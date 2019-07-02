@@ -32,7 +32,7 @@ import string
 import re
 import struct
 
-import conversion_general as cnv_gen
+#import utils.utils as utils
 
 #  _______ _                   _____                              _
 # |__   __(_)                 / ____|                            (_)
@@ -122,7 +122,7 @@ def tgipsy2dt(tin):
     GIPSY time is not the 'real' J2000
     but only counted starting from 1st January 2000 at Noon
     """
-    if cnv_gen.is_iterable(tin):
+    if utils.is_iterable(tin):
         typ = type(tin)
         return typ([tgipsy2dt(e) for e in tin])
     else:
@@ -152,7 +152,7 @@ def numpy_datetime2dt(npdtin):
     ------
         https://stackoverflow.com/questions/29753060/how-to-convert-numpy-datetime64-into-datetime/29755657
     """
-    if cnv_gen.is_iterable(npdtin):        
+    if utils.is_iterable(npdtin):        
         typ = type(npdtin)
         return typ([numpy_datetime2dt(e) for e in npdtin])
     else:
@@ -177,7 +177,7 @@ def matlab_time2dt(matlab_datenum):
     python_datetime : datetime or list/numpy.array of datetime
         Converted Datetime(s)
     """
-    if cnv_gen.is_iterable(matlab_datenum):
+    if utils.is_iterable(matlab_datenum):
         typ = type(matlab_datenum)
         return typ([matlab_time2dt(e) for e in matlab_datenum])
     else:
@@ -210,7 +210,7 @@ def dt_round(dtin=None, roundTo=60):
     """
     import datetime as dtmod
 
-    if cnv_gen.is_iterable(dtin):
+    if utils.is_iterable(dtin):
         typ = type(dtin)
         return typ([dt_round(e,roundTo=roundTo) for e in dtin])
     else:
@@ -230,7 +230,7 @@ def roundTime(*args):
     
 
 def dt_in_local_timezone2posix(dtin):
-    if not cnv_gen.is_iterable(dtin):
+    if not utils.is_iterable(dtin):
         return time.mktime(dtin.timetuple()) + dtin.microsecond * 0.000001
     else:
         typ = type(dtin)
@@ -238,7 +238,7 @@ def dt_in_local_timezone2posix(dtin):
 
 
 def posix2dt_in_local_timezone(posixin):
-    if not cnv_gen.is_iterable(posixin):
+    if not utils.is_iterable(posixin):
         if np.isnan(posixin):
             return dt.datetime(1970,1,1)
         else:
@@ -266,7 +266,7 @@ def dt2posix(dtin,out_array=False):
     L : float or list/numpy.array of floats
         POSIX Time(s)  
     """
-    if not cnv_gen.is_iterable(dtin):
+    if not utils.is_iterable(dtin):
         D = dtin - dt.datetime(1970,1,1)
         return D.days * 86400 + D.seconds +  D.microseconds * 10**-6
     else:
@@ -296,7 +296,7 @@ def posix2dt(posixin,out_array=False):
         Converted Datetime(s)
     """
 
-    if not cnv_gen.is_iterable(posixin):
+    if not utils.is_iterable(posixin):
         if np.isnan(posixin):
             return dt.datetime(1970,1,1)
         else:
@@ -355,7 +355,7 @@ def dt2ymdhms(dtin,with_microsec = True):
     -------
         tuple with year , month , day , hour , minute , second , microsecond
     """
-    if not cnv_gen.is_iterable(dtin):
+    if not utils.is_iterable(dtin):
         if with_microsec:
             return (dtin.year,dtin.month,dtin.day,dtin.hour,dtin.minute,dtin.second,dtin.microsecond)
         else:
@@ -406,7 +406,7 @@ def doy2dt(year,days,hours=0,minutes=0,seconds=0):
     L : datetime or list/numpy.array of datetime.
         Datetime(s)
     """
-    if not cnv_gen.is_iterable(year):
+    if not utils.is_iterable(year):
         # All this because Python cant handle int with a starting with 0 (like 08)
         # => SyntaxError: invalid token
         year    = int(str(year))
@@ -423,11 +423,11 @@ def doy2dt(year,days,hours=0,minutes=0,seconds=0):
         dt.timedelta(microseconds=finalmicrosec)
 
     else:
-        if not cnv_gen.is_iterable(hours):
+        if not utils.is_iterable(hours):
             hours   = [0] * len(year)
-        if not cnv_gen.is_iterable(minutes):
+        if not utils.is_iterable(minutes):
             minutes = [0] * len(year)
-        if  not cnv_gen.is_iterable(seconds):
+        if  not utils.is_iterable(seconds):
             seconds = [0] * len(year)
 
         outlis = []
@@ -457,7 +457,7 @@ def dt2doy_year(dtin,outputtype=str):
         Is a list of tuple if the input is an iterable
     """
     
-    if cnv_gen.is_iterable(dtin):
+    if utils.is_iterable(dtin):
         typ=type(dtin)
         return typ([dt2doy_year(e,outputtype=outputtype) for e in dtin])
         
@@ -479,7 +479,7 @@ def dt2fracday(dtin):
         Fractional of the day
         Is a list of int if the input is an iterable
     """
-    if cnv_gen.is_iterable(dtin):
+    if utils.is_iterable(dtin):
         typ=type(dtin)
         return typ([dt2fracday(e) for e in dtin])
     else:
@@ -502,7 +502,7 @@ def dt2secinday(dtin):
         Seconds in the day
         Is a list of int if the input is an iterable
     """
-    if cnv_gen.is_iterable(dtin):
+    if utils.is_iterable(dtin):
         typ=type(dtin)
         return typ([dt2secinday(e) for e in dtin])
     else:
@@ -706,7 +706,7 @@ def dt2gpstime(dtin,dayinweek=True):
         Is a list of tuple if the input is an iterable
     """
     
-    if cnv_gen.is_iterable(dtin):
+    if utils.is_iterable(dtin):
         typ=type(dtin)
         return typ([dt2gpstime(e) for e in dtin])
         
@@ -745,7 +745,7 @@ def dt2gpsweek_decimal(dtin,return_middle_of_day=True):
         
         Is a list of float if the input is an iterable
     """
-    if cnv_gen.is_iterable(dtin):
+    if utils.is_iterable(dtin):
         typ=type(dtin)
         return typ([dt2gpsweek_decimal(e) for e in dtin])
     else:
@@ -844,7 +844,7 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True):
 
 
 def gpsweek_decimal2dt(gpsweekdec_in):
-    if cnv_gen.is_iterable(gpsweekdec_in):
+    if utils.is_iterable(gpsweekdec_in):
         typ=type(gpsweekdec_in)
         return typ([gpsweek_decimal2dt(e) for e in gpsweekdec_in])
     else:
@@ -878,7 +878,7 @@ def dt_gpstime2dt_utc(dtgpsin,out_array=False):
         Datetime(s) in UTC Time Scale
     """
     # on converti le dt gps en dt utc
-    if cnv_gen.is_iterable(dtgpsin):
+    if utils.is_iterable(dtgpsin):
         typ=type(dtgpsin)
         Out = typ([dt_gpstime2dt_utc(e) for e in dtgpsin])
         if not out_array:
@@ -952,7 +952,7 @@ def year_decimal2dt(yearin):
     L : datetime or list of datetime.
         Datetime(s)  
     """
-    if cnv_gen.is_iterable(yearin):
+    if utils.is_iterable(yearin):
         typ=type(yearin)
         return typ([year_decimal2dt(e) for e in yearin])
     else:
@@ -974,7 +974,7 @@ def dt2year_decimal(dtin):
     L : float or list/numpy.array of floats
         Decimal Year(s)  
     """
-    if cnv_gen.is_iterable(dtin):
+    if utils.is_iterable(dtin):
         typ=type(dtin)
         return typ([dt2year_decimal(e) for e in dtin])
     else:
@@ -1002,7 +1002,7 @@ def date_string_2_dt(strin):
     """
     
     import dateutil.parser
-    if cnv_gen.is_iterable(strin):
+    if utils.is_iterable(strin):
         typ=type(strin)
         return typ([date_string_2_dt(e) for e in strin])
     else:
@@ -1035,7 +1035,7 @@ def jjulCNES2dt(jjulin):
     https://www.aviso.altimetry.fr/fr/donnees/outils/jours-calendaires-ou-jours-juliens.html
     """
     
-    if cnv_gen.is_iterable(jjulin):
+    if utils.is_iterable(jjulin):
         typ=type(jjulin)
         return typ([jjulCNES2dt(e) for e in jjulin])
     else:
@@ -1098,7 +1098,7 @@ def MJD2dt(mjd_in,seconds=None):
     """
 
     # ITERABLE CASE
-    if cnv_gen.is_iterable(mjd_in): 
+    if utils.is_iterable(mjd_in): 
         typ=type(mjd_in)
         if seconds:
             if len(seconds) != len(mjd_in):
@@ -1171,7 +1171,7 @@ def dt2str(dtin , str_format="%Y-%m-%d %H:%M:%S"):
     http://www.jacksay.com/tutoriaux/bash-shell/bashshell-utilisation-commande-date.html
     """
     
-    if cnv_gen.is_iterable(dtin):
+    if utils.is_iterable(dtin):
         typ=type(dtin)
         return typ([dt2str(e) for e in dtin])
     else:
@@ -1351,7 +1351,7 @@ def datestr_sinex_2_dt(datestrin):
         Datetime(s)
     """
     
-    if cnv_gen.is_iterable(datestrin):
+    if utils.is_iterable(datestrin):
         return [datestr_sinex_2_dt(e) for e in datestrin]
     else:
         #### CASE WHERE THE DATE LOOKS LIKE 00000:00000
@@ -1401,7 +1401,7 @@ def datestr_gins_filename_2_dt(datestrin):
         Datetime(s)
     """
     
-    if cnv_gen.is_iterable(datestrin):
+    if utils.is_iterable(datestrin):
         typ=type(datestrin)
         return typ([datestr_gins_filename_2_dt(e) for e in datestrin])
     
