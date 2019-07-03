@@ -1387,6 +1387,8 @@ def datestr_sinex_2_dt(datestrin):
         return doy2dt(year,doy,seconds=sec)
 
 
+
+
 def datestr_gins_filename_2_dt(datestrin):
     """
     Time conversion
