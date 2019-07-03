@@ -50,3 +50,7 @@ def is_not_iterable(inp,consider_str_as_iterable=False):
     else:
         out = False
     return out
+
+
+def contains_word(s, w):
+    return f' {w} ' in f' {s} '
