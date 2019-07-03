@@ -184,7 +184,6 @@ def XYZ2GEO(x,y,z,outdeg=True,
 
     return RPHI,RLBDA,RHE
 
-
 def XYZ2ENU(dX,dY,dZ,lat0,lon0):
     """
     Coordinates conversion
