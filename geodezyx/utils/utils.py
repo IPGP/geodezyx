@@ -54,3 +54,66 @@ def is_not_iterable(inp,consider_str_as_iterable=False):
 
 def contains_word(s, w):
     return f' {w} ' in f' {s} '
+
+
+def docstring_generic():
+    """
+    prints and returns an prototype generic docstring. Based on Numpy docstring
+    convention
+    
+    Source
+    ------
+    https://numpydoc.readthedocs.io/en/latest/format.html
+    
+    """
+    
+    docstr_out = """    
+    General description
+
+    Parameters
+    ----------
+    param1 : float or int or str or dict or n-tuple or bool or list or numpy.array
+        Description param1
+
+    param2 : float or int or str or dict or n-tuple or bool or list or numpy.array
+        Description param2
+        
+    param3 : float or int or str or dict or n-tuple or bool or list or numpy.array
+        Description param3
+                
+    Returns
+    -------
+    out1 : float or int or str or dict or n-tuple or bool or list or numpy.array
+        Description out1
+    
+    out2 : float or int or str or dict or n-tuple or bool or list or numpy.array
+        Description out2
+        
+    Note
+    ----
+    Misc. Notes
+
+    Source
+    ------
+    www.forum-source.com
+    
+    Examples
+    --------
+    >>> answer
+    42    
+    """
+    
+    print(docstr_out)
+    
+    return docstr_out
+
+
+
+
+
+
+
+
+
+
+
