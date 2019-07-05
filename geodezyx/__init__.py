@@ -1,6 +1,6 @@
 #### Import all subpackages
 #from . import extern
-#from . import utils
+from . import utils
 
 
 #### Import extern libraires in in the geodezyx namespace
