@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Thu Feb 21 13:37:40 2019
@@ -25,12 +26,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
-import numpy as np
-import scipy
-import re
-
-import sys
-
+from geodezyx import np,scipy,re,sys
 #import geod.utils as utils
 
 sys.dont_write_bytecode = True
