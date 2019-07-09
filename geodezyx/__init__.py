@@ -10,6 +10,8 @@ import struct
 import math
 import sys
 import scipy
+from scipy.signal import butter, lfilter, freqz
+import matplotlib.pyplot as plt
 
 from . import extern
 from . import utils
@@ -17,8 +19,8 @@ from . import athmo
 from . import conv
 from . import files_rw
 from . import geodyn
-from . import legacy
 from . import stats
+from . import reffram
 
 __all__ = ['athmo','utils','extern','conv','files_rw','geodyn','reffram','stats']
 #### Import extern libraires in in the geodezyx namespace
