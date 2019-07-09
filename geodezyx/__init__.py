@@ -1,8 +1,10 @@
 #### Import all subpackages
-#from . import extern
+from . import extern
 from . import utils
-
-
+from . import athmo
+import numpy as np
+import pandas as pd
+__all__ = ['athmo','utils','extern']
 #### Import extern libraires in in the geodezyx namespace
 #from geodezyx.extern import *
 
