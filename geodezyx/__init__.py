@@ -1,8 +1,4 @@
 #### Import all subpackages
-from . import extern
-from . import utils
-from . import athmo
-from . import conv
 import numpy as np
 import pandas as df
 import datetime as dt
@@ -14,6 +10,11 @@ import struct
 import math
 import sys
 import scipy
+
+from . import extern
+from . import utils
+from . import athmo
+from . import conv
 
 __all__ = ['athmo','utils','extern','conv']
 #### Import extern libraires in in the geodezyx namespace
