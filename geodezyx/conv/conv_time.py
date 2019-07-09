@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Mon Feb 18 14:12:44 2019
@@ -24,18 +25,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
-import datetime as dt
-import time
-import numpy as np
-import os 
-import string
-import re
-import struct
-import math
-
 
 ##################################################
-import geodezyx.utils.utils as utils
+from geodezyx import utils,dt,time,np,os,re,struct,math
+#import geodezyx.utils.utils as utils
 
 
 
