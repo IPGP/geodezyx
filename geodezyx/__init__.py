@@ -15,8 +15,12 @@ from . import extern
 from . import utils
 from . import athmo
 from . import conv
+from . import files_rw
+from . import geodyn
+from . import legacy
+from . import stats
 
-__all__ = ['athmo','utils','extern','conv']
+__all__ = ['athmo','utils','extern','conv','files_rw','geodyn','reffram','stats']
 #### Import extern libraires in in the geodezyx namespace
 #from geodezyx.extern import *
 
