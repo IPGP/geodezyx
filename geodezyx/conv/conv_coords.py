@@ -26,7 +26,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
-from geodezyx import np,scipy,re,sys
+from geodezyx import np,scipy,re,sys,utils
 #import geod.utils as utils
 
 sys.dont_write_bytecode = True
@@ -216,7 +216,7 @@ def XYZ2ENU(dX,dY,dZ,lat0,lon0):
     """
     
     ## Case one ref point per dXYZ
-    if cnv_gen.is_iterable(lat0):
+    if utils.is_iterable(lat0):
         E,N,U = [] , [] , []
         for dX_m,dY_m,dZ_m,lat0_m,lon0_m in zip(dX,dY,dZ,lat0,lon0):
             E_m , N_m , U_m = XYZ2ENU(dX_m,dY_m,dZ_m,lat0_m,lon0_m)
@@ -327,7 +327,7 @@ def ENU2XYZ(E,N,U,Xref,Yref,Zref):
     https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates
     """
     
-    if cnv_gen.is_iterable(E):
+    if utils.is_iterable(E):
         Xlist , Ylist , Zlist = [] , [] , []
         for e,n,u in zip(E,N,U):
             x,y,z = ENU2XYZ(e,n,u,Xref,Yref,Zref)
@@ -1208,9 +1208,9 @@ def cartesian2polar(x,y):
     r , theta : float 
         polar coordinates (radius / angle in radians)
     """
-    if cnv_gen.is_iterable(x):
+    if utils.is_iterable(x):
         x = np.array(x)
-    if cnv_gen.is_iterable(y):
+    if utils.is_iterable(y):
         y = np.array(y)
 
     theta = np.arctan2(y,x)
@@ -1236,9 +1236,9 @@ def polar2cartesian(r,theta,ang='deg'):
     x , y : numpy.array of float
         cartesian coordinates
     """
-    if cnv_gen.is_iterable(r):
+    if utils.is_iterable(r):
         r = np.array(r)
-    if cnv_gen.is_iterable(theta):
+    if utils.is_iterable(theta):
         theta = np.array(theta)
 
     if ang == 'deg':
@@ -1680,6 +1680,8 @@ def itrf_psd_fundamuntal_formula(t,A_l,t_l,tau_l,A_e,t_e,tau_e):
     """
     
     dL = A_l * np.log(1 + (t - t_l)/ tau_l) + A_e * (1 + (t - t_e)/ tau_e)
+    
+    return dL
 
 
 def calc_pos_speed_itrf(x0,y0,z0,t0,vx,vy,vz,t):
