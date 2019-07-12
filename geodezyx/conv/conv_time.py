@@ -27,7 +27,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
 ##################################################
-from geodezyx import utils,dt,time,np,os,re,struct,math
+from geodezyx import utils,dt,time,np,os,re,struct,math,string
 #import geodezyx.utils.utils as utils
 
 
