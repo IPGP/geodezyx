@@ -1,8 +1,28 @@
 #### Import all subpackages
-#from . import extern
-#from . import utils
+import numpy as np
+import pandas as df
+import datetime as dt
+import time
+import os 
+import string
+import re
+import struct
+import math
+import sys
+import scipy
+from scipy.signal import butter, lfilter, freqz
+import matplotlib.pyplot as plt
 
+from . import extern
+from . import utils
+from . import athmo
+from . import conv
+from . import files_rw
+from . import geodyn
+from . import stats
+from . import reffram
 
+__all__ = ['athmo','utils','extern','conv','files_rw','geodyn','reffram','stats']
 #### Import extern libraires in in the geodezyx namespace
 #from geodezyx.extern import *
 
