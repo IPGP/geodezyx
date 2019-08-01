@@ -100,7 +100,7 @@ def calc_stand_ties(epoc, lat_ref , lon_ref , h_ref , lat_rov , lon_rov , h_rov 
     met_rov = gpt3(epoc,lat_rov,lon_rov,h_rov,grid)
     
     ztd_ref = trop_saast(met_ref[0],lat_ref,h_ref,met_ref[1],met_ref[4],"total")
-    ztd_rov = trop_saast(met_rov[0],lat_rov,h_ref,met_rov[1],met_rov[4],"total")
+    ztd_rov = trop_saast(met_rov[0],lat_rov,h_rov,met_rov[1],met_rov[4],"total")
     if unit == "m":
         return ztd_ref - ztd_rov
     elif unit == "mm":
