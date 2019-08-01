@@ -6,7 +6,28 @@ Created on Fri Jun 28 14:27:56 2019
 @author: psakicki
 """
 
-from geodezyx.extern import * 
+from geodezyx import * 
+
+def clear_all():
+    '''Clears all the variables from the workspace of the spyder
+    application.'''
+    #cls()
+    gl = globals().copy()
+    for var in gl:
+        if var[0] == '_': continue
+        if 'func' in str(globals()[var]): continue
+        if 'module' in str(globals()[var]): continue
+
+        del globals()[var]
+
+def spyder_run_check():
+    """
+    Check if the code is run inside Spyder IDE
+    """
+    if any('SPYDER' in name for name in os.environ):
+        return True
+    else:
+        return False
 
 def is_iterable(inp,consider_str_as_iterable=False):
     """
@@ -108,12 +129,532 @@ def docstring_generic():
     return docstr_out
 
 
+def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
+    '''
+    This function will spwan a thread and run the given function
+    using the args, kwargs and return the given default
+    value if the timeout_duration is exceeded
+
+    http://stackoverflow.com/questions/366682/how-to-limit-execution-time-of-a-function-call-in-python
+    '''
+    import threading
+    class InterruptableThread(threading.Thread):
+        def __init__(self):
+            threading.Thread.__init__(self)
+            self.result = default
+        def run(self):
+            try:
+                self.result = func(*args, **kwargs)
+            except:
+                self.result = default
+    start = time.time()
+    it = InterruptableThread()
+    it.start()
+    it.join(timeout_duration)
+    if it.isAlive():
+        print('ERR : a timout is triggered !!!')
+        stop = time.time() - start
+        print("     runtime : " , stop, 'sec.')
+        return it.result
+    else:
+        stop = time.time() - start
+        print("INFO : runtime : " , stop, 'sec.')
+        return it.result
+
+
+def indice_printer(i,print_every = 10,text_before=''):
+    """
+    print an index every N iteration
+    """
+    if np.mod(i,print_every) == 0:
+        print(text_before ,  i)
+    return None
 
 
 
+def pickle_saver(datain , outdir = None , outname = None , ext='.pik' ,
+                 timestamp = False,full_path=None):
+    """
+    if full_path is given, override outdir and outname
+    RETURN :
+        outpath : the output path of the pickle
+    """
+    if not full_path and not outdir and not outname:
+        print('ERR : pickle_saver : not full_path and not outdir and not outname are given !')
+        raise Exception
+
+    if timestamp:
+        ts = get_timestamp() + '_'
+    else:
+        ts = ''
+    if full_path:
+        outpath = full_path
+    else:
+        outpath = os.path.join(outdir,ts + outname + ext)
+
+
+    # For Python 2
+    # pickle.dump( datain , open( outpath , "w+" ) )
+    # For Python 3
+    pickle.dump( datain , open( outpath , "wb" ) )
+    return outpath
+
+def pickle_loader(pathin):
+    try:
+        #outdata = pickle.load( open( pathin , "r" ) )
+        outdata = pickle.load( open( pathin ,'rb' )  , encoding='latin1')
+    except UnicodeDecodeError:
+        print('INFO : pickle loader : alternative reading following a UnicodeDecodeError')
+        #outdata = pickle.load( open( pathin ,'rb' )  , encoding='latin1')
+        outdata = pickle.load( open( pathin , "r" ) )
+    except TypeError:
+        print('INFO : pickle loader : alternative reading following a TypeError (is it a Py2 pickle ?)')
+        # source :
+        # https://stackoverflow.com/questions/28218466/unpickling-a-python-2-object-with-python-3
+        outdata = pickle.load( open( pathin ,'rb' )  , encoding='latin1')
+
+    return outdata
+
+def memmap_from_array(arrin):
+    nam = str(np.random.randint(99999)) + '.mmp.tmp'
+    path = os.path.join(tempfile.mkdtemp(), nam)
+    mmp = np.memmap(path, dtype='float64', mode='w+',
+                    shape=arrin.shape)
+    mmp[:] = arrin[:]
+    return mmp
+
+def mmpa(arrin):
+    # just a light wrapper
+    return memmap_from_array(arrin)
+
+def read_mat_file(pathin,full=False):
+    """ low level reader of a MATLAB mat file """
+    import scipy.io as sio
+    import os
+    fullmat = sio.loadmat(pathin)
+    data = fullmat[os.path.basename(pathin).split('.')[0]]
+    if full:
+        return data , fullmat
+    else:
+        return data
+
+def save_obj_as_file(objin,pathin,prefix,ext='.exp',suffix=''):
+    """
+    OLD proto-version of pickle saver DISCONTINUED
+    """
+    if suffix != '':
+        suffix = suffix + '_'
+    ts = get_timestamp()
+    fullpath = os.path.join(pathin,prefix +'_'+suffix+ts+ext)
+
+
+    # Python 2
+    #pickle.dump( objin, open( fullpath , "w+" ) )
+    # Python 3
+    pickle.dump( objin , open( fullpath , "wb" ) )
+
+    return fullpath
+
+def save_array_fast(arrin,outname='',
+                    outdir='/home/psakicki/aaa_FOURBI',
+                    txt=True):
+    if outname == '':
+        outname = str(uuid.uuid4())[:8]
+    if scipy.sparse.issparse(arrin):
+        arrin = arrin.toarray()
+    outpath = os.path.join(outdir,outname)
+    print(outpath)
+    if txt:
+        np.savetxt(outpath,arrin)
+    else:
+        np.save(outpath,arrin)
+    print(outpath)
+    return outpath
+
+def join_improved(strseparat,*varsin):
+    return strseparat.join([str(v) for v in varsin])
+
+def split_improved(strin,sep_left,sep_right):
+    return strin.split(sep_left)[1].split(sep_right)[0]
+
+def diagonalize(x,n=10):
+    if is_iterable(x):
+        x = list(x) * n
+        x = np.expand_dims(np.array(x),1)
+        return np.diag(x[:,0])
+    else:
+        return np.diag((np.ones((n,n)) * x)[:,0])
+
+
+def read_comments(filein,comment='#'):
+    outlist = []
+    for l in open(filein):
+        if l[0] == comment:
+            outlist.append(l[1:-1])
+    return outlist
+
+
+def str2float_smart(str_in):
+    try:
+        out = float(str_in)
+    except ValueError:
+        out = np.nan
+    return out
+
+
+def str2int_smart(str_in):
+    try:
+        out = int(str_in)
+    except ValueError:
+        out = np.nan
+    return out
+
+def array_from_lists(*listsin):
+    """ fonction pour arreter de galerer avec les conversions
+    de lists => matrices """
+    out = np.vstack(listsin)
+    out = out.T
+    return out
+
+def stringizer(tupin,separ=' ',eol=True):
+    """
+    transform elts of a tuple in a string line, ready for write in a file
+    """
+    if eol:
+        end = '\n'
+    else:
+        end = ''
+    lineout =  ' '.join([str(e) for e in tupin]) + end
+    return lineout
+
+def eval_a_dict(dictin,where,verbose=True):
+    """
+    where is most of time globals()
+    WARN : doesnt work in a function !!!
+    use instead :
+    for k,v in booldic.items():
+        globals()[k] = v
+        locals()[k] = v
+    """
+    for k,v in dictin.items():
+        where[k] = v
+        if verbose:
+            print('INFO : eval_a_dict : the 2 values must be equals ', where[k] , v , ", variable",k )
+    return None
+
+def boolean_dict(list_of_keywords):
+    outdict = dict()
+    for k in list_of_keywords:
+        outdict[k] = (True , False)
+    return outdict
+
+ 
+def line_in_file_checker(file_path,string):
+    #Open the file
+    fobj = open(file_path)
+    
+    trigger = False
+    for line in fobj:
+        if string in line:
+            trigger = True
+            break
+        
+    fobj.close()
+    return trigger
+        
+
+def line_count(filein):
+    num_lines = sum(1 for line in open(filein))
+    return num_lines
+
+
+def patterns_in_string_checker(string,*patterns):
+    """
+    from
+    http://stackoverflow.com/questions/3389574/check-if-multiple-strings-exist-in-another-string
+    """
+    print(patterns)
+    L = [x in string for x in patterns]
+    return bool(any( L ))
+
+
+def extract_text_between_elements(file_path,elt_start,elt_end):
+    """
+    source :
+        https://stackoverflow.com/questions/9222106/how-to-extract-information-between-two-unique-words-in-a-large-text-file
+    """
+
+    f = open(file_path,'r')
+    text = f.read()
+    text_extract = text.split(elt_start,1)[-1].split(elt_end)[0]
+
+    return text_extract
+
+def extract_text_between_elements_2(file_path , elt_start , elt_end,
+                                           return_string = False,
+                                           nth_occur_elt_start=0,
+                                           nth_occur_elt_end=0):
+    """
+    This function is based on REGEX (elt_start , elt_end are REGEX)
+    and can manage several blocks in the same file
+
+    return_string = True  : returns a string of the matched lines
+    return_string = False : returns a list of the matched lines
+    
+    NB : in SINEX context, with "+MARKER", use backslash i.e.
+         "\+MARKER"    
+         
+    NB2 : think about StingIO for a Pandas DataFrame Handeling
+    https://docs.python.org/2/library/stringio.html
+    """
+    
+    try:
+        F = open(file_path,"r",encoding = "ISO-8859-1")
+    except:
+        F = file_path
+    
+    out_lines_list = []
+    
+    trigger = False
+    last_triggered_line = False
+    
+    for line in F:
+
+        if re.search(elt_start , line) and nth_occur_elt_start == 0:
+            trigger = True
+        elif re.search(elt_start , line) and nth_occur_elt_start > 0:
+            nth_occur_elt_start = nth_occur_elt_start - 1
+        
+        if re.search(elt_end , line) and nth_occur_elt_end == 0:
+            last_triggered_line = True
+        elif trigger and re.search(elt_end , line) and nth_occur_elt_end > 0:
+            nth_occur_elt_end = nth_occur_elt_end - 1
+            
+        if trigger:
+            out_lines_list.append(line)
+            
+        if last_triggered_line:
+            trigger = False
+            last_triggered_line = False
+
+    if return_string:
+        return "".join(out_lines_list)
+    else:
+        return out_lines_list
+    
+    
+def str_2_float_line(line , sep=" ",out_type=float):
+    """
+    convert a line of number (in str)
+    to a list of float (or other out_type)
+    """
+    fields = line.strip().split(sep)
+    fields = [e for e in fields if len(e) > 0]
+    try:
+        return [out_type(e) for e in fields]
+    except:
+        return fields
 
 
 
+################
+### "GETTERs" : wrappers to get easily some fcts
+################
+
+def get_timestamp(outstring = True):
+    """frontend to get easily a timestamp"""
+    if outstring:
+        return dt.datetime.now().strftime('%Y%m%d_%H%M%S')
+    else:
+        return dt.datetime.now()
+
+def get_function_name():
+    return inspect.stack()[0][3]
+
+def get_computer_name():
+    import platform
+    return platform.node()
 
 
+def get_username():
+    import pwd
+    return pwd.getpwuid( os.getuid() )[ 0 ]
+  
+
+def vectorialize(array_in):
+    """
+    redondant avec .flat ???
+    """
+    vector_out = array_in.reshape((array_in.size,))
+    return vector_out
+
+def get_specific_locals(prefix):
+    """ get locals params with 'prefix' in the name
+        can actually be a suffix """
+    # MARCHE PAS EN L'ETAT
+    loctemp = dict(globals())
+    print(loctemp)
+    outlis = []
+    for k,v in loctemp.items():
+        if prefix in k:
+            outlis.append(str(k[4:]) + ' : ' + str(v))
+    outlis.sort()
+    return outlis
+
+class Tee(object):
+    # based on
+    # http://stackoverflow.com/questions/11325019/output-on-the-console-and-file-using-python
+    # Secondary links
+    # http://stackoverflow.com/questions/616645/how-do-i-duplicate-sys-stdout-to-a-log-file-in-python
+    # http://stackoverflow.com/questions/2996887/how-to-replicate-tee-behavior-in-python-when-using-subprocess
+    def __init__(self, *files):
+        self.original = sys.stdout
+        self.files = [sys.stdout] + list(files)
+        sys.stdout = self
+
+    def write(self, obj):
+        for f in self.files:
+            f.write(obj)
+    def flush(self):
+        for f in self.files:
+            f.flush()
+    def stop(self):
+        for fil in self.files:
+            if fil != self.original:
+                fil.close()
+        sys.stdout = self.original
+        self.files = [self.original]
+
+    def pause(self):
+        sys.stdout = self.original
+        self.files_saved = list(self.files)
+        self.files = [self.original]
+
+    def restart(self):
+        self.files = self.files_saved
+        sys.stdout = self
+
+def Tee_frontend(pathin,prefix,suffix='',ext='log',print_timestamp=True):
+    #if suffix != '':
+    #    suffix = suffix + '_'
+    if print_timestamp:
+        ts = '_' + get_timestamp()
+    else:
+        ts = ''
+    f = open(os.path.join(pathin,prefix +'_'+suffix+ts+'.'+ext), 'w')
+    f_tee = Tee(f)
+    #sys.stdout = f_tee
+    return f_tee
+
+def alphabet(num=None):
+    if not num:
+        import string
+        return list(string.ascii_lowercase)
+    else:
+        return alphabet()[num]
+
+def dday():
+    D = (dt.datetime(2016,10,14) - dt.datetime.now()).days
+    print('J -',  D , 'avant la quille')
+    return D
+
+def Aformat(A,landscape=True):
+    LA = [(841 , 1189),
+    (594 , 841),
+    (420 , 594),
+    (297 , 420),
+    (210 , 297),
+    (148 , 210),
+    (105 , 148),
+    (74  , 105),
+    (52  , 74)]
+
+    out = np.array(LA[A])/25.4
+    if landscape:
+        out = np.flipud(out)
+    return tuple(out)
+
+
+
+########### PANDA UTILS ##############################
+
+def renamedic_fast_4_pandas(*inpnames):
+    """
+    EXEMPLE :
+    rnamedic = gf.renamedic_fast_4_pandas(*["zmax","ang","zsmooth","smoothtype","xgrad","ygrad",
+                                       'r_eiko','z_eiko','pt_eiko_x','pt_eiko_y',"t_eiko",
+                                       'r_sd',  'z_sd',  'pt_sd_x'  ,'pt_sd_y'  ,'t_sd',
+                                       'diff_x','diff_y','diff','diff_t'])
+
+    pda = pda.rename(columns = rnamedic)
+    """
+    renamedic = dict()
+
+    for i,nam in enumerate(inpnames) :
+        renamedic[i] = nam
+
+    return renamedic
+
+def pandas_column_rename_dic(*inpnames):
+    """
+    wrapper of renamedic_fast_4_pandas
+
+    EXEMPLE :
+    rnamedic = gf.renamedic_fast_4_pandas(*["zmax","ang","zsmooth","smoothtype","xgrad","ygrad",
+                                       'r_eiko','z_eiko','pt_eiko_x','pt_eiko_y',"t_eiko",
+                                       'r_sd',  'z_sd',  'pt_sd_x'  ,'pt_sd_y'  ,'t_sd',
+                                       'diff_x','diff_y','diff','diff_t'])
+
+    pda = pda.rename(columns = rnamedic)
+    """
+    return renamedic_fast_4_pandas(*inpnames)
+
+def pandas_DF_2_tuple_serie(DFin,columns_name_list,reset_index_first=False):
+    """
+    This function is made to solve the multiple columns selection 
+    problem
+    the idea is :
+        S1 = pandas_DF_2_tuple_serie(DF1 , columns_name_list)
+        S2 = pandas_DF_2_tuple_serie(DF2 , columns_name_list)
+        BOOL = S1.isin(S2)
+        DF1[BOOL]
+        
+    Source :
+        https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns
+    """
+    if reset_index_first:
+        DF = DFin.reset_index(level=0, inplace=False)
+    else:
+        DF = DFin
+        
+    Sout = pd.Series(list(map(tuple, DF[columns_name_list].values.tolist())),index=DF.index)
+    return Sout
+    
+########### END PANDA UTILS ##############################
+    
+def trunc(f, n):
+    '''Truncates/pads a float f to n decimal places without rounding'''
+    slen = len('%.*f' % (n, f))
+    return float(str(f)[:slen])
+
+def multidot(tupin):
+
+    out = np.eye(tupin[0].shape[0])
+
+    for e in tupin:
+        out = np.dot(out,e)
+
+    return out
+
+def mdot(*args):
+    ret = args[0]
+    for a in args[1:]:
+        ret = np.dot(ret,a)
+    return ret
+
+def mdotr(*args):
+    ret = args[-1]
+    for a in reversed(args[:-1]):
+        ret = np.dot(a,ret)
+    return ret
 
