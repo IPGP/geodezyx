@@ -1,28 +1,54 @@
-#### Import all subpackages
-import numpy as np
-import pandas as df
+#### IMPORT EXTERNAL MODULES
+import bisect
+from collections import defaultdict
+from collections import Counter
 import datetime as dt
-import time
-import os 
-import string
-import re
-import struct
+import fnmatch
+import inspect
+import itertools
 import math
-import sys
+import matplotlib
+import matplotlib.pyplot as plt
+from natsort import natsorted, ns
+import numpy as np
+import operator
+import os 
+from os import remove, close
+import pandas as df
+import pandas as pd
+import pickle
 import scipy
 from scipy.signal import butter, lfilter, freqz
-import matplotlib.pyplot as plt
+import shutil
+import string
+import struct
+import sys
+import subprocess
+import re
+import tempfile
+from tempfile import mkstemp
+import time
+import uuid
 
-from . import extern
-from . import utils
+#### IMPORT GEODEZYX INTERNAL SUBMODULES
 from . import athmo
 from . import conv
+from . import extern
 from . import files_rw
 from . import geodyn
-from . import stats
 from . import reffram
+from . import stats
+from . import utils
 
-__all__ = ['athmo','utils','extern','conv','files_rw','geodyn','reffram','stats']
+__all__ = ['athmo',
+           'conv',
+           'extern',
+           'files_rw',
+           'geodyn',
+           'reffram',
+           'stats',
+           'utils']
+
 #### Import extern libraires in in the geodezyx namespace
 #from geodezyx.extern import *
 
