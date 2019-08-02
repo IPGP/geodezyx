@@ -27,7 +27,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
 ##################################################
-from geodezyx import utils,dt,time,np,os,re,struct,math,string
+from geodezyx import utils,dt,time,np,os,re,struct,math,string,pd
 #import geodezyx.utils.utils as utils
 
 
@@ -124,7 +124,7 @@ def tgipsy2dt(tin):
     but only counted starting from 1st January 2000 at Noon
     """
     if utils.is_iterable(tin):
-        typ = type(tin)
+        typ=utils.get_type_smart(tin)
         return typ([tgipsy2dt(e) for e in tin])
     else:
         j2000 = dt.datetime(2000, 1, 1, 12, 0)
@@ -154,7 +154,7 @@ def numpy_datetime2dt(npdtin):
         https://stackoverflow.com/questions/29753060/how-to-convert-numpy-datetime64-into-datetime/29755657
     """
     if utils.is_iterable(npdtin):        
-        typ = type(npdtin)
+        typ=utils.get_type_smart(npdtin)
         return typ([numpy_datetime2dt(e) for e in npdtin])
     else:
         python_datetime = npdtin.astype('M8[ms]').astype('O') 
@@ -179,7 +179,7 @@ def matlab_time2dt(matlab_datenum):
         Converted Datetime(s)
     """
     if utils.is_iterable(matlab_datenum):
-        typ = type(matlab_datenum)
+        typ=utils.get_type_smart(matlab_datenum)
         return typ([matlab_time2dt(e) for e in matlab_datenum])
     else:
         python_datetime = dt.datetime.fromordinal(int(matlab_datenum)) + \
@@ -212,7 +212,7 @@ def dt_round(dtin=None, roundTo=60):
     import datetime as dtmod
 
     if utils.is_iterable(dtin):
-        typ = type(dtin)
+        typ=utils.get_type_smart(dtin)
         return typ([dt_round(e,roundTo=roundTo) for e in dtin])
     else:
         if dtin == None :
@@ -222,6 +222,28 @@ def dt_round(dtin=None, roundTo=60):
         rounding = (seconds+roundTo/2) // roundTo * roundTo
         return dtin + dtmod.timedelta(0,rounding-seconds,-dtin.microsecond)
 
+
+def dt_ceil(dtin):
+    """
+    Round a datetime object to the begining of the day
+    
+    Parameters
+    ----------
+    dtin : datetime or list/numpy.array of datetime 
+        Datetime you want to round, default now.
+        Can handle several datetimes in an iterable.
+            
+    Returns
+    -------  
+    dtout : datetime or list/numpy.array of datetime
+        Rounded Datetime
+        
+    """
+    if utils.is_iterable(dtin):
+        typ=utils.get_type_smart(dtin)
+        return typ([dt_ceil(e) for e in dtin])
+    else:
+        return date2dt(dtin.date())
 
 def roundTime(*args):
     """
@@ -234,7 +256,7 @@ def dt_in_local_timezone2posix(dtin):
     if not utils.is_iterable(dtin):
         return time.mktime(dtin.timetuple()) + dtin.microsecond * 0.000001
     else:
-        typ = type(dtin)
+        typ=utils.get_type_smart(dtin)
         return typ([ dt_in_local_timezone2posix(e) for e in dtin ])
 
 
@@ -245,7 +267,7 @@ def posix2dt_in_local_timezone(posixin):
         else:
             return dt.datetime.fromtimestamp(posixin)
     else:
-        typ = type(posixin)
+        typ=utils.get_type_smart(posixin)
         return typ([ posix2dt_in_local_timezone(e) for e in posixin ])
 
 
@@ -271,7 +293,7 @@ def dt2posix(dtin,out_array=False):
         D = dtin - dt.datetime(1970,1,1)
         return D.days * 86400 + D.seconds +  D.microseconds * 10**-6
     else:
-        typ = type(dtin)
+        typ=utils.get_type_smart(dtin)
         L = typ([ dt2posix(e) for e in dtin  ])
         if out_array:
             return np.array(L)
@@ -303,7 +325,7 @@ def posix2dt(posixin,out_array=False):
         else:
             return dt.datetime(1970,1,1) + dt.timedelta(seconds=posixin)
     else:
-        typ = type(posixin)
+        typ=utils.get_type_smart(posixin)
         L = typ([ posix2dt(e) for e in posixin ])
         if out_array:
             return np.array(L)
@@ -363,7 +385,7 @@ def dt2ymdhms(dtin,with_microsec = True):
             dt2 = roundTime(dtin,1)
             return (dt2.year,dt2.month,dt2.day,dt2.hour,dt2.minute,dt2.second)
     else:
-        typ = type(dtin)
+        typ=utils.get_type_smart(dtin)
         return typ([ dt2ymdhms(e,with_microsec) for e in dtin ])
 
 def ymdhms_vectors2dt(yrlis,mlis,dlis,hlis,minlis,slis):
@@ -432,7 +454,7 @@ def doy2dt(year,days,hours=0,minutes=0,seconds=0):
             seconds = [0] * len(year)
 
         outlis = []
-        typ=type(year)
+        typ=utils.get_type_smart(year)
         for y,d,h,m,s in zip(year,days,hours,minutes,seconds):
             outlis.append(doy2dt(y,d,h,m,s))
         return typ(outlis)
@@ -459,7 +481,7 @@ def dt2doy_year(dtin,outputtype=str):
     """
     
     if utils.is_iterable(dtin):
-        typ=type(dtin)
+        typ=utils.get_type_smart(dtin)
         return typ([dt2doy_year(e,outputtype=outputtype) for e in dtin])
         
     else:
@@ -481,7 +503,7 @@ def dt2fracday(dtin):
         Is a list of int if the input is an iterable
     """
     if utils.is_iterable(dtin):
-        typ=type(dtin)
+        typ=utils.get_type_smart(dtin)
         return typ([dt2fracday(e) for e in dtin])
     else:
         return dtin.hour / 24 + dtin.minute / (60*24) + dtin.second / (60*60*24)
@@ -504,7 +526,7 @@ def dt2secinday(dtin):
         Is a list of int if the input is an iterable
     """
     if utils.is_iterable(dtin):
-        typ=type(dtin)
+        typ=utils.get_type_smart(dtin)
         return typ([dt2secinday(e) for e in dtin])
     else:
         return dtin.hour * 3600 + dtin.minute * 60 + dtin.second
@@ -549,7 +571,8 @@ def gpstime2utc(gpsweek,gpssecs,utc_offset):
     days_in_year = array([0,31,59,90,120,151,181,212,243,273,304,334,365])
     days_in_leap_year = array([0,31,60,91,121,152,182,213,244,274,305,335,366])
     # leap dayys since 1980
-    leap_day_table = array([1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1]);
+    leap_day_table = array([1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,
+                            0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1]);
 
     # adjust for utc offset
     secs = gpssecs - utc_offset;
@@ -708,7 +731,7 @@ def dt2gpstime(dtin,dayinweek=True):
     """
     
     if utils.is_iterable(dtin):
-        typ=type(dtin)
+        typ=utils.get_type_smart(dtin)
         return typ([dt2gpstime(e) for e in dtin])
         
     else:
@@ -747,7 +770,7 @@ def dt2gpsweek_decimal(dtin,return_middle_of_day=True):
         Is a list of float if the input is an iterable
     """
     if utils.is_iterable(dtin):
-        typ=type(dtin)
+        typ=utils.get_type_smart(dtin)
         return typ([dt2gpsweek_decimal(e) for e in dtin])
     else:
         if return_middle_of_day:
@@ -846,7 +869,7 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True):
 
 def gpsweek_decimal2dt(gpsweekdec_in):
     if utils.is_iterable(gpsweekdec_in):
-        typ=type(gpsweekdec_in)
+        typ=utils.get_type_smart(gpsweekdec_in)
         return typ([gpsweek_decimal2dt(e) for e in gpsweekdec_in])
     else:
         week_floor    = np.floor(gpsweekdec_in)
@@ -880,7 +903,7 @@ def dt_gpstime2dt_utc(dtgpsin,out_array=False):
     """
     # on converti le dt gps en dt utc
     if utils.is_iterable(dtgpsin):
-        typ=type(dtgpsin)
+        typ=utils.get_type_smart(dtgpsin)
         Out = typ([dt_gpstime2dt_utc(e) for e in dtgpsin])
         if not out_array:
             return Out
@@ -954,7 +977,7 @@ def year_decimal2dt(yearin):
         Datetime(s)  
     """
     if utils.is_iterable(yearin):
-        typ=type(yearin)
+        typ=utils.get_type_smart(yearin)
         return typ([year_decimal2dt(e) for e in yearin])
     else:
         return convert_partial_year(yearin)
@@ -976,7 +999,7 @@ def dt2year_decimal(dtin):
         Decimal Year(s)  
     """
     if utils.is_iterable(dtin):
-        typ=type(dtin)
+        typ=utils.get_type_smart(dtin)
         return typ([dt2year_decimal(e) for e in dtin])
     else:
         return toYearFraction(dtin)
@@ -1004,7 +1027,7 @@ def date_string_2_dt(strin):
     
     import dateutil.parser
     if utils.is_iterable(strin):
-        typ=type(strin)
+        typ=utils.get_type_smart(strin)
         return typ([date_string_2_dt(e) for e in strin])
     else:
         return dateutil.parser.parse(strin)
@@ -1037,7 +1060,7 @@ def jjulCNES2dt(jjulin):
     """
     
     if utils.is_iterable(jjulin):
-        typ=type(jjulin)
+        typ=utils.get_type_smart(jjulin)
         return typ([jjulCNES2dt(e) for e in jjulin])
     else:
         return dt.datetime(1950,0o1,0o1,00,00,00) + dt.timedelta(float(jjulin))
@@ -1100,7 +1123,7 @@ def MJD2dt(mjd_in,seconds=None):
 
     # ITERABLE CASE
     if utils.is_iterable(mjd_in): 
-        typ=type(mjd_in)
+        typ=utils.get_type_smart(mjd_in)
         if seconds:
             if len(seconds) != len(mjd_in):
                 print("ERR : MJD2dt : len(seconds) != len(mjd_in) !!")
@@ -1141,7 +1164,7 @@ def dt2MJD(dtin):
     """
     # cf http://en.wikipedia.org/wiki/Julian_day
     try:
-        typ=type(dtin)
+        typ=utils.get_type_smart(dtin)
         return typ([dt2MJD(t) for t in dtin])
     except:
         delta = (dtin - dt.datetime(1858,11,17))
@@ -1173,10 +1196,85 @@ def dt2str(dtin , str_format="%Y-%m-%d %H:%M:%S"):
     """
     
     if utils.is_iterable(dtin):
-        typ=type(dtin)
+        typ=utils.get_type_smart(dtin)
         return typ([dt2str(e) for e in dtin])
     else:
         return dtin.strftime(str_format)
+    
+    
+def date2dt(date_in):
+    """
+    Time conversion
+    
+    Python's Date => Python's Datetime
+    
+    Parameters
+    ----------
+    date_in : date or list/numpy.array of date.
+        Date(s).  Can handle several datetimes in an iterable.
+        
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)  
+    """
+    if utils.is_iterable(date_in):
+        typ=utils.get_type_smart(date_in)
+        return typ([date2dt(e) for e in date_in])
+    else:
+        return dt.datetime(*tuple(date_in.timetuple())[:3])
+        
+
+def timestamp_pandas2dt(timestamp_in):
+    """
+    Time conversion
+    
+    Pandas's Timestamp => Python's Datetime
+    
+    Parameters
+    ----------
+    timestamp_in : Timestamp or list/numpy.array of Timestamp.
+        Pandas's Timestamp(s).  Can handle several datetimes in an iterable.
+        
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)  
+    """
+    if utils.is_iterable(timestamp_in):
+        typ=utils.get_type_smart(timestamp_in)
+        return typ([timestamp_pandas2dt(e) for e in timestamp_in])
+    else:
+        return timestamp_in.to_pydatetime()
+        
+def datetime64_numpy2dt(npdt64_in):
+    """
+    Time conversion
+    
+    Numpy's datetime64 => Python's Datetime
+    
+    Parameters
+    ----------
+    npdt64_in : datetime64 or list/numpy.array of datetime64.
+        Numpy's datetime64(s). Can handle several datetimes in an iterable.
+        
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)  
+        
+    Source
+    ------
+    
+    https://stackoverflow.com/questions/13703720/converting-between-datetime-timestamp-and-datetime64
+    """
+    
+    if utils.is_iterable(npdt64_in):
+        typ=utils.get_type_smart(npdt64_in)
+        return typ([datetime64_numpy2dt(e) for e in npdt64_in])
+    else:
+        return pd.Timestamp(npdt64_in).to_pydatetime()
+
 
 def rinexname2dt(rinexpath):
     """
@@ -1405,7 +1503,7 @@ def datestr_gins_filename_2_dt(datestrin):
     """
     
     if utils.is_iterable(datestrin):
-        typ=type(datestrin)
+        typ=utils.get_type_smart(datestrin)
         return typ([datestr_gins_filename_2_dt(e) for e in datestrin])
     
     else:

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Jul  9 14:01:29 2019
@@ -1299,3 +1298,25 @@ def color_of_season(datein):
     elif season == 'autumn':
         outcolor = 'k'
     return outcolor
+
+
+def diff_pandas(DF,col_name):
+    """
+    Differentiate a Pandas DataFrame, if index is time
+
+    Parameters
+    ----------
+    DF : Pandas DataFrame
+         input DataFrame
+
+    col_name : str
+        the column of the DataFrame you want to differentiate
+
+    Returns
+    -------
+    DSout : Pandas DataFrame
+        Differenciated column of the input DataFrame
+
+    """
+    DSout = DF[col_name].diff() / DF[col_name].index.to_series().diff().dt.total_seconds()
+    return DSout

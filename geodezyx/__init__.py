@@ -2,8 +2,10 @@
 import bisect
 from collections import defaultdict
 from collections import Counter
+import copy
 import datetime as dt
 import fnmatch
+import glob
 import inspect
 import itertools
 import math
@@ -30,23 +32,26 @@ from tempfile import mkstemp
 import time
 import uuid
 
+
 #### IMPORT GEODEZYX INTERNAL SUBMODULES
 from . import athmo
 from . import conv
-from . import extern
 from . import files_rw
 from . import geodyn
+#from . import legacy
 from . import reffram
 from . import stats
+from . import time_series
 from . import utils
 
 __all__ = ['athmo',
            'conv',
-           'extern',
            'files_rw',
            'geodyn',
+#           'legacy',
            'reffram',
            'stats',
+           'time_series',
            'utils']
 
 #### Import extern libraires in in the geodezyx namespace
@@ -57,4 +62,7 @@ __all__ = ['athmo',
 #      import geodezyx
 #      but with
 #      from geodezyx import *
+
+
+
 
