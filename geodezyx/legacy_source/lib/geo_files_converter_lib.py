@@ -25,6 +25,9 @@ from geodezyx import utils,dt,time,np,os,re,struct,math,string,pd,copy
 from geodezyx import *
 import dateutil
 
+import geodezyx.legacy.geodetik as geok
+
+
 #import geodezyx.legacy.genefun as genefun
 #import geodezyx.legacy.geodetik as geok
 #import softs_runner

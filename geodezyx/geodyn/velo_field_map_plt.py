@@ -33,6 +33,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #import genefun as gf
 
 from geodezyx import *
+from mpl_toolkits.basemap import Basemap
+from matplotlib.patches import Ellipse
+
+
+
+import geodezyx.utils as utils
 
 
 # ------------------
@@ -230,7 +236,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                 
             # STATION NAME
             if name_stats:
-                offset_x_ok , offset_y_ok = gf.axis_data_coords_sys_transform(ax,
+                offset_x_ok , offset_y_ok = utils.axis_data_coords_sys_transform(ax,
                                                                               name_stats_offset[0],
                                                                               name_stats_offset[1])
                 plt.text(all_posx_proj[i] + offset_x_ok,
@@ -265,7 +271,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
             ######### AJUSTEMENT SI FLECHES TROP GRANDES
             x_end_arrow , y_end_arrow = all_posx_proj[i],all_posy_proj[i]+np.multiply(plot_vertical_ITRF[i],scale_arrow)
             
-            x_end_axis_ref , y_end_axis_ref = gf.axis_data_coords_sys_transform(ax,
+            x_end_axis_ref , y_end_axis_ref = utils.axis_data_coords_sys_transform(ax,
                                                               x_end_arrow,
                                                               y_end_arrow,
                                                               inverse=True) 
@@ -273,14 +279,14 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
             if (y_end_axis_ref < 0.) and shorten_oversized_arrows:
                 shortened_arrow = True
                 x_end_arrow_ok = x_end_arrow
-                _ , y_end_arrow_ok = gf.axis_data_coords_sys_transform(ax,
+                _ , y_end_arrow_ok = utils.axis_data_coords_sys_transform(ax,
                                                               x_end_axis_ref,
                                                               0,
                                                               inverse=False)
             elif (y_end_axis_ref > 1.) and shorten_oversized_arrows:
                 shortened_arrow = True
                 x_end_arrow_ok = x_end_arrow
-                _ , y_end_arrow_ok = gf.axis_data_coords_sys_transform(ax,
+                _ , y_end_arrow_ok = utils.axis_data_coords_sys_transform(ax,
                                                               x_end_axis_ref,
                                                               1.,
                                                               inverse=False) 
@@ -312,7 +318,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                     
             ### STATION NAME
             if name_stats:
-                offset_x_ok , offset_y_ok = gf.axis_data_coords_sys_transform(ax,
+                offset_x_ok , offset_y_ok = utils.axis_data_coords_sys_transform(ax,
                                                                               name_stats_offset[0],
                                                                               name_stats_offset[1])
                 
@@ -352,7 +358,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
     
     ######## Fleche de Legende    
     ### origine de la fleche de legende        
-    xl,yl = gf.axis_data_coords_sys_transform(ax,legend_position_x,
+    xl,yl = utils.axis_data_coords_sys_transform(ax,legend_position_x,
                                               legend_position_y + 0.02,
                                               inverse=False)
     ### fin de la fleche de legende                

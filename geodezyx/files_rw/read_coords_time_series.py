@@ -542,35 +542,36 @@ def read_epos_sta_coords_mono(filein,return_df=True):
             sVx = float(fields[7])
             sVy = float(fields[8])
             sVz = float(fields[9])
-
+        
             #### Last useful line for the point, store it
-            point = time_series.Point(X,Y,Z,T,"XYZ",sX,sY,sZ,name=namestat)
-            point.anex["Vx"] = sVx
-            point.anex["Vy"] = sVy
-            point.anex["Vz"] = sVz
-            Points_list_stk.append(point)
+            if not return_df:
+                point = time_series.Point(X,Y,Z,T,"XYZ",sX,sY,sZ,name=namestat)
+                point.anex["Vx"] = sVx
+                point.anex["Vy"] = sVy
+                point.anex["Vz"] = sVz
+                Points_list_stk.append(point)
+            
 
             #### And store for the DataFrame
-            tup_4_DF = (namestat,numstat,tecto_plate,
-                        MJD_ref,MJD_strt,MJD_end,
-                        X,Y,Z,sX,sY,sZ,
-                        Vx,Vy,Vz,sVx,sVy,sVz)
+            else:
+                tup_4_DF = (namestat,numstat,tecto_plate,
+                            MJD_ref,MJD_strt,MJD_end,
+                            X,Y,Z,sX,sY,sZ,
+                            Vx,Vy,Vz,sVx,sVy,sVz)
 
-
-
-            Lines_4_DF_stk.append(tup_4_DF)
-
-
-        columns = ("site","site_num","tecto_plate",
-                   "MJD_ref","MJD_start","MJD_end",
-                   "x","y","z","sx","sy","sz",
-                   "Vx","Vy","Vz","sVx","sVy","sVz")
-
-        DFout = pd.DataFrame(Lines_4_DF_stk,
-                     columns=columns)
+                Lines_4_DF_stk.append(tup_4_DF)
 
 
     if return_df:
+        
+        columns = ("site","site_num","tecto_plate",
+           "MJD_ref","MJD_start","MJD_end",
+           "x","y","z","sx","sy","sz",
+           "Vx","Vy","Vz","sVx","sVy","sVz")
+
+        DFout = pd.DataFrame(Lines_4_DF_stk,
+             columns=columns)
+
         return DFout
     else:
         return Points_list_stk
