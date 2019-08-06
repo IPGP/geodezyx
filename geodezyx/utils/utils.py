@@ -371,10 +371,10 @@ def line_count(filein):
 
 def patterns_in_string_checker(string,*patterns):
     """
+    recipe to the famous problem of pattern in string
     from
     http://stackoverflow.com/questions/3389574/check-if-multiple-strings-exist-in-another-string
     """
-    print(patterns)
     L = [x in string for x in patterns]
     return bool(any( L ))
 

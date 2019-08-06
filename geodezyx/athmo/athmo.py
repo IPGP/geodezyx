@@ -697,7 +697,7 @@ def compare_trop_ties(input_file,STA1,STA2,coord_file="",grid_met="",apply_ties=
 
         grid = grid_met
         if coord_t == "kinematic":
-            diff_pd['stand_ties'] = diff_pd.apply(lambda x: gtro.calc_stand_ties(x['epoc'], x.lat_ref , x.lon_ref , x.h_ref,x.lat_rov , x.lon_rov , x.h_rov,grid),axis=1)
+            diff_pd['stand_ties'] = diff_pd.apply(lambda x:athmo.calc_stand_ties(x['epoc'], x.lat_ref , x.lon_ref , x.h_ref,x.lat_rov , x.lon_rov , x.h_rov,grid),axis=1)
         elif coord_t == "static":
             diff_pd['stand_ties'] = diff_pd.apply(lambda x: gtro.calc_stand_ties(x['epoc'], float(lat_ref) , float(lon_ref) , float(h_ref) , float(lat_rov) , float(lon_rov) , float(h_rov),grid),axis=1)
 
