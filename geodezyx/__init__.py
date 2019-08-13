@@ -39,6 +39,7 @@ from . import conv
 from . import files_rw
 from . import geodyn
 #from . import legacy
+from . import megalib
 from . import reffram
 from . import stats
 from . import time_series

@@ -31,7 +31,7 @@ from geodezyx import *
 import geodezyx.legacy.geodetik as geok
 
 
-#import genefun as genefun
+#import utils.as genefun
 #import geo_files_converter_lib as gfc
 #import geo_trop as gtro
 #import geodetik as geok     maybe we should leave as comment until define the proper paths
@@ -39,7 +39,7 @@ import geodezyx.legacy.geodetik as geok
 
 def read_bull_B(path):
 
-    if not genefun.is_iterable(path):
+    if not utils.is_iterable(path):
         path = [path]
 
     path = sorted(path)
@@ -47,7 +47,7 @@ def read_bull_B(path):
     DFstk = []
 
     for path_solo in path:
-        S = genefun.extract_text_between_elements(path_solo,"1 - DAILY FINAL VALUES" ,
+        S = utils.extract_text_between_elements(path_solo,"1 - DAILY FINAL VALUES" ,
                                          "2 - DAILY FINAL VALUES" )
 
         L = S.replace('\t','\n').split("\n")
@@ -597,7 +597,7 @@ def read_sp3_header(sp3_path):
 
 def read_bull_B(path):
 
-    if not genefun.is_iterable(path):
+    if not utils.is_iterable(path):
         path = [path]
 
     path = sorted(path)
@@ -605,7 +605,7 @@ def read_bull_B(path):
     DFstk = []
 
     for path_solo in path:
-        S = genefun.extract_text_between_elements(path_solo,"1 - DAILY FINAL VALUES" ,
+        S = utils.extract_text_between_elements(path_solo,"1 - DAILY FINAL VALUES" ,
                                          "2 - DAILY FINAL VALUES" )
 
         L = S.replace('\t','\n').split("\n")
@@ -644,7 +644,7 @@ def read_erp(path,return_array=False):
             float(l[0])
         except:
             continue
-        l=genefun.str_2_float_line(l.strip())
+        l=utils.str_2_float_line(l.strip())
         L.append(l)
 
     M = np.vstack(L)
@@ -976,7 +976,7 @@ def write_sp3(SP3_DF_in , outpath):
 
     header_line1 = "#cP" + geok.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochList)) + "   u+U IGSXX FIT  XXX\n"
 
-    delta_epoch = int(genefun.most_common(np.diff(EpochList) * 10**-9))
+    delta_epoch = int(utils.most_common(np.diff(EpochList) * 10**-9))
     MJD  = geok.dt2MJD(start_dt)
     MJD_int = int(np.floor(MJD))
     MJD_dec = MJD - MJD_int
@@ -1721,7 +1721,7 @@ def stations_in_EPOS_sta_coords_file_mono(coords_file_path):
         stats_list : list of 4 char station list
     """
 
-    SITE_line_list = genefun.grep(coords_file_path , " SITE            m")
+    SITE_line_list = utils.grep(coords_file_path , " SITE            m")
 
     stats_list = []
     mean_mjd_list = []
@@ -1731,7 +1731,7 @@ def stations_in_EPOS_sta_coords_file_mono(coords_file_path):
         mean_mjd = np.mean([float(l.split()[6]) , float(l.split()[7])])
         mean_mjd_list.append(mean_mjd)
 
-    mjd_final = genefun.most_common(mean_mjd_list)
+    mjd_final = utils.most_common(mean_mjd_list)
     epoch = geok.MJD2dt(mjd_final)
 
     return epoch , stats_list
@@ -1747,7 +1747,7 @@ def stations_in_sinex_mono(sinex_path):
         stats_list : list of 4 char station list
 
     """
-    extract = genefun.extract_text_between_elements(sinex_path,'+SITE/ID','-SITE/ID')
+    extract = utils.extract_text_between_elements(sinex_path,'+SITE/ID','-SITE/ID')
     extract = extract.split('\n')
     extract2 = []
     for e in extract:
@@ -1756,14 +1756,14 @@ def stations_in_sinex_mono(sinex_path):
 
     stats_list = [e.split()[0].lower() for e in extract2]
 
-    extract = genefun.extract_text_between_elements(sinex_path,'+SOLUTION/EPOCHS','-SOLUTION/EPOCHS')
+    extract = utils.extract_text_between_elements(sinex_path,'+SOLUTION/EPOCHS','-SOLUTION/EPOCHS')
     extract = extract.split('\n')
     extract2 = []
     for e in extract:
         if e != '' and e[0] == ' ' and e != '\n':
             extract2.append(e)
 
-    epoch = geok.datestr_sinex_2_dt(genefun.most_common([e.split()[-1] for e in extract2]))
+    epoch = geok.datestr_sinex_2_dt(utils.most_common([e.split()[-1] for e in extract2]))
 
     return epoch , stats_list
 

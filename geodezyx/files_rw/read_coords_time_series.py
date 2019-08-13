@@ -141,7 +141,7 @@ def read_rtklib(filein):
 
 
     try:
-        inpfilis = genefun.grep(filein,'inp file')
+        inpfilis = utils.grep(filein,'inp file')
         tsout.anex['rover'] = os.path.basename(inpfilis[0].split()[-1])[0:4].upper()
         tsout.anex['base']  = os.path.basename(inpfilis[1].split()[-1])[0:4].upper()
     except:
@@ -606,7 +606,7 @@ def read_epos_sta_coords_multi(filein_list,return_dict = True):
 
 
 def read_epos_slv_times(p):
-    L = genefun.extract_text_between_elements_2(p,"\+sum_times/estimates","\-sum_times/estimates")
+    L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates","\-sum_times/estimates")
 
 
     Lgood = []
@@ -645,7 +645,7 @@ def write_epos_sta_coords(DF_in,file_out):
 """
 
     generic_header = generic_header.format(len(DF_work),
-                                           genefun.most_common(DF_work["MJD_ref"]))
+                                           utils.most_common(DF_work["MJD_ref"]))
 
     Stat_lines_blk_stk.append(generic_header)
 
@@ -772,7 +772,7 @@ def read_combi_sum_full(sum_full_file,RMS_lines_output=True,
 
     DF.date_mjd = mjd
     DF.date_dt  = date_dt
-    DF.date_gps = genefun.join_improved("",conv.dt2gpstime(date_dt))
+    DF.date_gps = utils.join_improved("",conv.dt2gpstime(date_dt))
 
     if set_PRN_as_index:
         DF.set_index("PRN_str",inplace=True)
@@ -834,7 +834,7 @@ def read_combi_clk_rms(sum_file,return_as_df=True,
     strt = " RESULTS OF FINAL WEIGHTED COMBINATION"
     end  = " CLK_REF_CEN_GAL: " + clk_ref_cen_gal
 
-    L = genefun.extract_text_between_elements_2(sum_file,strt,end)
+    L = utils.extract_text_between_elements_2(sum_file,strt,end)
 
     L = L[:-2]
 
@@ -875,7 +875,7 @@ def read_combi_clk_rms_full_table(path_in):
     strt = "RMS \(ps\) OF AC CLOCK COMPARED TO COMBINATION"
     end  = "---+---"
 
-    Lines = genefun.extract_text_between_elements_2(path_in,strt,end,nth_occur_elt_end=1)
+    Lines = utils.extract_text_between_elements_2(path_in,strt,end,nth_occur_elt_end=1)
 
     Lines_good = []
 
@@ -964,7 +964,7 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
 
 
     # Specific si 2ble convergence
-    grep_conv = genefun.grep(filein,'c o n v e r g e n c e')
+    grep_conv = utils.grep(filein,'c o n v e r g e n c e')
     if len(grep_conv) == 2:
         IPPmode = True
         converg_compt = 0
@@ -974,7 +974,7 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
         IPPmode = False
 
     # Specific si Ajustement Final
-    greped_adj = genefun.grep(filein,'COORDONNEES DES STATIONS AJUSTEES EN HAUTE FREQUENCE')
+    greped_adj = utils.grep(filein,'COORDONNEES DES STATIONS AJUSTEES EN HAUTE FREQUENCE')
     if force_get_convergence:
         FinalAdj_mode = False
     elif len(greped_adj) != 0:
@@ -1497,7 +1497,7 @@ def read_gins_multi_raw_listings(filelistin,kineorstatic='static',flh_in_rad=Tru
     if kineorstatic == 'static':
         for filein in filelistin:
             print(filein)
-            if not genefun.check_regex(filein,'c o n v e r g e n c e'):
+            if not utils.check_regex(filein,'c o n v e r g e n c e'):
                 continue
             pt = read_gins(filein,kineorstatic='static',flh_in_rad=flh_in_rad)
             if refname == 'RIEN':
@@ -1512,7 +1512,7 @@ def read_gins_multi_raw_listings(filelistin,kineorstatic='static',flh_in_rad=Tru
         tsoutlis = []
         for filein in filelistin:
             print(filein)
-            if not genefun.check_regex(filein,'c o n v e r g e n c e'):
+            if not utils.check_regex(filein,'c o n v e r g e n c e'):
                 continue
             ts = read_gins(filein,kineorstatic='kine',flh_in_rad=flh_in_rad)
             tsoutlis.append(ts)
@@ -1619,7 +1619,7 @@ def read_gins_double_diff(filein):
     return a list of Point object for a double diff listing
     """
 
-    if genefun.grep(filein , 'c o n v e r g e n c e') == '':
+    if utils.grep(filein , 'c o n v e r g e n c e') == '':
         print('ERR : ' , filein , 'have no convergence, return None')
         return None
 
@@ -1849,7 +1849,7 @@ def sorting_a_calais_file(openedfile):
         STAT.append(str(f[3]))
 
     DATA = [ T , A, sA , STAT ]
-    DATA2 = genefun.sort_table(DATA,0)
+    DATA2 = utils.sort_table(DATA,0)
 
     return DATA2
 
@@ -2225,7 +2225,7 @@ def read_sonardyne_attitude(filein):
 
 
 def interp_sndy_SYS_UTC(time_conv_file_in):
-    timeConv = genefun.read_mat_file(timepath)
+    timeConv = utils.read_mat_file(timepath)
     timeSYS  = timeConv[0,:]
     timeUTC  = timeConv[1,:]
     IntSYSUTC = scipy.interpolate.interp1d(timeSYS,timeUTC,kind='slinear',
@@ -2238,7 +2238,7 @@ def interp_sndy_SYS_UTC(time_conv_file_in):
 def read_sndy_mat_att(filein,IntSYSUTCin=None):
     if IntSYSUTCin == None:
         print("WARN : read_sndy_mat_att : No Interpolator")
-    attmat  = genefun.read_mat_file(filein)
+    attmat  = utils.read_mat_file(filein)
     Tsys_att = attmat[0,:]
     Tposix_att = IntSYSUTCin(Tsys_att)
 #    Tdt_att = np.array(conv.posix2dt(Tposix_att))
@@ -2257,7 +2257,7 @@ def read_sndy_mat_att(filein,IntSYSUTCin=None):
 def read_sndy_mat_nav(filein,IntSYSUTCin=None):
     if IntSYSUTCin == None:
         print("WARN : read_sndy_mat_att : No Interpolator")
-    navmat  = genefun.read_mat_file(filein)
+    navmat  = utils.read_mat_file(filein)
     Tsys_nav = navmat[0,:]
     Tposix_nav = IntSYSUTCin(Tsys_nav)
 #    Tdt_att = np.array(conv.posix2dt(Tposix_att))
@@ -2275,7 +2275,7 @@ def read_sndy_mat_nav(filein,IntSYSUTCin=None):
 def read_hector_neu(filein):
     print("WARN : XYZ/FLH conversion not implemented")
     M = np.loadtxt(filein)
-    stat = genefun.grep(filein,'Site :',only_first_occur=True).split()[3]
+    stat = utils.grep(filein,'Site :',only_first_occur=True).split()[3]
     tsout = ts_from_list(M[:,2],M[:,1],M[:,3],conv.year_decimal2dt(M[:,0]),
                          'ENU',M[:,4],M[:,5],M[:,6],stat=stat,name=stat)
 

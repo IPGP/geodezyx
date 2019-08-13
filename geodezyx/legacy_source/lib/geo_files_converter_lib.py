@@ -26,7 +26,7 @@ from geodezyx import *
 import dateutil
 
 import geodezyx.legacy.geodetik as geok
-
+from geodezyx.megalib import *
 
 #import geodezyx.legacy.genefun as genefun
 #import geodezyx.legacy.geodetik as geok
@@ -36,7 +36,7 @@ import geodezyx.legacy.geodetik as geok
 #import datetime as dt
 #import numpy as np
 #import textwrap
-#import shutil
+import shutil
 #import os
 #import pandas
 #import re

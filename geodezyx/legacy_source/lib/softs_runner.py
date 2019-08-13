@@ -29,10 +29,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #import geoclass
 #from geodezyx import utils as genefun
 
-#import geodezyx.legacy.genefun as genefun
-#import geodezyx.legacy.geodetik as geok
-#import geodezyx.legacy.geoclass as gcls
-#import geodezyx.legacy.geo_files_converter_lib as gfc
+from geodezyx.megalib import *
+import geodezyx.megalib.geoclass as gcls
+import geodezyx.megalib.geodetik as geok
+import geodezyx.megalib.genefun as genefun
+import geodezyx.megalib.genefun as gf
+
+
 
 import os
 import shutil
@@ -607,7 +610,7 @@ def orbclk_cddis_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
             orbname = center + "MGXRAP_" + datelong + "0000"  + sp3clk_long + ".gz"
         else:
             if sp3clk == "sp3":
-                sp3clk_long = "_01D_05M_ORB.SP3"
+                sp3clk_long = "_01D_15M_ORB.SP3"
             elif sp3clk == "clk":
                 sp3clk_long = "_01D_30S_CLK.CLK"
             elif sp3clk == "erp":
@@ -689,7 +692,7 @@ def orbclk_ign_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
             orbname = center + "MGXRAP_" + datelong + "0000"  + sp3clk_long + ".gz"
         else:
             if sp3clk == "sp3":
-                sp3clk_long = "_01D_05M_ORB.SP3"
+                sp3clk_long = "_01D_15M_ORB.SP3"
             elif sp3clk == "clk":
                 sp3clk_long = "_01D_30S_CLK.CLK"
             elif sp3clk == "erp":
@@ -1124,7 +1127,6 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     yyyy   = int(longname_basename.split("_")[1][:4])
     doy    = int(longname_basename.split("_")[1][4:7])
 
-    import geodetik as geok
 
     day_dt = geok.doy2dt(yyyy,doy)
 
