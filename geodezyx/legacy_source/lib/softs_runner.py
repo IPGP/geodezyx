@@ -29,10 +29,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #import geoclass
 #from geodezyx import utils as genefun
 
-<<<<<<< HEAD
-=======
+
 from geodezyx.megalib import *
->>>>>>> a5cee64cfbc71bc7b63992d38ee964f560cf50f6
 import geodezyx.megalib.geoclass as gcls
 import geodezyx.megalib.geodetik as geok
 import geodezyx.megalib.genefun as genefun

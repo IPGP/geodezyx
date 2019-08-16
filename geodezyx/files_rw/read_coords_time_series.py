@@ -772,11 +772,8 @@ def read_combi_sum_full(sum_full_file,RMS_lines_output=True,
 
     DF.date_mjd = mjd
     DF.date_dt  = date_dt
-<<<<<<< HEAD
-    DF.date_gps = utils.join_improved(conv.dt2gpstime(date_dt))
-=======
+
     DF.date_gps = utils.join_improved("",conv.dt2gpstime(date_dt))
->>>>>>> a5cee64cfbc71bc7b63992d38ee964f560cf50f6
 
     if set_PRN_as_index:
         DF.set_index("PRN_str",inplace=True)
@@ -2279,13 +2276,8 @@ def read_sndy_mat_nav(filein,IntSYSUTCin=None):
 def read_hector_neu(filein):
     print("WARN : XYZ/FLH conversion not implemented")
     M = np.loadtxt(filein)
-<<<<<<< HEAD
-    stat = genefun.grep(filein,'Site :',only_first_occur=True).split()[3]
-    tsout = ts_from_list(conv.year_decimal2dt(M[:,0]),
-=======
     stat = utils.grep(filein,'Site :',only_first_occur=True).split()[3]
     tsout = ts_from_list(M[:,2],M[:,1],M[:,3],conv.year_decimal2dt(M[:,0]),
->>>>>>> a5cee64cfbc71bc7b63992d38ee964f560cf50f6
                          'ENU',M[:,4],M[:,5],M[:,6],stat=stat,name=stat)
 
     return tsout

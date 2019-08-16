@@ -73,10 +73,6 @@ def read_bull_B(path):
 
     return DFout
 
-
-
-
-
 def read_clk(file_path_in, returns_pandas = True, interval=None):
     """
     General description
@@ -804,11 +800,7 @@ def write_sp3(SP3_DF_in , outpath):
     header_line1 = "#cP" + geok.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochList)) + "   u+U IGSXX FIT  XXX\n"
 
     delta_epoch = int(utils.most_common(np.diff(EpochList) * 10**-9))
-<<<<<<< HEAD
     MJD  = conv.dt2MJD(start_dt)
-=======
-    MJD  = geok.dt2MJD(start_dt)
->>>>>>> a5cee64cfbc71bc7b63992d38ee964f560cf50f6
     MJD_int = int(np.floor(MJD))
     MJD_dec = MJD - MJD_int
     gps_wwww , gps_sec = conv.dt2gpstime(start_dt,False,"gps")
@@ -1563,12 +1555,7 @@ def stations_in_EPOS_sta_coords_file_mono(coords_file_path):
         mean_mjd_list.append(mean_mjd)
 
     mjd_final = utils.most_common(mean_mjd_list)
-<<<<<<< HEAD
     epoch = conv.MJD2dt(mjd_final)
-=======
-    epoch = geok.MJD2dt(mjd_final)
->>>>>>> a5cee64cfbc71bc7b63992d38ee964f560cf50f6
-
     return epoch , stats_list
 
 
@@ -1598,11 +1585,7 @@ def stations_in_sinex_mono(sinex_path):
         if e != '' and e[0] == ' ' and e != '\n':
             extract2.append(e)
 
-<<<<<<< HEAD
     epoch = conv.datestr_sinex_2_dt(utils.most_common([e.split()[-1] for e in extract2]))
-=======
-    epoch = geok.datestr_sinex_2_dt(utils.most_common([e.split()[-1] for e in extract2]))
->>>>>>> a5cee64cfbc71bc7b63992d38ee964f560cf50f6
 
     return epoch , stats_list
 
