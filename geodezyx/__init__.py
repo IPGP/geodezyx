@@ -50,7 +50,7 @@ __all__ = ['athmo',
            'conv',
            'files_rw',
            'geodyn',
-           'operational'
+           'operational',
 #           'legacy',
            'reffram',
            'stats',
