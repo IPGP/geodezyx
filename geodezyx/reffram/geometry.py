@@ -6,6 +6,10 @@ Created on Fri Aug  2 17:15:57 2019
 @author: psakicki
 """
 
+from geodezyx import *
+from geodezyx import np,scipy
+
+
 def BL_from_points(listpointin):
     ''' 
     A partir d'une liste de points,
@@ -115,7 +119,7 @@ def rotate_points(alphal,betal,gammal,pointlin,Rtype='R1',
 
     xaxis, yaxis, zaxis = xyzreftuple
 
-    if not genefun.is_iterable(alphal):
+    if not utils.is_iterable(alphal):
         alphal = np.array([alphal])
         betal = np.array([betal])
         gammal = np.array([gammal])
@@ -129,7 +133,7 @@ def rotate_points(alphal,betal,gammal,pointlin,Rtype='R1',
 
     for pt in pointlin:
 
-        if not genefun.is_iterable(pt) or len(pt) != 3:
+        if not utils.is_iterable(pt) or len(pt) != 3:
             print("ERR : rotate_points : pts != 3 coords")
             return 0
 
@@ -498,7 +502,7 @@ def savage_buford_formula(Vs,X,d):
     X et d doivent être dans la même unité, Vs pas forcément
     """
 
-    if not genefun.is_iterable(X):
+    if not utils.is_iterable(X):
         X = np.arange(-X,X,1)
     return X , ( Vs / np.pi ) * np.arctan2(X,d)
 
@@ -522,7 +526,7 @@ def R2_calc(y_obs,y_fit,with_r2_bis=False):
 
 def R2_from_a_line_regress(Xobs,Yobs,a,b):
     #https://en.wikipedia.org/wiki/Coefficient_of_determination
-    Xfit , Yfit = geok.linear_reg_getvalue(Xobs,a,b)
+    Xfit , Yfit = stats.linear_reg_getvalue(Xobs,a,b)
     r2 = R2_calc(Yobs,Yfit)
     return r2
 
@@ -678,7 +682,7 @@ def helmert_trans_estim_matrixs_maker(X1 , X2):
     return l,A
 
 
-def helmert_trans_estim(X1list , X2list):
+def helmert_trans_estim(X1list , X2list, Weights=[]):
     """
     estimates 7 parameters of a 3D Helmert transformation between a set of points
     X1 and a set of points X2 (compute transformation X1 => X2)
@@ -688,6 +692,10 @@ def helmert_trans_estim(X1list , X2list):
     
     X1list & X2list : list of N (x,y,z) points ,
         or an numpy array of shape (3, N)
+
+    Weights : list of N Wieghtd,
+        or an numpy array of shape (3, N)
+
     
     Returns
     -------
@@ -705,8 +713,7 @@ def helmert_trans_estim(X1list , X2list):
 
     l_stk = []
     A_stk = []
-    
-    
+        
     for X1 , X2 in zip(X1list , X2list):
         lmono , Amono = helmert_trans_estim_matrixs_maker(X1,X2)
             
@@ -716,14 +723,123 @@ def helmert_trans_estim(X1list , X2list):
     A = np.vstack(A_stk)
     l = np.hstack(l_stk)
     
-    Res = scipy.linalg.inv((A.T).dot(A)).dot(A.T).dot(l)
+    if len(Weights) == 0:
+        W = np.eye(len(l))
+    else:
+        W = np.repeat(np.array(Weights),3) * np.eye(len(l))
+    
+    N    = (A.T).dot(W).dot(A)
+    AtWB = (A.T).dot(W).dot(l)
+    
+    Res = scipy.linalg.inv(N).dot(AtWB)
     
     return Res , A , l
 
 
+def helmert_trans_apply(Xin,SevenParam_in):
+    tx,ty,tz,rx,ry,rz,scal = SevenParam_in 
+    
+    R = np.array([[1.,rz,-ry],
+                  [-rz,1.,rx],
+                  [ry,-rx,1.]])
+    
+    T = np.array([tx,ty,tz])
+    S = (1. + scal)
+    
+    typ=utils.get_type_smart(Xin)
+    
+    Xout = []
+    for X1 in Xin:
+        X2 = S * np.dot(R,X1) + T
+        Xout.append(X2)
+    
+    Xout=typ(Xout)
+    
+    return Xout
 
 
 
+def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
+                                     L1norm=True,tol=10**-9,full_output=False):
+    
+    def minimiz_helmert_fct(HParam_mini_in,X1in,X2in,L1norm_mini=L1norm):
+        """
+        This fct is the input for the scipy optimization fct
+        """
+        HParam_mini_wk = HParam_mini_in.copy()
+        X12wrk = helmert_trans_apply(X1in,HParam_mini_wk)
+
+        if not L1norm_mini: #return a L2 norm 
+            SUM=np.sum((np.sum(np.power(X2in - X12wrk,2),axis=1)))
+        else: #Return L1 norm
+            SUM=np.sum(np.sum(np.abs(X2in - X12wrk),axis=1))
+        return SUM
+        
+    
+    
+    RES = scipy.optimize.minimize(minimiz_helmert_fct,HParam_apri,
+                                  (X1in,X2in,L1norm),
+                                  method="Powell",tol=tol,
+                                  options={"maxiter":100,
+                                         'xtol':tol,
+                                         'ftol':tol})
+    
+    if not full_output:
+        return RES.x
+    else:
+        return RES
+    
+    
+    
+
+    
+def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
+                                            L1norm=True,itera=2):
+    """
+    Estimates the Helmert parameters but based on a minimisation approach 
+    between X1 and X2 (as suggested in the IGS combination software)
+    
+    NOT STABLE AVOID THE USE
+    """
+    
+    print("WARN : unstable, avoid !!!!!")
+    
+    def minimiz_helmert_fct_scalar(hparam_mono_in,hparam_mono_id,
+                            HParam_mini_in,X1in,X2in):
+        """
+        This fct is the input for the scipy optimization fct
+        """
+        HParam_mini_wk = HParam_mini_in.copy()
+        HParam_mini_wk[hparam_mono_id] = hparam_mono_in
+        X12wrk = helmert_trans_apply(X1in,HParam_mini_wk)
+
+        if not L1norm: #return a L2 norm 
+            return np.sum(np.sqrt(np.sum(np.power(X2in - X12wrk,2),axis=1)))
+        else: #Return L1 norm
+            return np.sum(np.sum(np.abs(X2in - X12wrk),axis=1))
+        
+    HParam_opti_wrk = HParam_opti_apriori.copy()
+
+    for j in range(itera): #iter iterations
+        for i in range(7): #7 Helmert Parameters:
+            RES=scipy.optimize.minimize_scalar(minimiz_helmert_fct,
+                                               args=(i,HParam_opti_wrk,X1,X2),
+                                               tol=10**-20)
+            HParam_opti_wrk[i] = RES.x
+            
+        if not j:
+            HParam_opti_prev = HParam_opti_wrk.copy()
+        else:
+            print("Helmert Param minimisation iter",j+1,HParam_opti_wrk - HParam_opti_prev)
+            HParam_opti_prev = HParam_opti_wrk.copy()
+                        
+    return HParam_opti_wrk
+
+
+
+
+
+        
 #### ASTRONOMY FUNCTION
 def semi_major_axis_from_mean_motion(n):
     """

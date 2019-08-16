@@ -551,8 +551,8 @@ def ECI2RTN_or_RPY(P,V,C,out_rpy=False,rpy_theo_mode=False):
     out_rpy : bool
         if True output in RPY frame, RTN instead
     rpy_theo_mode : bool
-        use the theoretical matrix composition, but wrong ans.
-        empirically, only for debug !!
+        use the theoretical matrix composition, but wrong 
+        ans. empirically, only for debug !!
 
     Returns
     -------

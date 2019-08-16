@@ -18,32 +18,32 @@ def print4compar(dA,dB,dC,dD,coortype):
 
     print("moyenne aritm & RMS et std composante " + Astr)
     print(str(np.nanmean(dA)))
-    print(str(geok.RMSmean(dA)))
+    print(stats.RMSmean(dA))
     print(str(np.nanstd(dA)))
     print('')
 
     print("moyenne aritm & RMS et std composante " + Bstr)
     print(str(np.nanmean(dB)))
-    print(str(geok.RMSmean(dB)))
+    print(stats.RMSmean(dB))
     print(str(np.nanstd(dB)))
     print('')
 
     print("moyenne aritm & RMS et std composante " + Cstr)
     print(str(np.nanmean(dC)))
-    print(str(geok.RMSmean(dC)))
+    print(stats.RMSmean(dC))
     print(str(np.nanstd(dC)))
     print('')
 
     print("moyenne aritm & RMS et std composante D")
     print(str(np.nanmean(dD)))
-    print(str(geok.RMSmean(dD)))
+    print(stats.RMSmean(dD))
     print(str(np.nanstd(dD)))
     print('')
 
     print("RMS3D : sqrt((RMS_{}**2 + RMS_{}**2 + RMS_{}**2)/3 ) ".format(Astr,Bstr,Cstr))
-    print(geok.RMSmean([geok.RMSmean(dA),geok.RMSmean(dB),geok.RMSmean(dC)]))
+    print(geok.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB),stats.RMSmean(dC)]))
     print("RMS2D : uniquement sur les 2 composantes plani")
-    print(geok.RMSmean([geok.RMSmean(dA),geok.RMSmean(dB)]))
+    print(geok.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB)]))
     print('')
 
 def print4compar_tabular(dicolist,split=0,print_2D3D_if_any=True):
@@ -81,7 +81,7 @@ def print4compar_tabular(dicolist,split=0,print_2D3D_if_any=True):
         Astr,Bstr,Cstr = 'A','B','C'
 
     datacol = ("Arithm. mean", "RMS mean", "std. dev.")
-    datacol = ("Arit.", "RMS", geok.greek_alphabet()[17])
+    datacol = ("Arit.", "RMS", utils.greek_alphabet()[17])
 
     headerline = ['Experiment']
 
@@ -114,28 +114,28 @@ def print4compar_tabular(dicolist,split=0,print_2D3D_if_any=True):
         line.append(stat)
 
         line.append(np.nanmean(dA))
-        line.append(geok.RMSmean(dA))
+        line.append(stats.RMSmean(dA))
         line.append(np.nanstd(dA))
 
         line.append(np.nanmean(dB))
-        line.append(geok.RMSmean(dB))
+        line.append(stats.RMSmean(dB))
         line.append(np.nanstd(dB))
 
         line.append(np.nanmean(dC))
-        line.append(geok.RMSmean(dC))
+        line.append(stats.RMSmean(dC))
         line.append(np.nanstd(dC))
 
         line.append(np.nanmean(dD))
-        line.append(geok.RMSmean(dD))
+        line.append(stats.RMSmean(dD))
         line.append(np.nanstd(dD))
 
         if D2Dn3D:
             line.append(np.nanmean(dDb))
-            line.append(geok.RMSmean(dDb))
+            line.append(stats.RMSmean(dDb))
             line.append(np.nanstd(dDb))
 
-        line.append(geok.RMSmean([geok.RMSmean(dA),geok.RMSmean(dB),geok.RMSmean(dC)]))
-        line.append(geok.RMSmean([geok.RMSmean(dA),geok.RMSmean(dB)]))
+        line.append(stats.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB),stats.RMSmean(dC)]))
+        line.append(stats.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB)]))
 
         LINES_STK.append(line)
 
@@ -354,30 +354,30 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
             dAin = dA
             dA,bb = geok.outiler_mad(dA,seuil=seuil)
             dAout = dA
-            TA = geok.posix2dt(np.array(Tref[bb]))
+            TA = conv.posix2dt(np.array(Tref[bb]))
 
             dBin = dB
             dB,bb = geok.outiler_mad(dB,seuil=seuil)
             dBout = dB
-            TB = geok.posix2dt(np.array(Tref[bb]))
+            TB = conv.posix2dt(np.array(Tref[bb]))
 
             dCin = dC
             dC,bb = geok.outiler_mad(dC,seuil=seuil)
             dCout = dC
-            TC = geok.posix2dt(np.array(Tref[bb]))
+            TC = conv.posix2dt(np.array(Tref[bb]))
 
             dDin = dD
             dD,bb = geok.outiler_mad(dD,seuil=seuil)
-            TD = geok.posix2dt(np.array(Tref[bb]))
+            TD = conv.posix2dt(np.array(Tref[bb]))
             dDout = dD
             if D2n3:
                 dD2Din = dD2D
                 dD2D,bb = geok.outiler_mad(dD2D,seuil=seuil)
-                TD2D = geok.posix2dt(np.array(Tref[bb]))
+                TD2D = conv.posix2dt(np.array(Tref[bb]))
                 dD2Dout = dD2D
                 dD3Din = dD3D
                 dD3D,bb = geok.outiler_mad(dD3D,seuil=seuil)
-                TD3D = geok.posix2dt(np.array(Tref[bb]))
+                TD3D = conv.posix2dt(np.array(Tref[bb]))
                 dD3Dout = dD3D
 
             if verbose:
@@ -388,7 +388,7 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
                 print4compar(dA,dB,dC,dD,coortype)
 
         else:
-            Tdt = geok.posix2dt(Tref)
+            Tdt = conv.posix2dt(Tref)
             TA,TB,TC,TD = Tdt,Tdt,Tdt,Tdt
             dAin,dBin,dCin,dDin = dA,dB,dC,dD
 
@@ -454,7 +454,7 @@ def compar2(tstup,coortype='ENU',seuil=3.,win=[],mode='keep',
         Tvar = np.round(Tvar,1)
 
         Tcommon    = np.intersect1d(Tref,Tvar)
-        Tcommon_dt = geok.posix2dt(Tcommon)
+        Tcommon_dt = conv.posix2dt(Tcommon)
 
         ind_ref = np.nonzero(np.in1d(Tref , Tcommon))[0]
         ind_var = np.nonzero(np.in1d(Tvar , Tcommon))[0]
@@ -554,9 +554,9 @@ def sigma_cleaner(tsin,seuil=3,coortype='ABC',cleantype='any', verbose=False):
 
     A,B,C,T,sA,sB,sC = tsin.to_list(coortype)
 
-    sAout , bbsA = geok.outlier_sigma(sA,seuil)
-    sBout , bbsB = geok.outlier_sigma(sB,seuil)
-    sCout , bbsC = geok.outlier_sigma(sC,seuil)
+    sAout , bbsA = stats.outlier_sigma(sA,seuil)
+    sBout , bbsB = stats.outlier_sigma(sB,seuil)
+    sCout , bbsC = stats.outlier_sigma(sC,seuil)
 
     if cleantype == 'any':
         boolbad = bbsA * bbsB * bbsC
@@ -672,8 +672,8 @@ def linear_regress_ts(tsin,coortype='ENU',titledetails = ''):
             w = W[i]
             xi = np.arange(min(T),max(T),10**5)
             line = w[0]*xi+w[1]
-            axes[i].plot(geok.posix2dt(xi),line,'r-')
-            axes[i].plot(geok.posix2dt(T),composante,'+')
+            axes[i].plot(conv.posix2dt(xi),line,'r-')
+            axes[i].plot(conv.posix2dt(T),composante,'+')
             axes[i].set_title(coortype[i])
             axes[i].set_xlabel('Date')
             axes[i].set_ylabel('Displacement (m)')
@@ -798,11 +798,11 @@ def export_ts(ts,outdir,coordtype = 'ENU',outprefix='',write_header=False):
         filobj.write()
 
     for a,b,c,t,sa,sb,sc in zip(A,B,C,T,sA,sB,sC):
-        tt = geok.posix2dt(t)
+        tt = conv.posix2dt(t)
         paramstr = [str(e) for e in [a,b,c,t,sa,sb,sc]]
         #paramstr = [e.ljust(18, '0') for e in paramstr]
 
-        yr_dec_str = str(geok.dt2year_decimal(tt))
+        yr_dec_str = str(conv.dt2year_decimal(tt))
         posix_str = str(t)
 
         paramstr2 = paramstr + [tt.strftime("%Y %m %d %H %M %S"),yr_dec_str,posix_str ,'\n']
@@ -857,7 +857,7 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
     outfile.write('# Solution code: GINS_PS \n')
     outfile.write('# Datum: ITRF2008\n')
     outfile.write('#\n')
-    outfile.write('# Reference epoch: {}\n'.format(geok.toYearFraction(first_pt.Tdt)))
+    outfile.write('# Reference epoch: {}\n'.format(conv.toYearFraction(first_pt.Tdt)))
     outfile.write('# X : {}\n'.format(first_pt.X))
     outfile.write('# Y : {}\n'.format(first_pt.Y))
     outfile.write('# Z : {}\n'.format(first_pt.Z))
@@ -870,12 +870,12 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
         outfile.write('# type_of_offset : from discontinuties got from a station.info\n')
         outfile.write('#\n')
         for disc in sorted(tswork.discont):
-            outfile.write('# offset {} 7\n'.format(geok.toYearFraction(disc)))
+            outfile.write('# offset {} 7\n'.format(conv.toYearFraction(disc)))
         outfile.write('#\n')
     # write the data
     outfile.write('#  Year         DN           DE           DH        SDN       SDE       SDH\n')
     for e,n,u,t,se,sn,su in zip(E,N,U,T,sE,sN,sU):
-        t = geok.toYearFraction(geok.posix2dt(t))
+        t = conv.toYearFraction(conv.posix2dt(t))
         outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
 
     print('INFO : timeserie exported in ' + outpath)
@@ -938,7 +938,7 @@ def export_ts_as_midas_tenu(tsin,outdir,outprefix,coordtype = 'ENU',
     e0,n0,u0,t0 = list(zip(E,N,U,T))[0]
 
     for e,n,u,t in zip(E,N,U,T):
-        t = geok.toYearFraction(geok.posix2dt(t))
+        t = conv.toYearFraction(conv.posix2dt(t))
         #outfile.write('{} {:.5f} {:+.6f} {:+.6f} {:+.6f} \n'.format(stat,t,n-n0,e-e0,u-u0))
         outfile.write('{} {:.5f} {:+.6f} {:+.6f} {:+.6f} \n'.format(stat,t,e-e0,n-n0,u-u0))
 
@@ -948,7 +948,7 @@ def export_ts_as_midas_tenu(tsin,outdir,outprefix,coordtype = 'ENU',
         outpath_step = outdir +'/' + outprefix + tswork.stat + '.step'
         outfile_step = open(outpath_step,'w+')
         for d in tswork.discont:
-            d = geok.toYearFraction(d)
+            d = conv.toYearFraction(d)
             line = tswork.stat + " " + str(d) + "\n"
             outfile_step.write(line)
 
@@ -1012,7 +1012,7 @@ def merge(tsin,N):
     tsin.sort()
     tsout = copy.deepcopy(tsin)
     tsout.del_data()
-    slic = genefun.sliceIt(tsin.pts,N)
+    slic = utils.sliceIt(tsin.pts,N)
     for sl in slic:
         pt = mean_list_of_pts(sl)
         tsout.add_point(pt)
@@ -1142,7 +1142,7 @@ def time_gap(tsin,marge=2,mode='del'):
         modbool = False
 
     indbool = np.where(np.array(boollist) == modbool)[0]
-    protowin = geok.group_consecutives(indbool)
+    protowin = reffram.group_consecutives(indbool)
 
     winout = []
 
@@ -1184,7 +1184,7 @@ def rotate_pt_cls_solo(tsattin,pointin,Rtype='R1', xyzreftuple = ([1, 0, 0], [0,
 
     ptrotlis = geok.rotate_points(R,P,Y,[np.array([A,B,C])],Rtype,xyzreftuple,angtype)
 
-    ptrotlis = genefun.shrink_listoflist(ptrotlis)
+    ptrotlis = utils.shrink_listoflist(ptrotlis)
 
     tsout = TimeSeriePoint()
 
@@ -1227,7 +1227,7 @@ def add_offset_point(ptin,dA,dB,dC,coortype='ENU'):
                      ptin.sF,ptin.sL,ptin.sH)
 
     elif coortype == 'UXYZ':
-        N = geok.normal_vector(ptin.F , ptin.L , ptin.H)
+        N = conv.normal_vector(ptin.F , ptin.L , ptin.H)
         dA2 , dB2 , dC2 = N * dC
         ptout.XYZset(ptin.X + dA2,ptin.Y + dB2,ptin.Z + dC2,
                      ptin.sX,ptin.sY,ptin.sZ)
@@ -1258,7 +1258,7 @@ def add_offset_smart_for_GINS_kine(tsin,tslist_offset_3ple,list_windows,coortype
     """
 
     if type(list_windows[0]) is int:
-        list_windows = [geok.posix2dt(e) for e in list_windows]
+        list_windows = [conv.posix2dt(e) for e in list_windows]
 
     list_windows = [dt.datetime(1980,1,1)] + list_windows + [dt.datetime(2099,1,1)]
     tsout = copy.deepcopy(tsin)
@@ -1291,7 +1291,7 @@ def dist_btwn_2pts(ptA,ptB,coortype='XYZ'):
         A = np.array([ptA.X,ptA.Y,ptA.Z])
         B = np.array([ptB.X,ptB.Y,ptB.Z])
 
-        return geok.dist(A,B)
+        return conv.dist(A,B)
 
 def dist_diff_btwn_2pts(ptA,ptB):
     #dérive la distance entre 2 points A et B

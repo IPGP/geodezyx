@@ -310,12 +310,12 @@ plt.plot(X,Y)
 
 N = 50
 
-Y1 = geok.movingaverage(Y,N)
-Y2 = geok.runningMean(Y,N)
-Y3 = geok.running_mean_core(Y,N)
-Y4a = geok.movingaverage_bis(Y,N,"same")
-Y4b = geok.movingaverage_bis(Y,N,"full")
-Y5 = geok.movingaverage_ter(Y,N)
+Y1 = stats.movingaverage(Y,N)
+Y2 = stats.runningMean(Y,N)
+Y3 = stats.running_mean_core(Y,N)
+Y4a = stats.movingaverage_bis(Y,N,"same")
+Y4b = stats.movingaverage_bis(Y,N,"full")
+Y5 = stats.movingaverage_ter(Y,N)
 
 plt.clf()
 plt.plot(Y)
@@ -1300,23 +1300,4 @@ def color_of_season(datein):
     return outcolor
 
 
-def diff_pandas(DF,col_name):
-    """
-    Differentiate a Pandas DataFrame, if index is time
 
-    Parameters
-    ----------
-    DF : Pandas DataFrame
-         input DataFrame
-
-    col_name : str
-        the column of the DataFrame you want to differentiate
-
-    Returns
-    -------
-    DSout : Pandas DataFrame
-        Differenciated column of the input DataFrame
-
-    """
-    DSout = DF[col_name].diff() / DF[col_name].index.to_series().diff().dt.total_seconds()
-    return DSout

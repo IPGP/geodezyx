@@ -442,7 +442,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
 #        (lats_area,longs_area,gebco_area) = area(long_ini,lats_ini,gebconc,latm,latM,lonm,lonM,'0-180') #lat bas,lat haut, long
 #        (longs,lats,gebco) = split_grid(longs_area,lats_area,gebco_area,2)
 #        (longs_gr,lats_gr)=np.meshgrid(longs,lats)  
-#        fond = m.pcolormesh(longs_gr,lats_gr,gebco,shading='flat',cmap=mpl_util.LevelColormap(list(np.asarray(levels)*(1)),cmap=cm.deep_r),latlon=True) #ice,deep
+#        fond = m.pcolormesh(longs_gr,lats_gr,gebco,shading=geodyn.LevelColormap(list(np.asarray(levels)*(1)),cmap=cm.deep_r),latlon=True) #ice,deep
 #        cbar=m.colorbar(location='top',pad=0.5)
 #        cbar.set_label('Depth [m] ', rotation=0)
 #    m.drawparallels(np.arange(latm,latM,10.),fontsize=10,color=color1,labels=[True,False,False,False],linewidth=0.25, dashes=[10000,1]) #de -180 a 360 par pas de 5° ;   

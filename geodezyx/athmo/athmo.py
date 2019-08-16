@@ -581,7 +581,7 @@ def compare_trop_ties(input_file,STA1,STA2,coord_file="",grid_met="",apply_ties=
     """
 
     if mode == "SINEX":
-        trop_pd = gfc.read_snx_trop(input_file)
+        trop_pd = read_snx_trop(input_file)
     elif mode == "DF":
         trop_pd = input_file
     else:
@@ -635,7 +635,7 @@ def compare_trop_ties(input_file,STA1,STA2,coord_file="",grid_met="",apply_ties=
             lat_rov , lon_rov , h_rov = geok.XYZ2GEO(coord_rov.x,coord_rov.y,coord_rov.z,False)
 
             #Merge coordinates results
-            coord_res = pd.merge(coord_ref,coord_rov,how='outer',on='MJD_ref')
+            coord_res = time_series.merge(coord_ref,coord_rov,how='outer',on='MJD_ref')
             coord_res['lat_ref'] , coord_res['lon_ref'] , coord_res['h_ref'] = float(lat_ref) , float(lon_ref) , float(h_ref)
             coord_res['lat_rov'] , coord_res['lon_rov'] , coord_res['h_rov'] = float(lat_rov) , float(lon_rov) , float(h_rov)
 
@@ -670,17 +670,17 @@ def compare_trop_ties(input_file,STA1,STA2,coord_file="",grid_met="",apply_ties=
             # Extract coordinates Ref station in Lat. Lon. height
             coord_ref = coord[coord.site==STA1.lower()]
             f_x_ref , f_y_ref , f_z_ref = interpolator_with_extrapolated(coord_ref.MJD_epo,coord_ref.x,coord_ref.y,coord_ref.z)
-            x_ref_new = f_x_ref(geok.dt2MJD(diff_pd.epoc))
-            y_ref_new = f_y_ref(geok.dt2MJD(diff_pd.epoc))
-            z_ref_new = f_z_ref(geok.dt2MJD(diff_pd.epoc))
+            x_ref_new = f_x_ref(conv.dt2MJD(diff_pd.epoc))
+            y_ref_new = f_y_ref(conv.dt2MJD(diff_pd.epoc))
+            z_ref_new = f_z_ref(conv.dt2MJD(diff_pd.epoc))
             lat_ref , lon_ref , h_ref = geok.XYZ2GEO(x_ref_new,y_ref_new,z_ref_new,False)
 
             # Extract coordinates Rov station in Lat. Lon. height
             coord_rov = coord[coord.site==STA2.lower()]
             f_x_rov , f_y_rov , f_z_rov = interpolator_with_extrapolated(coord_rov.MJD_epo,coord_rov.x,coord_rov.y,coord_rov.z)
-            x_rov_new = f_x_rov(geok.dt2MJD(diff_pd.epoc))
-            y_rov_new = f_y_rov(geok.dt2MJD(diff_pd.epoc))
-            z_rov_new = f_z_rov(geok.dt2MJD(diff_pd.epoc))
+            x_rov_new = f_x_rov(conv.dt2MJD(diff_pd.epoc))
+            y_rov_new = f_y_rov(conv.dt2MJD(diff_pd.epoc))
+            z_rov_new = f_z_rov(conv.dt2MJD(diff_pd.epoc))
             lat_rov , lon_rov , h_rov = geok.XYZ2GEO(x_rov_new,y_rov_new,z_rov_new,False)
 
             diff_pd['lat_ref'] , diff_pd['lon_ref'] , diff_pd['h_ref'] = lat_ref , lon_ref , h_ref
@@ -697,9 +697,9 @@ def compare_trop_ties(input_file,STA1,STA2,coord_file="",grid_met="",apply_ties=
 
         grid = grid_met
         if coord_t == "kinematic":
-            diff_pd['stand_ties'] = diff_pd.apply(lambda x:athmo.calc_stand_ties(x['epoc'], x.lat_ref , x.lon_ref , x.h_ref,x.lat_rov , x.lon_rov , x.h_rov,grid),axis=1)
+            diff_pd['stand_ties'] = diff_pd.apply(lambda x: calc_stand_ties(x['epoc'], x.lat_ref , x.lon_ref , x.h_ref,x.lat_rov , x.lon_rov , x.h_rov,grid),axis=1)
         elif coord_t == "static":
-            diff_pd['stand_ties'] = diff_pd.apply(lambda x: gtro.calc_stand_ties(x['epoc'], float(lat_ref) , float(lon_ref) , float(h_ref) , float(lat_rov) , float(lon_rov) , float(h_rov),grid),axis=1)
+            diff_pd['stand_ties'] = diff_pd.apply(lambda x: calc_stand_ties(x['epoc'], float(lat_ref) , float(lon_ref) , float(h_ref) , float(lat_rov) , float(lon_rov) , float(h_rov),grid),axis=1)
 
 
         diff_pd['Trop_ties_corr'] = diff_pd.apply(lambda x: x['tro_x'] - (x['tro_y']+x['stand_ties']),axis=1)
@@ -718,8 +718,8 @@ def compare_trop_ties(input_file,STA1,STA2,coord_file="",grid_met="",apply_ties=
 def stat_summary_trop_ties(df):
     wmean_no_ties = np.round(np.average(df.Trop_ties,weights = 1/df.STrop_ties),3)
     wmean_wt_ties = np.round(np.average(df.Trop_ties_corr,weights = 1/df.STrop_ties),3)
-    rms_mean_no_ties = np.round(geok.rms_mean(df.Trop_ties),3)
-    rms_mean_wt_ties = np.round(geok.rms_mean(df.Trop_ties_corr),3)
+    rms_mean_no_ties = np.round(stats.rms_mean(df.Trop_ties),3)
+    rms_mean_wt_ties = np.round(stats.rms_mean(df.Trop_ties_corr),3)
 
     return [wmean_no_ties,wmean_wt_ties,rms_mean_no_ties,rms_mean_wt_ties]
 
@@ -737,7 +737,7 @@ def plot_trop_ties(df,ref_sta,rov_sta,analy_coor=False,analy_num_obs=False,df_co
         filePath : Directory to save
         fileName : Filename of figure
     """
-    epo_plt = geok.dt2year_decimal(df.epoc)
+    epo_plt = conv.dt2year_decimal(df.epoc)
     h_diff = df_coord.h_ref - df_coord.h_rov
     if analy_coor:
 

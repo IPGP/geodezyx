@@ -28,9 +28,9 @@ def rinex_lister(path,add_new_names=True):
 
     wholefilelist = list(set(wholefilelist))
     
-    rinexfilelist           = [fil for fil in wholefilelist if re.search( softs_runner.rinex_regex() , os.path.basename(fil))]
+    rinexfilelist           = [fil for fil in wholefilelist if re.search( conv.rinex_regex() , os.path.basename(fil))]
     if add_new_names:
-        rinexfilelist_new_names = [fil for fil in wholefilelist if re.search( softs_runner.rinex_regex_new_name() , os.path.basename(fil))]
+        rinexfilelist_new_names = [fil for fil in wholefilelist if re.search( conv.rinex_regex_new_name() , os.path.basename(fil))]
         rinexfilelist = rinexfilelist + rinexfilelist_new_names
     
     print('INFO : ' , len(rinexfilelist) , 'RINEXs found')
@@ -55,7 +55,7 @@ def rinex_timeline(inputlist_or_paths,start = dt.datetime(1980,1,1) ,
 #    else:
 #        filelist = inputlist_or_paths
 #
-#    rinexfilelist = [fil for fil in filelist if re.match( '.*' + softs_runner.rinex_regex() + '$', fil)]
+#    rinexfilelist = [fil for fil in filelist if re.match( '.*' + conv.rinex_regex() + '$', fil)]
 #
 #    if not use_rinex_lister:
 #        rinexfilelist = [os.path.basename(e) for e in rinexfilelist]
@@ -98,7 +98,7 @@ def rinex_timeline(inputlist_or_paths,start = dt.datetime(1980,1,1) ,
 #            #old old with dots
 #            ax.plot(T,i*np.ones(len(T)), '.')
 #        else:
-#            TGrp = genefun.consecutive_groupIt(dt2MJD(T),True)
+#            TGrp = utils.consecutive_groupIt(dt2MJD(T),True)
 #            for tgrp in TGrp:
 #                if not jul_date_plot:
 #                    tgrp = MJD2dt(tgrp)
@@ -129,9 +129,9 @@ def rinex_timeline_datadico(inputlist_or_paths,use_rinex_lister = True,
     else:
         filelist = inputlist_or_paths
 
-    #rinexfilelist = [fil for fil in filelist if re.search( '.*' + softs_runner.rinex_regex() + '$', fil)]
-    rinexfilelist_old = [fil for fil in filelist if re.search( softs_runner.rinex_regex() , fil)]
-    rinexfilelist_new = [fil for fil in filelist if re.search( softs_runner.rinex_regex_new_name() , fil)]
+    #rinexfilelist = [fil for fil in filelist if re.search( '.*' + conv.rinex_regex() + '$', fil)]
+    rinexfilelist_old = [fil for fil in filelist if re.search( conv.rinex_regex() , fil)]
+    rinexfilelist_new = [fil for fil in filelist if re.search( conv.rinex_regex_new_name() , fil)]
 
     rinexfilelist = rinexfilelist_old + rinexfilelist_new
 
@@ -171,7 +171,7 @@ def rinex_timeline_datadico_merge_not_very_smart(datadico_list,priority_list):
 
     datadico_out  = dict()
 
-    datadico_merged = genefun.dicts_of_list_merge(*datadico_list)
+    datadico_merged = utils.dicts_of_list_merge(*datadico_list)
 
     for k , dataval in datadico_merged.items():
 
@@ -214,7 +214,7 @@ def rinex_timeline_datadico_merge(datadico_list,priority_list=None):
 
     datadico_out  = dict()
 
-    datadico_merged = genefun.dicts_of_list_merge(*datadico_list)
+    datadico_merged = utils.dicts_of_list_merge(*datadico_list)
 
     for k , dataval in datadico_merged.items():
 
@@ -286,10 +286,10 @@ def timeline_plotter(datadico,start = dt.datetime(1980,1,1) ,
                 T.append(t)
                 O.append(o)
 
-        T,O = genefun.sort_binom_list(T,O)
+        T,O = utils.sort_binom_list(T,O)
 
         TMJD=dt2MJD(T)
-        TGrpAll = genefun.consecutive_groupIt(TMJD,True) # Tuples (start,end) of continue period
+        TGrpAll = utils.consecutive_groupIt(TMJD,True) # Tuples (start,end) of continue period
 
         for tgrp in TGrpAll:
             color1 = 'C0'
@@ -310,8 +310,8 @@ def timeline_plotter(datadico,start = dt.datetime(1980,1,1) ,
                         color1 = colordico_for_main_datadico[opt_set[0]]
                 else: # several archives ... so the line has to be splited in segments
                     extra_archive = True
-                    OSubgrp = genefun.identical_groupIt(Ogrp)
-                    TSubgrp = genefun.sublistsIt(Tgrp , [len(e) for e in OSubgrp])
+                    OSubgrp = utils.identical_groupIt(Ogrp)
+                    TSubgrp = utils.sublistsIt(Tgrp , [len(e) for e in OSubgrp])
 
                     Tgrp_plt      = [ (e[0] , e[-1] + 1)    for e in TSubgrp ] # +1 because the end boundary day is not included
                     Ogrp_plt      = [ list(set(e))[0] for e in OSubgrp     ]
@@ -405,7 +405,7 @@ def timeline_plotter(datadico,start = dt.datetime(1980,1,1) ,
 #                 ax.plot(T,i*np.ones(len(T)), '.')
 #             else:
 #                 TMJD=dt2MJD(T)
-#                 TGrpAll = genefun.consecutive_groupIt(TMJD,True)
+#                 TGrpAll = utils.consecutive_groupIt(TMJD,True)
 #
 #                 for tgrp in TGrpAll:
 #
@@ -426,8 +426,8 @@ def timeline_plotter(datadico,start = dt.datetime(1980,1,1) ,
 #                                 color1 = colordico_for_main_datadico[opt_set[0]]
 #                         else: # several archives ... so the line has to be splited in segments
 #                             extra_archive = True
-#                             OSubgrp = genefun.identical_groupIt(Ogrp)
-#                             TSubgrp = genefun.sublistsIt(Tgrp , [len(e) for e in OSubgrp])
+#                             OSubgrp = utils.identical_groupIt(Ogrp)
+#                             TSubgrp = utils.sublistsIt(Tgrp , [len(e) for e in OSubgrp])
 #
 #                             Tgrp_plt      = [ (e[0],e[-1] + 1)    for e in TSubgrp ] # +1 because the end boundary day is not included
 #                             Ogrp_plt      = [ list(set(e))[0] for e in OSubgrp     ]
@@ -497,7 +497,7 @@ def timeline_plotter(datadico,start = dt.datetime(1980,1,1) ,
 #                            if opt_set[1] in colordico_for_main_datadico:
 #
 # THIS SECOND SOLUTION PRINT X, NOT GOOD
-#                            o_major = genefun.most_common(Ogrp)
+#                            o_major = utils.most_common(Ogrp)
 #                            if o_major in colordico_for_main_datadico:
 #                                color1 = colordico_for_main_datadico[o_major]
 #
@@ -580,12 +580,12 @@ def rinex_check_epochs_availability(rinex_path_list):
         if not QC:
             continue
 
-        epoc_all  = int(genefun.egrep_big_string("Poss. # of obs epochs" ,QC,only_first_occur=True).split()[-1])
-        epoc_disp = int(genefun.egrep_big_string("Epochs w/ observations",QC,only_first_occur=True).split()[-1])
+        epoc_all  = int(utils.egrep_big_string("Poss. # of obs epochs" ,QC,only_first_occur=True).split()[-1])
+        epoc_disp = int(utils.egrep_big_string("Epochs w/ observations",QC,only_first_occur=True).split()[-1])
 
-        dt_rnx = geok.rinexname2dt(rinex_name)
+        dt_rnx = conv.rinexname2dt(rinex_name)
 
-        date_str = geok.dt2str(dt_rnx,"%F")
+        date_str = conv.dt2str(dt_rnx,"%F")
 
         percentage = (float(epoc_disp) / float(epoc_all)) * 100.
 

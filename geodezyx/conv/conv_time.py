@@ -1225,7 +1225,7 @@ def date2dt(date_in):
         return dt.datetime(*tuple(date_in.timetuple())[:3])
         
 
-def timestamp_pandas2dt(timestamp_in):
+def pandas_timestamp2dt(timestamp_in):
     """
     Time conversion
     
@@ -1243,7 +1243,7 @@ def timestamp_pandas2dt(timestamp_in):
     """
     if utils.is_iterable(timestamp_in):
         typ=utils.get_type_smart(timestamp_in)
-        return typ([timestamp_pandas2dt(e) for e in timestamp_in])
+        return typ([pandas_timestamp2dt(e) for e in timestamp_in])
     else:
         return timestamp_in.to_pydatetime()
         

@@ -645,7 +645,7 @@ def write_epos_sta_coords(DF_in,file_out):
 """
 
     generic_header = generic_header.format(len(DF_work),
-                                           genefun.most_common(DF_work["MJD_ref"]))
+                                           utils.most_common(DF_work["MJD_ref"]))
 
     Stat_lines_blk_stk.append(generic_header)
 
@@ -772,7 +772,7 @@ def read_combi_sum_full(sum_full_file,RMS_lines_output=True,
 
     DF.date_mjd = mjd
     DF.date_dt  = date_dt
-    DF.date_gps = genefun.join_improved("",conv.dt2gpstime(date_dt))
+    DF.date_gps = utils.join_improved(conv.dt2gpstime(date_dt))
 
     if set_PRN_as_index:
         DF.set_index("PRN_str",inplace=True)
@@ -1497,7 +1497,7 @@ def read_gins_multi_raw_listings(filelistin,kineorstatic='static',flh_in_rad=Tru
     if kineorstatic == 'static':
         for filein in filelistin:
             print(filein)
-            if not genefun.check_regex(filein,'c o n v e r g e n c e'):
+            if not utils.check_regex(filein,'c o n v e r g e n c e'):
                 continue
             pt = read_gins(filein,kineorstatic='static',flh_in_rad=flh_in_rad)
             if refname == 'RIEN':
@@ -1512,7 +1512,7 @@ def read_gins_multi_raw_listings(filelistin,kineorstatic='static',flh_in_rad=Tru
         tsoutlis = []
         for filein in filelistin:
             print(filein)
-            if not genefun.check_regex(filein,'c o n v e r g e n c e'):
+            if not utils.check_regex(filein,'c o n v e r g e n c e'):
                 continue
             ts = read_gins(filein,kineorstatic='kine',flh_in_rad=flh_in_rad)
             tsoutlis.append(ts)
@@ -1849,7 +1849,7 @@ def sorting_a_calais_file(openedfile):
         STAT.append(str(f[3]))
 
     DATA = [ T , A, sA , STAT ]
-    DATA2 = genefun.sort_table(DATA,0)
+    DATA2 = utils.sort_table(DATA,0)
 
     return DATA2
 
@@ -1888,7 +1888,7 @@ def read_calais(filelist):
 
     # MAKING POINTS
     for i in range(DATA.shape[0]):
-        pt = time_series.Point(DATA[i,0],DATA[i,1],DATA[i,2],conv.convert_partial_year(bigT[i])
+        pt = time_series.Point(conv.convert_partial_year(bigT[i])
         ,'ENU',DATA[i,3],DATA[i,4],DATA[i,5])
         ptslist.append(pt)
 
@@ -2199,7 +2199,7 @@ def read_sonardyne_attitude(filein):
     initype = 'FLH'
 
     AHRS = list(reader['AHRS Id'])
-    nbunit = conv.guess_seq_len(AHRS)
+    nbunit = reffram.guess_seq_len(AHRS)
     print("nbre de devices ID : " ,nbunit)
     AHRS = reader['AHRS Id']
 
@@ -2225,7 +2225,7 @@ def read_sonardyne_attitude(filein):
 
 
 def interp_sndy_SYS_UTC(time_conv_file_in):
-    timeConv = genefun.read_mat_file(timepath)
+    timeConv = utils.read_mat_file(timepath)
     timeSYS  = timeConv[0,:]
     timeUTC  = timeConv[1,:]
     IntSYSUTC = scipy.interpolate.interp1d(timeSYS,timeUTC,kind='slinear',
@@ -2238,7 +2238,7 @@ def interp_sndy_SYS_UTC(time_conv_file_in):
 def read_sndy_mat_att(filein,IntSYSUTCin=None):
     if IntSYSUTCin == None:
         print("WARN : read_sndy_mat_att : No Interpolator")
-    attmat  = genefun.read_mat_file(filein)
+    attmat  = utils.read_mat_file(filein)
     Tsys_att = attmat[0,:]
     Tposix_att = IntSYSUTCin(Tsys_att)
 #    Tdt_att = np.array(conv.posix2dt(Tposix_att))
@@ -2257,7 +2257,7 @@ def read_sndy_mat_att(filein,IntSYSUTCin=None):
 def read_sndy_mat_nav(filein,IntSYSUTCin=None):
     if IntSYSUTCin == None:
         print("WARN : read_sndy_mat_att : No Interpolator")
-    navmat  = genefun.read_mat_file(filein)
+    navmat  = utils.read_mat_file(filein)
     Tsys_nav = navmat[0,:]
     Tposix_nav = IntSYSUTCin(Tsys_nav)
 #    Tdt_att = np.array(conv.posix2dt(Tposix_att))
@@ -2276,7 +2276,7 @@ def read_hector_neu(filein):
     print("WARN : XYZ/FLH conversion not implemented")
     M = np.loadtxt(filein)
     stat = genefun.grep(filein,'Site :',only_first_occur=True).split()[3]
-    tsout = ts_from_list(M[:,2],M[:,1],M[:,3],conv.year_decimal2dt(M[:,0]),
+    tsout = ts_from_list(conv.year_decimal2dt(M[:,0]),
                          'ENU',M[:,4],M[:,5],M[:,6],stat=stat,name=stat)
 
     return tsout

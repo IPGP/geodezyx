@@ -131,7 +131,7 @@ def partial_derive_old(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0):
     m = f(*args_f_m,**kwargs_f_m)
     p = f(*args_f_p,**kwargs_f_p)
 
-    if genefun.is_iterable(m):
+    if utils.is_iterable(m):
         m = m[var_out]
         p = p[var_out]
 #    print p,m,h,x
@@ -202,7 +202,7 @@ def partial_derive(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0,accur=-1):
 
             res = f(*args_f_i,**kwargs_f_i)
 
-            if genefun.is_iterable(res):
+            if utils.is_iterable(res):
                 res = res[var_out]
 
             res_stk.append(res)
@@ -251,7 +251,7 @@ def kwargs_for_jacobian(kwdic_generik,kwdic_variables):
     keys_list = list(kwdic_variables.keys())
 
     for k,v in kwdic_variables.items():
-        if not genefun.is_iterable(v):
+        if not utils.is_iterable(v):
             print('WARN : key',k,'val',v,'is not iterable !!!')
 
     values_combined = itertools.product(*list(kwdic_variables.values()))
@@ -540,7 +540,7 @@ def fuv_calc(V,A,P=1,normafuv=1):
     """
     V = np.squeeze(np.array(V))
 
-    if not genefun.is_iterable(P):
+    if not utils.is_iterable(P):
         P = np.ones(len(V)) * P
     elif scipy.sparse.issparse(P):
         P = P.diagonal()
@@ -779,13 +779,13 @@ def error_ellipse(xm,ym,sigx,sigy,sigxy,nsig=1,ne = 100,scale=1):
     DEBUG:
 
     si on a
-    xe1,ye1,_,_ = geok.error_ellipse(pxp[0],pxp[1], sigxB , sigyB , sigxyB, scale= 10000)
-    xe2,ye2,_,_ = geok.error_ellipse(pxp[0],pxp[1], sigyB , sigxB , sigxyB, scale= 10000)
+    xe1,ye1,_,_ = stats.error_ellipse(pxp[0],pxp[1], sigxB , sigyB , sigxyB, scale= 10000)
+    xe2,ye2,_,_ = stats.error_ellipse(pxp[0],pxp[1], sigyB , sigxB , sigxyB, scale= 10000)
     et PAS les - à D et dxy0 => on a 2 ellipses differentes
 
     si on a
-    xe1,ye1,_,_ = geok.error_ellipse(pxp[0],pxp[1], sigxB , sigyB , sigxyB, scale= 10000)
-    xe2,ye2,_,_ = geok.error_ellipse(pxp[0],pxp[1], sigyB , sigxB , sigxyB, scale= 10000)
+    xe1,ye1,_,_ = stats.error_ellipse(pxp[0],pxp[1], sigxB , sigyB , sigxyB, scale= 10000)
+    xe2,ye2,_,_ = stats.error_ellipse(pxp[0],pxp[1], sigyB , sigxB , sigxyB, scale= 10000)
     et AVEC les - à D et dxy0 => on a 2 ellipses differentes
     au moins une ellipse coincide avec celle de Ghiliani
 

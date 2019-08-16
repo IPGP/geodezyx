@@ -82,7 +82,7 @@ class Point():
 
         self.initype = 'FLH'
         self.X,self.Y,self.Z = geok.GEO2XYZ(self.F,self.L,self.H)
-        self.sX,self.sY,self.sZ = geok.sFLH2sXYZ(F,L,H,sF,sL,sH)
+        self.sX,self.sY,self.sZ = conv.sFLH2sXYZ(F,L,H,sF,sL,sH)
 
     def ENUset(self,E=np.nan,N=np.nan,U=np.nan,sE=np.nan,sN=np.nan,sU=np.nan):
         self.E = E
@@ -115,11 +115,11 @@ class Point():
 
         if type(T) == dt.datetime:
             self.Tdt = T
-            self.T = geok.dt2posix(T)
+            self.T = conv.dt2posix(T)
 
         else:
             self.T = float(T)
-            self.Tdt = geok.posix2dt(float(T))
+            self.Tdt = conv.posix2dt(float(T))
 
     def ENUcalc_pt(self,refENU ):
 
@@ -129,14 +129,14 @@ class Point():
         dY =  self.Y - refENU.Y
         dZ =  self.Z - refENU.Z
 
-        self.E,self.N,self.U = geok.XYZ2ENU(dX,dY,dZ,refENU.F,refENU.L)
+        self.E,self.N,self.U = conv.XYZ2ENU(dX,dY,dZ,refENU.F,refENU.L)
 
         if self.initype == 'FLH' and hasattr(self,'sF'):
             if not np.isnan(self.sF):
-                self.sE,self.sN,self.sU = geok.sFLH2sENU(self.F,self.L,self.H,self.sF,self.sL,self.sH)
+                self.sE,self.sN,self.sU = conv.sFLH2sENU(self.F,self.L,self.H,self.sF,self.sL,self.sH)
         elif self.initype == 'XYZ' and hasattr(self,'sX'):
             if not np.isnan(self.sX):
-                self.sE,self.sN,self.sU = geok.sXYZ2sENU(self.X,self.Y,self.Z,self.sX,self.sY,self.sZ)
+                self.sE,self.sN,self.sU = conv.sXYZ2sENU(self.X,self.Y,self.Z,self.sX,self.sY,self.sZ)
 
     def keysanex(self):
         return list(self.anex.keys())
@@ -156,8 +156,8 @@ class Point():
             print('ERR : epoc_init == auto and epoc_end == auto')
             return None
 
-        tdt = geok.posix2dt(self.T)
-        yeardec = geok.dt2year_decimal(tdt)
+        tdt = conv.posix2dt(self.T)
+        yeardec = conv.dt2year_decimal(tdt)
 
         if epoc_init  == 'auto':
             epoc_init = yeardec
@@ -165,7 +165,7 @@ class Point():
         if epoc_end  == "auto":
             epoc_end = yeardec
 
-        Xb = geok.itrf_speed_calc(self.X,self.Y,self.Z, epoc_init ,
+        Xb = reffram.itrf_speed_calc(self.X,self.Y,self.Z, epoc_init ,
                                   vx, vy, vz, epoc_end)
         self.XYZset(*Xb)
         return None
@@ -203,11 +203,11 @@ class Attitude:
 
         if type(T) == dt.datetime:
             self.Tdt = T
-            self.T = geok.dt2posix(T)
+            self.T = conv.dt2posix(T)
 
         else:
             self.T = float(T)
-            self.Tdt = geok.posix2dt(float(T))
+            self.Tdt = conv.posix2dt(float(T))
 
     def RPYget(self):
         return self.R,self.P,self.Y
@@ -310,11 +310,11 @@ class TimeSeriePoint:
 
     def startdate(self):
         self.sort()
-        return geok.posix2dt(self.pts[0].T)
+        return conv.posix2dt(self.pts[0].T)
 
     def enddate(self):
         self.sort()
-        return geok.posix2dt(self.pts[-1].T)
+        return conv.posix2dt(self.pts[-1].T)
 
     def interval_nominal(self):
 
@@ -457,7 +457,7 @@ class TimeSeriePoint:
         namest=0
         namend=10
 
-        Tdt = geok.posix2dt(T)
+        Tdt = conv.posix2dt(T)
 
         if type(fig) is int:
             figobj = plt.figure(fig)
@@ -493,7 +493,7 @@ class TimeSeriePoint:
         ax = plt.gca()
 
 #        if coortype == 'ENU':
-##            refstr = 'ref XYZ = ' + genefun.join_improved(',',self.refENU.X ,
+##            refstr = 'ref XYZ = ' + utils.join_improved(',',self.refENU.X ,
 ##                                                          self.refENU.Y ,
 ##                                                          self.refENU.Z)
         plt.subplot(styleint+2)
@@ -559,17 +559,17 @@ class TimeSeriePoint:
             figobj = fig
 
         for ax in figobj.axes:
-            geok.plot_vertical_bar_ax(self.discont,ax,"r")
+            stats.plot_vertical_bar_ax(self.discont,ax,"r")
 
         if self.bool_discont_manu:
             for ax in figobj.axes:
-                geok.plot_vertical_bar_ax(self.discont_manu,ax,"g")
+                stats.plot_vertical_bar_ax(self.discont_manu,ax,"g")
 
 #        figobj.axes[1]
-#        geok.plot_vertical_bar(self.discont)
+#        stats.plot_vertical_bar(self.discont)
 #
 #        figobj.axes[2]
-#        geok.plot_vertical_bar(self.discont)
+#        stats.plot_vertical_bar(self.discont)
 
 
     def discont_manu_click(self,fig=1):
@@ -608,7 +608,7 @@ class TimeSeriePoint:
 
             print("INFO : discontinuity recorded : " , ix)
             for ax in figobj.axes:
-                geok.plot_vertical_bar_ax([ix],ax,"g")
+                stats.plot_vertical_bar_ax([ix],ax,"g")
 #
 
             self.bool_discont      = True
@@ -666,9 +666,9 @@ class TimeSeriePoint:
         self.del_data()
 
         if type(startdate) == dt.datetime:
-            startdate = geok.dt2posix(startdate)
+            startdate = conv.dt2posix(startdate)
         if type(enddate) == dt.datetime:
-            enddate = geok.dt2posix(enddate)
+            enddate = conv.dt2posix(enddate)
 
         N = int(np.round( enddate - startdate / pas ))
         #datelist = np.arange(startdate,enddate,pas)
@@ -726,7 +726,7 @@ class TimeSeriePoint:
         tsout = copy.copy(self)
         tsout.del_data()
 
-        if not genefun.is_iterable(T):
+        if not utils.is_iterable(T):
             T = np.array([T])
 
         if coortype == 'ENU':
@@ -800,7 +800,7 @@ class TimeSeriePoint:
         find = False
 
         if type(tin) is dt.datetime:
-            tin = geok.dt2posix(tin)
+            tin = conv.dt2posix(tin)
 
         tmin = self.pts[0].T
         tmax  = self.pts[-1].T
@@ -962,7 +962,7 @@ class TimeSerieObs(object):
         tsout = copy.copy(self)
         tsout.del_data()
 
-        if not genefun.is_iterable(T):
+        if not utils.is_iterable(T):
             T = np.array([T])
 
 
@@ -994,7 +994,7 @@ class TimeSerieObs(object):
 
         namest=0
         namend=10
-        Tdt = geok.posix2dt(T)
+        Tdt = conv.posix2dt(T)
 
         if new_style:
             styleint = 410
@@ -1102,7 +1102,7 @@ class point_n_click_plot():
                 print("INFO : X value recorded : " , ix)
 
                 for ax in figobj.axes:
-                    out_bar_list = geok.plot_vertical_bar_ax([ix],ax,"b",
+                    out_bar_list = stats.plot_vertical_bar_ax([ix],ax,"b",
                                                              linewidth=1)
 
                 self.ver_bar_stk.append(out_bar_list[0])
@@ -1116,7 +1116,7 @@ class point_n_click_plot():
 
                 self.selectedX.remove(last)
                 #for ax in figobj.axes:
-                #    geok.plot_vertical_bar_ax([last],ax,"r")
+                #    stats.plot_vertical_bar_ax([last],ax,"r")
                 last_bar = self.ver_bar_stk[-1]
                 self.ver_bar_stk.remove(last_bar)
                 last_bar.remove()

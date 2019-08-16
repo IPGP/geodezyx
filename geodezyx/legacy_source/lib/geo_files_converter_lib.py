@@ -38,7 +38,7 @@ import geodezyx.legacy.geodetik as geok
 #import textwrap
 #import shutil
 #import os
-#import pandas
+import pandas
 #import re
 #
 #import dateutil.parser

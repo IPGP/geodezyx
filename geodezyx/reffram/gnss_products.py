@@ -6,11 +6,15 @@ Created on Fri Aug  2 17:36:39 2019
 @author: psakicki
 """
 
+from geodezyx import *
+import numpy as np
+
 def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                  sats_used_list = ['G'],
                  name1='',name2='',use_name_1_2_for_table_name = False,
                  RTNoutput = True,convert_ECEF_ECI=True,
-                 clean_null_values = True):
+                 clean_null_values = True,
+                 conv_coef=10**3):
     """
     Compares 2 GNSS orbits files (SP3), and gives a summary plot and a
     statistics table
@@ -46,6 +50,9 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
         are null (0.000000)
         if "any", remove sat position if X or Y or Z is null
         if False, keep everything
+        
+    conv_coef : int
+        conversion coefficient, km to m 10**3, km to mm 10**6
 
     Returns
     -------
@@ -89,7 +96,7 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
     # Thus, manual copy ...
     # (Dirty way, should be impoved without so many lines ...)
     if type(Data_inp_1) is str:
-        D1orig = read_sp3(Data_inp_1,epoch_as_pd_index=True)
+        D1orig = files_rw.read_sp3(Data_inp_1,epoch_as_pd_index=True)
     else:
         D1orig = Data_inp_1.copy(True)
         try:
@@ -106,7 +113,7 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
             D1orig.filename = "no_filename"
 
     if type(Data_inp_2) is str:
-        D2orig = read_sp3(Data_inp_2,epoch_as_pd_index=True)
+        D2orig = files_rw.read_sp3(Data_inp_2,epoch_as_pd_index=True)
     else:
         D2orig = Data_inp_2.copy(True)
         try:
@@ -153,9 +160,9 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
 
         if np.any(D1_null_bool) or np.any(D2_null_bool):
             print("WARN : Null values contained in SP3 files : ")
-            print("f1:" , np.sum(D1_null_bool) , genefun.join_improved(" " ,
+            print("f1:" , np.sum(D1_null_bool) , utils.join_improved(" " ,
                   *list(set(D1orig[D1_null_bool]["sat"]))))
-            print("f2:" , np.sum(D2_null_bool) , genefun.join_improved(" " ,
+            print("f2:" , np.sum(D2_null_bool) , utils.join_improved(" " ,
                   *list(set(D2orig[D2_null_bool]["sat"]))))
 
     else:
@@ -222,9 +229,9 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 # Backup because the columns xyz will be reaffected
                 D1sv_bkp = D1sv.copy()
                 D2sv_bkp = D2sv.copy()
-
-                P1b = geok.ECEF2ECI(np.array(P1),geok.dt_gpstime2dt_utc(P1.index.to_pydatetime(),out_array=True))
-                P2b = geok.ECEF2ECI(np.array(P2),geok.dt_gpstime2dt_utc(P2.index.to_pydatetime(),out_array=True))
+    
+                P1b = conv.ECEF2ECI(np.array(P1),conv.dt_gpstime2dt_utc(P1.index.to_pydatetime(),out_array=True))
+                P2b = conv.ECEF2ECI(np.array(P2),conv.dt_gpstime2dt_utc(P2.index.to_pydatetime(),out_array=True))
 
                 D1sv[['x','y','z']] = P1b
                 D2sv[['x','y','z']] = P2b
@@ -246,9 +253,9 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
             else:
                 rnorm = np.linalg.norm(P1,axis=1)
 
-                Vx = diff_pandas(D1sv,'x')
-                Vy = diff_pandas(D1sv,'y')
-                Vz = diff_pandas(D1sv,'z')
+                Vx = utils.diff_pandas(D1sv,'x')
+                Vy = utils.diff_pandas(D1sv,'y')
+                Vz = utils.diff_pandas(D1sv,'z')
 
                 V =  pd.concat((Vx , Vy , Vz),axis=1)
                 V.columns = ['vx','vy','vz']
@@ -286,7 +293,7 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 Diff_sat = pd.DataFrame(np.vstack(Astk),
                                    index = P1.index,columns=['dr','dt','dn'])
 
-            Diff_sat = Diff_sat * 1000 # metrer conversion
+            Diff_sat = Diff_sat * conv_coef # metrer conversion
 
             Diff_sat['const'] = [constuse] * len(Diff_sat.index)
             Diff_sat['sv']    = [svv]      * len(Diff_sat.index)
@@ -341,7 +348,7 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
     Diff_sat_all.name = ' '.join(('Orbits comparison ('+Diff_sat_all.frame_type +') b/w',
                                   Diff_sat_all.name1 ,'(ref.) and',
                                   Diff_sat_all.name2 ,',',Date.strftime("%Y-%m-%d"),
-                                  ', doy', str(geok.dt2doy(Date))))
+                                  ', doy', str(conv.dt2doy(Date))))
 
 
     return Diff_sat_all
@@ -474,7 +481,7 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     >>> print(tabulate(ComparTable,headers="keys",floatfmt=".4f"))
     """
 
-    sat_list = genefun.uniq_and_sort(Diff_sat_all_df_in['sat'])
+    sat_list = utils.uniq_and_sort(Diff_sat_all_df_in['sat'])
 
     # Pandas donesn't manage well iterable as attribute
     # So, it is separated
@@ -485,16 +492,16 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     rms_stk = []
 
     for sat in sat_list:
-        Diffwork = genefun.df_sel_val_in_col(Diff_sat_all_df_in,'sat',sat)
+        Diffwork = utils.df_sel_val_in_col(Diff_sat_all_df_in,'sat',sat)
 
         if not GRGS_style:
-            rms_A = geok.rms_mean(Diffwork[col_name0])
-            rms_B = geok.rms_mean(Diffwork[col_name1])
-            rms_C = geok.rms_mean(Diffwork[col_name2])
+            rms_A = stats.rms_mean(Diffwork[col_name0])
+            rms_B = stats.rms_mean(Diffwork[col_name1])
+            rms_C = stats.rms_mean(Diffwork[col_name2])
         else:
-            rms_A = geok.rms_mean(Diffwork[col_name0] - Diffwork[col_name0].mean())
-            rms_B = geok.rms_mean(Diffwork[col_name1] - Diffwork[col_name1].mean())
-            rms_C = geok.rms_mean(Diffwork[col_name2] - Diffwork[col_name2].mean())
+            rms_A = stats.rms_mean(Diffwork[col_name0] - Diffwork[col_name0].mean())
+            rms_B = stats.rms_mean(Diffwork[col_name1] - Diffwork[col_name1].mean())
+            rms_C = stats.rms_mean(Diffwork[col_name2] - Diffwork[col_name2].mean())
 
         RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
@@ -522,9 +529,9 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     #################################
              # ALL SATS
 
-    rms_A = geok.rms_mean(Diff_sat_all_df_in[col_name0] - Diff_sat_all_df_in[col_name0].mean())
-    rms_B = geok.rms_mean(Diff_sat_all_df_in[col_name1] - Diff_sat_all_df_in[col_name1].mean())
-    rms_C = geok.rms_mean(Diff_sat_all_df_in[col_name2] - Diff_sat_all_df_in[col_name2].mean())
+    rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0] - Diff_sat_all_df_in[col_name0].mean())
+    rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1] - Diff_sat_all_df_in[col_name1].mean())
+    rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2] - Diff_sat_all_df_in[col_name2].mean())
 
     RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
@@ -586,8 +593,8 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
                  manu_wwwwd=None):
 
     if type(snx1) is str:
-        week1 = genefun.split_improved(os.path.basename(snx1),"_",".")[:]
-        week2 = genefun.split_improved(os.path.basename(snx2),"_",".")[:]
+        week1 = utils.split_improved(os.path.basename(snx1),"_",".")[:]
+        week2 = utils.split_improved(os.path.basename(snx2),"_",".")[:]
         if week1 != week2:
             print("WARN : Dates of 2 input files are differents !!! It might be very bad !!!",week1,week2)
         else:
@@ -617,7 +624,7 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
 
         if type(stat_select) is str:
             STATCommon = [sta for sta in STATCommon_init if select_fct(re.search(stat_select, sta)) ]
-        elif genefun.is_iterable(stat_select):
+        elif utils.is_iterable(stat_select):
             STATCommon = [sta for sta in STATCommon_init if select_fct(sta in stat_select) ]
         else:
             print("WARN : check type of stat_select")
@@ -646,7 +653,7 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
     enu_stk = []
 
     for (_,l1) , (_,l2) in zip( D1Common.iterrows() , D2Common.iterrows() ):
-        enu   = geok.XYZ2ENU_2(l1["x"],l1["y"],l1["z"],l2["x"],l2["y"],l2["z"])
+        enu   = conv.XYZ2ENU_2(l1["x"],l1["y"],l1["z"],l2["x"],l2["y"],l2["z"])
         enu_stk.append(np.array(enu))
 
 
@@ -666,8 +673,8 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
     Ddiff = Ddiff.assign(d2D_enu=D2D)
     Ddiff = Ddiff.assign(d3D_enu=D3D)
 
-    #    E,N,U    = geok.XYZ2ENU_2((X,Y,Z,x0,y0,z0))
-    #    E,N,U    = geok.XYZ2ENU_2((X,Y,Z,x0,y0,z0))
+    #    E,N,U    = conv.XYZ2ENU_2((X,Y,Z,x0,y0,z0))
+    #    E,N,U    = conv.XYZ2ENU_2((X,Y,Z,x0,y0,z0))
 
     if out_dataframe:
         out_meta = True
@@ -683,7 +690,7 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
                      "e","n","u","d2D_enu","d3D_enu")
 
         for xyz in col_names:
-            output.append(geok.rms_mean(Ddiff[xyz]))
+            output.append(stats.rms_mean(Ddiff[xyz]))
         for xyz in col_names:
             output.append(np.nanmean(Ddiff[xyz]))
         for xyz in col_names:

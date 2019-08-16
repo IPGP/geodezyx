@@ -25,27 +25,27 @@ def gebco_bathy_grid_extractor(dataset,latmin,latmax,lonmin,lonmax):
     lonmin_dec = lonmin
     lonmax_dec = lonmax
 
-    #latmin_dec = geok.dms2dec_num(*latmin)
-    #latmax_dec = geok.dms2dec_num(*latmax)
-    #lonmin_dec = geok.dms2dec_num(*lonmin)
-    #lonmax_dec = geok.dms2dec_num(*lonmax)
+    #latmin_dec = conv.dms2dec_num(*latmin)
+    #latmax_dec = conv.dms2dec_num(*latmax)
+    #lonmin_dec = conv.dms2dec_num(*lonmin)
+    #lonmax_dec = conv.dms2dec_num(*lonmax)
 
 
     if not np.any(latmin_dec == lat):
         print("ERR : ... replacing to the nearest")
-        latmin_dec = gf.find_nearest(lat,latmin_dec)[0]
+        latmin_dec = utils.find_nearest(lat,latmin_dec)[0]
 
     if not np.any(latmax_dec == lat):
         print("ERR : ... replacing to the nearest")
-        latmax_dec = gf.find_nearest(lat,latmax_dec)[0]
+        latmax_dec = utils.find_nearest(lat,latmax_dec)[0]
 
     if not np.any(lonmin_dec == lon):
         print("ERR : ... replacing to the nearest")
-        lonmin_dec = gf.find_nearest(lon,lonmin_dec)[0]
+        lonmin_dec = utils.find_nearest(lon,lonmin_dec)[0]
 
     if not np.any(lonmax_dec == lon):
         print("ERR : ... replacing to the nearest")
-        lonmax_dec = gf.find_nearest(lon,lonmax_dec)[0]
+        lonmax_dec = utils.find_nearest(lon,lonmax_dec)[0]
 
     boollat = np.logical_and(latmin_dec <= lat, lat <= latmax_dec)
     boollon = np.logical_and(lonmin_dec <= lon, lon <= lonmax_dec)

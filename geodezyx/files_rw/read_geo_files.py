@@ -39,7 +39,7 @@ import geodezyx.legacy.geodetik as geok
 
 def read_bull_B(path):
 
-    if not genefun.is_iterable(path):
+    if not utils.is_iterable(path):
         path = [path]
 
     path = sorted(path)
@@ -47,7 +47,7 @@ def read_bull_B(path):
     DFstk = []
 
     for path_solo in path:
-        S = genefun.extract_text_between_elements(path_solo,"1 - DAILY FINAL VALUES" ,
+        S = utils.extract_text_between_elements(path_solo,"1 - DAILY FINAL VALUES" ,
                                          "2 - DAILY FINAL VALUES" )
 
         L = S.replace('\t','\n').split("\n")
@@ -237,11 +237,11 @@ def read_erp(caminho_arq,ac):
     name = os.path.basename(caminho_arq)
 
     if len(name) == 12:
-        dt_delivery = convt.sp3name2dt(caminho_arq)
+        dt_delivery = conv.sp3name2dt(caminho_arq)
     elif len(name) == 38:
-        dt_delivery = convt.sp3name_v3_2dt(caminho_arq)
+        dt_delivery = conv.sp3name_v3_2dt(caminho_arq)
     else:
-        dt_delivery = convt.posix2dt(0)
+        dt_delivery = conv.posix2dt(0)
 
 
     le = open(caminho_arq, 'r')
@@ -286,37 +286,37 @@ def read_erp(caminho_arq,ac):
                     Year = (Lines[i][27:29])
                     Pref_year = '20'
                     Year = int(Pref_year+Year)
-                    Date = convt.doy2dt(Year,Doy)
+                    Date = conv.doy2dt(Year,Doy)
                     XPO = float(Lines[i][47:68])*(10**-3)
                     XPO_std = float(Lines[i][69:80])*(10**-3)
                     XPO_stk.append(XPO)
                     XPO_std_stk.append(XPO_std)
-                    MJD_stk.append(convt.jd_to_mjd(convt.date_to_jd(Date.year,Date.month,Date.day)))
-
+                    MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
+                    
                 if utils.contains_word(Lines[i],'YPO') and marker:
                     Doy = (Lines[i][30:33])
                     Year = str(Lines[i][27:29])
                     Pref_year = '20'
                     Year = int(Pref_year+Year)
-                    Date = convt.doy2dt(Year,Doy)
+                    Date = conv.doy2dt(Year,Doy)
                     YPO = float(Lines[i][47:68])*(10**-3)
                     YPO_std = float(Lines[i][69:80])*(10**-3)
                     YPO_stk.append(YPO)
                     YPO_std_stk.append(YPO_std)
-                    MJD_stk.append(convt.jd_to_mjd(convt.date_to_jd(Date.year,Date.month,Date.day)))
-
+                    MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
+                    
                 if utils.contains_word(Lines[i],'LOD') and marker:
                     Doy = (Lines[i][30:33])
                     Year = str(Lines[i][27:29])
                     Pref_year = '20'
                     Year = int(Pref_year+Year)
-                    Date = convt.doy2dt(Year,Doy)
+                    Date = conv.doy2dt(Year,Doy)
                     LOD = float(Lines[i][47:68])*(10**+4)
                     LOD_std = float(Lines[i][69:80])*(10**+4)
                     LOD_stk.append(LOD)
                     LOD_std_stk.append(LOD_std)
-                    MJD_stk.append(convt.jd_to_mjd(convt.date_to_jd(Date.year,Date.month,Date.day)))
-
+                    MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
+                    
         MJD = list(set(MJD_stk))
         if len(LOD_stk) == 0:
                 LOD_stk = ['0']*len(MJD)
@@ -417,7 +417,7 @@ def read_erp(caminho_arq,ac):
 
 
 def read_sp3(file_path_in,returns_pandas = True, name = '',
-             epoch_as_pd_index = False):
+             epoch_as_pd_index = False,km_conv_coef=1):
     """
     Read a SP3 file (GNSS Orbits standard file) and return X,Y,Z coordinates
     for each satellite and for each epoch
@@ -437,7 +437,11 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     epoch_as_pd_index : bool
         if True, the index of the output dataframe contains
         if False, it contains generic integer indexs
-
+        
+    km_conv_coef : float
+        a conversion coefficient to change the units
+        to get meters : 10**3
+        to get milimeters : 10**6
 
     Returns
     -------
@@ -476,9 +480,9 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
             sat_sv  = int(l[2:4].strip())
             sat_sat = l[1:4].strip()
 
-            X   = float(l[4:18])
-            Y   = float(l[18:32])
-            Z   = float(l[32:46])
+            X   = float(l[4:18]) * km_conv_coef
+            Y   = float(l[18:32])* km_conv_coef
+            Z   = float(l[32:46])* km_conv_coef
             Clk = float(l[46:60])
 
             if returns_pandas:
@@ -549,7 +553,7 @@ def read_sp3_header(sp3_path):
 
     for il , l in enumerate(Lines):
         if il == 1:
-            date = convt.MJD2dt(int(l.split()[4]))
+            date = conv.MJD2dt(int(l.split()[4]))
         if l[:2] == "+ ":
             Sat_prn_list.append(l)
         if l[:2] == "++":
@@ -597,7 +601,7 @@ def read_sp3_header(sp3_path):
 
 def read_bull_B(path):
 
-    if not genefun.is_iterable(path):
+    if not utils.is_iterable(path):
         path = [path]
 
     path = sorted(path)
@@ -605,7 +609,7 @@ def read_bull_B(path):
     DFstk = []
 
     for path_solo in path:
-        S = genefun.extract_text_between_elements(path_solo,"1 - DAILY FINAL VALUES" ,
+        S = utils.extract_text_between_elements(path_solo,"1 - DAILY FINAL VALUES" ,
                                          "2 - DAILY FINAL VALUES" )
 
         L = S.replace('\t','\n').split("\n")
@@ -644,7 +648,7 @@ def read_erp(path,return_array=False):
             float(l[0])
         except:
             continue
-        l=genefun.str_2_float_line(l.strip())
+        l=utils.str_2_float_line(l.strip())
         L.append(l)
 
     M = np.vstack(L)
@@ -688,183 +692,6 @@ def read_erp_multi(path_list , return_array=False,
     else:
         return pd.DataFrame(M)
 
-def read_sp3(file_path_in,returns_pandas = True, name = '',
-             epoch_as_pd_index = False):
-    """
-    Read a SP3 file (GNSS Orbits standard file) and return X,Y,Z coordinates
-    for each satellite and for each epoch
-
-    Parameters
-    ----------
-    file_path_in : str
-        path of the SP3 file
-
-    returns_pandas : bool
-        if True, return a Pandas DataFrame.
-        if False, return separated lists.
-
-    name : str
-        a manual name for the file
-
-    epoch_as_pd_index : bool
-        if True, the index of the output dataframe contains
-        if False, it contains generic integer indexs
-
-
-    Returns
-    -------
-    df : Pandas DataFrame
-        if returns_pandas == True
-
-    epoch_stk ,  Xstk , Ystk , Zstk , Clkstk : lists
-        if returns_pandas == False
-
-    """
-
-    AC_name =  os.path.basename(file_path_in)[:3]
-
-    fil = open(file_path_in)
-
-    header = True
-
-    epoch_stk = []
-    Xstk , Ystk , Zstk , Clkstk = [],[],[],[]
-
-    data_stk  = []
-
-    for l in fil:
-        if l[0] == '*':
-            header = False
-
-        if header:
-            continue
-        if 'EOF' in l:
-            continue
-
-        if l[0] == '*':
-            epoc   = geok.tup_or_lis2dt(l[1:].strip().split())
-        else:
-            sat_nat = l[1:2].strip()
-            sat_sv  = int(l[2:4].strip())
-            sat_sat = l[1:4].strip()
-
-            X   = float(l[4:18])
-            Y   = float(l[18:32])
-            Z   = float(l[32:46])
-            Clk = float(l[46:60])
-
-            if returns_pandas:
-                line_data = [epoc,sat_sat,sat_nat,sat_sv,X,Y,Z,Clk,AC_name]
-                data_stk.append(line_data)
-            else:
-                epoch_stk.append(epoc)
-                Xstk.append(X)
-                Ystk.append(Y)
-                Zstk.append(Z)
-                Clkstk.append(Clk)
-
-
-    AC_name_stk = [AC_name] * len(Xstk)
-
-    if returns_pandas:
-        df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv',
-                                             'x','y','z','clk','AC'])
-        if epoch_as_pd_index:
-            df.set_index('epoch',inplace=True)
-        df.filename = os.path.basename(file_path_in)
-        df.path = file_path_in
-
-        if name != '':
-            df.name = name
-        else:
-            df.name = os.path.basename(file_path_in)
-
-        return df
-    else:
-        print("INFO : return list, very beta : no Sat. Vehicule Number info ...")
-        return  epoch_stk ,  Xstk , Ystk , Zstk , Clkstk , AC_name_stk
-
-
-def read_sp3_header(sp3_path):
-    """
-    Read a SP3 file header and return a Pandas DataFrame
-    with sat. PRNs and sigmas contained in the header
-
-    Parameters
-    ----------
-    sp3_path : str
-        path of the SP3 file
-
-
-    Returns
-    -------
-    df : Pandas DataFrame
-        2 columns "sat", "sigma"
-
-    Note
-    -------
-    More infos about the sigma
-    http://acc.igs.org/orbacc.txt
-    """
-
-
-    F = open(sp3_path)
-    ac_name = os.path.basename(sp3_path)[:3]
-
-
-    Lines = F.readlines()
-
-    Sat_prn_list = []
-    Sat_sig_list = []
-
-    for il , l in enumerate(Lines):
-        if il == 1:
-            date = geok.MJD2dt(int(l.split()[4]))
-        if l[:2] == "+ ":
-            Sat_prn_list.append(l)
-        if l[:2] == "++":
-            Sat_sig_list.append(l)
-        if l[0] == "*":
-            break
-
-    ### PRN part
-    Sat_prn_list_clean = []
-    for prn_line in Sat_prn_list:
-        prn_line_splited = prn_line.split()
-        prn_line_splited = [e for e in prn_line_splited if not "+" in e]
-        prn_line_splited = [e for e in prn_line_splited if not  e == "0"]
-        Sat_prn_list_clean = Sat_prn_list_clean + prn_line_splited
-
-    sat_nbr = int(Sat_prn_list_clean[0])
-
-    Sat_prn_list_clean = Sat_prn_list_clean[1:]
-
-    Sat_prn_string = "".join(Sat_prn_list_clean)
-
-    Sat_prn_list_final = []
-    for i in range(sat_nbr):
-        Sat_prn_list_final.append(Sat_prn_string[i*3:i*3+3])
-
-    ### Sigma part
-    Sat_sig_list_clean = []
-    for sig_line in Sat_sig_list:
-        sig_line_splited = sig_line.split()
-        sig_line_splited = [e for e in sig_line_splited if not "+" in e]
-        Sat_sig_list_clean = Sat_sig_list_clean + sig_line_splited
-
-    Sat_sig_list_final = [int(e) for e in Sat_sig_list_clean[:sat_nbr]]
-
-
-    ### Export part
-    AC_name_list = [ac_name] * sat_nbr
-    Date_list    = [date] * sat_nbr
-
-    Header_DF = pd.DataFrame(list(zip(AC_name_list,Sat_prn_list_final,
-                                      Sat_sig_list_final,Date_list)),
-                             columns=["AC","sat","sigma","epoch"])
-
-    return Header_DF
-
 
 
 def sp3_decimate(file_in,file_out,step=15):
@@ -876,7 +703,7 @@ def sp3_decimate(file_in,file_out,step=15):
 
     for l in Fin:
         if l[0] == "*":
-            epoc   = geok.tup_or_lis2dt(l[1:].strip().split())
+            epoc   = conv.tup_or_lis2dt(l[1:].strip().split())
             if np.mod(epoc.minute , step) == 0:
                 good_line = True
             else:
@@ -976,11 +803,11 @@ def write_sp3(SP3_DF_in , outpath):
 
     header_line1 = "#cP" + geok.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochList)) + "   u+U IGSXX FIT  XXX\n"
 
-    delta_epoch = int(genefun.most_common(np.diff(EpochList) * 10**-9))
-    MJD  = geok.dt2MJD(start_dt)
+    delta_epoch = int(utils.most_common(np.diff(EpochList) * 10**-9))
+    MJD  = conv.dt2MJD(start_dt)
     MJD_int = int(np.floor(MJD))
     MJD_dec = MJD - MJD_int
-    gps_wwww , gps_sec = geok.dt2gpstime(start_dt,False,"gps")
+    gps_wwww , gps_sec = conv.dt2gpstime(start_dt,False,"gps")
 
     header_line2 = "## {:4} {:15.8f} {:14.8f} {:5} {:15.13f}\n".format(gps_wwww,gps_sec,delta_epoch,MJD_int,MJD_dec)
 
@@ -1026,7 +853,7 @@ def clk_decimate(file_in,file_out,step=5):
     for l in Fin:
         good_line = True
         if l[0:2] in ("AR","AS"):
-            epoc   = geok.tup_or_lis2dt(l[8:34].strip().split())
+            epoc   = conv.tup_or_lis2dt(l[8:34].strip().split())
             if np.mod(epoc.minute , step) == 0:
                 good_line = True
             else:
@@ -1044,7 +871,7 @@ def clk_decimate(file_in,file_out,step=5):
 
 def AC_equiv_vals(AC1,AC2):
     ### 1) Merge the 2 DF to find common lines
-    ACmerged = pd.merge(AC1 , AC2 , how='inner', on=['epoch', 'sat'])
+    ACmerged = time_series.merge(AC1 , AC2 , how='inner', on=['epoch', 'sat'])
 
     ### 2) Extract merged epoch & sv
     common_epoch = ACmerged["epoch"]
@@ -1364,11 +1191,11 @@ def read_erp2(caminho_arq,ac):
     name = os.path.basename(caminho_arq)
 
     if len(name) == 12:
-        dt_delivery = geok.sp3name2dt(caminho_arq)
+        dt_delivery = conv.sp3name2dt(caminho_arq)
     elif len(name) == 38:
-        dt_delivery = geok.sp3name_v3_2dt(caminho_arq)
+        dt_delivery = conv.sp3name_v3_2dt(caminho_arq)
     else:
-        dt_delivery = geok.posix2dt(0)
+        dt_delivery = conv.posix2dt(0)
 
 
     le = open(caminho_arq, 'r')
@@ -1410,42 +1237,42 @@ def read_erp2(caminho_arq,ac):
                 if Lines[i].split()[0] == '-SOLUTION/ESTIMATE':
                     marker = False
 
-                if cmg.contains_word(Lines[i],'XPO') and marker:
+                if utils.contains_word(Lines[i],'XPO') and marker:
                     Doy = (Lines[i][30:33])
                     Year = (Lines[i][27:29])
                     Pref_year = '20'
                     Year = int(Pref_year+Year)
-                    Date = geok.doy2dt(Year,Doy)
+                    Date = conv.doy2dt(Year,Doy)
                     XPO = float(Lines[i][47:68])*(10**-3)
                     XPO_std = float(Lines[i][69:80])*(10**-3)
                     XPO_stk.append(XPO)
                     XPO_std_stk.append(XPO_std)
                     MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
-
-                if cmg.contains_word(Lines[i],'YPO') and marker:
+                    
+                if utils.contains_word(Lines[i],'YPO') and marker:
                     Doy = (Lines[i][30:33])
                     Year = str(Lines[i][27:29])
                     Pref_year = '20'
                     Year = int(Pref_year+Year)
-                    Date = geok.doy2dt(Year,Doy)
+                    Date = conv.doy2dt(Year,Doy)
                     YPO = float(Lines[i][47:68])*(10**-3)
                     YPO_std = float(Lines[i][69:80])*(10**-3)
                     YPO_stk.append(YPO)
                     YPO_std_stk.append(YPO_std)
                     MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
-
-                if cmg.contains_word(Lines[i],'LOD') and marker:
+                    
+                if utils.contains_word(Lines[i],'LOD') and marker:
                     Doy = (Lines[i][30:33])
                     Year = str(Lines[i][27:29])
                     Pref_year = '20'
                     Year = int(Pref_year+Year)
-                    Date = geok.doy2dt(Year,Doy)
+                    Date = conv.doy2dt(Year,Doy)
                     LOD = float(Lines[i][47:68])*(10**+4)
                     LOD_std = float(Lines[i][69:80])*(10**+4)
                     LOD_stk.append(LOD)
                     LOD_std_stk.append(LOD_std)
                     MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
-
+                    
         MJD = list(set(MJD_stk))
         if len(LOD_stk) == 0:
                 LOD_stk = ['0']*len(MJD)
@@ -1731,8 +1558,8 @@ def stations_in_EPOS_sta_coords_file_mono(coords_file_path):
         mean_mjd = np.mean([float(l.split()[6]) , float(l.split()[7])])
         mean_mjd_list.append(mean_mjd)
 
-    mjd_final = genefun.most_common(mean_mjd_list)
-    epoch = geok.MJD2dt(mjd_final)
+    mjd_final = utils.most_common(mean_mjd_list)
+    epoch = conv.MJD2dt(mjd_final)
 
     return epoch , stats_list
 
@@ -1747,7 +1574,7 @@ def stations_in_sinex_mono(sinex_path):
         stats_list : list of 4 char station list
 
     """
-    extract = genefun.extract_text_between_elements(sinex_path,'+SITE/ID','-SITE/ID')
+    extract = utils.extract_text_between_elements(sinex_path,'+SITE/ID','-SITE/ID')
     extract = extract.split('\n')
     extract2 = []
     for e in extract:
@@ -1756,14 +1583,14 @@ def stations_in_sinex_mono(sinex_path):
 
     stats_list = [e.split()[0].lower() for e in extract2]
 
-    extract = genefun.extract_text_between_elements(sinex_path,'+SOLUTION/EPOCHS','-SOLUTION/EPOCHS')
+    extract = utils.extract_text_between_elements(sinex_path,'+SOLUTION/EPOCHS','-SOLUTION/EPOCHS')
     extract = extract.split('\n')
     extract2 = []
     for e in extract:
         if e != '' and e[0] == ' ' and e != '\n':
             extract2.append(e)
 
-    epoch = geok.datestr_sinex_2_dt(genefun.most_common([e.split()[-1] for e in extract2]))
+    epoch = conv.datestr_sinex_2_dt(utils.most_common([e.split()[-1] for e in extract2]))
 
     return epoch , stats_list
 
@@ -1835,8 +1662,8 @@ def stations_in_sinex_multi(sinex_path_list):
 
 def sinex_bench_antenna_DF_2_disconts(DFantenna_in,stat,return_full=False):
     DFantenna_work = DFantenna_in[DFantenna_in["Code"] == stat]
-    Start_List     = geok.datestr_sinex_2_dt(DFantenna_work["_Data_Start"])
-    End_list       = geok.datestr_sinex_2_dt(DFantenna_work["_Data_End__"])
+    Start_List     = conv.datestr_sinex_2_dt(DFantenna_work["_Data_Start"])
+    End_list       = conv.datestr_sinex_2_dt(DFantenna_work["_Data_End__"])
     if return_full:
         return Start_List,End_list
     else:
