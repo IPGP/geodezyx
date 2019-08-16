@@ -28,7 +28,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 
 from geodezyx import *
-import geodezyx.legacy.geodetik as geok
+#import geodezyx.megalib.geodetik as geok
 
 
 #import utils.as genefun

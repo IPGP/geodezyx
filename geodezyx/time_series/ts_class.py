@@ -8,7 +8,7 @@ Created on Fri Aug  2 13:55:33 2019
 from geodezyx import *
 from geodezyx.time_series import *
 
-import geodezyx.legacy.geodetik as geok
+#import geodezyx.megalib.geodetik as geok
 
 
 class Point():

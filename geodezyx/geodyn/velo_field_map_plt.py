@@ -38,7 +38,7 @@ from matplotlib.patches import Ellipse
 
 
 
-import geodezyx.utils as utils
+#import geodezyx.utils as utils
 
 
 # ------------------

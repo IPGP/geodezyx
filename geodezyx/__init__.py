@@ -38,6 +38,7 @@ from . import athmo
 from . import conv
 from . import files_rw
 from . import geodyn
+from . import operational
 #from . import legacy
 from . import megalib
 from . import reffram
@@ -49,6 +50,7 @@ __all__ = ['athmo',
            'conv',
            'files_rw',
            'geodyn',
+           'operational'
 #           'legacy',
            'reffram',
            'stats',
