@@ -6,6 +6,9 @@ Created on Fri Aug  2 17:13:04 2019
 @author: psakicki
 """
 
+from geodezyx import * 
+from geodezyx.externlib import *
+
 def rinex_lister(path,add_new_names=True):
     """
     find all rinex in a folder and his subfolders

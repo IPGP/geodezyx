@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .megalib import *
+#### SHOULD NOT BE ACTIVATED
+#### because megalib recursively import itself
+## from .megalib import *
+
+
 

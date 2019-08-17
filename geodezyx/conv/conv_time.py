@@ -270,6 +270,28 @@ def posix2dt_in_local_timezone(posixin):
         typ=utils.get_type_smart(posixin)
         return typ([ posix2dt_in_local_timezone(e) for e in posixin ])
 
+def dt_range(start_dt,end_dt):
+    """
+    Range of datetime between a start and end (included)
+    
+    Parameters
+    ----------
+    start_dt,end_dt : datetime
+        Datetimes
+        
+    Returns
+    -------
+    Out_range : list of datetime
+        range of dates  
+    """
+    Out_range = [start_dt]
+    while Out_range[-1] <= end_dt:
+        Out_range.append(Out_range[-1] + dt.timedelta(days=1))
+    return Out_range
+
+
+
+
 
 def dt2posix(dtin,out_array=False):       
     """

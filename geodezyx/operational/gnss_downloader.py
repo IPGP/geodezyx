@@ -14,6 +14,15 @@ Created on Fri Aug 16 11:47:40 2019
 #|_|  \_\_____|_| \_|______/_/ \_\ |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|
 
 
+from geodezyx import * 
+from geodezyx.externlib import *
+from geodezyx.megalib.megalib import *
+import urllib
+from ftplib import FTP
+import multiprocessing as mp
+
+
+
 ############################################################################
 ######## RINEX DOWNLOADER
 ############################################################################
@@ -467,7 +476,7 @@ def effective_save_dir_orbit(parent_archive_dir,calc_center,date,
             f_evaluated = "wk" + str(week).zfill(4)
         else:
             f_evaluated = eval(f)
-        out_save_dir = os.path.join(out_save_dir,f_evaluated)
+        out_save_dir = os.path.join(out_save_dir,str(f_evaluated))
     return out_save_dir
 
 
@@ -1164,3 +1173,163 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     print(re_patt_big)
     
     return Files_select_list
+
+
+
+
+
+def FTP_downloader(ftp_obj,filename,localdir):   
+    localpath = os.path.join(localdir,filename)
+    
+    if not utils.empty_file_check(localpath):
+        print("INFO:",filename,"already exists ;)")
+        bool_dl = True
+    else:
+        try:
+            localfile = open(localpath, 'wb')
+            ftp_obj.retrbinary('RETR ' + filename, localfile.write, 1024)
+            localfile.close()
+            bool_dl = True
+            print("INFO:",filename,"downloaded :)")
+    
+        except:
+            print("WARN:",localpath,"download failed :(")
+            bool_dl = False
+    
+    return localpath , bool_dl
+
+def FTP_downloader_wo_objects(tupin):
+    arch_center_main,wwww_dir,filename,localdir = tupin
+    ftp_obj_wk = FTP(arch_center_main)
+    ftp_obj_wk.login()
+    ftp_obj_wk.cwd(wwww_dir)
+    localpath , bool_dl = FTP_downloader(ftp_obj_wk,filename,localdir)
+    ftp_obj_wk.close()
+    return localpath , bool_dl
+    
+    
+
+def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,AC_names = ("wum","cod"),
+                            prod_types = ("sp3","clk"),archtype ='week',
+                            new_name_conv = True, parallel_download=4,
+                            archive_center='whu',mgex=True,repro=0,sorted_mode=False,
+                            return_also_uncompressed_files=True,
+                            ftp_download=False):
+    
+    if mgex:
+        mgex_str = "mgex/"
+    else:
+        mgex_str = ""
+    
+    if archive_center == "cddis":
+        arch_center_main    = 'cddis.gsfc.nasa.gov'
+        arch_center_basedir = '/pub/gps/products/' + mgex_str
+    
+    elif archive_center == "ign":
+        arch_center_main    = 'igs.ign.fr'
+        arch_center_basedir = '/pub/igs/products/' + mgex_str  
+
+    elif archive_center == "ensg":
+        arch_center_main    = 'igs.ensg.ign.fr'
+        arch_center_basedir = '/pub/igs/products/' + mgex_str
+        
+    elif archive_center == "whu":
+        arch_center_main    = "igs.gnsswhu.cn"
+        arch_center_basedir = "/pub/gps/products/" + mgex_str
+        
+        
+    print("INFO: data center used :",archive_center)
+
+    Dates_list = conv.dt_range(startdate,enddate)
+
+
+    wwww_dir_previous = None
+    Files_local_list = []
+    
+    ### Crawl day per day for files
+    for dat in Dates_list:
+        pool = mp.Pool(processes=parallel_download) 
+        ## create the FTP object
+        ftp = FTP(arch_center_main)
+        ftp.login()
+        ## create a list of FTP object for multiple downloads (unstable...)
+        if ftp_download and parallel_download > 1:
+            Ftp_obj_list = [FTP(arch_center_main) for i in range(parallel_download)]
+            [f.login() for f in Ftp_obj_list]    
+            # define the main obj for crawling
+            ftp = Ftp_obj_list[0]
+            
+
+
+
+        Files_remote_date_list = []
+        wwww , dow = conv.dt2gpstime(dat)
+        print("INFO: ","Find products for day",dat,wwww,dow)
+        
+        wwww_dir = os.path.join(arch_center_basedir,str(wwww))
+        ftp.cwd(wwww_dir)
+        
+#        if wwww_dir_previous != wwww_dir:
+#            ftp.cwd(wwww_dir)
+#            wwww_dir_previous = wwww_dir
+            
+        Files_listed_in_FTP = ftp.nlst()
+        if len(Files_listed_in_FTP) == 0:
+            print("WARN: no files found in ",wwww_dir)
+            
+                    
+        ### check if the pattern of the wished products are in the listed daily files
+        for patt_tup in list(itertools.product(AC_names,[wwww],[dow],prod_types)):
+            pattern_old_nam = utils.join_improved(".*",patt_tup[0],str(patt_tup[1])+str(patt_tup[2]),patt_tup[3])
+            pattern_old_nam = ".*" + pattern_old_nam + ".*"
+            Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam,f)]
+            
+            if new_name_conv: ### serch for new name convention
+                ac_newnam = patt_tup[0].upper()
+                doy_newnam="".join(reversed(conv.dt2doy_year(conv.gpstime2dt(patt_tup[1],patt_tup[2]))))
+                prod_newnam = patt_tup[3].upper()
+                
+                pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
+                pattern_new_nam = ".*" + pattern_new_nam + ".*"
+                Files_new_nam   = [f for f in Files_listed_in_FTP if re.search(pattern_new_nam,f)]
+                
+                Files = Files + Files_new_nam
+            
+            if len(Files) == 0:
+                print("WARN: ","no product found for",*patt_tup)
+                
+            archive_dir_specif = effective_save_dir_orbit(archive_dir,
+                                                          patt_tup[0],
+                                                          dat,
+                                                          archtype)
+            
+            Files_remote_date_list = Files_remote_date_list + Files
+            
+        utils.create_dir(archive_dir_specif)
+        
+        ### Generation of the Download fct inputs
+        Files_remote_date_chunck = utils.chunkIt(Files_remote_date_list,
+                                                 parallel_download)
+        Downld_tuples_list = [] 
+        if ftp_download:
+            for ftpobj , Chunk in zip(Ftp_obj_list,Files_remote_date_chunck):
+                for filchunk in Chunk:
+                        if parallel_download == 1:
+                            Downld_tuples_list.append((ftpobj,filchunk,archive_dir_specif))
+                        else:
+                            Downld_tuples_list.append((arch_center_main,wwww_dir,
+                                                       filchunk,archive_dir_specif))
+        else:
+            Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
+
+        ### Actual Download
+        if ftp_download and parallel_download == 1:
+            for tup in Downld_tuples_list:
+                FTP_downloader(*tup)
+        elif ftp_download and parallel_download > 1:
+            _ = pool.map(FTP_downloader_wo_objects,Downld_tuples_list)
+        elif not ftp_download:
+            _ = pool.map(downloader_wrap,Downld_tuples_list)
+            
+
+    return None

@@ -25,27 +25,31 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
-import subprocess
-import os
-import time
-import yaml
-import geodetik as geok
-import geo_files_converter_lib as gfc
-import geoclass as gcls
-import softs_runner
-import datetime as dt
-import genefun
-import filecmp
-import shlex
-import multiprocessing as mp
-import glob
-import re
-import shutil
-import collections
-import numpy as np
-import sys
-import pandas as pd
-import copy
+#import subprocess
+#import os
+#import time
+#import yaml
+#import geodetik as geok
+#import geo_files_converter_lib as gfc
+#import geoclass as gcls
+#import softs_runner
+#import datetime as dt
+#import genefun
+#import filecmp
+#import shlex
+#import multiprocessing as mp
+#import glob
+#import re
+#import shutil
+#import collections
+#import numpy as np
+#import sys
+#import pandas as pd
+#import copy
+
+
+from geodezyx import * 
+from geodezyx.externlib import *
 
 #finding the right encoding for debug
 from bs4 import UnicodeDammit

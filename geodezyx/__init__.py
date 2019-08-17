@@ -13,6 +13,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from natsort import natsorted, ns
 import numpy as np
+import numpy as npaa
 import operator
 import os 
 from os import remove, close
@@ -34,17 +35,20 @@ import uuid
 
 
 #### IMPORT GEODEZYX INTERNAL SUBMODULES
+from . import externlib
+from . import megalib
+
 from . import athmo
 from . import conv
 from . import files_rw
 from . import geodyn
 from . import operational
 #from . import legacy
-from . import megalib
 from . import reffram
 from . import stats
 from . import time_series
 from . import utils
+
 
 __all__ = ['athmo',
            'conv',
@@ -56,6 +60,9 @@ __all__ = ['athmo',
            'stats',
            'time_series',
            'utils']
+
+
+
 
 #### Import extern libraires in in the geodezyx namespace
 #from geodezyx.extern import *

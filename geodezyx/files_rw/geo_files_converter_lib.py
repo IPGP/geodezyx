@@ -21,12 +21,15 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
-from geodezyx import utils,dt,time,np,os,re,struct,math,string,pd,copy
-from geodezyx import *
-import dateutil
+#from geodezyx import utils,dt,time,np,os,re,struct,math,string,pd,copy
+#from geodezyx import *
+#import dateutil
 
 #import geodezyx.megalib.geodetik as geok
-from geodezyx.megalib import *
+
+from geodezyx import *
+from geodezyx.externlib import *
+from geodezyx.megalib.megalib import *
 
 #import geodezyx.legacy.genefun as genefun
 #import geodezyx.legacy.geodetik as geok
@@ -36,9 +39,9 @@ from geodezyx.megalib import *
 #import datetime as dt
 #import numpy as np
 #import textwrap
-import shutil
+#import shutil
 #import os
-import pandas
+#import pandas
 #import re
 #
 #import dateutil.parser

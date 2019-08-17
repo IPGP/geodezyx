@@ -25,20 +25,13 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
-#import matplotlib.pyplot as plt
-#from mpl_toolkits.basemap import Basemap
-#import numpy as np
-#from matplotlib.patches import Ellipse
-#import math
-#import genefun as gf
 
 from geodezyx import *
-#from mpl_toolkits.basemap import Basemap
+from geodezyx.externlib import *
+from geodezyx.megalib.megalib import *
+
 from matplotlib.patches import Ellipse
 
-
-
-import geodezyx.utils as utils
 
 
 # ------------------
