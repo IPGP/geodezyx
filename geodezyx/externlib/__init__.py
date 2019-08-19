@@ -30,5 +30,6 @@ import subprocess
 import re
 import tempfile
 from tempfile import mkstemp
+import tabulate
 import time
 import uuid

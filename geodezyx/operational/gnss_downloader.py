@@ -371,14 +371,14 @@ def downloader(url,savedir,force = False,
 
     rnxname = os.path.basename(url)
 
-    potential_exisiting_files_list = [os.path.join(savedir , rnxname)]
+    Pot_compress_files_list = [os.path.join(savedir , rnxname)]
 
     if check_if_file_already_exists_uncompressed:
-        potential_exisiting_files_list.append(os.path.join(savedir , rnxname.replace(".gz","")))
-        potential_exisiting_files_list.append(os.path.join(savedir , rnxname.replace(".Z","")))
-        potential_exisiting_files_list = list(set(potential_exisiting_files_list))
+        Pot_compress_files_list.append(os.path.join(savedir , rnxname.replace(".gz","")))
+        Pot_compress_files_list.append(os.path.join(savedir , rnxname.replace(".Z","")))
+        Pot_compress_files_list = list(set(Pot_compress_files_list))
 
-    for f in potential_exisiting_files_list:
+    for f in Pot_compress_files_list:
         if os.path.isfile(f) and (not force):
             print("INFO :", os.path.basename(f) , "already exists locally ;)")
             return None
@@ -724,10 +724,16 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
         shortname = shortname_prefix + ".erp"
     elif "BIA" in longname_basename:
         shortname = shortname_prefix + ".bia"
+    elif "SNX" in longname_basename:
+        shortname = shortname_prefix + ".snx"
+    else:
+        print("ERR : filetype not found for",longname_basename)
 
     shortname_filepath = os.path.join(longname_dirname , shortname)
 
     shutil.copy2(longname_filepath_in , shortname_filepath)
+    print("INFO : rename" , longname_filepath_in,"=>",shortname_filepath)
+
 
     if rm_longname_file:
         print("INFO : remove " , longname_filepath_in)
@@ -915,12 +921,12 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
 
             localfile = os.path.join(savedir,os.path.basename(url))        
             
-            potential_exisiting_files_list = [localfile]
-            potential_exisiting_files_list.append(localfile.replace(".gz",""))
-            potential_exisiting_files_list.append(localfile.replace(".Z",""))
-            potential_exisiting_files_list = list(set(potential_exisiting_files_list))
+            Pot_compress_files_list = [localfile]
+            Pot_compress_files_list.append(localfile.replace(".gz",""))
+            Pot_compress_files_list.append(localfile.replace(".Z",""))
+            Pot_compress_files_list = list(set(Pot_compress_files_list))
             
-            for potential_exisiting_file in potential_exisiting_files_list:
+            for potential_exisiting_file in Pot_compress_files_list:
                 if os.path.isfile(potential_exisiting_file):
                     localfiles_lis.append(potential_exisiting_file)
     
@@ -1209,10 +1215,15 @@ def FTP_downloader_wo_objects(tupin):
     
     
 
-def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,AC_names = ("wum","cod"),
-                            prod_types = ("sp3","clk"),archtype ='week',
-                            new_name_conv = True, parallel_download=4,
-                            archive_center='whu',mgex=True,repro=0,sorted_mode=False,
+def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
+                            AC_names = ("wum","cod"),
+                            prod_types = ("sp3","clk"),
+                            remove_patterns=("ULA",),
+                            archtype ='week',
+                            new_name_conv = True,
+                            parallel_download=4,
+                            archive_center='whu',
+                            mgex=True,repro=0,sorted_mode=False,
                             return_also_uncompressed_files=True,
                             ftp_download=False):
     
@@ -1220,6 +1231,9 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,AC_names = ("wum"
         mgex_str = "mgex/"
     else:
         mgex_str = ""
+        
+    if not utils.is_iterable(remove_patterns):
+        remove_patterns = [remove_patterns]
     
     if archive_center == "cddis":
         arch_center_main    = 'cddis.gsfc.nasa.gov'
@@ -1242,25 +1256,24 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,AC_names = ("wum"
 
     Dates_list = conv.dt_range(startdate,enddate)
 
-
+    Localfiles_lis = []
     wwww_dir_previous = None
-    Files_local_list = []
-    
-    ### Crawl day per day for files
-    for dat in Dates_list:
-        pool = mp.Pool(processes=parallel_download) 
-        ## create the FTP object
-        ftp = FTP(arch_center_main)
-        ftp.login()
-        ## create a list of FTP object for multiple downloads (unstable...)
-        if ftp_download and parallel_download > 1:
-            Ftp_obj_list = [FTP(arch_center_main) for i in range(parallel_download)]
-            [f.login() for f in Ftp_obj_list]    
-            # define the main obj for crawling
-            ftp = Ftp_obj_list[0]
+    pool = mp.Pool(processes=parallel_download) 
+   
+
+    ## create the FTP object
+    ftp = FTP(arch_center_main)
+    ftp.login()
+    ## create a list of FTP object for multiple downloads (unstable...)
+    if ftp_download and parallel_download > 1:
+        Ftp_obj_list = [FTP(arch_center_main) for i in range(parallel_download)]
+        [f.login() for f in Ftp_obj_list]    
+        # define the main obj for crawling
+        ftp = Ftp_obj_list[0]
             
 
-
+    ### Crawl day per day for files
+    for dat in Dates_list:
 
         Files_remote_date_list = []
         wwww , dow = conv.dt2gpstime(dat)
@@ -1269,11 +1282,11 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,AC_names = ("wum"
         wwww_dir = os.path.join(arch_center_basedir,str(wwww))
         ftp.cwd(wwww_dir)
         
-#        if wwww_dir_previous != wwww_dir:
-#            ftp.cwd(wwww_dir)
-#            wwww_dir_previous = wwww_dir
+        if wwww_dir_previous != wwww_dir:
+            ftp.cwd(wwww_dir)
+            Files_listed_in_FTP = ftp.nlst()
+            wwww_dir_previous = wwww_dir
             
-        Files_listed_in_FTP = ftp.nlst()
         if len(Files_listed_in_FTP) == 0:
             print("WARN: no files found in ",wwww_dir)
             
@@ -1294,26 +1307,33 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,AC_names = ("wum"
                 Files_new_nam   = [f for f in Files_listed_in_FTP if re.search(pattern_new_nam,f)]
                 
                 Files = Files + Files_new_nam
-            
-            if len(Files) == 0:
-                print("WARN: ","no product found for",*patt_tup)
                 
-            archive_dir_specif = effective_save_dir_orbit(archive_dir,
-                                                          patt_tup[0],
-                                                          dat,
-                                                          archtype)
+                if len(Files) == 0:
+                    print("WARN: ","no product found for",*patt_tup)
             
             Files_remote_date_list = Files_remote_date_list + Files
+        
+        ### exclude some pattern
+        for negpatt in remove_patterns:
+            Files_remote_date_list = [e for e in Files_remote_date_list if not re.search(negpatt,e)]
+
+        archive_dir_specif = effective_save_dir_orbit(archive_dir,
+                                                      patt_tup[0],
+                                                      dat,
+                                                      archtype)
             
         utils.create_dir(archive_dir_specif)
         
         ### Generation of the Download fct inputs
         Files_remote_date_chunck = utils.chunkIt(Files_remote_date_list,
                                                  parallel_download)
-        Downld_tuples_list = [] 
+        Downld_tuples_list = []
+        Potential_localfiles_list = []
+
         if ftp_download:
             for ftpobj , Chunk in zip(Ftp_obj_list,Files_remote_date_chunck):
                 for filchunk in Chunk:
+                        Potential_localfiles_list.append(os.path.join(archive_dir_specif,filchunk))
                         if parallel_download == 1:
                             Downld_tuples_list.append((ftpobj,filchunk,archive_dir_specif))
                         else:
@@ -1321,15 +1341,43 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,AC_names = ("wum"
                                                        filchunk,archive_dir_specif))
         else:
             Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
+            [Potential_localfiles_list.append(os.path.join(archive_dir_specif,f)) for f in Files_remote_date_list]
 
-        ### Actual Download
+            
+        ### Actual Download, FTP download is not recommended
         if ftp_download and parallel_download == 1:
             for tup in Downld_tuples_list:
                 FTP_downloader(*tup)
         elif ftp_download and parallel_download > 1:
-            _ = pool.map(FTP_downloader_wo_objects,Downld_tuples_list)
-        elif not ftp_download:
+            _ = pool.map_async(FTP_downloader_wo_objects,Downld_tuples_list)
+        elif not ftp_download and parallel_download == 1:
+            for tup in Downld_tuples_list:
+                downloader_wrap(tup)
+        elif not ftp_download and parallel_download > 1:
             _ = pool.map(downloader_wrap,Downld_tuples_list)
+        ## Those 2 other methods are unstables
+        ##  _ = pool.map_async(downloader_wrap,Downld_tuples_list)
+        ##  _ = [pool.apply(downloader_wrap,(tup,)) for tup in Downld_tuples_list]
+        
+
+        ### Independent files exsitence check
+        
+        if not return_also_uncompressed_files:
+            for localfile in Potential_localfiles_list:
+                if os.path.isfile(localfile):
+                    Localfiles_lis.append(localfile)
+        else:
+            for localfile in Potential_localfiles_list:
+                Pot_compress_name_list = [localfile]
+                Pot_compress_name_list.append(localfile.replace(".gz",""))
+                Pot_compress_name_list.append(localfile.replace(".Z",""))
+                Pot_compress_name_list = list(set(Pot_compress_name_list))
+                
+                for pot_compress_name in Pot_compress_name_list:
+                    if os.path.isfile(pot_compress_name):
+                        Localfiles_lis.append(pot_compress_name)
+    
+    pool.close()
+    return Localfiles_lis
             
 
-    return None
