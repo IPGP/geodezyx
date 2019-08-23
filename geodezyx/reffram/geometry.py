@@ -765,6 +765,34 @@ def helmert_trans_apply(Xin,SevenParam_in):
 
 def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
                                      L1norm=True,tol=10**-9,full_output=False):
+    """
+    estimates 7 parameters of a 3D Helmert transformation between a set of points
+    X1 and a set of points X2 (compute transformation X1 => X2) 
+    using a Minimization approach (and not a Least Square inversion)
+    
+    Parameters
+    ----------
+    
+    X1in & X2in : list of N (x,y,z) points ,
+        or an numpy array of shape (3, N)
+
+    HParam_apri : list of 7 values,
+        The Apriori for the Helmert parameter 
+    
+    L1norm : bool
+        Use the L1-norm as a criteria, use the quadratic sum instead if False
+        
+    tol : float
+        tolerence for the convergence
+    
+    full_output : bool
+        return only the result if True, return the scipy optimize result if False
+    
+    Returns
+    -------
+    Res :
+        7 Helmert params. : x,y,z translations, x,y,z rotations, scale
+    """
     
     def minimiz_helmert_fct(HParam_mini_in,X1in,X2in,L1norm_mini=L1norm):
         """
@@ -793,10 +821,6 @@ def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
     else:
         return RES
     
-    
-    
-
-    
 def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
                                             L1norm=True,itera=2):
     """
@@ -806,7 +830,7 @@ def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
     NOT STABLE AVOID THE USE
     """
     
-    print("WARN : unstable, avoid !!!!!")
+    print("WARN : helmert_trans_estim_minimisation_scalar unstable, avoid !!!!!")
     
     def minimiz_helmert_fct_scalar(hparam_mono_in,hparam_mono_id,
                             HParam_mini_in,X1in,X2in):
@@ -826,7 +850,7 @@ def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
 
     for j in range(itera): #iter iterations
         for i in range(7): #7 Helmert Parameters:
-            RES=scipy.optimize.minimize_scalar(minimiz_helmert_fct,
+            RES=scipy.optimize.minimize_scalar(minimiz_helmert_fct_scalar,
                                                args=(i,HParam_opti_wrk,X1,X2),
                                                tol=10**-20)
             HParam_opti_wrk[i] = RES.x
