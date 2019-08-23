@@ -1,10 +1,14 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Jul  9 14:01:29 2019
 
 @author: chaiyap
 """
+
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
 
 from geodezyx import np,dt,plt,conv,butter, lfilter , scipy,utils
 
@@ -311,12 +315,12 @@ plt.plot(X,Y)
 
 N = 50
 
-Y1 = geok.movingaverage(Y,N)
-Y2 = geok.runningMean(Y,N)
-Y3 = geok.running_mean_core(Y,N)
-Y4a = geok.movingaverage_bis(Y,N,"same")
-Y4b = geok.movingaverage_bis(Y,N,"full")
-Y5 = geok.movingaverage_ter(Y,N)
+Y1 = stats.movingaverage(Y,N)
+Y2 = stats.runningMean(Y,N)
+Y3 = stats.running_mean_core(Y,N)
+Y4a = stats.movingaverage_bis(Y,N,"same")
+Y4b = stats.movingaverage_bis(Y,N,"full")
+Y5 = stats.movingaverage_ter(Y,N)
 
 plt.clf()
 plt.plot(Y)
@@ -1299,3 +1303,6 @@ def color_of_season(datein):
     elif season == 'autumn':
         outcolor = 'k'
     return outcolor
+
+
+
