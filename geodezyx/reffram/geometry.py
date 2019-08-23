@@ -6,7 +6,11 @@ Created on Fri Aug  2 17:15:57 2019
 @author: psakicki
 """
 
-from geodezyx import *
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+
 from geodezyx import np,scipy
 
 

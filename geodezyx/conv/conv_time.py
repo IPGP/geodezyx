@@ -27,6 +27,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
 ##################################################
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+
 from geodezyx import utils,dt,time,np,os,re,struct,math,string,pd
 #import geodezyx.utils.utils as utils
 

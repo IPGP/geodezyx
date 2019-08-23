@@ -26,10 +26,15 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
 from geodezyx import np,scipy,re,sys,utils
 #import geod.utils as utils
 
-sys.dont_write_bytecode = True
+
+#sys.dont_write_bytecode = True
 
 #### Coordinates conversion
     

@@ -6,7 +6,10 @@ Created on Fri Aug  2 17:36:39 2019
 @author: psakicki
 """
 
-from geodezyx import *
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
 import numpy as np
 
 def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,

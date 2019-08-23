@@ -5,6 +5,11 @@ Created on Tue Jul  9 14:01:29 2019
 @author: chaiyap
 """
 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+
 from geodezyx import np,dt,plt,conv,butter, lfilter , scipy,utils
 
 def linear_regression(x,y,fulloutput=False,alpha=.95):

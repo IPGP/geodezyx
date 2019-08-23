@@ -48,8 +48,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #import copy
 
 
-from geodezyx import * 
-from geodezyx.externlib import *
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
 
 #finding the right encoding for debug
 from bs4 import UnicodeDammit

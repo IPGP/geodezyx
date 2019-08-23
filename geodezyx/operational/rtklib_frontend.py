@@ -6,6 +6,11 @@ Created on Fri Aug 16 11:54:28 2019
 @author: psakicki
 """
 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+
 def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
                           experience_prefix="",rover_auto_conf=False,
                           base_auto_conf=True,XYZbase=[0,0,0],outtype = 'auto',
