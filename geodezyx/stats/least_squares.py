@@ -32,6 +32,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #import multiprocessing as mp
 #import matplotlib.pyplot as plt
 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 
 #  _                    _      _____                  _    _ _   _ _

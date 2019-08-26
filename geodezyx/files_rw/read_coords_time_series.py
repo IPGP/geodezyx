@@ -6,6 +6,9 @@ Created on Thu Aug  1 15:18:29 2019
 @author: psakicki
 """
 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 import geodezyx.time_series as time_series
 #import geodezyx.legacy.geodetik as conv

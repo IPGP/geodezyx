@@ -6,6 +6,10 @@ Created on Fri Aug  2 18:00:21 2019
 @author: psakicki
 """
 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
 def write_sndy_light_dat(ts_in,outdir,outprefix):
     """pas fini"""
     fil = open(os.path.join(outdir,outprefix),'w+')

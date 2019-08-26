@@ -6,7 +6,9 @@ Created on Fri Aug  2 17:15:06 2019
 @author: psakicki
 """
 
-import pandas as pd
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 def renamedic_fast_4_pandas(*inpnames):
     """

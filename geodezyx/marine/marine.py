@@ -6,6 +6,11 @@ Created on Fri Aug  2 17:18:11 2019
 @author: psakicki
 """
 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+
 def gebco_bathy_grid_extractor(dataset,latmin,latmax,lonmin,lonmax):
     """
     for safety reasons, lat and lon input MUST BE in the dataset,

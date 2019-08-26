@@ -6,7 +6,9 @@ Created on Wed Jul 31 14:19:37 2019
 @author: psakicki
 """
 
-from geodezyx import * 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 def color_list(L , colormap='jet'):
     cm     = plt.get_cmap(colormap)

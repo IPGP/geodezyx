@@ -6,6 +6,11 @@ Created on Wed Jul 31 14:12:12 2019
 @author: psakicki
 """
 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+
 def is_listoflist(inp):
     """
     check if inp is a list of list [[...] , [...] , ... ,[...]]

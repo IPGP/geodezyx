@@ -14,9 +14,10 @@ Created on Fri Aug 16 11:47:40 2019
 #|_|  \_\_____|_| \_|______/_/ \_\ |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|
 
 
-from geodezyx import * 
-from geodezyx.externlib import *
-from geodezyx.megalib.megalib import *
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
 import urllib
 from ftplib import FTP
 import multiprocessing as mp

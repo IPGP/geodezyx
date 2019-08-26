@@ -27,7 +27,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
 
-from geodezyx import *
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+import linecache
+
 #import geodezyx.megalib.geodetik as geok
 
 
@@ -1243,7 +1248,8 @@ def read_erp2(caminho_arq,ac):
                     XPO_std = float(Lines[i][69:80])*(10**-3)
                     XPO_stk.append(XPO)
                     XPO_std_stk.append(XPO_std)
-                    MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
+                    MJD_stk.append(conv.dt2MJD(Date))
+                    #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
                     
                 if utils.contains_word(Lines[i],'YPO') and marker:
                     Doy = (Lines[i][30:33])
@@ -1255,7 +1261,9 @@ def read_erp2(caminho_arq,ac):
                     YPO_std = float(Lines[i][69:80])*(10**-3)
                     YPO_stk.append(YPO)
                     YPO_std_stk.append(YPO_std)
-                    MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
+                    MJD_stk.append(conv.dt2MJD(Date))
+                    #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
+
                     
                 if utils.contains_word(Lines[i],'LOD') and marker:
                     Doy = (Lines[i][30:33])
@@ -1267,8 +1275,9 @@ def read_erp2(caminho_arq,ac):
                     LOD_std = float(Lines[i][69:80])*(10**+4)
                     LOD_stk.append(LOD)
                     LOD_std_stk.append(LOD_std)
-                    MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
-                    
+                    #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
+                    MJD_stk.append(conv.dt2MJD(Date))
+
         MJD = list(set(MJD_stk))
         if len(LOD_stk) == 0:
                 LOD_stk = ['0']*len(MJD)

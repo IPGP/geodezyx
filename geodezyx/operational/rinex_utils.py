@@ -6,6 +6,11 @@ Created on Fri Aug 16 11:53:56 2019
 @author: psakicki
 """
 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+
 #  _____  _____ _   _ ________   __   _____       _ _ _
 # |  __ \|_   _| \ | |  ____\ \ / /  / ____|     | (_) |
 # | |__) | | | |  \| | |__   \ V /  | (___  _ __ | |_| |_ ___ _ __
