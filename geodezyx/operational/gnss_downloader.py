@@ -1411,7 +1411,12 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                             mgex=True,repro=0,sorted_mode=False,
                             return_also_uncompressed_files=True,
                             ftp_download=False,
-                            dow_manu=None):
+                            dow_manu=False):
+    """
+    dow_manu = False, no dow manu, consider the converted dow from the time span, regular case
+    dow_manu = None, no dow in the REGEX, the crawler will search only for the week
+    dow_manu = [0,7] the dow in question    
+    """
     
     if mgex:
         mgex_str = "mgex/"
@@ -1475,11 +1480,11 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         
         
         #### Manage the cases of manual DOW
-        if type(dow_manu) is int and dow_manu == 0:
-            dow = 0
+        if type(dow_manu) is int:
+            dow = dow_manu
         elif dow_manu is None:
             dow = ""
-        elif not dow_manu:
+        elif dow_manu is False:
             pass        
         else:
             dow = str(dow_manu)
