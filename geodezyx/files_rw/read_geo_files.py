@@ -1163,7 +1163,7 @@ def read_erp1(caminho_arq,ac):
         #np.savetxt(out, ERP, fmt="%02s %04s %05s %05s %05s %05s %05s %10s %10s %10s %10s %10s %10s %10s %10s %10s")
 ################################################### END READ ERP GUS
 ##########################################################################################################################
-def read_erp2(caminho_arq,ac):
+def read_erp2(caminho_arq,ac=None):
     """
     General description
     Units: ('MJD','X-P (arcsec)', 'Y-P (arcsec)', 'UT1UTC (E-7S)','LOD (E-7S/D)','S-X (E-6" arcsec)','S-Y (E-6" arcsec)',
@@ -1177,7 +1177,8 @@ def read_erp2(caminho_arq,ac):
         Path of the file in the local machine.
 
     which AC :  str
-        The analisys center that will be used
+        The analisys center that will be used. 
+        If not precised, will be the first 3 letters of the input name
 
 
     Returns
