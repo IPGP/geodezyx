@@ -636,7 +636,7 @@ def read_bull_B(path):
 
     return DFout
 ##
-def read_erp(path,return_array=False):
+def read_erp_bad(path,return_array=False):
     """
     This function is discontinued, use read_erp1 instead
     """
@@ -662,8 +662,7 @@ def read_erp(path,return_array=False):
 def read_erp_multi(path_list , return_array=False,
                    smart_mode=True):
     """
-    This function is discontinued, use read_erp1 instead
-
+    DISCONTINUED BUT CAN BE REACTIVATED
     Input :
         path_list : a list of ERP files
         smart_mode : keep only the latest value (True is recommended)
@@ -671,7 +670,7 @@ def read_erp_multi(path_list , return_array=False,
     path_list = sorted(path_list)
     Lstk = []
     for path in path_list:
-        L = read_erp(path,return_array)
+        L = read_erp2(path)
         Lstk.append(L)
 
     M = np.vstack(Lstk)
@@ -1043,127 +1042,127 @@ def read_clk1(file_path_in, returns_pandas = True, interval=None):
 
 
 ################################################READ ERP GUS
-def read_erp1(caminho_arq,ac):
+# def read_erp1(caminho_arq,ac):
 
-    le = open(caminho_arq, 'r')
-    letudo = le.readlines()
-    le.close()
-    tamanho = len(letudo) #usado para saber quantas linhas tem o arquivo
-
-
-
-    para = tamanho #onde o arquivo para de ser lido
-
-    numeros = ['0','1','2','3','4','5','6','7','8','9']
-    le = 0
-    numlin = 0 #numero de linhas da matriz de epocas
-    numcol = 16 #numero de colunas que a matriz final deve ter
+    # le = open(caminho_arq, 'r')
+    # letudo = le.readlines()
+    # le.close()
+    # tamanho = len(letudo) #usado para saber quantas linhas tem o arquivo
 
 
-    while le <= para:
-     linhaatual = linecache.getline(caminho_arq, le)
-     if linhaatual[0:1] in numeros:
-         numlin +=1
-     le +=1
 
-    dt = np.dtype(object)
-    ERP = np.empty((numlin,numcol), dtype=dt)
-    n = 0
-    j = 0
-    l = 0
-    g = 0
-#####################################
-    if ac == 'wum':
-        while l <=para:
-         linhaatual = linecache.getline(caminho_arq, l)
-         if linhaatual[0:1] in numeros:
-             ERP[j,0] = float(linhaatual[0:8])
-             ERP[j,1] = round((float(linhaatual[11:17])*(10**-6)),6)
-             ERP[j,2] = float(linhaatual[18:25])*(10**-6)
-             ERP[j,4] = float(linhaatual[26:34])*(10**-7)
-             ERP[j,3] = float(linhaatual[35:41])*(10**-7)
-             ERP[j,5] = float(linhaatual[44:47])*(10**-6)
-             ERP[j,6] = float(linhaatual[50:53])*(10**-6)
-             ERP[j,7] = float(linhaatual[57:61])*(10**-7)
-             ERP[j,8] = float(linhaatual[63:69])*(10**-7)
-             ERP[j,9] = float(linhaatual[69:73])
-             ERP[j,10] = float(linhaatual[74:76])
-             ERP[j,11] = float(linhaatual[76:80])
-             ERP[j,12] = float(linhaatual[81:86])*(10**-6)
-             ERP[j,13] = float(linhaatual[88:93])*(10**-6)
-             ERP[j,14] = float(linhaatual[96:101])*(10**-6)
-             ERP[j,15] = float(linhaatual[102:107])*(10**-6)
+    # para = tamanho #onde o arquivo para de ser lido
 
-             j +=1
-         l +=1
+    # numeros = ['0','1','2','3','4','5','6','7','8','9']
+    # le = 0
+    # numlin = 0 #numero de linhas da matriz de epocas
+    # numcol = 16 #numero de colunas que a matriz final deve ter
 
-        Erp_end = pd.DataFrame(ERP, columns=['MJD','X-P', 'Y-P', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
-                                             'X-RT','Y-RT','S-XR','S-YR'])
-    #    Erp_end.set_index('MJD',inplace=True)
-        return Erp_end
-#######################################
-    if ac == 'COD':
-        while n <=para:
-         linhaatual = linecache.getline(caminho_arq, n)
-         if linhaatual[0:1] in numeros:
-             ERP[j,0] = float(linhaatual[0:8])
-             ERP[j,1] = round((float(linhaatual[12:17])*(10**-6)),6)
-             ERP[j,2] = float(linhaatual[20:27])*(10**-6)
-             ERP[j,4] = float(linhaatual[38:41])*(10**-7)
-             ERP[j,3] = float(linhaatual[29:35])*(10**-7)
-             ERP[j,5] = float(linhaatual[47:49])*(10**-6)
-             ERP[j,6] = float(linhaatual[53:55])*(10**-6)
-             ERP[j,7] = float(linhaatual[59:61])*(10**-7)
-             ERP[j,8] = float(linhaatual[65:66])*(10**-7)
-             ERP[j,9] = float(linhaatual[67:70])
-             ERP[j,10] = float(linhaatual[71:74])
-             ERP[j,11] = float(linhaatual[75:77])
-             ERP[j,12] = float(linhaatual[81:85])*(10**-6)
-             ERP[j,13] = float(linhaatual[88:92])*(10**-6)
-             ERP[j,14] = float(linhaatual[94:98])*(10**-6)
-             ERP[j,15] = float(linhaatual[100:104])*(10**-6)
 
-             j +=1
-         n +=1
+    # while le <= para:
+     # linhaatual = linecache.getline(caminho_arq, le)
+     # if linhaatual[0:1] in numeros:
+         # numlin +=1
+     # le +=1
 
-        Erp_end = pd.DataFrame(ERP, columns=['MJD','X-P', 'Y-P', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
-                                             'X-RT','Y-RT','S-XR','S-YR'])
-    #    Erp_end.set_index('MJD',inplace=True)
-        return Erp_end
-################################################
-    if ac == 'gbm':
-        while g <=para:
-         linhaatual = linecache.getline(caminho_arq, g)
-         if linhaatual[0:1] in numeros:
-             ERP[j,0] = float(linhaatual[0:9])
-             ERP[j,1] = round((float(linhaatual[12:18])*(10**-6)),6)
-             ERP[j,2] = float(linhaatual[19:25])*(10**-6)
-             ERP[j,4] = float(linhaatual[26:37])*(10**-7)  ###UT1 - TAI!!!!!!!!!!!!
-             ERP[j,3] = float(linhaatual[39:44])*(10**-7)
-             ERP[j,5] = float(linhaatual[46:49])*(10**-6)
-             ERP[j,6] = float(linhaatual[50:54])*(10**-6)
-             ERP[j,7] = float(linhaatual[56:59])*(10**-7)
-             ERP[j,8] = float(linhaatual[60:64])*(10**-7)
-             ERP[j,9] = float(linhaatual[65:70])
-             ERP[j,10] = float(linhaatual[71:72])
-             ERP[j,11] = float(linhaatual[73:76])
-             ERP[j,12] = float(linhaatual[77:82])*(10**-6)
-             ERP[j,13] = float(linhaatual[83:88])*(10**-6)
-             ERP[j,14] = float(linhaatual[92:96])*(10**-6)
-             ERP[j,15] = float(linhaatual[100:104])*(10**-6)
+    # dt = np.dtype(object)
+    # ERP = np.empty((numlin,numcol), dtype=dt)
+    # n = 0
+    # j = 0
+    # l = 0
+    # g = 0
+# #####################################
+    # if ac == 'wum':
+        # while l <=para:
+         # linhaatual = linecache.getline(caminho_arq, l)
+         # if linhaatual[0:1] in numeros:
+             # ERP[j,0] = float(linhaatual[0:8])
+             # ERP[j,1] = round((float(linhaatual[11:17])*(10**-6)),6)
+             # ERP[j,2] = float(linhaatual[18:25])*(10**-6)
+             # ERP[j,4] = float(linhaatual[26:34])*(10**-7)
+             # ERP[j,3] = float(linhaatual[35:41])*(10**-7)
+             # ERP[j,5] = float(linhaatual[44:47])*(10**-6)
+             # ERP[j,6] = float(linhaatual[50:53])*(10**-6)
+             # ERP[j,7] = float(linhaatual[57:61])*(10**-7)
+             # ERP[j,8] = float(linhaatual[63:69])*(10**-7)
+             # ERP[j,9] = float(linhaatual[69:73])
+             # ERP[j,10] = float(linhaatual[74:76])
+             # ERP[j,11] = float(linhaatual[76:80])
+             # ERP[j,12] = float(linhaatual[81:86])*(10**-6)
+             # ERP[j,13] = float(linhaatual[88:93])*(10**-6)
+             # ERP[j,14] = float(linhaatual[96:101])*(10**-6)
+             # ERP[j,15] = float(linhaatual[102:107])*(10**-6)
 
-             j +=1
-         g +=1
+             # j +=1
+         # l +=1
 
-        Erp_end = pd.DataFrame(ERP, columns=['MJD','X-P', 'Y-P', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
-                                             'X-RT','Y-RT','S-XR','S-YR'])
-    #    Erp_end.set_index('MJD',inplace=True)
-        return Erp_end
-        #out = '/home/mansur/Documents/MGEX/Saida/outERP_'+caminho_arq[28:-4]+'.txt'
-        #np.savetxt(out, ERP, fmt="%02s %04s %05s %05s %05s %05s %05s %10s %10s %10s %10s %10s %10s %10s %10s %10s")
+        # Erp_end = pd.DataFrame(ERP, columns=['MJD','X-P', 'Y-P', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
+                                             # 'X-RT','Y-RT','S-XR','S-YR'])
+    # #    Erp_end.set_index('MJD',inplace=True)
+        # return Erp_end
+# #######################################
+    # if ac == 'COD':
+        # while n <=para:
+         # linhaatual = linecache.getline(caminho_arq, n)
+         # if linhaatual[0:1] in numeros:
+             # ERP[j,0] = float(linhaatual[0:8])
+             # ERP[j,1] = round((float(linhaatual[12:17])*(10**-6)),6)
+             # ERP[j,2] = float(linhaatual[20:27])*(10**-6)
+             # ERP[j,4] = float(linhaatual[38:41])*(10**-7)
+             # ERP[j,3] = float(linhaatual[29:35])*(10**-7)
+             # ERP[j,5] = float(linhaatual[47:49])*(10**-6)
+             # ERP[j,6] = float(linhaatual[53:55])*(10**-6)
+             # ERP[j,7] = float(linhaatual[59:61])*(10**-7)
+             # ERP[j,8] = float(linhaatual[65:66])*(10**-7)
+             # ERP[j,9] = float(linhaatual[67:70])
+             # ERP[j,10] = float(linhaatual[71:74])
+             # ERP[j,11] = float(linhaatual[75:77])
+             # ERP[j,12] = float(linhaatual[81:85])*(10**-6)
+             # ERP[j,13] = float(linhaatual[88:92])*(10**-6)
+             # ERP[j,14] = float(linhaatual[94:98])*(10**-6)
+             # ERP[j,15] = float(linhaatual[100:104])*(10**-6)
+
+             # j +=1
+         # n +=1
+
+        # Erp_end = pd.DataFrame(ERP, columns=['MJD','X-P', 'Y-P', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
+                                             # 'X-RT','Y-RT','S-XR','S-YR'])
+    # #    Erp_end.set_index('MJD',inplace=True)
+        # return Erp_end
+# ################################################
+    # if ac == 'gbm':
+        # while g <=para:
+         # linhaatual = linecache.getline(caminho_arq, g)
+         # if linhaatual[0:1] in numeros:
+             # ERP[j,0] = float(linhaatual[0:9])
+             # ERP[j,1] = round((float(linhaatual[12:18])*(10**-6)),6)
+             # ERP[j,2] = float(linhaatual[19:25])*(10**-6)
+             # ERP[j,4] = float(linhaatual[26:37])*(10**-7)  ###UT1 - TAI!!!!!!!!!!!!
+             # ERP[j,3] = float(linhaatual[39:44])*(10**-7)
+             # ERP[j,5] = float(linhaatual[46:49])*(10**-6)
+             # ERP[j,6] = float(linhaatual[50:54])*(10**-6)
+             # ERP[j,7] = float(linhaatual[56:59])*(10**-7)
+             # ERP[j,8] = float(linhaatual[60:64])*(10**-7)
+             # ERP[j,9] = float(linhaatual[65:70])
+             # ERP[j,10] = float(linhaatual[71:72])
+             # ERP[j,11] = float(linhaatual[73:76])
+             # ERP[j,12] = float(linhaatual[77:82])*(10**-6)
+             # ERP[j,13] = float(linhaatual[83:88])*(10**-6)
+             # ERP[j,14] = float(linhaatual[92:96])*(10**-6)
+             # ERP[j,15] = float(linhaatual[100:104])*(10**-6)
+
+             # j +=1
+         # g +=1
+
+        # Erp_end = pd.DataFrame(ERP, columns=['MJD','X-P', 'Y-P', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
+                                             # 'X-RT','Y-RT','S-XR','S-YR'])
+    # #    Erp_end.set_index('MJD',inplace=True)
+        # return Erp_end
+        # #out = '/home/mansur/Documents/MGEX/Saida/outERP_'+caminho_arq[28:-4]+'.txt'
+        # #np.savetxt(out, ERP, fmt="%02s %04s %05s %05s %05s %05s %05s %10s %10s %10s %10s %10s %10s %10s %10s %10s")
 ################################################### END READ ERP GUS
 ##########################################################################################################################
-def read_erp2(caminho_arq,ac):
+def read_erp2(caminho_arq,ac=None):
     """
     General description
     Units: ('MJD','X-P (arcsec)', 'Y-P (arcsec)', 'UT1UTC (E-7S)','LOD (E-7S/D)','S-X (E-6" arcsec)','S-Y (E-6" arcsec)',
@@ -1190,6 +1189,9 @@ def read_erp2(caminho_arq,ac):
 
     #### FIND DELIVERY DATE
     name = os.path.basename(caminho_arq)
+
+    if not ac:
+        ac = name[:3]
 
     if len(name) == 12:
         dt_delivery = conv.sp3name2dt(caminho_arq)
@@ -1307,6 +1309,9 @@ def read_erp2(caminho_arq,ac):
                 ERP_data.append(dt_delivery)
 
                 ERP.append(ERP_data)
+                
+        linecache.clearcache()
+        
 
 #        Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
 #                                                 'X-RT','Y-RT','S-XR','S-YR',"Delivery_date"])
@@ -1328,6 +1333,9 @@ def read_erp2(caminho_arq,ac):
                 ERP_data.append(dt_delivery)
 
                 ERP.append(ERP_data)
+                
+        linecache.clearcache()
+
 #        Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
 #                                                 'X-RT','Y-RT','S-XR','S-YR'])
 #        return Erp_end
@@ -1347,6 +1355,8 @@ def read_erp2(caminho_arq,ac):
                 ERP_data.append(dt_delivery)
 
                 ERP.append(ERP_data)
+        linecache.clearcache()
+
 #        Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
 #                                                 'X-RT','Y-RT','S-XR','S-YR'])  ##EH TBM O RATE XY POR DIA??????
 #        return Erp_end
@@ -1371,12 +1381,19 @@ def read_erp2(caminho_arq,ac):
                 ERP_data.append(dt_delivery)
 
                 ERP.append(ERP_data)
+        linecache.clearcache()
+
 
     Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD',
                                          'NR', 'NF', 'NT',
                                          'X-RT','Y-RT','S-XR','S-YR',
                                          'Delivered_date'])
+    
+    file.close()
     return Erp_end
+    
+    
+    
 
 ########################################################################################################################################
 ############################################### READ IERS GUS

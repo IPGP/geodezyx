@@ -1489,7 +1489,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         else:
             dow = str(dow_manu)
                
-        print("INFO : ","Find products for day",wwww,dow,"AC/prod",ac_cur,prod_cur)
+        print("INFO : ","Search products for day",wwww,dow,"AC/prod",ac_cur,prod_cur)
         
         wwww_dir = os.path.join(arch_center_basedir,str(wwww))
         if wwww_dir_previous != wwww_dir:
@@ -1497,30 +1497,31 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
             Files_listed_in_FTP = ftp.nlst()
             wwww_dir_previous = wwww_dir
             if len(Files_listed_in_FTP) == 0:
-                print("WARN: no files found in ",wwww_dir)
+                print("WARN: no files found in directory",wwww_dir)
                 
                 
         Files_remote_date_list = []
 
-        pattern_old_nam = ac_cur+".*"+str(wwww)+str(dow)+".*"+prod_cur+".*"
-        print("      ",pattern_old_nam)
+        pattern_old_nam = ac_cur+".*"+str(wwww)+str(dow)+".*"+prod_cur+"\..*"
         Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam,f)]
         
+        pattern_new_nam = ""
         if new_name_conv: ### search for new name convention
             ac_newnam   = ac_cur.upper()
             doy_newnam  ="".join(reversed(conv.dt2doy_year(conv.gpstime2dt(wwww,dow))))
             prod_newnam =prod_cur.upper()
             
             pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
-            pattern_new_nam = ".*" + pattern_new_nam + ".*"
-            print("      ",pattern_new_nam)
+            pattern_new_nam = ".*" + pattern_new_nam + "\..*"
 
             Files_new_nam   = [f for f in Files_listed_in_FTP if re.search(pattern_new_nam,f)]
-            
-            Files = Files + Files_new_nam
-            
-            if len(Files) == 0:
-                print("WARN : ","no product found for",*patt_tup)
+        
+        
+        print("      ","Regex :",pattern_old_nam,pattern_new_nam)        
+        Files = Files + Files_new_nam
+        
+        if len(Files) == 0:
+            print("WARN : ","no product found for",*patt_tup)
         
         Files_remote_date_list = Files_remote_date_list + Files
             
@@ -1541,7 +1542,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         Downld_tuples_list = []
         Potential_localfiles_list = []
 
-        if ftp_download:
+        if ftp_download: ### FTP download is not recommended
             for ftpobj , Chunk in zip(Ftp_obj_list,Files_remote_date_chunck):
                 for filchunk in Chunk:
                         Potential_localfiles_list.append(os.path.join(archive_dir_specif,filchunk))
@@ -1550,7 +1551,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                         else:
                             Downld_tuples_list.append((arch_center_main,wwww_dir,
                                                        filchunk,archive_dir_specif))
-        else:
+        else: ### HTML download, recommended
             Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
             [Potential_localfiles_list.append(os.path.join(archive_dir_specif,f)) for f in Files_remote_date_list]
 
