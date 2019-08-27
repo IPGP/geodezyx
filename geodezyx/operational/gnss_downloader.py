@@ -1216,7 +1216,7 @@ def FTP_downloader_wo_objects(tupin):
     
     
 
-def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
+def multi_downloader_orbs_clks_2bad(archive_dir,startdate,enddate,
                             AC_names = ("wum","cod"),
                             prod_types = ("sp3","clk"),
                             remove_patterns=("ULA",),
@@ -1226,7 +1226,8 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                             archive_center='whu',
                             mgex=True,repro=0,sorted_mode=False,
                             return_also_uncompressed_files=True,
-                            ftp_download=False):
+                            ftp_download=False,
+                            dow_manu=None):
     
     if mgex:
         mgex_str = "mgex/"
@@ -1251,6 +1252,15 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     elif archive_center == "whu":
         arch_center_main    = "igs.gnsswhu.cn"
         arch_center_basedir = "/pub/gps/products/" + mgex_str
+        
+    elif archive_center == "ign_rf":
+        arch_center_main    = 'igs-rf.ign.fr'
+        arch_center_basedir = '/pub/' + mgex_str  
+
+    elif archive_center == "ensg_rf":
+        arch_center_main    = 'igs-rf.ensg.ign.fr'
+        arch_center_basedir = '/pub/' + mgex_str
+        
         
         
     print("INFO: data center used :",archive_center)
@@ -1291,6 +1301,14 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         if len(Files_listed_in_FTP) == 0:
             print("WARN: no files found in ",wwww_dir)
             
+        if type(dow) is int and dow == 0:
+            dow = "0"
+        elif not dow:
+            pass        
+        elif dow_manu is None:
+            dow = ""
+        else:
+            dow = str(dow_manu)
                     
         ### check if the pattern of the wished products are in the listed daily files
         for patt_tup in list(itertools.product(AC_names,[wwww],[dow],prod_types)):
@@ -1380,5 +1398,195 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     
     pool.close()
     return Localfiles_lis
-            
+    
+    
+def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
+                            AC_names = ("wum","cod"),
+                            prod_types = ("sp3","clk"),
+                            remove_patterns=("ULA",),
+                            archtype ='week',
+                            new_name_conv = True,
+                            parallel_download=4,
+                            archive_center='whu',
+                            mgex=True,repro=0,sorted_mode=False,
+                            return_also_uncompressed_files=True,
+                            ftp_download=False,
+                            dow_manu=False):
+    """
+    dow_manu = False, no dow manu, consider the converted dow from the time span, regular case
+    dow_manu = None, no dow in the REGEX, the crawler will search only for the week
+    dow_manu = [0,7] the dow in question    
+    """
+    
+    if mgex:
+        mgex_str = "mgex/"
+    else:
+        mgex_str = ""
+        
+    if not utils.is_iterable(remove_patterns):
+        remove_patterns = [remove_patterns]
+    
+    if archive_center == "cddis":
+        arch_center_main    = 'cddis.gsfc.nasa.gov'
+        arch_center_basedir = '/pub/gps/products/' + mgex_str
+    
+    elif archive_center == "ign":
+        arch_center_main    = 'igs.ign.fr'
+        arch_center_basedir = '/pub/igs/products/' + mgex_str  
 
+    elif archive_center == "ensg":
+        arch_center_main    = 'igs.ensg.ign.fr'
+        arch_center_basedir = '/pub/igs/products/' + mgex_str
+        
+    elif archive_center == "whu":
+        arch_center_main    = "igs.gnsswhu.cn"
+        arch_center_basedir = "/pub/gps/products/" + mgex_str
+        
+    elif archive_center == "ign_rf":
+        arch_center_main    = 'igs-rf.ign.fr'
+        arch_center_basedir = '/pub/' + mgex_str  
+
+    elif archive_center == "ensg_rf":
+        arch_center_main    = 'igs-rf.ensg.ign.fr'
+        arch_center_basedir = '/pub/' + mgex_str
+        
+        
+        
+    print("INFO : data center used :",archive_center)
+
+    Dates_list = conv.dt_range(startdate,enddate)
+
+    Localfiles_lis = []
+    wwww_dir_previous = None
+    pool = mp.Pool(processes=parallel_download) 
+   
+
+    ## create the FTP object
+    ftp = FTP(arch_center_main)
+    ftp.login()
+    ## create a list of FTP object for multiple downloads (unstable...)
+    if ftp_download and parallel_download > 1:
+        Ftp_obj_list = [FTP(arch_center_main) for i in range(parallel_download)]
+        [f.login() for f in Ftp_obj_list]    
+        # define the main obj for crawling
+        ftp = Ftp_obj_list[0]
+    
+
+                
+    ### check if the pattern of the wished products are in the listed daily files
+    for patt_tup in list(itertools.product(Dates_list,AC_names,prod_types)):
+        dt_cur , ac_cur , prod_cur = patt_tup
+        wwww , dow = conv.dt2gpstime(dt_cur)
+        
+        
+        #### Manage the cases of manual DOW
+        if type(dow_manu) is int:
+            dow = dow_manu
+        elif dow_manu is None:
+            dow = ""
+        elif dow_manu is False:
+            pass        
+        else:
+            dow = str(dow_manu)
+               
+        print("INFO : ","Find products for day",wwww,dow,"AC/prod",ac_cur,prod_cur)
+        
+        wwww_dir = os.path.join(arch_center_basedir,str(wwww))
+        if wwww_dir_previous != wwww_dir:
+            ftp.cwd(wwww_dir)
+            Files_listed_in_FTP = ftp.nlst()
+            wwww_dir_previous = wwww_dir
+            if len(Files_listed_in_FTP) == 0:
+                print("WARN: no files found in ",wwww_dir)
+                
+                
+        Files_remote_date_list = []
+
+        pattern_old_nam = ac_cur+".*"+str(wwww)+str(dow)+".*"+prod_cur+".*"
+        print("      ",pattern_old_nam)
+        Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam,f)]
+        
+        if new_name_conv: ### search for new name convention
+            ac_newnam   = ac_cur.upper()
+            doy_newnam  ="".join(reversed(conv.dt2doy_year(conv.gpstime2dt(wwww,dow))))
+            prod_newnam =prod_cur.upper()
+            
+            pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
+            pattern_new_nam = ".*" + pattern_new_nam + ".*"
+            print("      ",pattern_new_nam)
+
+            Files_new_nam   = [f for f in Files_listed_in_FTP if re.search(pattern_new_nam,f)]
+            
+            Files = Files + Files_new_nam
+            
+            if len(Files) == 0:
+                print("WARN : ","no product found for",*patt_tup)
+        
+        Files_remote_date_list = Files_remote_date_list + Files
+            
+        ### exclude some pattern
+        for negpatt in remove_patterns:
+            Files_remote_date_list = [e for e in Files_remote_date_list if not re.search(negpatt,e)]
+
+        archive_dir_specif = effective_save_dir_orbit(archive_dir,
+                                                      ac_cur,
+                                                      dt_cur,
+                                                      archtype)
+            
+        utils.create_dir(archive_dir_specif)
+        
+        ### Generation of the Download fct inputs
+        Files_remote_date_chunck = utils.chunkIt(Files_remote_date_list,
+                                                 parallel_download)
+        Downld_tuples_list = []
+        Potential_localfiles_list = []
+
+        if ftp_download:
+            for ftpobj , Chunk in zip(Ftp_obj_list,Files_remote_date_chunck):
+                for filchunk in Chunk:
+                        Potential_localfiles_list.append(os.path.join(archive_dir_specif,filchunk))
+                        if parallel_download == 1:
+                            Downld_tuples_list.append((ftpobj,filchunk,archive_dir_specif))
+                        else:
+                            Downld_tuples_list.append((arch_center_main,wwww_dir,
+                                                       filchunk,archive_dir_specif))
+        else:
+            Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
+            [Potential_localfiles_list.append(os.path.join(archive_dir_specif,f)) for f in Files_remote_date_list]
+
+            
+        ### Actual Download, FTP download is not recommended
+        if ftp_download and parallel_download == 1:
+            for tup in Downld_tuples_list:
+                FTP_downloader(*tup)
+        elif ftp_download and parallel_download > 1:
+            _ = pool.map_async(FTP_downloader_wo_objects,Downld_tuples_list)
+        elif not ftp_download and parallel_download == 1:
+            for tup in Downld_tuples_list:
+                downloader_wrap(tup)
+        elif not ftp_download and parallel_download > 1:
+            _ = pool.map(downloader_wrap,Downld_tuples_list)
+        ## Those 2 other methods are unstables
+        ##  _ = pool.map_async(downloader_wrap,Downld_tuples_list)
+        ##  _ = [pool.apply(downloader_wrap,(tup,)) for tup in Downld_tuples_list]
+        
+
+    ### Independent files exsitence check
+    
+    if not return_also_uncompressed_files:
+        for localfile in Potential_localfiles_list:
+            if os.path.isfile(localfile):
+                Localfiles_lis.append(localfile)
+    else:
+        for localfile in Potential_localfiles_list:
+            Pot_compress_name_list = [localfile]
+            Pot_compress_name_list.append(localfile.replace(".gz",""))
+            Pot_compress_name_list.append(localfile.replace(".Z",""))
+            Pot_compress_name_list = list(set(Pot_compress_name_list))
+            
+            for pot_compress_name in Pot_compress_name_list:
+                if os.path.isfile(pot_compress_name):
+                    Localfiles_lis.append(pot_compress_name)
+    
+    pool.close()
+    return Localfiles_lis
