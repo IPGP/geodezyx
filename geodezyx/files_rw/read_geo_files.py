@@ -1176,7 +1176,8 @@ def read_erp2(caminho_arq,ac=None):
         Path of the file in the local machine.
 
     which AC :  str
-        The analisys center that will be used
+        The analisys center that will be used. 
+        If not precised, will be the first 3 letters of the input name
 
 
     Returns
