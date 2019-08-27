@@ -278,7 +278,7 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 I_ar = np.array(I)
                 C_ar = np.array(C)
 
-                R_ar[1]
+                #R_ar[1]
                 Beta = np.stack((R_ar,I_ar,C_ar),axis=1)
 
                 # Compatible with the documentation +
