@@ -26,10 +26,15 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
 from geodezyx import np,scipy,re,sys,utils
 #import geod.utils as utils
 
-sys.dont_write_bytecode = True
+
+#sys.dont_write_bytecode = True
 
 #### Coordinates conversion
     
@@ -551,8 +556,8 @@ def ECI2RTN_or_RPY(P,V,C,out_rpy=False,rpy_theo_mode=False):
     out_rpy : bool
         if True output in RPY frame, RTN instead
     rpy_theo_mode : bool
-        use the theoretical matrix composition, but wrong ans.
-        empirically, only for debug !!
+        use the theoretical matrix composition, but wrong 
+        ans. empirically, only for debug !!
 
     Returns
     -------
@@ -1640,210 +1645,3 @@ def lambert_projection_CC_frontend(long,lat,NZ = 93):
     X,Y = lambert_projection(np.deg2rad(long),np.deg2rad(lat),n,c,e,lc,Xs,Ys)
     
     return X,Y
-
-
-#  _    _ _       _       _                    _    _____                _      _   _        ______   _       
-# | |  | (_)     | |     | |                  | |  / ____|              | |    | | (_)      |  ____| | |      
-# | |__| |_  __ _| |__   | |     _____   _____| | | |  __  ___  ___   __| | ___| |_ _  ___  | |__ ___| |_ ___ 
-# |  __  | |/ _` | '_ \  | |    / _ \ \ / / _ \ | | | |_ |/ _ \/ _ \ / _` |/ _ \ __| |/ __| |  __/ __| __/ __|
-# | |  | | | (_| | | | | | |___|  __/\ V /  __/ | | |__| |  __/ (_) | (_| |  __/ |_| | (__  | | | (__| |_\__ \
-# |_|  |_|_|\__, |_| |_| |______\___| \_/ \___|_|  \_____|\___|\___/ \__,_|\___|\__|_|\___| |_|  \___|\__|___/
-#            __/ |                                                                                            
-#           |___/                                                                         
-    
-### High level geodetic function
-
-def itrf_speed_calc(x0,y0,z0,t0,vx,vy,vz,t):
-    """
-    Args :
-        x0,y0,z0 (floats) : coordinates at the reference epoch (m)
-
-        t0 (float) : reference epoch (decimal year)
-
-        vx,vy,vz (floats) : speed of the point (m/yr)
-
-        t (float) : output epoch
-    Returns :
-        xout,yout,zout : coordinates of the point @ the ref. epoch (m)
-    """
-
-    xout = x0 + vx * ( t - t0 )
-    yout = y0 + vy * ( t - t0 )
-    zout = z0 + vz * ( t - t0 )
-
-    return xout,yout,zout
-
-
-def itrf_psd_fundamuntal_formula(t,A_l,t_l,tau_l,A_e,t_e,tau_e):
-    """
-    http://itrf.ensg.ign.fr/ITRF_solutions/2014/doc/ITRF2014-PSD-model-eqs-IGN.pdf
-    """
-    
-    dL = A_l * np.log(1 + (t - t_l)/ tau_l) + A_e * (1 + (t - t_e)/ tau_e)
-    
-    return dL
-
-
-def calc_pos_speed_itrf(x0,y0,z0,t0,vx,vy,vz,t):
-    """
-    just a wrapper of itrf_speed_calc
-    for legacy reasons
-    """
-    return itrf_speed_calc(x0,y0,z0,t0,vx,vy,vz,t)
-
-
-def helmert_trans(Xa,params='itrf2008_2_etrf2000',invert=True,workepoc=2009.):
-    """
-    NB 1 : http://etrs89.ensg.ign.fr/memo-V8.pdf
-    NB 2 :
-    Transformation inverse : * -1 pour les paramètres
-    cf https://en.wikipedia.org/wiki/Helmert_transformation
-
-    optimisé pour RGF93 => ITRF2008 (d'ou le invert = True & workepoc = 2009.)
-
-    NB3 : Attention losque l'on compare avec
-          le convertisseur EUREF avec une vitesse
-          parce que elle aussi est modifiée dans la conversion ETRS => ITRS.
-          Conclusion : le faire en 2 étapes ETRS = > ITRS dans la même epoc
-                                            ITRS epoc 1 => ITRS epoc 2
-
-    if manual
-    then params is a tuple
-    params = (t1,t2,t3,dab,r1,r2,r3)
-
-    NE MARCHE PAS PARCE BESOIN DU RATE(TAUX) DES PARAMS D'HELMERT !!!!!!
-    (160923)
-    """
-    if invert:
-        inver = -1.
-    else:
-        inver = 1.
-
-    mas2rad = 0.0000000048481368
-    mas2rad = 4.8481368111e-6 * 1e-3
-
-    if params == 'itrf2008_2_etrf2000':
-
-        t1rate = .1 * 10**-3
-        t2rate = .1 * 10**-3
-        t3rate = -1.8 * 10**-3
-        dabrate = .08 * 10**-9
-        r1rate =  .081 * mas2rad
-        r2rate =  .490 * mas2rad
-        r3rate = -.792 * mas2rad
-
-        t1rate = .1 * 10**-3
-        t2rate = .1 * 10**-3
-        t3rate = -1.8 * 10**-3
-        dabrate = .08 * 10**-9
-        r1rate =  .081 * mas2rad
-        r2rate =  .490 * mas2rad
-        r3rate = -.792 * mas2rad
-
-
-        t1  =(52.1  * 10**-3   + t1rate  * ( workepoc - 2000.)) *inver
-        t2  =(49.3  * 10**-3   + t2rate  * ( workepoc - 2000.)) *inver
-        t3  =(-58.5 * 10**-3   + t3rate  * ( workepoc - 2000.)) *inver
-        dab =( 1.34 * 10**-9   + dabrate * ( workepoc - 2000.)) *inver
-        r1  =( 0.891 * mas2rad + r1rate  * ( workepoc - 2000.)) *inver
-        r2  =( 5.39  * mas2rad + r2rate  * ( workepoc - 2000.)) *inver
-        r3  =( -8.712* mas2rad + r3rate  * ( workepoc - 2000.)) *inver
-
-
-    elif params == 'itrf2000_2_etrf2000':
-        t1  =54.0  * 10**-3   *inver
-        t2  =51.0  * 10**-3   *inver
-        t3  =-48.0 * 10**-3   *inver
-        dab = 0.0  * 10**-9   *inver
-        r1  = 0.891 * mas2rad *inver
-        r2  = 5.390 * mas2rad *inver
-        r3  = -8.712* mas2rad *inver
-
-
-
-
-    R = np.matrix([[dab,-r3,r2],
-                   [r3,dab,-r1],
-                   [-r2,r1,dab]])
-
-    Xb = Xa + np.matrix([t1,t2,t3]) + np.dot(R,Xa)
-    Xb = np.squeeze(np.array(Xb))
-
-    return Xb
-
-
-def helmert_trans_estim_matrixs_maker(X1 , X2):
-    """
-    internal function for helmert_trans_estim
-    """
-    x1 , y1 , z1 = X1
-    x2 , y2 , z2 = X2
-    
-    
-    block_1 = np.eye(3)
-    
-    block_2 = np.array([[ 0. , -z1,  y1, x1],
-                       [ z1,   0., -x1, y1],
-                       [-y1,  x1,   0., z1]])
-    
-    l = X2 - X1
-    A = np.hstack((block_1 , block_2))
-
-    return l,A
-
-
-def helmert_trans_estim(X1list , X2list):
-    """
-    estimates 7 parameters of a 3D Helmert transformation between a set of points
-    X1 and a set of points X2 (compute transformation X1 => X2)
-    
-    Parameters
-    ----------
-    
-    X1list & X2list : list of N (x,y,z) points ,
-        or an numpy array of shape (3, N)
-    
-    Returns
-    -------
-    Res :
-        7 Helmert params. : x,y,z translations, x,y,z rotations, scale
-    A :
-        Design matrix    
-    l :
-        X2 - X1
-        
-    Source
-    ------
-    https://elib.uni-stuttgart.de/bitstream/11682/9661/1/BscThesis_GaoYueqing.pdf
-    """
-
-    l_stk = []
-    A_stk = []
-    
-    
-    for X1 , X2 in zip(X1list , X2list):
-        lmono , Amono = helmert_trans_estim_matrixs_maker(X1,X2)
-            
-        l_stk.append(lmono)
-        A_stk.append(Amono)
-        
-    A = np.vstack(A_stk)
-    l = np.hstack(l_stk)
-    
-    Res = scipy.linalg.inv((A.T).dot(A)).dot(A.T).dot(l)
-    
-    return Res , A , l
-
-
-
-
-
-#### ASTRONOMY FUNCTION
-def semi_major_axis_from_mean_motion(n):
-    """
-    source : https://space.stackexchange.com/questions/18289/how-to-get-semi-major-axis-from-tle
-    """
-    mu = 3.9860044189 * 10**14
-    a  = (mu**(1./3.)) / ((2*n*np.pi/86400)**(2./3.))
-    return a    
-

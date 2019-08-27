@@ -6,7 +6,11 @@ Created on Fri Jun 28 14:28:06 2019
 @author: psakicki
 """
 
-from geodezyx import * 
+from geodezyx import *                   # Import the GeodeZYX modules
+from geodezyx.externlib import *         # Import the external modules
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
+import os
+import shutil
 
 #################
 ### SHELL LIKE FCTS
@@ -390,6 +394,8 @@ def write_in_file(string_to_write,outdir,outname,ext='.txt'):
 def replace(file_path, pattern, subst):
     """ from http://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python """
     #Create temp file
+    from tempfile import mkstemp
+    from os import remove, close
     fh, abs_path = mkstemp()
     new_file = open(abs_path,'w')
     old_file = open(file_path)
@@ -400,9 +406,9 @@ def replace(file_path, pattern, subst):
     close(fh)
     old_file.close()
     #Remove original file
-    remove(file_path)
+    os.remove(file_path)
     #Move new file
-    move(abs_path, file_path)
+    shutil.move(abs_path, file_path)
     
     
 def regex2filelist(dossier,regex,outtype='file'):
