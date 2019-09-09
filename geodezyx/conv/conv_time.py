@@ -1272,7 +1272,10 @@ def pandas_timestamp2dt(timestamp_in):
         typ=utils.get_type_smart(timestamp_in)
         return typ([pandas_timestamp2dt(e) for e in timestamp_in])
     else:
-        return timestamp_in.to_pydatetime()
+        if isinstance(timestamp_in, pd._libs.tslibs.timedeltas.Timedelta):
+            return timestamp_in.to_pytimedelta()
+        else:
+            return timestamp_in.to_pydatetime()
         
 def datetime64_numpy2dt(npdt64_in):
     """

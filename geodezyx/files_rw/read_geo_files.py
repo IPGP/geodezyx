@@ -1394,7 +1394,16 @@ def read_erp2(caminho_arq,ac=None):
     return Erp_end
     
     
+def read_erp_snx(snx_in):
+    utils.extract_text_between_elements_2(snx_in,
+                                          '\+SOLUTION/ESTIMATE',
+                                          '-SOLUTION/ESTIMATE',
+                                          return_string = True)
     
+    
+
+
+
 
 ########################################################################################################################################
 ############################################### READ IERS GUS

@@ -9,8 +9,13 @@ from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
+
+
 from geodezyx.time_series import *
 import geodezyx.megalib.geodetik as geok
+
+import geodezyx.conv as conv
+import geodezyx.stats as stats                   # Import the GeodeZYX modules
 
 
 class Point():

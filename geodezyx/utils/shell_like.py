@@ -212,8 +212,8 @@ def find_recursive(parent_folder , pattern,
 
     pattern : str
         the researched files pattern name (can manage wildcard or regex)
-        * wildcard (only * and ?) for case_sensitive = False
-        * regex for case_sensitive = True
+        * wildcard (only * and ?) for case_sensitive = True
+        * regex for case_sensitive = False
         
     sort_results : bool
         Sort results
@@ -244,7 +244,7 @@ def find_recursive(parent_folder , pattern,
                 try:
                     bool_match = re.search(pattern, filename, re.IGNORECASE)
                 except Exception as e:
-                    print("ERR : if case_sensitive = True, pattern have to be a REGEX (and not only a simple wildcard)")
+                    print("ERR : if case_sensitive = False, pattern have to be a REGEX (and not only a simple wildcard)")
                     raise Exception
                     
                 if bool_match:

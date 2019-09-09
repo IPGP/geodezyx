@@ -405,7 +405,7 @@ def extract_text_between_elements_2(file_path , elt_start , elt_end,
     return_string = False : returns a list of the matched lines
     
     NB : in SINEX context, with "+MARKER", use backslash i.e.
-         "\+MARKER"    
+         "\\+MARKER"    
          
     NB2 : think about StingIO for a Pandas DataFrame Handeling
     https://docs.python.org/2/library/stringio.html

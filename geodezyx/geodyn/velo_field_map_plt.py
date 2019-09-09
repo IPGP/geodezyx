@@ -30,6 +30,7 @@ from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
+from mpl_toolkits.basemap import Basemap
 from matplotlib.patches import Ellipse
 
 
@@ -108,7 +109,8 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
              adjust_text=False,
              pixels_hires_backgrnd=2000,
              draw_borders=True,
-             full_return=False):
+             full_return=False,
+             draw_latlon_lines=True):
     """
     """
     
@@ -160,12 +162,14 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
         fond = m.pcolormesh(longs_gr,lats_gr,gebco,shading='flat',cmap=LevelColormap(list(np.asarray(levels)*(1)),cmap=cm.deep_r),latlon=True) #ice,deep
         cbar=m.colorbar(location='top',pad=0.5)
         cbar.set_label('Depth [m] ', rotation=0)
-    m.drawparallels(np.arange(latm,latM,1.),fontsize=10,color=color1,labels=[True,False,False,False],linewidth=0.25, dashes=[10000,1]) #de -180 a 360 par pas de 5° ;   
-    m.drawmeridians(np.arange(lonm,lonM,1.),fontsize=10,color=color1,labels=[False,False,False,True],linewidth=0.25, dashes=[10000,1]) # Haut / G/D/BAS 
-    ### Labels
-    plt.xlabel('Longitude (°) ',labelpad=25,fontsize=10)
-    plt.ylabel('Latitude (°) ',labelpad=40,fontsize=10)
-    ax.yaxis.set_label_position("left")
+        
+    if draw_latlon_lines:
+        m.drawparallels(np.arange(latm,latM,1.),fontsize=10,color=color1,labels=[True,False,False,False],linewidth=0.25, dashes=[10000,1]) #de -180 a 360 par pas de 5° ;   
+        m.drawmeridians(np.arange(lonm,lonM,1.),fontsize=10,color=color1,labels=[False,False,False,True],linewidth=0.25, dashes=[10000,1]) # Haut / G/D/BAS 
+        ### Labels
+        plt.xlabel('Longitude (°) ',labelpad=25,fontsize=10)
+        plt.ylabel('Latitude (°) ',labelpad=40,fontsize=10)
+        ax.yaxis.set_label_position("left")
        
     all_posx_proj=[0]*nstation
     all_posy_proj=[0]*nstation
