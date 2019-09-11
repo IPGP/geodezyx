@@ -106,6 +106,24 @@ Else, it may miss a library. Follow the *prerequisite* section
 
 4) COMPONENTS
 
-4.1) Main libraires
+conv           : Conversion of time and 
+utils          : Shell-like functions (grep, find in folder ...)
+                 and functions to optimize list management
+time_series    : 
+stats          : Low-level statistics functions & outlier detection functions
+reffram        : Reference Frame & high-level coordinates conversion
+operational    : Download GNSS data/products from various servers
+                 Read sitelogs 
+files_rw       : read, import & write geodetic files
+geodyn         : Euler pole calculator and plot velocity field maps
 
-<<< ... IN PROGRESS ... >>>
+
+4.1) Other modules
+externlib      : call easily all extern librairies
+athmo          
+marine 
+
+
+maintened for legacy purposes :
+megalib
+legacy_source

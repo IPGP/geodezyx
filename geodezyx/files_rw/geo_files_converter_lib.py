@@ -32,6 +32,7 @@ from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 from geodezyx import utils,conv
+import pandas
 
 
 #import geodezyx.legacy.utils.as genefun
