@@ -13,6 +13,58 @@ from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 from geodezyx import np,conv,re,df
 
+def PWV_conversion(zwd,Tm):
+    """
+    This function convert from Zenith Wet delay to Precipitate Water Vapor (PWV)
+    
+    Parameters
+    ----------
+    zwd :
+        Zenith wet delay in meters
+    Tm:
+        Mean temperature of troposphere
+        
+    Returns
+    ----------
+    PWV :
+        Precipitate Water Vapor in mm
+        
+    Sources
+    ----------
+    Solution and Constant k2' k3 from Atmospheric effects in Space Geodesy Chapter 3.
+    """
+    k1 = 77.689
+    k2 = 71.2952
+    Md = 28.965 / 100 # g/mol -> kg/mol
+    Mw = 18.016 / 100 # g/mol -> kg/mol
+    k2d = k2 - (k1*(Mw/Md))
+    k3 = 375463
+    R = 8.3143
+    Rhow = 999.97
+    
+    CF = 10e6 * Mw / (Rhow * R * (k2d + (k3/Tm))) 
+    PWV = CF* zwd * 1000
+    return np.round(PWV,2)
+
+def Tm_bevis(Ts):
+    """
+    This function determines mean temperature based on surface temperature using Bevis equation
+    
+    Parameters
+    ----------
+    Ts:
+        Surface temperature in Kelvin
+    Returns
+    ----------
+    Tm:
+        Mean temperature in Kevlin
+    Sources
+    ----------
+    Atmospheric effects in Space Geodesy Chapter 3.
+    """
+    
+    Tm = 70.2 + 0.72*Ts
+    return np.round(Tm,2)
 
 def trop_saast(p,dlat,hell,t=0,e=0,mode="dry"):
     """
@@ -39,12 +91,12 @@ def trop_saast(p,dlat,hell,t=0,e=0,mode="dry"):
          dry, wet or total
          
     Returns
-    -------
+    ----------
     res :
         zenith total delay in m (depend on mode) 
     
     Source
-    ------
+    ----------
      c Reference:
      Saastamoinen, J., Atmospheric correction for the troposphere and 
      stratosphere in radio ranging of satellites. The use of artificial 
@@ -78,7 +130,7 @@ def calc_stand_ties_gpt3(epoc, lat_ref , lon_ref , h_ref , lat_rov , lon_rov , h
     Determine standard atmospheric ties from meteological information from GPT3 with analytical equation from Teke et al. (2011)
     
     Parameters:
-    -------
+    ----------
         epoc : 
             time in Python datetime
         lat_ref : 
@@ -95,7 +147,7 @@ def calc_stand_ties_gpt3(epoc, lat_ref , lon_ref , h_ref , lat_rov , lon_rov , h
             in meters (m) or milimeters (mm)
         
     Return:
-    -------
+    ----------
         ties : 
             Standard ties of total delay in milimeters or meters
         
@@ -130,7 +182,7 @@ def gpt3(dtin,lat,lon,h_ell,C,it=0):
     semiannual variation of the coefficients.
     
     Parameters:
-    -------  
+    ----------  
     dtin : 
         datatime in Python datetime object
     
@@ -147,7 +199,7 @@ def gpt3(dtin,lat,lon,h_ell,C,it=0):
         case 1 no time variation but static quantities, case 0 with time variation (annual and semiannual terms)
            
     Returns:
-    -------    
+    ----------    
     p:    
         pressure in hPa  
     
@@ -187,11 +239,12 @@ def gpt3(dtin,lat,lon,h_ell,C,it=0):
     Ge_w: 
         wet east gradient in m 
     
-    Notes:
-        Modified for Python by : Chaiyaporn Kitpracha
+    Notes
+    ----------
+        Modified for Python by Chaiyaporn Kitpracha
         
-    Source:
-        
+    Source
+    ----------    
         (c) Department of Geodesy and Geoinformation, Vienna University of
         Technology, 2017
       
@@ -577,7 +630,8 @@ def gpt2_5(mjd,lat,lon,HELL,IT,VEC):
      Johannes Boehm, 25 August 2014, reference changed to Boehm et al. in GPS
      Solutions
     
-    Source:
+    Source
+    ----------
          J. Böhm, G. Möller, M. Schindelegger, G. Pain, R. Weber, Development of an 
          improved blind model for slant delays in the troposphere (GPT2w),
          GPS Solutions, 2014, doi:10.1007/s10291-014-0403-7
