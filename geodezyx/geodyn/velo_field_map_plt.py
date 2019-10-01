@@ -26,12 +26,27 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
 
+########## BEGIN IMPORT ##########
+#### External modules
+import math
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+
+from mpl_toolkits.basemap import Basemap
+from matplotlib.patches import Ellipse
+
+#### geodeZYX modules
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-from mpl_toolkits.basemap import Basemap
-from matplotlib.patches import Ellipse
+##########  END IMPORT  ##########
+
+
 
 
 
@@ -42,14 +57,14 @@ from matplotlib.patches import Ellipse
 def landmask(M, color='0.8'):
 
    # Make a constant colormap, default = grey
-   constmap = pl.matplotlib.colors.ListedColormap([color])
+   constmap = matplotlib.colors.ListedColormap([color])
 
    jmax, imax = M.shape
    # X and Y give the grid cell boundaries,
    # one more than number of grid cells + 1
    # half integers (grid cell centers are integers)
-   X = -0.5 + pl.arange(imax+1)
-   Y = -0.5 + pl.arange(jmax+1)
+   X = -0.5 + np.arange(imax+1)
+   Y = -0.5 + np.arange(jmax+1)
 
    # Draw the mask by pcolor
    M = ma.masked_where(M > 0, M)
@@ -70,11 +85,11 @@ def LevelColormap(levels, cmap=None):
 
     # Spread the colours maximally
     nlev = len(levels)
-    S = pl.arange(nlev, dtype='float')/(nlev-1)
+    S = np.arange(nlev, dtype='float')/(nlev-1)
     A = cmap(S)
 
     # Normalize the levels to interval [0,1]
-    levels = pl.array(levels, dtype='float')
+    levels = np.array(levels, dtype='float')
     L = (levels-levels[0])/(levels[-1]-levels[0])
 
     # Make the colour dictionary

@@ -6,9 +6,17 @@ Created on Wed Jul 31 14:19:37 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+#### geodeZYX modules
+from geodezyx import utils
+
+##########  END IMPORT  ##########
+
 
 def color_list(L , colormap='jet'):
     cm     = plt.get_cmap(colormap)
@@ -83,7 +91,7 @@ def get_figure(figin = 0):
 
 
 def figure_saver(figobjt_in , outdir , outname , outtype = '.png' , formt = 'a4' ):
-    if not is_iterable(outtype):
+    if not utils.is_iterable(outtype):
          outtype = (outtype,) 
          
     outpath_stk = []

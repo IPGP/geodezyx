@@ -27,19 +27,26 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
 
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import linecache
+import numpy as np
+import os 
+import pandas as pd
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import time_series
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-import linecache
+##########  END IMPORT  ##########
 
-#import geodezyx.megalib.geodetik as geok
-
-
-#import utils.as genefun
-#import geo_files_converter_lib as gfc
-#import geo_trop as gtro
-#import geodetik as geok     maybe we should leave as comment until define the proper paths
 
 
 def read_bull_B(path):
@@ -600,41 +607,6 @@ def read_sp3_header(sp3_path):
 
     return Header_DF
 
-def read_bull_B(path):
-
-    if not utils.is_iterable(path):
-        path = [path]
-
-    path = sorted(path)
-
-    DFstk = []
-
-    for path_solo in path:
-        S = utils.extract_text_between_elements(path_solo,"1 - DAILY FINAL VALUES" ,
-                                         "2 - DAILY FINAL VALUES" )
-
-        L = S.replace('\t','\n').split("\n")
-
-        L2 = []
-        for e in L:
-            if len(e) > 0:
-                if e[0] !=  " ":
-                    L2.append(e)
-        L3 = []
-        for e in L2:
-            L4 = []
-            for ee in e.split():
-                L4.append(float(ee))
-            L3.append(L4)
-
-        DF = pd.DataFrame(np.vstack(L3))
-        DFstk.append(DF)
-
-    DFout = pd.concat(DFstk)
-    DFout.columns = ["year","month","day","MJD","x","y","UT1-UTC","dX","dY",
-                  "x err","y err","UT1 err","X err","Y err"]
-
-    return DFout
 ##
 def read_erp_bad(path,return_array=False):
     """
@@ -759,7 +731,7 @@ def write_sp3(SP3_DF_in , outpath):
             SP3epoc = SP3epoc.append(miss_line)
 
         SP3epoc.sort_values("sat",inplace=True)
-        timestamp = geok.dt2sp3_timestamp(geok.numpy_dt2dt(epoc)) + "\n"
+        timestamp = conv.dt2sp3_timestamp(conv.numpy_dt2dt(epoc)) + "\n"
 
         LinesStk.append(timestamp)
 
@@ -799,9 +771,9 @@ def write_sp3(SP3_DF_in , outpath):
 
 
     ######### 2 First LINES
-    start_dt = geok.numpy_dt2dt(EpochList.min())
+    start_dt = conv.numpy_dt2dt(EpochList.min())
 
-    header_line1 = "#cP" + geok.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochList)) + "   u+U IGSXX FIT  XXX\n"
+    header_line1 = "#cP" + conv.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochList)) + "   u+U IGSXX FIT  XXX\n"
 
     delta_epoch = int(utils.most_common(np.diff(EpochList) * 10**-9))
     MJD  = conv.dt2MJD(start_dt)
@@ -1496,32 +1468,6 @@ def list_files(dire,file = None):
 
     return path
 
-
-def read_clk(file_path_in):
-    """
-    This function is discontinued, use read_clk1 instead
-    """
-
-    i  = 0
-    with open(file_path_in) as oF:
-        for l in oF:
-            i += 1
-            if 'END OF HEADER'  in l:
-                break
-
-    colnam = ['type' , 'name' , 'year' ,'month' ,'day' , 'h' ,'m' ,'s','nb_val' ,
-              'clk_bias','clk_bias_std','clk_rate','clk_rate_std','clk_accel','clk_accel_std']
-    DF = pd.read_table(file_path_in,skiprows=i,header = -1,names = colnam,delim_whitespace=True)
-
-    DF['epoc'] =  pd.to_datetime(DF[[ 'year' ,'month' ,'day','h','m','s']])
-
-    # Removing NaN columns
-    for colnam in ['clk_bias','clk_bias_std','clk_rate',
-                   'clk_rate_std','clk_accel','clk_accel_std']:
-        if np.all(np.isnan(DF[colnam])):
-            DF = DF.drop(colnam,axis=1)
-
-    return DF
 
 def clk_diff(file_1,file_2):
     if type(file_1) is str:

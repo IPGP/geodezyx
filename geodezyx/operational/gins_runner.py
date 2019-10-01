@@ -25,36 +25,33 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
-#import subprocess
-#import os
-#import time
-#import yaml
-#import geodetik as geok
-#import geo_files_converter_lib as gfc
-#import geoclass as gcls
-#import softs_runner
-#import datetime as dt
-#import genefun
-#import filecmp
-#import shlex
-#import multiprocessing as mp
-#import glob
-#import re
-#import shutil
-#import collections
-#import numpy as np
-#import sys
-#import pandas as pd
-#import copy
 
+########## BEGIN IMPORT ##########
+#### External modules
+import collections
+import copy
+import datetime as dt
+import glob
+import multiprocessing as mp
+import numpy as np
+import os
+import pandas as pd
+import re
+import shutil
+import subprocess
+import sys
+import time
+import yaml
+from bs4 import UnicodeDammit #finding the right encoding for debug
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import utils
+from geodezyx import files_rw
+from geodezyx import operational
+from geodezyx import time_series
 
-
-#finding the right encoding for debug
-from bs4 import UnicodeDammit
+##########  END IMPORT  ##########
 
 def get_gins_path(extended=False):
     try:
@@ -69,7 +66,7 @@ def get_gins_path(extended=False):
         return os.path.join(os.environ['GS_USER'],'gin')
 
 def check_if_stat_in_stationfile(stat,stationfile):
-    boolout = genefun.check_regex(stationfile,stat)
+    boolout = utils.check_regex(stationfile,stat)
     if not boolout:
         print('WARN :',stat,'not in',stationfile)
         print('       check your RINEX header and particularly')
@@ -77,7 +74,7 @@ def check_if_stat_in_stationfile(stat,stationfile):
     return boolout
 
 def check_if_DOMES_in_oceanloadfile(domes,oclofile):
-    boolout =  genefun.check_regex(oclofile,'^   ' + str(domes))
+    boolout =  utils.check_regex(oclofile,'^   ' + str(domes))
     if not boolout:
         print('WARN :',domes,'not in',oclofile)
     return boolout
@@ -256,13 +253,13 @@ def write_oceanload_file(station_file,oceanload_out_file,fes_yyyy=2004):
 #        calccntr_suffix = ''
 #
 #    # date
-#    strt_epoch , end_epoch = softs_runner.rinex_start_end(rinex_path)
-#    ses = '_' + softs_runner.rinex_session_id(strt_epoch,end_epoch,full_mode=1)
+#    strt_epoch , end_epoch = operational.rinex_start_end(rinex_path)
+#    ses = '_' + operational.rinex_session_id(strt_epoch,end_epoch,full_mode=1)
 #
 #    # Interval Initalisation
-#    # interval_line = genefun.grep(rinex_path,'INTERVAL',True)
+#    # interval_line = utils.grep(rinex_path,'INTERVAL',True)
 #    #  float(interval_line.split()[0])
-#    _ , _ , freq_rnx_true = softs_runner.rinex_start_end(rinex_path,True)
+#    _ , _ , freq_rnx_true = operational.rinex_start_end(rinex_path,True)
 #    if auto_interval:
 #        freq_rnx_str = '_' + str(int(freq_rnx_true)).zfill(2) + 's'
 #    else:
@@ -378,8 +375,8 @@ def write_oceanload_file(station_file,oceanload_out_file,fes_yyyy=2004):
 #        outfile.write( yaml.dump(director_dic,default_flow_style=False) )
 #
 #    # correcting a bug : GINS YAML interpreter can't manage false or true ...
-#    genefun.replace(director_output_path,'false','no')
-#    genefun.replace(director_output_path,'true','yes')
+#    utils.replace(director_output_path,'false','no')
+#    utils.replace(director_output_path,'true','yes')
 #
 #    return director_output_path
 
@@ -450,11 +447,11 @@ def prairie_manual(rinex_paths_in , temp_data_folder = '' ,
             print("INFO : ",expected_rinex_path, "already exists")
             rinex_path = expected_rinex_path
         # check if the RINEX is compressed ...
-        bool_comp_rnx = softs_runner.check_if_compressed_rinex(rinex_path)
+        bool_comp_rnx = operational.check_if_compressed_rinex(rinex_path)
         # ... if not crz2rnx !
         if bool_comp_rnx:
             crinex_path = rinex_path
-            rinex_path = softs_runner.crz2rnx(crinex_path,temp_data_folder)
+            rinex_path = operational.crz2rnx(crinex_path,temp_data_folder)
             if not os.path.isfile(rinex_path):
                 print("ERR : something went wrong during CRZ2RNX, skiping the file")
                 print(crinex_path)
@@ -591,7 +588,7 @@ def gen_dirs_from_rnxs(rinex_paths_in,director_generik_path,
             print(' ======== ' , i+1 , '/' , N , ' ======== ')
             print(' === ' , os.path.basename(rinex_path))
         rinex_name = os.path.basename(rinex_path)
-        dt_rinex  = geok.rinexname2dt(rinex_name)
+        dt_rinex  = conv.rinexname2dt(rinex_name)
         gins_path = get_gins_path()
 
         # be sure there is a TEMP DATA folder
@@ -607,11 +604,11 @@ def gen_dirs_from_rnxs(rinex_paths_in,director_generik_path,
             print('INFO : will be copied in ', temp_data_folder)
             rinex_path = copy_file_in_gin_folder(rinex_path,temp_data_folder)
         # check if the RINEX is compressed ...
-        bool_comp_rnx = softs_runner.check_if_compressed_rinex(rinex_path)
+        bool_comp_rnx = operational.check_if_compressed_rinex(rinex_path)
         # ... if not crz2rnx !
         if bool_comp_rnx:
             crinex_path = rinex_path
-            rinex_path = softs_runner.crz2rnx(crinex_path,temp_data_folder)
+            rinex_path = operational.crz2rnx(crinex_path,temp_data_folder)
             if not os.path.isfile(rinex_path):
                 print("ERR : something went wrong during CRZ2RNX, skiping the file")
                 print(crinex_path)
@@ -643,7 +640,7 @@ def gen_dirs_from_rnxs(rinex_paths_in,director_generik_path,
 
         # date
         try:
-            strt_epoch , end_epoch , freq_rnx_true = softs_runner.rinex_start_end(rinex_path,True)
+            strt_epoch , end_epoch , freq_rnx_true = operational.rinex_start_end(rinex_path,True)
         except:
             print("ERR : gen_dirs_from_rnxs : unable to get RINEX start/end, skiping ...", end=' ')
             print(rinex_path)
@@ -653,10 +650,10 @@ def gen_dirs_from_rnxs(rinex_paths_in,director_generik_path,
             else:
                 return ''
 
-        ses = '_' + softs_runner.rinex_session_id(strt_epoch,end_epoch,full_mode=1)
+        ses = '_' + operational.rinex_session_id(strt_epoch,end_epoch,full_mode=1)
 
         # Interval Initalisation
-        # interval_line = genefun.grep(rinex_path,'INTERVAL',True)
+        # interval_line = utils.grep(rinex_path,'INTERVAL',True)
         #  float(interval_line.split()[0])
         if auto_interval:
             freq_rnx_str = '_' + str(int(freq_rnx_true)).zfill(2) + 's'
@@ -833,8 +830,8 @@ def gen_dirs_from_rnxs(rinex_paths_in,director_generik_path,
             outfile.write( yaml.dump(director_dic,default_flow_style=False) )
 
         # correcting a bug : GINS YAML interpreter can't manage false or true ...
-        genefun.replace(director_output_path,'false','no')
-        genefun.replace(director_output_path,'true','yes')
+        utils.replace(director_output_path,'false','no')
+        utils.replace(director_output_path,'true','yes')
 
         director_output_path_lis.append(director_output_path)
 
@@ -926,8 +923,8 @@ def gen_dirs_from_double_diff(dd_files_paths_in,director_generik_path,
         dd_end_jjul   = np.max(Table_dd[12])
         dd_end_sec    = np.max(Table_dd[13])
 
-        dd_start_epoch = geok.jjulCNES2dt(dd_start_jjul) + dt.timedelta(seconds=dd_start_sec)
-        dd_end_epoch   = geok.jjulCNES2dt(dd_end_jjul)   + dt.timedelta(seconds=dd_end_sec)
+        dd_start_epoch = conv.jjulCNES2dt(dd_start_jjul) + dt.timedelta(seconds=dd_start_sec)
+        dd_end_epoch   = conv.jjulCNES2dt(dd_end_jjul)   + dt.timedelta(seconds=dd_end_sec)
 
         freq_dd_true = np.min(np.abs(np.diff(Table_dd[13])))
 
@@ -971,7 +968,7 @@ def gen_dirs_from_double_diff(dd_files_paths_in,director_generik_path,
         stats_str = '_'.join(stats_list)
         director_output_name = director_name_prefix + '_' + stats_str + '_' + \
         str(dd_start_jjul) + '_' + str(dd_start_epoch.year) + '_' + \
-        geok.dt2doy(dd_start_epoch) + '_' + str(freq_dd_true) + coord_prefix + calccntr_suffix + '.yml'
+        conv.dt2doy(dd_start_epoch) + '_' + str(freq_dd_true) + coord_prefix + calccntr_suffix + '.yml'
 
         director_output_path = os.path.join(out_director_folder,director_output_name)
         director_generik_file = open(director_generik_path)
@@ -984,8 +981,8 @@ def gen_dirs_from_double_diff(dd_files_paths_in,director_generik_path,
         director_dic['observation']['interobject_data'][1]['file'] = dd_path_dir_compatible
 
         # date
-        strt_day , strt_sec = geok.dt2jjulCNES(dd_start_epoch,False)
-        end_day  , end_sec  = geok.dt2jjulCNES(dd_end_epoch,False)
+        strt_day , strt_sec = conv.dt2jjulCNES(dd_start_epoch,False)
+        end_day  , end_sec  = conv.dt2jjulCNES(dd_end_epoch,False)
 
         director_dic['date']['arc_start'][0] = strt_day
         director_dic['date']['arc_stop'][0]  = end_day
@@ -1089,8 +1086,8 @@ def gen_dirs_from_double_diff(dd_files_paths_in,director_generik_path,
             outfile.write( yaml.dump(director_dic,default_flow_style=False) )
 
         # correcting a bug : GINS YAML interpreter can't manage false or true ...
-        genefun.replace(director_output_path,'false','no')
-        genefun.replace(director_output_path,'true','yes')
+        utils.replace(director_output_path,'false','no')
+        utils.replace(director_output_path,'true','yes')
 
         director_output_path_lis.append(director_output_path)
 
@@ -1151,7 +1148,7 @@ def dirs_copy_generik_2_working(director_name_prefix,
 #    if 'IPPP' in opts_gins_90:
 #        for grepstr in ('userext_gps__qualiteorb','userext_gps__haute_freq',
 #        'userext_gps__hor_interp'):
-#            grep_out = genefun.grep(director_path,grepstr)
+#            grep_out = utils.grep(director_path,grepstr)
 #            if grep_out == '':
 #                print "WARN : IPPP mode on, but no",grepstr," in the dir !!!"
 #
@@ -1233,7 +1230,7 @@ def run_directors(dir_paths_in,opts_gins_pc='',opts_gins_90='  ',
             for grepstr in ('userext_gps__qualiteorb','userext_gps__haute_freq',
             'userext_gps__hor_interp', 'GPS__QUALITEORB' , 'GPS__HAUTE_FREQ'   ,
             'GPS__HOR_INTERP'):
-                grep_out = genefun.grep(director_path,grepstr)
+                grep_out = utils.grep(director_path,grepstr)
                 if grep_out == '':
                     print("WARN : IPPP mode on, but no",grepstr," in the dir !!!")
 
@@ -1249,7 +1246,7 @@ def run_directors(dir_paths_in,opts_gins_pc='',opts_gins_90='  ',
         print('INFO : submit. command : ' , command)
 
         gins_path = get_gins_path()
-        log_path = genefun.create_dir(os.path.join(gins_path,'python_logs'))
+        log_path = utils.create_dir(os.path.join(gins_path,'python_logs'))
         log_path = os.path.join(gins_path,'python_logs',director_name + ".log")
 
         with open(log_path, 'w+') as f:
@@ -1316,7 +1313,7 @@ def run_dirs_multislots(director_lis,slots_lis=['','U','L','R'] ,
     if type(slots_lis) is int:
         slots_lis = [''] * slots_lis
 
-    chunk = genefun.chunkIt(director_lis,len(slots_lis))
+    chunk = utils.chunkIt(director_lis,len(slots_lis))
     pool_size = len(slots_lis)
     pool = mp.Pool(processes=pool_size)
     ZIP = list(zip(chunk,[slot + opts_gins_pc for slot in slots_lis],
@@ -1365,12 +1362,12 @@ def get_rinex_list(parent_folder,specific_stats=[],invert=False,compressed=True,
         wholefilelist = list(set(wholefilelist))
 
         if compressed:
-            rnxregex = softs_runner.rinex_regex()
+            rnxregex = operational.rinex_regex()
         else:
-            rnxregex = softs_runner.rinex_regex(False)
+            rnxregex = operational.rinex_regex(False)
 
         rinexfilelist = [fil for fil in wholefilelist if re.search(rnxregex, fil)]
-    elif genefun.is_iterable(parent_folder):
+    elif utils.is_iterable(parent_folder):
         # is parent_folder is a list containing already found RINEXs
         rinexfilelist = parent_folder
 
@@ -1395,7 +1392,7 @@ def get_rinex_list(parent_folder,specific_stats=[],invert=False,compressed=True,
     goodrnxfilelist_date = []
     end = end + dt.timedelta(seconds = 86399)
     for rnx in goodrnxfilelist:
-        dtrnx = geok.rinexname2dt(os.path.basename(rnx))
+        dtrnx = conv.rinexname2dt(os.path.basename(rnx))
         if start <= dtrnx <= end:
             goodrnxfilelist_date.append(rnx)
     if len(goodrnxfilelist_date) != len(goodrnxfilelist):
@@ -1589,7 +1586,7 @@ def bad_sat_finder(orbfilein,egrep_ready=True):
         satid = int(f[0])
         if satid not in satdic:
             satdic[satid] = []
-        D = geok.jjulCNES2dt(int(f[1])) + dt.timedelta(seconds=float(f[2]))
+        D = conv.jjulCNES2dt(int(f[1])) + dt.timedelta(seconds=float(f[2]))
         satdic[satid].append(D)
 
     epochdic = dict()
@@ -1598,7 +1595,7 @@ def bad_sat_finder(orbfilein,egrep_ready=True):
         epochdic[k] = len(v)
         epochlis.append( len(v))
 
-    nominal_epoch = genefun.most_common(epochlis)
+    nominal_epoch = utils.most_common(epochlis)
 
     bad_sat_lis = []
 
@@ -1616,7 +1613,7 @@ def bad_sat_finder(orbfilein,egrep_ready=True):
 def orbit_cleaner(orbfilein,orbfileout):
     """remove sat of a gins orbit file without a nominal number of epoch """
     bad_sat_lis = bad_sat_finder(orbfilein)
-    goodsatslinlis = genefun.grep(orbfilein,bad_sat_lis,invert=1,regex=1)
+    goodsatslinlis = utils.grep(orbfilein,bad_sat_lis,invert=1,regex=1)
 
     filobj = open(orbfileout,'w+')
 
@@ -1654,7 +1651,7 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
     else:
         calc_center_prefix =  calc_center
 
-    week , dow = geok.dt2gpstime(centraldate)
+    week , dow = conv.dt2gpstime(centraldate)
     week , dow = str(week) , str(dow)
     centdate = week + dow + centraldate.strftime('_%Y_%j')
     catoutorb  = calc_center_prefix + centdate + '.3d.orb.gin'
@@ -1675,7 +1672,7 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
         return cleanoutorb_path , catoutclk_path
 
     # downloading orbits
-    sp3Zlis = softs_runner.multi_downloader_orbs_clks(temp_dir,strtdt, enddt,
+    sp3Zlis = operational.multi_downloader_orbs_clks(temp_dir,strtdt, enddt,
                            sp3clk='sp3', calc_center=calc_center,
                            archive_center=archive_center,
                            repro = repro,archtype='/',sorted_mode=0)
@@ -1684,7 +1681,7 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
 
     # downloading clocks
     # 30sec clock prioritary
-    clkZlis = softs_runner.multi_downloader_orbs_clks(temp_dir,strtdt, enddt,
+    clkZlis = operational.multi_downloader_orbs_clks(temp_dir,strtdt, enddt,
                            sp3clk='clk_30s', calc_center=calc_center,
                            archive_center=archive_center,
                            repro = repro,archtype='/',sorted_mode=0)
@@ -1695,7 +1692,7 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
     #standard clock else
     if clkZlis == []:
         print('INFO : clock download : no 30s clock found, trying std. clocks')
-        clkZlis = softs_runner.multi_downloader_orbs_clks(temp_dir,strtdt, enddt,
+        clkZlis = operational.multi_downloader_orbs_clks(temp_dir,strtdt, enddt,
                                sp3clk='clk', calc_center=calc_center,
                                archive_center=archive_center,
                                repro = repro,archtype='/',sorted_mode=0)
@@ -1713,11 +1710,11 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
     sp3lis = []
     for Zfil in sp3Zlis:
         if Zfil[-2:] == ".Z":
-            uncomp_fil = genefun.uncompress(Zfil)
+            uncomp_fil = utils.uncompress(Zfil)
         else:
             uncomp_fil = Zfil
         # some SP3 haven't EOF at the end ...
-        if not genefun.grep_boolean(uncomp_fil,'EOF'):
+        if not utils.grep_boolean(uncomp_fil,'EOF'):
             with open(uncomp_fil, "a") as myfile:
                 print('INFO : uncompress SP3 : adding a EOF line')
                 myfile.write("EOF")
@@ -1729,7 +1726,7 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
     clklis = []
     for Zfil in clkZlis:        
         if Zfil[-2:] == ".Z":
-            uncomp_fil = genefun.uncompress(Zfil)
+            uncomp_fil = utils.uncompress(Zfil)
         else:
             uncomp_fil = Zfil
         clklis.append(uncomp_fil)
@@ -1746,11 +1743,11 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
 
 
     # cating orbits
-    genefun.cat(catoutorb_path,*gins_orb_lis)
+    utils.cat(catoutorb_path,*gins_orb_lis)
     sort_orbit_gins(catoutorb_path,sortoutorb_path)
 
     # test, checking if the cat was OK
-    catoutclk_nline = genefun.line_count(sortoutorb_path)
+    catoutclk_nline = utils.line_count(sortoutorb_path)
     if catoutclk_nline < 7500:
         print("WARN : the 3days orb file (~8000lines) looks small ! ")
         print(catoutclk_nline,"lines found in", sortoutorb_path)
@@ -1758,8 +1755,8 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
 
     # cleaning the orbits file
     _ = orbit_cleaner(sortoutorb_path,cleanoutorb_path)
-    Nsort  = genefun.line_count(sortoutorb_path)
-    Nclean = genefun.line_count(cleanoutorb_path)
+    Nsort  = utils.line_count(sortoutorb_path)
+    Nclean = utils.line_count(cleanoutorb_path)
 
     badsatlis = bad_sat_finder(sortoutorb_path,0)
 
@@ -1767,7 +1764,7 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
         print("INFO : " , len(badsatlis) , "bad sats." , Nsort - Nclean , "epochs del.")
         print("       bad sats :", badsatlis)
     # cating clocks
-    genefun.cat(catoutclk_path,*gins_clk_lis)
+    utils.cat(catoutclk_path,*gins_clk_lis)
 
     if rm_temp_files:
         try:
@@ -1791,13 +1788,13 @@ def export_results_gins_listing(listings_list_in,outpath,
         print("ERR : export_results_gins_listing : listings list is empty ...")
         return None
     if static_or_kinematic == 'stat':
-        ts = gcls.read_gins_multi_raw_listings(listings_list_in)
+        ts = files_rw.read_gins_multi_raw_listings(listings_list_in)
     elif static_or_kinematic == 'kine':
         tslist = []
         for lising in listings_list_in:
-            tslist.append(gcls.read_gins(lising))
-        ts = gcls.merge_ts(tslist)
-    gcls.export_ts(ts,outpath,coordtype,outprefix)
+            tslist.append(files_rw.read_gins(lising))
+        ts = time_series.merge_ts(tslist)
+    time_series.export_ts(ts,outpath,coordtype,outprefix)
     return outpath
 
 
@@ -1875,10 +1872,10 @@ def double_diff_binom(rinex_path_A,rinex_path_B,temp_data_folder='',
     statA = os.path.basename(rinex_path_A)[0:4]
     statB = os.path.basename(rinex_path_B)[0:4]
 
-    strt_epochA , end_epochA , freq_rnx_trueA = softs_runner.rinex_start_end(rinex_path_A,True)
-    strt_epochB , end_epochB , freq_rnx_trueB = softs_runner.rinex_start_end(rinex_path_B,True)
+    strt_epochA , end_epochA , freq_rnx_trueA = operational.rinex_start_end(rinex_path_A,True)
+    strt_epochB , end_epochB , freq_rnx_trueB = operational.rinex_start_end(rinex_path_B,True)
 
-    year,doy = geok.dt2doy_year(strt_epochA)
+    year,doy = conv.dt2doy_year(strt_epochA)
 
     argdict = dict()
     #argdict['-ignore']  = 'EG'
@@ -1886,10 +1883,10 @@ def double_diff_binom(rinex_path_A,rinex_path_B,temp_data_folder='',
     praA_path = prairie_manual(rinex_path_A,temp_data_folder=temp_data_folder,argsdict=argdict)
     praB_path = prairie_manual(rinex_path_B,temp_data_folder=temp_data_folder,argsdict=argdict)
 
-    praABcat_name    = gf.join_improved('_',statA,statB,year,doy) + '.pra.cat'
+    praABcat_name    = utils.join_improved('_',statA,statB,year,doy) + '.pra.cat'
     praABcat_path    = os.path.join(temp_data_folder,praABcat_name)
 
-    gf.cat(praABcat_path,praA_path,praB_path)
+    utils.cat(praABcat_path,praA_path,praB_path)
 
     dd_path = double90_runner(praABcat_path,temp_data_folder=temp_data_folder)
 
@@ -1927,11 +1924,11 @@ def double_diff_multi(rinex_path_list,temp_data_folder='',
         print('****** conversion to GINS (PRARIE) format of :')
         print(rinex_path)
 
-        bool_comp_rnx = softs_runner.check_if_compressed_rinex(rinex_path)
+        bool_comp_rnx = operational.check_if_compressed_rinex(rinex_path)
         # ... if not crz2rnx !
         if bool_comp_rnx:
             crinex_path = rinex_path
-            rinex_path = softs_runner.crz2rnx(crinex_path,temp_data_folder)
+            rinex_path = operational.crz2rnx(crinex_path,temp_data_folder)
             if not os.path.isfile(rinex_path):
                 print("ERR : something went wrong during CRZ2RNX, skiping the file")
                 print(crinex_path)
@@ -1939,8 +1936,8 @@ def double_diff_multi(rinex_path_list,temp_data_folder='',
 
         statA = os.path.basename(rinex_path)[0:4]
 
-        strt_epochA , end_epochA , freq_rnx_trueA = softs_runner.rinex_start_end(rinex_path,True)
-        doy , year = geok.dt2doy_year(strt_epochA)
+        strt_epochA , end_epochA , freq_rnx_trueA = operational.rinex_start_end(rinex_path,True)
+        doy , year = conv.dt2doy_year(strt_epochA)
 
         argdict = dict()
 
@@ -1958,13 +1955,13 @@ def double_diff_multi(rinex_path_list,temp_data_folder='',
 
 
 
-    pracat_name    = genefun.join_improved('_',year,doy,*list(set(stats_list))) + '.pra.cat'
+    pracat_name    = utils.join_improved('_',year,doy,*list(set(stats_list))) + '.pra.cat'
     pracat_path    = os.path.join(temp_data_folder,pracat_name)
 
     print('****** Concatenation of the PRAIRIE files in :')
     print(pracat_path)
 
-    genefun.cat(pracat_path,*prarie_path_list)
+    utils.cat(pracat_path,*prarie_path_list)
 
     print('****** generation of the Double Diff. file :')
 

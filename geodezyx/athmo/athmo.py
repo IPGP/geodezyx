@@ -6,13 +6,25 @@ Created on Tue Jul  9 09:23:54 2019
 @author: Chaiyaporn Kitpracha
 """
 
+########## BEGIN IMPORT ##########
+#### External modules
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import re
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import files_rw
+from geodezyx import stats
+from geodezyx import time_series
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-
-from geodezyx import np,conv,re,df
-
+##########  END IMPORT  ##########
 
 def trop_saast(p,dlat,hell,t=0,e=0,mode="dry"):
     """
@@ -631,13 +643,13 @@ def compare_trop_ties(input_file,STA1,STA2,coord_file="",grid_met="",apply_ties=
             sys.exit()
 
         if mode_coor == "epos" and coord_t == "static":
-            coord = read_epos_sta_coords_mono(coord_file)
+            coord = files_rw.read_epos_sta_coords_mono(coord_file)
             # Extract coordinates Ref station in Lat. Lon. height
             coord_ref = coord[coord.site==STA1]
-            lat_ref , lon_ref , h_ref = geok.XYZ2GEO(coord_ref.x,coord_ref.y,coord_ref.z,False)
+            lat_ref , lon_ref , h_ref = conv.XYZ2GEO(coord_ref.x,coord_ref.y,coord_ref.z,False)
             # Extract coordinates Rov station in Lat. Lon. height
             coord_rov = coord[coord.site==STA2]
-            lat_rov , lon_rov , h_rov = geok.XYZ2GEO(coord_rov.x,coord_rov.y,coord_rov.z,False)
+            lat_rov , lon_rov , h_rov = conv.XYZ2GEO(coord_rov.x,coord_rov.y,coord_rov.z,False)
 
             #Merge coordinates results
             coord_res = time_series.merge(coord_ref,coord_rov,how='outer',on='MJD_ref')
@@ -652,13 +664,13 @@ def compare_trop_ties(input_file,STA1,STA2,coord_file="",grid_met="",apply_ties=
                                         'sVz_y'],axis=1)
 
         elif mode_coor == "sinex" and coord_t == "static":
-            coord = gfc.read_sinex(coord_file,True)
+            coord = files_rw.read_sinex(coord_file,True)
              # Extract coordinates Ref station in Lat. Lon. height
             coord_ref = coord[coord.STAT==STA1]
-            lat_ref , lon_ref , h_ref = geok.XYZ2GEO(coord_ref.x,coord_ref.y,coord_ref.z,False)
+            lat_ref , lon_ref , h_ref = conv.XYZ2GEO(coord_ref.x,coord_ref.y,coord_ref.z,False)
             # Extract coordinates Rov station in Lat. Lon. height
             coord_rov = coord[coord.STAT==STA2]
-            lat_rov , lon_rov , h_rov = geok.XYZ2GEO(coord_rov.x,coord_rov.y,coord_rov.z,False)
+            lat_rov , lon_rov , h_rov = conv.XYZ2GEO(coord_rov.x,coord_rov.y,coord_rov.z,False)
 
             #Merge coordinates results
             coord_res = pd.merge(coord_ref,coord_rov,how='outer',on='epoc')
@@ -671,7 +683,7 @@ def compare_trop_ties(input_file,STA1,STA2,coord_file="",grid_met="",apply_ties=
                                        'start_y', 'end_y'],axis=1)
 
         elif mode_coor == "epos" and coord_t == "kinematic":
-            coord = read_epos_sta_kinematics(coord_file)
+            coord = files_rw.read_epos_sta_kinematics(coord_file)
             # Extract coordinates Ref station in Lat. Lon. height
             coord_ref = coord[coord.site==STA1.lower()]
             f_x_ref , f_y_ref , f_z_ref = interpolator_with_extrapolated(coord_ref.MJD_epo,coord_ref.x,coord_ref.y,coord_ref.z)
@@ -686,7 +698,7 @@ def compare_trop_ties(input_file,STA1,STA2,coord_file="",grid_met="",apply_ties=
             x_rov_new = f_x_rov(conv.dt2MJD(diff_pd.epoc))
             y_rov_new = f_y_rov(conv.dt2MJD(diff_pd.epoc))
             z_rov_new = f_z_rov(conv.dt2MJD(diff_pd.epoc))
-            lat_rov , lon_rov , h_rov = geok.XYZ2GEO(x_rov_new,y_rov_new,z_rov_new,False)
+            lat_rov , lon_rov , h_rov = conv.XYZ2GEO(x_rov_new,y_rov_new,z_rov_new,False)
 
             diff_pd['lat_ref'] , diff_pd['lon_ref'] , diff_pd['h_ref'] = lat_ref , lon_ref , h_ref
             diff_pd['lat_rov'] , diff_pd['lon_rov'] , diff_pd['h_rov'] = lat_rov , lon_rov , h_rov
@@ -811,7 +823,7 @@ def plot_trop_ties(df,ref_sta,rov_sta,analy_coor=False,analy_num_obs=False,df_co
     plt.tight_layout()
     plt.suptitle("Total delay ties of " + ref_sta + "-" + rov_sta)
     if savePlot:
-        export_ts_figure_pdf(fig,filePath,fileName,True)
+        time_series.export_ts_figure_pdf(fig,filePath,fileName,True)
 
     plt.show()
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Thu Feb 21 13:37:40 2019
@@ -26,16 +25,21 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
+########## BEGIN IMPORT ##########
+#### External modules
+import numpy as np
+import scipy
+import re
+
+#### geodeZYX modules
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-from geodezyx import np,scipy,re,sys,utils
-#import geod.utils as utils
-
-
-#sys.dont_write_bytecode = True
-
+##########  END IMPORT  ##########
 #### Coordinates conversion
     
 #   _____                    _ _             _               _____                              _             

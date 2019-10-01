@@ -6,10 +6,21 @@ Created on Fri Aug 16 11:55:12 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import glob
+import os 
+import shutil
+import subprocess
 
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import files_rw
+from geodezyx import operational
+from geodezyx import utils
+
+##########  END IMPORT  ##########
 
 def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
                  XYZbase  = [], XYZrover = [] , outtype = 'XYZ',mode = 'short',
@@ -17,23 +28,23 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
                  calc_center='igs' , forced_sp3_path = ''):
 
     # paths & files
-    working_dir = genefun.create_dir(working_dir)
-    temp_dir    = genefun.create_dir(os.path.join(working_dir,'TEMP'))
-    out_dir     = genefun.create_dir(os.path.join(working_dir,'OUTPUT'))
+    working_dir = utils.create_dir(working_dir)
+    temp_dir    = utils.create_dir(os.path.join(working_dir,'TEMP'))
+    out_dir     = utils.create_dir(os.path.join(working_dir,'OUTPUT'))
 
-    if check_if_compressed_rinex(rnx_rover):
-        rnx_rover = crz2rnx(rnx_rover,temp_dir)
+    if operational.check_if_compressed_rinex(rnx_rover):
+        rnx_rover = operational.crz2rnx(rnx_rover,temp_dir)
     else:
         shutil.copy(rnx_rover,temp_dir)
 
-    if check_if_compressed_rinex(rnx_base):
-        rnx_base  = crz2rnx(rnx_base,temp_dir)
+    if operational.check_if_compressed_rinex(rnx_base):
+        rnx_base  = operational.crz2rnx(rnx_base,temp_dir)
     else:
         shutil.copy(rnx_base,temp_dir)
 
     # RINEX START & END
-    rov_srt, rov_end , rov_itv = rinex_start_end(rnx_rover,1)
-    bas_srt, bas_end , bas_itv = rinex_start_end(rnx_base,1)
+    rov_srt, rov_end , rov_itv = operational.rinex_start_end(rnx_rover,1)
+    bas_srt, bas_end , bas_itv = operational.rinex_start_end(rnx_base,1)
 
     # RINEX NAMES
     rov_name = os.path.basename(rnx_rover)[0:4]
@@ -60,22 +71,22 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     confobj.write(' '.join((' ',rov_name_uper,os.path.basename(rnx_rover),'K'))+ '\n')
     confobj.write('\n')
 
-    date = geok.rinexname2dt(os.path.basename(rnx_rover))
+    date = conv.rinexname2dt(os.path.basename(rnx_rover))
 
     # Nav File
     if forced_sp3_path == '':
         strt_rnd = dt.datetime(*bas_srt.timetuple()[:3])
         end_rnd  = dt.datetime(*bas_end.timetuple()[:3])
-        orblis = multi_downloader_orbs_clks( temp_dir , strt_rnd , end_rnd ,
+        orblis = operational.multi_downloader_orbs_clks( temp_dir , strt_rnd , end_rnd ,
                                             archtype='/',
                                             calc_center = calc_center)
         
 
         #sp3Z = orblis[0]
-        sp3 = [genefun.uncompress(sp3Z) for sp3Z in orblis]
+        sp3 = [utils.uncompress(sp3Z) for sp3Z in orblis]
         sp3 = [e  if ".sp3" in e[-5:] else e + ".sp3" for e in sp3]
     else:
-        if genefun.is_iterable(forced_sp3_path):
+        if utils.is_iterable(forced_sp3_path):
             sp3 = forced_sp3_path
         else:
             sp3 = [forced_sp3_path]
@@ -128,7 +139,7 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     confobj.write(' ante_off \n')
 
     Antobj_rov , Recobj_rov , Siteobj_rov , Locobj_rov = \
-    gfc.read_rinex_2_dataobjts(rnx_rover)
+    operational.read_rinex_2_dataobjts(rnx_rover)
 
     confobj.write(' '.join([' ', rov_name_uper ,
                             str(Antobj_rov.North_Ecc) ,
@@ -137,7 +148,7 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
                             Antobj_rov.Antenna_Type , '\n']))
 
     Antobj_bas , Recobj_bas , Siteobj_bas , Locobj_bas = \
-    gfc.read_rinex_2_dataobjts(rnx_base)
+    operational.read_rinex_2_dataobjts(rnx_base)
 
     confobj.write(' '.join([' ', bas_name_uper ,
                             str(Antobj_bas.North_Ecc) ,
@@ -164,8 +175,8 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     confobj.close()
     #END OF FILE WRITING
 
-    dowstring = ''.join([str(e) for e in geok.dt2gpstime(date)])
-    bigcomand = ' '.join(("track -f" ,  out_conf_fil , '-d' , geok.dt2doy(date) ,'-w', dowstring))
+    dowstring = ''.join([str(e) for e in conv.dt2gpstime(date)])
+    bigcomand = ' '.join(("track -f" ,  out_conf_fil , '-d' , conv.dt2doy(date) ,'-w', dowstring))
 
     print('INFO : command launched :')
     print(bigcomand)
@@ -180,7 +191,7 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*cmd*'))
 
     Antobj_rov , Recobj_rov , Siteobj_rov , Locobj_rov = \
-    gfc.read_rinex_2_dataobjts(rnx_rover)
+    files_rw.read_rinex_2_dataobjts(rnx_rover)
 
     [shutil.copy(e,out_dir) for e in outfiles]
     [os.remove(e) for e in outfiles]
@@ -191,8 +202,8 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
 
 
 def run_track(temp_dir,exp_full_name,out_conf_fil,date,rnx_rover):
-    dowstring = ''.join([str(e) for e in geok.dt2gpstime(date)])
-    bigcomand = ' '.join(("track -f" ,  out_conf_fil , '-d' , geok.dt2doy(date) ,'-w', dowstring))
+    dowstring = ''.join([str(e) for e in conv.dt2gpstime(date)])
+    bigcomand = ' '.join(("track -f" ,  out_conf_fil , '-d' , conv.dt2doy(date) ,'-w', dowstring))
 
     print('INFO : command launched :')
     print(bigcomand)
@@ -207,7 +218,7 @@ def run_track(temp_dir,exp_full_name,out_conf_fil,date,rnx_rover):
     outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*cmd*'))
 
     Antobj_rov , Recobj_rov , Siteobj_rov , Locobj_rov = \
-    gfc.read_rinex_2_dataobjts(rnx_rover)
+    files_rw.read_rinex_2_dataobjts(rnx_rover)
 
     [shutil.copy(e,out_dir) for e in outfiles]
     [os.remove(e) for e in outfiles]
