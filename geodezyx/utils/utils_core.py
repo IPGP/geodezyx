@@ -6,9 +6,24 @@ Created on Fri Jun 28 14:27:56 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import inspect
+import numpy as np
+import os
+import pickle
+import re
+import scipy
+import sys
+import tempfile
+import time
+import uuid
+#### geodeZYX modules
+
+
+##########  END IMPORT  ##########
+
 
 
 def clear_all():
@@ -405,7 +420,7 @@ def extract_text_between_elements_2(file_path , elt_start , elt_end,
     return_string = False : returns a list of the matched lines
     
     NB : in SINEX context, with "+MARKER", use backslash i.e.
-         "\+MARKER"    
+         "\\+MARKER"    
          
     NB2 : think about StingIO for a Pandas DataFrame Handeling
     https://docs.python.org/2/library/stringio.html

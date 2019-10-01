@@ -6,9 +6,18 @@ Created on Wed Jul 31 14:12:12 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+########## BEGIN IMPORT ##########
+#### External modules
+import bisect
+import collections
+import itertools
+import natsort
+import numpy as np
+#### geodeZYX modules
+
+
+##########  END IMPORT  ##########
 
 
 def is_listoflist(inp):
@@ -445,7 +454,7 @@ def dicofdic(mat,names):
     # Fabrique un dictionnaire 2D dic[nom1][nom2] = M[n1,n2]
     # http://stackoverflow.com/questions/13326042/2d-dictionary-with-multiple-keys-per-value
 
-    d2_dict = defaultdict(dict)
+    d2_dict = collections.defaultdict(dict)
 
     for i in range(mat.shape[0]):
         for j in range(mat.shape[1]):

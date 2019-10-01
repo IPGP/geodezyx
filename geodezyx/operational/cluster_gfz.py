@@ -6,11 +6,25 @@ Created on Fri Aug 16 11:55:51 2019
 @author: psakicki
 """
 
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import numpy as np
+import subprocess
+import re
+import time
+
+
+#### geodeZYX modules
+from geodezyx import utils
+
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-
+##########  END IMPORT  ##########
 def cluster_GFZ_run(commands_list,
                     bunch_on_off = True,
                     bunch_job_nbr = 10,
@@ -27,7 +41,7 @@ def cluster_GFZ_run(commands_list,
     i_bunch = 0
 
     if bj_check_user == "auto":
-        bj_check_user=genefun.get_username()
+        bj_check_user=utils.get_username()
 
     log_path = "/home/" + bj_check_user + "/test_tmp.log"
     LOGobj = open(log_path , 'w+')

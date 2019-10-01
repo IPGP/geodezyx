@@ -4,11 +4,30 @@ Created on Fri Aug  2 17:38:41 2019
 
 @author: psakicki
 """
+
+########## BEGIN IMPORT ##########
+#### External modules
+import copy
+import datetime as dt
+import matplotlib.pyplot as plt
+import numpy as np
+import os 
+import scipy
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import stats
+from geodezyx import utils
+from geodezyx import time_series
+from geodezyx import reffram
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
+##########  END IMPORT  ##########
 
-from geodezyx.time_series import *
+
 
 def print4compar(dA,dB,dC,dD,coortype):
 
@@ -44,9 +63,9 @@ def print4compar(dA,dB,dC,dD,coortype):
     print('')
 
     print("RMS3D : sqrt((RMS_{}**2 + RMS_{}**2 + RMS_{}**2)/3 ) ".format(Astr,Bstr,Cstr))
-    print(geok.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB),stats.RMSmean(dC)]))
+    print(stats.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB),stats.RMSmean(dC)]))
     print("RMS2D : uniquement sur les 2 composantes plani")
-    print(geok.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB)]))
+    print(stats.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB)]))
     print('')
 
 def print4compar_tabular(dicolist,split=0,print_2D3D_if_any=True):
@@ -141,8 +160,6 @@ def print4compar_tabular(dicolist,split=0,print_2D3D_if_any=True):
         line.append(stats.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB)]))
 
         LINES_STK.append(line)
-
-    LINES_STK_orig = list(LINES_STK)
 
     if split != 0:
         LINES_arr = np.vstack(LINES_STK)
@@ -355,31 +372,31 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
                 print("Nettoyage par la MAD")
                 print("------------------------------")
             dAin = dA
-            dA,bb = geok.outiler_mad(dA,seuil=seuil)
+            dA,bb = stats.outiler_mad(dA,seuil=seuil)
             dAout = dA
             TA = conv.posix2dt(np.array(Tref[bb]))
 
             dBin = dB
-            dB,bb = geok.outiler_mad(dB,seuil=seuil)
+            dB,bb = stats.outiler_mad(dB,seuil=seuil)
             dBout = dB
             TB = conv.posix2dt(np.array(Tref[bb]))
 
             dCin = dC
-            dC,bb = geok.outiler_mad(dC,seuil=seuil)
+            dC,bb = stats.outiler_mad(dC,seuil=seuil)
             dCout = dC
             TC = conv.posix2dt(np.array(Tref[bb]))
 
             dDin = dD
-            dD,bb = geok.outiler_mad(dD,seuil=seuil)
+            dD,bb = stats.outiler_mad(dD,seuil=seuil)
             TD = conv.posix2dt(np.array(Tref[bb]))
             dDout = dD
             if D2n3:
                 dD2Din = dD2D
-                dD2D,bb = geok.outiler_mad(dD2D,seuil=seuil)
+                dD2D,bb = stats.outiler_mad(dD2D,seuil=seuil)
                 TD2D = conv.posix2dt(np.array(Tref[bb]))
                 dD2Dout = dD2D
                 dD3Din = dD3D
-                dD3D,bb = geok.outiler_mad(dD3D,seuil=seuil)
+                dD3D,bb = stats.outiler_mad(dD3D,seuil=seuil)
                 TD3D = conv.posix2dt(np.array(Tref[bb]))
                 dD3Dout = dD3D
 
@@ -530,11 +547,11 @@ def mad_cleaner(tsin,seuil=3.5,method='dist',coortype='ABC',
     D = np.sqrt(A ** 2 + B ** 2 + C ** 2)
 
     if method == 'dist':
-        Dout , bb = geok.outiler_mad(D,seuil)
+        Dout , bb = stats.outiler_mad(D,seuil)
     if method == 'indep':
-        Aout , bbA = geok.outiler_mad(A,seuil)
-        Bout , bbB = geok.outiler_mad(B,seuil)
-        Cout , bbC = geok.outiler_mad(C,seuil)
+        Aout , bbA = stats.outiler_mad(A,seuil)
+        Bout , bbB = stats.outiler_mad(B,seuil)
+        Cout , bbC = stats.outiler_mad(C,seuil)
 
         bb = bbA * bbB * bbC
 
@@ -707,7 +724,7 @@ def export_ts_figure_pdf(fig,export_path,filename,close=False):
 
     if type(fig) is int:
         f = plt.figure(fig)
-    elif type(fig) is Figure:
+    elif type(fig) is plt.Figure:
         f = fig
 
     f.set_size_inches(16.53,11.69)
@@ -825,6 +842,8 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
 
     outfile will be writed in
     /outdir/outprefixSTAT.neu
+    
+    NB: The XYZ mode is quite dirty (191001)
     """
     if not hasattr(tsin[0],'X'):
         print('WARN : export_ts_as_neu : no XYZ in ts')
@@ -833,12 +852,12 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
         noXYZ = False
 
     tswork = copy.deepcopy(tsin)
-    if coordtype == 'XYZ':
-        mp = tswork.mean_posi()
-        tswork.ENUcalc(mp)
+    #if coordtype == 'XYZ':
+    #    mp = tswork.mean_posi()
+    #    tswork.ENUcalc(mp)
     outpath = outdir +'/' + outprefix + tswork.stat + '.neu'
     outfile = open(outpath,'w+')
-    E,N,U,T,sE,sN,sU = tswork.to_list('ENU')
+    E,N,U,T,sE,sN,sU = tswork.to_list(coordtype)
     first_pt = tswork.pts[0]
     if noXYZ:
         first_pt.X = 0.
@@ -876,10 +895,17 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
             outfile.write('# offset {} 7\n'.format(conv.toYearFraction(disc)))
         outfile.write('#\n')
     # write the data
-    outfile.write('#  Year         DN           DE           DH        SDN       SDE       SDH\n')
+    if coordtype == "ENU":
+        outfile.write('#  Year         DN           DE           DH        SDN       SDE       SDH\n')  
+    elif coordtype == "XYZ":
+        outfile.write('#  Year         DX           DY           DZ        SDX       SDY       SDZ\n')  
+        
     for e,n,u,t,se,sn,su in zip(E,N,U,T,sE,sN,sU):
         t = conv.toYearFraction(conv.posix2dt(t))
-        outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
+        if coordtype == "ENU":        
+            outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
+        elif coordtype == "XYZ":
+            outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,e-e0,n-n0,u-u0,se,sn,su))
 
     print('INFO : timeserie exported in ' + outpath)
     return None
@@ -897,7 +923,6 @@ def export_ts_as_hector_enu(tsin,outdir,outprefix,coordtype = 'ENU'):
     """
 
     print("NOT IMPLEMENTED YET !")
-
 
     return None
 
@@ -971,7 +996,7 @@ def decimate_cleaner(tsin,minval,in_place = False):
     else:
         tsout = tsin
     if minval == 0:
-        return ts_out
+        return tsout
 
     tsout.del_data()
     for pt in tsin.pts:
@@ -1005,7 +1030,7 @@ def mean_list_of_pts(ptslisin):
 
     Tlis = [p.T for p in ptslisin]
     T = ((np.max(Tlis) - np.min(Tlis)) / 2.) + np.min(Tlis)
-    pt = Point(E,N,U,T,'ENU',sE,sN,sU,ptslisin[0].name)
+    pt = time_series.Point(E,N,U,T,'ENU',sE,sN,sU,ptslisin[0].name)
 
     return pt
 
@@ -1027,7 +1052,7 @@ def merge_ts(ts_list_in):
     for ts in ts_list_in:
         pts_list_merged = pts_list_merged + ts.pts
 
-    ts_out = TimeSeriePoint()
+    ts_out = time_series.TimeSeriePoint()
     ts_out.pts = pts_list_merged
     ts_out.anex = ts_list_in[0].anex
     ts_out.interval_nominal()
@@ -1044,9 +1069,9 @@ def time_win(tsin,windows,mode='keep',outbool=False):
     tsout = copy.copy(tsin)
     tsout.del_data()
 
-    if isinstance(tsout,TimeSeriePoint):
+    if isinstance(tsout,time_series.TimeSeriePoint):
         data = 'pts'
-    elif isinstance(tsout,TimeSerieObs):
+    elif isinstance(tsout,time_series.TimeSerieObs):
         data = 'obs'
     else:
         print('BUG : time_win : ca chie')
@@ -1185,15 +1210,15 @@ def rotate_pt_cls_solo(tsattin,pointin,Rtype='R1', xyzreftuple = ([1, 0, 0], [0,
 
     A,B,C,_,_ = pointin()
 
-    ptrotlis = geok.rotate_points(R,P,Y,[np.array([A,B,C])],Rtype,xyzreftuple,angtype)
+    ptrotlis = XXX.rotate_points(R,P,Y,[np.array([A,B,C])],Rtype,xyzreftuple,angtype)
 
     ptrotlis = utils.shrink_listoflist(ptrotlis)
 
-    tsout = TimeSeriePoint()
+    tsout = time_series.TimeSeriePoint()
 
     for p,t in zip(ptrotlis,T):
         #print p
-        tsout.add_point(Point(p[0],p[1],p[2],t,initype=pointin.initype))
+        tsout.add_point(time_series.Point(p[0],p[1],p[2],t,initype=pointin.initype))
 
     return tsout
 
@@ -1360,7 +1385,7 @@ def refENU_for_tslist(tslist_in, tsref_marker = 0):
         Y = np.mean([renu.Y for renu in refENU_stk])
         Z = np.mean([renu.Z for renu in refENU_stk])
 
-        refENU = Point(X,Y,Z,0,initype='XYZ')
+        refENU = time_series.Point(X,Y,Z,0,initype='XYZ')
 
     else:
         refENU = tslist_in[tsref_marker].mean_posi()
@@ -1381,14 +1406,14 @@ def time_win_multi(inplis):
     return tsoutlis
 
 def ts_from_list(A,B,C,T,initype,sA=[],sB=[],sC=[],stat='STAT',name='NoName'):
-    tsout = TimeSeriePoint()
+    tsout = time_series.TimeSeriePoint()
     if len(sA) == 0:
         for a,b,c,t in zip(A,B,C,T):
-            pt = Point(a,b,c,t,initype)
+            pt = time_series.Point(a,b,c,t,initype)
             tsout.add_point(pt)
     else:
         for a,b,c,t,sa,sb,sc in zip(A,B,C,T,sA,sB,sC):
-            pt = Point(a,b,c,t,initype,sa,sb,sc)
+            pt = time_series.Point(a,b,c,t,initype,sa,sb,sc)
             tsout.add_point(pt)
     tsout.stat = stat
     tsout.name = name

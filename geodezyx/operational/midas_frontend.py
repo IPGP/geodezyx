@@ -6,10 +6,22 @@ Created on Fri Aug 16 11:48:35 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import glob
+import matplotlib.pyplot as plt
+import numpy as np
+import os 
+import pandas as pd
+import shutil
+import subprocess
 
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import stats
+from geodezyx import utils
+
+##########  END IMPORT  ##########
 
 
 #
@@ -45,7 +57,7 @@ def midas_run(tenu_file_path,work_dir="",
             os.remove(fil_full_path)
 
     ### Find the Station Name
-    DF = pandas.read_table(tenu_file_path,comment='*',header=-1,delim_whitespace = True)
+    DF = pd.read_table(tenu_file_path,comment='*',header=-1,delim_whitespace = True)
     stat = list(set(DF[0]))[0]
 
     ### Prepare the tmp input
@@ -56,7 +68,7 @@ def midas_run(tenu_file_path,work_dir="",
 
     ### Prepare the tmp STEP FILE input
     step_OK = False
-    if step_file_path and not genefun.empty_file_check(step_file_path):
+    if step_file_path and not utils.empty_file_check(step_file_path):
         work_file_path_step = work_dir + "/MIDAS.STEP"
         shutil.copy(step_file_path , work_file_path_step)
         step_OK = True
@@ -80,11 +92,11 @@ def midas_run(tenu_file_path,work_dir="",
 
     exec_OK = False
 
-    if not genefun.empty_file_check(work_file_path_vel):
+    if not utils.empty_file_check(work_file_path_vel):
         exec_OK = True
         print("INFO : MIDAS.VEL exists for",stat,", should be OK :)")
 
-    if not genefun.empty_file_check(os.path.join(work_dir,'MIDAS.ERR')):
+    if not utils.empty_file_check(os.path.join(work_dir,'MIDAS.ERR')):
         print("ERR : MIDAS.ERR is not empty for",stat,", must be checked :(")
 
     if stderr:
@@ -131,7 +143,7 @@ def midas_vel_files_2_pandas_DF(vel_files_in):
     DF : Pandas DataFrame
     """
 
-    if genefun.is_iterable(vel_files_in):
+    if utils.is_iterable(vel_files_in):
         L_vel_files = vel_files_in
     else:
         L_vel_files = glob.glob(vel_files_in)
@@ -139,11 +151,11 @@ def midas_vel_files_2_pandas_DF(vel_files_in):
 
     if len(L_vel_files) > 1:
         work_dir = os.path.dirname(L_vel_files[0])
-        vel_file_opera = genefun.cat(work_dir + "/MERGED_VEL" , *L_vel_files)
+        vel_file_opera = utils.cat(work_dir + "/MERGED_VEL" , *L_vel_files)
     else:
         vel_file_opera = L_vel_files[0]
 
-    DF = pandas.read_table(vel_file_opera,comment='*',header=-1,delim_whitespace = True)
+    DF = pd.read_table(vel_file_opera,comment='*',header=-1,delim_whitespace = True)
 
     DF.columns = ["Station",
               "soft",
@@ -179,7 +191,7 @@ def midas_plot(path_tenu,path_vel="",path_step=""):
     """
     import geoclass as gcls
 
-    DF = pandas.read_table(path_tenu,header=-1,delim_whitespace = True)
+    DF = pd.read_table(path_tenu,header=-1,delim_whitespace = True)
     stat = list(set(DF[0]))[0]
 
     if path_vel:
@@ -190,12 +202,12 @@ def midas_plot(path_tenu,path_vel="",path_step=""):
 
 
     if path_step:
-        DFstep  = pandas.read_table(path_step,header=-1,delim_whitespace = True)
-        Discont = geok.year_decimal2dt(list(DFstep[1]))
+        DFstep  = pd.read_table(path_step,header=-1,delim_whitespace = True)
+        Discont = conv.year_decimal2dt(list(DFstep[1]))
 
 
     T = DF[1]
-    Tdt = geok.year_decimal2dt(T)
+    Tdt = conv.year_decimal2dt(T)
     E = DF[2]
     N = DF[3]
     U = DF[4]
@@ -239,7 +251,7 @@ def midas_plot(path_tenu,path_vel="",path_step=""):
             b = DFvel[b_key][0]
             sigma = DFvel[sigma_key][0]
 
-            _ , Vlin = geok.linear_reg_getvalue(T-T[0],a,b)
+            _ , Vlin = stats.linear_reg_getvalue(T-T[0],a,b)
 
             ax.plot(Tdt,Vlin,c="xkcd:dark orange")
             text_vel = str(np.round(a*1000,4)) + " +/- " + str(np.round(sigma*1000,4)) + " mm/yr"

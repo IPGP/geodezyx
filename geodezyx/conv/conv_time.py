@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Mon Feb 18 14:12:44 2019
@@ -26,15 +25,27 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
-##################################################
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import math
+import numpy as np
+import os 
+import pandas as pd
+import string
+import struct
+import re
+import time
+
+#### geodeZYX modules
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-
-from geodezyx import utils,dt,time,np,os,re,struct,math,string,pd
-#import geodezyx.utils.utils as utils
-
+##########  END IMPORT  ##########
 
 
 
@@ -1272,7 +1283,10 @@ def pandas_timestamp2dt(timestamp_in):
         typ=utils.get_type_smart(timestamp_in)
         return typ([pandas_timestamp2dt(e) for e in timestamp_in])
     else:
-        return timestamp_in.to_pydatetime()
+        if isinstance(timestamp_in, pd._libs.tslibs.timedeltas.Timedelta):
+            return timestamp_in.to_pytimedelta()
+        else:
+            return timestamp_in.to_pydatetime()
         
 def datetime64_numpy2dt(npdt64_in):
     """

@@ -27,11 +27,36 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #import geodezyx.megalib.geodetik as geok
 
+########## BEGIN IMPORT ##########
+#### External modules
+import copy
+import datetime as dt
+import dateutil
+import glob
+from io import BytesIO,StringIO
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import os 
+import pandas as pd
+import shutil
+import textwrap
+import re
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import operational
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-from geodezyx import utils
+##########  END IMPORT  ##########
+
+#from geodezyx import utils,conv
+#import pandas
 
 
 #import geodezyx.legacy.utils.as genefun
@@ -57,7 +82,7 @@ from geodezyx import utils
 ##for read rinex nav
 #from io import BytesIO,StringIO
 #from pandas import DataFrame,Series
-#from pandas.io.pytables import read_hdf
+#from pd.io.pytables import read_hdf
 
 #
    #_____          __  __ _____ _______                                   _
@@ -259,7 +284,7 @@ def read_pbo_vel_file_solo(velfilein,stat):
         if l[0] not in (' ','*'):
             skiplinelis.append(i)
 
-    data = pandas.read_table(open(velfilein),skiprows=skiplinelis,sep= ' *',header=max(skiplinelis)+1)
+    data = pd.read_table(open(velfilein),skiprows=skiplinelis,sep= ' *',header=max(skiplinelis)+1)
     #data['Ref_epoch']
 
     i_lis = []
@@ -284,7 +309,7 @@ def read_globk_vel_file(velfile_in):
         if '(deg)' in l:
             break
 
-    D = pandas.read_table(p,skiprows=i,header=-1,delim_whitespace = True )
+    D = pd.read_table(p,skiprows=i,header=-1,delim_whitespace = True )
 
     D.rename(columns={0: 'Long',
                       1: 'Lat',
@@ -1026,7 +1051,7 @@ class Location(object):
                                  self.Z_coordinate_m,self.Reference_epoch)
 
 
-    def export_as_string():
+    def export_as_string(self):
         Str_list = []
         Str_list.append('City or Town             : {:}'.format(self.City_or_Town))
         Str_list.append('State or Province        : {:}'.format(self.State_or_Province))
@@ -1525,7 +1550,7 @@ def read_rinex_2_dataobjts(rinex_path):
     #Date_Removed = Date_Installed + dt.timedelta(days=1)
 
 
-    Date_Installed , Date_Removed = softs_runner.rinex_start_end(rinex_path,
+    Date_Installed , Date_Removed = operational.rinex_start_end(rinex_path,
                                                                  add_tzinfo=1,
                                                                  verbose=0)
 
@@ -1899,11 +1924,11 @@ def read_snx_trop(snxfile,dataframe_output=True):
         return Tropsinex_DataFrame(outtuple)
                 
 def Tropsinex_DataFrame(read_sinex_result):
-     DF_Sinex = pandas.DataFrame.from_records(list(read_sinex_result)).transpose()
+     DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
      colnam = ['STAT','epoc','tro','stro','tgn','stgn','tge','stge']
      DF_Sinex.columns = colnam
      cols_numeric = ['tro','stro','tgn','stgn','tge','stge']
-     DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pandas.to_numeric, errors='coerce')
+     DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pd.to_numeric, errors='coerce')
      
      return DF_Sinex
      
@@ -1999,7 +2024,7 @@ def read_sinex(snxfile,dataframe_output=False):
         return STAT , soln , epoc , x , y , z , sx , sy , sz , vx , vy , vz , svx , svy , svz , start ,  end
 
 def sinex_DataFrame(read_sinex_result):
-    DF_Sinex = pandas.DataFrame.from_records(list(read_sinex_result)).transpose()
+    DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
     colnam = ['AC', 'STAT' , 'soln' , 'epoc' , 'x' , 'y' , 'z' , 'sx' , 'sy' , 'sz' , 'vx' , 'vy' , 'vz' , 'svx' , 'svy' , 'svz' , 'start' , 'end']
     DF_Sinex.columns = colnam
     
@@ -2008,7 +2033,7 @@ def sinex_DataFrame(read_sinex_result):
                 "vx","vy","vz",
                 "svx","svy","svz"]
         
-    DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pandas.to_numeric, errors='coerce')
+    DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pd.to_numeric, errors='coerce')
         
 
     return DF_Sinex
@@ -2081,14 +2106,14 @@ def read_sinex_versatile(sinex_path_in , id_block,
 
     
         ### Read the file
-        DF = pandas.read_fwf(StringIO(Lines_str),widths=Fields_size)
+        DF = pd.read_fwf(StringIO(Lines_str),widths=Fields_size)
         DF.set_axis(Header_split, axis=1, inplace=True)
         
         ### Rename the 1st column (remove the comment marker)
         DF.rename(columns={DF.columns[0]:DF.columns[0][1:]}, inplace=True)
 
     else: # no header in the SINEX
-        DF = pandas.read_csv(StringIO(Lines_str),header=-1 ,
+        DF = pd.read_csv(StringIO(Lines_str),header=-1 ,
                              delim_whitespace=True)
 
     for col in DF.columns:
@@ -2119,7 +2144,7 @@ def read_sinex_bench_antenna(sinex_in):
                    "___x/up___" ,"___y/n____", "___z/e____" ,
                    "_Data_Start", "_Data_End__",
                    "__Antenna_type______" ,"Radome","__S/N__"]
-    DFantenna = pandas.read_table(T,delim_whitespace = True,error_bad_lines=False,names=header_cols)
+    DFantenna = pd.read_table(T,delim_whitespace = True,error_bad_lines=False,names=header_cols)
 
     return DFantenna
 
@@ -2216,7 +2241,7 @@ def read_rinex_nav(fn,writeh5=None,version=2):
     strio = BytesIO(raws.encode())
     darr = np.genfromtxt(strio,delimiter=nfloat)
 
-    nav= DataFrame(darr, epoch,
+    nav= pd.DataFrame(darr, epoch,
                ['SVclockBias','SVclockDrift','SVclockDriftRate','IODE',
                 'Crs','DeltaN','M0','Cuc','Eccentricity','Cus','sqrtA','TimeEph',
                 'Cic','OMEGA','CIS','Io','Crc','omega','OMEGA DOT','IDOT',
@@ -2226,15 +2251,15 @@ def read_rinex_nav(fn,writeh5=None,version=2):
     if version == 3:
         Const = [e[0]  for e in sv]
         SV    = [int(e[1:]) for e in sv]
-        nav['Const'] = Series(np.array(Const), index=nav.index)
-        nav['sv'] = Series(np.array(SV), index=nav.index)
+        nav['Const'] = pd.Series(np.array(Const), index=nav.index)
+        nav['sv'] = pd.Series(np.array(SV), index=nav.index)
     elif version == 2:
         rinexnav_type = os.path.basename(fn)[-1]
         if rinexnav_type == 'n':
-            nav['Const'] = Series(['G']*len(nav.index), index=nav.index)
+            nav['Const'] = pd.Series(['G']*len(nav.index), index=nav.index)
         else:
-            nav['Const'] = Series([rinexnav_type.upper()]*len(nav.index), index=nav.index)
-        nav['sv'] = Series(np.array(sv), index=nav.index)
+            nav['Const'] = pd.Series([rinexnav_type.upper()]*len(nav.index), index=nav.index)
+        nav['sv'] = pd.Series(np.array(sv), index=nav.index)
 
 
 
@@ -2254,7 +2279,7 @@ def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False, force = False):
     .Z decompression is implemented, but is very unstable (avoid .Z, prefer .gz)
     """
 
-    import gzip,zlib
+    import gzip
 
     if inp_gzip_file.endswith('.gz'):
         is_gz = True
