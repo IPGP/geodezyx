@@ -888,7 +888,11 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
     outfile.write('# Latitude  : {}\n'.format(first_pt.F))
     outfile.write('# Height    : {}\n'.format(first_pt.H))
     outfile.write('#\n')
-    outfile.write('# Components : ' + coordtype + "\n")
+    if coordtype == "ENU":
+        outfile.write('# Components : ' + "NEU" + "\n")
+    elif coordtype == "XYZ":
+        outfile.write('# Components : ' + "YXZ" + "\n")
+        outfile.write('# Cartesian components are undirect to maintain consistency with NEU\n')                
     outfile.write('#\n')
     if tswork.bool_discont:
         outfile.write('# type_of_offset : from discontinuties got from a station.info\n')
@@ -897,17 +901,12 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
             outfile.write('# offset {} 7\n'.format(conv.toYearFraction(disc)))
         outfile.write('#\n')
     # write the data
-    if coordtype == "ENU":
-        outfile.write('#  Year         DN           DE           DH        SDN       SDE       SDH\n')  
-    elif coordtype == "XYZ":
-        outfile.write('#  Year         DN           DE           DH        SDN       SDE       SDH\n')  
-        
     for e,n,u,t,se,sn,su in zip(E,N,U,T,sE,sN,sU):
         t = conv.toYearFraction(conv.posix2dt(t))
         if coordtype == "ENU":        
             outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
         elif coordtype == "XYZ":
-            outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,e-e0,n-n0,u-u0,se,sn,su))
+            outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
 
     print('INFO : timeserie exported in ' + outpath)
     return None

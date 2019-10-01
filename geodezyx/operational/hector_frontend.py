@@ -73,8 +73,8 @@ def neufile_outlier_removing(inp_neufile,generik_conf_file,outdir='',remove_ctl_
 
     comp_list = [ 'North' , 'East' , 'Up' ]
         
-    if utils.grep_boolean(inp_neufile,"Components : XYZ"):
-        comp_list_filename = [ 'X' , 'Y' , 'Z' ]
+    if utils.grep_boolean(inp_neufile,"Components : YXZ"):
+        comp_list_filename = [ 'Y' , 'X' , 'Z' ]
     else:
         comp_list_filename = [ 'N' , 'E' , 'U' ]
         
