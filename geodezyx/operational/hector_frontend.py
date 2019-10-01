@@ -80,7 +80,7 @@ def neufile_outlier_removing(inp_neufile,generik_conf_file,outdir='',remove_ctl_
         
 
     for comp,comp_fn in zip(comp_list,comp_list_filename):
-        work_conf_file = inpdir + '/' + prefix_inp  + comp[0] + '_rmoutlier.ctl'
+        work_conf_file = inpdir + '/' + prefix_inp  + comp_fn + '_rmoutlier.ctl'
         prefix_out = prefix_inp + comp_fn + '_pre'
         momfile_name = prefix_out + '.mom'
         momfile_path = outdir + '/' + momfile_name
