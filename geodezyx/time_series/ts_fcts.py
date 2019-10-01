@@ -842,6 +842,8 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
 
     outfile will be writed in
     /outdir/outprefixSTAT.neu
+    
+    NB: The XYZ mode is quite dirty (191001)
     """
     if not hasattr(tsin[0],'X'):
         print('WARN : export_ts_as_neu : no XYZ in ts')
@@ -850,12 +852,12 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
         noXYZ = False
 
     tswork = copy.deepcopy(tsin)
-    if coordtype == 'XYZ':
-        mp = tswork.mean_posi()
-        tswork.ENUcalc(mp)
+    #if coordtype == 'XYZ':
+    #    mp = tswork.mean_posi()
+    #    tswork.ENUcalc(mp)
     outpath = outdir +'/' + outprefix + tswork.stat + '.neu'
     outfile = open(outpath,'w+')
-    E,N,U,T,sE,sN,sU = tswork.to_list('ENU')
+    E,N,U,T,sE,sN,sU = tswork.to_list(coordtype)
     first_pt = tswork.pts[0]
     if noXYZ:
         first_pt.X = 0.
@@ -893,10 +895,17 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
             outfile.write('# offset {} 7\n'.format(conv.toYearFraction(disc)))
         outfile.write('#\n')
     # write the data
-    outfile.write('#  Year         DN           DE           DH        SDN       SDE       SDH\n')
+    if coordtype == "ENU":
+        outfile.write('#  Year         DN           DE           DH        SDN       SDE       SDH\n')  
+    elif coordtype == "XYZ":
+        outfile.write('#  Year         DX           DY           DZ        SDX       SDY       SDZ\n')  
+        
     for e,n,u,t,se,sn,su in zip(E,N,U,T,sE,sN,sU):
         t = conv.toYearFraction(conv.posix2dt(t))
-        outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
+        if coordtype == "ENU":        
+            outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
+        elif coordtype == "XYZ":
+            outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,e-e0,n-n0,u-u0,se,sn,su))
 
     print('INFO : timeserie exported in ' + outpath)
     return None
@@ -914,7 +923,6 @@ def export_ts_as_hector_enu(tsin,outdir,outprefix,coordtype = 'ENU'):
     """
 
     print("NOT IMPLEMENTED YET !")
-
 
     return None
 
