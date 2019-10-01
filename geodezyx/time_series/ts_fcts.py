@@ -888,6 +888,7 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
     outfile.write('# Latitude  : {}\n'.format(first_pt.F))
     outfile.write('# Height    : {}\n'.format(first_pt.H))
     outfile.write('#\n')
+    outfile.write('# Components : ' + coordtype)
     if tswork.bool_discont:
         outfile.write('# type_of_offset : from discontinuties got from a station.info\n')
         outfile.write('#\n')
@@ -898,7 +899,7 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
     if coordtype == "ENU":
         outfile.write('#  Year         DN           DE           DH        SDN       SDE       SDH\n')  
     elif coordtype == "XYZ":
-        outfile.write('#  Year         DX           DY           DZ        SDX       SDY       SDZ\n')  
+        outfile.write('#  Year         DN           DE           DH        SDN       SDE       SDH\n')  
         
     for e,n,u,t,se,sn,su in zip(E,N,U,T,sE,sN,sU):
         t = conv.toYearFraction(conv.posix2dt(t))

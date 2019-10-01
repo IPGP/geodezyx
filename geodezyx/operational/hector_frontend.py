@@ -72,16 +72,19 @@ def neufile_outlier_removing(inp_neufile,generik_conf_file,outdir='',remove_ctl_
         outdir = inpdir
     if not os.path.exists(outdir):
         os.makedirs(outdir)
+
+
+    comp_list = [ 'North' , 'East' , 'Up' ]
         
-    if utils.grep_boolean(inp_neufile,"SDN       SDE       SDH"):
-        comp_list = [ 'North' , 'East' , 'Up' ]
-    elif utils.grep_boolean(inp_neufile,"SDX       SDY       SDZ"):
-        comp_list = [ 'X' , 'Y' , 'Z' ]
+    if utils.grep_boolean(inp_neufile,"Components : XYZ"):
+        comp_list_filename = [ 'X' , 'Y' , 'Z' ]
+    else:
+        comp_list_filename = [ 'N' , 'E' , 'U' ]
         
 
-    for comp in comp_list:
+    for comp,comp_fn in zip(comp_list,comp_list_filename):
         work_conf_file = inpdir + '/' + prefix_inp  + comp[0] + '_rmoutlier.ctl'
-        prefix_out = prefix_inp + comp[0] + '_pre'
+        prefix_out = prefix_inp + comp_fn + '_pre'
         momfile_name = prefix_out + '.mom'
         momfile_path = outdir + '/' + momfile_name
         shutil.copyfile(generik_conf_file, work_conf_file)
