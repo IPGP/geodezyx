@@ -888,7 +888,7 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
     outfile.write('# Latitude  : {}\n'.format(first_pt.F))
     outfile.write('# Height    : {}\n'.format(first_pt.H))
     outfile.write('#\n')
-    outfile.write('# Components : ' + coordtype)
+    outfile.write('# Components : ' + coordtype + "\n")
     if tswork.bool_discont:
         outfile.write('# type_of_offset : from discontinuties got from a station.info\n')
         outfile.write('#\n')
