@@ -33,7 +33,11 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from mpl_toolkits.basemap import Basemap
+try:
+    from mpl_toolkits.basemap import Basemap
+except:
+    pass
+
 from matplotlib.patches import Ellipse
 
 #### geodeZYX modules

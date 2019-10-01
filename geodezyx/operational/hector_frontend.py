@@ -13,6 +13,7 @@ import glob
 import matplotlib.pyplot as plt
 import numpy as np
 import os 
+import pandas
 import shutil
 import subprocess
 import time
@@ -26,12 +27,8 @@ from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-<<<<<<< HEAD
-import pandas
 
-=======
 ##########  END IMPORT  ##########
->>>>>>> 0891a43af9e1b1ffcae59b65e11c0ce2cc707498
 #  _    _ ______ _____ _______ ____  _____
 # | |  | |  ____/ ____|__   __/ __ \|  __ \
 # | |__| | |__ | |       | | | |  | | |__) |
