@@ -889,6 +889,7 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
     outfile.write('# Height    : {}\n'.format(first_pt.H))
     outfile.write('#\n')
     outfile.write('# Components : ' + coordtype + "\n")
+    outfile.write('#\n')
     if tswork.bool_discont:
         outfile.write('# type_of_offset : from discontinuties got from a station.info\n')
         outfile.write('#\n')
