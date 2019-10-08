@@ -388,6 +388,15 @@ def datetime_improved(y=0,mo=0,d=0,h=0,mi=0,s=0,ms=0):
     Datetime
         Converted Datetime(s)
     """
+    y = int(y)
+    mo = int(mo)
+    d = int(d)
+    h = int(h)
+    mi = int(mi)
+    s = float(s)
+    ms = float(ms)
+    
+    
     try:
         ms_from_s  = (s - np.floor(s)) * 10**6
         if ms_from_s != 0:
