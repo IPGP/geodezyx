@@ -426,9 +426,9 @@ def extract_text_between_elements_2(file_path , elt_start , elt_end,
     https://docs.python.org/2/library/stringio.html
     """
     
-    try:
+    if type(file_path) is str:
         F = open(file_path,"r",encoding = "ISO-8859-1")
-    except:
+    else:
         F = file_path
     
     out_lines_list = []

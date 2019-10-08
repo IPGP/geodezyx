@@ -886,126 +886,126 @@ def AC_equiv_vals(AC1,AC2):
 
 
 ############################# READ CLK 30
-def read_clk1(file_path_in, returns_pandas = True, interval=None):
-    """
-    General description
-
-    Parameters
-    ----------
-    file_path_in :  str
-        Path of the file in the local machine.
-
-    returns_pandas :  bool
-        Define if pandas function will be used to put the data on tables
-
-    interval :  int
-        Defines which interval should be used in the data tables. The interval is always in minutes unit.
-
-    Returns
-    -------
-    out1 : float or int oandas table
-        Returns a panda table format with the data extracted from the file.
-
-    out2 :  list
-       In case of the pandas function are not in use, the return will be a list with the data extract from the file.
-
-
-    """
-
-    file = open(file_path_in,'r')
-    fil = file.readlines()
-    file.close()
-
-
-    types_m, name_m, year_m, month_m, day_m, hr_m, minute_m, seconds_m, epoch_m, offset_m, rms_m = [],[],[],[],[],[],[],[],[],[],[]
-
-    Clk_read  = []
-
-        #####IGNORES HEADER
-
-    le = 0
-    i = 0
-    count = 0
-    for le in range(len(fil)):
-     linhaatual = linecache.getline(file_path_in, le)
-     header_end = (linhaatual[60:73])
-     count +=1
-     if header_end =="END OF HEADER":
-        i = count
-#############################################################
-    while i <= len(fil):
-          linhaatual = linecache.getline(file_path_in, i)
-          types = (linhaatual[0:2]) # Column refers to AS or AR
-          name = (linhaatual[3:7])# Name of the station or satellite
-          year = int((linhaatual[8:12]))
-          month = int((linhaatual[13:15]))
-          day = int((linhaatual[16:18]))
-          hr= int((linhaatual[19:22]))# hour
-          minute = int((linhaatual[22:25]))
-          seconds = float((linhaatual[25:33]))
-          offset = float(((linhaatual[40:59])))# Clock offset
-          ##### check if there is a value for thr rms
-          if (linhaatual[65:70]) == '     ' or len(linhaatual[65:70])==0:
-              rms = 0
-          else:
-              rms = float(linhaatual[61:79])
-          ############
-          epoch = dt.datetime(year,month,day,hr,minute,int(seconds),int(((int(seconds)-seconds)*10**-6))) # epoch as date.time function
-
-        ############ Data in a defined interval
-          if interval:
-              if (float(minute)%interval) == 0 and float(seconds) == 0:
-
-                  if returns_pandas:
-                            Clk_dados = [types,name,year,month,day,hr,minute,seconds,epoch,offset,rms]
-                            Clk_read.append(Clk_dados)
-                  else:
-                            types_m.append(types)
-                            name_m.append(name)
-                            year_m.append(year)
-                            month_m.append(month)
-                            day_m.append(day)
-                            hr_m.append(hr)
-                            minute_m.append(minute)
-                            seconds_m.append(seconds)
-                            epoch_m.append(epoch)
-                            offset_m.append(offset)
-                            rms_m.append(rms)
-         #########################################################
-        ########################################################### standart file epochs
-          else:
-              if returns_pandas:
-                            Clk_dados = [types,name,year,month,day,hr,minute,seconds,epoch,offset,rms]
-                            Clk_read.append(Clk_dados)
-              else:
-                            types_m.append(types)
-                            name_m.append(name)
-                            year_m.append(year)
-                            month_m.append(month)
-                            day_m.append(day)
-                            hr_m.append(hr)
-                            minute_m.append(minute)
-                            seconds_m.append(seconds)
-                            epoch_m.append(epoch)
-                            offset_m.append(offset)
-                            rms_m.append(rms)
-
-
-          i +=1
-
-  ################################################################################################
-   ############################################ put on pandas table format
-    if returns_pandas:
-     Clk_readed = pd.DataFrame(Clk_read, columns=['type','name','year','month','day','hr','minutes','seconds','epoch','offset','rms'])
-     Clk_readed.path = file_path_in
-
-     return Clk_readed
-
-          ###############################
-    else:
-           print(" ...")
-           return  types_m, name_m, year_m, month_m, day_m, hr_m, minute_m, seconds_m, offset_m, rms_m
-
+#def read_clk1(file_path_in, returns_pandas = True, interval=None):
+#    """
+#    General description
+#
+#    Parameters
+#    ----------
+#    file_path_in :  str
+#        Path of the file in the local machine.
+#
+#    returns_pandas :  bool
+#        Define if pandas function will be used to put the data on tables
+#
+#    interval :  int
+#        Defines which interval should be used in the data tables. The interval is always in minutes unit.
+#
+#    Returns
+#    -------
+#    out1 : float or int oandas table
+#        Returns a panda table format with the data extracted from the file.
+#
+#    out2 :  list
+#       In case of the pandas function are not in use, the return will be a list with the data extract from the file.
+#
+#
+#    """
+#
+#    file = open(file_path_in,'r')
+#    fil = file.readlines()
+#    file.close()
+#
+#
+#    types_m, name_m, year_m, month_m, day_m, hr_m, minute_m, seconds_m, epoch_m, offset_m, rms_m = [],[],[],[],[],[],[],[],[],[],[]
+#
+#    Clk_read  = []
+#
+#        #####IGNORES HEADER
+#
+#    le = 0
+#    i = 0
+#    count = 0
+#    for le in range(len(fil)):
+#     linhaatual = linecache.getline(file_path_in, le)
+#     header_end = (linhaatual[60:73])
+#     count +=1
+#     if header_end =="END OF HEADER":
+#        i = count
+##############################################################
+#    while i <= len(fil):
+#          linhaatual = linecache.getline(file_path_in, i)
+#          types = (linhaatual[0:2]) # Column refers to AS or AR
+#          name = (linhaatual[3:7])# Name of the station or satellite
+#          year = int((linhaatual[8:12]))
+#          month = int((linhaatual[13:15]))
+#          day = int((linhaatual[16:18]))
+#          hr= int((linhaatual[19:22]))# hour
+#          minute = int((linhaatual[22:25]))
+#          seconds = float((linhaatual[25:33]))
+#          offset = float(((linhaatual[40:59])))# Clock offset
+#          ##### check if there is a value for thr rms
+#          if (linhaatual[65:70]) == '     ' or len(linhaatual[65:70])==0:
+#              rms = 0
+#          else:
+#              rms = float(linhaatual[61:79])
+#          ############
+#          epoch = dt.datetime(year,month,day,hr,minute,int(seconds),int(((int(seconds)-seconds)*10**-6))) # epoch as date.time function
+#
+#        ############ Data in a defined interval
+#          if interval:
+#              if (float(minute)%interval) == 0 and float(seconds) == 0:
+#
+#                  if returns_pandas:
+#                            Clk_dados = [types,name,year,month,day,hr,minute,seconds,epoch,offset,rms]
+#                            Clk_read.append(Clk_dados)
+#                  else:
+#                            types_m.append(types)
+#                            name_m.append(name)
+#                            year_m.append(year)
+#                            month_m.append(month)
+#                            day_m.append(day)
+#                            hr_m.append(hr)
+#                            minute_m.append(minute)
+#                            seconds_m.append(seconds)
+#                            epoch_m.append(epoch)
+#                            offset_m.append(offset)
+#                            rms_m.append(rms)
+#         #########################################################
+#        ########################################################### standart file epochs
+#          else:
+#              if returns_pandas:
+#                            Clk_dados = [types,name,year,month,day,hr,minute,seconds,epoch,offset,rms]
+#                            Clk_read.append(Clk_dados)
+#              else:
+#                            types_m.append(types)
+#                            name_m.append(name)
+#                            year_m.append(year)
+#                            month_m.append(month)
+#                            day_m.append(day)
+#                            hr_m.append(hr)
+#                            minute_m.append(minute)
+#                            seconds_m.append(seconds)
+#                            epoch_m.append(epoch)
+#                            offset_m.append(offset)
+#                            rms_m.append(rms)
+#
+#
+#          i +=1
+#
+#  ################################################################################################
+#   ############################################ put on pandas table format
+#    if returns_pandas:
+#     Clk_readed = pd.DataFrame(Clk_read, columns=['type','name','year','month','day','hr','minutes','seconds','epoch','offset','rms'])
+#     Clk_readed.path = file_path_in
+#
+#     return Clk_readed
+#
+#          ###############################
+#    else:
+#           print(" ...")
+#           return  types_m, name_m, year_m, month_m, day_m, hr_m, minute_m, seconds_m, offset_m, rms_m
+#
 
 
 

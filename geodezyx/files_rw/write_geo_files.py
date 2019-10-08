@@ -24,3 +24,7 @@ def write_sndy_light_dat(ts_in,outdir,outprefix):
                 lin = ' '.join([str(e) for e in [att.R , att.P , att.Y , att.T , att.Q.w , att.Q.x , att.Q.y , att.Q.z ]])
                 fil.write(lin + '\n')
     fil.close()
+    
+    
+#def write_clk(DFclk_in):
+    

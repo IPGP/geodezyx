@@ -624,11 +624,15 @@ def read_epos_sta_coords_multi(filein_list,return_dict = True):
         return ts_list
 
 
-def read_epos_slv_times(p):
-    L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates","\-sum_times/estimates")
-
+def read_epos_slv_times(p,convert_to_time=False):
+    """
+    convert_to_time : divide by the speed of light. Values in meter instead 
+    """
+    L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates",
+                                                "\-sum_times/estimates")
 
     Lgood = []
+    
     for l in L[1:-1]:
         if "EPOCHE" in l:
             cur_epoc_line = l
@@ -642,6 +646,9 @@ def read_epos_slv_times(p):
     DF = pd.DataFrame(Lgood,columns=["epoch","stat","offset","offset_sig"])
 
     DF["stat"] = DF["stat"].astype('int')
+    
+    if convert_to_time:
+        DF[["offset","offset_sig"]] = DF[["offset","offset_sig"]] / 299792458.
 
     return DF
 
