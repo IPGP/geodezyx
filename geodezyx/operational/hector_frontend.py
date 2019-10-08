@@ -326,6 +326,10 @@ def velfile_from_a_list_of_statVsV_tuple(listoftup,out_dir, out_prefix , raw_neu
         outfile = open(out_dir +'/' + out_prefix + '.vel.csv','w+')
         outfile.write('Station,V_North,V_East,V_Up,sV_North,sV_East,sV_Up\n')
         k = 1000.
+    elif style == "csv_renag_xyz":
+        outfile = open(out_dir +'/' + out_prefix + '.vel.csv','w+')
+        outfile.write('Station,V_X,V_Y,V_Z,sV_X,sV_Y,sV_Z\n')
+        k = 1000.
     elif style == "dataframe":
         column_names = ['Station','Latitude','Longitude','V_North','V_East','V_Up','sV_North','sV_East','sV_Up']
         lines_stk = []
@@ -346,6 +350,8 @@ def velfile_from_a_list_of_statVsV_tuple(listoftup,out_dir, out_prefix , raw_neu
             line = '{} {} {} {} {} {} {} {}\n'.format(stat,lat,reffram.wrapTo180(lon),V['N']*k,V['E']*k,sV['N']*k,sV['E']*k,0)
         elif style == 'csv_renag':
             line = '{},{:10.5f},{:10.5f},{:10.5f},{:10.5f},{:10.5f},{:10.5f}\n'.format(stat,V['N']*k,V['E']*k,V['U']*k,sV['N']*k,sV['E']*k,sV['U']*k)
+        elif style == 'csv_renag_xyz':
+            line = '{},{:10.5f},{:10.5f},{:10.5f},{:10.5f},{:10.5f},{:10.5f}\n'.format(stat,V['X']*k,V['Y']*k,V['Z']*k,sV['X']*k,sV['Y']*k,sV['Z']*k)
         elif style == "dataframe":
             line = [stat,lat,lon,V['N']*k,V['E']*k,V['U']*k,sV['N']*k,sV['E']*k,sV['U']*k]
             lines_stk.append(line)
