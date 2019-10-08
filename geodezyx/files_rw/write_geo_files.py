@@ -26,5 +26,22 @@ def write_sndy_light_dat(ts_in,outdir,outprefix):
     fil.close()
     
     
-#def write_clk(DFclk_in):
-    
+def write_clk(DFclk_in,clk_file_out,header=""):
+    HEAD = header
+    Row_str_stk = []
+    for irow, row in DFclk_in.iterrows():
+        row_str_proto = "{:2} {:4} {:4d} {:2d} {:2d} {:2d} {:2d} {:9.6f} {:2d}   {:19.12e}"
+        row_str = row_str_proto.format(row["type"],row["name"],row["year"],
+                                       row["month"],row["day"],row["h"],row["minutes"],
+                                       row["seconds"],1,row["offset"])
+        Row_str_stk.append(row_str)
+        
+    CORPSE = "\n".join(Row_str_stk)
+       
+    OUT = HEAD + CORPSE
+
+    with open(clk_file_out,"w+") as Fout:
+        Fout.write(OUT)
+        Fout.close()
+        
+    return OUT

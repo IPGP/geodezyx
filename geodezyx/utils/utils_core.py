@@ -327,6 +327,18 @@ def str2int_smart(str_in):
         out = np.nan
     return out
 
+def str2int_float_autodetect(str_list_in):
+    intflt_list_out = []
+    for str_in in str_list_in:
+        flt_tmp = float(str_in)
+        if np.isclose(flt_tmp - np.floor(flt_tmp),0):
+            val = int(flt_tmp)
+        else:
+            val = flt_tmp
+        intflt_list_out.append(val)
+    return(intflt_list_out)
+            
+
 def array_from_lists(*listsin):
     """ fonction pour arreter de galerer avec les conversions
     de lists => matrices """
