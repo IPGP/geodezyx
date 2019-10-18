@@ -811,6 +811,77 @@ def gpt2_5(mjd,lat,lon,HELL,IT,VEC):
         UNDU = DNLON2*R1+DNLON1*R2
     return round(P,2),round(T,2),round(DT,2),round(E,2),round(UNDU,2)
 
+def vmf1(ah,aw,dt,dlat,zd):
+    """
+    This subroutine determines the VMF1 (Vienna Mapping Functions 1) for specific sites.
+    
+    Parameters
+    ----------
+    ah:
+        hydrostatic coefficient a
+    aw:
+        wet coefficient a
+    dt:
+        datetime in python datetime
+    dlat:
+        ellipsoidal latitude in radians
+    zd:
+        zenith distance in radians
+        
+    Return
+    ----------
+    vmf1h:
+        hydrostatic mapping function
+    vmf1w:
+        wet mapping function
+    
+    Reference
+    ----------
+    Boehm, J., B. Werl, H. Schuh (2006), Troposphere mapping functions for GPS and very long baseline interferometry 
+    from European Centre for Medium-Range Weather Forecasts operational analysis data, 
+    J. Geoph. Res., Vol. 111, B02406, doi:10.1029/2005JB003629.
+    
+    Notes
+    ----------
+    Written by Johannes Boehm, 2005 October 2
+    
+    Translated to python by Chaiyaporn Kitpracha
+    """
+    
+    pi = 3.14159265359
+    dmjd = conv.dt2MJD(dt)
+    doy = dmjd  - 44239.0 + 1 - 28
+    
+    bh = 0.0029
+    c0h = 0.062
+    
+    if dlat < 0:
+        phh  = pi
+        c11h = 0.007
+        c10h = 0.002
+    else:
+         phh  = 0
+         c11h = 0.005
+         c10h = 0.001
+         
+    ch = c0h + ((np.cos(doy/365.25*2*pi + phh)+1)*c11h/2 \
+                + c10h)*(1-np.cos(dlat))
+    
+    sine = np.sin(pi/2 - zd)
+    beta = bh / (sine + ch)
+    gamma = ah/ (sine + beta)
+    topcon = (1 + ah/(1 + bh/(1 + ch)))
+    vmf1h = topcon/(sine+gamma)
+    
+    bw = 0.00146
+    cw = 0.04391
+    beta   = bw/( sine + cw )
+    gamma  = aw/( sine + beta)
+    topcon = (1 + aw/(1 + bw/(1 + cw)))
+    vmf1w = topcon/(sine+gamma)
+    
+    return vmf1h,vmf1w
+    
 def read_snx_trop(snxfile,dataframe_output=True):
     """
     Read troposphere solutions from Troposphere SINEX
