@@ -1259,6 +1259,11 @@ def multi_downloader_orbs_clks_2bad(archive_dir,startdate,enddate,
     if archive_center == "cddis":
         arch_center_main    = 'cddis.gsfc.nasa.gov'
         arch_center_basedir = '/pub/gps/products/' + mgex_str
+
+    if archive_center == "cddis_glonass":
+        arch_center_main    = 'cddis.gsfc.nasa.gov'
+        arch_center_basedir = '/pub/gps/products/glonass/' + mgex_str
+        print(arch_center_main,arch_center_basedir)
     
     elif archive_center == "ign":
         arch_center_main    = 'igs.ign.fr'
@@ -1279,6 +1284,10 @@ def multi_downloader_orbs_clks_2bad(archive_dir,startdate,enddate,
     elif archive_center == "ensg_rf":
         arch_center_main    = 'igs-rf.ensg.ign.fr'
         arch_center_basedir = '/pub/' + mgex_str
+    else:
+        raise Exception("ERR: no archive_center given")
+
+    
         
         
         
@@ -1448,6 +1457,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     if archive_center == "cddis":
         arch_center_main    = 'cddis.gsfc.nasa.gov'
         arch_center_basedir = '/pub/gps/products/' + mgex_str
+        
+    elif archive_center == "cddis_glonass":
+        arch_center_main    = 'cddis.gsfc.nasa.gov'
+        arch_center_basedir = '/pub/glonass/products/' + mgex_str
     
     elif archive_center == "ign":
         arch_center_main    = 'igs.ign.fr'
@@ -1469,8 +1482,6 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         arch_center_main    = 'igs-rf.ensg.ign.fr'
         arch_center_basedir = '/pub/' + mgex_str
         
-        
-        
     print("INFO : data center used :",archive_center)
 
     Dates_list = conv.dt_range(startdate,enddate)
@@ -1490,13 +1501,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         # define the main obj for crawling
         ftp = Ftp_obj_list[0]
     
-
-                
     ### check if the pattern of the wished products are in the listed daily files
     for patt_tup in list(itertools.product(Dates_list,AC_names,prod_types)):
         dt_cur , ac_cur , prod_cur = patt_tup
         wwww , dow = conv.dt2gpstime(dt_cur)
-        
         
         #### Manage the cases of manual DOW
         if type(dow_manu) is int:
