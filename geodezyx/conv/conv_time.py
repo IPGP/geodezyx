@@ -396,7 +396,6 @@ def datetime_improved(y=0,mo=0,d=0,h=0,mi=0,s=0,ms=0):
     s = float(s)
     ms = float(ms)
     
-    
     try:
         ms_from_s  = (s - np.floor(s)) * 10**6
         if ms_from_s != 0:
@@ -455,8 +454,6 @@ def ymdhms_vectors2dt(yrlis,mlis,dlis,hlis,minlis,slis):
     for yr,m,d,minn,h,s in zip(yrlis,mlis,dlis,hlis,minlis,slis):
         dtlis.append(dt.datetime(int(yr),int(m),int(d),int(h),int(minn),int(s)))
     return np.array(dtlis)
-
-
 
 def doy2dt(year,days,hours=0,minutes=0,seconds=0):
     """
@@ -536,7 +533,7 @@ def dt2doy_year(dtin,outputtype=str):
     
 def dt2fracday(dtin):
     """
-    Python's datetime => Seconds in days
+    Python's datetime => Fraction of the day
 
     Parameters
     ----------
@@ -580,6 +577,8 @@ def dt2secinday(dtin):
 
 def dt2tuple(dtin):
     return tuple(dtin.timetuple())[:-3]
+
+
 
 def tup_or_lis2dt(lisin):
     """
@@ -1529,6 +1528,41 @@ def datestr_sinex_2_dt(datestrin):
 
 
 
+def dt_2_sinex_datestr(dtin,short_yy=True):
+    """
+    Time conversion
+    
+    Python's Datetime => SINEX time format 
+        
+    Parameters
+    ----------
+    dtin : datetime
+    
+    Returns
+    -------
+    dtout : str
+        Date in SINEX format
+    """
+    
+    if utils.is_iterable(dtin):
+        return [dt_2_sinex_datestr(e) for e in dtin]
+    else:
+        if not short_yy:
+            year = int(dtin.year)
+        else:
+            year = int(str(dtin.year)[2:])
+        
+        doy = str(dt2doy(dtin))
+        sec = str(dt2secinday(dtin)) 
+        
+        strout = "{:}:{:3}:{:5}".format(year,doy.zfill(3),sec.zfill(5))
+
+        return strout
+
+
+
+
+
 
 def datestr_gins_filename_2_dt(datestrin):
     """
@@ -1925,7 +1959,49 @@ def hr_to_Day(hr,minu,sec):
         
     return dia_fim
 
+def epo_epos_converter(inp,inp_type,out_type):
+    """
+    Frontend for the GFZ EPOS epo converter
+    
+    
+    Parameters
+    ----------
+    inp : string or int
+        the input day, like 58773 2019290 20754 ...
+        
+    inp_type : str
+        An output format managed by epo command :
+        wwwwd,yyddd,yyyyddd,yyyymmdd
+    
+    out_type : str
+        An output format managed by epo command :
+        mjd,yyyy,yy,ddd,mon,dmon,hour,min,sec,wwww,wd
 
+
+    Returns
+    -------
+    year : int
+        Year as integer. Years preceding 1 A.D. should be 0 or negative.
+        The year before 1 A.D. is 0, 10 B.C. is year -9.
+    """
+    
+    import subprocess
+
+    epo_cmd = "-epo "  + str(inp)
+    inp_cmd = "-type " + str(inp_type)
+    out_cmd = "-o "    + str(out_type)
+
+    cmd = " ".join(("epo",epo_cmd,inp_cmd,out_cmd))
+
+    print(cmd)
+    
+    result = subprocess.run(cmd, stdout=subprocess.PIPE,executable='/bin/csh')
+    return result.stdout.decode('utf-8')
+
+
+    
+    
+    
 
 
 
