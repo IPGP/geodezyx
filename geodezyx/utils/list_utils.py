@@ -83,7 +83,7 @@ def uniq_and_sort(L,natural_sort=True):
     In a list, remove duplicates and sort the list
     """
     if natural_sort:
-        return natsorted(list(set(L)))
+        return natsort.natsorted(list(set(L)))
     else:
         return sorted(list(set(L)))
 

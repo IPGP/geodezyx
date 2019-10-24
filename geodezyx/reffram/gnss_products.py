@@ -10,6 +10,7 @@ Created on Fri Aug  2 17:36:39 2019
 #### External modules
 import matplotlib
 import matplotlib.pyplot as plt
+import natsort
 import numpy as np
 import os 
 import pandas as pd
@@ -391,7 +392,7 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     import matplotlib.dates as mdates
     fig,[axr,axt,axn] = plt.subplots(3,1,sharex='all')
 
-    satdispo = natsorted(list(set(Diff_sat_all_df_in['sat'])))
+    satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in['sat'])))
 
     SymbStk = []
 
@@ -401,9 +402,14 @@ def compar_orbit_plot(Diff_sat_all_df_in,
 
     # Pandas donesn't manage well iterable as attribute
     # So, it is separated
-    col_name0 = Diff_sat_all_df_in.frame_col_name1
-    col_name1 = Diff_sat_all_df_in.frame_col_name2
-    col_name2 = Diff_sat_all_df_in.frame_col_name3
+    try:
+        col_name0 = Diff_sat_all_df_in.frame_col_name1
+        col_name1 = Diff_sat_all_df_in.frame_col_name2
+        col_name2 = Diff_sat_all_df_in.frame_col_name3
+    except:
+        col_name0 = Diff_sat_all_df_in.columns[0]
+        col_name1 = Diff_sat_all_df_in.columns[1]
+        col_name2 = Diff_sat_all_df_in.columns[2]
 
     for satuse,color in zip(satdispo,Colors):
         Diffuse = Diff_sat_all_df_in[Diff_sat_all_df_in['sat'] == satuse]
@@ -499,9 +505,14 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
 
     # Pandas donesn't manage well iterable as attribute
     # So, it is separated
-    col_name0 = Diff_sat_all_df_in.frame_col_name1
-    col_name1 = Diff_sat_all_df_in.frame_col_name2
-    col_name2 = Diff_sat_all_df_in.frame_col_name3
+    try:
+        col_name0 = Diff_sat_all_df_in.frame_col_name1
+        col_name1 = Diff_sat_all_df_in.frame_col_name2
+        col_name2 = Diff_sat_all_df_in.frame_col_name3
+    except:
+        col_name0 = Diff_sat_all_df_in.columns[0]
+        col_name1 = Diff_sat_all_df_in.columns[1]
+        col_name2 = Diff_sat_all_df_in.columns[2]
 
     rms_stk = []
 
