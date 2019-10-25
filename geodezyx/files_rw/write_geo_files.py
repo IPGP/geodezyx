@@ -25,6 +25,148 @@ def write_sndy_light_dat(ts_in,outdir,outprefix):
                 fil.write(lin + '\n')
     fil.close()
     
+def write_sp3(SP3_DF_in , outpath):
+    """
+    Write DOCSTRING
+    """
+    ################## MAIN DATA
+    LinesStk = []
+
+
+    SP3_DF_in.sort_values(["epoch","sat"],inplace=True)
+
+    EpochList  = SP3_DF_in["epoch"].unique()
+    SatList    = sorted(SP3_DF_in["sat"].unique())
+    SatListSet = set(SatList)
+
+    for epoc in EpochList:
+        SP3epoc   = pd.DataFrame(SP3_DF_in[SP3_DF_in["epoch"] == epoc])
+        ## Missing Sat
+        MissingSats = SatListSet.difference(set(SP3epoc["sat"]))
+        
+        for miss_sat in MissingSats:
+            miss_line = SP3epoc.iloc[0].copy()
+            miss_line["sat"]   = miss_sat
+            miss_line["const"] = miss_sat[0]
+            miss_line["x"]     = 0.000000
+            miss_line["y"]     = 0.000000
+            miss_line["z"]     = 0.000000
+            miss_line["clk"]   = 999999.999999
+            
+            SP3epoc = SP3epoc.append(miss_line)
+
+        SP3epoc.sort_values("sat",inplace=True)
+        timestamp = conv.dt_2_sp3_datestr(conv.numpy_datetime2dt(epoc)) + "\n"
+
+        LinesStk.append(timestamp)
+
+        linefmt = "P{:}{:14.6f}{:14.6f}{:14.6f}{:14.6f}\n"
+
+
+        for ilin , lin in SP3epoc.iterrows():
+            line_out = linefmt.format(lin["sat"],lin["x"],lin["y"],lin["z"],lin["clk"])
+
+            LinesStk.append(line_out)
+
+
+
+    ################## HEADER
+    ######### SATELLITE LIST
+
+    Satline_stk   = []
+    Sigmaline_stk = []
+
+    for i in range(5):
+        SatLine = SatList[17*i:17*(i+1)]
+        if len(SatLine) < 17:
+            complem = " 00" * (17 - len(SatLine))
+        else:
+            complem = ""
+
+        if i == 0:
+            nbsat4line = len(SatList)
+        else:
+            nbsat4line = ''
+
+        satline = "+  {:3}   ".format(nbsat4line) + "".join(SatLine) + complem + "\n"
+        sigmaline = "++         0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0\n"
+
+        Satline_stk.append(satline)
+        Sigmaline_stk.append(sigmaline)
+
+
+    ######### 2 First LINES
+    start_dt = conv.numpy_dt2dt(EpochList.min())
+
+    header_line1 = "#cP" + conv.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochList)) + "   u+U IGSXX FIT  XXX\n"
+
+    delta_epoch = int(utils.most_common(np.diff(EpochList) * 10**-9))
+    MJD  = conv.dt2MJD(start_dt)
+    MJD_int = int(np.floor(MJD))
+    MJD_dec = MJD - MJD_int
+    gps_wwww , gps_sec = conv.dt2gpstime(start_dt,False,"gps")
+
+    header_line2 = "## {:4} {:15.8f} {:14.8f} {:5} {:15.13f}\n".format(gps_wwww,gps_sec,delta_epoch,MJD_int,MJD_dec)
+
+
+    ######### HEADER BOTTOM
+    header_bottom = """%c G  cc GPS ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
+%c cc cc ccc ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
+%f  1.2500000  1.025000000  0.00000000000  0.000000000000000
+%f  0.0000000  0.000000000  0.00000000000  0.000000000000000
+%i    0    0    0    0      0      0      0      0         0
+%i    0    0    0    0      0      0      0      0         0
+/* PCV:IGSXX_XXXX OL/AL:FESXXXX  NONE     YN CLK:CoN ORB:CoN
+/*     GeodeZYX Toolbox Output
+/*
+/*
+"""
+
+
+    ################## FINAL STACK
+
+    FinalLinesStk = []
+
+    FinalLinesStk.append(header_line1)
+    FinalLinesStk.append(header_line2)
+    FinalLinesStk = FinalLinesStk + Satline_stk + Sigmaline_stk
+    FinalLinesStk.append(header_bottom)
+    FinalLinesStk = FinalLinesStk + LinesStk + ["EOF"]
+
+    FinalStr = "".join(FinalLinesStk)
+
+    F = open(outpath,"w+")
+    F.write(FinalStr)
+
+def clk_decimate(file_in,file_out,step=5):
+
+    Fin = open(file_in)
+
+    good_line = True
+    outline = []
+
+    step = 5
+
+    for l in Fin:
+        good_line = True
+        if l[0:2] in ("AR","AS"):
+            epoc   = conv.tup_or_lis2dt(l[8:34].strip().split())
+            if np.mod(epoc.minute , step) == 0:
+                good_line = True
+            else:
+                good_line = False
+
+        if good_line:
+            outline.append(l)
+
+    with open(file_out,"w+") as Fout:
+        for l in outline:
+            Fout.write(l)
+
+    return file_out
+    
+    
+    
     
 def write_clk(DFclk_in,clk_file_out,header=""):
     HEAD = header
