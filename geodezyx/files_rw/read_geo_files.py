@@ -732,7 +732,7 @@ def write_sp3(SP3_DF_in , outpath):
             SP3epoc = SP3epoc.append(miss_line)
 
         SP3epoc.sort_values("sat",inplace=True)
-        timestamp = conv.dt2sp3_timestamp(conv.numpy_dt2dt(epoc)) + "\n"
+        timestamp = conv.dt_2_sp3_datestr(conv.numpy_dt2dt(epoc)) + "\n"
 
         LinesStk.append(timestamp)
 
