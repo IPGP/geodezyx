@@ -1578,7 +1578,7 @@ def dt_2_sp3_datestr(dtin):
     if utils.is_iterable(dtin):
         return [dt_2_sp3_datestr(e) for e in dtin]
     else:
-        return utils.join_improved("",*conv.dt2gpstime(dat))
+        return utils.join_improved("",*dt2gpstime(dat))
 
 
 
