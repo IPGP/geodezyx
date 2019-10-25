@@ -14,6 +14,7 @@ import collections
 import itertools
 import natsort
 import numpy as np
+import re
 #### geodeZYX modules
 
 
