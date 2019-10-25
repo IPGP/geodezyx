@@ -1581,6 +1581,30 @@ def dt_2_sp3_datestr(dtin):
         return utils.join_improved("",*dt2gpstime(dtin))
 
 
+def dt2sp3_timestamp(dtin,start_with_star=True):
+    """
+    Time conversion
+    
+    Python's Datetime => SP3 Timestamp
+    e.g. 
+    
+    *  2000  5 28  0  0  0.00000000
+    """
+    yyyy = dtin.year
+    mm   = dtin.month
+    dd   = dtin.day
+    hh   = dtin.hour
+    mi   = dtin.minute
+    sec  = dtin.second
+    
+    if start_with_star:
+        strt = "*  "
+    else:
+        strt = ""
+        
+    strout = strt + "{:4} {:2d} {:2d} {:2d} {:2d} {:11.8f}".format(yyyy,mm,dd,hh,mi,sec)
+    return strout
+
 
 
 def datestr_gins_filename_2_dt(datestrin):
@@ -1638,6 +1662,10 @@ def datestr_gins_filename_2_dt(datestrin):
             year = 2000 + yr
     
         return dt.datetime(year,mm,dd,hh,mmin,ss)
+
+
+
+
 
 
 #### LEAP SECONDS MANAGEMENT
