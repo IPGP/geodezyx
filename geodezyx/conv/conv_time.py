@@ -752,7 +752,7 @@ def utc2gpstime(year,month,day,hour,min,sec):
     return int(gpsweek),int(gpssecs)
 
 
-def dt2gpstime(dtin,dayinweek=True):
+def dt2gpstime(dtin,dayinweek=True,inp_ref="utc"):
     
     """
     Time conversion
@@ -763,6 +763,11 @@ def dt2gpstime(dtin,dayinweek=True):
     ----------
     dtin : datetime or list/numpy.array of datetime
         Datetime(s). Can handle several datetimes in an iterable.
+        
+    inp_ref : str
+        "utc" : apply the 19 sec & leap second correction at the epoch 
+        "gps" : no correction applied 
+        "tai" : apply -19 sec correction
         
     dayinweek : bool
         if True : returns  GPS week, day in GPS week
@@ -776,18 +781,33 @@ def dt2gpstime(dtin,dayinweek=True):
         Is a list of tuple if the input is an iterable
     """
     
-    if utils.is_iterable(dtin):
-        typ=utils.get_type_smart(dtin)
-        return typ([dt2gpstime(e) for e in dtin])
+    if cnv_gen.is_iterable(dtin):
+        return [dt2gpstime(e) for e in dtin]
         
     else:
-        week , secs = utc2gpstime(dtin.year,dtin.month,dtin.day,dtin.hour,
-                                  dtin.minute,dtin.second)
+        week_raw , secs_raw = utc2gpstime(dtin.year,dtin.month,dtin.day,dtin.hour,
+                                          dtin.minute,dtin.second)
+        
+        utc_offset = find_leapsecond(dtin)
+
+        if inp_ref == "utc":
+            ### utc : utc2gpstime did the job
+            week , secs = week_raw , secs_raw
+
+        elif inp_ref == "tai":
+            ### tai : utc2gpstime did the job, but needs leap sec correction again
+            week , secs = week_raw , secs_raw - utc_offset
+
+        elif inp_ref == "gps":
+            ### tai : utc2gpstime did the job, but needs leap sec & 19sec correction again
+            week , secs = week_raw , secs_raw + 19 - utc_offset
+            
         if dayinweek:
             day = np.floor(np.divide(secs,86400))
             return int(week) , int(day)
         else:
             return int(week) , int(secs)
+
 
 
 def dt2gpsweek_decimal(dtin,return_middle_of_day=True):
