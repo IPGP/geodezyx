@@ -178,6 +178,35 @@ def numpy_datetime2dt(npdtin):
 
 
 
+def numpy_dt2dt(numpy_dt_in):
+    """
+    Time conversion
+
+    numpy datetime64 object => Python's Datetime
+    
+    Parameters
+    ----------
+    numpy_dt_in : numpy datetime64 object
+        numpy datetime64 object
+
+    Returns
+    -------
+    dt : datetime
+        Datetime
+              
+    source
+    ------
+    
+    https://gist.github.com/blaylockbk/1677b446bc741ee2db3e943ab7e4cabd
+    """
+    timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
+                 / np.timedelta64(1, 's'))
+    return dt.datetime.utcfromtimestamp(timestamp)
+
+
+
+
+
 def matlab_time2dt(matlab_datenum):
     """
     Time conversion

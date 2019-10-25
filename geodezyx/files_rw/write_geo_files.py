@@ -35,9 +35,12 @@ def write_sndy_light_dat(ts_in,outdir,outprefix):
                 fil.write(lin + '\n')
     fil.close()
     
-def write_sp3(SP3_DF_in , outpath):
+def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
     """
     Write DOCSTRING
+    
+    skip_null_epoch: Dont write an epoch if all sats are null (filtering)
+
     """
     ################## MAIN DATA
     LinesStk = []
@@ -68,16 +71,22 @@ def write_sp3(SP3_DF_in , outpath):
         SP3epoc.sort_values("sat",inplace=True)
         timestamp = conv.dt2sp3_timestamp(conv.numpy_datetime2dt(epoc)) + "\n"
 
-        LinesStk.append(timestamp)
-
         linefmt = "P{:}{:14.6f}{:14.6f}{:14.6f}{:14.6f}\n"
 
-
+        LinesStkEpoch = []
+        sum_val_epoch = 0
         for ilin , lin in SP3epoc.iterrows():
             line_out = linefmt.format(lin["sat"],lin["x"],lin["y"],lin["z"],lin["clk"])
+            
+            sum_val_epoch += lin["x"]+lin["y"]+lin["z"]
 
-            LinesStk.append(line_out)
+            LinesStkEpoch.append(line_out)
 
+
+        ### if skip_null_epoch activated, print only if valid epoch 
+        if not ( np.isclose(sum_val_epoch,0) and skip_null_epoch):
+            LinesStk.append(timestamp)
+            LinesStk = LinesStk + LinesStkEpoch
 
 
     ################## HEADER
