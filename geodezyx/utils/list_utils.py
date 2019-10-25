@@ -461,3 +461,15 @@ def dicofdic(mat,names):
             d2_dict[names[i]][names[j]] = mat[i,j]
 
     return d2_dict
+
+
+def find_regex_in_list(regex,L,only_first_occurence=False):
+    Lout = []
+    for e in L:
+        if re.search(regex,e):
+            if only_first_occurence:
+                return e
+            else:    
+                Lout.append(e)
+    return Lout
+            
