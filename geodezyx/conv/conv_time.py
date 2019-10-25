@@ -1559,7 +1559,26 @@ def dt_2_sinex_datestr(dtin,short_yy=True):
 
         return strout
 
-
+def dt_2_sp3_datestr(dtin):
+    """
+    Time conversion
+    
+    Python's Datetime => SP3 time format 
+        
+    Parameters
+    ----------
+    dtin : datetime
+    
+    Returns
+    -------
+    dtout : str
+        Date in SP3 format
+    """
+    
+    if utils.is_iterable(dtin):
+        return [dt_2_sp3_datestr(e) for e in dtin]
+    else:
+        return utils.join_improved("",*conv.dt2gpstime(dat))
 
 
 
