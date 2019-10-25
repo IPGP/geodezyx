@@ -6,9 +6,19 @@ Created on Fri Aug  2 18:00:21 2019
 @author: psakicki
 """
 
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import operational
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
+##########  END IMPORT  ##########
+
+
+
 
 def write_sndy_light_dat(ts_in,outdir,outprefix):
     """pas fini"""
@@ -137,35 +147,6 @@ def write_sp3(SP3_DF_in , outpath):
 
     F = open(outpath,"w+")
     F.write(FinalStr)
-
-def clk_decimate(file_in,file_out,step=5):
-
-    Fin = open(file_in)
-
-    good_line = True
-    outline = []
-
-    step = 5
-
-    for l in Fin:
-        good_line = True
-        if l[0:2] in ("AR","AS"):
-            epoc   = conv.tup_or_lis2dt(l[8:34].strip().split())
-            if np.mod(epoc.minute , step) == 0:
-                good_line = True
-            else:
-                good_line = False
-
-        if good_line:
-            outline.append(l)
-
-    with open(file_out,"w+") as Fout:
-        for l in outline:
-            Fout.write(l)
-
-    return file_out
-    
-    
     
     
 def write_clk(DFclk_in,clk_file_out,header=""):
