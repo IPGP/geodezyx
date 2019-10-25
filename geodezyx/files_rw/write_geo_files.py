@@ -6,9 +6,16 @@ Created on Fri Aug  2 18:00:21 2019
 @author: psakicki
 """
 
+
+
+########## BEGIN IMPORT ##########
+#### External modules
+import numpy as np
+import os 
+import pandas as pd
+
 #### geodeZYX modules
 from geodezyx import conv
-from geodezyx import operational
 from geodezyx import utils
 
 #### Import star style
@@ -106,7 +113,7 @@ def write_sp3(SP3_DF_in , outpath):
 
 
     ######### 2 First LINES
-    start_dt = conv.numpy_dt2dt(EpochList.min())
+    start_dt = conv.numpy_datetime2dt(EpochList.min())
 
     header_line1 = "#cP" + conv.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochList)) + "   u+U IGSXX FIT  XXX\n"
 
