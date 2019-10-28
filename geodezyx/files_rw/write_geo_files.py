@@ -129,7 +129,7 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
 
 
     ######### HEADER BOTTOM
-    header_bottom = """%c G  cc GPS ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
+    header_bottom = """%c M  cc GPS ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
 %c cc cc ccc ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
 %f  1.2500000  1.025000000  0.00000000000  0.000000000000000
 %f  0.0000000  0.000000000  0.00000000000  0.000000000000000
