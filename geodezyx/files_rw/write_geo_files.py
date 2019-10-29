@@ -117,7 +117,7 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
 
 
     ######### 2 First LINES
-    start_dt = conv.numpy_datetime2dt(EpochUsedList.min())
+    start_dt = conv.numpy_datetime2dt(np.min(EpochUsedList))
     
     header_line1 = "#cP" + conv.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochUsedList)) + "   u+U IGSXX FIT  XXX\n"
 
