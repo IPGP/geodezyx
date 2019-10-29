@@ -48,11 +48,12 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
 
     SP3_DF_in.sort_values(["epoch","sat"],inplace=True)
 
-    EpochList  = SP3_DF_in["epoch"].unique()
+    EpochRawList  = SP3_DF_in["epoch"].unique()
     SatList    = sorted(SP3_DF_in["sat"].unique())
     SatListSet = set(SatList)
+    EpochUsedList = []
 
-    for epoc in EpochList:
+    for epoc in EpochRawList:
         SP3epoc   = pd.DataFrame(SP3_DF_in[SP3_DF_in["epoch"] == epoc])
         ## Missing Sat
         MissingSats = SatListSet.difference(set(SP3epoc["sat"]))
@@ -85,8 +86,9 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
 
         ### if skip_null_epoch activated, print only if valid epoch 
         if not ( np.isclose(sum_val_epoch,0) and skip_null_epoch):
-            LinesStk.append(timestamp)
-            LinesStk = LinesStk + LinesStkEpoch
+            LinesStk.append(timestamp)          # stack the timestamp
+            LinesStk = LinesStk + LinesStkEpoch # stack the values
+            EpochUsedList.append(epoc)          # stack the epoc as dt
 
 
     ################## HEADER
@@ -115,13 +117,11 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
 
 
     ######### 2 First LINES
-    start_dt = conv.numpy_datetime2dt(EpochList.min())
-
-    print("N epoch",EpochList)
+    start_dt = conv.numpy_datetime2dt(EpochUsedList.min())
     
-    header_line1 = "#cP" + conv.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochList)) + "   u+U IGSXX FIT  XXX\n"
+    header_line1 = "#cP" + conv.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochUsedList)) + "   u+U IGSXX FIT  XXX\n"
 
-    delta_epoch = int(utils.most_common(np.diff(EpochList) * 10**-9))
+    delta_epoch = int(utils.most_common(np.diff(EpochUsedList) * 10**-9))
     MJD  = conv.dt2MJD(start_dt)
     MJD_int = int(np.floor(MJD))
     MJD_dec = MJD - MJD_int
