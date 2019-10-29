@@ -117,6 +117,8 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
     ######### 2 First LINES
     start_dt = conv.numpy_datetime2dt(EpochList.min())
 
+    print("N epoch",len(EpochList))
+    
     header_line1 = "#cP" + conv.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochList)) + "   u+U IGSXX FIT  XXX\n"
 
     delta_epoch = int(utils.most_common(np.diff(EpochList) * 10**-9))
