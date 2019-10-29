@@ -46,15 +46,15 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
     LinesStk = []
 
 
-    SP3_DF_in.sort_values(["epoch","sat"],inplace=True)
+    SP3_DF_wrk = SP3_DF_in.sort_values(["epoch","sat"])
 
-    EpochRawList  = SP3_DF_in["epoch"].unique()
-    SatList    = sorted(SP3_DF_in["sat"].unique())
+    EpochRawList  = SP3_DF_wrk["epoch"].unique()
+    SatList    = sorted(SP3_DF_wrk["sat"].unique())
     SatListSet = set(SatList)
     EpochUsedList = []
 
     for epoc in EpochRawList:
-        SP3epoc   = pd.DataFrame(SP3_DF_in[SP3_DF_in["epoch"] == epoc])
+        SP3epoc   = pd.DataFrame(SP3_DF_wrk[SP3_DF_wrk["epoch"] == epoc])
         ## Missing Sat
         MissingSats = SatListSet.difference(set(SP3epoc["sat"]))
         
