@@ -2110,8 +2110,9 @@ def read_sinex_versatile(sinex_path_in , id_block,
                 fld_head_space = fld_head_regex.search(header_line)
                 Fields_size.append(len(fld_head_space.group()) + 1)
             
-
-        print(header_line , Fields_size)
+        print("INFO : read_sinex_versatile : Auto detected column names/sizes")
+        print(header_line)
+        print(Header_split , Fields_size)
 
 
 

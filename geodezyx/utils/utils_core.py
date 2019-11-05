@@ -486,6 +486,23 @@ def str_2_float_line(line , sep=" ",out_type=float):
         return fields
 
 
+def replace_in_file(file_in,str_before,str_after):
+    """
+    https://stackoverflow.com/questions/17140886/how-to-search-and-replace-text-in-a-file
+    """
+    with open(file_in, 'r') as file :
+        filedata = file.read()
+        
+    # Replace the target string
+    filedata = filedata.replace(str_before,str_after)
+        
+    # Write the file out again
+    with open(fbias + "", 'w') as file:
+        file.write(filedata)
+
+
+
+
 
 ################
 ### "GETTERs" : wrappers to get easily some fcts
@@ -702,4 +719,3 @@ def mdotr(*args):
     for a in reversed(args[:-1]):
         ret = np.dot(a,ret)
     return ret
-

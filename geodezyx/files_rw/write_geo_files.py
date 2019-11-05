@@ -167,7 +167,7 @@ def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False):
     if output_std_values:
         row_str_proto = "{:2} {:4} {:4d} {:2d} {:2d} {:2d} {:2d} {:9.6f} {:2d}   {:19.12e} {:19.12e}"
     else:
-        row_str_proto = "{:2} {:4} {:4d} {:2d} {:2d} {:2d} {:2d} {:9.6f} {:2d}   {:19.12e}"
+        row_str_proto = "{:2} {:4} {:4d} {:02d} {:02d} {:02d} {:02d} {:9.6f} {:2d}   {:19.12e}"
         
     for irow, row in DFclk_in.iterrows():
 
