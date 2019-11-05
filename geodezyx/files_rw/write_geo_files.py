@@ -160,14 +160,26 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
     F.write(FinalStr)
     
     
-def write_clk(DFclk_in,clk_file_out,header=""):
+def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False):
     HEAD = header
     Row_str_stk = []
-    for irow, row in DFclk_in.iterrows():
+
+    if output_std_values:
+        row_str_proto = "{:2} {:4} {:4d} {:2d} {:2d} {:2d} {:2d} {:9.6f} {:2d}   {:19.12e} {:19.12e}"
+    else:
         row_str_proto = "{:2} {:4} {:4d} {:2d} {:2d} {:2d} {:2d} {:9.6f} {:2d}   {:19.12e}"
-        row_str = row_str_proto.format(row["type"],row["name"],row["year"],
-                                       row["month"],row["day"],row["h"],row["minutes"],
-                                       row["seconds"],1,row["offset"])
+        
+    for irow, row in DFclk_in.iterrows():
+
+        if output_std_values:
+            row_str = row_str_proto.format(row["type"],row["name"],row["year"],
+                                           row["month"],row["day"],row["h"],row["minutes"],
+                                           row["seconds"],1,row["offset"],row["rms"])
+        else:
+            row_str = row_str_proto.format(row["type"],row["name"],row["year"],
+                                           row["month"],row["day"],row["h"],row["minutes"],
+                                           row["seconds"],1,row["offset"])
+            
         Row_str_stk.append(row_str)
         
     CORPSE = "\n".join(Row_str_stk)

@@ -2098,7 +2098,18 @@ def read_sinex_versatile(sinex_path_in , id_block,
         
 
         Header_split = header_line.split()
-        Fields_size = [len(e)+1 for e in Header_split]
+        if False: ### Simple case when the columns are splitted with only a single
+            Fields_size = [len(e)+1 for e in Header_split]
+        else: ### Smarter case : we search for the n spaces after the column name
+            Fields_size = []
+            for fld_head_split in Header_split:
+                fld_head_regex = re.compile(fld_head_split[1:] + " *") #trick:
+                #1st char is removed, because it can be a *
+                #and screw the regex. This char is re-added at the end
+                #when the len is stored (the "+1" below)
+                fld_head_space = fld_head_regex.search(header_line)
+                Fields_size.append(len(fld_head_space.group()) + 1)
+            
 
         print(header_line , Fields_size)
 
@@ -2116,13 +2127,16 @@ def read_sinex_versatile(sinex_path_in , id_block,
         DF = pd.read_csv(StringIO(Lines_str),header=-1 ,
                              delim_whitespace=True)
 
+
+    regex_time = "(([0-9]{2}|[0-9]{4}):[0-9]{3}|[0-9]{7}):[0-9]{5}"
     for col in DF.columns:
-        if convert_date_2_dt and re.match("([0-9]{2}|[0-9]{4}):[0-9]{3}:[0-9]{5}",
+        if convert_date_2_dt and re.match(regex_time,
                                           str(DF[col][0])):
             try:
                 DF[col] = DF[col].apply(lambda x : conv.datestr_sinex_2_dt(x))
-            except:
+            except Exception as e:
                 print("WARN : read_sinex_versatile : convert date string to datetime failed")
+                print(e)
                 pass
         
     return DF

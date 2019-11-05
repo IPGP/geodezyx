@@ -1551,21 +1551,29 @@ def datestr_sinex_2_dt(datestrin):
     if utils.is_iterable(datestrin):
         return [datestr_sinex_2_dt(e) for e in datestrin]
     else:
-        #### CASE WHERE THE DATE LOOKS LIKE 00000:00000
-        if re.search("[0-9]{5}:[0-9]{5}",datestrin):
-            datestr_list = list(datestrin)
+        datestr = datestrin
+        #### CASE WHERE THE DATE LOOKS LIKE YYDDD:SSSSS
+        if re.search("[0-9]{7}:[0-9]{5}",datestr):
+            datestr_list = list(datestr)
+            datestr_list.insert(4,":")
+            datestr = "".join(datestr_list)    
+        #### CASE WHERE THE DATE LOOKS LIKE YYYYDDD:SSSSS
+        elif re.search("[0-9]{5}:[0-9]{5}",datestr):
+            datestr_list = list(datestr)
             datestr_list.insert(2,":")
-            datestrin = "".join(datestr_list)
-        elif '00:000:00000' in datestrin:
+            datestr = "".join(datestr_list)
+            
+        ### this test must be independent  
+        if '00:000:00000' in datestr:
             return dt.datetime(1970,1,1)
     
-        dateint = [int(e) for e in datestrin.split(':')]
-        yr = dateint[0]
+        dateint = [int(e) for e in datestr.split(':')]
+        yr  = dateint[0]
         doy = dateint[1]
         sec = dateint[2]
         
         ## case for year with only 2 digits
-        if re.match("[0-9]{2}:[0-9]{3}:[0-9]{5}",datestrin):            
+        if re.match("[0-9]{2}:[0-9]{3}:[0-9]{5}",datestr):            
             if yr > 50:
                 year = 1900 + yr
             else:
