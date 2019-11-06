@@ -6,10 +6,22 @@ Created on Fri Aug 16 11:53:56 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import dateutil
+import numpy as np
+import os 
+import shutil
+import string
+import subprocess
+import re
 
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import utils
+
+##########  END IMPORT  ##########
 
 #  _____  _____ _   _ ________   __   _____       _ _ _
 # |  __ \|_   _| \ | |  ____\ \ / /  / ____|     | (_) |
@@ -171,7 +183,7 @@ def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
 
 
 
-    if  genefun.is_iterable(input_rinex_path_or_string):
+    if  utils.is_iterable(input_rinex_path_or_string):
         Finp = input_rinex_path_or_string
     elif os.path.isfile(input_rinex_path_or_string):
         Finp = open(input_rinex_path_or_string)
@@ -201,7 +213,7 @@ def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
             else:
                 rinex_60sec = False
             try:
-                epochdt = datetime.datetime(*f)
+                epochdt = dt.datetime(*f)
                 if rinex_60sec:
                     epochdt = epochdt + dt.timedelta(seconds=1)
                 epochs_list.append(epochdt)
@@ -241,19 +253,19 @@ def rinex_start_end(input_rinex_path,interval_out=False,
     NBsuite : c'est fait au 161018 mais par contre c'est un dirty copier coller
     """
     epochs_list = []
-    Head = genefun.head(input_rinex_path,500)
+    Head = utils.head(input_rinex_path,500)
     epochs_list_head = rinex_read_epoch(Head,interval_out=interval_out,
                                         add_tzinfo=add_tzinfo,out_array=False)
 
 
-    Tail =  genefun.tail(input_rinex_path,500)
+    Tail =  utils.tail(input_rinex_path,500)
     epochs_list_tail = rinex_read_epoch(Tail,interval_out=interval_out,
                                         add_tzinfo=add_tzinfo,out_array=False)
 
     epochs_list = epochs_list_head + epochs_list_tail
 
     if len(epochs_list) == 0:
-        first_epoch = geok.rinexname2dt(input_rinex_path)
+        first_epoch = conv.rinexname2dt(input_rinex_path)
         alphabet = list(string.ascii_lowercase)
 
         if os.path.basename(input_rinex_path)[7] in alphabet:
@@ -275,7 +287,7 @@ def rinex_start_end(input_rinex_path,interval_out=False,
     else:
         interv_lis = np.diff(epochs_list)
         interv_lis = [e.seconds + e.microseconds * 10**-6 for e in interv_lis]
-        interval   = genefun.most_common(interv_lis)
+        interval   = utils.most_common(interv_lis)
         print("interval : " , interval , last_epoch)
 
         #return interv_lis , epochs_list
@@ -458,15 +470,15 @@ def rinex_spliter(input_rinex_path,output_directory,stat_out_name='',
 
     # In this function, Date are truncated epochs
     # (only the day if interval == 24 , + the hour else)
-    first_date = datetime.datetime(first_epoch.year,first_epoch.month,
+    first_date = dt.datetime(first_epoch.year,first_epoch.month,
                                    first_epoch.day,first_epoch.hour)
-    last_date = datetime.datetime(last_epoch.year,last_epoch.month,
-                                  last_epoch.day,last_epoch.hour)+datetime.timedelta(hours=1)
+    last_date = dt.datetime(last_epoch.year,last_epoch.month,
+                                  last_epoch.day,last_epoch.hour)+dt.timedelta(hours=1)
 
     print("first & last dates (truncated) : " , first_date , last_date)
 
-    time_interval = genefun.get_interval(first_date,last_date,
-                                         datetime.timedelta(hours=interval_size))
+    time_interval = utils.get_interval(first_date,last_date,
+                                         dt.timedelta(hours=interval_size))
 
     alphabet = list(string.ascii_lowercase)
 

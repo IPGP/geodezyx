@@ -57,6 +57,7 @@ from . import utils
 
 __all__ = ['athmo',
            'conv',
+           'externlib',
            'files_rw',
            'geodyn',
            'operational',

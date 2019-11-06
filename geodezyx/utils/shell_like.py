@@ -6,11 +6,21 @@ Created on Fri Jun 28 14:28:06 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+########## BEGIN IMPORT ##########
+#### External modules
+import fnmatch
+import glob
 import os
+import re
 import shutil
+import subprocess
+
+#### geodeZYX modules
+from geodezyx import utils
+##########  END IMPORT  ##########
+
+
 
 #################
 ### SHELL LIKE FCTS
@@ -130,7 +140,7 @@ def grep_boolean(file_in,search_string):
     return False
 
 def regex_OR_from_list(listin):
-    return "(" + join_improved("|" , *listin) +  ")"
+    return "(" + utils.join_improved("|" , *listin) +  ")"
 
 def cat(outfilename, *infilenames):
     """
@@ -245,7 +255,7 @@ def find_recursive(parent_folder , pattern,
                     bool_match = re.search(pattern, filename, re.IGNORECASE)
                 except Exception as e:
                     print("ERR : if case_sensitive = False, pattern have to be a REGEX (and not only a simple wildcard)")
-                    raise Exception
+                    raise e
                     
                 if bool_match:
                     matches.append(os.path.join(root, filename))
@@ -274,10 +284,10 @@ def glob_smart(dir_path,file_pattern=None,verbose=True):
 
 def insert_lines_in_file(file_path,text_values,lines_ids):
     
-    if not is_iterable(text_values):
+    if not utils.is_iterable(text_values):
         text_values = [text_values]
     
-    if not is_iterable(lines_ids):
+    if not utils.is_iterable(lines_ids):
         lines_ids = [lines_ids]
     
     f = open(file_path, "r")
@@ -395,7 +405,7 @@ def replace(file_path, pattern, subst):
     """ from http://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python """
     #Create temp file
     from tempfile import mkstemp
-    from os import remove, close
+    from os import close
     fh, abs_path = mkstemp()
     new_file = open(abs_path,'w')
     old_file = open(file_path)

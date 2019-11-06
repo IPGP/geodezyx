@@ -6,11 +6,23 @@ Created on Fri Aug  2 17:36:39 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
+########## BEGIN IMPORT ##########
+#### External modules
+import matplotlib
+import matplotlib.pyplot as plt
+import natsort
 import numpy as np
+import os 
+import pandas as pd
+import re
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import files_rw
+from geodezyx import stats
+from geodezyx import utils
+
+##########  END IMPORT  ##########
 
 def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                  sats_used_list = ['G'],
@@ -230,8 +242,8 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
             # Start ECEF => ECI
             if convert_ECEF_ECI:
                 # Backup because the columns xyz will be reaffected
-                D1sv_bkp = D1sv.copy()
-                D2sv_bkp = D2sv.copy()
+                #D1sv_bkp = D1sv.copy()
+                #D2sv_bkp = D2sv.copy()
     
                 P1b = conv.ECEF2ECI(np.array(P1),conv.dt_gpstime2dt_utc(P1.index.to_pydatetime(),out_array=True))
                 P2b = conv.ECEF2ECI(np.array(P2),conv.dt_gpstime2dt_utc(P2.index.to_pydatetime(),out_array=True))
@@ -380,7 +392,7 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     import matplotlib.dates as mdates
     fig,[axr,axt,axn] = plt.subplots(3,1,sharex='all')
 
-    satdispo = natsorted(list(set(Diff_sat_all_df_in['sat'])))
+    satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in['sat'])))
 
     SymbStk = []
 
@@ -390,9 +402,14 @@ def compar_orbit_plot(Diff_sat_all_df_in,
 
     # Pandas donesn't manage well iterable as attribute
     # So, it is separated
-    col_name0 = Diff_sat_all_df_in.frame_col_name1
-    col_name1 = Diff_sat_all_df_in.frame_col_name2
-    col_name2 = Diff_sat_all_df_in.frame_col_name3
+    try:
+        col_name0 = Diff_sat_all_df_in.frame_col_name1
+        col_name1 = Diff_sat_all_df_in.frame_col_name2
+        col_name2 = Diff_sat_all_df_in.frame_col_name3
+    except:
+        col_name0 = Diff_sat_all_df_in.columns[0]
+        col_name1 = Diff_sat_all_df_in.columns[1]
+        col_name2 = Diff_sat_all_df_in.columns[2]
 
     for satuse,color in zip(satdispo,Colors):
         Diffuse = Diff_sat_all_df_in[Diff_sat_all_df_in['sat'] == satuse]
@@ -488,9 +505,14 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
 
     # Pandas donesn't manage well iterable as attribute
     # So, it is separated
-    col_name0 = Diff_sat_all_df_in.frame_col_name1
-    col_name1 = Diff_sat_all_df_in.frame_col_name2
-    col_name2 = Diff_sat_all_df_in.frame_col_name3
+    try:
+        col_name0 = Diff_sat_all_df_in.frame_col_name1
+        col_name1 = Diff_sat_all_df_in.frame_col_name2
+        col_name2 = Diff_sat_all_df_in.frame_col_name3
+    except:
+        col_name0 = Diff_sat_all_df_in.columns[0]
+        col_name1 = Diff_sat_all_df_in.columns[1]
+        col_name2 = Diff_sat_all_df_in.columns[2]
 
     rms_stk = []
 
@@ -602,8 +624,8 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
             print("WARN : Dates of 2 input files are differents !!! It might be very bad !!!",week1,week2)
         else:
             wwwwd = week1
-        D1 = gfc.read_sinex(snx1,True)
-        D2 = gfc.read_sinex(snx2,True)
+        D1 = files_rw.read_sinex(snx1,True)
+        D2 = files_rw.read_sinex(snx2,True)
     else:
         print("WARN : you are giving the SINEX input as a DataFrame, wwwwd has to be given manually using manu_wwwwd")
         D1 = snx1

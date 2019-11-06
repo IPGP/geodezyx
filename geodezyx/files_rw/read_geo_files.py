@@ -27,19 +27,26 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
 
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import linecache
+import numpy as np
+import os 
+import pandas as pd
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import time_series
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-import linecache
+##########  END IMPORT  ##########
 
-#import geodezyx.megalib.geodetik as geok
-
-
-#import utils.as genefun
-#import geo_files_converter_lib as gfc
-#import geo_trop as gtro
-#import geodetik as geok     maybe we should leave as comment until define the proper paths
 
 
 def read_bull_B(path):
@@ -208,208 +215,209 @@ def read_clk(file_path_in, returns_pandas = True, interval=None):
 
 
 
-def read_erp(caminho_arq,ac):
-    """
-    General description
-    Units: ('MJD','X-P (arcsec)', 'Y-P (arcsec)', 'UT1UTC (E-7S)','LOD (E-7S/D)','S-X (E-6" arcsec)','S-Y (E-6" arcsec)',
-    'S-UT (E-7S)','S-LD (E-7S/D)','NR (E-6" arcsec)', 'NF (E-6" arcsec)', 'NT (E-6" arcsec)',
-    'X-RT (arcsec/D)','Y-RT (arcsec/D)','S-XR (E-6" arcsec/D)','S-YR (E-6" arcsec/D)', 'C-XY', 'C-XT',
-    'C-YT', 'DPSI', 'DEPS','S-DP','S-DE')
+# def read_erp(caminho_arq,ac):
+    # """
+    # General description
+    # Units: ('MJD','X-P (arcsec)', 'Y-P (arcsec)', 'UT1UTC (E-7S)','LOD (E-7S/D)','S-X (E-6" arcsec)','S-Y (E-6" arcsec)',
+    # 'S-UT (E-7S)','S-LD (E-7S/D)','NR (E-6" arcsec)', 'NF (E-6" arcsec)', 'NT (E-6" arcsec)',
+    # 'X-RT (arcsec/D)','Y-RT (arcsec/D)','S-XR (E-6" arcsec/D)','S-YR (E-6" arcsec/D)', 'C-XY', 'C-XT',
+    # 'C-YT', 'DPSI', 'DEPS','S-DP','S-DE')
 
-    Parameters
-    ----------
-    file_path_in :  str
-        Path of the file in the local machine.
+    # Parameters
+    # ----------
+    # file_path_in :  str
+        # Path of the file in the local machine.
 
-    which AC :  str
-        The analisys center that will be used
-
-
-    Returns
-    -------
-    out1 :  pandas table
-        Returns a panda table format with the data extracted from the file.
-
-    Obs: this function need to be improved to read also the values of UTC and etc. So far reads only the Pole rates. 
-
-    """
-
-    #### FIND DELIVERY DATE
-    name = os.path.basename(caminho_arq)
-
-    if len(name) == 12:
-        dt_delivery = conv.sp3name2dt(caminho_arq)
-    elif len(name) == 38:
-        dt_delivery = conv.sp3name_v3_2dt(caminho_arq)
-    else:
-        dt_delivery = conv.posix2dt(0)
+    # which AC :  str
+        # The analisys center that will be used
 
 
-    le = open(caminho_arq, 'r')
-    letudo = le.readlines()
-    le.close()
-    tamanho = len(letudo) 
+    # Returns
+    # -------
+    # out1 :  pandas table
+        # Returns a panda table format with the data extracted from the file.
+
+    # Obs: this function need to be improved to read also the values of UTC and etc. So far reads only the Pole rates. 
+
+    # """
+
+    # #### FIND DELIVERY DATE
+    # name = os.path.basename(caminho_arq)
+    
+    # if len(name) == 12:
+        # dt_delivery = conv.sp3name2dt(caminho_arq)
+    # elif len(name) == 38:
+        # dt_delivery = conv.sp3name_v3_2dt(caminho_arq)
+    # else:
+        # dt_delivery = conv.posix2dt(0)
+
+
+    # le = open(caminho_arq, 'r')
+    # letudo = le.readlines()
+    # le.close()
+    # tamanho = len(letudo) 
 
     
 
-    numeros = ['0','1','2','3','4','5','6','7','8','9']
+    # numeros = ['0','1','2','3','4','5','6','7','8','9']
 
 
-    ERP=[]
+    # ERP=[]
 
 
-    if caminho_arq[-3:] in ('snx','ssc'):
-        file = open(caminho_arq)
-        Lines =  file.readlines()
-        XPO_stk  = []
-        XPO_std_stk = []
-        YPO_stk  = []
-        YPO_std_stk = []
-        LOD_stk  = []
-        LOD_std_stk = []
-        MJD_stk = []
-        marker = False
+    # if caminho_arq[-3:] in ('snx','ssc'):
+        # file = open(caminho_arq)
+        # Lines =  file.readlines()
+        # XPO_stk  = []
+        # XPO_std_stk = []
+        # YPO_stk  = []
+        # YPO_std_stk = []
+        # LOD_stk  = []
+        # LOD_std_stk = []
+        # MJD_stk = []
+        # marker = False
 
-        for i in range(len(Lines)):
+        # for i in range(len(Lines)):
 
-            if len(Lines[i].strip()) == 0:
-                continue
-            else:
+            # if len(Lines[i].strip()) == 0:
+                # continue
+            # else:
 
-                if Lines[i].split()[0] == '+SOLUTION/ESTIMATE':
-                    marker = True
+                # if Lines[i].split()[0] == '+SOLUTION/ESTIMATE':
+                    # marker = True
 
-                if Lines[i].split()[0] == '-SOLUTION/ESTIMATE':
-                    marker = False
+                # if Lines[i].split()[0] == '-SOLUTION/ESTIMATE':
+                    # marker = False
 
-                if utils.contains_word(Lines[i],'XPO') and marker:
-                    Doy = (Lines[i][30:33])
-                    Year = (Lines[i][27:29])
-                    Pref_year = '20'
-                    Year = int(Pref_year+Year)
-                    Date = conv.doy2dt(Year,Doy)
-                    XPO = float(Lines[i][47:68])*(10**-3)
-                    XPO_std = float(Lines[i][69:80])*(10**-3)
-                    XPO_stk.append(XPO)
-                    XPO_std_stk.append(XPO_std)
-                    MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
+                # if utils.contains_word(Lines[i],'XPO') and marker:
+                    # Doy = (Lines[i][30:33])
+                    # Year = (Lines[i][27:29])
+                    # Pref_year = '20'
+                    # Year = int(Pref_year+Year)
+                    # Date = conv.doy2dt(Year,Doy)
+                    # XPO = float(Lines[i][47:68])*(10**-3)
+                    # XPO_std = float(Lines[i][69:80])*(10**-3)
+                    # XPO_stk.append(XPO)
+                    # XPO_std_stk.append(XPO_std)
+                    # MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
                     
-                if utils.contains_word(Lines[i],'YPO') and marker:
-                    Doy = (Lines[i][30:33])
-                    Year = str(Lines[i][27:29])
-                    Pref_year = '20'
-                    Year = int(Pref_year+Year)
-                    Date = conv.doy2dt(Year,Doy)
-                    YPO = float(Lines[i][47:68])*(10**-3)
-                    YPO_std = float(Lines[i][69:80])*(10**-3)
-                    YPO_stk.append(YPO)
-                    YPO_std_stk.append(YPO_std)
-                    MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
+                # if utils.contains_word(Lines[i],'YPO') and marker:
+                    # Doy = (Lines[i][30:33])
+                    # Year = str(Lines[i][27:29])
+                    # Pref_year = '20'
+                    # Year = int(Pref_year+Year)
+                    # Date = conv.doy2dt(Year,Doy)
+                    # YPO = float(Lines[i][47:68])*(10**-3)
+                    # YPO_std = float(Lines[i][69:80])*(10**-3)
+                    # YPO_stk.append(YPO)
+                    # YPO_std_stk.append(YPO_std)
+                    # MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
                     
-                if utils.contains_word(Lines[i],'LOD') and marker:
-                    Doy = (Lines[i][30:33])
-                    Year = str(Lines[i][27:29])
-                    Pref_year = '20'
-                    Year = int(Pref_year+Year)
-                    Date = conv.doy2dt(Year,Doy)
-                    LOD = float(Lines[i][47:68])*(10**+4)
-                    LOD_std = float(Lines[i][69:80])*(10**+4)
-                    LOD_stk.append(LOD)
-                    LOD_std_stk.append(LOD_std)
-                    MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
+                # if utils.contains_word(Lines[i],'LOD') and marker:
+                    # Doy = (Lines[i][30:33])
+                    # Year = str(Lines[i][27:29])
+                    # Pref_year = '20'
+                    # Year = int(Pref_year+Year)
+                    # Date = conv.doy2dt(Year,Doy)
+                    # LOD = float(Lines[i][47:68])*(10**+4)
+                    # LOD_std = float(Lines[i][69:80])*(10**+4)
+                    # LOD_stk.append(LOD)
+                    # LOD_std_stk.append(LOD_std)
+                    # MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
                     
-        MJD = list(set(MJD_stk))
-        if len(LOD_stk) == 0:
-                LOD_stk = ['0']*len(MJD)
-                LOD_std_stk = ['0']*len(MJD)
+        # MJD = list(set(MJD_stk))
+        # if len(LOD_stk) == 0:
+                # LOD_stk = ['0']*len(MJD)
+                # LOD_std_stk = ['0']*len(MJD)
 
-        for i in range(len(MJD)):
+        # for i in range(len(MJD)):
 
-            ERP_data = [ac, MJD[i], XPO_stk[i], YPO_stk[i], 0, LOD_stk[i], XPO_std_stk[i], YPO_std_stk[i],
-                     0, LOD_std_stk[i], 0, 0, 0, 0, 0, 0, 0, dt_delivery]
-            ERP.append(ERP_data)
-
-
-
-    if ac in ('COD','cod','com', 'cof', 'grg', 'mit', 'sio'):
-        for i in range(tamanho+1):
-            linhaatual = linecache.getline(caminho_arq, i)
-            if linhaatual[0:1] in numeros:
-                ERP_data = linhaatual.split()
-                for j in range(len(ERP_data)):
-                    ERP_data[j] = float(ERP_data[j])
-                ERP_data.insert(0,ac)
-                ERP_data[2] =  ERP_data[2]*(10**-6)
-                ERP_data[3] =  ERP_data[3]*(10**-6)
-                ERP_data[13] = ERP_data[13]*(10**-6)
-                ERP_data[14] = ERP_data[14]*(10**-6)
-                del ERP_data[17:]
-                ERP_data.append(dt_delivery)
-
-                ERP.append(ERP_data)
+            # ERP_data = [ac, MJD[i], XPO_stk[i], YPO_stk[i], 0, LOD_stk[i], XPO_std_stk[i], YPO_std_stk[i],
+                     # 0, LOD_std_stk[i], 0, 0, 0, 0, 0, 0, 0, dt_delivery]
+            # print(ERP_stk)
+            # ERP.append(ERP_data)
 
 
 
-    if ac in ('wum','grg','esa', 'mit', 'ngs', 'sio'):
-        for i in range(tamanho+1):
-            linhaatual = linecache.getline(caminho_arq, i)
-            if linhaatual[0:1] in numeros:
-                ERP_data = linhaatual.split()
-                for j in range(len(ERP_data)):
-                    ERP_data[j] = float(ERP_data[j])
-                ERP_data.insert(0,ac)
-                ERP_data[2] =  ERP_data[2]*(10**-6)
-                ERP_data[3] =  ERP_data[3]*(10**-6)
-                ERP_data[13] = ERP_data[13]*(10**-6)
-                ERP_data[14] = ERP_data[14]*(10**-6)
-                ERP_data.append(dt_delivery)
+    # if ac in ('COD','cod','com', 'cof', 'grg', 'mit', 'sio'):
+        # for i in range(tamanho+1):
+            # linhaatual = linecache.getline(caminho_arq, i)
+            # if linhaatual[0:1] in numeros:
+                # ERP_data = linhaatual.split()
+                # for j in range(len(ERP_data)):
+                    # ERP_data[j] = float(ERP_data[j])
+                # ERP_data.insert(0,ac)
+                # ERP_data[2] =  ERP_data[2]*(10**-6)
+                # ERP_data[3] =  ERP_data[3]*(10**-6)
+                # ERP_data[13] = ERP_data[13]*(10**-6)
+                # ERP_data[14] = ERP_data[14]*(10**-6)
+                # del ERP_data[17:]
+                # ERP_data.append(dt_delivery)
 
-                ERP.append(ERP_data)
-
-#
-    if ac in ('gbm', 'gfz'):
-        for i in range(tamanho+1):
-            linhaatual = linecache.getline(caminho_arq, i)
-            if linhaatual[0:1] in numeros:
-                ERP_data = linhaatual.split()
-                for j in range(len(ERP_data)):
-                    ERP_data[j] = float(ERP_data[j])
-                ERP_data.insert(0,ac)
-                ERP_data[2] =  ERP_data[2]*(10**-6)
-                ERP_data[3] =  ERP_data[3]*(10**-6)
-                ERP_data[13] = ERP_data[13]*(10**-6)
-                ERP_data[14] = ERP_data[14]*(10**-6)
-                ERP_data.append(dt_delivery)
-
-                ERP.append(ERP_data)
+                # ERP.append(ERP_data)
 
 
-    header = []
-    if ac in ('emr'):
-        for i in range(tamanho+1):
-            linhaatual = linecache.getline(caminho_arq, i)
-            if linhaatual == 'EOP  SOLUTION':
-                del ERP_data[:]
-                header = ['EOP  SOLUTION']
-            if linhaatual[0:1] in numeros and 'EOP  SOLUTION' in header:
-                ERP_data = linhaatual.split()
-                for j in range(len(ERP_data)):
-                    ERP_data[j] = float(ERP_data[j])
-                ERP_data.insert(0,ac)
-                ERP_data[2] =  ERP_data[2]*(10**-6)
-                ERP_data[3] =  ERP_data[3]*(10**-6)
-                ERP_data[13] = ERP_data[13]*(10**-6)
-                ERP_data[14] = ERP_data[14]*(10**-6)
-                del ERP_data[17:]
-                ERP_data.append(dt_delivery)
 
-                ERP.append(ERP_data)
+    # if ac in ('wum','grg','esa', 'mit', 'ngs', 'sio'):
+        # for i in range(tamanho+1):
+            # linhaatual = linecache.getline(caminho_arq, i)
+            # if linhaatual[0:1] in numeros:
+                # ERP_data = linhaatual.split()
+                # for j in range(len(ERP_data)):
+                    # ERP_data[j] = float(ERP_data[j])
+                # ERP_data.insert(0,ac)
+                # ERP_data[2] =  ERP_data[2]*(10**-6)
+                # ERP_data[3] =  ERP_data[3]*(10**-6)
+                # ERP_data[13] = ERP_data[13]*(10**-6)
+                # ERP_data[14] = ERP_data[14]*(10**-6)
+                # ERP_data.append(dt_delivery)
 
-    Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD',
-                                         'NR', 'NF', 'NT',
-                                         'X-RT','Y-RT','S-XR','S-YR',
-                                         'Delivered_date'])
-    return Erp_end
+                # ERP.append(ERP_data)
+
+# #
+    # if ac in ('gbm', 'gfz'):
+        # for i in range(tamanho+1):
+            # linhaatual = linecache.getline(caminho_arq, i)
+            # if linhaatual[0:1] in numeros:
+                # ERP_data = linhaatual.split()
+                # for j in range(len(ERP_data)):
+                    # ERP_data[j] = float(ERP_data[j])
+                # ERP_data.insert(0,ac)
+                # ERP_data[2] =  ERP_data[2]*(10**-6)
+                # ERP_data[3] =  ERP_data[3]*(10**-6)
+                # ERP_data[13] = ERP_data[13]*(10**-6)
+                # ERP_data[14] = ERP_data[14]*(10**-6)
+                # ERP_data.append(dt_delivery)
+
+                # ERP.append(ERP_data)
+
+
+    # header = []
+    # if ac in ('emr'):
+        # for i in range(tamanho+1):
+            # linhaatual = linecache.getline(caminho_arq, i)
+            # if linhaatual == 'EOP  SOLUTION':
+                # del ERP_data[:]
+                # header = ['EOP  SOLUTION']
+            # if linhaatual[0:1] in numeros and 'EOP  SOLUTION' in header:
+                # ERP_data = linhaatual.split()
+                # for j in range(len(ERP_data)):
+                    # ERP_data[j] = float(ERP_data[j])
+                # ERP_data.insert(0,ac)
+                # ERP_data[2] =  ERP_data[2]*(10**-6)
+                # ERP_data[3] =  ERP_data[3]*(10**-6)
+                # ERP_data[13] = ERP_data[13]*(10**-6)
+                # ERP_data[14] = ERP_data[14]*(10**-6)
+                # del ERP_data[17:]
+                # ERP_data.append(dt_delivery)
+
+                # ERP.append(ERP_data)
+
+    # Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD',
+                                         # 'NR', 'NF', 'NT',
+                                         # 'X-RT','Y-RT','S-XR','S-YR',
+                                         # 'Delivered_date'])
+    # return Erp_end
 
 
 
@@ -600,41 +608,6 @@ def read_sp3_header(sp3_path):
 
     return Header_DF
 
-def read_bull_B(path):
-
-    if not utils.is_iterable(path):
-        path = [path]
-
-    path = sorted(path)
-
-    DFstk = []
-
-    for path_solo in path:
-        S = utils.extract_text_between_elements(path_solo,"1 - DAILY FINAL VALUES" ,
-                                         "2 - DAILY FINAL VALUES" )
-
-        L = S.replace('\t','\n').split("\n")
-
-        L2 = []
-        for e in L:
-            if len(e) > 0:
-                if e[0] !=  " ":
-                    L2.append(e)
-        L3 = []
-        for e in L2:
-            L4 = []
-            for ee in e.split():
-                L4.append(float(ee))
-            L3.append(L4)
-
-        DF = pd.DataFrame(np.vstack(L3))
-        DFstk.append(DF)
-
-    DFout = pd.concat(DFstk)
-    DFout.columns = ["year","month","day","MJD","x","y","UT1-UTC","dX","dY",
-                  "x err","y err","UT1 err","X err","Y err"]
-
-    return DFout
 ##
 def read_erp_bad(path,return_array=False):
     """
@@ -727,120 +700,6 @@ def sp3_decimate(file_in,file_out,step=15):
 
     return file_out
 
-
-def write_sp3(SP3_DF_in , outpath):
-    """
-    Write DOCSTRING
-    """
-    ################## MAIN DATA
-    LinesStk = []
-
-
-    SP3_DF_in.sort_values(["epoch","sat"],inplace=True)
-
-    EpochList  = SP3_DF_in["epoch"].unique()
-    SatList    = sorted(SP3_DF_in["sat"].unique())
-    SatListSet = set(SatList)
-
-    for epoc in EpochList:
-        SP3epoc   = pd.DataFrame(SP3_DF_in[SP3_DF_in["epoch"] == epoc])
-        ## Missing Sat
-        MissingSats = SatListSet.difference(set(SP3epoc["sat"]))
-        
-        for miss_sat in MissingSats:
-            miss_line = SP3epoc.iloc[0].copy()
-            miss_line["sat"]   = miss_sat
-            miss_line["const"] = miss_sat[0]
-            miss_line["x"]     = 0.000000
-            miss_line["y"]     = 0.000000
-            miss_line["z"]     = 0.000000
-            miss_line["clk"]   = 999999.999999
-            
-            SP3epoc = SP3epoc.append(miss_line)
-
-        SP3epoc.sort_values("sat",inplace=True)
-        timestamp = geok.dt2sp3_timestamp(geok.numpy_dt2dt(epoc)) + "\n"
-
-        LinesStk.append(timestamp)
-
-        linefmt = "P{:}{:14.6f}{:14.6f}{:14.6f}{:14.6f}\n"
-
-
-        for ilin , lin in SP3epoc.iterrows():
-            line_out = linefmt.format(lin["sat"],lin["x"],lin["y"],lin["z"],lin["clk"])
-
-            LinesStk.append(line_out)
-
-
-
-    ################## HEADER
-    ######### SATELLITE LIST
-
-    Satline_stk   = []
-    Sigmaline_stk = []
-
-    for i in range(5):
-        SatLine = SatList[17*i:17*(i+1)]
-        if len(SatLine) < 17:
-            complem = " 00" * (17 - len(SatLine))
-        else:
-            complem = ""
-
-        if i == 0:
-            nbsat4line = len(SatList)
-        else:
-            nbsat4line = ''
-
-        satline = "+  {:3}   ".format(nbsat4line) + "".join(SatLine) + complem + "\n"
-        sigmaline = "++         0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0\n"
-
-        Satline_stk.append(satline)
-        Sigmaline_stk.append(sigmaline)
-
-
-    ######### 2 First LINES
-    start_dt = geok.numpy_dt2dt(EpochList.min())
-
-    header_line1 = "#cP" + geok.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochList)) + "   u+U IGSXX FIT  XXX\n"
-
-    delta_epoch = int(utils.most_common(np.diff(EpochList) * 10**-9))
-    MJD  = conv.dt2MJD(start_dt)
-    MJD_int = int(np.floor(MJD))
-    MJD_dec = MJD - MJD_int
-    gps_wwww , gps_sec = conv.dt2gpstime(start_dt,False,"gps")
-
-    header_line2 = "## {:4} {:15.8f} {:14.8f} {:5} {:15.13f}\n".format(gps_wwww,gps_sec,delta_epoch,MJD_int,MJD_dec)
-
-
-    ######### HEADER BOTTOM
-    header_bottom = """%c G  cc GPS ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
-%c cc cc ccc ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc
-%f  1.2500000  1.025000000  0.00000000000  0.000000000000000
-%f  0.0000000  0.000000000  0.00000000000  0.000000000000000
-%i    0    0    0    0      0      0      0      0         0
-%i    0    0    0    0      0      0      0      0         0
-/* PCV:IGSXX_XXXX OL/AL:FESXXXX  NONE     YN CLK:CoN ORB:CoN
-/*     GeodeZYX Toolbox Output
-/*
-/*
-"""
-
-
-    ################## FINAL STACK
-
-    FinalLinesStk = []
-
-    FinalLinesStk.append(header_line1)
-    FinalLinesStk.append(header_line2)
-    FinalLinesStk = FinalLinesStk + Satline_stk + Sigmaline_stk
-    FinalLinesStk.append(header_bottom)
-    FinalLinesStk = FinalLinesStk + LinesStk + ["EOF"]
-
-    FinalStr = "".join(FinalLinesStk)
-
-    F = open(outpath,"w+")
-    F.write(FinalStr)
-
 def clk_decimate(file_in,file_out,step=5):
 
     Fin = open(file_in)
@@ -867,8 +726,7 @@ def clk_decimate(file_in,file_out,step=5):
             Fout.write(l)
 
     return file_out
-
-
+    
 def AC_equiv_vals(AC1,AC2):
     ### 1) Merge the 2 DF to find common lines
     ACmerged = time_series.merge(AC1 , AC2 , how='inner', on=['epoch', 'sat'])
@@ -913,126 +771,126 @@ def AC_equiv_vals(AC1,AC2):
 
 
 ############################# READ CLK 30
-def read_clk1(file_path_in, returns_pandas = True, interval=None):
-    """
-    General description
-
-    Parameters
-    ----------
-    file_path_in :  str
-        Path of the file in the local machine.
-
-    returns_pandas :  bool
-        Define if pandas function will be used to put the data on tables
-
-    interval :  int
-        Defines which interval should be used in the data tables. The interval is always in minutes unit.
-
-    Returns
-    -------
-    out1 : float or int oandas table
-        Returns a panda table format with the data extracted from the file.
-
-    out2 :  list
-       In case of the pandas function are not in use, the return will be a list with the data extract from the file.
-
-
-    """
-
-    file = open(file_path_in,'r')
-    fil = file.readlines()
-    file.close()
-
-
-    types_m, name_m, year_m, month_m, day_m, hr_m, minute_m, seconds_m, epoch_m, offset_m, rms_m = [],[],[],[],[],[],[],[],[],[],[]
-
-    Clk_read  = []
-
-        #####IGNORES HEADER
-
-    le = 0
-    i = 0
-    count = 0
-    for le in range(len(fil)):
-     linhaatual = linecache.getline(file_path_in, le)
-     header_end = (linhaatual[60:73])
-     count +=1
-     if header_end =="END OF HEADER":
-        i = count
-#############################################################
-    while i <= len(fil):
-          linhaatual = linecache.getline(file_path_in, i)
-          types = (linhaatual[0:2]) # Column refers to AS or AR
-          name = (linhaatual[3:7])# Name of the station or satellite
-          year = int((linhaatual[8:12]))
-          month = int((linhaatual[13:15]))
-          day = int((linhaatual[16:18]))
-          hr= int((linhaatual[19:22]))# hour
-          minute = int((linhaatual[22:25]))
-          seconds = float((linhaatual[25:33]))
-          offset = float(((linhaatual[40:59])))# Clock offset
-          ##### check if there is a value for thr rms
-          if (linhaatual[65:70]) == '     ' or len(linhaatual[65:70])==0:
-              rms = 0
-          else:
-              rms = float(linhaatual[61:79])
-          ############
-          epoch = dt.datetime(year,month,day,hr,minute,int(seconds),int(((int(seconds)-seconds)*10**-6))) # epoch as date.time function
-
-        ############ Data in a defined interval
-          if interval:
-              if (float(minute)%interval) == 0 and float(seconds) == 0:
-
-                  if returns_pandas:
-                            Clk_dados = [types,name,year,month,day,hr,minute,seconds,epoch,offset,rms]
-                            Clk_read.append(Clk_dados)
-                  else:
-                            types_m.append(types)
-                            name_m.append(name)
-                            year_m.append(year)
-                            month_m.append(month)
-                            day_m.append(day)
-                            hr_m.append(hr)
-                            minute_m.append(minute)
-                            seconds_m.append(seconds)
-                            epoch_m.append(epoch)
-                            offset_m.append(offset)
-                            rms_m.append(rms)
-         #########################################################
-        ########################################################### standart file epochs
-          else:
-              if returns_pandas:
-                            Clk_dados = [types,name,year,month,day,hr,minute,seconds,epoch,offset,rms]
-                            Clk_read.append(Clk_dados)
-              else:
-                            types_m.append(types)
-                            name_m.append(name)
-                            year_m.append(year)
-                            month_m.append(month)
-                            day_m.append(day)
-                            hr_m.append(hr)
-                            minute_m.append(minute)
-                            seconds_m.append(seconds)
-                            epoch_m.append(epoch)
-                            offset_m.append(offset)
-                            rms_m.append(rms)
-
-
-          i +=1
-
-  ################################################################################################
-   ############################################ put on pandas table format
-    if returns_pandas:
-     Clk_readed = pd.DataFrame(Clk_read, columns=['type','name','year','month','day','hr','minutes','seconds','epoch','offset','rms'])
-     Clk_readed.path = file_path_in
-
-     return Clk_readed
-
-          ###############################
-    else:
-           print(" ...")
-           return  types_m, name_m, year_m, month_m, day_m, hr_m, minute_m, seconds_m, offset_m, rms_m
-
+#def read_clk1(file_path_in, returns_pandas = True, interval=None):
+#    """
+#    General description
+#
+#    Parameters
+#    ----------
+#    file_path_in :  str
+#        Path of the file in the local machine.
+#
+#    returns_pandas :  bool
+#        Define if pandas function will be used to put the data on tables
+#
+#    interval :  int
+#        Defines which interval should be used in the data tables. The interval is always in minutes unit.
+#
+#    Returns
+#    -------
+#    out1 : float or int oandas table
+#        Returns a panda table format with the data extracted from the file.
+#
+#    out2 :  list
+#       In case of the pandas function are not in use, the return will be a list with the data extract from the file.
+#
+#
+#    """
+#
+#    file = open(file_path_in,'r')
+#    fil = file.readlines()
+#    file.close()
+#
+#
+#    types_m, name_m, year_m, month_m, day_m, hr_m, minute_m, seconds_m, epoch_m, offset_m, rms_m = [],[],[],[],[],[],[],[],[],[],[]
+#
+#    Clk_read  = []
+#
+#        #####IGNORES HEADER
+#
+#    le = 0
+#    i = 0
+#    count = 0
+#    for le in range(len(fil)):
+#     linhaatual = linecache.getline(file_path_in, le)
+#     header_end = (linhaatual[60:73])
+#     count +=1
+#     if header_end =="END OF HEADER":
+#        i = count
+##############################################################
+#    while i <= len(fil):
+#          linhaatual = linecache.getline(file_path_in, i)
+#          types = (linhaatual[0:2]) # Column refers to AS or AR
+#          name = (linhaatual[3:7])# Name of the station or satellite
+#          year = int((linhaatual[8:12]))
+#          month = int((linhaatual[13:15]))
+#          day = int((linhaatual[16:18]))
+#          hr= int((linhaatual[19:22]))# hour
+#          minute = int((linhaatual[22:25]))
+#          seconds = float((linhaatual[25:33]))
+#          offset = float(((linhaatual[40:59])))# Clock offset
+#          ##### check if there is a value for thr rms
+#          if (linhaatual[65:70]) == '     ' or len(linhaatual[65:70])==0:
+#              rms = 0
+#          else:
+#              rms = float(linhaatual[61:79])
+#          ############
+#          epoch = dt.datetime(year,month,day,hr,minute,int(seconds),int(((int(seconds)-seconds)*10**-6))) # epoch as date.time function
+#
+#        ############ Data in a defined interval
+#          if interval:
+#              if (float(minute)%interval) == 0 and float(seconds) == 0:
+#
+#                  if returns_pandas:
+#                            Clk_dados = [types,name,year,month,day,hr,minute,seconds,epoch,offset,rms]
+#                            Clk_read.append(Clk_dados)
+#                  else:
+#                            types_m.append(types)
+#                            name_m.append(name)
+#                            year_m.append(year)
+#                            month_m.append(month)
+#                            day_m.append(day)
+#                            hr_m.append(hr)
+#                            minute_m.append(minute)
+#                            seconds_m.append(seconds)
+#                            epoch_m.append(epoch)
+#                            offset_m.append(offset)
+#                            rms_m.append(rms)
+#         #########################################################
+#        ########################################################### standart file epochs
+#          else:
+#              if returns_pandas:
+#                            Clk_dados = [types,name,year,month,day,hr,minute,seconds,epoch,offset,rms]
+#                            Clk_read.append(Clk_dados)
+#              else:
+#                            types_m.append(types)
+#                            name_m.append(name)
+#                            year_m.append(year)
+#                            month_m.append(month)
+#                            day_m.append(day)
+#                            hr_m.append(hr)
+#                            minute_m.append(minute)
+#                            seconds_m.append(seconds)
+#                            epoch_m.append(epoch)
+#                            offset_m.append(offset)
+#                            rms_m.append(rms)
+#
+#
+#          i +=1
+#
+#  ################################################################################################
+#   ############################################ put on pandas table format
+#    if returns_pandas:
+#     Clk_readed = pd.DataFrame(Clk_read, columns=['type','name','year','month','day','hr','minutes','seconds','epoch','offset','rms'])
+#     Clk_readed.path = file_path_in
+#
+#     return Clk_readed
+#
+#          ###############################
+#    else:
+#           print(" ...")
+#           return  types_m, name_m, year_m, month_m, day_m, hr_m, minute_m, seconds_m, offset_m, rms_m
+#
 
 
 
@@ -1242,11 +1100,12 @@ def read_erp2(caminho_arq,ac=None):
                     marker = False
 
                 if utils.contains_word(Lines[i],'XPO') and marker:
-                    Doy = (Lines[i][30:33])
-                    Year = (Lines[i][27:29])
-                    Pref_year = '20'
-                    Year = int(Pref_year+Year)
-                    Date = conv.doy2dt(Year,Doy)
+                    # Doy = (Lines[i][30:33])
+                    # Year = (Lines[i][27:29])
+                    # Pref_year = '20'
+                    # Year = int(Pref_year+Year)
+                    # Date = conv.doy2dt(Year,Doy)
+                    Date = conv.datestr_sinex_2_dt(Lines[i].split()[5])
                     XPO = float(Lines[i][47:68])*(10**-3)
                     XPO_std = float(Lines[i][69:80])*(10**-3)
                     XPO_stk.append(XPO)
@@ -1255,11 +1114,12 @@ def read_erp2(caminho_arq,ac=None):
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
                     
                 if utils.contains_word(Lines[i],'YPO') and marker:
-                    Doy = (Lines[i][30:33])
-                    Year = str(Lines[i][27:29])
-                    Pref_year = '20'
-                    Year = int(Pref_year+Year)
-                    Date = conv.doy2dt(Year,Doy)
+                    # Doy = (Lines[i][30:33])
+                    # Year = (Lines[i][27:29])
+                    # Pref_year = '20'
+                    # Year = int(Pref_year+Year)
+                    # Date = conv.doy2dt(Year,Doy)
+                    Date = conv.datestr_sinex_2_dt(Lines[i].split()[5])
                     YPO = float(Lines[i][47:68])*(10**-3)
                     YPO_std = float(Lines[i][69:80])*(10**-3)
                     YPO_stk.append(YPO)
@@ -1269,11 +1129,12 @@ def read_erp2(caminho_arq,ac=None):
 
                     
                 if utils.contains_word(Lines[i],'LOD') and marker:
-                    Doy = (Lines[i][30:33])
-                    Year = str(Lines[i][27:29])
-                    Pref_year = '20'
-                    Year = int(Pref_year+Year)
-                    Date = conv.doy2dt(Year,Doy)
+                    # Doy = (Lines[i][30:33])
+                    # Year = (Lines[i][27:29])
+                    # Pref_year = '20'
+                    # Year = int(Pref_year+Year)
+                    # Date = conv.doy2dt(Year,Doy)
+                    Date = conv.datestr_sinex_2_dt(Lines[i].split()[5])
                     LOD = float(Lines[i][47:68])*(10**+4)
                     LOD_std = float(Lines[i][69:80])*(10**+4)
                     LOD_stk.append(LOD)
@@ -1281,15 +1142,17 @@ def read_erp2(caminho_arq,ac=None):
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
                     MJD_stk.append(conv.dt2MJD(Date))
 
-        MJD = list(set(MJD_stk))
+        MJD = list(sorted(set(MJD_stk)))
         if len(LOD_stk) == 0:
                 LOD_stk = ['0']*len(MJD)
                 LOD_std_stk = ['0']*len(MJD)
+
 
         for i in range(len(MJD)):
 
             ERP_data = [ac, MJD[i], XPO_stk[i], YPO_stk[i], 0, LOD_stk[i], XPO_std_stk[i], YPO_std_stk[i],
                      0, LOD_std_stk[i], 0, 0, 0, 0, 0, 0, 0, dt_delivery]
+
             ERP.append(ERP_data)
 
 
@@ -1385,10 +1248,12 @@ def read_erp2(caminho_arq,ac=None):
         linecache.clearcache()
 
 
+
     Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD',
                                          'NR', 'NF', 'NT',
                                          'X-RT','Y-RT','S-XR','S-YR',
                                          'Delivered_date'])
+
     
     file.close()
     return Erp_end
@@ -1496,32 +1361,6 @@ def list_files(dire,file = None):
 
     return path
 
-
-def read_clk(file_path_in):
-    """
-    This function is discontinued, use read_clk1 instead
-    """
-
-    i  = 0
-    with open(file_path_in) as oF:
-        for l in oF:
-            i += 1
-            if 'END OF HEADER'  in l:
-                break
-
-    colnam = ['type' , 'name' , 'year' ,'month' ,'day' , 'h' ,'m' ,'s','nb_val' ,
-              'clk_bias','clk_bias_std','clk_rate','clk_rate_std','clk_accel','clk_accel_std']
-    DF = pd.read_table(file_path_in,skiprows=i,header = -1,names = colnam,delim_whitespace=True)
-
-    DF['epoc'] =  pd.to_datetime(DF[[ 'year' ,'month' ,'day','h','m','s']])
-
-    # Removing NaN columns
-    for colnam in ['clk_bias','clk_bias_std','clk_rate',
-                   'clk_rate_std','clk_accel','clk_accel_std']:
-        if np.all(np.isnan(DF[colnam])):
-            DF = DF.drop(colnam,axis=1)
-
-    return DF
 
 def clk_diff(file_1,file_2):
     if type(file_1) is str:

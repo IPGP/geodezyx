@@ -14,13 +14,32 @@ Created on Fri Aug 16 11:47:40 2019
 #|_|  \_\_____|_| \_|______/_/ \_\ |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|
 
 
+
+
+
+
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+from ftplib import FTP
+import glob
+import itertools
+import multiprocessing as mp
+import os 
+import re
+import shutil
+import urllib
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-import urllib
-from ftplib import FTP
-import multiprocessing as mp
+##########  END IMPORT  ##########
 
 
 
@@ -32,28 +51,28 @@ import multiprocessing as mp
 def igs_garner_server(stat,date):
     # plante si trop de requete
     urlserver = "ftp://garner.ucsd.edu/pub/rinex/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join( urlserver , str(date.year) , geok.dt2doy(date) , rnxname )
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join( urlserver , str(date.year) , conv.dt2doy(date) , rnxname )
     return url
 
 def igs_cddis_server(stat,date):
     # a privilegier
     urlserver = "ftp://cddis.gsfc.nasa.gov/gps/data/daily/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , date.strftime('%y') + 'd' , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , date.strftime('%y') + 'd' , rnxname)
     return url
 
 def igs_cddis_nav_server(stat,date):
     # a privilegier
     urlserver = "ftp://cddis.gsfc.nasa.gov/gps/data/daily/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date,'n.Z')
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , date.strftime('%y') + 'n' , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date,'n.Z')
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , date.strftime('%y') + 'n' , rnxname)
     return url
 
 def rgp_ign_smn_server(stat,date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , 'data_30' , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , 'data_30' , rnxname)
     return url
 
 def rgp_ign_smn_1Hz_server(stat,date):
@@ -66,9 +85,9 @@ def rgp_ign_smn_1Hz_server(stat,date):
         date_session = date_session.replace(hour=h)
 
         print(date_session , 'session' , h)
-        rnxname = geok.statname_dt2rinexname(stat.lower(),date_session ,
+        rnxname = conv.statname_dt2rinexname(stat.lower(),date_session ,
                                              session_a_instead_of_daily_session = 1)
-        url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) ,
+        url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) ,
                            'data_1' , rnxname)
 
         urls.append(url)
@@ -77,20 +96,20 @@ def rgp_ign_smn_1Hz_server(stat,date):
 
 def unavco_server(stat,date):
     urlserver='ftp://data-out.unavco.org/pub/rinex'
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , 'obs', str(date.year) , geok.dt2doy(date) , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , 'obs', str(date.year) , conv.dt2doy(date) , rnxname)
     return url
 
 def renag_server(stat,date):
     urlserver = "ftp://renag.unice.fr/data/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , rnxname)
     return url
 
 def orpheon_server(stat,date,user='',passwd=''):
     urlserver = "ftp://renag.unice.fr/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , rnxname)
     return url,user,passwd
 
 def ovsg_server(stat,date,user='',passwd=''):
@@ -98,23 +117,23 @@ def ovsg_server(stat,date,user='',passwd=''):
         urlserver = "http://webobs.ovsg.univ-ag.fr/rawdata/GPS-GPSDATA.backtemp_20140210/"
     else:
         urlserver = "http://webobs.ovsg.univ-ag.fr/rawdata/GPS/GPSDATA/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , 'rinex' , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , 'rinex' , rnxname)
     return url,user,passwd
 
 def geoaus_server(stat,date):
     """ Geosciences Australia
         ex : ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/ """
     urlserver = "ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , date.strftime('%y') + geok.dt2doy(date) , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , date.strftime('%y') + conv.dt2doy(date) , rnxname)
     return url
 
 def sonel_server(stat,date):
     """ex : ftp://ftp.sonel.org/gps/data/2015/001/ """
     urlserver = 'ftp://ftp.sonel.org/gps/data/'
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver,str(date.year),geok.dt2doy(date),rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver,str(date.year),conv.dt2doy(date),rnxname)
     return url
 
 def effective_save_dir(parent_archive_dir,stat,date,archtype ='stat'):
@@ -136,8 +155,8 @@ def effective_save_dir(parent_archive_dir,stat,date,archtype ='stat'):
     out_save_dir = parent_archive_dir
     fff = archtype.split('/')
     year = str(date.year)
-    doy = geok.dt2doy(date)
-    week, dow = geok.dt2gpstime(date)
+    doy = conv.dt2doy(date)
+    week, dow = conv.dt2gpstime(date)
     for f in fff:
         out_save_dir = os.path.join(out_save_dir,eval(f))
     return out_save_dir
@@ -169,7 +188,7 @@ def orbclk_cddis_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
         sp3clk = "eph"
 
     # date definition
-    week, day = geok.dt2gpstime(date)
+    week, day = conv.dt2gpstime(date)
 
     if force_weekly_file == False:
         pass
@@ -254,7 +273,7 @@ def orbclk_ign_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
         center     = list(center)
         center[-1] = str(repro)
         center = ''.join(center)
-    week, day = geok.dt2gpstime(date)
+    week, day = conv.dt2gpstime(date)
 
 
     if force_weekly_file == False:
@@ -325,7 +344,7 @@ def orbclk_igscb_server(date,center='gfz', sp3clk = 'sp3',repro=0):
         center     = list(center)
         center[-1] = str(repro)
         center = ''.join(center)
-    week, day = geok.dt2gpstime(date)
+    week, day = conv.dt2gpstime(date)
     if not 'igu' in center:
         orbname = center + str(week).zfill(4) + str(day) +'.' + sp3clk + '.Z'
         url = os.path.join(urlserver,str(week).zfill(4) ,rep_fldr,orbname)
@@ -345,7 +364,7 @@ def orbclk_gfz_local_server(date,center='gfz', sp3clk='sp3',repro=0):
         print("ERR : check the repro !!!")
         raise Exception
 
-    week, day = geok.dt2gpstime(date)
+    week, day = conv.dt2gpstime(date)
     
     orbname = center + str(week).zfill(4) + str(day) +'.' + sp3clk + '.Z'
     url = os.path.join(urlserver,str(week).zfill(4),orbname)
@@ -441,8 +460,8 @@ def downloader(url,savedir,force = False,
     return None
 
 def start_end_date_easy(start_year,start_doy,end_year,end_doy):
-    start = geok.doy2dt(start_year,start_doy)
-    end   = geok.doy2dt(end_year,end_doy)
+    start = conv.doy2dt(start_year,start_doy)
+    end   = conv.doy2dt(end_year,end_doy)
     return start , end
 
 
@@ -469,8 +488,8 @@ def effective_save_dir_orbit(parent_archive_dir,calc_center,date,
     out_save_dir = parent_archive_dir
     fff = archtype.split('/')
     year = str(date.year)
-    doy = geok.dt2doy(date)
-    week, dow = geok.dt2gpstime(date)
+    doy = conv.dt2doy(date)
+    week, dow = conv.dt2gpstime(date)
 
     for f in fff:
         if "wkwwww" in f:
@@ -617,7 +636,7 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
     #savedirlist = [x for (y,x) in sorted(zip(urllist,savedirlist))]
     #urllist     = sorted(urllist)
     
-    urllist,savedirlist = genefun.sort_binom_list(urllist,savedirlist)
+    urllist,savedirlist = utils.sort_binom_list(urllist,savedirlist)
 
     print(" ... done")
     print(len(urllist),"potential RINEXs")
@@ -711,9 +730,9 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     doy    = int(longname_basename.split("_")[1][4:7])
 
 
-    day_dt = geok.doy2dt(yyyy,doy)
+    day_dt = conv.doy2dt(yyyy,doy)
 
-    wwww , dow = geok.dt2gpstime(day_dt)
+    wwww , dow = conv.dt2gpstime(day_dt)
 
     shortname_prefix = center.lower() + str(wwww) + str(dow)
 
@@ -947,7 +966,7 @@ def multi_finder_rinex(main_dir,rinex_types=('o','d','d.Z','d.z'),
 
     But this one is the most elaborated , must be used in priority !!!
     """
-    files_raw_lis , _ = genefun.walk_dir(main_dir)
+    files_raw_lis , _ = utils.walk_dir(main_dir)
 
     yylis = [str(e).zfill(2) for e in list(range(80,100)) + list(range(0,dt.datetime.now().year - 2000 + 1))]
 
@@ -1004,16 +1023,16 @@ def multi_archiver_rinex(rinex_lis,parent_archive_dir,archtype='stat',
     print('INFO : RINEXs as input :' , len(rinex_lis))
 
     if move:
-        mv_fct = genefun.move
+        mv_fct = utils.move
     else:
-        mv_fct = genefun.copy2
+        mv_fct = utils.copy2
 
     for rnx in rinex_lis:
-        date = geok.rinexname2dt(rnx)
+        date = conv.rinexname2dt(rnx)
         rnxname = os.path.basename(rnx)
         stat = rnxname[0:4]
         savedir = effective_save_dir(parent_archive_dir, stat, date, archtype)
-        genefun.create_dir(savedir)
+        utils.create_dir(savedir)
 
         if not force_mv_or_cp and os.path.isfile(os.path.join(savedir,rnxname)):
             skip_cnt += 1
@@ -1041,7 +1060,7 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     parent_dir : str or list of str
         The parent directory (i.e. the archive) where files are stored
         can be a string (path of the archive) or a list of file paths
-        (given by the function genefun.find_recursive) in order to gain time
+        (given by the function utils.find_recursive) in order to gain time
 
 
     File_type : str or list of str
@@ -1091,34 +1110,34 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     if type(date_start) is dt.datetime:
         date_start_ok = date_start
     else:
-        date_start_ok = geok.gpstime2dt(*date_start)
+        date_start_ok = conv.gpstime2dt(*date_start)
     ### date_end
     if not date_end:
         date_end_ok = date_start_ok
     elif type(date_end) is dt.datetime:
         date_end_ok = date_end
     else:
-        date_end_ok = geok.gpstime2dt(*date_end)
+        date_end_ok = conv.gpstime2dt(*date_end)
     ### generate time period with a while loop
     Dates_list = [date_start_ok]
     while Dates_list[-1] < date_end_ok:
         Dates_list.append(Dates_list[-1]  + dt.timedelta(days=1))
 
-    Dates_wwwwd_list = [genefun.join_improved("",*geok.dt2gpstime(d)) for d in Dates_list]
+    Dates_wwwwd_list = [utils.join_improved("",*conv.dt2gpstime(d)) for d in Dates_list]
 
     ###### File type / ACs management ##############
 
-    if not genefun.is_iterable(File_type):
+    if not utils.is_iterable(File_type):
         File_type = [File_type]
-    if not genefun.is_iterable(ACs):
+    if not utils.is_iterable(ACs):
         ACs = [ACs]
 
     ###### General file search management ##############
-    if genefun.is_iterable(parent_dir):
+    if utils.is_iterable(parent_dir):
         FILE_LIST = parent_dir
     elif recursive_search:
         # All the files are listed first
-        FILE_LIST = genefun.find_recursive(parent_dir,".*",case_sensitive=False)
+        FILE_LIST = utils.find_recursive(parent_dir,".*",case_sensitive=False)
     else:
         FILE_LIST = glob.glob(parent_dir + "/*")
 
@@ -1149,7 +1168,7 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
         Re_patt_big_stk.append(re_patt_big_old_naming)
 
     if regex_igs_tfcc_naming:
-        Dates_yy_list = list(set([str(geok.gpstime2dt(int(e[0:4]),int(e[4])).year)[2:] for e in Dates_wwwwd_list]))
+        Dates_yy_list = list(set([str(conv.gpstime2dt(int(e[0:4]),int(e[4])).year)[2:] for e in Dates_wwwwd_list]))
         Dates_wwww_list = list(set([e[:-1] for e in Dates_wwwwd_list]))
         #Dates_wwww_dot_list = [e + "\." for e in Dates_wwww_list]
         re_patt_year = join_regex_and(Dates_yy_list)
@@ -1240,6 +1259,11 @@ def multi_downloader_orbs_clks_2bad(archive_dir,startdate,enddate,
     if archive_center == "cddis":
         arch_center_main    = 'cddis.gsfc.nasa.gov'
         arch_center_basedir = '/pub/gps/products/' + mgex_str
+
+    if archive_center == "cddis_glonass":
+        arch_center_main    = 'cddis.gsfc.nasa.gov'
+        arch_center_basedir = '/pub/gps/products/glonass/' + mgex_str
+        print(arch_center_main,arch_center_basedir)
     
     elif archive_center == "ign":
         arch_center_main    = 'igs.ign.fr'
@@ -1260,6 +1284,10 @@ def multi_downloader_orbs_clks_2bad(archive_dir,startdate,enddate,
     elif archive_center == "ensg_rf":
         arch_center_main    = 'igs-rf.ensg.ign.fr'
         arch_center_basedir = '/pub/' + mgex_str
+    else:
+        raise Exception("ERR: no archive_center given")
+
+    
         
         
         
@@ -1429,6 +1457,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     if archive_center == "cddis":
         arch_center_main    = 'cddis.gsfc.nasa.gov'
         arch_center_basedir = '/pub/gps/products/' + mgex_str
+        
+    elif archive_center == "cddis_glonass":
+        arch_center_main    = 'cddis.gsfc.nasa.gov'
+        arch_center_basedir = '/pub/glonass/products/' + mgex_str
     
     elif archive_center == "ign":
         arch_center_main    = 'igs.ign.fr'
@@ -1450,8 +1482,6 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         arch_center_main    = 'igs-rf.ensg.ign.fr'
         arch_center_basedir = '/pub/' + mgex_str
         
-        
-        
     print("INFO : data center used :",archive_center)
 
     Dates_list = conv.dt_range(startdate,enddate)
@@ -1471,13 +1501,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         # define the main obj for crawling
         ftp = Ftp_obj_list[0]
     
-
-                
     ### check if the pattern of the wished products are in the listed daily files
     for patt_tup in list(itertools.product(Dates_list,AC_names,prod_types)):
         dt_cur , ac_cur , prod_cur = patt_tup
         wwww , dow = conv.dt2gpstime(dt_cur)
-        
         
         #### Manage the cases of manual DOW
         if type(dow_manu) is int:

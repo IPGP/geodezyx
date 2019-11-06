@@ -36,6 +36,7 @@ from geodezyx.megalib import *
 #import datetime as dt
 #import numpy as np
 #import textwrap
+import io
 import shutil
 #import os
 import pandas
@@ -2075,7 +2076,7 @@ def read_sinex_versatile(sinex_path_in , id_block,
 
     
         ### Read the file
-        DF = pandas.read_fwf(StringIO(Lines_str),widths=Fields_size)
+        DF = pandas.read_fwf(io.StringIO(Lines_str),widths=Fields_size)
         DF.set_axis(Header_split, axis=1, inplace=True)
         
         ### Rename the 1st column (remove the comment marker)
