@@ -1540,7 +1540,141 @@ def sinex_bench_antenna_DF_2_disconts(DFantenna_in,stat,return_full=False):
         Clean_list = sorted(list(set(Start_List + End_list)))
         Clean_list = [e for e in Clean_list if e != dt.datetime(1970, 1, 1, 0, 0)]
         return Clean_list
+    
+############### Reading Tropospheric ################################################
+def read_snx_trop(snxfile,dataframe_output=True):
+    """
+    Read troposphere solutions from Troposphere SINEX
+    """
+    
+    STAT , epoc = [] , []
+    tro , stro , tgn , stgn , tge , stge = [] , [] , [] , [] , [] , []
+    
+    flagtrop = False
+    
+    for line in open(snxfile,"r",encoding = "ISO-8859-1"):
+        
+        if re.compile('TROP/SOLUTION').search(line):
+            flagtrop = True
+            continue
+        
+        if re.compile('-TROP/SOLUTION').search(line):
+            flagtrop = False
+            continue
+        
+        if line[0] != ' ':
+            continue
+        else:
+            fields = line.split()
+        
+        if flagtrop ==True:
+            
+            STAT.append(fields[0].upper())
+            if not ':' in fields[1]:
+                epoc.append(conv.convert_partial_year(fields[1]))
+            else:
+                date_elts_lis = fields[1].split(':')
+                yy =  int(date_elts_lis[0]) + 2000
+                doy = int(date_elts_lis[1])
+                sec = int(date_elts_lis[2])
 
+                epoc.append(conv.doy2dt(yy,doy,seconds=sec))
+            if not '*' in fields[2] and not '*' in fields[3] and not '*' in fields[4] and not '*' in fields[5] and not '*' in fields[6] and not '*' in fields[7]:
+                
+                tro.append(float(fields[2]))
+                stro.append(float(fields[3]))
+                tgn.append(float(fields[4]))
+                stgn.append(float(fields[5]))
+                tge.append(float(fields[6]))
+                stge.append(float(fields[7]))
+            else:
+                tro.append(np.nan)
+                stro.append(np.nan)
+                tgn.append(np.nan)
+                stgn.append(np.nan)
+                tge.append(np.nan)
+                stge.append(np.nan)
+            
+    outtuple = \
+    list(zip(*sorted(zip(STAT , epoc , tro , stro , tgn , stgn , tge , stge))))
+    
+    if dataframe_output:
+        return Tropsinex_DataFrame(outtuple)
+                
+def Tropsinex_DataFrame(read_sinex_result):
+     """
+      General description
+
+        Parameters
+        ----------
+        read_sinex_result : 
+            List values from read_snx_trop function
+                    
+        Returns
+        -------
+        DF_Sinex : 
+            troposphere information from SINEX in Dataframe
+            
+     """
+     DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
+     colnam = ['STAT','epoc','tro','stro','tgn','stgn','tge','stge']
+     DF_Sinex.columns = colnam
+     cols_numeric = ['tro','stro','tgn','stgn','tge','stge']
+     DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pd.to_numeric, errors='coerce')
+     
+     return DF_Sinex
+
+def read_bernese_trp(trpfile):
+    """
+    This function reads tropospheric solution in TRP format from Bernese
+    GNSS software
+    
+    Parameter
+    ----------
+    trpfile:
+        Filename of TRP file from Bernese
+    
+    Return
+    ----------
+    DF:
+        Tropospheric solutions from Bernese in Dataframe
+    
+    Notes
+    ----------
+        Written by Chaiyaporn Kitpracha
+    """
+    flagtrop = False
+    field = []
+    for line in open(trpfile,"r",encoding = "ISO-8859-1"):
+        if re.compile('STATION NAME').search(line):
+            headers = line.split()
+            headers.remove('YYYY')
+            headers.remove('MM')
+            headers.remove('DD')
+            headers.remove('HH')
+            headers.remove('MM')
+            headers.remove('SS')
+            headers[3] = 'year'
+            headers[4] = 'month'
+            headers[5] = 'day'
+            headers[6] = 'hour'
+            headers[7] = 'minute'
+            headers[8] = 'second'
+            flagtrop = True
+            continue
+        
+        if flagtrop and not line == '\n':
+            fields = line.split()
+            field.append(fields)
+        else:
+            continue
+        
+    DF = pd.DataFrame(field,columns=headers)
+    DF['dt'] = pd.to_datetime(DF[['year','month','day','hour','minute','second']])
+    cols_num = ['MOD_U', 'CORR_U', 'SIGMA_U', 'TOTAL_U', 'CORR_N', 'SIGMA_N','CORR_E', 'SIGMA_E']
+    DF[cols_num] = DF[cols_num].apply(pd.to_numeric, errors='coerce')
+    DF.drop(['year','month','day','hour','minute','second'], axis=1,inplace=True)
+    return DF
 
 
 
