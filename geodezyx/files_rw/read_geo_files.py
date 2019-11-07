@@ -1687,23 +1687,20 @@ def read_snx_trop(snxfile,dataframe_output=True):
     flagtrop = False
     
     for line in open(snxfile,"r",encoding = "ISO-8859-1"):
-        
+
         if re.compile('TROP/SOLUTION').search(line):
-            flagtrop = True
+            flagtrop = not flagtrop
             continue
         
-        if re.compile('-TROP/SOLUTION').search(line):
-            flagtrop = False
-            continue
-        
-        if line[0] != ' ':
-            continue
-        else:
+        if line[0] == ' ':
             fields = line.split()
+        else:
+            continue
         
         if flagtrop ==True:
             
             STAT.append(fields[0].upper())
+            
             if not ':' in fields[1]:
                 epoc.append(conv.convert_partial_year(fields[1]))
             else:
@@ -1711,16 +1708,24 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 yy =  int(date_elts_lis[0]) + 2000
                 doy = int(date_elts_lis[1])
                 sec = int(date_elts_lis[2])
-
                 epoc.append(conv.doy2dt(yy,doy,seconds=sec))
-            if not '*' in fields[2] and not '*' in fields[3] and not '*' in fields[4] and not '*' in fields[5] and not '*' in fields[6] and not '*' in fields[7]:
                 
-                tro.append(float(fields[2]))
-                stro.append(float(fields[3]))
-                tgn.append(float(fields[4]))
-                stgn.append(float(fields[5]))
-                tge.append(float(fields[6]))
-                stge.append(float(fields[7]))
+            if len(fields) == 8:
+                tro.append(np.nan if '*' in fields[2] else fields[2])
+                stro.append(np.nan if '*' in fields[3] else fields[3])
+                tgn.append(np.nan if '*' in fields[4] else fields[4])
+                stgn.append(np.nan if '*' in fields[5] else fields[5])
+                tge.append(np.nan if '*' in fields[6] else fields[6])
+                stge.append(np.nan if '*' in fields[7] else fields[7])
+                            
+            elif len(fields) == 4:
+                tro.append(np.nan if '*' in fields[2] else fields[2])
+                stro.append(np.nan if '*' in fields[3] else fields[3])
+                tgn.append(np.nan)
+                stgn.append(np.nan)
+                tge.append(np.nan)
+                stge.append(np.nan)
+                
             else:
                 tro.append(np.nan)
                 stro.append(np.nan)
@@ -1728,7 +1733,7 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 stgn.append(np.nan)
                 tge.append(np.nan)
                 stge.append(np.nan)
-            
+    
     outtuple = \
     list(zip(*sorted(zip(STAT , epoc , tro , stro , tgn , stgn , tge , stge))))
     
