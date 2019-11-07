@@ -8,12 +8,18 @@
 
 V 4.0c
 
-Authors : Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu
+Authors : 
+Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu
 GFZ, Potsdam, Germany 
 (previously at Université de La Rochelle, France)
-email : pierre.sakic@gfz-potsdam.de
+e-mail : pierre.sakic@gfz-potsdam.de
+
+Citation :
+Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
+The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes. 
+V. 4.0. GFZ Data Services. http://doi.org/10.5880/GFZ.1.1.2019.002
                                                                                           
-README Revision : 2019-11-06
+README Revision : 2019-11-07
 
 0) LICENCE
 
