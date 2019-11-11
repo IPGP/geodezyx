@@ -19,7 +19,8 @@ README Revision : 2019-11-06
 
 GNU General Public License, Version 3, 29 June 2007
 
-Copyright © 2019 Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences, Potsdam, Germany 
+Copyright © 2019 Helmholtz Centre Potsdam GFZ 
+German Research Centre for Geosciences, Potsdam, Germany 
 (Pierre SAKIC, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu)
 
 The geodeZYX toolbox is free software: you can redistribute it and/or modify it
@@ -60,7 +61,7 @@ https://guides.github.com/activities/forking/
 2.1.2) the proper basic steps
 * Create an account on GitHub
 * Go on the page of the project :
-  https://github.com/GeodeZYX/GeodeZYX-Toolbox-Lite
+  https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 * Fork it, i.e. click on the "Fork" button
 * Clone your fork on your computer ("Clone" button) 
 

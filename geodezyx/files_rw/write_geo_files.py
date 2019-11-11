@@ -191,3 +191,97 @@ def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False,one_or_two
         Fout.close()
         
     return OUT
+
+
+def ine_block_mono(sat,dt_in,extra_intrvl_strt=.1,extra_intrvl_end=.4,step=300):
+    
+    Fields = ['orb____1',
+    'orb____2',
+    'orb____3',
+    'orb____4',
+    'orb____5',
+    'orb____6',
+    'orb___db',
+    'orb_s2db',
+    'orb_c2db',
+    'orb_s4db',
+    'orb_c4db',
+    'orb___yb',
+    'orb___xb',
+    'orb_sixb',
+    'orb_coxb',
+    'orb___cr']
+    
+    
+    mjd = np.floor(conv.dt2MJD(dt_in))
+    mjd_strt = mjd - extra_intrvl_strt
+    mjd_end  = mjd + extra_intrvl_end + 1
+    
+    Lines = []
+    
+    l1 =  " sat_nr  : " + sat + "\n"
+    l2 =  " stepsize: {:3}  {:6.2f}\n".format(sat,step)
+    
+    Lines.append(l1)
+    Lines.append(l2)
+    
+    
+    for field in Fields:
+        line = " {:}: {:3}  0.000000000000000E+00 {:11.5f} {:11.5f}\n".format(field,sat,mjd_strt,mjd_end)
+        Lines.append(line)
+        
+    Lines.append(" end_sat\n")
+        
+    str_out = "".join(Lines)
+    
+    return str_out
+
+
+
+def write_ine_dummy_file(Sat_list,dt_in,extra_intrvl_strt=.1,
+             extra_intrvl_end=.4,step=300,out_file_path=None):
+
+    Lines = []
+    
+    mjd = np.floor(conv.dt2MJD(dt_in))
+    mjd_strt = mjd - extra_intrvl_strt
+    mjd_end  = mjd + extra_intrvl_end + 1
+    
+    datestr = conv.dt2str(dt.datetime.now(),str_format='%Y/%m/%d %H:%M:%S')
+    
+    head_proto="""%=INE 1.00 {:} NEWSE=INE+ORBCOR                                                                                 
++global
+ day_info: 
+ epoch   :                            {:5}  0.00000000000000
+ interval:                            {:11.5f} {:11.5f}
+ stepsize:      {:6.2f}
+-global
++initial_orbit
+"""
+    head = head_proto.format(datestr,int(mjd),mjd_strt,mjd_end,step)
+    
+    Lines.append(head)
+    
+    for sat in Sat_list:
+        Lines.append("******************************************************************\n")
+        sat_str = ine_block_mono(sat,dt_in,extra_intrvl_strt,extra_intrvl_end,step)
+        Lines.append(sat_str)
+        Lines.append("******************************************************************\n")
+    
+    str_end = """-initial_orbit
+%ENDINE
+"""
+    
+    Lines.append(str_end)
+         
+    str_out = "".join(Lines)
+    
+    if out_file_path:
+        with open(out_file_path,"w") as f:
+            f.write(str_out)
+            f.close()
+
+    return str_out
+
+
+
