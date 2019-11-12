@@ -35,11 +35,11 @@ def write_sndy_light_dat(ts_in,outdir,outprefix):
                 fil.write(lin + '\n')
     fil.close()
     
-def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
+def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
     """
     Write DOCSTRING
     
-    skip_null_epoch: Dont write an epoch if all sats are null (filtering)
+    skip_null_epoch: Do not write an epoch if all sats are null (filtering)
 
     """
     ################## MAIN DATA
@@ -97,7 +97,22 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
     Satline_stk   = []
     Sigmaline_stk = []
 
-    for i in range(5):
+
+    if force_format_c:
+        nlines = 5
+    else:
+        div,mod = np.divmod(len(SatList))
+        
+        if div < 5:
+            nlines = 5
+        else:
+            nlines = div
+        
+        if mod != 0:
+            nlines += 1
+        
+        
+    for i in range(nlines):
         SatLine = SatList[17*i:17*(i+1)]
         if len(SatLine) < 17:
             complem = " 00" * (17 - len(SatLine))
