@@ -18,8 +18,6 @@ from geodezyx.megalib.megalib import *   # Import the legacy modules names
 ##########  END IMPORT  ##########
 
 
-
-
 def write_sndy_light_dat(ts_in,outdir,outprefix):
     """pas fini"""
     fil = open(os.path.join(outdir,outprefix),'w+')
@@ -264,10 +262,13 @@ def write_ine_dummy_file(Sat_list,dt_in,extra_intrvl_strt=.1,
     
     datestr = conv.dt2str(dt.datetime.now(),str_format='%Y/%m/%d %H:%M:%S')
     
+    mjd_strt_deci = mjd_strt - np.floor(mjd_strt)
+    
+    
     head_proto="""%=INE 1.00 {:} NEWSE=INE+ORBCOR                                                                                 
 +global
  day_info: 
- epoch   :                            {:5}  0.00000000000000
+ epoch   :                            {:5}  {:16.14f}
  interval:                            {:11.5f} {:11.5f}
  stepsize:      {:6.2f}
 -global
