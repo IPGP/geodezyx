@@ -713,6 +713,8 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
 
     """
 
+    print("INFO : will rename" , longname_filepath_in)
+
     longname_basename = os.path.basename(longname_filepath_in)
     longname_dirname  = os.path.dirname(longname_filepath_in)
 
@@ -752,7 +754,7 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     shortname_filepath = os.path.join(longname_dirname , shortname)
 
     shutil.copy2(longname_filepath_in , shortname_filepath)
-    print("INFO : rename" , longname_filepath_in,"=>",shortname_filepath)
+    print("INFO : renaming" , longname_filepath_in,"=>",shortname_filepath)
 
 
     if rm_longname_file:
