@@ -1123,7 +1123,8 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     while Dates_list[-1] < date_end_ok:
         Dates_list.append(Dates_list[-1]  + dt.timedelta(days=1))
 
-    Dates_wwwwd_list = [utils.join_improved("",*conv.dt2gpstime(d)) for d in Dates_list]
+    Dates_wwwwd_list   = [utils.join_improved("",*conv.dt2gpstime(d)) for d in Dates_list]
+    Dates_yyyyddd_list = [utils.join_improved("",*reversed(conv.dt2doy_year(d))) for d in Dates_list]
 
     ###### File type / ACs management ##############
 
@@ -1166,6 +1167,17 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
         re_patt_filtyp = join_regex_and(File_type)
         re_patt_big_old_naming = ".*".join((re_patt_ac,re_patt_date,re_patt_filtyp))
         Re_patt_big_stk.append(re_patt_big_old_naming)
+        
+    if regex_new_naming: ### search for new name convention
+        if ACs[0] == "all":
+            re_patt_ac = "\W{3}"        
+        else:
+            re_patt_ac = join_regex_and([ac.upper() for ac in ACs])
+        re_patt_date   = join_regex_and(Dates_yyyyddd_list)
+        re_patt_filtyp = join_regex_and([fil.upper() for fil in File_type])
+        re_patt_big_new_naming = ".*".join((re_patt_ac,re_patt_date,re_patt_filtyp))
+        Re_patt_big_stk.append(re_patt_big_new_naming)
+        
 
     if regex_igs_tfcc_naming:
         Dates_yy_list = list(set([str(conv.gpstime2dt(int(e[0:4]),int(e[4])).year)[2:] for e in Dates_wwwwd_list]))
