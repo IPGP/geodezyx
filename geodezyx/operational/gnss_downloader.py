@@ -1162,7 +1162,7 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
         if ACs[0] == "all":
             re_patt_ac = "\w{3}"
         else:
-            re_patt_ac = join_regex_and(ACs)
+            re_patt_ac = join_regex_and([ac.lower() for ac in ACs])
         re_patt_date   = join_regex_and(Dates_wwwwd_list)
         re_patt_filtyp = join_regex_and(File_type)
         re_patt_big_old_naming = ".*".join((re_patt_ac,re_patt_date,re_patt_filtyp))
