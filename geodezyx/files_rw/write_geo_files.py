@@ -274,7 +274,7 @@ def write_ine_dummy_file(Sat_list,dt_in,extra_intrvl_strt=.1,
 -global
 +initial_orbit
 """
-    head = head_proto.format(datestr,int(mjd),mjd_strt,mjd_end,step)
+    head = head_proto.format(datestr,int(mjd),0,mjd_strt,mjd_end,step)
     
     Lines.append(head)
     
