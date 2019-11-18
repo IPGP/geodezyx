@@ -99,7 +99,7 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
     if force_format_c:
         nlines = 5
     else:
-        div,mod = np.divmod(len(SatList))
+        div,mod = np.divmod(len(SatList),17)
         
         if div < 5:
             nlines = 5
