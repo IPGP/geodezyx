@@ -1443,7 +1443,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     """
     dow_manu = False, no dow manu, consider the converted dow from the time span, regular case
     dow_manu = None, no dow in the REGEX, the crawler will search only for the week
-    dow_manu = [0,7] the dow in question    
+    dow_manu = 0 or 7: the dow in question    
     """
     
     if mgex:

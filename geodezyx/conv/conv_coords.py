@@ -876,6 +876,85 @@ def C_cep2itrs(xpole , ypole):
     return C_cep2itrs
 
 
+def C_euler(phi,theta,psi):
+    """
+    Gives the matrix of an Euler rotation
+    
+    Source
+    ------
+        https://fr.wikipedia.org/wiki/Angles_d%27Euler
+    """
+    Cphi=np.cos(phi)
+    Ctheta=np.cos(theta)
+    Cpsi=np.cos(psi)
+    Sphi=np.sin(phi)
+    Stheta=np.sin(theta)
+    Spsi=np.sin(psi)
+    
+    C_euler = np.array([[Cpsi*Cphi-Spsi*Ctheta*Sphi,-Cpsi*Sphi-Spsi*Ctheta*Cphi,Spsi*Stheta],
+                       [Spsi*Cphi+Cpsi*Ctheta*Sphi,-Spsi*Sphi+Cpsi*Ctheta*Cphi,-Cpsi*Stheta],
+                       [Stheta*Sphi,Stheta*Cphi,Ctheta]])
+    
+    return C_euler
+    
+
+
+def C_x(theta):
+    """
+    Gives the rotation matrix along the X-axis
+    
+    Source
+    ------
+        https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
+    """
+    C = np.cos(theta)
+    S = np.sin(theta)
+    
+    C_x = np.array([[1,0,0],
+                   [0,C,-S],
+                   [0,S,C]])
+
+    return C_x
+
+
+def C_y(theta):
+    """
+    Gives the rotation matrix around the Y-axis
+    
+    Source
+    ------
+        https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
+    """
+    C = np.cos(theta)
+    S = np.sin(theta)
+    
+    C_y = np.array([[C,0,S],
+                    [0,1,0],
+                    [-S,0,C]])
+
+    return C_y
+
+
+def C_z(theta):
+    """
+    Gives the rotation matrix around the Z-axis
+    
+    Source
+    ------
+        https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
+    """
+    C = np.cos(theta)
+    S = np.sin(theta)
+    
+    C_z = np.array([[C,-S,0],
+                   [S,C,0],
+                   [0,0,1]])
+
+    return C_z
+
+
+
+
 
 def rot_quelconq(theta,Vx,Vy,Vz,angtype='deg'):
 
