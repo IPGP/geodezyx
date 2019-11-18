@@ -1406,6 +1406,11 @@ def multi_downloader_orbs_clks_2bad(archive_dir,startdate,enddate,
         ##  _ = pool.map_async(downloader_wrap,Downld_tuples_list)
         ##  _ = [pool.apply(downloader_wrap,(tup,)) for tup in Downld_tuples_list]
         
+        ### 
+        #if uncompress:
+        #   for localfile in Potential_localfiles_list:
+                
+
 
         ### Independent files exsitence check
         
