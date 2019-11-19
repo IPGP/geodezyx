@@ -5,12 +5,19 @@ Created on Tue Jul  9 14:01:29 2019
 @author: chaiyap
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import numpy as np
+import scipy
+import matplotlib.pyplot as plt
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import utils
+
+##########  END IMPORT  ##########
 
 
-from geodezyx import np,dt,plt,conv,butter, lfilter , scipy,utils
 
 def linear_regression(x,y,fulloutput=False,alpha=.95):
     """    
@@ -418,12 +425,12 @@ def sinusoide(T,A,omega,phi=0):
 def butter_lowpass(cutoff, fs, order=5):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    b, a = scipy.signal.butter(order, normal_cutoff, btype='low', analog=False)
     return b, a
 
 def butter_lowpass_filter(data, cutoff, fs, order=5):
     b, a = butter_lowpass(cutoff, fs, order=order)
-    y = lfilter(b, a, data)
+    y = scipy.butter.lfilter(b, a, data)
     return y
 
 
