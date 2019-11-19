@@ -27,12 +27,39 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #import geodezyx.megalib.geodetik as geok
 
+########## BEGIN IMPORT ##########
+#### External modules
+import copy
+import datetime as dt
+import dateutil
+import glob
+from io import BytesIO,StringIO
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import os 
+import pandas as pd
+import shutil
+import textwrap
+import re
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import operational
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
+##########  END IMPORT  ##########
 
-#import geodezyx.legacy.genefun as genefun
+#from geodezyx import utils,conv
+#import pandas
+
+
+#import geodezyx.legacy.utils.as genefun
 #import geodezyx.legacy.geodetik as geok
 #import softs_runner
 #
@@ -55,7 +82,7 @@ from geodezyx.megalib.megalib import *   # Import the legacy modules names
 ##for read rinex nav
 #from io import BytesIO,StringIO
 #from pandas import DataFrame,Series
-#from pandas.io.pytables import read_hdf
+#from pd.io.pytables import read_hdf
 
 #
    #_____          __  __ _____ _______                                   _
@@ -77,7 +104,7 @@ def list_stat_in_statinfo(statinfoin):
         if l[1:5] == '\n':
             continue
     listtemp.append(l[1:5])
-    listout = genefun.uniqify_list(listtemp)
+    listout = utils.uniqify_list(listtemp)
     return listout
 
 
@@ -143,16 +170,16 @@ def read_station_info_solo(filein,stat,column_type="ulr"):
         if l[1:5] == stat:
             # cas specifique du temps (repris d'une autre fct)
             f = l
-            start = geok.doy2dt(int(f[rg_start_1]),
+            start = conv.doy2dt(int(f[rg_start_1]),
                                 int(f[rg_start_2]),
                                 int(f[rg_start_3]),
                                 int(f[rg_start_4]),
                                 int(f[rg_start_5]))
             dicout['Start'].append(start)
             if int(f[rg_end_1]) == 9999 or int(f[rg_end_2]) == 999:
-                end = geok.doy2dt(2099,1,0,0,0)
+                end = conv.doy2dt(2099,1,0,0,0)
             else:
-                end = geok.doy2dt(int(f[rg_end_1]),
+                end = conv.doy2dt(int(f[rg_end_1]),
                                   int(f[rg_end_2]),
                                   int(f[rg_end_3]),
                                   int(f[rg_end_4]),
@@ -222,9 +249,9 @@ def read_lfile_solo(filein,stat):
             Ttmp = float(f[7])
 
             if np.isclose(Ttmp , 0.):
-                T  = geok.convert_partial_year(2000.)
+                T  = conv.convert_partial_year(2000.)
             else:
-                T  = geok.convert_partial_year(Ttmp)
+                T  = conv.convert_partial_year(Ttmp)
 
             if len(l) > 225: # if velocities are given (125 is arbitrary)
                 vX = float(f[8])
@@ -257,7 +284,7 @@ def read_pbo_vel_file_solo(velfilein,stat):
         if l[0] not in (' ','*'):
             skiplinelis.append(i)
 
-    data = pandas.read_table(open(velfilein),skiprows=skiplinelis,sep= ' *',header=max(skiplinelis)+1)
+    data = pd.read_table(open(velfilein),skiprows=skiplinelis,sep= ' *',header=max(skiplinelis)+1)
     #data['Ref_epoch']
 
     i_lis = []
@@ -282,7 +309,7 @@ def read_globk_vel_file(velfile_in):
         if '(deg)' in l:
             break
 
-    D = pandas.read_table(p,skiprows=i,header=-1,delim_whitespace = True )
+    D = pd.read_table(p,skiprows=i,header=-1,delim_whitespace = True )
 
     D.rename(columns={0: 'Long',
                       1: 'Lat',
@@ -332,8 +359,8 @@ def read_sinex_discontinuity_solo(snxfile,stat,PorV = 'P'):
                     continue
 
                 soln_lis.append(int(fields[2]))
-                start_lis.append(geok.datestr_sinex_2_dt(fields[4]))
-                end = geok.datestr_sinex_2_dt(fields[5])
+                start_lis.append(conv.datestr_sinex_2_dt(fields[4]))
+                end = conv.datestr_sinex_2_dt(fields[5])
                 if end == dt.datetime(1970,1,1):
                     end = dt.datetime(2099,1,1)
                 end_lis.append(end)
@@ -409,13 +436,13 @@ def read_station_info_time_solo(filein,stat):
 
             f = l[25:].split()
 
-            start = geok.doy2dt(int(f[0]),int(f[1]),int(f[2]),int(f[3]),int(f[4]))
+            start = conv.doy2dt(int(f[0]),int(f[1]),int(f[2]),int(f[3]),int(f[4]))
             startlis.append(start)
 
             if int(f[5]) == 9999 or int(f[6]) == 999:
-                end = geok.doy2dt(2099,1,0,0,0)
+                end = conv.doy2dt(2099,1,0,0,0)
             else:
-                end = geok.doy2dt(int(f[5]),int(f[6]),int(f[7]),int(f[8]),int(f[9]))
+                end = conv.doy2dt(int(f[5]),int(f[6]),int(f[7]),int(f[8]),int(f[9]))
             endlis.append(end)
 
     return startlis,endlis
@@ -566,7 +593,7 @@ def statinfo_2_cats(statinfo_path,catsneu_path):
         elif 'Height' in line:
             catsneuout_f.write(line)
             for s in s_stk:
-                catsneuout_f.write('# offsets : ' + str(geok.toYearFraction(s)) + ' 1\n')
+                catsneuout_f.write('# offsets : ' + str(conv.toYearFraction(s)) + ' 1\n')
         # cleaning outlier
         elif line[0] != '#':
             if (abs(float(line.split()[1])) > 1 or abs(float(line.split()[2])) > 1):
@@ -704,7 +731,7 @@ def station_info_2_gins(statinfoin,coordfilein,outfile,
                 X = data['Ref_X']
                 Y = data['Ref_Y']
                 Z = data['Ref_Z']
-                T = geok.MJD2dt(data['Ref_jday'])
+                T = conv.MJD2dt(data['Ref_jday'])
                 vX = data['dX/dt']
                 vY = data['dY/dt']
                 vZ = data['dZ/dt']
@@ -745,7 +772,7 @@ def station_info_2_gins(statinfoin,coordfilein,outfile,
             idligne  = idstat + '{:0>2d}'.format(i+1)
             outAnt   = dicout['Ant'][i]
             outAntHt = dicout['AntHt'][i]
-            Xant,Yant,Zant = geok.ENU2XYZ_legacy(0,0,outAntHt,X,Y,Z)
+            Xant,Yant,Zant = conv.ENU2XYZ_legacy(0,0,outAntHt,X,Y,Z)
             lastEnd  = outEnd
             outStart = dicout['Start'][i].strftime('%d%m%y')
             outEnd   = dicout['End'][i].strftime('%d%m%y')
@@ -1024,7 +1051,7 @@ class Location(object):
                                  self.Z_coordinate_m,self.Reference_epoch)
 
 
-    def export_as_string():
+    def export_as_string(self):
         Str_list = []
         Str_list.append('City or Town             : {:}'.format(self.City_or_Town))
         Str_list.append('State or Province        : {:}'.format(self.State_or_Province))
@@ -1036,9 +1063,9 @@ class Location(object):
         Y = self.Y_coordinate_m
         Z = self.Z_coordinate_m
 
-        lat , lon , h = geok.XYZ2GEO(X,Y,Z)
-        lat_deg , lat_min , lat_sec = geok.deg2deg_dec2dms(lat)
-        lon_deg , lon_min , lon_sec = geok.deg2deg_dec2dms(lon)
+        lat , lon , h = conv.XYZ2GEO(X,Y,Z)
+        lat_deg , lat_min , lat_sec = conv.deg2deg_dec2dms(lat)
+        lon_deg , lon_min , lon_sec = conv.deg2deg_dec2dms(lon)
 
         Str_list.append('X coordinate (m)       : {:}'.format(X))
         Str_list.append('Y coordinate (m)       : {:}'.format(Y))
@@ -1272,8 +1299,8 @@ def write_station_info_from_datalists(period_lis_lis,site_lis,location_lis,stati
                 stat = stat.ljust(4)
 
             strtup = stat , name , \
-            d1.year,geok.dt2doy(d1),int(d1.hour),int(d1.minute),int(d1.second), \
-            d2.year,geok.dt2doy(d2),int(d2.hour),int(d2.minute),int(d2.second), \
+            d1.year,conv.dt2doy(d1),int(d1.hour),int(d1.minute),int(d1.second), \
+            d2.year,conv.dt2doy(d2),int(d2.hour),int(d2.minute),int(d2.second), \
             float(a.Up_Ecc) , a.ARPSmart() , float(a.North_Ecc) , float(a.East_Ecc) , \
             r.Receiver_Type , r.Firmware_Version , r.FirmwareSmart() , \
             str(r.Serial_Number)[:20] , a.AntTypSmart() , \
@@ -1299,7 +1326,7 @@ def write_lfile_from_datalists(site_lis,location_lis,lfile_out_path):
         sx  , sy  , sz  = 0,0,0
         svx , svy , svz = 0,0,0
         
-        yr = geok.dt2year_decimal(loc.Reference_epoch)
+        yr = conv.dt2year_decimal(loc.Reference_epoch)
 
         outline = proto_str.format(sit.Four_Character_ID ,
                                    loc.X_coordinate_m ,
@@ -1446,7 +1473,7 @@ def write_station_file_gins_from_datalists(period_lis_lis,site_lis,location_lis,
             idligne = idstatA + str(j).zfill(2)
             outRec = receptor_gins_corrector( rec.Receiver_Type )
 
-            Xant,Yant,Zant = geok.ENU2XYZ_legacy(ant.East_Ecc,ant.North_Ecc,ant.Up_Ecc,X,Y,Z)
+            Xant,Yant,Zant = conv.ENU2XYZ_legacy(ant.East_Ecc,ant.North_Ecc,ant.Up_Ecc,X,Y,Z)
 
             sigoffset = 0.
             outAnt = ant.AntTypSmart()
@@ -1474,19 +1501,19 @@ def smart_elt_list(list_raw,n_elt,replacement=''):
 
 def read_rinex_2_dataobjts(rinex_path):
 
-    if genefun.empty_file_check(rinex_path):
+    if utils.empty_file_check(rinex_path):
         print('ERR : the RINEX file is empty ...')
         print('      ' , rinex_path)
 
         return None , None , None , None
 
-    ant_raw   = genefun.grep(rinex_path,'ANT #',True)
-    rec_raw   = genefun.grep(rinex_path,'REC #',True)
-    xyz_raw   = genefun.grep(rinex_path,'APPROX POSITION XYZ',True).split()
-    stat_raw  = genefun.grep(rinex_path,'MARKER NAME',True).split()
-    domes_raw = genefun.grep(rinex_path,'MARKER NUMBER',True).split()
-    d_hen_raw = genefun.grep(rinex_path,'ANTENNA: DELTA H/E/N',True).split()
-    t_raw     = genefun.grep(rinex_path,'TIME OF FIRST OBS',True).split()
+    ant_raw   = utils.grep(rinex_path,'ANT #',True)
+    rec_raw   = utils.grep(rinex_path,'REC #',True)
+    xyz_raw   = utils.grep(rinex_path,'APPROX POSITION XYZ',True).split()
+    stat_raw  = utils.grep(rinex_path,'MARKER NAME',True).split()
+    domes_raw = utils.grep(rinex_path,'MARKER NUMBER',True).split()
+    d_hen_raw = utils.grep(rinex_path,'ANTENNA: DELTA H/E/N',True).split()
+    t_raw     = utils.grep(rinex_path,'TIME OF FIRST OBS',True).split()
 
     Antobj, Recobj , Siteobj , Locobj = Antenna(),Reciever(),Site(),Location()
 
@@ -1523,7 +1550,7 @@ def read_rinex_2_dataobjts(rinex_path):
     #Date_Removed = Date_Installed + dt.timedelta(days=1)
 
 
-    Date_Installed , Date_Removed = softs_runner.rinex_start_end(rinex_path,
+    Date_Installed , Date_Removed = operational.rinex_start_end(rinex_path,
                                                                  add_tzinfo=1,
                                                                  verbose=0)
 
@@ -1594,8 +1621,8 @@ def write_station_file_gins_from_rinex(rinex_path,station_file_out,
 #        if not satdic.has_key(prn):
 #            satdic[prn] = []
 #
-#        jjul = geok.dt2jjulCNES(epoch)
-#        sec = geok.dt2secinday(epoch) + 19
+#        jjul = conv.dt2jjulCNES(epoch)
+#        sec = conv.dt2secinday(epoch) + 19
 #
 #        satdic[prn].append((jjul,sec,x,y,z))
 #
@@ -1676,20 +1703,20 @@ def read_nmea(file_path , enuout = True ,
             Haut.append(float(f[9]))
             Qual.append(qual)
 
-    X,Y,Z = geok.GEO2XYZ(Lat,Long,Haut)
+    X,Y,Z = conv.GEO2XYZ(Lat,Long,Haut)
     f,l,h = np.mean(Lat),np.mean(Long),np.mean(Haut)
-    x0,y0,z0 = geok.GEO2XYZ(f,l,h)
+    x0,y0,z0 = conv.GEO2XYZ(f,l,h)
 
     f,l,h =   43.4417981389 , 7.83481522597 , 6.59449264956
     x0,y0,z0 = 4595047.79934 , 632288.017869 , 4363273.52335
-    E,N,U = geok.XYZ2ENU_2(X,Y,Z,x0,y0,z0)
+    E,N,U = conv.XYZ2ENU_2(X,Y,Z,x0,y0,z0)
 
     if export_path != '':
         outf = open(export_path,'w+')
         outf.write(' '.join(('#lat0,long0,h0 :',str(f),str(l),str(h),'\n')))
         outf.write(' '.join(('#x0 ,y0 , z0   :',str(x0),str(y0),str(z0),'\n')))
         for i in range(len(T)):
-            datalis = [geok.dt2posix(T[i]),T[i].year,T[i].month,T[i].day,
+            datalis = [conv.dt2posix(T[i]),T[i].year,T[i].month,T[i].day,
                        T[i].hour,T[i].minute,T[i].second,Lat[i],Long[i],
                         Haut[i],X[i],Y[i],Z[i],E[i],N[i],U[i] ]
             datalis = [str(e) for e in datalis] + ['\n']
@@ -1771,7 +1798,7 @@ def write_latlontime_file_4_OTPS_tide(outfilepath , lat , lon ,
         dates_lis = [strt + dt.timedelta(seconds=x) for x in np.arange(0,end+1,sec_step)]
 
 
-    if not genefun.is_iterable(lat):
+    if not utils.is_iterable(lat):
         lat = [float(lat)] * len(dates_lis)
         lon = [float(lon)] * len(dates_lis)
     else:
@@ -1874,14 +1901,14 @@ def read_snx_trop(snxfile,dataframe_output=True):
             
             STAT.append(fields[0].upper())
             if not ':' in fields[1]:
-                epoc.append(geok.convert_partial_year(fields[1]))
+                epoc.append(conv.convert_partial_year(fields[1]))
             else:
                 date_elts_lis = fields[1].split(':')
                 yy =  int(date_elts_lis[0]) + 2000
                 doy = int(date_elts_lis[1])
                 sec = int(date_elts_lis[2])
 
-                epoc.append(geok.doy2dt(yy,doy,seconds=sec))
+                epoc.append(conv.doy2dt(yy,doy,seconds=sec))
             
             tro.append(float(fields[2]))
             stro.append(float(fields[3]))
@@ -1897,11 +1924,11 @@ def read_snx_trop(snxfile,dataframe_output=True):
         return Tropsinex_DataFrame(outtuple)
                 
 def Tropsinex_DataFrame(read_sinex_result):
-     DF_Sinex = pandas.DataFrame.from_records(list(read_sinex_result)).transpose()
+     DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
      colnam = ['STAT','epoc','tro','stro','tgn','stgn','tge','stge']
      DF_Sinex.columns = colnam
      cols_numeric = ['tro','stro','tgn','stgn','tge','stge']
-     DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pandas.to_numeric, errors='coerce')
+     DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pd.to_numeric, errors='coerce')
      
      return DF_Sinex
      
@@ -1940,14 +1967,14 @@ def read_sinex(snxfile,dataframe_output=False):
                 STAT.append(fields[2].upper())
                 soln.append(fields[4])
                 if not ':' in fields[5]:
-                    epoc.append(geok.convert_partial_year(fields[5]))
+                    epoc.append(conv.convert_partial_year(fields[5]))
                 else:
                     date_elts_lis = fields[5].split(':')
                     yy =  int(date_elts_lis[0]) + 2000
                     doy = int(date_elts_lis[1])
                     sec = int(date_elts_lis[2])
 
-                    epoc.append(geok.doy2dt(yy,doy,seconds=sec))
+                    epoc.append(conv.doy2dt(yy,doy,seconds=sec))
 
                 x.append(float(fields[8]))
                 sx.append(float(fields[9]))
@@ -1974,8 +2001,8 @@ def read_sinex(snxfile,dataframe_output=False):
                 svz.append(float(fields[9]))
                 
         if flagepochs:
-            start_val = geok.datestr_sinex_2_dt(fields[4])
-            end_val   = geok.datestr_sinex_2_dt(fields[5])
+            start_val = conv.datestr_sinex_2_dt(fields[4])
+            end_val   = conv.datestr_sinex_2_dt(fields[5])
             start.append(start_val)
             end.append(end_val)
     
@@ -1997,7 +2024,7 @@ def read_sinex(snxfile,dataframe_output=False):
         return STAT , soln , epoc , x , y , z , sx , sy , sz , vx , vy , vz , svx , svy , svz , start ,  end
 
 def sinex_DataFrame(read_sinex_result):
-    DF_Sinex = pandas.DataFrame.from_records(list(read_sinex_result)).transpose()
+    DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
     colnam = ['AC', 'STAT' , 'soln' , 'epoc' , 'x' , 'y' , 'z' , 'sx' , 'sy' , 'sz' , 'vx' , 'vy' , 'vz' , 'svx' , 'svy' , 'svz' , 'start' , 'end']
     DF_Sinex.columns = colnam
     
@@ -2006,7 +2033,7 @@ def sinex_DataFrame(read_sinex_result):
                 "vx","vy","vz",
                 "svx","svy","svz"]
         
-    DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pandas.to_numeric, errors='coerce')
+    DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pd.to_numeric, errors='coerce')
         
 
     return DF_Sinex
@@ -2044,7 +2071,7 @@ def read_sinex_versatile(sinex_path_in , id_block,
     id_block_strt = "\+" + id_block
     id_block_end  = "\-" + id_block
     
-    Lines_list = genefun.extract_text_between_elements_2(sinex_path_in,
+    Lines_list = utils.extract_text_between_elements_2(sinex_path_in,
                                                          id_block_strt,
                                                          id_block_end)
     Lines_list = Lines_list[1:-1]
@@ -2071,31 +2098,46 @@ def read_sinex_versatile(sinex_path_in , id_block,
         
 
         Header_split = header_line.split()
-        Fields_size = [len(e)+1 for e in Header_split]
-
-        print(header_line , Fields_size)
+        if False: ### Simple case when the columns are splitted with only a single
+            Fields_size = [len(e)+1 for e in Header_split]
+        else: ### Smarter case : we search for the n spaces after the column name
+            Fields_size = []
+            for fld_head_split in Header_split:
+                fld_head_regex = re.compile(fld_head_split[1:] + " *") #trick:
+                #1st char is removed, because it can be a *
+                #and screw the regex. This char is re-added at the end
+                #when the len is stored (the "+1" below)
+                fld_head_space = fld_head_regex.search(header_line)
+                Fields_size.append(len(fld_head_space.group()) + 1)
+            
+        print("INFO : read_sinex_versatile : Auto detected column names/sizes")
+        print(header_line)
+        print(Header_split , Fields_size)
 
 
 
     
         ### Read the file
-        DF = pandas.read_fwf(StringIO(Lines_str),widths=Fields_size)
+        DF = pd.read_fwf(StringIO(Lines_str),widths=Fields_size)
         DF.set_axis(Header_split, axis=1, inplace=True)
         
         ### Rename the 1st column (remove the comment marker)
         DF.rename(columns={DF.columns[0]:DF.columns[0][1:]}, inplace=True)
 
     else: # no header in the SINEX
-        DF = pandas.read_csv(StringIO(Lines_str),header=-1 ,
+        DF = pd.read_csv(StringIO(Lines_str),header=-1 ,
                              delim_whitespace=True)
 
+
+    regex_time = "(([0-9]{2}|[0-9]{4}):[0-9]{3}|[0-9]{7}):[0-9]{5}"
     for col in DF.columns:
-        if convert_date_2_dt and re.match("([0-9]{2}|[0-9]{4}):[0-9]{3}:[0-9]{5}",
+        if convert_date_2_dt and re.match(regex_time,
                                           str(DF[col][0])):
             try:
-                DF[col] = DF[col].apply(lambda x : geok.datestr_sinex_2_dt(x))
-            except:
+                DF[col] = DF[col].apply(lambda x : conv.datestr_sinex_2_dt(x))
+            except Exception as e:
                 print("WARN : read_sinex_versatile : convert date string to datetime failed")
+                print(e)
                 pass
         
     return DF
@@ -2117,7 +2159,7 @@ def read_sinex_bench_antenna(sinex_in):
                    "___x/up___" ,"___y/n____", "___z/e____" ,
                    "_Data_Start", "_Data_End__",
                    "__Antenna_type______" ,"Radome","__S/N__"]
-    DFantenna = pandas.read_table(T,delim_whitespace = True,error_bad_lines=False,names=header_cols)
+    DFantenna = pd.read_table(T,delim_whitespace = True,error_bad_lines=False,names=header_cols)
 
     return DFantenna
 
@@ -2214,7 +2256,7 @@ def read_rinex_nav(fn,writeh5=None,version=2):
     strio = BytesIO(raws.encode())
     darr = np.genfromtxt(strio,delimiter=nfloat)
 
-    nav= DataFrame(darr, epoch,
+    nav= pd.DataFrame(darr, epoch,
                ['SVclockBias','SVclockDrift','SVclockDriftRate','IODE',
                 'Crs','DeltaN','M0','Cuc','Eccentricity','Cus','sqrtA','TimeEph',
                 'Cic','OMEGA','CIS','Io','Crc','omega','OMEGA DOT','IDOT',
@@ -2224,15 +2266,15 @@ def read_rinex_nav(fn,writeh5=None,version=2):
     if version == 3:
         Const = [e[0]  for e in sv]
         SV    = [int(e[1:]) for e in sv]
-        nav['Const'] = Series(np.array(Const), index=nav.index)
-        nav['sv'] = Series(np.array(SV), index=nav.index)
+        nav['Const'] = pd.Series(np.array(Const), index=nav.index)
+        nav['sv'] = pd.Series(np.array(SV), index=nav.index)
     elif version == 2:
         rinexnav_type = os.path.basename(fn)[-1]
         if rinexnav_type == 'n':
-            nav['Const'] = Series(['G']*len(nav.index), index=nav.index)
+            nav['Const'] = pd.Series(['G']*len(nav.index), index=nav.index)
         else:
-            nav['Const'] = Series([rinexnav_type.upper()]*len(nav.index), index=nav.index)
-        nav['sv'] = Series(np.array(sv), index=nav.index)
+            nav['Const'] = pd.Series([rinexnav_type.upper()]*len(nav.index), index=nav.index)
+        nav['sv'] = pd.Series(np.array(sv), index=nav.index)
 
 
 
@@ -2252,7 +2294,7 @@ def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False, force = False):
     .Z decompression is implemented, but is very unstable (avoid .Z, prefer .gz)
     """
 
-    import gzip,zlib
+    import gzip
 
     if inp_gzip_file.endswith('.gz'):
         is_gz = True
@@ -2281,7 +2323,7 @@ def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False, force = False):
             #f.write(str_object2)
             #f.close()
 
-            out_gzip_file = genefun.uncompress(inp_gzip_file)
+            out_gzip_file = utils.uncompress(inp_gzip_file)
 
         print('INFO : uncompressing ' + inp_gzip_file + " to " + out_gzip_file )
 

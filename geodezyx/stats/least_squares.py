@@ -25,16 +25,18 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
-#import numpy as np
-#import scipy
-#import genefun
-#import itertools
-#import multiprocessing as mp
-#import matplotlib.pyplot as plt
+########## BEGIN IMPORT ##########
+#### External modules
+import numpy as np
+import scipy
+import itertools
+import multiprocessing as mp
+import matplotlib.pyplot as plt
+#### geodeZYX modules
+from geodezyx import utils
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+##########  END IMPORT  ##########
+
 
 
 #  _                    _      _____                  _    _ _   _ _
@@ -158,7 +160,8 @@ def partial_derive(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0,accur=-1):
             tuple/list & dict describing the arguments of f
         h :
             derivation step, if h == 0 give x * sqrt(epsilon)
-            (source : http://en.wikipedia.org/wiki/Numerical_differentiation) '''
+            (source : http://en.wikipedia.org/wiki/Numerical_differentiation) 
+    '''
 
     # tuple => list pour plus d'aisance
     args_f = list(args_f)
@@ -874,7 +877,7 @@ def error_ellipse_parameters_2(sigx,sigy,sigxy,out_deg=True):
     V,D   = np.linalg.eig(cov)
     V2,D2 = np.linalg.eig(np.linalg.inv(cov))
 
-    Dsqrt = np.sqrt(V)
+    #Dsqrt = np.sqrt(V)
 
     l1 = 0.5 * (sigx2 + sigy2 + np.sqrt((sigx2 + sigy2)**2 - 4*(sigx2 * sigy2 - sigxy2)))
     l2 = 0.5 * (sigx2 + sigy2 - np.sqrt((sigx2 + sigy2)**2 - 4*(sigx2 * sigy2 - sigxy2)))

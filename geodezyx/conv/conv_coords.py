@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Thu Feb 21 13:37:40 2019
@@ -26,16 +25,21 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
+########## BEGIN IMPORT ##########
+#### External modules
+import numpy as np
+import scipy
+import re
+
+#### geodeZYX modules
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-from geodezyx import np,scipy,re,sys,utils
-#import geod.utils as utils
-
-
-#sys.dont_write_bytecode = True
-
+##########  END IMPORT  ##########
 #### Coordinates conversion
     
 #   _____                    _ _             _               _____                              _             
@@ -870,6 +874,85 @@ def C_cep2itrs(xpole , ypole):
                            [-xpole2 , ypole2 , 1.     ]])
     
     return C_cep2itrs
+
+
+def C_euler(phi,theta,psi):
+    """
+    Gives the matrix of an Euler rotation
+    
+    Source
+    ------
+        https://fr.wikipedia.org/wiki/Angles_d%27Euler
+    """
+    Cphi=np.cos(phi)
+    Ctheta=np.cos(theta)
+    Cpsi=np.cos(psi)
+    Sphi=np.sin(phi)
+    Stheta=np.sin(theta)
+    Spsi=np.sin(psi)
+    
+    C_euler = np.array([[Cpsi*Cphi-Spsi*Ctheta*Sphi,-Cpsi*Sphi-Spsi*Ctheta*Cphi,Spsi*Stheta],
+                       [Spsi*Cphi+Cpsi*Ctheta*Sphi,-Spsi*Sphi+Cpsi*Ctheta*Cphi,-Cpsi*Stheta],
+                       [Stheta*Sphi,Stheta*Cphi,Ctheta]])
+    
+    return C_euler
+    
+
+
+def C_x(theta):
+    """
+    Gives the rotation matrix along the X-axis
+    
+    Source
+    ------
+        https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
+    """
+    C = np.cos(theta)
+    S = np.sin(theta)
+    
+    C_x = np.array([[1,0,0],
+                   [0,C,-S],
+                   [0,S,C]])
+
+    return C_x
+
+
+def C_y(theta):
+    """
+    Gives the rotation matrix around the Y-axis
+    
+    Source
+    ------
+        https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
+    """
+    C = np.cos(theta)
+    S = np.sin(theta)
+    
+    C_y = np.array([[C,0,S],
+                    [0,1,0],
+                    [-S,0,C]])
+
+    return C_y
+
+
+def C_z(theta):
+    """
+    Gives the rotation matrix around the Z-axis
+    
+    Source
+    ------
+        https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
+    """
+    C = np.cos(theta)
+    S = np.sin(theta)
+    
+    C_z = np.array([[C,-S,0],
+                   [S,C,0],
+                   [0,0,1]])
+
+    return C_z
+
+
 
 
 

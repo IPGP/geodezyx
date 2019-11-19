@@ -6,15 +6,31 @@ Created on Thu Aug  1 15:18:29 2019
 @author: psakicki
 """
 
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import dateutil
+import glob
+import numpy as np
+import os 
+import pandas as pd
+import scipy
+import re
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import files_rw
+from geodezyx import reffram
+from geodezyx import time_series
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-import geodezyx.time_series as time_series
-#import geodezyx.legacy.geodetik as conv
-#from geodezyx import np,dt
+##########  END IMPORT  ##########
 
-from geodezyx import *
 
 def read_all_points(filein):
     """selectionne automatiquement le type de fichier brut en entrée
@@ -209,7 +225,7 @@ def read_gipsy_tdp_list(filelistin):
         ts = read_gipsy_tdp(fil)
         tslist.append(ts)
 
-    tsout = merge_ts(tslist)
+    tsout = time_series.merge_ts(tslist)
 
     return tsout
 
@@ -608,11 +624,15 @@ def read_epos_sta_coords_multi(filein_list,return_dict = True):
         return ts_list
 
 
-def read_epos_slv_times(p):
-    L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates","\-sum_times/estimates")
-
+def read_epos_slv_times(p,convert_to_time=False):
+    """
+    convert_to_time : divide by the speed of light. Values in meter instead 
+    """
+    L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates",
+                                                "\-sum_times/estimates")
 
     Lgood = []
+    
     for l in L[1:-1]:
         if "EPOCHE" in l:
             cur_epoc_line = l
@@ -626,6 +646,9 @@ def read_epos_slv_times(p):
     DF = pd.DataFrame(Lgood,columns=["epoch","stat","offset","offset_sig"])
 
     DF["stat"] = DF["stat"].astype('int')
+    
+    if convert_to_time:
+        DF[["offset","offset_sig"]] = DF[["offset","offset_sig"]] / 299792458.
 
     return DF
 
@@ -1274,7 +1297,7 @@ def convert_sp3_clk_2_GINS_clk(sp3_path_in,
                                clk_gins_out,
                                interpo_30sec = True,
                                return_as_DF = True):
-    DF = gcls.read_sp3(sp3_path_in)
+    DF = files_rw.read_sp3(sp3_path_in)
 
     Fout = open(clk_gins_out,"w+")
 
@@ -1315,7 +1338,7 @@ def convert_sp3_clk_2_GINS_clk(sp3_path_in,
             Epoc_interp = np.arange(np.min(Epoc_inp),np.max(Epoc_inp),30)
             Epoc_interp_dt = conv.posix2dt(Epoc_interp)
 
-            I = interpolate.interp1d(Epoc_inp,Clk_inp)
+            I = scipy.interpolate.interp1d(Epoc_inp,Clk_inp)
 
             Clk_interp = I(Epoc_interp)
 
@@ -2229,12 +2252,12 @@ def read_sonardyne_attitude(filein):
 
 
 def interp_sndy_SYS_UTC(time_conv_file_in):
-    timeConv = utils.read_mat_file(timepath)
+    timeConv = utils.read_mat_file(time_conv_file_in)
     timeSYS  = timeConv[0,:]
     timeUTC  = timeConv[1,:]
     IntSYSUTC = scipy.interpolate.interp1d(timeSYS,timeUTC,kind='slinear',
                                            bounds_error=0)
-    TSout = TimeSerieObs(time_conv_file_in)
+    TSout = time_series.TimeSerieObs(time_conv_file_in)
 
     return IntSYSUTC
 
@@ -2250,10 +2273,10 @@ def read_sndy_mat_att(filein,IntSYSUTCin=None):
     pitch = attmat[2,:]
     head  = attmat[3,:]
 
-    TSout = TimeSerieObs('RPY',filein)
+    TSout = time_series.TimeSerieObs('RPY',filein)
 
     for r,p,h,t in zip(roll,pitch,head,Tposix_att):
-        att = Attitude(r,p,h,t)
+        att = time_series.Attitude(r,p,h,t)
         TSout.add_obs(att)
     return TSout
 
@@ -2280,7 +2303,7 @@ def read_hector_neu(filein):
     print("WARN : XYZ/FLH conversion not implemented")
     M = np.loadtxt(filein)
     stat = utils.grep(filein,'Site :',only_first_occur=True).split()[3]
-    tsout = ts_from_list(M[:,2],M[:,1],M[:,3],conv.year_decimal2dt(M[:,0]),
+    tsout = time_series.ts_from_list(M[:,2],M[:,1],M[:,3],conv.year_decimal2dt(M[:,0]),
                          'ENU',M[:,4],M[:,5],M[:,6],stat=stat,name=stat)
 
     return tsout

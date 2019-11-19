@@ -5,12 +5,28 @@ Created on Fri Aug  2 13:55:33 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+from collections import Counter
+import copy
+import datetime as dt
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.widgets import MultiCursor
+import numpy as np
+import os 
+import scipy
 
-from geodezyx.time_series import *
-import geodezyx.megalib.geodetik as geok
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import files_rw
+from geodezyx import stats
+from geodezyx import utils
+from geodezyx import time_series
+from geodezyx import reffram
+
+##########  END IMPORT  ##########
+
 
 
 class Point():
@@ -72,7 +88,7 @@ class Point():
         self.sZ = sZ
 
         self.initype = 'XYZ'
-        self.F,self.L,self.H = geok.XYZ2GEO(self.X,self.Y,self.Z)
+        self.F,self.L,self.H = conv.XYZ2GEO(self.X,self.Y,self.Z)
 
     def FLHset(self,F=0,L=0,H=0,sF=0,sL=0,sH=0):
         self.F = F
@@ -83,7 +99,7 @@ class Point():
         self.sH = sH
 
         self.initype = 'FLH'
-        self.X,self.Y,self.Z = geok.GEO2XYZ(self.F,self.L,self.H)
+        self.X,self.Y,self.Z = conv.GEO2XYZ(self.F,self.L,self.H)
         self.sX,self.sY,self.sZ = conv.sFLH2sXYZ(F,L,H,sF,sL,sH)
 
     def ENUset(self,E=np.nan,N=np.nan,U=np.nan,sE=np.nan,sN=np.nan,sU=np.nan):
@@ -108,7 +124,7 @@ class Point():
 
     def add_offset(self,dA,dB,dC):
         print("NOTE 160415 : add_offset as method are hazardous ...")
-        temp = add_offset_point(self,dA,dB,dC)
+        temp = time_series.add_offset_point(self,dA,dB,dC)
         self.__dict__ = temp.__dict__
 
     def Tset(self,T=0):
@@ -145,7 +161,7 @@ class Point():
 
 
     def helmert_trans(self,params='itrf2008_2_etrf2000',invert=False):
-        Xb = geok.helmert_trans(np.array([self.X,self.Y,self.Z]),params,invert)
+        Xb = reffram.helmert_trans(np.array([self.X,self.Y,self.Z]),params,invert)
         self.XYZset(*Xb)
         return None
 
@@ -223,7 +239,7 @@ class Attitude:
         self.sY  = sY
 
     def Qcalc(self):
-        self.Q = geok.quaternion(self.R , self.P , self.Y , 'deg')
+        self.Q = conv.quaternion(self.R , self.P , self.Y , 'deg')
         return None
 
 
@@ -293,7 +309,7 @@ class TimeSeriePoint:
 
 
     def readfile(self,filein):
-        self.__dict__ = read_all_points(filein).__dict__
+        self.__dict__ = files_rw.read_all_points(filein).__dict__
 
         self.interp_set()
 
@@ -492,7 +508,7 @@ class TimeSeriePoint:
         plt.title(Btitle)
         plt.title(Atitle)
 
-        ax = plt.gca()
+#        ax = plt.gca()
 
 #        if coortype == 'ENU':
 ##            refstr = 'ref XYZ = ' + utils.join_improved(',',self.refENU.X ,
@@ -557,7 +573,7 @@ class TimeSeriePoint:
 
         if type(fig) is int:
             figobj = plt.figure(fig)
-        elif type(fig) is Figure:
+        elif type(fig) is plt.Figure:
             figobj = fig
 
         for ax in figobj.axes:
@@ -593,7 +609,7 @@ class TimeSeriePoint:
 
         if type(fig) is int:
             figobj = plt.figure(fig)
-        elif type(fig) is Figure:
+        elif type(fig) is plt.Figure:
             figobj = fig
 
         if not self.bool_discont:
@@ -685,7 +701,7 @@ class TimeSeriePoint:
 
     def timewin(self,windows,mode='keep'):
         '''IL EST TRES DANGEREUX DE L'APPLIQUER UN FENETRAGE A SOI MEME'''
-        self.__dict__ = time_win(self,windows,mode).__dict__
+        self.__dict__ = time_series.time_win(self,windows,mode).__dict__
 
 
     def interp_set(self,interptype = 'slinear'):
@@ -794,7 +810,7 @@ class TimeSeriePoint:
             pt.add_offset(dA,dB,dC)
 
     def decimate(self,dec):
-        self.__dict__ = decimate_cleaner(self,dec).__dict__
+        self.__dict__ = time_series.decimate_cleaner(self,dec).__dict__
         #decimate_cleaner(self,dec,True)
 
     def find_point(self,tin,tol=0.001,stop_when_found=True):
@@ -872,7 +888,7 @@ class TimeSerieObs(object):
 
     def readfile(self,filein,indtab=0):
         print("selection device " , indtab)
-        temp = read_all_obs(filein)[indtab]
+        temp = files_rw.read_all_obs(filein)[indtab]
         self.__dict__ = temp.__dict__
 
         self.interp_set()
@@ -951,7 +967,7 @@ class TimeSerieObs(object):
 
             self.RfT = scipy.interpolate.interp1d(T,R,bounds_error=False,kind=interptype)
             self.PfT = scipy.interpolate.interp1d(T,P,bounds_error=False,kind=interptype)
-            self.YfT = geok.scipy.interpolate.interp1d_ang(T,Y,bounds_error=False,kind=interptype)
+            self.YfT = scipy.interpolate.interp1d_ang(T,Y,bounds_error=False,kind=interptype)
 
         self.bool_interp_uptodate = True
 

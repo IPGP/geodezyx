@@ -6,9 +6,17 @@ Created on Wed Jul 31 14:19:37 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+#### geodeZYX modules
+from geodezyx import utils
+
+##########  END IMPORT  ##########
+
 
 def color_list(L , colormap='jet'):
     cm     = plt.get_cmap(colormap)
@@ -83,7 +91,7 @@ def get_figure(figin = 0):
 
 
 def figure_saver(figobjt_in , outdir , outname , outtype = '.png' , formt = 'a4' ):
-    if not is_iterable(outtype):
+    if not utils.is_iterable(outtype):
          outtype = (outtype,) 
          
     outpath_stk = []
@@ -124,3 +132,35 @@ def id2val(value_lis,id_lis,idin):
         replace dico bc. set is not supproted as key"""
     return value_lis[id_lis.index(idin)]
 
+def set_size_for_pub(width=418.25368, fraction=1,subplot=[1, 1]):
+    """ Set aesthetic figure dimensions to avoid scaling in latex.
+
+    Parameters
+    ----------
+    width: float
+            Width in pts
+    fraction: float
+            Fraction of the width which you wish the figure to occupy
+
+    Returns
+    -------
+    fig_dim: tuple
+            Dimensions of figure in inches
+    """
+    # Width of figure
+    fig_width_pt = width * fraction
+
+    # Convert from pt to inches
+    inches_per_pt = 1 / 72.27
+
+    # Golden ratio to set aesthetic figure height
+    golden_ratio = (5**.5 - 1) / 2
+
+    # Figure width in inches
+    fig_width_in = fig_width_pt * inches_per_pt
+    # Figure height in inches
+    fig_height_in = fig_width_in * golden_ratio * (subplot[0] / subplot[1])
+
+    fig_dim = (fig_width_in, fig_height_in)
+
+    return fig_dim

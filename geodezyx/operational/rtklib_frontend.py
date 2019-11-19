@@ -6,10 +6,19 @@ Created on Fri Aug 16 11:54:28 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import os 
+import subprocess
 
+#### geodeZYX modules
+from geodezyx import files_rw
+from geodezyx import operational
+from geodezyx import utils
+
+
+##########  END IMPORT  ##########
 
 def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
                           experience_prefix="",rover_auto_conf=False,
@@ -38,19 +47,19 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
     """
 
     # paths & files
-    working_dir = genefun.create_dir(working_dir)
-    temp_dir    = genefun.create_dir(os.path.join(working_dir,'TEMP_' + genefun.get_timestamp()))
-    out_dir     = genefun.create_dir(os.path.join(working_dir,'OUTPUT'))
+    working_dir = utils.create_dir(working_dir)
+    temp_dir    = utils.create_dir(os.path.join(working_dir,'TEMP_' + utils.get_timestamp()))
+    out_dir     = utils.create_dir(os.path.join(working_dir,'OUTPUT'))
 
     # uncompressing rinex if compressed
-    if check_if_compressed_rinex(rnx_rover):
-        rnx_rover = crz2rnx(rnx_rover,temp_dir)
-    if check_if_compressed_rinex(rnx_base):
-        rnx_base  = crz2rnx(rnx_base,temp_dir)
+    if operational.check_if_compressed_rinex(rnx_rover):
+        rnx_rover = operational.crz2rnx(rnx_rover,temp_dir)
+    if operational.check_if_compressed_rinex(rnx_base):
+        rnx_base  = operational.crz2rnx(rnx_base,temp_dir)
 
     # RINEX START & END
-    rov_srt, rov_end , rov_itv = rinex_start_end(rnx_rover,1)
-    bas_srt, bas_end , bas_itv = rinex_start_end(rnx_base,1)
+    rov_srt, rov_end , rov_itv = operational.rinex_start_end(rnx_rover,1)
+    bas_srt, bas_end , bas_itv = operational.rinex_start_end(rnx_base,1)
 
     # RINEX NAMES
     rov_name = os.path.basename(rnx_rover)[0:4]
@@ -69,11 +78,11 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
     out_conf_fil   = os.path.join(out_dir,exp_full_name + '.conf')
     out_result_fil = os.path.join(out_dir,exp_full_name + '.out' )
 
-    dicoconf = read_conf_file(generik_conf)
+    dicoconf = operational.read_conf_file(generik_conf)
 
     if rover_auto_conf:
         Antobj_rov , Recobj_rov , Siteobj_rov , Locobj_rov = \
-        gfc.read_rinex_2_dataobjts(rnx_rover)
+        files_rw.read_rinex_2_dataobjts(rnx_rover)
         dicoconf['ant1-postype'] ='xyz'
         dicoconf['ant1-anttype'] = Antobj_rov.Antenna_Type
         dicoconf['ant1-pos1'] = Locobj_rov.X_coordinate_m
@@ -90,7 +99,7 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
 
     if base_auto_conf:
         Antobj_bas , Recobj_bas , Siteobj_bas , Locobj_bas = \
-        gfc.read_rinex_2_dataobjts(rnx_base)
+        files_rw.read_rinex_2_dataobjts(rnx_base)
         dicoconf['ant2-postype'] ='xyz'
         dicoconf['ant2-anttype'] = Antobj_bas.Antenna_Type
         if XYZbase[0] != 0:
@@ -117,19 +126,19 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
 
     # ORBITS
     # SP3
-    orblis = multi_downloader_orbs_clks( temp_dir , bas_srt , bas_end , archtype='/',
+    orblis = operational.multi_downloader_orbs_clks( temp_dir , bas_srt , bas_end , archtype='/',
                                         calc_center = calc_center)
     sp3Z = orblis[0]
-    sp3 = genefun.uncompress(sp3Z)
+    sp3 = utils.uncompress(sp3Z)
 
     # BRDC
     statdic = dict()
     statdic['nav'] = ['BRDC']
     nav_srt = dt.datetime(bas_srt.year, bas_srt.month , bas_srt.day )
-    orblis = multi_downloader_rinex(statdic,temp_dir , nav_srt , bas_end ,
+    orblis = operational.multi_downloader_rinex(statdic,temp_dir , nav_srt , bas_end ,
                                     archtype='/', sorted_mode=0)
     navZ = orblis[0]
-    nav = genefun.uncompress(navZ)
+    nav = utils.uncompress(navZ)
 
     # Command
     com_config  = "-k " + out_conf_fil
