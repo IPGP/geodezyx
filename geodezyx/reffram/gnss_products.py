@@ -17,7 +17,7 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                  name1='',name2='',use_name_1_2_for_table_name = False,
                  RTNoutput = True,convert_ECEF_ECI=True,
                  clean_null_values = True,
-                 conv_coef=10**3):
+                 conv_coef=10**3,return_satNull = False):
     """
     Compares 2 GNSS orbits files (SP3), and gives a summary plot and a
     statistics table
@@ -162,11 +162,14 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
         D2 = D2orig[np.logical_not(D2_null_bool)]
 
         if np.any(D1_null_bool) or np.any(D2_null_bool):
+            sat_nul = utils.join_improved(" " ,*list(set(D1orig[D1_null_bool]["sat"])))
             print("WARN : Null values contained in SP3 files : ")
             print("f1:" , np.sum(D1_null_bool) , utils.join_improved(" " ,
                   *list(set(D1orig[D1_null_bool]["sat"]))))
             print("f2:" , np.sum(D2_null_bool) , utils.join_improved(" " ,
                   *list(set(D2orig[D2_null_bool]["sat"]))))
+        else:
+            sat_nul = []
 
     else:
         D1 = D1orig.copy()
@@ -353,8 +356,11 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                                   Diff_sat_all.name2 ,',',Date.strftime("%Y-%m-%d"),
                                   ', doy', str(conv.dt2doy(Date))))
 
-
-    return Diff_sat_all
+    
+    if return_satNull:
+        return Diff_sat_all, sat_nul
+    else:
+        return Diff_sat_all
 
 
 def compar_orbit_plot(Diff_sat_all_df_in,
@@ -756,7 +762,8 @@ def OrbDF_multidx_2_reg(OrbDFin,index_order=["sat","epoch"]):
     OrbDFwrk["sv"]    = OrbDFwrk["sat"].apply(lambda x: int(x[1:]))
     return OrbDFwrk
 
-def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False):
+def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
+                              supplementary_sort=True):
     """
     Find common sats and epochs in to Orbit DF, and output the
     corresponding Orbit DFs
@@ -766,10 +773,18 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False):
     
     I1 = OrbDFa.index
     I2 = OrbDFb.index
+    
     Iinter = I1.intersection(I2)
     
     OrbDFa_out = OrbDFa.loc[Iinter]
     OrbDFb_out = OrbDFb.loc[Iinter]
+    
+    if supplementary_sort:
+        # for multi GNSS, OrbDF_out are not well sorted (why ??? ...)
+        # we do a supplementary sort
+        OrbDFa_out = OrbDFa_out.sort_values(["sat","epoch"])
+        OrbDFb_out = OrbDFb_out.sort_values(["sat","epoch"])
+
     
     if len(OrbDFa_out) != len(OrbDFb_out):
         print("WARN : OrbDF_common_epoch_finder : len(OrbDFa_out) != len(OrbDFb_out)")

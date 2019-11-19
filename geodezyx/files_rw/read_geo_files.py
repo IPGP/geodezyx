@@ -456,7 +456,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
     AC_name =  os.path.basename(file_path_in)[:3]
 
-    fil = open(file_path_in)
+    fil = open(file_path_in,'r+')
 
     header = True
 
@@ -480,11 +480,27 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
             sat_nat = l[1:2].strip()
             sat_sv  = int(l[2:4].strip())
             sat_sat = l[1:4].strip()
+            
+            if '*' in l[4:18] or not (l[4:18] and l[4:18].strip()):
+                X = np.nan
+            else:
+                X   = float(l[4:18]) * km_conv_coef
+                
+            if '*' in l[18:32] or not (l[18:32] and l[18:32].strip()):
+                Y = np.nan
+            else:
+                Y   = float(l[18:32])* km_conv_coef                
+                
+            if '*' in l[32:46] or not (l[32:46] and l[32:46].strip()):
+                Z = np.nan
+            else:
+                Z   = float(l[32:46])* km_conv_coef
+                
+            if '*' in l[46:60] or not (l[46:60] and l[46:60].strip()):
+                Clk = np.nan
+            else:
+                Clk = float(l[46:60])
 
-            X   = float(l[4:18]) * km_conv_coef
-            Y   = float(l[18:32])* km_conv_coef
-            Z   = float(l[32:46])* km_conv_coef
-            Clk = float(l[46:60])
 
             if returns_pandas:
                 line_data = [epoc,sat_sat,sat_nat,sat_sv,X,Y,Z,Clk,AC_name]
@@ -565,6 +581,7 @@ def read_sp3_header(sp3_path):
     ### PRN part
     Sat_prn_list_clean = []
     for prn_line in Sat_prn_list:
+        
         prn_line_splited = prn_line.split()
         prn_line_splited = [e for e in prn_line_splited if not "+" in e]
         prn_line_splited = [e for e in prn_line_splited if not  e == "0"]
