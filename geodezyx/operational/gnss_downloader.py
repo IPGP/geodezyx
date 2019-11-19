@@ -670,7 +670,8 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
 
 def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
                            center_id_last_letter=None,
-                           center_manual_short_name=None):
+                           center_manual_short_name=None,
+                           force=False):
     """
     Rename a long naming new convention IGS product file to the short old
     convention
@@ -693,6 +694,9 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     center_manual_short_name : str
         replace completely the long name with this one
         overrides center_id_last_letter
+        
+    force : bool
+        if False, skip if the file already exsists
 
     Returns
     -------
@@ -738,6 +742,7 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
 
     shortname_prefix = center.lower() + str(wwww) + str(dow)
 
+    ### Type handeling
     if   "SP3" in longname_basename:
         shortname = shortname_prefix + ".sp3"
     elif "CLK" in longname_basename:
@@ -751,8 +756,21 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     else:
         print("ERR : filetype not found for",longname_basename)
 
-    shortname_filepath = os.path.join(longname_dirname , shortname)
+    
+    ### Compression handeling
+    if longname_basename[-3:] == ".gz":
+        shortname = shortname + ".gz"
+    elif longname_basename[-2:] == ".Z":
+        shortname = shortname + ".Z"
+        
 
+    shortname_filepath = os.path.join(longname_dirname , shortname)
+    
+    if not force and os.path.isfile(shortname_filepath):
+        print("INFO : skip", longname_filepath_in)
+        print("     ",shortname_filepath,"already exists")        
+        return shortname_filepath
+        
     shutil.copy2(longname_filepath_in , shortname_filepath)
     print("INFO : renaming" , longname_filepath_in,"=>",shortname_filepath)
 
@@ -1050,12 +1068,11 @@ def multi_archiver_rinex(rinex_lis,parent_archive_dir,archtype='stat',
 
 
 def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
-                            recursive_search=True,severe=True):
+                            recursive_search=True,severe=True,
+                            compressed="excl"):
     """
     Find all product files in a parent folder which correspond to file type(s),
     AC(s) and date(s)
-
-    Has to be improved for the new naming convention
 
     Parameters
     ----------
@@ -1089,6 +1106,14 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     
     severe : bool
         If True, raises an exception if something goes wrong
+
+    compressed : str
+        How the compressed files are handled
+        "incl": include the compressed files
+        "only": only consider the compressed files
+        "excl": exclude the compressed files
+        
+
         
     Naming_conv : str or list of str
 
@@ -1153,13 +1178,20 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     
     join_regex_and = lambda  L : "(" +  "|".join(L) + ")"
     
-    #####
-    ##### WORK IN PROGESS HERE FOR THE REGEX DEFINTION FOR THE NEW NAMING CONVENTION
-    ##### AND THE FCT ARGUMENTS
-    #####
-    
     Re_patt_big_stk = []
     
+    
+    ### compression handeling
+    if compressed == "excl":
+        re_patt_comp = "$"
+    elif compressed == "incl":
+        re_patt_comp = "(\.Z|\.gz|)$"
+    elif compressed == "only":
+        re_patt_comp = "(\.Z|\.gz)$"
+    else:
+        print("ERR : check 'compressed' keyword (excl,incl, or only)")
+        raise Exception
+        
     if regex_old_naming: 
         if ACs[0] == "all":
             re_patt_ac = "\w{3}"
@@ -1167,7 +1199,7 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
             re_patt_ac = join_regex_and([ac.lower() for ac in ACs])
         re_patt_date   = join_regex_and(Dates_wwwwd_list)
         re_patt_filtyp = join_regex_and(File_type)
-        re_patt_big_old_naming = re_patt_ac + re_patt_date + "\." + re_patt_filtyp
+        re_patt_big_old_naming = re_patt_ac + re_patt_date + "\." + re_patt_filtyp + re_patt_comp
         Re_patt_big_stk.append(re_patt_big_old_naming)
         
     if regex_new_naming: ### search for new name convention
@@ -1177,10 +1209,9 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
             re_patt_ac = join_regex_and([ac.upper() for ac in ACs])
         re_patt_date   = join_regex_and(["_"+e for e in Dates_yyyyddd_list]) #add _ because it can raise a conflit with the old format
         re_patt_filtyp = join_regex_and([fil.upper() for fil in File_type])
-        re_patt_big_new_naming = ".*".join((re_patt_ac,re_patt_date,re_patt_filtyp))
+        re_patt_big_new_naming = ".*".join((re_patt_ac,re_patt_date,re_patt_filtyp + re_patt_comp))
         Re_patt_big_stk.append(re_patt_big_new_naming)
         
-
     if regex_igs_tfcc_naming:
         Dates_yy_list = list(set([str(conv.gpstime2dt(int(e[0:4]),int(e[4])).year)[2:] for e in Dates_wwwwd_list]))
         Dates_wwww_list = list(set([e[:-1] for e in Dates_wwwwd_list]))
@@ -1190,7 +1221,7 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
         re_patt_date = join_regex_and(Dates_wwwwd_list + Dates_wwww_list)
         re_patt_filtyp = "\." +  join_regex_and(File_type)
 
-        re_patt_big_igs_tfcc_naming = "igs" + re_patt_year + "P" + re_patt_date + ".*" + re_patt_filtyp
+        re_patt_big_igs_tfcc_naming = "igs" + re_patt_year + "P" + re_patt_date + ".*" + re_patt_filtyp + re_patt_comp
         Re_patt_big_stk.append(re_patt_big_igs_tfcc_naming)
 
     re_patt_big = join_regex_and(Re_patt_big_stk)
