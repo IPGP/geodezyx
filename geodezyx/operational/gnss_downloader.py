@@ -1069,7 +1069,10 @@ def multi_archiver_rinex(rinex_lis,parent_archive_dir,archtype='stat',
 
 def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
                             recursive_search=True,severe=True,
-                            compressed="excl"):
+                            compressed="incl",
+                            regex_old_naming = True,
+                            regex_new_naming = True,
+                            regex_igs_tfcc_naming = True):
     """
     Find all product files in a parent folder which correspond to file type(s),
     AC(s) and date(s)
@@ -1171,10 +1174,6 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
 
 
     ###### Regex Definition ##############
-    
-    regex_old_naming = True
-    regex_new_naming = True
-    regex_igs_tfcc_naming = True
     
     join_regex_and = lambda  L : "(" +  "|".join(L) + ")"
     
