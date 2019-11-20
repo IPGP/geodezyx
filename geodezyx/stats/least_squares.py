@@ -160,7 +160,8 @@ def partial_derive(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0,accur=-1):
             tuple/list & dict describing the arguments of f
         h :
             derivation step, if h == 0 give x * sqrt(epsilon)
-            (source : http://en.wikipedia.org/wiki/Numerical_differentiation) '''
+            (source : http://en.wikipedia.org/wiki/Numerical_differentiation) 
+    '''
 
     # tuple => list pour plus d'aisance
     args_f = list(args_f)

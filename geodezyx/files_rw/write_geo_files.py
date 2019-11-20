@@ -18,8 +18,6 @@ from geodezyx.megalib.megalib import *   # Import the legacy modules names
 ##########  END IMPORT  ##########
 
 
-
-
 def write_sndy_light_dat(ts_in,outdir,outprefix):
     """pas fini"""
     fil = open(os.path.join(outdir,outprefix),'w+')
@@ -35,11 +33,11 @@ def write_sndy_light_dat(ts_in,outdir,outprefix):
                 fil.write(lin + '\n')
     fil.close()
     
-def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
+def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
     """
     Write DOCSTRING
     
-    skip_null_epoch: Dont write an epoch if all sats are null (filtering)
+    skip_null_epoch: Do not write an epoch if all sats are null (filtering)
 
     """
     ################## MAIN DATA
@@ -97,7 +95,22 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True):
     Satline_stk   = []
     Sigmaline_stk = []
 
-    for i in range(5):
+
+    if force_format_c:
+        nlines = 5
+    else:
+        div,mod = np.divmod(len(SatList),17)
+        
+        if div < 5:
+            nlines = 5
+        else:
+            nlines = div
+        
+        if mod != 0:
+            nlines += 1
+        
+        
+    for i in range(nlines):
         SatLine = SatList[17*i:17*(i+1)]
         if len(SatLine) < 17:
             complem = " 00" * (17 - len(SatLine))
@@ -191,3 +204,100 @@ def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False,one_or_two
         Fout.close()
         
     return OUT
+
+
+def ine_block_mono(sat,dt_in,extra_intrvl_strt=.1,extra_intrvl_end=.4,step=300):
+    
+    Fields = ['orb____1',
+    'orb____2',
+    'orb____3',
+    'orb____4',
+    'orb____5',
+    'orb____6',
+    'orb___db',
+    'orb_s2db',
+    'orb_c2db',
+    'orb_s4db',
+    'orb_c4db',
+    'orb___yb',
+    'orb___xb',
+    'orb_sixb',
+    'orb_coxb',
+    'orb___cr']
+    
+    
+    mjd = np.floor(conv.dt2MJD(dt_in))
+    mjd_strt = mjd - extra_intrvl_strt
+    mjd_end  = mjd + extra_intrvl_end + 1
+    
+    Lines = []
+    
+    l1 =  " sat_nr  : " + sat + "\n"
+    l2 =  " stepsize: {:3}  {:6.2f}\n".format(sat,step)
+    
+    Lines.append(l1)
+    Lines.append(l2)
+    
+    
+    for field in Fields:
+        line = " {:}: {:3}  0.000000000000000E+00 {:11.5f} {:11.5f}\n".format(field,sat,mjd_strt,mjd_end)
+        Lines.append(line)
+        
+    Lines.append(" end_sat\n")
+        
+    str_out = "".join(Lines)
+    
+    return str_out
+
+
+
+def write_ine_dummy_file(Sat_list,dt_in,extra_intrvl_strt=.1,
+             extra_intrvl_end=.4,step=300,out_file_path=None):
+
+    Lines = []
+    
+    mjd = np.floor(conv.dt2MJD(dt_in))
+    mjd_strt = mjd - extra_intrvl_strt
+    mjd_end  = mjd + extra_intrvl_end + 1
+    
+    datestr = conv.dt2str(dt.datetime.now(),str_format='%Y/%m/%d %H:%M:%S')
+    
+    mjd_strt_deci = mjd_strt - np.floor(mjd_strt)
+    
+    
+    head_proto="""%=INE 1.00 {:} NEWSE=INE+ORBCOR                                                                                 
++global
+ day_info: 
+ epoch   :                            {:5}  {:16.14f}
+ interval:                            {:11.5f} {:11.5f}
+ stepsize:      {:6.2f}
+-global
++initial_orbit
+"""
+    head = head_proto.format(datestr,int(mjd),0,mjd_strt,mjd_end,step)
+    
+    Lines.append(head)
+    
+    for sat in Sat_list:
+        Lines.append("******************************************************************\n")
+        sat_str = ine_block_mono(sat,dt_in,extra_intrvl_strt,extra_intrvl_end,step)
+        Lines.append(sat_str)
+        Lines.append("******************************************************************\n")
+    
+    str_end = """-initial_orbit
+%ENDINE
+"""
+    
+    Lines.append(str_end)
+         
+    str_out = "".join(Lines)
+    
+    if out_file_path:
+        with open(out_file_path,"w") as f:
+            f.write(str_out)
+            f.close()
+
+    return str_out
+
+
+

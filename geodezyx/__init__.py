@@ -48,7 +48,7 @@ from . import conv
 from . import files_rw
 from . import geodyn
 from . import operational
-from . import legacy
+#from . import legacy
 from . import reffram
 from . import stats
 from . import time_series

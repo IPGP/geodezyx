@@ -670,7 +670,8 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
 
 def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
                            center_id_last_letter=None,
-                           center_manual_short_name=None):
+                           center_manual_short_name=None,
+                           force=False):
     """
     Rename a long naming new convention IGS product file to the short old
     convention
@@ -693,6 +694,9 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     center_manual_short_name : str
         replace completely the long name with this one
         overrides center_id_last_letter
+        
+    force : bool
+        if False, skip if the file already exsists
 
     Returns
     -------
@@ -712,6 +716,8 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     if center_id_last_letter=m, it will become com
 
     """
+
+    print("INFO : will rename" , longname_filepath_in)
 
     longname_basename = os.path.basename(longname_filepath_in)
     longname_dirname  = os.path.dirname(longname_filepath_in)
@@ -736,6 +742,7 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
 
     shortname_prefix = center.lower() + str(wwww) + str(dow)
 
+    ### Type handeling
     if   "SP3" in longname_basename:
         shortname = shortname_prefix + ".sp3"
     elif "CLK" in longname_basename:
@@ -749,10 +756,23 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     else:
         print("ERR : filetype not found for",longname_basename)
 
-    shortname_filepath = os.path.join(longname_dirname , shortname)
+    
+    ### Compression handeling
+    if longname_basename[-3:] == ".gz":
+        shortname = shortname + ".gz"
+    elif longname_basename[-2:] == ".Z":
+        shortname = shortname + ".Z"
+        
 
+    shortname_filepath = os.path.join(longname_dirname , shortname)
+    
+    if not force and os.path.isfile(shortname_filepath):
+        print("INFO : skip", longname_filepath_in)
+        print("     ",shortname_filepath,"already exists")        
+        return shortname_filepath
+        
     shutil.copy2(longname_filepath_in , shortname_filepath)
-    print("INFO : rename" , longname_filepath_in,"=>",shortname_filepath)
+    print("INFO : renaming" , longname_filepath_in,"=>",shortname_filepath)
 
 
     if rm_longname_file:
@@ -1048,12 +1068,14 @@ def multi_archiver_rinex(rinex_lis,parent_archive_dir,archtype='stat',
 
 
 def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
-                            recursive_search=True,severe=True):
+                            recursive_search=True,severe=True,
+                            compressed="incl",
+                            regex_old_naming = True,
+                            regex_new_naming = True,
+                            regex_igs_tfcc_naming = True):
     """
     Find all product files in a parent folder which correspond to file type(s),
     AC(s) and date(s)
-
-    Has to be improved for the new naming convention
 
     Parameters
     ----------
@@ -1087,6 +1109,14 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     
     severe : bool
         If True, raises an exception if something goes wrong
+
+    compressed : str
+        How the compressed files are handled
+        "incl": include the compressed files
+        "only": only consider the compressed files
+        "excl": exclude the compressed files
+        
+
         
     Naming_conv : str or list of str
 
@@ -1123,7 +1153,8 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     while Dates_list[-1] < date_end_ok:
         Dates_list.append(Dates_list[-1]  + dt.timedelta(days=1))
 
-    Dates_wwwwd_list = [utils.join_improved("",*conv.dt2gpstime(d)) for d in Dates_list]
+    Dates_wwwwd_list   = [utils.join_improved("",*conv.dt2gpstime(d)) for d in Dates_list]
+    Dates_yyyyddd_list = [utils.join_improved("",*reversed(conv.dt2doy_year(d))) for d in Dates_list]
 
     ###### File type / ACs management ##############
 
@@ -1144,29 +1175,42 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
 
     ###### Regex Definition ##############
     
-    regex_old_naming = True
-    regex_new_naming = True
-    regex_igs_tfcc_naming = True
-    
     join_regex_and = lambda  L : "(" +  "|".join(L) + ")"
-    
-    #####
-    ##### WORK IN PROGESS HERE FOR THE REGEX DEFINTION FOR THE NEW NAMING CONVENTION
-    ##### AND THE FCT ARGUMENTS
-    #####
     
     Re_patt_big_stk = []
     
+    
+    ### compression handeling
+    if compressed == "excl":
+        re_patt_comp = "$"
+    elif compressed == "incl":
+        re_patt_comp = "(\.Z|\.gz|)$"
+    elif compressed == "only":
+        re_patt_comp = "(\.Z|\.gz)$"
+    else:
+        print("ERR : check 'compressed' keyword (excl,incl, or only)")
+        raise Exception
+        
     if regex_old_naming: 
         if ACs[0] == "all":
             re_patt_ac = "\w{3}"
         else:
-            re_patt_ac = join_regex_and(ACs)
+            re_patt_ac = join_regex_and([ac.lower() for ac in ACs])
         re_patt_date   = join_regex_and(Dates_wwwwd_list)
         re_patt_filtyp = join_regex_and(File_type)
-        re_patt_big_old_naming = ".*".join((re_patt_ac,re_patt_date,re_patt_filtyp))
+        re_patt_big_old_naming = re_patt_ac + re_patt_date + "\." + re_patt_filtyp + re_patt_comp
         Re_patt_big_stk.append(re_patt_big_old_naming)
-
+        
+    if regex_new_naming: ### search for new name convention
+        if ACs[0] == "all":
+            re_patt_ac = "\W{3}"        
+        else:
+            re_patt_ac = join_regex_and([ac.upper() for ac in ACs])
+        re_patt_date   = join_regex_and(["_"+e for e in Dates_yyyyddd_list]) #add _ because it can raise a conflit with the old format
+        re_patt_filtyp = join_regex_and([fil.upper() for fil in File_type])
+        re_patt_big_new_naming = ".*".join((re_patt_ac,re_patt_date,re_patt_filtyp + re_patt_comp))
+        Re_patt_big_stk.append(re_patt_big_new_naming)
+        
     if regex_igs_tfcc_naming:
         Dates_yy_list = list(set([str(conv.gpstime2dt(int(e[0:4]),int(e[4])).year)[2:] for e in Dates_wwwwd_list]))
         Dates_wwww_list = list(set([e[:-1] for e in Dates_wwwwd_list]))
@@ -1176,7 +1220,7 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
         re_patt_date = join_regex_and(Dates_wwwwd_list + Dates_wwww_list)
         re_patt_filtyp = "\." +  join_regex_and(File_type)
 
-        re_patt_big_igs_tfcc_naming = "igs" + re_patt_year + "P" + re_patt_date + ".*" + re_patt_filtyp
+        re_patt_big_igs_tfcc_naming = "igs" + re_patt_year + "P" + re_patt_date + ".*" + re_patt_filtyp + re_patt_comp
         Re_patt_big_stk.append(re_patt_big_igs_tfcc_naming)
 
     re_patt_big = join_regex_and(Re_patt_big_stk)
@@ -1235,198 +1279,198 @@ def FTP_downloader_wo_objects(tupin):
     
     
 
-def multi_downloader_orbs_clks_2bad(archive_dir,startdate,enddate,
-                            AC_names = ("wum","cod"),
-                            prod_types = ("sp3","clk"),
-                            remove_patterns=("ULA",),
-                            archtype ='week',
-                            new_name_conv = True,
-                            parallel_download=4,
-                            archive_center='whu',
-                            mgex=True,repro=0,sorted_mode=False,
-                            return_also_uncompressed_files=True,
-                            ftp_download=False,
-                            dow_manu=None):
-    
-    if mgex:
-        mgex_str = "mgex/"
-    else:
-        mgex_str = ""
-        
-    if not utils.is_iterable(remove_patterns):
-        remove_patterns = [remove_patterns]
-    
-    if archive_center == "cddis":
-        arch_center_main    = 'cddis.gsfc.nasa.gov'
-        arch_center_basedir = '/pub/gps/products/' + mgex_str
-
-    if archive_center == "cddis_glonass":
-        arch_center_main    = 'cddis.gsfc.nasa.gov'
-        arch_center_basedir = '/pub/gps/products/glonass/' + mgex_str
-        print(arch_center_main,arch_center_basedir)
-    
-    elif archive_center == "ign":
-        arch_center_main    = 'igs.ign.fr'
-        arch_center_basedir = '/pub/igs/products/' + mgex_str  
-
-    elif archive_center == "ensg":
-        arch_center_main    = 'igs.ensg.ign.fr'
-        arch_center_basedir = '/pub/igs/products/' + mgex_str
-        
-    elif archive_center == "whu":
-        arch_center_main    = "igs.gnsswhu.cn"
-        arch_center_basedir = "/pub/gps/products/" + mgex_str
-        
-    elif archive_center == "ign_rf":
-        arch_center_main    = 'igs-rf.ign.fr'
-        arch_center_basedir = '/pub/' + mgex_str  
-
-    elif archive_center == "ensg_rf":
-        arch_center_main    = 'igs-rf.ensg.ign.fr'
-        arch_center_basedir = '/pub/' + mgex_str
-    else:
-        raise Exception("ERR: no archive_center given")
-
-    
-        
-        
-        
-    print("INFO: data center used :",archive_center)
-
-    Dates_list = conv.dt_range(startdate,enddate)
-
-    Localfiles_lis = []
-    wwww_dir_previous = None
-    pool = mp.Pool(processes=parallel_download) 
-   
-
-    ## create the FTP object
-    ftp = FTP(arch_center_main)
-    ftp.login()
-    ## create a list of FTP object for multiple downloads (unstable...)
-    if ftp_download and parallel_download > 1:
-        Ftp_obj_list = [FTP(arch_center_main) for i in range(parallel_download)]
-        [f.login() for f in Ftp_obj_list]    
-        # define the main obj for crawling
-        ftp = Ftp_obj_list[0]
-            
-
-    ### Crawl day per day for files
-    for dat in Dates_list:
-
-        Files_remote_date_list = []
-        wwww , dow = conv.dt2gpstime(dat)
-        print("INFO: ","Find products for day",dat,wwww,dow)
-        
-        wwww_dir = os.path.join(arch_center_basedir,str(wwww))
-        ftp.cwd(wwww_dir)
-        
-        if wwww_dir_previous != wwww_dir:
-            ftp.cwd(wwww_dir)
-            Files_listed_in_FTP = ftp.nlst()
-            wwww_dir_previous = wwww_dir
-            
-        if len(Files_listed_in_FTP) == 0:
-            print("WARN: no files found in ",wwww_dir)
-            
-        if type(dow) is int and dow == 0:
-            dow = "0"
-        elif not dow:
-            pass        
-        elif dow_manu is None:
-            dow = ""
-        else:
-            dow = str(dow_manu)
-                    
-        ### check if the pattern of the wished products are in the listed daily files
-        for patt_tup in list(itertools.product(AC_names,[wwww],[dow],prod_types)):
-            pattern_old_nam = utils.join_improved(".*",patt_tup[0],str(patt_tup[1])+str(patt_tup[2]),patt_tup[3])
-            pattern_old_nam = ".*" + pattern_old_nam + ".*"
-            Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam,f)]
-            
-            if new_name_conv: ### serch for new name convention
-                ac_newnam = patt_tup[0].upper()
-                doy_newnam="".join(reversed(conv.dt2doy_year(conv.gpstime2dt(patt_tup[1],patt_tup[2]))))
-                prod_newnam = patt_tup[3].upper()
-                
-                pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
-                pattern_new_nam = ".*" + pattern_new_nam + ".*"
-                Files_new_nam   = [f for f in Files_listed_in_FTP if re.search(pattern_new_nam,f)]
-                
-                Files = Files + Files_new_nam
-                
-                if len(Files) == 0:
-                    print("WARN: ","no product found for",*patt_tup)
-            
-            Files_remote_date_list = Files_remote_date_list + Files
-        
-        ### exclude some pattern
-        for negpatt in remove_patterns:
-            Files_remote_date_list = [e for e in Files_remote_date_list if not re.search(negpatt,e)]
-
-        archive_dir_specif = effective_save_dir_orbit(archive_dir,
-                                                      patt_tup[0],
-                                                      dat,
-                                                      archtype)
-            
-        utils.create_dir(archive_dir_specif)
-        
-        ### Generation of the Download fct inputs
-        Files_remote_date_chunck = utils.chunkIt(Files_remote_date_list,
-                                                 parallel_download)
-        Downld_tuples_list = []
-        Potential_localfiles_list = []
-
-        if ftp_download:
-            for ftpobj , Chunk in zip(Ftp_obj_list,Files_remote_date_chunck):
-                for filchunk in Chunk:
-                        Potential_localfiles_list.append(os.path.join(archive_dir_specif,filchunk))
-                        if parallel_download == 1:
-                            Downld_tuples_list.append((ftpobj,filchunk,archive_dir_specif))
-                        else:
-                            Downld_tuples_list.append((arch_center_main,wwww_dir,
-                                                       filchunk,archive_dir_specif))
-        else:
-            Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
-            [Potential_localfiles_list.append(os.path.join(archive_dir_specif,f)) for f in Files_remote_date_list]
-
-            
-        ### Actual Download, FTP download is not recommended
-        if ftp_download and parallel_download == 1:
-            for tup in Downld_tuples_list:
-                FTP_downloader(*tup)
-        elif ftp_download and parallel_download > 1:
-            _ = pool.map_async(FTP_downloader_wo_objects,Downld_tuples_list)
-        elif not ftp_download and parallel_download == 1:
-            for tup in Downld_tuples_list:
-                downloader_wrap(tup)
-        elif not ftp_download and parallel_download > 1:
-            _ = pool.map(downloader_wrap,Downld_tuples_list)
-        ## Those 2 other methods are unstables
-        ##  _ = pool.map_async(downloader_wrap,Downld_tuples_list)
-        ##  _ = [pool.apply(downloader_wrap,(tup,)) for tup in Downld_tuples_list]
-        
-
-        ### Independent files exsitence check
-        
-        if not return_also_uncompressed_files:
-            for localfile in Potential_localfiles_list:
-                if os.path.isfile(localfile):
-                    Localfiles_lis.append(localfile)
-        else:
-            for localfile in Potential_localfiles_list:
-                Pot_compress_name_list = [localfile]
-                Pot_compress_name_list.append(localfile.replace(".gz",""))
-                Pot_compress_name_list.append(localfile.replace(".Z",""))
-                Pot_compress_name_list = list(set(Pot_compress_name_list))
-                
-                for pot_compress_name in Pot_compress_name_list:
-                    if os.path.isfile(pot_compress_name):
-                        Localfiles_lis.append(pot_compress_name)
-    
-    pool.close()
-    return Localfiles_lis
-    
+#def multi_downloader_orbs_clks_2bad(archive_dir,startdate,enddate,
+#                            AC_names = ("wum","cod"),
+#                            prod_types = ("sp3","clk"),
+#                            remove_patterns=("ULA",),
+#                            archtype ='week',
+#                            new_name_conv = True,
+#                            parallel_download=4,
+#                            archive_center='whu',
+#                            mgex=True,repro=0,sorted_mode=False,
+#                            return_also_uncompressed_files=True,
+#                            ftp_download=False,
+#                            dow_manu=None):
+#    
+#    if mgex:
+#        mgex_str = "mgex/"
+#    else:
+#        mgex_str = ""
+#        
+#    if not utils.is_iterable(remove_patterns):
+#        remove_patterns = [remove_patterns]
+#    
+#    if archive_center == "cddis":
+#        arch_center_main    = 'cddis.gsfc.nasa.gov'
+#        arch_center_basedir = '/pub/gps/products/' + mgex_str
+#
+#    if archive_center == "cddis_glonass":
+#        arch_center_main    = 'cddis.gsfc.nasa.gov'
+#        arch_center_basedir = '/pub/gps/products/glonass/' + mgex_str
+#        print(arch_center_main,arch_center_basedir)
+#    
+#    elif archive_center == "ign":
+#        arch_center_main    = 'igs.ign.fr'
+#        arch_center_basedir = '/pub/igs/products/' + mgex_str  
+#
+#    elif archive_center == "ensg":
+#        arch_center_main    = 'igs.ensg.ign.fr'
+#        arch_center_basedir = '/pub/igs/products/' + mgex_str
+#        
+#    elif archive_center == "whu":
+#        arch_center_main    = "igs.gnsswhu.cn"
+#        arch_center_basedir = "/pub/gps/products/" + mgex_str
+#        
+#    elif archive_center == "ign_rf":
+#        arch_center_main    = 'igs-rf.ign.fr'
+#        arch_center_basedir = '/pub/' + mgex_str  
+#
+#    elif archive_center == "ensg_rf":
+#        arch_center_main    = 'igs-rf.ensg.ign.fr'
+#        arch_center_basedir = '/pub/' + mgex_str
+#    else:
+#        raise Exception("ERR: no archive_center given")
+#
+#    
+#        
+#        
+#        
+#    print("INFO: data center used :",archive_center)
+#
+#    Dates_list = conv.dt_range(startdate,enddate)
+#
+#    Localfiles_lis = []
+#    wwww_dir_previous = None
+#    pool = mp.Pool(processes=parallel_download) 
+#   
+#
+#    ## create the FTP object
+#    ftp = FTP(arch_center_main)
+#    ftp.login()
+#    ## create a list of FTP object for multiple downloads (unstable...)
+#    if ftp_download and parallel_download > 1:
+#        Ftp_obj_list = [FTP(arch_center_main) for i in range(parallel_download)]
+#        [f.login() for f in Ftp_obj_list]    
+#        # define the main obj for crawling
+#        ftp = Ftp_obj_list[0]
+#            
+#
+#    ### Crawl day per day for files
+#    for dat in Dates_list:
+#
+#        Files_remote_date_list = []
+#        wwww , dow = conv.dt2gpstime(dat)
+#        print("INFO: ","Find products for day",dat,wwww,dow)
+#        
+#        wwww_dir = os.path.join(arch_center_basedir,str(wwww))
+#        ftp.cwd(wwww_dir)
+#        
+#        if wwww_dir_previous != wwww_dir:
+#            ftp.cwd(wwww_dir)
+#            Files_listed_in_FTP = ftp.nlst()
+#            wwww_dir_previous = wwww_dir
+#            
+#        if len(Files_listed_in_FTP) == 0:
+#            print("WARN: no files found in ",wwww_dir)
+#            
+#        if type(dow) is int and dow == 0:
+#            dow = "0"
+#        elif not dow:
+#            pass        
+#        elif dow_manu is None:
+#            dow = ""
+#        else:
+#            dow = str(dow_manu)
+#                    
+#        ### check if the pattern of the wished products are in the listed daily files
+#        for patt_tup in list(itertools.product(AC_names,[wwww],[dow],prod_types)):
+#            pattern_old_nam = utils.join_improved(".*",patt_tup[0],str(patt_tup[1])+str(patt_tup[2]),patt_tup[3])
+#            pattern_old_nam = ".*" + pattern_old_nam + ".*"
+#            Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam,f)]
+#            
+#            if new_name_conv: ### serch for new name convention
+#                ac_newnam = patt_tup[0].upper()
+#                doy_newnam="".join(reversed(conv.dt2doy_year(conv.gpstime2dt(patt_tup[1],patt_tup[2]))))
+#                prod_newnam = patt_tup[3].upper()
+#                
+#                pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
+#                pattern_new_nam = ".*" + pattern_new_nam + ".*"
+#                Files_new_nam   = [f for f in Files_listed_in_FTP if re.search(pattern_new_nam,f)]
+#                
+#                Files = Files + Files_new_nam
+#                
+#                if len(Files) == 0:
+#                    print("WARN: ","no product found for",*patt_tup)
+#            
+#            Files_remote_date_list = Files_remote_date_list + Files
+#        
+#        ### exclude some pattern
+#        for negpatt in remove_patterns:
+#            Files_remote_date_list = [e for e in Files_remote_date_list if not re.search(negpatt,e)]
+#
+#        archive_dir_specif = effective_save_dir_orbit(archive_dir,
+#                                                      patt_tup[0],
+#                                                      dat,
+#                                                      archtype)
+#            
+#        utils.create_dir(archive_dir_specif)
+#        
+#        ### Generation of the Download fct inputs
+#        Files_remote_date_chunck = utils.chunkIt(Files_remote_date_list,
+#                                                 parallel_download)
+#        Downld_tuples_list = []
+#        Potential_localfiles_list = []
+#
+#        if ftp_download:
+#            for ftpobj , Chunk in zip(Ftp_obj_list,Files_remote_date_chunck):
+#                for filchunk in Chunk:
+#                        Potential_localfiles_list.append(os.path.join(archive_dir_specif,filchunk))
+#                        if parallel_download == 1:
+#                            Downld_tuples_list.append((ftpobj,filchunk,archive_dir_specif))
+#                        else:
+#                            Downld_tuples_list.append((arch_center_main,wwww_dir,
+#                                                       filchunk,archive_dir_specif))
+#        else:
+#            Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
+#            [Potential_localfiles_list.append(os.path.join(archive_dir_specif,f)) for f in Files_remote_date_list]
+#
+#            
+#        ### Actual Download, FTP download is not recommended
+#        if ftp_download and parallel_download == 1:
+#            for tup in Downld_tuples_list:
+#                FTP_downloader(*tup)
+#        elif ftp_download and parallel_download > 1:
+#            _ = pool.map_async(FTP_downloader_wo_objects,Downld_tuples_list)
+#        elif not ftp_download and parallel_download == 1:
+#            for tup in Downld_tuples_list:
+#                downloader_wrap(tup)
+#        elif not ftp_download and parallel_download > 1:
+#            _ = pool.map(downloader_wrap,Downld_tuples_list)
+#        ## Those 2 other methods are unstables
+#        ##  _ = pool.map_async(downloader_wrap,Downld_tuples_list)
+#        ##  _ = [pool.apply(downloader_wrap,(tup,)) for tup in Downld_tuples_list]
+#        
+#
+#        ### Independent files exsitence check
+#        
+#        if not return_also_uncompressed_files:
+#            for localfile in Potential_localfiles_list:
+#                if os.path.isfile(localfile):
+#                    Localfiles_lis.append(localfile)
+#        else:
+#            for localfile in Potential_localfiles_list:
+#                Pot_compress_name_list = [localfile]
+#                Pot_compress_name_list.append(localfile.replace(".gz",""))
+#                Pot_compress_name_list.append(localfile.replace(".Z",""))
+#                Pot_compress_name_list = list(set(Pot_compress_name_list))
+#                
+#                for pot_compress_name in Pot_compress_name_list:
+#                    if os.path.isfile(pot_compress_name):
+#                        Localfiles_lis.append(pot_compress_name)
+#    
+#    pool.close()
+#    return Localfiles_lis
+#    
     
 def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                             AC_names = ("wum","cod"),
@@ -1443,7 +1487,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     """
     dow_manu = False, no dow manu, consider the converted dow from the time span, regular case
     dow_manu = None, no dow in the REGEX, the crawler will search only for the week
-    dow_manu = [0,7] the dow in question    
+    dow_manu = 0 or 7: the dow in question    
     """
     
     if mgex:
@@ -1597,10 +1641,9 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         ## Those 2 other methods are unstables
         ##  _ = pool.map_async(downloader_wrap,Downld_tuples_list)
         ##  _ = [pool.apply(downloader_wrap,(tup,)) for tup in Downld_tuples_list]
-        
-
-    ### Independent files exsitence check
     
+
+    ### Independent files existence check
     if not return_also_uncompressed_files:
         for localfile in Potential_localfiles_list:
             if os.path.isfile(localfile):
