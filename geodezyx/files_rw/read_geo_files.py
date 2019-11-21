@@ -470,6 +470,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
     epoch_stk = []
     Xstk , Ystk , Zstk , Clkstk = [],[],[],[]
+    Typestk = []
 
     data_stk  = []
 
@@ -493,9 +494,11 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
             Y   = float(l[18:32])* km_conv_coef
             Z   = float(l[32:46])* km_conv_coef
             Clk = float(l[46:60])
+            
+            typ = l[0]
 
             if returns_pandas:
-                line_data = [epoc,sat_sat,sat_nat,sat_sv,X,Y,Z,Clk,AC_name]
+                line_data = [epoc,sat_sat,sat_nat,sat_sv,typ,X,Y,Z,Clk,AC_name]
                 data_stk.append(line_data)
             else:
                 epoch_stk.append(epoc)
@@ -508,7 +511,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     AC_name_stk = [AC_name] * len(Xstk)
 
     if returns_pandas:
-        df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv',
+        df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
                                              'x','y','z','clk','AC'])
         if epoch_as_pd_index:
             df.set_index('epoch',inplace=True)
