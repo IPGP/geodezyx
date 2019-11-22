@@ -90,7 +90,7 @@ def extrapolate_orbit_kepler(P,V,t,t0,mu=3.9860044188e14):
 
 
 
-def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=8):
+def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9):
     NewEpoch_stk = []
     
     for sat in DFsp3["sat"].unique():
