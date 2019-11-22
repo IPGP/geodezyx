@@ -426,7 +426,8 @@ def read_clk(file_path_in, returns_pandas = True, interval=None):
 
 
 def read_sp3(file_path_in,returns_pandas = True, name = '',
-             epoch_as_pd_index = False,km_conv_coef=1):
+             epoch_as_pd_index = False,km_conv_coef=1,
+             skip_null_epoch=True):
     """
     Read a SP3 file (GNSS Orbits standard file) and return X,Y,Z coordinates
     for each satellite and for each epoch
@@ -451,6 +452,9 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
         a conversion coefficient to change the units
         to get meters : 10**3
         to get milimeters : 10**6
+        
+    skip_null_epoch :bool
+        Do not write an epoch if all sats are null (filtering)
 
     Returns
     -------
@@ -485,6 +489,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
         if l[0] == '*':
             epoc   = conv.tup_or_lis2dt(l[1:].strip().split())
+            
         else:
             sat_nat = l[1:2].strip()
             sat_sv  = int(l[2:4].strip())
@@ -517,6 +522,9 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
             df.set_index('epoch',inplace=True)
         df.filename = os.path.basename(file_path_in)
         df.path = file_path_in
+        
+        if skip_null_epoch:
+            df = sp3_DataFrame_zero_epoch_filter(df)
 
         if name != '':
             df.name = name
@@ -527,8 +535,6 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     else:
         print("INFO : return list, very beta : no Sat. Vehicule Number info ...")
         return  epoch_stk ,  Xstk , Ystk , Zstk , Clkstk , AC_name_stk
-
-
 
 
 def read_sp3_header(sp3_path):
@@ -610,6 +616,18 @@ def read_sp3_header(sp3_path):
                              columns=["AC","sat","sigma","epoch"])
 
     return Header_DF
+
+
+def sp3_DataFrame_zero_epoch_filter(DFsp3):
+    DFgrp = DFsp3[["epoch","x","y","z"]].groupby("epoch")
+    DFsum = DFgrp.agg(np.sum).sum(axis=1)
+    Epochs = DFsum[np.isclose(DFsum,0)].index
+    
+    DFsp3_out = DFsp3[np.logical_not(DFsp3["epoch"].isin(Epochs))]
+    
+    return DFsp3_out
+
+
 
 ##
 def read_erp_bad(path,return_array=False):
