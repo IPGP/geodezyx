@@ -11,6 +11,7 @@ Created on Mon Nov 18 13:39:48 2019
 import numpy as np
 import pandas as pd
 import datetime as dt
+from pytwobodyorbit import TwoBodyOrbit
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
@@ -80,7 +81,6 @@ def ECI_2_kepler_elts(P,V,rad2deg=True,
 
 
 def extrapolate_orbit_kepler(P,V,t,t0,mu=3.9860044188e14):
-    from pytwobodyorbit import TwoBodyOrbit
     orbit = TwoBodyOrbit("", mu=mu)   # create an instance
     orbit.setOrbCart(t0, P, V)        # define the orbit
     Pout, Vout = orbit.posvelatt(t)   # get position and velocity at t1
@@ -144,7 +144,7 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9):
     DFNewEpoch[["x","y","z"]] = conv.ECI2ECEF(DFNewEpoch[["x","y","z"]].values,Tutc_NewEpoch)
     DFNewEpoch[["x","y","z"]] = DFNewEpoch[["x","y","z"]] * .001
     
-    DFout = pd.concat((DF,DFNewEpoch))
+    DFout = pd.concat((DFsp3,DFNewEpoch))
     DFout.reset_index(drop=True,inplace=True)
     DFout.sort_values(["sat","epoch"],inplace=True)
     DFout.reset_index(drop=True,inplace=True)
