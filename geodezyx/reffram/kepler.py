@@ -136,13 +136,13 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=8):
         extrapo_intern_fct(0,-1)
     
         ### forward
-        extrapo_intern_fct(0,-1)
+        extrapo_intern_fct(-1,1)
         
     DFNewEpoch = pd.DataFrame(NewEpoch_stk)
     
     Tutc_NewEpoch = conv.dt_gpstime2dt_utc(conv.datetime64_numpy2dt(DFNewEpoch["epoch"].values))
     DFNewEpoch[["x","y","z"]] = conv.ECI2ECEF(DFNewEpoch[["x","y","z"]].values,Tutc_NewEpoch)
-    
+    DFNewEpoch[["x","y","z"]] = DFNewEpoch[["x","y","z"]] * .001
     
     DFout = pd.concat((DFsp3,DFNewEpoch))
     DFout.reset_index(drop=True,inplace=True)
