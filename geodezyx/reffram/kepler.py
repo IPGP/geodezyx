@@ -136,7 +136,7 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=8):
         extrapo_intern_fct(0,-1)
     
         ### forward
-        extrapo_intern_fct(0,-1)
+        extrapo_intern_fct(-1,1)
         
     DFNewEpoch = pd.DataFrame(NewEpoch_stk)
     
