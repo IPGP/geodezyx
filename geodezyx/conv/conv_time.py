@@ -818,7 +818,6 @@ def dt2gpstime(dtin,dayinweek=True,inp_ref="utc"):
         week_raw , secs_raw = utc2gpstime(dtin.year,dtin.month,dtin.day,dtin.hour,
                                           dtin.minute,dtin.second)
         
-        utc_offset = find_leapsecond(dtin)
 
         if inp_ref == "utc":
             ### utc : utc2gpstime did the job
@@ -826,10 +825,12 @@ def dt2gpstime(dtin,dayinweek=True,inp_ref="utc"):
 
         elif inp_ref == "tai":
             ### tai : utc2gpstime did the job, but needs leap sec correction again
+            utc_offset = find_leapsecond(dtin)
             week , secs = week_raw , secs_raw - utc_offset
 
         elif inp_ref == "gps":
             ### tai : utc2gpstime did the job, but needs leap sec & 19sec correction again
+            utc_offset = find_leapsecond(dtin)
             week , secs = week_raw , secs_raw + 19 - utc_offset
             
         if dayinweek:
@@ -1586,7 +1587,7 @@ def datestr_sinex_2_dt(datestrin):
 
 
 
-def dt_2_sinex_datestr(dtin,short_yy=True):
+def dt_2_sinex_datestr(dtin,short_yy=True,year_sep=":"):
     """
     Time conversion
     
@@ -1600,20 +1601,26 @@ def dt_2_sinex_datestr(dtin,short_yy=True):
     -------
     dtout : str
         Date in SINEX format
+        
+    year_sep : str
+        year separator, usually :, but can also be empty
     """
     
     if utils.is_iterable(dtin):
         return [dt_2_sinex_datestr(e) for e in dtin]
     else:
         if not short_yy:
-            year = int(dtin.year)
+            year = str(int(dtin.year))
+            year = year.zfill(4)
         else:
-            year = int(str(dtin.year)[2:])
+            year = str(int(str(dtin.year)[2:]))
+            year = year.zfill(2)
         
         doy = str(dt2doy(dtin))
         sec = str(dt2secinday(dtin)) 
         
-        strout = "{:}:{:3}:{:5}".format(year,doy.zfill(3),sec.zfill(5))
+        strfmt = "{:}" + year_sep + "{:3}:{:5}"
+        strout = strfmt.format(year,doy.zfill(3),sec.zfill(5))
 
         return strout
 

@@ -85,10 +85,38 @@ def read_bull_B(path):
 
     return DFout
 
-def read_clk(file_path_in, returns_pandas = True, interval=None):
-    """
-    General description
 
+def read_clk(file_path_in):
+    """
+    Read an IGS clk file
+
+    Parameters
+    ----------
+    file_path_in :  str
+        Path of the file in the local machine.
+    Returns
+    -------
+    DFclk : pandas DataFrame
+        Returns a panda table format with the data extracted from the file.
+    """
+    HeadLine = utils.grep(file_path_in,"END OF HEADER",
+                          only_first_occur=True,line_number=True)
+    
+    DFclk = pd.read_csv(file_path_in,skiprows=HeadLine[0]+1,header=-1,
+                        delim_whitespace = True,
+                        names=['type', 'name', 'year', 'month', 'day', 'hour',
+                             'minute', 'second',"n_values",'bias', 'sigma'])
+    
+    DFclk['epoch'] = pd.to_datetime(DFclk[['year', 'month', 'day', 'hour','minute', 'second']])
+    DFclk.path = file_path_in
+    
+    return DFclk
+
+def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=True):
+    """
+    Read an IGS clk file
+    Slow and complex, use read_clk instead
+    
     Parameters
     ----------
     file_path_in :  str
@@ -195,11 +223,16 @@ def read_clk(file_path_in, returns_pandas = True, interval=None):
   ################################################################################################
    ############################################ put on pandas table format
     if returns_pandas:
-     Clk_readed = pd.DataFrame(Clk_read, columns=['type','name','year','month','day','h','minutes','seconds','epoch','offset','rms'])
-     Clk_readed['epoch'] =  pd.to_datetime(Clk_readed[[ 'year' ,'month' ,'day','h','minutes','seconds']])
-     Clk_readed.path = file_path_in
-
-     return Clk_readed
+        if old_naming:
+            name_list = ['offset','rms']
+        else:
+            name_list = ['bias','sigma']
+            
+        Clk_readed = pd.DataFrame(Clk_read, columns= ['type','name','year','month','day','h','minutes','seconds','epoch'] + name_list)
+        Clk_readed['epoch'] =  pd.to_datetime(Clk_readed[[ 'year' ,'month' ,'day','h','minutes','seconds']])
+        Clk_readed.path = file_path_in
+    
+        return Clk_readed
 
           ###############################
     else:

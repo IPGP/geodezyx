@@ -173,7 +173,7 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
     F.write(FinalStr)
     
     
-def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False,one_or_two=2):
+def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False):
     HEAD = header
     Row_str_stk = []
 
@@ -185,13 +185,15 @@ def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False,one_or_two
     for irow, row in DFclk_in.iterrows():
 
         if output_std_values:
+            one_or_two=2
             row_str = row_str_proto.format(row["type"],row["name"],row["year"],
                                            row["month"],row["day"],row["h"],row["minutes"],
-                                           row["seconds"],one_or_two,row["offset"],row["rms"])
+                                           row["seconds"],one_or_two,row["bias"],row["sigma"])
         else:
+            one_or_two=1
             row_str = row_str_proto.format(row["type"],row["name"],row["year"],
                                            row["month"],row["day"],row["h"],row["minutes"],
-                                           row["seconds"],one_or_two,row["offset"])
+                                           row["seconds"],one_or_two,row["bias"])
             
         Row_str_stk.append(row_str)
         
