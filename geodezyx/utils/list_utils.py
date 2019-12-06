@@ -469,7 +469,7 @@ def find_regex_in_list(regex,L,only_first_occurence=False,
     Lout = []
     for i,e in enumerate(L):
         if re.search(regex,e):
-            if line_number:
+            if not line_number:
                 found = e
             else:
                 found = (i,e)
