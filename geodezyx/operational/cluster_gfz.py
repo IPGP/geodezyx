@@ -85,6 +85,7 @@ def cluster_GFZ_run(commands_list,
             LOGobj.write(info_bunch + '\n')
 
             ########## Bunch On/Off Check : check if the bunch is finished (experimental but on is better)
+            ###### THIS PART MUST BE MERGE WITH THE SMALLER FCT BELLOW
             if bj_check_on_off:
                 print("INFO : BJ Check : All jobs should be finished now, let's see if there is some latecomers")
                 bj_check_tigger = False
@@ -105,30 +106,34 @@ def cluster_GFZ_run(commands_list,
                     bj_check_tigger = True
                     print("INFO : let's continue, no job matchs the pattern " + bj_pattern_checked)
 
-def number_job_user(bj_check_user=None):
-    
+def number_job_user(bj_check_user=None,verbose=True):
     if not bj_check_user:
         bj_check_user=utils.get_username()
         
     bj_command = "perl /dsk/igs2/soft_wrk/psakicki/SOFT_EPOS8_BIN_TOOLS/SCRIPTS/e8_bjobs_local.pl"
 
     bj_list = subprocess.check_output(bj_command,shell='/bin/csh')
+    bj_list = bj_list.decode("utf-8")
+    bj_list = bj_list.split("\n")
+        
     bj_pattern_checked =   bj_check_user + ' *' +  bj_check_user
 
-    bj_list_checked = [re.search(bj_pattern_checked,l) for l in bj_list]
+    bj_list_checked = [bool(re.search(bj_pattern_checked,l)) for l in bj_list]
     bj_list_checked_sum = np.sum(bj_list_checked)
+    
+    if verbose:
+        print("INFO: ",bj_list_checked_sum,"running jobs found for",bj_check_user)
     
     return bj_list_checked_sum
 
 def sleep_job_user(bj_check_user=None,maxjob=20,bj_check_wait_time=20):
-    
     if not bj_check_user:
         bj_check_user=utils.get_username()
     
     n_job = number_job_user(bj_check_user)
     
     if n_job >= maxjob:
-        print("INFO : sleeping @ " + str(dt.datetime.now()) + " for " + str(bj_check_wait_time) + "s b.c." + str(n_job) + " are runing")
+        print("INFO : sleeping @ " + str(dt.datetime.now()) + " for " + str(bj_check_wait_time) + "s b.c." + str(n_job) + " jobs are runing")
         time.sleep(bj_check_wait_time)
         
     return None
