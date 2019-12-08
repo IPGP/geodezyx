@@ -105,9 +105,9 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
             nlines = 5
         else:
             nlines = div
-        
-        if mod != 0:
-            nlines += 1
+
+            if mod != 0:
+                nlines += 1
         
         
     for i in range(nlines):
