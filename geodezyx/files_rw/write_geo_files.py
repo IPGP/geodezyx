@@ -112,6 +112,8 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
         
     for i in range(nlines):
         SatLine = SatList[17*i:17*(i+1)]
+        SatLineSigma = len(SatLine) * " 01"
+        
         if len(SatLine) < 17:
             complem = " 00" * (17 - len(SatLine))
         else:
@@ -124,6 +126,10 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
 
         satline = "+  {:3}   ".format(nbsat4line) + "".join(SatLine) + complem + "\n"
         sigmaline = "++         0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0\n"
+        sigmaline = "++       " + SatLineSigma + complem  + "\n"
+
+
+
 
         Satline_stk.append(satline)
         Sigmaline_stk.append(sigmaline)
