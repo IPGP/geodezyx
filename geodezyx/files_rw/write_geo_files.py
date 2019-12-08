@@ -48,7 +48,7 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
 
     EpochRawList  = SP3_DF_wrk["epoch"].unique()
     SatList    = sorted(SP3_DF_wrk["sat"].unique())
-    SatList    = reversed(SatList)
+    SatList    = list(reversed(SatList))
     SatListSet = set(SatList)
     EpochUsedList = []
 
