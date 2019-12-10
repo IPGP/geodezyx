@@ -497,7 +497,7 @@ def replace_in_file(file_in,str_before,str_after):
     filedata = filedata.replace(str_before,str_after)
         
     # Write the file out again
-    with open(fbias + "", 'w') as file:
+    with open(file_in + "", 'w') as file:
         file.write(filedata)
 
 

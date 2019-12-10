@@ -639,7 +639,7 @@ def ECEF2ECI(xyz,utc_times):
     Returns
     -------
     eci : numpy.array of floats
-        Earth Centered Inertial UTC_times are UTC_times, as datetime objects. Sould have shape (N)    
+        Earth Centered Inertial coordinates. will have shape (N,3)    
 
     Note
     ----
@@ -671,6 +671,89 @@ def ECEF2ECI(xyz,utc_times):
     eci[:,0] = xyz[:,0]*np.cos(gmst) - xyz[:,1]*np.sin(gmst)
     eci[:,1] = xyz[:,0]*np.sin(gmst) + xyz[:,1]*np.cos(gmst)
     return eci
+
+
+
+def ECI2ECEF(xyz,utc_times):
+    """ 
+    Convert ECI (Earth Centered Inertial) positions to ECEF (Earth Centered Earth Fixed)
+    positions
+
+    Parameters
+    ----------
+    xyz : numpy.array of floats
+        XYZ are cartesian positions in Earth Centered Inertial. Should have shape (N,3)
+    
+    utc_times : numpy.array of floats
+        UTC_times are UTC timestamps, as datetime objects. Sould have shape (N)
+    
+    Returns
+    -------
+    ecef : numpy.array of floats
+        Earth Centered Earth Fixed coordinates. will have shape (N,3)        
+
+    Note
+    ----
+    Requires pyorbital module
+
+    Theory
+    ------   
+    
+     [X]          ([C -S 0])[X]
+     [Y]     = inv([S  C 0])[Y]
+     [Z]ecef      ([0  0 1])[Z]eci
+
+
+    Empirically:
+     [X]       [ C  S  0][X]
+     [Y]     = [-S  C  0][Y]
+     [Z]ecef   [ 0  0 -1][Z]eci
+
+
+
+     C and S are cos() and sin() of gmst (Greenwich Meridian Sideral Time)
+
+    Source
+    ------
+    http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc
+    Inspired from satellite-js (https://github.com/shashwatak/satellite-js)
+    
+    
+    Note
+    ----
+    Quick mode of the reverse fct, can be improved
+    """
+    from pyorbital import astronomy
+    # XYZ and utc_time must have the same shape
+    #if not xyz.shape[:-1] == utc_times.shape:
+    #    raise ValueError("shape mismatch for XYZ and utc_times (got {} and {})".format(xyz.shape[:-1],utc_times.shape))
+
+    #    gmst = -1 * astronomy.gmst(utc_times) # EDIT 180430 : Why this -1 ??? removed because wrong ! ...
+    gmst = 1 * astronomy.gmst(utc_times)
+    
+    ecef = xyz.copy()
+    ecef[:,0] = + xyz[:,0]*np.cos(gmst) + xyz[:,1]*np.sin(gmst)
+    ecef[:,1] = - xyz[:,0]*np.sin(gmst) + xyz[:,1]*np.cos(gmst)
+#   ecef[:,2] = + xyz[:,2]
+
+#    eci = xyz.copy()
+#    
+#    print(xyz)
+#    
+#    ecef_stk = []
+#    for xyz_epoc,gmst_epoc in zip(xyz,gmst):
+#        M = np.array([[np.cos(gmst_epoc),-np.sin(gmst_epoc),0],
+#                     [np.sin(gmst_epoc), np.cos(gmst_epoc),0],
+#                     [           0,            0,1]])
+#        Minv = np.linalg.inv(M)
+#        
+#        print(Minv)
+#        ecef_epoc = Minv.dot(xyz.T)
+#        ecef_stk.append(ecef_epoc)
+#    
+#    ecef = np.vstack(ecef_stk)
+    
+    return ecef
 
 
 #  _____       _        _   _               __  __       _        _               

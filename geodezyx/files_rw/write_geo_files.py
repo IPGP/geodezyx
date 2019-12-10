@@ -48,6 +48,7 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
 
     EpochRawList  = SP3_DF_wrk["epoch"].unique()
     SatList    = sorted(SP3_DF_wrk["sat"].unique())
+    SatList    = list(reversed(SatList))
     SatListSet = set(SatList)
     EpochUsedList = []
 
@@ -67,7 +68,7 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
             
             SP3epoc = SP3epoc.append(miss_line)
 
-        SP3epoc.sort_values("sat",inplace=True)
+        SP3epoc.sort_values("sat",inplace=True,ascending=False)
         timestamp = conv.dt2sp3_timestamp(conv.numpy_datetime2dt(epoc)) + "\n"
 
         linefmt = "P{:}{:14.6f}{:14.6f}{:14.6f}{:14.6f}\n"
@@ -105,13 +106,15 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
             nlines = 5
         else:
             nlines = div
-        
-        if mod != 0:
-            nlines += 1
+
+            if mod != 0:
+                nlines += 1
         
         
     for i in range(nlines):
         SatLine = SatList[17*i:17*(i+1)]
+        SatLineSigma = len(SatLine) * " 01"
+        
         if len(SatLine) < 17:
             complem = " 00" * (17 - len(SatLine))
         else:
@@ -124,6 +127,10 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
 
         satline = "+  {:3}   ".format(nbsat4line) + "".join(SatLine) + complem + "\n"
         sigmaline = "++         0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0\n"
+        sigmaline = "++       " + SatLineSigma + complem  + "\n"
+
+
+
 
         Satline_stk.append(satline)
         Sigmaline_stk.append(sigmaline)
@@ -173,7 +180,7 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
     F.write(FinalStr)
     
     
-def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False,one_or_two=2):
+def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False):
     HEAD = header
     Row_str_stk = []
 
@@ -185,13 +192,15 @@ def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False,one_or_two
     for irow, row in DFclk_in.iterrows():
 
         if output_std_values:
+            one_or_two=2
             row_str = row_str_proto.format(row["type"],row["name"],row["year"],
-                                           row["month"],row["day"],row["h"],row["minutes"],
-                                           row["seconds"],one_or_two,row["offset"],row["rms"])
+                                           row["month"],row["day"],row["hour"],row["minute"],
+                                           row["second"],one_or_two,row["bias"],row["sigma"])
         else:
+            one_or_two=1
             row_str = row_str_proto.format(row["type"],row["name"],row["year"],
-                                           row["month"],row["day"],row["h"],row["minutes"],
-                                           row["seconds"],one_or_two,row["offset"])
+                                           row["month"],row["day"],row["hour"],row["minute"],
+                                           row["second"],one_or_two,row["bias"])
             
         Row_str_stk.append(row_str)
         

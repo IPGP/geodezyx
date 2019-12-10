@@ -464,13 +464,19 @@ def dicofdic(mat,names):
     return d2_dict
 
 
-def find_regex_in_list(regex,L,only_first_occurence=False):
+def find_regex_in_list(regex,L,only_first_occurence=False,
+                       line_number=False):
     Lout = []
-    for e in L:
+    for i,e in enumerate(L):
         if re.search(regex,e):
+            if not line_number:
+                found = e
+            else:
+                found = (i,e)
+                
             if only_first_occurence:
-                return e
+                return found
             else:    
-                Lout.append(e)
+                Lout.append(found)
     return Lout
             
