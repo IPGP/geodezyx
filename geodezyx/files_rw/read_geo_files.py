@@ -501,7 +501,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
     AC_name =  os.path.basename(file_path_in)[:3]
 
-    fil = open(file_path_in)
+    fil = open(file_path_in,'r+')
 
     header = True
 
@@ -527,11 +527,24 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
             sat_nat = l[1:2].strip()
             sat_sv  = int(l[2:4].strip())
             sat_sat = l[1:4].strip()
-
-            X   = float(l[4:18]) * km_conv_coef
-            Y   = float(l[18:32])* km_conv_coef
-            Z   = float(l[32:46])* km_conv_coef
-            Clk = float(l[46:60])
+	    
+            # QnD mode, must be imprved to detect nonfloat values
+            if '*' in l[4:18] or not (l[4:18] and l[4:18].strip()):
+                X = np.nan
+            else:
+                X   = float(l[4:18]) * km_conv_coef               
+            if '*' in l[18:32] or not (l[18:32] and l[18:32].strip()):
+                Y = np.nan
+            else:
+                Y   = float(l[18:32])* km_conv_coef                
+            if '*' in l[32:46] or not (l[32:46] and l[32:46].strip()):
+                Z = np.nan
+            else:
+                Z   = float(l[32:46])* km_conv_coef
+            if '*' in l[46:60] or not (l[46:60] and l[46:60].strip()):
+                Clk = np.nan
+            else:
+                Clk = float(l[46:60])
             
             typ = l[0]
 
@@ -568,6 +581,8 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     else:
         print("INFO : return list, very beta : no Sat. Vehicule Number info ...")
         return  epoch_stk ,  Xstk , Ystk , Zstk , Clkstk , AC_name_stk
+
+
 
 
 def read_sp3_header(sp3_path):
@@ -1746,3 +1761,4 @@ def read_bernese_trp(trpfile):
 
 
  
+
