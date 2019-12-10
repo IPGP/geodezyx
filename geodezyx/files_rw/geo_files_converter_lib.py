@@ -2056,10 +2056,11 @@ def read_sinex_versatile(sinex_path_in , id_block,
     convert_date_2_dt : bool
         Try to convert a SINEX formated date as a python datetime
         
-    header_line_idx : int
+    header_line_idx : int or None
         If the block header contains several lines, use this line index
         Per default, the last (-1)
         For the first line, use 0
+        If no header is properly defined, use None
         
                 
     Returns
@@ -2092,7 +2093,7 @@ def read_sinex_versatile(sinex_path_in , id_block,
 
     Lines_str  = "".join(Lines_list_OK)
                             
-    if len(Lines_list_header) > 0:
+    if len(Lines_list_header) > 0 and header_line_idx:
         ### define the header
         header_line = Lines_list_header[header_line_idx]
         
@@ -2105,7 +2106,7 @@ def read_sinex_versatile(sinex_path_in , id_block,
             for fld_head_split in Header_split:
                 fld_head_regex = re.compile(fld_head_split[1:] + " *") #trick:
                 #1st char is removed, because it can be a *
-                #and screw the regex. This char is re-added at the end
+                #and then screw the regex. This char is re-added at the end
                 #when the len is stored (the "+1" below)
                 fld_head_space = fld_head_regex.search(header_line)
                 Fields_size.append(len(fld_head_space.group()) + 1)
