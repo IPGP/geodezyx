@@ -2071,7 +2071,7 @@ def hr_to_Day(hr,minu,sec):
         
     return dia_fim
 
-def epo_epos_converter(inp,inp_type,out_type):
+def epo_epos_converter(inp,inp_type="mjd",out_type="yyyyddd"):
     """
     Frontend for the GFZ EPOS epo converter
     
@@ -2103,7 +2103,7 @@ def epo_epos_converter(inp,inp_type,out_type):
     inp_cmd = "-type " + str(inp_type)
     out_cmd = "-o "    + str(out_type)
 
-    cmd = " ".join(("epo",epo_cmd,inp_cmd,out_cmd))
+    cmd = " ".join(("perl get_epoch.pl",epo_cmd,inp_cmd,out_cmd))
 
     print(cmd)
     
