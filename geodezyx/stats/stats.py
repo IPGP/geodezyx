@@ -704,6 +704,12 @@ def rms_mean_alternativ(A):
     """
     return np.sqrt(np.nanmean(np.square(A - np.nanmean(A))))
 
+def rms_mean_kouba(A,multipl_coef=3,deg_of_freedom=7):
+    """
+    returns RMS mean of a list/array
+    """
+    return np.sqrt(np.sum(np.square(A))/(multipl_coef*len(A)-deg_of_freedom))
+
 
 def mad(data,mode='median'):
     """

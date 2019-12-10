@@ -477,7 +477,7 @@ def compar_orbit_plot(Diff_sat_all_df_in,
 
     return save_plot_path
 
-def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
+def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
                        light_tab  = False):
     """
     Generate a table with statistical indicators for an orbit comparison
@@ -487,8 +487,12 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     Diff_sat_all_df_in : Pandas DataFrame
         a DataFrame produced by compar_orbit
 
-    GRGS_style : bool
-        RMS calc based on the GRGS definition of the RMS (OV help)
+    RMS_style : str
+        'natural': use the natural definition of the RMS
+        'GRGS': RMS calc based on the GRGS definition of the RMS (OV help)
+                is actually the standard deviation
+        'kouba': RMS as defined in Kouba et al. 1994, p75
+                 using the degree of freedom (3*Nobs - 7)
 
     light_tab : bool
         produce a table with only RMS, with min/max/arithmetic instead
@@ -525,15 +529,22 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     for sat in sat_list:
         Diffwork = utils.df_sel_val_in_col(Diff_sat_all_df_in,'sat',sat)
 
-        if not GRGS_style:
+        if RMS_style == "natural":
             rms_A = stats.rms_mean(Diffwork[col_name0])
             rms_B = stats.rms_mean(Diffwork[col_name1])
             rms_C = stats.rms_mean(Diffwork[col_name2])
-        else:
+        elif RMS_style == "GRGS":
             rms_A = stats.rms_mean(Diffwork[col_name0] - Diffwork[col_name0].mean())
             rms_B = stats.rms_mean(Diffwork[col_name1] - Diffwork[col_name1].mean())
             rms_C = stats.rms_mean(Diffwork[col_name2] - Diffwork[col_name2].mean())
+        elif RMS_style == "kouba":
+            rms_A = stats.rms_mean_kouba(Diffwork[col_name0])
+            rms_B = stats.rms_mean_kouba(Diffwork[col_name1])
+            rms_C = stats.rms_mean_kouba(Diffwork[col_name2])
 
+            
+            
+            
         RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
         min_A = Diffwork[col_name0].min()
@@ -559,12 +570,22 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
 
     #################################
              # ALL SATS
+    if RMS_style == "natural":
+        rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0])
+        rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1])
+        rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2])
+        RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
+    elif RMS_style == "GRGS":
+        rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0] - Diff_sat_all_df_in[col_name0].mean())
+        rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1] - Diff_sat_all_df_in[col_name1].mean())
+        rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2] - Diff_sat_all_df_in[col_name2].mean())
+        RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
+    elif RMS_style == "kouba":
+        rms_A = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name0])
+        rms_B = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name1])
+        rms_C = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name2])
+        RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
-    rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0] - Diff_sat_all_df_in[col_name0].mean())
-    rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1] - Diff_sat_all_df_in[col_name1].mean())
-    rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2] - Diff_sat_all_df_in[col_name2].mean())
-
-    RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
     min_A = Diff_sat_all_df_in[col_name0].min()
     min_B = Diff_sat_all_df_in[col_name1].min()
@@ -613,8 +634,10 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     return Compar_tab_out
 
 
-def compar_orbit_frontend(DataDF1,DataDF2,ac1,ac2):
-    K = compar_orbit(DataDF1[DataDF1["AC"] == ac1],DataDF2[DataDF2["AC"] == ac2])
+def compar_orbit_frontend(DataDF1,DataDF2,ac1,ac2, sats_used_list = ['G']):
+    K = compar_orbit(DataDF1[DataDF1["AC"] == ac1],
+                     DataDF2[DataDF2["AC"] == ac2],
+                     sats_used_list=sats_used_list)
     compar_orbit_plot(K)
     return K
 
