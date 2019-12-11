@@ -839,3 +839,45 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
     else:
         return OrbDFa_out , OrbDFb_out
 
+
+ #   _____ _      _____   __      __   _ _     _       _   _             
+ #  / ____| |    |  __ \  \ \    / /  | (_)   | |     | | (_)            
+ # | (___ | |    | |__) |  \ \  / /_ _| |_  __| | __ _| |_ _  ___  _ __  
+ #  \___ \| |    |  _  /    \ \/ / _` | | |/ _` |/ _` | __| |/ _ \| '_ \ 
+ #  ____) | |____| | \ \     \  / (_| | | | (_| | (_| | |_| | (_) | | | |
+ # |_____/|______|_|  \_\     \/ \__,_|_|_|\__,_|\__,_|\__|_|\___/|_| |_|
+                                                                       
+
+def stats_slr(DFin,grpby_keys = ['sat'],
+              threshold = .5):
+    """
+    computes statistics for SLR Residuals
+    
+    Parameters
+    ----------
+    DFin : Pandas DataFrame
+        Input residual Dataframe from read_pdm_res_slr.
+    grpby_keys : list of str, optional
+        The default is ['sat'].
+        per day, per solution, per satellite: ['day','sol','sat']
+        per day, per solution, per station: ['day','sol','sta']
+        per day, per solution, per satellite, per station: ['day','sol','sta','sat']
+    threshold : float
+        apply a Threshold
+
+    Returns
+    -------
+    DD : Output statistics DataFrame
+        return the mean, the rms and the std.
+    """
+    
+    DD = DFin[np.abs(DFin["res"]) < threshold]
+    
+    DD_grp  = DD.groupby(grpby_keys)
+    DD_mean = DD_grp['res'].agg(np.mean).rename('mean') * 1000
+    DD_rms  = DD_grp['res'].agg(stats.rms_mean).rename('rms')   * 1000
+    DD_std  = DD_grp['res'].agg(np.std).rename('std')   * 1000
+    DD = pd.concat([DD_mean,DD_std,DD_rms],axis=1)
+    DD.reset_index(inplace = True)
+    
+    return DD    
