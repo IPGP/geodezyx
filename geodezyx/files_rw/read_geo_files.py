@@ -31,6 +31,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #### External modules
 import datetime as dt
 import linecache
+import io
 import numpy as np
 import os 
 import pandas as pd
@@ -85,10 +86,38 @@ def read_bull_B(path):
 
     return DFout
 
-def read_clk(file_path_in, returns_pandas = True, interval=None):
-    """
-    General description
 
+def read_clk(file_path_in):
+    """
+    Read an IGS clk file
+
+    Parameters
+    ----------
+    file_path_in :  str
+        Path of the file in the local machine.
+    Returns
+    -------
+    DFclk : pandas DataFrame
+        Returns a panda table format with the data extracted from the file.
+    """
+    HeadLine = utils.grep(file_path_in,"END OF HEADER",
+                          only_first_occur=True,line_number=True)
+    
+    DFclk = pd.read_csv(file_path_in,skiprows=HeadLine[0]+1,header=-1,
+                        delim_whitespace = True,
+                        names=['type', 'name', 'year', 'month', 'day', 'hour',
+                             'minute', 'second',"n_values",'bias', 'sigma'])
+    
+    DFclk['epoch'] = pd.to_datetime(DFclk[['year', 'month', 'day', 'hour','minute', 'second']])
+    DFclk.path = file_path_in
+    
+    return DFclk
+
+def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=True):
+    """
+    Read an IGS clk file
+    Slow and complex, use read_clk instead
+    
     Parameters
     ----------
     file_path_in :  str
@@ -195,11 +224,16 @@ def read_clk(file_path_in, returns_pandas = True, interval=None):
   ################################################################################################
    ############################################ put on pandas table format
     if returns_pandas:
-     Clk_readed = pd.DataFrame(Clk_read, columns=['type','name','year','month','day','h','minutes','seconds','epoch','offset','rms'])
-     Clk_readed['epoch'] =  pd.to_datetime(Clk_readed[[ 'year' ,'month' ,'day','h','minutes','seconds']])
-     Clk_readed.path = file_path_in
-
-     return Clk_readed
+        if old_naming:
+            name_list = ['offset','rms']
+        else:
+            name_list = ['bias','sigma']
+            
+        Clk_readed = pd.DataFrame(Clk_read, columns= ['type','name','year','month','day','h','minutes','seconds','epoch'] + name_list)
+        Clk_readed['epoch'] =  pd.to_datetime(Clk_readed[[ 'year' ,'month' ,'day','h','minutes','seconds']])
+        Clk_readed.path = file_path_in
+    
+        return Clk_readed
 
           ###############################
     else:
@@ -426,7 +460,8 @@ def read_clk(file_path_in, returns_pandas = True, interval=None):
 
 
 def read_sp3(file_path_in,returns_pandas = True, name = '',
-             epoch_as_pd_index = False,km_conv_coef=1):
+             epoch_as_pd_index = False,km_conv_coef=1,
+             skip_null_epoch=True):
     """
     Read a SP3 file (GNSS Orbits standard file) and return X,Y,Z coordinates
     for each satellite and for each epoch
@@ -451,6 +486,9 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
         a conversion coefficient to change the units
         to get meters : 10**3
         to get milimeters : 10**6
+        
+    skip_null_epoch :bool
+        Do not write an epoch if all sats are null (filtering)
 
     Returns
     -------
@@ -464,12 +502,13 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
     AC_name =  os.path.basename(file_path_in)[:3]
 
-    fil = open(file_path_in)
+    fil = open(file_path_in,'r+')
 
     header = True
 
     epoch_stk = []
     Xstk , Ystk , Zstk , Clkstk = [],[],[],[]
+    Typestk = []
 
     data_stk  = []
 
@@ -484,18 +523,34 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
         if l[0] == '*':
             epoc   = conv.tup_or_lis2dt(l[1:].strip().split())
+            
         else:
             sat_nat = l[1:2].strip()
             sat_sv  = int(l[2:4].strip())
             sat_sat = l[1:4].strip()
-
-            X   = float(l[4:18]) * km_conv_coef
-            Y   = float(l[18:32])* km_conv_coef
-            Z   = float(l[32:46])* km_conv_coef
-            Clk = float(l[46:60])
+	    
+            # QnD mode, must be imprved to detect nonfloat values
+            if '*' in l[4:18] or not (l[4:18] and l[4:18].strip()):
+                X = np.nan
+            else:
+                X   = float(l[4:18]) * km_conv_coef               
+            if '*' in l[18:32] or not (l[18:32] and l[18:32].strip()):
+                Y = np.nan
+            else:
+                Y   = float(l[18:32])* km_conv_coef                
+            if '*' in l[32:46] or not (l[32:46] and l[32:46].strip()):
+                Z = np.nan
+            else:
+                Z   = float(l[32:46])* km_conv_coef
+            if '*' in l[46:60] or not (l[46:60] and l[46:60].strip()):
+                Clk = np.nan
+            else:
+                Clk = float(l[46:60])
+            
+            typ = l[0]
 
             if returns_pandas:
-                line_data = [epoc,sat_sat,sat_nat,sat_sv,X,Y,Z,Clk,AC_name]
+                line_data = [epoc,sat_sat,sat_nat,sat_sv,typ,X,Y,Z,Clk,AC_name]
                 data_stk.append(line_data)
             else:
                 epoch_stk.append(epoc)
@@ -508,12 +563,15 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     AC_name_stk = [AC_name] * len(Xstk)
 
     if returns_pandas:
-        df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv',
+        df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
                                              'x','y','z','clk','AC'])
         if epoch_as_pd_index:
             df.set_index('epoch',inplace=True)
         df.filename = os.path.basename(file_path_in)
         df.path = file_path_in
+        
+        if skip_null_epoch:
+            df = sp3_DataFrame_zero_epoch_filter(df)
 
         if name != '':
             df.name = name
@@ -607,6 +665,18 @@ def read_sp3_header(sp3_path):
                              columns=["AC","sat","sigma","epoch"])
 
     return Header_DF
+
+
+def sp3_DataFrame_zero_epoch_filter(DFsp3):
+    DFgrp = DFsp3[["epoch","x","y","z"]].groupby("epoch")
+    DFsum = DFgrp.agg(np.sum).sum(axis=1)
+    Epochs = DFsum[np.isclose(DFsum,0)].index
+    
+    DFsp3_out = DFsp3[np.logical_not(DFsp3["epoch"].isin(Epochs))]
+    
+    return DFsp3_out
+
+
 
 ##
 def read_erp_bad(path,return_array=False):
@@ -1530,6 +1600,101 @@ def stations_in_sinex_multi(sinex_path_list):
 
 
 
+
+def read_pdm_res_slr_mono(res_file_in,
+                          sol="sol"):
+    """
+    Read a PDM7 res(idual) file for SLR Validation
+    
+    Parameters
+    ----------
+    res_file_in : str
+        path of the input res file.
+        
+    sol : str or lambda fct
+        solution name
+        if it is a lambda fct, it will grab the sol name from the full residual path
+        e.g. : solnam = lambda x: x.split("/")[-5][4:]
+
+    Returns
+    -------
+    DFout : Pandas DataFrame
+        output DataFrame.
+
+    """
+    
+    dat = conv.sp3name2dt("xxx" + os.path.basename(res_file_in)[:5])
+    
+    ### get useful values
+    L = utils.extract_text_between_elements_2(res_file_in,
+                                              "\+residuals",
+                                              "\-residuals")
+    L = L[3:-1]
+    
+    output = io.StringIO()
+    output.write("".join(L))
+    output.seek(0)
+    
+    ### 
+    if utils.is_lambda(sol):
+        sol_wrk = sol(res_file_in)
+    else:
+        sol_wrk = sol
+
+    ### read
+    DFout = pd.read_csv(output,header=-1,delim_whitespace = True)
+    
+    ### rename useful columns
+    DFout = DFout.rename(columns={0: 'time',
+                                  1: 'sta',
+                                  2: 'sat',
+                                  4: 'res',
+                                  5: 'elev',
+                                  6: 'azi',
+                                  7: 'amb',
+                                  8: 'slr',
+                                  9: 'dt_sta',
+                                  10: 'delay',
+                                  11: 'sig_sta'})
+    
+    DFout["day"] = dat 
+    DFout["epoc"] = dat + DFout["time"].apply(lambda x: dt.timedelta(microseconds=x*86400*10*6))
+    DFout['sol'] = sol_wrk 
+    DFout["sys"] = DFout["sat"].str[0]
+    
+    return DFout
+    
+        
+def read_pdm_res_slr_multi(Res_file_list_in,sol="sol"):
+    """
+    Read a PDM7 res(idual) file for SLR Validation
+    
+    Parameters
+    ----------
+    Res_file_list_in : list of str
+        List of path of the input res files.
+        
+    sol : str or lambda fct
+        solution name
+        if it is a lambda fct, it will grab the sol name from the full residual path
+        e.g. : solnam = lambda x: x.split("/")[-5][4:]
+
+    Returns
+    -------
+    DFout : Pandas DataFrame
+        output DataFrame
+    """
+    DFstk = []
+    for res_fil in Res_file_list_in:
+        DFmono = read_pdm_res_slr_mono(res_fil,sol=sol)
+        DFstk.append(DFmono) 
+        
+    DFmulti = pd.concat(DFstk)
+    DFmulti.reset_index(inplace = True,drop=True)
+
+    return DFmulti
+ 
+
 def sinex_bench_antenna_DF_2_disconts(DFantenna_in,stat,return_full=False):
     DFantenna_work = DFantenna_in[DFantenna_in["Code"] == stat]
     Start_List     = conv.datestr_sinex_2_dt(DFantenna_work["_Data_Start"])
@@ -1690,4 +1855,6 @@ def read_bernese_trp(trpfile):
 
 
 
+
+ 
 

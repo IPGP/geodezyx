@@ -91,6 +91,22 @@ def is_not_iterable(inp,consider_str_as_iterable=False):
     return out
 
 
+
+
+def is_lambda(v):
+    """
+    Check if v is lambda
+
+    Source 
+    -------
+    https://stackoverflow.com/questions/3655842/how-can-i-test-whether-a-variable-holds-a-lambda
+    """
+    
+    LAMBDA = lambda:0
+    return isinstance(v, type(LAMBDA)) and v.__name__ == LAMBDA.__name__
+
+
+
 def contains_word(s, w):
     return f' {w} ' in f' {s} '
 
@@ -497,7 +513,7 @@ def replace_in_file(file_in,str_before,str_after):
     filedata = filedata.replace(str_before,str_after)
         
     # Write the file out again
-    with open(fbias + "", 'w') as file:
+    with open(file_in + "", 'w') as file:
         file.write(filedata)
 
 

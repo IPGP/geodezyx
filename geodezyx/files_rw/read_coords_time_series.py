@@ -654,9 +654,14 @@ def read_epos_slv_times(p,convert_to_time=False):
 
 
 
-def write_epos_sta_coords(DF_in,file_out):
+def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
+                          no_time_limit_for_first_period = True,
+                          no_time_limit_for_last_period = True):
+    """
+    sort_wrt="site" or "site_num"
+    """
 
-    DF_work = DF_in.sort_values(["site","MJD_start"])
+    DF_work = DF_in.sort_values([sort_wrt,"MJD_start"])
 
 
     Stat_lines_blk_stk = []
@@ -671,25 +676,64 @@ def write_epos_sta_coords(DF_in,file_out):
 """
 
     generic_header = generic_header.format(len(DF_work),
-                                           utils.most_common(DF_work["MJD_ref"]))
+                                           int(utils.most_common(DF_work["MJD_ref"])))
 
     Stat_lines_blk_stk.append(generic_header)
 
     Stat_lines_blk_stk.append("+station_coordinates")
 
-    for site in DF_work["site"].unique():
+    for site in DF_work[sort_wrt].unique():
 
         Stat_lines_blk_stk.append("*------------------------- ---- ----- -beg- -end- -**- ------------------------------------------------\n*")
 
-        for i_l ,(_ , l) in enumerate(DF_work[DF_work["site"] == site].iterrows()):
+        DF_SiteBlock = DF_work[DF_work[sort_wrt] == site]
 
-            line_site_fmt = " SITE            m {:4d}  {:1d} {:} {:5d} {:5d} {:5d} {:}   A  0      LOG_CAR       LOG_CAR"
+        for i_l ,(_ , l) in enumerate(DF_SiteBlock.iterrows()):
+
+            iope = i_l + 1
+            
+            if no_time_limit_for_first_period and i_l == 0:
+                MJD_start = 0
+            else:
+                MJD_start = l["MJD_start"]
+                                            
+            if no_time_limit_for_last_period and iope == len(DF_SiteBlock):
+                MJD_end = 0
+            else:
+                MJD_end = l["MJD_end"]
+                
+                
+            
+            line_site_fmt = " SITE            m {:4d}  {:1d} {:} {:5d} {:5d} {:5d} {:}   A  {:1d}      LOG_CAR       LOG_CAR"
             line_posi_fmt = " POS_VEL:XYZ     m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
             line_velo_fmt = " SIG_PV_XYZ      m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
 
-            line_site = line_site_fmt.format(l["site_num"],i_l,l["tecto_plate"].upper(), l["MJD_ref"],l["MJD_start"],l["MJD_end"],l["site"])
-            line_posi = line_posi_fmt.format(l["site_num"],i_l,l["x"],l["y"], l["z"],l["sx"],l["sy"],l["sz"])
-            line_velo = line_velo_fmt.format(l["site_num"],i_l,l["Vx"],l["Vy"], l["Vz"],l["sVx"],l["sVy"],l["sVz"])
+            line_site = line_site_fmt.format(int(l["site_num"]),
+                                             int(iope),
+                                             l["tecto_plate"].upper(),
+                                             int(l["MJD_ref"]),
+                                             int(MJD_start),
+                                             int(MJD_end),
+                                             int(l["site"]),
+                                             int(iope))
+            
+            line_posi = line_posi_fmt.format(int(l["site_num"]),
+                                             int(iope),
+                                             l["x"],
+                                             l["y"],
+                                             l["z"],
+                                             l["Vx"],
+                                             l["Vy"],
+                                             l["Vz"])
+            
+            line_velo = line_velo_fmt.format(int(l["site_num"]),
+                                             int(iope),
+                                             l["sx"],
+                                             l["sy"],
+                                             l["sz"],
+                                             l["sVx"],
+                                             l["sVy"],
+                                             l["sVz"])
 
             Stat_lines_blk_stk.append(line_site)
             Stat_lines_blk_stk.append(line_posi)
