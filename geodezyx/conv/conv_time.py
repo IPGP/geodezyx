@@ -2072,13 +2072,8 @@ def hr_to_Day(hr,minu,sec):
         
     return dia_fim
 
-<<<<<<< HEAD
-
 
 def epo_epos_converter(inp,inp_type="mjd",out_type="yyyy",verbose=False):
-=======
-def epo_epos_converter(inp,inp_type="mjd",out_type="yyyyddd"):
->>>>>>> 2c8507c238d49f91fc1e19e5e9e6a19b4196de60
     """
     Frontend for the GFZ EPOS epo converter
     
@@ -2108,26 +2103,13 @@ def epo_epos_converter(inp,inp_type="mjd",out_type="yyyyddd"):
     inp_cmd = "-type " + str(inp_type)
     out_cmd = "-o "    + str(out_type)
 
-<<<<<<< HEAD
     cmd = " ".join(("perl $EPOS8_BIN_TOOLS/SCRIPTS/get_epoch.pl",epo_cmd,inp_cmd,out_cmd))
-=======
-    cmd = " ".join(("perl get_epoch.pl",epo_cmd,inp_cmd,out_cmd))
->>>>>>> 2c8507c238d49f91fc1e19e5e9e6a19b4196de60
 
     if verbose:
         print(cmd)
     
     result = subprocess.run(cmd,shell=True,stdout=subprocess.PIPE,executable='/bin/bash')
-    
-<<<<<<< HEAD
-    result = subprocess.run(cmd, stdout=subprocess.PIPE,executable='/bin/csh')
-    
-    out = result.stdout.decode('utf-8')
-    
-    print(out)
-    
-    return out
-=======
+            
     out = int(result.stdout.decode('utf-8'))
     
     if verbose:
@@ -2135,7 +2117,6 @@ def epo_epos_converter(inp,inp_type="mjd",out_type="yyyyddd"):
     
     return out
 
->>>>>>> 89abc125ff3974d6987ad4cf7374fa5492ced4f7
 
 
 
