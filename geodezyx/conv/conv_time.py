@@ -34,6 +34,7 @@ import os
 import pandas as pd
 import string
 import struct
+import subprocess
 import re
 import time
 
@@ -2071,7 +2072,9 @@ def hr_to_Day(hr,minu,sec):
         
     return dia_fim
 
-def epo_epos_converter(inp,inp_type,out_type):
+
+
+def epo_epos_converter(inp,inp_type="mjd",out_type="yyyy",verbose=False):
     """
     Frontend for the GFZ EPOS epo converter
     
@@ -2096,19 +2099,25 @@ def epo_epos_converter(inp,inp_type,out_type):
         Year as integer. Years preceding 1 A.D. should be 0 or negative.
         The year before 1 A.D. is 0, 10 B.C. is year -9.
     """
-    
-    import subprocess
 
     epo_cmd = "-epo "  + str(inp)
     inp_cmd = "-type " + str(inp_type)
     out_cmd = "-o "    + str(out_type)
 
-    cmd = " ".join(("epo",epo_cmd,inp_cmd,out_cmd))
+    cmd = " ".join(("perl $EPOS8_BIN_TOOLS/SCRIPTS/get_epoch.pl",epo_cmd,inp_cmd,out_cmd))
 
-    print(cmd)
+    if verbose:
+        print(cmd)
     
-    result = subprocess.run(cmd, stdout=subprocess.PIPE,executable='/bin/csh')
-    return int(result.stdout.decode('utf-8'))
+    result = subprocess.run(cmd,shell=True,stdout=subprocess.PIPE,executable='/bin/bash')
+    
+    out = int(result.stdout.decode('utf-8'))
+    
+    if verbose:
+        print(out)
+    
+    return out
+
 
 
 
