@@ -2108,7 +2108,12 @@ def epo_epos_converter(inp,inp_type="mjd",out_type="yyyyddd"):
     print(cmd)
     
     result = subprocess.run(cmd, stdout=subprocess.PIPE,executable='/bin/csh')
-    return int(result.stdout.decode('utf-8'))
+    
+    out = result.stdout.decode('utf-8')
+    
+    print(out)
+    
+    return out
 
 
 
