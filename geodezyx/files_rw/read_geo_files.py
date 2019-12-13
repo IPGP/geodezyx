@@ -31,6 +31,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #### External modules
 import datetime as dt
 import linecache
+import io
 import numpy as np
 import os 
 import pandas as pd
@@ -501,7 +502,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
     AC_name =  os.path.basename(file_path_in)[:3]
 
-    fil = open(file_path_in)
+    fil = open(file_path_in,'r+')
 
     header = True
 
@@ -527,11 +528,24 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
             sat_nat = l[1:2].strip()
             sat_sv  = int(l[2:4].strip())
             sat_sat = l[1:4].strip()
-
-            X   = float(l[4:18]) * km_conv_coef
-            Y   = float(l[18:32])* km_conv_coef
-            Z   = float(l[32:46])* km_conv_coef
-            Clk = float(l[46:60])
+	    
+            # QnD mode, must be imprved to detect nonfloat values
+            if '*' in l[4:18] or not (l[4:18] and l[4:18].strip()):
+                X = np.nan
+            else:
+                X   = float(l[4:18]) * km_conv_coef               
+            if '*' in l[18:32] or not (l[18:32] and l[18:32].strip()):
+                Y = np.nan
+            else:
+                Y   = float(l[18:32])* km_conv_coef                
+            if '*' in l[32:46] or not (l[32:46] and l[32:46].strip()):
+                Z = np.nan
+            else:
+                Z   = float(l[32:46])* km_conv_coef
+            if '*' in l[46:60] or not (l[46:60] and l[46:60].strip()):
+                Clk = np.nan
+            else:
+                Clk = float(l[46:60])
             
             typ = l[0]
 
@@ -568,6 +582,8 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     else:
         print("INFO : return list, very beta : no Sat. Vehicule Number info ...")
         return  epoch_stk ,  Xstk , Ystk , Zstk , Clkstk , AC_name_stk
+
+
 
 
 def read_sp3_header(sp3_path):
@@ -1584,6 +1600,101 @@ def stations_in_sinex_multi(sinex_path_list):
 
 
 
+
+def read_pdm_res_slr_mono(res_file_in,
+                          sol="sol"):
+    """
+    Read a PDM7 res(idual) file for SLR Validation
+    
+    Parameters
+    ----------
+    res_file_in : str
+        path of the input res file.
+        
+    sol : str or lambda fct
+        solution name
+        if it is a lambda fct, it will grab the sol name from the full residual path
+        e.g. : solnam = lambda x: x.split("/")[-5][4:]
+
+    Returns
+    -------
+    DFout : Pandas DataFrame
+        output DataFrame.
+
+    """
+    
+    dat = conv.sp3name2dt("xxx" + os.path.basename(res_file_in)[:5])
+    
+    ### get useful values
+    L = utils.extract_text_between_elements_2(res_file_in,
+                                              "\+residuals",
+                                              "\-residuals")
+    L = L[3:-1]
+    
+    output = io.StringIO()
+    output.write("".join(L))
+    output.seek(0)
+    
+    ### 
+    if utils.is_lambda(sol):
+        sol_wrk = sol(res_file_in)
+    else:
+        sol_wrk = sol
+
+    ### read
+    DFout = pd.read_csv(output,header=-1,delim_whitespace = True)
+    
+    ### rename useful columns
+    DFout = DFout.rename(columns={0: 'time',
+                                  1: 'sta',
+                                  2: 'sat',
+                                  4: 'res',
+                                  5: 'elev',
+                                  6: 'azi',
+                                  7: 'amb',
+                                  8: 'slr',
+                                  9: 'dt_sta',
+                                  10: 'delay',
+                                  11: 'sig_sta'})
+    
+    DFout["day"] = dat 
+    DFout["epoc"] = dat + DFout["time"].apply(lambda x: dt.timedelta(microseconds=x*86400*10*6))
+    DFout['sol'] = sol_wrk 
+    DFout["sys"] = DFout["sat"].str[0]
+    
+    return DFout
+    
+        
+def read_pdm_res_slr_multi(Res_file_list_in,sol="sol"):
+    """
+    Read a PDM7 res(idual) file for SLR Validation
+    
+    Parameters
+    ----------
+    Res_file_list_in : list of str
+        List of path of the input res files.
+        
+    sol : str or lambda fct
+        solution name
+        if it is a lambda fct, it will grab the sol name from the full residual path
+        e.g. : solnam = lambda x: x.split("/")[-5][4:]
+
+    Returns
+    -------
+    DFout : Pandas DataFrame
+        output DataFrame
+    """
+    DFstk = []
+    for res_fil in Res_file_list_in:
+        DFmono = read_pdm_res_slr_mono(res_fil,sol=sol)
+        DFstk.append(DFmono) 
+        
+    DFmulti = pd.concat(DFstk)
+    DFmulti.reset_index(inplace = True,drop=True)
+
+    return DFmulti
+ 
+
 def sinex_bench_antenna_DF_2_disconts(DFantenna_in,stat,return_full=False):
     DFantenna_work = DFantenna_in[DFantenna_in["Code"] == stat]
     Start_List     = conv.datestr_sinex_2_dt(DFantenna_work["_Data_Start"])
@@ -1744,4 +1855,6 @@ def read_bernese_trp(trpfile):
 
 
 
+
+ 
 
