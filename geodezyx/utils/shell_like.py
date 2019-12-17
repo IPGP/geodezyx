@@ -211,7 +211,8 @@ def empty_file_check(fpath):
 
 
 def find_recursive(parent_folder , pattern, 
-                   sort_results = True, case_sensitive = True):
+                   sort_results = True, case_sensitive = True,
+                   extended_file_stats=False):
     """
     Find files in a folder and his sub-folders in a recursive way
 
@@ -230,6 +231,23 @@ def find_recursive(parent_folder , pattern,
         
     case_sensitive : bool
         Case sensitve or not
+        
+    extended_file_stats : bool
+        if True, returns the stats of the files
+        the outputed matches list will be a list of tuples
+        (file_path,stat_object), where stat_object has the following attributes
+        
+        - st_mode - protection bits,
+        - st_ino - inode number,
+        - st_dev - device,
+        - st_nlink - number of hard links,
+        - st_uid - user id of owner,
+        - st_gid - group id of owner,
+        - st_size - size of file, in bytes,
+        - st_atime - time of most recent access,
+        - st_mtime - time of most recent content modification,
+        - st_ctime - platform dependent; time of most recent metadata 
+                     change on Unix, or the time of creation on Windows)
                 
     Returns
     -------
@@ -248,7 +266,7 @@ def find_recursive(parent_folder , pattern,
         for root, dirnames, filenames in os.walk(parent_folder):
             for filename in fnmatch.filter(filenames, pattern):
                 matches.append(os.path.join(root, filename))
-    else:
+    else: # not case sensitive, use a regex
         for root, dirnames, filenames in os.walk(parent_folder):
             for filename in filenames:  
                 try:
@@ -262,6 +280,20 @@ def find_recursive(parent_folder , pattern,
 
     if sort_results:
         matches = sorted(matches)
+        
+    
+    if extended_file_stats:
+        matches_ext = []
+        for f in matches:
+            try:
+                stat = os.stat(f)
+            except FileNotFoundError:
+                print("WARN: file not found",f)
+                continue
+                
+            matches_ext.append((f,stat))
+        matches = matches_ext
+        
 
     return matches
 
@@ -388,18 +420,44 @@ def fileprint(output,outfile):
         f.write("{}\n".format(output))
     return None
 
-def write_in_file(string_to_write,outdir,outname,ext='.txt'):
+
+
+
+def write_in_file(string_to_write,outdir,outname,ext='.txt',encoding='utf8'):
+    """
+
+    encoding : utf8, latin_1
+    https://docs.python.org/3/library/codecs.html#standard-encodings
+    
+    check the following commented old version if troubles
+    """
     outpath = os.path.join(outdir,outname + ext)
-    F = open(outpath,'w+')
-    try:    
-        F.write(string_to_write.encode('utf8'))
-        # astuce de http://stackoverflow.com/questions/6048085/writing-unicode-text-to-a-text-file
-    except TypeError:
-        print("INFO : write_in_file : alternative reading following a TypeError")
-        F.write(string_to_write)
-        
+    F = open(outpath,'w+',encoding=encoding)
+    F.write(string_to_write)
     F.close()
     return outpath
+
+# def write_in_file(string_to_write,outdir,outname,ext='.txt',encoding='utf8'):
+#     """
+
+#     encoding : utf8, latin_1
+#     https://docs.python.org/3/library/codecs.html#standard-encodings
+#     """
+#     outpath = os.path.join(outdir,outname + ext)
+#     F = open(outpath,'w+', encoding=encoding)
+#     try:    
+#         F.write(string_to_write.encode(encode))
+#         # astuce de http://stackoverflow.com/questions/6048085/writing-unicode-text-to-a-text-file
+#     except UnicodeEncodeError as e:
+#         print(string_to_write)
+#         raise(e)
+#     except TypeError as e:
+#         print(e)
+#         print("INFO : write_in_file : alternative write following a TypeError")
+#         F.write(string_to_write)
+        
+#     F.close()
+#     return outpath
 
 def replace(file_path, pattern, subst):
     """ from http://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python """
