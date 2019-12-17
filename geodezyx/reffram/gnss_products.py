@@ -29,7 +29,7 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                  name1='',name2='',use_name_1_2_for_table_name = False,
                  RTNoutput = True,convert_ECEF_ECI=True,
                  clean_null_values = True,
-                 conv_coef=10**3):
+                 conv_coef=10**3,return_satNull = False):
     """
     Compares 2 GNSS orbits files (SP3), and gives a summary plot and a
     statistics table
@@ -174,11 +174,14 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
         D2 = D2orig[np.logical_not(D2_null_bool)]
 
         if np.any(D1_null_bool) or np.any(D2_null_bool):
+            sat_nul = utils.join_improved(" " ,*list(set(D1orig[D1_null_bool]["sat"])))
             print("WARN : Null values contained in SP3 files : ")
             print("f1:" , np.sum(D1_null_bool) , utils.join_improved(" " ,
                   *list(set(D1orig[D1_null_bool]["sat"]))))
             print("f2:" , np.sum(D2_null_bool) , utils.join_improved(" " ,
                   *list(set(D2orig[D2_null_bool]["sat"]))))
+        else:
+            sat_nul = []
 
     else:
         D1 = D1orig.copy()
@@ -365,8 +368,11 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                                   Diff_sat_all.name2 ,',',Date.strftime("%Y-%m-%d"),
                                   ', doy', str(conv.dt2doy(Date))))
 
-
-    return Diff_sat_all
+    
+    if return_satNull:
+        return Diff_sat_all, sat_nul
+    else:
+        return Diff_sat_all
 
 
 def compar_orbit_plot(Diff_sat_all_df_in,
@@ -471,7 +477,7 @@ def compar_orbit_plot(Diff_sat_all_df_in,
 
     return save_plot_path
 
-def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
+def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
                        light_tab  = False):
     """
     Generate a table with statistical indicators for an orbit comparison
@@ -481,8 +487,12 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     Diff_sat_all_df_in : Pandas DataFrame
         a DataFrame produced by compar_orbit
 
-    GRGS_style : bool
-        RMS calc based on the GRGS definition of the RMS (OV help)
+    RMS_style : str
+        'natural': use the natural definition of the RMS
+        'GRGS': RMS calc based on the GRGS definition of the RMS (OV help)
+                is actually the standard deviation
+        'kouba': RMS as defined in Kouba et al. 1994, p75
+                 using the degree of freedom (3*Nobs - 7)
 
     light_tab : bool
         produce a table with only RMS, with min/max/arithmetic instead
@@ -519,15 +529,22 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     for sat in sat_list:
         Diffwork = utils.df_sel_val_in_col(Diff_sat_all_df_in,'sat',sat)
 
-        if not GRGS_style:
+        if RMS_style == "natural":
             rms_A = stats.rms_mean(Diffwork[col_name0])
             rms_B = stats.rms_mean(Diffwork[col_name1])
             rms_C = stats.rms_mean(Diffwork[col_name2])
-        else:
+        elif RMS_style == "GRGS":
             rms_A = stats.rms_mean(Diffwork[col_name0] - Diffwork[col_name0].mean())
             rms_B = stats.rms_mean(Diffwork[col_name1] - Diffwork[col_name1].mean())
             rms_C = stats.rms_mean(Diffwork[col_name2] - Diffwork[col_name2].mean())
+        elif RMS_style == "kouba":
+            rms_A = stats.rms_mean_kouba(Diffwork[col_name0])
+            rms_B = stats.rms_mean_kouba(Diffwork[col_name1])
+            rms_C = stats.rms_mean_kouba(Diffwork[col_name2])
 
+            
+            
+            
         RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
         min_A = Diffwork[col_name0].min()
@@ -553,12 +570,22 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
 
     #################################
              # ALL SATS
+    if RMS_style == "natural":
+        rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0])
+        rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1])
+        rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2])
+        RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
+    elif RMS_style == "GRGS":
+        rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0] - Diff_sat_all_df_in[col_name0].mean())
+        rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1] - Diff_sat_all_df_in[col_name1].mean())
+        rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2] - Diff_sat_all_df_in[col_name2].mean())
+        RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
+    elif RMS_style == "kouba":
+        rms_A = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name0])
+        rms_B = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name1])
+        rms_C = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name2])
+        RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
-    rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0] - Diff_sat_all_df_in[col_name0].mean())
-    rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1] - Diff_sat_all_df_in[col_name1].mean())
-    rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2] - Diff_sat_all_df_in[col_name2].mean())
-
-    RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
     min_A = Diff_sat_all_df_in[col_name0].min()
     min_B = Diff_sat_all_df_in[col_name1].min()
@@ -607,8 +634,10 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     return Compar_tab_out
 
 
-def compar_orbit_frontend(DataDF1,DataDF2,ac1,ac2):
-    K = compar_orbit(DataDF1[DataDF1["AC"] == ac1],DataDF2[DataDF2["AC"] == ac2])
+def compar_orbit_frontend(DataDF1,DataDF2,ac1,ac2, sats_used_list = ['G']):
+    K = compar_orbit(DataDF1[DataDF1["AC"] == ac1],
+                     DataDF2[DataDF2["AC"] == ac2],
+                     sats_used_list=sats_used_list)
     compar_orbit_plot(K)
     return K
 
@@ -778,7 +807,8 @@ def OrbDF_multidx_2_reg(OrbDFin,index_order=["sat","epoch"]):
     OrbDFwrk["sv"]    = OrbDFwrk["sat"].apply(lambda x: int(x[1:]))
     return OrbDFwrk
 
-def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False):
+def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
+                              supplementary_sort=True):
     """
     Find common sats and epochs in to Orbit DF, and output the
     corresponding Orbit DFs
@@ -788,10 +818,18 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False):
     
     I1 = OrbDFa.index
     I2 = OrbDFb.index
+    
     Iinter = I1.intersection(I2)
     
     OrbDFa_out = OrbDFa.loc[Iinter]
     OrbDFb_out = OrbDFb.loc[Iinter]
+    
+    if supplementary_sort:
+        # for multi GNSS, OrbDF_out are not well sorted (why ??? ...)
+        # we do a supplementary sort
+        OrbDFa_out = OrbDFa_out.sort_values(["sat","epoch"])
+        OrbDFb_out = OrbDFb_out.sort_values(["sat","epoch"])
+
     
     if len(OrbDFa_out) != len(OrbDFb_out):
         print("WARN : OrbDF_common_epoch_finder : len(OrbDFa_out) != len(OrbDFb_out)")
