@@ -11,7 +11,7 @@ Created on Mon Nov 18 13:39:48 2019
 import numpy as np
 import pandas as pd
 import datetime as dt
-from pytwobodyorbit import TwoBodyOrbit
+#from pytwobodyorbit import TwoBodyOrbit
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils

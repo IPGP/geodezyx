@@ -103,7 +103,7 @@ def read_clk(file_path_in):
     HeadLine = utils.grep(file_path_in,"END OF HEADER",
                           only_first_occur=True,line_number=True)
     
-    DFclk = pd.read_csv(file_path_in,skiprows=HeadLine[0]+1,header=-1,
+    DFclk = pd.read_csv(file_path_in,skiprows=HeadLine[0]+1,header=None,
                         delim_whitespace = True,
                         names=['type', 'name', 'year', 'month', 'day', 'hour',
                              'minute', 'second',"n_values",'bias', 'sigma'])
