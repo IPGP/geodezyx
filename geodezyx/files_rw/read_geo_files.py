@@ -565,13 +565,14 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     if returns_pandas:
         df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
                                              'x','y','z','clk','AC'])
+
+        if skip_null_epoch:
+            df = sp3_DataFrame_zero_epoch_filter(df)
+
         if epoch_as_pd_index:
             df.set_index('epoch',inplace=True)
         df.filename = os.path.basename(file_path_in)
         df.path = file_path_in
-        
-        if skip_null_epoch:
-            df = sp3_DataFrame_zero_epoch_filter(df)
 
         if name != '':
             df.name = name
@@ -770,14 +771,12 @@ def sp3_decimate(file_in,file_out,step=15):
 
     return file_out
 
-def clk_decimate(file_in,file_out,step=5):
+def clk_decimate(file_in,file_out,step=15):
 
     Fin = open(file_in)
 
     good_line = True
     outline = []
-
-    step = 5
 
     for l in Fin:
         good_line = True
