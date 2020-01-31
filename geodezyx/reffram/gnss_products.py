@@ -225,6 +225,15 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 print("      it happens e.g. when multiple ACs are in the same DataFrame ")
                 print("TIP : Filter the input Dataframe before calling this fct with")
                 print("      DF = DF[DF['AC'] == 'gbm']")
+                
+                Dtmp1 = D1orig[D1orig['sv'] == svv]
+                Dtmp2 = D2orig[D2orig['sv'] == svv]
+                
+                dupli1 = np.sum(Dtmp1.duplicated(["epoch","sat"]))
+                dupli2 = np.sum(Dtmp2.duplicated(["epoch","sat"]))
+                
+                print("FWIW : duplicated epoch/sat in DF1 & DF2 : ",dupli1,dupli2)
+
                 raise exce
 
             # Second research, it is a security in case of gap
@@ -560,7 +569,7 @@ def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
         mean_C = Diffwork[col_name2].mean()
 
         if light_tab:
-            rms_stk.append([rms_A,rms_B,rms_C])
+            rms_stk.append([rms_A,rms_B,rms_C,RMS3D])
         else:
             rms_stk.append([rms_A,rms_B,rms_C,RMS3D,
                             min_A,max_A,mean_A,
@@ -600,7 +609,7 @@ def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
     mean_C = Diff_sat_all_df_in[col_name2].mean()
 
     if light_tab:
-        rms_stk.append([rms_A,rms_B,rms_C])
+        rms_stk.append([rms_A,rms_B,rms_C,RMS3D])
     else:
         rms_stk.append([rms_A,rms_B,rms_C,RMS3D,
                         min_A,max_A,mean_A,
