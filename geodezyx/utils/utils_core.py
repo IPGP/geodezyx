@@ -12,6 +12,7 @@ import datetime as dt
 import inspect
 import numpy as np
 import os
+import pandas as pd
 import pickle
 import re
 import scipy
@@ -91,6 +92,29 @@ def is_not_iterable(inp,consider_str_as_iterable=False):
     return out
 
 
+def transpose_vector_array(X):
+    """
+    transpose a Nx3 array to a 3xN array if necessary
+    (necessary for some usages)
+    
+    Parameters
+    ----------
+    X : iterable
+    
+    Returns
+    -------
+    X : iterable
+        X transposed if necessary.
+
+    """
+    
+    if isinstance(X,pd.core.frame.DataFrame):
+        X = X.values
+        
+    if isinstance(X,np.ndarray):
+        if not X.shape[0] == 3:
+            X = X.T
+    return X
 
 
 def is_lambda(v):

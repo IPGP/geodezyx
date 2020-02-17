@@ -374,6 +374,9 @@ def ENU2XYZ_legacy(E,N,U,Xref,Yref,Zref):
 
     diffère de ENU2XYZ pour d'obscure raisons, à investiguer !!!
     est laissé pour des scripts de conversion de GINS (170119)
+    
+    this fct compute the dXYZ and not the final XYZ
+
     """
 
     fr,lr,hr = XYZ2GEO(Xref,Yref,Zref)
@@ -390,11 +393,74 @@ def ENU2XYZ_legacy(E,N,U,Xref,Yref,Zref):
 
     xyz = np.dot(R3,ENU) #+ np.vstack((Xref,Yref,Zref))
 
-    X = float(xyz[0])
-    Y = float(xyz[1])
-    Z = float(xyz[2])
+    dX = float(xyz[0])
+    dY = float(xyz[1])
+    dZ = float(xyz[2])
 
-    return X,Y,Z
+    return dX,dY,dZ
+
+
+    
+            
+
+
+def GEO2XYZ_vector(FLH,angle='deg',
+                   a=6378137.,e2=0.00669438003):
+    
+        
+    #### if Nx3 array => 3xN array
+    FLH = utils.transpose_vector_array(FLH)
+    
+    X,Y,Z = GEO2XYZ(FLH[0],
+                    FLH[1],
+                    FLH[2],
+                    angle=angle,
+                    a=a,
+                    e2=e2)
+    XYZ = np.column_stack((X,Y,Z))
+    
+    return XYZ
+    
+def XYZ2ENU_vector(XYZ,xyz0):
+    
+    XYZ = utils.transpose_vector_array(XYZ)
+    
+    E,N,U = XYZ2ENU_2(XYZ[0], XYZ[1], XYZ[2],
+                      xyz0[0], xyz0[1], xyz0[2])
+    ENU = np.column_stack((E,N,U))
+    
+    return ENU
+    
+def XYZ2GEO_vector(XYZ,outdeg=True,
+            A=6378137.,E2=0.00669438003):
+    
+    XYZ = utils.transpose_vector_array(XYZ)
+
+    F,L,H = XYZ2GEO(XYZ[0], XYZ[1], XYZ[2],
+                    outdeg=outdeg,
+                    A=A,
+                    E2=E2)
+            
+    FLH = np.column_stack((F,L,H))
+    
+    return FLH
+
+    
+def ENU2XYZ_vector(ENU,xyz_ref):
+    
+    ENU = utils.transpose_vector_array(ENU)
+    
+    X,Y,Z = ENU2XYZ(ENU[0],
+            ENU[1],
+            ENU[2],
+            xyz_ref[0],
+            xyz_ref[1],
+            xyz_ref[2])
+    
+    XYZ = np.column_stack((X,Y,Z))
+    
+    return XYZ
+
 
 
 def sFLH2sXYZ(F,L,H,sF,sL,sH,ang='deg'):
