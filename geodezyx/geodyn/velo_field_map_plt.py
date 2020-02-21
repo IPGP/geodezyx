@@ -81,7 +81,9 @@ def landmask(M, color='0.8'):
 # Colormap, smlgn. med Rob Hetland
 
 def LevelColormap(levels, cmap=None):
-    """Make a colormap based on an increasing sequence of levels"""
+    """
+    Make a colormap based on an increasing sequence of levels
+    """
     
     # Start with an existing colormap
     if cmap == None:
@@ -132,6 +134,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
              draw_latlon_lines=True):
     """
     """
+    
     
     nstation = len(station_etude)
     fig,ax=plt.subplots(figsize=(7,8))  
@@ -269,7 +272,6 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                 e.set_alpha(0.3)
                 e.set_zorder(1) 
             
-            
     else:# Champ de vitesses verticales ITRF	   
         ############### PLOT FLECHES
         Text = []
@@ -283,7 +285,6 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                 print("INFO : exclude point because out of range")
                 continue
         
-            
             ######### AJUSTEMENT SI FLECHES TROP GRANDES
             x_end_arrow , y_end_arrow = all_posx_proj[i],all_posy_proj[i]+np.multiply(plot_vertical_ITRF[i],scale_arrow)
             
@@ -291,7 +292,6 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                                                               x_end_arrow,
                                                               y_end_arrow,
                                                               inverse=True) 
-            
             if (y_end_axis_ref < 0.) and shorten_oversized_arrows:
                 shortened_arrow = True
                 x_end_arrow_ok = x_end_arrow
@@ -331,14 +331,11 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                       annotation_clip=False)
             #xy point arrivee de la fleche, xytext l'origine de la fleche
                 
-                    
             ### STATION NAME
             if name_stats:
                 offset_x_ok , offset_y_ok = utils.axis_data_coords_sys_transform(ax,
                                                                               name_stats_offset[0],
                                                                               name_stats_offset[1])
-                
-                
                 Text.append(plt.text(all_posx_proj[i] + offset_x_ok,
                          all_posy_proj[i] + offset_y_ok,
                          station_etude[i], fontsize=name_stats_font_size))
@@ -396,8 +393,8 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
     verticalalignment='top', bbox=props)
     ells_legend = Ellipse(xy=[xe,ye],
                           width=np.multiply(2,np.multiply(legend_ellipse_size_metric,scale_ellipse)), 
-                          height=np.multiply(2,np.multiply(legend_ellipse_size_metric,scale_ellipse)),
-                          angle=a)
+                          height=np.multiply(2,np.multiply(legend_ellipse_size_metric,scale_ellipse)))
+                          #angle=a)
         
     if plot_ellipses:
         ax.add_artist(ells_legend)
@@ -579,3 +576,8 @@ def split_grid(lo,la,gr,fact):
         new_lo.append(lo[k*fact])
         
     return (new_lo,new_la,new_grid)
+
+
+
+########################################################################
+
