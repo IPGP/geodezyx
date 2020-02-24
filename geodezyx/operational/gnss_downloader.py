@@ -671,7 +671,8 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
 def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
                            center_id_last_letter=None,
                            center_manual_short_name=None,
-                           force=False):
+                           force=False,
+                           output_dirname=None):
     """
     Rename a long naming new convention IGS product file to the short old
     convention
@@ -697,6 +698,10 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
         
     force : bool
         if False, skip if the file already exsists
+        
+    output_dirname : str
+        directory where the output shortname will be created
+        if None, will be created in the same folder as the input longname
 
     Returns
     -------
@@ -721,6 +726,10 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
 
     longname_basename = os.path.basename(longname_filepath_in)
     longname_dirname  = os.path.dirname(longname_filepath_in)
+    
+    if not output_dirname:
+        output_dirname = longname_dirname
+        
 
     center = longname_basename[:3]
 
@@ -734,7 +743,6 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
 
     yyyy   = int(longname_basename.split("_")[1][:4])
     doy    = int(longname_basename.split("_")[1][4:7])
-
 
     day_dt = conv.doy2dt(yyyy,doy)
 
@@ -755,7 +763,6 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
         shortname = shortname_prefix + ".snx"
     else:
         print("ERR : filetype not found for",longname_basename)
-
     
     ### Compression handeling
     if longname_basename[-3:] == ".gz":
@@ -763,17 +770,15 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     elif longname_basename[-2:] == ".Z":
         shortname = shortname + ".Z"
         
-
-    shortname_filepath = os.path.join(longname_dirname , shortname)
+    shortname_filepath = os.path.join(output_dirname , shortname)
     
     if not force and os.path.isfile(shortname_filepath):
         print("INFO : skip", longname_filepath_in)
         print("     ",shortname_filepath,"already exists")        
         return shortname_filepath
-        
-    shutil.copy2(longname_filepath_in , shortname_filepath)
+    
     print("INFO : renaming" , longname_filepath_in,"=>",shortname_filepath)
-
+    shutil.copy2(longname_filepath_in , shortname_filepath)
 
     if rm_longname_file:
         print("INFO : remove " , longname_filepath_in)

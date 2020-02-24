@@ -519,13 +519,17 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
         if header:
             continue
         if 'EOF' in l:
-            continue
+            break
 
         if l[0] == '*':
             epoc   = conv.tup_or_lis2dt(l[1:].strip().split())
             
+        elif len(l.strip()) == 0:
+            continue
+            
         else:
             sat_nat = l[1:2].strip()
+            
             sat_sv  = int(l[2:4].strip())
             sat_sat = l[1:4].strip()
 	    
