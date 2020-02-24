@@ -1327,8 +1327,7 @@ def read_erp2(caminho_arq,ac=None):
                                          'X-RT','Y-RT','S-XR','S-YR',
                                          'Delivered_date'])
 
-    
-    file.close()
+        
     return Erp_end
     
     
