@@ -657,9 +657,13 @@ def read_epos_slv_times(p,convert_to_time=False):
 
 def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
                           no_time_limit_for_first_period = True,
-                          no_time_limit_for_last_period = True):
+                          no_time_limit_for_last_period = True,
+                          soln_in_DF=True):
     """
     sort_wrt="site" or "site_num"
+    
+    soln_in_DF
+    use soln AND pt information in the input DataFrame
     """
 
     DF_work = DF_in.sort_values([sort_wrt,"MJD_start"])
@@ -676,7 +680,7 @@ def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
 -info
 """
 
-    generic_header = generic_header.format(len(DF_work),
+    generic_header = generic_header.format(len(DF_work["site_num"].unique()),
                                            int(utils.most_common(DF_work["MJD_ref"])))
 
     Stat_lines_blk_stk.append(generic_header)
@@ -688,26 +692,32 @@ def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
         Stat_lines_blk_stk.append("*------------------------- ---- ----- -beg- -end- -**- ------------------------------------------------\n*")
 
         DF_SiteBlock = DF_work[DF_work[sort_wrt] == site]
+        
+        DF_SiteBlock.reset_index(inplace=True)
 
         for i_l ,(_ , l) in enumerate(DF_SiteBlock.iterrows()):
 
-            iope = i_l + 1
+            if soln_in_DF:
+                iope = int(l["soln"])
+                pt = l["pt"]
+            else:
+                iope = i_l + 1
+                pt = "A"
             
             if no_time_limit_for_first_period and i_l == 0:
                 MJD_start = 0
             else:
                 MJD_start = l["MJD_start"]
                                             
-            if no_time_limit_for_last_period and iope == len(DF_SiteBlock):
+            if no_time_limit_for_last_period and (i_l+1) == len(DF_SiteBlock):
                 MJD_end = 0
             else:
                 MJD_end = l["MJD_end"]
                 
-                
-            
-            line_site_fmt = " SITE            m {:4d}  {:1d} {:} {:5d} {:5d} {:5d} {:}   A  {:1d}      LOG_CAR       LOG_CAR"
-            line_posi_fmt = " POS_VEL:XYZ     m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
-            line_velo_fmt = " SIG_PV_XYZ      m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
+
+            line_site_fmt = " SITE            m {:4d}  {:1d} {:} {:5d} {:5d} {:5d} {:}   {:}  {:1d}      LOG_CAR       LOG_CAR"
+            line_valu_fmt = " POS_VEL:XYZ     m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
+            line_sigm_fmt = " SIG_PV_XYZ      m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
 
             line_site = line_site_fmt.format(int(l["site_num"]),
                                              int(iope),
@@ -716,9 +726,10 @@ def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
                                              int(MJD_start),
                                              int(MJD_end),
                                              int(l["site"]),
+                                             pt,
                                              int(iope))
             
-            line_posi = line_posi_fmt.format(int(l["site_num"]),
+            line_valu = line_valu_fmt.format(int(l["site_num"]),
                                              int(iope),
                                              l["x"],
                                              l["y"],
@@ -727,7 +738,7 @@ def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
                                              l["Vy"],
                                              l["Vz"])
             
-            line_velo = line_velo_fmt.format(int(l["site_num"]),
+            line_sigm = line_sigm_fmt.format(int(l["site_num"]),
                                              int(iope),
                                              l["sx"],
                                              l["sy"],
@@ -737,13 +748,11 @@ def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
                                              l["sVz"])
 
             Stat_lines_blk_stk.append(line_site)
-            Stat_lines_blk_stk.append(line_posi)
-            Stat_lines_blk_stk.append(line_velo)
+            Stat_lines_blk_stk.append(line_valu)
+            Stat_lines_blk_stk.append(line_sigm)
             Stat_lines_blk_stk.append("*")
 
-
     Stat_lines_blk_stk.append("-station_coordinates")
-
 
     final_str = "\n".join(Stat_lines_blk_stk)
 

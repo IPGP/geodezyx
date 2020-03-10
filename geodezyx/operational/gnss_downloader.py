@@ -1373,8 +1373,8 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
             dow = str(dow_manu)
                
         print("INFO : ","Search products for day",wwww,dow,"AC/prod",ac_cur,prod_cur)
-        
         wwww_dir = os.path.join(arch_center_basedir,str(wwww))
+        print("       Move to:",wwww_dir)
         if wwww_dir_previous != wwww_dir:
             ftp.cwd(wwww_dir)
             Files_listed_in_FTP = ftp.nlst()
@@ -1389,10 +1389,18 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam,f)]
         
         pattern_new_nam = ""
+        
+        Files_new_nam = []
         if new_name_conv: ### search for new name convention
+            
+            if dow is None:
+                print("ERR: dow == None and search for new name convention, Error ...")
+                raise  Exception()
+                
             ac_newnam   = ac_cur.upper()
-            doy_newnam  ="".join(reversed(conv.dt2doy_year(conv.gpstime2dt(wwww,dow))))
-            prod_newnam =prod_cur.upper()
+
+            doy_newnam  = "".join(reversed(conv.dt2doy_year(conv.gpstime2dt(wwww,dow))))
+            prod_newnam = prod_cur.upper()
             
             pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
             pattern_new_nam = ".*" + pattern_new_nam + "\..*"
