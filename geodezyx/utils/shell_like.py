@@ -127,7 +127,9 @@ def egrep_big_string(regex,bigstring,only_first_occur=False):
     if len(matching_line_list) == 1:
         return matching_line_list[0]
     elif len(matching_line_list) == 0:
+        print("WARN: nothing found... check the input args: 1-regex, 2-bigstring")
         return ''
+    
     elif only_first_occur:
         return matching_line_list[0]
     else:
