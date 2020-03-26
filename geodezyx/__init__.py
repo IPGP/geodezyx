@@ -47,8 +47,8 @@ from . import athmo
 from . import conv
 from . import files_rw
 from . import geodyn
-from . import operational
-from . import legacy
+#from . import operational
+#from . import legacy
 from . import reffram
 from . import stats
 from . import time_series
@@ -60,7 +60,7 @@ __all__ = ['athmo',
            'files_rw',
            'geodyn',
            'operational',
-#           'legacy',
+           'legacy',
            'reffram',
            'stats',
            'time_series',
