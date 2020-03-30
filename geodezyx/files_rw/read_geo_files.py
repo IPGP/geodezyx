@@ -1836,8 +1836,8 @@ def read_rinex_met(metfile):
     """
     if utils.is_iterable(metfile):
         merge_df = pd.DataFrame()
-        for metfile_m in zip(metfile):
-            met_df = read_rinex_met_2(metfile_m)
+        for metfile_m in metfile:
+            met_df = read_rinex_met_2(str(metfile_m))
             merge_df = pd.concat([merge_df,met_df])
         return merge_df
     else:
@@ -1849,6 +1849,7 @@ def read_rinex_met_2(metfile):
     for line in open(metfile,"r",encoding = "ISO-8859-1"):
         if re.compile('MARKER NAME').search(line):
             marker = line.split()[0]
+            marker = marker.upper()
         if re.compile('# / TYPES OF OBSERV').search(line):
             tmp = line.split()
             headers = tmp[1:int(tmp[0])+1]
@@ -1858,7 +1859,7 @@ def read_rinex_met_2(metfile):
         
     df = pd.read_fwf(metfile,skiprows=range(0,ln+1),delim_whitespace=True,skipinitialspace=True,names=['year','month','day','hour','minute','second']+headers)
     df['year'] = df['year'] + 2000 if df['year'].any() <= 79 else df['year'].any() + 1900
-
+    df['STA'] = marker
     df['epoch'] = pd.to_datetime(df[['year','month','day','hour','minute','second']],errors='coerce')
     df.drop(['year','month','day','hour','minute','second'], axis=1,inplace=True)
     df.set_index('epoch',inplace=True)

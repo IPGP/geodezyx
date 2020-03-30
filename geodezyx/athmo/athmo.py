@@ -173,9 +173,9 @@ def calc_stand_ties_gpt3(epoc, lat_ref , lon_ref , h_ref , lat_rov , lon_rov , h
         p0 , t0 , e0  = met_ref[0] , met_ref[1] , met_ref[4]
         t0 = t0 + 273.15 #convert to Kelvin
 
-        p = p0 * np.float_power(1 - ( -0.0065 * (h_rov-h_ref) / (t0) ) , 9.80665 / ( -0.0065 * 287.058 ))
+        p = p0 * np.float_power(1 - ( ( 0.0065 * (h_rov-h_ref) ) / t0 ) , 9.80665 / ( 0.0065 * 287.058 ))
         dZHD = 0.0022768*(p - p0) / ( 1 - (0.00266*np.cos(2 * lat_ref)) - 0.28e-6*h_ref)
-        dZWD = ((-2.789*e0) / t0**2 ) * (( 5383 / t0) -0.7803) * (-0.0065 * (h_rov - h_ref))
+        dZWD = ((-2.789*e0) / t0**2 ) * (( 5383 / t0) -0.7803) * 0.0065 * (h_rov - h_ref)
 
         if unit == "m":
             return np.round(dZHD+dZWD,4)
@@ -222,9 +222,9 @@ def calc_stand_ties(epoc, lat_ref, h_ref, h_rov, p0, t0, e0 ,unit="mm"):
     else:
         t0 = t0 + 273.15 #convert to Kelvin
 
-        p = p0 * np.float_power(1 - ( -0.0065 * (h_rov-h_ref) / (t0) ) , 9.80665 / ( -0.0065 * 287.058 ))
+        p = p0 * np.float_power(1 - ( ( 0.0065 * (h_rov-h_ref) ) / t0 ) , 9.80665 / ( 0.0065 * 287.058 ))
         dZHD = 0.0022768*(p - p0) / ( 1 - (0.00266*np.cos(2 * lat_ref)) - 0.28e-6*h_ref)
-        dZWD = ((-2.789*e0) / t0**2 ) * (( 5383 / t0) -0.7803) * (-0.0065 * (h_rov - h_ref))
+        dZWD = ((-2.789*e0) / t0**2 ) * (( 5383 / t0) -0.7803) * 0.0065 * (h_rov - h_ref)
 
         if unit == "m":
             return np.round(dZHD+dZWD,4)
