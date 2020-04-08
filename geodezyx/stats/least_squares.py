@@ -49,6 +49,10 @@ from geodezyx import utils
 #                                       |_|
 
 def get_accur_coeff(i):
+    """
+    accuracy coefficients given by
+    https://en.wikipedia.org/wiki/Finite_difference_coefficient
+    """
     accur_coeff_mat = np.array([[0,0,0,-1/2.,0,1/2.,0,0,0],
     [0,0,1/12. ,-2/3.,0,2/3.,-1/12.,0,0],
     [0,-1/60.,3/20.,-3/4.,0,3/4.,-3/20.,1/60.,0],
@@ -58,110 +62,45 @@ def get_accur_coeff(i):
     else:
         return accur_coeff_mat[i]
 
-def partial_derive_old(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0):
-    ''' var_in :
-            detrivation with respect to this variable
-            can be a int (starts with 0) or a string descirbing the name of
-            the var in f
-        var_out :
-            the output of f which needs to be considerated as the output
-            ** must be a int **
-        args_f & kwargs_f :
-            tuple/list & dict describing the arguments of f
-        h :
-            derivation step, if h == 0 give x * sqrt(epsilon)
-            (source : http://en.wikipedia.org/wiki/Numerical_differentiation) '''
-
-    # tuple => list pour plus d'aisance
-    args_f = list(args_f)
-
-    # operational arguments
-    args_f_m = list(args_f)
-    args_f_p = list(args_f)
-    kwargs_f_m = dict(kwargs_f)
-    kwargs_f_p = dict(kwargs_f)
-
-    args_name_list = list(f.__code__.co_varnames)
-    # var in is a int
-    if type(var_in) is int:
-        var_ind = var_in
-        var_name = args_name_list[var_ind]
-    # var in is a str
-    else:
-        var_name = var_in
-        try:
-            var_ind = args_name_list.index(var_name)
-        except ValueError:
-            print(args_name_list)
-            raise Exception('wrong var_in name (not in args name list)')
-
-#    if var_ind < len(args_f):
-#        x = args_f[var_ind]
-#        if h == 0:
-#            h = x * np.sqrt(np.finfo(float).eps)
-#            if h == 0:
-#                print 'WARN : h == 0 ! setting @ 10**-6 '
-#                h = 10**-6
-#        args_f_m[var_ind] = x - h
-#        args_f_p[var_ind] = x + h
-#    else:
-#        x = kwargs_f[var_name]
-#        if h == 0:
-#            h = x * np.sqrt(np.finfo(float).eps)
-#            if h == 0:
-#                print 'WARN : h == 0 ! setting @ 10**-6 '
-#                h = 10**-6
-#        kwargs_f_m[var_name] = x - h
-#        kwargs_f_p[var_name] = x + h
-
-
-    if var_ind < len(args_f):
-        x = args_f[var_ind]
-    else:
-        x = kwargs_f[var_name]
-
-    if h == 0:
-        h = x * np.sqrt(np.finfo(float).eps)
-        if h == 0:
-            print('WARN : h == 0 ! setting @ 10**-6 ')
-            h = 10**-6
-
-    if var_ind < len(args_f):
-        args_f_m[var_ind] = x - h
-        args_f_p[var_ind] = x + h
-    else:
-        kwargs_f_m[var_name] = x - h
-        kwargs_f_p[var_name] = x + h
-
-    m = f(*args_f_m,**kwargs_f_m)
-    p = f(*args_f_p,**kwargs_f_p)
-
-    if utils.is_iterable(m):
-        m = m[var_out]
-        p = p[var_out]
-#    print p,m,h,x
-#    print h
-#    print h == 0
-    dout = (p - m) / (2. * float(h))
-
-    return dout
-
 
 def partial_derive(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0,accur=-1):
-    ''' var_in :
-            detrivation with respect to this variable
-            can be a int (starts with 0) or a string describing the name of
-            the var in f
-        var_out :
-            the output of f which needs to be considerated as the output
-            ** must be a int **
+    """
+    This function computes the partial derivatives of a python function
+    
+    Parameters
+    ----------
+    f : Python function
+        the python function which will be derivated.
+        this function must return a scalar.
+        the parameter of f suseptibles to be derivated must be scalars.
+        i.e. if for isntace you want to derivate a position vector X = [x,y,z]
+        f must take as argument f(x,y,z) and not f(X)
+    var_in : int or string
+        the detrivation is with respect to this variable
+        can be a int (starts with 0) or a string describing the name of
+        the var in f arguments.
+    var_out : int
+        the output of f which needs to be considerated as the output
+        ** must be an int **
+        The default is 0.
+    kwargs_f : dict, optional
+        dictionary describing the arguments of f. The default is {}.
+    args_f : iterable, optional
+        tuple/list & dict describing the arguments of f. The default is [].
+    h : float, optional
+        derivation step, if h == 0 give x * sqrt(epsilon)
+        (source : http://en.wikipedia.org/wiki/Numerical_differentiation) .
+    accur : int, optional
+        accuracy coefficient index. -1 is the best but the slowest. The default is -1.
+        https://en.wikipedia.org/wiki/Finite_difference_coefficient
 
-        args_f & kwargs_f :
-            tuple/list & dict describing the arguments of f
-        h :
-            derivation step, if h == 0 give x * sqrt(epsilon)
-            (source : http://en.wikipedia.org/wiki/Numerical_differentiation) 
-    '''
+
+    Returns
+    -------
+    dout : float
+        the derivative of f w.r.t. var_in.
+
+    """
 
     # tuple => list pour plus d'aisance
     args_f = list(args_f)
@@ -188,6 +127,10 @@ def partial_derive(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0,accur=-1):
         x = args_f[var_ind]
     else:
         x = kwargs_f[var_name]
+        
+    if utils.is_iterable(x):
+        print("ERR: partial_derive: var_in is not a scalar")
+        raise Exception
 
     if h == 0:
         h = x * np.sqrt(np.finfo(float).eps)
@@ -198,14 +141,19 @@ def partial_derive(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0,accur=-1):
     res_stk = []
     accur_coeff = get_accur_coeff(accur)
     for i,k in enumerate(accur_coeff):
+        ### if the coeff is nul, no computation
         if k == 0:
             res_stk.append(0.)
+        
         else:
             if var_ind < len(args_f):
-                args_f_i[var_ind] = x + h * (i-4)
+                args_f_i[var_ind]    = x + h * float(i-4)
             else:
-                kwargs_f_i[var_name]   = x + h * (i-4)
-
+                kwargs_f_i[var_name] = x + h * float(i-4)
+            ### i-4 because i=0 is actually the index -4
+            ### cf Wikipedia table 
+            ### https://en.wikipedia.org/wiki/Finite_difference_coefficient
+            
             res = f(*args_f_i,**kwargs_f_i)
 
             if utils.is_iterable(res):
@@ -230,23 +178,6 @@ def jacobian_line(f,var_in_list,var_out=0,kwargs_f={},args_f=[],h=0,aray=True):
     else:
         return line_out
 
-
-#def jacobian_old_bkp(f,var_in_list,var_out,kwargs_f_list=[],args_f_list=[],h=10**-6):
-#    if args_f_list == [] and kwargs_f_list == []:
-#        raise Exception('jacobian : args_f_list == [] and kwargs_f_list ==  []')
-#    elif args_f_list == [] and kwargs_f_list != []:
-#        args_f_list =  [ [] * len(kwargs_f_list)]
-#    elif args_f_list != [] and kwargs_f_list == []:
-#        kwargs_f_list =  [ [] * len(args_f_list)]
-#
-#    if len(args_f_list) != len(kwargs_f_list):
-#        raise Exception("Jacobian : len(args_f_list) != len(kwargs_f_list)")
-#    jacob_temp = []
-#    for kwargs_f , args_f in zip(kwargs_f_list,args_f_list):
-#        line = jacobian_line(f,var_in_list,var_out,kwargs_f,args_f,h)
-#        jacob_temp.append(line)
-#
-#    return np.vstack(*jacob_temp)
 
 def kwargs_for_jacobian(kwdic_generik,kwdic_variables):
     """ Building a list of kwargs for the jacobian function
@@ -317,92 +248,6 @@ def nan_cleaner(Ain,Bin):
 
     return Aout , Bout
 
-
-def clean_nan(A,L):
-    """
-    DISCONTINUED
-
-    A est un array bi dimentionnel
-    L est un array mono dimentionnel
-    renvoie un A et un L nettoyé mutuellement
-    de leurs NaN respectifs
-    return np.sqrt(a + a.T - np.diag(a.diagonal()))
-    """
-    if A.ndim != 2  or L.ndim != 1:
-        raise Exception("ERREUR : revoir les dimensions de A (2) et L (1)")
-
-    if A.shape[0] != L.shape[0]:
-        raise Exception("ERREUR : A et L ont des longeurs differentes")
-
-    # 11) Detecter les nan de L
-    indLnonan = np.where(~np.isnan(L))
-    nbnanL = np.isnan(L).sum()
-    nbnanAtot = np.isnan(A).sum()
-    nbnanA = np.isnan(A).any(1).sum()
-
-    # 12) Virer les nan de L dans A
-    A2 = A[indLnonan[0],:]
-    # 13) Virer les nan de L dans L
-    L2 = L[indLnonan]
-    # 21) Detecter les nan de A
-    # (même si cetains ont potentiellement déjà été supprimé)
-    boolA2arenan = np.isnan(A2)
-    nbnanA2 = boolA2arenan.any(1).sum()
-    # 22) Virer les nan de A dans A
-    Aout = A2[~boolA2arenan.any(1)]
-
-    # 23) Virer les nan de A dans L
-    Lout = L2[~boolA2arenan.any(1)]
-
-    if  np.isnan(Lout).sum() != 0 or  np.isnan(Aout).sum() != 0 :
-        print("pour info, isnan(Lout).sum(), isnan(Aout).sum()")
-        print(np.isnan(Lout).sum(), np.isnan(Aout).sum())
-        raise Exception("ERREUR : A_out et L_out contiennent des NaN")
-
-    if Aout.shape[0] != Lout.shape[0]:
-        raise Exception("ERREUR : A_out et L_out ont des longeurs differentes")
-
-    print("%i NaN dans le V" %nbnanL)
-    print("%i NaN dans la M vert., APRES suppr. des NaN du V" %nbnanA2)
-    print("%i lignes supprimées dans le V et la M (en théorie)" %(nbnanA2 + nbnanL))
-    print("")
-    print("pour info :")
-    print("%i NaN dans la M vert., AVANT suppr. des NaN du V" %nbnanA)
-    print("%i NaN dans la M AU TOTAL (vert. et horiz.)" %nbnanAtot)
-
-    return Aout , Lout
-
-#def weight_mat_OLD(Sinp,Ninp,fuvinp=1):
-#    """ Sinp : liste des Sigmas sig = sqrt(var)
-#        Ninp : liste de la taille de chaque blocs (obs)
-#        fuvinp = 1 : facteur unitaire de variance
-#        inspiré de mat_poids , fct écrite dans la lib resolution de GPShApy
-#
-#        retourne :
-#        K : matrice de var-covar
-#        Q : matrice des cofacteurs
-#        P : matrice des poids inv(Q)
-#    """
-#
-#    if len(Sinp) != len(Ninp):
-#        raise Exception("S et N de taille differente")
-#
-#    Ktemp = []
-#
-#    for i in range(len(Sinp)):
-#        try:
-#            Ktemp.append(np.eye(Ninp[i]) * Sinp[i]**2)
-#        except DeprecationWarning:
-#            print "weight_mat : Are you sure you don't invert Sinp <> Ninp ?"
-#    K = scipy.linalg.block_diag(*Ktemp)
-#    Q = (1/fuvinp) * K
-#    # normalement P = scipy.linalg.inv(Q)
-#    # mais pour que ce soit + rapide
-#    Qdiag = np.diagonal(Q)
-#    Pdiag = 1/Qdiag
-#    P = scipy.linalg.block_diag(*Pdiag)
-#
-#    return K , Q , P
 
 def weight_mat(Sinp,Ninp=[],fuvinp=1,sparsediag=False):
     """
@@ -499,24 +344,6 @@ def weight_mat_simple(Pinp,Ninp=[],sparsediag=False,
             P = np.diag(Ptemp,0)
 
     return P
-
-def fuv_calc_OLD(V,A):
-    fuv = np.dot(V.T,V) / np.abs(A.shape[0] - A.shape[1])
-    return fuv
-
-def fuv_calc_OLD2(V,A,P=None):
-    if P is None:
-        P = np.eye(len(V))
-
-    P = np.matrix(P)
-    V = np.matrix(V)
-    A = np.matrix(A)
-
-    if V.shape[0] == 1:
-        V = V.T
-
-    fuv = (V.T * P * V) / np.abs(A.shape[0] - A.shape[1])
-    return fuv[0,0]
 
 
 def fuv_calc(V,A,P=1,normafuv=1):
@@ -649,8 +476,6 @@ def constraint_improve_N(N,C,trans=False,outsparsetype = 'csc'):
 def triangle_arr2vect(triarrin,k=1):
     ind = np.triu_indices_from(triarrin,k)
     return triarrin[ind]
-
-
 
 
 def bins_middle(bin_edges):
@@ -915,8 +740,6 @@ def ellipse_get_coords(a=0.0, b=0.0, x=0.0, y=0.0, angle=0.0, k=2 ,
     if trigo:
         angle = - angle
 
-
-
     pts = np.zeros((360*k+1, 2))
 
     beta = -angle * np.pi/180.0
@@ -934,7 +757,6 @@ def ellipse_get_coords(a=0.0, b=0.0, x=0.0, y=0.0, angle=0.0, k=2 ,
         return pts
     else:
         return pts[:, 0] , pts[:, 1]
-
 
 def ellipse_center(a):
     """
@@ -1001,3 +823,228 @@ def ellipse_fit(x,y):
     phi   = ellipse_angle_of_rotation(tmp)
     x0,y0 = ellipse_center(tmp)
     return a,b,phi,x0,y0
+
+
+ #  ______                _   _                _____ _                _                  
+ # |  ____|              | | (_)              / ____(_)              | |                 
+ # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |     _ _ __ ___   ___| |_ ___ _ __ _   _ 
+ # |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | |    | | '_ ` _ \ / _ \ __/ _ \ '__| | | |
+ # | |  | |_| | | | | (__| |_| | (_) | | | | | |____| | | | | | |  __/ ||  __/ |  | |_| |
+ # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|_| |_| |_|\___|\__\___|_|   \__, |
+ #                                                                                  __/ |
+ #                                                                                 |___/ 
+
+
+
+def clean_nan(A,L):
+    """
+    DISCONTINUED
+
+    A est un array bi dimentionnel
+    L est un array mono dimentionnel
+    renvoie un A et un L nettoyé mutuellement
+    de leurs NaN respectifs
+    return np.sqrt(a + a.T - np.diag(a.diagonal()))
+    """
+    if A.ndim != 2  or L.ndim != 1:
+        raise Exception("ERREUR : revoir les dimensions de A (2) et L (1)")
+
+    if A.shape[0] != L.shape[0]:
+        raise Exception("ERREUR : A et L ont des longeurs differentes")
+
+    # 11) Detecter les nan de L
+    indLnonan = np.where(~np.isnan(L))
+    nbnanL = np.isnan(L).sum()
+    nbnanAtot = np.isnan(A).sum()
+    nbnanA = np.isnan(A).any(1).sum()
+
+    # 12) Virer les nan de L dans A
+    A2 = A[indLnonan[0],:]
+    # 13) Virer les nan de L dans L
+    L2 = L[indLnonan]
+    # 21) Detecter les nan de A
+    # (même si cetains ont potentiellement déjà été supprimé)
+    boolA2arenan = np.isnan(A2)
+    nbnanA2 = boolA2arenan.any(1).sum()
+    # 22) Virer les nan de A dans A
+    Aout = A2[~boolA2arenan.any(1)]
+
+    # 23) Virer les nan de A dans L
+    Lout = L2[~boolA2arenan.any(1)]
+
+    if  np.isnan(Lout).sum() != 0 or  np.isnan(Aout).sum() != 0 :
+        print("pour info, isnan(Lout).sum(), isnan(Aout).sum()")
+        print(np.isnan(Lout).sum(), np.isnan(Aout).sum())
+        raise Exception("ERREUR : A_out et L_out contiennent des NaN")
+
+    if Aout.shape[0] != Lout.shape[0]:
+        raise Exception("ERREUR : A_out et L_out ont des longeurs differentes")
+
+    print("%i NaN dans le V" %nbnanL)
+    print("%i NaN dans la M vert., APRES suppr. des NaN du V" %nbnanA2)
+    print("%i lignes supprimées dans le V et la M (en théorie)" %(nbnanA2 + nbnanL))
+    print("")
+    print("pour info :")
+    print("%i NaN dans la M vert., AVANT suppr. des NaN du V" %nbnanA)
+    print("%i NaN dans la M AU TOTAL (vert. et horiz.)" %nbnanAtot)
+
+    return Aout , Lout
+
+
+def fuv_calc_OLD(V,A):
+    fuv = np.dot(V.T,V) / np.abs(A.shape[0] - A.shape[1])
+    return fuv
+
+def fuv_calc_OLD2(V,A,P=None):
+    if P is None:
+        P = np.eye(len(V))
+
+    P = np.matrix(P)
+    V = np.matrix(V)
+    A = np.matrix(A)
+
+    if V.shape[0] == 1:
+        V = V.T
+
+    fuv = (V.T * P * V) / np.abs(A.shape[0] - A.shape[1])
+    return fuv[0,0]
+
+#def weight_mat_OLD(Sinp,Ninp,fuvinp=1):
+#    """ Sinp : liste des Sigmas sig = sqrt(var)
+#        Ninp : liste de la taille de chaque blocs (obs)
+#        fuvinp = 1 : facteur unitaire de variance
+#        inspiré de mat_poids , fct écrite dans la lib resolution de GPShApy
+#
+#        retourne :
+#        K : matrice de var-covar
+#        Q : matrice des cofacteurs
+#        P : matrice des poids inv(Q)
+#    """
+#
+#    if len(Sinp) != len(Ninp):
+#        raise Exception("S et N de taille differente")
+#
+#    Ktemp = []
+#
+#    for i in range(len(Sinp)):
+#        try:
+#            Ktemp.append(np.eye(Ninp[i]) * Sinp[i]**2)
+#        except DeprecationWarning:
+#            print "weight_mat : Are you sure you don't invert Sinp <> Ninp ?"
+#    K = scipy.linalg.block_diag(*Ktemp)
+#    Q = (1/fuvinp) * K
+#    # normalement P = scipy.linalg.inv(Q)
+#    # mais pour que ce soit + rapide
+#    Qdiag = np.diagonal(Q)
+#    Pdiag = 1/Qdiag
+#    P = scipy.linalg.block_diag(*Pdiag)
+#
+#    return K , Q , P
+
+
+def partial_derive_old(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0):
+    ''' var_in :
+            detrivation with respect to this variable
+            can be a int (starts with 0) or a string descirbing the name of
+            the var in f
+        var_out :
+            the output of f which needs to be considerated as the output
+            ** must be a int **
+        args_f & kwargs_f :
+            tuple/list & dict describing the arguments of f
+        h :
+            derivation step, if h == 0 give x * sqrt(epsilon)
+            (source : http://en.wikipedia.org/wiki/Numerical_differentiation) '''
+
+    # tuple => list pour plus d'aisance
+    args_f = list(args_f)
+
+    # operational arguments
+    args_f_m = list(args_f)
+    args_f_p = list(args_f)
+    kwargs_f_m = dict(kwargs_f)
+    kwargs_f_p = dict(kwargs_f)
+
+    args_name_list = list(f.__code__.co_varnames)
+    # var in is a int
+    if type(var_in) is int:
+        var_ind = var_in
+        var_name = args_name_list[var_ind]
+    # var in is a str
+    else:
+        var_name = var_in
+        try:
+            var_ind = args_name_list.index(var_name)
+        except ValueError:
+            print(args_name_list)
+            raise Exception('wrong var_in name (not in args name list)')
+
+#    if var_ind < len(args_f):
+#        x = args_f[var_ind]
+#        if h == 0:
+#            h = x * np.sqrt(np.finfo(float).eps)
+#            if h == 0:
+#                print 'WARN : h == 0 ! setting @ 10**-6 '
+#                h = 10**-6
+#        args_f_m[var_ind] = x - h
+#        args_f_p[var_ind] = x + h
+#    else:
+#        x = kwargs_f[var_name]
+#        if h == 0:
+#            h = x * np.sqrt(np.finfo(float).eps)
+#            if h == 0:
+#                print 'WARN : h == 0 ! setting @ 10**-6 '
+#                h = 10**-6
+#        kwargs_f_m[var_name] = x - h
+#        kwargs_f_p[var_name] = x + h
+
+
+    if var_ind < len(args_f):
+        x = args_f[var_ind]
+    else:
+        x = kwargs_f[var_name]
+
+    if h == 0:
+        h = x * np.sqrt(np.finfo(float).eps)
+        if h == 0:
+            print('WARN : h == 0 ! setting @ 10**-6 ')
+            h = 10**-6
+
+    if var_ind < len(args_f):
+        args_f_m[var_ind] = x - h
+        args_f_p[var_ind] = x + h
+    else:
+        kwargs_f_m[var_name] = x - h
+        kwargs_f_p[var_name] = x + h
+
+    m = f(*args_f_m,**kwargs_f_m)
+    p = f(*args_f_p,**kwargs_f_p)
+
+    if utils.is_iterable(m):
+        m = m[var_out]
+        p = p[var_out]
+#    print p,m,h,x
+#    print h
+#    print h == 0
+    dout = (p - m) / (2. * float(h))
+
+    return dout
+
+
+
+#def jacobian_old_bkp(f,var_in_list,var_out,kwargs_f_list=[],args_f_list=[],h=10**-6):
+#    if args_f_list == [] and kwargs_f_list == []:
+#        raise Exception('jacobian : args_f_list == [] and kwargs_f_list ==  []')
+#    elif args_f_list == [] and kwargs_f_list != []:
+#        args_f_list =  [ [] * len(kwargs_f_list)]
+#    elif args_f_list != [] and kwargs_f_list == []:
+#        kwargs_f_list =  [ [] * len(args_f_list)]
+#
+#    if len(args_f_list) != len(kwargs_f_list):
+#        raise Exception("Jacobian : len(args_f_list) != len(kwargs_f_list)")
+#    jacob_temp = []
+#    for kwargs_f , args_f in zip(kwargs_f_list,args_f_list):
+#        line = jacobian_line(f,var_in_list,var_out,kwargs_f,args_f,h)
+#        jacob_temp.append(line)
+#
+#    return np.vstack(*jacob_temp)
