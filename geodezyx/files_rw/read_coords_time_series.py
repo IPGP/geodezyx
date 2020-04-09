@@ -907,7 +907,9 @@ def read_combi_sum_exclu(sum_file,return_as_df=True,
 
 
 def read_combi_clk_rms(sum_file,return_as_df=True,
-                       clk_ref_cen_gal = "com"):
+                       clk_ref_cen_gal = "com",
+                       index_useful_col=-4,
+                       convert_to_int=True):
     """
     based on : read_good_clk_rms_one
     """
@@ -937,9 +939,12 @@ def read_combi_clk_rms(sum_file,return_as_df=True,
 
     for e in Lres_splited:
         try:
-            rms_dict[e[0]] = int(e[-4])
+            if convert_to_int:
+                rms_dict[e[0]] = int(float(e[index_useful_col]))
+            else:
+                rms_dict[e[0]] = float(e[index_useful_col])
         except:
-            print("WARN : ", e[-4],"not handeled")
+            print("WARN : ", e[index_useful_col],"not handeled")
             print("replaced with NaN")
             rms_dict[e[0]] = np.nan
 

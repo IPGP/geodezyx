@@ -952,8 +952,6 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True):
     https://gist.github.com/jeremiahajohnson/eca97484db88bcf6b124
     """
     
-    print("BBBBBBBBBBBBBB",gpsdow_or_seconds)
-    
     if dow_input:
         gpsseconds = gpsdow_or_seconds * 86400 + 86400*.5 # so we are around noon
     else:
