@@ -214,8 +214,8 @@ def calc_stand_ties(epoc, lat_ref, h_ref, h_rov, p0, t0, e0 ,unit="mm"):
     """
     if utils.is_iterable(lat_ref):
         ties = []
-        for epoc_m,lat_ref_m,lon_ref_m,h_ref_m,h_rov_m,p0_m,t0_m,e0_m in zip(epoc, lat_ref, h_ref, h_rov, p0, t0, e0):
-            ties_m = calc_stand_ties(epoc_m,lat_ref_m,lon_ref_m,h_ref_m,h_rov_m,p0_m,t0_m,e0_m)
+        for epoc_m,lat_ref_m,h_ref_m,h_rov_m,p0_m,t0_m,e0_m in zip(epoc, lat_ref, h_ref, h_rov, p0, t0, e0):
+            ties_m = calc_stand_ties(epoc_m,lat_ref_m,h_ref_m,h_rov_m,p0_m,t0_m,e0_m)
             ties.append(ties_m)
         return np.array(ties)
 
