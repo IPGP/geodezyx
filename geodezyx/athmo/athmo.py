@@ -116,18 +116,25 @@ def trop_saast(p,dlat,hell,t=0,e=0,mode="dry"):
      pp. 1593-1607, 1985.
 
     """
-    f = 1-0.00266*np.cos(2*dlat) - 0.00000028*hell # calculate denominator f
-    t = t + 273.15 #convert celcius to kelvin
-    if mode == "dry":
-        res = 0.0022768*p/f
-    elif mode == "wet":
-        res = (0.22768e-2) * ((0.1255e+4)+(t+0.5e-1)) * (e/t)
-    elif mode == "total":
-        zhd = 0.0022768*p/f
-        zwd = (0.22768e-2) * ((0.1255e+4)+(t+0.5e-1)) * (e/t)
-        res = zhd + zwd
+	if utils.is_iterable(dlat):
+        ztd = []
+        for p_m,dlat_m,hell_m,t_m,e_m in zip(p,dlat,hell,t,e):
+            ztd_m = trop_saast(p_m,dlat_m,hell_m,t_m,e_m,mode)
+            ztd.append(ztd_m)
+        return np.array(ztd)
+	else:
+		f = 1-0.00266*np.cos(2*dlat) - 0.00000028*hell # calculate denominator f
+		t = t + 273.15 #convert celcius to kelvin
+		if mode == "dry":
+			res = 0.0022768*p/f
+		elif mode == "wet":
+			res = (0.22768e-2) * ((0.1255e+4)+(t+0.5e-1)) * (e/t)
+		elif mode == "total":
+			zhd = 0.0022768*p/f
+			zwd = (0.22768e-2) * ((0.1255e+4)+(t+0.5e-1)) * (e/t)
+			res = zhd + zwd
 
-    return np.round(res,4)
+		return np.round(res,4)
 
 def read_grid_gpt(grid_name,cols=64):
     grid = np.loadtxt(grid_name,usecols=range(cols),comments="%",dtype=float)
