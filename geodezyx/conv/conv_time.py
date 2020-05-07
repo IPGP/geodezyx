@@ -2150,10 +2150,15 @@ class interp1d_time(scipy.interpolate.interp1d):
     
     This class inherites from scipy.interpolate.interp1d
     and can take as input datetime as X
+    
+    P. Sakic 2019-01
     """
     def __init__(self, x, y, kind='linear', axis=-1,
                  copy=True, bounds_error=None, fill_value=np.nan,
                  assume_sorted=False):
+        
+        ### x (time) is converted as an array
+        #x = np.array(x)
         
         ### the datetime is converted to posix
         if isinstance(x[0],dt.datetime):
@@ -2168,6 +2173,9 @@ class interp1d_time(scipy.interpolate.interp1d):
                  assume_sorted=assume_sorted)
         
     def __call__(self,x):
+        ### x (time) is converted as an array
+        #x = np.array(x)
+        
         ### the datetime is converted to posix
         if isinstance(x[0],dt.datetime):
             xposix = dt2posix(x)
@@ -2182,13 +2190,19 @@ class interp1d_time(scipy.interpolate.interp1d):
    
 class Slerp_time(scipy.spatial.transform.Slerp):
     """
-    Slerp interpolation with datetime as inputs
+    Slerp interpolation (for quaterinons) with datetime as inputs
     
-    This class inherites from scipy.interpolate.interp1d
+    This class inherites from scipy.spatial.transform.Slerp
     and can take as input datetime as X
+    
+    P. Sakic 2019-01
     """
     
-    def __init__(self, times, rotations,extrapolate=True):        
+    def __init__(self, times, rotations,extrapolate=True):   
+        
+        ### time is converted as an array
+        times = np.array(times)
+        
         ### the datetime is converted to posix
         if isinstance(times[0],dt.datetime):
             times_posix = dt2posix(times)
@@ -2196,7 +2210,10 @@ class Slerp_time(scipy.spatial.transform.Slerp):
             times_posix = dt2posix(numpy_dt2dt(times))
         else:
             times_posix = times
-            
+        
+        #### For the extrapolation 
+        # first value => begining of posix era
+        # last value => end of posix era 
         if extrapolate:
             times_posix = np.array(times_posix)
             times_posix = np.insert(times_posix,0,0.)
@@ -2210,6 +2227,9 @@ class Slerp_time(scipy.spatial.transform.Slerp):
         super().__init__(times_posix, rotations)
         
     def __call__(self,times):
+        ### time is converted as an array
+        times = np.array(times)
+        
         if isinstance(times[0],dt.datetime):
             times_posix = dt2posix(times)
         elif isinstance(times[0],np.datetime64):
@@ -2218,7 +2238,4 @@ class Slerp_time(scipy.spatial.transform.Slerp):
             times_posix = times
             
         return super().__call__(times_posix)
-        
-    
-
     
