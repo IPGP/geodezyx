@@ -751,7 +751,7 @@ def sp3_decimate(file_in,file_out,step=15):
 
     for l in Fin:
         if l[0] == "*":
-            epoc   = conv.tup_or_lis2dt(l[1:].strip().split())
+            epoc   = conv.tup_or_lis2dt(l[1:].strip().split()) 
             if np.mod(epoc.minute , step) == 0:
                 good_line = True
             else:
@@ -775,7 +775,10 @@ def sp3_decimate(file_in,file_out,step=15):
 
     return file_out
 
-def clk_decimate(file_in,file_out,step=15):
+def clk_decimate(file_in,file_out,step=300):
+    """
+    step in seconds
+    """
 
     Fin = open(file_in)
 
@@ -786,7 +789,7 @@ def clk_decimate(file_in,file_out,step=15):
         good_line = True
         if l[0:2] in ("AR","AS"):
             epoc   = conv.tup_or_lis2dt(l[8:34].strip().split())
-            if np.mod(epoc.minute , step) == 0:
+            if np.mod(int(epoc.minute*60 + epoc.second) , step) == 0:
                 good_line = True
             else:
                 good_line = False
