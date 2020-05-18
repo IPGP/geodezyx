@@ -954,14 +954,28 @@ def read_combi_clk_rms(sum_file,return_as_df=True,
         return tdt,rms_dict
 
 
-def read_combi_clk_rms_full_table(path_in):
+def read_combi_clk_rms_full_table(path_in,
+                                  with_stats_rms=False,
+                                  detailed_df=False):
     """
     recommended for .out file
+    
+    detailed_df: the outlier values are more detailled
+    X (excuded) => np.inf
+    - (not proivided) => np.nan
+    >>> (too big for a print, but still kept) => 999999
     """
     strt = "RMS \(ps\) OF AC CLOCK COMPARED TO COMBINATION"
     end  = "---+---"
 
-    Lines = utils.extract_text_between_elements_2(path_in,strt,end,nth_occur_elt_end=1)
+    if with_stats_rms:
+        nth_occur = 2
+    else:
+        nth_occur = 1
+    
+
+    Lines = utils.extract_text_between_elements_2(path_in,strt,end,
+                                                  nth_occur_elt_end=nth_occur)
 
     Lines_good = []
 
@@ -976,13 +990,42 @@ def read_combi_clk_rms_full_table(path_in):
     Lines_good = [e.replace("         ","  SAT    ") for e in Lines_good]
 
     STR = "".join(Lines_good)
-
+    
     import io
 
-    DF = pd.read_table(io.StringIO(STR),
-                      na_values = ["-","X",">>>"] ,
-                      delim_whitespace = True ,
-                      error_bad_lines=False)
+    ### Simple Mode
+    if not detailed_df:
+        DF = pd.read_table(io.StringIO(STR),
+                          na_values = ["-","X",">>>"],
+                          delim_whitespace = True ,
+                          error_bad_lines=False)
+        
+    #### Mone detailled mode
+    else:
+        Cols = Lines_good[0].split()[1:-2]
+        
+        #### We need an ad hoc fct to convert the values
+        def conv_detailed(inp_val):
+            if "-" in inp_val:
+                out_val = np.nan
+            elif "X" in inp_val:
+                out_val = np.inf
+            elif ">>>" in inp_val:
+                out_val = 999999
+            else:
+                out_val = np.int64(inp_val)
+            return out_val
+        
+        ### and then each column has to have its own convert fct... 
+        ### (quite stupid but it's the only way...)
+        conv_dict = dict()
+        for col in Cols:
+            conv_dict[col] = conv_detailed
+        
+        DF = pd.read_table(io.StringIO(STR),
+                           delim_whitespace = True,
+                           error_bad_lines=False,
+                           converters=conv_dict) 
 
     DF = DF.set_index("SAT")
 

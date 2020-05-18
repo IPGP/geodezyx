@@ -192,8 +192,9 @@ def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
 
 
     for line in Finp:
-        epoch=re.search('^ {1,2}([0-9]{1,2} * ){5}',line)
-        if epoch:
+        epoch_rnx2=re.search('^ {1,2}([0-9]{1,2} * ){5}',line)
+        
+        if epoch_rnx2:
             fraw = line.split() #fraw est la pour gerer les fracion de sec ...
             fraw = fraw[0:6]
             fraw = [float(e) for e in fraw]
@@ -220,8 +221,7 @@ def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
 
             except:
                 print("ERR : rinex_read_epoch : " , f)
-
-
+                
     if add_tzinfo:
         epochs_list = [ e.replace(tzinfo=dateutil.tz.tzutc()) for e in epochs_list]
 
@@ -253,16 +253,18 @@ def rinex_start_end(input_rinex_path,interval_out=False,
     NBsuite : c'est fait au 161018 mais par contre c'est un dirty copier coller
     """
     epochs_list = []
-    Head = utils.head(input_rinex_path,500)
+    Head = utils.head(input_rinex_path,1500)
     epochs_list_head = rinex_read_epoch(Head,interval_out=interval_out,
                                         add_tzinfo=add_tzinfo,out_array=False)
 
 
-    Tail =  utils.tail(input_rinex_path,500)
+    Tail =  utils.tail(input_rinex_path,1500)
     epochs_list_tail = rinex_read_epoch(Tail,interval_out=interval_out,
                                         add_tzinfo=add_tzinfo,out_array=False)
 
     epochs_list = epochs_list_head + epochs_list_tail
+    print("BBBBBBBBB",epochs_list)
+
 
     if len(epochs_list) == 0:
         first_epoch = conv.rinexname2dt(input_rinex_path)
@@ -287,6 +289,7 @@ def rinex_start_end(input_rinex_path,interval_out=False,
     else:
         interv_lis = np.diff(epochs_list)
         interv_lis = [e.seconds + e.microseconds * 10**-6 for e in interv_lis]
+        print("AAAAAAAAAA",interv_lis)
         interval   = utils.most_common(interv_lis)
         print("interval : " , interval , last_epoch)
 
@@ -617,3 +620,11 @@ def rinex_renamer(input_rinex_path,output_directory,stat_out_name='',remove=Fals
         print("nothing's done ...")
 
     return output_rinex_path
+
+
+# def rinex_renamer_gfz_odc_2_igs(rinex_in,output_dir=None):
+    
+    
+    
+    
+    

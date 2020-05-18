@@ -61,7 +61,8 @@ def head(filename, count=1):
         return list(filter(len, lines))
 
 def grep(file_in,search_string,only_first_occur=False,
-         invert=False,regex=False,line_number=False,col=(None,None)):
+         invert=False,regex=False,line_number=False,col=(None,None),
+         force_list_output=False):
     """
     if nothing is found returns a empty string : ""
     (and NOT a singleton list with an empty string inside)
@@ -70,6 +71,9 @@ def grep(file_in,search_string,only_first_occur=False,
         col : Define the columns where the grep is executed 
               (Not delimited columns , one character = a new column)
               from 1st col. / until last col. : use None as index
+              
+              force_list_output : if the output is an unique element, 
+              it will be returned in a list anyway
 
     search_string can be a list (150721 change)
     """
@@ -99,8 +103,10 @@ def grep(file_in,search_string,only_first_occur=False,
         return line_number_list[0] , matching_line_list[0]
     elif line_number:
         return line_number_list    , matching_line_list
-    elif len(matching_line_list) == 1:
+    elif len(matching_line_list) == 1 and not force_list_output:
         return matching_line_list[0]
+    elif len(matching_line_list) == 1 and force_list_output:
+        return matching_line_list
     elif len(matching_line_list) == 0:
         return ''
     elif only_first_occur:

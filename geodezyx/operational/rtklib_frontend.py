@@ -11,6 +11,8 @@ Created on Fri Aug 16 11:54:28 2019
 import datetime as dt
 import os 
 import subprocess
+import collections
+
 
 #### geodeZYX modules
 from geodezyx import files_rw
@@ -19,6 +21,28 @@ from geodezyx import utils
 
 
 ##########  END IMPORT  ##########
+
+
+def read_conf_file(filein):
+    outdic = collections.OrderedDict()
+    for l  in open(filein):
+        if l[0] == "#":
+            continue
+        if l.strip() == '':
+            continue
+
+        f = l.split('=')
+        key = f[0]
+        if len(f) == 1:
+            val = ''
+        else:
+            try:
+                val = f[1].split('#')[0]
+            except IndexError:
+                val = f[1]
+        outdic[key.strip()] = val.strip()
+    return outdic
+
 
 def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
                           experience_prefix="",rover_auto_conf=False,
@@ -78,7 +102,7 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
     out_conf_fil   = os.path.join(out_dir,exp_full_name + '.conf')
     out_result_fil = os.path.join(out_dir,exp_full_name + '.out' )
 
-    dicoconf = operational.read_conf_file(generik_conf)
+    dicoconf = read_conf_file(generik_conf)
 
     if rover_auto_conf:
         Antobj_rov , Recobj_rov , Siteobj_rov , Locobj_rov = \
@@ -150,6 +174,8 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
 
     exe_path = "rnx2rtkp"
 #    exe_path = "/home/pierre/install_softs/RTKLIB/rnx2rtkp"
+    exe_path = "/home/psakicki/SOFTWARE/RTKLIB/RTKLIB/app/rnx2rtkp/gcc/rnx2rtkp"
+
 
     bigcomand = ' '.join((exe_path,com_config,com_interval,com_mode,
                           com_resultfile,rnx_rover,rnx_base,nav,sp3))
