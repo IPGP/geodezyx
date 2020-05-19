@@ -669,7 +669,7 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
 
 
 def orbclk_long2short_name(longname_filepath_in,
-                           rm_longname_file=True,
+                           rm_longname_file=False,
                            center_id_last_letter=None,
                            center_manual_short_name=None,
                            force=False,
