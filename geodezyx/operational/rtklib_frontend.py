@@ -150,8 +150,11 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
 
     # ORBITS
     # SP3
-    orblis = operational.multi_downloader_orbs_clks( temp_dir , bas_srt , bas_end , archtype='/',
-                                        calc_center = calc_center)
+    orblis = operational.multi_downloader_orbs_clks( temp_dir ,
+                                                    bas_srt ,
+                                                    bas_end , 
+                                                    archtype='/',
+                                                    calc_center = calc_center)
     sp3Z = orblis[0]
     sp3 = utils.uncompress(sp3Z)
 
@@ -159,8 +162,12 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
     statdic = dict()
     statdic['nav'] = ['BRDC']
     nav_srt = dt.datetime(bas_srt.year, bas_srt.month , bas_srt.day )
-    orblis = operational.multi_downloader_rinex(statdic,temp_dir , nav_srt , bas_end ,
-                                    archtype='/', sorted_mode=0)
+    orblis = operational.multi_downloader_rinex(statdic,
+                                                temp_dir,
+                                                nav_srt,
+                                                bas_end ,
+                                                archtype='/',
+                                                sorted_mode=False)
     navZ = orblis[0]
     nav = utils.uncompress(navZ)
 

@@ -263,8 +263,6 @@ def rinex_start_end(input_rinex_path,interval_out=False,
                                         add_tzinfo=add_tzinfo,out_array=False)
 
     epochs_list = epochs_list_head + epochs_list_tail
-    print("BBBBBBBBB",epochs_list)
-
 
     if len(epochs_list) == 0:
         first_epoch = conv.rinexname2dt(input_rinex_path)
@@ -289,7 +287,6 @@ def rinex_start_end(input_rinex_path,interval_out=False,
     else:
         interv_lis = np.diff(epochs_list)
         interv_lis = [e.seconds + e.microseconds * 10**-6 for e in interv_lis]
-        print("AAAAAAAAAA",interv_lis)
         interval   = utils.most_common(interv_lis)
         print("interval : " , interval , last_epoch)
 
