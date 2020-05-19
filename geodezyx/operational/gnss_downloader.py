@@ -668,7 +668,8 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
 #    return zip(urllist,savedirlist)
 
 
-def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
+def orbclk_long2short_name(longname_filepath_in,
+                           rm_longname_file=True,
                            center_id_last_letter=None,
                            center_manual_short_name=None,
                            force=False,
@@ -729,10 +730,8 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     
     if not output_dirname:
         output_dirname = longname_dirname
-        
 
     center = longname_basename[:3]
-
 
     if center_manual_short_name:
         center = center_manual_short_name
@@ -785,6 +784,29 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
         os.remove(longname_filepath_in)
 
     return shortname_filepath
+
+
+
+def rnx_long2short_name(longname_filepath_in):
+    """
+    MUST BE IMPROVED
+    """
+    
+    longname_basename = os.path.basename(longname_filepath_in)
+    longname_dirname  = os.path.dirname(longname_filepath_in)
+    
+    Longname_basename_splitted = longname_basename.split("_")
+    
+    datepart_str = Longname_basename_splitted[2]
+    yyyy = datepart_str[:4]
+    ddd  = datepart_str[4:7]
+
+    shortname_basename = longname_basename[:4].lower() + ddd + "0." + yyyy[2:] + "o"
+    
+    return os.path.join(longname_dirname,shortname_basename)
+    
+    
+    
 
 
 def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
@@ -1291,7 +1313,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                             archtype ='week',
                             new_name_conv = True,
                             parallel_download=4,
-                            archive_center='whu',
+                            archive_center='ign',
                             mgex=True,repro=0,sorted_mode=False,
                             return_also_uncompressed_files=True,
                             ftp_download=False,

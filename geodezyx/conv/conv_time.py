@@ -797,7 +797,7 @@ def utc2gpstime(year,month,day,hour,min,sec):
     return int(gpsweek),int(gpssecs)
 
 
-def dt2gpstime(dtin,dayinweek=True,inp_ref="utc"):
+def dt2gpstime(dtin,dayinweek=True,inp_ref="utc",outputtype=int):
     
     """
     Time conversion
@@ -850,9 +850,9 @@ def dt2gpstime(dtin,dayinweek=True,inp_ref="utc"):
             
         if dayinweek:
             day = np.floor(np.divide(secs,86400))
-            return int(week) , int(day)
+            return outputtype(int(week)) , outputtype(int(day))
         else:
-            return int(week) , int(secs)
+            return outputtype(int(week)) , outputtype(int(secs))
 
 
 
