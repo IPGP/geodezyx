@@ -230,7 +230,7 @@ def read_erp(caminho_arq,ac):
     out1 :  pandas table
         Returns a panda table format with the data extracted from the file.
 
-    Obs: this function need to be improved to read also the values of UTC and etc. So far reads only the Pole rates. 
+    Obs: this function need to be improved to read also the values of UTC and etc. So far reads only the Pole rates.
 
     """
 
@@ -248,9 +248,9 @@ def read_erp(caminho_arq,ac):
     le = open(caminho_arq, 'r')
     letudo = le.readlines()
     le.close()
-    tamanho = len(letudo) 
+    tamanho = len(letudo)
 
-    
+
 
     numeros = ['0','1','2','3','4','5','6','7','8','9']
 
@@ -293,7 +293,7 @@ def read_erp(caminho_arq,ac):
                     XPO_stk.append(XPO)
                     XPO_std_stk.append(XPO_std)
                     MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
-                    
+
                 if utils.contains_word(Lines[i],'YPO') and marker:
                     Doy = (Lines[i][30:33])
                     Year = str(Lines[i][27:29])
@@ -305,7 +305,7 @@ def read_erp(caminho_arq,ac):
                     YPO_stk.append(YPO)
                     YPO_std_stk.append(YPO_std)
                     MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
-                    
+
                 if utils.contains_word(Lines[i],'LOD') and marker:
                     Doy = (Lines[i][30:33])
                     Year = str(Lines[i][27:29])
@@ -317,7 +317,7 @@ def read_erp(caminho_arq,ac):
                     LOD_stk.append(LOD)
                     LOD_std_stk.append(LOD_std)
                     MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
-                    
+
         MJD = list(set(MJD_stk))
         if len(LOD_stk) == 0:
                 LOD_stk = ['0']*len(MJD)
@@ -438,7 +438,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     epoch_as_pd_index : bool
         if True, the index of the output dataframe contains
         if False, it contains generic integer indexs
-        
+
     km_conv_coef : float
         a conversion coefficient to change the units
         to get meters : 10**3
@@ -747,7 +747,7 @@ def write_sp3(SP3_DF_in , outpath):
         SP3epoc   = pd.DataFrame(SP3_DF_in[SP3_DF_in["epoch"] == epoc])
         ## Missing Sat
         MissingSats = SatListSet.difference(set(SP3epoc["sat"]))
-        
+
         for miss_sat in MissingSats:
             miss_line = SP3epoc.iloc[0].copy()
             miss_line["sat"]   = miss_sat
@@ -756,7 +756,7 @@ def write_sp3(SP3_DF_in , outpath):
             miss_line["y"]     = 0.000000
             miss_line["z"]     = 0.000000
             miss_line["clk"]   = 999999.999999
-            
+
             SP3epoc = SP3epoc.append(miss_line)
 
         SP3epoc.sort_values("sat",inplace=True)
@@ -1250,7 +1250,7 @@ def read_erp2(caminho_arq,ac):
                     XPO_std_stk.append(XPO_std)
                     MJD_stk.append(conv.dt2MJD(Date))
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
-                    
+
                 if utils.contains_word(Lines[i],'YPO') and marker:
                     Doy = (Lines[i][30:33])
                     Year = str(Lines[i][27:29])
@@ -1264,7 +1264,7 @@ def read_erp2(caminho_arq,ac):
                     MJD_stk.append(conv.dt2MJD(Date))
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
 
-                    
+
                 if utils.contains_word(Lines[i],'LOD') and marker:
                     Doy = (Lines[i][30:33])
                     Year = str(Lines[i][27:29])
@@ -1674,33 +1674,33 @@ def sinex_bench_antenna_DF_2_disconts(DFantenna_in,stat,return_full=False):
         Clean_list = sorted(list(set(Start_List + End_list)))
         Clean_list = [e for e in Clean_list if e != dt.datetime(1970, 1, 1, 0, 0)]
         return Clean_list
-    
+
 ############### Reading Tropospheric ################################################
 def read_snx_trop(snxfile,dataframe_output=True):
     """
     Read troposphere solutions from Troposphere SINEX
     """
-    
+
     STAT , epoc = [] , []
     tro , stro , tgn , stgn , tge , stge = [] , [] , [] , [] , [] , []
-    
+
     flagtrop = False
-    
+
     for line in open(snxfile,"r",encoding = "ISO-8859-1"):
 
         if re.compile('TROP/SOLUTION').search(line):
             flagtrop = not flagtrop
             continue
-        
+
         if line[0] == ' ':
             fields = line.split()
         else:
             continue
-        
+
         if flagtrop ==True:
-            
+
             STAT.append(fields[0].upper())
-            
+
             if not ':' in fields[1]:
                 epoc.append(conv.convert_partial_year(fields[1]))
             else:
@@ -1709,7 +1709,7 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 doy = int(date_elts_lis[1])
                 sec = int(date_elts_lis[2])
                 epoc.append(conv.doy2dt(yy,doy,seconds=sec))
-                
+
             if len(fields) == 8:
                 tro.append(np.nan if '*' in fields[2] else fields[2])
                 stro.append(np.nan if '*' in fields[3] else fields[3])
@@ -1717,7 +1717,7 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 stgn.append(np.nan if '*' in fields[5] else fields[5])
                 tge.append(np.nan if '*' in fields[6] else fields[6])
                 stge.append(np.nan if '*' in fields[7] else fields[7])
-                            
+
             elif len(fields) == 4:
                 tro.append(np.nan if '*' in fields[2] else fields[2])
                 stro.append(np.nan if '*' in fields[3] else fields[3])
@@ -1725,7 +1725,7 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 stgn.append(np.nan)
                 tge.append(np.nan)
                 stge.append(np.nan)
-                
+
             else:
                 tro.append(np.nan)
                 stro.append(np.nan)
@@ -1733,51 +1733,51 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 stgn.append(np.nan)
                 tge.append(np.nan)
                 stge.append(np.nan)
-    
+
     outtuple = \
     list(zip(*sorted(zip(STAT , epoc , tro , stro , tgn , stgn , tge , stge))))
-    
+
     if dataframe_output:
         return Tropsinex_DataFrame(outtuple)
-                
+
 def Tropsinex_DataFrame(read_sinex_result):
      """
       General description
 
         Parameters
         ----------
-        read_sinex_result : 
+        read_sinex_result :
             List values from read_snx_trop function
-                    
+
         Returns
         -------
-        DF_Sinex : 
+        DF_Sinex :
             troposphere information from SINEX in Dataframe
-            
+
      """
      DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
      colnam = ['STAT','epoc','tro','stro','tgn','stgn','tge','stge']
      DF_Sinex.columns = colnam
      cols_numeric = ['tro','stro','tgn','stgn','tge','stge']
      DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pd.to_numeric, errors='coerce')
-     
+
      return DF_Sinex
 
 def read_bernese_trp(trpfile):
     """
     This function reads tropospheric solution in TRP format from Bernese
     GNSS software
-    
+
     Parameter
     ----------
     trpfile:
         Filename of TRP file from Bernese
-    
+
     Return
     ----------
     DF:
         Tropospheric solutions from Bernese in Dataframe
-    
+
     Notes
     ----------
         Written by Chaiyaporn Kitpracha
@@ -1801,35 +1801,35 @@ def read_bernese_trp(trpfile):
             headers[8] = 'second'
             flagtrop = True
             continue
-        
+
         if flagtrop and not line == '\n':
             fields = line.split()
             field.append(fields)
         else:
             continue
-        
+
     DF = pd.DataFrame(field,columns=headers)
     DF['dt'] = pd.to_datetime(DF[['year','month','day','hour','minute','second']])
     cols_num = ['MOD_U', 'CORR_U', 'SIGMA_U', 'TOTAL_U', 'CORR_N', 'SIGMA_N','CORR_E', 'SIGMA_E']
     DF[cols_num] = DF[cols_num].apply(pd.to_numeric, errors='coerce')
     DF.drop(['year','month','day','hour','minute','second'], axis=1,inplace=True)
     return DF
-    
+
 
 def read_rinex_met(metfile):
     """
     This function reads RINEX Meteorological files and convert to Pandas DataFrame
-    
+
     Parameter
     ----------
     metfile:
         Path of RINEX Meteorological file in List/String (e.g. made with glob)
-    
+
     Return
     ----------
     DF:
         Meteorological data in DataFrame
-    
+
     Notes
     ----------
         Written by Chaiyaporn Kitpracha
@@ -1856,8 +1856,8 @@ def read_rinex_met_2(metfile):
         if re.compile('END OF HEADER').search(line):
             break
         ln = ln+1
-        
-    df = pd.read_fwf(metfile,skiprows=range(0,ln+1),delim_whitespace=True,skipinitialspace=True,names=['year','month','day','hour','minute','second']+headers)
+
+    df = pd.read_csv(metfile,skiprows=range(0,ln+1),delim_whitespace=True,names=['year','month','day','hour','minute','second']+headers)
     df['year'] = df['year'] + 2000 if df['year'].any() <= 79 else df['year'].any() + 1900
     df['STA'] = marker
     df['epoch'] = pd.to_datetime(df[['year','month','day','hour','minute','second']],errors='coerce')
