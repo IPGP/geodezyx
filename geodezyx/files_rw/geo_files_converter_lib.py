@@ -1932,7 +1932,10 @@ def Tropsinex_DataFrame(read_sinex_result):
      
      return DF_Sinex
      
-def read_sinex(snxfile,dataframe_output=False):
+def read_sinex_old(snxfile,dataframe_output=True):
+    """
+    This function is depreciated !!!!
+    """
 
     STAT , soln , epoc, AC = [] , [] , [], []
     x , y , z , sx , sy , sz = [] , [] , [] , [] , [] , []
@@ -2038,6 +2041,78 @@ def sinex_DataFrame(read_sinex_result):
 
     return DF_Sinex
 
+def read_sinex(sinex_path_in,
+               keep_sites_as_index=False):
+    ## Read the blocs
+    DFcoor = read_sinex_versatile(sinex_path_in,"SOLUTION/ESTIMATE",
+                                           header_line_idx=None)
+    DFepoc = read_sinex_versatile(sinex_path_in,"SOLUTION/EPOCHS",
+                                           header_line_idx=None)
+    ## Rename the Epoch DF
+    DFepoc.rename(columns={0: "STAT",
+                           1: "pt",
+                           2: "soln",
+                           3: "?",
+                           4: "start",
+                           5: "end",
+                           6: "mean"},inplace=True)
+    DFepoc.set_index(['STAT','pt','soln'],inplace=True)
+    
+    
+    
+    ### Rearange the coords DF
+    Index = DFcoor[[2,3,4]].drop_duplicates()
+    
+    Stk_DFcoor2_line = []
+    
+    for (stat,pt,soln) in zip(Index[2],Index[3],Index[4]):   
+        DF2 = DFcoor[(DFcoor[2] == stat) & (DFcoor[3] == pt) & (DFcoor[4] == soln)]
+    
+        dicttmp = dict()
+    
+        epoc = DF2[5].unique()[0]    
+        dicttmp['epoc'] = epoc
+        dicttmp['STAT'] = stat
+        dicttmp['pt']   = pt
+        dicttmp['soln'] = soln
+    
+        
+        for typ,comp in itertools.product(('STA','VEL'),
+                                          ('X','Y','Z')):
+             
+            typcomp = typ+comp
+            val = DF2[DF2[1] == typcomp][8].values[0]
+            sig = DF2[DF2[1] == typcomp][9].values[0]
+            
+            if typ == 'VEL':
+                typdic = 'v'
+            else:
+                typdic = ''
+            
+            dicttmp[typdic + comp.lower()] = val
+            dicttmp['s' + typdic + comp.lower()] = sig
+            
+        DFcoor2_line = pd.DataFrame(dicttmp,index=[0])
+        Stk_DFcoor2_line.append(DFcoor2_line)
+        
+    DFcoor2 = pd.concat(Stk_DFcoor2_line)   
+    DFcoor2.set_index(['STAT','pt','soln'],inplace=True)
+    
+    
+    ### Concatenate both
+    DFout = pd.concat((DFepoc,DFcoor2),axis=1)
+    
+    ### remove NaN (might be more epochs than coords...)
+    DFout.dropna(inplace=True)
+    
+    if not keep_sites_as_index:
+        DFout.reset_index(inplace=True)    
+
+    return DFout
+    
+
+
+
 
 def read_sinex_versatile(sinex_path_in , id_block,
                          convert_date_2_dt = True,
@@ -2126,7 +2201,7 @@ def read_sinex_versatile(sinex_path_in , id_block,
         DF.rename(columns={DF.columns[0]:DF.columns[0][1:]}, inplace=True)
 
     else: # no header in the SINEX
-        DF = pd.read_csv(StringIO(Lines_str),header=-1 ,
+        DF = pd.read_csv(StringIO(Lines_str),header=None ,
                              delim_whitespace=True)
 
 

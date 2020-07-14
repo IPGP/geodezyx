@@ -203,7 +203,10 @@ def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False):
                                            row["second"],one_or_two,row["bias"])
             
         Row_str_stk.append(row_str)
-        
+    
+    ## Add EOF
+    Row_str_stk.append("EOF")
+    
     CORPSE = "\n".join(Row_str_stk)
        
     OUT = HEAD + CORPSE

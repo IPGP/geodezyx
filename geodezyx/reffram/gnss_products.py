@@ -328,7 +328,6 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
 
             Diff_sat_stk.append(Diff_sat)
 
-
     Diff_sat_all = pd.concat(Diff_sat_stk)
     Date = Diff_sat.index[0]
 
@@ -388,7 +387,9 @@ def compar_orbit_plot(Diff_sat_all_df_in,
                       save_plot=False,
                       save_plot_dir="",
                       save_plot_name="auto",
-                      save_plot_ext=(".pdf",".png",".svg")):
+                      save_plot_name_suffix=None,
+                      save_plot_ext=(".pdf",".png",".svg"),
+                      yaxis_limit=None):
     """
     General description
 
@@ -396,10 +397,14 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     ----------
     Diff_sat_all_df_in : DataFrame
         a DataFrame produced by compar_orbit
+        
+    yaxis_limit : 3-tuple iterable
+        force the y axis limits. must look like 
+        [(ymin_r,ymax_r),(ymin_t,ymax_t),(ymin_n,ymax_n)]
 
     Returns
     -------
-    None if no save is asked
+    the Figure and the 3 Axes if no save is asked
     export path (str) if save is asked
     but plot a plot anyway
     """
@@ -459,7 +464,12 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     axr.yaxis.set_major_formatter(y_formatter)
     axt.yaxis.set_major_formatter(y_formatter)
     axn.yaxis.set_major_formatter(y_formatter)
-
+    
+    if yaxis_limit:
+        axr.set_ylim(yaxis_limit[0])
+        axt.set_ylim(yaxis_limit[1])
+        axn.set_ylim(yaxis_limit[2])
+    
     import matplotlib.dates as mdates
     fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
 
@@ -477,14 +487,19 @@ def compar_orbit_plot(Diff_sat_all_df_in,
             save_plot_name = "_".join((Diff_sat_all_df_in.name1,
                                       Diff_sat_all_df_in.name2,
                                       Diff_sat_all_df_in.index.min().strftime("%Y-%m-%d")))
+            
+        if save_plot_name_suffix:
+            save_plot_name = save_plot_name + '_' + save_plot_name_suffix
 
         for ext in save_plot_ext:
             save_plot_path = os.path.join(save_plot_dir,save_plot_name)
             plt.savefig(save_plot_path + ext)
+            return_val = save_plot_path
+            
     else:
-        save_plot_path = None
+        return_val = fig,(axr,axt,axn)
 
-    return save_plot_path
+    return return_val
 
 def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
                        light_tab  = False):
@@ -829,6 +844,8 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
     I2 = OrbDFb.index
     
     Iinter = I1.intersection(I2)
+    ### A sort of the Index to avoid issues ...
+    Iinter = Iinter.sort_values()
     
     OrbDFa_out = OrbDFa.loc[Iinter]
     OrbDFb_out = OrbDFb.loc[Iinter]
@@ -836,6 +853,9 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
     if supplementary_sort:
         # for multi GNSS, OrbDF_out are not well sorted (why ??? ...)
         # we do a supplementary sort
+        # NB 202003: maybe because Iiter was not sorted ...
+        # should be fixed with the Iinter.sort_values() above 
+        # but we maintain this sort
         OrbDFa_out = OrbDFa_out.sort_values(["sat","epoch"])
         OrbDFb_out = OrbDFb_out.sort_values(["sat","epoch"])
 
@@ -848,6 +868,20 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
     else:
         return OrbDFa_out , OrbDFb_out
 
+
+def OrbDF_const_sv_columns_maker(OrbDFin,inplace=True):
+    """
+    (re)generate the const and sv columns from the sat one
+    """
+    if inplace:
+        OrbDFin['const'] = OrbDFin['sat'].str[0]
+        OrbDFin['sv']    = OrbDFin['sat'].apply(lambda x: int(x[1:]))
+        return None
+    else:
+        OrbDFout = OrbDFin.copy()
+        OrbDFout['const'] = OrbDFout['sat'].str[0]
+        OrbDFout['sv']    = OrbDFout['sat'].apply(lambda x: int(x[1:]))
+        return OrbDFout
 
  #   _____ _      _____   __      __   _ _     _       _   _             
  #  / ____| |    |  __ \  \ \    / /  | (_)   | |     | | (_)            

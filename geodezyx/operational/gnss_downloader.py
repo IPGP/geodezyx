@@ -668,10 +668,13 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
 #    return zip(urllist,savedirlist)
 
 
-def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
+def orbclk_long2short_name(longname_filepath_in,
+                           rm_longname_file=False,
                            center_id_last_letter=None,
                            center_manual_short_name=None,
-                           force=False):
+                           force=False,
+                           dryrun=False,
+                           output_dirname=None):
     """
     Rename a long naming new convention IGS product file to the short old
     convention
@@ -698,6 +701,13 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     force : bool
         if False, skip if the file already exsists
 
+    dryrun : bool
+        if True, don't rename effectively, just output the new name
+        
+    output_dirname : str
+        directory where the output shortname will be created
+        if None, will be created in the same folder as the input longname
+
     Returns
     -------
     shortname_filepath : str
@@ -721,9 +731,11 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
 
     longname_basename = os.path.basename(longname_filepath_in)
     longname_dirname  = os.path.dirname(longname_filepath_in)
+    
+    if not output_dirname:
+        output_dirname = longname_dirname
 
     center = longname_basename[:3]
-
 
     if center_manual_short_name:
         center = center_manual_short_name
@@ -734,7 +746,6 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
 
     yyyy   = int(longname_basename.split("_")[1][:4])
     doy    = int(longname_basename.split("_")[1][4:7])
-
 
     day_dt = conv.doy2dt(yyyy,doy)
 
@@ -755,7 +766,6 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
         shortname = shortname_prefix + ".snx"
     else:
         print("ERR : filetype not found for",longname_basename)
-
     
     ### Compression handeling
     if longname_basename[-3:] == ".gz":
@@ -763,23 +773,45 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     elif longname_basename[-2:] == ".Z":
         shortname = shortname + ".Z"
         
-
-    shortname_filepath = os.path.join(longname_dirname , shortname)
+    shortname_filepath = os.path.join(output_dirname , shortname)
     
     if not force and os.path.isfile(shortname_filepath):
         print("INFO : skip", longname_filepath_in)
         print("     ",shortname_filepath,"already exists")        
         return shortname_filepath
-        
-    shutil.copy2(longname_filepath_in , shortname_filepath)
-    print("INFO : renaming" , longname_filepath_in,"=>",shortname_filepath)
+    
+    if not dryrun:
+        print("INFO : renaming" , longname_filepath_in,"=>",shortname_filepath)
+        shutil.copy2(longname_filepath_in , shortname_filepath)
 
-
-    if rm_longname_file:
+    if rm_longname_file and not dryrun:
         print("INFO : remove " , longname_filepath_in)
         os.remove(longname_filepath_in)
 
     return shortname_filepath
+
+
+
+def rnx_long2short_name(longname_filepath_in):
+    """
+    MUST BE IMPROVED
+    """
+    
+    longname_basename = os.path.basename(longname_filepath_in)
+    longname_dirname  = os.path.dirname(longname_filepath_in)
+    
+    Longname_basename_splitted = longname_basename.split("_")
+    
+    datepart_str = Longname_basename_splitted[2]
+    yyyy = datepart_str[:4]
+    ddd  = datepart_str[4:7]
+
+    shortname_basename = longname_basename[:4].lower() + ddd + "0." + yyyy[2:] + "o"
+    
+    return os.path.join(longname_dirname,shortname_basename)
+    
+    
+    
 
 
 def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
@@ -1286,7 +1318,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                             archtype ='week',
                             new_name_conv = True,
                             parallel_download=4,
-                            archive_center='whu',
+                            archive_center='ign',
                             mgex=True,repro=0,sorted_mode=False,
                             return_also_uncompressed_files=True,
                             ftp_download=False,
@@ -1368,8 +1400,8 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
             dow = str(dow_manu)
                
         print("INFO : ","Search products for day",wwww,dow,"AC/prod",ac_cur,prod_cur)
-        
         wwww_dir = os.path.join(arch_center_basedir,str(wwww))
+        print("       Move to:",wwww_dir)
         if wwww_dir_previous != wwww_dir:
             ftp.cwd(wwww_dir)
             Files_listed_in_FTP = ftp.nlst()
@@ -1384,10 +1416,18 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam,f)]
         
         pattern_new_nam = ""
+        
+        Files_new_nam = []
         if new_name_conv: ### search for new name convention
+            
+            if dow is None:
+                print("ERR: dow == None and search for new name convention, Error ...")
+                raise  Exception()
+                
             ac_newnam   = ac_cur.upper()
-            doy_newnam  ="".join(reversed(conv.dt2doy_year(conv.gpstime2dt(wwww,dow))))
-            prod_newnam =prod_cur.upper()
+
+            doy_newnam  = "".join(reversed(conv.dt2doy_year(conv.gpstime2dt(wwww,dow))))
+            prod_newnam = prod_cur.upper()
             
             pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
             pattern_new_nam = ".*" + pattern_new_nam + "\..*"
