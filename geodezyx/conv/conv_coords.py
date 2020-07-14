@@ -29,6 +29,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #### External modules
 import numpy as np
 import scipy
+from pyorbital import astronomy
 import re
 
 #### geodeZYX modules
@@ -374,6 +375,9 @@ def ENU2XYZ_legacy(E,N,U,Xref,Yref,Zref):
 
     diffère de ENU2XYZ pour d'obscure raisons, à investiguer !!!
     est laissé pour des scripts de conversion de GINS (170119)
+    
+    this fct compute the dXYZ and not the final XYZ
+
     """
 
     fr,lr,hr = XYZ2GEO(Xref,Yref,Zref)
@@ -390,11 +394,74 @@ def ENU2XYZ_legacy(E,N,U,Xref,Yref,Zref):
 
     xyz = np.dot(R3,ENU) #+ np.vstack((Xref,Yref,Zref))
 
-    X = float(xyz[0])
-    Y = float(xyz[1])
-    Z = float(xyz[2])
+    dX = float(xyz[0])
+    dY = float(xyz[1])
+    dZ = float(xyz[2])
 
-    return X,Y,Z
+    return dX,dY,dZ
+
+
+    
+            
+
+
+def GEO2XYZ_vector(FLH,angle='deg',
+                   a=6378137.,e2=0.00669438003):
+    
+        
+    #### if Nx3 array => 3xN array
+    FLH = utils.transpose_vector_array(FLH)
+    
+    X,Y,Z = GEO2XYZ(FLH[0],
+                    FLH[1],
+                    FLH[2],
+                    angle=angle,
+                    a=a,
+                    e2=e2)
+    XYZ = np.column_stack((X,Y,Z))
+    
+    return XYZ
+    
+def XYZ2ENU_vector(XYZ,xyz0):
+    
+    XYZ = utils.transpose_vector_array(XYZ)
+    
+    E,N,U = XYZ2ENU_2(XYZ[0], XYZ[1], XYZ[2],
+                      xyz0[0], xyz0[1], xyz0[2])
+    ENU = np.column_stack((E,N,U))
+    
+    return ENU
+    
+def XYZ2GEO_vector(XYZ,outdeg=True,
+            A=6378137.,E2=0.00669438003):
+    
+    XYZ = utils.transpose_vector_array(XYZ)
+
+    F,L,H = XYZ2GEO(XYZ[0], XYZ[1], XYZ[2],
+                    outdeg=outdeg,
+                    A=A,
+                    E2=E2)
+            
+    FLH = np.column_stack((F,L,H))
+    
+    return FLH
+
+    
+def ENU2XYZ_vector(ENU,xyz_ref):
+    
+    ENU = utils.transpose_vector_array(ENU)
+    
+    X,Y,Z = ENU2XYZ(ENU[0],
+            ENU[1],
+            ENU[2],
+            xyz_ref[0],
+            xyz_ref[1],
+            xyz_ref[2])
+    
+    XYZ = np.column_stack((X,Y,Z))
+    
+    return XYZ
+
 
 
 def sFLH2sXYZ(F,L,H,sF,sL,sH,ang='deg'):
@@ -659,7 +726,7 @@ def ECEF2ECI(xyz,utc_times):
     http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc
     Inspired from satellite-js (https://github.com/shashwatak/satellite-js)
     """
-    from pyorbital import astronomy
+
     # XYZ and utc_time must have the same shape
     #if not xyz.shape[:-1] == utc_times.shape:
     #    raise ValueError("shape mismatch for XYZ and utc_times (got {} and {})".format(xyz.shape[:-1],utc_times.shape))
@@ -707,7 +774,7 @@ def ECI2ECEF(xyz,utc_times):
     Empirically:
      [X]       [ C  S  0][X]
      [Y]     = [-S  C  0][Y]
-     [Z]ecef   [ 0  0 -1][Z]eci
+     [Z]ecef   [ 0  0  1][Z]eci
 
 
 
@@ -723,7 +790,6 @@ def ECI2ECEF(xyz,utc_times):
     ----
     Quick mode of the reverse fct, can be improved
     """
-    from pyorbital import astronomy
     # XYZ and utc_time must have the same shape
     #if not xyz.shape[:-1] == utc_times.shape:
     #    raise ValueError("shape mismatch for XYZ and utc_times (got {} and {})".format(xyz.shape[:-1],utc_times.shape))
@@ -734,24 +800,6 @@ def ECI2ECEF(xyz,utc_times):
     ecef = xyz.copy()
     ecef[:,0] = + xyz[:,0]*np.cos(gmst) + xyz[:,1]*np.sin(gmst)
     ecef[:,1] = - xyz[:,0]*np.sin(gmst) + xyz[:,1]*np.cos(gmst)
-#   ecef[:,2] = + xyz[:,2]
-
-#    eci = xyz.copy()
-#    
-#    print(xyz)
-#    
-#    ecef_stk = []
-#    for xyz_epoc,gmst_epoc in zip(xyz,gmst):
-#        M = np.array([[np.cos(gmst_epoc),-np.sin(gmst_epoc),0],
-#                     [np.sin(gmst_epoc), np.cos(gmst_epoc),0],
-#                     [           0,            0,1]])
-#        Minv = np.linalg.inv(M)
-#        
-#        print(Minv)
-#        ecef_epoc = Minv.dot(xyz.T)
-#        ecef_stk.append(ecef_epoc)
-#    
-#    ecef = np.vstack(ecef_stk)
     
     return ecef
 
@@ -962,7 +1010,7 @@ def C_cep2itrs(xpole , ypole):
 def C_euler(phi,theta,psi):
     """
     Gives the matrix of an Euler rotation
-    
+        
     Source
     ------
         https://fr.wikipedia.org/wiki/Angles_d%27Euler
@@ -981,22 +1029,36 @@ def C_euler(phi,theta,psi):
     return C_euler
     
 
-
 def C_x(theta):
     """
     Gives the rotation matrix along the X-axis
     
+    Manage iterable (list, array) as input
+    
+    [1,0, 0]
+    [0,C,-S]
+    [0,S, C]
+    
     Source
     ------
         https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
+        
     """
+    
+    if not utils.is_iterable(theta):
+        theta = np.array([theta])
+    
     C = np.cos(theta)
     S = np.sin(theta)
+    Z = np.zeros(len(theta))
+    I = np.ones(len(theta))
     
-    C_x = np.array([[1,0,0],
-                   [0,C,-S],
-                   [0,S,C]])
-
+    C_x = np.stack([[I,Z, Z],
+                    [Z,C,-S],
+                    [Z,S, C]])
+    
+    C_x = np.squeeze(C_x)
+    
     return C_x
 
 
@@ -1004,16 +1066,30 @@ def C_y(theta):
     """
     Gives the rotation matrix around the Y-axis
     
+    Manage iterable (list, array) as input
+    
+    [ C,0,S]
+    [ 0,1,0]
+    [-S,0,C]
+    
     Source
     ------
         https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
     """
+
+    if not utils.is_iterable(theta):
+        theta = np.array([theta])
+    
     C = np.cos(theta)
     S = np.sin(theta)
+    Z = np.zeros(len(theta))
+    I = np.ones(len(theta))
     
-    C_y = np.array([[C,0,S],
-                    [0,1,0],
-                    [-S,0,C]])
+    C_y = np.stack([[ C,Z,S],
+                    [ Z,I,Z],
+                    [-S,Z,C]])
+    
+    C_y = np.squeeze(C_y)
 
     return C_y
 
@@ -1021,18 +1097,30 @@ def C_y(theta):
 def C_z(theta):
     """
     Gives the rotation matrix around the Z-axis
+
+    [C,-S,0]
+    [S, C,0]
+    [0, 0,1]
     
     Source
     ------
         https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
     """
+    
+    if not utils.is_iterable(theta):
+        theta = np.array([theta])
+    
     C = np.cos(theta)
     S = np.sin(theta)
+    Z = np.zeros(len(theta))
+    I = np.ones(len(theta))
     
-    C_z = np.array([[C,-S,0],
-                   [S,C,0],
-                   [0,0,1]])
-
+    C_z = np.stack([[C,-S,Z],
+                    [S, C,Z],
+                    [Z, Z,I]])
+    
+    C_z = np.squeeze(C_z)
+    
     return C_z
 
 

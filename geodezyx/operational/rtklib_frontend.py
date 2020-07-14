@@ -11,6 +11,8 @@ Created on Fri Aug 16 11:54:28 2019
 import datetime as dt
 import os 
 import subprocess
+import collections
+
 
 #### geodeZYX modules
 from geodezyx import files_rw
@@ -19,6 +21,28 @@ from geodezyx import utils
 
 
 ##########  END IMPORT  ##########
+
+
+def read_conf_file(filein):
+    outdic = collections.OrderedDict()
+    for l  in open(filein):
+        if l[0] == "#":
+            continue
+        if l.strip() == '':
+            continue
+
+        f = l.split('=')
+        key = f[0]
+        if len(f) == 1:
+            val = ''
+        else:
+            try:
+                val = f[1].split('#')[0]
+            except IndexError:
+                val = f[1]
+        outdic[key.strip()] = val.strip()
+    return outdic
+
 
 def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
                           experience_prefix="",rover_auto_conf=False,
@@ -48,7 +72,6 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
 
     # paths & files
     working_dir = utils.create_dir(working_dir)
-    temp_dir    = utils.create_dir(os.path.join(working_dir,'TEMP_' + utils.get_timestamp()))
     out_dir     = utils.create_dir(os.path.join(working_dir,'OUTPUT'))
 
     # uncompressing rinex if compressed
@@ -78,7 +101,7 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
     out_conf_fil   = os.path.join(out_dir,exp_full_name + '.conf')
     out_result_fil = os.path.join(out_dir,exp_full_name + '.out' )
 
-    dicoconf = operational.read_conf_file(generik_conf)
+    dicoconf = read_conf_file(generik_conf)
 
     if rover_auto_conf:
         Antobj_rov , Recobj_rov , Siteobj_rov , Locobj_rov = \
@@ -126,8 +149,11 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
 
     # ORBITS
     # SP3
-    orblis = operational.multi_downloader_orbs_clks( temp_dir , bas_srt , bas_end , archtype='/',
-                                        calc_center = calc_center)
+    orblis = operational.multi_downloader_orbs_clks( temp_dir ,
+                                                    bas_srt ,
+                                                    bas_end , 
+                                                    archtype='/',
+                                                    calc_center = calc_center)
     sp3Z = orblis[0]
     sp3 = utils.uncompress(sp3Z)
 
@@ -135,8 +161,12 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
     statdic = dict()
     statdic['nav'] = ['BRDC']
     nav_srt = dt.datetime(bas_srt.year, bas_srt.month , bas_srt.day )
-    orblis = operational.multi_downloader_rinex(statdic,temp_dir , nav_srt , bas_end ,
-                                    archtype='/', sorted_mode=0)
+    orblis = operational.multi_downloader_rinex(statdic,
+                                                temp_dir,
+                                                nav_srt,
+                                                bas_end ,
+                                                archtype='/',
+                                                sorted_mode=False)
     navZ = orblis[0]
     nav = utils.uncompress(navZ)
 
@@ -150,6 +180,8 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
 
     exe_path = "rnx2rtkp"
 #    exe_path = "/home/pierre/install_softs/RTKLIB/rnx2rtkp"
+    exe_path = "/home/psakicki/SOFTWARE/RTKLIB/RTKLIB/app/rnx2rtkp/gcc/rnx2rtkp"
+
 
     bigcomand = ' '.join((exe_path,com_config,com_interval,com_mode,
                           com_resultfile,rnx_rover,rnx_base,nav,sp3))

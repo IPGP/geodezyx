@@ -188,10 +188,10 @@ def euler_vels_relative_to_ref(w,lat_ITRF,long_ITRF,vn_ITRF,ve_ITRF,
     lat_ITRF,long_ITRF : list or numpy.array
         latitude and longitude of the points (deg)
         
-    vn_ITRF,ve_ITRF : float or int or str or dict or n-tuple or bool or list or numpy.array
+    vn_ITRF,ve_ITRF : list or numpy.array
         north and east velocities of the points (m/yr)
 
-    incvn_ITRF,incve_ITRF : float or int or str or dict or n-tuple or bool or list or numpy.array
+    incvn_ITRF,incve_ITRF : list or numpy.array
         uncertainties on north and east velocities of the points (m/yr)
                               
     Returns
@@ -214,7 +214,10 @@ def euler_vels_relative_to_ref(w,lat_ITRF,long_ITRF,vn_ITRF,ve_ITRF,
     vel_rot=[0]*nstation
     for i in range(nstation): #
         mat=Rt*np.array([np.array([np.sin(all_pos[i][1]*np.pi/180), -np.cos(all_pos[i][1]*np.pi/180),0]),
-                         np.array([-np.sin(all_pos[i][0]*np.pi/180)*np.cos(all_pos[i][1]*np.pi/180), -np.sin(all_pos[i][0]*np.pi/180)*np.sin(all_pos[i][1]*np.pi/180),np.cos(all_pos[i][0]*np.pi/180)])]) # [°] > [rad] pour le calcul
+                         np.array([-np.sin(all_pos[i][0]*np.pi/180)*np.cos(all_pos[i][1]*np.pi/180),
+                        -np.sin(all_pos[i][0]*np.pi/180)*np.sin(all_pos[i][1]*np.pi/180),np.cos(all_pos[i][0]*np.pi/180)])]) # [°] > [rad] pour le calcul
+        
+        
         vel_rot[i]=mat.dot(w)  #   [m] cross [rad/yr]
     #vel_rot=np.array(vel_rot)*1000  # [m/an]  > [mm/an]
     v_ITRF=np.transpose(np.array([vn_ITRF,ve_ITRF])) # les vitesses de toutes les stations [m/yr]
