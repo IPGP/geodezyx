@@ -72,7 +72,6 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
 
     # paths & files
     working_dir = utils.create_dir(working_dir)
-    temp_dir    = utils.create_dir(os.path.join(working_dir,'TEMP_' + utils.get_timestamp()))
     out_dir     = utils.create_dir(os.path.join(working_dir,'OUTPUT'))
 
     # uncompressing rinex if compressed
