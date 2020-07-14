@@ -103,10 +103,12 @@ def read_clk(file_path_in):
     HeadLine = utils.grep(file_path_in,"END OF HEADER",
                           only_first_occur=True,line_number=True)
     
-    DFclk = pd.read_csv(file_path_in,skiprows=HeadLine[0]+1,header=-1,
+    DFclk = pd.read_csv(file_path_in,skiprows=HeadLine[0]+1,header=None,
                         delim_whitespace = True,
                         names=['type', 'name', 'year', 'month', 'day', 'hour',
                              'minute', 'second',"n_values",'bias', 'sigma'])
+    
+    DFclk["ac"] = os.path.basename(file_path_in)[:3] 
     
     DFclk['epoch'] = pd.to_datetime(DFclk[['year', 'month', 'day', 'hour','minute', 'second']])
     DFclk.path = file_path_in
@@ -519,13 +521,17 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
         if header:
             continue
         if 'EOF' in l:
-            continue
+            break
 
         if l[0] == '*':
             epoc   = conv.tup_or_lis2dt(l[1:].strip().split())
             
+        elif len(l.strip()) == 0:
+            continue
+            
         else:
             sat_nat = l[1:2].strip()
+            
             sat_sv  = int(l[2:4].strip())
             sat_sat = l[1:4].strip()
 	    
@@ -565,13 +571,14 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     if returns_pandas:
         df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
                                              'x','y','z','clk','AC'])
+
+        if skip_null_epoch:
+            df = sp3_DataFrame_zero_epoch_filter(df)
+
         if epoch_as_pd_index:
             df.set_index('epoch',inplace=True)
         df.filename = os.path.basename(file_path_in)
         df.path = file_path_in
-        
-        if skip_null_epoch:
-            df = sp3_DataFrame_zero_epoch_filter(df)
 
         if name != '':
             df.name = name
@@ -746,7 +753,7 @@ def sp3_decimate(file_in,file_out,step=15):
 
     for l in Fin:
         if l[0] == "*":
-            epoc   = conv.tup_or_lis2dt(l[1:].strip().split())
+            epoc   = conv.tup_or_lis2dt(l[1:].strip().split()) 
             if np.mod(epoc.minute , step) == 0:
                 good_line = True
             else:
@@ -770,20 +777,21 @@ def sp3_decimate(file_in,file_out,step=15):
 
     return file_out
 
-def clk_decimate(file_in,file_out,step=5):
+def clk_decimate(file_in,file_out,step=300):
+    """
+    step in seconds
+    """
 
     Fin = open(file_in)
 
     good_line = True
     outline = []
 
-    step = 5
-
     for l in Fin:
         good_line = True
         if l[0:2] in ("AR","AS"):
             epoc   = conv.tup_or_lis2dt(l[8:34].strip().split())
-            if np.mod(epoc.minute , step) == 0:
+            if np.mod(int(epoc.minute*60 + epoc.second) , step) == 0:
                 good_line = True
             else:
                 good_line = False
@@ -1324,8 +1332,7 @@ def read_erp2(caminho_arq,ac=None):
                                          'X-RT','Y-RT','S-XR','S-YR',
                                          'Delivered_date'])
 
-    
-    file.close()
+        
     return Erp_end
     
     

@@ -32,6 +32,8 @@ import math
 import numpy as np
 import os 
 import pandas as pd
+import scipy
+from scipy.spatial.transform import Rotation
 import string
 import struct
 import subprocess
@@ -175,7 +177,7 @@ def numpy_datetime2dt(npdtin):
         typ=utils.get_type_smart(npdtin)
         return typ([numpy_datetime2dt(e) for e in npdtin])
     else:
-        python_datetime = npdtin.astype('M8[ms]').astype('O') 
+        python_datetime = npdtin.astype('M8[us]').astype('O') 
     return python_datetime
 
 
@@ -201,6 +203,12 @@ def numpy_dt2dt(numpy_dt_in):
     
     https://gist.github.com/blaylockbk/1677b446bc741ee2db3e943ab7e4cabd
     """
+    
+    if utils.is_iterable(numpy_dt_in):        
+        typ=utils.get_type_smart(numpy_dt_in)
+        return typ([numpy_dt2dt(e) for e in numpy_dt_in])
+    
+    
     timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
                  / np.timedelta64(1, 's'))
     return dt.datetime.utcfromtimestamp(timestamp)
@@ -437,6 +445,12 @@ def datetime_improved(y=0,mo=0,d=0,h=0,mi=0,s=0,ms=0):
     except:
         return dt.datetime(1970,1,1) # si ca deconne, si on donne un NaN par ex
             
+  
+def ymdhms2dt():
+    print("it is called datetime_improved, change the name ASAP !!!")
+    return None
+    
+
 def dt2ymdhms(dtin,with_microsec = True):
     """
     Time conversion
@@ -783,7 +797,7 @@ def utc2gpstime(year,month,day,hour,min,sec):
     return int(gpsweek),int(gpssecs)
 
 
-def dt2gpstime(dtin,dayinweek=True,inp_ref="utc"):
+def dt2gpstime(dtin,dayinweek=True,inp_ref="utc",outputtype=int):
     
     """
     Time conversion
@@ -836,9 +850,9 @@ def dt2gpstime(dtin,dayinweek=True,inp_ref="utc"):
             
         if dayinweek:
             day = np.floor(np.divide(secs,86400))
-            return int(week) , int(day)
+            return outputtype(int(week)) , outputtype(int(day))
         else:
-            return int(week) , int(secs)
+            return outputtype(int(week)) , outputtype(int(secs))
 
 
 
@@ -2118,6 +2132,110 @@ def epo_epos_converter(inp,inp_type="mjd",out_type="yyyy",verbose=False):
     return out
 
 
+ #  _______ _                   _____           _             _____       _                        _       _   _             
+ # |__   __(_)                 / ____|         (_)           |_   _|     | |                      | |     | | (_)            
+ #    | |   _ _ __ ___   ___  | (___   ___ _ __ _  ___  ___    | |  _ __ | |_ ___ _ __ _ __   ___ | | __ _| |_ _  ___  _ __  
+ #    | |  | | '_ ` _ \ / _ \  \___ \ / _ \ '__| |/ _ \/ __|   | | | '_ \| __/ _ \ '__| '_ \ / _ \| |/ _` | __| |/ _ \| '_ \ 
+ #    | |  | | | | | | |  __/  ____) |  __/ |  | |  __/\__ \  _| |_| | | | ||  __/ |  | |_) | (_) | | (_| | |_| | (_) | | | |
+ #    |_|  |_|_| |_| |_|\___| |_____/ \___|_|  |_|\___||___/ |_____|_| |_|\__\___|_|  | .__/ \___/|_|\__,_|\__|_|\___/|_| |_|
+ #                                                                                    | |                                    
+ #                                                                                    |_|                                    
 
 
 
+class interp1d_time(scipy.interpolate.interp1d):
+    """
+    Interpolation with datetime as inputs
+
+    
+    This class inherites from scipy.interpolate.interp1d
+    and can take as input datetime as X
+    
+    P. Sakic 2019-01
+    """
+    def __init__(self, x, y, kind='linear', axis=-1,
+                 copy=True, bounds_error=None, fill_value=np.nan,
+                 assume_sorted=False):
+        
+        ### x (time) is converted as an array
+        #x = np.array(x)
+        
+        ### the datetime is converted to posix
+        if isinstance(x[0],dt.datetime):
+            xposix = dt2posix(x)
+        elif isinstance(x[0],np.datetime64):
+            xposix = dt2posix(numpy_dt2dt(x))
+        else:
+            xposix = x
+        
+        super().__init__(xposix, y, kind=kind, axis=axis,
+                 copy=copy, bounds_error=bounds_error, fill_value=fill_value,
+                 assume_sorted=assume_sorted)
+        
+    def __call__(self,x):
+        ### x (time) is converted as an array
+        #x = np.array(x)
+        
+        ### the datetime is converted to posix
+        if isinstance(x[0],dt.datetime):
+            xposix = dt2posix(x)
+        elif isinstance(x[0],np.datetime64):
+            xposix = dt2posix(numpy_dt2dt(x))
+        else:
+            xposix = x
+        
+        return super().__call__(xposix)
+    
+
+   
+class Slerp_time(scipy.spatial.transform.Slerp):
+    """
+    Slerp interpolation (for quaterinons) with datetime as inputs
+    
+    This class inherites from scipy.spatial.transform.Slerp
+    and can take as input datetime as X
+    
+    P. Sakic 2019-01
+    """
+    
+    def __init__(self, times, rotations,extrapolate=True):   
+        
+        ### time is converted as an array
+        times = np.array(times)
+        
+        ### the datetime is converted to posix
+        if isinstance(times[0],dt.datetime):
+            times_posix = dt2posix(times)
+        elif isinstance(times[0],np.datetime64):
+            times_posix = dt2posix(numpy_dt2dt(times))
+        else:
+            times_posix = times
+        
+        #### For the extrapolation 
+        # first value => begining of posix era
+        # last value => end of posix era 
+        if extrapolate:
+            times_posix = np.array(times_posix)
+            times_posix = np.insert(times_posix,0,0.)
+            times_posix = np.append(times_posix,2147483646.)
+            
+            rotations_list = list(rotations)
+            rotations_list.insert(0,rotations_list[0])
+            rotations_list.append(rotations_list[-1])
+            rotations = Rotation.from_quat([r.as_quat() for r in rotations_list])
+            
+        super().__init__(times_posix, rotations)
+        
+    def __call__(self,times):
+        ### time is converted as an array
+        times = np.array(times)
+        
+        if isinstance(times[0],dt.datetime):
+            times_posix = dt2posix(times)
+        elif isinstance(times[0],np.datetime64):
+            times_posix = dt2posix(numpy_dt2dt(times))
+        else:
+            times_posix = times
+            
+        return super().__call__(times_posix)
+    
