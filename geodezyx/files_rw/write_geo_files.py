@@ -189,7 +189,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
     if not outname:
         outpath_opera = outpath
     elif outname == 'auto_old_cnv':
-        week , dow = geok.dt2gpstime(start_dt)
+        week , dow = conv.dt2gpstime(start_dt)
         filename = prefix_opera + str(week) + str(dow) + '.sp3'
         outpath_opera = os.path.join(outpath,filename)
         
