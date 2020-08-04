@@ -436,9 +436,9 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                     print("ERROR with day",dat)
                     continue
                 
-                SP3     = files_rw.read_sp3(p1)
-                SP3_bef = files_rw.read_sp3(p_bef)
-                SP3_aft = files_rw.read_sp3(p_aft)
+                SP3     = read_sp3(p1)
+                SP3_bef = read_sp3(p_bef)
+                SP3_aft = read_sp3(p_aft)
                 
                 SP3_bef = SP3_bef[SP3_bef["epoch"] < SP3["epoch"].min()]
                 SP3_aft = SP3_aft[SP3_aft["epoch"] > SP3["epoch"].max()]
@@ -491,7 +491,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 fil_out = dir_out_wk + "/" + suffix_out  + wwwwd_str + ".sp3"
                 print("8)) outputed file")
                 print(fil_out)
-                files_rw.write_sp3(SP3concat,fil_out)
+                write_sp3(SP3concat,fil_out)
                 
                 #### system separated
                 if False:
@@ -501,7 +501,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                             fil_out_sys = dir_out_wk + "/" + suffix_out[:2] + sys.lower() + wwwwd_str + ".sp3"
                             print("9)) outputed file")
                             print(fil_out_sys)
-                            files_rw.write_sp3(SP3concat_sys,fil_out_sys)
+                            write_sp3(SP3concat_sys,fil_out_sys)
                         except:
                             continue
             
