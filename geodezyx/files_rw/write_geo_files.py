@@ -33,16 +33,22 @@ def write_sndy_light_dat(ts_in,outdir,outprefix):
                 fil.write(lin + '\n')
     fil.close()
     
-def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
+def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
+              skip_null_epoch=True,force_format_c=False):
     """
     Write DOCSTRING
+
+    outname : None = outpath is the full path (directory + filename) of the outputfile
+             'auto_old_cnv' = automatically generate the filename (old convention)
+             'auto_new_cnv' = automatically generate the filename (new convention)
+             
+    prefix : the output name of the AC
     
     skip_null_epoch: Do not write an epoch if all sats are null (filtering)
 
     """
     ################## MAIN DATA
     LinesStk = []
-
 
     SP3_DF_wrk = SP3_DF_in.sort_values(["epoch","sat"])
 
@@ -176,7 +182,22 @@ def write_sp3(SP3_DF_in,outpath,skip_null_epoch=True,force_format_c=False):
 
     FinalStr = "".join(FinalLinesStk)
 
-    F = open(outpath,"w+")
+
+    ### Manage the file path
+    prefix_opera = prefix
+    
+    if not outname:
+        outpath_opera = outpath
+    elif outname == 'auto_old_cnv':
+        week , dow = geok.dt2gpstime(start_dt)
+        filename = prefix_opera + str(week) + str(dow) + '.sp3'
+        outpath_opera = os.path.join(outpath,filename)
+        
+    elif outname == 'auto_new_cnv':
+        print("ERR: not implemented yet !!!!!")
+        raise Exception
+        
+    F = open(outpath_opera,"w+")
     F.write(FinalStr)
     
     
