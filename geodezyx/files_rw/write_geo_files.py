@@ -57,7 +57,10 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
     SatList    = list(reversed(SatList))
     SatListSet = set(SatList)
     EpochUsedList = []
-
+    
+    if not "clk" in SP3_DF_wrk.columns:
+        SP3_DF_wrk["clk"] = 999999.999999
+    
     for epoc in EpochRawList:
         SP3epoc   = pd.DataFrame(SP3_DF_wrk[SP3_DF_wrk["epoch"] == epoc])
         ## Missing Sat
