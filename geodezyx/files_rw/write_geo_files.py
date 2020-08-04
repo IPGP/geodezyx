@@ -354,7 +354,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
     dir_out : str
          where the output sp3 will be outputed.
     suffix_out_input : str, optional
-        last char of the 3-char. code. The default is None, then it is s.
+        last char of the 3-char. code. if None, then it is the same as input.
     overlap_size : int, optional
         Overlapsize. The default is 7200.
     force : True, optional
@@ -381,9 +381,9 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         Lfile = utils.find_recursive(dir_in,"*" + ac + "*sp3")
         
         if not suffix_out_input:
-            suffix_out = ac[:2] + "s" 
+            suffix_out = ac
         else:
-            suffix_out = suffix_out_input
+            suffix_out = ac[:2] + suffix_out_input
         
         D     = []
         WWWWD = []
