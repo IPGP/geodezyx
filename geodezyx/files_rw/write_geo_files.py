@@ -10,6 +10,7 @@ Created on Fri Aug  2 18:00:21 2019
 from geodezyx import conv
 from geodezyx import operational
 from geodezyx import utils
+from geodezyx import files_rw
 
 #### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
@@ -137,10 +138,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
         satline = "+  {:3}   ".format(nbsat4line) + "".join(SatLine) + complem + "\n"
         sigmaline = "++         0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0\n"
         sigmaline = "++       " + SatLineSigma + complem  + "\n"
-
-
-
-
+        
         Satline_stk.append(satline)
         Sigmaline_stk.append(sigmaline)
 
@@ -335,5 +333,183 @@ def write_ine_dummy_file(Sat_list,dt_in,extra_intrvl_strt=.1,
 
     return str_out
 
+def sp3_overlap_creator(ac_list,dir_in,dir_out,
+                        suffix_out_input = None,
+                        overlap_size = 7200,
+                        force = False,
+                        common_sats_only=True,
+                        eliminate_null_sat=True,
+                        severe=False,
+                        separated_systems_export=False):
+    """
+    Parameters
+    ----------
+    ac_list : list
+        3-character codes of the ACs.
+    dir_in : str
+        where the input sp3 are.
+    dir_out : str
+         where the output sp3 will be outputed.
+    suffix_out_input : str, optional
+        last char of the 3-char. code. if None, then it is the same as input.
+    overlap_size : int, optional
+        Overlapsize. The default is 7200.
+    force : True, optional
+        force overwrite. The default is False.
+    common_sats_only : True, optional
+        generate a file with only the common sat between the 3 days.
+        The default is True.
+    eliminate_null_sat : bool, optional
+        eliminate null sat. The default is True.
+    severe : bool, optional
+        raise an exception if problem. The default is False.
+    separated_systems_export : bool, optional
+        export different sp3 for different system. The default is False.
 
+    Returns
+    -------
+    None.
+
+    """
+    
+
+
+    for ac in ac_list:
+        Lfile = utils.find_recursive(dir_in,"*" + ac + "*sp3")
+        
+        if not suffix_out_input:
+            suffix_out = ac
+        else:
+            suffix_out = ac[:2] + suffix_out_input
+        
+        D     = []
+        WWWWD = []
+            
+        for sp3 in Lfile:
+            wwwwd_str = os.path.basename(sp3)[3:8]
+            D.append(conv.gpstime2dt(int(wwwwd_str[:4]),int(wwwwd_str[4:])))
+            
+            
+        for dat in D[1:-1]: ####if selection manuel, zip > 2lists !!!
+            try:
+                print("******",ac,dat)
+                
+                if conv.dt2gpstime(dat)[0] < 1800:
+                    print("SKIP",dat)
+                    continue
+                    
+                wwwwd_str = conv.dt_2_sp3_datestr(dat)
+            
+                dat_bef = dat - dt.timedelta(days=1)
+                dat_aft = dat + dt.timedelta(days=1)
+                
+                wwwwd_str_bef = utils.join_improved("",*conv.dt2gpstime(dat_bef))
+                wwwwd_str_aft = utils.join_improved("",*conv.dt2gpstime(dat_aft))
+                
+                
+                ###### check if exsists
+                dir_out_wk = os.path.join(dir_out,"wk" + str(wwwwd_str)[:4])
+                utils.create_dir(dir_out_wk)
+                fil_out = dir_out_wk + "/" + suffix_out  + wwwwd_str + ".sp3"
+                
+                if not force and os.path.isfile(fil_out):
+                    print("0))",fil_out,"exsists, skipping...")
+                    continue
+
+
+                ### *************** STEP 1 ***************
+                print("1)) Search for the days before/after")                
+                print("1))",dat_bef,dat_aft)
+                
+                p1    = utils.find_regex_in_list(wwwwd_str     + ".sp3",Lfile,True)
+                p_bef = utils.find_regex_in_list(wwwwd_str_bef + ".sp3",Lfile,True)
+                p_aft = utils.find_regex_in_list(wwwwd_str_aft + ".sp3",Lfile,True)
+
+                print("1)) Files found for the days before/after")                            
+                print("0b)",p_bef)
+                print("01)",p1)
+                print("0a)",p_aft)
+            
+                if not p1 or not p_bef or not p_aft:
+                    print("ERROR with day",dat)
+                    continue
+                
+                SP3     = files_rw.read_sp3(p1)
+                SP3_bef = files_rw.read_sp3(p_bef)
+                SP3_aft = files_rw.read_sp3(p_aft)
+                
+                SP3_bef = SP3_bef[SP3_bef["epoch"] < SP3["epoch"].min()]
+                SP3_aft = SP3_aft[SP3_aft["epoch"] > SP3["epoch"].max()]
+                
+                SP3concat = pd.concat((SP3_bef,SP3,SP3_aft))
+                
+                dat_filter_bef = dat - dt.timedelta(seconds=overlap_size)
+                dat_filter_aft = dat + dt.timedelta(seconds=overlap_size) + dt.timedelta(days=1)
+
+                ### *************** STEP 2 ***************
+                print("2)) dates of the overlap period before/after")                   
+                print("2))",dat_filter_bef,dat_filter_aft)
+
+                ### *************** STEP 3 *************** 
+                print("3)) Dates of: SP3 concatenated, before, current, after")                       
+                print("3))",SP3concat["epoch"].min(),SP3concat["epoch"].max())
+                print("3b)",SP3_bef["epoch"].min(),SP3_bef["epoch"].max())
+                print("31)",SP3["epoch"].min(),SP3["epoch"].max())
+                print("3a)",SP3_aft["epoch"].min(),SP3_aft["epoch"].max())
+                
+                SP3concat = SP3concat[(SP3concat["epoch"] >= dat_filter_bef) & (SP3concat["epoch"] <= dat_filter_aft)]
+                
+                if common_sats_only:           
+                    common_sats = set(SP3_bef["sat"]).intersection(set(SP3["sat"])).intersection(set(SP3_aft["sat"]))
+                    SP3concat = SP3concat[SP3concat["sat"].isin(common_sats)]
+                    
+                    
+                if eliminate_null_sat:
+                    GoodSats = []
+                    for sat in SP3concat["sat"].unique():
+                        XYZvals = SP3concat[SP3concat["sat"] == sat][["x","y","z"]].sum(axis=1)
+                        
+                        V = np.sum(np.isclose(XYZvals,0)) / len(XYZvals)
+                                            
+                        if V < 0.50:
+                            GoodSats.append(sat)
+                        else:
+                            print("6) eliminate because null position",sat)
+                        
+                    SP3concat = SP3concat[SP3concat["sat"].isin(GoodSats)]
+
+
+                ### *************** STEP 7 ***************           
+                print("7))","Start/End Epoch of the concatenated file ")                                     
+                print("7))",SP3concat["epoch"].min(),SP3concat["epoch"].max())
+
+                #### All systems        
+                dir_out_wk = os.path.join(dir_out,"wk" + str(wwwwd_str)[:4])
+                utils.create_dir(dir_out_wk)
+                fil_out = dir_out_wk + "/" + suffix_out  + wwwwd_str + ".sp3"
+                print("8)) outputed file")
+                print(fil_out)
+                write_sp3(SP3concat,fil_out)
+                
+                #### system separated
+                if False:
+                    for sys in SP3concat["const"].unique():
+                        try:
+                            SP3concat_sys = SP3concat[SP3concat["const"] == sys]
+                            fil_out_sys = dir_out_wk + "/" + suffix_out[:2] + sys.lower() + wwwwd_str + ".sp3"
+                            print("9)) outputed file")
+                            print(fil_out_sys)
+                            write_sp3(SP3concat_sys,fil_out_sys)
+                        except:
+                            continue
+            
+            except KeyboardInterrupt:
+                raise KeyboardInterrupt
+                
+            except Exception as e:
+                if severe:
+                    raise e
+                else:
+                    print("ERR:",e)
+                    raise e
 
