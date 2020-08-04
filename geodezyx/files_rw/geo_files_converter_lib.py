@@ -2201,7 +2201,7 @@ def read_sinex_versatile(sinex_path_in , id_block,
         DF.rename(columns={DF.columns[0]:DF.columns[0][1:]}, inplace=True)
 
     else: # no header in the SINEX
-        DF = pd.read_csv(StringIO(Lines_str),header=-1 ,
+        DF = pd.read_csv(StringIO(Lines_str),header=None ,
                              delim_whitespace=True)
 
 

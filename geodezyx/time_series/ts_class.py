@@ -321,7 +321,7 @@ class TimeSeriePoint:
         self.bool_interp_uptodate = False
 
     def aleapt(self):
-        ipt = randrange(self.nbpts)
+        ipt = np.random.randint(self.nbpts)
         print("point no " + str(ipt))
 
         return self.pts[ipt]

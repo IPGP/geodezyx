@@ -673,6 +673,7 @@ def orbclk_long2short_name(longname_filepath_in,
                            center_id_last_letter=None,
                            center_manual_short_name=None,
                            force=False,
+                           dryrun=False,
                            output_dirname=None):
     """
     Rename a long naming new convention IGS product file to the short old
@@ -699,6 +700,9 @@ def orbclk_long2short_name(longname_filepath_in,
         
     force : bool
         if False, skip if the file already exsists
+
+    dryrun : bool
+        if True, don't rename effectively, just output the new name
         
     output_dirname : str
         directory where the output shortname will be created
@@ -776,10 +780,11 @@ def orbclk_long2short_name(longname_filepath_in,
         print("     ",shortname_filepath,"already exists")        
         return shortname_filepath
     
-    print("INFO : renaming" , longname_filepath_in,"=>",shortname_filepath)
-    shutil.copy2(longname_filepath_in , shortname_filepath)
+    if not dryrun:
+        print("INFO : renaming" , longname_filepath_in,"=>",shortname_filepath)
+        shutil.copy2(longname_filepath_in , shortname_filepath)
 
-    if rm_longname_file:
+    if rm_longname_file and not dryrun:
         print("INFO : remove " , longname_filepath_in)
         os.remove(longname_filepath_in)
 

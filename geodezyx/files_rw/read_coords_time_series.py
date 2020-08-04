@@ -129,9 +129,11 @@ def read_rtklib(filein):
 
         fields = line.split()
         date1 = re.findall(r"[\w']+",fields[0] + ':' + fields[1])
-        date2 = tuple([int(d) for d in date1])
+        date2 = tuple([int(d) for d in date1[:-1]] + [int(date1[-1][:6])])
+        
+        print(date2)
 
-        T = (dt.datetime(date2[0],date2[1],date2[2],date2[3],date2[4],date2[5],date2[6]*1000) + dt.timedelta(seconds=dUTCGPS))
+        T = (dt.datetime(date2[0],date2[1],date2[2],date2[3],date2[4],date2[5],date2[6]) + dt.timedelta(seconds=dUTCGPS))
         A = (float(fields[2]))
         B = (float(fields[3]))
         C = (float(fields[4]))
@@ -725,7 +727,7 @@ def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
                                              int(l["MJD_ref"]),
                                              int(MJD_start),
                                              int(MJD_end),
-                                             int(l["site"]),
+                                             l["site"],
                                              pt,
                                              int(iope))
             
