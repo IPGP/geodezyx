@@ -10,6 +10,7 @@ Created on Fri Aug  2 18:00:21 2019
 from geodezyx import conv
 from geodezyx import operational
 from geodezyx import utils
+from geodezyx import files_rw
 
 #### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
@@ -436,9 +437,9 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                     print("ERROR with day",dat)
                     continue
                 
-                SP3     = read_sp3(p1)
-                SP3_bef = read_sp3(p_bef)
-                SP3_aft = read_sp3(p_aft)
+                SP3     = files_rw.read_sp3(p1)
+                SP3_bef = files_rw.read_sp3(p_bef)
+                SP3_aft = files_rw.read_sp3(p_aft)
                 
                 SP3_bef = SP3_bef[SP3_bef["epoch"] < SP3["epoch"].min()]
                 SP3_aft = SP3_aft[SP3_aft["epoch"] > SP3["epoch"].max()]
