@@ -1861,7 +1861,5 @@ def read_bernese_trp(trpfile):
 
 
 
-
-
  
 
