@@ -987,7 +987,8 @@ def gpsweek_decimal2dt(gpsweekdec_in):
         week_floor    = np.floor(gpsweekdec_in)
         week_dec_part = gpsweekdec_in - week_floor 
         
-        dt_out = gpstime2dt(week_floor,week_dec_part * 7)
+        dt_out = gpstime2dt(week_floor,week_dec_part * 7 *86400,
+                            dow_input = False)
         return dt_out
     
 
@@ -2151,14 +2152,14 @@ class interp1d_time(scipy.interpolate.interp1d):
     This class inherites from scipy.interpolate.interp1d
     and can take as input datetime as X
     
-    P. Sakic 2019-01
+    P. Sakic 2020-01
     """
     def __init__(self, x, y, kind='linear', axis=-1,
                  copy=True, bounds_error=None, fill_value=np.nan,
                  assume_sorted=False):
         
         ### x (time) is converted as an array
-        #x = np.array(x)
+        x = np.array(x)
         
         ### the datetime is converted to posix
         if isinstance(x[0],dt.datetime):
@@ -2195,7 +2196,7 @@ class Slerp_time(scipy.spatial.transform.Slerp):
     This class inherites from scipy.spatial.transform.Slerp
     and can take as input datetime as X
     
-    P. Sakic 2019-01
+    P. Sakic 2020-01
     """
     
     def __init__(self, times, rotations,extrapolate=True):   

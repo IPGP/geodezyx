@@ -1913,7 +1913,5 @@ def read_rinex_met_2(metfile):
 
 
 
-
-
  
 
