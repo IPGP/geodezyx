@@ -26,11 +26,31 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
 
+########## BEGIN IMPORT ##########
+#### External modules
+import math
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+
+try:
+    from mpl_toolkits.basemap import Basemap
+except:
+    pass
+
+from matplotlib.patches import Ellipse
+
+#### geodeZYX modules
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-from matplotlib.patches import Ellipse
+##########  END IMPORT  ##########
+
+
 
 
 
@@ -41,14 +61,14 @@ from matplotlib.patches import Ellipse
 def landmask(M, color='0.8'):
 
    # Make a constant colormap, default = grey
-   constmap = pl.matplotlib.colors.ListedColormap([color])
+   constmap = matplotlib.colors.ListedColormap([color])
 
    jmax, imax = M.shape
    # X and Y give the grid cell boundaries,
    # one more than number of grid cells + 1
    # half integers (grid cell centers are integers)
-   X = -0.5 + pl.arange(imax+1)
-   Y = -0.5 + pl.arange(jmax+1)
+   X = -0.5 + np.arange(imax+1)
+   Y = -0.5 + np.arange(jmax+1)
 
    # Draw the mask by pcolor
    M = ma.masked_where(M > 0, M)
@@ -61,7 +81,9 @@ def landmask(M, color='0.8'):
 # Colormap, smlgn. med Rob Hetland
 
 def LevelColormap(levels, cmap=None):
-    """Make a colormap based on an increasing sequence of levels"""
+    """
+    Make a colormap based on an increasing sequence of levels
+    """
     
     # Start with an existing colormap
     if cmap == None:
@@ -69,11 +91,11 @@ def LevelColormap(levels, cmap=None):
 
     # Spread the colours maximally
     nlev = len(levels)
-    S = pl.arange(nlev, dtype='float')/(nlev-1)
+    S = np.arange(nlev, dtype='float')/(nlev-1)
     A = cmap(S)
 
     # Normalize the levels to interval [0,1]
-    levels = pl.array(levels, dtype='float')
+    levels = np.array(levels, dtype='float')
     L = (levels-levels[0])/(levels[-1]-levels[0])
 
     # Make the colour dictionary
@@ -108,9 +130,11 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
              adjust_text=False,
              pixels_hires_backgrnd=2000,
              draw_borders=True,
-             full_return=False):
+             full_return=False,
+             draw_latlon_lines=True):
     """
     """
+    
     
     nstation = len(station_etude)
     fig,ax=plt.subplots(figsize=(7,8))  
@@ -160,12 +184,14 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
         fond = m.pcolormesh(longs_gr,lats_gr,gebco,shading='flat',cmap=LevelColormap(list(np.asarray(levels)*(1)),cmap=cm.deep_r),latlon=True) #ice,deep
         cbar=m.colorbar(location='top',pad=0.5)
         cbar.set_label('Depth [m] ', rotation=0)
-    m.drawparallels(np.arange(latm,latM,1.),fontsize=10,color=color1,labels=[True,False,False,False],linewidth=0.25, dashes=[10000,1]) #de -180 a 360 par pas de 5° ;   
-    m.drawmeridians(np.arange(lonm,lonM,1.),fontsize=10,color=color1,labels=[False,False,False,True],linewidth=0.25, dashes=[10000,1]) # Haut / G/D/BAS 
-    ### Labels
-    plt.xlabel('Longitude (°) ',labelpad=25,fontsize=10)
-    plt.ylabel('Latitude (°) ',labelpad=40,fontsize=10)
-    ax.yaxis.set_label_position("left")
+        
+    if draw_latlon_lines:
+        m.drawparallels(np.arange(latm,latM,1.),fontsize=10,color=color1,labels=[True,False,False,False],linewidth=0.25, dashes=[10000,1]) #de -180 a 360 par pas de 5° ;   
+        m.drawmeridians(np.arange(lonm,lonM,1.),fontsize=10,color=color1,labels=[False,False,False,True],linewidth=0.25, dashes=[10000,1]) # Haut / G/D/BAS 
+        ### Labels
+        plt.xlabel('Longitude (°) ',labelpad=25,fontsize=10)
+        plt.ylabel('Latitude (°) ',labelpad=40,fontsize=10)
+        ax.yaxis.set_label_position("left")
        
     all_posx_proj=[0]*nstation
     all_posy_proj=[0]*nstation
@@ -246,7 +272,6 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                 e.set_alpha(0.3)
                 e.set_zorder(1) 
             
-            
     else:# Champ de vitesses verticales ITRF	   
         ############### PLOT FLECHES
         Text = []
@@ -260,7 +285,6 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                 print("INFO : exclude point because out of range")
                 continue
         
-            
             ######### AJUSTEMENT SI FLECHES TROP GRANDES
             x_end_arrow , y_end_arrow = all_posx_proj[i],all_posy_proj[i]+np.multiply(plot_vertical_ITRF[i],scale_arrow)
             
@@ -268,7 +292,6 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                                                               x_end_arrow,
                                                               y_end_arrow,
                                                               inverse=True) 
-            
             if (y_end_axis_ref < 0.) and shorten_oversized_arrows:
                 shortened_arrow = True
                 x_end_arrow_ok = x_end_arrow
@@ -308,14 +331,11 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                       annotation_clip=False)
             #xy point arrivee de la fleche, xytext l'origine de la fleche
                 
-                    
             ### STATION NAME
             if name_stats:
                 offset_x_ok , offset_y_ok = utils.axis_data_coords_sys_transform(ax,
                                                                               name_stats_offset[0],
                                                                               name_stats_offset[1])
-                
-                
                 Text.append(plt.text(all_posx_proj[i] + offset_x_ok,
                          all_posy_proj[i] + offset_y_ok,
                          station_etude[i], fontsize=name_stats_font_size))
@@ -373,8 +393,8 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
     verticalalignment='top', bbox=props)
     ells_legend = Ellipse(xy=[xe,ye],
                           width=np.multiply(2,np.multiply(legend_ellipse_size_metric,scale_ellipse)), 
-                          height=np.multiply(2,np.multiply(legend_ellipse_size_metric,scale_ellipse)),
-                          angle=a)
+                          height=np.multiply(2,np.multiply(legend_ellipse_size_metric,scale_ellipse)))
+                          #angle=a)
         
     if plot_ellipses:
         ax.add_artist(ells_legend)
@@ -556,3 +576,8 @@ def split_grid(lo,la,gr,fact):
         new_lo.append(lo[k*fact])
         
     return (new_lo,new_la,new_grid)
+
+
+
+########################################################################
+

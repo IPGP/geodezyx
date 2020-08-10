@@ -14,13 +14,32 @@ Created on Fri Aug 16 11:47:40 2019
 #|_|  \_\_____|_| \_|______/_/ \_\ |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|
 
 
+
+
+
+
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+from ftplib import FTP
+import glob
+import itertools
+import multiprocessing as mp
+import os 
+import re
+import shutil
+import urllib
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-import urllib
-from ftplib import FTP
-import multiprocessing as mp
+##########  END IMPORT  ##########
 
 
 
@@ -32,28 +51,28 @@ import multiprocessing as mp
 def igs_garner_server(stat,date):
     # plante si trop de requete
     urlserver = "ftp://garner.ucsd.edu/pub/rinex/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join( urlserver , str(date.year) , geok.dt2doy(date) , rnxname )
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join( urlserver , str(date.year) , conv.dt2doy(date) , rnxname )
     return url
 
 def igs_cddis_server(stat,date):
     # a privilegier
     urlserver = "ftp://cddis.gsfc.nasa.gov/gps/data/daily/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , date.strftime('%y') + 'd' , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , date.strftime('%y') + 'd' , rnxname)
     return url
 
 def igs_cddis_nav_server(stat,date):
     # a privilegier
     urlserver = "ftp://cddis.gsfc.nasa.gov/gps/data/daily/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date,'n.Z')
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , date.strftime('%y') + 'n' , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date,'n.Z')
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , date.strftime('%y') + 'n' , rnxname)
     return url
 
 def rgp_ign_smn_server(stat,date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , 'data_30' , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , 'data_30' , rnxname)
     return url
 
 def rgp_ign_smn_1Hz_server(stat,date):
@@ -66,9 +85,9 @@ def rgp_ign_smn_1Hz_server(stat,date):
         date_session = date_session.replace(hour=h)
 
         print(date_session , 'session' , h)
-        rnxname = geok.statname_dt2rinexname(stat.lower(),date_session ,
+        rnxname = conv.statname_dt2rinexname(stat.lower(),date_session ,
                                              session_a_instead_of_daily_session = 1)
-        url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) ,
+        url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) ,
                            'data_1' , rnxname)
 
         urls.append(url)
@@ -77,20 +96,20 @@ def rgp_ign_smn_1Hz_server(stat,date):
 
 def unavco_server(stat,date):
     urlserver='ftp://data-out.unavco.org/pub/rinex'
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , 'obs', str(date.year) , geok.dt2doy(date) , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , 'obs', str(date.year) , conv.dt2doy(date) , rnxname)
     return url
 
 def renag_server(stat,date):
     urlserver = "ftp://renag.unice.fr/data/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , rnxname)
     return url
 
 def orpheon_server(stat,date,user='',passwd=''):
     urlserver = "ftp://renag.unice.fr/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , rnxname)
     return url,user,passwd
 
 def ovsg_server(stat,date,user='',passwd=''):
@@ -98,23 +117,23 @@ def ovsg_server(stat,date,user='',passwd=''):
         urlserver = "http://webobs.ovsg.univ-ag.fr/rawdata/GPS-GPSDATA.backtemp_20140210/"
     else:
         urlserver = "http://webobs.ovsg.univ-ag.fr/rawdata/GPS/GPSDATA/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , geok.dt2doy(date) , 'rinex' , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , 'rinex' , rnxname)
     return url,user,passwd
 
 def geoaus_server(stat,date):
     """ Geosciences Australia
         ex : ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/ """
     urlserver = "ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/"
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver , str(date.year) , date.strftime('%y') + geok.dt2doy(date) , rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , date.strftime('%y') + conv.dt2doy(date) , rnxname)
     return url
 
 def sonel_server(stat,date):
     """ex : ftp://ftp.sonel.org/gps/data/2015/001/ """
     urlserver = 'ftp://ftp.sonel.org/gps/data/'
-    rnxname = geok.statname_dt2rinexname(stat.lower(),date)
-    url = os.path.join(urlserver,str(date.year),geok.dt2doy(date),rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver,str(date.year),conv.dt2doy(date),rnxname)
     return url
 
 def effective_save_dir(parent_archive_dir,stat,date,archtype ='stat'):
@@ -136,8 +155,8 @@ def effective_save_dir(parent_archive_dir,stat,date,archtype ='stat'):
     out_save_dir = parent_archive_dir
     fff = archtype.split('/')
     year = str(date.year)
-    doy = geok.dt2doy(date)
-    week, dow = geok.dt2gpstime(date)
+    doy = conv.dt2doy(date)
+    week, dow = conv.dt2gpstime(date)
     for f in fff:
         out_save_dir = os.path.join(out_save_dir,eval(f))
     return out_save_dir
@@ -169,7 +188,7 @@ def orbclk_cddis_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
         sp3clk = "eph"
 
     # date definition
-    week, day = geok.dt2gpstime(date)
+    week, day = conv.dt2gpstime(date)
 
     if force_weekly_file == False:
         pass
@@ -254,7 +273,7 @@ def orbclk_ign_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
         center     = list(center)
         center[-1] = str(repro)
         center = ''.join(center)
-    week, day = geok.dt2gpstime(date)
+    week, day = conv.dt2gpstime(date)
 
 
     if force_weekly_file == False:
@@ -325,7 +344,7 @@ def orbclk_igscb_server(date,center='gfz', sp3clk = 'sp3',repro=0):
         center     = list(center)
         center[-1] = str(repro)
         center = ''.join(center)
-    week, day = geok.dt2gpstime(date)
+    week, day = conv.dt2gpstime(date)
     if not 'igu' in center:
         orbname = center + str(week).zfill(4) + str(day) +'.' + sp3clk + '.Z'
         url = os.path.join(urlserver,str(week).zfill(4) ,rep_fldr,orbname)
@@ -345,7 +364,7 @@ def orbclk_gfz_local_server(date,center='gfz', sp3clk='sp3',repro=0):
         print("ERR : check the repro !!!")
         raise Exception
 
-    week, day = geok.dt2gpstime(date)
+    week, day = conv.dt2gpstime(date)
     
     orbname = center + str(week).zfill(4) + str(day) +'.' + sp3clk + '.Z'
     url = os.path.join(urlserver,str(week).zfill(4),orbname)
@@ -441,8 +460,8 @@ def downloader(url,savedir,force = False,
     return None
 
 def start_end_date_easy(start_year,start_doy,end_year,end_doy):
-    start = geok.doy2dt(start_year,start_doy)
-    end   = geok.doy2dt(end_year,end_doy)
+    start = conv.doy2dt(start_year,start_doy)
+    end   = conv.doy2dt(end_year,end_doy)
     return start , end
 
 
@@ -469,8 +488,8 @@ def effective_save_dir_orbit(parent_archive_dir,calc_center,date,
     out_save_dir = parent_archive_dir
     fff = archtype.split('/')
     year = str(date.year)
-    doy = geok.dt2doy(date)
-    week, dow = geok.dt2gpstime(date)
+    doy = conv.dt2doy(date)
+    week, dow = conv.dt2gpstime(date)
 
     for f in fff:
         if "wkwwww" in f:
@@ -617,7 +636,7 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
     #savedirlist = [x for (y,x) in sorted(zip(urllist,savedirlist))]
     #urllist     = sorted(urllist)
     
-    urllist,savedirlist = genefun.sort_binom_list(urllist,savedirlist)
+    urllist,savedirlist = utils.sort_binom_list(urllist,savedirlist)
 
     print(" ... done")
     print(len(urllist),"potential RINEXs")
@@ -649,9 +668,13 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
 #    return zip(urllist,savedirlist)
 
 
-def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
+def orbclk_long2short_name(longname_filepath_in,
+                           rm_longname_file=False,
                            center_id_last_letter=None,
-                           center_manual_short_name=None):
+                           center_manual_short_name=None,
+                           force=False,
+                           dryrun=False,
+                           output_dirname=None):
     """
     Rename a long naming new convention IGS product file to the short old
     convention
@@ -674,6 +697,16 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     center_manual_short_name : str
         replace completely the long name with this one
         overrides center_id_last_letter
+        
+    force : bool
+        if False, skip if the file already exsists
+
+    dryrun : bool
+        if True, don't rename effectively, just output the new name
+        
+    output_dirname : str
+        directory where the output shortname will be created
+        if None, will be created in the same folder as the input longname
 
     Returns
     -------
@@ -694,11 +727,15 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
 
     """
 
+    print("INFO : will rename" , longname_filepath_in)
+
     longname_basename = os.path.basename(longname_filepath_in)
     longname_dirname  = os.path.dirname(longname_filepath_in)
+    
+    if not output_dirname:
+        output_dirname = longname_dirname
 
     center = longname_basename[:3]
-
 
     if center_manual_short_name:
         center = center_manual_short_name
@@ -710,13 +747,13 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
     yyyy   = int(longname_basename.split("_")[1][:4])
     doy    = int(longname_basename.split("_")[1][4:7])
 
+    day_dt = conv.doy2dt(yyyy,doy)
 
-    day_dt = geok.doy2dt(yyyy,doy)
-
-    wwww , dow = geok.dt2gpstime(day_dt)
+    wwww , dow = conv.dt2gpstime(day_dt)
 
     shortname_prefix = center.lower() + str(wwww) + str(dow)
 
+    ### Type handeling
     if   "SP3" in longname_basename:
         shortname = shortname_prefix + ".sp3"
     elif "CLK" in longname_basename:
@@ -729,18 +766,52 @@ def orbclk_long2short_name(longname_filepath_in,rm_longname_file=True,
         shortname = shortname_prefix + ".snx"
     else:
         print("ERR : filetype not found for",longname_basename)
+    
+    ### Compression handeling
+    if longname_basename[-3:] == ".gz":
+        shortname = shortname + ".gz"
+    elif longname_basename[-2:] == ".Z":
+        shortname = shortname + ".Z"
+        
+    shortname_filepath = os.path.join(output_dirname , shortname)
+    
+    if not force and os.path.isfile(shortname_filepath):
+        print("INFO : skip", longname_filepath_in)
+        print("     ",shortname_filepath,"already exists")        
+        return shortname_filepath
+    
+    if not dryrun:
+        print("INFO : renaming" , longname_filepath_in,"=>",shortname_filepath)
+        shutil.copy2(longname_filepath_in , shortname_filepath)
 
-    shortname_filepath = os.path.join(longname_dirname , shortname)
-
-    shutil.copy2(longname_filepath_in , shortname_filepath)
-    print("INFO : rename" , longname_filepath_in,"=>",shortname_filepath)
-
-
-    if rm_longname_file:
+    if rm_longname_file and not dryrun:
         print("INFO : remove " , longname_filepath_in)
         os.remove(longname_filepath_in)
 
     return shortname_filepath
+
+
+
+def rnx_long2short_name(longname_filepath_in):
+    """
+    MUST BE IMPROVED
+    """
+    
+    longname_basename = os.path.basename(longname_filepath_in)
+    longname_dirname  = os.path.dirname(longname_filepath_in)
+    
+    Longname_basename_splitted = longname_basename.split("_")
+    
+    datepart_str = Longname_basename_splitted[2]
+    yyyy = datepart_str[:4]
+    ddd  = datepart_str[4:7]
+
+    shortname_basename = longname_basename[:4].lower() + ddd + "0." + yyyy[2:] + "o"
+    
+    return os.path.join(longname_dirname,shortname_basename)
+    
+    
+    
 
 
 def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
@@ -947,7 +1018,7 @@ def multi_finder_rinex(main_dir,rinex_types=('o','d','d.Z','d.z'),
 
     But this one is the most elaborated , must be used in priority !!!
     """
-    files_raw_lis , _ = genefun.walk_dir(main_dir)
+    files_raw_lis , _ = utils.walk_dir(main_dir)
 
     yylis = [str(e).zfill(2) for e in list(range(80,100)) + list(range(0,dt.datetime.now().year - 2000 + 1))]
 
@@ -1004,16 +1075,16 @@ def multi_archiver_rinex(rinex_lis,parent_archive_dir,archtype='stat',
     print('INFO : RINEXs as input :' , len(rinex_lis))
 
     if move:
-        mv_fct = genefun.move
+        mv_fct = utils.move
     else:
-        mv_fct = genefun.copy2
+        mv_fct = utils.copy2
 
     for rnx in rinex_lis:
-        date = geok.rinexname2dt(rnx)
+        date = conv.rinexname2dt(rnx)
         rnxname = os.path.basename(rnx)
         stat = rnxname[0:4]
         savedir = effective_save_dir(parent_archive_dir, stat, date, archtype)
-        genefun.create_dir(savedir)
+        utils.create_dir(savedir)
 
         if not force_mv_or_cp and os.path.isfile(os.path.join(savedir,rnxname)):
             skip_cnt += 1
@@ -1029,19 +1100,21 @@ def multi_archiver_rinex(rinex_lis,parent_archive_dir,archtype='stat',
 
 
 def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
-                            recursive_search=True,severe=True):
+                            recursive_search=True,severe=True,
+                            compressed="incl",
+                            regex_old_naming = True,
+                            regex_new_naming = True,
+                            regex_igs_tfcc_naming = True):
     """
     Find all product files in a parent folder which correspond to file type(s),
     AC(s) and date(s)
-
-    Has to be improved for the new naming convention
 
     Parameters
     ----------
     parent_dir : str or list of str
         The parent directory (i.e. the archive) where files are stored
         can be a string (path of the archive) or a list of file paths
-        (given by the function genefun.find_recursive) in order to gain time
+        (given by the function utils.find_recursive) in order to gain time
 
 
     File_type : str or list of str
@@ -1068,6 +1141,14 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     
     severe : bool
         If True, raises an exception if something goes wrong
+
+    compressed : str
+        How the compressed files are handled
+        "incl": include the compressed files
+        "only": only consider the compressed files
+        "excl": exclude the compressed files
+        
+
         
     Naming_conv : str or list of str
 
@@ -1091,65 +1172,79 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     if type(date_start) is dt.datetime:
         date_start_ok = date_start
     else:
-        date_start_ok = geok.gpstime2dt(*date_start)
+        date_start_ok = conv.gpstime2dt(*date_start)
     ### date_end
     if not date_end:
         date_end_ok = date_start_ok
     elif type(date_end) is dt.datetime:
         date_end_ok = date_end
     else:
-        date_end_ok = geok.gpstime2dt(*date_end)
+        date_end_ok = conv.gpstime2dt(*date_end)
     ### generate time period with a while loop
     Dates_list = [date_start_ok]
     while Dates_list[-1] < date_end_ok:
         Dates_list.append(Dates_list[-1]  + dt.timedelta(days=1))
 
-    Dates_wwwwd_list = [genefun.join_improved("",*geok.dt2gpstime(d)) for d in Dates_list]
+    Dates_wwwwd_list   = [utils.join_improved("",*conv.dt2gpstime(d)) for d in Dates_list]
+    Dates_yyyyddd_list = [utils.join_improved("",*reversed(conv.dt2doy_year(d))) for d in Dates_list]
 
     ###### File type / ACs management ##############
 
-    if not genefun.is_iterable(File_type):
+    if not utils.is_iterable(File_type):
         File_type = [File_type]
-    if not genefun.is_iterable(ACs):
+    if not utils.is_iterable(ACs):
         ACs = [ACs]
 
     ###### General file search management ##############
-    if genefun.is_iterable(parent_dir):
+    if utils.is_iterable(parent_dir):
         FILE_LIST = parent_dir
     elif recursive_search:
         # All the files are listed first
-        FILE_LIST = genefun.find_recursive(parent_dir,".*",case_sensitive=False)
+        FILE_LIST = utils.find_recursive(parent_dir,".*",case_sensitive=False)
     else:
         FILE_LIST = glob.glob(parent_dir + "/*")
 
 
     ###### Regex Definition ##############
     
-    regex_old_naming = True
-    regex_new_naming = True
-    regex_igs_tfcc_naming = True
-    
     join_regex_and = lambda  L : "(" +  "|".join(L) + ")"
-    
-    #####
-    ##### WORK IN PROGESS HERE FOR THE REGEX DEFINTION FOR THE NEW NAMING CONVENTION
-    ##### AND THE FCT ARGUMENTS
-    #####
     
     Re_patt_big_stk = []
     
+    
+    ### compression handeling
+    if compressed == "excl":
+        re_patt_comp = "$"
+    elif compressed == "incl":
+        re_patt_comp = "(\.Z|\.gz|)$"
+    elif compressed == "only":
+        re_patt_comp = "(\.Z|\.gz)$"
+    else:
+        print("ERR : check 'compressed' keyword (excl,incl, or only)")
+        raise Exception
+        
     if regex_old_naming: 
         if ACs[0] == "all":
             re_patt_ac = "\w{3}"
         else:
-            re_patt_ac = join_regex_and(ACs)
+            re_patt_ac = join_regex_and([ac.lower() for ac in ACs])
         re_patt_date   = join_regex_and(Dates_wwwwd_list)
         re_patt_filtyp = join_regex_and(File_type)
-        re_patt_big_old_naming = ".*".join((re_patt_ac,re_patt_date,re_patt_filtyp))
+        re_patt_big_old_naming = re_patt_ac + re_patt_date + "\." + re_patt_filtyp + re_patt_comp
         Re_patt_big_stk.append(re_patt_big_old_naming)
-
+        
+    if regex_new_naming: ### search for new name convention
+        if ACs[0] == "all":
+            re_patt_ac = "\W{3}"        
+        else:
+            re_patt_ac = join_regex_and([ac.upper() for ac in ACs])
+        re_patt_date   = join_regex_and(["_"+e for e in Dates_yyyyddd_list]) #add _ because it can raise a conflit with the old format
+        re_patt_filtyp = join_regex_and([fil.upper() for fil in File_type])
+        re_patt_big_new_naming = ".*".join((re_patt_ac,re_patt_date,re_patt_filtyp + re_patt_comp))
+        Re_patt_big_stk.append(re_patt_big_new_naming)
+        
     if regex_igs_tfcc_naming:
-        Dates_yy_list = list(set([str(geok.gpstime2dt(int(e[0:4]),int(e[4])).year)[2:] for e in Dates_wwwwd_list]))
+        Dates_yy_list = list(set([str(conv.gpstime2dt(int(e[0:4]),int(e[4])).year)[2:] for e in Dates_wwwwd_list]))
         Dates_wwww_list = list(set([e[:-1] for e in Dates_wwwwd_list]))
         #Dates_wwww_dot_list = [e + "\." for e in Dates_wwww_list]
         re_patt_year = join_regex_and(Dates_yy_list)
@@ -1157,7 +1252,7 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
         re_patt_date = join_regex_and(Dates_wwwwd_list + Dates_wwww_list)
         re_patt_filtyp = "\." +  join_regex_and(File_type)
 
-        re_patt_big_igs_tfcc_naming = "igs" + re_patt_year + "P" + re_patt_date + ".*" + re_patt_filtyp
+        re_patt_big_igs_tfcc_naming = "igs" + re_patt_year + "P" + re_patt_date + ".*" + re_patt_filtyp + re_patt_comp
         Re_patt_big_stk.append(re_patt_big_igs_tfcc_naming)
 
     re_patt_big = join_regex_and(Re_patt_big_stk)
@@ -1215,7 +1310,7 @@ def FTP_downloader_wo_objects(tupin):
     return localpath , bool_dl
     
     
-
+    
 def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                             AC_names = ("wum","cod"),
                             prod_types = ("sp3","clk"),
@@ -1223,10 +1318,16 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                             archtype ='week',
                             new_name_conv = True,
                             parallel_download=4,
-                            archive_center='whu',
+                            archive_center='ign',
                             mgex=True,repro=0,sorted_mode=False,
                             return_also_uncompressed_files=True,
-                            ftp_download=False):
+                            ftp_download=False,
+                            dow_manu=False):
+    """
+    dow_manu = False, no dow manu, consider the converted dow from the time span, regular case
+    dow_manu = None, no dow in the REGEX, the crawler will search only for the week
+    dow_manu = 0 or 7: the dow in question    
+    """
     
     if mgex:
         mgex_str = "mgex/"
@@ -1239,6 +1340,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     if archive_center == "cddis":
         arch_center_main    = 'cddis.gsfc.nasa.gov'
         arch_center_basedir = '/pub/gps/products/' + mgex_str
+        
+    elif archive_center == "cddis_glonass":
+        arch_center_main    = 'cddis.gsfc.nasa.gov'
+        arch_center_basedir = '/pub/glonass/products/' + mgex_str
     
     elif archive_center == "ign":
         arch_center_main    = 'igs.ign.fr'
@@ -1252,8 +1357,15 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         arch_center_main    = "igs.gnsswhu.cn"
         arch_center_basedir = "/pub/gps/products/" + mgex_str
         
-        
-    print("INFO: data center used :",archive_center)
+    elif archive_center == "ign_rf":
+        arch_center_main    = 'igs-rf.ign.fr'
+        arch_center_basedir = '/pub/' + mgex_str  
+
+    elif archive_center == "ensg_rf":
+        arch_center_main    = 'igs-rf.ensg.ign.fr'
+        arch_center_basedir = '/pub/' + mgex_str
+
+    print("INFO : data center used :",archive_center)
 
     Dates_list = conv.dt_range(startdate,enddate)
 
@@ -1271,56 +1383,73 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         [f.login() for f in Ftp_obj_list]    
         # define the main obj for crawling
         ftp = Ftp_obj_list[0]
-            
-
-    ### Crawl day per day for files
-    for dat in Dates_list:
-
-        Files_remote_date_list = []
-        wwww , dow = conv.dt2gpstime(dat)
-        print("INFO: ","Find products for day",dat,wwww,dow)
+    
+    ### check if the pattern of the wished products are in the listed daily files
+    for patt_tup in list(itertools.product(Dates_list,AC_names,prod_types)):
+        dt_cur , ac_cur , prod_cur = patt_tup
+        wwww , dow = conv.dt2gpstime(dt_cur)
         
+        #### Manage the cases of manual DOW
+        if type(dow_manu) is int:
+            dow = dow_manu
+        elif dow_manu is None:
+            dow = ""
+        elif dow_manu is False:
+            pass        
+        else:
+            dow = str(dow_manu)
+               
+        print("INFO : ","Search products for day",wwww,dow,"AC/prod",ac_cur,prod_cur)
         wwww_dir = os.path.join(arch_center_basedir,str(wwww))
-        ftp.cwd(wwww_dir)
-        
+        print("       Move to:",wwww_dir)
         if wwww_dir_previous != wwww_dir:
             ftp.cwd(wwww_dir)
             Files_listed_in_FTP = ftp.nlst()
             wwww_dir_previous = wwww_dir
-            
-        if len(Files_listed_in_FTP) == 0:
-            print("WARN: no files found in ",wwww_dir)
-            
-                    
-        ### check if the pattern of the wished products are in the listed daily files
-        for patt_tup in list(itertools.product(AC_names,[wwww],[dow],prod_types)):
-            pattern_old_nam = utils.join_improved(".*",patt_tup[0],str(patt_tup[1])+str(patt_tup[2]),patt_tup[3])
-            pattern_old_nam = ".*" + pattern_old_nam + ".*"
-            Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam,f)]
-            
-            if new_name_conv: ### serch for new name convention
-                ac_newnam = patt_tup[0].upper()
-                doy_newnam="".join(reversed(conv.dt2doy_year(conv.gpstime2dt(patt_tup[1],patt_tup[2]))))
-                prod_newnam = patt_tup[3].upper()
+            if len(Files_listed_in_FTP) == 0:
+                print("WARN: no files found in directory",wwww_dir)
                 
-                pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
-                pattern_new_nam = ".*" + pattern_new_nam + ".*"
-                Files_new_nam   = [f for f in Files_listed_in_FTP if re.search(pattern_new_nam,f)]
                 
-                Files = Files + Files_new_nam
-                
-                if len(Files) == 0:
-                    print("WARN: ","no product found for",*patt_tup)
-            
-            Files_remote_date_list = Files_remote_date_list + Files
+        Files_remote_date_list = []
+
+        pattern_old_nam = ac_cur+".*"+str(wwww)+str(dow)+".*"+prod_cur+"\..*"
+        Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam,f)]
         
+        pattern_new_nam = ""
+        
+        Files_new_nam = []
+        if new_name_conv: ### search for new name convention
+            
+            if dow is None:
+                print("ERR: dow == None and search for new name convention, Error ...")
+                raise  Exception()
+                
+            ac_newnam   = ac_cur.upper()
+
+            doy_newnam  = "".join(reversed(conv.dt2doy_year(conv.gpstime2dt(wwww,dow))))
+            prod_newnam = prod_cur.upper()
+            
+            pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
+            pattern_new_nam = ".*" + pattern_new_nam + "\..*"
+
+            Files_new_nam   = [f for f in Files_listed_in_FTP if re.search(pattern_new_nam,f)]
+        
+        
+        print("      ","Regex :",pattern_old_nam,pattern_new_nam)        
+        Files = Files + Files_new_nam
+        
+        if len(Files) == 0:
+            print("WARN : ","no product found for",*patt_tup)
+        
+        Files_remote_date_list = Files_remote_date_list + Files
+            
         ### exclude some pattern
         for negpatt in remove_patterns:
             Files_remote_date_list = [e for e in Files_remote_date_list if not re.search(negpatt,e)]
 
         archive_dir_specif = effective_save_dir_orbit(archive_dir,
-                                                      patt_tup[0],
-                                                      dat,
+                                                      ac_cur,
+                                                      dt_cur,
                                                       archtype)
             
         utils.create_dir(archive_dir_specif)
@@ -1331,7 +1460,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         Downld_tuples_list = []
         Potential_localfiles_list = []
 
-        if ftp_download:
+        if ftp_download: ### FTP download is not recommended
             for ftpobj , Chunk in zip(Ftp_obj_list,Files_remote_date_chunck):
                 for filchunk in Chunk:
                         Potential_localfiles_list.append(os.path.join(archive_dir_specif,filchunk))
@@ -1340,7 +1469,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                         else:
                             Downld_tuples_list.append((arch_center_main,wwww_dir,
                                                        filchunk,archive_dir_specif))
-        else:
+        else: ### HTML download, recommended
             Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
             [Potential_localfiles_list.append(os.path.join(archive_dir_specif,f)) for f in Files_remote_date_list]
 
@@ -1359,26 +1488,23 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         ## Those 2 other methods are unstables
         ##  _ = pool.map_async(downloader_wrap,Downld_tuples_list)
         ##  _ = [pool.apply(downloader_wrap,(tup,)) for tup in Downld_tuples_list]
-        
+    
 
-        ### Independent files exsitence check
-        
-        if not return_also_uncompressed_files:
-            for localfile in Potential_localfiles_list:
-                if os.path.isfile(localfile):
-                    Localfiles_lis.append(localfile)
-        else:
-            for localfile in Potential_localfiles_list:
-                Pot_compress_name_list = [localfile]
-                Pot_compress_name_list.append(localfile.replace(".gz",""))
-                Pot_compress_name_list.append(localfile.replace(".Z",""))
-                Pot_compress_name_list = list(set(Pot_compress_name_list))
-                
-                for pot_compress_name in Pot_compress_name_list:
-                    if os.path.isfile(pot_compress_name):
-                        Localfiles_lis.append(pot_compress_name)
+    ### Independent files existence check
+    if not return_also_uncompressed_files:
+        for localfile in Potential_localfiles_list:
+            if os.path.isfile(localfile):
+                Localfiles_lis.append(localfile)
+    else:
+        for localfile in Potential_localfiles_list:
+            Pot_compress_name_list = [localfile]
+            Pot_compress_name_list.append(localfile.replace(".gz",""))
+            Pot_compress_name_list.append(localfile.replace(".Z",""))
+            Pot_compress_name_list = list(set(Pot_compress_name_list))
+            
+            for pot_compress_name in Pot_compress_name_list:
+                if os.path.isfile(pot_compress_name):
+                    Localfiles_lis.append(pot_compress_name)
     
     pool.close()
     return Localfiles_lis
-            
-

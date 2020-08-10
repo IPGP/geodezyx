@@ -6,10 +6,19 @@ Created on Fri Aug  2 17:18:11 2019
 @author: psakicki
 """
 
+########## BEGIN IMPORT ##########
+#### External modules
+import numpy as np
+
+#### geodeZYX modules
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
+##########  END IMPORT  ##########
 
 def gebco_bathy_grid_extractor(dataset,latmin,latmax,lonmin,lonmax):
     """
@@ -18,9 +27,7 @@ def gebco_bathy_grid_extractor(dataset,latmin,latmax,lonmin,lonmax):
 
     return latnew , lonnew , Znew
     """
-
-    import genefun as gf
-
+    
     lon = dataset['lon'][:]
     lat = dataset['lat'][:]
     Z   = dataset['elevation'][:]

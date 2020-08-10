@@ -6,11 +6,21 @@ Created on Fri Jun 28 14:28:06 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+########## BEGIN IMPORT ##########
+#### External modules
+import fnmatch
+import glob
 import os
+import re
 import shutil
+import subprocess
+
+#### geodeZYX modules
+from geodezyx import utils
+##########  END IMPORT  ##########
+
+
 
 #################
 ### SHELL LIKE FCTS
@@ -51,7 +61,8 @@ def head(filename, count=1):
         return list(filter(len, lines))
 
 def grep(file_in,search_string,only_first_occur=False,
-         invert=False,regex=False,line_number=False,col=(None,None)):
+         invert=False,regex=False,line_number=False,col=(None,None),
+         force_list_output=False):
     """
     if nothing is found returns a empty string : ""
     (and NOT a singleton list with an empty string inside)
@@ -60,6 +71,9 @@ def grep(file_in,search_string,only_first_occur=False,
         col : Define the columns where the grep is executed 
               (Not delimited columns , one character = a new column)
               from 1st col. / until last col. : use None as index
+              
+              force_list_output : if the output is an unique element, 
+              it will be returned in a list anyway
 
     search_string can be a list (150721 change)
     """
@@ -89,8 +103,10 @@ def grep(file_in,search_string,only_first_occur=False,
         return line_number_list[0] , matching_line_list[0]
     elif line_number:
         return line_number_list    , matching_line_list
-    elif len(matching_line_list) == 1:
+    elif len(matching_line_list) == 1 and not force_list_output:
         return matching_line_list[0]
+    elif len(matching_line_list) == 1 and force_list_output:
+        return matching_line_list
     elif len(matching_line_list) == 0:
         return ''
     elif only_first_occur:
@@ -117,7 +133,9 @@ def egrep_big_string(regex,bigstring,only_first_occur=False):
     if len(matching_line_list) == 1:
         return matching_line_list[0]
     elif len(matching_line_list) == 0:
+        print("WARN: nothing found... check the input args: 1-regex, 2-bigstring")
         return ''
+    
     elif only_first_occur:
         return matching_line_list[0]
     else:
@@ -130,7 +148,7 @@ def grep_boolean(file_in,search_string):
     return False
 
 def regex_OR_from_list(listin):
-    return "(" + join_improved("|" , *listin) +  ")"
+    return "(" + utils.join_improved("|" , *listin) +  ")"
 
 def cat(outfilename, *infilenames):
     """
@@ -201,7 +219,8 @@ def empty_file_check(fpath):
 
 
 def find_recursive(parent_folder , pattern, 
-                   sort_results = True, case_sensitive = True):
+                   sort_results = True, case_sensitive = True,
+                   extended_file_stats=False):
     """
     Find files in a folder and his sub-folders in a recursive way
 
@@ -212,14 +231,31 @@ def find_recursive(parent_folder , pattern,
 
     pattern : str
         the researched files pattern name (can manage wildcard or regex)
-        * wildcard (only * and ?) for case_sensitive = False
-        * regex for case_sensitive = True
+        * wildcard (only * and ?) for case_sensitive = True
+        * regex for case_sensitive = False
         
     sort_results : bool
         Sort results
         
     case_sensitive : bool
         Case sensitve or not
+        
+    extended_file_stats : bool
+        if True, returns the stats of the files
+        the outputed matches list will be a list of tuples
+        (file_path,stat_object), where stat_object has the following attributes
+        
+        - st_mode - protection bits,
+        - st_ino - inode number,
+        - st_dev - device,
+        - st_nlink - number of hard links,
+        - st_uid - user id of owner,
+        - st_gid - group id of owner,
+        - st_size - size of file, in bytes,
+        - st_atime - time of most recent access,
+        - st_mtime - time of most recent content modification,
+        - st_ctime - platform dependent; time of most recent metadata 
+                     change on Unix, or the time of creation on Windows)
                 
     Returns
     -------
@@ -238,20 +274,34 @@ def find_recursive(parent_folder , pattern,
         for root, dirnames, filenames in os.walk(parent_folder):
             for filename in fnmatch.filter(filenames, pattern):
                 matches.append(os.path.join(root, filename))
-    else:
+    else: # not case sensitive, use a regex
         for root, dirnames, filenames in os.walk(parent_folder):
             for filename in filenames:  
                 try:
                     bool_match = re.search(pattern, filename, re.IGNORECASE)
                 except Exception as e:
-                    print("ERR : if case_sensitive = True, pattern have to be a REGEX (and not only a simple wildcard)")
-                    raise Exception
+                    print("ERR : if case_sensitive = False, pattern have to be a REGEX (and not only a simple wildcard)")
+                    raise e
                     
                 if bool_match:
                     matches.append(os.path.join(root, filename))
 
     if sort_results:
         matches = sorted(matches)
+        
+    
+    if extended_file_stats:
+        matches_ext = []
+        for f in matches:
+            try:
+                stat = os.stat(f)
+            except FileNotFoundError:
+                print("WARN: file not found",f)
+                continue
+                
+            matches_ext.append((f,stat))
+        matches = matches_ext
+        
 
     return matches
 
@@ -274,10 +324,10 @@ def glob_smart(dir_path,file_pattern=None,verbose=True):
 
 def insert_lines_in_file(file_path,text_values,lines_ids):
     
-    if not is_iterable(text_values):
+    if not utils.is_iterable(text_values):
         text_values = [text_values]
     
-    if not is_iterable(lines_ids):
+    if not utils.is_iterable(lines_ids):
         lines_ids = [lines_ids]
     
     f = open(file_path, "r")
@@ -378,24 +428,50 @@ def fileprint(output,outfile):
         f.write("{}\n".format(output))
     return None
 
-def write_in_file(string_to_write,outdir,outname,ext='.txt'):
+
+
+
+def write_in_file(string_to_write,outdir,outname,ext='.txt',encoding='utf8'):
+    """
+
+    encoding : utf8, latin_1
+    https://docs.python.org/3/library/codecs.html#standard-encodings
+    
+    check the following commented old version if troubles
+    """
     outpath = os.path.join(outdir,outname + ext)
-    F = open(outpath,'w+')
-    try:    
-        F.write(string_to_write.encode('utf8'))
-        # astuce de http://stackoverflow.com/questions/6048085/writing-unicode-text-to-a-text-file
-    except TypeError:
-        print("INFO : write_in_file : alternative reading following a TypeError")
-        F.write(string_to_write)
-        
+    F = open(outpath,'w+',encoding=encoding)
+    F.write(string_to_write)
     F.close()
     return outpath
+
+# def write_in_file(string_to_write,outdir,outname,ext='.txt',encoding='utf8'):
+#     """
+
+#     encoding : utf8, latin_1
+#     https://docs.python.org/3/library/codecs.html#standard-encodings
+#     """
+#     outpath = os.path.join(outdir,outname + ext)
+#     F = open(outpath,'w+', encoding=encoding)
+#     try:    
+#         F.write(string_to_write.encode(encode))
+#         # astuce de http://stackoverflow.com/questions/6048085/writing-unicode-text-to-a-text-file
+#     except UnicodeEncodeError as e:
+#         print(string_to_write)
+#         raise(e)
+#     except TypeError as e:
+#         print(e)
+#         print("INFO : write_in_file : alternative write following a TypeError")
+#         F.write(string_to_write)
+        
+#     F.close()
+#     return outpath
 
 def replace(file_path, pattern, subst):
     """ from http://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python """
     #Create temp file
     from tempfile import mkstemp
-    from os import remove, close
+    from os import close
     fh, abs_path = mkstemp()
     new_file = open(abs_path,'w')
     old_file = open(file_path)

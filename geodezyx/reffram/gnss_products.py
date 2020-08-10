@@ -6,18 +6,30 @@ Created on Fri Aug  2 17:36:39 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
+########## BEGIN IMPORT ##########
+#### External modules
+import matplotlib
+import matplotlib.pyplot as plt
+import natsort
 import numpy as np
+import os 
+import pandas as pd
+import re
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import files_rw
+from geodezyx import stats
+from geodezyx import utils
+
+##########  END IMPORT  ##########
 
 def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                  sats_used_list = ['G'],
                  name1='',name2='',use_name_1_2_for_table_name = False,
                  RTNoutput = True,convert_ECEF_ECI=True,
                  clean_null_values = True,
-                 conv_coef=10**3):
+                 conv_coef=10**3,return_satNull = False):
     """
     Compares 2 GNSS orbits files (SP3), and gives a summary plot and a
     statistics table
@@ -162,11 +174,14 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
         D2 = D2orig[np.logical_not(D2_null_bool)]
 
         if np.any(D1_null_bool) or np.any(D2_null_bool):
+            sat_nul = utils.join_improved(" " ,*list(set(D1orig[D1_null_bool]["sat"])))
             print("WARN : Null values contained in SP3 files : ")
             print("f1:" , np.sum(D1_null_bool) , utils.join_improved(" " ,
                   *list(set(D1orig[D1_null_bool]["sat"]))))
             print("f2:" , np.sum(D2_null_bool) , utils.join_improved(" " ,
                   *list(set(D2orig[D2_null_bool]["sat"]))))
+        else:
+            sat_nul = []
 
     else:
         D1 = D1orig.copy()
@@ -210,6 +225,15 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 print("      it happens e.g. when multiple ACs are in the same DataFrame ")
                 print("TIP : Filter the input Dataframe before calling this fct with")
                 print("      DF = DF[DF['AC'] == 'gbm']")
+                
+                Dtmp1 = D1orig[D1orig['sv'] == svv]
+                Dtmp2 = D2orig[D2orig['sv'] == svv]
+                
+                dupli1 = np.sum(Dtmp1.duplicated(["epoch","sat"]))
+                dupli2 = np.sum(Dtmp2.duplicated(["epoch","sat"]))
+                
+                print("FWIW : duplicated epoch/sat in DF1 & DF2 : ",dupli1,dupli2)
+
                 raise exce
 
             # Second research, it is a security in case of gap
@@ -230,8 +254,8 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
             # Start ECEF => ECI
             if convert_ECEF_ECI:
                 # Backup because the columns xyz will be reaffected
-                D1sv_bkp = D1sv.copy()
-                D2sv_bkp = D2sv.copy()
+                #D1sv_bkp = D1sv.copy()
+                #D2sv_bkp = D2sv.copy()
     
                 P1b = conv.ECEF2ECI(np.array(P1),conv.dt_gpstime2dt_utc(P1.index.to_pydatetime(),out_array=True))
                 P2b = conv.ECEF2ECI(np.array(P2),conv.dt_gpstime2dt_utc(P2.index.to_pydatetime(),out_array=True))
@@ -278,7 +302,7 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 I_ar = np.array(I)
                 C_ar = np.array(C)
 
-                R_ar[1]
+                #R_ar[1]
                 Beta = np.stack((R_ar,I_ar,C_ar),axis=1)
 
                 # Compatible with the documentation +
@@ -303,7 +327,6 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
             Diff_sat['sat']   = [constuse + str(svv).zfill(2)] * len(Diff_sat.index)
 
             Diff_sat_stk.append(Diff_sat)
-
 
     Diff_sat_all = pd.concat(Diff_sat_stk)
     Date = Diff_sat.index[0]
@@ -353,15 +376,20 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                                   Diff_sat_all.name2 ,',',Date.strftime("%Y-%m-%d"),
                                   ', doy', str(conv.dt2doy(Date))))
 
-
-    return Diff_sat_all
+    
+    if return_satNull:
+        return Diff_sat_all, sat_nul
+    else:
+        return Diff_sat_all
 
 
 def compar_orbit_plot(Diff_sat_all_df_in,
                       save_plot=False,
                       save_plot_dir="",
                       save_plot_name="auto",
-                      save_plot_ext=(".pdf",".png",".svg")):
+                      save_plot_name_suffix=None,
+                      save_plot_ext=(".pdf",".png",".svg"),
+                      yaxis_limit=None):
     """
     General description
 
@@ -369,10 +397,14 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     ----------
     Diff_sat_all_df_in : DataFrame
         a DataFrame produced by compar_orbit
+        
+    yaxis_limit : 3-tuple iterable
+        force the y axis limits. must look like 
+        [(ymin_r,ymax_r),(ymin_t,ymax_t),(ymin_n,ymax_n)]
 
     Returns
     -------
-    None if no save is asked
+    the Figure and the 3 Axes if no save is asked
     export path (str) if save is asked
     but plot a plot anyway
     """
@@ -380,7 +412,7 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     import matplotlib.dates as mdates
     fig,[axr,axt,axn] = plt.subplots(3,1,sharex='all')
 
-    satdispo = natsorted(list(set(Diff_sat_all_df_in['sat'])))
+    satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in['sat'])))
 
     SymbStk = []
 
@@ -390,9 +422,14 @@ def compar_orbit_plot(Diff_sat_all_df_in,
 
     # Pandas donesn't manage well iterable as attribute
     # So, it is separated
-    col_name0 = Diff_sat_all_df_in.frame_col_name1
-    col_name1 = Diff_sat_all_df_in.frame_col_name2
-    col_name2 = Diff_sat_all_df_in.frame_col_name3
+    try:
+        col_name0 = Diff_sat_all_df_in.frame_col_name1
+        col_name1 = Diff_sat_all_df_in.frame_col_name2
+        col_name2 = Diff_sat_all_df_in.frame_col_name3
+    except:
+        col_name0 = Diff_sat_all_df_in.columns[0]
+        col_name1 = Diff_sat_all_df_in.columns[1]
+        col_name2 = Diff_sat_all_df_in.columns[2]
 
     for satuse,color in zip(satdispo,Colors):
         Diffuse = Diff_sat_all_df_in[Diff_sat_all_df_in['sat'] == satuse]
@@ -427,7 +464,12 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     axr.yaxis.set_major_formatter(y_formatter)
     axt.yaxis.set_major_formatter(y_formatter)
     axn.yaxis.set_major_formatter(y_formatter)
-
+    
+    if yaxis_limit:
+        axr.set_ylim(yaxis_limit[0])
+        axt.set_ylim(yaxis_limit[1])
+        axn.set_ylim(yaxis_limit[2])
+    
     import matplotlib.dates as mdates
     fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
 
@@ -445,16 +487,21 @@ def compar_orbit_plot(Diff_sat_all_df_in,
             save_plot_name = "_".join((Diff_sat_all_df_in.name1,
                                       Diff_sat_all_df_in.name2,
                                       Diff_sat_all_df_in.index.min().strftime("%Y-%m-%d")))
+            
+        if save_plot_name_suffix:
+            save_plot_name = save_plot_name + '_' + save_plot_name_suffix
 
         for ext in save_plot_ext:
             save_plot_path = os.path.join(save_plot_dir,save_plot_name)
             plt.savefig(save_plot_path + ext)
+            return_val = save_plot_path
+            
     else:
-        save_plot_path = None
+        return_val = fig,(axr,axt,axn)
 
-    return save_plot_path
+    return return_val
 
-def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
+def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
                        light_tab  = False):
     """
     Generate a table with statistical indicators for an orbit comparison
@@ -464,8 +511,12 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     Diff_sat_all_df_in : Pandas DataFrame
         a DataFrame produced by compar_orbit
 
-    GRGS_style : bool
-        RMS calc based on the GRGS definition of the RMS (OV help)
+    RMS_style : str
+        'natural': use the natural definition of the RMS
+        'GRGS': RMS calc based on the GRGS definition of the RMS (OV help)
+                is actually the standard deviation
+        'kouba': RMS as defined in Kouba et al. 1994, p75
+                 using the degree of freedom (3*Nobs - 7)
 
     light_tab : bool
         produce a table with only RMS, with min/max/arithmetic instead
@@ -488,24 +539,36 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
 
     # Pandas donesn't manage well iterable as attribute
     # So, it is separated
-    col_name0 = Diff_sat_all_df_in.frame_col_name1
-    col_name1 = Diff_sat_all_df_in.frame_col_name2
-    col_name2 = Diff_sat_all_df_in.frame_col_name3
+    try:
+        col_name0 = Diff_sat_all_df_in.frame_col_name1
+        col_name1 = Diff_sat_all_df_in.frame_col_name2
+        col_name2 = Diff_sat_all_df_in.frame_col_name3
+    except:
+        col_name0 = Diff_sat_all_df_in.columns[0]
+        col_name1 = Diff_sat_all_df_in.columns[1]
+        col_name2 = Diff_sat_all_df_in.columns[2]
 
     rms_stk = []
 
     for sat in sat_list:
         Diffwork = utils.df_sel_val_in_col(Diff_sat_all_df_in,'sat',sat)
 
-        if not GRGS_style:
+        if RMS_style == "natural":
             rms_A = stats.rms_mean(Diffwork[col_name0])
             rms_B = stats.rms_mean(Diffwork[col_name1])
             rms_C = stats.rms_mean(Diffwork[col_name2])
-        else:
+        elif RMS_style == "GRGS":
             rms_A = stats.rms_mean(Diffwork[col_name0] - Diffwork[col_name0].mean())
             rms_B = stats.rms_mean(Diffwork[col_name1] - Diffwork[col_name1].mean())
             rms_C = stats.rms_mean(Diffwork[col_name2] - Diffwork[col_name2].mean())
+        elif RMS_style == "kouba":
+            rms_A = stats.rms_mean_kouba(Diffwork[col_name0])
+            rms_B = stats.rms_mean_kouba(Diffwork[col_name1])
+            rms_C = stats.rms_mean_kouba(Diffwork[col_name2])
 
+            
+            
+            
         RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
         min_A = Diffwork[col_name0].min()
@@ -521,7 +584,7 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
         mean_C = Diffwork[col_name2].mean()
 
         if light_tab:
-            rms_stk.append([rms_A,rms_B,rms_C])
+            rms_stk.append([rms_A,rms_B,rms_C,RMS3D])
         else:
             rms_stk.append([rms_A,rms_B,rms_C,RMS3D,
                             min_A,max_A,mean_A,
@@ -531,12 +594,22 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
 
     #################################
              # ALL SATS
+    if RMS_style == "natural":
+        rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0])
+        rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1])
+        rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2])
+        RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
+    elif RMS_style == "GRGS":
+        rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0] - Diff_sat_all_df_in[col_name0].mean())
+        rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1] - Diff_sat_all_df_in[col_name1].mean())
+        rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2] - Diff_sat_all_df_in[col_name2].mean())
+        RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
+    elif RMS_style == "kouba":
+        rms_A = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name0])
+        rms_B = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name1])
+        rms_C = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name2])
+        RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
-    rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0] - Diff_sat_all_df_in[col_name0].mean())
-    rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1] - Diff_sat_all_df_in[col_name1].mean())
-    rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2] - Diff_sat_all_df_in[col_name2].mean())
-
-    RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
     min_A = Diff_sat_all_df_in[col_name0].min()
     min_B = Diff_sat_all_df_in[col_name1].min()
@@ -551,7 +624,7 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     mean_C = Diff_sat_all_df_in[col_name2].mean()
 
     if light_tab:
-        rms_stk.append([rms_A,rms_B,rms_C])
+        rms_stk.append([rms_A,rms_B,rms_C,RMS3D])
     else:
         rms_stk.append([rms_A,rms_B,rms_C,RMS3D,
                         min_A,max_A,mean_A,
@@ -585,8 +658,10 @@ def compar_orbit_table(Diff_sat_all_df_in,GRGS_style = True,
     return Compar_tab_out
 
 
-def compar_orbit_frontend(DataDF1,DataDF2,ac1,ac2):
-    K = compar_orbit(DataDF1[DataDF1["AC"] == ac1],DataDF2[DataDF2["AC"] == ac2])
+def compar_orbit_frontend(DataDF1,DataDF2,ac1,ac2, sats_used_list = ['G']):
+    K = compar_orbit(DataDF1[DataDF1["AC"] == ac1],
+                     DataDF2[DataDF2["AC"] == ac2],
+                     sats_used_list=sats_used_list)
     compar_orbit_plot(K)
     return K
 
@@ -602,8 +677,8 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
             print("WARN : Dates of 2 input files are differents !!! It might be very bad !!!",week1,week2)
         else:
             wwwwd = week1
-        D1 = gfc.read_sinex(snx1,True)
-        D2 = gfc.read_sinex(snx2,True)
+        D1 = files_rw.read_sinex(snx1,True)
+        D2 = files_rw.read_sinex(snx2,True)
     else:
         print("WARN : you are giving the SINEX input as a DataFrame, wwwwd has to be given manually using manu_wwwwd")
         D1 = snx1
@@ -722,3 +797,130 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
              "e_ari","n_std","u_std","d2D_enu_std","d3D_enu_std"]
 
             return output_DF
+
+
+#   ____       _     _ _     _____        _        ______                             
+#  / __ \     | |   (_) |   |  __ \      | |      |  ____|                            
+# | |  | |_ __| |__  _| |_  | |  | | __ _| |_ __ _| |__ _ __ __ _ _ __ ___   ___  ___ 
+# | |  | | '__| '_ \| | __| | |  | |/ _` | __/ _` |  __| '__/ _` | '_ ` _ \ / _ \/ __|
+# | |__| | |  | |_) | | |_  | |__| | (_| | || (_| | |  | | | (_| | | | | | |  __/\__ \
+#  \____/|_|  |_.__/|_|\__| |_____/ \__,_|\__\__,_|_|  |_|  \__,_|_| |_| |_|\___||___/
+#                                                                                     
+       
+### Orbit DataFrames                                                                      
+
+#### FCT DEF
+def OrbDF_reg_2_multidx(OrbDFin,index_order=["sat","epoch"]):
+    """
+    From an regular Orbit DF generated by read_sp3(), set some columns 
+    (typically ["sat","epoch"]) as indexes
+    The outputed DF is then a Multi-index DF
+    """
+    OrbDFwrk = OrbDFin.reset_index()
+    OrbDFwrk = OrbDFwrk.sort_values(index_order)
+    OrbDFwrk = OrbDFwrk.set_index(index_order,inplace=False)
+    return OrbDFwrk
+
+def OrbDF_multidx_2_reg(OrbDFin,index_order=["sat","epoch"]):
+    """
+    Convert a Multi-index formatted OrbitDF to his original form
+    """
+    OrbDFwrk = OrbDFin.reset_index()
+    OrbDFwrk = OrbDFwrk.sort_values(index_order)
+    OrbDFwrk["const"] = OrbDFwrk["sat"].apply(lambda x: x[0])
+    OrbDFwrk["sv"]    = OrbDFwrk["sat"].apply(lambda x: int(x[1:]))
+    return OrbDFwrk
+
+def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
+                              supplementary_sort=True):
+    """
+    Find common sats and epochs in to Orbit DF, and output the
+    corresponding Orbit DFs
+    """
+    OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in)
+    OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in)
+    
+    I1 = OrbDFa.index
+    I2 = OrbDFb.index
+    
+    Iinter = I1.intersection(I2)
+    ### A sort of the Index to avoid issues ...
+    Iinter = Iinter.sort_values()
+    
+    OrbDFa_out = OrbDFa.loc[Iinter]
+    OrbDFb_out = OrbDFb.loc[Iinter]
+    
+    if supplementary_sort:
+        # for multi GNSS, OrbDF_out are not well sorted (why ??? ...)
+        # we do a supplementary sort
+        # NB 202003: maybe because Iiter was not sorted ...
+        # should be fixed with the Iinter.sort_values() above 
+        # but we maintain this sort
+        OrbDFa_out = OrbDFa_out.sort_values(["sat","epoch"])
+        OrbDFb_out = OrbDFb_out.sort_values(["sat","epoch"])
+
+    
+    if len(OrbDFa_out) != len(OrbDFb_out):
+        print("WARN : OrbDF_common_epoch_finder : len(OrbDFa_out) != len(OrbDFb_out)")
+    
+    if return_index:
+        return OrbDFa_out , OrbDFb_out , Iinter
+    else:
+        return OrbDFa_out , OrbDFb_out
+
+
+def OrbDF_const_sv_columns_maker(OrbDFin,inplace=True):
+    """
+    (re)generate the const and sv columns from the sat one
+    """
+    if inplace:
+        OrbDFin['const'] = OrbDFin['sat'].str[0]
+        OrbDFin['sv']    = OrbDFin['sat'].apply(lambda x: int(x[1:]))
+        return None
+    else:
+        OrbDFout = OrbDFin.copy()
+        OrbDFout['const'] = OrbDFout['sat'].str[0]
+        OrbDFout['sv']    = OrbDFout['sat'].apply(lambda x: int(x[1:]))
+        return OrbDFout
+
+ #   _____ _      _____   __      __   _ _     _       _   _             
+ #  / ____| |    |  __ \  \ \    / /  | (_)   | |     | | (_)            
+ # | (___ | |    | |__) |  \ \  / /_ _| |_  __| | __ _| |_ _  ___  _ __  
+ #  \___ \| |    |  _  /    \ \/ / _` | | |/ _` |/ _` | __| |/ _ \| '_ \ 
+ #  ____) | |____| | \ \     \  / (_| | | | (_| | (_| | |_| | (_) | | | |
+ # |_____/|______|_|  \_\     \/ \__,_|_|_|\__,_|\__,_|\__|_|\___/|_| |_|
+                                                                       
+
+def stats_slr(DFin,grpby_keys = ['sat'],
+              threshold = .5):
+    """
+    computes statistics for SLR Residuals
+    
+    Parameters
+    ----------
+    DFin : Pandas DataFrame
+        Input residual Dataframe from read_pdm_res_slr.
+    grpby_keys : list of str, optional
+        The default is ['sat'].
+        per day, per solution, per satellite: ['day','sol','sat']
+        per day, per solution, per station: ['day','sol','sta']
+        per day, per solution, per satellite, per station: ['day','sol','sta','sat']
+    threshold : float
+        apply a Threshold
+
+    Returns
+    -------
+    DD : Output statistics DataFrame
+        return the mean, the rms and the std.
+    """
+    
+    DD = DFin[np.abs(DFin["res"]) < threshold]
+    
+    DD_grp  = DD.groupby(grpby_keys)
+    DD_mean = DD_grp['res'].agg(np.mean).rename('mean') * 1000
+    DD_rms  = DD_grp['res'].agg(stats.rms_mean).rename('rms')   * 1000
+    DD_std  = DD_grp['res'].agg(np.std).rename('std')   * 1000
+    DD = pd.concat([DD_mean,DD_std,DD_rms],axis=1)
+    DD.reset_index(inplace = True)
+    
+    return DD    

@@ -6,9 +6,25 @@ Created on Fri Jun 28 14:27:56 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import inspect
+import numpy as np
+import os
+import pandas as pd
+import pickle
+import re
+import scipy
+import sys
+import tempfile
+import time
+import uuid
+#### geodeZYX modules
+
+
+##########  END IMPORT  ##########
+
 
 
 def clear_all():
@@ -74,6 +90,45 @@ def is_not_iterable(inp,consider_str_as_iterable=False):
     else:
         out = False
     return out
+
+
+def transpose_vector_array(X):
+    """
+    transpose a Nx3 array to a 3xN array if necessary
+    (necessary for some usages)
+    
+    Parameters
+    ----------
+    X : iterable
+    
+    Returns
+    -------
+    X : iterable
+        X transposed if necessary.
+
+    """
+    
+    if isinstance(X,pd.core.frame.DataFrame):
+        X = X.values
+        
+    if isinstance(X,np.ndarray):
+        if not X.shape[0] == 3:
+            X = X.T
+    return X
+
+
+def is_lambda(v):
+    """
+    Check if v is lambda
+
+    Source 
+    -------
+    https://stackoverflow.com/questions/3655842/how-can-i-test-whether-a-variable-holds-a-lambda
+    """
+    
+    LAMBDA = lambda:0
+    return isinstance(v, type(LAMBDA)) and v.__name__ == LAMBDA.__name__
+
 
 
 def contains_word(s, w):
@@ -312,6 +367,18 @@ def str2int_smart(str_in):
         out = np.nan
     return out
 
+def str2int_float_autodetect(str_list_in):
+    intflt_list_out = []
+    for str_in in str_list_in:
+        flt_tmp = float(str_in)
+        if np.isclose(flt_tmp - np.floor(flt_tmp),0):
+            val = int(flt_tmp)
+        else:
+            val = flt_tmp
+        intflt_list_out.append(val)
+    return(intflt_list_out)
+            
+
 def array_from_lists(*listsin):
     """ fonction pour arreter de galerer avec les conversions
     de lists => matrices """
@@ -405,15 +472,15 @@ def extract_text_between_elements_2(file_path , elt_start , elt_end,
     return_string = False : returns a list of the matched lines
     
     NB : in SINEX context, with "+MARKER", use backslash i.e.
-         "\+MARKER"    
+         "\\+MARKER"    
          
     NB2 : think about StingIO for a Pandas DataFrame Handeling
     https://docs.python.org/2/library/stringio.html
     """
     
-    try:
+    if type(file_path) is str:
         F = open(file_path,"r",encoding = "ISO-8859-1")
-    except:
+    else:
         F = file_path
     
     out_lines_list = []
@@ -457,6 +524,23 @@ def str_2_float_line(line , sep=" ",out_type=float):
         return [out_type(e) for e in fields]
     except:
         return fields
+
+
+def replace_in_file(file_in,str_before,str_after):
+    """
+    https://stackoverflow.com/questions/17140886/how-to-search-and-replace-text-in-a-file
+    """
+    with open(file_in, 'r') as file :
+        filedata = file.read()
+        
+    # Replace the target string
+    filedata = filedata.replace(str_before,str_after)
+        
+    # Write the file out again
+    with open(file_in + "", 'w') as file:
+        file.write(filedata)
+
+
 
 
 
@@ -675,4 +759,3 @@ def mdotr(*args):
     for a in reversed(args[:-1]):
         ret = np.dot(a,ret)
     return ret
-

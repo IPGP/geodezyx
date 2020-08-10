@@ -25,6 +25,29 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
 
+
+########## BEGIN IMPORT ##########
+#### External modules
+import matplotlib
+import matplotlib.pyplot as plt
+import natsort
+import numpy as np
+import os 
+import pandas as pd
+import re
+from scipy.spatial.transform import Rotation
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import files_rw
+from geodezyx import stats
+from geodezyx import utils
+
+##########  END IMPORT  ##########
+
+
+
+
 #   ____              _                  _
 #  / __ \            | |                (_)
 # | |  | |_   _  __ _| |_ ___ _ __ _ __  _  ___  _ __  ___
@@ -34,7 +57,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #
 
 
-def quaternion(r,p,h,angtype='rad'):
+
+def quaternion(r,p,h,angtype='rad',euler_sequence="zyx"):
     """
     Args:
         roll (xaxis) pitch (yaxis) heading (zaxis) angle
@@ -54,8 +78,15 @@ def quaternion(r,p,h,angtype='rad'):
     """
     if angtype == 'deg':
         r,p,h = np.deg2rad(r),np.deg2rad(p),np.deg2rad(h)
-    M = cgt.mat3().fromEulerZYX(r,p,h)
-    q = cgt.quat().fromMat(M)
+        
+        
+    #### Old style cgkit DISCONTINUED
+    #M = cgt.mat3().fromEulerZYX(r,p,h)
+    #q = cgt.quat().fromMat(M)
+
+    R = Rotation.from_euler(euler_sequence,[r,p,h],degrees=False)    
+    q = R.as_quat()
+        
     return q
 
 def quatern_multi(rlist,plist,hlist,angtype='rad'):
@@ -78,12 +109,23 @@ def rotate_quat2(ptin,quatin):
     """
     return np.array(quatin.rotateVec(ptin))
 
-def rotate_quat(ptin,quatin):
-
+def rotate_quat3(ptin,quatin):
+    """
+    DISCONTINUED
+    use the old quaterinons toolbox
+    """
     pt1 = np.concatenate(([0],np.array(ptin)))
     pt2 = cgt.quat(*pt1)
+    
     qtmp = (quatin) * pt2 * (quatin.inverse())
+    
     return np.array([qtmp.x, qtmp.y , qtmp.z])
+
+
+def rotate_quat(ptin,quatin):
+    Robj = 999999999999999999
+    return np.concatenate(([0],np.array(ptin)))
+
 
 def rotate_quat_multi(pts_list_in, quats_list_in):
     """
@@ -123,7 +165,7 @@ def interp_quat(Tlis , Quatlis , t):
 
 
     """
-    i1 , i2 = genefun.find_interval_bound(Tlis,t)
+    i1 , i2 = utils.find_interval_bound(Tlis,t)
     q1 , q2 = Quatlis[i1] , Quatlis[i2]
     t1 , t2 = Tlis[i1] , Tlis[i2]
     tt = (t - t1) / (t2 - t1)

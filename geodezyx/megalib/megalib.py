@@ -6,8 +6,10 @@
 
 import geodezyx.megalib.geoclass as gcls
 import geodezyx.megalib.geodetik as geok
-import geodezyx.megalib.genefun as genefun
-import geodezyx.megalib.genefun as gf
+import geodezyx.megalib.genefun  as genefun
+import geodezyx.megalib.genefun  as gf
+import geodezyx.megalib.softs_runner  as softs_runner
+import geodezyx.megalib.geo_files_converter_lib  as gfc
 
 
 

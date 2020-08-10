@@ -47,7 +47,7 @@ from . import athmo
 from . import conv
 from . import files_rw
 from . import geodyn
-#from . import operational
+from . import operational
 #from . import legacy
 from . import reffram
 from . import stats
@@ -57,6 +57,7 @@ from . import utils
 
 __all__ = ['athmo',
            'conv',
+           'externlib',
            'files_rw',
            'geodyn',
            'operational',
