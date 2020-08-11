@@ -400,11 +400,6 @@ def ENU2XYZ_legacy(E,N,U,Xref,Yref,Zref):
 
     return dX,dY,dZ
 
-
-    
-            
-
-
 def GEO2XYZ_vector(FLH,angle='deg',
                    a=6378137.,e2=0.00669438003):
     
@@ -478,7 +473,6 @@ def sFLH2sXYZ(F,L,H,sF,sL,sH,ang='deg'):
     ------
     Linear Algebra, Geodesy, and GPS p332
     """
-    
     
     if ang == 'deg':
         F  = np.deg2rad(F)

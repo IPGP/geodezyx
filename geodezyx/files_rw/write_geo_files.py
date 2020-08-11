@@ -6,6 +6,11 @@ Created on Fri Aug  2 18:00:21 2019
 @author: psakicki
 """
 
+
+#### External modules
+import numpy as np
+import pandas as pd
+
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import operational
@@ -17,37 +22,37 @@ from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 ##########  END IMPORT  ##########
-
-
-def write_sndy_light_dat(ts_in,outdir,outprefix):
-    """pas fini"""
-    fil = open(os.path.join(outdir,outprefix),'w+')
-    if isinstance(ts_in,TimeSeriePoint):
-        if ts_in.initype() == 'FLH':
-            for pt in ts_in.pts:
-                lin = ' '.join([str(e) for e in [pt.F , pt.L , pt.H , pt.T , pt.sF , pt.sL , pt.sH ]])
-                fil.write(lin + '\n')
-    elif isinstance(ts_in,TimeSerieObs):
-        if ts_in.typeobs == 'RPY':
-            for att in ts_in.obs:
-                lin = ' '.join([str(e) for e in [att.R , att.P , att.Y , att.T , att.Q.w , att.Q.x , att.Q.y , att.Q.z ]])
-                fil.write(lin + '\n')
-    fil.close()
     
 def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
               skip_null_epoch=True,force_format_c=False):
     """
-    Write DOCSTRING
+    Write a SP3 file from an Orbit DataFrame
 
-    outname : None = outpath is the full path (directory + filename) of the outputfile
-             'auto_old_cnv' = automatically generate the filename (old convention)
-             'auto_new_cnv' = automatically generate the filename (new convention)
-             
-    prefix : the output name of the AC
-    
-    skip_null_epoch: Do not write an epoch if all sats are null (filtering)
+    Parameters
+    ----------
+    SP3_DF_in : DataFrame
+        Input Orbit DataFrame.
+    outpath : str
+        The output path of the file (see also outname).
+    outname : None or str, optional
+        None = outpath is the full path (directory + filename) of the output.
+        A string = a manual name for the file.
+        'auto_old_cnv' = automatically generate the filename (old convention)
+        'auto_new_cnv' = automatically generate the filename (new convention)
+        The default is None.
+    prefix : str, optional
+        the output 3-char. name of the AC. The default is 'orb'.
+    skip_null_epoch : bool, optional
+        Do not write an epoch if all sats are null (filtering). 
+        The default is True.
+    force_format_c : bool, optional
+        DESCRIPTION. The default is False.
 
+    Returns
+    -------
+    The string containing the formatted SP3 data.
     """
+    
     ################## MAIN DATA
     LinesStk = []
 
@@ -202,7 +207,36 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
     F.write(FinalStr)
     
     
-def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False):
+def write_clk(DFclk_in,outpath,
+              outname=None,prefix='orb',
+              header="",output_std_values=False):
+    """
+    Write a SP3 Clock file from an Clock DataFrame
+
+    Parameters
+    ----------
+    DFclk_in : DataFrame
+        Input Clock DataFrame.
+    outpath : str
+        The output path of the file (see also outname).
+    outname : None or str, optional
+        None = outpath is the full path (directory + filename) of the output.
+        A string = a manual name for the file.
+        'auto_old_cnv' = automatically generate the filename (old convention)
+        'auto_new_cnv' = automatically generate the filename (new convention)
+        The default is None.
+    prefix : str, optional
+        the output 3-char. name of the AC. The default is 'orb'.
+    header : str, optional
+        A string describing the clk file header. The default is "".
+    output_std_values : bool, optional
+        Add observation sigmas as the last column. The default is False.
+
+    Returns
+    -------
+    The string containing the formatted clock data.
+    """
+    
     HEAD = header
     Row_str_stk = []
 
@@ -232,8 +266,25 @@ def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False):
     CORPSE = "\n".join(Row_str_stk)
        
     OUT = HEAD + CORPSE
+    
+    ### Manage the file path
+    prefix_opera = prefix
+    
+    if not outname:
+        outpath_opera = outpath
+    elif outname == 'auto_old_cnv':
+        start_dt = dt.datetime(row["year"].iloc[0],
+                               row["month"].iloc[0],
+                               row["day"].iloc[0])
+        week , dow = conv.dt2gpstime(start_dt)
+        filename = prefix_opera + str(week) + str(dow) + '.clk'
+        outpath_opera = os.path.join(outpath,filename)
+        
+    elif outname == 'auto_new_cnv':
+        print("ERR: not implemented yet !!!!!")
+        raise Exception
 
-    with open(clk_file_out,"w+") as Fout:
+    with open(outpath_opera,"w+") as Fout:
         Fout.write(OUT)
         Fout.close()
         
@@ -241,6 +292,9 @@ def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False):
 
 
 def ine_block_mono(sat,dt_in,extra_intrvl_strt=.1,extra_intrvl_end=.4,step=300):
+    """
+    Write an EPOS INE block
+    """
     
     Fields = ['orb____1',
     'orb____2',
@@ -287,6 +341,9 @@ def ine_block_mono(sat,dt_in,extra_intrvl_strt=.1,extra_intrvl_end=.4,step=300):
 
 def write_ine_dummy_file(Sat_list,dt_in,extra_intrvl_strt=.1,
              extra_intrvl_end=.4,step=300,out_file_path=None):
+    """
+    Write an EPOS INE dummy (empty values) file
+    """
 
     Lines = []
     
@@ -342,6 +399,9 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         severe=False,
                         separated_systems_export=False):
     """
+    Generate an SP3 Orbit file with overlap based on the SP3s of the 
+    days before and after
+    
     Parameters
     ----------
     ac_list : list
@@ -371,8 +431,6 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
     None.
 
     """
-    
-
 
     for ac in ac_list:
         Lfile = utils.find_recursive(dir_in,"*" + ac + "*sp3")
@@ -514,20 +572,48 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                     raise e
 
 
-
-def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
-                          no_time_limit_for_first_period = True,
-                          no_time_limit_for_last_period = True,
-                          soln_in_DF=True):
     """
     sort_wrt="site" or "site_num"
     
     soln_in_DF
     use soln AND pt information in the input DataFrame
     """
+    
 
+
+def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
+                          no_time_limit_for_first_period = True,
+                          no_time_limit_for_last_period = True,
+                          soln_in_DF=True):
+    """
+    Write an EPOS coordinate file
+
+    Parameters
+    ----------
+    DF_in : DataFrame
+        Input Orbit DataFrame.
+    file_out : str
+        The output path of the file.
+    sort_wrt : bool, optional
+        Sort the values with respect to a DF column. 
+        The default is "site".
+    no_time_limit_for_first_period : bool, optional
+        No time limit for the first period. 
+        The default is True.
+    no_time_limit_for_last_period : bool, optional
+        No time limit for the last period. 
+        The default is True.
+    soln_in_DF : bool, optional
+        Soln in DF. 
+        The default is True.
+
+    Returns
+    -------
+    None.
+
+    """
+    
     DF_work = DF_in.sort_values([sort_wrt,"MJD_start"])
-
 
     Stat_lines_blk_stk = []
 
@@ -621,3 +707,20 @@ def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
         f.write(final_str)
 
     return final_str
+
+
+
+def write_sndy_light_dat(ts_in,outdir,outprefix):
+    """ Not properly implemented """
+    fil = open(os.path.join(outdir,outprefix),'w+')
+    if isinstance(ts_in,TimeSeriePoint):
+        if ts_in.initype() == 'FLH':
+            for pt in ts_in.pts:
+                lin = ' '.join([str(e) for e in [pt.F , pt.L , pt.H , pt.T , pt.sF , pt.sL , pt.sH ]])
+                fil.write(lin + '\n')
+    elif isinstance(ts_in,TimeSerieObs):
+        if ts_in.typeobs == 'RPY':
+            for att in ts_in.obs:
+                lin = ' '.join([str(e) for e in [att.R , att.P , att.Y , att.T , att.Q.w , att.Q.x , att.Q.y , att.Q.z ]])
+                fil.write(lin + '\n')
+    fil.close()

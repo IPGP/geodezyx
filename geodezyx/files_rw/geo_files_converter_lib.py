@@ -1588,66 +1588,6 @@ def write_station_file_gins_from_rinex(rinex_path,station_file_out,
 
 
 
-
-
-
-
-# Convert sp3 2 gins
-# brouillon
-#
-#satdic = OrderedDict()
-#
-#sp3in = "/media/psakicki/AF0E-DA43/CHAL_BUGS/TEMP_DATA/jp211236.sp3"
-#orbginsout = '/home/psakicki/aaa_FOURBI/outgins'
-#
-#for l in open(sp3in):
-#    if l[0] in ('#','+','%','/'):
-#        continue
-#
-#    f = l.split()
-#
-#    if l[0] == '*':
-#        ll = [int(float(e)) for e in f[1:]]
-#        epoch = dt.datetime(*ll)
-#        continue
-#    if l[0] == 'P':
-#        prn = int(f[0][2:])
-#        x = float(f[1]) * 10**3
-#        y = float(f[2]) * 10**3
-#        z = float(f[3]) * 10**3
-#
-#        print epoch,prn,x,y,z
-#
-#        if not satdic.has_key(prn):
-#            satdic[prn] = []
-#
-#        jjul = conv.dt2jjulCNES(epoch)
-#        sec = conv.dt2secinday(epoch) + 19
-#
-#        satdic[prn].append((jjul,sec,x,y,z))
-#
-#fil = open(orbginsout,'w+')
-#
-#for k,vv in satdic.iteritems():
-#    for v in vv:
-#        if k in (11,13,14,18,20,28):
-#            finalprn = 66600 + k
-#        elif k in (2,15,17,21):
-#            finalprn = 88800 + k
-#        else:
-#            finalprn = 77700 + k
-#
-#        jjul = v[0]
-#        sec  = v[1]
-#        x = v[2]
-#        y = v[3]
-#        z = v[4]
-#
-#        finalline =  '  {:5} {:6} {:12.6f} tai xyz ine  0 {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:.3f}  {:.3E}\n'.format(finalprn,jjul,float(sec),0,0,0,0,0,0,0,0,0,x,y,z,0,0,0,0.,0)
-#        fil.write(finalline)
-#
-#fil.close()
-
 #                     _   _   _ __  __ ______             _____  _____
 #                    | | | \ | |  \/  |  ____|   /\      / ____|/ ____|   /\
 #  _ __ ___  __ _  __| | |  \| | \  / | |__     /  \    | |  __| |  __   /  \
@@ -1931,115 +1871,7 @@ def Tropsinex_DataFrame(read_sinex_result):
      DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pd.to_numeric, errors='coerce')
      
      return DF_Sinex
-     
-def read_sinex_old(snxfile,dataframe_output=True):
-    """
-    This function is depreciated !!!!
-    """
 
-    STAT , soln , epoc, AC = [] , [] , [], []
-    x , y , z , sx , sy , sz = [] , [] , [] , [] , [] , []
-    vx , vy , vz , svx , svy , svz = [] , [] , [] , [] , [] , []
-    
-    start , end = [] , []
-
-    flagxyz    = False
-    flagepochs = False
-
-    for line in open(snxfile,"r",encoding = "ISO-8859-1"):
-
-        if re.compile('SOLUTION/ESTIMATE').search(line):
-            flagxyz = not flagxyz
-            continue
-        
-        if re.compile('SOLUTION/EPOCHS').search(line):
-            flagepochs = not flagepochs
-            continue        
-
-        if line[0] != ' ':
-            continue
-        else:
-            fields = line.split()
-
-
-        if flagxyz == True:
-
-            if fields[1] == 'STAX':
-                split_sp3_name = os.path.basename(snxfile)
-                AC.append(split_sp3_name[0:3])
-                STAT.append(fields[2].upper())
-                soln.append(fields[4])
-                if not ':' in fields[5]:
-                    epoc.append(conv.convert_partial_year(fields[5]))
-                else:
-                    date_elts_lis = fields[5].split(':')
-                    yy =  int(date_elts_lis[0]) + 2000
-                    doy = int(date_elts_lis[1])
-                    sec = int(date_elts_lis[2])
-
-                    epoc.append(conv.doy2dt(yy,doy,seconds=sec))
-
-                x.append(float(fields[8]))
-                sx.append(float(fields[9]))
-
-            if fields[1] == 'STAY':
-                y.append(float(fields[8]))
-                sy.append(float(fields[9]))
-
-            if fields[1] == 'STAZ':
-                z.append(float(fields[8]))
-                sz.append(float(fields[9]))
-
-
-            if fields[1] == 'VELX':
-                vx.append(float(fields[8]))
-                svx.append(float(fields[9]))
-
-            if fields[1] == 'VELY':
-                vy.append(float(fields[8]))
-                svy.append(float(fields[9]))
-
-            if fields[1] == 'VELZ':
-                vz.append(float(fields[8]))
-                svz.append(float(fields[9]))
-                
-        if flagepochs:
-            start_val = conv.datestr_sinex_2_dt(fields[4])
-            end_val   = conv.datestr_sinex_2_dt(fields[5])
-            start.append(start_val)
-            end.append(end_val)
-    
-    if not vx:
-        nanlist = [np.nan] * len(x)
-        vx , vy , vz , svx , svy , svz = list(nanlist) , list(nanlist) , list(nanlist) , \
-                                         list(nanlist) , list(nanlist) ,list(nanlist)
-                                         
-
-    outtuple = \
-    list(zip(*sorted(zip(AC, STAT , soln , epoc , x , y , z , sx , sy , sz ,
-                         vx , vy , vz , svx , svy , svz , start , end))))
-
-    if dataframe_output:
-        return sinex_DataFrame(outtuple)
-    else:
-        STAT , soln , epoc , x , y , z , sx , sy , sz , vx , vy , vz , svx , svy , svz , start , end= outtuple
-        print('TIPS : this output can be converted directly to a Pandas DataFrame using sinex_DataFrame function')
-        return STAT , soln , epoc , x , y , z , sx , sy , sz , vx , vy , vz , svx , svy , svz , start ,  end
-
-def sinex_DataFrame(read_sinex_result):
-    DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
-    colnam = ['AC', 'STAT' , 'soln' , 'epoc' , 'x' , 'y' , 'z' , 'sx' , 'sy' , 'sz' , 'vx' , 'vy' , 'vz' , 'svx' , 'svy' , 'svz' , 'start' , 'end']
-    DF_Sinex.columns = colnam
-    
-    cols_numeric = ["x","y","z",
-                "sx","sy","sz",
-                "vx","vy","vz",
-                "svx","svy","svz"]
-        
-    DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pd.to_numeric, errors='coerce')
-        
-
-    return DF_Sinex
 
 def read_sinex(sinex_path_in,
                keep_sites_as_index=False):
@@ -2057,8 +1889,6 @@ def read_sinex(sinex_path_in,
                            5: "end",
                            6: "mean"},inplace=True)
     DFepoc.set_index(['STAT','pt','soln'],inplace=True)
-    
-    
     
     ### Rearange the coords DF
     Index = DFcoor[[2,3,4]].drop_duplicates()
@@ -2109,11 +1939,23 @@ def read_sinex(sinex_path_in,
         DFout.reset_index(inplace=True)    
 
     return DFout
+
+
+def sinex_DataFrame(read_sinex_result):
+    DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
+    colnam = ['AC', 'STAT' , 'soln' , 'epoc' , 'x' , 'y' , 'z' , 'sx' , 'sy' , 'sz' , 'vx' , 'vy' , 'vz' , 'svx' , 'svy' , 'svz' , 'start' , 'end']
+    DF_Sinex.columns = colnam
     
+    cols_numeric = ["x","y","z",
+                "sx","sy","sz",
+                "vx","vy","vz",
+                "svx","svy","svz"]
+        
+    DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pd.to_numeric, errors='coerce')
+        
 
-
-
-
+    return DF_Sinex
+    
 def read_sinex_versatile(sinex_path_in , id_block,
                          convert_date_2_dt = True,
                          header_line_idx = -1):
@@ -2217,9 +2059,6 @@ def read_sinex_versatile(sinex_path_in , id_block,
                 pass
         
     return DF
-
-
-
 
 def read_sinex_bench_antenna(sinex_in):
     F = open(sinex_in,"r")
@@ -2409,6 +2248,166 @@ def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False, force = False):
 
     return out_gzip_file
 
+
+ #  ______                _   _                _____                                         _ 
+ # |  ____|              | | (_)              / ____|                                       | |
+ # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
+ # |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | | |_ | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
+ # | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+ # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
+ #                                                                        __/ |                
+ #                                                                       |___/       
+
+def read_sinex_old(snxfile,dataframe_output=True):
+    """
+    This function is depreciated !!!!
+    """
+
+    STAT , soln , epoc, AC = [] , [] , [], []
+    x , y , z , sx , sy , sz = [] , [] , [] , [] , [] , []
+    vx , vy , vz , svx , svy , svz = [] , [] , [] , [] , [] , []
+    
+    start , end = [] , []
+
+    flagxyz    = False
+    flagepochs = False
+
+    for line in open(snxfile,"r",encoding = "ISO-8859-1"):
+
+        if re.compile('SOLUTION/ESTIMATE').search(line):
+            flagxyz = not flagxyz
+            continue
+        
+        if re.compile('SOLUTION/EPOCHS').search(line):
+            flagepochs = not flagepochs
+            continue        
+
+        if line[0] != ' ':
+            continue
+        else:
+            fields = line.split()
+
+
+        if flagxyz == True:
+
+            if fields[1] == 'STAX':
+                split_sp3_name = os.path.basename(snxfile)
+                AC.append(split_sp3_name[0:3])
+                STAT.append(fields[2].upper())
+                soln.append(fields[4])
+                if not ':' in fields[5]:
+                    epoc.append(conv.convert_partial_year(fields[5]))
+                else:
+                    date_elts_lis = fields[5].split(':')
+                    yy =  int(date_elts_lis[0]) + 2000
+                    doy = int(date_elts_lis[1])
+                    sec = int(date_elts_lis[2])
+
+                    epoc.append(conv.doy2dt(yy,doy,seconds=sec))
+
+                x.append(float(fields[8]))
+                sx.append(float(fields[9]))
+
+            if fields[1] == 'STAY':
+                y.append(float(fields[8]))
+                sy.append(float(fields[9]))
+
+            if fields[1] == 'STAZ':
+                z.append(float(fields[8]))
+                sz.append(float(fields[9]))
+
+
+            if fields[1] == 'VELX':
+                vx.append(float(fields[8]))
+                svx.append(float(fields[9]))
+
+            if fields[1] == 'VELY':
+                vy.append(float(fields[8]))
+                svy.append(float(fields[9]))
+
+            if fields[1] == 'VELZ':
+                vz.append(float(fields[8]))
+                svz.append(float(fields[9]))
+                
+        if flagepochs:
+            start_val = conv.datestr_sinex_2_dt(fields[4])
+            end_val   = conv.datestr_sinex_2_dt(fields[5])
+            start.append(start_val)
+            end.append(end_val)
+    
+    if not vx:
+        nanlist = [np.nan] * len(x)
+        vx , vy , vz , svx , svy , svz = list(nanlist) , list(nanlist) , list(nanlist) , \
+                                         list(nanlist) , list(nanlist) ,list(nanlist)
+                                         
+
+    outtuple = \
+    list(zip(*sorted(zip(AC, STAT , soln , epoc , x , y , z , sx , sy , sz ,
+                         vx , vy , vz , svx , svy , svz , start , end))))
+
+    if dataframe_output:
+        return sinex_DataFrame(outtuple)
+    else:
+        STAT , soln , epoc , x , y , z , sx , sy , sz , vx , vy , vz , svx , svy , svz , start , end= outtuple
+        print('TIPS : this output can be converted directly to a Pandas DataFrame using sinex_DataFrame function')
+        return STAT , soln , epoc , x , y , z , sx , sy , sz , vx , vy , vz , svx , svy , svz , start ,  end
+
+
+# Convert sp3 2 gins
+# brouillon
+#
+#satdic = OrderedDict()
+#
+#sp3in = "/media/psakicki/AF0E-DA43/CHAL_BUGS/TEMP_DATA/jp211236.sp3"
+#orbginsout = '/home/psakicki/aaa_FOURBI/outgins'
+#
+#for l in open(sp3in):
+#    if l[0] in ('#','+','%','/'):
+#        continue
+#
+#    f = l.split()
+#
+#    if l[0] == '*':
+#        ll = [int(float(e)) for e in f[1:]]
+#        epoch = dt.datetime(*ll)
+#        continue
+#    if l[0] == 'P':
+#        prn = int(f[0][2:])
+#        x = float(f[1]) * 10**3
+#        y = float(f[2]) * 10**3
+#        z = float(f[3]) * 10**3
+#
+#        print epoch,prn,x,y,z
+#
+#        if not satdic.has_key(prn):
+#            satdic[prn] = []
+#
+#        jjul = conv.dt2jjulCNES(epoch)
+#        sec = conv.dt2secinday(epoch) + 19
+#
+#        satdic[prn].append((jjul,sec,x,y,z))
+#
+#fil = open(orbginsout,'w+')
+#
+#for k,vv in satdic.iteritems():
+#    for v in vv:
+#        if k in (11,13,14,18,20,28):
+#            finalprn = 66600 + k
+#        elif k in (2,15,17,21):
+#            finalprn = 88800 + k
+#        else:
+#            finalprn = 77700 + k
+#
+#        jjul = v[0]
+#        sec  = v[1]
+#        x = v[2]
+#        y = v[3]
+#        z = v[4]
+#
+#        finalline =  '  {:5} {:6} {:12.6f} tai xyz ine  0 {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:+.14E} {:.3f}  {:.3E}\n'.format(finalprn,jjul,float(sec),0,0,0,0,0,0,0,0,0,x,y,z,0,0,0,0.,0)
+#        fil.write(finalline)
+#
+#fil.close()
 
 
 
