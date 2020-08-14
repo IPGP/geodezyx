@@ -62,7 +62,6 @@ def read_bull_B(file_path_in):
     DFout : pandas DataFrame
         Returns a panda table format with the data extracted from the file.
     """
-    
 
     if not utils.is_iterable(file_path_in):
         file_path_in = [file_path_in]
@@ -72,8 +71,9 @@ def read_bull_B(file_path_in):
     DFstk = []
 
     for path_solo in file_path_in:
-        S = utils.extract_text_between_elements(path_solo,"1 - DAILY FINAL VALUES" ,
-                                         "2 - DAILY FINAL VALUES" )
+        S = utils.extract_text_between_elements(path_solo,
+                                                "1 - DAILY FINAL VALUES" ,
+                                                "2 - DAILY FINAL VALUES" )
 
         L = S.replace('\t','\n').split("\n")
 
@@ -1403,6 +1403,10 @@ def read_rinex_met_2(metfile):
     df.drop(['year','month','day','hour','minute','second'], axis=1,inplace=True)
     df.set_index('epoch',inplace=True)
     return df
+
+
+
+
 
 
 
