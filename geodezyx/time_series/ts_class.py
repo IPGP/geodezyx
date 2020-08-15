@@ -14,6 +14,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.widgets import MultiCursor
 import numpy as np
+import pandas as pd
 import os 
 import scipy
 
@@ -188,61 +189,6 @@ class Point():
         self.XYZset(*Xb)
         return None
 
-class Attitude:
-    def __init__(self,R=0,P=0,Y=0,T=0,sR=0,sP=0,sY=0,devID='NULL',angtype='deg'):
-
-        self.Tset(T)
-        self.devID = devID
-
-        if angtype == 'deg':
-            self.R = R
-            self.P = P
-            self.Y = Y
-
-        elif angtype == 'rad' :
-            self.R = np.rad2deg(R)
-            self.P = np.rad2deg(P)
-            self.Y = np.rad2deg(Y)
-        else:
-            raise Exception("Mauvais angtype")
-
-        self.Qcalc()
-
-    def __call__(self):
-        return self.R,self.P,self.Y,self.Tdt
-
-    def __repr__(self):
-        return "{},{},{},{}".format(self.R,self.P,self.Y,self.Tdt)
-
-
-    def Tset(self,T=0):
-        if T == 0:
-            T = dt.datetime.now()
-
-        if type(T) == dt.datetime:
-            self.Tdt = T
-            self.T = conv.dt2posix(T)
-
-        else:
-            self.T = float(T)
-            self.Tdt = conv.posix2dt(float(T))
-
-    def RPYget(self):
-        return self.R,self.P,self.Y
-
-    def RPYset(self,R=0,P=0,Y=0,sR=0,sP=0,sY=0):
-        self.R  = R
-        self.P  = P
-        self.Y  = Y
-        self.sR  = sR
-        self.sP  = sP
-        self.sY  = sY
-
-    def Qcalc(self):
-        self.Q = conv.quaternion(self.R , self.P , self.Y , 'deg')
-        return None
-
-
 class TimeSeriePoint:
     def __init__(self,stat='STAT'):
 
@@ -276,14 +222,36 @@ class TimeSeriePoint:
 
     @property
     def nbpts(self):
+        """
+        Method to have the length of the TimeSerie
+
+        Returns
+        -------
+        int
+            Length of the TimeSerie.
+
+        """
         return len(self.pts)
+
 
     def meta_set(self,path='',stat='STAT',name=''):
         """
-        stat:
-            the 4char. code of the station
-        name :
-            is a free name for the TS, like the experience, the periode , the software ...
+        Set meta data about the TimeSerie
+
+        Parameters
+        ----------
+        path : str, optional
+            file path. The default is ''.
+        stat : str, optional
+            station 4-char. code. The default is 'STAT'.
+        name : str, optional
+            free name of for the TS, 
+            like the experience, the periode , the software ...
+            The default is ''.
+
+        Returns
+        -------
+        None.
         """
 
         self.path = path
@@ -302,6 +270,14 @@ class TimeSeriePoint:
         self.interval_nominal()
 
     def del_data(self):
+        """
+        Method to purge the data
+
+        Returns
+        -------
+        None.
+
+        """
         self.pts = []
 
         self.bool_interp_uptodate = False
@@ -309,11 +285,37 @@ class TimeSeriePoint:
 
 
     def readfile(self,filein):
+        """
+        Method to read the data form a file
+        Should be used with care
+
+        Parameters
+        ----------
+        filein : str
+            path of the file.
+
+        Returns
+        -------
+        None.
+
+        """
         self.__dict__ = files_rw.read_all_points(filein).__dict__
 
         self.interp_set()
 
     def add_point(self,inPoint):
+        """
+        Method to add a Point in the TimeSerie Object
+
+        Parameters
+        ----------
+        inPoint : Point Object
+
+        Returns
+        -------
+        None.
+
+        """
         self.pts.append(inPoint)
         # this line is discontiued, because now nbpts is a property
         #self.nbpts = len(self.pts)
@@ -321,20 +323,53 @@ class TimeSeriePoint:
         self.bool_interp_uptodate = False
 
     def aleapt(self):
+        """
+        Method to get a random Point in the TimeSeries
+
+        Returns
+        -------
+        Point Object
+
+        """
         ipt = np.random.randint(self.nbpts)
-        print("point no " + str(ipt))
+        print("INFO: point no " + str(ipt))
 
         return self.pts[ipt]
 
     def startdate(self):
+        """
+        Method to get the first epoch of the data in the TimeSerie
+
+        Returns
+        -------
+        DateTime
+
+        """
         self.sort()
         return conv.posix2dt(self.pts[0].T)
 
     def enddate(self):
+        """
+        Method to get the last epoch of the data in the TimeSerie
+
+        Returns
+        -------
+        DateTime
+
+        """
         self.sort()
         return conv.posix2dt(self.pts[-1].T)
 
     def interval_nominal(self):
+        """
+        Method to get the nominal internal between two epochs.
+
+        Returns
+        -------
+        float
+            interval nominal.
+
+        """
 
         if len(self.pts) < 2:
             self.i_nomi = 0
@@ -347,8 +382,33 @@ class TimeSeriePoint:
 
     def from_list(self,T,A,B,C,coortype='XYZ',sA=[],sB=[],sC=[]):
         """
-        T in datetime
+        Method to load data from lists to the TimeSerie
+
+        Parameters
+        ----------
+        T : float
+            Time.
+        A : list of float
+            X, F (latitude), E..
+        B : list of float
+            Y, L (longitude), N.
+        C : list of float
+            Z, H (hight), U.
+        coortype : str, optional
+            The coordinates type. The default is 'XYZ'.
+        sA : TYPE, optional
+            sigma of A component. The default is [].
+        sB : TYPE, optional
+            sigma of B component. The default is [].
+        sC : TYPE, optional
+            sigma of C component. The default is [].
+
+        Returns
+        -------
+        None.
+
         """
+
         if not sA:
             sA = np.zeros(len(A))
         if not sB:
@@ -369,7 +429,35 @@ class TimeSeriePoint:
         return None
 
 
-    def to_list(self,coortype = 'XYZ',specific_output=''):
+    def to_list(self,coortype='XYZ',specific_output=None,
+                time_as_datetime=False):
+        """
+        Export the TimeSerie Object as Lists (Numpy Arrays)
+
+        Parameters
+        ----------
+        coortype : str, optional
+        The coordinates type exported to the list.
+        The default is 'XYZ'.
+        specific_output : int, optional
+            ask for a specific list, ranges between 0 and 6.
+            The default is None.
+        time_as_datetime : bool, optional
+            if True the Time list is exported in DataFrame
+            if False the Time list is exported in Posix time
+
+        Returns
+        -------
+        A,B,C,T,sA,sB,sC : lists
+            A = X, F (latitude), E.
+            B = Y, L (longitude), N.
+            C = Z, H (hight), U.
+            T = Time
+            sA = sigma of A component
+            sB = sigma of B component
+            sC = sigma of C component
+        """
+
 
         if coortype == 'XYZ':
             A,B,C = 'X','Y','Z'
@@ -409,9 +497,15 @@ class TimeSeriePoint:
             sC = np.asarray([ np.nan ] * len(self.pts))
         # il faut squeezer les vecteurs parce que des fois on se retrouve
         # avec des matrices
+        
+        if time_as_datetime:
+            Tout = conv.posix2dt(T)
+        else:
+            Tout = T
+        
         sq = np.squeeze
-        outtup = (sq(A) , sq(B) , sq(C) , sq(T) , sq(sA) , sq(sB) , sq(sC))
-        if specific_output == '':
+        outtup = (sq(A) , sq(B) , sq(C) , sq(Tout) , sq(sA) , sq(sB) , sq(sC))
+        if specific_output == None:
             return outtup
         elif type(specific_output) is int:
             return outtup[specific_output]
@@ -419,16 +513,99 @@ class TimeSeriePoint:
             print("INFO : this mode must be implemented ;)")
             print("use an int as index instead")
             return outtup
+        
+    def to_dataframe(self,coortype ='XYZ'):
+        """
+        Export the TimeSerie Object as DataFrame
+        
+        Parameters
+        ----------
+        coortype : str or iterable of str.
+            The coordinates type exported to the DataFrame.
+            'XYZ', 'FLH', 'ENU', 'NED'
+            can be also an iterable like ('XYZ','FLH')
+            The default is 'XYZ'.
 
-
+        Returns
+        -------
+        DF : DataFrame
+            output DataFrame.
+        """
+        
+        if not utils.is_iterable(coortype):
+            coortype = (coortype,)
+        
+        ColStk = tuple()
+        ColNameStk = []
+        
+        for icoty , coty in enumerate(coortype):
+            A,B,C,T,sA,sB,sC = self.to_list(coty)
+            
+            if icoty == 0:
+                Tdt = conv.posix2dt(T)
+                ColStk = ColStk + (Tdt,T,A,B,C,sA,sB,sC)  
+                ColNameStk = ["Tdt","T"] + [e for e in coty] + ["s" + e for e in coty]
+            else:
+                ColStk = ColStk + (A,B,C,sA,sB,sC)
+                ColNameStk = [e for e in coty] + ["s" + e for e in coty]
+                
+        BIG = np.column_stack(ColStk)
+        DF = pd.DataFrame(BIG)
+        DF.columns = ColNameStk
+        
+        return DF
 
     def sort(self):
+        """
+        Internal method to sort the point in the TimeSerie Object
+
+        Returns
+        -------
+        None.
+
+        """
         self.pts.sort(key=lambda x: x.T)
 
-    def plot(self,coortype='ENU',diapt=2,alpha=0.8,fig=1,
-             errbar=True,new_style=True,symbol = '.',errbar_width=1):
-        """ fig can accept a int (id of a Figure)
-         OR the figure Object itself """
+    def plot(self,coortype='ENU',
+             diapt=2,
+             alpha=0.8,
+             fig=1,
+             errbar=True,
+             new_style=True,
+             symbol = '.',
+             errbar_width=1):
+        """
+        Plot data in a TimeSerie Object
+
+        Parameters
+        ----------
+        coortype : str, optional
+            The coordinates type. The default is 'ENU'.
+        diapt : float, optional
+            Point diamaeter. The default is 2.
+        alpha : float, optional
+            Alpha (transparency) of points. The default is 0.8.
+        fig : int or Figure object, optional
+            Figure ID where the data will be plotted
+            can accept a int (id of a Figure)
+            OR the figure Object itself.
+            The default is 1.
+        errbar : bool, optional
+            Plot the error bars. The default is True.
+        new_style : bool, optional
+            Plot in a new style.
+            The old style is only kept for legacy
+            The default is True.
+        symbol : str, optional
+            symbol. The default is '.'.
+        errbar_width : TYPE, optional
+            coefficient for the error bar size. The default is 1.
+
+        Returns
+        -------
+        None.
+
+        """
 
         if new_style:
             styleint = 310
@@ -566,10 +743,26 @@ class TimeSeriePoint:
 
 
     def plot_discont(self,fig=1):
+        """
+        Plot discontinuties of a TimeSerie Object contained in discont list
+
+        Parameters
+        ----------
+        fig : int or Figure object, optional
+            Figure ID where the data will be plotted
+            can accept a int (id of a Figure)
+            OR the figure Object itself.
+            The default is 1.
+
+        Returns
+        -------
+        None.
+
+        """
 
         if not self.bool_discont:
-            print("WARN : pas de discontinuité dans la TS")
-            return 0
+            print("WARN : no discontinuities in TimeSerie")
+            return None
 
         if type(fig) is int:
             figobj = plt.figure(fig)
@@ -648,15 +841,24 @@ class TimeSeriePoint:
 
         return multi , cid
 
-
-
-
-
     def initype(self):
         L = [ pt.initype for pt in self.pts ]
         return Counter(L).most_common(1)[0][0]
 
     def ENUcalc(self, refENU ):
+        """
+        Method to determine the ENU components based on a reference point
+
+        Parameters
+        ----------
+        refENU : Point Object or TimeSeriePoint Object
+            Reference point.
+
+        Returns
+        -------
+        None.
+
+        """
         if refENU.__class__.__name__ == 'Point':
             self.refENU = refENU
             [ pt.ENUcalc_pt(refENU) for pt in self.pts ]
@@ -677,6 +879,14 @@ class TimeSeriePoint:
             self.interp_set()
 
     def ENUcalc_from_mean_posi(self):
+        """
+        Method to determine the ENU components based directly on the mean position
+
+        Returns
+        -------
+        None.
+
+        """
         self.ENUcalc(self.mean_posi())
         return None
 
@@ -705,6 +915,19 @@ class TimeSeriePoint:
 
 
     def interp_set(self,interptype = 'slinear'):
+        """
+        Method to set the coordinate interpolators
+
+        Parameters
+        ----------
+        interptype : TYPE, optional
+            Interpolation type. The default is 'slinear'.
+
+        Returns
+        -------
+        None.
+
+        """
         if (not hasattr(self.pts[0],'E')) or np.isnan(self.pts[0].E) == True:
             print("WARN : interp_set : pas de ENU pour " + self.name)
         else:
@@ -736,6 +959,22 @@ class TimeSeriePoint:
         self.bool_interp_uptodate = True
 
     def interp_get(self,T,coortype='ENU'):
+        """
+        Method to get the coordinate interpolators
+
+        Parameters
+        ----------
+        T : float or list of float
+            Time (IN POSIX Time) where the interpolation is wished.
+        coortype : str, optional
+            The coordinates type. The default is 'ENU'.
+
+        Returns
+        -------
+        tsout : 
+            DESCRIPTION.
+
+        """
 
         if self.bool_interp_uptodate == False:
             print("WARN : interp obsolete, recalcul auto")
@@ -768,10 +1007,40 @@ class TimeSeriePoint:
         return tsout
 
     def set_discont(self,indiscont):
+        """
+        Method to set the discontinuties list
+
+        Parameters
+        ----------
+        indiscont : list of time
+            Discontinuities in the TimeSerie.
+
+        Returns
+        -------
+        None.
+
+        """
         self.discont = indiscont
         self.bool_discont = True
 
     def mean_posi(self,coortype='XYZ',outtype='point',meanormed='mean'):
+        """
+        Method to determine the mean position of the TimeSerie
+
+        Parameters
+        ----------
+        coortype : TYPE, optional
+            The coordinates type. The default is 'XYZ'.
+        outtype : TYPE, optional
+            'point' or 'tuple'. The default is 'point'.
+        meanormed : TYPE, optional
+            'mean' or 'median'. The default is 'mean'.
+
+        Returns
+        -------
+        Point or coordinates tuple
+
+        """
 
         #special case where only one point
         if self.nbpts == 1:
@@ -784,7 +1053,7 @@ class TimeSeriePoint:
             Aout = np.nanmean(A)
             Bout = np.nanmean(B)
             Cout = np.nanmean(C)
-        elif meanormed == 'med':
+        elif meanormed == 'median':
             Aout = np.median(A)
             Bout = np.median(B)
             Cout = np.median(C)
@@ -810,10 +1079,43 @@ class TimeSeriePoint:
             pt.add_offset(dA,dB,dC)
 
     def decimate(self,dec):
+        """
+        Method to decimate a TimeSerie
+
+        Parameters
+        ----------
+        dec : int
+            keep 1/dec point in the TimeSerie.
+
+        Returns
+        -------
+        None.
+
+        """
         self.__dict__ = time_series.decimate_cleaner(self,dec).__dict__
         #decimate_cleaner(self,dec,True)
 
     def find_point(self,tin,tol=0.001,stop_when_found=True):
+        """
+        Method to find a specific point according to its timestamp
+
+        Parameters
+        ----------
+        tin : float or datetime
+            timestamp of the researched point.
+        tol : float, optional
+            tolerence of the research. The default is 0.001.
+        stop_when_found : bool, optional
+            Stop the research when a point is found. The default is True.
+
+        Returns
+        -------
+        Point Object
+            Point Found.
+        int or list of int
+            index of the point.
+
+        """
 
         find = False
 
@@ -845,6 +1147,77 @@ class TimeSeriePoint:
                     i_stk.append(i)
             return pts_stk  , i_stk
     
+    
+    
+
+
+ #  ______                      _                      _        _    _____ _                         
+ # |  ____|                    (_)                    | |      | |  / ____| |                        
+ # | |__  __  ___ __   ___ _ __ _ _ __ ___   ___ _ __ | |_ __ _| | | |    | | __ _ ___ ___  ___  ___ 
+ # |  __| \ \/ / '_ \ / _ \ '__| | '_ ` _ \ / _ \ '_ \| __/ _` | | | |    | |/ _` / __/ __|/ _ \/ __|
+ # | |____ >  <| |_) |  __/ |  | | | | | | |  __/ | | | || (_| | | | |____| | (_| \__ \__ \  __/\__ \
+ # |______/_/\_\ .__/ \___|_|  |_|_| |_| |_|\___|_| |_|\__\__,_|_|  \_____|_|\__,_|___/___/\___||___/
+ #             | |                                                                                   
+ #             |_|                                                                                   
+
+
+    
+    
+class Attitude:
+    def __init__(self,R=0,P=0,Y=0,T=0,sR=0,sP=0,sY=0,devID='NULL',angtype='deg'):
+
+        self.Tset(T)
+        self.devID = devID
+
+        if angtype == 'deg':
+            self.R = R
+            self.P = P
+            self.Y = Y
+
+        elif angtype == 'rad' :
+            self.R = np.rad2deg(R)
+            self.P = np.rad2deg(P)
+            self.Y = np.rad2deg(Y)
+        else:
+            raise Exception("Mauvais angtype")
+
+        self.Qcalc()
+
+    def __call__(self):
+        return self.R,self.P,self.Y,self.Tdt
+
+    def __repr__(self):
+        return "{},{},{},{}".format(self.R,self.P,self.Y,self.Tdt)
+
+
+    def Tset(self,T=0):
+        if T == 0:
+            T = dt.datetime.now()
+
+        if type(T) == dt.datetime:
+            self.Tdt = T
+            self.T = conv.dt2posix(T)
+
+        else:
+            self.T = float(T)
+            self.Tdt = conv.posix2dt(float(T))
+
+    def RPYget(self):
+        return self.R,self.P,self.Y
+
+    def RPYset(self,R=0,P=0,Y=0,sR=0,sP=0,sY=0):
+        self.R  = R
+        self.P  = P
+        self.Y  = Y
+        self.sR  = sR
+        self.sP  = sP
+        self.sY  = sY
+
+    def Qcalc(self):
+        self.Q = conv.quaternion(self.R , self.P , self.Y , 'deg')
+        return None
+
+
     
 class TimeSerieObs(object):
 
