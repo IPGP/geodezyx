@@ -28,12 +28,47 @@ from geodezyx import reffram
 
 ##########  END IMPORT  ##########
 
-
-
 class Point():
     def __init__(self,A=0.,B=0.,C=0.,T=0.,initype='XYZ',
                  sA=0.,sB=0.,sC=0.,name='noname'):
+        """
+        Initialize a Point Object by importing the coordinate component
 
+        Parameters
+        ----------
+        A : float
+            X, F (latitude), E (depends on initype).
+        B : float
+            Y, L (longitude), N (depends on initype).
+        C : float
+            Z, H (hight), U (depends on initype).
+        T : float, optional
+            Epoch of the measure. The default is 0..
+        initype : str, optional
+            The inital coordinates type. The default is 'XYZ'.
+            The others are 'FLH', 'ENU' and 'NED'
+        sA : TYPE, optional
+            sigma of A component. The default is 0.
+        sB : TYPE, optional
+            sigma of B component. The default is 0.
+        sC : TYPE, optional
+            sigma of C component. The default is 0.
+        name : str, optional
+            Flexible name for the Point identification. The default is 'noname'.
+        
+        Note
+        ----
+        
+        A dictionary called anex is also initialized to allow a 
+        versatile storage of a variety of data
+        
+        Exemple of dictionary keys 
+        RMS: average RMS (for gipsy)
+        sdAB , sdBC , sdAC : the variances between A,B,C (for rtklib)
+        sdXY , sdXZ , sdYZ : the variances between XYZ (pbo.pos)
+        Vx , Vy , Vz , sVx , sVy , sVz : velocity of the point (EPOS coordinates)
+        """
+        
         self.Tset(T)
         self.ENUset()
         self.name = name
@@ -49,7 +84,6 @@ class Point():
 
         if initype == 'XYZ':
             self.XYZset(A,B,C,sA,sB,sC)
-
         elif initype == 'FLH': # On travaille en degres decimaux
             self.FLHset(A,B,C,sA,sB,sC)
 
@@ -124,7 +158,7 @@ class Point():
         self.initype = 'NED'
 
     def add_offset(self,dA,dB,dC):
-        print("NOTE 160415 : add_offset as method are hazardous ...")
+        print("WARN: add_offset as method are hazardous ...")
         temp = time_series.add_offset_point(self,dA,dB,dC)
         self.__dict__ = temp.__dict__
 
@@ -191,6 +225,15 @@ class Point():
 
 class TimeSeriePoint:
     def __init__(self,stat='STAT'):
+        """
+        Initialize a TimeSeriePoint object
+
+        Parameters
+        ----------
+        stat : str, optional
+            station 4-char. code. The default is 'STAT'.
+
+        """
 
         self.pts = []
         self.i_nomi = 0
@@ -205,8 +248,11 @@ class TimeSeriePoint:
         self.anex = dict()
 
     def __repr__(self):
+        """
+        Representation of a TimeSeriePoint object
+        """
         if self.pts == []:
-            raise Exception('TS is empty ...')
+            raise Exception('ERR: TimeSeriePoint is empty ...')
 
         start = self.startdate()
         end = self.enddate()
@@ -271,7 +317,7 @@ class TimeSeriePoint:
 
     def del_data(self):
         """
-        Method to purge the data
+        Method to purge the data in the TimeSeriePoint
 
         Returns
         -------
@@ -396,11 +442,11 @@ class TimeSeriePoint:
             Z, H (hight), U.
         coortype : str, optional
             The coordinates type. The default is 'XYZ'.
-        sA : TYPE, optional
+        sA : list of float, optional
             sigma of A component. The default is [].
-        sB : TYPE, optional
+        sB : list of float, optional
             sigma of B component. The default is [].
-        sC : TYPE, optional
+        sC : list of float, optional
             sigma of C component. The default is [].
 
         Returns
