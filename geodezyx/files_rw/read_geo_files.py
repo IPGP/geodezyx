@@ -1853,6 +1853,15 @@ def read_rinex_met_2(metfile):
         if re.compile('# / TYPES OF OBSERV').search(line):
             tmp = line.split()
             headers = tmp[1:int(tmp[0])+1]
+        if re.compile('TD SENSOR MOD/TYPE/ACC').search(line):
+            tmp = line.split()
+            temp_unc = float(tmp[2])
+        if re.compile('PR SENSOR MOD/TYPE/ACC').search(line):
+            tmp = line.split()
+            press_unc = float(tmp[2])
+        if re.compile('HR SENSOR MOD/TYPE/ACC').search(line):
+            tmp = line.split()
+            humrel_unc = float(tmp[2])
         if re.compile('END OF HEADER').search(line):
             break
         ln = ln+1
@@ -1862,6 +1871,12 @@ def read_rinex_met_2(metfile):
     df['STA'] = marker
     df['epoch'] = pd.to_datetime(df[['year','month','day','hour','minute','second']],errors='coerce')
     df.drop(['year','month','day','hour','minute','second'], axis=1,inplace=True)
+    if press_unc is not None:
+        df['PR_std'] = press_unc
+    if temp_unc is not None:
+        df['TD_std'] = temp_unc
+    if humrel_unc is not None:
+        df['HR_std'] = humrel_unc
     df.set_index('epoch',inplace=True)
     return df
 
