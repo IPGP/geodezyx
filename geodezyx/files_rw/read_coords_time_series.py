@@ -6,15 +6,31 @@ Created on Thu Aug  1 15:18:29 2019
 @author: psakicki
 """
 
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import dateutil
+import glob
+import numpy as np
+import os 
+import pandas as pd
+import scipy
+import re
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import files_rw
+from geodezyx import reffram
+from geodezyx import time_series
+from geodezyx import utils
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-import geodezyx.time_series as time_series
-#import geodezyx.legacy.geodetik as conv
-#from geodezyx import np,dt
+##########  END IMPORT  ##########
 
-from geodezyx import *
 
 def read_all_points(filein):
     """selectionne automatiquement le type de fichier brut en entrée
@@ -113,9 +129,11 @@ def read_rtklib(filein):
 
         fields = line.split()
         date1 = re.findall(r"[\w']+",fields[0] + ':' + fields[1])
-        date2 = tuple([int(d) for d in date1])
+        date2 = tuple([int(d) for d in date1[:-1]] + [int(date1[-1][:6])])
+        
+        print(date2)
 
-        T = (dt.datetime(date2[0],date2[1],date2[2],date2[3],date2[4],date2[5],date2[6]*1000) + dt.timedelta(seconds=dUTCGPS))
+        T = (dt.datetime(date2[0],date2[1],date2[2],date2[3],date2[4],date2[5],date2[6]) + dt.timedelta(seconds=dUTCGPS))
         A = (float(fields[2]))
         B = (float(fields[3]))
         C = (float(fields[4]))
@@ -209,7 +227,7 @@ def read_gipsy_tdp_list(filelistin):
         ts = read_gipsy_tdp(fil)
         tslist.append(ts)
 
-    tsout = merge_ts(tslist)
+    tsout = time_series.merge_ts(tslist)
 
     return tsout
 
@@ -608,11 +626,16 @@ def read_epos_sta_coords_multi(filein_list,return_dict = True):
         return ts_list
 
 
-def read_epos_slv_times(p):
-    L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates","\-sum_times/estimates")
-
+def read_epos_slv_times(p,convert_to_time=False):
+    """
+    convert_to_time : divide by the speed of light to get time-homogene values.
+    Values in meter instead 
+    """
+    L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates",
+                                                "\-sum_times/estimates")
 
     Lgood = []
+    
     for l in L[1:-1]:
         if "EPOCHE" in l:
             cur_epoc_line = l
@@ -626,14 +649,26 @@ def read_epos_slv_times(p):
     DF = pd.DataFrame(Lgood,columns=["epoch","stat","offset","offset_sig"])
 
     DF["stat"] = DF["stat"].astype('int')
+    
+    if convert_to_time:
+        DF[["offset","offset_sig"]] = DF[["offset","offset_sig"]] / 299792458.
 
     return DF
 
 
 
-def write_epos_sta_coords(DF_in,file_out):
+def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
+                          no_time_limit_for_first_period = True,
+                          no_time_limit_for_last_period = True,
+                          soln_in_DF=True):
+    """
+    sort_wrt="site" or "site_num"
+    
+    soln_in_DF
+    use soln AND pt information in the input DataFrame
+    """
 
-    DF_work = DF_in.sort_values(["site","MJD_start"])
+    DF_work = DF_in.sort_values([sort_wrt,"MJD_start"])
 
 
     Stat_lines_blk_stk = []
@@ -647,35 +682,79 @@ def write_epos_sta_coords(DF_in,file_out):
 -info
 """
 
-    generic_header = generic_header.format(len(DF_work),
-                                           utils.most_common(DF_work["MJD_ref"]))
+    generic_header = generic_header.format(len(DF_work["site_num"].unique()),
+                                           int(utils.most_common(DF_work["MJD_ref"])))
 
     Stat_lines_blk_stk.append(generic_header)
 
     Stat_lines_blk_stk.append("+station_coordinates")
 
-    for site in DF_work["site"].unique():
+    for site in DF_work[sort_wrt].unique():
 
         Stat_lines_blk_stk.append("*------------------------- ---- ----- -beg- -end- -**- ------------------------------------------------\n*")
 
-        for i_l ,(_ , l) in enumerate(DF_work[DF_work["site"] == site].iterrows()):
+        DF_SiteBlock = DF_work[DF_work[sort_wrt] == site]
+        
+        DF_SiteBlock.reset_index(inplace=True)
 
-            line_site_fmt = " SITE            m {:4d}  {:1d} {:} {:5d} {:5d} {:5d} {:}   A  0      LOG_CAR       LOG_CAR"
-            line_posi_fmt = " POS_VEL:XYZ     m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
-            line_velo_fmt = " SIG_PV_XYZ      m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
+        for i_l ,(_ , l) in enumerate(DF_SiteBlock.iterrows()):
 
-            line_site = line_site_fmt.format(l["site_num"],i_l,l["tecto_plate"].upper(), l["MJD_ref"],l["MJD_start"],l["MJD_end"],l["site"])
-            line_posi = line_posi_fmt.format(l["site_num"],i_l,l["x"],l["y"], l["z"],l["sx"],l["sy"],l["sz"])
-            line_velo = line_velo_fmt.format(l["site_num"],i_l,l["Vx"],l["Vy"], l["Vz"],l["sVx"],l["sVy"],l["sVz"])
+            if soln_in_DF:
+                iope = int(l["soln"])
+                pt = l["pt"]
+            else:
+                iope = i_l + 1
+                pt = "A"
+            
+            if no_time_limit_for_first_period and i_l == 0:
+                MJD_start = 0
+            else:
+                MJD_start = l["MJD_start"]
+                                            
+            if no_time_limit_for_last_period and (i_l+1) == len(DF_SiteBlock):
+                MJD_end = 0
+            else:
+                MJD_end = l["MJD_end"]
+                
+
+            line_site_fmt = " SITE            m {:4d}  {:1d} {:} {:5d} {:5d} {:5d} {:}   {:}  {:1d}      LOG_CAR       LOG_CAR"
+            line_valu_fmt = " POS_VEL:XYZ     m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
+            line_sigm_fmt = " SIG_PV_XYZ      m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
+
+            line_site = line_site_fmt.format(int(l["site_num"]),
+                                             int(iope),
+                                             l["tecto_plate"].upper(),
+                                             int(l["MJD_ref"]),
+                                             int(MJD_start),
+                                             int(MJD_end),
+                                             l["site"],
+                                             pt,
+                                             int(iope))
+            
+            line_valu = line_valu_fmt.format(int(l["site_num"]),
+                                             int(iope),
+                                             l["x"],
+                                             l["y"],
+                                             l["z"],
+                                             l["Vx"],
+                                             l["Vy"],
+                                             l["Vz"])
+            
+            line_sigm = line_sigm_fmt.format(int(l["site_num"]),
+                                             int(iope),
+                                             l["sx"],
+                                             l["sy"],
+                                             l["sz"],
+                                             l["sVx"],
+                                             l["sVy"],
+                                             l["sVz"])
 
             Stat_lines_blk_stk.append(line_site)
-            Stat_lines_blk_stk.append(line_posi)
-            Stat_lines_blk_stk.append(line_velo)
+            Stat_lines_blk_stk.append(line_valu)
+            Stat_lines_blk_stk.append(line_sigm)
             Stat_lines_blk_stk.append("*")
 
-
     Stat_lines_blk_stk.append("-station_coordinates")
-
 
     final_str = "\n".join(Stat_lines_blk_stk)
 
@@ -830,7 +909,9 @@ def read_combi_sum_exclu(sum_file,return_as_df=True,
 
 
 def read_combi_clk_rms(sum_file,return_as_df=True,
-                       clk_ref_cen_gal = "com"):
+                       clk_ref_cen_gal = "com",
+                       index_useful_col=-4,
+                       convert_to_int=True):
     """
     based on : read_good_clk_rms_one
     """
@@ -860,9 +941,12 @@ def read_combi_clk_rms(sum_file,return_as_df=True,
 
     for e in Lres_splited:
         try:
-            rms_dict[e[0]] = int(e[-4])
+            if convert_to_int:
+                rms_dict[e[0]] = int(float(e[index_useful_col]))
+            else:
+                rms_dict[e[0]] = float(e[index_useful_col])
         except:
-            print("WARN : ", e[-4],"not handeled")
+            print("WARN : ", e[index_useful_col],"not handeled")
             print("replaced with NaN")
             rms_dict[e[0]] = np.nan
 
@@ -872,14 +956,28 @@ def read_combi_clk_rms(sum_file,return_as_df=True,
         return tdt,rms_dict
 
 
-def read_combi_clk_rms_full_table(path_in):
+def read_combi_clk_rms_full_table(path_in,
+                                  with_stats_rms=False,
+                                  detailed_df=False):
     """
     recommended for .out file
+    
+    detailed_df: the outlier values are more detailled
+    X (excuded) => np.inf
+    - (not proivided) => np.nan
+    >>> (too big for a print, but still kept) => 999999
     """
     strt = "RMS \(ps\) OF AC CLOCK COMPARED TO COMBINATION"
     end  = "---+---"
 
-    Lines = utils.extract_text_between_elements_2(path_in,strt,end,nth_occur_elt_end=1)
+    if with_stats_rms:
+        nth_occur = 2
+    else:
+        nth_occur = 1
+    
+
+    Lines = utils.extract_text_between_elements_2(path_in,strt,end,
+                                                  nth_occur_elt_end=nth_occur)
 
     Lines_good = []
 
@@ -894,13 +992,42 @@ def read_combi_clk_rms_full_table(path_in):
     Lines_good = [e.replace("         ","  SAT    ") for e in Lines_good]
 
     STR = "".join(Lines_good)
-
+    
     import io
 
-    DF = pd.read_table(io.StringIO(STR),
-                      na_values = ["-","X",">>>"] ,
-                      delim_whitespace = True ,
-                      error_bad_lines=False)
+    ### Simple Mode
+    if not detailed_df:
+        DF = pd.read_table(io.StringIO(STR),
+                          na_values = ["-","X",">>>"],
+                          delim_whitespace = True ,
+                          error_bad_lines=False)
+        
+    #### Mone detailled mode
+    else:
+        Cols = Lines_good[0].split()[1:-2]
+        
+        #### We need an ad hoc fct to convert the values
+        def conv_detailed(inp_val):
+            if "-" in inp_val:
+                out_val = np.nan
+            elif "X" in inp_val:
+                out_val = np.inf
+            elif ">>>" in inp_val:
+                out_val = 999999
+            else:
+                out_val = np.int64(inp_val)
+            return out_val
+        
+        ### and then each column has to have its own convert fct... 
+        ### (quite stupid but it's the only way...)
+        conv_dict = dict()
+        for col in Cols:
+            conv_dict[col] = conv_detailed
+        
+        DF = pd.read_table(io.StringIO(STR),
+                           delim_whitespace = True,
+                           error_bad_lines=False,
+                           converters=conv_dict) 
 
     DF = DF.set_index("SAT")
 
@@ -1274,7 +1401,7 @@ def convert_sp3_clk_2_GINS_clk(sp3_path_in,
                                clk_gins_out,
                                interpo_30sec = True,
                                return_as_DF = True):
-    DF = gcls.read_sp3(sp3_path_in)
+    DF = files_rw.read_sp3(sp3_path_in)
 
     Fout = open(clk_gins_out,"w+")
 
@@ -1315,7 +1442,7 @@ def convert_sp3_clk_2_GINS_clk(sp3_path_in,
             Epoc_interp = np.arange(np.min(Epoc_inp),np.max(Epoc_inp),30)
             Epoc_interp_dt = conv.posix2dt(Epoc_interp)
 
-            I = interpolate.interp1d(Epoc_inp,Clk_inp)
+            I = scipy.interpolate.interp1d(Epoc_inp,Clk_inp)
 
             Clk_interp = I(Epoc_interp)
 
@@ -2229,12 +2356,12 @@ def read_sonardyne_attitude(filein):
 
 
 def interp_sndy_SYS_UTC(time_conv_file_in):
-    timeConv = utils.read_mat_file(timepath)
+    timeConv = utils.read_mat_file(time_conv_file_in)
     timeSYS  = timeConv[0,:]
     timeUTC  = timeConv[1,:]
     IntSYSUTC = scipy.interpolate.interp1d(timeSYS,timeUTC,kind='slinear',
                                            bounds_error=0)
-    TSout = TimeSerieObs(time_conv_file_in)
+    TSout = time_series.TimeSerieObs(time_conv_file_in)
 
     return IntSYSUTC
 
@@ -2250,10 +2377,10 @@ def read_sndy_mat_att(filein,IntSYSUTCin=None):
     pitch = attmat[2,:]
     head  = attmat[3,:]
 
-    TSout = TimeSerieObs('RPY',filein)
+    TSout = time_series.TimeSerieObs('RPY',filein)
 
     for r,p,h,t in zip(roll,pitch,head,Tposix_att):
-        att = Attitude(r,p,h,t)
+        att = time_series.Attitude(r,p,h,t)
         TSout.add_obs(att)
     return TSout
 
@@ -2280,7 +2407,7 @@ def read_hector_neu(filein):
     print("WARN : XYZ/FLH conversion not implemented")
     M = np.loadtxt(filein)
     stat = utils.grep(filein,'Site :',only_first_occur=True).split()[3]
-    tsout = ts_from_list(M[:,2],M[:,1],M[:,3],conv.year_decimal2dt(M[:,0]),
+    tsout = time_series.ts_from_list(M[:,2],M[:,1],M[:,3],conv.year_decimal2dt(M[:,0]),
                          'ENU',M[:,4],M[:,5],M[:,6],stat=stat,name=stat)
 
     return tsout

@@ -6,9 +6,9 @@ Created on Wed Jul 31 14:33:25 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+#from geodezyx import *                   # Import the GeodeZYX modules
+#from geodezyx.externlib import *         # Import the external modules
+#from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 def dicts_merge(*dict_args):
     '''

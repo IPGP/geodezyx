@@ -6,9 +6,19 @@ Created on Wed Jul 31 14:12:12 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+########## BEGIN IMPORT ##########
+#### External modules
+import bisect
+import collections
+import itertools
+import natsort
+import numpy as np
+import re
+#### geodeZYX modules
+
+
+##########  END IMPORT  ##########
 
 
 def is_listoflist(inp):
@@ -74,7 +84,7 @@ def uniq_and_sort(L,natural_sort=True):
     In a list, remove duplicates and sort the list
     """
     if natural_sort:
-        return natsorted(list(set(L)))
+        return natsort.natsorted(list(set(L)))
     else:
         return sorted(list(set(L)))
 
@@ -445,10 +455,28 @@ def dicofdic(mat,names):
     # Fabrique un dictionnaire 2D dic[nom1][nom2] = M[n1,n2]
     # http://stackoverflow.com/questions/13326042/2d-dictionary-with-multiple-keys-per-value
 
-    d2_dict = defaultdict(dict)
+    d2_dict = collections.defaultdict(dict)
 
     for i in range(mat.shape[0]):
         for j in range(mat.shape[1]):
             d2_dict[names[i]][names[j]] = mat[i,j]
 
     return d2_dict
+
+
+def find_regex_in_list(regex,L,only_first_occurence=False,
+                       line_number=False):
+    Lout = []
+    for i,e in enumerate(L):
+        if re.search(regex,e):
+            if not line_number:
+                found = e
+            else:
+                found = (i,e)
+                
+            if only_first_occurence:
+                return found
+            else:    
+                Lout.append(found)
+    return Lout
+            

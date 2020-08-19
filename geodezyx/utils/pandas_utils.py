@@ -6,9 +6,17 @@ Created on Fri Aug  2 17:15:06 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+########## BEGIN IMPORT ##########
+#### External modules
+import pandas as pd
+import numpy as np
+#### geodeZYX modules
+
+
+##########  END IMPORT  ##########
+
+
 
 def renamedic_fast_4_pandas(*inpnames):
     """
@@ -98,4 +106,7 @@ def diff_pandas(DF,col_name):
     DSout = DF[col_name].diff() / DF[col_name].index.to_series().diff().dt.total_seconds()
     return DSout
 
-
+def pandas_DF_print(DFin):
+    string = DFin.to_string()
+    print(string)
+    return string

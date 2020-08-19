@@ -6,12 +6,19 @@ Created on Fri Aug  2 17:15:57 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import numpy as np
+import scipy
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import stats
+from geodezyx import utils
+
+##########  END IMPORT  ##########
 
 
-from geodezyx import np,scipy
 
 
 def BL_from_points(listpointin):
@@ -95,7 +102,7 @@ def rotmat3(alpha,beta,gamma,xyzreftuple = ([1, 0, 0], [0, 1, 0], [0, 0, 1]),ang
     Rx = trans.rotation_matrix(alpha, xaxis)
     Ry = trans.rotation_matrix(beta, yaxis)
     Rz = trans.rotation_matrix(gamma, zaxis)
-    R = trans.concatenate_matrices(Rz, Ry, Rx)[:3,:3]
+    R  = trans.concatenate_matrices(Rz, Ry, Rx)[:3,:3]
 
     return R
 
@@ -305,8 +312,8 @@ class interp1d_ang():
         self.C = np.cos(A)
         self.S = np.sin(A)
 
-        self.CfT = interpolate.interp1d(T,self.C,kind=kind,bounds_error=bounds_error)
-        self.SfT = interpolate.interp1d(T,self.S,kind=kind,bounds_error=bounds_error)
+        self.CfT = scipy.interpolate.interp1d(T,self.C,kind=kind,bounds_error=bounds_error)
+        self.SfT = scipy.interpolate.interp1d(T,self.S,kind=kind,bounds_error=bounds_error)
 
 
     def __call__(self,T,angtype='deg'):
@@ -477,7 +484,7 @@ def points_circle_border(Npts,r,r_sigma,az_type_normal=True,
 
     R = np.array(Npts * [r]) - np.abs(S.randn(Npts) * r_sigma)
 
-    X,Y = polar2cartesian(R,Az,'rad')
+    X,Y = conv.polar2cartesian(R,Az,'rad')
 
     return X , Y
 
@@ -765,6 +772,34 @@ def helmert_trans_apply(Xin,SevenParam_in):
 
 def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
                                      L1norm=True,tol=10**-9,full_output=False):
+    """
+    estimates 7 parameters of a 3D Helmert transformation between a set of points
+    X1 and a set of points X2 (compute transformation X1 => X2) 
+    using a Minimization approach (and not a Least Square inversion)
+    
+    Parameters
+    ----------
+    
+    X1in & X2in : list of N (x,y,z) points ,
+        or an numpy array of shape (3, N)
+
+    HParam_apri : list of 7 values,
+        The Apriori for the Helmert parameter 
+    
+    L1norm : bool
+        Use the L1-norm as a criteria, use the quadratic sum instead if False
+        
+    tol : float
+        tolerence for the convergence
+    
+    full_output : bool
+        return only the result if True, return the scipy optimize result if False
+    
+    Returns
+    -------
+    Res :
+        7 Helmert params. : x,y,z translations, x,y,z rotations, scale
+    """
     
     def minimiz_helmert_fct(HParam_mini_in,X1in,X2in,L1norm_mini=L1norm):
         """
@@ -793,10 +828,6 @@ def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
     else:
         return RES
     
-    
-    
-
-    
 def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
                                             L1norm=True,itera=2):
     """
@@ -806,7 +837,7 @@ def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
     NOT STABLE AVOID THE USE
     """
     
-    print("WARN : unstable, avoid !!!!!")
+    print("WARN : helmert_trans_estim_minimisation_scalar unstable, avoid !!!!!")
     
     def minimiz_helmert_fct_scalar(hparam_mono_in,hparam_mono_id,
                             HParam_mini_in,X1in,X2in):
@@ -826,7 +857,7 @@ def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
 
     for j in range(itera): #iter iterations
         for i in range(7): #7 Helmert Parameters:
-            RES=scipy.optimize.minimize_scalar(minimiz_helmert_fct,
+            RES=scipy.optimize.minimize_scalar(minimiz_helmert_fct_scalar,
                                                args=(i,HParam_opti_wrk,X1,X2),
                                                tol=10**-20)
             HParam_opti_wrk[i] = RES.x

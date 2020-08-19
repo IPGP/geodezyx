@@ -6,5 +6,8 @@ Created on Fri Aug  2 14:26:37 2019
 @author: psakicki
 """
 
-from geodezyx.conv import *
+from geodezyx.conv  import *
+from geodezyx.conv.conv_coords  import *
+from geodezyx.conv.conv_time    import *
 from geodezyx.stats import *
+from geodezyx.reffram.geometry import *
