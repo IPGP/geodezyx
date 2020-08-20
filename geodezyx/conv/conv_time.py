@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Mon Feb 18 14:12:44 2019
@@ -2152,14 +2153,14 @@ class interp1d_time(scipy.interpolate.interp1d):
     This class inherites from scipy.interpolate.interp1d
     and can take as input datetime as X
     
-    P. Sakic 2019-01
+    P. Sakic 2020-01
     """
     def __init__(self, x, y, kind='linear', axis=-1,
                  copy=True, bounds_error=None, fill_value=np.nan,
                  assume_sorted=False):
         
         ### x (time) is converted as an array
-        #x = np.array(x)
+        x = np.array(x)
         
         ### the datetime is converted to posix
         if isinstance(x[0],dt.datetime):
@@ -2196,7 +2197,7 @@ class Slerp_time(scipy.spatial.transform.Slerp):
     This class inherites from scipy.spatial.transform.Slerp
     and can take as input datetime as X
     
-    P. Sakic 2019-01
+    P. Sakic 2020-01
     """
     
     def __init__(self, times, rotations,extrapolate=True):   

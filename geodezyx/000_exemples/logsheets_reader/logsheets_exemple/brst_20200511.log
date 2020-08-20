@@ -1,0 +1,644 @@
+     BRST Site Information Form (site log)
+     International GNSS Service
+     See Instructions at:
+       ftp://igscb.jpl.nasa.gov/pub/station/general/sitelog_instr.txt
+
+
+0.   Form
+
+     Prepared by (full name)  : RGP Team
+     Date Prepared            : 2020-05-11
+     Report Type              : UPDATE
+     If Update:
+      Previous Site Log       : brst_20200218.log
+      Modified/Added Sections : 3.24, 3.25
+
+
+1.   Site Identification of the GNSS Monument
+
+     Site Name                : Brest
+     Four Character ID        : BRST
+     Monument Inscription     : NONE
+     IERS DOMES Number        : 10004M004
+     CDP Number               : (A4)
+     Monument Description     : INOX PLATE ON TOP OF A METALLIC PILAR
+       Height of the Monument : 2 m
+       Monument Foundation    : TERRACE
+       Foundation Depth       : (m)
+     Marker Description       : HEMISPHERIC BRASS MARKER
+     Date Installed           : 1998-10-31T00:00Z
+     Geologic Characteristic  : BEDROCK
+       Bedrock Type           : METAMORPHIC
+       Bedrock Condition      : (FRESH/JOINTED/WEATHERED)
+       Fracture Spacing       : (0 cm/1-10 cm/11-50 cm/51-200 cm/over 200 cm)
+       Fault zones nearby     : (YES/NO/Name of the zone)
+         Distance/activity    : (multiple lines)
+     Additional Information   : Steel mast has been changed on
+                              : 2007-04-19T18:00Z
+
+
+2.   Site Location Information
+
+     City or Town             : Brest
+     State or Province        : Finistere
+     Country                  : France
+     Tectonic Plate           : EURASIAN
+     Approximate Position (ITRF)
+       X coordinate (m)       : 4231162.000
+       Y coordinate (m)       : -332747.000
+       Z coordinate (m)       : 4745131.000
+       Latitude (N is +)      : +482249.79
+       Longitude (E is +)     : -0042947.76
+       Elevation (m,ellips.)  : 65.5
+     Additional Information   : (multiple lines)
+
+
+3.   GNSS Receiver Information
+
+3.1  Receiver Type            : TRIMBLE 4000SSI
+     Satellite System         : GPS
+     Serial Number            : 21043
+     Firmware Version         : 7.15 / 3.04
+     Elevation Cutoff Setting : 5 deg
+     Date Installed           : 1998-10-31T00:00Z
+     Date Removed             : 1999-04-02T00:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.2  Receiver Type            : TRIMBLE 4000SSI
+     Satellite System         : GPS
+     Serial Number            : 21043
+     Firmware Version         : 7.28 / 3.07
+     Elevation Cutoff Setting : 5 deg
+     Date Installed           : 1999-04-02T00:00Z
+     Date Removed             : 1999-05-06T00:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.3  Receiver Type            : TRIMBLE 4000SSI
+     Satellite System         : GPS
+     Serial Number            : 21043
+     Firmware Version         : 7.29 / 3.07
+     Elevation Cutoff Setting : 5 deg
+     Date Installed           : 1999-05-06T00:00Z
+     Date Removed             : 2003-06-10T12:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.4  Receiver Type            : TRIMBLE 4000SSI
+     Satellite System         : GPS
+     Serial Number            : 3747A21041
+     Firmware Version         : 7.29 / 3.07
+     Elevation Cutoff Setting : 5 deg
+     Date Installed           : 2003-06-11T00:00Z
+     Date Removed             : 2006-07-26T00:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.5  Receiver Type            : TRIMBLE 5700
+     Satellite System         : GPS
+     Serial Number            : 220351863
+     Firmware Version         : 2.23
+     Elevation Cutoff Setting : 5 deg
+     Date Installed           : 2006-07-26T00:00Z
+     Date Removed             : 2007-04-19T00:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.6  Receiver Type            : LEICA GRX1200PRO
+     Satellite System         : GPS
+     Serial Number            : 462575
+     Firmware Version         : 5.1
+     Elevation Cutoff Setting : 5 deg
+     Date Installed           : 2007-04-19T18:00Z
+     Date Removed             : 2008-06-11T10:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.7  Receiver Type            : LEICA GRX1200GGPRO
+     Satellite System         : GPS+GLO
+     Serial Number            : 355918
+     Firmware Version         : 5.62
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2008-06-11T10:00Z
+     Date Removed             : 2009-05-11
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.8  Receiver Type            : LEICA GRX1200GGPRO
+     Satellite System         : GPS+GLO
+     Serial Number            : 355918
+     Firmware Version         : 7.50
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2009-05-11
+     Date Removed             : 2010-10-13T11:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.9  Receiver Type            : LEICA GRX1200GGPRO
+     Satellite System         : GPS+GLO
+     Serial Number            : 355918
+     Firmware Version         : 8.01
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2010-10-13T11:00Z
+     Date Removed             : 2011-03-23T09:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.10 Receiver Type            : LEICA GRX1200GGPRO
+     Satellite System         : GPS+GLO
+     Serial Number            : 355918
+     Firmware Version         : 8.10
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2011-03-23T09:00Z
+     Date Removed             : 2011-06-14T07:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.11 Receiver Type            : LEICA GRX1200GGPRO
+     Satellite System         : GPS+GLO
+     Serial Number            : 355918
+     Firmware Version         : 8.20
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2011-06-14T07:00Z
+     Date Removed             : 2011-10-26T08:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.12 Receiver Type            : TRIMBLE NETR9
+     Satellite System         : GPS+GLO
+     Serial Number            : 5046K71749
+     Firmware Version         : 4.42
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2011-10-26T08:00Z
+     Date Removed             : 2012-03-02T00:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.13 Receiver Type            : TRIMBLE NETR9
+     Satellite System         : GPS+GLO+GAL+SBAS
+     Serial Number            : 5046K71749
+     Firmware Version         : 4.42
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2012-03-02T00:00Z
+     Date Removed             : 2012-05-31T07:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.14 Receiver Type            : TRIMBLE NETR9
+     Satellite System         : GPS+GLO+GAL+SBAS
+     Serial Number            : 5046K71749
+     Firmware Version         : 4.60
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2012-05-31T07:00Z
+     Date Removed             : 2012-08-31T11:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.15 Receiver Type            : TRIMBLE NETR9
+     Satellite System         : GPS+GLO+GAL+SBAS
+     Serial Number            : 5046K71749
+     Firmware Version         : 4.61
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2012-08-31T11:00Z
+     Date Removed             : 2013-02-11T17:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.16 Receiver Type            : TRIMBLE NETR9
+     Satellite System         : GPS+GLO+GAL+BDS+SBAS
+     Serial Number            : 5046K71749
+     Firmware Version         : 4.70
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2013-02-11T17:00Z
+     Date Removed             : 2013-05-16T08:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.17 Receiver Type            : TRIMBLE NETR9
+     Satellite System         : GPS+GLO+GAL+BDS+SBAS
+     Serial Number            : 5046K71749
+     Firmware Version         : 4.80
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2013-05-16T08:00Z
+     Date Removed             : 2013-10-17T08:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.18 Receiver Type            : TRIMBLE NETR9
+     Satellite System         : GPS+GLO+GAL+BDS+SBAS
+     Serial Number            : 5046K71749
+     Firmware Version         : 4.81
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2013-10-17T08:00Z
+     Date Removed             : 2014-03-26T09:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.19 Receiver Type            : TRIMBLE NETR9
+     Satellite System         : GPS+GLO+GAL+BDS+SBAS
+     Serial Number            : 5046K71749
+     Firmware Version         : 4.85
+     Elevation Cutoff Setting : 3 deg
+     Date Installed           : 2014-03-26T09:00Z
+     Date Removed             : 2015-09-30T09:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.20 Receiver Type            : TRIMBLE NETR9
+     Satellite System         : GPS+GLO+GAL+BDS+SBAS
+     Serial Number            : 5046K71749
+     Firmware Version         : 4.85
+     Elevation Cutoff Setting : 0 deg
+     Date Installed           : 2015-09-30T09:00Z
+     Date Removed             : 2018-06-18T16:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.21 Receiver Type            : SEPT POLARX5
+     Satellite System         : GPS+GLO+GAL+BDS+SBAS
+     Serial Number            : 3015948
+     Firmware Version         : 5.1.1
+     Elevation Cutoff Setting : 0 deg
+     Date Installed           : 2018-06-18T16:00Z
+     Date Removed             : 2018-07-04T10:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.22 Receiver Type            : SEPT POLARX5
+     Satellite System         : GPS+GLO+GAL+BDS+SBAS
+     Serial Number            : 3015948
+     Firmware Version         : 5.2
+     Elevation Cutoff Setting : 0 deg
+     Date Installed           : 2018-07-04T10:00Z
+     Date Removed             : 2018-11-28T15:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.23 Receiver Type            : TRIMBLE ALLOY
+     Satellite System         : GPS+GLO+GAL+BDS+SBAS
+     Serial Number            : 5818R40023
+     Firmware Version         : 5.37
+     Elevation Cutoff Setting : 0 deg
+     Date Installed           : 2018-11-28T16:00Z
+     Date Removed             : 2020-02-18T10:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.24 Receiver Type            : TRIMBLE ALLOY
+     Satellite System         : GPS+GLO+GAL+BDS+SBAS
+     Serial Number            : 5818R40023
+     Firmware Version         : 5.43
+     Elevation Cutoff Setting : 0 deg
+     Date Installed           : 2020-02-18T10:00Z
+     Date Removed             : 2020-05-11T12:00Z
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.25 Receiver Type            : TRIMBLE ALLOY
+     Satellite System         : GPS+GLO+GAL+BDS+SBAS
+     Serial Number            : 5818R40023
+     Firmware Version         : 5.45
+     Elevation Cutoff Setting : 0 deg
+     Date Installed           : 2020-05-11T12:00Z
+     Date Removed             : CCYY-MM-DDThh:mmZ
+     Temperature Stabiliz.    : none
+     Additional Information   : (multiple lines)
+
+3.x  Receiver Type            : (A20, from rcvr_ant.tab; see instructions)
+     Satellite System         : (GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS)
+     Serial Number            : (A20, but note the first A5 is used in SINEX)
+     Firmware Version         : (A11)
+     Elevation Cutoff Setting : (deg)
+     Date Installed           : (CCYY-MM-DDThh:mmZ)
+     Date Removed             : (CCYY-MM-DDThh:mmZ)
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+
+4.   GNSS Antenna Information
+
+4.1  Antenna Type             : TRM29659.00     NONE
+     Serial Number            : 0220101990
+     Antenna Reference Point  : BPA
+     Marker->ARP Up Ecc. (m)  :   1.0543
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0 deg
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : (vendor & type number)
+     Antenna Cable Length     : 20 m
+     Date Installed           : 1998-10-31T00:00Z
+     Date Removed             : 2006-07-25T00:00Z
+     Additional Information   : (multiple lines)
+
+4.2  Antenna Type             : TRM41249.00     NONE
+     Serial Number            : 60035644
+     Antenna Reference Point  : BAM
+     Marker->ARP Up Ecc. (m)  :   1.0567
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0 deg
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : (vendor & type number)
+     Antenna Cable Length     : 10 m
+     Date Installed           : 2006-07-26T00:00Z
+     Date Removed             : 2007-04-19T00:00Z
+     Additional Information   : (multiple lines)
+
+4.3  Antenna Type             : LEIAT504        NONE
+     Serial Number            : 226
+     Antenna Reference Point  : BPA
+     Marker->ARP Up Ecc. (m)  :   2.0431
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0 deg
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : (vendor & type number)
+     Antenna Cable Length     : 30 m
+     Date Installed           : 2007-04-19T18:00Z
+     Date Removed             : 2008-06-11T10:00Z
+     Additional Information   : (multiple lines)
+
+4.4  Antenna Type             : LEIAT504GG      NONE
+     Serial Number            : 1136
+     Antenna Reference Point  : BPA
+     Marker->ARP Up Ecc. (m)  :   2.0431
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0 deg
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : (vendor & type number)
+     Antenna Cable Length     : 30 m
+     Date Installed           : 2008-06-11T10:00Z
+     Date Removed             : 2011-10-26T08:00Z
+     Additional Information   : (multiple lines)
+
+4.5  Antenna Type             : TRM57971.00     NONE
+     Serial Number            : 1441112346
+     Antenna Reference Point  : BAM
+     Marker->ARP Up Ecc. (m)  :   2.0431
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0 deg
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : (vendor & type number)
+     Antenna Cable Length     : (m)
+     Date Installed           : 2011-10-26T08:00Z
+     Date Removed             : 2012-04-19T12:00Z
+     Additional Information   : (multiple lines)
+
+4.6  Antenna Type             : TRM57971.00     NONE
+     Serial Number            : 1441017048
+     Antenna Reference Point  : BAM
+     Marker->ARP Up Ecc. (m)  :   2.0431
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0 deg
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : (vendor & type number)
+     Antenna Cable Length     : (m)
+     Date Installed           : 2012-04-19T12:00Z
+     Date Removed             : CCYY-MM-DDThh:mmZ
+     Additional Information   : (multiple lines)
+
+4.x  Antenna Type             : (A20, from rcvr_ant.tab; see instructions)
+     Serial Number            : (A*, but note the first A5 is used in SINEX)
+     Antenna Reference Point  : (BPA/BCR/XXX from "antenna.gra"; see instr.)
+     Marker->ARP Up Ecc. (m)  : (F8.4)
+     Marker->ARP North Ecc(m) : (F8.4)
+     Marker->ARP East Ecc(m)  : (F8.4)
+     Alignment from True N    : (deg; + is clockwise/east)
+     Antenna Radome Type      : (A4 from rcvr_ant.tab; see instructions)
+     Radome Serial Number     : 
+     Antenna Cable Type       : (vendor & type number)
+     Antenna Cable Length     : (m)
+     Date Installed           : (CCYY-MM-DDThh:mmZ)
+     Date Removed             : (CCYY-MM-DDThh:mmZ)
+     Additional Information   : (multiple lines)
+
+
+5.   Surveyed Local Ties
+
+5.x  Tied Marker Name         : 
+     Tied Marker Usage        : (SLR/VLBI/LOCAL CONTROL/FOOTPRINT/etc)
+     Tied Marker CDP Number   : (A4)
+     Tied Marker DOMES Number : (A9)
+     Differential Components from GNSS Marker to the tied monument (ITRS)
+       dx (m)                 : (m)
+       dy (m)                 : (m)
+       dz (m)                 : (m)
+     Accuracy (mm)            : (mm)
+     Survey method            : (GPS CAMPAIGN/TRILATERATION/TRIANGULATION/etc)
+     Date Measured            : (CCYY-MM-DDThh:mmZ)
+     Additional Information   : (multiple lines)
+
+
+6.   Frequency Standard
+
+6.1  Standard Type            : INTERNAL 
+       Input Frequency        : (if external)
+       Effective Dates        : 1998-10-31/CCYY-MM-DD
+       Notes                  : (multiple lines)
+
+6.x  Standard Type            : (INTERNAL or EXTERNAL H-MASER/CESIUM/etc)
+       Input Frequency        : (if external)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+
+7.   Collocation Information
+
+7.1  Instrumentation Type     : TIDE GAUGE
+       Status                 : PERMANENT
+       Effective Dates        : 1977-02-14/CCYY-MM-DD
+       Notes                  : Tide Gauge - Floating type
+                              : Status : operational.
+                              : Sea level data since 1806.
+
+7.2  Instrumentation Type     : TIDE GAUGE
+       Status                 : PERMANENT
+       Effective Dates        : 1993-02-05/CCYY-MM-DD
+       Notes                  : Status  operational
+                              : Tide Gauge - Acoustic type
+                              : Monthly and annual mean values sent to
+                              : PSMSL.
+
+7.x  Instrumentation Type     : (GPS/GLONASS/DORIS/PRARE/SLR/VLBI/TIME/etc)
+       Status                 : (PERMANENT/MOBILE)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+
+8.   Meteorological Instrumentation
+
+8.1.x  Humidity Sensor Model  : 
+       Manufacturer           : 
+       Serial Number          : 
+       Data Sampling Interval : (sec)
+       Accuracy (% rel h)     : (% rel h)
+       Aspiration             : (UNASPIRATED/NATURAL/FAN/etc)
+       Height Diff to Ant     : (m)
+       Calibration date       : (CCYY-MM-DD)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+8.2.x  Pressure Sensor Model  : 
+       Manufacturer           : 
+       Serial Number          : 
+       Data Sampling Interval : (sec)
+       Accuracy               : (hPa)
+       Height Diff to Ant     : (m)
+       Calibration date       : (CCYY-MM-DD)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+8.3.x  Temp. Sensor Model     : 
+       Manufacturer           : 
+       Serial Number          : 
+       Data Sampling Interval : (sec)
+       Accuracy               : (deg C)
+       Aspiration             : (UNASPIRATED/NATURAL/FAN/etc)
+       Height Diff to Ant     : (m)
+       Calibration date       : (CCYY-MM-DD)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+8.4.x  Water Vapor Radiometer : 
+       Manufacturer           : 
+       Serial Number          : 
+       Distance to Antenna    : (m)
+       Height Diff to Ant     : (m)
+       Calibration date       : (CCYY-MM-DD)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+8.5.x  Other Instrumentation  : (multiple lines)
+
+
+9.   Local Ongoing Conditions Possibly Affecting Computed Position
+
+9.1.x  Radio Interferences    : (TV/CELL PHONE ANTENNA/RADAR/etc)
+       Observed Degradations  : (SN RATIO/DATA GAPS/etc)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Additional Information : (multiple lines)
+
+9.2.x  Multipath Sources      : (METAL ROOF/DOME/VLBI ANTENNA/etc)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Additional Information : (multiple lines)
+
+9.3.x  Signal Obstructions    : (TREES/BUILDINGS/etc)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Additional Information : (multiple lines)
+
+
+10.  Local Episodic Effects Possibly Affecting Data Quality
+
+10.x  Date                    : (CCYY-MM-DD/CCYY-MM-DD)
+      Event                   : (TREE CLEARING/CONSTRUCTION/etc)
+
+
+11.  On-Site, Point of Contact Agency Information
+
+     Agency                   : Institut National de l'Information Geographique
+                              :  et Forestiere
+     Preferred Abbreviation   : IGN_RGP
+     Mailing Address          : avenue de Paris 73
+                              : 94165
+                              : Saint-Mande Cedex
+     Primary Contact
+       Contact Name           : RGP Team
+       Telephone (primary)    : +33 1 43 98 83 39
+       Telephone (secondary)  : 
+       Fax                    : +33 1 43 98 84 50
+       E-mail                 : rgpadmin@ign.fr
+     Secondary Contact
+       Contact Name           : 
+       Telephone (primary)    : 
+       Telephone (secondary)  : 
+       Fax                    : 
+       E-mail                 : 
+     Additional Information   : (multiple lines)
+
+
+12.  Responsible Agency (if different from 11.)
+
+     Agency                   : Institut National de l'Information Geographique
+                              :  et Forestiere
+     Preferred Abbreviation   : IGN_RGP
+     Mailing Address          : avenue de Paris 73
+                              : 94165
+                              : Saint-Mande Cedex
+     Primary Contact
+       Contact Name           : RGP Team
+       Telephone (primary)    : +33 1 43 98 83 39
+       Telephone (secondary)  : 
+       Fax                    : +33 1 43 98 84 50
+       E-mail                 : rgpadmin@ign.fr
+     Secondary Contact
+       Contact Name           : 
+       Telephone (primary)    : 
+       Telephone (secondary)  : 
+       Fax                    : 
+       E-mail                 : 
+     Additional Information   : (multiple lines)
+
+
+13.  More Information
+
+     Primary Data Center      : IGNE
+     Secondary Data Center    : BKG
+     URL for More Information : http://rgp.ign.fr
+     Hardcopy on File
+       Site Map               : http://rgp.ign.fr
+       Site Diagram           : (Y or URL)
+       Horizon Mask           : (Y or URL)
+       Monument Description   : (Y or URL)
+       Site Pictures          : http://rgp.ign.fr
+     Additional Information   : hourly data available
+     Antenna Graphics with Dimensions
+
+-----
+      L2 Phase Center =>         /    +                 <-------- 0.128
+      L1 Phase Center =>        |     +     |            <-------- 0.110
+                +--------------------------------------------+
+                |                                            |
+                |                                            |
+                |                                            |
+                |                                            |
+               ================================================<---
+0.035 BCR
+                   ___          |           |           ___
+                  |   |         |    +-+    |         |   |
+ Antenna Ref.  =>|-|-|----------+====| |====+----------|-|-|   <-- 0.000
+ Point (BPA)     |-|-|---------------| |---------------|-|-|
+                   | |            |_______|            | |
+               |---|-|---------------------------------|-|---|
+               |---|-|---------------------------------|-|---|
+               |  |___|                               |___|  |
+               |  |                                       |  |
+               |  |                                       |  |
+               |  |                                       |  |
+Metallic       |  |                                       |  |
+ pillar        .  .                                       .  .
+(triangular   .  .                                        .  .
+ section)      |  |                                       |  |
+               |  |                                       |  |
+               |  |---------------------------------------|--|
+               |  |---------------------------------------|--|
+               |  |                                       |  |
+               |  |                   _                   |  | <-- -2.0431
+   ____________|__|__________________| |__________________|__|_________
+
+                                     roof
+hemisheric brass marker
+
+ARP: Antenna Reference Point           BPA: Bottom of pre-amplifier
+L1 : L1 Phase Center                   L2 : L2 Phase Center
+TCR: Top of Chokering                  BCR: Bottom of Chokering
