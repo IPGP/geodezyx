@@ -6,6 +6,11 @@ Created on Fri Aug  2 18:00:21 2019
 @author: psakicki
 """
 
+
+#### External modules
+import numpy as np
+import pandas as pd
+
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import operational
@@ -17,37 +22,37 @@ from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 ##########  END IMPORT  ##########
-
-
-def write_sndy_light_dat(ts_in,outdir,outprefix):
-    """pas fini"""
-    fil = open(os.path.join(outdir,outprefix),'w+')
-    if isinstance(ts_in,TimeSeriePoint):
-        if ts_in.initype() == 'FLH':
-            for pt in ts_in.pts:
-                lin = ' '.join([str(e) for e in [pt.F , pt.L , pt.H , pt.T , pt.sF , pt.sL , pt.sH ]])
-                fil.write(lin + '\n')
-    elif isinstance(ts_in,TimeSerieObs):
-        if ts_in.typeobs == 'RPY':
-            for att in ts_in.obs:
-                lin = ' '.join([str(e) for e in [att.R , att.P , att.Y , att.T , att.Q.w , att.Q.x , att.Q.y , att.Q.z ]])
-                fil.write(lin + '\n')
-    fil.close()
     
 def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
               skip_null_epoch=True,force_format_c=False):
     """
-    Write DOCSTRING
+    Write a SP3 file from an Orbit DataFrame
 
-    outname : None = outpath is the full path (directory + filename) of the outputfile
-             'auto_old_cnv' = automatically generate the filename (old convention)
-             'auto_new_cnv' = automatically generate the filename (new convention)
-             
-    prefix : the output name of the AC
-    
-    skip_null_epoch: Do not write an epoch if all sats are null (filtering)
+    Parameters
+    ----------
+    SP3_DF_in : DataFrame
+        Input Orbit DataFrame.
+    outpath : str
+        The output path of the file (see also outname).
+    outname : None or str, optional
+        None = outpath is the full path (directory + filename) of the output.
+        A string = a manual name for the file.
+        'auto_old_cnv' = automatically generate the filename (old convention)
+        'auto_new_cnv' = automatically generate the filename (new convention)
+        The default is None.
+    prefix : str, optional
+        the output 3-char. name of the AC. The default is 'orb'.
+    skip_null_epoch : bool, optional
+        Do not write an epoch if all sats are null (filtering). 
+        The default is True.
+    force_format_c : bool, optional
+        DESCRIPTION. The default is False.
 
+    Returns
+    -------
+    The string containing the formatted SP3 data.
     """
+    
     ################## MAIN DATA
     LinesStk = []
 
@@ -205,7 +210,36 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
     F.write(FinalStr)
     
     
-def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False):
+def write_clk(DFclk_in,outpath,
+              outname=None,prefix='orb',
+              header="",output_std_values=False):
+    """
+    Write a SP3 Clock file from an Clock DataFrame
+
+    Parameters
+    ----------
+    DFclk_in : DataFrame
+        Input Clock DataFrame.
+    outpath : str
+        The output path of the file (see also outname).
+    outname : None or str, optional
+        None = outpath is the full path (directory + filename) of the output.
+        A string = a manual name for the file.
+        'auto_old_cnv' = automatically generate the filename (old convention)
+        'auto_new_cnv' = automatically generate the filename (new convention)
+        The default is None.
+    prefix : str, optional
+        the output 3-char. name of the AC. The default is 'orb'.
+    header : str, optional
+        A string describing the clk file header. The default is "".
+    output_std_values : bool, optional
+        Add observation sigmas as the last column. The default is False.
+
+    Returns
+    -------
+    The string containing the formatted clock data.
+    """
+    
     HEAD = header
     Row_str_stk = []
 
@@ -235,8 +269,25 @@ def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False):
     CORPSE = "\n".join(Row_str_stk)
        
     OUT = HEAD + CORPSE
+    
+    ### Manage the file path
+    prefix_opera = prefix
+    
+    if not outname:
+        outpath_opera = outpath
+    elif outname == 'auto_old_cnv':
+        start_dt = dt.datetime(row["year"].iloc[0],
+                               row["month"].iloc[0],
+                               row["day"].iloc[0])
+        week , dow = conv.dt2gpstime(start_dt)
+        filename = prefix_opera + str(week) + str(dow) + '.clk'
+        outpath_opera = os.path.join(outpath,filename)
+        
+    elif outname == 'auto_new_cnv':
+        print("ERR: not implemented yet !!!!!")
+        raise Exception
 
-    with open(clk_file_out,"w+") as Fout:
+    with open(outpath_opera,"w+") as Fout:
         Fout.write(OUT)
         Fout.close()
         
@@ -244,6 +295,9 @@ def write_clk(DFclk_in,clk_file_out,header="",output_std_values=False):
 
 
 def ine_block_mono(sat,dt_in,extra_intrvl_strt=.1,extra_intrvl_end=.4,step=300):
+    """
+    Write an EPOS INE block
+    """
     
     Fields = ['orb____1',
     'orb____2',
@@ -290,6 +344,9 @@ def ine_block_mono(sat,dt_in,extra_intrvl_strt=.1,extra_intrvl_end=.4,step=300):
 
 def write_ine_dummy_file(Sat_list,dt_in,extra_intrvl_strt=.1,
              extra_intrvl_end=.4,step=300,out_file_path=None):
+    """
+    Write an EPOS INE dummy (empty values) file
+    """
 
     Lines = []
     
@@ -345,6 +402,9 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         severe=False,
                         separated_systems_export=False):
     """
+    Generate an SP3 Orbit file with overlap based on the SP3s of the 
+    days before and after
+    
     Parameters
     ----------
     ac_list : list
@@ -374,8 +434,6 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
     None.
 
     """
-    
-
 
     for ac in ac_list:
         Lfile = utils.find_recursive(dir_in,"*" + ac + "*sp3")
@@ -516,3 +574,156 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                     print("ERR:",e)
                     raise e
 
+
+    """
+    sort_wrt="site" or "site_num"
+    
+    soln_in_DF
+    use soln AND pt information in the input DataFrame
+    """
+    
+
+
+def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
+                          no_time_limit_for_first_period = True,
+                          no_time_limit_for_last_period = True,
+                          soln_in_DF=True):
+    """
+    Write an EPOS coordinate file
+
+    Parameters
+    ----------
+    DF_in : DataFrame
+        Input Orbit DataFrame.
+    file_out : str
+        The output path of the file.
+    sort_wrt : bool, optional
+        Sort the values with respect to a DF column. 
+        The default is "site".
+    no_time_limit_for_first_period : bool, optional
+        No time limit for the first period. 
+        The default is True.
+    no_time_limit_for_last_period : bool, optional
+        No time limit for the last period. 
+        The default is True.
+    soln_in_DF : bool, optional
+        Soln in DF. 
+        The default is True.
+
+    Returns
+    -------
+    None.
+
+    """
+    
+    DF_work = DF_in.sort_values([sort_wrt,"MJD_start"])
+
+    Stat_lines_blk_stk = []
+
+    generic_header = """+info
+ FLATTENING                  298.2550
+ MAJOR_AXIS              6378140.0000
+ REFERENCE_FRAME                IGS14
+ NUMBER_OF_STATIONS             {:5d}
+ REF_MJD                        {:5d}
+-info
+"""
+
+    generic_header = generic_header.format(len(DF_work["site_num"].unique()),
+                                           int(utils.most_common(DF_work["MJD_ref"])))
+
+    Stat_lines_blk_stk.append(generic_header)
+
+    Stat_lines_blk_stk.append("+station_coordinates")
+
+    for site in DF_work[sort_wrt].unique():
+
+        Stat_lines_blk_stk.append("*------------------------- ---- ----- -beg- -end- -**- ------------------------------------------------\n*")
+
+        DF_SiteBlock = DF_work[DF_work[sort_wrt] == site]
+        
+        DF_SiteBlock.reset_index(inplace=True)
+
+        for i_l ,(_ , l) in enumerate(DF_SiteBlock.iterrows()):
+
+            if soln_in_DF:
+                iope = int(l["soln"])
+                pt = l["pt"]
+            else:
+                iope = i_l + 1
+                pt = "A"
+            
+            if no_time_limit_for_first_period and i_l == 0:
+                MJD_start = 0
+            else:
+                MJD_start = l["MJD_start"]
+                                            
+            if no_time_limit_for_last_period and (i_l+1) == len(DF_SiteBlock):
+                MJD_end = 0
+            else:
+                MJD_end = l["MJD_end"]
+                
+
+            line_site_fmt = " SITE            m {:4d}  {:1d} {:} {:5d} {:5d} {:5d} {:}   {:}  {:1d}      LOG_CAR       LOG_CAR"
+            line_valu_fmt = " POS_VEL:XYZ     m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
+            line_sigm_fmt = " SIG_PV_XYZ      m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
+
+            line_site = line_site_fmt.format(int(l["site_num"]),
+                                             int(iope),
+                                             l["tecto_plate"].upper(),
+                                             int(l["MJD_ref"]),
+                                             int(MJD_start),
+                                             int(MJD_end),
+                                             l["site"],
+                                             pt,
+                                             int(iope))
+            
+            line_valu = line_valu_fmt.format(int(l["site_num"]),
+                                             int(iope),
+                                             l["x"],
+                                             l["y"],
+                                             l["z"],
+                                             l["Vx"],
+                                             l["Vy"],
+                                             l["Vz"])
+            
+            line_sigm = line_sigm_fmt.format(int(l["site_num"]),
+                                             int(iope),
+                                             l["sx"],
+                                             l["sy"],
+                                             l["sz"],
+                                             l["sVx"],
+                                             l["sVy"],
+                                             l["sVz"])
+
+            Stat_lines_blk_stk.append(line_site)
+            Stat_lines_blk_stk.append(line_valu)
+            Stat_lines_blk_stk.append(line_sigm)
+            Stat_lines_blk_stk.append("*")
+
+    Stat_lines_blk_stk.append("-station_coordinates")
+
+    final_str = "\n".join(Stat_lines_blk_stk)
+
+
+    with open(file_out,"w+") as f:
+        f.write(final_str)
+
+    return final_str
+
+
+
+def write_sndy_light_dat(ts_in,outdir,outprefix):
+    """ Not properly implemented """
+    fil = open(os.path.join(outdir,outprefix),'w+')
+    if isinstance(ts_in,TimeSeriePoint):
+        if ts_in.initype() == 'FLH':
+            for pt in ts_in.pts:
+                lin = ' '.join([str(e) for e in [pt.F , pt.L , pt.H , pt.T , pt.sF , pt.sL , pt.sH ]])
+                fil.write(lin + '\n')
+    elif isinstance(ts_in,TimeSerieObs):
+        if ts_in.typeobs == 'RPY':
+            for att in ts_in.obs:
+                lin = ' '.join([str(e) for e in [att.R , att.P , att.Y , att.T , att.Q.w , att.Q.x , att.Q.y , att.Q.z ]])
+                fil.write(lin + '\n')
+    fil.close()
