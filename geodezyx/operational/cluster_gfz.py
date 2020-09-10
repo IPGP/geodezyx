@@ -89,22 +89,12 @@ def cluster_GFZ_run(commands_list,
             if bj_check_on_off:
                 print("INFO : BJ Check : All jobs should be finished now, let's see if there is some latecomers")
                 bj_check_tigger = False
-                bj_command = "perl /dsk/igs2/soft_wrk/" + username + "/SOFT_EPOS8_BIN_TOOLS/SCRIPTS/e8_bjobs_local.pl"
             while not bj_check_tigger:
-                bj_list = subprocess.check_output(bj_command,shell='/bin/csh')
-                bj_pattern_checked =   bj_check_user + ' *' +  bj_check_user
+                bj_check_tigger = sleep_job_user(minjob=bj_check_mini_nbr,
+                               bj_check_wait_time=bj_check_wait_time)
 
-                bj_list_checked = [re.search(bj_pattern_checked,l) for l in bj_list]
-                bj_list_checked_sum = np.sum(bj_list_checked)
+    return None 
 
-                if bj_list_checked_sum > bj_check_mini_nbr:
-                    print("INFO : sleeping @ " + str(dt.datetime.now()) + " for " + str(bj_check_wait_time) + "s b.c." + str(bj_list_checked_sum) + "job(s) match pattern " + bj_pattern_checked)
-                    print(bj_list)
-                    time.sleep(bj_check_wait_time)
-
-                else:
-                    bj_check_tigger = True
-                    print("INFO : let's continue, no job matchs the pattern " + bj_pattern_checked)
 
 def number_job_user(bj_check_user=None,verbose=True):
     username = getpass.getuser()
@@ -126,19 +116,25 @@ def number_job_user(bj_check_user=None,verbose=True):
     if verbose:
         print("INFO: ",bj_list_checked_sum,"running jobs found for",bj_check_user)
     
-    return bj_list_checked_sum
+    return bj_list_checked_sum,bj_list_checked
 
-def sleep_job_user(bj_check_user=None,maxjob=20,bj_check_wait_time=20):
+
+
+def sleep_job_user(bj_check_user=None,minjob=20,bj_check_wait_time=20):
     if not bj_check_user:
         bj_check_user=utils.get_username()
     
-    n_job = number_job_user(bj_check_user)
+    n_job,bj_list_checked = number_job_user(bj_check_user)
     
-    if n_job >= maxjob:
+    if n_job >= minjob:
+        check_tigger = False
         print("INFO : sleeping @ " + str(dt.datetime.now()) + " for " + str(bj_check_wait_time) + "s b.c." + str(n_job) + " jobs are runing")
         time.sleep(bj_check_wait_time)
+    else:
+        check_tigger = True
+        print("INFO : let's continue, no job matchs the pattern " + bj_pattern_checked)
         
-    return None
+    return check_tigger
     
 
 
