@@ -32,6 +32,40 @@ def cluster_GFZ_run(commands_list,
                     bj_check_mini_nbr = 2,
                     bj_check_wait_time = 120,
                     bj_check_user="auto"):
+    """
+    Parameters
+    ----------
+    commands_list : list of str
+        List of commands you want to run (one command per job).
+    bunch_on_off : bool, optional
+        If False, send all the jobs to the cluster at once.
+        If True, just send <bunch_job_nbr> of them.
+        See the options below.
+        The default is True.
+    bunch_job_nbr : int, optional
+        number of jobs which will be sent to the cluser at once.
+        The default is 10.
+    bunch_wait_time : int, optional
+        Minimal time between two bunch runs in sec.
+        The default is 600.
+    bj_check_on_off : bool, optional
+        Do a check before a new bunch run, if previous jobs are still running.
+        The default is True.
+    bj_check_mini_nbr : int, optional
+        The fuctions will wait <bj_check_wait_time> sec 
+        more if <bj_check_mini_nbr> or more jobs are running.
+        The default is 2.
+    bj_check_wait_time : int, optional
+        wait time between two checks in sec. The default is 120.
+    bj_check_user : str, optional
+        username you want to check in the batchjobs. 
+        The default is "auto" i.e. your own username.
+
+    Returns
+    -------
+    None.
+
+    """
 
     username = getpass.getuser()
 
@@ -97,6 +131,9 @@ def cluster_GFZ_run(commands_list,
 
 
 def number_job_user(bj_check_user=None,verbose=True):
+    """
+    Internal function for sleep_job_user
+    """
     username = getpass.getuser()
 
     if not bj_check_user:
@@ -121,6 +158,9 @@ def number_job_user(bj_check_user=None,verbose=True):
 
 
 def sleep_job_user(bj_check_user=None,minjob=20,bj_check_wait_time=20):
+    """
+    Internal function for cluster_GFZ_run
+    """
     if not bj_check_user:
         bj_check_user=utils.get_username()
     
