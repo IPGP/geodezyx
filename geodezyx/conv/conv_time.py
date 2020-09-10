@@ -345,10 +345,6 @@ def dt_range(start_dt,end_dt):
         Out_range.append(Out_range[-1] + dt.timedelta(days=1))
     return Out_range
 
-
-
-
-
 def dt2posix(dtin,out_array=False):       
     """
     Time conversion
@@ -1146,7 +1142,12 @@ def date_string_2_dt(strin):
     else:
         return dateutil.parser.parse(strin)
 
+
+### aliases
 string_date2dt = date_string_2_dt
+str_date2dt    = date_string_2_dt
+strdate2dt     = date_string_2_dt
+
 
 
 
@@ -1325,7 +1326,7 @@ def date2dt(date_in):
     Parameters
     ----------
     date_in : date or list/numpy.array of date.
-        Date(s).  Can handle several datetimes in an iterable.
+        Date(s).  Can handle several dates in an iterable.
         
     Returns
     -------
@@ -1337,7 +1338,30 @@ def date2dt(date_in):
         return typ([date2dt(e) for e in date_in])
     else:
         return dt.datetime(*tuple(date_in.timetuple())[:3])
+    
+    
+def dt2date(dt_in):
+    """
+    Time conversion
+    
+    Python's Datetime => Python's Date
+    
+    Parameters
+    ----------
+    dt_in : datetime or list/numpy.array of datetime.
+        Datetime(s).  Can handle several datetimes in an iterable.
         
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)  
+    """
+    if utils.is_iterable(date_in):
+        typ=utils.get_type_smart(date_in)
+        return typ([dt2date(e) for e in date_in])
+    else:
+        return dt_in.date()
+
 
 def pandas_timestamp2dt(timestamp_in):
     """
