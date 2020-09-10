@@ -102,8 +102,14 @@ def cluster_GFZ_run(commands_list,
         LOGobj.write(info_start + '\n')
 
         ########## RUN command here !!
-        p = subprocess.Popen('',executable='/bin/csh', stdin=subprocess.PIPE , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
-        stdout,stderr = p.communicate( kommand.encode() )
+        if True:
+            p = subprocess.Popen('',executable='/bin/csh', 
+                                 stdin=subprocess.PIPE , 
+                                 stdout=subprocess.PIPE ,
+                                 stderr=subprocess.PIPE)
+            stdout,stderr = p.communicate( kommand.encode() )
+        else:
+            os.system(kommand)
 
         if history_file_path:
             with open(history_file_path , "a") as myfile:
