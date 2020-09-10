@@ -13,11 +13,10 @@ import numpy as np
 import subprocess
 import re
 import time
-
+import getpass
 
 #### geodeZYX modules
 from geodezyx import utils
-
 
 #### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
@@ -34,6 +33,7 @@ def cluster_GFZ_run(commands_list,
                     bj_check_wait_time = 120,
                     bj_check_user="auto"):
 
+    username = getpass.getuser()
 
     history_file_path = None
     wait_sleeping_before_launch=5
@@ -89,7 +89,7 @@ def cluster_GFZ_run(commands_list,
             if bj_check_on_off:
                 print("INFO : BJ Check : All jobs should be finished now, let's see if there is some latecomers")
                 bj_check_tigger = False
-                bj_command = "perl /dsk/igs2/soft_wrk/psakicki/SOFT_EPOS8_BIN_TOOLS/SCRIPTS/e8_bjobs_local.pl"
+                bj_command = "perl /dsk/igs2/soft_wrk/" + username + "/SOFT_EPOS8_BIN_TOOLS/SCRIPTS/e8_bjobs_local.pl"
             while not bj_check_tigger:
                 bj_list = subprocess.check_output(bj_command,shell='/bin/csh')
                 bj_pattern_checked =   bj_check_user + ' *' +  bj_check_user
@@ -107,10 +107,12 @@ def cluster_GFZ_run(commands_list,
                     print("INFO : let's continue, no job matchs the pattern " + bj_pattern_checked)
 
 def number_job_user(bj_check_user=None,verbose=True):
+    username = getpass.getuser()
+
     if not bj_check_user:
         bj_check_user=utils.get_username()
-        
-    bj_command = "perl /dsk/igs2/soft_wrk/psakicki/SOFT_EPOS8_BIN_TOOLS/SCRIPTS/e8_bjobs_local.pl"
+    
+    bj_command = "perl /dsk/igs2/soft_wrk/" + username + "/SOFT_EPOS8_BIN_TOOLS/SCRIPTS/e8_bjobs_local.pl"
 
     bj_list = subprocess.check_output(bj_command,shell='/bin/csh')
     bj_list = bj_list.decode("utf-8")

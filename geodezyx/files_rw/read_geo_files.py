@@ -121,6 +121,7 @@ def read_clk(file_path_in):
                              'minute', 'second',"n_values",'bias', 'sigma'])
     
     DFclk["ac"] = os.path.basename(file_path_in)[:3] 
+    DFclk["name"] = DFclk["name"].str.upper()
     
     DFclk['epoch'] = pd.to_datetime(DFclk[['year', 'month', 'day', 'hour','minute', 'second']])
     DFclk.path = file_path_in

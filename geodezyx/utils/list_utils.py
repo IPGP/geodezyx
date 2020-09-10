@@ -314,6 +314,24 @@ def sublistsIt(seq,lenofsublis_lis,output_array=False):
         return [np.array(e) for e in sublis_lis]
     else:
         return sublis_lis
+    
+    
+def identical_consecutive_eltsIt(Lin):
+    Lout_big = []
+    Linter   = [Lin[0]]
+    Lout_big.append(Linter)
+            
+    for e in Lin[1:]:
+        if (e == Linter[-1]):
+            Linter.append(e)
+        else:
+            Linter = [e]
+            Lout_big.append(Linter)
+                
+    return Lout_big
+                
+
+
 
 def find_nearest(listin,value):
     """
