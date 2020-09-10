@@ -31,7 +31,8 @@ def cluster_GFZ_run(commands_list,
                     bj_check_on_off = True,
                     bj_check_mini_nbr = 2,
                     bj_check_wait_time = 120,
-                    bj_check_user="auto"):
+                    bj_check_user="auto",
+                    add_cjob_cmd_prefix=True):
     """
     Parameters
     ----------
@@ -60,6 +61,11 @@ def cluster_GFZ_run(commands_list,
     bj_check_user : str, optional
         username you want to check in the batchjobs. 
         The default is "auto" i.e. your own username.
+    add_cjob_cmd_prefix : bool, optional
+        If, the input commands in command_list do not contain 
+        the cjob prefix command, it will be added automatically
+        The default is True.
+    
 
     Returns
     -------
@@ -79,12 +85,21 @@ def cluster_GFZ_run(commands_list,
 
     log_path = "/home/" + bj_check_user + "/test_tmp.log"
     LOGobj = open(log_path , 'w+')
+    
+    
+    if not add_cjob_cmd_prefix:
+        commands_list_opera = commands_list
+    else:
+        commands_list_opera = []
+        for cmd in commands_list:
+            cmd_ope = "cjob -c '" + cmd + "'"
+            commands_list_opera.append(cmd_ope)
 
     print ("****** JOBS THAT WILL BE LAUNCHED ******")
-    print ('Number of jobs : ' + str(len(commands_list)))
+    print ('Number of jobs : ' + str(len(commands_list_opera)))
     print ("****************************************")
 
-    for kommand in commands_list:
+    for kommand in commands_list_opera:
 
         ########## LOG/PRINT command
         print(kommand)
@@ -102,8 +117,14 @@ def cluster_GFZ_run(commands_list,
         LOGobj.write(info_start + '\n')
 
         ########## RUN command here !!
-        p = subprocess.Popen('',executable='/bin/csh', stdin=subprocess.PIPE , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
-        stdout,stderr = p.communicate( kommand.encode() )
+        if True:
+            p = subprocess.Popen('',executable='/bin/csh', 
+                                 stdin=subprocess.PIPE , 
+                                 stdout=subprocess.PIPE ,
+                                 stderr=subprocess.PIPE)
+            stdout,stderr = p.communicate( kommand.encode() )
+        else:
+            os.system(kommand)
 
         if history_file_path:
             with open(history_file_path , "a") as myfile:
