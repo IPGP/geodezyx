@@ -545,7 +545,7 @@ def gaussian_filter_GFZ_style_smoother_improved(tim_ref, dat_ref, width=7):
         ## It differs a bit of the official fct, because the next element
         ## following this criteria is included anyway
         
-        dat_raw_clean = dat_raw_work[clean_bool]
+        dat_raw_clean = dat_raw_work[clean_bool]        
         X_fac_clean   = X_fac[clean_bool]
         
         dat_raw_clean = dat_raw_clean[~np.isnan(dat_raw_clean)]
@@ -559,6 +559,35 @@ def gaussian_filter_GFZ_style_smoother_improved(tim_ref, dat_ref, width=7):
     dat_smt2 = np.array(dat_smt2)
     
     return dat_smt2
+
+
+
+#def interpolate_gaps(values, limit=None):
+#    """
+#    Fill gaps using linear interpolation, optionally only fill gaps up to a
+#    size of `limit`.
+#    """
+#    values = np.asarray(values)
+#    i = np.arange(values.size)
+#    valid = np.isfinite(values)
+#    filled = np.interp(i, i[valid], values[valid])
+#
+#    if limit is not None:
+#        invalid = ~valid
+#        for n in range(1, limit+1):
+#            invalid[:-n] &= invalid[n:]
+#        filled[invalid] = np.nan
+#
+#    return filled
+
+
+
+
+
+
+
+
+
 
 def smooth(x,window_len=11,window='hanning'):
     """smooth the data using a window with requested size.
