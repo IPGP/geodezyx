@@ -174,7 +174,7 @@ def number_job_user(bj_check_user=None,verbose=True):
     if verbose:
         print("INFO: ",bj_list_checked_sum,"running jobs found for",bj_check_user)
     
-    return bj_list_checked_sum,bj_list_checked
+    return bj_list_checked_sum,bj_list_checked,bj_pattern_checked
 
 
 
@@ -185,7 +185,7 @@ def sleep_job_user(bj_check_user=None,minjob=20,bj_check_wait_time=20):
     if not bj_check_user:
         bj_check_user=utils.get_username()
     
-    n_job,bj_list_checked = number_job_user(bj_check_user)
+    n_job,bj_list_checked,bj_pattern_checked = number_job_user(bj_check_user)
     
     if n_job >= minjob:
         check_tigger = False
