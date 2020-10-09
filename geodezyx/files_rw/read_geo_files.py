@@ -1176,7 +1176,7 @@ def read_pdm_res_slr_mono(res_file_in,
         sol_wrk = sol
 
     ### read
-    DFout = pd.read_csv(output,header=-1,delim_whitespace = True)
+    DFout = pd.read_csv(output,header=None,delim_whitespace = True)
     
     ### rename useful columns
     DFout = DFout.rename(columns={0: 'time',
