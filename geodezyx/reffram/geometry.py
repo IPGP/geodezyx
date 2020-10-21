@@ -546,6 +546,58 @@ def R2_from_a_line_regress(Xobs,Yobs,a,b):
     return r2
 
 
+def project_point_on_plan(N,M,A):
+    """
+    
+
+    Parameters
+    ----------
+    N : 3-Array (Vector)
+        Vector describing the plan.
+    M : 3-Array (Vector)
+        Point of the plan.
+    A : 3-Array (Vector)
+        Point we want to project.
+
+    Returns
+    -------
+    P : 3-Array (Vector)
+        Projected point.
+        
+    Note
+    ----
+    It can be an ambiguity on the sign
+    
+    Source
+    ------
+    https://fr.wikipedia.org/wiki/Distance_d%27un_point_%C3%A0_un_plan
+    https://www.mathematex.fr/viewtopic.php?t=923    
+    """
+    
+    ##dist
+    d = np.abs(N.dot(A-M)) / np.linalg.norm(N)
+    
+    ## Normalized N 
+    Nnorm = N / np.linalg.norm(N) 
+        
+    P = Nnorm * d
+    
+    return P
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
 
 #  _    _ _       _       _                    _    _____                _      _   _        ______   _       
 # | |  | (_)     | |     | |                  | |  / ____|              | |    | | (_)      |  ____| | |      
@@ -558,19 +610,28 @@ def R2_from_a_line_regress(Xobs,Yobs,a,b):
     
 ### High level geodetic function
 
+
 def itrf_speed_calc(x0,y0,z0,t0,vx,vy,vz,t):
     """
-    Args :
-        x0,y0,z0 (floats) : coordinates at the reference epoch (m)
+    Translate a position to a given epoch using point velocity
 
-        t0 (float) : reference epoch (decimal year)
+    Parameters
+    ----------
+    x0,y0,z0 : float
+        coordinates at the reference epoch (m).
+    t0 : float
+        reference epoch (decimal year).
+    vx,vy,vz : float
+        speed of the point (m/yr).
+    t : float
+        output epoch.
 
-        vx,vy,vz (floats) : speed of the point (m/yr)
-
-        t (float) : output epoch
-    Returns :
-        xout,yout,zout : coordinates of the point @ the ref. epoch (m)
+    Returns
+    -------
+    xout,yout,zout : floats
+        coordinates of the point @ the ref. epoch (m).
     """
+    
 
     xout = x0 + vx * ( t - t0 )
     yout = y0 + vy * ( t - t0 )
@@ -762,7 +823,7 @@ def itrf_helmert_trans(Xi,
                        D,Ddot,
                        R,Rdot,
                        epoch_ref_Xe,
-                       velocity_mode=True):
+                       velocity_mode=False):
     """
     Do the Helmert transformation I/ETRFxx <=> I/ETRFxx
 

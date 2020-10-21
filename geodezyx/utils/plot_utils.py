@@ -12,6 +12,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import scipy
 #### geodeZYX modules
 from geodezyx import utils
 
@@ -164,3 +165,43 @@ def set_size_for_pub(width=418.25368, fraction=1,subplot=[1, 1]):
     fig_dim = (fig_width_in, fig_height_in)
 
     return fig_dim
+
+
+def gaussian_for_plot(D,density=False,nbins=500,nsigma=3.5):
+    """
+    generate a gaussian curve for histogram plot
+
+    Parameters
+    ----------
+    D : iterable
+        data vector.
+    density : bool, optional
+        Adapted curve for desity mode. The default is False.
+    nbins : int, optional
+        number of bins. The default is 500.
+    nsigma : TYPE, optional
+        n sigmas for the x axis. The default is 3.5.
+
+    Returns
+    -------
+    Xpdf : array
+        gaussian curve x.
+    Ypdf_out : TYPE
+        gaussian curve x.
+
+    """
+
+    mu = np.mean(D)
+    sigma = np.std(D)
+    Xpdf = np.linspace(mu - nsigma*sigma,
+                       mu + nsigma*sigma,
+                       nbins)
+    Ypdf = scipy.stats.norm.pdf(Xpdf, mu, sigma)
+    Ypdf_out = Ypdf
+    if not density:
+        Ybin,Xbin = np.histogram(D,bins=nbins)
+        area_bin = np.trapz(Ybin,dx=np.diff(Xbin)[0])
+        
+        Ypdf_out = Ypdf*area_bin
+        
+    return Xpdf,Ypdf_out    

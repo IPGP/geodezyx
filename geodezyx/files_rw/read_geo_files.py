@@ -121,6 +121,7 @@ def read_clk(file_path_in):
                              'minute', 'second',"n_values",'bias', 'sigma'])
     
     DFclk["ac"] = os.path.basename(file_path_in)[:3] 
+    DFclk["name"] = DFclk["name"].str.upper()
     
     DFclk['epoch'] = pd.to_datetime(DFclk[['year', 'month', 'day', 'hour','minute', 'second']])
     DFclk.path = file_path_in
@@ -168,6 +169,9 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
         if returns_pandas == False
 
     """
+    
+
+    
 
     AC_name =  os.path.basename(file_path_in)[:3]
 
@@ -175,11 +179,30 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
     header = True
 
+
+    #### List/DF initialization
     epoch_stk = []
     Xstk , Ystk , Zstk , Clkstk = [],[],[],[]
-    Typestk = []
+    Typestk     = []
+    data_stk    = []
+    AC_name_stk = []
+    
+    if returns_pandas:
+        df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
+                                             'x','y','z','clk','AC'])
 
-    data_stk  = []
+
+    #### read the Header as a 1st check
+    Header = read_sp3_header(file_path_in)
+    if Header.empty:
+        print("WARN:read_sp3: The SP3 looks empty: ",file_path_in)
+        if returns_pandas:
+            return df
+        else:
+            return  epoch_stk ,  Xstk , Ystk , Zstk , Clkstk , AC_name_stk
+            
+        
+
 
     for l in fil:
         if l[0] == '*':
@@ -238,7 +261,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     if returns_pandas:
         df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
                                              'x','y','z','clk','AC'])
-
+        
         if skip_null_epoch:
             df = sp3_DataFrame_zero_epoch_filter(df)
 
@@ -309,8 +332,10 @@ def read_sp3_header(sp3_path):
         prn_line_splited = [e for e in prn_line_splited if not "+" in e]
         prn_line_splited = [e for e in prn_line_splited if not  e == "0"]
         Sat_prn_list_clean = Sat_prn_list_clean + prn_line_splited
-
-    sat_nbr = int(Sat_prn_list_clean[0])
+    try:
+        sat_nbr = int(Sat_prn_list_clean[0])
+    except:
+        sat_nbr = 0 
 
     Sat_prn_list_clean = Sat_prn_list_clean[1:]
 
