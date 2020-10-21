@@ -1469,6 +1469,8 @@ def read_sinex(sinex_path_in,
                            6: "mean"},inplace=True)
     DFepoc.set_index(['STAT','pt','soln'],inplace=True)
     
+    DFout = (DFcoor , DFepoc)
+    
     ### Rearange the coords DF
     Index = DFcoor[[2,3,4]].drop_duplicates()
     
@@ -1490,8 +1492,11 @@ def read_sinex(sinex_path_in,
                                           ('X','Y','Z')):
              
             typcomp = typ+comp
-            val = DF2[DF2[1] == typcomp][8].values[0]
-            sig = DF2[DF2[1] == typcomp][9].values[0]
+            try:
+                val = DF2[DF2[1] == typcomp][8].values[0]
+                sig = DF2[DF2[1] == typcomp][9].values[0]
+            except:
+                val,sig = np.nan,np.nan
             
             if typ == 'VEL':
                 typdic = 'v'
@@ -1518,6 +1523,104 @@ def read_sinex(sinex_path_in,
         DFout.reset_index(inplace=True)    
 
     return DFout
+
+
+def read_sinex_legacy(snxfile,dataframe_output=True):
+    """
+    This function is depreciated !!!!
+    """
+
+    STAT , soln , epoc, AC = [] , [] , [], []
+    x , y , z , sx , sy , sz = [] , [] , [] , [] , [] , []
+    vx , vy , vz , svx , svy , svz = [] , [] , [] , [] , [] , []
+    
+    start , end = [] , []
+
+    flagxyz    = False
+    flagepochs = False
+
+    for line in open(snxfile,"r",encoding = "ISO-8859-1"):
+
+        if re.compile('SOLUTION/ESTIMATE').search(line):
+            flagxyz = not flagxyz
+            continue
+        
+        if re.compile('SOLUTION/EPOCHS').search(line):
+            flagepochs = not flagepochs
+            continue        
+
+        if line[0] != ' ':
+            continue
+        else:
+            fields = line.split()
+
+
+        if flagxyz == True:
+
+            if fields[1] == 'STAX':
+                split_sp3_name = os.path.basename(snxfile)
+                AC.append(split_sp3_name[0:3])
+                STAT.append(fields[2].upper())
+                soln.append(fields[4])
+                if not ':' in fields[5]:
+                    epoc.append(conv.convert_partial_year(fields[5]))
+                else:
+                    date_elts_lis = fields[5].split(':')
+                    yy =  int(date_elts_lis[0]) + 2000
+                    doy = int(date_elts_lis[1])
+                    sec = int(date_elts_lis[2])
+
+                    epoc.append(conv.doy2dt(yy,doy,seconds=sec))
+
+                x.append(float(fields[8]))
+                sx.append(float(fields[9]))
+
+            if fields[1] == 'STAY':
+                y.append(float(fields[8]))
+                sy.append(float(fields[9]))
+
+            if fields[1] == 'STAZ':
+                z.append(float(fields[8]))
+                sz.append(float(fields[9]))
+
+
+            if fields[1] == 'VELX':
+                vx.append(float(fields[8]))
+                svx.append(float(fields[9]))
+
+            if fields[1] == 'VELY':
+                vy.append(float(fields[8]))
+                svy.append(float(fields[9]))
+
+            if fields[1] == 'VELZ':
+                vz.append(float(fields[8]))
+                svz.append(float(fields[9]))
+                
+        if flagepochs:
+            start_val = conv.datestr_sinex_2_dt(fields[4])
+            end_val   = conv.datestr_sinex_2_dt(fields[5])
+            start.append(start_val)
+            end.append(end_val)
+    
+    if not vx:
+        nanlist = [np.nan] * len(x)
+        vx , vy , vz , svx , svy , svz = list(nanlist) , list(nanlist) , list(nanlist) , \
+                                         list(nanlist) , list(nanlist) ,list(nanlist)
+                                         
+
+    outtuple = \
+    list(zip(*sorted(zip(AC, STAT , soln , epoc , x , y , z , sx , sy , sz ,
+                         vx , vy , vz , svx , svy , svz , start , end))))
+
+    if dataframe_output:
+        return sinex_DataFrame(outtuple)
+    else:
+        STAT , soln , epoc , x , y , z , sx , sy , sz , vx , vy , vz , svx , svy , svz , start , end= outtuple
+        print('TIPS : this output can be converted directly to a Pandas DataFrame using sinex_DataFrame function')
+        return STAT , soln , epoc , x , y , z , sx , sy , sz , vx , vy , vz , svx , svy , svz , start ,  end
+
+
+
 
 def sinex_DataFrame(read_sinex_result):
     DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
@@ -1614,7 +1717,13 @@ def read_sinex_versatile(sinex_path_in , id_block,
 
     
         ### Read the file
-        DF = pd.read_fwf(StringIO(Lines_str),widths=Fields_size)
+        try:
+            DF = pd.read_fwf(StringIO(Lines_str),widths=Fields_size)
+        except pd.errors.EmptyDataError as ee:
+            print("ERR: something goes wrong in the header index position")
+            print("     try to give its right position manually with header_line_idx")
+
+            raise(ee)
         DF.set_axis(Header_split, axis=1, inplace=True)
         
         ### Rename the 1st column (remove the comment marker)
@@ -1836,99 +1945,51 @@ def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False, force = False):
  #                                                                        __/ |                
  #                                                                       |___/       
 
-def read_sinex_old(snxfile,dataframe_output=True):
-    """
-    This function is depreciated !!!!
-    """
-
-    STAT , soln , epoc, AC = [] , [] , [], []
-    x , y , z , sx , sy , sz = [] , [] , [] , [] , [] , []
-    vx , vy , vz , svx , svy , svz = [] , [] , [] , [] , [] , []
-    
-    start , end = [] , []
-
-    flagxyz    = False
-    flagepochs = False
-
-    for line in open(snxfile,"r",encoding = "ISO-8859-1"):
-
-        if re.compile('SOLUTION/ESTIMATE').search(line):
-            flagxyz = not flagxyz
-            continue
-        
-        if re.compile('SOLUTION/EPOCHS').search(line):
-            flagepochs = not flagepochs
-            continue        
-
-        if line[0] != ' ':
-            continue
-        else:
-            fields = line.split()
 
 
-        if flagxyz == True:
+########################################################################'
 
-            if fields[1] == 'STAX':
-                split_sp3_name = os.path.basename(snxfile)
-                AC.append(split_sp3_name[0:3])
-                STAT.append(fields[2].upper())
-                soln.append(fields[4])
-                if not ':' in fields[5]:
-                    epoc.append(conv.convert_partial_year(fields[5]))
-                else:
-                    date_elts_lis = fields[5].split(':')
-                    yy =  int(date_elts_lis[0]) + 2000
-                    doy = int(date_elts_lis[1])
-                    sec = int(date_elts_lis[2])
+# ## Read the blocs
+# DFcoor = files_rw.read_sinex_versatile(sinex_path_in,"SOLUTION/ESTIMATE",
+#                                        header_line_idx=None)
+# DFepoc = files_rw.read_sinex_versatile(sinex_path_in,"SOLUTION/EPOCHS",
+#                                        header_line_idx=None)
 
-                    epoc.append(conv.doy2dt(yy,doy,seconds=sec))
+# ## Rename the Coord DF
+# DFcoor.rename(columns={0: "INDEX",
+#                        1: "TYPE",
+#                        2: "CODE",
+#                        3: "PT",
+#                        4: "SOLN",
+#                        5: "REF_EPOCH",
+#                        6: "UNIT",
+#                        7: "N",
+#                        8: "ESTIMATED_VALUE",
+#                        9: "STD_DEV"},inplace=True)
 
-                x.append(float(fields[8]))
-                sx.append(float(fields[9]))
-
-            if fields[1] == 'STAY':
-                y.append(float(fields[8]))
-                sy.append(float(fields[9]))
-
-            if fields[1] == 'STAZ':
-                z.append(float(fields[8]))
-                sz.append(float(fields[9]))
+# ## Rename the Epoch DF
+# DFepoc.rename(columns={0: "CODE",
+#                        1: "PT",
+#                        2: "SOLN",
+#                        3: "T",
+#                        4: "DATA_START",
+#                        5: "DATA_END",
+#                        6: "MEAN_EPOCH"},inplace=True)
 
 
-            if fields[1] == 'VELX':
-                vx.append(float(fields[8]))
-                svx.append(float(fields[9]))
+# try:
+#     DFepoc[DFepoc["SOLN"].str.contains("----")] == 1
+# except:
+#     pass
 
-            if fields[1] == 'VELY':
-                vy.append(float(fields[8]))
-                svy.append(float(fields[9]))
+# DFcoor = DFcoor[DFcoor["TYPE"].str.contains("STA")]
 
-            if fields[1] == 'VELZ':
-                vz.append(float(fields[8]))
-                svz.append(float(fields[9]))
-                
-        if flagepochs:
-            start_val = conv.datestr_sinex_2_dt(fields[4])
-            end_val   = conv.datestr_sinex_2_dt(fields[5])
-            start.append(start_val)
-            end.append(end_val)
-    
-    if not vx:
-        nanlist = [np.nan] * len(x)
-        vx , vy , vz , svx , svy , svz = list(nanlist) , list(nanlist) , list(nanlist) , \
-                                         list(nanlist) , list(nanlist) ,list(nanlist)
-                                         
+# AAA = DFcoor.groupby(["CODE",
+#                       "SOLN"])
+# for a in AAA:
+#     print(a[1]["ESTIMATED_VALUE"].T)
 
-    outtuple = \
-    list(zip(*sorted(zip(AC, STAT , soln , epoc , x , y , z , sx , sy , sz ,
-                         vx , vy , vz , svx , svy , svz , start , end))))
 
-    if dataframe_output:
-        return sinex_DataFrame(outtuple)
-    else:
-        STAT , soln , epoc , x , y , z , sx , sy , sz , vx , vy , vz , svx , svy , svz , start , end= outtuple
-        print('TIPS : this output can be converted directly to a Pandas DataFrame using sinex_DataFrame function')
-        return STAT , soln , epoc , x , y , z , sx , sy , sz , vx , vy , vz , svx , svy , svz , start ,  end
 
 
 # Convert sp3 2 gins

@@ -442,7 +442,10 @@ def datetime_improved(y=0,mo=0,d=0,h=0,mi=0,s=0,ms=0):
     except:
         return dt.datetime(1970,1,1) # si ca deconne, si on donne un NaN par ex
             
-  
+    
+    
+dt_improved = datetime_improved
+
 def ymdhms2dt():
     print("it is called datetime_improved, change the name ASAP !!!")
     return None
