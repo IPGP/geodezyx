@@ -891,6 +891,61 @@ def OrbDF_const_sv_columns_maker(OrbDFin,inplace=True):
  # |_____/|______|_|  \_\     \/ \__,_|_|_|\__,_|\__,_|\__|_|\___/|_| |_|
                                                                        
 
+
+def svn_prn_equiv_DF(path_meta_snx):
+    """
+    generate a SVN <> PRN equivalent DataFrame
+
+    Parameters
+    ----------
+    path_meta_snx : str
+        path of the MGEX metadata sinex.
+        last version avaiable here
+        http://mgex.igs.org/IGS_MGEX_Metadata.php
+
+    Returns
+    -------
+    DFfin : Pandas DataFrame
+        SVN <> PRN equivalent DataFrame.
+
+    """
+    DFsvn  = gfc.read_sinex_versatile(path_meta_snx,"SATELLITE/IDENTIFIER",
+                             header_line_idx=-2)
+    
+    DFprn = gfc.read_sinex_versatile(path_meta_snx,"SATELLITE/PRN",
+                             header_line_idx=-2)
+    
+    DFsvn.drop(columns='Comment__________________________________',inplace=True)
+    DFprn.drop(columns='Comment_________________________________',inplace=True)
+    
+    DFsvn["SVN_"] = DFsvn["SVN_"].apply(lambda x:x[0] + x[2:])
+    DFprn.replace(dt.datetime(1970,1,1),dt.datetime(2099,1,1),inplace=True)
+    DFprn["SVN_"] = DFprn["SVN_"].apply(lambda x:x[0] + x[2:])
+    
+    
+    DFstk = []
+    
+    for isat , sat in DFprn.iterrows():
+        svn = sat["SVN_"]
+        
+        sat["Block"] = DFsvn[DFsvn["SVN_"] == svn]["Block__________"].values[0]
+        DFstk.append(sat)
+        
+    DFfin = pd.concat(DFstk,axis=1).transpose()
+    
+    DFfin.rename(columns={"SVN_":"SVN",
+                          "Valid_From____":"start",
+                          "Valid_To______":"end"},inplace=True)
+    
+    
+    DFfin["const"]   = DFfin["SVN"].apply(lambda x:x[0])
+    DFfin["SVN_int"] = DFfin["SVN"].apply(lambda x:int(x[2:]))
+    DFfin["PRN_int"] = DFfin["PRN"].apply(lambda x:int(x[2:]))    
+    
+    return DFfin
+    
+
+
 def stats_slr(DFin,grpby_keys = ['sat'],
               threshold = .5):
     """
