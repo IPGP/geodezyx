@@ -1403,7 +1403,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         wwww_dir = os.path.join(arch_center_basedir,str(wwww))
         print("       Move to:",wwww_dir)
         if wwww_dir_previous != wwww_dir:
-            ftp.cwd(wwww_dir)
+            try:
+                ftp.cwd(wwww_dir)
+            except:
+                print("WARN:",wwww_dir,"do not exists, skiping...")
             Files_listed_in_FTP = ftp.nlst()
             wwww_dir_previous = wwww_dir
             if len(Files_listed_in_FTP) == 0:
