@@ -15,6 +15,7 @@ import numpy as np
 import os 
 import pandas as pd
 import re
+import datetime as dt
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -909,10 +910,11 @@ def svn_prn_equiv_DF(path_meta_snx):
         SVN <> PRN equivalent DataFrame.
 
     """
-    DFsvn  = gfc.read_sinex_versatile(path_meta_snx,"SATELLITE/IDENTIFIER",
+    
+    DFsvn  = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/IDENTIFIER",
                              header_line_idx=-2)
     
-    DFprn = gfc.read_sinex_versatile(path_meta_snx,"SATELLITE/PRN",
+    DFprn  = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/PRN",
                              header_line_idx=-2)
     
     DFsvn.drop(columns='Comment__________________________________',inplace=True)
