@@ -1276,10 +1276,6 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     
     return Files_select_list
 
-
-
-
-
 def FTP_downloader(ftp_obj,filename,localdir):   
     localpath = os.path.join(localdir,filename)
     
@@ -1309,8 +1305,7 @@ def FTP_downloader_wo_objects(tupin):
     ftp_obj_wk.close()
     return localpath , bool_dl
     
-    
-    
+
 def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                             AC_names = ("wum","cod"),
                             prod_types = ("sp3","clk"),

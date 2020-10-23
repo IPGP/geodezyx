@@ -1398,12 +1398,14 @@ def read_epos_sta_coords_multi(filein_list,return_dict = True):
 def read_epos_slv_times(p,convert_to_time=False):
     """
     convert_to_time : divide by the speed of light to get time-homogene values.
-    Values in meter instead 
+    Values in meter instead
+    If convert_to_time : time in sec
     """
     L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates",
                                                 "\-sum_times/estimates")
 
-    Lgood = []
+    Lgood_stat  = []
+    Lgood_sat   = []
     
     for l in L[1:-1]:
         if "EPOCHE" in l:
@@ -1412,19 +1414,59 @@ def read_epos_slv_times(p,convert_to_time=False):
             cur_epoc   = conv.MJD2dt(int(cur_epoc_f[1])) +  dt.timedelta(seconds=int(86400*float(cur_epoc_f[2])))
 
         if re.match("^   [0-9]{4}.*",l):
-            Lgood.append([cur_epoc] + [float(e) for e in l.split()])
+            Lgood_stat.append([cur_epoc] + [float(e) for e in l.split()])
+
+        if re.match("^ [A-Z][0-9]{2}.*",l):
+            e = l.split()
+            Lgood_sat.append([cur_epoc] + [e[0],float(e[1]),float(e[2])])
 
 
-    DF = pd.DataFrame(Lgood,columns=["epoch","stat","offset","offset_sig"])
-
-    DF["stat"] = DF["stat"].astype('int')
-    
+    ### stations
+    DF_stat = pd.DataFrame(Lgood_stat,columns=["epoch","stat","offset","offset_sig"])
+    DF_stat["stat"] = DF_stat["stat"].astype('int')
     if convert_to_time:
-        DF[["offset","offset_sig"]] = DF[["offset","offset_sig"]] / 299792458.
+        DF_stat[["offset","offset_sig"]] = DF_stat[["offset","offset_sig"]] / 299792458.
+        
+    ### satellites
+    DF_sat = pd.DataFrame(Lgood_sat,columns=["epoch","sat","offset","offset_sig"])
+    if convert_to_time:
+        DF_sat[["offset","offset_sig"]] = DF_sat[["offset","offset_sig"]] / 299792458.    
 
+
+    return DF_stat , DF_sat
+
+
+
+def read_epos_tim(tim_file_in,convert_to_sec=False):
+    """
+    results in microsec
+    """
+    F = open(tim_file_in)
+    
+    head_stop = False
+    
+    if convert_to_sec:
+        koef = 10**-6
+    else:
+        koef = 1.
+        
+    
+    Val_stk = []
+    for l in F:
+        #print(l)
+        if re.match('^\*  [0-9]{4} *([0-9]{1,2} *){4}',l):
+            head_stop = True
+            epoc = conv.datetime_improved(*l[3:30].split())
+        if head_stop and re.match('[A-Z][0-9]{2}.* [0-9]*',l):
+            val = l.split()
+            val[1] = float(val[1]) * koef
+            val.insert(0,epoc)
+        
+            Val_stk.append(val)
+        
+    DF = pd.DataFrame(Val_stk,columns=["epoch","sat","offset"])
+        
     return DF
-
-
 
 
 

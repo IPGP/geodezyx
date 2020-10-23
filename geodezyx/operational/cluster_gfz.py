@@ -13,11 +13,10 @@ import numpy as np
 import subprocess
 import re
 import time
-
+import getpass
 
 #### geodeZYX modules
 from geodezyx import utils
-
 
 #### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
@@ -32,8 +31,49 @@ def cluster_GFZ_run(commands_list,
                     bj_check_on_off = True,
                     bj_check_mini_nbr = 2,
                     bj_check_wait_time = 120,
-                    bj_check_user="auto"):
+                    bj_check_user="auto",
+                    add_cjob_cmd_prefix=True):
+    """
+    Parameters
+    ----------
+    commands_list : list of str
+        List of commands you want to run (one command per job).
+    bunch_on_off : bool, optional
+        If False, send all the jobs to the cluster at once.
+        If True, just send <bunch_job_nbr> of them.
+        See the options below.
+        The default is True.
+    bunch_job_nbr : int, optional
+        number of jobs which will be sent to the cluser at once.
+        The default is 10.
+    bunch_wait_time : int, optional
+        Minimal time between two bunch runs in sec.
+        The default is 600.
+    bj_check_on_off : bool, optional
+        Do a check before a new bunch run, if previous jobs are still running.
+        The default is True.
+    bj_check_mini_nbr : int, optional
+        The fuctions will wait <bj_check_wait_time> sec 
+        more if <bj_check_mini_nbr> or more jobs are running.
+        The default is 2.
+    bj_check_wait_time : int, optional
+        wait time between two checks in sec. The default is 120.
+    bj_check_user : str, optional
+        username you want to check in the batchjobs. 
+        The default is "auto" i.e. your own username.
+    add_cjob_cmd_prefix : bool, optional
+        If, the input commands in command_list do not contain 
+        the cjob prefix command, it will be added automatically
+        The default is True.
+    
 
+    Returns
+    -------
+    None.
+
+    """
+
+    username = getpass.getuser()
 
     history_file_path = None
     wait_sleeping_before_launch=5
@@ -45,12 +85,21 @@ def cluster_GFZ_run(commands_list,
 
     log_path = "/home/" + bj_check_user + "/test_tmp.log"
     LOGobj = open(log_path , 'w+')
+    
+    
+    if not add_cjob_cmd_prefix:
+        commands_list_opera = commands_list
+    else:
+        commands_list_opera = []
+        for cmd in commands_list:
+            cmd_ope = "cjob -c '" + cmd + "'"
+            commands_list_opera.append(cmd_ope)
 
     print ("****** JOBS THAT WILL BE LAUNCHED ******")
-    print ('Number of jobs : ' + str(len(commands_list)))
+    print ('Number of jobs : ' + str(len(commands_list_opera)))
     print ("****************************************")
 
-    for kommand in commands_list:
+    for kommand in commands_list_opera:
 
         ########## LOG/PRINT command
         print(kommand)
@@ -68,8 +117,14 @@ def cluster_GFZ_run(commands_list,
         LOGobj.write(info_start + '\n')
 
         ########## RUN command here !!
-        p = subprocess.Popen('',executable='/bin/csh', stdin=subprocess.PIPE , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
-        stdout,stderr = p.communicate( kommand.encode() )
+        if True:
+            p = subprocess.Popen('',executable='/bin/csh', 
+                                 stdin=subprocess.PIPE , 
+                                 stdout=subprocess.PIPE ,
+                                 stderr=subprocess.PIPE)
+            stdout,stderr = p.communicate( kommand.encode() )
+        else:
+            os.system(kommand)
 
         if history_file_path:
             with open(history_file_path , "a") as myfile:
@@ -89,28 +144,23 @@ def cluster_GFZ_run(commands_list,
             if bj_check_on_off:
                 print("INFO : BJ Check : All jobs should be finished now, let's see if there is some latecomers")
                 bj_check_tigger = False
-                bj_command = "perl /dsk/igs2/soft_wrk/psakicki/SOFT_EPOS8_BIN_TOOLS/SCRIPTS/e8_bjobs_local.pl"
             while not bj_check_tigger:
-                bj_list = subprocess.check_output(bj_command,shell='/bin/csh')
-                bj_pattern_checked =   bj_check_user + ' *' +  bj_check_user
+                bj_check_tigger = sleep_job_user(minjob=bj_check_mini_nbr,
+                               bj_check_wait_time=bj_check_wait_time)
 
-                bj_list_checked = [re.search(bj_pattern_checked,l) for l in bj_list]
-                bj_list_checked_sum = np.sum(bj_list_checked)
+    return None 
 
-                if bj_list_checked_sum > bj_check_mini_nbr:
-                    print("INFO : sleeping @ " + str(dt.datetime.now()) + " for " + str(bj_check_wait_time) + "s b.c." + str(bj_list_checked_sum) + "job(s) match pattern " + bj_pattern_checked)
-                    print(bj_list)
-                    time.sleep(bj_check_wait_time)
-
-                else:
-                    bj_check_tigger = True
-                    print("INFO : let's continue, no job matchs the pattern " + bj_pattern_checked)
 
 def number_job_user(bj_check_user=None,verbose=True):
+    """
+    Internal function for sleep_job_user
+    """
+    username = getpass.getuser()
+
     if not bj_check_user:
         bj_check_user=utils.get_username()
-        
-    bj_command = "perl /dsk/igs2/soft_wrk/psakicki/SOFT_EPOS8_BIN_TOOLS/SCRIPTS/e8_bjobs_local.pl"
+    
+    bj_command = "perl /dsk/igs2/soft_wrk/" + username + "/SOFT_EPOS8_BIN_TOOLS/SCRIPTS/e8_bjobs_local.pl"
 
     bj_list = subprocess.check_output(bj_command,shell='/bin/csh')
     bj_list = bj_list.decode("utf-8")
@@ -124,19 +174,28 @@ def number_job_user(bj_check_user=None,verbose=True):
     if verbose:
         print("INFO: ",bj_list_checked_sum,"running jobs found for",bj_check_user)
     
-    return bj_list_checked_sum
+    return bj_list_checked_sum,bj_list_checked,bj_pattern_checked
 
-def sleep_job_user(bj_check_user=None,maxjob=20,bj_check_wait_time=20):
+
+
+def sleep_job_user(bj_check_user=None,minjob=20,bj_check_wait_time=20):
+    """
+    Internal function for cluster_GFZ_run
+    """
     if not bj_check_user:
         bj_check_user=utils.get_username()
     
-    n_job = number_job_user(bj_check_user)
+    n_job,bj_list_checked,bj_pattern_checked = number_job_user(bj_check_user)
     
-    if n_job >= maxjob:
+    if n_job >= minjob:
+        check_tigger = False
         print("INFO : sleeping @ " + str(dt.datetime.now()) + " for " + str(bj_check_wait_time) + "s b.c." + str(n_job) + " jobs are runing")
         time.sleep(bj_check_wait_time)
+    else:
+        check_tigger = True
+        print("INFO : let's continue, no job matchs the pattern " + bj_pattern_checked)
         
-    return None
+    return check_tigger
     
 
 

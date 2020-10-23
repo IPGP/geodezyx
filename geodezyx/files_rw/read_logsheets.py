@@ -197,16 +197,17 @@ def mono_logsheet_read(logsheet_path,return_lists = False):
             if r.Date_Installed <= d < r.Date_Removed:
                 potential_rec.append(r)
 
+        site_code = sit_lis[0].Four_Character_ID
         if len(potential_ant) == 0:
-            print('WARN : missing Antenna info for',sit_lis[0].Four_Character_ID,d,'skip ...')
+            print('WARN:',site_code,': missing Antenna',d,'skip ...')
             continue
         if len(potential_rec) == 0:
-            print('WARN : missing Receiver info for',sit_lis[0].Four_Character_ID,d,'skip ...')
+            print('WARN:',site_code,': missing Receiver',d,'skip ...')
             continue
         if len(potential_ant) != 1:
-            print('WARN : several Antennas found for',sit_lis[0].Four_Character_ID,d)
+            print('WARN:',site_code,': several Antennas found',d)
         if len(potential_rec) != 1:
-            print('WARN : several Receivers found for',sit_lis[0].Four_Character_ID,d)
+            print('WARN:',site_code,': several Receivers found',d)
 
         date_ant_rec_couple_lis.append((d , potential_ant[0] , potential_rec[0]))
 
@@ -370,12 +371,10 @@ class Reciever(Event):
 #        self.Date_Removed              = 'XXXX'
 
     def __repr__(self):
-        return "{},{},{}".format(self.Receiver_Type,
+        return "Antenna Type  :{},\nDate Installed:{},\nDate Removed  :{}".format(self.Receiver_Type,
                                  self.Date_Installed,
                                  self.Date_Removed)
-        return "{},{},{}".format(self.Antenna_Type,
-                                 self.Date_Installed,
-                                 self.Date_Removed)
+
 
     def FirmwareSmart(self):
         aaa = str(self.Firmware_Version).split()
@@ -415,7 +414,7 @@ class Antenna(Event):
             self.__Antenna_Radome_Type = inradome[0:4].upper()
 
     def __repr__(self):
-        return "{},{},{}".format(self.Antenna_Type,self.Date_Installed,self.Date_Removed)
+        return "Antenna Type  :{},\nDate Installed:{},\nDate Removed  :{}".format(self.Antenna_Type,self.Date_Installed,self.Date_Removed)
 
     def AntTypSmart(self):
         #Elimination of the Radome type
@@ -468,7 +467,7 @@ class Site(object):
             self.__IERS_DOMES_Number = '99999M001'
 
     def __repr__(self):
-        return "{},{},{}".format(self.Site_Name,
+        return "Site Name   :{},\nCode        :{},\nInstallation:{}".format(self.Site_Name,
                                  self.Four_Character_ID,
                                  self.Date_Installed)
 
@@ -502,8 +501,10 @@ class Location(object):
         self.Reference_epoch         = dt.datetime(2005,1,1)
 
     def __repr__(self):
-        return "{},{},{},{}".format(self.X_coordinate_m,self.Y_coordinate_m,
-                                 self.Z_coordinate_m,self.Reference_epoch)
+        return "X:{},Y:{},Z:{},\nRef. epoc.:{}".format(self.X_coordinate_m,
+                                                     self.Y_coordinate_m,
+                                                     self.Z_coordinate_m,
+                                                     self.Reference_epoch)
 
     def export_as_string(self):
         Str_list = []
