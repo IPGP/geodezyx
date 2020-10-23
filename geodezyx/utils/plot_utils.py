@@ -102,9 +102,10 @@ def figure_saver(figobjt_in , outdir , outname , outtype = '.png' , formt = 'a4'
     #    elif
         figobjt_in.savefig(outpath)
         outpath_stk.append(outpath)
+        
+        
     if len(outpath_stk) == 1:
         outpath_stk = outpath_stk[0]
-
     return outpath_stk
 
 
