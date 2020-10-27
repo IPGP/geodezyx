@@ -911,19 +911,13 @@ def svn_prn_equiv_DF(path_meta_snx):
         SVN <> PRN equivalent DataFrame.
 
     """
-<<<<<<< HEAD
     
     DFsvn  = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/IDENTIFIER",
-                             header_line_idx=-2)
+                                           header_line_idx=-2)
     
     DFprn  = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/PRN",
-=======
-    DFsvn  = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/IDENTIFIER",
-                             header_line_idx=-2)
-    
-    DFprn = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/PRN",
->>>>>>> 6661d515ed57d5e03e4746976549994a1a480da7
-                             header_line_idx=-2)
+                                           header_line_idx=-2)
+
     
     DFsvn.drop(columns='Comment__________________________________',inplace=True)
     DFprn.drop(columns='Comment_________________________________',inplace=True)
