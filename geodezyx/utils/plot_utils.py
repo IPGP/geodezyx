@@ -91,18 +91,19 @@ def get_figure(figin = 0):
     return figout
 
 
-def figure_saver(figobjt_in , outdir , outname , outtype = '.png' , formt = 'a4' ):
+def figure_saver(figobjt_in , outdir , outname ,
+                 outtype = ('.png','.pdf','.figpik') , formt = 'a4' ):
     if not utils.is_iterable(outtype):
          outtype = (outtype,) 
          
     outpath_stk = []
     for outtype_iter in outtype:
-        outpath = os.path.join(outdir,outname+outtype_iter)
-    #    if formt == 'a4':
-    #    elif
-        figobjt_in.savefig(outpath)
+        if "pik" in outtype_iter:
+            outpath = utils.pickle_saver(figobjt_in,outdir,outname,outtype_iter)
+        else:   
+            outpath = os.path.join(outdir,outname+outtype_iter)
+            figobjt_in.savefig(outpath)
         outpath_stk.append(outpath)
-        
         
     if len(outpath_stk) == 1:
         outpath_stk = outpath_stk[0]
