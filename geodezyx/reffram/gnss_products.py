@@ -921,19 +921,9 @@ def svn_prn_equiv_DF(path_meta_snx):
     
     DFsvn.drop(columns='Comment__________________________________',inplace=True)
     DFprn.drop(columns='Comment_________________________________',inplace=True)
-    
-<<<<<<< HEAD
-    
-    print(DFsvn)
-    
-    print(DFprn)
-    raise Exception
-    
-    
-    DFsvn["SVN_"] = DFsvn["SVN_"].apply(lambda x:x[0] + x[2:])
-=======
+
+    ## the next lines 1 and 3 seems like they have became useless
     DFsvn["SVN_"] = DFsvn["SVN_"].apply(lambda x:x[0] + x[1:])
->>>>>>> 3dc3a6dac1d181ecdc1ca370190f8f849fe37093
     DFprn.replace(dt.datetime(1970,1,1),dt.datetime(2099,1,1),inplace=True)
     DFprn["SVN_"] = DFprn["SVN_"].apply(lambda x:x[0] + x[1:])
     
