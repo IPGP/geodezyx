@@ -25,7 +25,7 @@ def color_list(L , colormap='jet'):
     colist = [cm(1.*i/NCOL) for i in range(NCOL)]
     return colist
 
-def symbols_list(L):
+def symbols_list(L=None):
 
     Lsym = ["o",
     "v",
@@ -53,7 +53,10 @@ def symbols_list(L):
     "|",
     "_"]
 
-    return Lsym[:len(L)]
+    if not L:
+        return Lsym
+    else:
+        return Lsym[:len(L)]
 
 
 
@@ -92,17 +95,22 @@ def get_figure(figin = 0):
 
 
 def figure_saver(figobjt_in , outdir , outname ,
-                 outtype = ('.png','.pdf','.figpik') , formt = 'a4' ):
+                 outtype = ('.png','.pdf','.figpik') , formt = 'a4' ,
+                 transparent=False):
+    
     if not utils.is_iterable(outtype):
          outtype = (outtype,) 
          
     outpath_stk = []
     for outtype_iter in outtype:
         if "pik" in outtype_iter:
-            outpath = utils.pickle_saver(figobjt_in,outdir,outname,outtype_iter)
+            outpath = utils.pickle_saver(figobjt_in,outdir,
+                                         outname,outtype_iter)
         else:   
             outpath = os.path.join(outdir,outname+outtype_iter)
-            figobjt_in.savefig(outpath)
+            #figobjt_in.savefig(outpath)
+            figobjt_in.savefig(outpath,transparent=transparent)
+
         outpath_stk.append(outpath)
         
     if len(outpath_stk) == 1:

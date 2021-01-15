@@ -111,6 +111,9 @@ def read_clk(file_path_in):
     -------
     DFclk : pandas DataFrame
         Returns a panda table format with the data extracted from the file.
+    Note
+    ----
+    Bias is given in seconds
     """
     HeadLine = utils.grep(file_path_in,"END OF HEADER",
                           only_first_occur=True,line_number=True)

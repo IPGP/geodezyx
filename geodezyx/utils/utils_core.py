@@ -499,13 +499,16 @@ def extract_text_between_elements(file_path,elt_start,elt_end):
 def extract_text_between_elements_2(file_path , elt_start , elt_end,
                                            return_string = False,
                                            nth_occur_elt_start=0,
-                                           nth_occur_elt_end=0):
+                                           nth_occur_elt_end=0,
+                                           invert=False,
+                                           verbose=False):
     """
     This function is based on REGEX (elt_start , elt_end are REGEX)
     and can manage several blocks in the same file
 
     return_string = True  : returns a string of the matched lines
     return_string = False : returns a list of the matched lines
+    invert : exclude text between the pattern
     
     NB : in SINEX context, with "+MARKER", use backslash i.e.
          "\\+MARKER"    
@@ -515,19 +518,25 @@ def extract_text_between_elements_2(file_path , elt_start , elt_end,
     """
     
     if type(file_path) is str:
-        F = open(file_path,"r",encoding = "ISO-8859-1")
+        #F = open(file_path,"r",encoding = "ISO-8859-1")
+        F = open(file_path,"r")
     else:
         F = file_path
     
     out_lines_list = []
     
     trigger = False
+    if invert:
+        trigger = not trigger
+        
     last_triggered_line = False
     
     for line in F:
 
         if re.search(elt_start , line) and nth_occur_elt_start == 0:
             trigger = True
+            if invert:
+                trigger = not trigger
         elif re.search(elt_start , line) and nth_occur_elt_start > 0:
             nth_occur_elt_start = nth_occur_elt_start - 1
         
@@ -535,13 +544,18 @@ def extract_text_between_elements_2(file_path , elt_start , elt_end,
             last_triggered_line = True
         elif trigger and re.search(elt_end , line) and nth_occur_elt_end > 0:
             nth_occur_elt_end = nth_occur_elt_end - 1
-            
+                        
         if trigger:
+            if verbose:
+                print(line)
             out_lines_list.append(line)
             
         if last_triggered_line:
-            trigger = False
             last_triggered_line = False
+            trigger = False
+            if invert:
+                trigger = not trigger
+            
 
     if return_string:
         return "".join(out_lines_list)
