@@ -74,7 +74,7 @@ def dms2dec_num(deg,minn=0,sec=0):
     return deg + minn * (1./60.) +  sec * (1./3600.)
 
 
-def deg_dec2dms(deg_in):
+def deg_dec2dms(deg_in,only_dm=False):
     """
     Angle conversion
     
@@ -97,7 +97,11 @@ def deg_dec2dms(deg_in):
     minu             = np.floor_divide(decimal_part_sec,60)
     sec              = decimal_part_sec - minu * 60
     sec              = np.round(sec,8)
-    return deg , minu , sec
+    if not only_dm:
+        return deg , minu , sec
+    else:
+        return deg , minu + sec * (1./60.)
+        
 
 
 
@@ -137,7 +141,7 @@ def dms2dec(dms_str , onlyDM=False):
     
     dms_str = dms_str.strip()
 
-    if re.match('[swoSWO]', dms_str):
+    if re.match('.*[swoSWO].*', dms_str):
         sign = -1
     else:
         sign = 1

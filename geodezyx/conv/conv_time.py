@@ -919,11 +919,12 @@ def dt2list(dtin,return_useful_values=True):
 
 
 
-def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True):
+def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True,
+               output_time_scale="utc"):
     """
     Time conversion
     
-    Day of Year Time => Python's datetime
+    GPS Time => Python's datetime
 
     Parameters
     ----------
@@ -933,6 +934,8 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True):
         Day of Week OR Seconds in Weeks
     dow_input : bool
         select if Day of Week (True) OR Seconds in Weeks (False)
+    output_time_scale : str
+        gives the wished time scale : "utc", "tai", "gps"
         
     Returns
     -------
@@ -952,31 +955,42 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True):
     https://gist.github.com/jeremiahajohnson/eca97484db88bcf6b124
     """
     
-    if dow_input:
-        gpsseconds = gpsdow_or_seconds * 86400 + 86400*.5 # so we are around noon
+    if utils.is_iterable(gpsweek):
+        typ=utils.get_type_smart(gpsweek)
+        return typ([gpstime2dt(w,ds,dow_input,output_time_scale) for w,ds in zip(gpsweek,gpsdow_or_seconds)])
     else:
-        gpsseconds = gpsdow_or_seconds
-
-    ## First gross run
-    epoch   = dt.datetime(1980,0o1,0o6)
-    elapsed = dt.timedelta(days=(gpsweek*7),seconds=(gpsseconds+0))
-
-    prelim_time = epoch + elapsed
-
-
-    leapsec = find_leapsecond(prelim_time)
-
-    ## Second run with leap second
-    epoch   = dt.datetime(1980,0o1,0o6)
-    elapsed = dt.timedelta(days=(gpsweek*7),seconds=(gpsseconds+leapsec))
-
-    final_time = epoch + elapsed
-
-    if dow_input:
-        final_time = final_time.date()
-        final_time = dt.datetime(final_time.year, final_time.month, final_time.day)
-
-    return final_time
+        if dow_input:
+            gpsseconds = gpsdow_or_seconds * 86400 + 86400*.5 # so we are around noon
+        else:
+            gpsseconds = gpsdow_or_seconds
+    
+        ## First gross run
+        epoch   = dt.datetime(1980,1,6)
+        elapsed = dt.timedelta(days=(gpsweek*7),seconds=(gpsseconds+0))
+        
+        prelim_time = epoch + elapsed
+    
+        if output_time_scale == "gps":
+            final_time = prelim_time
+        else:
+            leapsec = find_leapsecond(prelim_time)
+            
+            if output_time_scale == "utc":
+                deltasec = leapsec - 19
+            elif output_time_scale == "tai":
+                deltasec = 19
+                
+            ## Second run with leap second
+            epoch   = dt.datetime(1980,1,6)
+            elapsed = dt.timedelta(days=(gpsweek*7),seconds=(gpsseconds+leapsec))
+        
+            final_time = epoch + elapsed
+    
+        if dow_input:
+            final_time = final_time.date()
+            final_time = dt.datetime(final_time.year, final_time.month, final_time.day)
+    
+        return final_time
 
 
 def gpsweek_decimal2dt(gpsweekdec_in):
