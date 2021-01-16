@@ -432,16 +432,19 @@ def downloader(url,savedir,force = False,
         except (urllib.error.HTTPError , urllib.error.URLError):
             print("WARN :",rnxname,"not found on server :(")
             print(url_print)
-            return None
+            return ""
         print("INFO :" , rnxname ," found on server :)")
         data = f.read()
         if not os.path.exists(savedir):
             os.makedirs(savedir)
-        with open(os.path.join(savedir , rnxname), "wb") as code:
+        outpath = os.path.join(savedir , rnxname)
+        with open(outpath, "wb") as code:
             code.write(data)
+        return_str = outpath
     else:
         print("ERR : something goes wrong with the URL")
         print("     ", url)
+        return_str = ""
 
 
     # effective downloading (old version)
@@ -457,7 +460,7 @@ def downloader(url,savedir,force = False,
 #        os.makedirs(savedir)
 #    with open(os.path.join(savedir , rnxname), "wb") as code:
 #        code.write(data)
-    return None
+    return return_str
 
 def start_end_date_easy(start_year,start_doy,end_year,end_doy):
     start = conv.doy2dt(start_year,start_doy)
@@ -1398,7 +1401,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         wwww_dir = os.path.join(arch_center_basedir,str(wwww))
         print("       Move to:",wwww_dir)
         if wwww_dir_previous != wwww_dir:
-            ftp.cwd(wwww_dir)
+            try:
+                ftp.cwd(wwww_dir)
+            except:
+                print("WARN:",wwww_dir,"do not exists, skiping...")
             Files_listed_in_FTP = ftp.nlst()
             wwww_dir_previous = wwww_dir
             if len(Files_listed_in_FTP) == 0:

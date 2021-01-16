@@ -69,7 +69,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
     
     for epoc in EpochRawList:
         SP3epoc   = pd.DataFrame(SP3_DF_wrk[SP3_DF_wrk["epoch"] == epoc])
-        ## Missing Sat
+        ## manage missing Sats for the current epoc
         MissingSats = SatListSet.difference(set(SP3epoc["sat"]))
         
         for miss_sat in MissingSats:
@@ -82,6 +82,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
             miss_line["clk"]   = 999999.999999
             
             SP3epoc = SP3epoc.append(miss_line)
+        #### end of missing sat bloc
 
         SP3epoc.sort_values("sat",inplace=True,ascending=False)
         timestamp = conv.dt2sp3_timestamp(conv.numpy_datetime2dt(epoc)) + "\n"
@@ -91,6 +92,8 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
         LinesStkEpoch = []
         sum_val_epoch = 0
         for ilin , lin in SP3epoc.iterrows():
+            if not "clk" in lin.index:  # manage case if no clk in columns
+                lin["clk"] = 999999.999999
             line_out = linefmt.format(lin["sat"],lin["x"],lin["y"],lin["z"],lin["clk"])
             
             sum_val_epoch += lin["x"]+lin["y"]+lin["z"]
