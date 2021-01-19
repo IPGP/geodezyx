@@ -1189,6 +1189,142 @@ def outlier_overmean(Xin,Yin,marge=0.1):
     return Xout , Yout, boolbad
 
 
+def lagrange(points):
+    """
+    Low level function to determine a lagrangian polynom
+    
+    Replace scipy.interpolate.lagrange which is HIGHLY instable
+
+    Parameters
+    ----------
+    points : list of n-interable
+        point list.
+
+    Returns
+    -------
+    P : function
+        function representing the polynom.
+        
+    Source
+    ------
+    from : https://gist.github.com/melpomene/2482930
+
+    """
+    def P(x):
+        total = 0
+        n = len(points)
+        for i in range(n):
+            xi, yi = points[i]
+		
+            def g(i, n):
+				
+                tot_mul = 1
+                for j in range(n):
+                    if i == j:
+                        continue
+                    xj, yj = points[j]
+                    tot_mul *= (x - xj) / float(xi - xj)
+				
+                return tot_mul 
+
+            total += yi * g(i, n)
+        return total
+    return P 
+
+
+
+def lagrange_interpolate(Tdata,Ydata,Titrp,n=10):
+    """
+    Perform a temporal lagrangian interpolation
+    the X-component is a time 
+
+    Parameters
+    ----------
+    Tdata : iterable of datetime
+        X/T component of the known points.
+    Ydata : iterable of floats
+        Y component of the known points..
+    Titrp : iterable of datetime
+        Epochs of the wished points.
+    n : int, optional
+        degree of the polynom. Better if even. The default is 10.
+
+    Returns
+    -------
+    Yintrp : float array
+        output interpolated data.
+        
+    Tips
+    ----
+    Use conv.dt_range to generate the wished epochs range
+
+    """
+      
+    Tdata = np.array(Tdata)
+    Ydata = np.array(Ydata)
+    Titrp = np.array(Titrp)
+    
+    nn = int(n/2)
+        
+    Tdata_px = conv.dt2posix(np.array(Tdata))
+    Titrp_px = conv.dt2posix(np.array(Titrp))
+    
+    tref = Tdata_px[0]
+    
+    ### we substract a ref time to avoid numerical instability
+    Tdata_px = Tdata_px - tref
+    Titrp_px = Titrp_px - tref
+    
+    sur_val = (np.nan,np.nan)
+    sur_idx = (np.nan,np.nan)
+    
+    ### some checks
+    if np.any(np.diff(Tdata_px) == 0):
+        print("WARN: lagrange_interpolate: some Tdata are equals")
+
+    if np.any(np.diff(Ydata) == 0):
+        print("WARN: lagrange_interpolate: some Ydata are equals")
+
+    if np.any(Titrp_px < 0):
+        print("WARN: lagrange_interpolate: some wanted values are outside the data interval!!!!")
+    
+    Yintrp = []
+    
+    for tintrp in Titrp_px:
+        
+        if ( sur_val[0]  <= tintrp ) & ( tintrp <= sur_val[1] ):
+            ### the Polynom is alread determined
+            pass
+        else:
+            sur_val , sur_idx = utils.find_surrounding(Tdata_px, tintrp)
+                        
+            if (sur_idx[0] - nn < 0):  # manage side effect for first points
+                imin = 0
+                imax = n+1
+            elif (sur_idx[1] + nn > len(Ydata)): # manage side effect for last points
+                imin = len(Ydata) - n-1
+                imax = len(Ydata)                
+            else: # regular case
+            ### if (sur_idx[0] - nn >= 0) and (sur_idx[1] + nn >= len(Ydata)):
+                imin = sur_idx[0] - nn
+                imax = sur_idx[1] + nn                
+            
+    
+            Tuse = Tdata_px[imin:imax]
+            Xuse = Ydata[imin:imax]
+    
+            Poly = lagrange(list(zip(Tuse,Xuse)))
+    
+        yintrp = Poly(tintrp)
+        Yintrp.append(yintrp)
+        
+    return np.array(Yintrp)
+
+
+
+
+
+
 def dates_middle(start,end):
     return start + (end - start)/2
 

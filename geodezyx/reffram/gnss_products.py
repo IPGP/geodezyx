@@ -9,6 +9,7 @@ Created on Fri Aug  2 17:36:39 2019
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
+import itertools
 import matplotlib
 import matplotlib.pyplot as plt
 import natsort
@@ -809,7 +810,80 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
 #  \____/|_|  |_.__/|_|\__| |_____/ \__,_|\__\__,_|_|  |_|  \__,_|_| |_| |_|\___||___/
 #                                                                                     
        
-### Orbit DataFrames                                                                      
+### Orbit DataFrames   
+
+def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
+                               append_to_input_DF = False,
+                               plot=False):
+    """
+    High level function to interpolate an orbit DataFrame
+
+    Parameters
+    ----------
+    DForb_in : DataFrame
+        an Orbit DataFrame.
+    Titrp : iterable of datetime
+        Epochs of the wished points.
+    n : int, optional
+        degree of the polynom. Better if even. The default is 10.
+    append_to_input_DF : bool, optional
+        append the interpolated DF to the input DF. The default is False.
+    plot : bool, optional
+        Plot the values. For debug only. The default is False.
+
+    Returns
+    -------
+    DForb_out : DataFrame
+        Interpolated orbits.
+        
+    Tips
+    ----
+    Use conv.dt_range to generate the wished epochs range
+
+    """
+    DForb_stk = []
+    
+    for sat,ac in itertools.product(DForb_in.sat.unique(),DForb_in.AC.unique()):
+        
+        print("INFO: lagrange_interpolate_sp3: process",ac,sat)
+        
+        DForb_use = DForb_in[(DForb_in.sat == sat) & (DForb_in.AC == ac)].copy()
+            
+        Tdata = DForb_use.epoch.dt.to_pydatetime()
+        
+        Xitrp = stats.lagrange_interpolate(Tdata,DForb_use.x,Titrp,n=n)
+        Yitrp = stats.lagrange_interpolate(Tdata,DForb_use.y,Titrp,n=n)
+        Zitrp = stats.lagrange_interpolate(Tdata,DForb_use.z,Titrp,n=n)
+        
+        ClkDummy = np.array([999999.999999] * len(Titrp))
+        
+        ARR = np.column_stack((Titrp,Xitrp,Yitrp,Zitrp,ClkDummy))
+        
+        DForb_tmp = pd.DataFrame(ARR,columns=["epoch","x","y","z","clk"])
+        
+        ### sometihng else must be tested o give the annex val directly in the col of DForb_tmp
+        DFannex_vals = DForb_use.drop(["epoch","x","y","z","clk"],axis=1).drop_duplicates()
+        DFannex_vals = pd.concat([DFannex_vals]*(len(Titrp)),ignore_index=True,axis=0)
+        
+        DForb_tmp = pd.concat((DForb_tmp,DFannex_vals),axis=1)
+        DForb_stk.append(DForb_tmp)
+        
+        if plot:
+            plt.plot(Tdata,DForb_use.x,'o')
+            plt.plot(Titrp,Xitrp,'.')
+        
+    
+    DForb_out = pd.concat(DForb_stk)
+    
+    if append_to_input_DF:
+        DForb_out = pd.concat((DForb_in,DForb_out))
+        
+    DForb_out.reset_index(drop=True)
+    return DForb_out
+    
+        
+
+                                                                   
 
 #### FCT DEF
 def OrbDF_reg_2_multidx(OrbDFin,index_order=["sat","epoch"]):
