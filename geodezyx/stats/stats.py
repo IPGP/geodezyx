@@ -1189,7 +1189,7 @@ def outlier_overmean(Xin,Yin,marge=0.1):
     return Xout , Yout, boolbad
 
 
-def lagrange(points):
+def lagrange1(points):
     """
     Low level function to determine a lagrangian polynom
     
@@ -1229,6 +1229,44 @@ def lagrange(points):
 
             total += yi * g(i, n)
         return total
+    return P 
+
+
+
+def lagrange2(X,Y):
+    """
+    Low level function to determine a lagrangian polynom
+    
+    Replace scipy.interpolate.lagrange which is HIGHLY instable
+    
+    this function is more pythonic, but slower thant lagrange1....
+
+    Parameters
+    ----------
+    points : list of n-interable
+        point list.
+
+    Returns
+    -------
+    P : function
+        function representing the polynom.
+        
+    Source
+    ------
+    from : https://gist.github.com/melpomene/2482930
+
+    """
+    
+    def P(x_itrp):
+        total = 0
+        n = len(X)
+        for i in range(n):
+            def g(i, n):
+                X_but_i = np.concatenate((X[:i],X[i+1:]))
+                return np.product((x_itrp -X_but_i)/(X[i] - X_but_i)) 
+            total += Y[i] * g(i, n)
+        return total
+    
     return P 
 
 
@@ -1311,9 +1349,11 @@ def lagrange_interpolate(Tdata,Ydata,Titrp,n=10):
             
     
             Tuse = Tdata_px[imin:imax]
-            Xuse = Ydata[imin:imax]
+            Yuse = Ydata[imin:imax]
     
-            Poly = lagrange(list(zip(Tuse,Xuse)))
+            Poly = lagrange1(list(zip(Tuse,Yuse)))
+            #Poly = lagrange2(Tuse,Yuse)
+            
     
         yintrp = Poly(tintrp)
         Yintrp.append(yintrp)

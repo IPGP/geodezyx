@@ -34,6 +34,7 @@ import datetime as dt
 import dateutil
 import glob
 from io import BytesIO,StringIO
+import itertools
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -1453,12 +1454,37 @@ def Tropsinex_DataFrame(read_sinex_result):
 
 
 def read_sinex(sinex_path_in,
-               keep_sites_as_index=False):
+               keep_sites_as_index=False,
+               drop_nan=False):
+    """
+    Read a *coordinate* SINEX file as DataFrame
+
+    Parameters
+    ----------
+    sinex_path_in : str
+        path of the SINEX.
+    keep_sites_as_index : Bool, optional
+        use the site names as index. The default is False.
+    drop_nan : bool or str, optional
+        remove the NaN in the DataFrame.
+        False: do not remove them
+        'all': remove the row if all values are NaN
+        'any':  remove the row if at least one value is NaN (dangerous)
+        The default is False.
+
+    Returns
+    -------
+    DFout : TYPE
+        DESCRIPTION.
+
+    """
     ## Read the blocs
     DFcoor = read_sinex_versatile(sinex_path_in,"SOLUTION/ESTIMATE",
                                            header_line_idx=None)
     DFepoc = read_sinex_versatile(sinex_path_in,"SOLUTION/EPOCHS",
                                            header_line_idx=None)
+    
+    
     ## Rename the Epoch DF
     DFepoc.rename(columns={0: "STAT",
                            1: "pt",
@@ -1468,9 +1494,7 @@ def read_sinex(sinex_path_in,
                            5: "end",
                            6: "mean"},inplace=True)
     DFepoc.set_index(['STAT','pt','soln'],inplace=True)
-    
-    DFout = (DFcoor , DFepoc)
-    
+        
     ### Rearange the coords DF
     Index = DFcoor[[2,3,4]].drop_duplicates()
     
@@ -1487,7 +1511,6 @@ def read_sinex(sinex_path_in,
         dicttmp['pt']   = pt
         dicttmp['soln'] = soln
     
-        
         for typ,comp in itertools.product(('STA','VEL'),
                                           ('X','Y','Z')):
              
@@ -1515,9 +1538,10 @@ def read_sinex(sinex_path_in,
     
     ### Concatenate both
     DFout = pd.concat((DFepoc,DFcoor2),axis=1)
-    
+        
     ### remove NaN (might be more epochs than coords...)
-    DFout.dropna(inplace=True)
+    if drop_nan:
+        DFout.dropna(inplace=True,how=drop_nan)
     
     if not keep_sites_as_index:
         DFout.reset_index(inplace=True)    
