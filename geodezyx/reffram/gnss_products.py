@@ -909,13 +909,14 @@ def OrbDF_multidx_2_reg(OrbDFin,index_order=["sat","epoch"]):
     return OrbDFwrk
 
 def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
-                              supplementary_sort=True):
+                              supplementary_sort=True,order = ["sat","epoch"]):
     """
     Find common sats and epochs in to Orbit DF, and output the
     corresponding Orbit DFs
+    order >> normally for sp3 is sat and epoch, but can be used for snx files as STAT and epoch
     """
-    OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in)
-    OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in)
+    OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
+    OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
     
     I1 = OrbDFa.index
     I2 = OrbDFb.index
@@ -933,8 +934,8 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
         # NB 202003: maybe because Iiter was not sorted ...
         # should be fixed with the Iinter.sort_values() above 
         # but we maintain this sort
-        OrbDFa_out = OrbDFa_out.sort_values(["sat","epoch"])
-        OrbDFb_out = OrbDFb_out.sort_values(["sat","epoch"])
+        OrbDFa_out = OrbDFa_out.sort_values(order)
+        OrbDFb_out = OrbDFb_out.sort_values(order)
 
     
     if len(OrbDFa_out) != len(OrbDFb_out):
