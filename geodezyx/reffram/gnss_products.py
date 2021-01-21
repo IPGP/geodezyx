@@ -879,6 +879,7 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
         DForb_out = pd.concat((DForb_in,DForb_out))
         
     DForb_out.reset_index(drop=True)
+    DForb_out[["x","y","z","clk"]] = DForb_out[["x","y","z","clk"]].astype(float)
     return DForb_out
     
         
