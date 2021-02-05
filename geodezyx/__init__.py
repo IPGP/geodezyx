@@ -47,6 +47,7 @@ from . import athmo
 from . import conv
 from . import files_rw
 from . import geodyn
+#from . import kepler_core
 from . import operational
 #from . import legacy
 from . import reffram
@@ -60,6 +61,7 @@ __all__ = ['athmo',
            'externlib',
            'files_rw',
            'geodyn',
+#           'kepler_core',
            'operational',
 #           'legacy',
            'reffram',

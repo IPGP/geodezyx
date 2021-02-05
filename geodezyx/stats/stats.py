@@ -1263,6 +1263,12 @@ def lagrange2(X,Y):
         for i in range(n):
             def g(i, n):
                 X_but_i = np.concatenate((X[:i],X[i+1:]))
+                #mask = np.ones(len(X),dtype=bool)
+                #mask[i] = False
+                #X_but_i = np.concatenate((X[:i],X[i+1:]))
+                #X_but_i = X[mask]
+                #return np.product((x_itrp -X[mask])/(X[i] - X[mask])) 
+
                 return np.product((x_itrp -X_but_i)/(X[i] - X_but_i)) 
             total += Y[i] * g(i, n)
         return total

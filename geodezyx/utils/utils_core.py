@@ -518,8 +518,10 @@ def extract_text_between_elements_2(file_path , elt_start , elt_end,
     """
     
     if type(file_path) is str:
-        #F = open(file_path,"r",encoding = "ISO-8859-1")
-        F = open(file_path,"r")
+        try:
+            F = open(file_path,"r",encoding = "ISO-8859-1")
+        except:
+            F = open(file_path,"r")
     else:
         F = file_path
     

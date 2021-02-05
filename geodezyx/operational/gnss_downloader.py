@@ -167,6 +167,24 @@ def effective_save_dir(parent_archive_dir,stat,date,archtype ='stat'):
 ############################################################################
 
 
+def force_weekly_file_fct(force_weekly_file,sp3clk,day_in):
+    if force_weekly_file == False:
+        day = day_in
+
+    elif type(force_weekly_file) is str or type(force_weekly_file) is int:
+        print("INFO : The weekly file will be downloaded (DoW =",force_weekly_file,")")
+        print("       Check force_weekly_file option if you don't want it")
+        day = force_weekly_file
+
+    elif sp3clk in ("erp","sum") and force_weekly_file == True:
+        print("INFO : The weekly file (DoW = 7) will be downloaded for " + sp3clk.upper())
+        day = 7
+        
+    return day
+
+
+
+
 def orbclk_cddis_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
                         longname = False, force_weekly_file=False):
     """
@@ -190,21 +208,8 @@ def orbclk_cddis_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
     # date definition
     week, day = conv.dt2gpstime(date)
 
-    if force_weekly_file == False:
-        pass
-
-    elif type(force_weekly_file) is str or type(force_weekly_file) is int:
-        print("INFO : The weekly file will be downloaded (DoW =",force_weekly_file,")")
-        print("       Check force_weekly_file option if you don't want it")
-        day = force_weekly_file
-
-    elif sp3clk == "erp" and force_weekly_file == True:
-        print("INFO : The weekly file (DoW = 7) will be downloaded for ERP")
-        day = 7
-
-    elif sp3clk == "sum" and force_weekly_file == True:
-        print("INFO : The weekly file (DoW = 7) will be downloaded for SUM")
-        day = 7
+    ## force_weekly_file handeling
+    day = force_weekly_file_fct(force_weekly_file_fct,sp3clk,day)
 
     if not longname: # e.g. gbm19903.sp3.Z
         if not 'igu' in center:
@@ -275,20 +280,8 @@ def orbclk_ign_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
         center = ''.join(center)
     week, day = conv.dt2gpstime(date)
 
-
-    if force_weekly_file == False:
-        pass
-    elif type(force_weekly_file) is str or type(force_weekly_file) is int:
-        print("INFO : The weekly file will be downloaded (DoW =",force_weekly_file,")")
-        day = force_weekly_file
-
-    elif sp3clk == "erp" and force_weekly_file == True:
-        print("INFO : The weekly file (DoW = 7) will be downloaded for ERP")
-        day = 7
-
-    elif sp3clk == "sum" and force_weekly_file == True:
-        print("INFO : The weekly file (DoW = 7) will be downloaded for SUM")
-        day = 7
+    ## force_weekly_file handeling
+    day = force_weekly_file_fct(force_weekly_file_fct,sp3clk,day)
 
     if not longname: # e.g. gbm19903.sp3.Z
         if not 'igu' in center:
@@ -846,6 +839,10 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
             'clk_30s'
 
             'sp3'
+            
+            'snx'
+            
+            'sum'
 
             'erp'
 
@@ -1107,7 +1104,8 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
                             compressed="incl",
                             regex_old_naming = True,
                             regex_new_naming = True,
-                            regex_igs_tfcc_naming = True):
+                            regex_igs_tfcc_naming = True,
+                            add_weekly_file = False):
     """
     Find all product files in a parent folder which correspond to file type(s),
     AC(s) and date(s)
@@ -1151,9 +1149,18 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
         "only": only consider the compressed files
         "excl": exclude the compressed files
         
+    regex_old_naming : bool
+        Handle old naming format
 
+    regex_new_naming : bool
+        Handle new naming format        
+    
+    regex_igs_tfcc_naming : bool
+        Handle TFCC specific format (for SINEX files)
         
-    Naming_conv : str or list of str
+    add_weekly_file : bool
+        Also handle the weekly file (day 7)
+        Implemented only for the  old naming format (for the moment)
 
     Returns
     -------
@@ -1187,9 +1194,12 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     Dates_list = [date_start_ok]
     while Dates_list[-1] < date_end_ok:
         Dates_list.append(Dates_list[-1]  + dt.timedelta(days=1))
-
+        
+    ### manage weekly file 
     Dates_wwwwd_list   = [utils.join_improved("",*conv.dt2gpstime(d)) for d in Dates_list]
     Dates_yyyyddd_list = [utils.join_improved("",*reversed(conv.dt2doy_year(d))) for d in Dates_list]
+    
+    
 
     ###### File type / ACs management ##############
 
@@ -1231,7 +1241,13 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
             re_patt_ac = "\w{3}"
         else:
             re_patt_ac = join_regex_and([ac.lower() for ac in ACs])
-        re_patt_date   = join_regex_and(Dates_wwwwd_list)
+                 
+        if add_weekly_file:
+            Dates_wwwwd_list_4old = [ e[:-1] + "(" + e[-1] + "|" + "7)"  for e in Dates_wwwwd_list]
+        else:
+            Dates_wwwwd_list_4old = Dates_wwwwd_list
+        
+        re_patt_date   = join_regex_and(Dates_wwwwd_list_4old)
         re_patt_filtyp = join_regex_and(File_type)
         re_patt_big_old_naming = re_patt_ac + re_patt_date + "\." + re_patt_filtyp + re_patt_comp
         Re_patt_big_stk.append(re_patt_big_old_naming)

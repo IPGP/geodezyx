@@ -407,7 +407,7 @@ def posix2dt(posixin,out_array=False):
             return L
 
 
-def datetime_improved(y=0,mo=0,d=0,h=0,mi=0,s=0,ms=0):
+def ymdhms2dt(y=0,mo=0,d=0,h=0,mi=0,s=0,ms=0):
     """
     Improved time conversion of Datetime
 
@@ -444,11 +444,11 @@ def datetime_improved(y=0,mo=0,d=0,h=0,mi=0,s=0,ms=0):
             
     
     
-dt_improved = datetime_improved
 
-def ymdhms2dt():
-    print("it is called datetime_improved, change the name ASAP !!!")
-    return None
+def datetime_improved(*args):
+    return ymdhms2dt(*args)
+    
+dt_improved = datetime_improved
     
 
 def dt2ymdhms(dtin,with_microsec = True):
@@ -966,7 +966,7 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True,
     
         ## First gross run
         epoch   = dt.datetime(1980,1,6)
-        elapsed = dt.timedelta(days=(gpsweek*7),seconds=(gpsseconds+0))
+        elapsed = dt.timedelta(days=(int(gpsweek)*7),seconds=(int(gpsseconds)+0))
         
         prelim_time = epoch + elapsed
     
@@ -982,7 +982,7 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True,
                 
             ## Second run with leap second
             epoch   = dt.datetime(1980,1,6)
-            elapsed = dt.timedelta(days=(gpsweek*7),seconds=(gpsseconds+leapsec))
+            elapsed = dt.timedelta(days=(int(gpsweek)*7),seconds=(int(gpsseconds)+leapsec))
         
             final_time = epoch + elapsed
     

@@ -35,6 +35,7 @@ import re
 
 #### geodeZYX modules
 from geodezyx import utils
+from geodezyx.conv import conv_rotation_matrices as rotmat
 
 #### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
@@ -596,7 +597,7 @@ def sXYZ2sENU(X,Y,Z,sX,sY,sZ,sXY=0,sYZ=0,sXZ=0):
 
     F,L,H = XYZ2GEO(X,Y,Z)
 
-    C = C_ecef2enu(F,L,angtype='deg')
+    C = rotmat.C_ecef2enu(F,L,angtype='deg')
 
     SIGMAenu = np.dot(np.dot(C,SIGMAxyz),C.T)
 
@@ -634,7 +635,7 @@ def ECI2RTN_or_RPY(P,V,C,out_rpy=False,rpy_theo_mode=False):
     "Coordinate Systems", ASEN 3200 1/24/06 George H. Born
     """
 
-    C_eci2rtn_mat  = C_eci2rtn(P,V)
+    C_eci2rtn_mat  = rotmat.C_eci2rtn(P,V)
 
     if not out_rpy:
         TransMat = C_eci2rtn_mat
@@ -643,10 +644,10 @@ def ECI2RTN_or_RPY(P,V,C,out_rpy=False,rpy_theo_mode=False):
         if not rpy_theo_mode:
             # Pour de très obscures raisons la composition est inversée
             # par rapport à l'ordre standard ... (241017)
-            TransMat = np.dot(C_rtn2rpy().T,C_eci2rtn_mat.T)
+            TransMat = np.dot(rotmat.C_rtn2rpy().T,C_eci2rtn_mat.T)
         else:
             print("WARN : using the theoretical mode for RPY conversion, UNSTABLE & WRONG !")
-            TransMat = np.dot(C_rtn2rpy(),C_eci2rtn_mat)
+            TransMat = np.dot(rotmat.C_rtn2rpy(),C_eci2rtn_mat)
 
         # Mais reste compatible avec Wikipedia
         # https://en.wikipedia.org/wiki/Permutation_matrix#Permutation_of_rows_and_columns
