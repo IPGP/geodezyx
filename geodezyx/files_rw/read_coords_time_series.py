@@ -2147,18 +2147,37 @@ def read_nrcan_pos(filein):
     for l in open(filein):
         if l[0:3] == 'DIR':
             start_read = True
+            lhead=l.split()
+            i_lat_d = lhead.index('LATDD')
+            i_lat_m = lhead.index('LATMN')
+            i_lat_s = lhead.index('LATSS')
+
+            i_lon_d = lhead.index('LONDD')
+            i_lon_m = lhead.index('LONMN')
+            i_lon_s = lhead.index('LONSS')
+            
+            i_h = lhead.index('HGT(m)')
+            
+            i_slat =  lhead.index('SDLAT(95%)')
+            i_slon =  lhead.index('SDLON(95%)')
+            i_sh   =  lhead.index('SDHGT(95%)')
+            
             continue
         elif not start_read:
             continue
         else:
             f = l.split()
-            lat = (np.abs(float(f[20])) + 1/60. * float(f[21]) + 1/3600. * float(f[22])) * np.sign(float(f[20]))
-            lon = (np.abs(float(f[23])) + 1/60. * float(f[24]) + 1/3600. * float(f[25])) * np.sign(float(f[23]))
-            sE = float(f[15])
-            sN = float(f[16])
-            sU = float(f[17])
-            h   = float(f[26])
-            slat , slon , sh = conv.sENU2sFLH(lat,lon,h,sE,sN,sU)
+            lat = (np.abs(float(f[i_lat_d])) + 1/60. * float(f[i_lat_m]) + 1/3600. * float(f[i_lat_s])) * np.sign(float(f[i_lat_d]))
+            lon = (np.abs(float(f[i_lon_d])) + 1/60. * float(f[i_lon_m]) + 1/3600. * float(f[i_lon_s])) * np.sign(float(f[i_lon_d]))
+            h   = float(f[i_h])
+            
+            ### old and useless conversion (2021-01)
+            #sE = float(f[15])
+            #sN = float(f[16])
+            #sU = float(f[17])
+            #slat , slon , sh = conv.sENU2sFLH(lat,lon,h,sE,sN,sU)
+
+            slat , slon , sh = float(f[i_slat]),float(f[i_slon]),float(f[i_sh])
 
             t   = conv.date_string_2_dt(f[4] + ' ' + f[5])
 
