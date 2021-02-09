@@ -879,6 +879,7 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
         DForb_out = pd.concat((DForb_in,DForb_out))
         
     DForb_out.reset_index(drop=True)
+    DForb_out[["x","y","z","clk"]] = DForb_out[["x","y","z","clk"]].astype(float)
     return DForb_out
     
         
@@ -912,6 +913,7 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
     """
     Find common sats and epochs in to Orbit DF, and output the
     corresponding Orbit DFs
+    order >> normally for sp3 is sat and epoch, but can be used for snx files as STAT and epoch
     """
     OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
     OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
