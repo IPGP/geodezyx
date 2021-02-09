@@ -907,16 +907,14 @@ def OrbDF_multidx_2_reg(OrbDFin,index_order=["sat","epoch"]):
     OrbDFwrk["sv"]    = OrbDFwrk["sat"].apply(lambda x: int(x[1:]))
     return OrbDFwrk
 
-def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,
-                              return_index=False,
-                              supplementary_sort=True,
-                              order=["sat","epoch"]):
+def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
+                              supplementary_sort=True,order=["sat","epoch"]):
     """
     Find common sats and epochs in to Orbit DF, and output the
     corresponding Orbit DFs
     """
-    OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,order)
-    OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,order)
+    OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
+    OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
     
     I1 = OrbDFa.index
     I2 = OrbDFb.index
