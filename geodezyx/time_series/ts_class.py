@@ -405,6 +405,22 @@ class TimeSeriePoint:
         """
         self.sort()
         return conv.posix2dt(self.pts[-1].T)
+    
+    
+    def len_period(self,output_seconds=False):
+        """
+        Method to get the period length
+
+        Returns
+        -------
+        timedelta or 
+        """    
+        delta = self.enddate() - self.startdate()
+        
+        if output_seconds:
+            return delta.days*86400 + delta.seconds
+        else:
+            return delta
 
     def interval_nominal(self):
         """
@@ -713,8 +729,8 @@ class TimeSeriePoint:
         else:
             name4plot = self.stat
 
-
         plt.subplot(styleint+1)
+        
         if errbar:
             plt.errorbar(Tdt,A,sA, fmt=symbol,label=name4plot,
                          markersize=diapt, alpha=alpha,ecolor='tab:cyan',
