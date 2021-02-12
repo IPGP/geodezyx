@@ -882,8 +882,6 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
     DForb_out[["x","y","z","clk"]] = DForb_out[["x","y","z","clk"]].astype(float)
     return DForb_out
     
-        
-
                                                                    
 
 #### FCT DEF
@@ -940,6 +938,7 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
     
     if len(OrbDFa_out) != len(OrbDFb_out):
         print("WARN : Orb/ClkDF_common_epoch_finder : len(Orb/ClkDFa_out) != len(Orb/ClkDFb_out)")
+        Print("TIPS : ClkDFa_in and/or ClkDFb_in might contain duplicates")
     
     if return_index:
         return OrbDFa_out , OrbDFb_out , Iinter
@@ -997,15 +996,21 @@ def ClkDF_filter(ClkDF_in,
     epoch_strt : datetime, optional
         Start epoch. The default is dt.datetime(1980,1,1).
     epoch_end : datetime, optional
-        End epoch. The default is dt.datetime(2099,1,1).
+        End epoch (not included). The default is dt.datetime(2099,1,1).
     name_regex : bool, optional
         the given names as 'name' arguments are regular expressions
+        Some useful regex are given bellow
         The default is False
 
     Returns
     -------
     Clock DataFrame
         Output Clock DataFrame.
+        
+    Notes
+    -----
+    '^E[0-9]{2}': Galileo Satellites
+    '^G[0-9]{2}': GPS Satellites
 
     """
     
@@ -1022,15 +1027,15 @@ def ClkDF_filter(ClkDF_in,
         BOOL    = BOOL & np.array(BOOLtmp)
 
     if name:
-        if not name_regex:
+        if not name_regex: ### full name mode
             BOOLtmp = ClkDF_wrk.name.isin(name)
             BOOL    = BOOL & np.array(BOOLtmp)   
-        else:
-            #BOOLtmp = np.zeros(len(ClkDF_wrk.name)).astype(bool)
+        else: ### REGEX mode
+            BOOLtmp = np.zeros(len(ClkDF_wrk.name)).astype(bool)
             for rgx in name:
-                 np.array(ClkDF_wrk.name.str.contains('E.*'))
-                 print(rgx,ClkDF_wrk.name,rgx,BOOLtmp)
-            print("AAAA",np.sum(BOOLtmp))
+                NamSerie = ClkDF_wrk.name
+                BOOLtmp = BOOLtmp | np.array(NamSerie.str.contains(rgx))
+
             BOOL = BOOL & np.array(BOOLtmp)
                  
     if ac:
@@ -1039,7 +1044,7 @@ def ClkDF_filter(ClkDF_in,
         
         
     ##epoch
-    BOOLtmp = (epoch_strt <= ClkDF_wrk.epoch) & (ClkDF_wrk.epoch <= epoch_end)
+    BOOLtmp = (epoch_strt <= ClkDF_wrk.epoch) & (ClkDF_wrk.epoch < epoch_end)
     BOOL    = BOOL & np.array(BOOLtmp)    
     
     
@@ -1070,7 +1075,7 @@ def ClkDF_common_epoch_finder(ClkDFa_in,ClkDFb_in,return_index=False,
     return OrbDF_common_epoch_finder(ClkDFa_in,ClkDFb_in,
                                      return_index=return_index,
                                      supplementary_sort=supplementary_sort,
-                                     index_order=order)
+                                     order=order)
 
     
     
