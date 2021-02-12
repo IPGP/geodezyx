@@ -220,7 +220,8 @@ def empty_file_check(fpath):
 
 def find_recursive(parent_folder , pattern, 
                    sort_results = True, case_sensitive = True,
-                   extended_file_stats=False):
+                   extended_file_stats=False,
+                   warn_if_empty=True):
     """
     Find files in a folder and his sub-folders in a recursive way
 
@@ -302,7 +303,11 @@ def find_recursive(parent_folder , pattern,
             matches_ext.append((f,stat))
         matches = matches_ext
         
-
+    if warn_if_empty and len(matches) == 0:
+        print("WARN:find_recursive: no files found! check parent folder and pattern")
+        print(parent_folder)
+        print(pattern)
+                
     return matches
 
 def glob_smart(dir_path,file_pattern=None,verbose=True):
