@@ -1223,3 +1223,55 @@ def stats_slr(DFin,grpby_keys = ['sat'],
     DD.reset_index(inplace = True)
     
     return DD    
+
+
+ #  ______           _   _        ____       _            _        _   _               _____                               _                
+ # |  ____|         | | | |      / __ \     (_)          | |      | | (_)             |  __ \                             | |               
+ # | |__   __ _ _ __| |_| |__   | |  | |_ __ _  ___ _ __ | |_ __ _| |_ _  ___  _ __   | |__) |_ _ _ __ __ _ _ __ ___   ___| |_ ___ _ __ ___ 
+ # |  __| / _` | '__| __| '_ \  | |  | | '__| |/ _ \ '_ \| __/ _` | __| |/ _ \| '_ \  |  ___/ _` | '__/ _` | '_ ` _ \ / _ \ __/ _ \ '__/ __|
+ # | |___| (_| | |  | |_| | | | | |__| | |  | |  __/ | | | || (_| | |_| | (_) | | | | | |  | (_| | | | (_| | | | | | |  __/ ||  __/ |  \__ \
+ # |______\__,_|_|   \__|_| |_|  \____/|_|  |_|\___|_| |_|\__\__,_|\__|_|\___/|_| |_| |_|   \__,_|_|  \__,_|_| |_| |_|\___|\__\___|_|  |___/
+                                                                                                                                         
+
+### EOP / Earth Oreintation Parameters
+
+def eop_interpotate(DF_EOP,Epochs_intrp,eop_params = ["x","y"]):
+    """
+    Interopolate the EOP provided in a C04-like DataFrame
+
+    Parameters
+    ----------
+    DF_EOP : DataFrame
+        Input EOP DataFrame (C04 format).
+    Epochs_intrp : datetime of list of datetimes
+        Wished epochs for the interpolation.
+    eop_params : list of str, optional
+        Wished EOP parameter to be interpolated.
+        The default is ["x","y"].
+
+    Returns
+    -------
+    OUT : DataFrame or Series
+        Interpolated parameters.
+        Series if onely one epoch is provided, DF_EOP elsewere
+    """
+    if not utils.is_iterable(Epochs_intrp):
+        singleton = True
+    else:
+        singleton = False
+    
+    I_eop   = dict()
+    Out_eop = dict()
+    Out_eop["epoch"] = Epochs_intrp    
+    
+    for eoppar in eop_params:
+        I = conv.interp1d_time(DF_EOP.epoch,DF_EOP[eoppar])
+        I_eop[eoppar] = I
+        Out_eop[eoppar] = I(Epochs_intrp)
+      
+    if not singleton:
+        OUT = pd.DataFrame(Out_eop)
+    else:
+        OUT = pd.Series(Out_eop)
+        
+    return OUT

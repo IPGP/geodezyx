@@ -712,7 +712,7 @@ def dt_utc2dt_tai(dtin):
     
     if utils.is_iterable(dtin):
         typ=utils.get_type_smart(dtin)
-        return typ([dt_utc2tai(e) for e in dtin])
+        return typ([dt_utc2dt_tai(e) for e in dtin])
     else:
         return dtin + dt.timedelta(seconds=find_leapsecond(dtin)) 
 
@@ -743,7 +743,7 @@ def dt_tai2dt_utc(dtin):
     
     if utils.is_iterable(dtin):
         typ=utils.get_type_smart(dtin)
-        return typ([dt_tai2utc(e) for e in dtin])
+        return typ([dt_tai2dt_utc(e) for e in dtin])
     else:
         return dtin + dt.timedelta(seconds=-find_leapsecond(dtin))
     
@@ -779,13 +779,9 @@ def dt_tai2dt_tt(dtin):
     
     if utils.is_iterable(dtin):
         typ=utils.get_type_smart(dtin)
-        return typ([dt_tai2tt(e) for e in dtin])
+        return typ([dt_tai2dt_tt(e) for e in dtin])
     else:
         return dtin + dt.timedelta(seconds=32.184)
-    
-
-
-#def dt_tai2ut1(dtin,dUT1):
 
 
 def dt_utc2dt_ut1(dtin,dUT1):
@@ -809,7 +805,7 @@ def dt_utc2dt_ut1(dtin,dUT1):
     """
     if utils.is_iterable(dtin):
         typ=utils.get_type_smart(dtin)
-        return typ([dt_utc2ut1(e) for e in dtin])
+        return typ([dt_utc2dt_ut1(e) for e in dtin])
     else:
         return dtin + dt.timedelta(seconds=dUT1)
     
@@ -839,7 +835,7 @@ def dt_utc2dt_ut1_smart(dtin,DF_EOP_in):
 
     if utils.is_iterable(dtin):
         typ=utils.get_type_smart(dtin)
-        return typ([dt_utc2ut1_smart(e,DF_EOP_in) for e in dtin])
+        return typ([dt_utc2dt_ut1_smart(e,DF_EOP_in) for e in dtin])
     else:      
         DF_EOP = DF_EOP_in.set_index("epoch")
 
@@ -859,10 +855,10 @@ def dt_utc2dt_ut1_smart(dtin,DF_EOP_in):
                                            dUT1aft['MJD'],
                                            dUT1aft['UT1-UTC'])
             
-            dUT1 = stats.linear_reg_getvalue(dt2MJD(dtin), a, b,full=False)
-        print(use_time_interpo_class,dUT1)
+            dUT1 = stats.linear_reg_getvalue(dt2MJD(dtin), a, b,
+                                             full=False)
             
-        return dt_utc2ut1(dtin,dUT1)
+        return dt_utc2dt_ut1(dtin,dUT1)
     
     
         
