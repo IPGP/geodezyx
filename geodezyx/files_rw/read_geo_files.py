@@ -864,6 +864,35 @@ def read_erp_snx(snx_in):
     
     
 
+def read_eop_C04(file_path_in):
+    """
+    read C04 file
+
+    Parameters
+    ----------
+    file_path_in : str
+        path of the C04 file.
+
+    Returns
+    -------
+    DF : DataFrame
+        out DataFrame.
+
+    """
+    DF = pd.read_csv(file_path_in,
+                     delim_whitespace=True,
+                     skip_blank_lines=True,
+                     skiprows=13,header=None)
+    
+    cols = ['yyyy','mm','dd','MJD','x','y','UT1-UTC','LOD','dX','dY',
+            'x_Err','y_Err','UT1-UTC_Err','LOD_Err','dX_Err','dY_Err']
+    
+    DF.columns = cols
+    
+    DF["epoch"] = conv.MJD2dt(DF.MJD)
+    
+    return DF
+
 
 
 

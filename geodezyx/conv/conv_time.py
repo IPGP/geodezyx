@@ -42,7 +42,7 @@ import re
 import time
 
 #### geodeZYX modules
-from geodezyx import utils
+from geodezyx import utils,stats
 
 #### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
@@ -93,14 +93,16 @@ def rinex_regex(compressed=True,compiled=False):
         return regexstr
 
 
-def rinex_regex_new_name(compressed=True,compiled=False):
+def rinex_regex_new_name(compressed=None,compiled=False):
     """
     Return a regex corresponding to a RINEX name (new convention)
 
     Parameters
     ----------
-    compressed : bool
+    compressed : bool or None
         return a the regex for a compressed rinex
+        if None, does not matter (return both compressed or not)
+        
 
     compiled : bool
         return a Python regex object already compliled
@@ -112,6 +114,8 @@ def rinex_regex_new_name(compressed=True,compiled=False):
     """
     if compressed:
         regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
+    elif compressed is None:
+        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?"        
     else:
         regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}"
 
@@ -119,12 +123,44 @@ def rinex_regex_new_name(compressed=True,compiled=False):
         return re.compile(regexstr)
     else:
         return regexstr
-    
+
+
+
+def rinex_regex_new_name_brdc(compressed=None,compiled=False):
+    """
+    Return a regex corresponding to a BROADCAST RINEX name (new convention)
+
+    Parameters
+    ----------
+    compressed : bool or None
+        return a the regex for a compressed rinex
+        if None, does not matter (return both compressed or not)
+        
+
+    compiled : bool
+        return a Python regex object already compliled
+        
+    Returns
+    -------
+    out : string or python's regex
+        a regex
+    """
+    if compressed:
+        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
+    elif compressed is None:
+        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?"        
+    else:
+        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}"
+
+    if compiled:
+        return re.compile(regexstr)
+    else:
+        return regexstr    
     
 
 def tgipsy2dt(tin):
     """
-    Time conversion
+    Time representation conversion
     
     GIPSY Time => Datetime
 
@@ -156,7 +192,7 @@ def tgipsy2dt(tin):
 
 def numpy_datetime2dt(npdtin):
     """
-    Time conversion
+    Time representation conversion
     
     Numpy Datetime => Datetime
 
@@ -185,7 +221,7 @@ def numpy_datetime2dt(npdtin):
 
 def numpy_dt2dt(numpy_dt_in):
     """
-    Time conversion
+    Time representation conversion
 
     numpy datetime64 object => Python's Datetime
     
@@ -220,7 +256,7 @@ def numpy_dt2dt(numpy_dt_in):
 
 def matlab_time2dt(matlab_datenum):
     """
-    Time conversion
+    Time representation conversion
     
     MATLAB Time => Datetime
 
@@ -347,7 +383,7 @@ def dt_range(start_dt,end_dt,day_step=1,sec_step=0):
 
 def dt2posix(dtin,out_array=False):       
     """
-    Time conversion
+    Time representation conversion
     
     Python's Datetime => POSIX Time
 
@@ -376,7 +412,7 @@ def dt2posix(dtin,out_array=False):
 
 def posix2dt(posixin,out_array=False):       
     """
-    Time conversion
+    Time representation conversion
     
     POSIX Time => Python's Datetime
 
@@ -409,9 +445,9 @@ def posix2dt(posixin,out_array=False):
 
 def ymdhms2dt(y=0,mo=0,d=0,h=0,mi=0,s=0,ms=0):
     """
-    Improved time conversion of Datetime
+    Improved time representation conversion to Datetime
 
-    can manage when you give list, array, or floats as input
+    can manage list, array, or floats as input
     can manage NaN too (return POSIX 0 epoch if NaN)
 
     Parameters
@@ -453,7 +489,7 @@ dt_improved = datetime_improved
 
 def dt2ymdhms(dtin,with_microsec = True):
     """
-    Time conversion
+    Time representation conversion
 
     Python's Datetime => Lists of Years, Months, Days, Hours, Minutes, Seconds
 
@@ -481,7 +517,7 @@ def dt2ymdhms(dtin,with_microsec = True):
 
 def ymdhms_vectors2dt(yrlis,mlis,dlis,hlis,minlis,slis):
     """
-    Time conversion
+    Time representation conversion
     
     Lists of Years, Months, Days, Hours, Minutes, Seconds => Python's Datetime
     
@@ -502,7 +538,7 @@ def ymdhms_vectors2dt(yrlis,mlis,dlis,hlis,minlis,slis):
 
 def doy2dt(year,days,hours=0,minutes=0,seconds=0):
     """
-    Time conversion
+    Time representation conversion
     
     Day of Year Time => Python's datetime
 
@@ -553,7 +589,7 @@ def dt2doy(dtin,outputtype=str):
 
 def dt2doy_year(dtin,outputtype=str):
     """
-    Time conversion
+    Time representation conversion
     
     Python's datetime => Day of Year, Year
 
@@ -578,6 +614,8 @@ def dt2doy_year(dtin,outputtype=str):
     
 def dt2fracday(dtin):
     """
+    Time representation conversion
+
     Python's datetime => Fraction of the day
 
     Parameters
@@ -599,7 +637,7 @@ def dt2fracday(dtin):
     
 def dt2secinday(dtin):
     """
-    Time conversion
+    Time representation conversion
     
     Python's datetime => Seconds in days
 
@@ -627,7 +665,7 @@ def dt2tuple(dtin):
 
 def tup_or_lis2dt(lisin):
     """
-    Time conversion
+    Time representation conversion
     
     Date-looking strings => Python's datetime
 
@@ -647,162 +685,193 @@ def tup_or_lis2dt(lisin):
     except:
         return posix2dt(0)
 
-def gpstime2utc(gpsweek,gpssecs,utc_offset):
+
+def dt_utc2dt_tai(dtin):
+    """
+    Time scale conversion
+    
+    Python's datetime in UTC => Python's datetime in TAI
+    
+    (Wrapper to correct the leap second)
+
+    Parameters
+    ----------
+    dtin : datetime or list/numpy.array of datetime
+        Datetime(s). Can handle several datetimes in an iterable.
+        
+    Returns
+    -------
+    L : list of datetime
+        converted DateTimes
+        
+    Note
+    ----
+    TAI is (currently) ahead of UTC
 
     """
-    DISCONTINUED FUNCTION, TOO UNSTABLE (171017)
-    use gpstime2dt instead
-
-    [year,month,day,hour,minute,sec] = gpstime2utc(gpsweek,gpssecs,utc_offset)
-    Converts GPS week and seconds into UTC time, Python version, March 2009
-    """
-
-    from numpy import array,floor,fmod
-
-    days_in_year = array([0,31,59,90,120,151,181,212,243,273,304,334,365])
-    days_in_leap_year = array([0,31,60,91,121,152,182,213,244,274,305,335,366])
-    # leap dayys since 1980
-    leap_day_table = array([1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,
-                            0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1]);
-
-    # adjust for utc offset
-    secs = gpssecs - utc_offset;
-
-    # time as integer and fractional seconds since midnight Jan 5 1980.
-    int_secs = floor(secs)
-    fract_secs = secs - int_secs
-    secs_1980 = 604800*gpsweek + int_secs
-
-    # Express current GPS time as elapsed UTC days and seconds.
-    day_number = floor(secs_1980/86400)
-    sec_of_day = secs_1980 - day_number*86400
-
-    leap_days1 = floor((day_number+1406) / 1461)
-
-    # calculate UTC year
-    total_years = floor((day_number + 5 - leap_days1) / 365)
-    year = 1980 + total_years
-
-    # day of utc year
-    leap_days2 = sum(leap_day_table[0:total_years])
-
-    day_of_utc_year = (day_number + 5 - 365*total_years - leap_days2)
-
-    # determine month and day
-    month = -1
-    if fmod(year,4) != 0:
-        # Not a leap year.
-        for i in range(12):
-            if day_of_utc_year > days_in_year[i]:
-                month = i+1
-                day = day_of_utc_year - days_in_year[i] + 1
+    
+    if utils.is_iterable(dtin):
+        typ=utils.get_type_smart(dtin)
+        return typ([dt_utc2tai(e) for e in dtin])
     else:
-        # A leap year.
-        for i in range(12):
-            if day_of_utc_year > days_in_leap_year[i]:
-                month = i+1
-                day = day_of_utc_year - days_in_leap_year[i] + 1
+        return dtin + dt.timedelta(seconds=find_leapsecond(dtin)) 
 
-    # calculate utc hour
-    hour = floor(sec_of_day/3600)
-
-    if hour > 23:
-        hour = 23
-
-    # calculate utc minute
-    minute = floor((sec_of_day - hour*3600) / 60)
-
-    if minute > 59:
-        minute = 59
-
-    # calculate utc seconds
-    sec = (sec_of_day - hour*3600 - minute*60) + fract_secs
-
-    utc_time = [year,month,day,hour,minute,sec]
-
-    return utc_time
-
-
-def utc2gpstime_bad(year,month,day,hour,min,sec):
-    from numpy import mod,array,floor
+    
+def dt_tai2dt_utc(dtin):
     """
-    [gpsweek,gpssecs] = utc2gpstime(year,month,day,hour,min,sec)
-    Converts UTC time to GPS week and seconds, Python version, Nov 2008
+    Time scale conversion
     
-    UNSTABLE, DISCONTINUED !
+    Python's datetime in TAI => Python's datetime in UTC
+    
+    (Wrapper to correct the leap second)
+
+    Parameters
+    ----------
+    dtin : datetime or list/numpy.array of datetime
+        Datetime(s). Can handle several datetimes in an iterable.
+        
+    Returns
+    -------
+    L : list of datetime
+        converted DateTimes
+        
+    Note
+    ----
+    TAI is (currently) ahead of UTC
+    
     """
-
-    # Number of days into the year at the start of each month (ignoring leap years).
-    days_in_year = array([0,31,59,90,120,151,181,212,243,273,304,334,365])
-
-    # year referenced from 1980
-    ye = year - 1980;
-
-    # Compute num of leap days
-    leap_days = ye/4 + 1
-    if mod(ye,4) == 0 and month <= 2:
-        leap_days = leap_days - 1;
-
-    # days elapsed since midnight jan 5, 1980.
-    de = ye*365 + days_in_year[month-1] + day + leap_days - 6;
-
-    # Leap Seconds, good after 1998
-    # GPS time is ahead of UTC by this many Leap Seconds
-
-    utc_offset = find_leapsecond(dt.datetime(year,month,day))
-
-    # Desactivated because poor
-
-    #    utc_offset = 13 # 1999 through 2005
-    #    if year >= 2009:
-    #        utc_offset = 15  # starting in 2009 to ???
-    #    elif year >= 2006:
-    #        utc_offset = 14 # 2006 through 2008
-    #
-    #    if year < 1999:
-    #        print "Leap seconds invalid for this year!"
-    #        return 0,0
-
-    # Convert time to GPS weeks and seconds.
-    gpsweek = floor(de/7.0)
-    gpssecs = mod(de,7)*86400.0 + hour*3600.0 + min*60.0 + sec + utc_offset
-
-    # Adjust GPS weeks/seconds to guarantee that seconds is in the range 0-604800.0. */
-    if gpssecs < 0.0:
-        gpsweek -= 1
-        gpssecs += 604800.0
-
-    if gpssecs >= 604800.0:
-        gpsweek += 1
-        gpssecs -= 604800.0
-
-    return gpsweek,gpssecs
-
-
-
-def utc2gpstime(year,month,day,hour,min,sec):
     
-    date_utc = dt.datetime(year,month,day,hour,min,sec)
+    if utils.is_iterable(dtin):
+        typ=utils.get_type_smart(dtin)
+        return typ([dt_tai2utc(e) for e in dtin])
+    else:
+        return dtin + dt.timedelta(seconds=-find_leapsecond(dtin))
     
-    utc_offset = find_leapsecond(date_utc)
+     
     
-    start_gps_time   = dt.datetime(1980,1,6)
-    date_diff  = date_utc - start_gps_time + dt.timedelta(seconds=utc_offset) - dt.timedelta(seconds=19)
+def dt_tai2dt_tt(dtin):
+    """
+    Time scale conversion
     
-    gpsweek_decimal = date_diff.days / 7.
-    gpsweek = np.floor(gpsweek_decimal)
-    gpsweek_decimal_part = np.modf(gpsweek_decimal)[0]
-    gpssecs = np.round(86400 * 7 * gpsweek_decimal_part) + date_diff.seconds
+    Python's datetime in TAI => Python's datetime in Terrestrial Time (TT)
     
-    return int(gpsweek),int(gpssecs)
+    Parameters
+    ----------
+    dtin : datetime or list/numpy.array of datetime
+        Datetime(s). Can handle several datetimes in an iterable.
+        
+    Returns
+    -------
+    L : list of datetime
+        converted DateTimes
+        
+    Source
+    ------
+    https://en.wikipedia.org/wiki/Terrestrial_Time
+    
+    Note
+    ----
+    Realization of the TT by the BIPM 
+    (restimation and correction by dozen of µsec)
+    https://www.bipm.org/en/bipm-services/timescales/time-ftp/ttbipm.html
+        
+    """
+    
+    if utils.is_iterable(dtin):
+        typ=utils.get_type_smart(dtin)
+        return typ([dt_tai2tt(e) for e in dtin])
+    else:
+        return dtin + dt.timedelta(seconds=32.184)
+    
 
+
+#def dt_tai2ut1(dtin,dUT1):
+
+
+def dt_utc2dt_ut1(dtin,dUT1):
+    """
+    Time scale conversion
+    
+    Python's datetime in UTC => Python's datetime in UT1
+    
+    Parameters
+    ----------
+    dtin : datetime or list/numpy.array of datetime
+        Datetime(s). Can handle several datetimes in an iterable.
+    dUT1 : float
+        UT1-UTC in seconds.
+
+    Returns
+    -------
+    L : list of datetime
+        converted DateTimes
+
+    """
+    if utils.is_iterable(dtin):
+        typ=utils.get_type_smart(dtin)
+        return typ([dt_utc2ut1(e) for e in dtin])
+    else:
+        return dtin + dt.timedelta(seconds=dUT1)
+    
+    
+
+def dt_utc2dt_ut1_smart(dtin,DF_EOP_in):
+    """
+    Time scale conversion
+    
+    Python's datetime in UTC => Python's datetime in UT1
+    using an EOP DataFrame provided by files_rw.read_eop_C04
+    
+    Parameters
+    ----------
+    dtin : datetime or list/numpy.array of datetime
+        Datetime(s). Can handle several datetimes in an iterable.
+    DF_EOP_in : DataFrame
+        EOP DataFrame provided by files_rw.read_eop_C04 for the UT1-UTC
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    use_time_interpo_class = False
+
+    if utils.is_iterable(dtin):
+        typ=utils.get_type_smart(dtin)
+        return typ([dt_utc2ut1_smart(e,DF_EOP_in) for e in dtin])
+    else:      
+        DF_EOP = DF_EOP_in.set_index("epoch")
+
+        if (dtin in DF_EOP.index):
+            dUT1 = DF_EOP.iloc[DF_EOP.index.get_loc(dtin)]['UT1-UTC']
+        elif use_time_interpo_class:
+            I = interp1d_time(DF_EOP.index.values,DF_EOP['UT1-UTC'])
+            dUT1 = I(dtin)
+
+        else:
+            dUT1bef = DF_EOP.iloc[DF_EOP.index.get_loc(dtin,'ffill')]
+            dUT1aft = DF_EOP.iloc[DF_EOP.index.get_loc(dtin,'bfill')]
+
+    
+            a,b,b2 = stats.linear_coef_a_b(dUT1bef['MJD'],
+                                           dUT1bef['UT1-UTC'],
+                                           dUT1aft['MJD'],
+                                           dUT1aft['UT1-UTC'])
+            
+            dUT1 = stats.linear_reg_getvalue(dt2MJD(dtin), a, b,full=False)
+        print(use_time_interpo_class,dUT1)
+            
+        return dt_utc2ut1(dtin,dUT1)
+    
+    
+        
 
 def dt2gpstime(dtin,dayinweek=True,inp_ref="utc",outputtype=int):
-    
     """
-    Time conversion
+    Time scale conversion
     
-    Python's datetime => GPS time
+    Python's datetime (UTC,TAI or GPS time scale) => GPS time
 
     Parameters
     ----------
@@ -858,7 +927,7 @@ def dt2gpstime(dtin,dayinweek=True,inp_ref="utc",outputtype=int):
 
 def dt2gpsweek_decimal(dtin,return_middle_of_day=True):
     """
-    Time conversion
+    Time representation conversion
     
     Python's datetime => GPS week
     
@@ -896,7 +965,7 @@ def dt2gpsweek_decimal(dtin,return_middle_of_day=True):
 
 def dt2list(dtin,return_useful_values=True):
     """
-    Time conversion
+    Time representation conversion
     
     Python's Datetime => Years, Months, Days, Hours, Minutes, Seconds
 
@@ -922,7 +991,7 @@ def dt2list(dtin,return_useful_values=True):
 def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True,
                output_time_scale="utc"):
     """
-    Time conversion
+    Time scale & representation conversion
     
     GPS Time => Python's datetime
 
@@ -994,6 +1063,22 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True,
 
 
 def gpsweek_decimal2dt(gpsweekdec_in):
+    """
+    Time representation conversion
+    
+    Decimal GPS Week => Python's datetime
+
+    Parameters
+    ----------
+    gpsweekdec_in : float or list/numpy.array of float
+        GPS week in decimal form.
+
+    Returns
+    -------
+    L : list of datetime
+        converted DateTimes
+
+    """
     if utils.is_iterable(gpsweekdec_in):
         typ=utils.get_type_smart(gpsweekdec_in)
         return typ([gpsweek_decimal2dt(e) for e in gpsweekdec_in])
@@ -1010,7 +1095,7 @@ def gpsweek_decimal2dt(gpsweekdec_in):
 
 def dt_gpstime2dt_utc(dtgpsin,out_array=False):
     """
-    Time conversion
+    Time scale conversion
     
     Datetime in GPS Time Scale => Datetime in UTC Time Scale
     
@@ -1041,55 +1126,9 @@ def dt_gpstime2dt_utc(dtgpsin,out_array=False):
         dtutc = dtgpsin + dt.timedelta(seconds=19) - dt.timedelta(seconds=leapsec)
         return dtutc
 
-def toYearFraction(date):
-    """
-    DISCONTINUED
-    use dt2year_decimal instead (which is the same)
-    """
-    #
-    # Give the decimal year
-    # source :
-    # http://stackoverflow.com/questions/6451655/python-how-to-convert-datetime-dates-to-decimal-years
-
-    from datetime import datetime as dt
-    import time
-
-    def sinceEpoch(date): # returns seconds since epoch
-        return time.mktime(date.timetuple())
-    s = sinceEpoch
-
-    year = date.year
-    startOfThisYear = dt(year=year, month=1, day=1)
-    startOfNextYear = dt(year=year+1, month=1, day=1)
-
-    yearElapsed = s(date) - s(startOfThisYear)
-    yearDuration = s(startOfNextYear) - s(startOfThisYear)
-    fraction = yearElapsed/yearDuration
-
-    return date.year + fraction
-
-def convert_partial_year(number):
-    """
-    DISCONTINUED
-    use year_decimal2dt instead (which is the same)
-    """
-
-    # Source
-    # http://stackoverflow.com/questions/19305991/convert-fractional-years-to-a-real-date-in-python
-
-    import calendar
-    from datetime import timedelta, datetime
-
-    year = int(number)
-    d = timedelta(days=(number - year)*(365 + calendar.isleap(year)))
-    day_one = datetime(year,1,1)
-    date = d + day_one
-    return date
-
-
 def year_decimal2dt(yearin):
     """
-    Time conversion
+    Time representation conversion
     
     Decimal Year => Python's Datetime 
 
@@ -1111,7 +1150,7 @@ def year_decimal2dt(yearin):
 
 def dt2year_decimal(dtin):
     """
-    Time conversion
+    Time representation conversion
     
     Python's Datetime => Decimal Year
 
@@ -1133,7 +1172,7 @@ def dt2year_decimal(dtin):
 
 def date_string_2_dt(strin):
     """
-    Time conversion
+    Time representation conversion
     
     String => Python's Datetime
     
@@ -1170,7 +1209,7 @@ strdate2dt     = date_string_2_dt
 
 def jjulCNES2dt(jjulin):
     """
-    Time conversion
+    Time representation & scale conversion
     
     Julian Day CNES => Python's Datetime
 
@@ -1199,7 +1238,7 @@ def jjulCNES2dt(jjulin):
 
 def dt2jjulCNES(dtin,onlydays=True):
     """
-    Time conversion
+    Time representation & scale conversion
     
     Python's Datetime => Julian Day CNES 
 
@@ -1232,7 +1271,7 @@ def dt2jjulCNES(dtin,onlydays=True):
 def MJD2dt(mjd_in,seconds=None):
     # cf http://en.wikipedia.org/wiki/Julian_day
     """
-    Time conversion
+    Time representation conversion
     
     Modified Julian Day  => Python's Datetime
 
@@ -1271,10 +1310,9 @@ def MJD2dt(mjd_in,seconds=None):
             seconds = 0    
         return dt.datetime(1858,11,17) + dt.timedelta(days=mjd_in,seconds=seconds)
 
-
 def dt2MJD(dtin):
     """
-    Time conversion
+    Time representation conversion
     
     Python's Datetime => Modified Julian Day
 
@@ -1300,11 +1338,11 @@ def dt2MJD(dtin):
         return typ([dt2MJD(t) for t in dtin])
     except:
         delta = (dtin - dt.datetime(1858,11,17))
-        return delta.days + delta.seconds / 86400.
+        return delta.days + (delta.seconds / 86400.) + (delta.microseconds / 864e8)
 
 def dt2str(dtin , str_format="%Y-%m-%d %H:%M:%S"):
     """
-    Time conversion
+    Time representation conversion
     
     Python's Datetime => String
 
@@ -1336,7 +1374,7 @@ def dt2str(dtin , str_format="%Y-%m-%d %H:%M:%S"):
     
 def date2dt(date_in):
     """
-    Time conversion
+    Time Python type conversion
     
     Python's Date => Python's Datetime
     
@@ -1359,7 +1397,7 @@ def date2dt(date_in):
     
 def dt2date(dt_in):
     """
-    Time conversion
+    Time Python type conversion
     
     Python's Datetime => Python's Date
     
@@ -1382,7 +1420,7 @@ def dt2date(dt_in):
 
 def pandas_timestamp2dt(timestamp_in):
     """
-    Time conversion
+    Time Python type conversion
     
     Pandas's Timestamp => Python's Datetime
     
@@ -1407,7 +1445,7 @@ def pandas_timestamp2dt(timestamp_in):
         
 def datetime64_numpy2dt(npdt64_in):
     """
-    Time conversion
+    Time Python type conversion
     
     Numpy's datetime64 => Python's Datetime
     
@@ -1436,9 +1474,9 @@ def datetime64_numpy2dt(npdt64_in):
 
 def rinexname2dt(rinexpath):
     """
-    Time conversion
+    Time representation conversion
     
-    RINEX Name (old naming convention)  => Python's Datetime
+    RINEX Name (old or new naming convention)  => Python's Datetime
     
     Extract the date in a RINEX name
 
@@ -1456,7 +1494,7 @@ def rinexname2dt(rinexpath):
     rinexname = os.path.basename(rinexpath)
     #rinexname = rinexpath
         
-    if re.search(rinex_regex_new_name(),rinexname):
+    if re.search(rinex_regex_new_name(),rinexname) or re.search(rinex_regex_new_name_brdc(),rinexname):
         date_str = rinexname.split("_")[2]
         yyyy = int(date_str[:4])
         doy  = int(date_str[4:7])        
@@ -1464,14 +1502,12 @@ def rinexname2dt(rinexpath):
         mm   = int(date_str[9:11])       
         dt_out = doy2dt(yyyy,doy) + dt.timedelta(seconds=hh*3600 + mm*60)
         return dt_out 
-    else:
+    elif re.search(rinex_regex(),rinexname):
         alphabet = list(string.ascii_lowercase)
     
-        if not re.search(rinex_regex(),rinexname):
-            raise Exception('RINEX name is not well formated !!!')
-        else:
-            doy  = int(rinexname[4:7])
-            yy   = int(rinexname[9:11])
+
+        doy  = int(rinexname[4:7])
+        yy   = int(rinexname[9:11])
     
         if yy > 80:
             year = yy + 1900
@@ -1482,14 +1518,19 @@ def rinexname2dt(rinexpath):
             h = alphabet.index(rinexname[7])
         else:
             h = 0
-    
+            
         return dt.datetime(year,1,1) + dt.timedelta(days = doy - 1 , seconds = h * 3600)
+
+    else:
+        print('ERR: RINEX name is not well formated:',rinexname)
+        raise Exception
+    
 
         
 
 def sp3name2dt(sp3path):
     """
-    Time conversion
+    Time representation conversion
     
     Orbit SP3 Name (old naming convention)  => Python's Datetime
     
@@ -1514,7 +1555,7 @@ def sp3name2dt(sp3path):
 
 def sp3name_v3_2dt(sp3path):
     """
-    Time conversion
+    Time representation conversion
     
     Orbit SP3 Name (new naming convention)  => Python's Datetime
     
@@ -1549,7 +1590,7 @@ def statname_dt2rinexname(statname,datein,rnxtype='d.Z',
                           session_a_instead_of_daily_session = False):
     
     """
-    Time conversion
+    Time representation conversion
     
     Python's Datetime (and station name) => RINEX name
     
@@ -1591,7 +1632,7 @@ def statname_dt2rinexname(statname,datein,rnxtype='d.Z',
 
 def datestr_sinex_2_dt(datestrin):
     """
-    Time conversion
+    Time representation conversion
     
     SINEX time format => Python's Datetime 
     
@@ -1647,7 +1688,7 @@ def datestr_sinex_2_dt(datestrin):
 
 def dt_2_sinex_datestr(dtin,short_yy=True,year_sep=":"):
     """
-    Time conversion
+    Time representation conversion
     
     Python's Datetime => SINEX time format 
         
@@ -1684,7 +1725,7 @@ def dt_2_sinex_datestr(dtin,short_yy=True,year_sep=":"):
 
 def dt_2_sp3_datestr(dtin):
     """
-    Time conversion
+    Time representation conversion
     
     Python's Datetime => SP3 time format 
         
@@ -1706,7 +1747,7 @@ def dt_2_sp3_datestr(dtin):
 
 def dt2sp3_timestamp(dtin,start_with_star=True):
     """
-    Time conversion
+    Time representation conversion
     
     Python's Datetime => SP3 Timestamp
     e.g. 
@@ -1732,7 +1773,7 @@ def dt2sp3_timestamp(dtin,start_with_star=True):
 
 def datestr_gins_filename_2_dt(datestrin):
     """
-    Time conversion
+    Time representation conversion
     
     GINS filename time format => Python's Datetime 
     
@@ -2194,7 +2235,7 @@ class interp1d_time(scipy.interpolate.interp1d):
     This class inherites from scipy.interpolate.interp1d
     and can take as input datetime as X
     
-    P. Sakic 2020-01
+    Pierre Sakic 2020-01
     """
     def __init__(self, x, y, kind='linear', axis=-1,
                  copy=True, bounds_error=None, fill_value=np.nan,
@@ -2216,9 +2257,13 @@ class interp1d_time(scipy.interpolate.interp1d):
                  assume_sorted=assume_sorted)
         
     def __call__(self,x):
-        ### x (time) is converted as an array
-        #x = np.array(x)
-        
+        ### x (time) is converted as an array if it is a mono-elt
+        if not utils.is_iterable(x):
+            singleton = True
+            x = np.array([x])
+        else:
+            singleton = False
+
         ### the datetime is converted to posix
         if isinstance(x[0],dt.datetime):
             xposix = dt2posix(x)
@@ -2227,7 +2272,13 @@ class interp1d_time(scipy.interpolate.interp1d):
         else:
             xposix = x
         
-        return super().__call__(xposix)
+        #### Interpolation via the heritagle
+        out = super().__call__(xposix)
+        
+        if singleton:
+            return out[0]
+        else:
+            return out
     
 
    
@@ -2282,3 +2333,213 @@ class Slerp_time(scipy.spatial.transform.Slerp):
             
         return super().__call__(times_posix)
     
+    
+    
+ #  ______                _   _                _____                                         _ 
+ # |  ____|              | | (_)              / ____|                                       | |
+ # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
+ # |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | | |_ | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
+ # | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+ # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
+ #                                                                        __/ |                
+ #                                                                       |___/
+  
+# function graveyard  
+    
+def utc2gpstime(year,month,day,hour,min,sec):
+    """
+    looks useless and discontinued
+    (210219)
+    """
+    
+    date_utc = dt.datetime(year,month,day,hour,min,sec)
+    
+    utc_offset = find_leapsecond(date_utc)
+    
+    start_gps_time   = dt.datetime(1980,1,6)
+    date_diff  = date_utc - start_gps_time + dt.timedelta(seconds=utc_offset) - dt.timedelta(seconds=19)
+    
+    gpsweek_decimal = date_diff.days / 7.
+    gpsweek = np.floor(gpsweek_decimal)
+    gpsweek_decimal_part = np.modf(gpsweek_decimal)[0]
+    gpssecs = np.round(86400 * 7 * gpsweek_decimal_part) + date_diff.seconds
+    
+    return int(gpsweek),int(gpssecs)
+
+
+def utc2gpstime_bad(year,month,day,hour,min,sec):
+    from numpy import mod,array,floor
+    """
+    [gpsweek,gpssecs] = utc2gpstime(year,month,day,hour,min,sec)
+    Converts UTC time to GPS week and seconds, Python version, Nov 2008
+    
+    UNSTABLE, DISCONTINUED !
+    """
+
+    # Number of days into the year at the start of each month (ignoring leap years).
+    days_in_year = array([0,31,59,90,120,151,181,212,243,273,304,334,365])
+
+    # year referenced from 1980
+    ye = year - 1980;
+
+    # Compute num of leap days
+    leap_days = ye/4 + 1
+    if mod(ye,4) == 0 and month <= 2:
+        leap_days = leap_days - 1;
+
+    # days elapsed since midnight jan 5, 1980.
+    de = ye*365 + days_in_year[month-1] + day + leap_days - 6;
+
+    # Leap Seconds, good after 1998
+    # GPS time is ahead of UTC by this many Leap Seconds
+
+    utc_offset = find_leapsecond(dt.datetime(year,month,day))
+
+    # Desactivated because poor
+
+    #    utc_offset = 13 # 1999 through 2005
+    #    if year >= 2009:
+    #        utc_offset = 15  # starting in 2009 to ???
+    #    elif year >= 2006:
+    #        utc_offset = 14 # 2006 through 2008
+    #
+    #    if year < 1999:
+    #        print "Leap seconds invalid for this year!"
+    #        return 0,0
+
+    # Convert time to GPS weeks and seconds.
+    gpsweek = floor(de/7.0)
+    gpssecs = mod(de,7)*86400.0 + hour*3600.0 + min*60.0 + sec + utc_offset
+
+    # Adjust GPS weeks/seconds to guarantee that seconds is in the range 0-604800.0. */
+    if gpssecs < 0.0:
+        gpsweek -= 1
+        gpssecs += 604800.0
+
+    if gpssecs >= 604800.0:
+        gpsweek += 1
+        gpssecs -= 604800.0
+
+    return gpsweek,gpssecs
+
+
+def gpstime2utc_bad(gpsweek,gpssecs,utc_offset):
+
+    """
+    DISCONTINUED FUNCTION, TOO UNSTABLE (171017)
+    use gpstime2dt instead
+
+    [year,month,day,hour,minute,sec] = gpstime2utc(gpsweek,gpssecs,utc_offset)
+    Converts GPS week and seconds into UTC time, Python version, March 2009
+    """
+
+    from numpy import array,floor,fmod
+
+    days_in_year = array([0,31,59,90,120,151,181,212,243,273,304,334,365])
+    days_in_leap_year = array([0,31,60,91,121,152,182,213,244,274,305,335,366])
+    # leap dayys since 1980
+    leap_day_table = array([1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,
+                            0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1]);
+
+    # adjust for utc offset
+    secs = gpssecs - utc_offset;
+
+    # time as integer and fractional seconds since midnight Jan 5 1980.
+    int_secs = floor(secs)
+    fract_secs = secs - int_secs
+    secs_1980 = 604800*gpsweek + int_secs
+
+    # Express current GPS time as elapsed UTC days and seconds.
+    day_number = floor(secs_1980/86400)
+    sec_of_day = secs_1980 - day_number*86400
+
+    leap_days1 = floor((day_number+1406) / 1461)
+
+    # calculate UTC year
+    total_years = floor((day_number + 5 - leap_days1) / 365)
+    year = 1980 + total_years
+
+    # day of utc year
+    leap_days2 = sum(leap_day_table[0:total_years])
+
+    day_of_utc_year = (day_number + 5 - 365*total_years - leap_days2)
+
+    # determine month and day
+    month = -1
+    if fmod(year,4) != 0:
+        # Not a leap year.
+        for i in range(12):
+            if day_of_utc_year > days_in_year[i]:
+                month = i+1
+                day = day_of_utc_year - days_in_year[i] + 1
+    else:
+        # A leap year.
+        for i in range(12):
+            if day_of_utc_year > days_in_leap_year[i]:
+                month = i+1
+                day = day_of_utc_year - days_in_leap_year[i] + 1
+
+    # calculate utc hour
+    hour = floor(sec_of_day/3600)
+
+    if hour > 23:
+        hour = 23
+
+    # calculate utc minute
+    minute = floor((sec_of_day - hour*3600) / 60)
+
+    if minute > 59:
+        minute = 59
+
+    # calculate utc seconds
+    sec = (sec_of_day - hour*3600 - minute*60) + fract_secs
+
+    utc_time = [year,month,day,hour,minute,sec]
+
+    return utc_time
+
+
+def toYearFraction(date):
+    """
+    DISCONTINUED
+    use dt2year_decimal instead (which is the same)
+    """
+    #
+    # Give the decimal year
+    # source :
+    # http://stackoverflow.com/questions/6451655/python-how-to-convert-datetime-dates-to-decimal-years
+
+    from datetime import datetime as dt
+    import time
+
+    def sinceEpoch(date): # returns seconds since epoch
+        return time.mktime(date.timetuple())
+    s = sinceEpoch
+
+    year = date.year
+    startOfThisYear = dt(year=year, month=1, day=1)
+    startOfNextYear = dt(year=year+1, month=1, day=1)
+
+    yearElapsed = s(date) - s(startOfThisYear)
+    yearDuration = s(startOfNextYear) - s(startOfThisYear)
+    fraction = yearElapsed/yearDuration
+
+    return date.year + fraction
+
+def convert_partial_year(number):
+    """
+    DISCONTINUED
+    use year_decimal2dt instead (which is the same)
+    """
+
+    # Source
+    # http://stackoverflow.com/questions/19305991/convert-fractional-years-to-a-real-date-in-python
+
+    import calendar
+    from datetime import timedelta, datetime
+
+    year = int(number)
+    d = timedelta(days=(number - year)*(365 + calendar.isleap(year)))
+    day_one = datetime(year,1,1)
+    date = d + day_one
+    return date
