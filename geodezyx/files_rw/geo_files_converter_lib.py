@@ -1663,7 +1663,9 @@ def sinex_DataFrame(read_sinex_result):
     
 def read_sinex_versatile(sinex_path_in , id_block,
                          convert_date_2_dt = True,
-                         header_line_idx = -1):
+                         header_line_idx = -1,
+                         improved_header_detection=True,
+                         verbose=True):
     """
     Read a block from a SINEX and return the data as a DataFrame
 
@@ -1684,12 +1686,22 @@ def read_sinex_versatile(sinex_path_in , id_block,
         For the first line, use 0
         If no header is properly defined, use None
         
+    improved_header_detection : bool
+        Improved header detection.
+        Works for most cases but sometime the simple version works better.
+        (advenced usage)
+        Default is True
+    
+    verbose : bool
+        print the header and its field size
+        Default is True        
                 
     Returns
     -------
     DF : Pandas DataFrame
         Returned DataFrame
     """
+
 
     ### remove the + or - if any    
     if id_block in ("+","-"):
@@ -1725,24 +1737,43 @@ def read_sinex_versatile(sinex_path_in , id_block,
         
 
         Header_split = header_line.split()
-        if False: ### Simple case when the columns are splitted with only a single
+        if not improved_header_detection: 
+            ### Simple case when the columns are splitted with only a single
             Fields_size = [len(e)+1 for e in Header_split]
-        else: ### Smarter case : we search for the n spaces after the column name
+        else: 
+            ### Smarter case : we search for the n spaces after the column name
             Fields_size = []
             for fld_head_split in Header_split:
-                fld_head_regex = re.compile(fld_head_split[1:] + " *") #trick:
-                #1st char is removed, because it can be a *
-                #and then screw the regex. This char is re-added at the end
-                #when the len is stored (the "+1" below)
+                if fld_head_split[0] == "*": 
+                    ## test to manage a * as 1st character
+                    ## which can be wrongly interpreted in the regex
+                    fld_head_regex = re.compile("\*" + fld_head_split[1:] + " *") 
+                else:
+                    fld_head_regex = re.compile(fld_head_split + " *") 
                 fld_head_space = fld_head_regex.search(header_line)
-                Fields_size.append(len(fld_head_space.group()) + 1)
-            
-        print("INFO : read_sinex_versatile : Auto detected column names/sizes")
-        print(header_line)
-        print(Header_split , Fields_size)
-
-
-
+                Fields_size.append(len(fld_head_space.group()))
+                #print(fld_head_space.group())                
+                
+                # # weak method (210216)
+                # fld_head_regex = re.compile(fld_head_split[1:] + " *") #trick:
+                # #1st char is removed, because it can be a *
+                # #and then screw the regex. This char is re-added at the end
+                # #when the len is stored (the "+1" below)
+                # fld_head_space = fld_head_regex.search(header_line)
+                # Fields_size.append(len(fld_head_space.group()) + 1)
+                # ### !!!!! something is weird here !!!!!
+                # print(fld_head_space.group())
+                # ### and you will see a bug !!!
+                # ### PS 210216
+        
+        if verbose:
+            print("INFO : read_sinex_versatile : Auto detected column names/sizes")
+            print("**** Raw header line in the file:")
+            print(header_line)
+            print("**** Splited header for the DataFrame:")
+            print(Header_split)
+            print("**** Size of the fields")
+            print(Fields_size)
     
         ### Read the file
         try:
@@ -1750,8 +1781,8 @@ def read_sinex_versatile(sinex_path_in , id_block,
         except pd.errors.EmptyDataError as ee:
             print("ERR: something goes wrong in the header index position")
             print("     try to give its right position manually with header_line_idx")
-
             raise(ee)
+
         DF.set_axis(Header_split, axis=1, inplace=True)
         
         ### Rename the 1st column (remove the comment marker)

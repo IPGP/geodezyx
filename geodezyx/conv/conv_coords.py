@@ -199,7 +199,9 @@ def XYZ2ENU(dX,dY,dZ,lat0,lon0):
 
     XYZ ECEF Geocentric => ENU Topocentic
     
-    core function for XYZ2ENU_2, use the later in priority
+    **use XYZ2ENU_2 in priority**
+    
+    (XYZ2ENU is a core function for XYZ2ENU_2)
 
     dXYZ = XYZrover - XYZref
     
@@ -790,7 +792,8 @@ def ECI2ECEF(xyz,utc_times):
     #if not xyz.shape[:-1] == utc_times.shape:
     #    raise ValueError("shape mismatch for XYZ and utc_times (got {} and {})".format(xyz.shape[:-1],utc_times.shape))
 
-    #    gmst = -1 * astronomy.gmst(utc_times) # EDIT 180430 : Why this -1 ??? removed because wrong ! ...
+    #    gmst = -1 * astronomy.gmst(utc_times) 
+    # EDIT 180430 : Why this -1 ??? removed because wrong ! ...
     gmst = 1 * astronomy.gmst(utc_times)
     
     ecef = xyz.copy()
