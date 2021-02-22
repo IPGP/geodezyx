@@ -19,6 +19,8 @@ import pandas as pd
 import re
 import datetime as dt
 
+import sofa
+
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import files_rw
@@ -881,8 +883,91 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
     DForb_out.reset_index(drop=True)
     DForb_out[["x","y","z","clk"]] = DForb_out[["x","y","z","clk"]].astype(float)
     return DForb_out
+
+def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
+                  inv_trf2crf=False):
+    """
+    Convert an Orbit DataFrame from Celetrial Reference Frame to 
+    Terrestrial Reference Frame.
     
-                                                                   
+    Requires EOP to work. Cf. note below.
+
+    Parameters
+    ----------
+    DForb_inp : DataFrame
+        Input Orbit DataFrame in Celetrial Reference Frame.
+    DF_EOP_inp : DataFrame
+        EOP DataFrame  (C04 format).
+    time_scale_inp : str, optional
+        The time scale used in. manage 'utc', 'tai' and 'gps'.
+        The default is "gps".
+    inv_trf2crf : bool, optional
+        Provide the inverse transformation TRF => CRF.
+        The default is False.
+
+    Returns
+    -------
+    DForb_out : DataFrame
+        Output Orbit DataFrame in Terrestrial Reference Frame.
+        
+    Note
+    ----
+    The EOP can be obtained from the IERS C04 products.
+    e.g.
+    https://datacenter.iers.org/data/latestVersion/224_EOP_C04_14.62-NOW.IAU2000A224.txt
+    To get them as a Compatible DataFrame, use the function
+    files_rw.read_eop_C04()
+    """
+    
+    DForb = DForb_inp.copy()
+    
+    ### bring everithing to UTC
+    if time_scale_inp.lower() == "gps":
+        DForb["epoch_utc"] = conv.dt_gpstime2dt_utc(DForb["epoch"])
+    elif time_scale_inp.lower() == "tai":
+        DForb["epoch_utc"] = conv.dt_tai2dt_utc(DForb["epoch"])
+    elif time_scale_inp.lower() == "utc":
+        DForb["epoch_utc"] = DForb["epoch"]
+    ### TT and UT1 are not implemented (quite unlikely to have them as input)
+    
+    ### do the time scale's conversion
+    DForb["epoch_tai"] = conv.dt_utc2dt_tai(DForb["epoch_utc"])
+    DForb["epoch_tt"]  = conv.dt_tai2dt_tt(DForb["epoch_tai"])
+    DForb["epoch_ut1"] = conv.dt_utc2dt_ut1_smart(DForb["epoch_utc"],DF_EOP_inp)
+        
+    ### Do the EOP interpolation 
+    DF_EOP_intrp = eop_interpotate(DF_EOP_inp, DForb["epoch_utc"])
+    ### bring the EOp to radians
+    Xeop = np.deg2rad(conv.arcsec2deg(DF_EOP_intrp['x']))
+    Yeop = np.deg2rad(conv.arcsec2deg(DF_EOP_intrp['y']))
+    
+    TRFstk = []
+    
+    for tt,ut1,xeop,yeop,x,y,z in zip(DForb["epoch_tt"],
+                                      DForb["epoch_ut1"],
+                                      Xeop,Yeop,
+                                      DForb['x'],DForb['y'],DForb['z']):
+    
+        MatCRF22TRF = sofa.iau_c2t06a(2400000.5,
+                                      conv.dt2MJD(tt),
+                                      2400000.5,
+                                      conv.dt2MJD(ut1),
+                                      xeop,yeop)
+        if inv_trf2crf:
+            MatCRF22TRF = np.linalg.inv(MatCRF22TRF)
+    
+        CRF = np.array([x,y,z])
+        TRF = np.dot(MatCRF22TRF,CRF)
+    
+        TRFstk.append(TRF)
+    
+    ### Final stack and replacement
+    TRFall = np.vstack(TRFstk)
+    DForb_out = DForb_inp.copy()
+    DForb_out[["x","y","z"]] = TRFall
+    
+    return DForb_out
+                                                                     
 
 #### FCT DEF
 def OrbDF_reg_2_multidx(OrbDFin,index_order=["sat","epoch"]):
@@ -1223,3 +1308,56 @@ def stats_slr(DFin,grpby_keys = ['sat'],
     DD.reset_index(inplace = True)
     
     return DD    
+
+
+ #  ______           _   _        ____       _            _        _   _               _____                               _                
+ # |  ____|         | | | |      / __ \     (_)          | |      | | (_)             |  __ \                             | |               
+ # | |__   __ _ _ __| |_| |__   | |  | |_ __ _  ___ _ __ | |_ __ _| |_ _  ___  _ __   | |__) |_ _ _ __ __ _ _ __ ___   ___| |_ ___ _ __ ___ 
+ # |  __| / _` | '__| __| '_ \  | |  | | '__| |/ _ \ '_ \| __/ _` | __| |/ _ \| '_ \  |  ___/ _` | '__/ _` | '_ ` _ \ / _ \ __/ _ \ '__/ __|
+ # | |___| (_| | |  | |_| | | | | |__| | |  | |  __/ | | | || (_| | |_| | (_) | | | | | |  | (_| | | | (_| | | | | | |  __/ ||  __/ |  \__ \
+ # |______\__,_|_|   \__|_| |_|  \____/|_|  |_|\___|_| |_|\__\__,_|\__|_|\___/|_| |_| |_|   \__,_|_|  \__,_|_| |_| |_|\___|\__\___|_|  |___/
+                                                                                                                                         
+
+### EOP / Earth Oreintation Parameters
+
+def eop_interpotate(DF_EOP,Epochs_intrp,eop_params = ["x","y"]):
+    """
+    Interopolate the EOP provided in a C04-like DataFrame
+
+    Parameters
+    ----------
+    DF_EOP : DataFrame
+        Input EOP DataFrame (C04 format).
+        Can be generated by files_rw.read_eop_C04
+    Epochs_intrp : datetime of list of datetimes
+        Wished epochs for the interpolation.
+    eop_params : list of str, optional
+        Wished EOP parameter to be interpolated.
+        The default is ["x","y"].
+
+    Returns
+    -------
+    OUT : DataFrame or Series
+        Interpolated parameters.
+        Series if onely one epoch is provided, DF_EOP elsewere
+    """
+    if not utils.is_iterable(Epochs_intrp):
+        singleton = True
+    else:
+        singleton = False
+    
+    I_eop   = dict()
+    Out_eop = dict()
+    Out_eop["epoch"] = Epochs_intrp    
+    
+    for eoppar in eop_params:
+        I = conv.interp1d_time(DF_EOP.epoch,DF_EOP[eoppar])
+        I_eop[eoppar] = I
+        Out_eop[eoppar] = I(Epochs_intrp)
+      
+    if not singleton:
+        OUT = pd.DataFrame(Out_eop)
+    else:
+        OUT = pd.Series(Out_eop)
+        
+    return OUT
