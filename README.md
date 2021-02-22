@@ -13,12 +13,12 @@
 README Revision: 2021-02-22
 
 
-**Authors: **Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
-GFZ, Potsdam, Germany, with contributions from Valérie Ballu (CNRS/La Rochelle University)
+**Authors:** Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
+(GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
 
 **Contact e-mail:** pierre.sakic@gfz-potsdam.de
 
-**Citation: ***Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
+**Citation:*** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
 The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes. 
 V. 4.0. GFZ Data Services. http://doi.org/10.5880/GFZ.1.1.2019.002*
 
@@ -75,6 +75,87 @@ TBC
 
 ## INSTALLATION
 
+### Automatic installation from XXXX
+
+Should be implemented soon !
+
+### Download and install the toolbox from GitHub
+
+#### Github in a nutshell
+If you are not familiar with Git and Github have a look in 
+https://guides.github.com/
+
+We decide to adopt the forking+pull request workflow
+https://guides.github.com/activities/forking/
+
+##### the proper basic steps
+* Create an account on GitHub
+* Go on the page of the project :
+  https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+* Fork it, i.e. click on the "Fork" button
+* Clone your fork on your computer ("Clone" button) 
+
+#### Install the toolbox
+
+### Old style installation (should be avoided)
+
+If you do not want to use the “pythonic” installation way (with `setup.py`) yet. Here are the two alternative options to install the toolbox from GitHub.
+
+#### Mandatory external librairies as prerequisite
+
+We suppose that the regular Python libraires (matplotlib, numpy, scipy ...)
+are already installed and up-to-date.
+
+You have to install some annex Python libraries which are not installed per default(tested with Anaconda and Ubuntu). Namely :
+
+tabulate
+collections
+natsort
+pyorbital
+sympy
+bs4 
+
+##### With the standard Python Interpreter of Ubuntu (most cases)
+In a terminal use pip to install the libraries :
+
+    sudo pip3 -I -U install <name of the library above>
+
+##### With Anaconda
+update Anaconda first
+
+    conda update --all
+
+Install the package in Anaconda
+    conda install <name of the library above>
+
+
+#### Installation for your whole environnement
+
+* In a terminal, edit your .bashrc using e.g. 
+nano ~/.bashrc
+
+* add a line 
+export PYTHONPATH=$PYTHONPATH:<path to the toolbox>/GeodeZYX-Toolbox_v4/geodezyx
+
+* The toolbox is installed !
+
+#### Spyder user
+
+For the ones who use the Graphical User Interface Spyder (which I recommend) :
+* click on the “PYTHONPATH manager” button (the Python logo-shaped icon between the spanner icon and the left arrow icon on the main toolbar)
+*  add the folder
+<path to the toolbox>/GeodeZYX-Toolbox_v4/geodezyx
+
+* The toolbox is installed !
+
+### check the installation
+
+in a python terminal run
+
+    from geodezyx import *
+
+If no error appears, then the toolbox is well installed!
+Else, it may miss a library. Follow the *prerequisite* section
 
 
 

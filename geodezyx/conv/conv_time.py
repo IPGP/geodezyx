@@ -1150,6 +1150,39 @@ def dt_gpstime2dt_utc(dtgpsin,out_array=False):
         leapsec = find_leapsecond(dtgpsin)
         dtutc = dtgpsin + dt.timedelta(seconds=19) - dt.timedelta(seconds=leapsec)
         return dtutc
+    
+    
+def dt_gpstime2dt_tai(dtgpsin,out_array=False):
+    """
+    Time scale conversion
+    
+    Datetime in GPS Time Scale => Datetime in TAI Time Scale
+    
+    Correct d the 19sec difference between GPS Time and TAI
+
+    Parameters
+    ----------
+    dtin : datetime or list/numpy.array of datetime.
+        Datetime(s) in GPS Time Scale.  Can handle several datetimes in an iterable.
+    out_array : bool
+        if iterable as input, force the output as a Numpy array
+
+    Returns
+    -------
+    L : datetime or list/numpy.array of datetime.
+        Datetime(s) in TAI Time Scale
+    """
+    # on converti le dt gps en dt utc
+    if utils.is_iterable(dtgpsin):
+        typ=utils.get_type_smart(dtgpsin)
+        Out = typ([dt_gpstime2dt_tai(e) for e in dtgpsin])
+        if not out_array:
+            return Out
+        else:
+            return np.array(Out)
+    else:
+        dtutc = dtgpsin + dt.timedelta(seconds=19)
+        return dtutc
 
 def year_decimal2dt(yearin):
     """
