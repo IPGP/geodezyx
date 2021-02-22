@@ -811,7 +811,9 @@ def dt_utc2dt_ut1(dtin,dUT1):
     
     
 
-def dt_utc2dt_ut1_smart(dtin,DF_EOP_in):
+def dt_utc2dt_ut1_smart(dtin,DF_EOP_in,
+                        use_interp1d_obj=True,
+                        EOP_interpolator=None):
     """
     Time scale conversion
     
@@ -823,29 +825,58 @@ def dt_utc2dt_ut1_smart(dtin,DF_EOP_in):
     dtin : datetime or list/numpy.array of datetime
         Datetime(s). Can handle several datetimes in an iterable.
     DF_EOP_in : DataFrame
-        EOP DataFrame provided by files_rw.read_eop_C04 for the UT1-UTC
+        EOP DataFrame for the UT1-UTC
+        provided by files_rw.read_eop_C04
+    use_interp1d_obj : TYPE, optional
+        Use an interp1d_time Interpolator object for the EOP determination 
+        at the right epoch.
+        Faster in recursive mode when dtin is a list/array
+        The default is True.
+    EOP_interpolator : interp1d_time object, optional
+        The interp1d_time Interpolator object for the EOP determination
+        Will be determined automatically inside the function
+        The default is None.
 
     Returns
     -------
     TYPE
         DESCRIPTION.
 
-    """
-    use_time_interpo_class = False
-
-    if utils.is_iterable(dtin):
-        typ=utils.get_type_smart(dtin)
-        return typ([dt_utc2dt_ut1_smart(e,DF_EOP_in) for e in dtin])
-    else:      
+    """    
+    #### internally we work with "epoch" as index
+    if DF_EOP_in.index.name != "epoch":
         DF_EOP = DF_EOP_in.set_index("epoch")
+    else:
+        DF_EOP = DF_EOP_in
 
-        if (dtin in DF_EOP.index):
-            dUT1 = DF_EOP.iloc[DF_EOP.index.get_loc(dtin)]['UT1-UTC']
-        elif use_time_interpo_class:
-            I = interp1d_time(DF_EOP.index.values,DF_EOP['UT1-UTC'])
-            dUT1 = I(dtin)
-
+    if utils.is_iterable(dtin): #### ITERABLE CASE
+        typ=utils.get_type_smart(dtin)
+        
+        ### if iterable, we optimize DF_EOP to speed up the fct        
+        dtmin = np.min(dtin)
+        dtmax = np.max(dtin)
+        
+        BOOL = ((DF_EOP.index > dtmin - dt.timedelta(days=2)) & 
+                (DF_EOP.index < dtmax + dt.timedelta(days=2)))
+    
+        DF_EOP = DF_EOP[BOOL]
+        
+        ### We also use the interpolator class
+        if use_interp1d_obj:
+            IEOP = interp1d_time(DF_EOP.index.values,DF_EOP['UT1-UTC'])
         else:
+            IEOP = None
+        
+        return typ([dt_utc2dt_ut1_smart(e,DF_EOP,
+                                        use_interp1d_obj=use_interp1d_obj,
+                                        EOP_interpolator=IEOP) for e in dtin])
+    
+    else: #### SINGLE ELEMENT CASE
+        if (dtin in DF_EOP.index): ## the EOP value is directly in the EOP DF
+            dUT1 = DF_EOP.iloc[DF_EOP.index.get_loc(dtin)]['UT1-UTC']
+        elif EOP_interpolator and use_interp1d_obj: ### use the interp class, faster in recursive mode
+            dUT1 = EOP_interpolator(dtin)
+        else: ## the EOP value is interpolated with a "manual" linear interpo.
             dUT1bef = DF_EOP.iloc[DF_EOP.index.get_loc(dtin,'ffill')]
             dUT1aft = DF_EOP.iloc[DF_EOP.index.get_loc(dtin,'bfill')]
 
@@ -859,8 +890,6 @@ def dt_utc2dt_ut1_smart(dtin,DF_EOP_in):
                                              full=False)
             
         return dt_utc2dt_ut1(dtin,dUT1)
-    
-    
         
 
 def dt2gpstime(dtin,dayinweek=True,inp_ref="utc",outputtype=int):
