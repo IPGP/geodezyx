@@ -40,6 +40,7 @@ import struct
 import subprocess
 import re
 import time
+import warnings
 
 #### geodeZYX modules
 from geodezyx import utils,stats
@@ -190,70 +191,6 @@ def tgipsy2dt(tin):
     return tout
 
 
-def numpy_datetime2dt(npdtin):
-    """
-    Time representation conversion
-    
-    Numpy Datetime => Datetime
-
-    Parameters
-    ----------
-    npdtin : np.datetime64 or list/numpy.array of np.datetime64 
-        Numpy Datetime.  Can handle several time in a list.
-                
-    Returns
-    -------
-    python_datetime : datetime or list/numpy.array of datetime
-        Converted Datetime(s)
-        
-    Source
-    ------
-        https://stackoverflow.com/questions/29753060/how-to-convert-numpy-datetime64-into-datetime/29755657
-    """
-    if utils.is_iterable(npdtin):        
-        typ=utils.get_type_smart(npdtin)
-        return typ([numpy_datetime2dt(e) for e in npdtin])
-    else:
-        python_datetime = npdtin.astype('M8[us]').astype('O') 
-    return python_datetime
-
-
-
-def numpy_dt2dt(numpy_dt_in):
-    """
-    Time representation conversion
-
-    numpy datetime64 object => Python's Datetime
-    
-    Parameters
-    ----------
-    numpy_dt_in : numpy datetime64 object
-        numpy datetime64 object
-
-    Returns
-    -------
-    dt : datetime
-        Datetime
-              
-    source
-    ------
-    
-    https://gist.github.com/blaylockbk/1677b446bc741ee2db3e943ab7e4cabd
-    """
-    
-    if utils.is_iterable(numpy_dt_in):        
-        typ=utils.get_type_smart(numpy_dt_in)
-        return typ([numpy_dt2dt(e) for e in numpy_dt_in])
-    
-    
-    timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
-                 / np.timedelta64(1, 's'))
-    return dt.datetime.utcfromtimestamp(timestamp)
-
-
-
-
-
 def matlab_time2dt(matlab_datenum):
     """
     Time representation conversion
@@ -278,18 +215,27 @@ def matlab_time2dt(matlab_datenum):
         dt.timedelta(days=matlab_datenum%1) - dt.timedelta(days = 366)
     return python_datetime
 
-def dt_round(dtin=None, roundTo=60):
+
+def round_dt(dtin,round_to):
     """
     Round a datetime object to any time laps in seconds
     
     Parameters
     ----------
     dtin : datetime or list/numpy.array of datetime 
-        Datetime you want to round, default now.
+        Datetime you want to round
         Can handle several datetimes in an iterable.
             
-    roundTo : int
-        Closest number of seconds to round to, default 1 minute.
+    roundTo : str
+        The way to round the datetime. 
+        
+        It follows the numpy datetime64 conventions, e.g.:
+            
+        * one-day rounding: '1D'
+        * one-minute rounding: '1m'
+        * one-second rounding: '1s'
+        
+        Full list is in the Note's link
             
     Returns
     -------  
@@ -297,22 +243,29 @@ def dt_round(dtin=None, roundTo=60):
         Rounded Datetime
         
     Note
-    ---- 
-    Based on :
-    http://stackoverflow.com/questions/3463930/how-to-round-the-minute-of-a-datetime-object-python
+    ----
+    https://numpy.org/doc/stable/reference/arrays.datetime.html
     """
-    import datetime as dtmod
 
-    if utils.is_iterable(dtin):
-        typ=utils.get_type_smart(dtin)
-        return typ([dt_round(e,roundTo=roundTo) for e in dtin])
+    ### Here we adopt a new scheme for the recursive approach which
+    ### because we switch per defaut to a Pandas Series (PSakic 2021-02-22)
+    if not utils.is_iterable(dtin):
+        singleton = True
+        dtin_use = pd.Series([dtin])
     else:
-        if dtin == None :
-            dtin = dtmod.datetime.now()
-        seconds = (dtin - dtin.min).seconds
-        # // is a floor division, not a comment on following line:
-        rounding = (seconds+roundTo/2) // roundTo * roundTo
-        return dtin + dtmod.timedelta(0,rounding-seconds,-dtin.microsecond)
+        singleton = False
+        typ=utils.get_type_smart(dtin)
+        dtin_use = pd.Series(dtin)
+
+    dtin_out = dtin_use.dt.round(round_to)
+
+    if singleton:
+        return dtin_out.iloc[0]
+    else:
+        return typ(dtin_out)
+        
+##### Nota Bene
+##### dt_round & roundTime moved to the function graveyard (PSakic 2021-02-22)
 
 
 def dt_ceil(dtin):
@@ -336,13 +289,7 @@ def dt_ceil(dtin):
         return typ([dt_ceil(e) for e in dtin])
     else:
         return date2dt(dtin.date())
-
-def roundTime(*args):
-    """
-    Wrapper of dt_round for legacy reasons
-    """
-    return dt_round(*args)
-    
+   
 
 def dt_in_local_timezone2posix(dtin):
     if not utils.is_iterable(dtin):
@@ -1060,7 +1007,8 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True,
     
         ## First gross run
         epoch   = dt.datetime(1980,1,6)
-        elapsed = dt.timedelta(days=(int(gpsweek)*7),seconds=(int(gpsseconds)+0))
+        elapsed = dt.timedelta(days=(int(gpsweek)*7),
+                               seconds=(int(gpsseconds)+0))
         
         prelim_time = epoch + elapsed
     
@@ -1076,13 +1024,16 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True,
                 
             ## Second run with leap second
             epoch   = dt.datetime(1980,1,6)
-            elapsed = dt.timedelta(days=(int(gpsweek)*7),seconds=(int(gpsseconds)+leapsec))
+            elapsed = dt.timedelta(days=(int(gpsweek)*7),
+                                   seconds=(int(gpsseconds)+deltasec))
         
             final_time = epoch + elapsed
     
         if dow_input:
             final_time = final_time.date()
-            final_time = dt.datetime(final_time.year, final_time.month, final_time.day)
+            final_time = dt.datetime(final_time.year,
+                                     final_time.month,
+                                     final_time.day)
     
         return final_time
 
@@ -1326,8 +1277,7 @@ def dt2jjulCNES(dtin,onlydays=True):
         epok = epok + dt.timedelta(seconds=19)
         return epok.days , epok.seconds
 
-def MJD2dt(mjd_in,seconds=None):
-    # cf http://en.wikipedia.org/wiki/Julian_day
+def MJD2dt(mjd_in,seconds=None,round_to='1s'):
     """
     Time representation conversion
     
@@ -1337,6 +1287,11 @@ def MJD2dt(mjd_in,seconds=None):
     ----------
     mjd_in : float/int or list/numpy.array of float/int.
         Modified Julian Day.  Can handle several float/int in an iterable.
+    seconds : float/int or list/numpy.array of float/int.
+        Handle a number
+    round_to : str or None
+        round the output datetime
+        see round_dt function for details
 
     Returns
     -------
@@ -1349,8 +1304,13 @@ def MJD2dt(mjd_in,seconds=None):
     
     https://en.wikipedia.org/wiki/Julian_day
     """
-
-    # ITERABLE CASE
+    
+    if round_to: #### define a lambda fct if we want to round the output dt
+        rnd = lambda x: round_dt(x, round_to)
+    else: ### indentity lambda if we don't wanna round
+        rnd = lambda x: x
+        
+    # ITERABLE CASE (warn: this fct is not recursive)
     if utils.is_iterable(mjd_in): 
         typ=utils.get_type_smart(mjd_in)
         if seconds:
@@ -1360,13 +1320,13 @@ def MJD2dt(mjd_in,seconds=None):
         else:
             seconds = np.zeros(len(mjd_in))
 
-        return typ([dt.datetime(1858,11,17) + dt.timedelta(days=m,seconds=sec) for m,sec in zip(mjd_in,seconds)])
+        return typ(rnd([dt.datetime(1858,11,17)+dt.timedelta(days=m,seconds=sec) for m,sec in zip(mjd_in,seconds)]))
     
     # NON ITERABLE / FLOAT CASE
     else:
         if not seconds:
             seconds = 0    
-        return dt.datetime(1858,11,17) + dt.timedelta(days=mjd_in,seconds=seconds)
+        return rnd(dt.datetime(1858,11,17) + dt.timedelta(days=mjd_in,seconds=seconds))
 
 def dt2MJD(dtin):
     """
@@ -1429,107 +1389,6 @@ def dt2str(dtin , str_format="%Y-%m-%d %H:%M:%S"):
     else:
         return dtin.strftime(str_format)
     
-    
-def date2dt(date_in):
-    """
-    Time Python type conversion
-    
-    Python's Date => Python's Datetime
-    
-    Parameters
-    ----------
-    date_in : date or list/numpy.array of date.
-        Date(s).  Can handle several dates in an iterable.
-        
-    Returns
-    -------
-    L : Datetime or list of Datetime
-        Time as Datetime(s)  
-    """
-    if utils.is_iterable(date_in):
-        typ=utils.get_type_smart(date_in)
-        return typ([date2dt(e) for e in date_in])
-    else:
-        return dt.datetime(*tuple(date_in.timetuple())[:3])
-    
-    
-def dt2date(dt_in):
-    """
-    Time Python type conversion
-    
-    Python's Datetime => Python's Date
-    
-    Parameters
-    ----------
-    dt_in : datetime or list/numpy.array of datetime.
-        Datetime(s).  Can handle several datetimes in an iterable.
-        
-    Returns
-    -------
-    L : Datetime or list of Datetime
-        Time as Datetime(s)  
-    """
-    if utils.is_iterable(date_in):
-        typ=utils.get_type_smart(date_in)
-        return typ([dt2date(e) for e in date_in])
-    else:
-        return dt_in.date()
-
-
-def pandas_timestamp2dt(timestamp_in):
-    """
-    Time Python type conversion
-    
-    Pandas's Timestamp => Python's Datetime
-    
-    Parameters
-    ----------
-    timestamp_in : Timestamp or list/numpy.array of Timestamp.
-        Pandas's Timestamp(s).  Can handle several datetimes in an iterable.
-        
-    Returns
-    -------
-    L : Datetime or list of Datetime
-        Time as Datetime(s)  
-    """
-    if utils.is_iterable(timestamp_in):
-        typ=utils.get_type_smart(timestamp_in)
-        return typ([pandas_timestamp2dt(e) for e in timestamp_in])
-    else:
-        if isinstance(timestamp_in, pd._libs.tslibs.timedeltas.Timedelta):
-            return timestamp_in.to_pytimedelta()
-        else:
-            return timestamp_in.to_pydatetime()
-        
-def datetime64_numpy2dt(npdt64_in):
-    """
-    Time Python type conversion
-    
-    Numpy's datetime64 => Python's Datetime
-    
-    Parameters
-    ----------
-    npdt64_in : datetime64 or list/numpy.array of datetime64.
-        Numpy's datetime64(s). Can handle several datetimes in an iterable.
-        
-    Returns
-    -------
-    L : Datetime or list of Datetime
-        Time as Datetime(s)  
-        
-    Source
-    ------
-    
-    https://stackoverflow.com/questions/13703720/converting-between-datetime-timestamp-and-datetime64
-    """
-    
-    if utils.is_iterable(npdt64_in):
-        typ=utils.get_type_smart(npdt64_in)
-        return typ([datetime64_numpy2dt(e) for e in npdt64_in])
-    else:
-        return pd.Timestamp(npdt64_in).to_pydatetime()
-
-
 def rinexname2dt(rinexpath):
     """
     Time representation conversion
@@ -2054,7 +1913,129 @@ def find_leapsecond(dtin,get_leapsec_lis=[],
     return leapsec_out
 
 
+ #  _____       _   _                 _       _____       _                        _   _____                                     _        _   _                 
+ # |  __ \     | | | |               ( )     |_   _|     | |                      | | |  __ \                                   | |      | | (_)                
+ # | |__) |   _| |_| |__   ___  _ __ |/ ___    | |  _ __ | |_ ___ _ __ _ __   __ _| | | |__) |___ _ __  _ __ ___  ___  ___ _ __ | |_ __ _| |_ _  ___  _ __  ___ 
+ # |  ___/ | | | __| '_ \ / _ \| '_ \  / __|   | | | '_ \| __/ _ \ '__| '_ \ / _` | | |  _  // _ \ '_ \| '__/ _ \/ __|/ _ \ '_ \| __/ _` | __| |/ _ \| '_ \/ __|
+ # | |   | |_| | |_| | | | (_) | | | | \__ \  _| |_| | | | ||  __/ |  | | | | (_| | | | | \ \  __/ |_) | | |  __/\__ \  __/ | | | || (_| | |_| | (_) | | | \__ \
+ # |_|    \__, |\__|_| |_|\___/|_| |_| |___/ |_____|_| |_|\__\___|_|  |_| |_|\__,_|_| |_|  \_\___| .__/|_|  \___||___/\___|_| |_|\__\__,_|\__|_|\___/|_| |_|___/
+ #         __/ |                                                                                 | |                                                            
+ #        |___/                                                                                  |_|                                                                           |_| 
 
+### Python's Internal Representations  
+    
+def date2dt(date_in):
+    """
+    Time Python type conversion
+    
+    Python's Date => Python's Datetime
+    
+    Parameters
+    ----------
+    date_in : date or list/numpy.array of date.
+        Date(s).  Can handle several dates in an iterable.
+        
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)  
+    """
+    if utils.is_iterable(date_in):
+        typ=utils.get_type_smart(date_in)
+        return typ([date2dt(e) for e in date_in])
+    else:
+        return dt.datetime(*tuple(date_in.timetuple())[:3])
+
+
+def dt2date(dt_in):
+    """
+    Time Python type conversion
+    
+    Python's Datetime => Python's Date
+    
+    Parameters
+    ----------
+    dt_in : datetime or list/numpy.array of datetime.
+        Datetime(s).  Can handle several datetimes in an iterable.
+        
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)  
+    """
+    if utils.is_iterable(dt_in):
+        typ=utils.get_type_smart(dt_in)
+        return typ([dt2date(e) for e in dt_in])
+    else:
+        return dt_in.date()
+
+
+def pandas_timestamp2dt(timestamp_in):
+    """
+    Time Python type conversion
+    
+    Pandas's Timestamp => Python's Datetime
+    
+    Parameters
+    ----------
+    timestamp_in : Timestamp or list/numpy.array of Timestamp.
+        Pandas's Timestamp(s).  Can handle several datetimes in an iterable.
+        
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)  
+    """
+    if utils.is_iterable(timestamp_in):
+        typ=utils.get_type_smart(timestamp_in)
+        return typ([pandas_timestamp2dt(e) for e in timestamp_in])
+    else:
+        if isinstance(timestamp_in, pd._libs.tslibs.timedeltas.Timedelta):
+            return timestamp_in.to_pytimedelta()
+        else:
+            return timestamp_in.to_pydatetime()
+        
+def numpy_dt2dt(numpy_dt_in):
+    """
+    Time representation conversion
+
+    Numpy datetime64 object => Python's Datetime
+    
+    Parameters
+    ----------
+    numpy_dt_in : numpy datetime64 object
+        numpy datetime64 object
+
+    Returns
+    -------
+    dt : datetime or list/numpy.array of datetime
+        Converted Datetime(s)
+        If the input is a Pandas Series, the output is forced as an array
+              
+    source
+    ------
+    https://gist.github.com/blaylockbk/1677b446bc741ee2db3e943ab7e4cabd
+    """
+    
+    if utils.is_iterable(numpy_dt_in):        
+        typ=utils.get_type_smart(numpy_dt_in)
+        
+        ### If the type is a Series, it has to be forced as an array
+        ### Otherwise, datetime will be converted as numpy_dt again
+        if typ == pd.core.series.Series:
+            typ = np.array
+            
+        return typ([numpy_dt2dt(e) for e in numpy_dt_in])
+    
+    timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
+                 / np.timedelta64(1, 's'))
+    return dt.datetime.utcfromtimestamp(timestamp)
+
+
+
+##### Nota Bene
+##### numpy_datetime2dt & datetime64_numpy2dt have been moved
+##### to the funtion graveyard (PSakic 2021-02-22)
 
 
 def date_to_jd(year,month,day):
@@ -2321,6 +2302,7 @@ class interp1d_time(scipy.interpolate.interp1d):
             x = np.array([x])
         else:
             singleton = False
+            x = np.array(x)
 
         ### the datetime is converted to posix
         if isinstance(x[0],dt.datetime):
@@ -2392,7 +2374,6 @@ class Slerp_time(scipy.spatial.transform.Slerp):
         return super().__call__(times_posix)
     
     
-    
  #  ______                _   _                _____                                         _ 
  # |  ____|              | | (_)              / ____|                                       | |
  # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
@@ -2403,6 +2384,120 @@ class Slerp_time(scipy.spatial.transform.Slerp):
  #                                                                       |___/
   
 # function graveyard  
+
+def datetime64_numpy2dt(npdt64_in):
+    """
+    Time Python type conversion
+    
+    Numpy's datetime64 => Python's Datetime
+    
+    **This function is depreciated !!!!!**
+    
+    **numpy_dt2dt instead !!!!!**
+    
+    Parameters
+    ----------
+    npdt64_in : datetime64 or list/numpy.array of datetime64.
+        Numpy's datetime64(s). Can handle several datetimes in an iterable.
+        
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)  
+        
+    Source
+    ------
+    
+    https://stackoverflow.com/questions/13703720/converting-between-datetime-timestamp-and-datetime64
+    """
+    print("WARN: datetime64_numpy2dt is depreciated, use numpy_dt2dt instead")
+    warnings.warn("WARN: datetime64_numpy2dt is depreciated, use numpy_dt2dt instead",DeprecationWarning)
+
+
+    if utils.is_iterable(npdt64_in):
+        typ=utils.get_type_smart(npdt64_in)
+        return typ([datetime64_numpy2dt(e) for e in npdt64_in])
+    else:
+        return pd.Timestamp(npdt64_in).to_pydatetime()
+
+
+
+def numpy_datetime2dt(npdtin):
+    """
+    Time representation conversion
+    
+    Numpy Datetime => Datetime
+    
+    **This function is depreciated !!!**
+    **Use numpy_dt2dt instead      !!!**
+
+    Parameters
+    ----------
+    npdtin : np.datetime64 or list/numpy.array of np.datetime64 
+        Numpy Datetime.  Can handle several time in a list.
+                
+    Returns
+    -------
+    python_datetime : datetime or list/numpy.array of datetime
+        Converted Datetime(s)
+        
+    Source
+    ------
+    https://stackoverflow.com/questions/29753060/how-to-convert-numpy-datetime64-into-datetime/29755657
+    """
+    
+    print("WARN: numpy_datetime2dt is depreciated, use numpy_dt2dt instead")
+    warnings.warn("WARN: numpy_datetime2dt is depreciated, use numpy_dt2dt instead",DeprecationWarning)
+    if utils.is_iterable(npdtin):        
+        typ=utils.get_type_smart(npdtin)
+        return typ([numpy_datetime2dt(e) for e in npdtin])
+    else:
+        python_datetime = npdtin.astype('M8[us]').astype('O') 
+    return python_datetime
+
+
+def dt_round(dtin=None, roundTo=60):
+    """
+    Round a datetime object to any time laps in seconds
+    
+    Parameters
+    ----------
+    dtin : datetime or list/numpy.array of datetime 
+        Datetime you want to round, default now.
+        Can handle several datetimes in an iterable.
+            
+    roundTo : int
+        Closest number of seconds to round to, default 1 minute.
+            
+    Returns
+    -------  
+    dtout : datetime or list/numpy.array of datetime
+        Rounded Datetime
+        
+    Note
+    ---- 
+    Based on :
+    http://stackoverflow.com/questions/3463930/how-to-round-the-minute-of-a-datetime-object-python
+    """
+    import datetime as dtmod
+
+    if utils.is_iterable(dtin):
+        typ=utils.get_type_smart(dtin)
+        return typ([dt_round(e,roundTo=roundTo) for e in dtin])
+    else:
+        if dtin == None :
+            dtin = dtmod.datetime.now()
+        seconds = (dtin - dtin.min).seconds
+        # // is a floor division, not a comment on following line:
+        rounding = (seconds+roundTo/2) // roundTo * roundTo
+        return dtin + dtmod.timedelta(0,rounding-seconds,-dtin.microsecond)
+
+def roundTime(*args):
+    """
+    Wrapper of dt_round for legacy reasons
+    """
+    return dt_round(*args)
+
     
 def utc2gpstime(year,month,day,hour,min,sec):
     """
