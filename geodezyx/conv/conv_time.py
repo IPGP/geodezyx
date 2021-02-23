@@ -1320,7 +1320,14 @@ def MJD2dt(mjd_in,seconds=None,round_to='1s'):
         else:
             seconds = np.zeros(len(mjd_in))
 
-        return typ(rnd([dt.datetime(1858,11,17)+dt.timedelta(days=m,seconds=sec) for m,sec in zip(mjd_in,seconds)]))
+        #return typ(rnd([dt.datetime(1858,11,17)+dt.timedelta(days=m,seconds=sec) for m,sec in zip(mjd_in,seconds)]))
+
+        Outdt_Stk = []
+        for m,sec in zip(mjd_in,seconds):
+            dtout = dt.datetime(1858,11,17) + dt.timedelta(days=m,seconds=sec)
+            Outdt_Stk.append(dtout)
+
+        return typ(rnd(Outdt_Stk))
     
     # NON ITERABLE / FLOAT CASE
     else:

@@ -890,7 +890,8 @@ def read_eop_C04(file_path_in):
     
     return DF
 
-def read_eop_finals(file_path_in,precnut_model = 2000):
+def read_eop_finals(file_path_in,precnut_model = 2000,
+                    simplified_EOP_DF="mixed"):
     """
     read EOP finals file
 
@@ -908,7 +909,7 @@ def read_eop_finals(file_path_in,precnut_model = 2000):
     DF : DataFrame
         out DataFrame - Complete content of the finals file.
     DF2 : DataFrame
-        out DataFrame - Short content of the finals file.
+        out DataFrame - Simplified content of the finals file.
         Based on C04 EOP DataFrame structure.
         If no Bulletin-B values provided, use Bulletin-A.
         
@@ -1004,20 +1005,34 @@ def read_eop_finals(file_path_in,precnut_model = 2000):
     
     #### DF 2 is a simplified version, base on the C04 DF
     DF2 = pd.DataFrame()
-    
-    ### Create epoch and use B-values per default
     DF2["epoch"] = conv.MJD2dt(DF["MJD"])
-    DF2[['MJD','x','y','UT1-UTC','LOD','dX','dY']] = DF[['MJD','x_B','y_B','UT1-UTC_B','LOD_A','dX_B','dY_B']]
     
-    DF2["Bul"] = "B"
-    ### If no B-values, use A-values
-    DF2.loc[np.isnan(DF.x_B),'Bul'] = "A"
-    DF2.loc[np.isnan(DF.x_B),'x'] = DF.loc[np.isnan(DF.x_B),'x_A']
-    DF2.loc[np.isnan(DF.y_B),'y'] = DF.loc[np.isnan(DF.y_B),'y_A']
-    DF2.loc[np.isnan(DF['UT1-UTC_B']),'UT1-UTC'] = DF.loc[np.isnan(DF['UT1-UTC_B']),'UT1-UTC_A']
-    DF2.loc[np.isnan(DF.dX_B),'dX'] = DF.loc[np.isnan(DF.dX_B),'dX_A']
-    DF2.loc[np.isnan(DF.dX_B),'dY'] = DF.loc[np.isnan(DF.dY_B),'dY_A']
-    
+    if simplified_EOP_DF == 'mixed':
+        ### Create epoch and use B-values per default
+        DF2[['MJD','x','y','UT1-UTC','LOD','dX','dY']] = DF[['MJD','x_B','y_B','UT1-UTC_B','LOD_A','dX_B','dY_B']]
+        
+        DF2["Bul"] = "B"
+        ### If no B-values, use A-values
+        DF2.loc[np.isnan(DF.x_B),'Bul'] = "A"
+        DF2.loc[np.isnan(DF.x_B),'x'] = DF.loc[np.isnan(DF.x_B),'x_A']
+        DF2.loc[np.isnan(DF.y_B),'y'] = DF.loc[np.isnan(DF.y_B),'y_A']
+        DF2.loc[np.isnan(DF['UT1-UTC_B']),'UT1-UTC'] = DF.loc[np.isnan(DF['UT1-UTC_B']),'UT1-UTC_A']
+        DF2.loc[np.isnan(DF.dX_B),'dX'] = DF.loc[np.isnan(DF.dX_B),'dX_A']
+        DF2.loc[np.isnan(DF.dX_B),'dY'] = DF.loc[np.isnan(DF.dY_B),'dY_A']
+    elif simplified_EOP_DF == "A":
+        DF2[['MJD','x','y','UT1-UTC','LOD','dX','dY']] = DF[['MJD','x_A','y_A','UT1-UTC_A','LOD_A','dX_A','dY_A']]
+        DF2["Bul"] = "A"
+        DF2.dropna(axis=1,how="all",inplace=True)       
+
+    elif simplified_EOP_DF == "B":
+        DF2[['MJD','x','y','UT1-UTC','LOD','dX','dY']] = DF[['MJD','x_B','y_B','UT1-UTC_B','LOD_A','dX_B','dY_B']]
+        DF2["Bul"] = "B"
+        DF2.dropna(axis=1,how="all",inplace=True)
+
+    else:
+        print("ERR: read_eop_C04: check the  simplified_EOP_DF parameter !!!")
+        raise Exception
+        
     return DF,DF2
 
 ########################################################################################################################################

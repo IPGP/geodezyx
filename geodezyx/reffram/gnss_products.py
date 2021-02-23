@@ -394,7 +394,8 @@ def compar_orbit_plot(Diff_sat_all_df_in,
                       save_plot_name="auto",
                       save_plot_name_suffix=None,
                       save_plot_ext=(".pdf",".png",".svg"),
-                      yaxis_limit=None):
+                      yaxis_limit=None,
+                      yaxis_label_unit="m"):
     """
     General description
 
@@ -454,15 +455,18 @@ def compar_orbit_plot(Diff_sat_all_df_in,
 
         fig.autofmt_xdate()
 
+
+    ylabuni = " (" + yaxis_label_unit + ")"
+    
     if Diff_sat_all_df_in.frame_type == 'RTN':
-        axr.set_ylabel('Radial diff. (m)')
-        axt.set_ylabel('Transverse diff. (m)')
-        axn.set_ylabel('Normal diff. (m)')
+        axr.set_ylabel('Radial diff.'     + ylabuni)
+        axt.set_ylabel('Transverse diff.' + ylabuni)
+        axn.set_ylabel('Normal diff.'     + ylabuni)
 
     else:
-        axr.set_ylabel(Diff_sat_all_df_in.frame_type + ' X diff. (m)')
-        axt.set_ylabel(Diff_sat_all_df_in.frame_type + ' Y diff. (m)')
-        axn.set_ylabel(Diff_sat_all_df_in.frame_type + ' Z diff. (m)')
+        axr.set_ylabel(Diff_sat_all_df_in.frame_type + ' X diff.' + ylabuni)
+        axt.set_ylabel(Diff_sat_all_df_in.frame_type + ' Y diff.' + ylabuni)
+        axn.set_ylabel(Diff_sat_all_df_in.frame_type + ' Z diff.' + ylabuni)
 
 
     y_formatter = matplotlib.ticker.ScalarFormatter(useOffset=False)

@@ -74,7 +74,7 @@ setup(
 
     # This should be your name or the name of the organization which owns the
     # project.
-    author='Pierre Sakic',  # Optional
+    author='Pierre Sakic & Gustavo Mansur',  # Optional
 
     # This should be a valid email address corresponding to the author listed
     # above.
