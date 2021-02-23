@@ -19,7 +19,7 @@ import pandas as pd
 import re
 import datetime as dt
 
-import sofa
+# import sofa
 
 #### geodeZYX modules
 from geodezyx import conv
