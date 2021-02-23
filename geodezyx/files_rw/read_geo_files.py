@@ -206,9 +206,6 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
             return df
         else:
             return  epoch_stk ,  Xstk , Ystk , Zstk , Clkstk , AC_name_stk
-            
-        
-
 
     for l in fil:
         if l[0] == '*':
@@ -866,12 +863,12 @@ def read_erp_snx(snx_in):
 
 def read_eop_C04(file_path_in):
     """
-    read C04 file
+    read EOP C04 file
 
     Parameters
     ----------
     file_path_in : str
-        path of the C04 file.
+        path of the EOP C04 file.
 
     Returns
     -------
@@ -893,8 +890,150 @@ def read_eop_C04(file_path_in):
     
     return DF
 
+def read_eop_finals(file_path_in,precnut_model = 2000,
+                    simplified_EOP_DF="mixed"):
+    """
+    read EOP finals file
 
 
+    Parameters
+    ----------
+    file_path_in : str
+        path of the EOP finals file.
+    precnut_model : int, optional
+        IAU Precession-Nutation Model. Valid values are 1980 and 2000.
+        The default is 2000.
+
+    Returns
+    -------
+    DF : DataFrame
+        out DataFrame - Complete content of the finals file.
+    DF2 : DataFrame
+        out DataFrame - Simplified content of the finals file.
+        Based on C04 EOP DataFrame structure.
+        If no Bulletin-B values provided, use Bulletin-A.
+        
+    Note
+    ----
+    Format description
+    https://github.com/marando/phpIERS/blob/master/src/Marando/IERS/default/readme.finals
+    """
+    
+    if precnut_model == 2000:
+        x_or_psi = "X"
+        y_or_eps = "Y"
+    elif precnut_model == 1980:
+        x_or_psi = "PSI"
+        y_or_eps = "EPS"   
+    else:
+        raise Exception
+    
+    cols = ((0,2    ),
+    (2,4    ),
+    (4,6    ),
+    (6,7    ),
+    (7,15   ),
+    (15,16  ),
+    (16,17  ),
+    (17,18  ),
+    (18,27  ),
+    (27,36  ),
+    (36,37  ),
+    (37,46  ),
+    (46,55  ),
+    (55,57  ),
+    (57,58  ),
+    (58,68  ),
+    (68,78  ),
+    (78,79  ),
+    (79,86  ),
+    (86,93  ),
+    (93,95  ),
+    (95,96  ),
+    (96,97  ),
+    (97,106 ),
+    (106,115),
+    (115,116),
+    (116,125),
+    (125,134),
+    (134,144),
+    (144,154),
+    (154,165),
+    (165,175),
+    (175,185))
+        
+    col_names = ['yyyy',
+    'mm',
+    'dd',
+    '[blank]',
+    'MJD',
+    '[blank]',
+    'flg_xy',
+    '[blank]',
+    'x_A',
+    'x_A_Err',
+    '[blank]',
+    'y_A',
+    'y_A_Err',
+    '[blanks]',
+    'flg_UT1-UTC',
+    'UT1-UTC_A',
+    'UT1-UTC_A_Err',
+    '[blank]',
+    'LOD_A',
+    'LOD_A_Err',
+    '[blanks]',
+    'flg_nut',
+    '[blank]',
+    'd' + x_or_psi + '_A',
+    'd' + x_or_psi + '_A_Err',
+    '[blank]',
+    'd' + y_or_eps + '_A',
+    'd' + y_or_eps + '_A_Err',
+    'x_B',
+    'y_B',
+    'UT1-UTC_B',
+    'd' + x_or_psi + '_B',
+    'd' + y_or_eps + '_B']
+    
+    DF = pd.read_fwf(file_path_in,colspecs=cols,header=None)
+    DF.columns = col_names
+    ### remove everything with NaN
+    DF.dropna(axis=1,how="all",inplace=True)
+    ### if not x_A provided, then its a blank line
+    DF = DF[np.logical_not(np.isnan(DF['x_A']))]
+    
+    #### DF 2 is a simplified version, base on the C04 DF
+    DF2 = pd.DataFrame()
+    DF2["epoch"] = conv.MJD2dt(DF["MJD"])
+    
+    if simplified_EOP_DF == 'mixed':
+        ### Create epoch and use B-values per default
+        DF2[['MJD','x','y','UT1-UTC','LOD','dX','dY']] = DF[['MJD','x_B','y_B','UT1-UTC_B','LOD_A','dX_B','dY_B']]
+        
+        DF2["Bul"] = "B"
+        ### If no B-values, use A-values
+        DF2.loc[np.isnan(DF.x_B),'Bul'] = "A"
+        DF2.loc[np.isnan(DF.x_B),'x'] = DF.loc[np.isnan(DF.x_B),'x_A']
+        DF2.loc[np.isnan(DF.y_B),'y'] = DF.loc[np.isnan(DF.y_B),'y_A']
+        DF2.loc[np.isnan(DF['UT1-UTC_B']),'UT1-UTC'] = DF.loc[np.isnan(DF['UT1-UTC_B']),'UT1-UTC_A']
+        DF2.loc[np.isnan(DF.dX_B),'dX'] = DF.loc[np.isnan(DF.dX_B),'dX_A']
+        DF2.loc[np.isnan(DF.dX_B),'dY'] = DF.loc[np.isnan(DF.dY_B),'dY_A']
+    elif simplified_EOP_DF == "A":
+        DF2[['MJD','x','y','UT1-UTC','LOD','dX','dY']] = DF[['MJD','x_A','y_A','UT1-UTC_A','LOD_A','dX_A','dY_A']]
+        DF2["Bul"] = "A"
+        DF2.dropna(axis=1,how="all",inplace=True)       
+
+    elif simplified_EOP_DF == "B":
+        DF2[['MJD','x','y','UT1-UTC','LOD','dX','dY']] = DF[['MJD','x_B','y_B','UT1-UTC_B','LOD_A','dX_B','dY_B']]
+        DF2["Bul"] = "B"
+        DF2.dropna(axis=1,how="all",inplace=True)
+
+    else:
+        print("ERR: read_eop_C04: check the  simplified_EOP_DF parameter !!!")
+        raise Exception
+        
+    return DF,DF2
 
 ########################################################################################################################################
 ############################################### READ IERS GUS
