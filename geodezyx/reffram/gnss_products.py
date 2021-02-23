@@ -394,7 +394,8 @@ def compar_orbit_plot(Diff_sat_all_df_in,
                       save_plot_name="auto",
                       save_plot_name_suffix=None,
                       save_plot_ext=(".pdf",".png",".svg"),
-                      yaxis_limit=None):
+                      yaxis_limit=None,
+                      yaxis_label_unit="m"):
     """
     General description
 
@@ -454,15 +455,18 @@ def compar_orbit_plot(Diff_sat_all_df_in,
 
         fig.autofmt_xdate()
 
+
+    ylabuni = " (" + yaxis_label_unit + ")"
+    
     if Diff_sat_all_df_in.frame_type == 'RTN':
-        axr.set_ylabel('Radial diff. (m)')
-        axt.set_ylabel('Transverse diff. (m)')
-        axn.set_ylabel('Normal diff. (m)')
+        axr.set_ylabel('Radial diff.'     + ylabuni)
+        axt.set_ylabel('Transverse diff.' + ylabuni)
+        axn.set_ylabel('Normal diff.'     + ylabuni)
 
     else:
-        axr.set_ylabel(Diff_sat_all_df_in.frame_type + ' X diff. (m)')
-        axt.set_ylabel(Diff_sat_all_df_in.frame_type + ' Y diff. (m)')
-        axn.set_ylabel(Diff_sat_all_df_in.frame_type + ' Z diff. (m)')
+        axr.set_ylabel(Diff_sat_all_df_in.frame_type + ' X diff.' + ylabuni)
+        axt.set_ylabel(Diff_sat_all_df_in.frame_type + ' Y diff.' + ylabuni)
+        axn.set_ylabel(Diff_sat_all_df_in.frame_type + ' Z diff.' + ylabuni)
 
 
     y_formatter = matplotlib.ticker.ScalarFormatter(useOffset=False)
@@ -888,7 +892,7 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
                   inv_trf2crf=False):
     """
     Convert an Orbit DataFrame from Celetrial Reference Frame to 
-    Terrestrial Reference Frame.
+    Terrestrial Reference Frame (.
     
     Requires EOP to work. Cf. note below.
 
@@ -909,6 +913,7 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
     -------
     DForb_out : DataFrame
         Output Orbit DataFrame in Terrestrial Reference Frame.
+        (or Celestrial if inv_trf2crf is True)
         
     Note
     ----
@@ -921,7 +926,7 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
     
     DForb = DForb_inp.copy()
     
-    ### bring everithing to UTC
+    ### bring everything to UTC
     if time_scale_inp.lower() == "gps":
         DForb["epoch_utc"] = conv.dt_gpstime2dt_utc(DForb["epoch"])
     elif time_scale_inp.lower() == "tai":
@@ -937,7 +942,7 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
         
     ### Do the EOP interpolation 
     DF_EOP_intrp = eop_interpotate(DF_EOP_inp, DForb["epoch_utc"])
-    ### bring the EOp to radians
+    ### bring the EOP to radians
     Xeop = np.deg2rad(conv.arcsec2deg(DF_EOP_intrp['x']))
     Yeop = np.deg2rad(conv.arcsec2deg(DF_EOP_intrp['y']))
     
@@ -1353,7 +1358,12 @@ def eop_interpotate(DF_EOP,Epochs_intrp,eop_params = ["x","y"]):
     for eoppar in eop_params:
         I = conv.interp1d_time(DF_EOP.epoch,DF_EOP[eoppar])
         I_eop[eoppar] = I
-        Out_eop[eoppar] = I(Epochs_intrp)
+        try:
+            Out_eop[eoppar] = I(Epochs_intrp)
+        except ValueError as err:
+            print("ERR: in EOP interpolation")
+            print("param.:",eoppar,"epoch:",Epochs_intrp)
+            raise err
       
     if not singleton:
         OUT = pd.DataFrame(Out_eop)

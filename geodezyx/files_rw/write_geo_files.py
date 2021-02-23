@@ -85,7 +85,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
         #### end of missing sat bloc
 
         SP3epoc.sort_values("sat",inplace=True,ascending=False)
-        timestamp = conv.dt2sp3_timestamp(conv.numpy_datetime2dt(epoc)) + "\n"
+        timestamp = conv.dt2sp3_timestamp(conv.numpy_dt2dt(epoc)) + "\n"
 
         linefmt = "P{:}{:14.6f}{:14.6f}{:14.6f}{:14.6f}\n"
 
@@ -152,7 +152,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
 
 
     ######### 2 First LINES
-    start_dt = conv.numpy_datetime2dt(np.min(EpochUsedList))
+    start_dt = conv.numpy_dt2dt(np.min(EpochUsedList))
     
     header_line1 = "#cP" + conv.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochUsedList)) + "   u+U IGSXX FIT  XXX\n"
 
