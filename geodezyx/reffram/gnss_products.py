@@ -888,7 +888,7 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
                   inv_trf2crf=False):
     """
     Convert an Orbit DataFrame from Celetrial Reference Frame to 
-    Terrestrial Reference Frame.
+    Terrestrial Reference Frame (.
     
     Requires EOP to work. Cf. note below.
 
@@ -909,6 +909,7 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
     -------
     DForb_out : DataFrame
         Output Orbit DataFrame in Terrestrial Reference Frame.
+        (or Celestrial if inv_trf2crf is True)
         
     Note
     ----
@@ -921,7 +922,7 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
     
     DForb = DForb_inp.copy()
     
-    ### bring everithing to UTC
+    ### bring everything to UTC
     if time_scale_inp.lower() == "gps":
         DForb["epoch_utc"] = conv.dt_gpstime2dt_utc(DForb["epoch"])
     elif time_scale_inp.lower() == "tai":
@@ -937,7 +938,7 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
         
     ### Do the EOP interpolation 
     DF_EOP_intrp = eop_interpotate(DF_EOP_inp, DForb["epoch_utc"])
-    ### bring the EOp to radians
+    ### bring the EOP to radians
     Xeop = np.deg2rad(conv.arcsec2deg(DF_EOP_intrp['x']))
     Yeop = np.deg2rad(conv.arcsec2deg(DF_EOP_intrp['y']))
     
@@ -1353,7 +1354,12 @@ def eop_interpotate(DF_EOP,Epochs_intrp,eop_params = ["x","y"]):
     for eoppar in eop_params:
         I = conv.interp1d_time(DF_EOP.epoch,DF_EOP[eoppar])
         I_eop[eoppar] = I
-        Out_eop[eoppar] = I(Epochs_intrp)
+        try:
+            Out_eop[eoppar] = I(Epochs_intrp)
+        except ValueError as err:
+            print("ERR: in EOP interpolation")
+            print("param.:",eoppar,"epoch:",Epochs_intrp)
+            raise err
       
     if not singleton:
         OUT = pd.DataFrame(Out_eop)
