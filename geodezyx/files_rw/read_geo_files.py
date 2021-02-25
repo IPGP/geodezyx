@@ -1003,6 +1003,9 @@ def read_eop_finals(file_path_in,precnut_model = 2000,
     ### if not x_A provided, then its a blank line
     DF = DF[np.logical_not(np.isnan(DF['x_A']))]
     
+    ### set mjd as int
+    DF["MJD"]   = DF["MJD"].astype(np.int64)
+    
     #### DF 2 is a simplified version, base on the C04 DF
     DF2 = pd.DataFrame()
     DF2["epoch"] = conv.MJD2dt(DF["MJD"])
@@ -1019,6 +1022,7 @@ def read_eop_finals(file_path_in,precnut_model = 2000,
         DF2.loc[np.isnan(DF['UT1-UTC_B']),'UT1-UTC'] = DF.loc[np.isnan(DF['UT1-UTC_B']),'UT1-UTC_A']
         DF2.loc[np.isnan(DF.dX_B),'dX'] = DF.loc[np.isnan(DF.dX_B),'dX_A']
         DF2.loc[np.isnan(DF.dX_B),'dY'] = DF.loc[np.isnan(DF.dY_B),'dY_A']
+                
     elif simplified_EOP_DF == "A":
         DF2[['MJD','x','y','UT1-UTC','LOD','dX','dY']] = DF[['MJD','x_A','y_A','UT1-UTC_A','LOD_A','dX_A','dY_A']]
         DF2["Bul"] = "A"
