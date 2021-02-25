@@ -948,7 +948,7 @@ def itrf_helmert_trans(Xi,
     return Xe
 
 
-def helmert_trans_estim_matrixs_maker(X1 , X2):
+def _helmert_trans_estim_matrixs_maker(X1 , X2):
     """
     internal function for helmert_trans_estim
     """
@@ -959,8 +959,8 @@ def helmert_trans_estim_matrixs_maker(X1 , X2):
     block_1 = np.eye(3)
     
     block_2 = np.array([[ 0. , -z1,  y1, x1],
-                       [ z1,   0., -x1, y1],
-                       [-y1,  x1,   0., z1]])
+                        [ z1,   0., -x1, y1],
+                        [-y1,  x1,   0., z1]])
     
     l = X2 - X1
     A = np.hstack((block_1 , block_2))
@@ -981,8 +981,8 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
     Parameters
     ----------
     
-    X1list & X2list : list of N (x,y,z) points ,
-        or an numpy array of shape (N,3)
+    X1list & X2list : list of N (x,y,z) points, or an (N,3)-shaped numpy array
+        Input point sets
 
     Weights : list of N Weights,
         or an numpy array of shape (N,3)
@@ -1013,7 +1013,7 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
             Bool_stk.append(False)
             continue
         
-        lmono , Amono = helmert_trans_estim_matrixs_maker(X1,X2)
+        lmono , Amono = _helmert_trans_estim_matrixs_maker(X1,X2)
             
         l_stk.append(lmono)
         A_stk.append(Amono)
@@ -1036,12 +1036,34 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
     
     HParam = scipy.linalg.inv(N).dot(AtWB)
     
-    
-    
     return HParam , A , l
 
 
-def helmert_trans_apply(Xin,SevenParam_in):
+def helmert_trans_apply(Xin,SevenParam_in,legacy_mode=False):
+    """
+    Apply an Helmert transformation (7-parameters)
+    to a set a points
+
+    Parameters
+    ----------
+    Xin : list of N (x,y,z) points, or an (N,3)-shaped numpy array.
+        input set points
+        
+    SevenParam_in : 7 element list or array
+        7 Helmert params. : x,y,z translations, x,y,z rotations, scale.
+        
+    legacy_mode : bool, optional
+        Use a non-optimized and slow computation approach (but same result).
+        This option should be removed in the Future.
+        The default is False.
+
+    Returns
+    -------
+    Xout : list/array of N (x,y,z) points
+        output transformed points. Same type as the input.
+
+    """
+    
     tx,ty,tz,rx,ry,rz,scal = SevenParam_in 
     
     R = np.array([[1.,rz,-ry],
@@ -1053,11 +1075,14 @@ def helmert_trans_apply(Xin,SevenParam_in):
     
     typ=utils.get_type_smart(Xin)
     
-    Xout = []
-    for X1 in Xin:
-        X2 = S * np.dot(R,X1) + T
-        Xout.append(X2)
-    
+    if legacy_mode:
+        Xout = []
+        for X1 in Xin:
+            X2 = S * np.dot(R,X1) + T
+            Xout.append(X2)
+    else:
+        Xout = S * np.einsum('ij,kj->ki', R,Xin) + np.tile(T,(len(Xin),1))
+  
     Xout=typ(Xout)
     
     return Xout
@@ -1074,8 +1099,8 @@ def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
     Parameters
     ----------
     
-    X1in & X2in : list of N (x,y,z) points ,
-        or an numpy array of shape (3, N)
+    X1in & X2in : list of N (x,y,z) points, or an (N,3)-shaped numpy array
+        Input point sets
 
     HParam_apri : list of 7 values,
         The Apriori for the Helmert parameter 

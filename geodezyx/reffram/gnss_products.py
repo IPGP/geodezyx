@@ -57,7 +57,8 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
         select output, Radial Transverse Normal or XYZ
 
     convert_ECEF_ECI : bool
-        convert sp3 ECEF => ECI, must be True in operational !
+        convert sp3 ECEF => ECI (Terrestrial => Celestrial)
+        must be True in operational to avoid artifacts.
 
     name1 & name2 : str (optionals)
         optional custom names for the 2 orbits
