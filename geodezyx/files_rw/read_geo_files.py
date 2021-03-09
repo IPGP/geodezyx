@@ -33,7 +33,7 @@ import datetime as dt
 import linecache
 import io
 import numpy as np
-import os 
+import os
 import pandas as pd
 
 #### geodeZYX modules
@@ -102,24 +102,24 @@ def read_clk(file_path_in):
     """
     HeadLine = utils.grep(file_path_in,"END OF HEADER",
                           only_first_occur=True,line_number=True)
-    
+
     DFclk = pd.read_csv(file_path_in,skiprows=HeadLine[0]+1,header=None,
                         delim_whitespace = True,
                         names=['type', 'name', 'year', 'month', 'day', 'hour',
                              'minute', 'second',"n_values",'bias', 'sigma'])
-    
-    DFclk["ac"] = os.path.basename(file_path_in)[:3] 
-    
+
+    DFclk["ac"] = os.path.basename(file_path_in)[:3]
+
     DFclk['epoch'] = pd.to_datetime(DFclk[['year', 'month', 'day', 'hour','minute', 'second']])
     DFclk.path = file_path_in
-    
+
     return DFclk
 
 def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=True):
     """
     Read an IGS clk file
     Slow and complex, use read_clk instead
-    
+
     Parameters
     ----------
     file_path_in :  str
@@ -230,11 +230,11 @@ def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=T
             name_list = ['offset','rms']
         else:
             name_list = ['bias','sigma']
-            
+
         Clk_readed = pd.DataFrame(Clk_read, columns= ['type','name','year','month','day','h','minutes','seconds','epoch'] + name_list)
         Clk_readed['epoch'] =  pd.to_datetime(Clk_readed[[ 'year' ,'month' ,'day','h','minutes','seconds']])
         Clk_readed.path = file_path_in
-    
+
         return Clk_readed
 
           ###############################
@@ -273,13 +273,13 @@ def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=T
     # out1 :  pandas table
         # Returns a panda table format with the data extracted from the file.
 
-    # Obs: this function need to be improved to read also the values of UTC and etc. So far reads only the Pole rates. 
+    # Obs: this function need to be improved to read also the values of UTC and etc. So far reads only the Pole rates.
 
     # """
 
     # #### FIND DELIVERY DATE
     # name = os.path.basename(caminho_arq)
-    
+
     # if len(name) == 12:
         # dt_delivery = conv.sp3name2dt(caminho_arq)
     # elif len(name) == 38:
@@ -291,9 +291,9 @@ def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=T
     # le = open(caminho_arq, 'r')
     # letudo = le.readlines()
     # le.close()
-    # tamanho = len(letudo) 
+    # tamanho = len(letudo)
 
-    
+
 
     # numeros = ['0','1','2','3','4','5','6','7','8','9']
 
@@ -336,7 +336,7 @@ def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=T
                     # XPO_stk.append(XPO)
                     # XPO_std_stk.append(XPO_std)
                     # MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
-                    
+
                 # if utils.contains_word(Lines[i],'YPO') and marker:
                     # Doy = (Lines[i][30:33])
                     # Year = str(Lines[i][27:29])
@@ -348,7 +348,7 @@ def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=T
                     # YPO_stk.append(YPO)
                     # YPO_std_stk.append(YPO_std)
                     # MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
-                    
+
                 # if utils.contains_word(Lines[i],'LOD') and marker:
                     # Doy = (Lines[i][30:33])
                     # Year = str(Lines[i][27:29])
@@ -360,7 +360,7 @@ def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=T
                     # LOD_stk.append(LOD)
                     # LOD_std_stk.append(LOD_std)
                     # MJD_stk.append(conv.jd_to_mjd(conv.date_to_jd(Date.year,Date.month,Date.day)))
-                    
+
         # MJD = list(set(MJD_stk))
         # if len(LOD_stk) == 0:
                 # LOD_stk = ['0']*len(MJD)
@@ -483,12 +483,12 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     epoch_as_pd_index : bool
         if True, the index of the output dataframe contains
         if False, it contains generic integer indexs
-        
+
     km_conv_coef : float
         a conversion coefficient to change the units
         to get meters : 10**3
         to get milimeters : 10**6
-        
+
     skip_null_epoch :bool
         Do not write an epoch if all sats are null (filtering)
 
@@ -525,25 +525,25 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
         if l[0] == '*':
             epoc   = conv.tup_or_lis2dt(l[1:].strip().split())
-            
+
         elif len(l.strip()) == 0:
             continue
-            
+
         else:
             sat_nat = l[1:2].strip()
-            
+
             sat_sv  = int(l[2:4].strip())
             sat_sat = l[1:4].strip()
-	    
+
             # QnD mode, must be imprved to detect nonfloat values
             if '*' in l[4:18] or not (l[4:18] and l[4:18].strip()):
                 X = np.nan
             else:
-                X   = float(l[4:18]) * km_conv_coef               
+                X   = float(l[4:18]) * km_conv_coef
             if '*' in l[18:32] or not (l[18:32] and l[18:32].strip()):
                 Y = np.nan
             else:
-                Y   = float(l[18:32])* km_conv_coef                
+                Y   = float(l[18:32])* km_conv_coef
             if '*' in l[32:46] or not (l[32:46] and l[32:46].strip()):
                 Z = np.nan
             else:
@@ -552,7 +552,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
                 Clk = np.nan
             else:
                 Clk = float(l[46:60])
-            
+
             typ = l[0]
 
             if returns_pandas:
@@ -678,9 +678,9 @@ def sp3_DataFrame_zero_epoch_filter(DFsp3):
     DFgrp = DFsp3[["epoch","x","y","z"]].groupby("epoch")
     DFsum = DFgrp.agg(np.sum).sum(axis=1)
     Epochs = DFsum[np.isclose(DFsum,0)].index
-    
+
     DFsp3_out = DFsp3[np.logical_not(DFsp3["epoch"].isin(Epochs))]
-    
+
     return DFsp3_out
 
 
@@ -753,7 +753,7 @@ def sp3_decimate(file_in,file_out,step=15):
 
     for l in Fin:
         if l[0] == "*":
-            epoc   = conv.tup_or_lis2dt(l[1:].strip().split()) 
+            epoc   = conv.tup_or_lis2dt(l[1:].strip().split())
             if np.mod(epoc.minute , step) == 0:
                 good_line = True
             else:
@@ -804,7 +804,7 @@ def clk_decimate(file_in,file_out,step=300):
             Fout.write(l)
 
     return file_out
-    
+
 def AC_equiv_vals(AC1,AC2):
     ### 1) Merge the 2 DF to find common lines
     ACmerged = time_series.merge(AC1 , AC2 , how='inner', on=['epoch', 'sat'])
@@ -1112,7 +1112,7 @@ def read_erp2(caminho_arq,ac=None):
         Path of the file in the local machine.
 
     which AC :  str
-        The analisys center that will be used. 
+        The analisys center that will be used.
         If not precised, will be the first 3 letters of the input name
 
 
@@ -1190,7 +1190,7 @@ def read_erp2(caminho_arq,ac=None):
                     XPO_std_stk.append(XPO_std)
                     MJD_stk.append(conv.dt2MJD(Date))
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
-                    
+
                 if utils.contains_word(Lines[i],'YPO') and marker:
                     # Doy = (Lines[i][30:33])
                     # Year = (Lines[i][27:29])
@@ -1205,7 +1205,7 @@ def read_erp2(caminho_arq,ac=None):
                     MJD_stk.append(conv.dt2MJD(Date))
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
 
-                    
+
                 if utils.contains_word(Lines[i],'LOD') and marker:
                     # Doy = (Lines[i][30:33])
                     # Year = (Lines[i][27:29])
@@ -1251,9 +1251,9 @@ def read_erp2(caminho_arq,ac=None):
                 ERP_data.append(dt_delivery)
 
                 ERP.append(ERP_data)
-                
+
         linecache.clearcache()
-        
+
 
 #        Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
 #                                                 'X-RT','Y-RT','S-XR','S-YR',"Delivery_date"])
@@ -1275,7 +1275,7 @@ def read_erp2(caminho_arq,ac=None):
                 ERP_data.append(dt_delivery)
 
                 ERP.append(ERP_data)
-                
+
         linecache.clearcache()
 
 #        Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
@@ -1332,17 +1332,17 @@ def read_erp2(caminho_arq,ac=None):
                                          'X-RT','Y-RT','S-XR','S-YR',
                                          'Delivered_date'])
 
-        
+
     return Erp_end
-    
-    
+
+
 def read_erp_snx(snx_in):
     utils.extract_text_between_elements_2(snx_in,
                                           '\+SOLUTION/ESTIMATE',
                                           '-SOLUTION/ESTIMATE',
                                           return_string = True)
-    
-    
+
+
 
 
 
@@ -1612,12 +1612,12 @@ def read_pdm_res_slr_mono(res_file_in,
                           sol="sol"):
     """
     Read a PDM7 res(idual) file for SLR Validation
-    
+
     Parameters
     ----------
     res_file_in : str
         path of the input res file.
-        
+
     sol : str or lambda fct
         solution name
         if it is a lambda fct, it will grab the sol name from the full residual path
@@ -1629,20 +1629,20 @@ def read_pdm_res_slr_mono(res_file_in,
         output DataFrame.
 
     """
-    
+
     dat = conv.sp3name2dt("xxx" + os.path.basename(res_file_in)[:5])
-    
+
     ### get useful values
     L = utils.extract_text_between_elements_2(res_file_in,
                                               "\+residuals",
                                               "\-residuals")
     L = L[3:-1]
-    
+
     output = io.StringIO()
     output.write("".join(L))
     output.seek(0)
-    
-    ### 
+
+    ###
     if utils.is_lambda(sol):
         sol_wrk = sol(res_file_in)
     else:
@@ -1650,7 +1650,7 @@ def read_pdm_res_slr_mono(res_file_in,
 
     ### read
     DFout = pd.read_csv(output,header=-1,delim_whitespace = True)
-    
+
     ### rename useful columns
     DFout = DFout.rename(columns={0: 'time',
                                   1: 'sta',
@@ -1663,24 +1663,24 @@ def read_pdm_res_slr_mono(res_file_in,
                                   9: 'dt_sta',
                                   10: 'delay',
                                   11: 'sig_sta'})
-    
-    DFout["day"] = dat 
+
+    DFout["day"] = dat
     DFout["epoc"] = dat + DFout["time"].apply(lambda x: dt.timedelta(microseconds=x*86400*10*6))
-    DFout['sol'] = sol_wrk 
+    DFout['sol'] = sol_wrk
     DFout["sys"] = DFout["sat"].str[0]
-    
+
     return DFout
-    
-        
+
+
 def read_pdm_res_slr_multi(Res_file_list_in,sol="sol"):
     """
     Read a PDM7 res(idual) file for SLR Validation
-    
+
     Parameters
     ----------
     Res_file_list_in : list of str
         List of path of the input res files.
-        
+
     sol : str or lambda fct
         solution name
         if it is a lambda fct, it will grab the sol name from the full residual path
@@ -1694,13 +1694,13 @@ def read_pdm_res_slr_multi(Res_file_list_in,sol="sol"):
     DFstk = []
     for res_fil in Res_file_list_in:
         DFmono = read_pdm_res_slr_mono(res_fil,sol=sol)
-        DFstk.append(DFmono) 
-        
+        DFstk.append(DFmono)
+
     DFmulti = pd.concat(DFstk)
     DFmulti.reset_index(inplace = True,drop=True)
 
     return DFmulti
- 
+
 
 def sinex_bench_antenna_DF_2_disconts(DFantenna_in,stat,return_full=False):
     DFantenna_work = DFantenna_in[DFantenna_in["Code"] == stat]
@@ -1712,33 +1712,33 @@ def sinex_bench_antenna_DF_2_disconts(DFantenna_in,stat,return_full=False):
         Clean_list = sorted(list(set(Start_List + End_list)))
         Clean_list = [e for e in Clean_list if e != dt.datetime(1970, 1, 1, 0, 0)]
         return Clean_list
-    
+
 ############### Reading Tropospheric ################################################
 def read_snx_trop(snxfile,dataframe_output=True):
     """
     Read troposphere solutions from Troposphere SINEX
     """
-    
+
     STAT , epoc = [] , []
     tro , stro , tgn , stgn , tge , stge = [] , [] , [] , [] , [] , []
-    
+
     flagtrop = False
-    
+
     for line in open(snxfile,"r",encoding = "ISO-8859-1"):
 
         if re.compile('TROP/SOLUTION').search(line):
             flagtrop = not flagtrop
             continue
-        
+
         if line[0] == ' ':
             fields = line.split()
         else:
             continue
-        
+
         if flagtrop ==True:
-            
+
             STAT.append(fields[0].upper())
-            
+
             if not ':' in fields[1]:
                 epoc.append(conv.convert_partial_year(fields[1]))
             else:
@@ -1747,7 +1747,7 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 doy = int(date_elts_lis[1])
                 sec = int(date_elts_lis[2])
                 epoc.append(conv.doy2dt(yy,doy,seconds=sec))
-                
+
             if len(fields) == 8:
                 tro.append(np.nan if '*' in fields[2] else fields[2])
                 stro.append(np.nan if '*' in fields[3] else fields[3])
@@ -1755,7 +1755,7 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 stgn.append(np.nan if '*' in fields[5] else fields[5])
                 tge.append(np.nan if '*' in fields[6] else fields[6])
                 stge.append(np.nan if '*' in fields[7] else fields[7])
-                            
+
             elif len(fields) == 4:
                 tro.append(np.nan if '*' in fields[2] else fields[2])
                 stro.append(np.nan if '*' in fields[3] else fields[3])
@@ -1763,7 +1763,7 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 stgn.append(np.nan)
                 tge.append(np.nan)
                 stge.append(np.nan)
-                
+
             else:
                 tro.append(np.nan)
                 stro.append(np.nan)
@@ -1771,51 +1771,90 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 stgn.append(np.nan)
                 tge.append(np.nan)
                 stge.append(np.nan)
-    
+
     outtuple = \
     list(zip(*sorted(zip(STAT , epoc , tro , stro , tgn , stgn , tge , stge))))
-    
+
     if dataframe_output:
         return Tropsinex_DataFrame(outtuple)
-                
+
+def read_gfz_trop(trpfile):
+    """
+    This function is reading GFZ troposphere sinex into Pandas DataFrame
+
+    Parameters
+    ----------
+    trpfile : Str
+        File name of GFZ troposphere sinex.
+
+    Returns
+    -------
+    DF : Pandas DataFrame
+        Pandas Dataframe of GFZ troposphere sinex.
+
+    """
+    fields = []
+    flagtrop = False
+
+    for line in open(trpfile,"r",encoding = "ISO-8859-1"):
+        if re.compile('TROP/SOLUTION').search(line):
+            flagtrop = not flagtrop
+            continue
+
+        if flagtrop ==True and line[0] == ' ':
+            field = line.split()
+            fields.append(field)
+        else:
+            continue
+
+    DF = pd.DataFrame(fields)
+    DF.drop(columns=[0,8,9,10,11,12,18,19,20],inplace=True)
+    DF.columns = ['STAT','epoc','year','doy','secofday','ztd_est','ztd_est_std','num_sat','tgn_est','tgn_est_std','tge_est','tge_est_std']
+    cols_numeric = ['epoc','ztd_est','ztd_est_std','num_sat','tgn_est','tgn_est_std','tge_est','tge_est_std']
+    DF[cols_numeric] = DF[cols_numeric].apply(pd.to_numeric, errors='coerce')
+    DF['epoc'] = conv.MJD2dt(DF['epoc'].values)
+    DF['epoc'] = DF['epoc'].dt.floor('H')
+    return DF
+
+
 def Tropsinex_DataFrame(read_sinex_result):
      """
       General description
 
         Parameters
         ----------
-        read_sinex_result : 
+        read_sinex_result :
             List values from read_snx_trop function
-                    
+
         Returns
         -------
-        DF_Sinex : 
+        DF_Sinex :
             troposphere information from SINEX in Dataframe
-            
+
      """
      DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
      colnam = ['STAT','epoc','tro','stro','tgn','stgn','tge','stge']
      DF_Sinex.columns = colnam
      cols_numeric = ['tro','stro','tgn','stgn','tge','stge']
      DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(pd.to_numeric, errors='coerce')
-     
+
      return DF_Sinex
 
 def read_bernese_trp(trpfile):
     """
     This function reads tropospheric solution in TRP format from Bernese
     GNSS software
-    
+
     Parameter
     ----------
     trpfile:
         Filename of TRP file from Bernese
-    
+
     Return
     ----------
     DF:
         Tropospheric solutions from Bernese in Dataframe
-    
+
     Notes
     ----------
         Written by Chaiyaporn Kitpracha
@@ -1839,13 +1878,13 @@ def read_bernese_trp(trpfile):
             headers[8] = 'second'
             flagtrop = True
             continue
-        
+
         if flagtrop and not line == '\n':
             fields = line.split()
             field.append(fields)
         else:
             continue
-        
+
     DF = pd.DataFrame(field,columns=headers)
     DF['dt'] = pd.to_datetime(DF[['year','month','day','hour','minute','second']])
     cols_num = ['MOD_U', 'CORR_U', 'SIGMA_U', 'TOTAL_U', 'CORR_N', 'SIGMA_N','CORR_E', 'SIGMA_E']
@@ -1853,7 +1892,7 @@ def read_bernese_trp(trpfile):
     DF.drop(['year','month','day','hour','minute','second'], axis=1,inplace=True)
     return DF
 
-  
+
 
 def read_rinex_met(metfile):
     """
@@ -1894,13 +1933,13 @@ def read_rinex_met_2(metfile):
             headers = tmp[1:int(tmp[0])+1]
         if re.compile('TD SENSOR MOD/TYPE/ACC').search(line):
             tmp = line.split()
-            temp_unc = float(tmp[2])
+            temp_unc = float(tmp[-4])
         if re.compile('PR SENSOR MOD/TYPE/ACC').search(line):
             tmp = line.split()
-            press_unc = float(tmp[2])
+            press_unc = float(tmp[-4])
         if re.compile('HR SENSOR MOD/TYPE/ACC').search(line):
             tmp = line.split()
-            humrel_unc = float(tmp[2])
+            humrel_unc = float(tmp[-4])
         if re.compile('END OF HEADER').search(line):
             break
         ln = ln+1
@@ -1930,5 +1969,5 @@ def read_rinex_met_2(metfile):
 
 
 
- 
+
 
