@@ -75,7 +75,7 @@ TBC
 
 ## INSTALLATION
 
-### Automatic installation from XXXX
+### Automatic installation from PyPi
 
 Should be implemented soon !
 
@@ -131,17 +131,16 @@ Install the package in Anaconda
 
 #### Installation for your whole environnement
 
-* In a terminal, edit your .bashrc using e.g. 
-nano ~/.bashrc
-
-* add a line 
-export PYTHONPATH=$PYTHONPATH:<path to the toolbox>/GeodeZYX-Toolbox_v4/geodezyx
+* In a terminal, edit your `.bashrc` using e.g. `nano ~/.bashrc`
+* add a line:   
+`export PYTHONPATH=$PYTHONPATH:<path to the toolbox>/GeodeZYX-Toolbox_v4/geodezyx`
 
 * The toolbox is installed !
 
 #### Spyder user
 
-For the ones who use the Graphical User Interface Spyder (which I recommend) :
+For the ones who use the Graphical User Interface Spyder (which I recommend):
+
 * click on the “PYTHONPATH manager” button (the Python logo-shaped icon between the spanner icon and the left arrow icon on the main toolbar)
 *  add the folder
 <path to the toolbox>/GeodeZYX-Toolbox_v4/geodezyx
