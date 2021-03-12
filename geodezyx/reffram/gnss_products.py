@@ -745,7 +745,6 @@ def compar_clock_table(DFclk_diff_in):
     return DFcompar_out
 
 
-
 def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
                  out_means_summary=True,out_meta=True,out_dataframe = True,
                  manu_wwwwd=None):
