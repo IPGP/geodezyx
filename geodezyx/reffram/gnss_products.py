@@ -1169,7 +1169,433 @@ def ClkDF_common_epoch_finder(ClkDFa_in,ClkDFb_in,return_index=False,
                                      order=order)
 
     
+
+
+def compar_clk(Data_inp_1,Data_inp_2,step_data = 300,
+                 sats_used_list = ['G'],
+                 name1='',name2='',use_name_1_2_for_table_name = False,
+                 clean_null_values = True,
+                 conv_coef=10**3,return_satNull = False):
+    """
+    Compares 2 GNSS orbits files (SP3), and gives a summary plot and a
+    statistics table
+
+    Parameters
+    ----------
+    Data_inp_1 & Data_inp_2 : str or Pandas DataFrame
+        contains the orbits or path (string) to the sp3
+
+    step_data : int
+        per default data sampling
+
+    sats_used_list : list of str
+        used constellation or satellite : G E R C ... E01 , G02 ...
+        Individuals satellites are prioritary on whole constellations
+        e.g. ['G',"E04"]
+
+
+    RTNoutput : bool
+        select output, Radial Transverse Normal or XYZ
+
+    convert_ECEF_ECI : bool
+        convert sp3 ECEF => ECI (Terrestrial => Celestrial)
+        must be True in operational to avoid artifacts.
+
+    name1 & name2 : str (optionals)
+        optional custom names for the 2 orbits
+
+    use_name_1_2_for_table_name : bool
+        False : use name 1 and 2 for table name, use datafile instead
+
+    clean_null_values : bool or str
+        if True or "all" remove sat position in all X,Y,Z values
+        are null (0.000000)
+        if "any", remove sat position if X or Y or Z is null
+        if False, keep everything
+        
+    conv_coef : int
+        conversion coefficient, km to m 10**3, km to mm 10**6
+
+    Returns
+    -------
+    Diff_sat_all : Pandas DataFrame
+    contains differences b/w Data_inp_1 & Data_inp_2
+    in Radial Transverse Normal OR XYZ frame
+
+        Attributes of Diff_sat_all :
+            Diff_sat_all.name : title of the table
+
+    Note
+    ----
+    clean_null_values if useful (and necessary) only if
+    convert_ECEF_ECI = False
+    if convert_ECEF_ECI = True, the cleaning will be done by
+    a side effect trick : the convertion ECEF => ECI will generate NaN
+    for a zero-valued position
+    But, nevertheless, activating  clean_null_values = True is better
+    This Note is in fact usefull if you want to see bad positions on a plot
+    => Then convert_ECEF_ECI = False and clean_null_values = False
+
+    Source
+    ------
+    "Coordinate Systems", ASEN 3200 1/24/06 George H. Born
+
+    """
+
+    # selection of both used Constellations AND satellites
+    const_used_list = []
+    sv_used_list    = []
+    for sat in sats_used_list:
+        if len(sat) == 1:
+            const_used_list.append(sat)
+        elif len(sat) == 3:
+            sv_used_list.append(sat)
+            if not sat[0] in const_used_list:
+                const_used_list.append(sat[0])
+
+    # Read the files or DataFrames
+    # metadata attributes are not copied
+    # Thus, manual copy ...
+    # (Dirty way, should be impoved without so many lines ...)
+    if type(Data_inp_1) is str:
+        D1orig = files_rw.read_sp3(Data_inp_1,epoch_as_pd_index=True)
+    else:
+        D1orig = Data_inp_1.copy(True)
+        try:
+            D1orig.name = Data_inp_1.name
+        except:
+            D1orig.name = "no_name"
+        try:
+            D1orig.path = Data_inp_1.path
+        except:
+            D1orig.path = "no_path"
+        try:
+            D1orig.filename = Data_inp_1.filename
+        except:
+            D1orig.filename = "no_filename"
+
+    if type(Data_inp_2) is str:
+        D2orig = files_rw.read_sp3(Data_inp_2,epoch_as_pd_index=True)
+    else:
+        D2orig = Data_inp_2.copy(True)
+        try:
+            D2orig.name = Data_inp_2.name
+        except:
+            D2orig.name = "no_name"
+        try:
+            D2orig.path = Data_inp_2.path
+        except:
+            D2orig.path = "no_path"
+        try:
+            D2orig.filename = Data_inp_2.filename
+        except:
+            D2orig.filename = "no_filename"
+
+    #### NB : It has been decided with GM that the index of a SP3 dataframe
+    ####      will be integers, not epoch datetime anymore
+    ####      BUT here, for legacy reasons, the index has to be datetime
+
+    if isinstance(D1orig.index[0], (int, np.integer)):
+        D1orig.set_index("epoch",inplace=True)
+
+    if isinstance(D2orig.index[0], (int, np.integer)):
+        D2orig.set_index("epoch",inplace=True)
+
+    Diff_sat_stk = []
+
+    # This block is for removing null values
+    if clean_null_values:
+        if clean_null_values == "all":
+            all_or_any = np.all
+        elif clean_null_values == "any":
+            all_or_any = np.any
+        else:
+            all_or_any = np.all
+
+        xyz_lst = ['sv','offset_cor']
+
+        D1_null_bool = all_or_any(np.isclose(D1orig[xyz_lst],0.),axis=1)
+        D2_null_bool = all_or_any(np.isclose(D2orig[xyz_lst],0.),axis=1)
+
+        D1 = D1orig[np.logical_not(D1_null_bool)]
+        D2 = D2orig[np.logical_not(D2_null_bool)]
+
+        if np.any(D1_null_bool) or np.any(D2_null_bool):
+            sat_nul = utils.join_improved(" " ,*list(set(D1orig[D1_null_bool]["sat"])))
+            print("WARN : Null values contained in SP3 files : ")
+            print("f1:" , np.sum(D1_null_bool) , utils.join_improved(" " ,
+                  *list(set(D1orig[D1_null_bool]["sat"]))))
+            print("f2:" , np.sum(D2_null_bool) , utils.join_improved(" " ,
+                  *list(set(D2orig[D2_null_bool]["sat"]))))
+        else:
+            sat_nul = []
+
+    else:
+        D1 = D1orig.copy()
+        D2 = D2orig.copy()
+
+    for constuse in const_used_list:
+        D1const = D1[D1['const'] == constuse]
+        D2const = D2[D2['const'] == constuse]
+
+        # checking if the data correspond to the step
+        bool_step1 = np.mod((D1const.index - np.min(D1.index)).seconds,step_data) == 0
+        bool_step2 = np.mod((D2const.index - np.min(D2.index)).seconds,step_data) == 0
+
+        D1window = D1const[bool_step1]
+        D2window = D2const[bool_step2]
+
+        # find common sats and common epochs
+        sv_set   = sorted(list(set(D1window['sv']).intersection(set(D2window['sv']))))
+        epoc_set = sorted(list(set(D1window.index).intersection(set(D2window.index))))
+
+        # if special selection of sats, then apply it
+        # (it is late and this selection is incredibely complicated ...)
+        if np.any([True  if constuse in e else False for e in sv_used_list]):
+            # first find the selected sats for the good constellation
+            sv_used_select_list = [int(e[1:]) for e in sv_used_list if constuse in e]
+            #and apply it
+            sv_set = sorted(list(set(sv_set).intersection(set(sv_used_select_list))))
+
+        for svv in sv_set:
+            # First research : find corresponding epoch for the SV
+            # this one is sufficent if there is no gaps (e.g. with 0.00000) i.e.
+            # same nb of obs in the 2 files
+            # NB : .reindex() is smart, it fills the DataFrame
+            # with NaN
+            try:
+                D1sv_orig = D1window[D1window['sv'] == svv].reindex(epoc_set)
+                D2sv_orig = D2window[D2window['sv'] == svv].reindex(epoc_set)
+            except Exception as exce:
+                print("ERR : Unable to re-index with an unique epoch")
+                print("      are you sure there is no multiple-defined epochs for the same sat ?")
+                print("      it happens e.g. when multiple ACs are in the same DataFrame ")
+                print("TIP : Filter the input Dataframe before calling this fct with")
+                print("      DF = DF[DF['AC'] == 'gbm']")
+                
+                Dtmp1 = D1orig[D1orig['sv'] == svv]
+                Dtmp2 = D2orig[D2orig['sv'] == svv]
+                
+                dupli1 = np.sum(Dtmp1.duplicated(["epoch","sat"]))
+                dupli2 = np.sum(Dtmp2.duplicated(["epoch","sat"]))
+                
+                print("FWIW : duplicated epoch/sat in DF1 & DF2 : ",dupli1,dupli2)
+
+                raise exce
+
+            # Second research, it is a security in case of gap
+            # This step is useless, because .reindex() will fill the DataFrame
+            # with NaN
+            if len(D1sv_orig) != len(D2sv_orig):
+                print("INFO : different epochs nbr for SV",svv,len(D1sv_orig),len(D2sv_orig))
+                epoc_sv_set = sorted(list(set(D1sv_orig.index).intersection(set(D2sv_orig.index))))
+                D1sv = D1sv_orig.loc[epoc_sv_set]
+                D2sv = D2sv_orig.loc[epoc_sv_set]
+            else:
+                D1sv = D1sv_orig
+                D2sv = D2sv_orig
+
+            P1     = D1sv[['sv','offset_cor']]
+            P2     = D2sv[['sv','offset_cor']]
+
+            Delta_P = P1 - P2
+
+
+            Diff_sat = Delta_P.copy()
+            Diff_sat.columns = ['sv','d_offset']
+
+
+            # Diff_sat = Diff_sat * conv_coef # metrer conversion
+
+            Diff_sat['const'] = [constuse] * len(Diff_sat.index)
+            Diff_sat['sv']    = [svv]      * len(Diff_sat.index)
+            Diff_sat['sat']   = [constuse + str(svv).zfill(2)] * len(Diff_sat.index)
+
+            Diff_sat_stk.append(Diff_sat)
+
+    Diff_sat_all = pd.concat(Diff_sat_stk)
+    Date = Diff_sat.index[0]
+
+
+    Diff_sat_all.frame_col_name1 = 'd_offset'
+    # Diff_sat_all.frame_col_name2 = 'dy'
+    # Diff_sat_all.frame_col_name3 = 'dz'
+
+
+
+
+    # Name definitions
+    if name1:
+        Diff_sat_all.name1 = name1
+    else:
+        Diff_sat_all.name1 = D1orig.name
+
+    if name2:
+        Diff_sat_all.name2 = name2
+    else:
+        Diff_sat_all.name2 = D2orig.name
+
+    Diff_sat_all.filename1 = D1orig.filename
+    Diff_sat_all.filename2 = D2orig.filename
+
+    Diff_sat_all.path1 = D1orig.path
+    Diff_sat_all.path2 = D2orig.path
+
+    # Diff_sat_all.name = ' '.join(('Orbits comparison ('+Diff_sat_all.frame_type +') b/w',
+    #                               Diff_sat_all.name1 ,'(ref.) and',
+    #                               Diff_sat_all.name2 ,',',Date.strftime("%Y-%m-%d"),
+    #                               ', doy', str(conv.dt2doy(Date))))
+
     
+    if return_satNull:
+        return Diff_sat_all, sat_nul
+    else:
+        return Diff_sat_all
+
+
+
+def compar_clk_table(Diff_sat_all_df_in,RMS_style = 'natural',
+                       light_tab  = False):
+    """
+    Generate a table with statistical indicators for an orbit comparison
+    (RMS mean, standard dev, ...)
+    Parameters
+    ----------
+    Diff_sat_all_df_in : Pandas DataFrame
+        a DataFrame produced by compar_orbit
+
+    RMS_style : str
+        'natural': use the natural definition of the RMS
+        'GRGS': RMS calc based on the GRGS definition of the RMS (OV help)
+                is actually the standard deviation
+        'kouba': RMS as defined in Kouba et al. 1994, p75
+                 using the degree of freedom (3*Nobs - 7)
+
+    light_tab : bool
+        produce a table with only RMS, with min/max/arithmetic instead
+
+    Returns
+    -------
+    Compar_tab_out : DataFrame
+        Statistical results of the comparison
+
+    Note
+    ----
+    you can pretty print the output DataFrame using tabular module
+    here is a template:
+
+    >>> from tabulate import tabulate
+    >>> print(tabulate(ComparTable,headers="keys",floatfmt=".4f"))
+    """
+
+    sat_list = utils.uniq_and_sort(Diff_sat_all_df_in['sat'])
+
+    # Pandas donesn't manage well iterable as attribute
+    # So, it is separated
+    try:
+        # col_name0 = Diff_sat_all_df_in.frame_col_name1
+        col_name1 = Diff_sat_all_df_in.frame_col_name2
+        # col_name2 = Diff_sat_all_df_in.frame_col_name3
+    except:
+        # col_name0 = Diff_sat_all_df_in.columns[0]
+        col_name1 = Diff_sat_all_df_in.columns[1]
+        # col_name2 = Diff_sat_all_df_in.columns[2]
+
+    rms_stk = []
+
+    for sat in sat_list:
+        Diffwork = utils.df_sel_val_in_col(Diff_sat_all_df_in,'sat',sat)
+
+        if RMS_style == "natural":
+            # rms_A = stats.rms_mean(Diffwork[col_name0])
+            rms_B = stats.rms_mean(Diffwork[col_name1])
+            # rms_C = stats.rms_mean(Diffwork[col_name2])
+        elif RMS_style == "GRGS":
+            # rms_A = stats.rms_mean(Diffwork[col_name0] - Diffwork[col_name0].mean())
+            rms_B = stats.rms_mean(Diffwork[col_name1] - Diffwork[col_name1].mean())
+            # rms_C = stats.rms_mean(Diffwork[col_name2] - Diffwork[col_name2].mean())
+        elif RMS_style == "kouba":
+            # rms_A = stats.rms_mean_kouba(Diffwork[col_name0])
+            rms_B = stats.rms_mean_kouba(Diffwork[col_name1])
+            # rms_C = stats.rms_mean_kouba(Diffwork[col_name2])
+
+            
+            
+            
+        # RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
+        RMS3D = np.sqrt(rms_B**2)
+
+
+        # min_A = Diffwork[col_name0].min()
+        min_B = Diffwork[col_name1].min()
+        # min_C = Diffwork[col_name2].min()
+
+        # max_A = Diffwork[col_name0].max()
+        max_B = Diffwork[col_name1].max()
+        # max_C = Diffwork[col_name2].max()
+
+        # mean_A = Diffwork[col_name0].mean()
+        mean_B = Diffwork[col_name1].mean()
+        # mean_C = Diffwork[col_name2].mean()
+
+        if light_tab:
+            rms_stk.append([rms_B,RMS3D])
+        else:
+            rms_stk.append([rms_B,RMS3D,
+                            min_B,max_B,mean_B])
+
+
+    #################################
+             # ALL SATS
+    if RMS_style == "natural":
+        # rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0])
+        rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1])
+        # rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2])
+        RMS3D = np.sqrt(rms_B**2)
+    elif RMS_style == "GRGS":
+        # rms_A = stats.rms_mean(Diff_sat_all_df_in[col_name0] - Diff_sat_all_df_in[col_name0].mean())
+        rms_B = stats.rms_mean(Diff_sat_all_df_in[col_name1] - Diff_sat_all_df_in[col_name1].mean())
+        # rms_C = stats.rms_mean(Diff_sat_all_df_in[col_name2] - Diff_sat_all_df_in[col_name2].mean())
+        RMS3D = np.sqrt(rms_B**2)
+    elif RMS_style == "kouba":
+        # rms_A = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name0])
+        rms_B = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name1])
+        # rms_C = stats.rms_mean_kouba(Diff_sat_all_df_in[col_name2])
+        RMS3D = np.sqrt(rms_B**2)
+
+
+    # min_A = Diff_sat_all_df_in[col_name0].min()
+    min_B = Diff_sat_all_df_in[col_name1].min()
+    # min_C = Diff_sat_all_df_in[col_name2].min()
+
+    # max_A = Diff_sat_all_df_in[col_name0].max()
+    max_B = Diff_sat_all_df_in[col_name1].max()
+    # max_C = Diff_sat_all_df_in[col_name2].max()
+
+    # mean_A = Diff_sat_all_df_in[col_name0].mean()
+    mean_B = Diff_sat_all_df_in[col_name1].mean()
+    # mean_C = Diff_sat_all_df_in[col_name2].mean()
+
+    if light_tab:
+        rms_stk.append([rms_B,RMS3D])
+    else:
+        rms_stk.append([rms_B,RMS3D,
+                        min_B,max_B,mean_B])
+
+             # ALL SATS
+    #################################
+
+
+    if light_tab:
+        cols_nam = ["rms_off","rms3D"]
+    else:
+        cols_nam = ["rms_off","rms3D",
+                    "minT","maxT","meanT"]
+
+    Compar_tab_out     = pd.DataFrame(rms_stk,index=sat_list + ['ALL'],
+                                      columns=cols_nam)
+
+    return Compar_tab_out    
 
 
  #   _____ _      _____   __      __   _ _     _       _   _             
