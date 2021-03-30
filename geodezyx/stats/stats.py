@@ -709,7 +709,7 @@ def rms_mean(A):
     """
     returns RMS mean of a list/array
     """
-    return np.sqrt(np.nanmean(np.square(A)))
+    return np.sqrt(np.nanmean(np.square(np.array(A,np.float64))))
 
 def RMSmean(indata):
     """

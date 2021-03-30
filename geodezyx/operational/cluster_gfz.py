@@ -23,6 +23,8 @@ from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
+utils.symbols_list()
+
 ##########  END IMPORT  ##########
 def cluster_GFZ_run(commands_list,
                     bunch_on_off = True,

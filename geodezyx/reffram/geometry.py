@@ -1042,7 +1042,7 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
 def helmert_trans_apply(Xin,SevenParam_in,legacy_mode=False):
     """
     Apply an Helmert transformation (7-parameters)
-    to a set a points
+    to a set of points
 
     Parameters
     ----------
@@ -1075,12 +1075,13 @@ def helmert_trans_apply(Xin,SevenParam_in,legacy_mode=False):
     
     typ=utils.get_type_smart(Xin)
     
-    if legacy_mode:
+    #### Apply the transformation here 
+    if legacy_mode: #### SLOW !!!
         Xout = []
         for X1 in Xin:
             X2 = S * np.dot(R,X1) + T
             Xout.append(X2)
-    else:
+    else: ##### 100x faster with the Einstein sum
         Xout = S * np.einsum('ij,kj->ki', R,Xin) + np.tile(T,(len(Xin),1))
   
     Xout=typ(Xout)
@@ -1090,7 +1091,8 @@ def helmert_trans_apply(Xin,SevenParam_in,legacy_mode=False):
 
 
 def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
-                                     L1norm=True,tol=10**-9,full_output=False):
+                                     L1norm=True,tol=10**-9,
+                                     full_output=False,method="Powell"):    
     """
     estimates 7 parameters of a 3D Helmert transformation between a set of points
     X1 and a set of points X2 (compute transformation X1 => X2) 
@@ -1114,6 +1116,11 @@ def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
     full_output : bool
         return only the result if True, return the scipy optimize result if False
     
+    method : str, optional
+        minimization method.
+        see scipy.optimize.minimize for details
+        The default is "Powell".
+    
     Returns
     -------
     Res :
@@ -1135,10 +1142,16 @@ def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
         
     RES = scipy.optimize.minimize(minimiz_helmert_fct,HParam_apri,
                                   (X1in,X2in,L1norm),
-                                  method="Powell",tol=tol,
-                                  options={"maxiter":100,
-                                         'xtol':tol,
-                                         'ftol':tol})
+                                  method=method,tol=tol,
+                                  options={"maxiter":1000,
+                                           'xtol':tol,
+                                           'ftol':tol})
+    
+    if RES.status != 0:
+        print("WARN: helmert_trans_estim_minimisation: something went wrong (status != 0)")
+        print("      here is the scipy.optimize.minimize message")
+        print("    > " + RES.message)
+    
     if not full_output:
         return RES.x
     else:

@@ -516,6 +516,7 @@ def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
     """
     Generate a table with statistical indicators for an orbit comparison
     (RMS mean, standard dev, ...)
+    
     Parameters
     ----------
     Diff_sat_all_df_in : Pandas DataFrame
@@ -674,6 +675,75 @@ def compar_orbit_frontend(DataDF1,DataDF2,ac1,ac2, sats_used_list = ['G']):
                      sats_used_list=sats_used_list)
     compar_orbit_plot(K)
     return K
+
+
+def compar_clock(DFclk_inp_1,DFclk_inp_2):
+    """
+    Compares 2 GNSS clock bias DataFrames (from .clk), to a
+    statistics table (with compar_clock_table)
+
+
+    Parameters
+    ----------
+    DFclk_inp_1 & DFclk_inp_2 : DataFrame
+        Clock DataFrame provided by files_rw.read_clk()
+
+    Returns
+    -------
+    DFclk_diff : DataFrame
+        Clock bias difference DataFrame
+    """
+    DF1idx = DFclk_inp_1.set_index(["name","epoch"])
+    DF1idx.sort_index(inplace=True)
+    
+    DF2idx = DFclk_inp_2.set_index(["name","epoch"])
+    DF2idx.sort_index(inplace=True)
+    
+    I1 = DF1idx.index
+    I2 = DF2idx.index
+    
+    Iinter = I1.intersection(I2)
+    Iinter = Iinter.sort_values()
+    
+    DF_diff_bias = DF1idx.loc[Iinter].bias - DF2idx.loc[Iinter].bias
+
+    DFclk_diff = DF1idx.loc[Iinter].copy()
+    DFclk_diff["bias"] = DF_diff_bias
+    DFclk_diff.drop("ac",axis=1,inplace=True)
+    DFclk_diff.rename({"bias":"bias_diff"},inplace=True,axis=1)
+    
+    return DFclk_diff
+    
+def compar_clock_table(DFclk_diff_in):
+    """
+    Generate a table with statistical indicators for an orbit comparison
+    (RMS mean, standard dev, ...)
+
+    Parameters
+    ----------
+    DFclk_diff_in : DataFrame
+        Clock bias difference DataFrame (from compar_clock)
+
+    Returns
+    -------
+    DFcompar_out : DataFrame
+        Statistical results of the comparison.
+
+    """
+    
+    DF_diff_grp = DFclk_diff_in.groupby("name")["bias_diff"]
+    
+    Smin  = DF_diff_grp.min().rename("min",inplace=True)
+    Smax  = DF_diff_grp.max().rename("max",inplace=True)
+    Smean = DF_diff_grp.mean().rename("mean",inplace=True)
+    Sstd  = DF_diff_grp.std().rename("std",inplace=True)
+    Srms  = DF_diff_grp.apply(stats.rms_mean).rename("rms",inplace=True)
+    
+    DFcompar_out = pd.concat([Smin,Smax,Smean,Sstd,Srms],axis=1)
+    DFcompar_out.reset_index()
+    
+    return DFcompar_out
+
 
 
 def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
