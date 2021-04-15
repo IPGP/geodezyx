@@ -26,7 +26,7 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
                  XYZbase  = [], XYZrover = [] , outtype = 'XYZ',mode = 'short',
                  interval=None,antmodfile = "~/gg/tables/antmod.dat",
                  calc_center='igs' , forced_sp3_path = '',
-                 const="G"):
+                 const="G",silent=False):
 
     # paths & files
     working_dir = utils.create_dir(working_dir)
@@ -187,24 +187,29 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     print('INFO : command launched :')
     print(bigcomand)
 
+
     # START OF PROCESSING
-    os.chdir(temp_dir)
-    subprocess.call([bigcomand], executable='/bin/bash', shell=True)
-
-    outfiles = []
-    outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*sum*'))
-    outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*pos*'))
-    outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*cmd*'))
-
-    Antobj_rov , Recobj_rov , Siteobj_rov , Locobj_rov = \
-    files_rw.read_rinex_2_dataobjts(rnx_rover)
-
-    [shutil.copy(e,out_dir) for e in outfiles]
-    [os.remove(e) for e in outfiles]
-
-    print("TRACK RUN FINISHED")
-    print('results available in ' , out_dir)
-    return None
+    if not silent:
+        os.chdir(temp_dir)
+        subprocess.call([bigcomand], executable='/bin/bash', shell=True)
+    
+        outfiles = []
+        outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*sum*'))
+        outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*pos*'))
+        outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*cmd*'))
+    
+        Antobj_rov , Recobj_rov , Siteobj_rov , Locobj_rov = \
+        files_rw.read_rinex_2_dataobjts(rnx_rover)
+    
+        [shutil.copy(e,out_dir) for e in outfiles]
+        [os.remove(e) for e in outfiles]
+    
+        print("TRACK RUN FINISHED")
+        print('results available in ' , out_dir)
+    else:
+        print("Silent mode ON: nothing is launched")
+        
+    return bigcomand
 
 
 def run_track(temp_dir,exp_full_name,out_conf_fil,date,rnx_rover):
