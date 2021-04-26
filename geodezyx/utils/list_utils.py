@@ -6,9 +6,19 @@ Created on Wed Jul 31 14:12:12 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+########## BEGIN IMPORT ##########
+#### External modules
+import bisect
+import collections
+import itertools
+import natsort
+import numpy as np
+import re
+#### geodeZYX modules
+
+
+##########  END IMPORT  ##########
 
 
 def is_listoflist(inp):
@@ -74,7 +84,7 @@ def uniq_and_sort(L,natural_sort=True):
     In a list, remove duplicates and sort the list
     """
     if natural_sort:
-        return natsorted(list(set(L)))
+        return natsort.natsorted(list(set(L)))
     else:
         return sorted(list(set(L)))
 
@@ -259,6 +269,33 @@ def second_smallest(numbers):
 def find_index_multi_occurences(L,elt):
     return [i for i, x in enumerate(L) if x == elt]
 
+
+def find_surrounding(L,v):
+    """
+    find the surrounding values
+
+    Parameters
+    ----------
+    L : Iterable
+        Input list/array.
+
+    Returns
+    -------
+    surrounding_values : tuple
+        surounding values.
+    surrounding_index : tuple
+        surounding indexes.
+        
+        
+    """
+    a = np.array(L)
+    b = v
+    
+    surrounding_values = np.sort([b + i for i in sorted(np.subtract(a,b),key=lambda x: abs(x))[:2]])
+    surrounding_index = (np.where(surrounding_values[0] == a)[0][0],np.where(surrounding_values[1] == a)[0][0])
+    
+    return tuple(surrounding_values),surrounding_index
+
 ##################
 ### LIST IT FCTs
 ##################
@@ -304,6 +341,24 @@ def sublistsIt(seq,lenofsublis_lis,output_array=False):
         return [np.array(e) for e in sublis_lis]
     else:
         return sublis_lis
+    
+    
+def identical_consecutive_eltsIt(Lin):
+    Lout_big = []
+    Linter   = [Lin[0]]
+    Lout_big.append(Linter)
+            
+    for e in Lin[1:]:
+        if (e == Linter[-1]):
+            Linter.append(e)
+        else:
+            Linter = [e]
+            Lout_big.append(Linter)
+                
+    return Lout_big
+                
+
+
 
 def find_nearest(listin,value):
     """
@@ -445,10 +500,28 @@ def dicofdic(mat,names):
     # Fabrique un dictionnaire 2D dic[nom1][nom2] = M[n1,n2]
     # http://stackoverflow.com/questions/13326042/2d-dictionary-with-multiple-keys-per-value
 
-    d2_dict = defaultdict(dict)
+    d2_dict = collections.defaultdict(dict)
 
     for i in range(mat.shape[0]):
         for j in range(mat.shape[1]):
             d2_dict[names[i]][names[j]] = mat[i,j]
 
     return d2_dict
+
+
+def find_regex_in_list(regex,L,only_first_occurence=False,
+                       line_number=False):
+    Lout = []
+    for i,e in enumerate(L):
+        if re.search(regex,e):
+            if not line_number:
+                found = e
+            else:
+                found = (i,e)
+                
+            if only_first_occurence:
+                return found
+            else:    
+                Lout.append(found)
+    return Lout
+            

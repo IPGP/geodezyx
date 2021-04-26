@@ -6,9 +6,18 @@ Created on Wed Jul 31 14:19:37 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import scipy
+#### geodeZYX modules
+from geodezyx import utils
+
+##########  END IMPORT  ##########
+
 
 def color_list(L , colormap='jet'):
     cm     = plt.get_cmap(colormap)
@@ -16,7 +25,7 @@ def color_list(L , colormap='jet'):
     colist = [cm(1.*i/NCOL) for i in range(NCOL)]
     return colist
 
-def symbols_list(L):
+def symbols_list(L=None):
 
     Lsym = ["o",
     "v",
@@ -44,7 +53,10 @@ def symbols_list(L):
     "|",
     "_"]
 
-    return Lsym[:len(L)]
+    if not L:
+        return Lsym
+    else:
+        return Lsym[:len(L)]
 
 
 
@@ -82,20 +94,27 @@ def get_figure(figin = 0):
     return figout
 
 
-def figure_saver(figobjt_in , outdir , outname , outtype = '.png' , formt = 'a4' ):
-    if not is_iterable(outtype):
+def figure_saver(figobjt_in , outdir , outname ,
+                 outtype = ('.png','.pdf','.figpik') , formt = 'a4' ,
+                 transparent=False):
+    
+    if not utils.is_iterable(outtype):
          outtype = (outtype,) 
          
     outpath_stk = []
     for outtype_iter in outtype:
-        outpath = os.path.join(outdir,outname+outtype_iter)
-    #    if formt == 'a4':
-    #    elif
-        figobjt_in.savefig(outpath)
+        if "pik" in outtype_iter:
+            outpath = utils.pickle_saver(figobjt_in,outdir,
+                                         outname,outtype_iter)
+        else:   
+            outpath = os.path.join(outdir,outname+outtype_iter)
+            #figobjt_in.savefig(outpath)
+            figobjt_in.savefig(outpath,transparent=transparent)
+
         outpath_stk.append(outpath)
+        
     if len(outpath_stk) == 1:
         outpath_stk = outpath_stk[0]
-
     return outpath_stk
 
 
@@ -124,3 +143,75 @@ def id2val(value_lis,id_lis,idin):
         replace dico bc. set is not supproted as key"""
     return value_lis[id_lis.index(idin)]
 
+def set_size_for_pub(width=418.25368, fraction=1,subplot=[1, 1]):
+    """ Set aesthetic figure dimensions to avoid scaling in latex.
+
+    Parameters
+    ----------
+    width: float
+            Width in pts
+    fraction: float
+            Fraction of the width which you wish the figure to occupy
+
+    Returns
+    -------
+    fig_dim: tuple
+            Dimensions of figure in inches
+    """
+    # Width of figure
+    fig_width_pt = width * fraction
+
+    # Convert from pt to inches
+    inches_per_pt = 1 / 72.27
+
+    # Golden ratio to set aesthetic figure height
+    golden_ratio = (5**.5 - 1) / 2
+
+    # Figure width in inches
+    fig_width_in = fig_width_pt * inches_per_pt
+    # Figure height in inches
+    fig_height_in = fig_width_in * golden_ratio * (subplot[0] / subplot[1])
+
+    fig_dim = (fig_width_in, fig_height_in)
+
+    return fig_dim
+
+
+def gaussian_for_plot(D,density=False,nbins=500,nsigma=3.5):
+    """
+    generate a gaussian curve for histogram plot
+
+    Parameters
+    ----------
+    D : iterable
+        data vector.
+    density : bool, optional
+        Adapted curve for desity mode. The default is False.
+    nbins : int, optional
+        number of bins. The default is 500.
+    nsigma : TYPE, optional
+        n sigmas for the x axis. The default is 3.5.
+
+    Returns
+    -------
+    Xpdf : array
+        gaussian curve x.
+    Ypdf_out : TYPE
+        gaussian curve x.
+
+    """
+
+    mu = np.mean(D)
+    sigma = np.std(D)
+    Xpdf = np.linspace(mu - nsigma*sigma,
+                       mu + nsigma*sigma,
+                       nbins)
+    Ypdf = scipy.stats.norm.pdf(Xpdf, mu, sigma)
+    Ypdf_out = Ypdf
+    if not density:
+        Ybin,Xbin = np.histogram(D,bins=nbins)
+        area_bin = np.trapz(Ybin,dx=np.diff(Xbin)[0])
+        
+        Ypdf_out = Ypdf*area_bin
+        
+    return Xpdf,Ypdf_out    

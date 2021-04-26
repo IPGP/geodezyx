@@ -6,11 +6,29 @@ Created on Fri Aug 16 11:46:44 2019
 @author: psakicki
 """
 
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import glob
+import matplotlib.pyplot as plt
+import numpy as np
+import os 
+import pandas
+import shutil
+import subprocess
+import time
+
+#### geodeZYX modules
+from geodezyx import utils
+from geodezyx import reffram
+
+#### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 
+##########  END IMPORT  ##########
 #  _    _ ______ _____ _______ ____  _____
 # | |  | |  ____/ ____|__   __/ __ \|  __ \
 # | |__| | |__ | |       | | | |  | | |__) |
@@ -52,19 +70,26 @@ def neufile_outlier_removing(inp_neufile,generik_conf_file,outdir='',remove_ctl_
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    comp_list = [ 'North' , 'East' , 'Up' ]
 
-    for comp in comp_list:
-        work_conf_file = inpdir + '/' + prefix_inp  + comp[0] + '_rmoutlier.ctl'
-        prefix_out = prefix_inp + comp[0] + '_pre'
+    comp_list = [ 'North' , 'East' , 'Up' ]
+        
+    if utils.grep_boolean(inp_neufile,"Components : YXZ"):
+        comp_list_filename = [ 'Y' , 'X' , 'Z' ]
+    else:
+        comp_list_filename = [ 'N' , 'E' , 'U' ]
+        
+
+    for comp,comp_fn in zip(comp_list,comp_list_filename):
+        work_conf_file = inpdir + '/' + prefix_inp  + comp_fn + '_rmoutlier.ctl'
+        prefix_out = prefix_inp + comp_fn + '_pre'
         momfile_name = prefix_out + '.mom'
         momfile_path = outdir + '/' + momfile_name
         shutil.copyfile(generik_conf_file, work_conf_file)
 #        work_conf_file_obj = open(work_conf_file,'w+')
-        genefun.replace(work_conf_file, 'DataFile',      'DataFile            ' + neufile_name)
-        genefun.replace(work_conf_file, 'DataDirectory', 'DataDirectory       ' + inpdir)
-        genefun.replace(work_conf_file, 'OutputFile',    'OutputFile          ' + momfile_path)
-        genefun.replace(work_conf_file, 'component' ,    'component           ' + comp)
+        utils.replace(work_conf_file, 'DataFile',      'DataFile            ' + neufile_name)
+        utils.replace(work_conf_file, 'DataDirectory', 'DataDirectory       ' + inpdir)
+        utils.replace(work_conf_file, 'OutputFile',    'OutputFile          ' + momfile_path)
+        utils.replace(work_conf_file, 'component' ,    'component           ' + comp)
 
         p = subprocess.Popen('',executable='/bin/bash', stdin=subprocess.PIPE , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
         command = "removeoutliers " +  work_conf_file
@@ -130,9 +155,9 @@ def momfile_trend_processing(inp_momfile,generik_conf_file,outdir='',
     momfile_out_name = momfile_inp_name.replace('pre.mom','out.mom')
     momfile_out_path = outdir + '/' + momfile_out_name
     shutil.copyfile(generik_conf_file, work_conf_file)
-    genefun.replace(work_conf_file, 'DataFile',      'DataFile            ' + momfile_inp_name)
-    genefun.replace(work_conf_file, 'DataDirectory', 'DataDirectory       ' + inpdir)
-    genefun.replace(work_conf_file, 'OutputFile',    'OutputFile          ' + momfile_out_path)
+    utils.replace(work_conf_file, 'DataFile',      'DataFile            ' + momfile_inp_name)
+    utils.replace(work_conf_file, 'DataDirectory', 'DataDirectory       ' + inpdir)
+    utils.replace(work_conf_file, 'OutputFile',    'OutputFile          ' + momfile_out_path)
 
     p = subprocess.Popen('',executable='/bin/bash', stdin=subprocess.PIPE , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
     command = "estimatetrend " +  work_conf_file
@@ -207,9 +232,9 @@ def momfile_trend_processing(inp_momfile,generik_conf_file,outdir='',
 def MJD2dt(mjd_in):
     # cf http://en.wikipedia.org/wiki/Julian_day
     try:
-        return [datetime.datetime(1858,11,17) + datetime.timedelta(m )for m in mjd_in]
+        return [dt.datetime(1858,11,17) + dt.timedelta(m) for m in mjd_in]
     except:
-        return datetime.datetime(1858,11,17) + datetime.timedelta(mjd_in)
+        return dt.datetime(1858,11,17) + dt.timedelta(mjd_in)
 
 def multi_momfile_trend_processing(inpdir,generik_conf_file,outdir='',extention='pre.mom',remove_ctl_file=True,specific_stats=(),invert_specific=False):
     start = time.time()
@@ -301,6 +326,10 @@ def velfile_from_a_list_of_statVsV_tuple(listoftup,out_dir, out_prefix , raw_neu
         outfile = open(out_dir +'/' + out_prefix + '.vel.csv','w+')
         outfile.write('Station,V_North,V_East,V_Up,sV_North,sV_East,sV_Up\n')
         k = 1000.
+    elif style == "csv_renag_xyz":
+        outfile = open(out_dir +'/' + out_prefix + '.vel.csv','w+')
+        outfile.write('Station,V_X,V_Y,V_Z,sV_X,sV_Y,sV_Z\n')
+        k = 1000.
     elif style == "dataframe":
         column_names = ['Station','Latitude','Longitude','V_North','V_East','V_Up','sV_North','sV_East','sV_Up']
         lines_stk = []
@@ -311,17 +340,18 @@ def velfile_from_a_list_of_statVsV_tuple(listoftup,out_dir, out_prefix , raw_neu
     for tup in listoftup:
         stat , V , sV = tup
         try:
-            neufile = genefun.regex2filelist(raw_neu_dir,stat)[0]
+            neufile = utils.regex2filelist(raw_neu_dir,stat)[0]
             lat , lon , hau = get_FLH_from_NEUfile(neufile)
         except:
             lat , lon , hau = 0,0,0
-        print(stat)
         if style == 'globk':
             line = '{:11.5f}{:11.5f} {:8.2f}{:8.2f}{:8.2f}{:8.2f}{:8.2f}{:8.2f} {:6.3f}  {:8.2f}{:8.2f}{:8.2f} {}\n'.format(lon , lat , V['E']*k , V['N']*k , 0. , 0. , sV['E']*k , sV['N']*k , 0. , V['U']*k ,0. ,  sV['U']*k , stat + '_GPS')
         elif style == 'epc':
-            line = '{} {} {} {} {} {} {} {}\n'.format(stat,lat,geok.wrapTo180(lon),V['N']*k,V['E']*k,sV['N']*k,sV['E']*k,0)
+            line = '{} {} {} {} {} {} {} {}\n'.format(stat,lat,reffram.wrapTo180(lon),V['N']*k,V['E']*k,sV['N']*k,sV['E']*k,0)
         elif style == 'csv_renag':
             line = '{},{:10.5f},{:10.5f},{:10.5f},{:10.5f},{:10.5f},{:10.5f}\n'.format(stat,V['N']*k,V['E']*k,V['U']*k,sV['N']*k,sV['E']*k,sV['U']*k)
+        elif style == 'csv_renag_xyz':
+            line = '{},{:10.5f},{:10.5f},{:10.5f},{:10.5f},{:10.5f},{:10.5f}\n'.format(stat,V['X']*k,V['Y']*k,V['Z']*k,sV['X']*k,sV['Y']*k,sV['Z']*k)
         elif style == "dataframe":
             line = [stat,lat,lon,V['N']*k,V['E']*k,V['U']*k,sV['N']*k,sV['E']*k,sV['U']*k]
             lines_stk.append(line)
@@ -331,8 +361,8 @@ def velfile_from_a_list_of_statVsV_tuple(listoftup,out_dir, out_prefix , raw_neu
 
     #### FINALISATION
     if style == "dataframe":
-        DF = pandas.DataFrame(lines_stk,columns=column_names)
-        genefun.pickle_saver(DF,out_dir,out_prefix + "_DataFrame")
+        DF = pd.DataFrame(lines_stk,columns=column_names)
+        utils.pickle_saver(DF,out_dir,out_prefix + "_DataFrame")
         return DF
     else:
         outfile.close()
@@ -344,12 +374,12 @@ def velfile_from_a_list_of_statVsV_tuple(listoftup,out_dir, out_prefix , raw_neu
 #    for tup in listoftup:
 #        stat , V , sV = tup
 #        try:
-#            neufile = genefun.regex2filelist(raw_neu_dir,stat)[0]
+#            neufile = utils.regex2filelist(raw_neu_dir,stat)[0]
 #            lat , lon , hau = get_FLH_from_NEUfile(neufile)
 #        except:
 #            lat , lon , hau = 0,0,0
 #
-#        line = '{} {} {} {} {} {} {} {}\n'.format(stat,lat,geok.wrapTo180(lon),V['N'],V['E'],sV['N'],sV['E'],0)
+#        line = '{} {} {} {} {} {} {} {}\n'.format(stat,lat,refframe.wrapTo180(lon),V['N'],V['E'],sV['N'],sV['E'],0)
 #        outfile.write(line)
 #    return None
 
@@ -360,7 +390,7 @@ def multi_sumfiles_trend_extract(inp_dir , out_dir , out_prefix ,
     make a GLOBK style .vel file or
     make a dirty velocity file compatible with EPC '''
 
-    genefun.create_dir(out_dir)
+    utils.create_dir(out_dir)
 
     statdico = sumfiles_to_statdico(inp_dir,specific_stats,invert_specific=invert_specific)
     listoftup = []

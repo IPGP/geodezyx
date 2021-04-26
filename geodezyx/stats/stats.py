@@ -5,12 +5,19 @@ Created on Tue Jul  9 14:01:29 2019
 @author: chaiyap
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import numpy as np
+import scipy
+import matplotlib.pyplot as plt
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import utils
+
+##########  END IMPORT  ##########
 
 
-from geodezyx import np,dt,plt,conv,butter, lfilter , scipy,utils
 
 def linear_regression(x,y,fulloutput=False,alpha=.95):
     """    
@@ -418,12 +425,12 @@ def sinusoide(T,A,omega,phi=0):
 def butter_lowpass(cutoff, fs, order=5):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    b, a = scipy.signal.butter(order, normal_cutoff, btype='low', analog=False)
     return b, a
 
 def butter_lowpass_filter(data, cutoff, fs, order=5):
     b, a = butter_lowpass(cutoff, fs, order=order)
-    y = lfilter(b, a, data)
+    y = scipy.butter.lfilter(b, a, data)
     return y
 
 
@@ -538,7 +545,7 @@ def gaussian_filter_GFZ_style_smoother_improved(tim_ref, dat_ref, width=7):
         ## It differs a bit of the official fct, because the next element
         ## following this criteria is included anyway
         
-        dat_raw_clean = dat_raw_work[clean_bool]
+        dat_raw_clean = dat_raw_work[clean_bool]        
         X_fac_clean   = X_fac[clean_bool]
         
         dat_raw_clean = dat_raw_clean[~np.isnan(dat_raw_clean)]
@@ -552,6 +559,35 @@ def gaussian_filter_GFZ_style_smoother_improved(tim_ref, dat_ref, width=7):
     dat_smt2 = np.array(dat_smt2)
     
     return dat_smt2
+
+
+
+#def interpolate_gaps(values, limit=None):
+#    """
+#    Fill gaps using linear interpolation, optionally only fill gaps up to a
+#    size of `limit`.
+#    """
+#    values = np.asarray(values)
+#    i = np.arange(values.size)
+#    valid = np.isfinite(values)
+#    filled = np.interp(i, i[valid], values[valid])
+#
+#    if limit is not None:
+#        invalid = ~valid
+#        for n in range(1, limit+1):
+#            invalid[:-n] &= invalid[n:]
+#        filled[invalid] = np.nan
+#
+#    return filled
+
+
+
+
+
+
+
+
+
 
 def smooth(x,window_len=11,window='hanning'):
     """smooth the data using a window with requested size.
@@ -673,7 +709,7 @@ def rms_mean(A):
     """
     returns RMS mean of a list/array
     """
-    return np.sqrt(np.nanmean(np.square(A)))
+    return np.sqrt(np.nanmean(np.square(np.array(A,np.float64))))
 
 def RMSmean(indata):
     """
@@ -696,6 +732,12 @@ def rms_mean_alternativ(A):
     √< (A - A)^2 > instead of √< (A)^2 >
     """
     return np.sqrt(np.nanmean(np.square(A - np.nanmean(A))))
+
+def rms_mean_kouba(A,multipl_coef=3,deg_of_freedom=7):
+    """
+    returns RMS mean of a list/array
+    """
+    return np.sqrt(np.sum(np.square(A))/(multipl_coef*len(A)-deg_of_freedom))
 
 
 def mad(data,mode='median'):
@@ -1145,6 +1187,188 @@ def outlier_overmean(Xin,Yin,marge=0.1):
 
 
     return Xout , Yout, boolbad
+
+
+def lagrange1(points):
+    """
+    Low level function to determine a lagrangian polynom
+    
+    Replace scipy.interpolate.lagrange which is HIGHLY instable
+
+    Parameters
+    ----------
+    points : list of n-interable
+        point list.
+
+    Returns
+    -------
+    P : function
+        function representing the polynom.
+        
+    Source
+    ------
+    from : https://gist.github.com/melpomene/2482930
+
+    """
+    def P(x):
+        total = 0
+        n = len(points)
+        for i in range(n):
+            xi, yi = points[i]
+		
+            def g(i, n):
+				
+                tot_mul = 1
+                for j in range(n):
+                    if i == j:
+                        continue
+                    xj, yj = points[j]
+                    tot_mul *= (x - xj) / float(xi - xj)
+				
+                return tot_mul 
+
+            total += yi * g(i, n)
+        return total
+    return P 
+
+
+
+def lagrange2(X,Y):
+    """
+    Low level function to determine a lagrangian polynom
+    
+    Replace scipy.interpolate.lagrange which is HIGHLY instable
+    
+    this function is more pythonic, but slower thant lagrange1....
+
+    Parameters
+    ----------
+    points : list of n-interable
+        point list.
+
+    Returns
+    -------
+    P : function
+        function representing the polynom.
+        
+    Source
+    ------
+    from : https://gist.github.com/melpomene/2482930
+
+    """
+    
+    def P(x_itrp):
+        total = 0
+        n = len(X)
+        for i in range(n):
+            def g(i, n):
+                X_but_i = np.concatenate((X[:i],X[i+1:]))
+                #mask = np.ones(len(X),dtype=bool)
+                #mask[i] = False
+                #X_but_i = np.concatenate((X[:i],X[i+1:]))
+                #X_but_i = X[mask]
+                #return np.product((x_itrp -X[mask])/(X[i] - X[mask])) 
+
+                return np.product((x_itrp -X_but_i)/(X[i] - X_but_i)) 
+            total += Y[i] * g(i, n)
+        return total
+    
+    return P 
+
+
+
+def lagrange_interpolate(Tdata,Ydata,Titrp,n=10):
+    """
+    Perform a temporal lagrangian interpolation
+    the X-component is a time 
+
+    Parameters
+    ----------
+    Tdata : iterable of datetime
+        X/T component of the known points.
+    Ydata : iterable of floats
+        Y component of the known points..
+    Titrp : iterable of datetime
+        Epochs of the wished points.
+    n : int, optional
+        degree of the polynom. Better if even. The default is 10.
+
+    Returns
+    -------
+    Yintrp : float array
+        output interpolated data.
+        
+    Tips
+    ----
+    Use conv.dt_range to generate the wished epochs range
+
+    """
+      
+    Tdata = np.array(Tdata)
+    Ydata = np.array(Ydata)
+    Titrp = np.array(Titrp)
+    
+    nn = int(n/2)
+        
+    Tdata_px = conv.dt2posix(np.array(Tdata))
+    Titrp_px = conv.dt2posix(np.array(Titrp))
+    
+    tref = Tdata_px[0]
+    
+    ### we substract a ref time to avoid numerical instability
+    Tdata_px = Tdata_px - tref
+    Titrp_px = Titrp_px - tref
+    
+    sur_val = (np.nan,np.nan)
+    sur_idx = (np.nan,np.nan)
+    
+    ### some checks
+    if np.any(np.diff(Tdata_px) == 0):
+        print("WARN: lagrange_interpolate: some Tdata are equals")
+
+    if np.any(np.diff(Ydata) == 0):
+        print("WARN: lagrange_interpolate: some Ydata are equals")
+
+    if np.any(Titrp_px < 0):
+        print("WARN: lagrange_interpolate: some wanted values are outside the data interval!!!!")
+    
+    Yintrp = []
+    
+    for tintrp in Titrp_px:
+        
+        if ( sur_val[0]  <= tintrp ) & ( tintrp <= sur_val[1] ):
+            ### the Polynom is alread determined
+            pass
+        else:
+            sur_val , sur_idx = utils.find_surrounding(Tdata_px, tintrp)
+                        
+            if (sur_idx[0] - nn < 0):  # manage side effect for first points
+                imin = 0
+                imax = n+1
+            elif (sur_idx[1] + nn > len(Ydata)): # manage side effect for last points
+                imin = len(Ydata) - n-1
+                imax = len(Ydata)                
+            else: # regular case
+            ### if (sur_idx[0] - nn >= 0) and (sur_idx[1] + nn >= len(Ydata)):
+                imin = sur_idx[0] - nn
+                imax = sur_idx[1] + nn                
+            
+    
+            Tuse = Tdata_px[imin:imax]
+            Yuse = Ydata[imin:imax]
+    
+            Poly = lagrange1(list(zip(Tuse,Yuse)))
+            #Poly = lagrange2(Tuse,Yuse)
+            
+    
+        yintrp = Poly(tintrp)
+        Yintrp.append(yintrp)
+        
+    return np.array(Yintrp)
+
+
+
+
 
 
 def dates_middle(start,end):

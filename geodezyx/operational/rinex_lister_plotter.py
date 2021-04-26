@@ -6,10 +6,21 @@ Created on Fri Aug  2 17:13:04 2019
 @author: psakicki
 """
 
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+########## BEGIN IMPORT ##########
+#### External modules
+import datetime as dt
+import matplotlib.pyplot as plt
+import numpy as np
+import os 
+import re
+import tabulate
 
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import operational
+from geodezyx import utils
+
+##########  END IMPORT  ##########
 
 def rinex_lister(path,add_new_names=True):
     """
@@ -156,7 +167,7 @@ def rinex_timeline_datadico(inputlist_or_paths,use_rinex_lister = True,
 
     for rnx in rinexfilelist:
         try:
-            datadico[rnx[0:4]].append((rnx,optional_info,rinexname2dt(rnx)))
+            datadico[rnx[0:4]].append((rnx,optional_info,conv.rinexname2dt(rnx)))
         except:
             print('error with : ', rnx)
 
@@ -293,7 +304,7 @@ def timeline_plotter(datadico,start = dt.datetime(1980,1,1) ,
 
         T,O = utils.sort_binom_list(T,O)
 
-        TMJD=dt2MJD(T)
+        TMJD=conv.dt2MJD(T)
         TGrpAll = utils.consecutive_groupIt(TMJD,True) # Tuples (start,end) of continue period
 
         for tgrp in TGrpAll:
@@ -327,9 +338,9 @@ def timeline_plotter(datadico,start = dt.datetime(1980,1,1) ,
                                            # must stay there, in case of not colordico_for_main_datadico
 
             if not jul_date_plot:
-                tgrp = MJD2dt(tgrp)
+                tgrp = conv.MJD2dt(tgrp)
                 if extra_archive:
-                    Tgrp_plt = [ (MJD2dt(e[0]) , MJD2dt(e[1])) for e in Tgrp_plt ]
+                    Tgrp_plt = [ (conv.MJD2dt(e[0]) , conv.MJD2dt(e[1])) for e in Tgrp_plt ]
 
             #PLOT part
             if tgrp[0] == tgrp[1] + dt.timedelta(days=1): # CASE NO PERIOD, ONLY ONE DAY
@@ -349,7 +360,7 @@ def timeline_plotter(datadico,start = dt.datetime(1980,1,1) ,
                 T = sorted(T)
 
                 if jul_date_plot:
-                    T = MJD2dt(T)
+                    T = conv.MJD2dt(T)
 
                 pale_blue_dot , = ax.plot(T,i*np.ones(len(T)), 'o', color='skyblue',label="final SNX")
                 legend_list     = [pale_blue_dot]
@@ -547,7 +558,7 @@ def listing_gins_timeline(path,stat_strt,stat_end,date_strt,date_end,suffix_rege
 
     for li in lifilelist:
         try:
-            tup = (li , jjulCNES2dt(li[date_strt:date_end] ))
+            tup = (li , conv.jjulCNES2dt(li[date_strt:date_end] ))
             datadico[li[stat_strt:stat_end]].append(tup)
         except:
             print('error with : ', li)
@@ -580,7 +591,7 @@ def rinex_check_epochs_availability(rinex_path_list):
 
         rinex_name = os.path.basename(rinex_path)
 
-        QC = softs_runner.teqc_qc(rinex_path)
+        QC = operational.teqc_qc(rinex_path)
 
         if not QC:
             continue
