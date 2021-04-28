@@ -12,7 +12,7 @@ import pathlib
 here = pathlib.Path(__file__).parent.resolve()
 
 # Get the long description from the README file
-long_description = (here / 'README').read_text(encoding='utf-8')
+long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
@@ -52,7 +52,16 @@ setup(
     #
     # This field corresponds to the "Description" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#description-optional
-    long_description=long_description,  # Optional
+    long_description="""The purpose of this GeodeZYX toolbox is to provide all the functions which
+can be useful for Geodesy and Geophysics. 
+
+It includes low level functions, file management functions,
+time and space-coordinates conversion functions, 
+data (especially GNSS observations and orbits) retrieve functions, 
+plots and visual selection functions ...
+
+It is designed for Python 3 on a LINUX Ubuntu-like system.
+Also tested with Anaconda""",  # Optional
 
     # Denotes that our long_description is in Markdown; valid values are
     # text/plain, text/x-rst, and text/markdown
@@ -65,7 +74,7 @@ setup(
     # This field corresponds to the "Description-Content-Type" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#description-content-type-optional
     # long_description_content_type='text/markdown',  # Optional (see note above)
-
+    long_description_content_type='text/x-rst',  # Optional (see note above)
     # This should be a valid link to your project's main homepage.
     #
     # This field corresponds to the "Home-Page" metadata field:
@@ -146,9 +155,14 @@ setup(
                       'collection',
                       'kepler.py',
                       'natsort',
+                      'numpy',
+                      'matplotlib',
                       'pyorbital',
+                      'pandas',
+                      'scipy',
                       'sympy',
-                      'tabulate']  # Optional
+                      'tabulate',
+                      'vincenty']  # Optional
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"

@@ -229,10 +229,10 @@ def round_dt(dtin,round_to):
     roundTo : str
         The way to round the datetime. 
         
-        It follows the numpy datetime64 conventions, e.g.:
+        It follows the Pandas' Series conventions, e.g.:
             
         * one-day rounding: '1D'
-        * one-minute rounding: '1m'
+        * one-minute rounding: '1min'
         * one-second rounding: '1s'
         
         Full list is in the Note's link
@@ -244,10 +244,10 @@ def round_dt(dtin,round_to):
         
     Note
     ----
-    https://numpy.org/doc/stable/reference/arrays.datetime.html
+    https://pandas.pydata.org/docs/user_guide/timeseries.html#timeseries-offset-aliases
     """
 
-    ### Here we adopt a new scheme for the recursive approach which
+    ### Here we adopt a new scheme for the recursive approach
     ### because we switch per defaut to a Pandas Series (PSakic 2021-02-22)
     if not utils.is_iterable(dtin):
         singleton = True
@@ -407,24 +407,31 @@ def ymdhms2dt(y=0,mo=0,d=0,h=0,mi=0,s=0,ms=0):
     Datetime
         Converted Datetime(s)
     """
-    y = int(y)
-    mo = int(mo)
-    d = int(d)
-    h = int(h)
-    mi = int(mi)
-    s = float(s)
-    ms = float(ms)
-    
-    try:
-        ms_from_s  = (s - np.floor(s)) * 10**6
-        if ms_from_s != 0:
-            if ms != 0:
-                print('WARN : input sec contains microsecs, given microsec are ignored')
-            ms = ms_from_s
-        return dt.datetime(int(y),int(mo),int(d),int(h),int(mi),int(s),int(ms))
-    except:
-        return dt.datetime(1970,1,1) # si ca deconne, si on donne un NaN par ex
-            
+    if not utils.is_iterable(y):
+        y = int(y)
+        mo = int(mo)
+        d = int(d)
+        h = int(h)
+        mi = int(mi)
+        s = float(s)
+        ms = float(ms)
+        
+        try:
+            ms_from_s  = (s - np.floor(s)) * 10**6
+            if ms_from_s != 0:
+                if ms != 0:
+                    print('WARN : input sec contains microsecs, given microsec are ignored')
+                ms = ms_from_s
+            return dt.datetime(int(y),int(mo),int(d),int(h),int(mi),int(s),int(ms))
+        except:
+            return dt.datetime(1970,1,1) # si ca deconne, si on donne un NaN par ex
+    else:
+        typ=utils.get_type_smart(y)
+        if ms == 0:
+            ms = [0] * len(y)
+        return typ([ ymdhms2dt(*e) for e in zip(y,mo,d,h,mi,s,ms) ])
+        
+                
     
     
 
@@ -2400,7 +2407,7 @@ def datetime64_numpy2dt(npdt64_in):
     
     **This function is depreciated !!!!!**
     
-    **numpy_dt2dt instead !!!!!**
+    **use numpy_dt2dt instead !!!!!**
     
     Parameters
     ----------
@@ -2466,6 +2473,10 @@ def numpy_datetime2dt(npdtin):
 def dt_round(dtin=None, roundTo=60):
     """
     Round a datetime object to any time laps in seconds
+    
+    **This function is depreciated !!!**
+    **Use round_dt instead         !!!**
+
     
     Parameters
     ----------

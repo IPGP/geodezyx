@@ -101,7 +101,7 @@ def read_bull_B(file_path_in):
     return DFout
 
 
-def read_clk(file_path_in):
+def read_clk(file_path_in,names_4char=False):
     """
     Read an IGS clk file
 
@@ -109,10 +109,15 @@ def read_clk(file_path_in):
     ----------
     file_path_in :  str
         Path of the file in the local machine.
+    names_4char : bool
+        Force the station names to have 4 charaters
+        (new naming convention is longer)
+
     Returns
     -------
     DFclk : pandas DataFrame
         Returns a panda table format with the data extracted from the file.
+        
     Note
     ----
     Bias is given in seconds
@@ -123,10 +128,12 @@ def read_clk(file_path_in):
     DFclk = pd.read_csv(file_path_in,skiprows=HeadLine[0]+1,header=None,
                         delim_whitespace = True,
                         names=['type', 'name', 'year', 'month', 'day', 'hour',
-                             'minute', 'second',"n_values",'bias', 'sigma'])
+                               'minute', 'second',"n_values",'bias', 'sigma'])
     
     DFclk["ac"] = os.path.basename(file_path_in)[:3] 
     DFclk["name"] = DFclk["name"].str.upper()
+    if names_4char:
+        DFclk['name'] = DFclk['name'].str[:4]
     
     DFclk['epoch'] = pd.to_datetime(DFclk[['year', 'month', 'day',
                                            'hour','minute', 'second']])
@@ -176,9 +183,6 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
     """
     
-
-    
-
     AC_name =  os.path.basename(file_path_in)[:3]
 
     fil = open(file_path_in,'r+')
@@ -189,7 +193,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     #### List/DF initialization
     epoch_stk = []
     Xstk , Ystk , Zstk , Clkstk = [],[],[],[]
-    Typestk     = []
+    #Typestk     = []
     data_stk    = []
     AC_name_stk = []
     
@@ -393,10 +397,11 @@ def sp3_DataFrame_zero_epoch_filter(DFsp3):
     return DFsp3_out
 
 
-def read_erp_multi(path_list , return_array=False,
-                   smart_mode=True):
+def read_erp_multi(path_list, 
+                   return_array=False,
+                   smart_mode=True,
+                   ac=None):
     """
-    DISCONTINUED BUT CAN BE REACTIVATED
     Input :
         path_list : a list of ERP files
         smart_mode : keep only the latest value (True is recommended)
@@ -404,7 +409,7 @@ def read_erp_multi(path_list , return_array=False,
     path_list = sorted(path_list)
     Lstk = []
     for path in path_list:
-        L = read_erp2(path)
+        L = read_erp(path,ac)
         Lstk.append(L)
 
     M = np.vstack(Lstk)
@@ -439,7 +444,7 @@ def sp3_decimate(file_in,file_out,step=15):
     file_out : str
         path of the output SP3 file.
     step : int, optional
-        decimation step in minutes. The default is 300.
+        decimation step in minutes. The default is 15.
 
     Returns
     -------
@@ -731,7 +736,7 @@ def read_erp(file_path_in,ac=None):
 
 
 
-    if ac in ('COD','cod','com', 'cof', 'grg', 'mit', 'sio'):
+    if ac in ('COD','cod','com', 'cof', 'grg', 'mit', 'sio','igs','igr'):
         for i in range(tamanho+1):
             linhaatual = linecache.getline(caminho_arq, i)
             if linhaatual[0:1] in numeros:
@@ -778,7 +783,7 @@ def read_erp(file_path_in,ac=None):
 #                                                 'X-RT','Y-RT','S-XR','S-YR'])
 #        return Erp_end
 #
-    if ac in ('gbm', 'gfz'):
+    if ac in ('gbm', 'gfz','gfr',"p1_","p1r"):
         for i in range(tamanho+1):
             linhaatual = linecache.getline(caminho_arq, i)
             if linhaatual[0:1] in numeros:
@@ -834,7 +839,7 @@ def read_erp(file_path_in,ac=None):
     return Erp_end
 
 
-read_erp2 = read_erp
+### read_erp2 = read_erp
     
     
 def read_erp_snx(snx_in):

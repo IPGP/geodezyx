@@ -1362,6 +1362,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     elif archive_center == "ign":
         arch_center_main    = 'igs.ign.fr'
         arch_center_basedir = '/pub/igs/products/' + mgex_str  
+        
+    elif archive_center == "ign_iono":
+        arch_center_main    = 'igs-rf.ign.fr'
+        arch_center_basedir = '/pub/'  
 
     elif archive_center == "ensg":
         arch_center_main    = 'igs.ensg.ign.fr'
@@ -1378,6 +1382,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     elif archive_center == "ensg_rf":
         arch_center_main    = 'igs-rf.ensg.ign.fr'
         arch_center_basedir = '/pub/' + mgex_str
+
 
     print("INFO : data center used :",archive_center)
 
