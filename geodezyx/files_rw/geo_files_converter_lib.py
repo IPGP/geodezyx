@@ -48,6 +48,7 @@ import re
 from geodezyx import conv
 from geodezyx import operational
 from geodezyx import utils
+from geodezyx.files_rw import read_logsheets
 
 #### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
@@ -1095,7 +1096,7 @@ def read_rinex_2_dataobjts(rinex_path):
     d_hen_raw = utils.grep(rinex_path,'ANTENNA: DELTA H/E/N',True).split()
     t_raw     = utils.grep(rinex_path,'TIME OF FIRST OBS',True).split()
 
-    Antobj, Recobj , Siteobj , Locobj = Antenna(),Reciever(),Site(),Location()
+    Antobj, Recobj , Siteobj , Locobj = read_logsheets.Antenna(),read_logsheets.Reciever(),read_logsheets.Site(),read_logsheets.Location()
 
     Locobj.X_coordinate_m = float(smart_elt_list(xyz_raw,0))
     Locobj.Y_coordinate_m = float(smart_elt_list(xyz_raw,1))
