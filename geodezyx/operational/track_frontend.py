@@ -26,7 +26,8 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
                  XYZbase  = [], XYZrover = [] , outtype = 'XYZ',mode = 'short',
                  interval=None,antmodfile = "~/gg/tables/antmod.dat",
                  calc_center='igs' , forced_sp3_path = '',
-                 const="G",silent=False):
+                 const="G",silent=False,rinex_full_path=False,
+                 run_on_gfz_cluster=False,forced_iono_path=''):
 
     # paths & files
     working_dir = utils.create_dir(working_dir)
@@ -68,8 +69,13 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
 
     # Obs Files
     confobj.write(' obs_file' + '\n')
-    confobj.write(' '.join((' ',bas_name_uper,os.path.basename(rnx_base) ,'F'))+ '\n')
-    confobj.write(' '.join((' ',rov_name_uper,os.path.basename(rnx_rover),'K'))+ '\n')
+    ### just the basename, the caracter nb is limited  (20210415)
+    if not rinex_full_path:
+        confobj.write(' '.join((' ',bas_name_uper,os.path.basename(rnx_base) ,'F'))+ '\n')
+        confobj.write(' '.join((' ',rov_name_uper,os.path.basename(rnx_rover),'K'))+ '\n')
+    else:
+        confobj.write(' '.join((' ',bas_name_uper,rnx_base ,'F'))+ '\n')
+        confobj.write(' '.join((' ',rov_name_uper,rnx_rover,'K'))+ '\n')
     confobj.write('\n')
 
     date = conv.rinexname2dt(os.path.basename(rnx_rover))
@@ -95,6 +101,12 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     for sp3_mono in sp3: 
         confobj.write(' '.join((' ','nav_file',sp3_mono ,' sp3'))+ '\n')
     confobj.write('\n')
+
+    # Iono file
+   
+    if forced_iono_path != '':
+        confobj.write(' ionex_file ' +  forced_iono_path  + '\n' )
+    
 
     # Mode
     confobj.write(' mode ' +  mode + '\n')
@@ -170,8 +182,10 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
 
 
     # Misc
-    confobj.write(" USE_GPTGMF" + '\n')
+    #confobj.write(" USE_GPTGMF"   + '\n')
+    confobj.write(" ATM_MODELC GMF 0.5"   + '\n')
     confobj.write(" ANTMOD_FILE " + antmodfile + '\n')
+    confobj.write(" DCB_FILE "    + "~/gg/incremental_updates/tables/dcb.dat.gnss" + '\n')
 
 
     confobj.write(" atm_stats" + '\n')
@@ -184,6 +198,12 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     dowstring = ''.join([str(e) for e in conv.dt2gpstime(date)])
     bigcomand = ' '.join(("track -f" ,  out_conf_fil , '-d' , conv.dt2doy(date) ,'-w', dowstring))
 
+    if run_on_gfz_cluster:
+        bigcomand = "cjob -c '" + bigcomand + "'"
+        executable="/bin/csh"
+    else:
+        executable="/bin/bash"
+
     print('INFO : command launched :')
     print(bigcomand)
 
@@ -191,7 +211,11 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     # START OF PROCESSING
     if not silent:
         os.chdir(temp_dir)
-        subprocess.call([bigcomand], executable='/bin/bash', shell=True)
+        try:
+            subprocess.call([bigcomand], executable=executable, shell=True,timeout=60*20)
+        except subprocess.TimeoutExpired:
+            print("WARN: command timeout expired, skip")
+            pass
     
         outfiles = []
         outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*sum*'))

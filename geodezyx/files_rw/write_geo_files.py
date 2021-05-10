@@ -433,6 +433,11 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
     -------
     None.
 
+    Note
+    ----
+    start/end date are not implemented
+    the force option skips existing files 
+
     """
 
     for ac in ac_list:
@@ -545,9 +550,6 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 print("7))",SP3concat["epoch"].min(),SP3concat["epoch"].max())
 
                 #### All systems        
-                dir_out_wk = os.path.join(dir_out,"wk" + str(wwwwd_str)[:4])
-                utils.create_dir(dir_out_wk)
-                fil_out = dir_out_wk + "/" + suffix_out  + wwwwd_str + ".sp3"
                 print("8)) outputed file")
                 print(fil_out)
                 write_sp3(SP3concat,fil_out)
