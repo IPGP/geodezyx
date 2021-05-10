@@ -11,6 +11,7 @@ Created on Fri Jun 28 14:28:06 2019
 #### External modules
 import fnmatch
 import glob
+import gzip
 import os
 import re
 import shutil
@@ -60,6 +61,8 @@ def head(filename, count=1):
         lines = [f.readline() for line in range(1, count+1)]
         return list(filter(len, lines))
 
+
+
 def grep(file_in,search_string,only_first_occur=False,
          invert=False,regex=False,line_number=False,col=(None,None),
          force_list_output=False):
@@ -83,7 +86,16 @@ def grep(file_in,search_string,only_first_occur=False,
     matching_line_list = []
     line_number_list   = []
     trigger = False
-    for iline , line in enumerate(open(file_in,encoding = "ISO-8859-1")):
+    
+    
+    if file_in[-2:] in ("gz","GZ"): ### cand handle gziped files 
+        File = gzip.open(file_in, "r+")
+        Lines = [e.decode('utf-8') for e in File]
+    else:
+        File = open(file_in,encoding = "ISO-8859-1")
+        Lines = File.readlines()
+        
+    for iline , line in enumerate(Lines):
         trigger = False
         for seastr in search_string:
             if regex:
@@ -113,6 +125,8 @@ def grep(file_in,search_string,only_first_occur=False,
         return matching_line_list[0]
     else:
         return matching_line_list
+    
+    
 
 def egrep_big_string(regex,bigstring,only_first_occur=False):
     """

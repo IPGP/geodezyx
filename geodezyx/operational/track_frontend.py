@@ -25,7 +25,8 @@ from geodezyx import utils
 def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
                  XYZbase  = [], XYZrover = [] , outtype = 'XYZ',mode = 'short',
                  interval=None,antmodfile = "~/gg/tables/antmod.dat",
-                 calc_center='igs' , forced_sp3_path = ''):
+                 calc_center='igs' , forced_sp3_path = '',
+                 const="G",silent=False):
 
     # paths & files
     working_dir = utils.create_dir(working_dir)
@@ -77,11 +78,12 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     if forced_sp3_path == '':
         strt_rnd = dt.datetime(*bas_srt.timetuple()[:3])
         end_rnd  = dt.datetime(*bas_end.timetuple()[:3])
-        orblis = operational.multi_downloader_orbs_clks( temp_dir , strt_rnd , end_rnd ,
-                                            archtype='/',
-                                            calc_center = calc_center)
+                
+        orblis = operational.multi_downloader_orbs_clks( temp_dir ,
+                                                        strt_rnd , end_rnd ,
+                                                        archtype='/',
+                                                        calc_center = calc_center)
         
-
         #sp3Z = orblis[0]
         sp3 = [utils.uncompress(sp3Z) for sp3Z in orblis]
         sp3 = [e  if ".sp3" in e[-5:] else e + ".sp3" for e in sp3]
@@ -139,7 +141,7 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     confobj.write(' ante_off \n')
 
     Antobj_rov , Recobj_rov , Siteobj_rov , Locobj_rov = \
-    operational.read_rinex_2_dataobjts(rnx_rover)
+    files_rw.read_rinex_2_dataobjts(rnx_rover)
 
     confobj.write(' '.join([' ', rov_name_uper ,
                             str(Antobj_rov.North_Ecc) ,
@@ -148,7 +150,7 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
                             Antobj_rov.Antenna_Type , '\n']))
 
     Antobj_bas , Recobj_bas , Siteobj_bas , Locobj_bas = \
-    operational.read_rinex_2_dataobjts(rnx_base)
+    files_rw.read_rinex_2_dataobjts(rnx_base)
 
     confobj.write(' '.join([' ', bas_name_uper ,
                             str(Antobj_bas.North_Ecc) ,
@@ -162,6 +164,10 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     confobj.write(' ' + bas_name_uper  + " 0.1 0.1 0.1 0 0 0" + '\n')
     confobj.write(' ' + rov_name_uper  + " 20 20 20 0.5 0.5 0.5" + '\n')
     confobj.write('\n')
+
+    # constellqtions
+    confobj.write(" TR_GNSS " + const + '\n')
+
 
     # Misc
     confobj.write(" USE_GPTGMF" + '\n')
@@ -181,24 +187,29 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     print('INFO : command launched :')
     print(bigcomand)
 
+
     # START OF PROCESSING
-    os.chdir(temp_dir)
-    subprocess.call([bigcomand], executable='/bin/bash', shell=True)
-
-    outfiles = []
-    outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*sum*'))
-    outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*pos*'))
-    outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*cmd*'))
-
-    Antobj_rov , Recobj_rov , Siteobj_rov , Locobj_rov = \
-    files_rw.read_rinex_2_dataobjts(rnx_rover)
-
-    [shutil.copy(e,out_dir) for e in outfiles]
-    [os.remove(e) for e in outfiles]
-
-    print("TRACK RUN FINISHED")
-    print('results available in ' , out_dir)
-    return None
+    if not silent:
+        os.chdir(temp_dir)
+        subprocess.call([bigcomand], executable='/bin/bash', shell=True)
+    
+        outfiles = []
+        outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*sum*'))
+        outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*pos*'))
+        outfiles = outfiles + glob.glob(os.path.join(temp_dir,exp_full_name + '*cmd*'))
+    
+        Antobj_rov , Recobj_rov , Siteobj_rov , Locobj_rov = \
+        files_rw.read_rinex_2_dataobjts(rnx_rover)
+    
+        [shutil.copy(e,out_dir) for e in outfiles]
+        [os.remove(e) for e in outfiles]
+    
+        print("TRACK RUN FINISHED")
+        print('results available in ' , out_dir)
+    else:
+        print("Silent mode ON: nothing is launched")
+        
+    return bigcomand
 
 
 def run_track(temp_dir,exp_full_name,out_conf_fil,date,rnx_rover):

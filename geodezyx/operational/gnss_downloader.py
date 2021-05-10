@@ -281,7 +281,7 @@ def orbclk_ign_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
     week, day = conv.dt2gpstime(date)
 
     ## force_weekly_file handeling
-    day = force_weekly_file_fct(force_weekly_file_fct,sp3clk,day)
+    day = force_weekly_file_fct(force_weekly_file,sp3clk,day)
 
     if not longname: # e.g. gbm19903.sp3.Z
         if not 'igu' in center:
@@ -812,7 +812,7 @@ def rnx_long2short_name(longname_filepath_in):
 
 def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
                             sp3clk='sp3',archtype ='year/doy',parallel_download=4,
-                            archive_center='cddis',repro=0,sorted_mode=False,
+                            archive_center='ign',repro=0,sorted_mode=False,
                             force_weekly_file=False, return_also_uncompressed_files=True):
 
     """
@@ -856,6 +856,8 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
             'cddis_mgex'
 
             'cddis_mgex_longname'
+
+            'ign'
 
             'ign_mgex'
 
@@ -943,6 +945,9 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
                     url = orbclk_cddis_server(curdate,cc,repro=repro,
                                               sp3clk=sp3clk,mgex=True,longname=True,
                                               force_weekly_file=force_weekly_file)
+                elif archive_center == 'ign':
+                    url = orbclk_ign_server(curdate,cc,repro=repro,sp3clk=sp3clk,
+                                              mgex=False,force_weekly_file=force_weekly_file)
                 elif archive_center == 'ign_mgex':
                     url = orbclk_ign_server(curdate,cc,repro=repro,sp3clk=sp3clk,
                                               mgex=True,force_weekly_file=force_weekly_file)
@@ -1362,6 +1367,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     elif archive_center == "ign":
         arch_center_main    = 'igs.ign.fr'
         arch_center_basedir = '/pub/igs/products/' + mgex_str  
+        
+    elif archive_center == "ign_iono":
+        arch_center_main    = 'igs-rf.ign.fr'
+        arch_center_basedir = '/pub/'  
 
     elif archive_center == "ensg":
         arch_center_main    = 'igs.ensg.ign.fr'
@@ -1378,6 +1387,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     elif archive_center == "ensg_rf":
         arch_center_main    = 'igs-rf.ensg.ign.fr'
         arch_center_basedir = '/pub/' + mgex_str
+
 
     print("INFO : data center used :",archive_center)
 
