@@ -9,6 +9,7 @@ Created on Fri Jun 28 14:27:56 2019
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
+import gzip
 import inspect
 import numpy as np
 import os
@@ -517,12 +518,22 @@ def extract_text_between_elements_2(file_path , elt_start , elt_end,
     https://docs.python.org/2/library/stringio.html
     """
     
-    if type(file_path) is str:
-        try:
-            F = open(file_path,"r",encoding = "ISO-8859-1")
-        except:
-            F = open(file_path,"r")
-    else:
+    
+    ## 3 possibilities
+    # file_path is a path, uncompressed
+    # file_path in a path, gzip compressed
+    # file_path is already a list of lines
+    
+    if type(file_path) is str: ### case 1 : path compressed 
+        if file_path[-2:] in ("gz","GZ"):
+            F = gzip.open(file_path, "r+")
+            F = [e.decode('utf-8') for e in F]
+        else:                  ### case 2 : path uncompressed
+            try:
+                F = open(file_path,"r",encoding = "ISO-8859-1")
+            except:
+                F = open(file_path,"r")
+    else:                      ### case 3 : already a list of lines
         F = file_path
     
     out_lines_list = []

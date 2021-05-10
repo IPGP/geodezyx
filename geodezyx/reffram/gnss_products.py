@@ -716,7 +716,7 @@ def compar_clock(DFclk_inp_1,DFclk_inp_2):
     
 def compar_clock_table(DFclk_diff_in):
     """
-    Generate a table with statistical indicators for an orbit comparison
+    Generate a table with statistical indicators for a clock comparison
     (RMS mean, standard dev, ...)
 
     Parameters
@@ -743,7 +743,6 @@ def compar_clock_table(DFclk_diff_in):
     DFcompar_out.reset_index()
     
     return DFcompar_out
-
 
 
 def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
@@ -1068,7 +1067,7 @@ def OrbDF_multidx_2_reg(OrbDFin,index_order=["sat","epoch"]):
     return OrbDFwrk
 
 def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
-                              supplementary_sort=True,order=["sat","epoch"]):
+                              supplementary_sort=False,order=["sat","epoch"]):
     """
     Find common sats and epochs in to Orbit DF, and output the
     corresponding Orbit DFs
@@ -1181,7 +1180,6 @@ def ClkDF_filter(ClkDF_in,
         ClkDF_wrk = ClkDF_in
     
     BOOL = np.ones(len(ClkDF_wrk)).astype(bool)
-
     
     if typ:
         BOOLtmp = ClkDF_wrk.type.isin(typ)
@@ -1203,11 +1201,9 @@ def ClkDF_filter(ClkDF_in,
         BOOLtmp = ClkDF_wrk.ac.isin(ac)
         BOOL    = BOOL & np.array(BOOLtmp)    
         
-        
     ##epoch
     BOOLtmp = (epoch_strt <= ClkDF_wrk.epoch) & (ClkDF_wrk.epoch < epoch_end)
     BOOL    = BOOL & np.array(BOOLtmp)    
-    
     
     return ClkDF_wrk[BOOL]
 
@@ -1224,7 +1220,7 @@ def ClkDF_reg_2_multidx(ClkDFin,index_order=["name","epoch"]):
     
 
 def ClkDF_common_epoch_finder(ClkDFa_in,ClkDFb_in,return_index=False,
-                              supplementary_sort=True,
+                              supplementary_sort=False,
                               order=["name","epoch"]):
     """
     Find common sats/station and epochs in to Clock DF, and output the
