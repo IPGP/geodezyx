@@ -158,6 +158,43 @@ def rinex_regex_new_name_brdc(compressed=None,compiled=False):
     else:
         return regexstr    
     
+    
+def rinex_regex_new_name_brdc_gfz_godc(compressed=None,compiled=False):
+    """
+    Return a regex corresponding to a BROADCAST RINEX name (new convention)
+    from the GFZ's GODC archive
+
+    Parameters
+    ----------
+    compressed : bool or None
+        return a the regex for a compressed rinex
+        if None, does not matter (return both compressed or not)
+        
+
+    compiled : bool
+        return a Python regex object already compliled
+        
+    Returns
+    -------
+    out : string or python's regex
+        a regex
+    """
+    ### BRDC00GFZ_00000000_FRO_RX3_MN_20210114_000000_01D_00U_GFZ.rnx
+    if compressed:
+        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}\.gz"
+    elif compressed is None:
+        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}(\.gz)?"        
+    else:
+        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}"
+
+    if compiled:
+        return re.compile(regexstr)
+    else:
+        return regexstr    
+    
+    
+    
+    
 
 def tgipsy2dt(tin):
     """
@@ -216,7 +253,7 @@ def matlab_time2dt(matlab_datenum):
     return python_datetime
 
 
-def round_dt(dtin,round_to):
+def round_dt(dtin,round_to,python_dt_out=True):
     """
     Round a datetime object to any time laps in seconds
     
@@ -226,7 +263,7 @@ def round_dt(dtin,round_to):
         Datetime you want to round
         Can handle several datetimes in an iterable.
             
-    roundTo : str
+    round_to : str
         The way to round the datetime. 
         
         It follows the Pandas' Series conventions, e.g.:
@@ -236,6 +273,11 @@ def round_dt(dtin,round_to):
         * one-second rounding: '1s'
         
         Full list is in the Note's link
+        
+    python_dt_out : bool, optional
+        If True, it returns the date as a legacy Python's DateTime.
+        If False, it returns a Pandas Timestamp.
+        The default is True.
             
     Returns
     -------  
@@ -258,6 +300,9 @@ def round_dt(dtin,round_to):
         dtin_use = pd.Series(dtin)
 
     dtin_out = dtin_use.dt.round(round_to)
+    
+    if python_dt_out:
+        dtin_out.dt.to_pydatetime()
 
     if singleton:
         return dtin_out.iloc[0]
@@ -309,7 +354,8 @@ def posix2dt_in_local_timezone(posixin):
         typ=utils.get_type_smart(posixin)
         return typ([ posix2dt_in_local_timezone(e) for e in posixin ])
 
-def dt_range(start_dt,end_dt,day_step=1,sec_step=0):
+def dt_range(start_dt,end_dt,
+             day_step=1,sec_step=0):
     """
     Range of datetime between a start and end (included)
     
@@ -324,7 +370,7 @@ def dt_range(start_dt,end_dt,day_step=1,sec_step=0):
         range of dates  
     """
     Out_range = [start_dt]
-    while Out_range[-1] <= end_dt:
+    while Out_range[-1] < end_dt:
         Out_range.append(Out_range[-1] + dt.timedelta(days=day_step) + dt.timedelta(seconds=sec_step))
     return Out_range
 
@@ -1425,6 +1471,8 @@ def rinexname2dt(rinexpath):
     rinexname = os.path.basename(rinexpath)
     #rinexname = rinexpath
         
+    
+    ##### NEW rinex name
     if re.search(rinex_regex_new_name(),rinexname) or re.search(rinex_regex_new_name_brdc(),rinexname):
         date_str = rinexname.split("_")[2]
         yyyy = int(date_str[:4])
@@ -1433,6 +1481,25 @@ def rinexname2dt(rinexpath):
         mm   = int(date_str[9:11])       
         dt_out = doy2dt(yyyy,doy) + dt.timedelta(seconds=hh*3600 + mm*60)
         return dt_out 
+
+    ##### NEW rinex name -- GFZ's GODC internal name
+    ###### OBS RINEX for GFZ GODC not implemented yet !!!!
+    if re.search(rinex_regex_new_name_brdc_gfz_godc(),rinexname): 
+        date_str = rinexname.split("_")[5]
+        time_str = rinexname.split("_")[6]
+        yyyy = int(date_str[:4])
+        mo   = int(date_str[4:6])     
+        dd   = int(date_str[6:8])     
+        
+        hh   = int(time_str[0:2])        
+        mm   = int(time_str[2:4])       
+        ss   = int(time_str[4:6])             
+
+        dt_out = dt.datetime(yyyy,mo,dd,hh,mm,ss)
+        
+        return dt_out 
+    
+    ##### OLD rinex name    
     elif re.search(rinex_regex(),rinexname):
         alphabet = list(string.ascii_lowercase)
     

@@ -1475,8 +1475,8 @@ def read_sinex(sinex_path_in,
 
     Returns
     -------
-    DFout : TYPE
-        DESCRIPTION.
+    DFout : DataFrame
+        SINEX DataFrame.
 
     """
     ## Read the blocs
@@ -1990,6 +1990,8 @@ def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False, force = False):
 
         print('INFO : uncompressing ' + inp_gzip_file + " to " + out_gzip_file )
 
+
+    ### Removing part
     if remove_inp and os.path.getsize(out_gzip_file) > 0:
         print("INFO : removing " + inp_gzip_file)
         os.remove(inp_gzip_file)

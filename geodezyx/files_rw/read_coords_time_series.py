@@ -1457,12 +1457,15 @@ def read_epos_sta_coords_multi(filein_list,return_dict = True):
         return ts_list
 
 
+
+
 def read_epos_slv_times(p,convert_to_time=False):
     """
     convert_to_time : divide by the speed of light to get time-homogene values.
     Values in meter instead
     If convert_to_time : time in sec
     """
+    
     L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates",
                                                 "\-sum_times/estimates")
 

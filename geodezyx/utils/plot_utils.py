@@ -95,7 +95,9 @@ def get_figure(figin = 0):
 
 
 def figure_saver(figobjt_in , outdir , outname ,
-                 outtype = ('.png','.pdf','.figpik') , formt = 'a4' ,
+                 outtype = ('.png','.pdf','.figpik') ,
+                 formt = None ,
+                 dpi = 200 ,
                  transparent=False):
     
     if not utils.is_iterable(outtype):
@@ -108,8 +110,22 @@ def figure_saver(figobjt_in , outdir , outname ,
                                          outname,outtype_iter)
         else:   
             outpath = os.path.join(outdir,outname+outtype_iter)
-            #figobjt_in.savefig(outpath)
-            figobjt_in.savefig(outpath,transparent=transparent)
+            
+            if formt:
+                if type(formt) is tuple:
+                    formtup = formt
+                elif type(formt) is str:
+                    if formt.upper() == "A4":
+                        formtup = (11.69,8.27)
+                    elif formt.upper() == "A3":
+                        formtup = (16.53,11.69)                        
+                    else:
+                        print("WARN: issue in , assume Figure format as A4")
+                        formtup = (11.69,8.27)
+                        
+                figobjt_in.set_size_inches(*formtup)
+            
+            figobjt_in.savefig(outpath,transparent=transparent,dpi=dpi)
 
         outpath_stk.append(outpath)
         

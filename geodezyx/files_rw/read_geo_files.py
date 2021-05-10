@@ -30,6 +30,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
+import gzip
 import linecache
 import io
 import numpy as np
@@ -109,6 +110,7 @@ def read_clk(file_path_in,names_4char=False):
     ----------
     file_path_in :  str
         Path of the file in the local machine.
+        can handle gzip-compressed file (with .gz/.GZ extension) 
     names_4char : bool
         Force the station names to have 4 charaters
         (new naming convention is longer)
@@ -153,6 +155,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     ----------
     file_path_in : str
         path of the SP3 file
+        can handle gzip-compressed file (with .gz/.GZ extension) 
 
     returns_pandas : bool
         if True, return a Pandas DataFrame.
@@ -184,11 +187,15 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     """
     
     AC_name =  os.path.basename(file_path_in)[:3]
-
-    fil = open(file_path_in,'r+')
+    
+    if file_path_in[-2:] in ("gz","GZ"):
+        F = gzip.open(file_path_in, "r+")
+        Lines = [e.decode('utf-8') for e in F]
+    else:
+        F = open(file_path_in,'r+')
+        Lines = F.readlines()
 
     header = True
-
 
     #### List/DF initialization
     epoch_stk = []
@@ -201,9 +208,8 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
         df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
                                              'x','y','z','clk','AC'])
 
-
     #### read the Header as a 1st check
-    Header = read_sp3_header(file_path_in)
+    Header = read_sp3_header(Lines,AC_name)
     if Header.empty:
         print("WARN:read_sp3: The SP3 looks empty: ",file_path_in)
         if returns_pandas:
@@ -211,7 +217,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
         else:
             return  epoch_stk ,  Xstk , Ystk , Zstk , Clkstk , AC_name_stk
 
-    for l in fil:
+    for l in Lines:
         if l[0] == '*':
             header = False
 
@@ -290,17 +296,24 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
 
 
-def read_sp3_header(sp3_path):
+def read_sp3_header(sp3_in,ac_name_in=None):
     """
     Read a SP3 file header and return a Pandas DataFrame
     with sat. PRNs and sigmas contained in the header
 
     Parameters
     ----------
-    sp3_path : str
+    sp3_in : str or list
         path of the SP3 file
+        can handle gzip-compressed file (with .gz/.GZ extension) 
 
-
+        can also handle the sp3 content as a list of string
+        (useful when read_sp3_header is used as a subfunction of read_sp3)
+        
+    ac_name_in : str
+        force the AC name
+        (necessary when read_sp3_header is used as a subfunction of read_sp3)
+        
     Returns
     -------
     Header_DF : Pandas DataFrame
@@ -312,12 +325,20 @@ def read_sp3_header(sp3_path):
     http://acc.igs.org/orbacc.txt
     """
 
-
-    F = open(sp3_path)
-    ac_name = os.path.basename(sp3_path)[:3]
-
-
-    Lines = F.readlines()
+    if type(sp3_in) is list: 
+        ### case when read_sp3_header is used as a subfunction of read_sp3
+        Lines = sp3_in
+    elif sp3_in[-2:] in ("gz","GZ"):
+        F = gzip.open(sp3_in, "r+")
+        Lines = [e.decode('utf-8') for e in F]
+    else:
+        F = open(sp3_in,'r+')
+        Lines = F.readlines()
+    
+    if not ac_name_in:
+        ac_name = os.path.basename(sp3_in)[:3]
+    else:
+        ac_name = ac_name_in
 
     Sat_prn_list = []
     Sat_sig_list = []
