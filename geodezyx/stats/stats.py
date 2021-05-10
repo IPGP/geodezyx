@@ -816,7 +816,7 @@ def outlier_mad(data,seuil=3.5,verbose=False,convert_to_np_array=True,
 
     diff = data - med
     MZS = 0.6745 * np.abs(diff) / MAD
-    print(MZS)
+    # print(MZS)
     MZS[np.isnan(MZS)] = seuil * 10
     boolbad = MZS < seuil
     dataout = data[boolbad]
