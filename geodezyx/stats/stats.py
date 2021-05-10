@@ -829,8 +829,14 @@ def outlier_mad(data,threshold=3.5,verbose=False,
 
     diff = data - med
     MZS = 0.6745 * np.abs(diff) / MAD
+<<<<<<< HEAD
     MZS[np.isnan(MZS)] = threshold * 10
     boolbad = MZS < threshold
+=======
+    # print(MZS)
+    MZS[np.isnan(MZS)] = seuil * 10
+    boolbad = MZS < seuil
+>>>>>>> ba104863439668146d0c5ea3daddb9edeae4d6e3
     dataout = data[boolbad]
     nbout = float(sum(boolbad))
     ratio = (nbinp-nbout)/nbinp
