@@ -192,10 +192,11 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     Typestk     = []
     data_stk    = []
     AC_name_stk = []
-    
-    if returns_pandas:
-        df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
-                                             'x','y','z','clk','AC'])
+   
+    # Why this here ?!? (PSa 202104)
+    # if returns_pandas:
+    #     df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
+    #                                        'x','y','z','clk','AC'])
 
 
     #### read the Header as a 1st check
@@ -452,23 +453,31 @@ def sp3_decimate(file_in,file_out,step=15):
 
     good_line = True
     outline = []
-
+    n_good_lines = 0 
     for l in Fin:
         if l[0] == "*":
             epoc   = conv.tup_or_lis2dt(l[1:].strip().split()) 
             if np.mod(epoc.minute , step) == 0:
                 good_line = True
+                n_good_lines += 1
             else:
                 good_line = False
 
         if good_line:
             outline.append(l)
 
+    ### replace nb epochs
+    line0     = outline[0]
+    nlines_orig = outline[0].split()[6]
+    nlines_ok = "{:7}".format(n_good_lines).strip().zfill(3)
+    line0b = line0.replace(nlines_orig,nlines_ok)
+    outline[0] = line0b    
+
+
+    ### replace step
     line1     = outline[1]
     step_orig = outline[1].split()[3]
-
     step_ok = "{:14.8f}".format(step * 60).strip()
-
     line1b = line1.replace(step_orig,step_ok)
     outline[1] = line1b
 
