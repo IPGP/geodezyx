@@ -412,6 +412,42 @@ def read_jpl_timeseries_solo(latlonrad_files_list):
  # |_|  |_|_____|  |_/_/   \_____/_/    \_\_|  |_|_____|  |_|    |_|    |_|_|\___||___/
                                                                                      
 
+
+
+def read_track_2(filein,site_name=None):
+    """
+    Read a kinematic track file
+
+    Parameters
+    ----------
+    filein : str
+        path of the file.
+
+    Returns
+    -------
+    DF : Pandas DataFrame
+
+    """
+    DF = pd.read_csv(filein,delim_whitespace=True,skiprows=[1,2])
+    DF.columns = ['year','month','day','hour','minute','second',
+                  'dX','dX_std','dY','dY_std','dZ','dZ_std',
+                  'rms','dd','atm','atm_std','fract_doy',
+                  'n_epoch','BF','not','f','rho_ua','null']
+    
+    DF.drop("null",axis=1,inplace=True)
+    
+    Epoch = conv.ymdhms2dt(DF.year,DF.month,DF.day,
+                           DF.hour,DF.minute,DF.second)
+    DF['epoch'] = Epoch
+    
+    if site_name:
+        DF['site'] = site_name()
+    
+    return DF
+
+
+
+
 def read_track(filein):
     """
     Read GAMIT/TRACK File
@@ -859,7 +895,10 @@ def gins_read_time(line):
     return T
 
 
-def gins_read_MZB(filein):
+def gins_read_MZB(filein,return_df=False):
+    """
+    Read Mean Zeintal Bias in a GINS' listing
+    """
 
     F = open(filein)
 
@@ -868,6 +907,7 @@ def gins_read_MZB(filein):
     Tstk    = []
     MZBstk  = []
     sMZBstk = []
+    NameStat = []
 
     for line in F:
         if re.compile('__Nom__').search(line):
@@ -901,8 +941,30 @@ def gins_read_MZB(filein):
             Tstk.append(T)
             MZBstk.append(MZB)
             sMZBstk.append(sMZB)
+            NameStat.append(namestat)
+    
+    if not return_df:
+        return Tstk , MZBstk , sMZBstk , NameStat
+    else:
+        DF = pd.DataFrame((Tstk , MZBstk , sMZBstk , NameStat))
+        DF = DF.T
+        DF.columns = ('epoch','mzb','mzb_std','site')
+        DF.mzb = DF.mzb.astype(float)
+        DF.mzb_std = DF.mzb_std.astype(float)
+        return DF
+    
 
-    return Tstk , MZBstk , sMZBstk , namestat
+def gins_readTROPOZ(filein): 
+    """
+    Read TROPOZ in a GINS' listing
+    """
+    
+    L  = utils.grep(filein,"TROPOZ COR_ZEN_ESTIM")
+    DF = pd.DataFrame([e.split()[2:] for e in L]).astype(float)
+    DF.columns = ['jjul_cnes','tropoz_std','tropoz']
+    DF["epoch"] = conv.jjulCNES2dt(DF['jjul_cnes']).dt.round('1s') - dt.timedelta(seconds=19)
+    
+    return DF
 
 
 def write_ATM_GAMIT(Tstk , MZBstk , sMZBstk ,
@@ -1395,12 +1457,15 @@ def read_epos_sta_coords_multi(filein_list,return_dict = True):
         return ts_list
 
 
+
+
 def read_epos_slv_times(p,convert_to_time=False):
     """
     convert_to_time : divide by the speed of light to get time-homogene values.
     Values in meter instead
     If convert_to_time : time in sec
     """
+    
     L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates",
                                                 "\-sum_times/estimates")
 
