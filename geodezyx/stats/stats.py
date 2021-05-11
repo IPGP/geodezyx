@@ -833,6 +833,7 @@ def outlier_mad(data,threshold=3.5,verbose=False,
     MZS[np.isnan(MZS)] = threshold * 10 ### makes a threshold virtually higher for NaN
     boolbad = MZS < threshold
 
+
     dataout = data[boolbad]
     nbout = float(sum(boolbad))
     ratio = (nbinp-nbout)/nbinp
