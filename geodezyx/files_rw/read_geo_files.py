@@ -144,6 +144,51 @@ def read_clk(file_path_in,names_4char=False):
     return DFclk
 
 
+def read_clk_from_sp3(file_path_or_DForb_in):
+    """
+    Get the clock values from a SP3 file of an Orbit DataFrame,
+    formated as a Clock DataFrame
+
+    Parameters
+    ----------
+    file_path_or_DForb_in : str or DataFrame
+        the input SP3 file path or an Orbit DataFrame.
+
+    Returns
+    -------
+    DFclk_sp3 : DataFrame
+        Clock DataFrame.
+
+    """
+    if type(file_path_or_DForb_in) is str:
+        DForb = read_sp3(file_path_or_DForb_in)
+    else:
+        DForb = file_path_or_DForb_in
+        
+    nlines = len(DForb)
+
+    DFclk_sp3 = pd.DataFrame([["AS"] * nlines,
+                                DForb.sat,
+                                DForb.epoch.dt.year,
+                                DForb.epoch.dt.month,
+                                DForb.epoch.dt.day,
+                                DForb.epoch.dt.hour,
+                                DForb.epoch.dt.minute,
+                                DForb.epoch.dt.second,
+                                [1] * nlines,
+                                DForb.clk * 10**-6,
+                                [np.nan] * nlines,
+                                DForb.AC,
+                                DForb.epoch]).T
+    
+    DFclk_sp3.columns = ['type', 'name', 'year', 'month', 
+                         'day', 'hour', 'minute', 'second',
+                         'n_values', 'bias', 'sigma', 'ac', 'epoch']
+    
+    return DFclk_sp3
+            
+
+
 def read_sp3(file_path_in,returns_pandas = True, name = '',
              epoch_as_pd_index = False,km_conv_coef=1,
              skip_null_epoch=True):
@@ -214,6 +259,10 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     if Header.empty:
         print("WARN:read_sp3: The SP3 looks empty: ",file_path_in)
         if returns_pandas:
+            df = pd.DataFrame([], columns=['epoch','sat', 'const',
+                                           'sv','type',
+                                           'x','y','z',
+                                           'clk','AC'])
             return df
         else:
             return  epoch_stk ,  Xstk , Ystk , Zstk , Clkstk , AC_name_stk
@@ -273,8 +322,10 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     AC_name_stk = [AC_name] * len(Xstk)
 
     if returns_pandas:
-        df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
-                                             'x','y','z','clk','AC'])
+        df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const',
+                                             'sv','type',
+                                             'x','y','z',
+                                             'clk','AC'])
         
         if skip_null_epoch:
             df = sp3_DataFrame_zero_epoch_filter(df)
@@ -308,7 +359,7 @@ def read_sp3_header(sp3_in,ac_name_in=None):
         path of the SP3 file
         can handle gzip-compressed file (with .gz/.GZ extension) 
 
-        can also handle the sp3 content as a list of string
+        can also handle the sp3 content as a list of strings
         (useful when read_sp3_header is used as a subfunction of read_sp3)
         
     ac_name_in : str
