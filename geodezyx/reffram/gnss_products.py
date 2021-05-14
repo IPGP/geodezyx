@@ -1077,10 +1077,10 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
     order >> normally for sp3 is sat and epoch, but can be used for snx files as STAT and epoch
     """
     
-    print("666:",dt.datetime.now())
+    #print("666:",dt.datetime.now())
     OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
     OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
-    print("777:",dt.datetime.now())
+    #print("777:",dt.datetime.now())
     
     I1 = OrbDFa.index
     I2 = OrbDFb.index
