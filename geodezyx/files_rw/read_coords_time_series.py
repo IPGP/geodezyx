@@ -1377,7 +1377,7 @@ def read_epos_sta_coords_mono(filein,return_df=True):
             MJD_strt = int(fields[6])
             MJD_end  = int(fields[7])
             MJD_mid = np.mean([MJD_strt , MJD_end])
-            T = conv.MJD2dt(MJD_mid)
+            T = conv.numpy_dt2dt(conv.MJD2dt(MJD_mid))
 
         if "POS_VEL:XYZ" in fields[0]:
             X  = float(fields[4])
@@ -1403,7 +1403,6 @@ def read_epos_sta_coords_mono(filein,return_df=True):
                 point.anex["Vz"] = sVz
                 Points_list_stk.append(point)
             
-
             #### And store for the DataFrame
             else:
                 tup_4_DF = (namestat,numstat,tecto_plate,
@@ -1415,7 +1414,6 @@ def read_epos_sta_coords_mono(filein,return_df=True):
 
 
     if return_df:
-        
         columns = ("site","site_num","tecto_plate",
            "MJD_ref","MJD_start","MJD_end",
            "x","y","z","sx","sy","sz",
@@ -1429,7 +1427,6 @@ def read_epos_sta_coords_mono(filein,return_df=True):
         return Points_list_stk
 
 def read_epos_sta_coords_multi(filein_list,return_dict = True):
-
     filein_list  = sorted(filein_list)
     Points_list  = []
     statname_stk = []
