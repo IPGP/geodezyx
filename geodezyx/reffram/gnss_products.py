@@ -1106,7 +1106,7 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
         print("WARN : Orb/ClkDF_common_epoch_finder : len(Orb/ClkDFa_out) != len(Orb/ClkDFb_out)")
         print("TIPS : ClkDFa_in and/or ClkDFb_in might contain duplicates")
 
-    print("888:",dt.datetime.now())
+#    print("888:",dt.datetime.now())
     
     if return_index:
         return OrbDFa_out , OrbDFb_out , Iinter
