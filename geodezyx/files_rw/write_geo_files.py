@@ -504,6 +504,12 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 SP3_bef = files_rw.read_sp3(p_bef)
                 SP3_aft = files_rw.read_sp3(p_aft)
                 
+                ### Filtering to keep P only
+                SP3 = SP3[SP3.type == "P"]
+                SP3_bef = SP3_bef[SP3_bef.type == "P"]
+                SP3_aft = SP3_aft[SP3_aft.type == "P"]
+                
+                
                 SP3_bef = SP3_bef[SP3_bef["epoch"] < SP3["epoch"].min()]
                 SP3_aft = SP3_aft[SP3_aft["epoch"] > SP3["epoch"].max()]
                 
