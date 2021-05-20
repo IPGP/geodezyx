@@ -802,33 +802,39 @@ def export_ts(ts,outdir,coordtype = 'ENU',outprefix='',write_header=False):
     write_header not well implemented !!!
     """
 
-    proto_str = '{:23} {:23} {:23} {:23} {:23} {:23} {:23} {} {:23} {:23} {}'
+    proto_str = '{:23} ' * 14
 
     A,B,C,T,sA,sB,sC = ts.to_list(coordtype)
     if outprefix != '':
         outprefix = outprefix + '_'
 
-    outfilenam = outprefix + ts.stat + '.' + coordtype + '.ts.dat'
+    outfilenam = outprefix +  ts.stat + "_" +  ts.name + '.' + coordtype + '.ts.dat'
     outpath = os.path.join(outdir,outfilenam)
 
     filobj = open(outpath,'w+')
 
     if write_header:
-        "#" + proto_str.format(("year","month","day","hour","minute","seconds","year_decimal","posix_time"))
-        filobj.write()
+        header = "#" + proto_str.format(*(coordtype[0],"sigma"+coordtype[0],
+                                          coordtype[1],"sigma"+coordtype[1],
+                                          coordtype[2],"sigma"+coordtype[2],
+                                          "year","month","day",
+                                          "hour","minute","seconds",
+                                          "year_decimal","posix_time"))
+        filobj.write(header + "\n")
 
     for a,b,c,t,sa,sb,sc in zip(A,B,C,T,sA,sB,sC):
-        tt = conv.posix2dt(t)
-        paramstr = [str(e) for e in [a,b,c,t,sa,sb,sc]]
+        paramstr = [str(e) for e in [a,sa,b,sb,c,sc]]
         #paramstr = [e.ljust(18, '0') for e in paramstr]
-
+        
+        tt = conv.posix2dt(t)
         yr_dec_str = str(conv.dt2year_decimal(tt))
         posix_str = str(t)
 
-        paramstr2 = paramstr + [tt.strftime("%Y %m %d %H %M %S"),yr_dec_str,posix_str ,'\n']
+        paramstr_time = list(tt.strftime("%Y %m %d %H %M %S").split())
 
-
-        outlin =  proto_str.format(*paramstr2)
+        paramstr2 = paramstr + paramstr_time + [yr_dec_str,posix_str]
+        
+        outlin =  proto_str.format(*paramstr2) + "\n"
         filobj.write(outlin)
     filobj.close()
 

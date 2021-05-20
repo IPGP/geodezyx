@@ -1076,8 +1076,11 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
     corresponding Orbit DFs
     order >> normally for sp3 is sat and epoch, but can be used for snx files as STAT and epoch
     """
+    
+    #print("666:",dt.datetime.now())
     OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
     OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
+    #print("777:",dt.datetime.now())
     
     I1 = OrbDFa.index
     I2 = OrbDFb.index
@@ -1102,6 +1105,8 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
     if len(OrbDFa_out) != len(OrbDFb_out):
         print("WARN : Orb/ClkDF_common_epoch_finder : len(Orb/ClkDFa_out) != len(Orb/ClkDFb_out)")
         print("TIPS : ClkDFa_in and/or ClkDFb_in might contain duplicates")
+
+#    print("888:",dt.datetime.now())
     
     if return_index:
         return OrbDFa_out , OrbDFb_out , Iinter
