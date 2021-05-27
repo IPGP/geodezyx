@@ -2,9 +2,10 @@
 
 hosnam=`hostname`
 user="$USER"
-if [ $USER eq 'psakicki' ]
+if [ $user eq 'psakicki' ]
     then user="psakic"
 fi
+echo $user
 dat=`date '+%Y-%m-%d %H:%M:%S'`
 #rm -fv lib/*pyc
 #find . -name "__pycache__" -exec rm -fvr "{}" \;
