@@ -2,7 +2,7 @@
 
 hosnam=`hostname`
 user="$USER"
-if [ $user eq 'psakicki' ]
+if [ $user = 'psakicki' ]
     then user="psakic"
 fi
 echo $user
