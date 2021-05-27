@@ -1072,9 +1072,10 @@ def OrbDF_multidx_2_reg(OrbDFin,index_order=["sat","epoch"]):
 def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
                               supplementary_sort=False,order=["sat","epoch"]):
     """
-    Find common sats and epochs in to Orbit DF, and output the
-    corresponding Orbit DFs
-    order >> normally for sp3 is sat and epoch, but can be used for snx files as STAT and epoch
+    Find common sats and epochs in to Orbit DF,
+    and output the corresponding Orbit DFs
+    order >> normally for sp3 is sat and epoch, 
+    but can be used for snx files as STAT and epoch
     """
     
     #print("666:",dt.datetime.now())
@@ -1242,7 +1243,43 @@ def ClkDF_common_epoch_finder(ClkDFa_in,ClkDFb_in,return_index=False,
                                      supplementary_sort=supplementary_sort,
                                      order=order)
 
+
+
+def ClkDF_common_epoch_finder_multi(ClkDF_list_in,
+                                    return_index=False,
+                                    supplementary_sort=False,
+                                    order=["name","epoch"]):
     
+    """
+    Find common sats/station and epochs in to Clock DF, and output the
+    corresponding Clock DFs
+    
+    Is is the multi version of ClkDF_common_epoch_finder
+    """
+    
+    ClkDFref = ClkDF_list_in[0]
+    
+    #### First loop: we find the common epochs
+    for ClkDF in ClkDF_list_in[1:]:
+        
+        OUTTUP = OrbDF_common_epoch_finder(ClkDFref,ClkDF,
+                                           return_index=True,
+                                           supplementary_sort=supplementary_sort,
+                                           order=order)
+        
+        ClkDFref , _ , Iinter = OUTTUP
+        
+    #### second loop: we use the common epochs found for the outputed ClkDF  
+    ClkDF_list_out= []
+    for ClkDF in ClkDF_list_in:
+        ClkDFout = ClkDF.set_index(order).loc[Iinter]
+        ClkDF_list_out.append(ClkDFout)
+    
+    if not return_index:
+        return ClkDF_list_out
+    else:
+        return ClkDF_list_out,Iinter
+        
 
 
  #   _____ _      _____   __      __   _ _     _       _   _             

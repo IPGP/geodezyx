@@ -8,7 +8,9 @@ Created on Fri Aug  2 18:00:21 2019
 
 
 #### External modules
+import datetime as dt
 import numpy as np
+import os 
 import pandas as pd
 
 #### geodeZYX modules
@@ -252,15 +254,27 @@ def write_clk(DFclk_in,outpath,
 
         if output_std_values:
             one_or_two=2
-            row_str = row_str_proto.format(row["type"],row["name"],row["year"],
-                                           row["month"],row["day"],row["hour"],row["minute"],
-                                           row["second"],one_or_two,row["bias"],row["sigma"])
+            row_str = row_str_proto.format(row["type"],row["name"],
+                                           int(row["year"]),
+                                           int(row["month"]),
+                                           int(row["day"]),
+                                           int(row["hour"]),
+                                           int(row["minute"]),
+                                           int(row["second"]),
+                                           one_or_two,
+                                           row["bias"],
+                                           row["sigma"])
         else:
             one_or_two=1
-            row_str = row_str_proto.format(row["type"],row["name"],row["year"],
-                                           row["month"],row["day"],row["hour"],row["minute"],
-                                           row["second"],one_or_two,row["bias"])
-            
+            row_str = row_str_proto.format(row["type"],row["name"],
+                                           int(row["year"]),
+                                           int(row["month"]),
+                                           int(row["day"]),
+                                           int(row["hour"]),
+                                           int(row["minute"]),
+                                           int(row["second"]),
+                                           one_or_two,
+                                           row["bias"])            
         Row_str_stk.append(row_str)
     
     ## Add EOF
@@ -276,9 +290,9 @@ def write_clk(DFclk_in,outpath,
     if not outname:
         outpath_opera = outpath
     elif outname == 'auto_old_cnv':
-        start_dt = dt.datetime(row["year"].iloc[0],
-                               row["month"].iloc[0],
-                               row["day"].iloc[0])
+        start_dt = dt.datetime(int(DFclk_in.iloc[0]["year"]),
+                               int(DFclk_in.iloc[0]["month"]),
+                               int(DFclk_in.iloc[0]["day"]))
         week , dow = conv.dt2gpstime(start_dt)
         filename = prefix_opera + str(week) + str(dow) + '.clk'
         outpath_opera = os.path.join(outpath,filename)
@@ -286,10 +300,16 @@ def write_clk(DFclk_in,outpath,
     elif outname == 'auto_new_cnv':
         print("ERR: not implemented yet !!!!!")
         raise Exception
+        
+    else:
+        outpath_opera = os.path.join(outpath,outname)
+        
+    OUT = "END OF HEADER\n" + OUT
 
     with open(outpath_opera,"w+") as Fout:
         Fout.write(OUT)
         Fout.close()
+    
         
     return OUT
 
