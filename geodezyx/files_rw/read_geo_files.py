@@ -186,12 +186,12 @@ def read_clk_from_sp3(file_path_or_DForb_in):
     
     DFclk_sp3 = DFclk_sp3.infer_objects()
     
+    
     DFclk_sp3.columns = ['type', 'name', 'year', 'month', 
                          'day', 'hour', 'minute', 'second',
                          'n_values', 'bias', 'sigma', 'ac', 'epoch']
     
     return DFclk_sp3
-            
 
 
 def read_sp3(file_path_in,returns_pandas = True, name = '',
