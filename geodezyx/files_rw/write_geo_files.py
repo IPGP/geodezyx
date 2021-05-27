@@ -482,9 +482,9 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
             try:
                 print("******",ac,dat)
                 
-                if conv.dt2gpstime(dat)[0] < 1800:
-                    print("SKIP",dat)
-                    continue
+                #if conv.dt2gpstime(dat)[0] < 1800:
+                #    print("SKIP",dat)
+                #    continue
                     
                 wwwwd_str = conv.dt_2_sp3_datestr(dat)
             
