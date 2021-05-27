@@ -167,6 +167,9 @@ def read_clk_from_sp3(file_path_or_DForb_in):
         
     nlines = len(DForb)
 
+    ### replace 999999.999999 with NaN
+    DForb.loc[np.isclose(DForb.clk,999999.999999),'clk'] = np.nan
+
     DFclk_sp3 = pd.DataFrame([["AS"] * nlines,
                                 DForb.sat,
                                 DForb.epoch.dt.year,
@@ -180,6 +183,8 @@ def read_clk_from_sp3(file_path_or_DForb_in):
                                 [np.nan] * nlines,
                                 DForb.AC,
                                 DForb.epoch]).T
+    
+    DFclk_sp3 = DFclk_sp3.infer_objects()
     
     DFclk_sp3.columns = ['type', 'name', 'year', 'month', 
                          'day', 'hour', 'minute', 'second',
