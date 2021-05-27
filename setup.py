@@ -158,6 +158,7 @@ Also tested with Anaconda""",  # Optional
                       'numpy',
                       'matplotlib',
                       'pyorbital',
+                      'pytwobodyorbit',
                       'pandas',
                       'scipy',
                       'sympy',

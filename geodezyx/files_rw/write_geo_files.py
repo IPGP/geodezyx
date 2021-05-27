@@ -15,9 +15,9 @@ import pandas as pd
 
 #### geodeZYX modules
 from geodezyx import conv
-from geodezyx import operational
 from geodezyx import utils
 from geodezyx import files_rw
+from geodezyx import reffram
 
 #### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
@@ -417,7 +417,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         suffix_out_input = None,
                         overlap_size = 7200,
                         force = False,
-                        common_sats_only=True,
+                        manage_missing_sats='common_sats_only',
                         eliminate_null_sat=True,
                         severe=False,
                         separated_systems_export=False):
@@ -439,9 +439,11 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         Overlapsize. The default is 7200.
     force : True, optional
         force overwrite. The default is False.
-    common_sats_only : True, optional
-        generate a file with only the common sat between the 3 days.
-        The default is True.
+    manage_missing_sats : str, optional
+        'common_sats_only' : generate a file with only the common sat 
+        between the 3 days.
+        'extrapolate' : extrapolate the missing sats based on the first/last epoch
+        The default is 'common_sats_only'.
     eliminate_null_sat : bool, optional
         eliminate null sat. The default is True.
     severe : bool, optional
@@ -499,7 +501,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 fil_out = dir_out_wk + "/" + suffix_out  + wwwwd_str + ".sp3"
                 
                 if not force and os.path.isfile(fil_out):
-                    print("0))",fil_out,"exsists, skipping...")
+                    print("0))",fil_out,"exists, skipping...")
                     continue
 
 
@@ -551,10 +553,55 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 
                 SP3concat = SP3concat[(SP3concat["epoch"] >= dat_filter_bef) & (SP3concat["epoch"] <= dat_filter_aft)]
                 
-                if common_sats_only:           
+                ########## HERE WE MANAGE THE MISSING SATS
+                if manage_missing_sats == "common_sats_only":     
+                    print("4))","remove missing sats ")                                     
                     common_sats = set(SP3_bef["sat"]).intersection(set(SP3["sat"])).intersection(set(SP3_aft["sat"]))
                     SP3concat = SP3concat[SP3concat["sat"].isin(common_sats)]
+                elif manage_missing_sats == "extrapolate":
+                    print("4))","extrapolate missing sats ")                                     
+                    for iovl,SP3_ovl in enumerate((SP3_bef,SP3_aft)):
+                        if iovl == 0:
+                            backward = True
+                            forward  = False
+                            backfor = "backward"
+                        elif iovl == 1:
+                            backward = False
+                            forward  = True
+                            backfor = "forward"
+                            
+                        Sats = set(SP3["sat"])
+                        Sats_ovl = set(SP3_ovl["sat"])
                     
+                        Sats_miss = Sats.difference(Sats_ovl)
+                        if not Sats_miss:
+                            continue
+                        print("4a)","extrapolate missing sats",backfor,Sats_miss)                                     
+
+                        SP3extrapo_in = SP3concat[SP3concat["sat"].isin(Sats_miss)]
+                        
+                        #step = utils.most_common(SP3concat["epoch"].diff().dropna())
+                        #step = step.astype('timedelta64[s]').astype(np.int32)
+                        step = 900
+                        #print(step)
+                        
+                        #print("SP3extrapo_in",SP3extrapo_in)
+                        
+                        SP3extrapo = reffram.extrapolate_sp3_DataFrame(SP3extrapo_in,
+                                                                       step=step,
+                                                                       n_step=int(overlap_size/step),
+                                                                       backward=backward,
+                                                                       forward=forward,
+                                                                       until_backward=dat_filter_bef,
+                                                                       until_forward=dat_filter_aft,
+                                                                       return_all=False)
+                        
+                        SP3concat = pd.concat((SP3concat,SP3extrapo))
+                        print(SP3extrapo)
+
+                else:
+                    print("ERR: check manage_missing_sats value")
+                    raise Exception
                     
                 if eliminate_null_sat:
                     GoodSats = []
@@ -569,7 +616,6 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                             print("6) eliminate because null position",sat)
                         
                     SP3concat = SP3concat[SP3concat["sat"].isin(GoodSats)]
-
 
                 ### *************** STEP 7 ***************           
                 print("7))","Start/End Epoch of the concatenated file ")                                     
