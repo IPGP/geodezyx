@@ -147,7 +147,8 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9,
     
     for sat in DFsp3["sat"].unique():
         print("INFO:extrapolate_sp3_DataFrame: extrapolate: ",sat)
-        DFsat = DFsp3[(DFsp3["sat"] == sat) & (DFsp3["type"] == "P")]
+        DFsat = DFsp3[(DFsp3["sat"] == sat) & (DFsp3["type"] == "P")].copy()
+        DFsat.sort_values("epoch",inplace=True)
         
         DFline_dummy = DFsat.iloc[0].copy()
         DFline_dummy["clk"] = 999999.999999
