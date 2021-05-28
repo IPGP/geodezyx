@@ -440,8 +440,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
     force : True, optional
         force overwrite. The default is False.
     manage_missing_sats : str, optional
-        'common_sats_only' : generate a file with only the common sat 
-        between the 3 days.
+        'exclude' : generate a file with only the common sat 
+        between the 3 days. Thus, exclude the missing sats
         'extrapolate' : extrapolate the missing sats based on the first/last epoch
         The default is 'common_sats_only'.
     eliminate_null_sat : bool, optional
@@ -495,7 +495,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 wwwwd_str_aft = utils.join_improved("",*conv.dt2gpstime(dat_aft))
                 
                 
-                ###### check if exsists
+                ###### check if exists
                 dir_out_wk = os.path.join(dir_out,"wk" + str(wwwwd_str)[:4])
                 utils.create_dir(dir_out_wk)
                 fil_out = dir_out_wk + "/" + suffix_out  + wwwwd_str + ".sp3"
@@ -554,7 +554,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 SP3concat = SP3concat[(SP3concat["epoch"] >= dat_filter_bef) & (SP3concat["epoch"] <= dat_filter_aft)]
                 
                 ########## HERE WE MANAGE THE MISSING SATS
-                if manage_missing_sats == "common_sats_only":     
+                if manage_missing_sats == "exclude":     
                     print("4))","remove missing sats ")                                     
                     common_sats = set(SP3_bef["sat"]).intersection(set(SP3["sat"])).intersection(set(SP3_aft["sat"]))
                     SP3concat = SP3concat[SP3concat["sat"].isin(common_sats)]
