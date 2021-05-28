@@ -631,7 +631,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                     for sys in SP3concat["const"].unique():
                         try:
                             SP3concat_sys = SP3concat[SP3concat["const"] == sys]
-                            fil_out_sys = dir_out_wk + "/" + suffix_out[:2] + sys.lower() + wwwwd_str + ".sp3"
+                            fil_out_sys = dir_out_wk + "/" + suffix_out[:2] + sys.lower() + wwwwd_str.zfill(5) + ".sp3"
                             print("9)) outputed file")
                             print(fil_out_sys)
                             write_sp3(SP3concat_sys,fil_out_sys)
