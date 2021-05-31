@@ -133,8 +133,8 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9,
         if False, returns only the extrapolated values.
         The default is True.
     until_backward & until_backward : datetime, optional
-        epoch until then the extrapolation has to be done
-        override n_step
+        epoch until then the extrapolation has to be done.
+        Override n_step
         
     Returns
     -------
