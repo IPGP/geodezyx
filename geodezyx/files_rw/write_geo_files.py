@@ -481,7 +481,6 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
             #wwwwd_str = os.path.basename(sp3)[3:8]
             #D.append(conv.gpstime2dt(int(wwwwd_str[:4]),int(wwwwd_str[4:])))
 
-            print("AAAA",sp3)
             dat = conv.sp3name2dt(sp3)
             D.append(dat)
             

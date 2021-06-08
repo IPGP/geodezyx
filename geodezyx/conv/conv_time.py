@@ -1545,10 +1545,10 @@ def sp3name2dt(sp3path):
 
     sp3name = os.path.basename(sp3path)
 
-    if len(sp3name) < 10: ###### A REGEX WOULD BE MUCH BETTER !!!!
-        return sp3name_leg_2dt(week,dow)
+    if len(sp3name) < 17: ###### A REGEX WOULD BE MUCH BETTER !!!! (PSakic 2021-06)
+        return sp3name_leg_2dt(sp3path)
     else:
-        return sp3name_v3_2dt(week,dow)
+        return sp3name_v3_2dt(sp3path)
              
 
 def sp3name_leg_2dt(sp3path):

@@ -747,7 +747,7 @@ def orbclk_long2short_name(longname_filepath_in,
 
     wwww , dow = conv.dt2gpstime(day_dt)
 
-    shortname_prefix = center.lower() + str(wwww) + str(dow)
+    shortname_prefix = center.lower() + str(wwww).zfill(4) + str(dow)
 
     ### Type handeling
     if   "SP3" in longname_basename:
