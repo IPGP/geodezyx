@@ -463,7 +463,11 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
     """
 
     for ac in ac_list:
-        Lfile = utils.find_recursive(dir_in,"*" + ac + "*sp3") + utils.find_recursive(dir_in,"*" + ac + "*SP3")
+        Lfile = []
+        Extlist = ["sp3","SP3","sp3.gz","SP3.gz"]
+        for ext in Extlist:
+            Lfile = Lfile + utils.find_recursive(dir_in,"*" + ac + "*" + ext)
+        print("Nb of SP3 found for",ac,len(Lfile))
         
         if not suffix_out_input:
             suffix_out = ac
@@ -474,8 +478,12 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         WWWWD = []
             
         for sp3 in Lfile:
-            wwwwd_str = os.path.basename(sp3)[3:8]
-            D.append(conv.gpstime2dt(int(wwwwd_str[:4]),int(wwwwd_str[4:])))
+            #wwwwd_str = os.path.basename(sp3)[3:8]
+            #D.append(conv.gpstime2dt(int(wwwwd_str[:4]),int(wwwwd_str[4:])))
+
+            print("AAAA",sp3)
+            dat = conv.sp3name2dt(sp3)
+            D.append(dat)
             
             
         for dat in D[1:-1]: ####if selection manuel, zip > 2lists !!!
