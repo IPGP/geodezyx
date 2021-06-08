@@ -463,7 +463,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
     """
 
     for ac in ac_list:
-        Lfile = utils.find_recursive(dir_in,"*" + ac + "*sp3")
+        Lfile = utils.find_recursive(dir_in,"*" + ac + "*sp3") + utils.find_recursive(dir_in,"*" + ac + "*SP3")
         
         if not suffix_out_input:
             suffix_out = ac
