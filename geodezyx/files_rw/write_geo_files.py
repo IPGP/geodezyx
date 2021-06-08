@@ -486,14 +486,13 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 #    print("SKIP",dat)
                 #    continue
                     
-                wwwwd_str = conv.dt_2_sp3_datestr(dat)
+                wwwwd_str = conv.dt_2_sp3_datestr(dat).zfill(5)
             
                 dat_bef = dat - dt.timedelta(days=1)
                 dat_aft = dat + dt.timedelta(days=1)
                 
-                wwwwd_str_bef = utils.join_improved("",*conv.dt2gpstime(dat_bef))
-                wwwwd_str_aft = utils.join_improved("",*conv.dt2gpstime(dat_aft))
-                
+                wwwwd_str_bef = utils.join_improved("",*conv.dt2gpstime(dat_bef)).zfill(5)
+                wwwwd_str_aft = utils.join_improved("",*conv.dt2gpstime(dat_aft)).zfill(5)
                 
                 ###### check if exists
                 dir_out_wk = os.path.join(dir_out,"wk" + str(wwwwd_str)[:4])
