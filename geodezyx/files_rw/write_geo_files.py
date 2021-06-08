@@ -462,8 +462,13 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
 
     """
 
+
+    Dict_Lfiles_ac = dict()
+
     for ac in ac_list:
-        Lfile = []
+        Dict_Lfiles_ac[ac] = []
+        Lfile = Dict_Lfiles_ac[ac]
+        
         Extlist = ["sp3","SP3","sp3.gz","SP3.gz"]
         for ext in Extlist:
             Lfile = Lfile + utils.find_recursive(dir_in,"*" + ac + "*" + ext)
@@ -649,10 +654,11 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 
             except Exception as e:
                 if severe:
+                    print("WARN:",e)
                     raise e
                 else:
-                    print("ERR:",e)
-                    raise e
+                    print("WARN: Error",e,"but no severe mode, continue...")
+                    continue
 
 
     """
