@@ -420,7 +420,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         manage_missing_sats='common_sats_only',
                         eliminate_null_sat=True,
                         severe=False,
-                        separated_systems_export=False):
+                        separated_systems_export=False,
+                        first_date=None):
     """
     Generate an SP3 Orbit file with overlap based on the SP3s of the 
     days before and after
@@ -450,6 +451,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         raise an exception if problem. The default is False.
     separated_systems_export : bool, optional
         export different sp3 for different system. The default is False.
+    first_date : datetime, optional
+        exclude SP3 before this epoch
 
     Returns
     -------
@@ -494,9 +497,10 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
             try:
                 print("******",ac,dat)
                 
-                #if conv.dt2gpstime(dat)[0] < 1800:
-                #    print("SKIP",dat)
-                #    continue
+                if first_date:
+                    if conv.dt2gpstime(dat) < first_date:
+                        print("INFO: SKIP date",dat)
+                        continue
                     
                 wwwwd_str = conv.dt_2_sp3_datestr(dat).zfill(5)
             
