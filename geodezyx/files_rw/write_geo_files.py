@@ -495,7 +495,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
             
         for dat in D[1:-1]: ####if selection manuel, zip > 2lists !!!
             try:
-                print("******",ac,dat)
+                print("***********",ac,dat)
                 
                 if first_date:
                     if conv.dt2gpstime(dat) < first_date:
