@@ -539,6 +539,7 @@ def gaussian_filter_GFZ_style_smoother_improved(tim_ref, dat_ref, width=7):
     num_raw = len(tim_raw)
     
     for ismt in range(num_raw):
+
         tim_raw_work = np.delete(tim_raw , ismt)
         dat_raw_work = np.delete(dat_raw , ismt)
         
@@ -895,7 +896,7 @@ def outlier_mad_binom(Y,X,threshold=3.5,verbose=False,detrend_first=False,
     else:
         _ , Ywork = np.array(X) , np.array(Y)
         
-    _ , bb = outiler_mad(Ywork,threshold,verbose)
+    _ , bb = outlier_mad(Ywork,threshold,verbose)
     
     Xclean = np.array(X)[bb]    
     Yclean = np.array(Y)[bb]
