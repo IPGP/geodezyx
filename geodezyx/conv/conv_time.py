@@ -1524,13 +1524,38 @@ def rinexname2dt(rinexpath):
         raise Exception
     
 
-        
-
 def sp3name2dt(sp3path):
     """
     Time representation conversion
     
-    Orbit SP3 Name (old naming convention)  => Python's Datetime
+    Orbit SP3 Name (legacy/new naming convention)  => Python's Datetime
+    
+    Extract the date in a Orbit SP3 name
+
+    Parameters
+    ----------
+    sp3path : string
+        Orbit SP3 path. The basename will be extracted automatically.
+
+    Returns
+    -------
+    dt : datetime
+        Datetime
+    """
+
+    sp3name = os.path.basename(sp3path)
+
+    if len(sp3name) < 17: ###### A REGEX WOULD BE MUCH BETTER !!!! (PSakic 2021-06)
+        return sp3name_leg_2dt(sp3path)
+    else:
+        return sp3name_v3_2dt(sp3path)
+             
+
+def sp3name_leg_2dt(sp3path):
+    """
+    Time representation conversion
+    
+    Orbit SP3 Name (old/legacy naming convention)  => Python's Datetime
     
     Extract the date in a Orbit SP3 name
 

@@ -1490,10 +1490,8 @@ class TimeSerieObs(object):
 # |_|   \___/|_|_| |_|\__|  \___/\/  \_____|_|_|\___|_|\_\
 
 
-class point_n_click_plot():
     """
     USAGE :
-        Data have to be ploted already in a figure
 
         Then :
 
@@ -1514,13 +1512,47 @@ class point_n_click_plot():
             Get your results in a list called PnC.selectedX
 
 
-    IMPORTANT : cursor objects (i.e. multi & cid)
-                must be stored as global variables when you call the method
-                like this :
 
-                    multi , cid = PnC(fig=1)
 
     """
+
+
+class point_n_click_plot():
+    """
+    This method allow to do "point and click" on a plot, to localize offsets 
+    for instance
+    
+    Usage
+    -----
+    Data have to be ploted already in a figure
+    
+    .. code-block:: python
+    
+        PnC = point_n_click_plot()
+        multi , cid = PnC(fig=1,Xdata_are_time=True)
+        PnC.selectedX
+
+    i.e.
+    
+    Create an object point_n_click_plot (here it is PnC in the exemple below) \n
+    Call the object like a function with as 1st argument the id of the plot figure or the plot figure itself \n
+    Make your selection using the SPACE key \n
+    Get your results in a list called PnC.selectedX   
+    
+    Important
+    ---------
+    
+    cursor objects (i.e. multi & cid)
+    must be stored as global variables when you call the method
+    like this :
+
+    .. code-block:: python
+    
+        multi , cid = PnC(fig=1)
+    
+    """
+    
+
 
 
     def __init__(self):
@@ -1558,21 +1590,23 @@ class point_n_click_plot():
                     out_bar_list = stats.plot_vertical_bar_ax([ix],ax,"b",
                                                              linewidth=1)
 
-                self.ver_bar_stk.append(out_bar_list[0])
+                    self.ver_bar_stk.append(out_bar_list[0])
 
                 self.selectedX.append(ix)
 
                 plt.draw()
 
-            elif event.key == 'r' and len(self.selectedX) > 0:
+            elif event.key in ('r','R') and len(self.selectedX) > 0:
                 last = self.selectedX[-1]
 
                 self.selectedX.remove(last)
-                #for ax in figobj.axes:
-                #    stats.plot_vertical_bar_ax([last],ax,"r")
-                last_bar = self.ver_bar_stk[-1]
-                self.ver_bar_stk.remove(last_bar)
-                last_bar.remove()
+
+                last_bars = self.ver_bar_stk[-len(figobj.axes):]
+                
+                for bar in last_bars:
+                    self.ver_bar_stk.remove(bar)    
+                    bar.remove()
+                    
                 print("INFO : value removed : " , last )
 
                 plt.draw()

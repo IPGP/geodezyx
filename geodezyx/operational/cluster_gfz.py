@@ -34,7 +34,8 @@ def cluster_GFZ_run(commands_list,
                     bj_check_mini_nbr = 2,
                     bj_check_wait_time = 120,
                     bj_check_user="auto",
-                    add_cjob_cmd_prefix=True):
+                    add_cjob_cmd_prefix=True,
+                    wait_sleeping_before_launch=5):
     """
     Parameters
     ----------
@@ -67,7 +68,10 @@ def cluster_GFZ_run(commands_list,
         If, the input commands in command_list do not contain 
         the cjob prefix command, it will be added automatically
         The default is True.
-    
+    wait_sleeping_before_launch : int, optional
+        Waiting time between two successive runs.
+        (To cancel the run if necessary)
+        The default is 5.
 
     Returns
     -------
@@ -75,10 +79,10 @@ def cluster_GFZ_run(commands_list,
 
     """
 
+
     username = getpass.getuser()
 
     history_file_path = None
-    wait_sleeping_before_launch=5
 
     i_bunch = 0
 
@@ -101,7 +105,7 @@ def cluster_GFZ_run(commands_list,
     print ('Number of jobs : ' + str(len(commands_list_opera)))
     print ("****************************************")
 
-    for kommand in commands_list_opera:
+    for ikommand,kommand in enumerate(commands_list_opera):
 
         ########## LOG/PRINT command
         print(kommand)
