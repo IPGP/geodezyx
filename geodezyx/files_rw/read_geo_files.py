@@ -1510,7 +1510,7 @@ def read_pdm_res_slr_multi(Res_file_list_in,sol="sol"):
  #                |_|             |_|        
                 
                 
-def read_snx_trop(snxfile,dataframe_output=True):
+def read_snx_trop(snxfile,dataframe_output=True,version=2):
     """
     Read troposphere solutions from Troposphere SINEX
     """
@@ -1539,7 +1539,11 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 epoc.append(conv.convert_partial_year(fields[1]))
             else:
                 date_elts_lis = fields[1].split(':')
-                yy =  int(date_elts_lis[0]) + 2000
+                if version == 2:
+                    yy =  int(date_elts_lis[0])
+                else:
+                    yy =  int(date_elts_lis[0]) + 2000
+                    
                 doy = int(date_elts_lis[1])
                 sec = int(date_elts_lis[2])
                 epoc.append(conv.doy2dt(yy,doy,seconds=sec))
@@ -1574,6 +1578,45 @@ def read_snx_trop(snxfile,dataframe_output=True):
     if dataframe_output:
         return Tropsinex_DataFrame(outtuple)
                 
+def read_gfz_trop(trpfile):
+    """
+    This function is reading GFZ troposphere sinex into Pandas DataFrame
+
+    Parameters
+    ----------
+    trpfile : Str
+        File name of GFZ troposphere sinex.
+
+    Returns
+    -------
+    DF : Pandas DataFrame
+        Pandas Dataframe of GFZ troposphere sinex.
+
+    """
+    fields = []
+    flagtrop = False
+
+    for line in open(trpfile,"r",encoding = "ISO-8859-1"):
+        if re.compile('TROP/SOLUTION').search(line):
+            flagtrop = not flagtrop
+            continue
+
+        if flagtrop ==True and line[0] == ' ':
+            field = line.split()
+            fields.append(field)
+        else:
+            continue
+
+    DF = pd.DataFrame(fields)
+    DF.drop(columns=[0,8,9,10,11,12,18,19,20],inplace=True)
+    DF.columns = ['STAT','epoc','year','doy','secofday','ztd_est','ztd_est_std','num_sat','tgn_est','tgn_est_std','tge_est','tge_est_std']
+    cols_numeric = ['epoc','ztd_est','ztd_est_std','num_sat','tgn_est','tgn_est_std','tge_est','tge_est_std']
+    DF[cols_numeric] = DF[cols_numeric].apply(pd.to_numeric, errors='coerce')
+    DF['epoc'] = conv.MJD2dt(DF['epoc'].values)
+    DF['epoc'] = DF['epoc'].dt.floor('H')
+    return DF
+
+
 def Tropsinex_DataFrame(read_sinex_result):
      """
       General description
@@ -1686,6 +1729,15 @@ def read_rinex_met_2(metfile):
         if re.compile('# / TYPES OF OBSERV').search(line):
             tmp = line.split()
             headers = tmp[1:int(tmp[0])+1]
+        if re.compile('TD SENSOR MOD/TYPE/ACC').search(line):
+            tmp = line.split()
+            temp_unc = float(tmp[-4])
+        if re.compile('PR SENSOR MOD/TYPE/ACC').search(line):
+            tmp = line.split()
+            press_unc = float(tmp[-4])
+        if re.compile('HR SENSOR MOD/TYPE/ACC').search(line):
+            tmp = line.split()
+            humrel_unc = float(tmp[-4])
         if re.compile('END OF HEADER').search(line):
             break
         ln = ln+1
@@ -1695,6 +1747,12 @@ def read_rinex_met_2(metfile):
     df['STA'] = marker
     df['epoch'] = pd.to_datetime(df[['year','month','day','hour','minute','second']],errors='coerce')
     df.drop(['year','month','day','hour','minute','second'], axis=1,inplace=True)
+    if press_unc is not None:
+        df['PR_std'] = press_unc
+    if temp_unc is not None:
+        df['TD_std'] = temp_unc
+    if humrel_unc is not None:
+        df['HR_std'] = humrel_unc
     df.set_index('epoch',inplace=True)
     return df
 
