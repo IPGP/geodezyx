@@ -1714,7 +1714,7 @@ def sinex_bench_antenna_DF_2_disconts(DFantenna_in,stat,return_full=False):
         return Clean_list
 
 ############### Reading Tropospheric ################################################
-def read_snx_trop(snxfile,dataframe_output=True):
+def read_snx_trop(snxfile,dataframe_output=True,version=2):
     """
     Read troposphere solutions from Troposphere SINEX
     """
@@ -1743,7 +1743,11 @@ def read_snx_trop(snxfile,dataframe_output=True):
                 epoc.append(conv.convert_partial_year(fields[1]))
             else:
                 date_elts_lis = fields[1].split(':')
-                yy =  int(date_elts_lis[0]) + 2000
+                if version == 2:
+                    yy =  int(date_elts_lis[0])
+                else:
+                    yy =  int(date_elts_lis[0]) + 2000
+                    
                 doy = int(date_elts_lis[1])
                 sec = int(date_elts_lis[2])
                 epoc.append(conv.doy2dt(yy,doy,seconds=sec))
