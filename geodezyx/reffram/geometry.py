@@ -8,8 +8,11 @@ Created on Fri Aug  2 17:15:57 2019
 
 ########## BEGIN IMPORT ##########
 #### External modules
+import io
+import pandas as pd
 import numpy as np
 import scipy
+
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -85,7 +88,8 @@ def rotmat2(theta,angtype='deg'):
     if angtype == 'deg':
         theta = np.deg2rad(theta)
 
-    rotmat = np.array([[np.cos(theta),-np.sin(theta)],[np.sin(theta),np.cos(theta)]])
+    rotmat = np.array([[np.cos(theta),-np.sin(theta)],
+                       [np.sin(theta),np.cos(theta)]])
 
     return rotmat
 
@@ -153,7 +157,7 @@ def rotate_points(alphal,betal,gammal,pointlin,Rtype='R1',
         for a,b,g in zip(alphal,betal,gammal):
 
             R1 = rotmat3(a,b,g,angtype=angtype,xyzreftuple=xyzreftuple)
-            R2 = C_rpy2enu(a,b,g,angtype=angtype)
+            R2 = conv.C_rpy2enu(a,b,g,angtype=angtype)
 
             if Rtype == 'R1':
                 R = R1
@@ -542,6 +546,58 @@ def R2_from_a_line_regress(Xobs,Yobs,a,b):
     return r2
 
 
+def project_point_on_plan(N,M,A):
+    """
+    
+
+    Parameters
+    ----------
+    N : 3-Array (Vector)
+        Vector describing the plan.
+    M : 3-Array (Vector)
+        Point of the plan.
+    A : 3-Array (Vector)
+        Point we want to project.
+
+    Returns
+    -------
+    P : 3-Array (Vector)
+        Projected point.
+        
+    Note
+    ----
+    It can be an ambiguity on the sign
+    
+    Source
+    ------
+    https://fr.wikipedia.org/wiki/Distance_d%27un_point_%C3%A0_un_plan
+    https://www.mathematex.fr/viewtopic.php?t=923    
+    """
+    
+    ##dist
+    d = np.abs(N.dot(A-M)) / np.linalg.norm(N)
+    
+    ## Normalized N 
+    Nnorm = N / np.linalg.norm(N) 
+        
+    P = Nnorm * d
+    
+    return P
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
 
 #  _    _ _       _       _                    _    _____                _      _   _        ______   _       
 # | |  | (_)     | |     | |                  | |  / ____|              | |    | | (_)      |  ____| | |      
@@ -554,19 +610,28 @@ def R2_from_a_line_regress(Xobs,Yobs,a,b):
     
 ### High level geodetic function
 
+
 def itrf_speed_calc(x0,y0,z0,t0,vx,vy,vz,t):
     """
-    Args :
-        x0,y0,z0 (floats) : coordinates at the reference epoch (m)
+    Translate a position to a given epoch using point velocity
 
-        t0 (float) : reference epoch (decimal year)
+    Parameters
+    ----------
+    x0,y0,z0 : float
+        coordinates at the reference epoch (m).
+    t0 : float
+        reference epoch (decimal year).
+    vx,vy,vz : float
+        speed of the point (m/yr).
+    t : float
+        output epoch.
 
-        vx,vy,vz (floats) : speed of the point (m/yr)
-
-        t (float) : output epoch
-    Returns :
-        xout,yout,zout : coordinates of the point @ the ref. epoch (m)
+    Returns
+    -------
+    xout,yout,zout : floats
+        coordinates of the point @ the ref. epoch (m).
     """
+    
 
     xout = x0 + vx * ( t - t0 )
     yout = y0 + vy * ( t - t0 )
@@ -593,87 +658,297 @@ def calc_pos_speed_itrf(x0,y0,z0,t0,vx,vy,vz,t):
     return itrf_speed_calc(x0,y0,z0,t0,vx,vy,vz,t)
 
 
-def helmert_trans(Xa,params='itrf2008_2_etrf2000',invert=True,workepoc=2009.):
+
+
+
+
+
+
+
+def itrf_helmert_get_parameters(TRF_Input_name,TRF_Ext_name,
+                                verbose=False,
+                                convert=True):
     """
-    NB 1 : http://etrs89.ensg.ign.fr/memo-V8.pdf
-    NB 2 :
-    Transformation inverse : * -1 pour les paramètres
-    cf https://en.wikipedia.org/wiki/Helmert_transformation
+    Get the Helmert parameters for a transformation I/ETRFxx <=> I/ETRFxx
 
-    optimisé pour RGF93 => ITRF2008 (d'ou le invert = True & workepoc = 2009.)
+    Parameters
+    ----------
+    TRF_Input_name : str
+        Name of the initial Reference Frame.
+        Can be ITRFyyyy, ITRFyy, ETRFyyyy, ETRFyy
+        where yyyy or yy is the TRF realization
+    TRF_Ext_name : str
+        Name of the wished Reference Frame.
+        Can be ITRFyyyy, ITRFyy, ETRFyyyy, ETRFyy
+        where yyyy or yy is the TRF realization
+    verbose : bool, optional
+        Print the parameters. The default is True.
+    convert : bool, optional
+        Gives directly useful values in the good units
+        for a proper transformation
 
-    NB3 : Attention losque l'on compare avec
-          le convertisseur EUREF avec une vitesse
-          parce que elle aussi est modifiée dans la conversion ETRS => ITRS.
-          Conclusion : le faire en 2 étapes ETRS = > ITRS dans la même epoc
-                                            ITRS epoc 1 => ITRS epoc 2
+    Returns
+    -------
+    T : 3-Array
+        Translation.
+    Tdot : 3-Array
+        Translation rate.
+    D : float
+        Scale factor.
+    Ddot : float
+        Scale factor rate.
+    R : 3-Array
+        Rotation.
+    Rdot : 3-Array
+        Rotation rte.
+    epoch_ref_Xe : float
+        Reference epoch of TRF_Ext_name.
+        
+    Notes
+    -----
+    Based on the values of
+    http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf
 
-    if manual
-    then params is a tuple
-    params = (t1,t2,t3,dab,r1,r2,r3)
-
-    NE MARCHE PAS PARCE BESOIN DU RATE(TAUX) DES PARAMS D'HELMERT !!!!!!
-    (160923)
     """
-    if invert:
+
+    ### Get short name if necessary
+    if len(TRF_Input_name) == 8:
+        TRF_Input_name = TRF_Input_name[:4] + TRF_Input_name[6:]
+    if len(TRF_Ext_name) == 8:
+        TRF_Ext_name = TRF_Ext_name[:4] + TRF_Ext_name[6:]
+        
+        
+    COEFFS="""TRF_I,TRF_E,TRF_E_epoch,T1,T2,T3,D,R1,R2,R3,Tdot1,Tdot2,Tdot3,Ddot,Rdot1,Rdot2,Rdot3
+ITRF14,ETRF14,1989.0,0.0,0.0,0.0,0.00,0.000,0.000,0.000,0.0,0.0,0.0,0.00,0.085,0.531,-0.770
+ITRF05,ETRF05,1989.0,56.0,48.0,-37.0,0.00,0.000,0.000,0.000,0.0,0.0,0.0,0.00,0.054,0.518,-0.781
+ITRF00,ETRF00,1989.0,54.0,51.0,-48.0,0.00,0.000,0.000,0.000,0.0,0.0,0.0,0.00,0.081,0.490,-0.792
+ITRF97,ETRF97,1989.0,41.0,41.0,-49.0,0.00,0.000,0.000,0.000,0.0,0.0,0.0,0.00,0.200,0.500,-0.650
+ITRF96,ETRF96,1989.0,41.0,41.0,-49.0,0.00,0.000,0.000,0.000,0.0,0.0,0.0,0.00,0.200,0.500,-0.650
+ITRF94,ETRF94,1989.0,41.0,41.0,-49.0,0.00,0.000,0.000,0.000,0.0,0.0,0.0,0.00,0.200,0.500,-0.650
+ITRF93,ETRF93,1989.0,19.0,53.0,-21.0,0.00,0.000,0.000,0.000,0.0,0.0,0.0,0.00,0.320,0.780,-0.670
+ITRF92,ETRF92,1989.0,38.0,40.0,-37.0,0.00,0.000,0.000,0.000,0.0,0.0,0.0,0.00,0.210,0.520,-0.680
+ITRF91,ETRF91,1989.0,21.0,25.0,-37.0,0.00,0.000,0.000,0.000,0.0,0.0,0.0,0.00,0.210,0.520,-0.680
+ITRF90,ETRF90,1989.0,19.0,28.0,-23.0,0.00,0.000,0.000,0.000,0.0,0.0,0.0,0.00,0.110,0.570,-0.710
+ITRF89,ETRF89,1989.0,0.0,0.0,0.0,0.00,0.000,0.000,0.000,0.0,0.0,0.0,0.00,0.110,0.570,-0.710
+ITRF14,ETRF14,2010.0,0.0,0.0,0.0,0.00,1.785,11.151,-16.170,0.0,0.0,0.0,0.00,0.085,0.531,-0.770
+ITRF08,ETRF14,2010.0,-1.6,-1.9,-2.4,0.02,1.785,11.151,-16.170,0.0,0.0,0.1,-0.03,0.085,0.531,-0.770
+ITRF05,ETRF14,2010.0,-2.6,-1.0,2.3,-0.92,1.785,11.151,-16.170,-0.3,0.0,0.1,-0.03,0.085,0.531,-0.770
+ITRF00,ETRF14,2010.0,-0.7,-1.2,26.1,-2.12,1.785,11.151,-16.170,-0.1,-0.1,1.9,-0.11,0.085,0.531,-0.770
+ITRF97,ETRF14,2010.0,-7.4,0.5,62.8,-3.80,1.785,11.151,-16.430,-0.1,0.5,3.3,-0.12,0.085,0.531,-0.790
+ITRF96,ETRF14,2010.0,-7.4,0.5,62.8,-3.80,1.785,11.151,-16.430,-0.1,0.5,3.3,-0.12,0.085,0.531,-0.790
+ITRF94,ETRF14,2010.0,-7.4,0.5,62.8,-3.80,1.785,11.151,-16.430,-0.1,0.5,3.3,-0.12,0.085,0.531,-0.790
+ITRF93,ETRF14,2010.0,50.4,-3.3,60.2,-4.29,4.595,14.531,-16.570,2.8,0.1,2.5,-0.12,0.195,0.721,-0.840
+ITRF92,ETRF14,2010.0,-15.4,-1.5,70.8,-3.09,1.785,11.151,-16.430,-0.1,0.5,3.3,-0.12,0.085,0.531,-0.790
+ITRF91,ETRF14,2010.0,-27.4,-15.5,76.8,-4.49,1.785,11.151,-16.430,-0.1,0.5,3.3,-0.12,0.085,0.531,-0.790
+ITRF90,ETRF14,2010.0,-25.4,-11.5,92.8,-4.79,1.785,11.151,-16.430,-0.1,0.5,3.3,-0.12,0.085,0.531,-0.790
+ITRF89,ETRF14,2010.0,-30.4,-35.5,130.8,-8.19,1.785,11.151,-16.430,-0.1,0.5,3.3,-0.12,0.085,0.531,-0.790
+ITRF14,ETRF00,2010.0,54.7,52.2,-74.1,2.12,1.701,10.290,-16.632,0.1,0.1,-1.9,0.11,0.081,0.490,-0.792
+ITRF08,ETRF00,2010.0,53.1,50.3,-76.5,2.14,1.701,10.290,-16.632,0.1,0.1,-1.8,0.08,0.081,0.490,-0.792
+ITRF05,ETRF00,2010.0,52.1,51.2,-71.8,1.20,1.701,10.290,-16.632,-0.2,0.1,-1.8,0.08,0.081,0.490,-0.792
+ITRF00,ETRF00,2010.0,54.0,51.0,-48.0,0.00,1.701,10.290,-16.632,0.0,0.0,0.0,0.00,0.081,0.490,-0.792
+ITRF97,ETRF00,2010.0,47.3,52.7,-11.3,-1.68,1.701,10.290,-16.892,0.0,0.6,1.4,-0.01,0.081,0.490,-0.812
+ITRF96,ETRF00,2010.0,47.3,52.7,-11.3,-1.68,1.701,10.290,-16.892,0.0,0.6,1.4,-0.01,0.081,0.490,-0.812
+ITRF94,ETRF00,2010.0,47.3,52.7,-11.3,-1.68,1.701,10.290,-16.892,0.0,0.6,1.4,-0.01,0.081,0.490,-0.812
+ITRF93,ETRF00,2010.0,105.1,48.9,-13.9,-2.17,4.511,13.670,-17.032,2.9,0.2,0.6,-0.01,0.191,0.680,-0.862
+ITRF92,ETRF00,2010.0,39.3,50.7,-3.3,-0.97,1.701,10.290,-16.892,0.0,0.6,1.4,-0.01,0.081,0.490,-0.812
+ITRF91,ETRF00,2010.0,27.3,36.7,2.7,-2.37,1.701,10.290,-16.892,0.0,0.6,1.4,-0.01,0.081,0.490,-0.812
+ITRF90,ETRF00,2010.0,29.3,40.7,18.7,-2.67,1.701,10.290,-16.892,0.0,0.6,1.4,-0.01,0.081,0.490,-0.812
+ITRF89,ETRF00,2010.0,24.3,16.7,56.7,-6.07,1.701,10.290,-16.892,0.0,0.6,1.4,-0.01,0.081,0.490,-0.812
+ITRF14,ITRF08,2010.0,1.6,1.9,2.4,-0.02,0.00,0.00,0.00,0.0,0.0,-0.1,0.03,0.00,0.00,0.00
+ITRF14,ITRF05,2010.0,2.6,1.0,-2.3,0.92,0.00,0.00,0.00,0.3,0.0,-0.1,0.03,0.00,0.00,0.00
+ITRF14,ITRF00,2010.0,0.7,1.2,-26.1,2.12,0.00,0.00,0.00,0.1,0.1,-1.9,0.11,0.00,0.00,0.00
+ITRF14,ITRF97,2010.0,7.4,-0.5,-62.8,3.80,0.00,0.00,0.26,0.1,-0.5,-3.3,0.12,0.00,0.00,0.02
+ITRF14,ITRF96,2010.0,7.4,-0.5,-62.8,3.80,0.00,0.00,0.26,0.1,-0.5,-3.3,0.12,0.00,0.00,0.02
+ITRF14,ITRF94,2010.0,7.4,-0.5,-62.8,3.80,0.00,0.00,0.26,0.1,-0.5,-3.3,0.12,0.00,0.00,0.02
+ITRF14,ITRF93,2010.0,-50.4,3.3,-60.2,4.29,-2.81,-3.38,0.40,-2.8,-0.1,-2.5,0.12,-0.11,-0.19,0.07
+ITRF14,ITRF92,2010.0,15.4,1.5,-70.8,3.09,0.00,0.00,0.26,0.1,-0.5,-3.3,0.12,0.00,0.00,0.02
+ITRF14,ITRF91,2010.0,27.4,15.5,-76.8,4.49,0.00,0.00,0.26,0.1,-0.5,-3.3,0.12,0.00,0.00,0.02
+ITRF14,ITRF90,2010.0,25.4,11.5,-92.8,4.79,0.00,0.00,0.26,0.1,-0.5,-3.3,0.12,0.00,0.00,0.02
+ITRF14,ITRF89,2010.0,30.4,35.5,-130.8,8.19,0.00,0.00,0.26,0.1,-0.5,-3.3,0.12,0.00,0.00,0.02
+ITRF14,ITRF88,2010.0,25.4,-0.5,-154.8,11.29,0.10,0.00,0.26,0.1,-0.5,-3.3,0.12,0.00,0.00,0.02
+"""
+    
+    COEFFS = io.StringIO(COEFFS)
+
+    p="/home/psakicki/Downloads/coeff_helmert2.csv"
+    DF = pd.read_csv(p)
+        
+    DF2 = DF[(DF["TRF_I"] == TRF_Input_name) & (DF["TRF_E"] == TRF_Ext_name)]
+    inver = 1.
+    inver_bool = False
+    
+    if len(DF2) == 0:
+        DF2 = DF[(DF["TRF_E"] == TRF_Input_name) & (DF["TRF_I"] == TRF_Ext_name)]
         inver = -1.
+        inver_bool = True
+    
+    DF3 = DF2.iloc[0]
+    
+    if convert:
+        convT = 0.001
+        convD = 10**-9
+        convR = 4.84813681109536e-09
     else:
-        inver = 1.
-
-    mas2rad = 0.0000000048481368
-    mas2rad = 4.8481368111e-6 * 1e-3
-
-    if params == 'itrf2008_2_etrf2000':
-
-        t1rate = .1 * 10**-3
-        t2rate = .1 * 10**-3
-        t3rate = -1.8 * 10**-3
-        dabrate = .08 * 10**-9
-        r1rate =  .081 * mas2rad
-        r2rate =  .490 * mas2rad
-        r3rate = -.792 * mas2rad
-
-        t1rate = .1 * 10**-3
-        t2rate = .1 * 10**-3
-        t3rate = -1.8 * 10**-3
-        dabrate = .08 * 10**-9
-        r1rate =  .081 * mas2rad
-        r2rate =  .490 * mas2rad
-        r3rate = -.792 * mas2rad
-
-
-        t1  =(52.1  * 10**-3   + t1rate  * ( workepoc - 2000.)) *inver
-        t2  =(49.3  * 10**-3   + t2rate  * ( workepoc - 2000.)) *inver
-        t3  =(-58.5 * 10**-3   + t3rate  * ( workepoc - 2000.)) *inver
-        dab =( 1.34 * 10**-9   + dabrate * ( workepoc - 2000.)) *inver
-        r1  =( 0.891 * mas2rad + r1rate  * ( workepoc - 2000.)) *inver
-        r2  =( 5.39  * mas2rad + r2rate  * ( workepoc - 2000.)) *inver
-        r3  =( -8.712* mas2rad + r3rate  * ( workepoc - 2000.)) *inver
+        convT = 0.
+        convD = 0.
+        convR = 0.
+    
+    T    = inver * convT * DF3[["T1","T2","T3"]].values
+    Tdot = inver * convT * DF3[["Tdot1","Tdot2","Tdot3"]].values
+    
+    D    = inver * convD * DF3["D"]
+    Ddot = inver * convD * DF3["Ddot"]
+    
+    R    = inver * convR * DF3[["R1","R2","R3"]].values
+    Rdot = inver * convR * DF3[["Rdot1","Rdot2","Rdot3"]].values
+    
+    epoch_ref_Xe = DF3["TRF_E_epoch"]
+    
+    if verbose:
+        print("INFO:itrf_helmert_get_parameters:",TRF_Input_name,"=>",TRF_Ext_name)
+        print("   T:",T,Tdot)
+        print("   D:",D,Ddot)
+        print("   R:",R,Rdot)
+        print("t Xe:",epoch_ref_Xe)
+        print(" Inv:",inver_bool)
+        print("DataFrame:")
+        print(DF2)
+    
+    return T,Tdot,D,Ddot,R,Rdot,epoch_ref_Xe
 
 
-    elif params == 'itrf2000_2_etrf2000':
-        t1  =54.0  * 10**-3   *inver
-        t2  =51.0  * 10**-3   *inver
-        t3  =-48.0 * 10**-3   *inver
-        dab = 0.0  * 10**-9   *inver
-        r1  = 0.891 * mas2rad *inver
-        r2  = 5.390 * mas2rad *inver
-        r3  = -8.712* mas2rad *inver
+def itrf_helmert_trans(Xi,
+                       epoch_Xi,
+                       T,Tdot,
+                       D,Ddot,
+                       R,Rdot,
+                       epoch_ref_Xe,
+                       velocity_mode=False):
+    """
+    Do the Helmert transformation I/ETRFxx <=> I/ETRFxx
 
 
+    Parameters
+    ----------
+    Xi : 3-Array, Nx3-Array OR 6-Array, Nx6-Array
+        Points in the initial Reference Frame.
+        3 columns if positions only
+        6 columns if positions+velocities
+    epoch_Xi : float
+        epoch of the initial Reference Frame points.
+    T : 3-Array
+        Translation.
+    Tdot : 3-Array
+        Translation rate.
+    D : float
+        Scale factor.
+    Ddot : float
+        Scale factor rate.
+    R : 3-Array
+        Rotation.
+    Rdot : 3-Array
+        Rotation rte.
+    epoch_ref_Xe : float
+        Reference epoch of the destination TRF.
+        
+    The seven Helmert Parameters are generated with
+    itrf_helmert_get_parameters
+        
+    velocity_mode : bool, optional
+        Compute also the velocities. The default is False.
+
+    Returns
+    -------
+    Xe : 3-Array or Nx3-Array
+        Points in the destination Reference Frame.
+        
+    Warning
+    -------
+    This function does not the velocity shift from one epoch to another
+    The output coordinates will be provided at the same epoch as the input ones
+        
+    Notes
+    -----
+    Based on the theory and values of
+    http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf
+    
+    We recommend to confirm the values with the official EUREF converter
+    http://www.epncb.oma.be/_productsservices/coord_trans/index.php
+    
+    By definition RGF93 = ETRF2000@2009.0
+    """
+    
+    # manage the case where only one point is given
+    if len(np.shape(Xi)) == 1:
+        Xi = Xi[...,np.newaxis].T
+        
+    #### Translation
+    if velocity_mode:
+        Topera = Tdot
+    else:
+        Topera = T + Tdot * (epoch_Xi-epoch_ref_Xe)
+        
+    #### Scale Factor    
+    D_mat       = np.eye(3).dot(D)
+    Ddot_mat    = np.eye(3).dot(Ddot)
+    if velocity_mode:
+        D_mat_opera = Ddot_mat
+    else:
+        D_mat_opera = Ddot_mat * (epoch_Xi-epoch_ref_Xe) + D_mat
+        
+    ### Rotation
+    r_1,r_2,r_3 = R  
+    r_dot_1,r_dot_2,r_dot_3 = Rdot 
+    
+    R_mat    = np.array([[0. ,-r_3, r_2],
+                         [ r_3, 0.,-r_1],
+                         [-r_2, r_1,0.]])     
+    
+    Rdot_mat = np.array([[0. ,-r_dot_3, r_dot_2],
+                         [ r_dot_3, 0.,-r_dot_1],
+                         [-r_dot_2, r_dot_1,0.]])     
+    
+    if velocity_mode:
+        R_mat_opera = (Rdot_mat)     
+    else:
+        R_mat_opera = (Rdot_mat * (epoch_Xi-epoch_ref_Xe) + R_mat) 
 
 
-    R = np.matrix([[dab,-r3,r2],
-                   [r3,dab,-r1],
-                   [-r2,r1,dab]])
+    #### Computation
+    Xe_stk = []
+    for xi in Xi:
+        if velocity_mode:
+            xe = xi[3:] + Topera + D_mat_opera.dot(xi[:3]) + R_mat_opera.dot(xi[:3])
+        else:
+            xe = xi[:3] + Topera + D_mat_opera.dot(xi[:3]) + R_mat_opera.dot(xi[:3])            
 
-    Xb = Xa + np.matrix([t1,t2,t3]) + np.dot(R,Xa)
-    Xb = np.squeeze(np.array(Xb))
+        Xe_stk.append(xe)
 
-    return Xb
+    #### Final Aestetics
+    Xe = np.array(Xe_stk)
+    Xe = np.squeeze(Xe)
+    Xe = Xe.astype(np.float64)
+    
+    
+    #### Trick if we are in velocity mode, we recall the fct 
+    #### with velocity_mode=False to have the positions
+    if velocity_mode:
+         Xe_pos = itrf_helmert_trans(Xi,epoch_Xi,
+                            T,Tdot,
+                            D,Ddot,
+                            R,Rdot,
+                            epoch_ref_Xe,
+                            velocity_mode=False)
+         
+         if len(np.shape(Xe)) == 1:
+             Xe = np.hstack((Xe_pos,Xe))
+         else:
+             Xe = np.column_stack((Xe_pos,Xe))
+
+    return Xe
 
 
-def helmert_trans_estim_matrixs_maker(X1 , X2):
+def _helmert_trans_estim_matrixs_maker(X1 , X2):
     """
     internal function for helmert_trans_estim
     """
@@ -684,14 +959,19 @@ def helmert_trans_estim_matrixs_maker(X1 , X2):
     block_1 = np.eye(3)
     
     block_2 = np.array([[ 0. , -z1,  y1, x1],
-                       [ z1,   0., -x1, y1],
-                       [-y1,  x1,   0., z1]])
+                        [ z1,   0., -x1, y1],
+                        [-y1,  x1,   0., z1]])
     
     l = X2 - X1
     A = np.hstack((block_1 , block_2))
 
     return l,A
 
+
+# def helmert_trans_frontend(X1list , X2list, Weights=[]):
+#     HParam , A , l = reffram.helmert_trans_estim(X1list,X2list)
+#     X2_trans_out = reffram.helmert_trans_apply(X1list,HParam)
+  
 
 def helmert_trans_estim(X1list , X2list, Weights=[]):
     """
@@ -701,21 +981,21 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
     Parameters
     ----------
     
-    X1list & X2list : list of N (x,y,z) points ,
-        or an numpy array of shape (3, N)
+    X1list & X2list : list of N (x,y,z) points, or an (N,3)-shaped numpy array
+        Input point sets
 
-    Weights : list of N Wieghtd,
-        or an numpy array of shape (3, N)
-
+    Weights : list of N Weights,
+        or an numpy array of shape (N,3)
     
     Returns
     -------
-    Res :
+    
+    HParam :
         7 Helmert params. : x,y,z translations, x,y,z rotations, scale
     A :
         Design matrix    
     l :
-        X2 - X1
+        Differences X2 - X1 (before transformation !!!)
         
     Source
     ------
@@ -724,30 +1004,66 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
 
     l_stk = []
     A_stk = []
-        
+    Bool_stk = []
+    
     for X1 , X2 in zip(X1list , X2list):
-        lmono , Amono = helmert_trans_estim_matrixs_maker(X1,X2)
+        
+        if np.sum(np.isnan(X1)) or np.sum(np.isnan(X2)):
+            print("WARN: helmert_trans_estim: one point component is nan, skipping")
+            Bool_stk.append(False)
+            continue
+        
+        lmono , Amono = _helmert_trans_estim_matrixs_maker(X1,X2)
             
         l_stk.append(lmono)
         A_stk.append(Amono)
+        Bool_stk.append(True)
+        
         
     A = np.vstack(A_stk)
     l = np.hstack(l_stk)
+    Bool = np.array(Bool_stk)
     
     if len(Weights) == 0:
         W = np.eye(len(l))
     else:
-        W = np.repeat(np.array(Weights),3) * np.eye(len(l))
+        Weights_corr = np.array(Weights)
+        Weights_corr = Weights_corr[Bool]
+        W = np.repeat(Weights_corr,3) * np.eye(len(l))
     
     N    = (A.T).dot(W).dot(A)
     AtWB = (A.T).dot(W).dot(l)
     
-    Res = scipy.linalg.inv(N).dot(AtWB)
+    HParam = scipy.linalg.inv(N).dot(AtWB)
     
-    return Res , A , l
+    return HParam , A , l
 
 
-def helmert_trans_apply(Xin,SevenParam_in):
+def helmert_trans_apply(Xin,SevenParam_in,legacy_mode=False):
+    """
+    Apply an Helmert transformation (7-parameters)
+    to a set of points
+
+    Parameters
+    ----------
+    Xin : list of N (x,y,z) points, or an (N,3)-shaped numpy array.
+        input set points
+        
+    SevenParam_in : 7 element list or array
+        7 Helmert params. : x,y,z translations, x,y,z rotations, scale.
+        
+    legacy_mode : bool, optional
+        Use a non-optimized and slow computation approach (but same result).
+        This option should be removed in the Future.
+        The default is False.
+
+    Returns
+    -------
+    Xout : list/array of N (x,y,z) points
+        output transformed points. Same type as the input.
+
+    """
+    
     tx,ty,tz,rx,ry,rz,scal = SevenParam_in 
     
     R = np.array([[1.,rz,-ry],
@@ -759,11 +1075,15 @@ def helmert_trans_apply(Xin,SevenParam_in):
     
     typ=utils.get_type_smart(Xin)
     
-    Xout = []
-    for X1 in Xin:
-        X2 = S * np.dot(R,X1) + T
-        Xout.append(X2)
-    
+    #### Apply the transformation here 
+    if legacy_mode: #### SLOW !!!
+        Xout = []
+        for X1 in Xin:
+            X2 = S * np.dot(R,X1) + T
+            Xout.append(X2)
+    else: ##### 100x faster with the Einstein sum
+        Xout = S * np.einsum('ij,kj->ki', R,Xin) + np.tile(T,(len(Xin),1))
+  
     Xout=typ(Xout)
     
     return Xout
@@ -771,7 +1091,8 @@ def helmert_trans_apply(Xin,SevenParam_in):
 
 
 def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
-                                     L1norm=True,tol=10**-9,full_output=False):
+                                     L1norm=True,tol=10**-9,
+                                     full_output=False,method="Powell"):    
     """
     estimates 7 parameters of a 3D Helmert transformation between a set of points
     X1 and a set of points X2 (compute transformation X1 => X2) 
@@ -780,8 +1101,8 @@ def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
     Parameters
     ----------
     
-    X1in & X2in : list of N (x,y,z) points ,
-        or an numpy array of shape (3, N)
+    X1in & X2in : list of N (x,y,z) points, or an (N,3)-shaped numpy array
+        Input point sets
 
     HParam_apri : list of 7 values,
         The Apriori for the Helmert parameter 
@@ -794,6 +1115,11 @@ def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
     
     full_output : bool
         return only the result if True, return the scipy optimize result if False
+    
+    method : str, optional
+        minimization method.
+        see scipy.optimize.minimize for details
+        The default is "Powell".
     
     Returns
     -------
@@ -814,14 +1140,17 @@ def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
             SUM=np.sum(np.sum(np.abs(X2in - X12wrk),axis=1))
         return SUM
         
-    
-    
     RES = scipy.optimize.minimize(minimiz_helmert_fct,HParam_apri,
                                   (X1in,X2in,L1norm),
-                                  method="Powell",tol=tol,
-                                  options={"maxiter":100,
-                                         'xtol':tol,
-                                         'ftol':tol})
+                                  method=method,tol=tol,
+                                  options={"maxiter":1000,
+                                           'xtol':tol,
+                                           'ftol':tol})
+    
+    if RES.status != 0:
+        print("WARN: helmert_trans_estim_minimisation: something went wrong (status != 0)")
+        print("      here is the scipy.optimize.minimize message")
+        print("    > " + RES.message)
     
     if not full_output:
         return RES.x
@@ -835,6 +1164,8 @@ def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
     between X1 and X2 (as suggested in the IGS combination software)
     
     NOT STABLE AVOID THE USE
+    (it does the optimization of the 1st parameter, 
+     and then the optimization of the 2nd one etc, etc...)
     """
     
     print("WARN : helmert_trans_estim_minimisation_scalar unstable, avoid !!!!!")
@@ -870,10 +1201,6 @@ def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
                         
     return HParam_opti_wrk
 
-
-
-
-
         
 #### ASTRONOMY FUNCTION
 def semi_major_axis_from_mean_motion(n):
@@ -883,4 +1210,92 @@ def semi_major_axis_from_mean_motion(n):
     mu = 3.9860044189 * 10**14
     a  = (mu**(1./3.)) / ((2*n*np.pi/86400)**(2./3.))
     return a    
+
+
+
+
+
+ #  ______                _   _                _____                                         _ 
+ # |  ____|              | | (_)              / ____|                                       | |
+ # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
+ # |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | | |_ | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
+ # | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+ # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
+ #                                                                        __/ |                
+ #                                                                       |___/ 
+
+
+def helmert_trans_legacy(Xa,params='itrf2008_2_etrf2000',
+                         invert=True,workepoc=2009.):
+    """
+    This function is highly unstable and should be used only for legacy reason
+    
+    NB 1 : http://etrs89.ensg.ign.fr/memo-V8.pdf
+    NB 2 :
+    Transformation inverse : * -1 pour les paramètres
+    cf https://en.wikipedia.org/wiki/Helmert_transformation
+
+    optimisé pour RGF93 => ITRF2008 (d'ou le invert = True & workepoc = 2009.)
+
+    NB3 : Attention losque l'on compare avec
+          le convertisseur EUREF avec une vitesse
+          parce que elle aussi est modifiée dans la conversion ETRS => ITRS.
+          Conclusion : le faire en 2 étapes ETRS = > ITRS dans la même epoc
+                                            ITRS epoc 1 => ITRS epoc 2
+    if manual
+    then params is a tuple
+    params = (t1,t2,t3,dab,r1,r2,r3)
+
+    NE MARCHE PAS PARCE BESOIN DU RATE(TAUX) DES PARAMS D'HELMERT !!!!!!
+    (160923)
+    """
+    if invert:
+        inver = -1.
+    else:
+        inver = 1.
+
+    mas2rad = 0.0000000048481368
+    mas2rad = 4.8481368111e-6 * 1e-3
+
+    if params == 'itrf2008_2_etrf2000':
+
+        t1rate = .1 * 10**-3
+        t2rate = .1 * 10**-3
+        t3rate = -1.8 * 10**-3
+        dabrate = .08 * 10**-9
+        r1rate =  .081 * mas2rad
+        r2rate =  .490 * mas2rad
+        r3rate = -.792 * mas2rad
+
+        t1  =(52.1  * 10**-3   + t1rate  * ( workepoc - 2000.)) *inver
+        t2  =(49.3  * 10**-3   + t2rate  * ( workepoc - 2000.)) *inver
+        t3  =(-58.5 * 10**-3   + t3rate  * ( workepoc - 2000.)) *inver
+        dab =( 1.34 * 10**-9   + dabrate * ( workepoc - 2000.)) *inver
+        r1  =( 0.891 * mas2rad + r1rate  * ( workepoc - 2000.)) *inver
+        r2  =( 5.39  * mas2rad + r2rate  * ( workepoc - 2000.)) *inver
+        r3  =( -8.712* mas2rad + r3rate  * ( workepoc - 2000.)) *inver
+
+    elif params == 'itrf2000_2_etrf2000':
+        t1  =54.0  * 10**-3   *inver
+        t2  =51.0  * 10**-3   *inver
+        t3  =-48.0 * 10**-3   *inver
+        dab = 0.0  * 10**-9   *inver
+        r1  = 0.891 * mas2rad *inver
+        r2  = 5.390 * mas2rad *inver
+        r3  = -8.712* mas2rad *inver
+
+
+
+
+    R = np.matrix([[dab,-r3,r2],
+                   [r3,dab,-r1],
+                   [-r2,r1,dab]])
+
+    Xb = Xa + np.matrix([t1,t2,t3]) + np.dot(R,Xa)
+    Xb = np.squeeze(np.array(Xb))
+
+    return Xb
+
+
+
 

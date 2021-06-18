@@ -269,6 +269,33 @@ def second_smallest(numbers):
 def find_index_multi_occurences(L,elt):
     return [i for i, x in enumerate(L) if x == elt]
 
+
+def find_surrounding(L,v):
+    """
+    find the surrounding values
+
+    Parameters
+    ----------
+    L : Iterable
+        Input list/array.
+
+    Returns
+    -------
+    surrounding_values : tuple
+        surounding values.
+    surrounding_index : tuple
+        surounding indexes.
+        
+        
+    """
+    a = np.array(L)
+    b = v
+    
+    surrounding_values = np.sort([b + i for i in sorted(np.subtract(a,b),key=lambda x: abs(x))[:2]])
+    surrounding_index = (np.where(surrounding_values[0] == a)[0][0],np.where(surrounding_values[1] == a)[0][0])
+    
+    return tuple(surrounding_values),surrounding_index
+
 ##################
 ### LIST IT FCTs
 ##################
@@ -314,6 +341,24 @@ def sublistsIt(seq,lenofsublis_lis,output_array=False):
         return [np.array(e) for e in sublis_lis]
     else:
         return sublis_lis
+    
+    
+def identical_consecutive_eltsIt(Lin):
+    Lout_big = []
+    Linter   = [Lin[0]]
+    Lout_big.append(Linter)
+            
+    for e in Lin[1:]:
+        if (e == Linter[-1]):
+            Linter.append(e)
+        else:
+            Linter = [e]
+            Lout_big.append(Linter)
+                
+    return Lout_big
+                
+
+
 
 def find_nearest(listin,value):
     """

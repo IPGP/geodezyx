@@ -25,9 +25,9 @@ from geodezyx import time_series
 from geodezyx import utils
 
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 ##########  END IMPORT  ##########
 
@@ -170,13 +170,35 @@ def read_rtklib(filein):
 
     return tsout
 
+
+
+ #       _ _____  _          _______ _____ _____   _______     __  ______ _ _           
+ #      | |  __ \| |        / / ____|_   _|  __ \ / ____\ \   / / |  ____(_) |          
+ #      | | |__) | |       / / |  __  | | | |__) | (___  \ \_/ /  | |__   _| | ___  ___ 
+ #  _   | |  ___/| |      / /| | |_ | | | |  ___/ \___ \  \   /   |  __| | | |/ _ \/ __|
+ # | |__| | |    | |____ / / | |__| |_| |_| |     ____) |  | |    | |    | | |  __/\__ \
+ #  \____/|_|    |______/_/   \_____|_____|_|    |_____/   |_|    |_|    |_|_|\___||___/
+                                                                                      
+
 def read_tdp(filein):
+    """
+    Read GIPSY TDP (Time Dependent Parameter) File
 
-    print('TDPclassic')
+    Parameters
+    ----------
+    filein : str
+        input file path.
 
-    X,Y,Z = 0,0,0
-    Tx , Ty , Tz, T = 111,222,333,0
-    sX,sY,sZ = 0,0,0
+    Returns
+    -------
+    tsout : TimeSeries Object
+        output TimeSerie.
+    """
+
+
+    X,Y,Z = np.nan,np.nan,np.nan
+    Tx , Ty , Tz, T = np.nan,np.nan,np.nan,np.nan
+    sX,sY,sZ = np.nan,np.nan,np.nan
 
     tsout = time_series.TimeSeriePoint()
 
@@ -216,12 +238,28 @@ def read_tdp(filein):
 
 def read_gipsy_tdp(filein):
     """
-    wrapper de read_tdp pour un nom plus explicite (et qui evitera de recoder la fct ...)
+    Wrapper of read_tdp 
     """
+    # pour un nom plus explicite (et qui evitera de recoder la fct ...)
     return read_tdp(filein)
 
 
 def read_gipsy_tdp_list(filelistin):
+    """
+    Read Several GIPSY TDP (Time Dependent Parameter) Files
+    
+
+    Parameters
+    ----------
+    filelistin : list
+        input file paths in a list.
+
+    Returns
+    -------
+    tsout : TimeSeries Object
+        output TimeSerie.    
+    """
+
     tslist = []
     for fil in filelistin:
         ts = read_gipsy_tdp(fil)
@@ -232,7 +270,20 @@ def read_gipsy_tdp_list(filelistin):
     return tsout
 
 def read_gipsy_bosser(filein):
-    print('TDPBOSSER')
+    """
+    Read P. Bosser (@ENSTA Brest) File (GIPSY)
+
+    Parameters
+    ----------
+    filein : str
+        input file path.
+
+    Returns
+    -------
+    tsout : TimeSeries Object
+        output TimeSerie.
+    """
+    
     F,L,H = 0,0,0
     T = 0
     sF,sL,sH = 0,0,0
@@ -264,8 +315,20 @@ def read_gipsy_bosser(filein):
     return tsout
 
 def read_gipsy_apps(filein):
-    """ WARN : not optimized for > 1Hz !!! """
-    print("GIPSY APPS")
+    """
+    Read GIPSY APPS (Online tool) File
+
+    Parameters
+    ----------
+    filein : str
+        input file path.
+
+    Returns
+    -------
+    tsout : TimeSeries Object
+        output TimeSerie.
+    """
+    
 
     tsout = time_series.TimeSeriePoint()
 
@@ -292,9 +355,113 @@ def read_gipsy_apps(filein):
     return tsout
 
 
+def read_jpl_timeseries_solo(latlonrad_files_list):
+
+    tsout = time_series.TimeSeriePoint()
+
+    latpath = [f for f in latlonrad_files_list if '.lat' in f][0]
+    lonpath = [f for f in latlonrad_files_list if '.lon' in f][0]
+    radpath = [f for f in latlonrad_files_list if '.rad' in f][0]
+
+    latfile = open(latpath)
+    lonfile = open(lonpath)
+    radfile = open(radpath)
+
+    for llat , llon , lrad in zip(latfile,lonfile,radfile):
+        flat = [float(e) for e in llat.split()[0:3]]
+        flon = [float(e) for e in llon.split()[0:3]]
+        frad = [float(e) for e in lrad.split()[0:3]]
+
+        if not ( flat[0] == flon[0] == frad[0]):
+            print(flat[0] , flon[0] , frad[0])
+            raise Exception('ERR : read_jpl_timeseries_solo : Time dont corresponds !!!')
+
+        statlat = os.path.basename(latpath).split('.')[0]
+        statlon = os.path.basename(lonpath).split('.')[0]
+        statrad = os.path.basename(radpath).split('.')[0]
+
+        if not ( statlat == statlon == statrad):
+            print(statlat , statlon , statrad)
+            raise Exception('ERR : read_jpl_timeseries_solo : station name dont corresponds !!!')
+
+        T = conv.year_decimal2dt(flat[0])
+
+        N = flat[1] * 10**-2
+        E = flon[1] * 10**-2
+        U = frad[1] * 10**-2
+
+        sN = flat[2] * 10**-2
+        sE = flon[2] * 10**-2
+        sU = frad[2] * 10**-2
+
+        point = time_series.Point(E,N,U,T,'ENU',sE,sN,sU)
+
+        tsout.boolENU = True
+        tsout.add_point(point)
+
+    tsout.stat = statlat
+
+    return tsout
+
+
+ #  __  __ _____ _______  _______          __  __ _____ _______   ______ _ _           
+ # |  \/  |_   _|__   __|/ / ____|   /\   |  \/  |_   _|__   __| |  ____(_) |          
+ # | \  / | | |    | |  / / |  __   /  \  | \  / | | |    | |    | |__   _| | ___  ___ 
+ # | |\/| | | |    | | / /| | |_ | / /\ \ | |\/| | | |    | |    |  __| | | |/ _ \/ __|
+ # | |  | |_| |_   | |/ / | |__| |/ ____ \| |  | |_| |_   | |    | |    | | |  __/\__ \
+ # |_|  |_|_____|  |_/_/   \_____/_/    \_\_|  |_|_____|  |_|    |_|    |_|_|\___||___/
+                                                                                     
+
+
+
+def read_track_2(filein,site_name=None):
+    """
+    Read a kinematic track file
+
+    Parameters
+    ----------
+    filein : str
+        path of the file.
+
+    Returns
+    -------
+    DF : Pandas DataFrame
+
+    """
+    DF = pd.read_csv(filein,delim_whitespace=True,skiprows=[1,2])
+    DF.columns = ['year','month','day','hour','minute','second',
+                  'dX','dX_std','dY','dY_std','dZ','dZ_std',
+                  'rms','dd','atm','atm_std','fract_doy',
+                  'n_epoch','BF','not','f','rho_ua','null']
+    
+    DF.drop("null",axis=1,inplace=True)
+    
+    Epoch = conv.ymdhms2dt(DF.year,DF.month,DF.day,
+                           DF.hour,DF.minute,DF.second)
+    DF['epoch'] = Epoch
+    
+    if site_name:
+        DF['site'] = site_name()
+    
+    return DF
+
+
 
 
 def read_track(filein):
+    """
+    Read GAMIT/TRACK File
+
+    Parameters
+    ----------
+    filein : str
+        input file path.
+
+    Returns
+    -------
+    tsout : TimeSeries Object
+        output TimeSerie.
+    """
 
     tsout = time_series.TimeSeriePoint()
 
@@ -360,6 +527,14 @@ def read_track(filein):
         pass
 
     return tsout
+
+
+ #   _____ _   _ ______  _____    _______ _____ _   _  _____   ______ _ _           
+ #  / ____| \ | |  ____|/ ____|  / / ____|_   _| \ | |/ ____| |  ____(_) |          
+ # | |    |  \| | |__  | (___   / / |  __  | | |  \| | (___   | |__   _| | ___  ___ 
+ # | |    | . ` |  __|  \___ \ / /| | |_ | | | | . ` |\___ \  |  __| | | |/ _ \/ __|
+ # | |____| |\  | |____ ____) / / | |__| |_| |_| |\  |____) | | |    | | |  __/\__ \
+ #  \_____|_| \_|______|_____/_/   \_____|_____|_| \_|_____/  |_|    |_|_|\___||___/
 
 def read_gins_solution(filein,mode="cinematic"):
     """
@@ -478,6 +653,662 @@ def read_gins_solution_multi(filein_list,return_dict = True):
         return ts_list
 
 
+def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
+              force_get_convergence=False,kf_result=False):
+
+    '''
+    Static : donne un point
+    Kinematic : donne une TS
+
+    force_get_convergence : if there is a bug about
+    'COORDONNEES DES STATIONS AJUSTEES EN HAUTE FREQUENCE' field, it is in the listing
+    but empty ... so we force the retreive of the 'c o n v e r g e n c e' part
+    '''
+
+    if '.prepars' in filein:
+        print('WARN :',filein, 'seems to be a prepars file, are you sure of what you are doing ?')
+
+    # Pour le static, il y a des blancs en fin de ligne ...
+
+    if kineorstatic == 'kine':
+        #regex = '\[S[PLHXYZ] .*\]$'
+        regex = '\[S[PLHXYZ] .*\]$'
+        tsout = time_series.TimeSeriePoint()
+        if kf_result:
+            regex = '\[S[PLHXYZ][E ].*\]     $'
+    elif kineorstatic == 'static':
+        #regex = '\[S[PLHXYZ] .*\]     $'
+        regex = '\[S[PLHXYZ][E ].*\]     $'
+        tsout = time_series.TimeSeriePoint()
+    else:
+        print("ERR")
+
+    A,B,C = 0,0,0
+    Ta , Tb , Tc, T = 111,222,333,0
+    sA,sB,sC = 0,0,0
+
+    if kf_result:
+        regex = '\[S[PLHXYZ][E ].*\]     $'
+
+
+    # Specific si 2ble convergence
+    grep_conv = utils.grep(filein,'c o n v e r g e n c e')
+    if len(grep_conv) == 2:
+        IPPmode = True
+        converg_compt = 0
+        print("INFO : ", os.path.basename(filein) , 'have 2  c o n v e r g e n c e  fields')
+        print("     keeping the last one")
+    else:
+        IPPmode = False
+
+    # Specific si Ajustement Final
+    greped_adj = utils.grep(filein,'COORDONNEES DES STATIONS AJUSTEES EN HAUTE FREQUENCE')
+    if force_get_convergence:
+        FinalAdj_mode = False
+    elif len(greped_adj) != 0:
+        FinalAdj_mode = True
+        FinalAdj_found = False
+        print("INFO : ", os.path.basename(filein) , 'have a COORD STAT AJ EN HTE FREQ  field')
+        print("     keeping this one (and not the convergence)")
+    else:
+        FinalAdj_mode = False
+
+    fileopened = open(filein,encoding = "ISO-8859-1")
+
+    regex_valid_line_count = 0
+
+    for line in fileopened:
+
+        if re.compile('__Nom__').search(line):
+            nextline = next(fileopened).split()
+            namestat = nextline[3]
+            Xref = float(nextline[4])
+            Yref = float(nextline[5])
+            Zref = float(nextline[6])
+
+            Fref , Lref , Href = conv.XYZ2GEO(Xref,Yref,Zref)
+
+#        if 'angles en deg' in line:
+#            flh_in_rad = False
+
+        # Specific search
+        if IPPmode and re.compile('c o n v e r g e n c e').search(line):
+            converg_compt = converg_compt + 1
+        if FinalAdj_mode and re.compile('COORDONNEES DES STATIONS AJUSTEES EN HAUTE FREQUENCE').search(line):
+            FinalAdj_found = True
+
+        # Specific skip
+        if FinalAdj_mode and not FinalAdj_found:
+            continue
+        if IPPmode and converg_compt != 2:
+            continue
+
+        if "real" in line:
+            rawexectime = line.split()[-1]
+
+        if re.compile(regex).search(line):
+            regex_valid_line_count += 1
+            fields = line.split()
+
+            if re.compile('[XYZ]').search(line):
+                initype = 'XYZ'
+                Aref , Bref ,Cref = Xref,Yref,Zref
+            elif re.compile('[PLH]').search(line):
+                initype = 'FLH'
+                Aref , Bref ,Cref = Fref,Lref,Href
+            else:
+                print("ERR : read gins : wrong initype")
+
+            if (float(fields[2]) == 0):
+                continue
+
+            if (fields[0] == 'stations'):
+                print('yyyyy')
+
+            # securité pour les lignes du type
+            #  ------------------------------------------------------------------------------------------------------
+            # stations      175  -0.574353783560234E+07  +/-   0.000000000000000E+00   1  [SX  1212001892701M005071]
+
+            jour = int(line[108:110])
+            h    = int(line[110:112])
+            m    = int(line[112:114])
+            s    = int(line[114:116])
+            yy   = int(line[125:127])
+
+            # gestion des années
+            if 80 < yy <= 99:
+                yy = yy + 1900
+            else:
+                yy = yy + 2000
+
+            # pour le mois, si > sept (9), alors lettre ...
+            mm = line[127]
+
+            if mm == 'O':
+                mm = 10
+            elif mm == 'N':
+                mm = 11
+            elif mm == 'D':
+                mm = 12
+            else:
+                mm = int(mm)
+
+            try:
+                if h == 24:
+                    # cas exceptionnel ou on doit gerer minuit
+                    # on retranche l'heure dans l'int en input et on l'ajoute dans le dt
+                    Ttemp = (dt.datetime(yy,mm,jour,h-1,m,s) + dt.timedelta(seconds=-19) + dt.timedelta(hours=1))
+                else:
+                    Ttemp = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
+
+                if  line[105] == 'X' or line[105] == 'P':
+                    Ta = Ttemp
+                    A = (float(fields[3]))
+                    sA = (float(fields[4]))
+
+                if  line[105] == 'Y' or line[105] == 'L':
+                    Tb = Ttemp
+                    B = (float(fields[3]))
+                    sB = (float(fields[4]))
+
+                if  line[105] == 'Z' or line[105] == 'H':
+                    Tc = Ttemp
+                    C = (float(fields[3]))
+                    sC = (float(fields[4]))
+            except ValueError as err:
+                print('ERR :')
+                print('yy,mm,jour,h,m,s ',yy,mm,jour,h,m,s)
+                raise err
+
+            if  Ta == Tb == Tc :
+                T = Ta
+                if initype == 'FLH' and not FinalAdj_mode:
+                    if flh_in_rad:
+                        A = np.rad2deg(A)
+                        B = np.rad2deg(B)
+                        sA = np.rad2deg(sA)
+                        sB = np.rad2deg(sB)
+                if kf_result and 0:
+                    A = A + Aref
+                    B = B + Bref
+                    C = C + Cref
+                point = time_series.Point(A,B,C,T,initype,sA,sB,sC,name=namestat)
+
+                Ta = 111
+                Tb = 222
+                Tc = 333
+
+                if kineorstatic == 'static':
+                    return point
+                elif kineorstatic == 'kine':
+                    tsout.add_point(point)
+                else:
+                    print("ERR")
+
+    if  regex_valid_line_count == 0:
+        print("WARN : no valid line (with regex check) was found !!!")
+
+
+    tsout.anex['exec_time'] = rawexectime
+    tsout.meta_set(filein,namestat)
+    return tsout
+
+
+def gins_read_time(line):
+    jour = int(line[108:110])
+    h    = int(line[110:112])
+    m    = int(line[112:114])
+    s    = int(line[114:116])
+    yy   = int(line[125:127])
+
+    # gestion des années
+    if 80 < yy <= 99:
+        yy = yy + 1900
+    else:
+        yy = yy + 2000
+
+    # pour le mois, si > sept (9), alors lettre ...
+    mm = line[127]
+
+    if mm == 'O':
+        mm = 10
+    elif mm == 'N':
+        mm = 11
+    elif mm == 'D':
+        mm = 12
+    else:
+        mm = int(mm)
+
+    try:
+        if h == 24:
+            # cas exceptionnel ou on doit gerer minuit
+            # on retranche l'heure dans l'int en input et on l'ajoute dans le dt
+            Ttemp = (dt.datetime(yy,mm,jour,h-1,m,s) +
+                     dt.timedelta(seconds=-19) + dt.timedelta(hours=1))
+        else:
+            Ttemp = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
+    except:
+        Ttemp = dt.datetime(1970,1,1)
+
+    T = Ttemp
+
+    return T
+
+
+def gins_read_MZB(filein,return_df=False):
+    """
+    Read Mean Zeintal Bias in a GINS' listing
+    """
+
+    F = open(filein)
+
+    regex = '\[MZB.*\]     $'
+
+    Tstk    = []
+    MZBstk  = []
+    sMZBstk = []
+    NameStat = []
+
+    for line in F:
+        if re.compile('__Nom__').search(line):
+            nextline = next(F).split()
+            namestat = nextline[3]
+            Xref = float(nextline[4])
+            Yref = float(nextline[5])
+            Zref = float(nextline[6])
+
+        if re.compile(regex).search(line):
+            fields = line.split()
+
+            #[MZB  801980015051301 GPS]
+
+            Traw = fields[6][-8:]
+            yy = int(Traw[0:2])
+            mm = int(Traw[2:4])
+            dd = int(Traw[4:6])
+            hh = int(Traw[6:8])
+
+            if 80 < yy <= 99:
+                yy = yy + 1900
+            else:
+                yy = yy + 2000
+
+            T = dt.datetime(yy,mm,dd,hh)
+
+            MZB  = float(fields[3])
+            sMZB = float(fields[4])
+
+            Tstk.append(T)
+            MZBstk.append(MZB)
+            sMZBstk.append(sMZB)
+            NameStat.append(namestat)
+    
+    if not return_df:
+        return Tstk , MZBstk , sMZBstk , NameStat
+    else:
+        DF = pd.DataFrame((Tstk , MZBstk , sMZBstk , NameStat))
+        DF = DF.T
+        DF.columns = ('epoch','mzb','mzb_std','site')
+        DF.mzb = DF.mzb.astype(float)
+        DF.mzb_std = DF.mzb_std.astype(float)
+        return DF
+    
+
+def gins_readTROPOZ(filein): 
+    """
+    Read TROPOZ in a GINS' listing
+    """
+    
+    L  = utils.grep(filein,"TROPOZ COR_ZEN_ESTIM")
+    DF = pd.DataFrame([e.split()[2:] for e in L]).astype(float)
+    DF.columns = ['jjul_cnes','tropoz_std','tropoz']
+    DF["epoch"] = conv.jjulCNES2dt(DF['jjul_cnes']).dt.round('1s') - dt.timedelta(seconds=19)
+    
+    return DF
+
+
+def write_ATM_GAMIT(Tstk , MZBstk , sMZBstk ,
+                    namestat , file_out):
+    Fout = open(file_out,'w+')
+    for T,mzb , smzb in zip(Tstk , MZBstk , sMZBstk):
+        yy = T.year
+        mm = T.month
+        dd = T.day
+        hh = T.hour
+        Line = 'ATM_ZEN X {}  1 {:4} {:2} {:2} {:2}  0  {:6.4f} +-   {:6.4f}    {:6.4f}\n'.format(namestat.upper(),yy,mm,dd,hh,mzb,smzb,mzb)
+        Fout.write(Line)
+    Fout.close()
+    return file_out
+
+
+def MZB_GINS_2_ATM_GAMIT(listing_in,path_out):
+    Tstk , MZBstk , sMZBstk , namestat = gins_read_MZB(listing_in)
+    doy,yy = conv.dt2doy_year(Tstk[0],str)
+    file_out = os.path.join(path_out,'_'.join(('MZB_GINS_2_ATM_GAMIT',namestat,doy,yy,'.txt')))
+    write_ATM_GAMIT(Tstk , MZBstk , sMZBstk ,
+                    namestat , file_out)
+
+    return file_out
+
+def read_gins_wrapper(input_list_or_path,flh_in_rad=True):
+    """
+    pour une liste de paths renvoie une liste de timeseries
+    AUTANT DE TIMESERIES QUE DE LISTINGS
+
+    INPUT :
+    Une liste de fichiers
+    Un path compatible avec glob
+
+    les fichiers sans extensions .gins
+    sont automatiquement exclus
+    """
+
+    if type(input_list_or_path) is str:
+        gins_listings_list = glob.glob(input_list_or_path)
+    else:
+        gins_listings_list = input_list_or_path
+
+    tslis = []
+    for f in gins_listings_list:
+        if not '.gins' in f:
+            print('WARN : no .gins ext, skipping')
+            continue
+
+        ts = read_gins(f,flh_in_rad=flh_in_rad)
+        tslis.append(ts)
+
+    return tslis
+
+
+def convert_sp3_clk_2_GINS_clk(sp3_path_in,
+                               clk_gins_out,
+                               interpo_30sec = True,
+                               return_as_DF = True):
+    DF = files_rw.read_sp3(sp3_path_in)
+
+    Fout = open(clk_gins_out,"w+")
+
+    def write_GINS_signaletic_elt_clk(dt_in,sv,
+                                      signaletic_name="MNG",
+                                      add_19sec_to_dt_in = True):
+        """
+        very beta, only for GPS clk
+        """
+
+        if add_19sec_to_dt_in:
+            dt_work = dt_in + dt.timedelta(seconds=19)
+        else:
+            dt_work = dt_in
+
+        jjul = conv.dt2jjulCNES(dt_work)
+        sec_in_day = (dt_work - conv.jjulCNES2dt(jjul) ).seconds
+
+        #MNG0000000jjjjjcccccnnnn
+
+        outstr = "[MNG0000000" + str(jjul) + str(sec_in_day).zfill(5) + "GP" + str(sv).zfill(2) + "]"
+
+        return outstr
+
+    c = 299792458
+
+    if interpo_30sec:
+        Epoc_work = []
+        Sv_work   = []
+        Clk_work  = []
+
+        for sv in sorted(DF["sv"].unique()):
+            DFsv = DF[DF["sv"] == sv]
+
+            Epoc_inp = np.array(conv.dt2posix(DFsv["epoch"]))
+            Clk_inp  = np.array(DFsv["clk"])
+
+            Epoc_interp = np.arange(np.min(Epoc_inp),np.max(Epoc_inp),30)
+            Epoc_interp_dt = conv.posix2dt(Epoc_interp)
+
+            I = scipy.interpolate.interp1d(Epoc_inp,Clk_inp)
+
+            Clk_interp = I(Epoc_interp)
+
+            Sv_work   = Sv_work   + [sv] * len(Epoc_interp)
+            Epoc_work = Epoc_work + list(Epoc_interp_dt)
+            Clk_work  = Clk_work  + list(Clk_interp)
+
+    else:
+        Epoc_work = DF["epoch"]
+        Sv_work   = DF["sv"]
+        Clk_work  = DF["clk"]
+
+
+    DF_work = pd.DataFrame(list(zip(Epoc_work,Sv_work,Clk_work)),
+                            columns=("epoch","sv","clk"))
+
+    DF_work.sort_values(["epoch","sv"],inplace=True)
+
+    print("tot",DF_work)
+
+    for epoc , sv , clk in zip(DF_work["epoch"],DF_work["sv"],DF_work["clk"]):
+        signaletik = write_GINS_signaletic_elt_clk(epoc,sv,clk)
+
+        str_final = " 0 0 {:}  {:+17.15e} {:+17.15e}\n".format(signaletik,clk* 10**-6 * c,0)
+
+        Fout.write(str_final)
+
+    if not return_as_DF:
+        return clk_gins_out
+    else:
+        return DF_work
+
+
+def read_gins_multi_raw_listings(filelistin,kineorstatic='static',flh_in_rad=True):
+    """
+    traite une liste de listing bruts
+    pour obtenir UNE SEULE timeserie
+    """
+
+    tsout = time_series.TimeSeriePoint()
+    refname = 'RIEN'
+    if kineorstatic == 'static':
+        for filein in filelistin:
+            print(filein)
+            if not utils.check_regex(filein,'c o n v e r g e n c e'):
+                continue
+            pt = read_gins(filein,kineorstatic='static',flh_in_rad=flh_in_rad)
+            if refname == 'RIEN':
+                refname = pt.name
+            if refname != pt.name:
+                print("WARN : read_gins_multi : nom de stat. != reference")
+            tsout.add_point(pt)
+        tsout.meta_set(stat=refname)
+
+
+    elif kineorstatic == 'kine':
+        tsoutlis = []
+        for filein in filelistin:
+            print(filein)
+            if not utils.check_regex(filein,'c o n v e r g e n c e'):
+                continue
+            ts = read_gins(filein,kineorstatic='kine',flh_in_rad=flh_in_rad)
+            tsoutlis.append(ts)
+        tsout = merge_ts(tsoutlis)
+
+    else:
+        print("ERR : check kineorstatic keyword")
+
+    tsout.sort()
+    return tsout
+
+def read_gins_multi_extracted(filelistin,flh_in_rad=True):
+    """
+    traite les extractions de listings
+    sous la forme par ex. S<HLP>__ddhhiissxxxxxxxxxyym.HOUE
+    La liste doit contenir exactement 3 fichiers (pour chacune des composantes)
+    """
+    tsout = time_series.TimeSeriePoint()
+    if len(filelistin) != 3:
+        print("ERR : read_gins_multi_extracted : listfilein != 3 elts")
+        return None
+    statnameset = list(set([ f.split('.')[-1] for f in filelistin ]))
+    statname = statnameset[0]
+    if len(statnameset) != 1:
+        print("WARN : read_gins_multi_extracted : len(statnameset) != 1")
+    fileopenedlist = [ open(f,'r+') for f in filelistin ]
+    coortypelist = [ os.path.basename(f)[1] for f in filelistin ]
+    print(coortypelist,filelistin)
+    if 'X' in coortypelist:
+        initype='XYZ'
+        ia = coortypelist.index('X')
+        ib = coortypelist.index('Y')
+        ic = coortypelist.index('Z')
+    elif 'P' in coortypelist:
+        initype = 'FLH'
+        ia = coortypelist.index('P')
+        ib = coortypelist.index('L')
+        ic = coortypelist.index('H')
+
+    for lf in zip(*fileopenedlist):
+        # OLD MODE : MAVAIS GESTION DE LA DATE
+#        t1 = lf[0].split()[0]
+#        t2 = lf[1].split()[0]
+#        t3 = lf[2].split()[0]
+#        if not (t1 == t2 == t3):
+#            print "WARN : read_gins_multi_extracted : not (t1 == t2 == t3)"
+#
+        fields = lf[0].split()
+        line = lf[0]
+        blok = fields[-1]
+        jour = int(blok[0:2])
+        h = int(blok[2:4])
+        m = int(blok[4:6])
+        s = int(blok[6:8])
+        yy = int(blok[-4:-2])
+        # gestion des années
+        if 80 < yy <= 99:
+            yy = yy + 1900
+        else:
+            yy = yy + 2000
+
+        # pour le mois, si > sept (9), alors lettre ...
+        mm = blok[-2]
+
+        if mm == 'O':
+            mm = 10
+        elif mm == 'N':
+            mm = 11
+        elif mm == 'D':
+            mm = 12
+        else:
+            mm = int(mm)
+
+        t1  =  (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
+
+        lfiasplit = lf[ia].split()
+        lfibsplit = lf[ib].split()
+        lficsplit = lf[ic].split()
+
+        A  = float(lfiasplit[4])
+        B  = float(lfibsplit[4])
+        C  = float(lficsplit[4])
+        sA = float(lfiasplit[5])
+        sB = float(lfibsplit[5])
+        sC = float(lficsplit[5])
+        T = t1
+
+        if initype == 'FLH' and flh_in_rad:
+            A  = np.rad2deg(A)
+            B  = np.rad2deg(B)
+            sA = np.rad2deg(sA)
+            sB = np.rad2deg(sB)
+
+        pt = time_series.Point(A,B,C,T,initype,sA,sB,sC)
+
+        tsout.add_point(pt)
+    tsout.meta_set(stat=statname)
+    tsout.sort()
+
+    return tsout
+
+def read_gins_double_diff(filein):
+    """
+    return a list of Point object for a double diff listing
+    """
+
+    if utils.grep(filein , 'c o n v e r g e n c e') == '':
+        print('ERR : ' , filein , 'have no convergence, return None')
+        return None
+
+    fileopened = open(filein)
+
+    statlist    = []
+    rawdatalist = []
+    timelist    = []
+
+    regstat   = re.compile(r'[0-9]{5}[A-Z][0-9]{3}  [0-9]{7} .*$')
+    regresult = re.compile(r'\[S[PLHXYZ][E ].*\]     $')
+
+
+    for line in fileopened:
+        # finding
+        if regstat.search(line):
+            stat = line.split()[3]
+            statlist.append(stat)
+
+        if regresult.search(line):
+            fields = line.split()
+            rawdatalist.append([float(e) for e in fields[:-2]])
+            timelist.append(gins_read_time(line))
+
+
+    rawdatatab = np.vstack(rawdatalist)
+
+    Pstk = []
+
+    for istat,stat in enumerate(statlist):
+        P = time_series.Point(rawdatatab[3*istat,3],
+                       rawdatatab[3*istat+1,3],
+                       rawdatatab[3*istat+2,3],
+                       timelist[3*istat],'XYZ',
+                       rawdatatab[3*istat,4],
+                       rawdatatab[3*istat,4],
+                       rawdatatab[3*istat,4],name=stat)
+
+        Pstk.append(P)
+
+    return Pstk
+
+def read_gins_double_diff_multi(filelistin):
+    """
+    return a dictionnary with station names as keys and timeseries as values
+    """
+
+    Ptsstk = []
+    for filein in filelistin:
+        Pstk = read_gins_double_diff(filein)
+        if Pstk != None:
+            Ptsstk = Ptsstk + Pstk
+
+    statlist = set([e.name for e in Ptsstk])
+
+    tsdico = dict()
+
+    for stat in statlist:
+        tsdico[stat] = time_series.TimeSeriePoint(stat=stat)
+
+    for pt in Ptsstk:
+        tsdico[pt.name].add_point(pt)
+
+    for ts in tsdico.values():
+        ts.sort()
+
+    return tsdico
+
+
+ #   _____ ______ ______    ________ _____   ____   _____   ______ _ _           
+ #  / ____|  ____|___  /   / /  ____|  __ \ / __ \ / ____| |  ____(_) |          
+ # | |  __| |__     / /   / /| |__  | |__) | |  | | (___   | |__   _| | ___  ___ 
+ # | | |_ |  __|   / /   / / |  __| |  ___/| |  | |\___ \  |  __| | | |/ _ \/ __|
+ # | |__| | |     / /__ / /  | |____| |    | |__| |____) | | |    | | |  __/\__ \
+ #  \_____|_|    /_____/_/   |______|_|     \____/|_____/  |_|    |_|_|\___||___/
+
 def read_epos_sta_kinematics(filein):
     """
     read an EPOS kinematic solutions
@@ -546,7 +1377,7 @@ def read_epos_sta_coords_mono(filein,return_df=True):
             MJD_strt = int(fields[6])
             MJD_end  = int(fields[7])
             MJD_mid = np.mean([MJD_strt , MJD_end])
-            T = conv.MJD2dt(MJD_mid)
+            T = conv.numpy_dt2dt(conv.MJD2dt(MJD_mid))
 
         if "POS_VEL:XYZ" in fields[0]:
             X  = float(fields[4])
@@ -572,7 +1403,6 @@ def read_epos_sta_coords_mono(filein,return_df=True):
                 point.anex["Vz"] = sVz
                 Points_list_stk.append(point)
             
-
             #### And store for the DataFrame
             else:
                 tup_4_DF = (namestat,numstat,tecto_plate,
@@ -584,7 +1414,6 @@ def read_epos_sta_coords_mono(filein,return_df=True):
 
 
     if return_df:
-        
         columns = ("site","site_num","tecto_plate",
            "MJD_ref","MJD_start","MJD_end",
            "x","y","z","sx","sy","sz",
@@ -598,7 +1427,6 @@ def read_epos_sta_coords_mono(filein,return_df=True):
         return Points_list_stk
 
 def read_epos_sta_coords_multi(filein_list,return_dict = True):
-
     filein_list  = sorted(filein_list)
     Points_list  = []
     statname_stk = []
@@ -626,15 +1454,20 @@ def read_epos_sta_coords_multi(filein_list,return_dict = True):
         return ts_list
 
 
+
+
 def read_epos_slv_times(p,convert_to_time=False):
     """
     convert_to_time : divide by the speed of light to get time-homogene values.
-    Values in meter instead 
+    Values in meter instead
+    If convert_to_time : time in sec
     """
+    
     L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates",
                                                 "\-sum_times/estimates")
 
-    Lgood = []
+    Lgood_stat  = []
+    Lgood_sat   = []
     
     for l in L[1:-1]:
         if "EPOCHE" in l:
@@ -643,126 +1476,68 @@ def read_epos_slv_times(p,convert_to_time=False):
             cur_epoc   = conv.MJD2dt(int(cur_epoc_f[1])) +  dt.timedelta(seconds=int(86400*float(cur_epoc_f[2])))
 
         if re.match("^   [0-9]{4}.*",l):
-            Lgood.append([cur_epoc] + [float(e) for e in l.split()])
+            Lgood_stat.append([cur_epoc] + [float(e) for e in l.split()])
+
+        if re.match("^ [A-Z][0-9]{2}.*",l):
+            e = l.split()
+            Lgood_sat.append([cur_epoc] + [e[0],float(e[1]),float(e[2])])
 
 
-    DF = pd.DataFrame(Lgood,columns=["epoch","stat","offset","offset_sig"])
-
-    DF["stat"] = DF["stat"].astype('int')
-    
+    ### stations
+    DF_stat = pd.DataFrame(Lgood_stat,columns=["epoch","stat","offset","offset_sig"])
+    DF_stat["stat"] = DF_stat["stat"].astype('int')
     if convert_to_time:
-        DF[["offset","offset_sig"]] = DF[["offset","offset_sig"]] / 299792458.
+        DF_stat[["offset","offset_sig"]] = DF_stat[["offset","offset_sig"]] / 299792458.
+        
+    ### satellites
+    DF_sat = pd.DataFrame(Lgood_sat,columns=["epoch","sat","offset","offset_sig"])
+    if convert_to_time:
+        DF_sat[["offset","offset_sig"]] = DF_sat[["offset","offset_sig"]] / 299792458.    
 
+
+    return DF_stat , DF_sat
+
+
+
+def read_epos_tim(tim_file_in,convert_to_sec=False):
+    """
+    results in microsec
+    """
+    F = open(tim_file_in)
+    
+    head_stop = False
+    
+    if convert_to_sec:
+        koef = 10**-6
+    else:
+        koef = 1.
+        
+    
+    Val_stk = []
+    for l in F:
+        #print(l)
+        if re.match('^\*  [0-9]{4} *([0-9]{1,2} *){4}',l):
+            head_stop = True
+            epoc = conv.datetime_improved(*l[3:30].split())
+        if head_stop and re.match('[A-Z][0-9]{2}.* [0-9]*',l):
+            val = l.split()
+            val[1] = float(val[1]) * koef
+            val.insert(0,epoc)
+        
+            Val_stk.append(val)
+        
+    DF = pd.DataFrame(Val_stk,columns=["epoch","sat","offset"])
+        
     return DF
 
 
 
-def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
-                          no_time_limit_for_first_period = True,
-                          no_time_limit_for_last_period = True,
-                          soln_in_DF=True):
-    """
-    sort_wrt="site" or "site_num"
-    
-    soln_in_DF
-    use soln AND pt information in the input DataFrame
-    """
-
-    DF_work = DF_in.sort_values([sort_wrt,"MJD_start"])
-
-
-    Stat_lines_blk_stk = []
-
-    generic_header = """+info
- FLATTENING                  298.2550
- MAJOR_AXIS              6378140.0000
- REFERENCE_FRAME                IGS14
- NUMBER_OF_STATIONS             {:5d}
- REF_MJD                        {:5d}
--info
-"""
-
-    generic_header = generic_header.format(len(DF_work["site_num"].unique()),
-                                           int(utils.most_common(DF_work["MJD_ref"])))
-
-    Stat_lines_blk_stk.append(generic_header)
-
-    Stat_lines_blk_stk.append("+station_coordinates")
-
-    for site in DF_work[sort_wrt].unique():
-
-        Stat_lines_blk_stk.append("*------------------------- ---- ----- -beg- -end- -**- ------------------------------------------------\n*")
-
-        DF_SiteBlock = DF_work[DF_work[sort_wrt] == site]
-        
-        DF_SiteBlock.reset_index(inplace=True)
-
-        for i_l ,(_ , l) in enumerate(DF_SiteBlock.iterrows()):
-
-            if soln_in_DF:
-                iope = int(l["soln"])
-                pt = l["pt"]
-            else:
-                iope = i_l + 1
-                pt = "A"
-            
-            if no_time_limit_for_first_period and i_l == 0:
-                MJD_start = 0
-            else:
-                MJD_start = l["MJD_start"]
-                                            
-            if no_time_limit_for_last_period and (i_l+1) == len(DF_SiteBlock):
-                MJD_end = 0
-            else:
-                MJD_end = l["MJD_end"]
-                
-
-            line_site_fmt = " SITE            m {:4d}  {:1d} {:} {:5d} {:5d} {:5d} {:}   {:}  {:1d}      LOG_CAR       LOG_CAR"
-            line_valu_fmt = " POS_VEL:XYZ     m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
-            line_sigm_fmt = " SIG_PV_XYZ      m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
-
-            line_site = line_site_fmt.format(int(l["site_num"]),
-                                             int(iope),
-                                             l["tecto_plate"].upper(),
-                                             int(l["MJD_ref"]),
-                                             int(MJD_start),
-                                             int(MJD_end),
-                                             l["site"],
-                                             pt,
-                                             int(iope))
-            
-            line_valu = line_valu_fmt.format(int(l["site_num"]),
-                                             int(iope),
-                                             l["x"],
-                                             l["y"],
-                                             l["z"],
-                                             l["Vx"],
-                                             l["Vy"],
-                                             l["Vz"])
-            
-            line_sigm = line_sigm_fmt.format(int(l["site_num"]),
-                                             int(iope),
-                                             l["sx"],
-                                             l["sy"],
-                                             l["sz"],
-                                             l["sVx"],
-                                             l["sVy"],
-                                             l["sVz"])
-
-            Stat_lines_blk_stk.append(line_site)
-            Stat_lines_blk_stk.append(line_valu)
-            Stat_lines_blk_stk.append(line_sigm)
-            Stat_lines_blk_stk.append("*")
-
-    Stat_lines_blk_stk.append("-station_coordinates")
-
-    final_str = "\n".join(Stat_lines_blk_stk)
-
-
-    with open(file_out,"w+") as f:
-        f.write(final_str)
-
-    return final_str
+ #  _____ _____  _____    _____                _     _             _   _                _____        __ _       ______ _ _           
+ # |_   _/ ____|/ ____|  / ____|              | |   (_)           | | (_)              / ____|      / _| |     |  ____(_) |          
+ #   | || |  __| (___   | |     ___  _ __ ___ | |__  _ _ __   __ _| |_ _  ___  _ __   | (___   ___ | |_| |_    | |__   _| | ___  ___ 
+ #   | || | |_ |\___ \  | |    / _ \| '_ ` _ \| '_ \| | '_ \ / _` | __| |/ _ \| '_ \   \___ \ / _ \|  _| __|   |  __| | | |/ _ \/ __|
+ #  _| || |__| |____) | | |___| (_) | | | | | | |_) | | | | | (_| | |_| | (_) | | | |  ____) | (_) | | | |_ _  | |    | | |  __/\__ \
+ # |_____\_____|_____/   \_____\___/|_| |_| |_|_.__/|_|_| |_|\__,_|\__|_|\___/|_| |_| |_____/ \___/|_|  \__(_) |_|    |_|_|\___||___/
 
 
 def prn_int_2_prn_str(prn_int,full_out=False):
@@ -1053,822 +1828,6 @@ def read_combi_REPORT(Path_list):
 
     return DF
 
-
-
-
-def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
-              force_get_convergence=False,kf_result=False):
-
-    '''
-    Static : donne un point
-    Kinematic : donne une TS
-
-    force_get_convergence : if there is a bug about
-    'COORDONNEES DES STATIONS AJUSTEES EN HAUTE FREQUENCE' field, it is in the listing
-    but empty ... so we force the retreive of the 'c o n v e r g e n c e' part
-    '''
-
-    if '.prepars' in filein:
-        print('WARN :',filein, 'seems to be a prepars file, are you sure of what you are doing ?')
-
-    # Pour le static, il y a des blancs en fin de ligne ...
-
-    if kineorstatic == 'kine':
-        #regex = '\[S[PLHXYZ] .*\]$'
-        regex = '\[S[PLHXYZ] .*\]$'
-        tsout = time_series.TimeSeriePoint()
-        if kf_result:
-            regex = '\[S[PLHXYZ][E ].*\]     $'
-    elif kineorstatic == 'static':
-        #regex = '\[S[PLHXYZ] .*\]     $'
-        regex = '\[S[PLHXYZ][E ].*\]     $'
-        tsout = time_series.TimeSeriePoint()
-    else:
-        print("ERR")
-
-    A,B,C = 0,0,0
-    Ta , Tb , Tc, T = 111,222,333,0
-    sA,sB,sC = 0,0,0
-
-    if kf_result:
-        regex = '\[S[PLHXYZ][E ].*\]     $'
-
-
-    # Specific si 2ble convergence
-    grep_conv = utils.grep(filein,'c o n v e r g e n c e')
-    if len(grep_conv) == 2:
-        IPPmode = True
-        converg_compt = 0
-        print("INFO : ", os.path.basename(filein) , 'have 2  c o n v e r g e n c e  fields')
-        print("     keeping the last one")
-    else:
-        IPPmode = False
-
-    # Specific si Ajustement Final
-    greped_adj = utils.grep(filein,'COORDONNEES DES STATIONS AJUSTEES EN HAUTE FREQUENCE')
-    if force_get_convergence:
-        FinalAdj_mode = False
-    elif len(greped_adj) != 0:
-        FinalAdj_mode = True
-        FinalAdj_found = False
-        print("INFO : ", os.path.basename(filein) , 'have a COORD STAT AJ EN HTE FREQ  field')
-        print("     keeping this one (and not the convergence)")
-    else:
-        FinalAdj_mode = False
-
-    fileopened = open(filein,encoding = "ISO-8859-1")
-
-    regex_valid_line_count = 0
-
-    for line in fileopened:
-
-        if re.compile('__Nom__').search(line):
-            nextline = next(fileopened).split()
-            namestat = nextline[3]
-            Xref = float(nextline[4])
-            Yref = float(nextline[5])
-            Zref = float(nextline[6])
-
-            Fref , Lref , Href = conv.XYZ2GEO(Xref,Yref,Zref)
-
-#        if 'angles en deg' in line:
-#            flh_in_rad = False
-
-        # Specific search
-        if IPPmode and re.compile('c o n v e r g e n c e').search(line):
-            converg_compt = converg_compt + 1
-        if FinalAdj_mode and re.compile('COORDONNEES DES STATIONS AJUSTEES EN HAUTE FREQUENCE').search(line):
-            FinalAdj_found = True
-
-        # Specific skip
-        if FinalAdj_mode and not FinalAdj_found:
-            continue
-        if IPPmode and converg_compt != 2:
-            continue
-
-        if "real" in line:
-            rawexectime = line.split()[-1]
-
-        if re.compile(regex).search(line):
-            regex_valid_line_count += 1
-            fields = line.split()
-
-            if re.compile('[XYZ]').search(line):
-                initype = 'XYZ'
-                Aref , Bref ,Cref = Xref,Yref,Zref
-            elif re.compile('[PLH]').search(line):
-                initype = 'FLH'
-                Aref , Bref ,Cref = Fref,Lref,Href
-            else:
-                print("ERR : read gins : wrong initype")
-
-            if (float(fields[2]) == 0):
-                continue
-
-            if (fields[0] == 'stations'):
-                print('yyyyy')
-
-            # securité pour les lignes du type
-            #  ------------------------------------------------------------------------------------------------------
-            # stations      175  -0.574353783560234E+07  +/-   0.000000000000000E+00   1  [SX  1212001892701M005071]
-
-            jour = int(line[108:110])
-            h    = int(line[110:112])
-            m    = int(line[112:114])
-            s    = int(line[114:116])
-            yy   = int(line[125:127])
-
-            # gestion des années
-            if 80 < yy <= 99:
-                yy = yy + 1900
-            else:
-                yy = yy + 2000
-
-            # pour le mois, si > sept (9), alors lettre ...
-            mm = line[127]
-
-            if mm == 'O':
-                mm = 10
-            elif mm == 'N':
-                mm = 11
-            elif mm == 'D':
-                mm = 12
-            else:
-                mm = int(mm)
-
-            try:
-                if h == 24:
-                    # cas exceptionnel ou on doit gerer minuit
-                    # on retranche l'heure dans l'int en input et on l'ajoute dans le dt
-                    Ttemp = (dt.datetime(yy,mm,jour,h-1,m,s) + dt.timedelta(seconds=-19) + dt.timedelta(hours=1))
-                else:
-                    Ttemp = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
-
-                if  line[105] == 'X' or line[105] == 'P':
-                    Ta = Ttemp
-                    A = (float(fields[3]))
-                    sA = (float(fields[4]))
-
-                if  line[105] == 'Y' or line[105] == 'L':
-                    Tb = Ttemp
-                    B = (float(fields[3]))
-                    sB = (float(fields[4]))
-
-                if  line[105] == 'Z' or line[105] == 'H':
-                    Tc = Ttemp
-                    C = (float(fields[3]))
-                    sC = (float(fields[4]))
-            except ValueError as err:
-                print('ERR :')
-                print('yy,mm,jour,h,m,s ',yy,mm,jour,h,m,s)
-                raise err
-
-            if  Ta == Tb == Tc :
-                T = Ta
-                if initype == 'FLH' and not FinalAdj_mode:
-                    if flh_in_rad:
-                        A = np.rad2deg(A)
-                        B = np.rad2deg(B)
-                        sA = np.rad2deg(sA)
-                        sB = np.rad2deg(sB)
-                if kf_result and 0:
-                    A = A + Aref
-                    B = B + Bref
-                    C = C + Cref
-                point = time_series.Point(A,B,C,T,initype,sA,sB,sC,name=namestat)
-
-                Ta = 111
-                Tb = 222
-                Tc = 333
-
-                if kineorstatic == 'static':
-                    return point
-                elif kineorstatic == 'kine':
-                    tsout.add_point(point)
-                else:
-                    print("ERR")
-
-    if  regex_valid_line_count == 0:
-        print("WARN : no valid line (with regex check) was found !!!")
-
-
-    tsout.anex['exec_time'] = rawexectime
-    tsout.meta_set(filein,namestat)
-    return tsout
-
-
-def gins_read_time(line):
-    jour = int(line[108:110])
-    h    = int(line[110:112])
-    m    = int(line[112:114])
-    s    = int(line[114:116])
-    yy   = int(line[125:127])
-
-    # gestion des années
-    if 80 < yy <= 99:
-        yy = yy + 1900
-    else:
-        yy = yy + 2000
-
-    # pour le mois, si > sept (9), alors lettre ...
-    mm = line[127]
-
-    if mm == 'O':
-        mm = 10
-    elif mm == 'N':
-        mm = 11
-    elif mm == 'D':
-        mm = 12
-    else:
-        mm = int(mm)
-
-    try:
-        if h == 24:
-            # cas exceptionnel ou on doit gerer minuit
-            # on retranche l'heure dans l'int en input et on l'ajoute dans le dt
-            Ttemp = (dt.datetime(yy,mm,jour,h-1,m,s) +
-                     dt.timedelta(seconds=-19) + dt.timedelta(hours=1))
-        else:
-            Ttemp = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
-    except:
-        Ttemp = dt.datetime(1970,1,1)
-
-    T = Ttemp
-
-    return T
-
-
-def gins_read_MZB(filein):
-
-    F = open(filein)
-
-    regex = '\[MZB.*\]     $'
-
-    Tstk    = []
-    MZBstk  = []
-    sMZBstk = []
-
-    for line in F:
-        if re.compile('__Nom__').search(line):
-            nextline = next(F).split()
-            namestat = nextline[3]
-            Xref = float(nextline[4])
-            Yref = float(nextline[5])
-            Zref = float(nextline[6])
-
-        if re.compile(regex).search(line):
-            fields = line.split()
-
-            #[MZB  801980015051301 GPS]
-
-            Traw = fields[6][-8:]
-            yy = int(Traw[0:2])
-            mm = int(Traw[2:4])
-            dd = int(Traw[4:6])
-            hh = int(Traw[6:8])
-
-            if 80 < yy <= 99:
-                yy = yy + 1900
-            else:
-                yy = yy + 2000
-
-            T = dt.datetime(yy,mm,dd,hh)
-
-            MZB  = float(fields[3])
-            sMZB = float(fields[4])
-
-            Tstk.append(T)
-            MZBstk.append(MZB)
-            sMZBstk.append(sMZB)
-
-    return Tstk , MZBstk , sMZBstk , namestat
-
-
-def write_ATM_GAMIT(Tstk , MZBstk , sMZBstk ,
-                    namestat , file_out):
-    Fout = open(file_out,'w+')
-    for T,mzb , smzb in zip(Tstk , MZBstk , sMZBstk):
-        yy = T.year
-        mm = T.month
-        dd = T.day
-        hh = T.hour
-        Line = 'ATM_ZEN X {}  1 {:4} {:2} {:2} {:2}  0  {:6.4f} +-   {:6.4f}    {:6.4f}\n'.format(namestat.upper(),yy,mm,dd,hh,mzb,smzb,mzb)
-        Fout.write(Line)
-    Fout.close()
-    return file_out
-
-
-def MZB_GINS_2_ATM_GAMIT(listing_in,path_out):
-    Tstk , MZBstk , sMZBstk , namestat = gins_read_MZB(listing_in)
-    doy,yy = conv.dt2doy_year(Tstk[0],str)
-    file_out = os.path.join(path_out,'_'.join(('MZB_GINS_2_ATM_GAMIT',namestat,doy,yy,'.txt')))
-    write_ATM_GAMIT(Tstk , MZBstk , sMZBstk ,
-                    namestat , file_out)
-
-    return file_out
-
-def read_gins_wrapper(input_list_or_path,flh_in_rad=True):
-    """
-    pour une liste de paths renvoie une liste de timeseries
-    AUTANT DE TIMESERIES QUE DE LISTINGS
-
-    INPUT :
-    Une liste de fichiers
-    Un path compatible avec glob
-
-    les fichiers sans extensions .gins
-    sont automatiquement exclus
-    """
-
-    if type(input_list_or_path) is str:
-        gins_listings_list = glob.glob(input_list_or_path)
-    else:
-        gins_listings_list = input_list_or_path
-
-    tslis = []
-    for f in gins_listings_list:
-        if not '.gins' in f:
-            print('WARN : no .gins ext, skipping')
-            continue
-
-        ts = read_gins(f,flh_in_rad=flh_in_rad)
-        tslis.append(ts)
-
-    return tslis
-
-
-def convert_sp3_clk_2_GINS_clk(sp3_path_in,
-                               clk_gins_out,
-                               interpo_30sec = True,
-                               return_as_DF = True):
-    DF = files_rw.read_sp3(sp3_path_in)
-
-    Fout = open(clk_gins_out,"w+")
-
-    def write_GINS_signaletic_elt_clk(dt_in,sv,
-                                      signaletic_name="MNG",
-                                      add_19sec_to_dt_in = True):
-        """
-        very beta, only for GPS clk
-        """
-
-        if add_19sec_to_dt_in:
-            dt_work = dt_in + dt.timedelta(seconds=19)
-        else:
-            dt_work = dt_in
-
-        jjul = conv.dt2jjulCNES(dt_work)
-        sec_in_day = (dt_work - conv.jjulCNES2dt(jjul) ).seconds
-
-        #MNG0000000jjjjjcccccnnnn
-
-        outstr = "[MNG0000000" + str(jjul) + str(sec_in_day).zfill(5) + "GP" + str(sv).zfill(2) + "]"
-
-        return outstr
-
-    c = 299792458
-
-    if interpo_30sec:
-        Epoc_work = []
-        Sv_work   = []
-        Clk_work  = []
-
-        for sv in sorted(DF["sv"].unique()):
-            DFsv = DF[DF["sv"] == sv]
-
-            Epoc_inp = np.array(conv.dt2posix(DFsv["epoch"]))
-            Clk_inp  = np.array(DFsv["clk"])
-
-            Epoc_interp = np.arange(np.min(Epoc_inp),np.max(Epoc_inp),30)
-            Epoc_interp_dt = conv.posix2dt(Epoc_interp)
-
-            I = scipy.interpolate.interp1d(Epoc_inp,Clk_inp)
-
-            Clk_interp = I(Epoc_interp)
-
-            Sv_work   = Sv_work   + [sv] * len(Epoc_interp)
-            Epoc_work = Epoc_work + list(Epoc_interp_dt)
-            Clk_work  = Clk_work  + list(Clk_interp)
-
-    else:
-        Epoc_work = DF["epoch"]
-        Sv_work   = DF["sv"]
-        Clk_work  = DF["clk"]
-
-
-    DF_work = pd.DataFrame(list(zip(Epoc_work,Sv_work,Clk_work)),
-                            columns=("epoch","sv","clk"))
-
-    DF_work.sort_values(["epoch","sv"],inplace=True)
-
-    print("tot",DF_work)
-
-    for epoc , sv , clk in zip(DF_work["epoch"],DF_work["sv"],DF_work["clk"]):
-        signaletik = write_GINS_signaletic_elt_clk(epoc,sv,clk)
-
-        str_final = " 0 0 {:}  {:+17.15e} {:+17.15e}\n".format(signaletik,clk* 10**-6 * c,0)
-
-        Fout.write(str_final)
-
-    if not return_as_DF:
-        return clk_gins_out
-    else:
-        return DF_work
-
-
-
-#def read_gins_kinematic(filein):
-#
-#    ''' retourne une TSPoint '''
-#
-#    tsout = time_series.TimeSeriePoint()
-#
-#    X,Y,Z = 0,0,0
-#    Tx , Ty , Tz, T = 111,222,333,0
-#    sX,sY,sZ = 0,0,0
-#
-#    for line in open(filein):
-#
-#        if re.compile('\[S[XYZ] .*\]$').search(line):
-#            fields = line.split()
-#
-#            if (float(fields[2]) == 0):
-#                continue
-#
-#            if (fields[0] == 'stations'):
-#                continue
-#            # securité pour les lignes du type
-#            #  ------------------------------------------------------------------------------------------------------
-#            # stations      175  -0.574353783560234E+07  +/-   0.000000000000000E+00   1  [SX  1212001892701M005071]
-#
-#            jour = int(line[108:110])
-#            h = int(line[110:112])
-#            m = int(line[112:114])
-#            s = int(line[114:116])
-#            yy = int(line[125:127]) + 2000
-#            mm = int(line[127])
-#
-#            if line[105] == 'X':
-#                Tx = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
-#                X = (float(fields[3]))
-#                sX = (float(fields[4]))
-#
-#            if  line[105] == 'Y':
-#                Ty = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
-#                Y = (float(fields[3]))
-#                sY = (float(fields[4]))
-#
-#            if  line[105] == 'Z':
-#                Tz = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
-#                Z = (float(fields[3]))
-#                sZ = (float(fields[4]))
-#
-#
-#            if  Tx == Ty == Tz :
-#                T = Tx
-#                point = time_series.Point(X,Y,Z,T,'XYZ',sX,sY,sZ)
-#                tsout.add_point(point)
-#                Tx = 111
-#                Ty = 222
-#                Tz = 333
-#
-#    tsout.meta_set(filein)
-#
-#    return tsout
-#
-#
-#def read_gins_static_solo(filein):
-#
-#    X,Y,Z = 0,0,0
-#    Tx , Ty , Tz, T = 111,222,333,0
-#    sX,sY,sZ = 0,0,0
-#    namestat='NULL'
-#
-#    fileopened = open(filein)
-#
-#    for line in fileopened:
-#
-#        if re.compile('__Nom__').search(line):
-#            namestat = next(fileopened).split()[3]
-#
-#        # Pour le static, il y a des blancs en fin de ligne ...
-#        if re.compile('\[S[XYZ] .*\]     $').search(line):
-#
-#            fields = line.split()
-#
-#            if (float(fields[2]) == 0):
-#                continue
-#
-#            if (fields[0] == 'stations'):
-#                continue
-#            # securité pour les lignes du type
-#            #  ------------------------------------------------------------------------------------------------------
-#            # stations      175  -0.574353783560234E+07  +/-   0.000000000000000E+00   1  [SX  1212001892701M005071]
-#
-#            jour = int(line[108:110])
-#            h = int(line[110:112])
-#            m = int(line[112:114])
-#            s = int(line[114:116])
-#            yy = int(line[125:127])
-#
-#            # gestion des annÃ©es
-#            if 80 < yy <= 99:
-#                yy = yy + 1900
-#            else:
-#                yy = yy + 2000
-#
-#            # pour le mois, si > sept (9), alors lettre ...
-#            mm = line[127]
-#
-#            if mm == 'O':
-#                mm = 10
-#            elif mm == 'N':
-#                mm = 11
-#            elif mm == 'D':
-#                mm = 12
-#            else:
-#                mm = int(mm)
-#
-#            if line[105] == 'X':
-#                Tx = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
-#                X = (float(fields[3]))
-#                sX = (float(fields[4]))
-#
-#            if  line[105] == 'Y':
-#                Ty = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
-#                Y = (float(fields[3]))
-#                sY = (float(fields[4]))
-#
-#            if  line[105] == 'Z':
-#                Tz = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
-#                Z = (float(fields[3]))
-#                sZ = (float(fields[4]))
-#
-#
-#            if  Tx == Ty == Tz :
-#                T = Tx
-#                point = time_series.Point(X,Y,Z,T,'XYZ',sX,sY,sZ,name=namestat)
-#
-#                Tx = 111
-#                Ty = 222
-#                Tz = 333
-#
-#                return point
-
-#read_gins_static_solo('/media/DDannex/GINS_AKRIM/listing/listing_NRMD/DIR_sortie_2007_20830_nrmd.140513_060821.gins')
-
-def read_gins_multi_raw_listings(filelistin,kineorstatic='static',flh_in_rad=True):
-    """
-    traite une liste de listing bruts
-    pour obtenir UNE SEULE timeserie
-    """
-
-    tsout = time_series.TimeSeriePoint()
-    refname = 'RIEN'
-    if kineorstatic == 'static':
-        for filein in filelistin:
-            print(filein)
-            if not utils.check_regex(filein,'c o n v e r g e n c e'):
-                continue
-            pt = read_gins(filein,kineorstatic='static',flh_in_rad=flh_in_rad)
-            if refname == 'RIEN':
-                refname = pt.name
-            if refname != pt.name:
-                print("WARN : read_gins_multi : nom de stat. != reference")
-            tsout.add_point(pt)
-        tsout.meta_set(stat=refname)
-
-
-    elif kineorstatic == 'kine':
-        tsoutlis = []
-        for filein in filelistin:
-            print(filein)
-            if not utils.check_regex(filein,'c o n v e r g e n c e'):
-                continue
-            ts = read_gins(filein,kineorstatic='kine',flh_in_rad=flh_in_rad)
-            tsoutlis.append(ts)
-        tsout = merge_ts(tsoutlis)
-
-    else:
-        print("ERR : check kineorstatic keyword")
-
-    tsout.sort()
-    return tsout
-
-def read_gins_multi_extracted(filelistin,flh_in_rad=True):
-    """
-    traite les extractions de listings
-    sous la forme par ex. S<HLP>__ddhhiissxxxxxxxxxyym.HOUE
-    La liste doit contenir exactement 3 fichiers (pour chacune des composantes)
-    """
-    tsout = time_series.TimeSeriePoint()
-    if len(filelistin) != 3:
-        print("ERR : read_gins_multi_extracted : listfilein != 3 elts")
-        return None
-    statnameset = list(set([ f.split('.')[-1] for f in filelistin ]))
-    statname = statnameset[0]
-    if len(statnameset) != 1:
-        print("WARN : read_gins_multi_extracted : len(statnameset) != 1")
-    fileopenedlist = [ open(f,'r+') for f in filelistin ]
-    coortypelist = [ os.path.basename(f)[1] for f in filelistin ]
-    print(coortypelist,filelistin)
-    if 'X' in coortypelist:
-        initype='XYZ'
-        ia = coortypelist.index('X')
-        ib = coortypelist.index('Y')
-        ic = coortypelist.index('Z')
-    elif 'P' in coortypelist:
-        initype = 'FLH'
-        ia = coortypelist.index('P')
-        ib = coortypelist.index('L')
-        ic = coortypelist.index('H')
-
-    for lf in zip(*fileopenedlist):
-        # OLD MODE : MAVAIS GESTION DE LA DATE
-#        t1 = lf[0].split()[0]
-#        t2 = lf[1].split()[0]
-#        t3 = lf[2].split()[0]
-#        if not (t1 == t2 == t3):
-#            print "WARN : read_gins_multi_extracted : not (t1 == t2 == t3)"
-#
-        fields = lf[0].split()
-        line = lf[0]
-        blok = fields[-1]
-        jour = int(blok[0:2])
-        h = int(blok[2:4])
-        m = int(blok[4:6])
-        s = int(blok[6:8])
-        yy = int(blok[-4:-2])
-        # gestion des années
-        if 80 < yy <= 99:
-            yy = yy + 1900
-        else:
-            yy = yy + 2000
-
-        # pour le mois, si > sept (9), alors lettre ...
-        mm = blok[-2]
-
-        if mm == 'O':
-            mm = 10
-        elif mm == 'N':
-            mm = 11
-        elif mm == 'D':
-            mm = 12
-        else:
-            mm = int(mm)
-
-        t1  =  (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
-
-        lfiasplit = lf[ia].split()
-        lfibsplit = lf[ib].split()
-        lficsplit = lf[ic].split()
-
-        A  = float(lfiasplit[4])
-        B  = float(lfibsplit[4])
-        C  = float(lficsplit[4])
-        sA = float(lfiasplit[5])
-        sB = float(lfibsplit[5])
-        sC = float(lficsplit[5])
-        T = t1
-
-        if initype == 'FLH' and flh_in_rad:
-            A  = np.rad2deg(A)
-            B  = np.rad2deg(B)
-            sA = np.rad2deg(sA)
-            sB = np.rad2deg(sB)
-
-        pt = time_series.Point(A,B,C,T,initype,sA,sB,sC)
-
-        tsout.add_point(pt)
-    tsout.meta_set(stat=statname)
-    tsout.sort()
-
-    return tsout
-
-def read_gins_double_diff(filein):
-    """
-    return a list of Point object for a double diff listing
-    """
-
-    if utils.grep(filein , 'c o n v e r g e n c e') == '':
-        print('ERR : ' , filein , 'have no convergence, return None')
-        return None
-
-    fileopened = open(filein)
-
-    statlist    = []
-    rawdatalist = []
-    timelist    = []
-
-    regstat   = re.compile(r'[0-9]{5}[A-Z][0-9]{3}  [0-9]{7} .*$')
-    regresult = re.compile(r'\[S[PLHXYZ][E ].*\]     $')
-
-
-    for line in fileopened:
-        # finding
-        if regstat.search(line):
-            stat = line.split()[3]
-            statlist.append(stat)
-
-        if regresult.search(line):
-            fields = line.split()
-            rawdatalist.append([float(e) for e in fields[:-2]])
-            timelist.append(gins_read_time(line))
-
-
-    rawdatatab = np.vstack(rawdatalist)
-
-    Pstk = []
-
-    for istat,stat in enumerate(statlist):
-        P = time_series.Point(rawdatatab[3*istat,3],
-                       rawdatatab[3*istat+1,3],
-                       rawdatatab[3*istat+2,3],
-                       timelist[3*istat],'XYZ',
-                       rawdatatab[3*istat,4],
-                       rawdatatab[3*istat,4],
-                       rawdatatab[3*istat,4],name=stat)
-
-        Pstk.append(P)
-
-    return Pstk
-
-def read_gins_double_diff_multi(filelistin):
-    """
-    return a dictionnary with station names as keys and timeseries as values
-    """
-
-    Ptsstk = []
-    for filein in filelistin:
-        Pstk = read_gins_double_diff(filein)
-        if Pstk != None:
-            Ptsstk = Ptsstk + Pstk
-
-    statlist = set([e.name for e in Ptsstk])
-
-    tsdico = dict()
-
-    for stat in statlist:
-        tsdico[stat] = time_series.TimeSeriePoint(stat=stat)
-
-    for pt in Ptsstk:
-        tsdico[pt.name].add_point(pt)
-
-    for ts in tsdico.values():
-        ts.sort()
-
-    return tsdico
-
-
-
-
-def read_jpl_timeseries_solo(latlonrad_files_list):
-
-    tsout = time_series.TimeSeriePoint()
-
-    latpath = [f for f in latlonrad_files_list if '.lat' in f][0]
-    lonpath = [f for f in latlonrad_files_list if '.lon' in f][0]
-    radpath = [f for f in latlonrad_files_list if '.rad' in f][0]
-
-    latfile = open(latpath)
-    lonfile = open(lonpath)
-    radfile = open(radpath)
-
-    for llat , llon , lrad in zip(latfile,lonfile,radfile):
-        flat = [float(e) for e in llat.split()[0:3]]
-        flon = [float(e) for e in llon.split()[0:3]]
-        frad = [float(e) for e in lrad.split()[0:3]]
-
-        if not ( flat[0] == flon[0] == frad[0]):
-            print(flat[0] , flon[0] , frad[0])
-            raise Exception('ERR : read_jpl_timeseries_solo : Time dont corresponds !!!')
-
-        statlat = os.path.basename(latpath).split('.')[0]
-        statlon = os.path.basename(lonpath).split('.')[0]
-        statrad = os.path.basename(radpath).split('.')[0]
-
-        if not ( statlat == statlon == statrad):
-            print(statlat , statlon , statrad)
-            raise Exception('ERR : read_jpl_timeseries_solo : station name dont corresponds !!!')
-
-        T = conv.year_decimal2dt(flat[0])
-
-        N = flat[1] * 10**-2
-        E = flon[1] * 10**-2
-        U = frad[1] * 10**-2
-
-        sN = flat[2] * 10**-2
-        sE = flon[2] * 10**-2
-        sU = frad[2] * 10**-2
-
-        point = time_series.Point(E,N,U,T,'ENU',sE,sN,sU)
-
-        tsout.boolENU = True
-        tsout.add_point(point)
-
-    tsout.stat = statlat
-
-    return tsout
 
 def read_nevada(filein,input_coords="enu"):
     """
@@ -2191,6 +2150,14 @@ def read_nav_step1_geodesea(filein):
     return tsout
 
 
+
+ #  _   _ _____   _____          _   _   ______ _ _           
+ # | \ | |  __ \ / ____|   /\   | \ | | |  ____(_) |          
+ # |  \| | |__) | |       /  \  |  \| | | |__   _| | ___  ___ 
+ # | . ` |  _  /| |      / /\ \ | . ` | |  __| | | |/ _ \/ __|
+ # | |\  | | \ \| |____ / ____ \| |\  | | |    | | |  __/\__ \
+ # |_| \_|_|  \_\\_____/_/    \_\_| \_| |_|    |_|_|\___||___/
+
 def read_nrcan_csv(filein , associated_ps_file = '', statname = ''):
     """
     associated_ps_file is highly recommanded
@@ -2242,18 +2209,37 @@ def read_nrcan_pos(filein):
     for l in open(filein):
         if l[0:3] == 'DIR':
             start_read = True
+            lhead=l.split()
+            i_lat_d = lhead.index('LATDD')
+            i_lat_m = lhead.index('LATMN')
+            i_lat_s = lhead.index('LATSS')
+
+            i_lon_d = lhead.index('LONDD')
+            i_lon_m = lhead.index('LONMN')
+            i_lon_s = lhead.index('LONSS')
+            
+            i_h = lhead.index('HGT(m)')
+            
+            i_slat =  lhead.index('SDLAT(95%)')
+            i_slon =  lhead.index('SDLON(95%)')
+            i_sh   =  lhead.index('SDHGT(95%)')
+            
             continue
         elif not start_read:
             continue
         else:
             f = l.split()
-            lat = (np.abs(float(f[20])) + 1/60. * float(f[21]) + 1/3600. * float(f[22])) * np.sign(float(f[20]))
-            lon = (np.abs(float(f[23])) + 1/60. * float(f[24]) + 1/3600. * float(f[25])) * np.sign(float(f[23]))
-            sE = float(f[15])
-            sN = float(f[16])
-            sU = float(f[17])
-            h   = float(f[26])
-            slat , slon , sh = conv.sENU2sFLH(lat,lon,h,sE,sN,sU)
+            lat = (np.abs(float(f[i_lat_d])) + 1/60. * float(f[i_lat_m]) + 1/3600. * float(f[i_lat_s])) * np.sign(float(f[i_lat_d]))
+            lon = (np.abs(float(f[i_lon_d])) + 1/60. * float(f[i_lon_m]) + 1/3600. * float(f[i_lon_s])) * np.sign(float(f[i_lon_d]))
+            h   = float(f[i_h])
+            
+            ### old and useless conversion (2021-01)
+            #sE = float(f[15])
+            #sN = float(f[16])
+            #sU = float(f[17])
+            #slat , slon , sh = conv.sENU2sFLH(lat,lon,h,sE,sN,sU)
+
+            slat , slon , sh = float(f[i_slat]),float(f[i_slon]),float(f[i_sh])
 
             t   = conv.date_string_2_dt(f[4] + ' ' + f[5])
 
@@ -2411,3 +2397,154 @@ def read_hector_neu(filein):
                          'ENU',M[:,4],M[:,5],M[:,6],stat=stat,name=stat)
 
     return tsout
+
+
+ #  ______                _   _                _____                                         _ 
+ # |  ____|              | | (_)              / ____|                                       | |
+ # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
+ # |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | | |_ | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
+ # | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+ # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
+ #                                                                        __/ |                
+ #                                                                       |___/       
+
+
+#def read_gins_kinematic(filein):
+#
+#    ''' retourne une TSPoint '''
+#
+#    tsout = time_series.TimeSeriePoint()
+#
+#    X,Y,Z = 0,0,0
+#    Tx , Ty , Tz, T = 111,222,333,0
+#    sX,sY,sZ = 0,0,0
+#
+#    for line in open(filein):
+#
+#        if re.compile('\[S[XYZ] .*\]$').search(line):
+#            fields = line.split()
+#
+#            if (float(fields[2]) == 0):
+#                continue
+#
+#            if (fields[0] == 'stations'):
+#                continue
+#            # securité pour les lignes du type
+#            #  ------------------------------------------------------------------------------------------------------
+#            # stations      175  -0.574353783560234E+07  +/-   0.000000000000000E+00   1  [SX  1212001892701M005071]
+#
+#            jour = int(line[108:110])
+#            h = int(line[110:112])
+#            m = int(line[112:114])
+#            s = int(line[114:116])
+#            yy = int(line[125:127]) + 2000
+#            mm = int(line[127])
+#
+#            if line[105] == 'X':
+#                Tx = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
+#                X = (float(fields[3]))
+#                sX = (float(fields[4]))
+#
+#            if  line[105] == 'Y':
+#                Ty = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
+#                Y = (float(fields[3]))
+#                sY = (float(fields[4]))
+#
+#            if  line[105] == 'Z':
+#                Tz = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
+#                Z = (float(fields[3]))
+#                sZ = (float(fields[4]))
+#
+#
+#            if  Tx == Ty == Tz :
+#                T = Tx
+#                point = time_series.Point(X,Y,Z,T,'XYZ',sX,sY,sZ)
+#                tsout.add_point(point)
+#                Tx = 111
+#                Ty = 222
+#                Tz = 333
+#
+#    tsout.meta_set(filein)
+#
+#    return tsout
+#
+#
+#def read_gins_static_solo(filein):
+#
+#    X,Y,Z = 0,0,0
+#    Tx , Ty , Tz, T = 111,222,333,0
+#    sX,sY,sZ = 0,0,0
+#    namestat='NULL'
+#
+#    fileopened = open(filein)
+#
+#    for line in fileopened:
+#
+#        if re.compile('__Nom__').search(line):
+#            namestat = next(fileopened).split()[3]
+#
+#        # Pour le static, il y a des blancs en fin de ligne ...
+#        if re.compile('\[S[XYZ] .*\]     $').search(line):
+#
+#            fields = line.split()
+#
+#            if (float(fields[2]) == 0):
+#                continue
+#
+#            if (fields[0] == 'stations'):
+#                continue
+#            # securité pour les lignes du type
+#            #  ------------------------------------------------------------------------------------------------------
+#            # stations      175  -0.574353783560234E+07  +/-   0.000000000000000E+00   1  [SX  1212001892701M005071]
+#
+#            jour = int(line[108:110])
+#            h = int(line[110:112])
+#            m = int(line[112:114])
+#            s = int(line[114:116])
+#            yy = int(line[125:127])
+#
+#            # gestion des annÃ©es
+#            if 80 < yy <= 99:
+#                yy = yy + 1900
+#            else:
+#                yy = yy + 2000
+#
+#            # pour le mois, si > sept (9), alors lettre ...
+#            mm = line[127]
+#
+#            if mm == 'O':
+#                mm = 10
+#            elif mm == 'N':
+#                mm = 11
+#            elif mm == 'D':
+#                mm = 12
+#            else:
+#                mm = int(mm)
+#
+#            if line[105] == 'X':
+#                Tx = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
+#                X = (float(fields[3]))
+#                sX = (float(fields[4]))
+#
+#            if  line[105] == 'Y':
+#                Ty = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
+#                Y = (float(fields[3]))
+#                sY = (float(fields[4]))
+#
+#            if  line[105] == 'Z':
+#                Tz = (dt.datetime(yy,mm,jour,h,m,s) + dt.timedelta(seconds=-19))
+#                Z = (float(fields[3]))
+#                sZ = (float(fields[4]))
+#
+#
+#            if  Tx == Ty == Tz :
+#                T = Tx
+#                point = time_series.Point(X,Y,Z,T,'XYZ',sX,sY,sZ,name=namestat)
+#
+#                Tx = 111
+#                Ty = 222
+#                Tz = 333
+#
+#                return point
+
+#read_gins_static_solo('/media/DDannex/GINS_AKRIM/listing/listing_NRMD/DIR_sortie_2007_20830_nrmd.140513_060821.gins')

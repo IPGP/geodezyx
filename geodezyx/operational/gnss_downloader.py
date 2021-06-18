@@ -167,6 +167,24 @@ def effective_save_dir(parent_archive_dir,stat,date,archtype ='stat'):
 ############################################################################
 
 
+def force_weekly_file_fct(force_weekly_file,sp3clk,day_in):
+    if force_weekly_file == False:
+        day = day_in
+
+    elif type(force_weekly_file) is str or type(force_weekly_file) is int:
+        print("INFO : The weekly file will be downloaded (DoW =",force_weekly_file,")")
+        print("       Check force_weekly_file option if you don't want it")
+        day = force_weekly_file
+
+    elif sp3clk in ("erp","sum") and force_weekly_file == True:
+        print("INFO : The weekly file (DoW = 7) will be downloaded for " + sp3clk.upper())
+        day = 7
+        
+    return day
+
+
+
+
 def orbclk_cddis_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
                         longname = False, force_weekly_file=False):
     """
@@ -190,21 +208,8 @@ def orbclk_cddis_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
     # date definition
     week, day = conv.dt2gpstime(date)
 
-    if force_weekly_file == False:
-        pass
-
-    elif type(force_weekly_file) is str or type(force_weekly_file) is int:
-        print("INFO : The weekly file will be downloaded (DoW =",force_weekly_file,")")
-        print("       Check force_weekly_file option if you don't want it")
-        day = force_weekly_file
-
-    elif sp3clk == "erp" and force_weekly_file == True:
-        print("INFO : The weekly file (DoW = 7) will be downloaded for ERP")
-        day = 7
-
-    elif sp3clk == "sum" and force_weekly_file == True:
-        print("INFO : The weekly file (DoW = 7) will be downloaded for SUM")
-        day = 7
+    ## force_weekly_file handeling
+    day = force_weekly_file_fct(force_weekly_file_fct,sp3clk,day)
 
     if not longname: # e.g. gbm19903.sp3.Z
         if not 'igu' in center:
@@ -275,20 +280,8 @@ def orbclk_ign_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
         center = ''.join(center)
     week, day = conv.dt2gpstime(date)
 
-
-    if force_weekly_file == False:
-        pass
-    elif type(force_weekly_file) is str or type(force_weekly_file) is int:
-        print("INFO : The weekly file will be downloaded (DoW =",force_weekly_file,")")
-        day = force_weekly_file
-
-    elif sp3clk == "erp" and force_weekly_file == True:
-        print("INFO : The weekly file (DoW = 7) will be downloaded for ERP")
-        day = 7
-
-    elif sp3clk == "sum" and force_weekly_file == True:
-        print("INFO : The weekly file (DoW = 7) will be downloaded for SUM")
-        day = 7
+    ## force_weekly_file handeling
+    day = force_weekly_file_fct(force_weekly_file,sp3clk,day)
 
     if not longname: # e.g. gbm19903.sp3.Z
         if not 'igu' in center:
@@ -432,16 +425,19 @@ def downloader(url,savedir,force = False,
         except (urllib.error.HTTPError , urllib.error.URLError):
             print("WARN :",rnxname,"not found on server :(")
             print(url_print)
-            return None
+            return ""
         print("INFO :" , rnxname ," found on server :)")
         data = f.read()
         if not os.path.exists(savedir):
             os.makedirs(savedir)
-        with open(os.path.join(savedir , rnxname), "wb") as code:
+        outpath = os.path.join(savedir , rnxname)
+        with open(outpath, "wb") as code:
             code.write(data)
+        return_str = outpath
     else:
         print("ERR : something goes wrong with the URL")
         print("     ", url)
+        return_str = ""
 
 
     # effective downloading (old version)
@@ -457,7 +453,7 @@ def downloader(url,savedir,force = False,
 #        os.makedirs(savedir)
 #    with open(os.path.join(savedir , rnxname), "wb") as code:
 #        code.write(data)
-    return None
+    return return_str
 
 def start_end_date_easy(start_year,start_doy,end_year,end_doy):
     start = conv.doy2dt(start_year,start_doy)
@@ -751,7 +747,7 @@ def orbclk_long2short_name(longname_filepath_in,
 
     wwww , dow = conv.dt2gpstime(day_dt)
 
-    shortname_prefix = center.lower() + str(wwww) + str(dow)
+    shortname_prefix = center.lower() + str(wwww).zfill(4) + str(dow)
 
     ### Type handeling
     if   "SP3" in longname_basename:
@@ -816,7 +812,7 @@ def rnx_long2short_name(longname_filepath_in):
 
 def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
                             sp3clk='sp3',archtype ='year/doy',parallel_download=4,
-                            archive_center='cddis',repro=0,sorted_mode=False,
+                            archive_center='ign',repro=0,sorted_mode=False,
                             force_weekly_file=False, return_also_uncompressed_files=True):
 
     """
@@ -843,6 +839,10 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
             'clk_30s'
 
             'sp3'
+            
+            'snx'
+            
+            'sum'
 
             'erp'
 
@@ -856,6 +856,8 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
             'cddis_mgex'
 
             'cddis_mgex_longname'
+
+            'ign'
 
             'ign_mgex'
 
@@ -943,6 +945,9 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
                     url = orbclk_cddis_server(curdate,cc,repro=repro,
                                               sp3clk=sp3clk,mgex=True,longname=True,
                                               force_weekly_file=force_weekly_file)
+                elif archive_center == 'ign':
+                    url = orbclk_ign_server(curdate,cc,repro=repro,sp3clk=sp3clk,
+                                              mgex=False,force_weekly_file=force_weekly_file)
                 elif archive_center == 'ign_mgex':
                     url = orbclk_ign_server(curdate,cc,repro=repro,sp3clk=sp3clk,
                                               mgex=True,force_weekly_file=force_weekly_file)
@@ -1104,7 +1109,8 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
                             compressed="incl",
                             regex_old_naming = True,
                             regex_new_naming = True,
-                            regex_igs_tfcc_naming = True):
+                            regex_igs_tfcc_naming = True,
+                            add_weekly_file = False):
     """
     Find all product files in a parent folder which correspond to file type(s),
     AC(s) and date(s)
@@ -1148,9 +1154,18 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
         "only": only consider the compressed files
         "excl": exclude the compressed files
         
+    regex_old_naming : bool
+        Handle old naming format
 
+    regex_new_naming : bool
+        Handle new naming format        
+    
+    regex_igs_tfcc_naming : bool
+        Handle TFCC specific format (for SINEX files)
         
-    Naming_conv : str or list of str
+    add_weekly_file : bool
+        Also handle the weekly file (day 7)
+        Implemented only for the  old naming format (for the moment)
 
     Returns
     -------
@@ -1184,9 +1199,12 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     Dates_list = [date_start_ok]
     while Dates_list[-1] < date_end_ok:
         Dates_list.append(Dates_list[-1]  + dt.timedelta(days=1))
-
+        
+    ### manage weekly file 
     Dates_wwwwd_list   = [utils.join_improved("",*conv.dt2gpstime(d)) for d in Dates_list]
     Dates_yyyyddd_list = [utils.join_improved("",*reversed(conv.dt2doy_year(d))) for d in Dates_list]
+    
+    
 
     ###### File type / ACs management ##############
 
@@ -1228,7 +1246,13 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
             re_patt_ac = "\w{3}"
         else:
             re_patt_ac = join_regex_and([ac.lower() for ac in ACs])
-        re_patt_date   = join_regex_and(Dates_wwwwd_list)
+                 
+        if add_weekly_file:
+            Dates_wwwwd_list_4old = [ e[:-1] + "(" + e[-1] + "|" + "7)"  for e in Dates_wwwwd_list]
+        else:
+            Dates_wwwwd_list_4old = Dates_wwwwd_list
+        
+        re_patt_date   = join_regex_and(Dates_wwwwd_list_4old)
         re_patt_filtyp = join_regex_and(File_type)
         re_patt_big_old_naming = re_patt_ac + re_patt_date + "\." + re_patt_filtyp + re_patt_comp
         Re_patt_big_stk.append(re_patt_big_old_naming)
@@ -1276,10 +1300,6 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     
     return Files_select_list
 
-
-
-
-
 def FTP_downloader(ftp_obj,filename,localdir):   
     localpath = os.path.join(localdir,filename)
     
@@ -1309,8 +1329,7 @@ def FTP_downloader_wo_objects(tupin):
     ftp_obj_wk.close()
     return localpath , bool_dl
     
-    
-    
+
 def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                             AC_names = ("wum","cod"),
                             prod_types = ("sp3","clk"),
@@ -1348,6 +1367,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     elif archive_center == "ign":
         arch_center_main    = 'igs.ign.fr'
         arch_center_basedir = '/pub/igs/products/' + mgex_str  
+        
+    elif archive_center == "ign_iono":
+        arch_center_main    = 'igs-rf.ign.fr'
+        arch_center_basedir = '/pub/'  
 
     elif archive_center == "ensg":
         arch_center_main    = 'igs.ensg.ign.fr'
@@ -1364,6 +1387,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     elif archive_center == "ensg_rf":
         arch_center_main    = 'igs-rf.ensg.ign.fr'
         arch_center_basedir = '/pub/' + mgex_str
+
 
     print("INFO : data center used :",archive_center)
 
@@ -1403,7 +1427,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         wwww_dir = os.path.join(arch_center_basedir,str(wwww))
         print("       Move to:",wwww_dir)
         if wwww_dir_previous != wwww_dir:
-            ftp.cwd(wwww_dir)
+            try:
+                ftp.cwd(wwww_dir)
+            except:
+                print("WARN:",wwww_dir,"do not exists, skiping...")
             Files_listed_in_FTP = ftp.nlst()
             wwww_dir_previous = wwww_dir
             if len(Files_listed_in_FTP) == 0:

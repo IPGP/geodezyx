@@ -12,6 +12,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import scipy
 #### geodeZYX modules
 from geodezyx import utils
 
@@ -24,7 +25,7 @@ def color_list(L , colormap='jet'):
     colist = [cm(1.*i/NCOL) for i in range(NCOL)]
     return colist
 
-def symbols_list(L):
+def symbols_list(L=None):
 
     Lsym = ["o",
     "v",
@@ -52,7 +53,10 @@ def symbols_list(L):
     "|",
     "_"]
 
-    return Lsym[:len(L)]
+    if not L:
+        return Lsym
+    else:
+        return Lsym[:len(L)]
 
 
 
@@ -90,20 +94,43 @@ def get_figure(figin = 0):
     return figout
 
 
-def figure_saver(figobjt_in , outdir , outname , outtype = '.png' , formt = 'a4' ):
+def figure_saver(figobjt_in , outdir , outname ,
+                 outtype = ('.png','.pdf','.figpik') ,
+                 formt = None ,
+                 dpi = 200 ,
+                 transparent=False):
+    
     if not utils.is_iterable(outtype):
          outtype = (outtype,) 
          
     outpath_stk = []
     for outtype_iter in outtype:
-        outpath = os.path.join(outdir,outname+outtype_iter)
-    #    if formt == 'a4':
-    #    elif
-        figobjt_in.savefig(outpath)
+        if "pik" in outtype_iter:
+            outpath = utils.pickle_saver(figobjt_in,outdir,
+                                         outname,outtype_iter)
+        else:   
+            outpath = os.path.join(outdir,outname+outtype_iter)
+            
+            if formt:
+                if type(formt) is tuple:
+                    formtup = formt
+                elif type(formt) is str:
+                    if formt.upper() == "A4":
+                        formtup = (11.69,8.27)
+                    elif formt.upper() == "A3":
+                        formtup = (16.53,11.69)                        
+                    else:
+                        print("WARN: issue in , assume Figure format as A4")
+                        formtup = (11.69,8.27)
+                        
+                figobjt_in.set_size_inches(*formtup)
+            
+            figobjt_in.savefig(outpath,transparent=transparent,dpi=dpi)
+
         outpath_stk.append(outpath)
+        
     if len(outpath_stk) == 1:
         outpath_stk = outpath_stk[0]
-
     return outpath_stk
 
 
@@ -164,3 +191,43 @@ def set_size_for_pub(width=418.25368, fraction=1,subplot=[1, 1]):
     fig_dim = (fig_width_in, fig_height_in)
 
     return fig_dim
+
+
+def gaussian_for_plot(D,density=False,nbins=500,nsigma=3.5):
+    """
+    generate a gaussian curve for histogram plot
+
+    Parameters
+    ----------
+    D : iterable
+        data vector.
+    density : bool, optional
+        Adapted curve for desity mode. The default is False.
+    nbins : int, optional
+        number of bins. The default is 500.
+    nsigma : TYPE, optional
+        n sigmas for the x axis. The default is 3.5.
+
+    Returns
+    -------
+    Xpdf : array
+        gaussian curve x.
+    Ypdf_out : TYPE
+        gaussian curve x.
+
+    """
+
+    mu = np.mean(D)
+    sigma = np.std(D)
+    Xpdf = np.linspace(mu - nsigma*sigma,
+                       mu + nsigma*sigma,
+                       nbins)
+    Ypdf = scipy.stats.norm.pdf(Xpdf, mu, sigma)
+    Ypdf_out = Ypdf
+    if not density:
+        Ybin,Xbin = np.histogram(D,bins=nbins)
+        area_bin = np.trapz(Ybin,dx=np.diff(Xbin)[0])
+        
+        Ypdf_out = Ypdf*area_bin
+        
+    return Xpdf,Ypdf_out    

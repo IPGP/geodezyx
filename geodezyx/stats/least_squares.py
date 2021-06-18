@@ -281,8 +281,9 @@ def weight_mat(Sinp,Ninp=[],fuvinp=1,sparsediag=False):
             print("weight_mat : Are you sure you don't invert Sinp <> Ninp ?")
     Ktemp = np.array(Ktemp).astype(np.float64)
     Qtemp = (1. /fuvinp) * Ktemp
+    Qtemp = Ktemp
     Ptemp = 1. / Qtemp
-
+    
     if sparsediag:
         K = scipy.sparse.diags(Ktemp,0)
         Q = scipy.sparse.diags(Qtemp,0)
@@ -570,8 +571,8 @@ def chi2_test_lsq(V , A ,  P = None , fuvin = None , risk = 0.05,
     else:
         esfuv = np.sum( V.T * P * V ) / ddl
 
-        pmin = scipy.stats.chi2.ppf(risk/2,ddl) / ddl
-        pmax = scipy.stats.chi2.ppf(1 - risk/2,ddl) / ddl
+    pmin = scipy.stats.chi2.ppf(risk/2,ddl) / ddl
+    pmax = scipy.stats.chi2.ppf(1 - risk/2,ddl) / ddl
 
     if pmin < esfuv and esfuv < pmax:
         boolchi2 = True
