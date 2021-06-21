@@ -1,9 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jul  9 14:01:29 2019
+@author: psakic
 
-@author: chaiyap
+This sub-module of geodezyx.stats contains functions for low-level 
+statistics. 
+
+it can be imported directly with:
+from geodezyx import stats
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
+
 
 ########## BEGIN IMPORT ##########
 #### External modules

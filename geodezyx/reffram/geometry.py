@@ -1,9 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Aug  2 17:15:57 2019
+@author: psakic
 
-@author: psakicki
+This sub-module of geodezyx.reffram contains functions for low-level 
+geometry operations. 
+
+it can be imported directly with:
+from geodezyx import reffram
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
 
 ########## BEGIN IMPORT ##########
@@ -585,19 +596,6 @@ def project_point_on_plan(N,M,A):
     return P
     
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
-
-
 
 #  _    _ _       _       _                    _    _____                _      _   _        ______   _       
 # | |  | (_)     | |     | |                  | |  / ____|              | |    | | (_)      |  ____| | |      
@@ -656,13 +654,6 @@ def calc_pos_speed_itrf(x0,y0,z0,t0,vx,vy,vz,t):
     for legacy reasons
     """
     return itrf_speed_calc(x0,y0,z0,t0,vx,vy,vz,t)
-
-
-
-
-
-
-
 
 
 def itrf_helmert_get_parameters(TRF_Input_name,TRF_Ext_name,
