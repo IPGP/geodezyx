@@ -1,10 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug  1 15:18:29 2019
+@author: psakic
 
-@author: psakicki
+This sub-module of geodezyx.files_rw contains reading functions to 
+import files containing geodetic time series.
+
+it can be imported directly with:
+from geodezyx import files_rw
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
+
+
 
 ########## BEGIN IMPORT ##########
 #### External modules

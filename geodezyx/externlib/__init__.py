@@ -1,3 +1,22 @@
+"""
+Created on Thu Aug 13 15:11:12 2020
+
+@author: psakicki
+
+This module geodezyx.externlib import easily all the useful extrern Python's packages.
+
+it can be imported directly with:
+from geodezyx.externlib import *  
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+"""
+
+
 from .externlib import *
 
 
