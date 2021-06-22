@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>geodezyx.geodyn package &mdash; geodezyx 4.x documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx.megalib package" href="geodezyx.megalib.html" />
+    <link rel="prev" title="geodezyx.files_rw package" href="geodezyx.files_rw.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> geodezyx
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>GeodeZYX Toolbox</cite>’s Cookbook</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.geodyn package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.geodyn.euler_pole_calc">geodezyx.geodyn.euler_pole_calc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.geodyn.velo_field_map_plt">geodezyx.geodyn.velo_field_map_plt module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="geodezyx.html">geodezyx package</a> &raquo;</li>
+        
+      <li>geodezyx.geodyn package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/geodezyx.geodyn.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-geodezyx.geodyn">
+<span id="geodezyx-geodyn-package"></span><h1>geodezyx.geodyn package<a class="headerlink" href="#module-geodezyx.geodyn" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-geodezyx.geodyn.euler_pole_calc">
+<span id="geodezyx-geodyn-euler-pole-calc-module"></span><h2>geodezyx.geodyn.euler_pole_calc module<a class="headerlink" href="#module-geodezyx.geodyn.euler_pole_calc" title="Permalink to this headline">¶</a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.geodyn contains functions to determine the
+Euler pole of a tectonic plate.</p>
+<p>it can be imported directly with:
+from geodezyx import geodyn</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
+<p>This module is based on the work of :
+Goudarzi, M. A., Cocard, M., &amp; Santerre, R. (2014).
+EPC: Matlab software to estimate Euler pole parameters. GPS Solutions, 18(1),
+153–162. <a class="reference external" href="https://doi.org/10.1007/s10291-013-0354-4">https://doi.org/10.1007/s10291-013-0354-4</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.covarvec2wtmat">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">covarvec2wtmat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">covars</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.covarvec2wtmat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal fuction for euler_pole_calc</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_pole_calc">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_pole_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vn_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ve_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incvn_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incve_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6371008.8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_pole_calc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Euler pole of a set of reference points</p>
+<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat_ref</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – latitude and longitude of the reference points (deg)</p></li>
+<li><p><strong>long_ref</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – latitude and longitude of the reference points (deg)</p></li>
+<li><p><strong>vn_ref</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – north and east velocities of the reference points (m/yr)</p></li>
+<li><p><strong>ve_ref</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – north and east velocities of the reference points (m/yr)</p></li>
+<li><p><strong>incvn_ref</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – uncertainties on north and east velocities of the reference points (m/yr)</p></li>
+<li><p><strong>incve_ref</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – uncertainties on north and east velocities of the reference points (m/yr)</p></li>
+<li><p><strong>Rt</strong> (<em>float</em>) – Earth Radius
+IUGG value = 6.3710088e6
+IAU value  = 6.378e6</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>w</strong> (<em>numpy.array</em>) – Euler vector (rad/yr)</p></li>
+<li><p><strong>wratedeg</strong> (<em>float</em>) – Rate of rotation (deg/Myr)</p></li>
+<li><p><strong>wlat,wlong</strong> (<em>float</em>) – latitude and longitude of the Euler pole (deg)</p></li>
+<li><p><strong>wwmat</strong> (<em>numpy.array</em>) – weight matrix (for debug)</p></li>
+<li><p><strong>desmat</strong> (<em>numpy.array</em>) – design matrix (for debug)</p></li>
+<li><p><strong>nrmatinv</strong> (<em>2-tuple</em>) – output of scipy’s lstsq fct (for debug)</p></li>
+<li><p><em>Source</em></p></li>
+<li><p><em>——</em></p></li>
+<li><p><em>based on</em></p></li>
+<li><p><strong>Goudarzi, M. A., Cocard, M., &amp; Santerre, R. (2014). EPC</strong> (<em>Matlab software to estimate Euler pole parameters. GPS Solutions, 18(1), 153–162. https://doi.org/10.1007/s10291-013-0354-4</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>w is the common element for all Euler pole functions</p>
+<p>Should remains in rad/yr</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_pole_quality">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_pole_quality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vn_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ve_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrmatinv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desmat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wwmat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_pole_quality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the uncertainties of the Euler pole determination</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w</strong> (<em>numpy.array</em>) – Pole of rotation vector computed by euler_pole_calc</p></li>
+<li><p><strong>vn_ref</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – north and east velocities of the reference points (m/yr)</p></li>
+<li><p><strong>ve_ref</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – north and east velocities of the reference points (m/yr)</p></li>
+<li><p><strong>nrmatinv</strong> (<em>2-tuple</em>) – output of scipy’s lstsq fct from euler_pole_calc</p></li>
+<li><p><strong>wwmat</strong> (<em>numpy.array</em>) – weight matrix from euler_pole_calc</p></li>
+<li><p><strong>desmat</strong> (<em>numpy.array</em>) – design matrix from euler_pole_calc</p></li>
+<li><p><strong>pretty_output</strong> (<em>bool</em>) – if True, convert sigma_ww_latlon to pertinent units directly,
+returns raw units instead</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>sigma_ww</strong> (<em>numpy.array</em>) – Uncertainty on the Euler vector</p></li>
+<li><p><strong>sigma_ww_latlon</strong> (<em>numpy.array</em>) – Uncertainty on the Euler pole : [rateSigma, latSigma, longSigma]
+if pretty_output == True :  [deg/Myr,deg,deg]
+if pretty_output == False : [rad/yr,rad,rad]</p></li>
+<li><p><strong>dV_topo3</strong> (<em>numpy.array</em>) – Residual velocities for the references points</p></li>
+<li><p><strong>wrmse</strong> (<em>float</em>) – weigthed RMS on Residual velocities (m)</p></li>
+<li><p><strong>wrmse_norm</strong> (<em>float</em>) – nomalized weigthed RMS on Residual velocities (m)</p></li>
+<li><p><strong>rmse</strong> (<em>float</em>) – unweigthed RMS on Residual velocities (m)</p></li>
+<li><p><strong>apost_sigma</strong> (<em>float</em>) – a-posteriori sigma (m)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>w is the common element for all Euler pole functions</p>
+<p>Should remains in rad/yr</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlongrate">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_pole_vector_from_latlongrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlong</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_w_in_deg_per_Myr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlongrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the Euler vector from the pole latitude, longitude and rate</p>
+<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wlat</strong> (<em>float</em>) – latitude and longitude of the Euler pole (deg)</p></li>
+<li><p><strong>wlong</strong> (<em>float</em>) – latitude and longitude of the Euler pole (deg)</p></li>
+<li><p><strong>wrate</strong> (<em>float</em>) – rate of the Euler pole (rad/Myr)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>w</strong> – Pole of rotation vector (rad/yr)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>w is the common element for all Euler pole functions</p>
+<p>Should remains in rad/yr per default</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_pole_vector_to_latlongrate">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_pole_vector_to_latlongrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_pole_vector_to_latlongrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert Euler pole vector to latitude longitude and rate</p>
+<p>Written by P. Sakic based on C. Geisert work</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>w</strong> (<em>numpy.array</em>) – Pole of rotation vector computed by euler_pole_calc (rad/yr)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>wlat,wlong</strong> (<em>float</em>) – latitude and longitude of the Euler pole (deg)</p></li>
+<li><p><strong>wrate</strong> (<em>float</em>) – Rate of rotation (rad/Myr)</p></li>
+<li><p><strong>wratedeg</strong> (<em>float</em>) – Rate of rotation (deg/Myr)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>w is the common element for all Euler pole functions</p>
+<p>Should remains in rad/yr</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_vels_relative_to_ref">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_vels_relative_to_ref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vn_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ve_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incvn_ITRF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incve_ITRF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6378000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_vels_relative_to_ref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute relative velocities of points with respect to an reference plate/Euler pole</p>
+<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w</strong> (<em>numpy.array</em>) – Pole of rotation vector computed by euler_pole_calc (rad/yr)</p></li>
+<li><p><strong>lat_ITRF</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – latitude and longitude of the points (deg)</p></li>
+<li><p><strong>long_ITRF</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – latitude and longitude of the points (deg)</p></li>
+<li><p><strong>vn_ITRF</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – north and east velocities of the points (m/yr)</p></li>
+<li><p><strong>ve_ITRF</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – north and east velocities of the points (m/yr)</p></li>
+<li><p><strong>incvn_ITRF</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – uncertainties on north and east velocities of the points (m/yr)</p></li>
+<li><p><strong>incve_ITRF</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – uncertainties on north and east velocities of the points (m/yr)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>vel_reltoref</strong> – relative velocities of points with respect to the Euler pole w</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>w is the common element for all Euler pole functions</p>
+<p>Should remains in rad/yr</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.topo2dm">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">topo2dm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.topo2dm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal fuction for euler_pole_calc</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-geodezyx.geodyn.velo_field_map_plt">
+<span id="geodezyx-geodyn-velo-field-map-plt-module"></span><h2>geodezyx.geodyn.velo_field_map_plt module<a class="headerlink" href="#module-geodezyx.geodyn.velo_field_map_plt" title="Permalink to this headline">¶</a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.geodyn contains functions to plot velocity
+vectors on a map.</p>
+<p>it can be imported directly with:
+from geodezyx import geodyn</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.velo_field_map_plt.LevelColormap">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.velo_field_map_plt.</span></span><span class="sig-name descname"><span class="pre">LevelColormap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">levels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.velo_field_map_plt.LevelColormap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a colormap based on an increasing sequence of levels</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.velo_field_map_plt.area">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.velo_field_map_plt.</span></span><span class="sig-name descname"><span class="pre">area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">la</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minla</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxla</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minlo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxlo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_long</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0-180'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.velo_field_map_plt.area" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.velo_field_map_plt.draw_map">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.velo_field_map_plt.</span></span><span class="sig-name descname"><span class="pre">draw_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">station_etude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vn_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ve_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_vertical_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incvn_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incve_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incplot_vertical_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_GEBCO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_vertical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_topo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_ellipses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarse_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_arrow_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('1</span> <span class="pre">cm/yr',</span> <span class="pre">0.01)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_ellipse_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('2</span> <span class="pre">mm/yr',</span> <span class="pre">0.002)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.5,</span> <span class="pre">0.9)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_arrow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_ellipse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_stats_font_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_stats_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.005,</span> <span class="pre">0.01)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shorten_oversized_arrows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_points_out_of_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels_hires_backgrnd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_borders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_return</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_latlon_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.velo_field_map_plt.draw_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.velo_field_map_plt.landmask">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.velo_field_map_plt.</span></span><span class="sig-name descname"><span class="pre">landmask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0.8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.velo_field_map_plt.landmask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.velo_field_map_plt.split_grid">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.velo_field_map_plt.</span></span><span class="sig-name descname"><span class="pre">split_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">la</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fact</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.velo_field_map_plt.split_grid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="geodezyx.megalib.html" class="btn btn-neutral float-right" title="geodezyx.megalib package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="geodezyx.files_rw.html" class="btn btn-neutral float-left" title="geodezyx.files_rw package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

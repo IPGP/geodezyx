@@ -1,0 +1,255 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Getting started &mdash; geodezyx 4.x documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="GeodeZYX Toolbox’s Cookbook" href="cookbook.html" />
+    <link rel="prev" title="Welcome to GeodeZYX Toolbox’s documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> geodezyx
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#minimal-exemple">Minimal exemple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#description-of-the-modules">Description of the Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>GeodeZYX Toolbox</cite>’s Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="geodezyx.html">geodezyx package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Getting started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="getting-started">
+<span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>See the <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file</p>
+</div>
+<div class="section" id="minimal-exemple">
+<h2>Minimal exemple<a class="headerlink" href="#minimal-exemple" title="Permalink to this headline">¶</a></h2>
+<p>To test if the <cite>GeodeZYX Toolbox</cite> is well installed, import:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#### Import star style</span>
+<span class="kn">from</span> <span class="nn">geodezyx</span> <span class="kn">import</span> <span class="o">*</span>                   <span class="c1"># Import the GeodeZYX modules</span>
+<span class="kn">from</span> <span class="nn">geodezyx.externlib</span> <span class="kn">import</span> <span class="o">*</span>         <span class="c1"># Import the external modules</span>
+<span class="kn">from</span> <span class="nn">geodezyx.megalib.megalib</span> <span class="kn">import</span> <span class="o">*</span>   <span class="c1"># Import the legacy modules names</span>
+</pre></div>
+</div>
+<p>If the modules are well imported (without errors in the console), fine! you have the <cite>GeodeZYX Toolbox</cite>!
+If not, check again the installation README</p>
+<p>Nevertheless, star imports are not recomended. It is better to import the modules separatelly, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">geodezyx.conv</span> <span class="k">as</span> <span class="nn">conv</span>                  <span class="c1"># Import the conversion module</span>
+</pre></div>
+</div>
+<p>See the description of each module in the following section</p>
+</div>
+<div class="section" id="description-of-the-modules">
+<h2>Description of the Modules<a class="headerlink" href="#description-of-the-modules" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="geodezyx.athmo.html#module-geodezyx.athmo" title="geodezyx.athmo"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.athmo</span></code></a>: functions implementing troposhere/ionosphere models</p></li>
+<li><p><a class="reference internal" href="geodezyx.conv.html#module-geodezyx.conv" title="geodezyx.conv"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.conv</span></code></a>: time and coordinates conversion</p></li>
+<li><p><a class="reference internal" href="geodezyx.files_rw.html#module-geodezyx.files_rw" title="geodezyx.files_rw"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.files_rw</span></code></a>: read, import &amp; write geodetic files</p></li>
+<li><p><a class="reference internal" href="geodezyx.geodyn.html#module-geodezyx.geodyn" title="geodezyx.geodyn"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.geodyn</span></code></a>: Euler pole calculator and plot velocity field maps</p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.marine</span></code>: contains a GEBCO bathymetry extrapolator</p></li>
+<li><p><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational" title="geodezyx.operational"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.operational</span></code></a>: Download GNSS data/products from various servers / Read and Import sitelogs</p></li>
+<li><p><a class="reference internal" href="geodezyx.reffram.html#module-geodezyx.reffram" title="geodezyx.reffram"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.reffram</span></code></a>: Reference Frame &amp; high-level coordinates conversion</p></li>
+<li><p><a class="reference internal" href="geodezyx.stats.html#module-geodezyx.stats" title="geodezyx.stats"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.stats</span></code></a>: Low-level statistics functions &amp; outlier detection functions / Low-level least-square functions</p></li>
+<li><p><a class="reference internal" href="geodezyx.time_series.html#module-geodezyx.time_series" title="geodezyx.time_series"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.time_series</span></code></a>: module to handle Geodetic time-series</p></li>
+<li><p><a class="reference internal" href="geodezyx.utils.html#module-geodezyx.utils" title="geodezyx.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.utils</span></code></a>: Shell-like functions (grep, find in folder …) and functions to optimize list management</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="cookbook.html" class="btn btn-neutral float-right" title="GeodeZYX Toolbox’s Cookbook" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to GeodeZYX Toolbox’s documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,1320 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>geodezyx.reffram package &mdash; geodezyx 4.x documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx.stats package" href="geodezyx.stats.html" />
+    <link rel="prev" title="geodezyx.operational package" href="geodezyx.operational.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> geodezyx
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>GeodeZYX Toolbox</cite>’s Cookbook</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.reffram package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.geometry">geodezyx.reffram.geometry module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.gnss_products">geodezyx.reffram.gnss_products module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.kepler_gzyx">geodezyx.reffram.kepler_gzyx module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.quaternions">geodezyx.reffram.quaternions module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="geodezyx.html">geodezyx package</a> &raquo;</li>
+        
+      <li>geodezyx.reffram package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/geodezyx.reffram.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-geodezyx.reffram">
+<span id="geodezyx-reffram-package"></span><h1>geodezyx.reffram package<a class="headerlink" href="#module-geodezyx.reffram" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-geodezyx.reffram.geometry">
+<span id="geodezyx-reffram-geometry-module"></span><h2>geodezyx.reffram.geometry module<a class="headerlink" href="#module-geodezyx.reffram.geometry" title="Permalink to this headline">¶</a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.reffram contains functions for low-level
+geometry operations.</p>
+<p>it can be imported directly with:
+from geodezyx import reffram</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.BL_from_points">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">BL_from_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listpointin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.BL_from_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>A partir d’une liste de points,
+retourne les baselines entre ces points dans une matrice</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.R2_calc">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">R2_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_obs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_r2_bis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.R2_calc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.R2_from_a_line_regress">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">R2_from_a_line_regress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Yobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.R2_from_a_line_regress" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.calc_pos_speed_itrf">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">calc_pos_speed_itrf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.calc_pos_speed_itrf" title="Permalink to this definition">¶</a></dt>
+<dd><p>just a wrapper of itrf_speed_calc
+for legacy reasons</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.circle_draw">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">circle_draw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.circle_draw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.estimated_autocorrelation">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">estimated_autocorrelation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.estimated_autocorrelation" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://stackoverflow.com/q/14297012/190597">http://stackoverflow.com/q/14297012/190597</a>
+<a class="reference external" href="http://en.wikipedia.org/wiki/Autocorrelation#Estimation">http://en.wikipedia.org/wiki/Autocorrelation#Estimation</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.group_consecutives">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">group_consecutives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.group_consecutives" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of consecutive lists of numbers from vals (number list).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.guess_seq_len">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">guess_seq_len</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.guess_seq_len" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.helmert_trans_apply">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">helmert_trans_apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SevenParam_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legacy_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.helmert_trans_apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an Helmert transformation (7-parameters)
+to a set of points</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Xin</strong> (<em>list of N</em><em> (</em><em>x</em><em>,</em><em>y</em><em>,</em><em>z</em><em>) </em><em>points</em><em>, or </em><em>an</em><em> (</em><em>N</em><em>,</em><em>3</em><em>)</em><em>-shaped numpy array.</em>) – input set points</p></li>
+<li><p><strong>SevenParam_in</strong> (<em>7 element list</em><em> or </em><em>array</em>) – 7 Helmert params. : x,y,z translations, x,y,z rotations, scale.</p></li>
+<li><p><strong>legacy_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use a non-optimized and slow computation approach (but same result).
+This option should be removed in the Future.
+The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Xout</strong> – output transformed points. Same type as the input.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list/array of N (x,y,z) points</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.helmert_trans_estim">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">helmert_trans_estim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X1list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X2list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.helmert_trans_estim" title="Permalink to this definition">¶</a></dt>
+<dd><p>estimates 7 parameters of a 3D Helmert transformation between a set of points
+X1 and a set of points X2 (compute transformation X1 =&gt; X2)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>&amp; X2list</strong> (<em>X1list</em>) – Input point sets</p></li>
+<li><p><strong>Weights</strong> (<em>list of N Weights</em><em>,</em>) – or an numpy array of shape (N,3)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>HParam</em> – 7 Helmert params. : x,y,z translations, x,y,z rotations, scale</p></li>
+<li><p><em>A</em> – Design matrix</p></li>
+<li><p><em>l</em> – Differences X2 - X1 (before transformation !!!)</p></li>
+<li><p><em>Source</em></p></li>
+<li><p><em>——</em></p></li>
+<li><p><strong>https</strong> (<em>//elib.uni-stuttgart.de/bitstream/11682/9661/1/BscThesis_GaoYueqing.pdf</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.helmert_trans_estim_minimisation">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">helmert_trans_estim_minimisation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X1in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X2in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HParam_apri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0.,</span> <span class="pre">0.,</span> <span class="pre">0.,</span> <span class="pre">0.,</span> <span class="pre">0.,</span> <span class="pre">0.,</span> <span class="pre">0.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L1norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Powell'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.helmert_trans_estim_minimisation" title="Permalink to this definition">¶</a></dt>
+<dd><p>estimates 7 parameters of a 3D Helmert transformation between a set of points
+X1 and a set of points X2 (compute transformation X1 =&gt; X2)
+using a Minimization approach (and not a Least Square inversion)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>&amp; X2in</strong> (<em>X1in</em>) – Input point sets</p></li>
+<li><p><strong>HParam_apri</strong> (<em>list of 7 values</em><em>,</em>) – The Apriori for the Helmert parameter</p></li>
+<li><p><strong>L1norm</strong> (<em>bool</em>) – Use the L1-norm as a criteria, use the quadratic sum instead if False</p></li>
+<li><p><strong>tol</strong> (<em>float</em>) – tolerence for the convergence</p></li>
+<li><p><strong>full_output</strong> (<em>bool</em>) – return only the result if True, return the scipy optimize result if False</p></li>
+<li><p><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – minimization method.
+see scipy.optimize.minimize for details
+The default is “Powell”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>7 Helmert params. : x,y,z translations, x,y,z rotations, scale</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Res</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.helmert_trans_estim_minimisation_scalar">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">helmert_trans_estim_minimisation_scalar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HParam_opti_apriori</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L1norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itera</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.helmert_trans_estim_minimisation_scalar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimates the Helmert parameters but based on a minimisation approach
+between X1 and X2 (as suggested in the IGS combination software)</p>
+<p>NOT STABLE AVOID THE USE
+(it does the optimization of the 1st parameter,</p>
+<blockquote>
+<div><p>and then the optimization of the 2nd one etc, etc…)</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.helmert_trans_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">helmert_trans_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itrf2008_2_etrf2000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workepoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2009.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.helmert_trans_legacy" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is highly unstable and should be used only for legacy reason</p>
+<p>NB 1 : <a class="reference external" href="http://etrs89.ensg.ign.fr/memo-V8.pdf">http://etrs89.ensg.ign.fr/memo-V8.pdf</a>
+NB 2 :
+Transformation inverse : * -1 pour les paramètres
+cf <a class="reference external" href="https://en.wikipedia.org/wiki/Helmert_transformation">https://en.wikipedia.org/wiki/Helmert_transformation</a></p>
+<p>optimisé pour RGF93 =&gt; ITRF2008 (d’ou le invert = True &amp; workepoc = 2009.)</p>
+<dl>
+<dt>NB3<span class="classifier">Attention losque l’on compare avec</span></dt><dd><p>le convertisseur EUREF avec une vitesse
+parce que elle aussi est modifiée dans la conversion ETRS =&gt; ITRS.
+Conclusion : le faire en 2 étapes ETRS = &gt; ITRS dans la même epoc</p>
+<blockquote>
+<div><p>ITRS epoc 1 =&gt; ITRS epoc 2</p>
+</div></blockquote>
+</dd>
+</dl>
+<p>if manual
+then params is a tuple
+params = (t1,t2,t3,dab,r1,r2,r3)</p>
+<p>NE MARCHE PAS PARCE BESOIN DU RATE(TAUX) DES PARAMS D’HELMERT !!!!!!
+(160923)</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.interp1d_ang">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">interp1d_ang</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.interp1d_ang" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.itrf_helmert_get_parameters">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">itrf_helmert_get_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TRF_Input_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TRF_Ext_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.itrf_helmert_get_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the Helmert parameters for a transformation I/ETRFxx &lt;=&gt; I/ETRFxx</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TRF_Input_name</strong> (<em>str</em>) – Name of the initial Reference Frame.
+Can be ITRFyyyy, ITRFyy, ETRFyyyy, ETRFyy
+where yyyy or yy is the TRF realization</p></li>
+<li><p><strong>TRF_Ext_name</strong> (<em>str</em>) – Name of the wished Reference Frame.
+Can be ITRFyyyy, ITRFyy, ETRFyyyy, ETRFyy
+where yyyy or yy is the TRF realization</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Print the parameters. The default is True.</p></li>
+<li><p><strong>convert</strong> (<em>bool</em><em>, </em><em>optional</em>) – Gives directly useful values in the good units
+for a proper transformation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>T</strong> (<em>3-Array</em>) – Translation.</p></li>
+<li><p><strong>Tdot</strong> (<em>3-Array</em>) – Translation rate.</p></li>
+<li><p><strong>D</strong> (<em>float</em>) – Scale factor.</p></li>
+<li><p><strong>Ddot</strong> (<em>float</em>) – Scale factor rate.</p></li>
+<li><p><strong>R</strong> (<em>3-Array</em>) – Rotation.</p></li>
+<li><p><strong>Rdot</strong> (<em>3-Array</em>) – Rotation rte.</p></li>
+<li><p><strong>epoch_ref_Xe</strong> (<em>float</em>) – Reference epoch of TRF_Ext_name.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Based on the values of
+<a class="reference external" href="http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf">http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.itrf_helmert_trans">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">itrf_helmert_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_Xi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tdot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ddot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rdot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_ref_Xe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.itrf_helmert_trans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do the Helmert transformation I/ETRFxx &lt;=&gt; I/ETRFxx</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Xi</strong> (<em>3-Array</em><em>, </em><em>Nx3-Array OR 6-Array</em><em>, </em><em>Nx6-Array</em>) – Points in the initial Reference Frame.
+3 columns if positions only
+6 columns if positions+velocities</p></li>
+<li><p><strong>epoch_Xi</strong> (<em>float</em>) – epoch of the initial Reference Frame points.</p></li>
+<li><p><strong>T</strong> (<em>3-Array</em>) – Translation.</p></li>
+<li><p><strong>Tdot</strong> (<em>3-Array</em>) – Translation rate.</p></li>
+<li><p><strong>D</strong> (<em>float</em>) – Scale factor.</p></li>
+<li><p><strong>Ddot</strong> (<em>float</em>) – Scale factor rate.</p></li>
+<li><p><strong>R</strong> (<em>3-Array</em>) – Rotation.</p></li>
+<li><p><strong>Rdot</strong> (<em>3-Array</em>) – Rotation rte.</p></li>
+<li><p><strong>epoch_ref_Xe</strong> (<em>float</em>) – Reference epoch of the destination TRF.</p></li>
+<li><p><strong>seven Helmert Parameters are generated with</strong> (<em>The</em>) – </p></li>
+<li><p><strong>itrf_helmert_get_parameters</strong> – </p></li>
+<li><p><strong>velocity_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – Compute also the velocities. The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Xe</strong> – Points in the destination Reference Frame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>3-Array or Nx3-Array</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function does not the velocity shift from one epoch to another
+The output coordinates will be provided at the same epoch as the input ones</p>
+</div>
+<p class="rubric">Notes</p>
+<p>Based on the theory and values of
+<a class="reference external" href="http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf">http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf</a></p>
+<p>We recommend to confirm the values with the official EUREF converter
+<a class="reference external" href="http://www.epncb.oma.be/_productsservices/coord_trans/index.php">http://www.epncb.oma.be/_productsservices/coord_trans/index.php</a></p>
+<p>By definition RGF93 = <a class="reference external" href="mailto:ETRF2000&#37;&#52;&#48;2009&#46;0">ETRF2000<span>&#64;</span>2009<span>&#46;</span>0</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.itrf_psd_fundamuntal_formula">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">itrf_psd_fundamuntal_formula</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.itrf_psd_fundamuntal_formula" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://itrf.ensg.ign.fr/ITRF_solutions/2014/doc/ITRF2014-PSD-model-eqs-IGN.pdf">http://itrf.ensg.ign.fr/ITRF_solutions/2014/doc/ITRF2014-PSD-model-eqs-IGN.pdf</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.itrf_speed_calc">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">itrf_speed_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.itrf_speed_calc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate a position to a given epoch using point velocity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x0</strong> (<em>float</em>) – coordinates at the reference epoch (m).</p></li>
+<li><p><strong>y0</strong> (<em>float</em>) – coordinates at the reference epoch (m).</p></li>
+<li><p><strong>z0</strong> (<em>float</em>) – coordinates at the reference epoch (m).</p></li>
+<li><p><strong>t0</strong> (<em>float</em>) – reference epoch (decimal year).</p></li>
+<li><p><strong>vx</strong> (<em>float</em>) – speed of the point (m/yr).</p></li>
+<li><p><strong>vy</strong> (<em>float</em>) – speed of the point (m/yr).</p></li>
+<li><p><strong>vz</strong> (<em>float</em>) – speed of the point (m/yr).</p></li>
+<li><p><strong>t</strong> (<em>float</em>) – output epoch.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>xout,yout,zout</strong> – coordinates of the point &#64; the ref. epoch (m).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>floats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.mat_poids">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">mat_poids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Sinp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ninp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuvinp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.mat_poids" title="Permalink to this definition">¶</a></dt>
+<dd><p>discontinued</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.points_circle_border">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">points_circle_border</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Npts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">az_type_normal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">main_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.14159</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.14159</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.points_circle_border" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.project_point_on_plan">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">project_point_on_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.project_point_on_plan" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N</strong> (<em>3-Array</em><em> (</em><em>Vector</em><em>)</em>) – Vector describing the plan.</p></li>
+<li><p><strong>M</strong> (<em>3-Array</em><em> (</em><em>Vector</em><em>)</em>) – Point of the plan.</p></li>
+<li><p><strong>A</strong> (<em>3-Array</em><em> (</em><em>Vector</em><em>)</em>) – Point we want to project.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>P</strong> – Projected point.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>3-Array (Vector)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It can be an ambiguity on the sign</p>
+<p><a class="reference external" href="https://fr.wikipedia.org/wiki/Distance_d%27un_point_%C3%A0_un_plan">https://fr.wikipedia.org/wiki/Distance_d%27un_point_%C3%A0_un_plan</a>
+<a class="reference external" href="https://www.mathematex.fr/viewtopic.php?t=923">https://www.mathematex.fr/viewtopic.php?t=923</a></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.randn_bool">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">randn_bool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RandGene</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.randn_bool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.random_walk_in_a_circle">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">random_walk_in_a_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uniform_or_normal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rand_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.random_walk_in_a_circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>random : normal ou uniform
+coords : polaire ou cartésien</p>
+<p>param est un paramètre très versatile pour controler le random :
+plage pour le uniform
+sigma pour le normal</p>
+<p>on recommande plutot le polaire normal : on a un pas constant &amp; une derive réaliste sur le cap</p>
+<dl class="simple">
+<dt>Returns :</dt><dd><p>X,Y, Xcircle , Ycircle</p>
+</dd>
+</dl>
+<p>Exemple :</p>
+<dl>
+<dt>for un in (‘u’,’n’):</dt><dd><dl>
+<dt>for pol in range(2):</dt><dd><p>X,Y , Xcircle , Ycircle = random_walk_in_a_circle(10,10,0,0,50,10000,polar = pol,uniform_or_normal=un)</p>
+<p>plt.figure()
+plt.plot(Xcircle,Ycircle)
+plt.plot(X,Y)
+plt.axis(‘equal’)
+plt.suptitle(un + str(pol))</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.randomwalk_normal">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">randomwalk_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.randomwalk_normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>d = dimension</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.randomwalk_uniform">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">randomwalk_uniform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.randomwalk_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>d = dimension
+bound = contraint of the random walk</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.rotate_points">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">rotate_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alphal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">betal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gammal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointlin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'R1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzreftuple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">([1,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">0],</span> <span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">1])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fullout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.rotate_points" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>R1  = Rz(g) * Ry(b) * Rx(a)</dt><dd><p>si les RPY sont donnés dans le NED
+alors les positions résultantes sont dans le NED</p>
+</dd>
+<dt>R2  =  matrice RPY2ENU</dt><dd><p>si les RPY sont donnés dans le NED
+alors les  résultantes sont DANS LE ENU
+pas besoin de rotation NED2ENU</p>
+<p>Grewal et al. 2007</p>
+</dd>
+<dt>Entrée :</dt><dd><p>Angles n = A
+liste de listes de P * [ points ]</p>
+</dd>
+<dt>Sortie :</dt><dd><p>liste de listes [ [ xA ] [ xA ] … xP [ xA ] ]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.rotmat2">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">rotmat2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.rotmat2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.rotmat3">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">rotmat3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzreftuple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">([1,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">0],</span> <span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">1])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.rotmat3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.savage_buford_formula">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">savage_buford_formula</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Vs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.savage_buford_formula" title="Permalink to this definition">¶</a></dt>
+<dd><p>X : distance à la faille , un iterable pour toutes le profil,
+un nombre pour la longeur max</p>
+<p>d : profondeur de la faille
+retourne X , et Vdeform(X)</p>
+<p>X et d doivent être dans la même unité, Vs pas forcément</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.semi_major_axis_from_mean_motion">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">semi_major_axis_from_mean_motion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.semi_major_axis_from_mean_motion" title="Permalink to this definition">¶</a></dt>
+<dd><p>source : <a class="reference external" href="https://space.stackexchange.com/questions/18289/how-to-get-semi-major-axis-from-tle">https://space.stackexchange.com/questions/18289/how-to-get-semi-major-axis-from-tle</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.unwrap180">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">unwrap180</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anglist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.unwrap180" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.wrap360">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">wrap360</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anglist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.wrap360" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.wrapTo180">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">wrapTo180</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lonin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.wrapTo180" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrapTo180 Wrap angle in degrees to [-180 180]</p>
+<p>lonWrapped = wrapTo180(LON) wraps angles in LON, in degrees, to the
+interval [-180 180] such that 180 maps to 180 and -180 maps to -180.
+(In general, odd, positive multiples of 180 map to 180 and odd,
+negative multiples of 180 map to -180.)</p>
+<p>See also wrapTo360, wrapTo2Pi, wrapToPi.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.wrapTo2Pi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">wrapTo2Pi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.wrapTo2Pi" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>wrapTo2Pi Wrap angle in radians to [0 2*pi]</p>
+</div></blockquote>
+<p>lambdaWrapped = wrapTo2Pi(LAMBDA) wraps angles in LAMBDA, in radians,
+to the interval [0 2*pi] such that zero maps to zero and 2*pi maps
+to 2*pi. (In general, positive multiples of 2*pi map to 2*pi and
+negative multiples of 2*pi map to zero.)</p>
+<p>See also wrapToPi, wrapTo180, wrapTo360.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.wrapTo360">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">wrapTo360</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lonin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.wrapTo360" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrapTo360 Wrap angle in degrees to [0 360]</p>
+<p>lonWrapped = wrapTo360(LON) wraps angles in LON, in degrees, to the
+interval [0 360] such that zero maps to zero and 360 maps to 360.
+(In general, positive multiples of 360 map to 360 and negative
+multiples of 360 map to zero.)</p>
+<p>See also wrapTo180, wrapToPi, wrapTo2Pi.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.wrapToPi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">wrapToPi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.wrapToPi" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrapToPi Wrap angle in radians to [-pi pi]</p>
+<blockquote>
+<div><p>lambdaWrapped = wrapToPi(LAMBDA) wraps angles in LAMBDA, in radians,
+to the interval [-pi pi] such that pi maps to pi and -pi maps to
+-pi.  (In general, odd, positive multiples of pi map to pi and odd,
+negative multiples of pi map to -pi.)</p>
+<p>See also wrapTo2Pi, wrapTo180, wrapTo360.</p>
+</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="module-geodezyx.reffram.gnss_products">
+<span id="geodezyx-reffram-gnss-products-module"></span><h2>geodezyx.reffram.gnss_products module<a class="headerlink" href="#module-geodezyx.reffram.gnss_products" title="Permalink to this headline">¶</a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.reffram contains functions for operations
+related to GNSS-products</p>
+<p>it can be imported directly with:
+from geodezyx import reffram</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.ClkDF_common_epoch_finder">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">ClkDF_common_epoch_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ClkDFa_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ClkDFb_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['name',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.ClkDF_common_epoch_finder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find common sats/station and epochs in to Clock DF, and output the
+corresponding Clock DFs</p>
+<p>Is an adapted version of OrbDF_common_epoch_finder</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.ClkDF_common_epoch_finder_multi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">ClkDF_common_epoch_finder_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ClkDF_list_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['name',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.ClkDF_common_epoch_finder_multi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find common sats/station and epochs in to Clock DF, and output the
+corresponding Clock DFs</p>
+<p>Is is the multi version of ClkDF_common_epoch_finder</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.ClkDF_filter">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">ClkDF_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ClkDF_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('AS',</span> <span class="pre">'AR')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_strt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.ClkDF_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter the content of a Clock DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ClkDF_in</strong> (<em>DataFrame</em>) – Input Clock DataFrame
+(a concatenation of DF generated by files_rw.read_clk.</p></li>
+<li><p><strong>typ</strong> (<em>iterable of str</em><em>, </em><em>optional</em>) – List of the types of clocks: AS (satellite) or AR (receiver).
+The default is (“AS”,”AR”).</p></li>
+<li><p><strong>name</strong> (<em>iterable of str</em><em>, </em><em>optional</em>) – List of wished satellites/stations.
+Can be a regex (see also name_regex)
+The default is None.</p></li>
+<li><p><strong>ac</strong> (<em>iterable of str</em><em>, </em><em>optional</em>) – List of wished ACs. The default is None.</p></li>
+<li><p><strong>epoch_strt</strong> (<em>datetime</em><em>, </em><em>optional</em>) – Start epoch. The default is dt.datetime(1980,1,1).</p></li>
+<li><p><strong>epoch_end</strong> (<em>datetime</em><em>, </em><em>optional</em>) – End epoch (not included). The default is dt.datetime(2099,1,1).</p></li>
+<li><p><strong>name_regex</strong> (<em>bool</em><em>, </em><em>optional</em>) – the given names as ‘name’ arguments are regular expressions
+Some useful regex are given bellow
+The default is False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Output Clock DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Clock DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>‘^E[0-9]{2}’: Galileo Satellites
+‘^G[0-9]{2}’: GPS Satellites</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.ClkDF_reg_2_multidx">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">ClkDF_reg_2_multidx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ClkDFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['name',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.ClkDF_reg_2_multidx" title="Permalink to this definition">¶</a></dt>
+<dd><p>From an regular Clock DF generated by read_clk(), set some columns
+(typically [“name”,”epoch”]) as indexes
+The outputed DF is then a Multi-index DF</p>
+<p>It an adapted version of OrbDF_reg_2_multidx</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.OrbDF_common_epoch_finder">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">OrbDF_common_epoch_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">OrbDFa_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OrbDFb_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['sat',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.OrbDF_common_epoch_finder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find common sats and epochs in to Orbit DF,
+and output the corresponding Orbit DFs
+order &gt;&gt; normally for sp3 is sat and epoch,
+but can be used for snx files as STAT and epoch</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.OrbDF_const_sv_columns_maker">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">OrbDF_const_sv_columns_maker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">OrbDFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.OrbDF_const_sv_columns_maker" title="Permalink to this definition">¶</a></dt>
+<dd><p>(re)generate the const and sv columns from the sat one</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.OrbDF_crf2trf">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">OrbDF_crf2trf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DForb_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DF_EOP_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_scale_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gps'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inv_trf2crf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.OrbDF_crf2trf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an Orbit DataFrame from Celetrial Reference Frame to
+Terrestrial Reference Frame (.</p>
+<p>Requires EOP to work. Cf. note below.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DForb_inp</strong> (<em>DataFrame</em>) – Input Orbit DataFrame in Celetrial Reference Frame.</p></li>
+<li><p><strong>DF_EOP_inp</strong> (<em>DataFrame</em>) – EOP DataFrame  (C04 format).</p></li>
+<li><p><strong>time_scale_inp</strong> (<em>str</em><em>, </em><em>optional</em>) – The time scale used in. manage ‘utc’, ‘tai’ and ‘gps’.
+The default is “gps”.</p></li>
+<li><p><strong>inv_trf2crf</strong> (<em>bool</em><em>, </em><em>optional</em>) – Provide the inverse transformation TRF =&gt; CRF.
+The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>DForb_out</strong> – Output Orbit DataFrame in Terrestrial Reference Frame.
+(or Celestrial if inv_trf2crf is True)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The EOP can be obtained from the IERS C04 products.
+e.g.
+<a class="reference external" href="https://datacenter.iers.org/data/latestVersion/224_EOP_C04_14.62-NOW.IAU2000A224.txt">https://datacenter.iers.org/data/latestVersion/224_EOP_C04_14.62-NOW.IAU2000A224.txt</a>
+To get them as a Compatible DataFrame, use the function
+files_rw.read_eop_C04()</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.OrbDF_lagrange_interpolate">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">OrbDF_lagrange_interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DForb_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Titrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append_to_input_DF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.OrbDF_lagrange_interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>High level function to interpolate an orbit DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DForb_in</strong> (<em>DataFrame</em>) – an Orbit DataFrame.</p></li>
+<li><p><strong>Titrp</strong> (<em>iterable of datetime</em>) – Epochs of the wished points.</p></li>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – degree of the polynom. Better if even. The default is 10.</p></li>
+<li><p><strong>append_to_input_DF</strong> (<em>bool</em><em>, </em><em>optional</em>) – append the interpolated DF to the input DF. The default is False.</p></li>
+<li><p><strong>plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot the values. For debug only. The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>DForb_out</strong> (<em>DataFrame</em>) – Interpolated orbits.</p></li>
+<li><p><em>Tips</em></p></li>
+<li><p><em>—-</em></p></li>
+<li><p><em>Use conv.dt_range to generate the wished epochs range</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.OrbDF_multidx_2_reg">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">OrbDF_multidx_2_reg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">OrbDFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['sat',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.OrbDF_multidx_2_reg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a Multi-index formatted OrbitDF to his original form</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.OrbDF_reg_2_multidx">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">OrbDF_reg_2_multidx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">OrbDFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['sat',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.OrbDF_reg_2_multidx" title="Permalink to this definition">¶</a></dt>
+<dd><p>From an regular Orbit DF generated by read_sp3(), set some columns
+(typically [“sat”,”epoch”]) as indexes
+The outputed DF is then a Multi-index DF</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_clock">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_clock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFclk_inp_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DFclk_inp_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_Col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_clock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares 2 GNSS clock bias DataFrames (from .clk), to a
+statistics table (with compar_clock_table)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>&amp; DFclk_inp_2</strong> (<em>DFclk_inp_1</em>) – Clock DataFrame provided by files_rw.read_clk()</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>DFclk_diff</strong> – Clock bias difference DataFrame</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_clock_table">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_clock_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFclk_diff_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_Col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias_diff'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_clock_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a table with statistical indicators for a clock comparison
+(RMS mean, standard dev, …)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>DFclk_diff_in</strong> (<em>DataFrame</em>) – Clock bias difference DataFrame (from compar_clock)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>DFcompar_out</strong> – Statistical results of the comparison.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_orbit">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Data_inp_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Data_inp_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">900</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sats_used_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['G']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_name_1_2_for_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RTNoutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_ECEF_ECI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_null_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_satNull</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares 2 GNSS orbits files (SP3), and gives a summary plot and a
+statistics table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>&amp; Data_inp_2</strong> (<em>Data_inp_1</em>) – contains the orbits or path (string) to the sp3</p></li>
+<li><p><strong>step_data</strong> (<em>int</em>) – per default data sampling</p></li>
+<li><p><strong>sats_used_list</strong> (<em>list of str</em>) – used constellation or satellite : G E R C … E01 , G02 …
+Individuals satellites are prioritary on whole constellations
+e.g. [‘G’,”E04”]</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>RTNoutput<span class="classifier">bool</span></dt><dd><p>select output, Radial Transverse Normal or XYZ</p>
+</dd>
+<dt>convert_ECEF_ECI<span class="classifier">bool</span></dt><dd><p>convert sp3 ECEF =&gt; ECI (Terrestrial =&gt; Celestrial)
+must be True in operational to avoid artifacts.</p>
+</dd>
+<dt>name1 &amp; name2<span class="classifier">str (optionals)</span></dt><dd><p>optional custom names for the 2 orbits</p>
+</dd>
+<dt>use_name_1_2_for_table_name<span class="classifier">bool</span></dt><dd><p>False : use name 1 and 2 for table name, use datafile instead</p>
+</dd>
+<dt>clean_null_values<span class="classifier">bool or str</span></dt><dd><p>if True or “all” remove sat position in all X,Y,Z values
+are null (0.000000)
+if “any”, remove sat position if X or Y or Z is null
+if False, keep everything</p>
+</dd>
+<dt>conv_coef<span class="classifier">int</span></dt><dd><p>conversion coefficient, km to m 10**3, km to mm 10**6</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul>
+<li><p><strong>Diff_sat_all</strong> (<em>Pandas DataFrame</em>)</p></li>
+<li><p><em>contains differences b/w Data_inp_1 &amp; Data_inp_2</em></p></li>
+<li><p><em>in Radial Transverse Normal OR XYZ frame</em> –</p>
+<dl class="simple">
+<dt>Attributes of Diff_sat_all :</dt><dd><p>Diff_sat_all.name : title of the table</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>clean_null_values if useful (and necessary) only if
+convert_ECEF_ECI = False
+if convert_ECEF_ECI = True, the cleaning will be done by
+a side effect trick : the convertion ECEF =&gt; ECI will generate NaN
+for a zero-valued position
+But, nevertheless, activating  clean_null_values = True is better
+This Note is in fact usefull if you want to see bad positions on a plot
+=&gt; Then convert_ECEF_ECI = False and clean_null_values = False</p>
+<p>“Coordinate Systems”, ASEN 3200 1/24/06 George H. Born</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_orbit_frontend">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_frontend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DataDF1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DataDF2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sats_used_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['G']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit_frontend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_orbit_plot">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Diff_sat_all_df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.pdf',</span> <span class="pre">'.png',</span> <span class="pre">'.svg')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_label_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'m'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>General description</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Diff_sat_all_df_in</strong> (<em>DataFrame</em>) – a DataFrame produced by compar_orbit</p></li>
+<li><p><strong>yaxis_limit</strong> (<em>3-tuple iterable</em>) – force the y axis limits. must look like
+[(ymin_r,ymax_r),(ymin_t,ymax_t),(ymin_n,ymax_n)]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>the Figure and the 3 Axes if no save is asked</em></p></li>
+<li><p><em>export path (str) if save is asked</em></p></li>
+<li><p><em>but plot a plot anyway</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_orbit_table">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Diff_sat_all_df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RMS_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'natural'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_tab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a table with statistical indicators for an orbit comparison
+(RMS mean, standard dev, …)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Diff_sat_all_df_in</strong> (<em>Pandas DataFrame</em>) – a DataFrame produced by compar_orbit</p></li>
+<li><p><strong>RMS_style</strong> (<em>str</em>) – <p>‘natural’: use the natural definition of the RMS
+‘GRGS’: RMS calc based on the GRGS definition of the RMS (OV help)</p>
+<blockquote>
+<div><p>is actually the standard deviation</p>
+</div></blockquote>
+<dl class="simple">
+<dt>’kouba’: RMS as defined in Kouba et al. 1994, p75</dt><dd><p>using the degree of freedom (3*Nobs - 7)</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>light_tab</strong> (<em>bool</em>) – produce a table with only RMS, with min/max/arithmetic instead</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Compar_tab_out</strong> – Statistical results of the comparison</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>you can pretty print the output DataFrame using tabular module
+here is a template:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">ComparTable</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span><span class="n">floatfmt</span><span class="o">=</span><span class="s2">&quot;.4f&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_sinex">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_sinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snx1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snx2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_means_summary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_meta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dataframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manu_wwwwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_sinex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.eop_interpotate">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">eop_interpotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DF_EOP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Epochs_intrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eop_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['x',</span> <span class="pre">'y']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.eop_interpotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interopolate the EOP provided in a C04-like DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DF_EOP</strong> (<em>DataFrame</em>) – Input EOP DataFrame (C04 format).
+Can be generated by files_rw.read_eop_C04</p></li>
+<li><p><strong>Epochs_intrp</strong> (<em>datetime of list of datetimes</em>) – Wished epochs for the interpolation.</p></li>
+<li><p><strong>eop_params</strong> (<em>list of str</em><em>, </em><em>optional</em>) – Wished EOP parameter to be interpolated.
+The default is [“x”,”y”].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>OUT</strong> – Interpolated parameters.
+Series if onely one epoch is provided, DF_EOP elsewere</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame or Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.stats_slr">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">stats_slr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grpby_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['sat']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.stats_slr" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes statistics for SLR Residuals</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DFin</strong> (<em>Pandas DataFrame</em>) – Input residual Dataframe from read_pdm_res_slr.</p></li>
+<li><p><strong>grpby_keys</strong> (<em>list of str</em><em>, </em><em>optional</em>) – The default is [‘sat’].
+per day, per solution, per satellite: [‘day’,’sol’,’sat’]
+per day, per solution, per station: [‘day’,’sol’,’sta’]
+per day, per solution, per satellite, per station: [‘day’,’sol’,’sta’,’sat’]</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – apply a Threshold</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>DD</strong> – return the mean, the rms and the std.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Output statistics DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.svn_prn_equiv">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">svn_prn_equiv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sat_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svn_prn_equiv_DF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'svn2prn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.svn_prn_equiv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the equivalence SVN &lt;&gt; PRN for a given epoch</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sat_in</strong> (<em>str</em>) – Satellite “ID”, SVN or PRN.</p></li>
+<li><p><strong>date_in</strong> (<em>datetime</em>) – wished epoch.</p></li>
+<li><p><strong>svn_prn_equiv_DF</strong> (<em>DataFrame</em>) – Equivalence table generated by svn_prn_equiv_DF.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – prn2svn: PRN &gt; SVN
+svn2prn: SVN &gt; PRN.
+The default is “svn2prn”.</p></li>
+<li><p><strong>full_output</strong> (<em>bool</em><em>, </em><em>optional</em>) – get the complete Equivalence table row. The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str or DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.svn_prn_equiv_DF">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">svn_prn_equiv_DF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_meta_snx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.svn_prn_equiv_DF" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate a SVN &lt;&gt; PRN equivalent DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path_meta_snx</strong> (<em>str</em>) – path of the MGEX metadata sinex.
+last version avaiable here
+<a class="reference external" href="http://mgex.igs.org/IGS_MGEX_Metadata.php">http://mgex.igs.org/IGS_MGEX_Metadata.php</a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>DFfin</strong> – SVN &lt;&gt; PRN equivalent DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-geodezyx.reffram.kepler_gzyx">
+<span id="geodezyx-reffram-kepler-gzyx-module"></span><h2>geodezyx.reffram.kepler_gzyx module<a class="headerlink" href="#module-geodezyx.reffram.kepler_gzyx" title="Permalink to this headline">¶</a></h2>
+<p>&#64;author: psakic</p>
+<dl class="simple">
+<dt>This sub-module of geodezyx.reffram contains functions related to</dt><dd><p>Kepler’s element operations.</p>
+</dd>
+</dl>
+<p>it can be imported directly with:
+from geodezyx import reffram</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.kepler_gzyx.ECI_2_kepler_elts">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.kepler_gzyx.</span></span><span class="sig-name descname"><span class="pre">ECI_2_kepler_elts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rad2deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">398600441880000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.kepler_gzyx.ECI_2_kepler_elts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert ECI coordinates &gt; Kepler’s elements</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>P</strong> (<em>array</em>) – Position.</p></li>
+<li><p><strong>V</strong> (<em>array</em>) – Velocity.</p></li>
+<li><p><strong>rad2deg</strong> (<em>bool</em><em>, </em><em>optional</em>) – canvert Keplerian’s angles (anomalies) to deg. The default is True.</p></li>
+<li><p><strong>mu</strong> (<em>float</em><em>, </em><em>optional</em>) – Standard gravitational parameter. The default is 3.9860044188e14.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>a,ecc,i,omega_periarg,omega_LAN,m</strong> – Kepler’s elements.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>floats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.kepler_gzyx.extrapolate_orbit_kepler">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.kepler_gzyx.</span></span><span class="sig-name descname"><span class="pre">extrapolate_orbit_kepler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">398600441880000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.kepler_gzyx.extrapolate_orbit_kepler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.kepler_gzyx.extrapolate_sp3_DataFrame">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.kepler_gzyx.</span></span><span class="sig-name descname"><span class="pre">extrapolate_sp3_DataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFsp3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">900</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">until_backward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">until_forward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.kepler_gzyx.extrapolate_sp3_DataFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extrapolate the positions in a SP3 based on the first/last
+epochs’ position</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DFsp3</strong> (<em>DataFrame</em>) – Input Orbit DataFrame (i.e. generated by files_rw.read_sp3).</p></li>
+<li><p><strong>step</strong> (<em>int</em><em>, </em><em>optional</em>) – step between two epochs. The default is 900.</p></li>
+<li><p><strong>n_step</strong> (<em>int</em><em>, </em><em>optional</em>) – number of epochs to interpolate. The default is 9.</p></li>
+<li><p><strong>and forward</strong> (<em>backward</em>) – extrapolate for the day before/after. The default is True.</p></li>
+<li><p><strong>return_all</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, returns the input DF enhanced with the extrapolated values
+if False, returns only the extrapolated values.
+The default is True.</p></li>
+<li><p><strong>&amp; until_backward</strong> (<em>until_backward</em>) – epoch until then the extrapolation has to be done.
+Override n_step</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>DForb_out</strong> – Orbit DataFrame with extrapolated values
+(see return_all).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-geodezyx.reffram.quaternions">
+<span id="geodezyx-reffram-quaternions-module"></span><h2>geodezyx.reffram.quaternions module<a class="headerlink" href="#module-geodezyx.reffram.quaternions" title="Permalink to this headline">¶</a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.reffram contains functions for quaternion
+operations.</p>
+<p>it can be imported directly with:
+from geodezyx import reffram</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.quaternions.interp_quat">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.quaternions.</span></span><span class="sig-name descname"><span class="pre">interp_quat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tlis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Quatlis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.quaternions.interp_quat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate quaterinon</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Tlis</strong> (<em>float</em>) – list of time, in POSIX time</p></li>
+<li><p><strong>Quatlis</strong> – list of quaternion (produced by quaterion fct)</p></li>
+<li><p><strong>t</strong> – the instant for the interpolation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an interpoled Quaternion</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.quaternions.interp_quat_multi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.quaternions.</span></span><span class="sig-name descname"><span class="pre">interp_quat_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tlis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Quatlis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tlis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.quaternions.interp_quat_multi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.quaternions.quatern_multi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.quaternions.</span></span><span class="sig-name descname"><span class="pre">quatern_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rlist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hlist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rad'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.quaternions.quatern_multi" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrapper of quaternion, with lists/arrays of angles</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.quaternions.quaternion">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.quaternions.</span></span><span class="sig-name descname"><span class="pre">quaternion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rad'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">euler_sequence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zyx'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.quaternions.quaternion" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>roll</strong> (<em>xaxis</em><em>) </em><em>pitch</em><em> (</em><em>yaxis</em><em>) </em><em>heading</em><em> (</em><em>zaxis</em>) – </p></li>
+<li><p><strong>angtype</strong> – ‘rad’ or ‘deg’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the associate quaternion</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>the input args are in XYZ but
+the rotation is in the order ZYX</p>
+<p>Need of the cgkit quaternion module
+<a class="reference external" href="http://cgkit.sourceforge.net/doc2/quat.html">http://cgkit.sourceforge.net/doc2/quat.html</a></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.quaternions.rotate_quat">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.quaternions.</span></span><span class="sig-name descname"><span class="pre">rotate_quat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quatin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.quaternions.rotate_quat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.quaternions.rotate_quat2">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.quaternions.</span></span><span class="sig-name descname"><span class="pre">rotate_quat2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quatin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.quaternions.rotate_quat2" title="Permalink to this definition">¶</a></dt>
+<dd><p>DISCONTINUED
+plus long que rotate_quat :
+benchmarking 5.53084397316 vs 0.703444957733 pour 100000</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.quaternions.rotate_quat3">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.quaternions.</span></span><span class="sig-name descname"><span class="pre">rotate_quat3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quatin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.quaternions.rotate_quat3" title="Permalink to this definition">¶</a></dt>
+<dd><p>DISCONTINUED
+use the old quaterinons toolbox</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.quaternions.rotate_quat_multi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.quaternions.</span></span><span class="sig-name descname"><span class="pre">rotate_quat_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts_list_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quats_list_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.quaternions.rotate_quat_multi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multi version of rotate_quat</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pts_list_in</strong> – a list of Points object</p></li>
+<li><p><strong>quats_list_in</strong> – a list of quaternions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list of list of rotated points</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="geodezyx.stats.html" class="btn btn-neutral float-right" title="geodezyx.stats package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="geodezyx.operational.html" class="btn btn-neutral float-left" title="geodezyx.operational package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
