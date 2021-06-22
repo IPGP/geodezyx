@@ -1,0 +1,606 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>geodezyx.athmo package &mdash; geodezyx 4.x documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx.conv package" href="geodezyx.conv.html" />
+    <link rel="prev" title="geodezyx package" href="geodezyx.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> geodezyx
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>GeodeZYX Toolbox</cite>’s Cookbook</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.athmo package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.athmo.athmo">geodezyx.athmo.athmo module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="geodezyx.html">geodezyx package</a> &raquo;</li>
+        
+      <li>geodezyx.athmo package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/geodezyx.athmo.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-geodezyx.athmo">
+<span id="geodezyx-athmo-package"></span><h1>geodezyx.athmo package<a class="headerlink" href="#module-geodezyx.athmo" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-geodezyx.athmo.athmo">
+<span id="geodezyx-athmo-athmo-module"></span><h2>geodezyx.athmo.athmo module<a class="headerlink" href="#module-geodezyx.athmo.athmo" title="Permalink to this headline">¶</a></h2>
+<p>Created on Tue Jul  9 09:23:54 2019</p>
+<p>&#64;author: Chaiyaporn Kitpracha</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.athmo.PWV_conversion">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">PWV_conversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zwd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.PWV_conversion" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function convert from Zenith Wet delay to Precipitate Water Vapor (PWV)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zwd</strong> – Zenith wet delay in meters</p></li>
+<li><p><strong>Tm</strong> – Mean temperature of troposphere</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>PWV</em> – Precipitate Water Vapor in mm</p></li>
+<li><p><em>Sources</em></p></li>
+<li><p><em>———-</em></p></li>
+<li><p><em>Solution and Constant k2’ k3 from Atmospheric effects in Space Geodesy Chapter 3.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.athmo.Tm_bevis">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">Tm_bevis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.Tm_bevis" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function determines mean temperature based on surface temperature using Bevis equation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>Ts</strong> – Surface temperature in Kelvin</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>Tm</em> – Mean temperature in Kevlin</p></li>
+<li><p><em>Sources</em></p></li>
+<li><p><em>———-</em></p></li>
+<li><p><em>Atmospheric effects in Space Geodesy Chapter 3.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.athmo.calc_stand_ties">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">calc_stand_ties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_rov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mm'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.calc_stand_ties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine standard atmospheric ties with analytical equation from Teke et al. (2011)</p>
+<blockquote>
+<div><dl class="simple">
+<dt>epoc :</dt><dd><p>time in Python datetime</p>
+</dd>
+<dt>lat_ref :</dt><dd><p>Latitude of Ref. station</p>
+</dd>
+<dt>h_ref :</dt><dd><p>Height of Ref. station</p>
+</dd>
+<dt>h_rov :</dt><dd><p>Height of Rov. station</p>
+</dd>
+<dt>p0:</dt><dd><p>Pressure of Ref. station in hPa</p>
+</dd>
+<dt>t0:</dt><dd><p>Temperature in C of Ref. station</p>
+</dd>
+<dt>e0:</dt><dd><p>Water vapor pressure of Ref. station in hPa</p>
+</dd>
+<dt>unit :</dt><dd><p>in meters (m) or milimeters (mm)</p>
+</dd>
+</dl>
+</div></blockquote>
+<blockquote>
+<div><dl class="simple">
+<dt>ties :</dt><dd><p>Standard ties of total delay in milimeters or meters</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.athmo.calc_stand_ties_gpt3">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">calc_stand_ties_gpt3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_rov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_rov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_rov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mm'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.calc_stand_ties_gpt3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine standard atmospheric ties from meteological information from GPT3 with analytical equation from Teke et al. (2011)</p>
+<blockquote>
+<div><dl class="simple">
+<dt>epoc :</dt><dd><p>time in Python datetime</p>
+</dd>
+<dt>lat_ref :</dt><dd><p>Latitude of Ref. station</p>
+</dd>
+<dt>lat_rov :</dt><dd><p>Latitude of Rov. station</p>
+</dd>
+<dt>h_ref :</dt><dd><p>Height of Ref. station</p>
+</dd>
+<dt>h_rov :</dt><dd><p>Height of Rov. station</p>
+</dd>
+<dt>grid_file :</dt><dd><p>meteological grid file</p>
+</dd>
+<dt>unit :</dt><dd><p>in meters (m) or milimeters (mm)</p>
+</dd>
+</dl>
+</div></blockquote>
+<blockquote>
+<div><dl class="simple">
+<dt>ties :</dt><dd><p>Standard ties of total delay in milimeters or meters</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.athmo.gpt2_5">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">gpt2_5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HELL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">VEC</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.gpt2_5" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>(c) Department of Geodesy and Geoinformation, Vienna University of
+Technology, 2013</p>
+<p>The copyright in this document is vested in the Department of Geodesy and
+Geoinformation (GEO), Vienna University of Technology, Austria. This document
+may only be reproduced in whole or in part, or stored in a retrieval
+system, or transmitted in any form, or by any means electronic,
+mechanical, photocopying or otherwise, either with the prior permission
+of GEO or in accordance with the terms of ESTEC Contract No.
+4000107329/12/NL/LvH.
+—</p>
+<p>This subroutine determines pressure, temperature, temperature lapse rate,
+mean temperature of the water vapor, water vapour pressure, hydrostatic
+and wet mapping function coefficients ah and aw, water vapour decrease
+factor and geoid undulation for specific sites near the Earth surface.
+It is based on a 5 x 5 degree external grid file (‘gpt2_5.grd’) with mean
+values as well as sine and cosine amplitudes for the annual and
+semiannual variation of the coefficients.</p>
+<p>The hydrostatic mapping function coefficients have to be used with the
+height dependent Vienna Mapping Function 1 (vmf_ht.f) because the
+coefficients refer to zero height.</p>
+<p>Example 1 (Vienna, 2 August 2012, with time variation):</p>
+<p>dmjd = 56141.d0
+dlat(1) = 48.20d0*pi/180.d0
+dlon(1) = 16.37d0*pi/180.d0
+hell(1) = 156.d0
+nstat = 1
+it = 0</p>
+<p>output:
+p = 1002.56 hPa
+T = 22.12 deg Celsius
+dT = -6.53 deg / km
+Tm = 281.11 K
+e = 16.72 hPa
+ah = 0.0012647
+aw = 0.0005726
+la = 2.6964
+undu = 44.06 m</p>
+<p>Example 2 (Vienna, 2 August 2012, without time variation, i.e. constant values):</p>
+<p>dmjd = 56141.d0
+dlat(1) = 48.20d0*pi/180.d0
+dlon(1) = 16.37d0*pi/180.d0
+hell(1) = 156.d0
+nstat = 1
+it = 1</p>
+<p>output:
+p = 1003.49 hPa
+T = 11.95 deg Celsius
+dT = -5.47 deg / km
+Tm = 273.00 K
+e = 10.23 hPa
+ah = 0.0012395
+aw = 0.0005560
+la = 2.6649
+undu = 44.06 m</p>
+<p>Klemens Lagler, 2 August 2012
+Johannes Boehm, 6 August 2012, revision
+Klemens Lagler, 21 August 2012, epoch change to January 1 2000
+Johannes Boehm, 23 August 2012, adding possibility to determine constant field
+Johannes Boehm, 27 December 2012, reference added
+Johannes Boehm, 10 January 2013, correction for dlat = -90 degrees</p>
+<blockquote>
+<div><p>(problem found by Changyong He)</p>
+</div></blockquote>
+<p>Johannes Boehm, 21 May 2013, bug with dmjd removed (input parameter dmjd was replaced
+unintentionally; problem found by Dennis Ferguson)
+Gregory Pain,   17 June 2013, adding water vapour decrease factor la
+Gregory Pain,   01 July 2013, adding mean temperature Tm
+Gregory Pain,   30 July 2013, changing the method to calculate the water vapor partial pressure (e)
+Gregory Pain,   31 July 2013, correction for (dlat = -90 degrees, dlon = 360 degrees)
+Johannes Boehm, 27 December 2013, copyright notice added
+Johannes Boehm, 25 August 2014, reference changed to Boehm et al. in GPS
+Solutions</p>
+</div></blockquote>
+<blockquote>
+<div><p>J. Böhm, G. Möller, M. Schindelegger, G. Pain, R. Weber, Development of an
+improved blind model for slant delays in the troposphere (GPT2w),
+GPS Solutions, 2014, doi:10.1007/s10291-014-0403-7</p>
+</div></blockquote>
+<p class="rubric">Notes</p>
+<p>Modified for Python by: Chaiyaporn Kitpracha</p>
+<dl class="simple">
+<dt>mjd:</dt><dd><p>modified Julian date (scalar, only one epoch per call is possible)</p>
+</dd>
+<dt>lat:</dt><dd><p>ellipsoidal latitude in degrees</p>
+</dd>
+<dt>lon:</dt><dd><p>longitude in degrees</p>
+</dd>
+<dt>HELL:</dt><dd><p>ellipsoidal height in m</p>
+</dd>
+<dt>IT:</dt><dd><p>case 1: no time variation but static quantities</p>
+</dd>
+</dl>
+<p>case 0: with time variation (annual and semiannual terms)</p>
+<dl class="simple">
+<dt>VEC:</dt><dd><p>GPT2 grid data in numpy array size 5 x 5 degree (‘gpt2_5.grd’)</p>
+</dd>
+</dl>
+<blockquote>
+<div><dl class="simple">
+<dt>p:</dt><dd><p>pressure in hPa</p>
+</dd>
+<dt>T:</dt><dd><p>temperature in degrees Celsius</p>
+</dd>
+<dt>dT:</dt><dd><p>temperature lapse rate in degrees per km</p>
+</dd>
+<dt>e:</dt><dd><p>water vapour pressure in hPa</p>
+</dd>
+<dt>undu:</dt><dd><p>geoid undulation in m</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.athmo.gpt3">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">gpt3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_ell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">it</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.gpt3" title="Permalink to this definition">¶</a></dt>
+<dd><p>This subroutine determines pressure, temperature, temperature lapse rate,
+mean temperature of the water vapor, water vapour pressure, hydrostatic
+and wet mapping function coefficients ah and aw, water vapour decrease
+factor, geoid undulation and empirical tropospheric gradients for
+specific sites near the earth’s surface.
+It is based on a 5 x 5 degree external grid file (‘gpt3_5.grd’) with mean
+values as well as sine and cosine amplitudes for the annual and
+semiannual variation of the coefficients.</p>
+<dl class="simple">
+<dt>dtin :</dt><dd><p>datatime in Python datetime object</p>
+</dd>
+<dt>lat:</dt><dd><p>ellipsoidal latitude in radians [-pi/2:+pi/2]</p>
+</dd>
+<dt>lon:</dt><dd><p>longitude in radians [-pi:pi] or [0:2pi]</p>
+</dd>
+<dt>h_ell:</dt><dd><p>ellipsoidal height in m</p>
+</dd>
+<dt>it:</dt><dd><p>case 1 no time variation but static quantities, case 0 with time variation (annual and semiannual terms)</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>p:</dt><dd><p>pressure in hPa</p>
+</dd>
+<dt>T:</dt><dd><p>temperature in degrees Celsius</p>
+</dd>
+<dt>dT:</dt><dd><p>temperature lapse rate in degrees per km</p>
+</dd>
+<dt>Tm:</dt><dd><p>mean temperature weighted with the water vapor in degrees Kelvin</p>
+</dd>
+<dt>e:</dt><dd><p>water vapour pressure in hPa</p>
+</dd>
+<dt>ah:</dt><dd><p>hydrostatic mapping function coefficient at zero height (VMF3)</p>
+</dd>
+<dt>aw:</dt><dd><p>wet mapping function coefficient (VMF3)</p>
+</dd>
+<dt>la:</dt><dd><p>water vapour decrease factor</p>
+</dd>
+<dt>undu:</dt><dd><p>geoid undulation in m</p>
+</dd>
+<dt>Gn_h:</dt><dd><p>hydrostatic north gradient in m</p>
+</dd>
+<dt>Ge_h:</dt><dd><p>hydrostatic east gradient in m</p>
+</dd>
+<dt>Gn_w:</dt><dd><p>wet north gradient in m</p>
+</dd>
+<dt>Ge_w:</dt><dd><p>wet east gradient in m</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Modified for Python by Chaiyaporn Kitpracha</p>
+<blockquote>
+<div><p>(c) Department of Geodesy and Geoinformation, Vienna University of
+Technology, 2017</p>
+<p>The copyright in this document is vested in the Department of Geodesy and
+Geoinformation (GEO), Vienna University of Technology, Austria. This document
+may only be reproduced in whole or in part, or stored in a retrieval
+system, or transmitted in any form, or by any means electronic,
+mechanical, photocopying or otherwise, either with the prior permission
+of GEO or in accordance with the terms of ESTEC Contract No.
+4000107329/12/NL/LvH.</p>
+<p>D. Landskron, J. Böhm (2018), VMF3/GPT3: Refined Discrete and Empirical Troposphere Mapping Functions,
+J Geod (2018) 92: 349., doi: 10.1007/s00190-017-1066-2.
+Download at: <a class="reference external" href="https://link.springer.com/content/pdf/10.1007%2Fs00190-017-1066-2.pdf">https://link.springer.com/content/pdf/10.1007%2Fs00190-017-1066-2.pdf</a></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.athmo.read_grid_gpt">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">read_grid_gpt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.read_grid_gpt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.athmo.trop_saast">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">trop_saast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dry'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.trop_saast" title="Permalink to this definition">¶</a></dt>
+<dd><p>This subroutine determines the zenith total delay based on the equation by Saastamoinen (1972) as refined by Davis et al. (1985)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> – pressure in hPa</p></li>
+<li><p><strong>dlat</strong> – ellipsoidal latitude in radians</p></li>
+<li><p><strong>t</strong> – temperature in Celcius</p></li>
+<li><p><strong>e</strong> – water vapor pressure in hPa</p></li>
+<li><p><strong>hell</strong> – ellipsoidal height in meters</p></li>
+<li><p><strong>mode</strong> – dry, wet or total</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>res</em> – zenith total delay in m (depend on mode)</p></li>
+<li><p><em>Source</em></p></li>
+<li><p><em>———-</em> – c Reference:
+Saastamoinen, J., Atmospheric correction for the troposphere and
+stratosphere in radio ranging of satellites. The use of artificial
+satellites for geodesy, Geophys. Monogr. Ser. 15, Amer. Geophys. Union,
+pp. 274-251, 1972.
+Davis, J.L, T.A. Herring, I.I. Shapiro, A.E.E. Rogers, and G. Elgered,
+Geodesy by Radio Interferometry: Effects of Atmospheric Modeling Errors
+on Estimates of Baseline Length, Radio Science, Vol. 20, No. 6,
+pp. 1593-1607, 1985.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.athmo.vmf1">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">vmf1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ah</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.vmf1" title="Permalink to this definition">¶</a></dt>
+<dd><p>This subroutine determines the VMF1 (Vienna Mapping Functions 1) for specific sites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ah</strong> – hydrostatic coefficient a</p></li>
+<li><p><strong>aw</strong> – wet coefficient a</p></li>
+<li><p><strong>dt</strong> – datetime in python datetime</p></li>
+<li><p><strong>dlat</strong> – ellipsoidal latitude in radians</p></li>
+<li><p><strong>zd</strong> – zenith distance in radians</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>vmf1h</em> – hydrostatic mapping function</p></li>
+<li><p><em>vmf1w</em> – wet mapping function</p></li>
+<li><p><em>Reference</em></p></li>
+<li><p><em>———-</em></p></li>
+<li><p><em>Boehm, J., B. Werl, H. Schuh (2006), Troposphere mapping functions for GPS and very long baseline interferometry</em></p></li>
+<li><p><em>from European Centre for Medium-Range Weather Forecasts operational analysis data,</em></p></li>
+<li><p><strong>J. Geoph. Res., Vol. 111, B02406, doi</strong> (<em>10.1029/2005JB003629.</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Written by Johannes Boehm, 2005 October 2</p>
+<p>Translated to python by Chaiyaporn Kitpracha</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="geodezyx.conv.html" class="btn btn-neutral float-right" title="geodezyx.conv package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="geodezyx.html" class="btn btn-neutral float-left" title="geodezyx package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

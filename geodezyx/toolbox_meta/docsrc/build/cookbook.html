@@ -1,0 +1,339 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>GeodeZYX Toolbox’s Cookbook &mdash; geodezyx 4.x documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx package" href="geodezyx.html" />
+    <link rel="prev" title="Getting started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> geodezyx
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><cite>GeodeZYX Toolbox</cite>’s Cookbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#convert-time">Convert time</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#complete-reference">Complete reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#time-conversion-exemples">Time conversion exemples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#get-today-as-gps-time-week-day-of-week">Get today as GPS Time (week/day of week)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#convert-year-day-of-year-to-modified-julian-day">Convert year/day of year to Modified Julian Day</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#convert-a-sp3-name-to-decimal-year">Convert a SP3 name to decimal year</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#convert-coordinates">Convert coordinates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coordinates-conversion-exemples">Coordinates conversion exemples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Complete reference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#read-and-import-geodetic-files">Read and import geodetic files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#point-and-click-to-detect-offsets-manually">Point and Click to detect offsets manually</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="geodezyx.html">geodezyx package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><cite>GeodeZYX Toolbox</cite>’s Cookbook</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/cookbook.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="geodezyx-toolbox-s-cookbook">
+<span id="cookbook"></span><h1><cite>GeodeZYX Toolbox</cite>’s Cookbook<a class="headerlink" href="#geodezyx-toolbox-s-cookbook" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="convert-time">
+<h2>Convert time<a class="headerlink" href="#convert-time" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>GeodeZYX Toolbox</cite> can handle a lot of time <strong>scales</strong> and time <strong>representations</strong>.</p>
+<p>What we call <cite>scale</cite> is a physical definition: UTC, GPS Time, TAI…</p>
+<p>What we call <cite>representation</cite> is the way the physical value is represented : Julian date, year/day of year, GPS week/day of week, ISO string…</p>
+<p>The basic idea behind it is the conversion to and from the <code class="docutils literal notranslate"><span class="pre">datetime</span></code> objects of the Python’s <code class="docutils literal notranslate"><span class="pre">datetime</span></code> module.</p>
+<p>The generic structure of the fuctions is <code class="docutils literal notranslate"><span class="pre">conv.&lt;input</span> <span class="pre">time</span> <span class="pre">scale/representation&gt;2&lt;output</span> <span class="pre">time</span> <span class="pre">scale/representation&gt;</span></code>.</p>
+<div class="section" id="complete-reference">
+<h3>Complete reference<a class="headerlink" href="#complete-reference" title="Permalink to this headline">¶</a></h3>
+<p>All the module’s functionalites can be found here:
+<a class="reference internal" href="geodezyx.conv.html#module-geodezyx.conv.conv_time" title="geodezyx.conv.conv_time"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.conv.conv_time</span></code></a></p>
+</div>
+<div class="section" id="time-conversion-exemples">
+<h3>Time conversion exemples<a class="headerlink" href="#time-conversion-exemples" title="Permalink to this headline">¶</a></h3>
+<p>First of all:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">geodezyx.conv</span> <span class="k">as</span> <span class="nn">conv</span>                  <span class="c1"># Import the conversion module</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+</pre></div>
+</div>
+<div class="section" id="get-today-as-gps-time-week-day-of-week">
+<h4>Get today as GPS Time (week/day of week)<a class="headerlink" href="#get-today-as-gps-time-week-day-of-week" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">now</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>    <span class="c1">###  datetime.datetime(2021, 6, 18, 15, 53, 56, 245345)</span>
+<span class="n">gpstime</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">dt2gpstime</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
+
+<span class="n">gpstime</span>
+<span class="n">Out</span><span class="p">:</span> <span class="p">(</span><span class="mi">2162</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="convert-year-day-of-year-to-modified-julian-day">
+<h4>Convert year/day of year to Modified Julian Day<a class="headerlink" href="#convert-year-day-of-year-to-modified-julian-day" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">year</span><span class="p">,</span><span class="n">doy</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">169</span><span class="p">)</span>
+<span class="n">epoch</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">doy</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">doy</span><span class="p">)</span>
+<span class="n">mjd</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">dt2MJD</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
+
+<span class="n">mjd</span>
+<span class="n">Out</span><span class="p">:</span> <span class="mf">59383.0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="convert-a-sp3-name-to-decimal-year">
+<h4>Convert a SP3 name to decimal year<a class="headerlink" href="#convert-a-sp3-name-to-decimal-year" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="s2">&quot;/home/user/igs20726.sp3&quot;</span>
+
+<span class="n">epoch</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">sp3name2dt</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="n">yeardec</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">dt2year_decimal</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
+
+<span class="n">yeardec</span>
+<span class="n">Out</span><span class="p">:</span> <span class="mf">2019.739611872146</span>
+</pre></div>
+</div>
+<p>It handles also RINEX names with <code class="docutils literal notranslate"><span class="pre">conv.rinexname2dt(p_rinex)</span></code> (old and new naming)
+(Documentation here: <a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.rinexname2dt" title="geodezyx.conv.conv_time.rinexname2dt"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.conv.conv_time.rinexname2dt()</span></code></a>)</p>
+</div>
+</div>
+</div>
+<div class="section" id="convert-coordinates">
+<h2>Convert coordinates<a class="headerlink" href="#convert-coordinates" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>GeodeZYX Toolbox</cite> can easily handle coordinate conversion in Geocentric (X,Y,Z), Geographic (latitude, longitude, height) and topocentric (East, North, Up).</p>
+<p><strong>Warning</strong>: This is considered as the “low-level” coordinate conversions. It does not deal with the different Reference Frame and their realisations (ITRFxx, ETRFxx…). This is managed by “high-level” functions in the <a href="#id1"><span class="problematic" id="id2">``</span></a>reffram``module.</p>
+<p>These functions are optimized for arrays (multiple inputs) but can also handle scalars.</p>
+<div class="section" id="coordinates-conversion-exemples">
+<h3>Coordinates conversion exemples<a class="headerlink" href="#coordinates-conversion-exemples" title="Permalink to this headline">¶</a></h3>
+<p>We consider as exemple the coordinates of the Helmertturm given in latitude, longitude, height from Wikipedia and the GNSS station POTS in Geocentric XYZ.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Helmertturm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">52.380278</span><span class="p">,</span> <span class="mf">13.065278</span><span class="p">,</span><span class="mf">147.983</span><span class="p">])</span>
+<span class="n">POTS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3800689.6341</span><span class="p">,</span><span class="mf">882077.3857</span><span class="p">,</span><span class="mf">5028791.3179</span> <span class="p">])</span>
+</pre></div>
+</div>
+<p>We can bring POTS in Geographic and the Helmertturm in Geocentric coordinates</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POTS_geo</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">XYZ2GEO</span><span class="p">(</span><span class="n">POTS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">POTS</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">POTS</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">POTS_geo</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">XYZ2GEO</span><span class="p">(</span><span class="o">*</span><span class="n">POTS</span><span class="p">)</span>
+
+<span class="n">POTS_geo</span>
+<span class="n">Out</span><span class="p">:</span> <span class="p">(</span><span class="mf">52.37929737808202</span><span class="p">,</span> <span class="mf">13.066091316954145</span><span class="p">,</span> <span class="mf">144.41769897658378</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Helmertturm_xyz</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">GEO2XYZ</span><span class="p">(</span><span class="n">Helmertturm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                               <span class="n">Helmertturm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                               <span class="n">Helmertturm</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="n">Helmertturm_xyz</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">GEO2XYZ</span><span class="p">(</span><span class="o">*</span><span class="n">Helmertturm</span><span class="p">)</span>
+
+<span class="n">Helmertturm_xyz</span>
+<span class="n">Out</span><span class="p">:</span> <span class="p">(</span><span class="mf">89.92804903383008</span><span class="p">,</span> <span class="mf">14.005569048843014</span><span class="p">,</span> <span class="o">-</span><span class="mf">6356604.297220887</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can also get the vector between POTS and the Helmertturm
+(i.e. the Helmertturm in the Topocentric frame centered on POTS)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conv</span><span class="o">.</span><span class="n">XYZ2ENU_2</span><span class="p">(</span><span class="n">Helmertturm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Helmertturm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Helmertturm</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+               <span class="n">POTS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">POTS</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">POTS</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">Out</span><span class="p">:</span> <span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.88515353</span><span class="p">]),</span> <span class="n">array</span><span class="p">([</span><span class="mf">20735.55848087</span><span class="p">]),</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">6364723.46820732</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Complete reference<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>All the module’s functionalites can be found here:
+<a class="reference internal" href="geodezyx.conv.html#module-geodezyx.conv.conv_coords" title="geodezyx.conv.conv_coords"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.conv.conv_coords</span></code></a></p>
+</div>
+</div>
+<div class="section" id="read-and-import-geodetic-files">
+<h2>Read and import geodetic files<a class="headerlink" href="#read-and-import-geodetic-files" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="point-and-click-to-detect-offsets-manually">
+<h2>Point and Click to detect offsets manually<a class="headerlink" href="#point-and-click-to-detect-offsets-manually" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="geodezyx.html" class="btn btn-neutral float-right" title="geodezyx package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

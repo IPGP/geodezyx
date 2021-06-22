@@ -1,0 +1,1224 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>geodezyx.time_series package &mdash; geodezyx 4.x documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx.utils package" href="geodezyx.utils.html" />
+    <link rel="prev" title="geodezyx.stats package" href="geodezyx.stats.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> geodezyx
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>GeodeZYX Toolbox</cite>’s Cookbook</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.time_series package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.time_series.ts_class">geodezyx.time_series.ts_class module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.time_series.ts_fcts">geodezyx.time_series.ts_fcts module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="geodezyx.html">geodezyx package</a> &raquo;</li>
+        
+      <li>geodezyx.time_series package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/geodezyx.time_series.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-geodezyx.time_series">
+<span id="geodezyx-time-series-package"></span><h1>geodezyx.time_series package<a class="headerlink" href="#module-geodezyx.time_series" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-geodezyx.time_series.ts_class">
+<span id="geodezyx-time-series-ts-class-module"></span><h2>geodezyx.time_series.ts_class module<a class="headerlink" href="#module-geodezyx.time_series.ts_class" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Aug  2 13:55:33 2019</p>
+<p>&#64;author: psakicki</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Attitude">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_class.</span></span><span class="sig-name descname"><span class="pre">Attitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">devID</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NULL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Attitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Attitude.Qcalc">
+<span class="sig-name descname"><span class="pre">Qcalc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Attitude.Qcalc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Attitude.RPYget">
+<span class="sig-name descname"><span class="pre">RPYget</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Attitude.RPYget" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Attitude.RPYset">
+<span class="sig-name descname"><span class="pre">RPYset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Attitude.RPYset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Attitude.Tset">
+<span class="sig-name descname"><span class="pre">Tset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Attitude.Tset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Point">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_class.</span></span><span class="sig-name descname"><span class="pre">Point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sB</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'noname'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Point.ENUcalc_pt">
+<span class="sig-name descname"><span class="pre">ENUcalc_pt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refENU</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Point.ENUcalc_pt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Point.ENUset">
+<span class="sig-name descname"><span class="pre">ENUset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sN</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sU</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Point.ENUset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Point.FLHset">
+<span class="sig-name descname"><span class="pre">FLHset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Point.FLHset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Point.NEDset">
+<span class="sig-name descname"><span class="pre">NEDset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sN</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sD</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Point.NEDset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Point.Tset">
+<span class="sig-name descname"><span class="pre">Tset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Point.Tset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Point.XYZset">
+<span class="sig-name descname"><span class="pre">XYZset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sX</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sY</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Point.XYZset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Point.add_offset">
+<span class="sig-name descname"><span class="pre">add_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dC</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Point.add_offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Point.helmert_trans">
+<span class="sig-name descname"><span class="pre">helmert_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itrf2008_2_etrf2000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Point.helmert_trans" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Point.keysanex">
+<span class="sig-name descname"><span class="pre">keysanex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Point.keysanex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.Point.velocity_trans">
+<span class="sig-name descname"><span class="pre">velocity_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoc_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoc_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.Point.velocity_trans" title="Permalink to this definition">¶</a></dt>
+<dd><p>auto == epoc of the measures</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_class.</span></span><span class="sig-name descname"><span class="pre">TimeSerieObs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typeobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NULL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>LES DIFFERENCES AVEC TSPOINT
+* Les objets ne contiennent qu’un type de données sous une seul forme
+(a la difference d’un point qui peut exister sous plusieurs formes)
+* Dans un fichier en input, il peut y avoir plusieurs “devices”</p>
+<blockquote>
+<div><p>=&gt; les fonctions de lectures produisent donc obligatoirement des listes
+de TS (le cas échéant une liste à 1 élt)
+=&gt; la methode readfile() nécessite donc l’indice de la device</p>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.add_obs">
+<span class="sig-name descname"><span class="pre">add_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inObs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.add_obs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.aleaobs">
+<span class="sig-name descname"><span class="pre">aleaobs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.aleaobs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.del_data">
+<span class="sig-name descname"><span class="pre">del_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.del_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.enddate">
+<span class="sig-name descname"><span class="pre">enddate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.enddate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.interp_get">
+<span class="sig-name descname"><span class="pre">interp_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.interp_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.interp_set">
+<span class="sig-name descname"><span class="pre">interp_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interptype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'slinear'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.interp_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.interval_nominal">
+<span class="sig-name descname"><span class="pre">interval_nominal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.interval_nominal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.meta_set">
+<span class="sig-name descname"><span class="pre">meta_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">devID</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NULL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.meta_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diapt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.readfile">
+<span class="sig-name descname"><span class="pre">readfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indtab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.readfile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.startdate">
+<span class="sig-name descname"><span class="pre">startdate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.startdate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.timewin">
+<span class="sig-name descname"><span class="pre">timewin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">windows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'keep'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.timewin" title="Permalink to this definition">¶</a></dt>
+<dd><p>IL EST TRES DANGEREUX DE L’APPLIQUER UN FENETRAGE A SOI MEME</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.to_list">
+<span class="sig-name descname"><span class="pre">to_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.to_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_class.</span></span><span class="sig-name descname"><span class="pre">TimeSeriePoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'STAT'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc">
+<span class="sig-name descname"><span class="pre">ENUcalc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refENU</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to determine the ENU components based on a reference point</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>refENU</strong> (<em>Point Object</em><em> or </em><em>TimeSeriePoint Object</em>) – Reference point.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc_from_mean_posi">
+<span class="sig-name descname"><span class="pre">ENUcalc_from_mean_posi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc_from_mean_posi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to determine the ENU components based directly on the mean position</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.add_offset">
+<span class="sig-name descname"><span class="pre">add_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dC</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.add_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>NOTE 160415 : add_offset as method are hazardous …
+use fct add_offset_ts instead</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.add_point">
+<span class="sig-name descname"><span class="pre">add_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inPoint</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.add_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to add a Point in the TimeSerie Object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inPoint</strong> (<em>Point Object</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.aleapt">
+<span class="sig-name descname"><span class="pre">aleapt</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.aleapt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to get a random Point in the TimeSeries</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Point Object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.decimate">
+<span class="sig-name descname"><span class="pre">decimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.decimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to decimate a TimeSerie</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dec</strong> (<em>int</em>) – keep 1/dec point in the TimeSerie.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.del_data">
+<span class="sig-name descname"><span class="pre">del_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.del_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to purge the data in the TimeSeriePoint</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.discont_manu_click">
+<span class="sig-name descname"><span class="pre">discont_manu_click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.discont_manu_click" title="Permalink to this definition">¶</a></dt>
+<dd><p>manual discontinuities are both recorded in the “main” discont list
+and in a new discont_manu list,
+thus the manual discontinuites can be identified</p>
+<dl class="simple">
+<dt>IMPORTANT<span class="classifier">cursor objects (multi , cid)</span></dt><dd><p>must be stored as global variables like this :
+multi , cid = tsout.discont_manu_click()</p>
+</dd>
+<dt>NOTE<span class="classifier">This method was created before point_n_click_plot():</span></dt><dd><p>this other one is more complete
+both has to be merged ASAP !!!!!</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.enddate">
+<span class="sig-name descname"><span class="pre">enddate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.enddate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to get the last epoch of the data in the TimeSerie</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>DateTime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.find_point">
+<span class="sig-name descname"><span class="pre">find_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_when_found</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.find_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to find a specific point according to its timestamp</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tin</strong> (<em>float</em><em> or </em><em>datetime</em>) – timestamp of the researched point.</p></li>
+<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – tolerence of the research. The default is 0.001.</p></li>
+<li><p><strong>stop_when_found</strong> (<em>bool</em><em>, </em><em>optional</em>) – Stop the research when a point is found. The default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>Point Object</em> – Point Found.</p></li>
+<li><p><em>int or list of int</em> – index of the point.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.from_list">
+<span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sB</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.from_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to load data from lists to the TimeSerie</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float</em>) – Time.</p></li>
+<li><p><strong>A</strong> (<em>list of float</em>) – X, F (latitude), E..</p></li>
+<li><p><strong>B</strong> (<em>list of float</em>) – Y, L (longitude), N.</p></li>
+<li><p><strong>C</strong> (<em>list of float</em>) – Z, H (hight), U.</p></li>
+<li><p><strong>coortype</strong> (<em>str</em><em>, </em><em>optional</em>) – The coordinates type. The default is ‘XYZ’.</p></li>
+<li><p><strong>sA</strong> (<em>list of float</em><em>, </em><em>optional</em>) – sigma of A component. The default is [].</p></li>
+<li><p><strong>sB</strong> (<em>list of float</em><em>, </em><em>optional</em>) – sigma of B component. The default is [].</p></li>
+<li><p><strong>sC</strong> (<em>list of float</em><em>, </em><em>optional</em>) – sigma of C component. The default is [].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.from_uniq_point">
+<span class="sig-name descname"><span class="pre">from_uniq_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.from_uniq_point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.initype">
+<span class="sig-name descname"><span class="pre">initype</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.initype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.interp_get">
+<span class="sig-name descname"><span class="pre">interp_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.interp_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to get the coordinate interpolators</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float</em><em> or </em><em>list of float</em>) – Time (IN POSIX Time) where the interpolation is wished.</p></li>
+<li><p><strong>coortype</strong> (<em>str</em><em>, </em><em>optional</em>) – The coordinates type. The default is ‘ENU’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DESCRIPTION.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tsout</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.interp_set">
+<span class="sig-name descname"><span class="pre">interp_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interptype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'slinear'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.interp_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to set the coordinate interpolators</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>interptype</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – Interpolation type. The default is ‘slinear’.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.interval_nominal">
+<span class="sig-name descname"><span class="pre">interval_nominal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.interval_nominal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to get the nominal internal between two epochs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>interval nominal.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.len_period">
+<span class="sig-name descname"><span class="pre">len_period</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.len_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to get the period length</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>timedelta or</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.mean_posi">
+<span class="sig-name descname"><span class="pre">mean_posi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'point'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meanormed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.mean_posi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to determine the mean position of the TimeSerie</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coortype</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – The coordinates type. The default is ‘XYZ’.</p></li>
+<li><p><strong>outtype</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – ‘point’ or ‘tuple’. The default is ‘point’.</p></li>
+<li><p><strong>meanormed</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – ‘mean’ or ‘median’. The default is ‘mean’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#geodezyx.time_series.ts_class.Point" title="geodezyx.time_series.ts_class.Point">Point</a> or coordinates tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.meta_set">
+<span class="sig-name descname"><span class="pre">meta_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'STAT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.meta_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set meta data about the TimeSerie</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em><em>, </em><em>optional</em>) – file path. The default is ‘’.</p></li>
+<li><p><strong>stat</strong> (<em>str</em><em>, </em><em>optional</em>) – station 4-char. code. The default is ‘STAT’.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – free name of for the TS,
+like the experience, the periode , the software …
+The default is ‘’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.nbpts">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">nbpts</span></span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.nbpts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to have the length of the TimeSerie</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Length of the TimeSerie.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diapt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errbar_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot data in a TimeSerie Object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coortype</strong> (<em>str</em><em>, </em><em>optional</em>) – The coordinates type. The default is ‘ENU’.</p></li>
+<li><p><strong>diapt</strong> (<em>float</em><em>, </em><em>optional</em>) – Point diamaeter. The default is 2.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Alpha (transparency) of points. The default is 0.8.</p></li>
+<li><p><strong>fig</strong> (<em>int</em><em> or </em><em>Figure object</em><em>, </em><em>optional</em>) – Figure ID where the data will be plotted
+can accept a int (id of a Figure)
+OR the figure Object itself.
+The default is 1.</p></li>
+<li><p><strong>errbar</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot the error bars. The default is True.</p></li>
+<li><p><strong>new_style</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot in a new style.
+The old style is only kept for legacy
+The default is True.</p></li>
+<li><p><strong>symbol</strong> (<em>str</em><em>, </em><em>optional</em>) – symbol. The default is ‘.’.</p></li>
+<li><p><strong>errbar_width</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – coefficient for the error bar size. The default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.plot_discont">
+<span class="sig-name descname"><span class="pre">plot_discont</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.plot_discont" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot discontinuties of a TimeSerie Object contained in discont list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fig</strong> (<em>int</em><em> or </em><em>Figure object</em><em>, </em><em>optional</em>) – Figure ID where the data will be plotted
+can accept a int (id of a Figure)
+OR the figure Object itself.
+The default is 1.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.readfile">
+<span class="sig-name descname"><span class="pre">readfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.readfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to read the data form a file
+Should be used with care</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filein</strong> (<em>str</em>) – path of the file.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.set_discont">
+<span class="sig-name descname"><span class="pre">set_discont</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indiscont</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.set_discont" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to set the discontinuties list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>indiscont</strong> (<em>list of time</em>) – Discontinuities in the TimeSerie.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.sort">
+<span class="sig-name descname"><span class="pre">sort</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal method to sort the point in the TimeSerie Object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.startdate">
+<span class="sig-name descname"><span class="pre">startdate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.startdate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to get the first epoch of the data in the TimeSerie</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>DateTime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.timewin">
+<span class="sig-name descname"><span class="pre">timewin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">windows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'keep'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.timewin" title="Permalink to this definition">¶</a></dt>
+<dd><p>IL EST TRES DANGEREUX DE L’APPLIQUER UN FENETRAGE A SOI MEME</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.to_dataframe">
+<span class="sig-name descname"><span class="pre">to_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.to_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export the TimeSerie Object as DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>coortype</strong> (<em>str</em><em> or </em><em>iterable of str.</em>) – The coordinates type exported to the DataFrame.
+‘XYZ’, ‘FLH’, ‘ENU’, ‘NED’
+can be also an iterable like (‘XYZ’,’FLH’)
+The default is ‘XYZ’.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>DF</strong> – output DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.to_list">
+<span class="sig-name descname"><span class="pre">to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_as_datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export the TimeSerie Object as Lists (Numpy Arrays)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coortype</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>coordinates type exported to the list.</strong> (<em>The</em>) – </p></li>
+<li><p><strong>default is 'XYZ'.</strong> (<em>The</em>) – </p></li>
+<li><p><strong>specific_output</strong> (<em>int</em><em>, </em><em>optional</em>) – ask for a specific list, ranges between 0 and 6.
+The default is None.</p></li>
+<li><p><strong>time_as_datetime</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True the Time list is exported in DataFrame
+if False the Time list is exported in Posix time</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>A,B,C,T,sA,sB,sC</strong> – A = X, F (latitude), E.
+B = Y, L (longitude), N.
+C = Z, H (hight), U.
+T = Time
+sA = sigma of A component
+sB = sigma of B component
+sC = sigma of C component</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>lists</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.point_n_click_plot">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_class.</span></span><span class="sig-name descname"><span class="pre">point_n_click_plot</span></span><a class="headerlink" href="#geodezyx.time_series.ts_class.point_n_click_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This method allow to do “point and click” on a plot, to localize offsets
+for instance</p>
+<p>Data have to be ploted already in a figure</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PnC</span> <span class="o">=</span> <span class="n">point_n_click_plot</span><span class="p">()</span>
+<span class="n">multi</span> <span class="p">,</span> <span class="n">cid</span> <span class="o">=</span> <span class="n">PnC</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">Xdata_are_time</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">PnC</span><span class="o">.</span><span class="n">selectedX</span>
+</pre></div>
+</div>
+<p>i.e.</p>
+<p>Create an object point_n_click_plot (here it is PnC in the exemple below)</p>
+<p>Call the object like a function with as 1st argument the id of the plot figure or the plot figure itself</p>
+<p>Make your selection using the SPACE key</p>
+<p>Get your results in a list called PnC.selectedX</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>cursor objects (i.e. multi &amp; cid)
+must be stored as global variables when you call the method
+like this :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">multi</span> <span class="p">,</span> <span class="n">cid</span> <span class="o">=</span> <span class="n">PnC</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-geodezyx.time_series.ts_fcts">
+<span id="geodezyx-time-series-ts-fcts-module"></span><h2>geodezyx.time_series.ts_fcts module<a class="headerlink" href="#module-geodezyx.time_series.ts_fcts" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Aug  2 17:38:41 2019</p>
+<p>&#64;author: psakicki</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.add_offset_point">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">add_offset_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.add_offset_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>ONLY IMPLEMENTED FOR ENU FOR THE MOMENT
+150415 : remark still necessary ???</p>
+<dl class="simple">
+<dt>coortype == ‘UXYZ’ :</dt><dd><p>specific case where we correct an Up offset directly in the XYZ coords
+very usefull for an antenna offset in for a moving GPS
+(but works only for the up)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.add_offset_smart_for_GINS_kine">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">add_offset_smart_for_GINS_kine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tslist_offset_3ple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_windows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.add_offset_smart_for_GINS_kine" title="Permalink to this definition">¶</a></dt>
+<dd><p>tslist_offset_3ple : list of len N containing (dX,dY,dZ) offsets
+list_windows       : list of len N-1 containing dates of changes</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.add_offset_ts">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">add_offset_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.add_offset_ts" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a copy of the tsin
+(tsin won’t be affected)</p>
+<dl class="simple">
+<dt>coortype == ‘UXYZ’ :</dt><dd><p>specific case where we correct an Up offset directly in the XYZ coords
+very usefull for an antenna offset in for a moving GPS
+(but works only for the up)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.bool_cleaner">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">bool_cleaner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boollist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.bool_cleaner" title="Permalink to this definition">¶</a></dt>
+<dd><p>A partir d’une liste de bool de meme longeur que le nbre de points
+on ne conserve que les points True</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.compar">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">compar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tstup</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seuil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'keep'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2D3D'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diapt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_report</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.compar" title="Permalink to this definition">¶</a></dt>
+<dd><p>si seuil == 0, pas de nettoyage</p>
+<p>On preconise compar en mode keep :
+Ainsi le Tref est strictement cantonné aux bonnes valeurs des Ti
+En mode del, les Ti sont extrapolé aux valeur de Tref =&gt; nan =&gt; pbs pour la mad</p>
+<p>if 2D3D /3D2D : selectionne 2D ou 3D (selon) en prioritaire pour dD mais
+détermine 2D et 3D et les introduit dans des clés adhoc dD2D dD3D
+‘’’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.compar2">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">compar2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tstup</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seuil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'keep'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'3D'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diapt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_report</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.compar2" title="Permalink to this definition">¶</a></dt>
+<dd><p>160903 cette fonction semble discontinuée</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.compar_elts_in_ts">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">compar_elts_in_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.compar_elts_in_ts" title="Permalink to this definition">¶</a></dt>
+<dd><p>ts2 must contains less elts than ts1 (ts2 = cleaned one)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.compar_plot">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">compar_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dico_list_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diapt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gnuplot'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.compar_plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.decimate_cleaner">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">decimate_cleaner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_place</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.decimate_cleaner" title="Permalink to this definition">¶</a></dt>
+<dd><p>in_place DOES’NT WORK !!!</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.decimate_cleaner_2">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">decimate_cleaner_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_place</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.decimate_cleaner_2" title="Permalink to this definition">¶</a></dt>
+<dd><p>keep a value every N vals</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.detrend_ts">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">detrend_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.detrend_ts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.dist_btwn_2pts">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">dist_btwn_2pts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.dist_btwn_2pts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.dist_diff_btwn_2pts">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">dist_diff_btwn_2pts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptB</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.dist_diff_btwn_2pts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.export_ts">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">export_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outprefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.export_ts" title="Permalink to this definition">¶</a></dt>
+<dd><p>export the timeserie</p>
+<p>write_header not well implemented !!!</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.export_ts_as_hector_enu">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">export_ts_as_hector_enu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outprefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.export_ts_as_hector_enu" title="Permalink to this definition">¶</a></dt>
+<dd><p>export to a HECTOR .enu (and not .neu !) compatible format
+This format is simpler : just gives MJD E N U</p>
+<p>This format is necessary to force a sampling period.</p>
+<p>outfile will be writed in
+/outdir/outprefixSTAT.enu</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.export_ts_as_midas_tenu">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">export_ts_as_midas_tenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outprefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.export_ts_as_midas_tenu" title="Permalink to this definition">¶</a></dt>
+<dd><p>export to a MIDAS .tneu compatible format</p>
+<p>outfile will be writed in
+/outdir/outprefixSTAT.tneu</p>
+<p>if export_step == True:
+export a step file as
+/outdir/outprefixSTAT.step</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.export_ts_as_neu">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">export_ts_as_neu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outprefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.export_ts_as_neu" title="Permalink to this definition">¶</a></dt>
+<dd><p>export to a HECTOR .neu compatible format</p>
+<p>outfile will be writed in
+/outdir/outprefixSTAT.neu</p>
+<p>NB: The XYZ mode is quite dirty (191001)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.export_ts_figure_pdf">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">export_ts_figure_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.export_ts_figure_pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>fig can accept a int (id of a Figure)
+OR the figure Object itself</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.export_ts_plot">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">export_ts_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('pdf',</span> <span class="pre">'png')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_fig_after_export</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.export_ts_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Very beta …
+to be implemented : merge w/ the export_figure_pdf fct</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.find_pts_from_ts_with_time">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">find_pts_from_ts_with_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstupin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.find_pts_from_ts_with_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.helmert_trans">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">helmert_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itrf2008_2_etrf2000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.helmert_trans" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.interpolator_light">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">interpolator_light</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.interpolator_light" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.interpolator_with_extrapolated">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">interpolator_with_extrapolated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.interpolator_with_extrapolated" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.linear_regress_find_coeff">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">linear_regress_find_coeff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.linear_regress_find_coeff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.linear_regress_ts">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">linear_regress_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">titledetails</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.linear_regress_ts" title="Permalink to this definition">¶</a></dt>
+<dd><p>doit être cablé ASAP linear_regress_find_coeff</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.linear_regress_ts_discont">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">linear_regress_ts_discont</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.linear_regress_ts_discont" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.mad_cleaner">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">mad_cleaner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seuil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dist'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ABC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detrend_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_detrended</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.mad_cleaner" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>method<span class="classifier">methode d’élimination :</span></dt><dd><p>dist : on élimine les point qu sont trop loin en distance de la posi de ref
+indep : on traite les point independaments</p>
+<p>dist est a privilégier</p>
+</dd>
+</dl>
+<p>output_detrended ne marche que si detrend_first est activé</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.mean_list_of_pts">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">mean_list_of_pts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptslisin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.mean_list_of_pts" title="Permalink to this definition">¶</a></dt>
+<dd><p>useful for merge fct
+ONLY IMPLEMENTED FOR ENU coords for the moment</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.mean_posi_multi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">mean_posi_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tstup</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.mean_posi_multi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.merge">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>merge N points in one</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.merge_ts">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">merge_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts_list_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.merge_ts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.print4compar">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">print4compar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.print4compar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.print4compar_tabular">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">print4compar_tabular</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dicolist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_2D3D_if_any</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.print4compar_tabular" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.refENU_for_tslist">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">refENU_for_tslist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tslist_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsref_marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.refENU_for_tslist" title="Permalink to this definition">¶</a></dt>
+<dd><p>tsref_marker : indice of the reference time serie OR the ‘all’ keyword
+in this case all the time series mean position will be averaged</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.rotate_points_class">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">rotate_points_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsattin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptslin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'R1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzreftuple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">([1,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">0],</span> <span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">1])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.rotate_points_class" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.rotate_pt_cls_solo">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">rotate_pt_cls_solo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsattin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pointin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'R1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzreftuple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">([1,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">0],</span> <span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">1])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.rotate_pt_cls_solo" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>ENTREE<span class="classifier">tsattin</span><span class="classifier">une TS d’attitude  (N angles)</span></dt><dd><p>pointin : UN Point en entrée</p>
+</dd>
+</dl>
+<p>SORTIE : une TSpoint de N points</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.sigma_cleaner">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">sigma_cleaner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seuil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ABC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleantype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'any'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.sigma_cleaner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.std_dev_cleaner">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">std_dev_cleaner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stddev_threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ABC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleantype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'any'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.std_dev_cleaner" title="Permalink to this definition">¶</a></dt>
+<dd><p>A rebooted (1807) version of sigma_cleaner
+just remove values in a timeserie with a high sigma/std deviation</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.time_gap">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">time_gap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'del'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.time_gap" title="Permalink to this definition">¶</a></dt>
+<dd><p>ENTREE une TimeSerie
+SORTIE une window (liste de listes)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.time_win">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">time_win</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'keep'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outbool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.time_win" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.time_win_T">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">time_win_T</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'del'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.time_win_T" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.time_win_multi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">time_win_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inplis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.time_win_multi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.ts_from_list">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">ts_from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sB</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sC</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'STAT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NoName'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.ts_from_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.velocity_trans">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">velocity_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoc_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoc_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.velocity_trans" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="geodezyx.utils.html" class="btn btn-neutral float-right" title="geodezyx.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="geodezyx.stats.html" class="btn btn-neutral float-left" title="geodezyx.stats package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
