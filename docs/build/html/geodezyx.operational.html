@@ -196,8 +196,16 @@
 </div>
 <div class="section" id="module-geodezyx.operational.cluster_gfz">
 <span id="geodezyx-operational-cluster-gfz-module"></span><h2>geodezyx.operational.cluster_gfz module<a class="headerlink" href="#module-geodezyx.operational.cluster_gfz" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug 16 11:55:51 2019</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to send runs
+to the GFZ’s cluster in a batch mode.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.cluster_gfz.cluster_GFZ_run">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.cluster_gfz.</span></span><span class="sig-name descname"><span class="pre">cluster_GFZ_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commands_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bunch_on_off</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bunch_job_nbr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bunch_wait_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_on_off</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_mini_nbr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_wait_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_cjob_cmd_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_sleeping_before_launch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.cluster_gfz.cluster_GFZ_run" title="Permalink to this definition">¶</a></dt>
@@ -253,23 +261,16 @@ The default is 5.</p></li>
 </div>
 <div class="section" id="module-geodezyx.operational.gins_runner">
 <span id="geodezyx-operational-gins-runner-module"></span><h2>geodezyx.operational.gins_runner module<a class="headerlink" href="#module-geodezyx.operational.gins_runner" title="Permalink to this headline">¶</a></h2>
-<p>Created on Sat Mar 14 15:58:47 2015</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to run the
+GNSS processing software GINS.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
 <p>The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics</p>
-<p>Copyright (C) 2019 Pierre Sakic (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/PierreS1/GeodeZYX-Toolbox-Lite">https://github.com/PierreS1/GeodeZYX-Toolbox-Lite</a></p>
-<p>This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
-<p>This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.</p>
-<p>You should have received a copy of the GNU General Public License
-along with this program. If not, see &lt;<a class="reference external" href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>&gt;.</p>
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.gins_runner.bad_sat_finder">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.</span></span><span class="sig-name descname"><span class="pre">bad_sat_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbfilein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egrep_ready</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.bad_sat_finder" title="Permalink to this definition">¶</a></dt>
@@ -569,8 +570,16 @@ eg : i = 18 for filename KARIB_MK3_FLH_v2__bara_22282_2011_003</p>
 </div>
 <div class="section" id="module-geodezyx.operational.gnss_downloader">
 <span id="geodezyx-operational-gnss-downloader-module"></span><h2>geodezyx.operational.gnss_downloader module<a class="headerlink" href="#module-geodezyx.operational.gnss_downloader" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug 16 11:47:40 2019</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to download
+gnss data and products from distant IGS servers.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.gnss_downloader.FTP_downloader">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gnss_downloader.</span></span><span class="sig-name descname"><span class="pre">FTP_downloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftp_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gnss_downloader.FTP_downloader" title="Permalink to this definition">¶</a></dt>
@@ -995,8 +1004,16 @@ if center_id_last_letter=m, it will become com</p>
 </div>
 <div class="section" id="module-geodezyx.operational.hector_frontend">
 <span id="geodezyx-operational-hector-frontend-module"></span><h2>geodezyx.operational.hector_frontend module<a class="headerlink" href="#module-geodezyx.operational.hector_frontend" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug 16 11:46:44 2019</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to run the
+time series velocities estimation software HECTOR.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.hector_frontend.MJD2dt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">MJD2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.hector_frontend.MJD2dt" title="Permalink to this definition">¶</a></dt>
@@ -1070,8 +1087,16 @@ statdico[stat] = [path/E.sum,path/N.sum,path/U.sum ]</p>
 </div>
 <div class="section" id="module-geodezyx.operational.midas_frontend">
 <span id="geodezyx-operational-midas-frontend-module"></span><h2>geodezyx.operational.midas_frontend module<a class="headerlink" href="#module-geodezyx.operational.midas_frontend" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug 16 11:48:35 2019</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to run the
+time series velocities estimation software MIDAS.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.midas_frontend.midas_plot">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.midas_frontend.</span></span><span class="sig-name descname"><span class="pre">midas_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_tenu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_vel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.midas_frontend.midas_plot" title="Permalink to this definition">¶</a></dt>
@@ -1105,8 +1130,15 @@ to consider several files</p>
 </div>
 <div class="section" id="module-geodezyx.operational.rinex_lister_plotter">
 <span id="geodezyx-operational-rinex-lister-plotter-module"></span><h2>geodezyx.operational.rinex_lister_plotter module<a class="headerlink" href="#module-geodezyx.operational.rinex_lister_plotter" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug  2 17:13:04 2019</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational generates RINEX timeline plot.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.listing_gins_timeline">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">listing_gins_timeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_strt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_strt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix_regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.listing_gins_timeline" title="Permalink to this definition">¶</a></dt>
@@ -1207,8 +1239,16 @@ on 20180118 15:59A</p>
 </div>
 <div class="section" id="module-geodezyx.operational.rinex_utils">
 <span id="geodezyx-operational-rinex-utils-module"></span><h2>geodezyx.operational.rinex_utils module<a class="headerlink" href="#module-geodezyx.operational.rinex_utils" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug 16 11:53:56 2019</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to manipulate
+RINEX files (version 2, quite obsolate).</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.check_if_compressed_rinex">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">check_if_compressed_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.check_if_compressed_rinex" title="Permalink to this definition">¶</a></dt>
@@ -1306,8 +1346,16 @@ NBsuite : c’est fait au 161018 mais par contre c’est un dirty copier coller<
 </div>
 <div class="section" id="module-geodezyx.operational.rtklib_frontend">
 <span id="geodezyx-operational-rtklib-frontend-module"></span><h2>geodezyx.operational.rtklib_frontend module<a class="headerlink" href="#module-geodezyx.operational.rtklib_frontend" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug 16 11:54:28 2019</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to run the
+GNSS processing software RTKLIB.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rtklib_frontend.read_conf_file">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">read_conf_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rtklib_frontend.read_conf_file" title="Permalink to this definition">¶</a></dt>
@@ -1338,8 +1386,16 @@ can manage the upper case XYZ or FLH</p>
 </div>
 <div class="section" id="module-geodezyx.operational.track_frontend">
 <span id="geodezyx-operational-track-frontend-module"></span><h2>geodezyx.operational.track_frontend module<a class="headerlink" href="#module-geodezyx.operational.track_frontend" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug 16 11:55:12 2019</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to run the
+GNSS processing software TRACK.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.track_frontend.run_track">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.track_frontend.</span></span><span class="sig-name descname"><span class="pre">run_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_full_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_conf_fil</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_rover</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.track_frontend.run_track" title="Permalink to this definition">¶</a></dt>

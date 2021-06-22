@@ -1,9 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Aug  2 17:36:39 2019
+@author: psakic
 
-@author: psakicki
+This sub-module of geodezyx.reffram contains functions for operations
+related to GNSS-products
+
+
+it can be imported directly with:
+from geodezyx import reffram
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
 
 ########## BEGIN IMPORT ##########

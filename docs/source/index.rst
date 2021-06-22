@@ -31,7 +31,7 @@ Citation: Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie
 Installation
 ------------
 
-See the ``README.md`` file
+See the ``README.md`` file.
 
 License
 -------
