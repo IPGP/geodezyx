@@ -17,8 +17,6 @@ GitHub repository :
 https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
 
-
-
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
@@ -37,13 +35,8 @@ from geodezyx import reffram
 from geodezyx import time_series
 from geodezyx import utils
 
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 ##########  END IMPORT  ##########
-
 
 def read_all_points(filein):
     """selectionne automatiquement le type de fichier brut en entrée
