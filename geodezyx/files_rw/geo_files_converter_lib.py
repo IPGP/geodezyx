@@ -25,10 +25,8 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 
 ########## BEGIN IMPORT ##########
 #### External modules
-import copy
 import datetime as dt
 import dateutil
-import glob
 from io import BytesIO,StringIO
 import itertools
 import matplotlib

@@ -29,9 +29,8 @@ import numpy as np
 import os 
 import pandas as pd
 import re
-import datetime as dt
 
-# import sofa
+import geodezyx.reffram.sofa18 as sofa
 
 #### geodeZYX modules
 from geodezyx import conv

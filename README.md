@@ -54,6 +54,11 @@ plots and visual selection functions ...
 It is designed for Python 3 on a LINUX Ubuntu-like system.
 Also tested with Anaconda
 
+## Documentation
+
+See the following link:
+[https://geodezyx.github.io/GeodeZYX-Toolbox_v4/](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
+
 ## Installation 
 
 See the following link:
@@ -64,9 +69,11 @@ See the following link:
 ### with PyPi and pip
 
 We recommend to use pip to do a propper installation:
+
 ``pip install geodezyx``
 
 To get the latest working version you can install directly the GitHub-hosted version:
+
 ``pip install -I -U git+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4``
 
 ### clone and manually install from GitHub

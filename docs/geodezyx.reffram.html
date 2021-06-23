@@ -40,9 +40,7 @@
 
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="geodezyx.stats package" href="geodezyx.stats.html" />
-    <link rel="prev" title="geodezyx.operational package" href="geodezyx.operational.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -56,12 +54,9 @@
           
 
           
-            <a href="index.html">
+            <a href="index.html" class="icon icon-home"> GeodeZYX Toolbox
           
 
-          
-            
-            <img src="_static/geodezyx_toolbox_logo.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -87,34 +82,11 @@
               
             
             
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to GeodeZYX Toolbox’s documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>GeodeZYX Toolbox</cite>’s Cookbook</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">GeodeZYX’s complete reference package</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.reffram package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.geometry">geodezyx.reffram.geometry module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.gnss_products">geodezyx.reffram.gnss_products module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.kepler_gzyx">geodezyx.reffram.kepler_gzyx module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.quaternions">geodezyx.reffram.quaternions module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="geodezyx.html">GeodeZYX’s complete reference package</a></li>
 </ul>
 
             
@@ -163,8 +135,6 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="geodezyx.html">GeodeZYX’s complete reference package</a> &raquo;</li>
-        
       <li>geodezyx.reffram package</li>
     
     
@@ -204,8 +174,19 @@ GitHub repository :
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.geometry.BL_from_points">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">BL_from_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listpointin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.BL_from_points" title="Permalink to this definition">¶</a></dt>
-<dd><p>A partir d’une liste de points,
-retourne les baselines entre ces points dans une matrice</p>
+<dd><p>From a list of 2-D or 3-dD points, returns the a matrix with distance
+between each points</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>listpointin</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – List of N 2D or 3D points [[x1,y1,z1] … [xn , yn , zn]]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>BL</strong> – matrix with distances between each points</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -403,6 +384,8 @@ for a proper transformation</p></li>
 <p class="rubric">Notes</p>
 <p>Based on the values of
 <a class="reference external" href="http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf">http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf</a></p>
+<p>Warning: a validation unsing the EUREF converter is highly recomended
+<a class="reference external" href="https://www.epncb.oma.be/_productsservices/coord_trans/">https://www.epncb.oma.be/_productsservices/coord_trans/</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -451,7 +434,28 @@ The output coordinates will be provided at the same epoch as the input ones</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.geometry.itrf_psd_fundamuntal_formula">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">itrf_psd_fundamuntal_formula</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.itrf_psd_fundamuntal_formula" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="http://itrf.ensg.ign.fr/ITRF_solutions/2014/doc/ITRF2014-PSD-model-eqs-IGN.pdf">http://itrf.ensg.ign.fr/ITRF_solutions/2014/doc/ITRF2014-PSD-model-eqs-IGN.pdf</a></p>
+<dd><p>Get the Post Seismic Deformation of a station</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – epoch in decimal years.</p></li>
+<li><p><strong>A_l</strong> (<em>float</em>) – Amplitude of the logarithmic term.</p></li>
+<li><p><strong>t_l</strong> (<em>float</em>) – Earthquake time(date) corresponding to logarithmic term</p></li>
+<li><p><strong>tau_l</strong> (<em>float</em>) – Relaxation time of the logarithmic term.</p></li>
+<li><p><strong>A_e</strong> (<em>float</em>) – Amplitude of the exponential term.</p></li>
+<li><p><strong>t_e</strong> (<em>float</em>) – Earthquake time(date) corresponding to the exponential term.</p></li>
+<li><p><strong>tau_e</strong> (<em>float</em>) – Relaxation time of the exponential term..</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>dL</strong> (<em>TYPE</em>) – the total sum of PSD corrections.</p></li>
+<li><p><em>Source</em></p></li>
+<li><p><em>——</em> – <a class="reference external" href="http://itrf.ensg.ign.fr/ITRF_solutions/2014/doc/ITRF2014-PSD-model-eqs-IGN.pdf">http://itrf.ensg.ign.fr/ITRF_solutions/2014/doc/ITRF2014-PSD-model-eqs-IGN.pdf</a></p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -494,7 +498,8 @@ The output coordinates will be provided at the same epoch as the input ones</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.geometry.project_point_on_plan">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">project_point_on_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.project_point_on_plan" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Project a point on a Plan</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>N</strong> (<em>3-Array</em><em> (</em><em>Vector</em><em>)</em>) – Vector describing the plan.</p></li>
@@ -525,27 +530,43 @@ The output coordinates will be provided at the same epoch as the input ones</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.geometry.random_walk_in_a_circle">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">random_walk_in_a_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uniform_or_normal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rand_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.random_walk_in_a_circle" title="Permalink to this definition">¶</a></dt>
-<dd><p>random : normal ou uniform
-coords : polaire ou cartésien</p>
-<p>param est un paramètre très versatile pour controler le random :
-plage pour le uniform
-sigma pour le normal</p>
-<p>on recommande plutot le polaire normal : on a un pas constant &amp; une derive réaliste sur le cap</p>
-<dl class="simple">
-<dt>Returns :</dt><dd><p>X,Y, Xcircle , Ycircle</p>
+<dd><p>generate random walk in a circle</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x0</strong> (<em>float</em>) – x start of the random walk.</p></li>
+<li><p><strong>y0</strong> (<em>float</em>) – y start of the random walk.</p></li>
+<li><p><strong>xc</strong> (<em>float</em>) – x center of the circle.</p></li>
+<li><p><strong>yc</strong> (<em>float</em>) – y center of the circle.</p></li>
+<li><p><strong>R</strong> (<em>float</em>) – radius of the circle.</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – number of points.</p></li>
+<li><p><strong>step_size</strong> (<em>float</em>) – size of the step.</p></li>
+<li><p><strong>param</strong> (<em>int</em><em>, </em><em>optional</em>) – control the random. The default is 1.</p></li>
+<li><p><strong>polar</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is True.</p></li>
+<li><p><strong>uniform_or_normal</strong> (<em>'u'</em><em> or </em><em>'n'</em><em>, </em><em>optional</em>) – uniform of normal walk. The default is ‘n’.</p></li>
+<li><p><strong>rand_seed</strong> (<em>int</em><em>, </em><em>optional</em>) – control the random. The default is -1.</p></li>
+</ul>
 </dd>
-</dl>
-<p>Exemple :</p>
-<dl>
-<dt>for un in (‘u’,’n’):</dt><dd><dl>
-<dt>for pol in range(2):</dt><dd><p>X,Y , Xcircle , Ycircle = random_walk_in_a_circle(10,10,0,0,50,10000,polar = pol,uniform_or_normal=un)</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul>
+<li><p><strong>X</strong> (<em>np.array</em>) – X-coordinates of the random walk.</p></li>
+<li><p><strong>Y</strong> (<em>np.array</em>) – Y-coordinates of the random walk.</p></li>
+<li><p><strong>Xcircle</strong> (<em>np.array</em>) – X-coordinates of the circle.</p></li>
+<li><p><strong>Ycircle</strong> (<em>np.array</em>) – Y-coordinates of the circle.</p></li>
+<li><p><em>Exemple</em></p></li>
+<li><p><em>——-</em> – for un in (‘u’,’n’):
+for pol in range(2):</p>
+<blockquote>
+<div><p>X,Y , Xcircle , Ycircle = random_walk_in_a_circle(10,10,0,0,50,10000,polar = pol,uniform_or_normal=un)</p>
 <p>plt.figure()
 plt.plot(Xcircle,Ycircle)
 plt.plot(X,Y)
 plt.axis(‘equal’)
 plt.suptitle(un + str(pol))</p>
-</dd>
-</dl>
+</div></blockquote>
+</li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1267,6 +1288,512 @@ use the old quaterinons toolbox</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-geodezyx.reffram.sofa18">
+<span id="geodezyx-reffram-sofa18-module"></span><h2>geodezyx.reffram.sofa18 module<a class="headerlink" href="#module-geodezyx.reffram.sofa18" title="Permalink to this headline">¶</a></h2>
+<p>This module ‘sofa18’ is auto-generated with f2py (version:2).
+Functions:</p>
+<blockquote>
+<div><p>iau_a2af(ndp,angle,sign,idmsf)
+iau_a2tf(ndp,angle,sign,ihmsf)
+iau_ab(pnat,v,s,bm1,ppr)
+iau_ae2hd(az,el,phi,ha,dec)
+iau_af2a(s,ideg,iamin,asec,rad,j)
+iau_anp = iau_anp(a)
+iau_anpm = iau_anpm(a)
+iau_apcg13(date1,date2,astrom)
+iau_apcg(date1,date2,ebpv,ehp,astrom)
+iau_apci13(date1,date2,astrom,eo)
+iau_apci(date1,date2,ebpv,ehp,x,y,s,astrom)
+iau_apco13(utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,astrom,eo,j)
+iau_apco(date1,date2,ebpv,ehp,x,y,s,theta,elong,phi,hm,xp,yp,sp,refa,refb,astrom)
+iau_apcs13(date1,date2,pv,astrom)
+iau_apcs(date1,date2,pv,ebpv,ehp,astrom)
+iau_aper13(ut11,ut12,astrom)
+iau_aper(theta,astrom)
+iau_apio13(utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,astrom,j)
+iau_apio(sp,theta,elong,phi,hm,xp,yp,refa,refb,astrom)
+iau_atcc13(rc,dc,pr,pd,px,rv,date1,date2,ra,da)
+iau_atccq(rc,dc,pr,pd,px,rv,astrom,ra,da)
+iau_atci13(rc,dc,pr,pd,px,rv,date1,date2,ri,di,eo)
+iau_atciq(rc,dc,pr,pd,px,rv,astrom,ri,di)
+iau_atciqn(rc,dc,pr,pd,px,rv,astrom,b,ri,di,n=shape(b,1))
+iau_atciqz(rc,dc,astrom,ri,di)
+iau_atco13(rc,dc,pr,pd,px,rv,utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,aob,zob,hob,dob,rob,eo,j)
+iau_atic13(ri,di,date1,date2,rc,dc,eo)
+iau_aticq(ri,di,astrom,rc,dc)
+iau_aticqn(ri,di,astrom,b,rc,dc,n=shape(b,1))
+iau_atio13(ri,di,utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,aob,zob,hob,dob,rob,j)
+iau_atioq(ri,di,astrom,aob,zob,hob,dob,rob)
+iau_atoc13(type_bn,ob1,ob2,utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,rc,dc,j)
+iau_atoi13(type_bn,ob1,ob2,utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,ri,di,j)
+iau_atoiq(type_bn,ob1,ob2,astrom,ri,di)
+iau_bi00(dpsibi,depsbi,dra)
+iau_bp00(date1,date2,rb,rp,rbp)
+iau_bp06(date1,date2,rb,rp,rbp)
+iau_bpn2xy(rbpn,x,y)
+iau_c2i00a(date1,date2,rc2i)
+iau_c2i00b(date1,date2,rc2i)
+iau_c2i06a(date1,date2,rc2i)
+iau_c2ibpn(date1,date2,rbpn,rc2i)
+iau_c2ixy(date1,date2,x,y,rc2i)
+iau_c2ixys(x,y,s,rc2i)
+iau_c2s(p,theta,phi)
+iau_c2t00a(tta,ttb,uta,utb,xp,yp,rc2t)
+iau_c2t00b(tta,ttb,uta,utb,xp,yp,rc2t)
+iau_c2t06a(tta,ttb,uta,utb,xp,yp,rc2t)
+iau_c2tceo(rc2i,era,rpom,rc2t)
+iau_c2tcio(rc2i,era,rpom,rc2t)
+iau_c2teqx(rbpn,gst,rpom,rc2t)
+iau_c2tpe(tta,ttb,uta,utb,dpsi,deps,xp,yp,rc2t)
+iau_c2txy(tta,ttb,uta,utb,x,y,xp,yp,rc2t)
+iau_cal2jd(iy,im,id,djm0,djm,j)
+iau_cp(p,c)
+iau_cpv(pv,c)
+iau_cr(r,c)
+iau_d2dtf(scale,ndp,d1,d2,iy,im,id,ihmsf,j)
+iau_d2tf(ndp,days,sign,ihmsf)
+iau_dat(iy,im,id,fd,deltat,j)
+iau_dtdb = iau_dtdb(date1,date2,ut,elong,u,v)
+iau_dtf2d(scale,iy,im,id,ihr,imn,sec,d1,d2,j)
+iau_eceq06(date1,date2,dl,db,dr,dd)
+iau_ecm06(date1,date2,rm)
+iau_ee00a = iau_ee00a(date1,date2)
+iau_ee00b = iau_ee00b(date1,date2)
+iau_ee00 = iau_ee00(date1,date2,epsa,dpsi)
+iau_ee06a = iau_ee06a(date1,date2)
+iau_eect00 = iau_eect00(date1,date2)
+iau_eform(n,a,f,j)
+iau_eo06a = iau_eo06a(date1,date2)
+iau_eors = iau_eors(rnpb,s)
+iau_epb2jd(epb,djm0,djm)
+iau_epb = iau_epb(dj1,dj2)
+iau_epj2jd(epj,djm0,djm)
+iau_epj = iau_epj(dj1,dj2)
+iau_epv00(date1,date2,pvh,pvb,jstat)
+iau_eqec06(date1,date2,dr,dd,dl,db)
+iau_eqeq94 = iau_eqeq94(date1,date2)
+iau_era00 = iau_era00(dj1,dj2)
+iau_fad03 = iau_fad03(t)
+iau_fae03 = iau_fae03(t)
+iau_faf03 = iau_faf03(t)
+iau_faju03 = iau_faju03(t)
+iau_fal03 = iau_fal03(t)
+iau_falp03 = iau_falp03(t)
+iau_fama03 = iau_fama03(t)
+iau_fame03 = iau_fame03(t)
+iau_fane03 = iau_fane03(t)
+iau_faom03 = iau_faom03(t)
+iau_fapa03 = iau_fapa03(t)
+iau_fasa03 = iau_fasa03(t)
+iau_faur03 = iau_faur03(t)
+iau_fave03 = iau_fave03(t)
+iau_fk425(r1950,d1950,dr1950,dd1950,p1950,v1950,r2000,d2000,dr2000,dd2000,p2000,v2000)
+iau_fk45z(r1950,d1950,bepoch,r2000,d2000)
+iau_fk524(r2000,d2000,dr2000,dd2000,p2000,v2000,r1950,d1950,dr1950,dd1950,p1950,v1950)
+iau_fk52h(r5,d5,dr5,dd5,px5,rv5,rh,dh,drh,ddh,pxh,rvh)
+iau_fk54z(r2000,d2000,bepoch,r1950,d1950,dr1950,dd1950)
+iau_fk5hip(r5h,s5h)
+iau_fk5hz(r5,d5,date1,date2,rh,dh)
+iau_fw2m(gamb,phib,psi,eps,r)
+iau_fw2xy(gamb,phib,psi,eps,x,y)
+iau_g2icrs(dl,db,dr,dd)
+iau_gc2gde(a,f,xyz,elong,phi,height,j)
+iau_gc2gd(n,xyz,elong,phi,height,j)
+iau_gd2gce(a,f,elong,phi,height,xyz,j)
+iau_gd2gc(n,elong,phi,height,xyz,j)
+iau_gmst00 = iau_gmst00(uta,utb,tta,ttb)
+iau_gmst06 = iau_gmst06(uta,utb,tta,ttb)
+iau_gmst82 = iau_gmst82(dj1,dj2)
+iau_gst00a = iau_gst00a(uta,utb,tta,ttb)
+iau_gst00b = iau_gst00b(uta,utb)
+iau_gst06a = iau_gst06a(uta,utb,tta,ttb)
+iau_gst06 = iau_gst06(uta,utb,tta,ttb,rnpb)
+iau_gst94 = iau_gst94(uta,utb)
+iau_h2fk5(rh,dh,drh,ddh,pxh,rvh,r5,d5,dr5,dd5,px5,rv5)
+iau_hd2ae(ha,dec,phi,az,el)
+iau_hd2pa = iau_hd2pa(ha,dec,phi)
+iau_hfk5z(rh,dh,date1,date2,r5,d5,dr5,dd5)
+iau_icrs2g(dr,dd,dl,db)
+iau_ir(r)
+iau_jd2cal(dj1,dj2,iy,im,id,fd,j)
+iau_jdcalf(ndp,dj1,dj2,iymdf,j)
+iau_ld(bm,p,q,e,em,dlim,p1)
+iau_ldn(b,ob,sc,sn,n=shape(b,1))
+iau_ldsun(p,e,em,p1)
+iau_lteceq(epj,dl,db,dr,dd)
+iau_ltecm(epj,rm)
+iau_lteqec(epj,dr,dd,dl,db)
+iau_ltpb(epj,rpb)
+iau_ltpecl(epj,vec)
+iau_ltpequ(epj,veq)
+iau_ltp(epj,rp)
+iau_moon98(date1,date2,pv)
+iau_num00a(date1,date2,rmatn)
+iau_num00b(date1,date2,rmatn)
+iau_num06a(date1,date2,rmatn)
+iau_numat(epsa,dpsi,deps,rmatn)
+iau_nut00a(date1,date2,dpsi,deps)
+iau_nut00b(date1,date2,dpsi,deps)
+iau_nut06a(date1,date2,dpsi,deps)
+iau_nut80(date1,date2,dpsi,deps)
+iau_nutm80(date1,date2,rmatn)
+iau_obl06 = iau_obl06(date1,date2)
+iau_obl80 = iau_obl80(date1,date2)
+iau_p06e(date1,date2,eps0,psia,oma,bpa,bqa,pia,bpia,epsa,chia,za,zetaa,thetaa,pa,gam,phi,psi)
+iau_p2pv(p,pv)
+iau_p2s(p,theta,phi,r)
+iau_pap(a,b,theta)
+iau_pas(al,ap,bl,bp,theta)
+iau_pb06(date1,date2,bzeta,bz,btheta)
+iau_pdp(a,b,adb)
+iau_pfw06(date1,date2,gamb,phib,psib,epsa)
+iau_plan94(date1,date2,np,pv,j)
+iau_pmat00(date1,date2,rbp)
+iau_pmat06(date1,date2,rbp)
+iau_pmat76(date1,date2,rmatp)
+iau_pm(p,r)
+iau_pmp(a,b,amb)
+iau_pmpx(rc,dc,pr,pd,px,rv,pmt,pob,pco)
+iau_pmsafe(ra1,dec1,pmr1,pmd1,px1,rv1,ep1a,ep1b,ep2a,ep2b,ra2,dec2,pmr2,pmd2,px2,rv2,j)
+iau_pn00a(date1,date2,dpsi,deps,epsa,rb,rp,rbp,rn,rbpn)
+iau_pn00b(date1,date2,dpsi,deps,epsa,rb,rp,rbp,rn,rbpn)
+iau_pn00(date1,date2,dpsi,deps,epsa,rb,rp,rbp,rn,rbpn)
+iau_pn06a(date1,date2,dpsi,deps,epsa,rb,rp,rbp,rn,rbpn)
+iau_pn06(date1,date2,dpsi,deps,epsa,rb,rp,rbp,rn,rbpn)
+iau_pn(p,r,u)
+iau_pnm00a(date1,date2,rbpn)
+iau_pnm00b(date1,date2,rbpn)
+iau_pnm06a(date1,date2,rbpn)
+iau_pnm80(date1,date2,rmatpn)
+iau_pom00(xp,yp,sp,rpom)
+iau_ppp(a,b,apb)
+iau_ppsp(a,s,b,apsb)
+iau_pr00(date1,date2,dpsipr,depspr)
+iau_prec76(date01,date02,date11,date12,zeta,z,theta)
+iau_pv2p(pv,p)
+iau_pv2s(pv,theta,phi,r,td,pd,rd)
+iau_pvdpv(a,b,adb)
+iau_pvm(pv,r,s)
+iau_pvmpv(a,b,amb)
+iau_pvppv(a,b,apb)
+iau_pvstar(pv,ra,dec,pmr,pmd,px,rv,j)
+iau_pvtob(elong,phi,hm,xp,yp,sp,theta,pv)
+iau_pvu(dt,pv,upv)
+iau_pvup(dt,pv,p)
+iau_pvxpv(a,b,axb)
+iau_pxp(a,b,axb)
+iau_refco(phpa,tc,rh,wl,refa,refb)
+iau_rm2v(r,w)
+iau_rv2m(w,r)
+iau_rx(phi,r)
+iau_rxp(r,p,rp)
+iau_rxpv(r,pv,rpv)
+iau_rxr(a,b,atb)
+iau_ry(theta,r)
+iau_rz(psi,r)
+iau_s00a = iau_s00a(date1,date2)
+iau_s00b = iau_s00b(date1,date2)
+iau_s00 = iau_s00(date1,date2,x,y)
+iau_s06a = iau_s06a(date1,date2)
+iau_s06 = iau_s06(date1,date2,x,y)
+iau_s2c(theta,phi,c)
+iau_s2p(theta,phi,r,p)
+iau_s2pv(theta,phi,r,td,pd,rd,pv)
+iau_s2xpv(s1,s2,pv,spv)
+iau_sepp(a,b,s)
+iau_seps(al,ap,bl,bp,s)
+iau_sp00 = iau_sp00(date1,date2)
+iau_starpm(ra1,dec1,pmr1,pmd1,px1,rv1,ep1a,ep1b,ep2a,ep2b,ra2,dec2,pmr2,pmd2,px2,rv2,j)
+iau_starpv(ra,dec,pmr,pmd,px,rv,pv,j)
+iau_sxp(s,p,sp)
+iau_sxpv(s,pv,spv)
+iau_taitt(tai1,tai2,tt1,tt2,j)
+iau_taiut1(tai1,tai2,dta,ut11,ut12,j)
+iau_taiutc(tai1,tai2,utc1,utc2,j)
+iau_tcbtdb(tcb1,tcb2,tdb1,tdb2,j)
+iau_tcgtt(tcg1,tcg2,tt1,tt2,j)
+iau_tdbtcb(tdb1,tdb2,tcb1,tcb2,j)
+iau_tdbtt(tdb1,tdb2,dtr,tt1,tt2,j)
+iau_tf2a(s,ihour,imin,sec,rad,j)
+iau_tf2d(s,ihour,imin,sec,days,j)
+iau_tpors(xi,eta,a,b,a01,b01,a02,b02,n)
+iau_tporv(xi,eta,v,v01,v02,n)
+iau_tpsts(xi,eta,a0,b0,a,b)
+iau_tpstv(xi,eta,v0,v)
+iau_tpxes(a,b,a0,b0,xi,eta,j)
+iau_tpxev(v,v0,xi,eta,j)
+iau_tr(r,rt)
+iau_trxp(r,p,trp)
+iau_trxpv(r,pv,trpv)
+viv(ival,ivalok,func,test,status)
+vvd(val,valok,dval,func,test,status)
+err(func,test,status)
+t_iau_a2af(status)
+t_iau_a2tf(status)
+t_iau_ab(status)
+t_iau_ae2hd(status)
+t_iau_af2a(status)
+t_iau_anp(status)
+t_iau_anpm(status)
+t_iau_apcg(status)
+t_iau_apcg13(status)
+t_iau_apci(status)
+t_iau_apci13(status)
+t_iau_apco(status)
+t_iau_apco13(status)
+t_iau_apcs(status)
+t_iau_apcs13(status)
+t_iau_aper(status)
+t_iau_aper13(status)
+t_iau_apio(status)
+t_iau_apio13(status)
+t_iau_atcc13(status)
+t_iau_atccq(status)
+t_iau_atci13(status)
+t_iau_atciq(status)
+t_iau_atciqn(status)
+t_iau_atciqz(status)
+t_iau_atco13(status)
+t_iau_atic13(status)
+t_iau_aticq(status)
+t_iau_aticqn(status)
+t_iau_atio13(status)
+t_iau_atioq(status)
+t_iau_atoc13(status)
+t_iau_atoi13(status)
+t_iau_atoiq(status)
+t_iau_bi00(status)
+t_iau_bp00(status)
+t_iau_bp06(status)
+t_iau_bpn2xy(status)
+t_iau_c2i00a(status)
+t_iau_c2i00b(status)
+t_iau_c2i06a(status)
+t_iau_c2ibpn(status)
+t_iau_c2ixy(status)
+t_iau_c2ixys(status)
+t_iau_c2s(status)
+t_iau_c2t00a(status)
+t_iau_c2t00b(status)
+t_iau_c2t06a(status)
+t_iau_c2tcio(status)
+t_iau_c2teqx(status)
+t_iau_c2tpe(status)
+t_iau_c2txy(status)
+t_iau_cal2jd(status)
+t_iau_cp(status)
+t_iau_cpv(status)
+t_iau_cr(status)
+t_iau_d2dtf(status)
+t_iau_d2tf(status)
+t_iau_dat(status)
+t_iau_dtdb(status)
+t_iau_dtf2d(status)
+t_iau_eceq06(status)
+t_iau_ecm06(status)
+t_iau_ee00(status)
+t_iau_ee00a(status)
+t_iau_ee00b(status)
+t_iau_ee06a(status)
+t_iau_eect00(status)
+t_iau_eform(status)
+t_iau_eo06a(status)
+t_iau_eors(status)
+t_iau_epb(status)
+t_iau_epb2jd(status)
+t_iau_epj(status)
+t_iau_epj2jd(status)
+t_iau_epv00(status)
+t_iau_eqec06(status)
+t_iau_eqeq94(status)
+t_iau_era00(status)
+t_iau_fad03(status)
+t_iau_fae03(status)
+t_iau_faf03(status)
+t_iau_faju03(status)
+t_iau_fal03(status)
+t_iau_falp03(status)
+t_iau_fama03(status)
+t_iau_fame03(status)
+t_iau_fane03(status)
+t_iau_faom03(status)
+t_iau_fapa03(status)
+t_iau_fasa03(status)
+t_iau_faur03(status)
+t_iau_fave03(status)
+t_iau_fk425(status)
+t_iau_fk45z(status)
+t_iau_fk524(status)
+t_iau_fk52h(status)
+t_iau_fk54z(status)
+t_iau_fk5hip(status)
+t_iau_fk5hz(status)
+t_iau_fw2m(status)
+t_iau_fw2xy(status)
+t_iau_g2icrs(status)
+t_iau_gc2gd(status)
+t_iau_gc2gde(status)
+t_iau_gd2gc(status)
+t_iau_gd2gce(status)
+t_iau_gmst00(status)
+t_iau_gmst06(status)
+t_iau_gmst82(status)
+t_iau_gst00a(status)
+t_iau_gst00b(status)
+t_iau_gst06(status)
+t_iau_gst06a(status)
+t_iau_gst94(status)
+t_iau_h2fk5(status)
+t_iau_hd2ae(status)
+t_iau_hd2pa(status)
+t_iau_hfk5z(status)
+t_iau_icrs2g(status)
+t_iau_ir(status)
+t_iau_jd2cal(status)
+t_iau_jdcalf(status)
+t_iau_ld(status)
+t_iau_ldn(status)
+t_iau_ldsun(status)
+t_iau_lteceq(status)
+t_iau_ltecm(status)
+t_iau_lteqec(status)
+t_iau_ltp(status)
+t_iau_ltpb(status)
+t_iau_ltpecl(status)
+t_iau_ltpequ(status)
+t_iau_moon98(status)
+t_iau_num00a(status)
+t_iau_num00b(status)
+t_iau_num06a(status)
+t_iau_numat(status)
+t_iau_nut00a(status)
+t_iau_nut00b(status)
+t_iau_nut06a(status)
+t_iau_nut80(status)
+t_iau_nutm80(status)
+t_iau_obl06(status)
+t_iau_obl80(status)
+t_iau_p06e(status)
+t_iau_p2pv(status)
+t_iau_p2s(status)
+t_iau_pap(status)
+t_iau_pas(status)
+t_iau_pb06(status)
+t_iau_pdp(status)
+t_iau_pfw06(status)
+t_iau_plan94(status)
+t_iau_pmat00(status)
+t_iau_pmat06(status)
+t_iau_pmat76(status)
+t_iau_pm(status)
+t_iau_pmp(status)
+t_iau_pmpx(status)
+t_iau_pmsafe(status)
+t_iau_pn(status)
+t_iau_pn00(status)
+t_iau_pn00a(status)
+t_iau_pn00b(status)
+t_iau_pn06a(status)
+t_iau_pn06(status)
+t_iau_pnm00a(status)
+t_iau_pnm00b(status)
+t_iau_pnm06a(status)
+t_iau_pnm80(status)
+t_iau_pom00(status)
+t_iau_ppp(status)
+t_iau_ppsp(status)
+t_iau_pr00(status)
+t_iau_prec76(status)
+t_iau_pv2p(status)
+t_iau_pv2s(status)
+t_iau_pvdpv(status)
+t_iau_pvm(status)
+t_iau_pvmpv(status)
+t_iau_pvppv(status)
+t_iau_pvstar(status)
+t_iau_pvtob(status)
+t_iau_pvu(status)
+t_iau_pvup(status)
+t_iau_pvxpv(status)
+t_iau_pxp(status)
+t_iau_refco(status)
+t_iau_rm2v(status)
+t_iau_rv2m(status)
+t_iau_rx(status)
+t_iau_rxp(status)
+t_iau_rxpv(status)
+t_iau_rxr(status)
+t_iau_ry(status)
+t_iau_rz(status)
+t_iau_s00a(status)
+t_iau_s00b(status)
+t_iau_s00(status)
+t_iau_s06a(status)
+t_iau_s06(status)
+t_iau_s2c(status)
+t_iau_s2p(status)
+t_iau_s2pv(status)
+t_iau_s2xpv(status)
+t_iau_sepp(status)
+t_iau_seps(status)
+t_iau_sp00(status)
+t_iau_starpm(status)
+t_iau_starpv(status)
+t_iau_sxp(status)
+t_iau_sxpv(status)
+t_iau_taitt(status)
+t_iau_taiut1(status)
+t_iau_taiutc(status)
+t_iau_tcbtdb(status)
+t_iau_tcgtt(status)
+t_iau_tdbtcb(status)
+t_iau_tdbtt(status)
+t_iau_tf2a(status)
+t_iau_tf2d(status)
+t_iau_tpors(status)
+t_iau_tporv(status)
+t_iau_tpsts(status)
+t_iau_tpstv(status)
+t_iau_tpxes(status)
+t_iau_tpxev(status)
+t_iau_tr(status)
+t_iau_trxp(status)
+t_iau_trxpv(status)
+t_iau_tttai(status)
+t_iau_tttcg(status)
+t_iau_tttdb(status)
+t_iau_ttut1(status)
+t_iau_ut1tai(status)
+t_iau_ut1tt(status)
+t_iau_ut1utc(status)
+t_iau_utctai(status)
+t_iau_utcut1(status)
+t_iau_xy06(status)
+t_iau_xys00a(status)
+t_iau_xys00b(status)
+t_iau_xys06a(status)
+t_iau_zp(status)
+t_iau_zpv(status)
+t_iau_zr(status)
+iau_tttai(tt1,tt2,tai1,tai2,j)
+iau_tttcg(tt1,tt2,tcg1,tcg2,j)
+iau_tttdb(tt1,tt2,dtr,tdb1,tdb2,j)
+iau_ttut1(tt1,tt2,dt,ut11,ut12,j)
+iau_ut1tai(ut11,ut12,dta,tai1,tai2,j)
+iau_ut1tt(ut11,ut12,dt,tt1,tt2,j)
+iau_ut1utc(ut11,ut12,dut1,utc1,utc2,j)
+iau_utctai(utc1,utc2,tai1,tai2,j)
+iau_utcut1(utc1,utc2,dut1,ut11,ut12,j)
+iau_xy06(date1,date2,x,y)
+iau_xys00a(date1,date2,x,y,s)
+iau_xys00b(date1,date2,x,y,s)
+iau_xys06a(date1,date2,x,y,s)
+iau_zp(p)
+iau_zpv(pv)
+iau_zr(r)</p>
+</div></blockquote>
+<p>.</p>
+</div>
 </div>
 
 
@@ -1274,10 +1801,6 @@ use the old quaterinons toolbox</p>
            
           </div>
           <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="geodezyx.stats.html" class="btn btn-neutral float-right" title="geodezyx.stats package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="geodezyx.operational.html" class="btn btn-neutral float-left" title="geodezyx.operational package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-    </div>
 
   <hr/>
 

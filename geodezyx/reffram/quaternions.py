@@ -20,24 +20,13 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 
 ########## BEGIN IMPORT ##########
 #### External modules
-import matplotlib
-import matplotlib.pyplot as plt
-import natsort
 import numpy as np
-import os 
-import pandas as pd
-import re
 from scipy.spatial.transform import Rotation
 
 #### geodeZYX modules
-from geodezyx import conv
-from geodezyx import files_rw
-from geodezyx import stats
 from geodezyx import utils
 
 ##########  END IMPORT  ##########
-
-
 
 
 #   ____              _                  _
