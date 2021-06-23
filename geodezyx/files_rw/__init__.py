@@ -8,4 +8,5 @@ from .read_coords_time_series import *
 from .read_geo_files          import *
 from .read_gnss_prods         import *
 from .read_logsheets          import *
+from .read_igs_combi          import *
 from .write_geo_files         import *

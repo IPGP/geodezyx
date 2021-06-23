@@ -278,9 +278,25 @@ def read_erp_multi(path_list,
                    smart_mode=True,
                    ac=None):
     """
-    Input :
-        path_list : a list of ERP files
-        smart_mode : keep only the latest value (True is recommended)
+    
+
+    Parameters
+    ----------
+    path_list : list
+        a list of ERP files.
+    return_array : ool, optional
+        retur results in Array or DataFrame. The default is False.
+    smart_mode : bool, optional
+        keep only the latest value (True is recommended). 
+        The default is True.
+    ac : str, optional
+        select a specific AC. The default is None.
+
+    Returns
+    -------
+     Array or DataFrame
+        output ERPs.
+
     """
     path_list = sorted(path_list)
     Lstk = []
@@ -306,8 +322,6 @@ def read_erp_multi(path_list,
         return M
     else:
         return pd.DataFrame(M)
-
-
 
 
 

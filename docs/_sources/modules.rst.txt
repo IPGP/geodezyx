@@ -1,7 +1,7 @@
-GeodeZYX's complete reference
-==================================================
+geodezyx
+========
 
 .. toctree::
    :maxdepth: 4
 
-   GeodeZYX's complete reference
+   geodezyx

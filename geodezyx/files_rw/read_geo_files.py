@@ -28,7 +28,6 @@ import os
 import pandas as pd
 import re
 
-
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import time_series
@@ -51,8 +50,7 @@ from geodezyx import utils
  #    | | | | (_) | |_) | (_) \__ \ |_) | | | |  __/ | |  __/ | |    | | |  __/\__ \
  #    |_|_|  \___/| .__/ \___/|___/ .__/|_| |_|\___|_|  \___| |_|    |_|_|\___||___/
  #                | |             | |                                               
- #                |_|             |_|        
-                
+ #                |_|             |_|                    
                 
 def read_snx_trop(snxfile,dataframe_output=True,version=2):
     """
@@ -300,12 +298,6 @@ def read_rinex_met_2(metfile):
     df.set_index('epoch',inplace=True)
     return df
 
-
-
-
-
-
-
  #  ______                _   _                _____                                         _ 
  # |  ____|              | | (_)              / ____|                                       | |
  # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
@@ -314,8 +306,6 @@ def read_rinex_met_2(metfile):
  # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
  #                                                                        __/ |                
  #                                                                       |___/       
-
-
 
 def read_erp_bad(path,return_array=False):
     """
@@ -968,5 +958,72 @@ def list_files(dire,file = None):
 
     return path
 
-
  
+def AC_equiv_vals(AC1,AC2):
+    """
+    Find common values between 2 Orbit DataFrame (from SP3)
+
+    Note
+    ----
+    Redundant with reffram.OrbDF_common_epoch_finder
+    this function should not be used anymore
+    
+    Parameters
+    ----------
+    AC1 : DataFrame
+        Orbit DataFrame 1.
+    AC2 : DataFrame
+        Orbit DataFrame 2.
+
+    Returns
+    -------
+    AC1_ok : DataFrame
+        Cleaned Orbit DataFrame 1.
+    AC2_ok : DataFrame
+        Cleaned Orbit DataFrame 2.
+    ACmerged : DataFrame
+        Merged orbit DataFrame.
+    """
+    
+    print("WARN: This function is redundant with reffram.OrbDF_common_epoch_finder, use the latter one")
+    
+    ### 1) Merge the 2 DF to find common lines
+    ACmerged = pd.merge(AC1 , AC2 , how='inner', on=['epoch', 'sat'])
+
+    ### 2) Extract merged epoch & sv
+    common_epoch = ACmerged["epoch"]
+    common_sat   = ACmerged["sat"]
+    ### 3) Create a boolean line based on common epoch / sv
+    common_sat_epoch_AC1 = (AC1["epoch"].isin(common_epoch)) & (AC1["sat"].isin(common_sat))
+    common_sat_epoch_AC2 = (AC2["epoch"].isin(common_epoch)) & (AC2["sat"].isin(common_sat))
+    ### 4) Get epoch and sv in the combined sol which correspond to the SP3
+    AC1new = AC1[common_sat_epoch_AC1].copy()
+    AC2new = AC2[common_sat_epoch_AC2].copy()
+    ### 5) A sort to compare the same things
+    AC1new.sort_values(by=['sat','sv'],inplace=True)
+    AC2new.sort_values(by=['sat','sv'],inplace=True)
+
+    ### Check for > 99999 vals
+    AC1_bad_bool_9  = (AC1new["x"] > 9999) & (AC1new["y"] > 9999) & (AC1new["z"] > 9999)
+    AC1_bad_bool_9  = np.logical_not(np.array(AC1_bad_bool_9))
+
+    AC2_bad_bool_9  = (AC2new["x"] > 9999) & (AC2new["y"] > 9999) & (AC2new["z"] > 9999)
+    AC2_bad_bool_9  = np.logical_not(np.array(AC2_bad_bool_9))
+
+    AC12_bad_bool_9 = np.array(np.logical_and(AC1_bad_bool_9 , AC2_bad_bool_9))
+
+    ### Check for NaN vals
+    AC1_bad_bool_nan  = np.isnan(AC1new["x"]) & np.isnan(AC1new["y"]) & np.isnan(AC1new["z"])
+    AC1_bad_bool_nan  = np.logical_not(np.array(AC1_bad_bool_nan))
+
+    AC2_bad_bool_nan  = np.isnan(AC2new["x"]) & np.isnan(AC2new["y"]) & np.isnan(AC2new["z"])
+    AC2_bad_bool_nan  = np.logical_not(np.array(AC2_bad_bool_nan))
+
+    AC12_bad_bool_nan = np.array(np.logical_and(AC1_bad_bool_nan , AC2_bad_bool_nan))
+
+    AC12_bad_bool = np.logical_and(AC12_bad_bool_9, AC12_bad_bool_nan)
+
+    AC1_ok = AC1new[AC12_bad_bool]
+    AC2_ok = AC2new[AC12_bad_bool]
+
+    return AC1_ok , AC2_ok , ACmerged

@@ -30,9 +30,9 @@ from geodezyx import files_rw
 from geodezyx import reffram
 
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 ##########  END IMPORT  ##########
     
 def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',

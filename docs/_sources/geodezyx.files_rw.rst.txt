@@ -17,10 +17,26 @@ geodezyx.files\_rw.geo\_files\_converter\_lib module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.files\_rw.read\_coords\_misc module
+--------------------------------------------
+
+.. automodule:: geodezyx.files_rw.read_coords_misc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.files\_rw.read\_coords\_time\_series module
 ----------------------------------------------------
 
 .. automodule:: geodezyx.files_rw.read_coords_time_series
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geodezyx.files\_rw.read\_eop module
+-----------------------------------
+
+.. automodule:: geodezyx.files_rw.read_eop
    :members:
    :undoc-members:
    :show-inheritance:
@@ -33,10 +49,34 @@ geodezyx.files\_rw.read\_geo\_files module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.files\_rw.read\_gnss\_prods module
+-------------------------------------------
+
+.. automodule:: geodezyx.files_rw.read_gnss_prods
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geodezyx.files\_rw.read\_igs\_combi module
+------------------------------------------
+
+.. automodule:: geodezyx.files_rw.read_igs_combi
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.files\_rw.read\_logsheets module
 -----------------------------------------
 
 .. automodule:: geodezyx.files_rw.read_logsheets
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geodezyx.files\_rw.read\_slr module
+-----------------------------------
+
+.. automodule:: geodezyx.files_rw.read_slr
    :members:
    :undoc-members:
    :show-inheritance:

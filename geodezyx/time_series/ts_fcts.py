@@ -372,31 +372,31 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
                 print("Nettoyage par la MAD")
                 print("------------------------------")
             dAin = dA
-            dA,bb = stats.outiler_mad(dA,seuil=seuil)
+            dA,bb = stats.outlier_mad(dA,seuil=seuil)
             dAout = dA
             TA = conv.posix2dt(np.array(Tref[bb]))
 
             dBin = dB
-            dB,bb = stats.outiler_mad(dB,seuil=seuil)
+            dB,bb = stats.outlier_mad(dB,seuil=seuil)
             dBout = dB
             TB = conv.posix2dt(np.array(Tref[bb]))
 
             dCin = dC
-            dC,bb = stats.outiler_mad(dC,seuil=seuil)
+            dC,bb = stats.outlier_mad(dC,seuil=seuil)
             dCout = dC
             TC = conv.posix2dt(np.array(Tref[bb]))
 
             dDin = dD
-            dD,bb = stats.outiler_mad(dD,seuil=seuil)
+            dD,bb = stats.outlier_mad(dD,seuil=seuil)
             TD = conv.posix2dt(np.array(Tref[bb]))
             dDout = dD
             if D2n3:
                 dD2Din = dD2D
-                dD2D,bb = stats.outiler_mad(dD2D,seuil=seuil)
+                dD2D,bb = stats.outlier_mad(dD2D,seuil=seuil)
                 TD2D = conv.posix2dt(np.array(Tref[bb]))
                 dD2Dout = dD2D
                 dD3Din = dD3D
-                dD3D,bb = stats.outiler_mad(dD3D,seuil=seuil)
+                dD3D,bb = stats.outlier_mad(dD3D,seuil=seuil)
                 TD3D = conv.posix2dt(np.array(Tref[bb]))
                 dD3Dout = dD3D
 
@@ -547,11 +547,11 @@ def mad_cleaner(tsin,seuil=3.5,method='dist',coortype='ABC',
     D = np.sqrt(A ** 2 + B ** 2 + C ** 2)
 
     if method == 'dist':
-        Dout , bb = stats.outiler_mad(D,seuil)
+        Dout , bb = stats.outlier_mad(D,seuil)
     if method == 'indep':
-        Aout , bbA = stats.outiler_mad(A,seuil)
-        Bout , bbB = stats.outiler_mad(B,seuil)
-        Cout , bbC = stats.outiler_mad(C,seuil)
+        Aout , bbA = stats.outlier_mad(A,seuil)
+        Bout , bbB = stats.outlier_mad(B,seuil)
+        Cout , bbC = stats.outlier_mad(C,seuil)
 
         bb = bbA * bbB * bbC
 
@@ -574,9 +574,9 @@ def sigma_cleaner(tsin,seuil=3,coortype='ABC',cleantype='any', verbose=False):
 
     A,B,C,T,sA,sB,sC = tsin.to_list(coortype)
 
-    sAout , bbsA = stats.outlier_sigma(sA,seuil)
-    sBout , bbsB = stats.outlier_sigma(sB,seuil)
-    sCout , bbsC = stats.outlier_sigma(sC,seuil)
+    sAout , bbsA = stats.outiler_sigma(sA,seuil)
+    sBout , bbsB = stats.outiler_sigma(sB,seuil)
+    sCout , bbsC = stats.outiler_sigma(sC,seuil)
 
     if cleantype == 'any':
         boolbad = bbsA * bbsB * bbsC
