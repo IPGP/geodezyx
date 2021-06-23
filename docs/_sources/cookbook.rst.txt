@@ -18,13 +18,6 @@ The basic idea behind it is the conversion to and from the ``datetime`` objects 
 
 The generic structure of the fuctions is ``conv.<input time scale/representation>2<output time scale/representation>``.
 
-Complete reference
-==================
-
-All the module's functionalites can be found here:
-:py:mod:`geodezyx.conv.conv_time`
-
-
 Time conversion exemples
 ========================
 
@@ -70,6 +63,12 @@ Convert a SP3 name to decimal year
 
 It handles also RINEX names with ``conv.rinexname2dt(p_rinex)`` (old and new naming)
 (Documentation here: :py:func:`geodezyx.conv.conv_time.rinexname2dt`)
+
+Complete reference
+==================
+
+All the module's functionalites can be found here:
+:py:mod:`geodezyx.conv.conv_time`
 
 -------------------
 Convert coordinates 

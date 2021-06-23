@@ -1,7 +1,7 @@
-geodezyx package
-================
+GeodeZYX's complete reference package
+==========================================================
 
-.. automodule:: geodezyx
+.. automodule:: GeodeZYX's complete reference
    :members:
    :undoc-members:
    :show-inheritance:
