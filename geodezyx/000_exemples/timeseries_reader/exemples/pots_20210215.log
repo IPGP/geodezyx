@@ -1,0 +1,785 @@
+     POTS Site Information Form (site log)
+     International GNSS Service
+     See Instructions at:
+       ftp://igscb.jpl.nasa.gov/pub/station/general/sitelog_instr.txt
+
+0.   Form
+
+     Prepared by (full name)  : markus.bradke@gfz-potsdam.de
+     Date Prepared            : 2021-02-15
+     Report Type              : UPDATE
+     If Update:
+      Previous Site Log       : pots_20201104.log
+      Modified/Added Sections : 0, 10.1
+
+
+1.   Site Identification of the GNSS Monument
+
+     Site Name                : Potsdam, GeoForschungsZentrum
+     Four Character ID        : POTS
+     Monument Inscription     : Geodetic pillar North-East on building
+     IERS DOMES Number        : 14106M003
+     CDP Number               : (A4)
+     Monument Description     : PILLAR
+       Height of the Monument : 1.40
+       Monument Foundation    : ROOF
+       Foundation Depth       : (m)
+     Marker Description       : BRASS NAIL
+     Date Installed           : 1994-10-14T00:00Z
+     Geologic Characteristic  : SAND
+       Bedrock Type           : SEDIMENTARY
+       Bedrock Condition      : (FRESH/JOINTED/WEATHERED)
+       Fracture Spacing       : (1-10 cm/11-50 cm/51-200 cm/over 200 cm)
+       Fault zones nearby     : (YES/NO/Name of the zone)
+         Distance/activity    : (multiple lines)
+     Additional Information   : (multiple lines)
+
+
+2.   Site Location Information
+
+     City or Town             : Potsdam
+     State or Province        : Brandenburg
+     Country                  : GERMANY
+     Tectonic Plate           : EURASIAN
+     Approximate Position (ITRF)
+       X coordinate (m)       : 3800689.6341
+       Y coordinate (m)       : 882077.3857
+       Z coordinate (m)       : 5028791.3179
+       Latitude (N is +)      : +522245.47
+       Longitude (E is +)     : +0130357.93
+       Elevation (m,ellips.)  :   144.4
+     Additional Information   : (multiple lines)
+
+
+3.   GNSS Receiver Information
+
+3.1  Receiver Type            : ROGUE SNR-8000
+     Satellite System         : GPS
+     Serial Number            : 289
+     Firmware Version         : 2.8.32.1X
+     Elevation Cutoff Setting : 4
+     Date Installed           : 1994-10-01T00:00Z
+     Date Removed             : 1996-01-15T23:59Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.2  Receiver Type            : ROGUE SNR-8000
+     Satellite System         : GPS
+     Serial Number            : 279
+     Firmware Version         : 3.2
+     Elevation Cutoff Setting : 4
+     Date Installed           : 1996-01-16T13:48Z
+     Date Removed             : 1996-05-30T07:53Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.3  Receiver Type            : ROGUE SNR-8000
+     Satellite System         : GPS
+     Serial Number            : 289
+     Firmware Version         : 3.2
+     Elevation Cutoff Setting : 4
+     Date Installed           : 1996-05-30T08:01Z
+     Date Removed             : 1999-08-19T00:00Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.4  Receiver Type            : AOA SNR-8000 ACT
+     Satellite System         : GPS
+     Serial Number            : 281
+     Firmware Version         : 3.2.32.9
+     Elevation Cutoff Setting : 4
+     Date Installed           : 1999-08-20T00:00Z
+     Date Removed             : 2000-08-19T00:00Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.5  Receiver Type            : AOA SNR-8000 ACT
+     Satellite System         : GPS
+     Serial Number            : 281-U
+     Firmware Version         : 3.3.32.3
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2000-08-20T00:00Z
+     Date Removed             : 2009-03-30T00:00Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.6  Receiver Type            : SEPT POLARX2
+     Satellite System         : GPS
+     Serial Number            : 1358
+     Firmware Version         : 2.5.0
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2009-03-30T00:00Z
+     Date Removed             : 2011-02-15T17:00Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.7  Receiver Type            : JAVAD TRE_G3TH DELTA
+     Satellite System         : GPS+GLO+GAL
+     Serial Number            : 205
+     Firmware Version         : 3.1.7
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2011-02-15T17:00Z
+     Date Removed             : 2011-11-03T14:30Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.8  Receiver Type            : JAVAD TRE_G3TH DELTA
+     Satellite System         : GPS+GLO+GAL
+     Serial Number            : 205
+     Firmware Version         : 3.2.7
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2011-11-03T14:30Z
+     Date Removed             : 2011-12-20T10:38Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.9  Receiver Type            : JAVAD TRE_G3TH DELTA
+     Satellite System         : GPS+GLO+GAL
+     Serial Number            : 205
+     Firmware Version         : 3.3.5
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2011-12-20T10:38Z
+     Date Removed             : 2012-06-12T09:00Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.10 Receiver Type            : JAVAD TRE_G3TH DELTA
+     Satellite System         : GPS+GLO+GAL
+     Serial Number            : 205
+     Firmware Version         : 3.4.4b0
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2012-06-12T09:00Z
+     Date Removed             : 2013-01-09T10:12Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.11 Receiver Type            : JAVAD TRE_G3TH DELTA
+     Satellite System         : GPS+GLO+GAL
+     Serial Number            : 205
+     Firmware Version         : 3.4.7
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2013-01-09T10:13Z
+     Date Removed             : 2015-09-15T13:58Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.12 Receiver Type            : JAVAD TRE_G3TH DELTA
+     Satellite System         : GPS+GLO+GAL
+     Serial Number            : 205
+     Firmware Version         : 3.5.10
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2015-09-15T13:58Z
+     Date Removed             : 2016-10-25T14:06Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.13 Receiver Type            : JAVAD TRE_G3TH DELTA
+     Satellite System         : GPS+GLO+GAL
+     Serial Number            : 205
+     Firmware Version         : 3.6.7
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2016-10-25T14:06Z
+     Date Removed             : 2018-07-09T14:47Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : enables tracking of E01/E02
+
+3.14 Receiver Type            : JAVAD TRE_G3TH DELTA
+     Satellite System         : GPS+GLO+GAL
+     Serial Number            : 205
+     Firmware Version         : 3.7.3P1
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2018-07-09T14:48Z
+     Date Removed             : 2018-07-17T09:30Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+3.15 Receiver Type            : JAVAD TRE_3
+     Satellite System         : GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS
+     Serial Number            : 4171773
+     Firmware Version         : 3.7.3P1
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2018-07-17T10:00Z
+     Date Removed             : 2018-09-06T00:00Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : tinyPC/4 S/N 006
+                              : Board revision TRE_3_4
+
+3.16 Receiver Type            : JAVAD TRE_3
+     Satellite System         : GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS
+     Serial Number            : 4171773
+     Firmware Version         : 3.7.4b0-193-7438
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2018-09-06T10:00Z
+     Date Removed             : 2018-12-11T08:35Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : tinyPC/4 S/N 006
+                              : Board revision TRE_3_4
+                              : beta upgrade to enable tracking of E31
+
+3.17 Receiver Type            : JAVAD TRE_3
+     Satellite System         : GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS
+     Serial Number            : 4171773
+     Firmware Version         : 3.7.5
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2018-12-11T08:36Z
+     Date Removed             : 2019-01-31T09:39Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : tinyPC/4 S/N 006
+                              : Board revision TRE_3_4
+
+3.18 Receiver Type            : JAVAD TRE_3
+     Satellite System         : GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS
+     Serial Number            : 4171773
+     Firmware Version         : 3.7.5p1
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2019-01-31T09:40Z
+     Date Removed             : 2019-04-09T12:21Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : tinyPC/4 S/N 006
+                              : Board revision TRE_3_4
+
+3.19 Receiver Type            : JAVAD TRE_3
+     Satellite System         : GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS
+     Serial Number            : 4171773
+     Firmware Version         : 3.7.6
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2019-04-09T12:22Z
+     Date Removed             : 2019-12-20T11:18Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : tinyPC/4 S/N 006
+                              : Board revision TRE_3_4
+
+3.20 Receiver Type            : JAVAD TRE_3
+     Satellite System         : GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS
+     Serial Number            : 4171773
+     Firmware Version         : 3.7.6
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2019-12-20T11:19Z
+     Date Removed             : 2020-02-10T15:44Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : tinyPC/4 S/N 006
+                              : Board revision TRE_3_4
+                              : Activation of clock steering
+                              : leads to loss of overall observations
+
+3.21 Receiver Type            : JAVAD TRE_3
+     Satellite System         : GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS
+     Serial Number            : 4171773
+     Firmware Version         : 3.7.6
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2020-02-10T15:45Z
+     Date Removed             : 2020-03-25T10:20Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : tinyPC/4 S/N 006
+                              : Board revision TRE_3_4
+                              : Activation of independent tracking
+
+3.22 Receiver Type            : JAVAD TRE_3
+     Satellite System         : GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS
+     Serial Number            : 4171773
+     Firmware Version         : 3.7.9
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2020-03-25T10:21Z
+     Date Removed             : 2020-04-02T07:05Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : tinyPC/4 S/N 006
+                              : Board revision TRE_3_4
+
+3.23 Receiver Type            : JAVAD TRE_3
+     Satellite System         : GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS
+     Serial Number            : 4171773
+     Firmware Version         : 3.7.9
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2020-04-02T07:06Z
+     Date Removed             : 2020-09-21T13:59Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : tinyPC/4 S/N 006
+                              : Board revision TRE_3_4
+                              : disabled SBAS L5 due to bug in JAVAD decoder
+
+3.24 Receiver Type            : JAVAD TRE_3
+     Satellite System         : GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS
+     Serial Number            : 4171773
+     Firmware Version         : 3.7.9
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2020-09-21T14:00Z
+     Date Removed             : 2020-11-04T10:05Z
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : tinyPC/4 S/N 017
+                              : Board revision TRE_3_4
+                              : changed data communication to ethernet
+
+3.25 Receiver Type            : JAVAD TRE_3
+     Satellite System         : GPS+GLO+GAL+BDS+QZSS+IRNSS+SBAS
+     Serial Number            : 4171773
+     Firmware Version         : 3.7.10
+     Elevation Cutoff Setting : 0
+     Date Installed           : 2020-11-04T10:06Z
+     Date Removed             : (CCYY-MM-DDThh:mmZ)
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : tinyPC/4 S/N 017
+                              : Board revision TRE_3_4
+
+3.x  Receiver Type            : (A20, from rcvr_ant.tab; see instructions)
+     Satellite System         : (GPS+GLO+GAL+BDS+QZSS+SBAS)
+     Serial Number            : (A20, but note the first A5 is used in SINEX)
+     Firmware Version         : (A11)
+     Elevation Cutoff Setting : (deg)
+     Date Installed           : (CCYY-MM-DDThh:mmZ)
+     Date Removed             : (CCYY-MM-DDThh:mmZ)
+     Temperature Stabiliz.    : (none or tolerance in degrees C)
+     Additional Information   : (multiple lines)
+
+
+4.   GNSS Antenna Information
+
+4.1  Antenna Type             : AOAD/M_T        NONE
+     Serial Number            : 261
+     Antenna Reference Point  : BPA
+     Marker->ARP Up Ecc. (m)  :   0.0460
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : (vendor & type number)
+     Antenna Cable Length     : (m)
+     Date Installed           : 1994-10-28T00:00Z
+     Date Removed             : 1995-10-03T08:00Z
+     Additional Information   : (multiple lines)
+
+4.2  Antenna Type             : AOAD/M_T        NONE
+     Serial Number            : 235
+     Antenna Reference Point  : BPA
+     Marker->ARP Up Ecc. (m)  :   0.0460
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : (vendor & type number)
+     Antenna Cable Length     : (m)
+     Date Installed           : 1995-10-03T08:00Z
+     Date Removed             : 2009-04-15T13:15Z
+     Additional Information   : (multiple lines)
+
+4.3  Antenna Type             : AOAD/M_T        NONE
+     Serial Number            : 354-U
+     Antenna Reference Point  : BPA
+     Marker->ARP Up Ecc. (m)  :   0.0460
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : (vendor & type number)
+     Antenna Cable Length     : (m)
+     Date Installed           : 2009-04-15T13:15Z
+     Date Removed             : 2011-02-15T17:00Z
+     Additional Information   : (multiple lines)
+
+4.4  Antenna Type             : JAV_RINGANT_G3T NONE
+     Serial Number            : 316
+     Antenna Reference Point  : BAM
+     Marker->ARP Up Ecc. (m)  :   0.1206
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : RG 214U
+     Antenna Cable Length     : 40.00
+     Date Installed           : 2011-02-15T17:00Z
+     Date Removed             : 2018-07-17T09:30Z
+     Additional Information   : (multiple lines)
+
+4.5  Antenna Type             : JAVRINGANT_G5T  NONE
+     Serial Number            : 6077C
+     Antenna Reference Point  : BAM
+     Marker->ARP Up Ecc. (m)  :   0.1206
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : RG 214U
+     Antenna Cable Length     : 40.00
+     Date Installed           : 2018-07-17T10:00Z
+     Date Removed             : 2020-09-09T09:14Z
+     Additional Information   : (multiple lines)
+
+4.6  Antenna Type             : JAVRINGANT_G5T  NONE
+     Serial Number            : 6077C
+     Antenna Reference Point  : BAM
+     Marker->ARP Up Ecc. (m)  :   0.1206
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : RG 214U
+     Antenna Cable Length     : 40.00
+     Date Installed           : 2020-09-09T09:15Z
+     Date Removed             : 2020-10-06T07:59Z
+     Additional Information   : added 20dB in-Line amplifier to antenna
+
+4.7  Antenna Type             : JAVRINGANT_G5T  NONE
+     Serial Number            : 6077C
+     Antenna Reference Point  : BAM
+     Marker->ARP Up Ecc. (m)  :   0.1206
+     Marker->ARP North Ecc(m) :   0.0000
+     Marker->ARP East Ecc(m)  :   0.0000
+     Alignment from True N    : 0
+     Antenna Radome Type      : NONE
+     Radome Serial Number     : 
+     Antenna Cable Type       : RG 214U
+     Antenna Cable Length     : 40.00
+     Date Installed           : 2020-10-06T08:00Z
+     Date Removed             : (CCYY-MM-DDThh:mmZ)
+     Additional Information   : removed 20dB in-Line amplifier from antenna
+
+4.x  Antenna Type             : (A20, from rcvr_ant.tab; see instructions)
+     Serial Number            : (A*, but note the first A5 is used in SINEX)
+     Antenna Reference Point  : (BPA/BCR/XXX from "antenna.gra"; see instr.)
+     Marker->ARP Up Ecc. (m)  : (F8.4)
+     Marker->ARP North Ecc(m) : (F8.4)
+     Marker->ARP East Ecc(m)  : (F8.4)
+     Alignment from True N    : (deg; + is clockwise/east)
+     Antenna Radome Type      : (A4 from rcvr_ant.tab; see instructions)
+     Radome Serial Number     : 
+     Antenna Cable Type       : (vendor & type number)
+     Antenna Cable Length     : (m)
+     Date Installed           : (CCYY-MM-DDThh:mmZ)
+     Date Removed             : (CCYY-MM-DDThh:mmZ)
+     Additional Information   : (multiple lines)
+
+
+5.   Surveyed Local Ties
+
+5.1  Tied Marker Name         : Laser Potsdam (az/el axis)
+     Tied Marker Usage        : SLR
+     Tied Marker CDP Number   : 7836
+     Tied Marker DOMES Number : 14106S009
+     Differential Components from GNSS Marker to the tied monument (ITRS)
+       dx (m)                 : -50.091
+       dy (m)                 : -95.219
+       dz (m)                 : 40.438
+     Accuracy (mm)            : 10
+     Survey method            : TRIANGULATION
+     Date Measured            : 1994-08-09T00:00Z
+     Additional Information   : (multiple lines)
+
+5.2  Tied Marker Name         : PRARE site Potsdam
+     Tied Marker Usage        : PRARE
+     Tied Marker CDP Number   : 7730
+     Tied Marker DOMES Number : (A9)
+     Differential Components from GNSS Marker to the tied monument (ITRS)
+       dx (m)                 : -97.572
+       dy (m)                 : -152.608
+       dz (m)                 : 112.545
+     Accuracy (mm)            : 10
+     Survey method            : TRIANGULATION
+     Date Measured            : 1994-08-09T00:00Z
+     Additional Information   : (multiple lines)
+
+5.x  Tied Marker Name         : 
+     Tied Marker Usage        : (SLR/VLBI/LOCAL CONTROL/FOOTPRINT/etc)
+     Tied Marker CDP Number   : (A4)
+     Tied Marker DOMES Number : (A9)
+     Differential Components from GNSS Marker to the tied monument (ITRS)
+       dx (m)                 : (m)
+       dy (m)                 : (m)
+       dz (m)                 : (m)
+     Accuracy (mm)            : (mm)
+     Survey method            : (GPS CAMPAIGN/TRILATERATION/TRIANGULATION/etc)
+     Date Measured            : (CCYY-MM-DDThh:mmZ)
+     Additional Information   : (multiple lines)
+
+
+6.   Frequency Standard
+
+6.1  Standard Type            : INTERNAL
+       Input Frequency        : (if external)
+       Effective Dates        : 1994-10-01/2011-11-03
+       Notes                  : (multiple lines)
+
+6.2  Standard Type            : EXTERNAL RUBIDIUM
+       Input Frequency        : 5 MHz
+       Effective Dates        : 2011-11-03/2012-08-07
+       Notes                  : Temex
+
+6.3  Standard Type            : INTERNAL
+       Input Frequency        : (if external)
+       Effective Dates        : 2012-08-08/CCYY-MM-DD
+       Notes                  : (multiple lines)
+
+6.x  Standard Type            : (INTERNAL or EXTERNAL H-MASER/CESIUM/etc)
+       Input Frequency        : (if external)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+
+7.   Collocation Information
+
+7.1  Instrumentation Type     : SLR
+       Status                 : PERMANENT
+       Effective Dates        : 1994-10-01/CCYY-MM-DD
+       Notes                  : (multiple lines)
+
+7.2  Instrumentation Type     : PRARE
+       Status                 : PERMANENT
+       Effective Dates        : 1994-10-01/CCYY-MM-DD
+       Notes                  : (multiple lines)
+
+7.x  Instrumentation Type     : (GPS/GLONASS/DORIS/PRARE/SLR/VLBI/TIME/etc)
+       Status                 : (PERMANENT/MOBILE)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+
+8.   Meteorological Instrumentation
+
+8.1.1 Humidity Sensor Model   : HC 500
+       Manufacturer           : TimeTech/Gresinger
+       Serial Number          : 
+       Data Sampling Interval : 600
+       Accuracy (% rel h)     : 1
+       Aspiration             : (UNASPIRATED/NATURAL/FAN/etc)
+       Height Diff to Ant     : 0.20
+       Calibration date       : (CCYY-MM-DD)
+       Effective Dates        : 1996-09-10/2006-01-11
+       Notes                  : The sensor is part of the meteorological
+                              : TimeTech station
+
+8.1.2 Humidity Sensor Model   : HMP45A-P
+       Manufacturer           : Vaisala
+       Serial Number          : Z2310004
+       Data Sampling Interval : 300
+       Accuracy (% rel h)     : 1.5
+       Aspiration             : NATURAL
+       Height Diff to Ant     : -2.00
+       Calibration date       : 2004-06-01
+       Effective Dates        : 2006-01-11/CCYY-MM-DD
+       Notes                  : The humidity sensor is part of a Vaisala
+                              : PTU200 meteo station
+
+8.1.x Humidity Sensor Model   : 
+       Manufacturer           : 
+       Serial Number          : 
+       Data Sampling Interval : (sec)
+       Accuracy (% rel h)     : (% rel h)
+       Aspiration             : (UNASPIRATED/NATURAL/FAN/etc)
+       Height Diff to Ant     : (m)
+       Calibration date       : (CCYY-MM-DD)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+8.2.1 Pressure Sensor Model   : PTB100B
+       Manufacturer           : Vaisala
+       Serial Number          : 
+       Data Sampling Interval : 600
+       Accuracy               : 0.5
+       Height Diff to Ant     : -1.70
+       Calibration date       : (CCYY-MM-DD)
+       Effective Dates        : 1996-09-10/2006-01-11
+       Notes                  : The sensor is part of the meteorological
+                              : TimeTech station
+
+8.2.2 Pressure Sensor Model   : PTU200
+       Manufacturer           : Vaisala
+       Serial Number          : Z2310004
+       Data Sampling Interval : 300
+       Accuracy               : 0.1
+       Height Diff to Ant     : -11.60
+       Calibration date       : 2004-06-01
+       Effective Dates        : 2006-01-11/CCYY-MM-DD
+       Notes                  : The pressure sensor is part of a Vaisala
+                              : PTU200 meteo station
+
+8.2.x Pressure Sensor Model   : 
+       Manufacturer           : 
+       Serial Number          : 
+       Data Sampling Interval : (sec)
+       Accuracy               : (hPa)
+       Height Diff to Ant     : (m)
+       Calibration date       : (CCYY-MM-DD)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+8.3.1 Temp. Sensor Model      : PT100
+       Manufacturer           : TimeTech
+       Serial Number          : 
+       Data Sampling Interval : 600
+       Accuracy               : 0.25
+       Aspiration             : (UNASPIRATED/NATURAL/FAN/etc)
+       Height Diff to Ant     : 0.20
+       Calibration date       : (CCYY-MM-DD)
+       Effective Dates        : 1996-09-10/2006-01-11
+       Notes                  : The sensor is part of the meteorological
+                              : TimeTech station
+
+8.3.2 Temp. Sensor Model      : HMP45A-P
+       Manufacturer           : Vaisala
+       Serial Number          : Z2310004
+       Data Sampling Interval : 300
+       Accuracy               : 0.1
+       Aspiration             : NATURAL
+       Height Diff to Ant     : -2.00
+       Calibration date       : 2004-06-01
+       Effective Dates        : 2006-01-11/CCYY-MM-DD
+       Notes                  : The temperature sensor is part of a Vaisala
+                              : PTU200 meteo station
+
+8.3.x Temp. Sensor Model      : 
+       Manufacturer           : 
+       Serial Number          : 
+       Data Sampling Interval : (sec)
+       Accuracy               : (deg C)
+       Aspiration             : (UNASPIRATED/NATURAL/FAN/etc)
+       Height Diff to Ant     : (m)
+       Calibration date       : (CCYY-MM-DD)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+8.4.x Water Vapor Radiometer  : 
+       Manufacturer           : 
+       Serial Number          : 
+       Distance to Antenna    : (m)
+       Height Diff to Ant     : (m)
+       Calibration date       : (CCYY-MM-DD)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Notes                  : (multiple lines)
+
+8.5.x Other Instrumentation   : (multiple lines)
+
+
+9.   Local Ongoing Conditions Possibly Affecting Computed Position
+
+9.1.x Radio Interferences     : (TV/CELL PHONE ANTENNA/RADAR/etc)
+       Observed Degradations  : (SN RATIO/DATA GAPS/etc)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Additional Information : (multiple lines)
+
+9.2.x Multipath Sources       : (METAL ROOF/DOME/VLBI ANTENNA/etc)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Additional Information : (multiple lines)
+
+9.3.x Signal Obstructions     : (TREES/BUILDINGS/etc)
+       Effective Dates        : (CCYY-MM-DD/CCYY-MM-DD)
+       Additional Information : (multiple lines)
+
+
+10.  Local Episodic Effects Possibly Affecting Data Quality
+
+10.1 Date                     : 2021-02-08/2021-02-12
+     Event                    : Accumulation of snow and ice on antenna and
+                              : choke ring caused jump of up component by -3 cm
+
+10.x Date                     : (CCYY-MM-DD/CCYY-MM-DD)
+     Event                    : (TREE CLEARING/CONSTRUCTION/etc)
+
+
+11.  On-Site, Point of Contact Agency Information
+
+     Agency                   : Helmholtz-Zentrum Potsdam
+                              : Deutsches GeoForschungsZentrum GFZ
+     Preferred Abbreviation   : GFZ
+     Mailing Address          : Telegrafenberg A17
+                              : 14473 Potsdam / Germany
+     Primary Contact
+       Contact Name           : Dr. Markus Ramatschi
+       Telephone (primary)    : (+49)331-288-1746
+       Telephone (secondary)  : 
+       Fax                    : (+49)331-288-1759
+       E-mail                 : gnss@gfz-potsdam.de
+     Secondary Contact
+       Contact Name           : Markus Bradke
+       Telephone (primary)    : (+49)331-288-1182
+       Telephone (secondary)  : 
+       Fax                    : (+49)331-288-1759
+       E-mail                 : bradke@gfz-potsdam.de
+     Additional Information   : (multiple lines)
+
+
+12.  Responsible Agency (if different from 11.)
+
+     Agency                   : (multiple lines)
+     Preferred Abbreviation   : (A10)
+     Mailing Address          : (multiple lines)
+     Primary Contact
+       Contact Name           : 
+       Telephone (primary)    : 
+       Telephone (secondary)  : 
+       Fax                    : 
+       E-mail                 : 
+     Secondary Contact
+       Contact Name           : 
+       Telephone (primary)    : 
+       Telephone (secondary)  : 
+       Fax                    : 
+       E-mail                 : 
+     Additional Information   : (multiple lines)
+
+
+13.  More Information
+
+     Primary Data Center      : CDDIS
+     Secondary Data Center    : BKG
+     URL for More Information : 
+     Hardcopy on File
+       Site Map               : (Y or URL)
+       Site Diagram           : (Y or URL)
+       Horizon Mask           : (Y or URL)
+       Monument Description   : (Y or URL)
+       Site Pictures          : (Y or URL)
+     Additional Information   : (multiple lines)
+     Antenna Graphics with Dimensions
+
+JAVRINGANT_G5T
+
+                       ---------                          <--  0.0614
+                     /           \
+                   /               \
+  +-------------------------------------------------+     <--  0.0410  TCR
+  |                                                 |
+  |              +-------------------+              |
+  |              |   \           /   |              |
+  |              |    \         /    |              |
+  |              |      +--x--+      |              |     <--  0.0000  BAM=ARP
+  +--------------+-------------------+--------------+     <-- -0.0260  BCR
+                                                                       RXC=NRP
+  <--                    0.3260                   -->
+
+JAV_RINGANT_G3T
+
+                       ---------                          <--  0.0614
+                     /           \
+                   /               \
+  +-------------------------------------------------+     <--  0.0410  TCR
+  |                                                 |
+  |              +-------------------+              |
+  |              |   \           /   |              |
+  |              |    \         /    |              |
+  |              |      +--x--+      |              |     <--  0.0000  BAM=ARP
+  +--------------+-------------------+--------------+     <-- -0.0260  BCR
+                                                                       RXC=NRP
+  <--                    0.3260                   -->
+
+AOAD/M_T
+
+                         -----
+                     /           \
+                    |             |
+  +-------------------------------------------------+     <--  0.1020  TCR
+  |                                                 |
+  |                                                 |
+  |                                                 |
+  |                                                 |
++-+-------------------------------------------------+-+   <--  0.0380
++-------------------+-------------+-------------------+   <--  0.0350  BCR
+                    |             |
+                   =|             |
+                    +------x------+                       <--  0.0000  BPA=ARP
+                                                                       RXC=NRP
+<--                      0.3810                     -->
+
