@@ -264,8 +264,6 @@ def euler_pole_vector_from_latlongrate(wlat,wlong,wrate,
     
     return w
 
-
-
 #%% ____Estimation de l'incertitude lors du calcul des EPP
 def euler_pole_quality(w,vn_ref,ve_ref,nrmatinv,desmat,wwmat,
                        pretty_output=True):
