@@ -30,7 +30,10 @@ import os
 import pandas as pd
 import re
 
-import geodezyx.reffram.sofa18 as sofa
+### disabled and imported directly in the needed fct
+## import geodezyx.reffram.sofa18 as sofa
+
+
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -1012,6 +1015,8 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
     """
     
     DForb = DForb_inp.copy()
+    
+    import geodezyx.reffram.sofa18 as sofa
     
     ### bring everything to UTC
     if time_scale_inp.lower() == "gps":
