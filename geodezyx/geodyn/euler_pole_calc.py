@@ -130,7 +130,7 @@ def euler_pole_vector_to_latlongrate(w):
     """
     Convert Euler pole vector to latitude longitude and rate  
     
-    Written by P. Sakic based on C. Geisert work
+    Written by P. Sakic based on C. Geisert's work
     
     Parameters
     ----------
