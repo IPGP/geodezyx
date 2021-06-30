@@ -1,5 +1,4 @@
-![GeodeZYX Toolbox's logo](./geodezyx_toolbox_logo.png =100px)
-
+<img src="./geodezyx_toolbox_logo.png" width="100">
 
 # GeodeZYX Toolbox
 
