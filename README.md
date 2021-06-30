@@ -1,4 +1,4 @@
-<img src="./geodezyx_toolbox_logo.png" width="100">
+<img src="./geodezyx_toolbox_logo.png" width="300">
 
 # GeodeZYX Toolbox
 
