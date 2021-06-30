@@ -299,11 +299,13 @@
 </div>
 <div class="section" id="euler-pole-determination">
 <h2>Euler pole determination<a class="headerlink" href="#euler-pole-determination" title="Permalink to this headline">¶</a></h2>
-<p>The toolbox proposes tools to manipulate Euler rotation poles:
-- to determine the tectonic plate’s Euler pole based on some GNSS absolute velocities (<a class="reference internal" href="geodezyx.geodyn.html#module-geodezyx.geodyn.euler_pole_calc" title="geodezyx.geodyn.euler_pole_calc"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_calc()</span></code></a>).
-- to analyze the quality of the Euler Pole estimation (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_quality()</span></code>).
-- to convert the estimated Euler pole in a vector form to a latitude/longitude/rate form (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_vector_to_latlongrate()</span></code>), and also do the reverse conversion (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_vector_from_latlongrate()</span></code>).
-- to substract the plate’s velocity to analyze the residual velocities of the stations (located at the plate’s boundary for instance) (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_vels_relative_to_ref()</span></code>).</p>
+<p>The toolbox proposes tools to manipulate Euler rotation poles:</p>
+<ul class="simple">
+<li><p>to determine the tectonic plate’s Euler pole based on some GNSS absolute velocities (<a class="reference internal" href="geodezyx.geodyn.html#module-geodezyx.geodyn.euler_pole_calc" title="geodezyx.geodyn.euler_pole_calc"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_calc()</span></code></a>).</p></li>
+<li><p>to analyze the quality of the Euler Pole estimation (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_quality()</span></code>).</p></li>
+<li><p>to convert the estimated Euler pole in a vector form to a latitude/longitude/rate form (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_vector_to_latlongrate()</span></code>), and also do the reverse conversion (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_vector_from_latlongrate()</span></code>).</p></li>
+<li><p>to substract the plate’s velocity to analyze the residual velocities of the stations (located at the plate’s boundary for instance) (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_vels_relative_to_ref()</span></code>).</p></li>
+</ul>
 </div>
 <div class="section" id="read-and-import-geodetic-products">
 <h2>Read and import geodetic products<a class="headerlink" href="#read-and-import-geodetic-products" title="Permalink to this headline">¶</a></h2>
@@ -313,7 +315,7 @@
 <ul class="simple">
 <li><p>The GNSS products such as clock offsets (.clk files) and orbits (.sp3 files): <a class="reference internal" href="geodezyx.files_rw.html#module-geodezyx.files_rw.read_gnss_prods" title="geodezyx.files_rw.read_gnss_prods"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.files_rw.read_gnss_prods</span></code></a></p></li>
 <li><p>The Earth orientation parameters: <a class="reference internal" href="geodezyx.files_rw.html#module-geodezyx.files_rw.read_gnss_prods" title="geodezyx.files_rw.read_gnss_prods"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.files_rw.read_gnss_prods</span></code></a></p></li>
-<li><p>The Troposphere files: <code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.files_rw.read_athmo</span></code></p></li>
+<li><p>The Troposphere files: <a class="reference internal" href="geodezyx.files_rw.html#module-geodezyx.files_rw.read_athmo" title="geodezyx.files_rw.read_athmo"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.files_rw.read_athmo</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="id4">

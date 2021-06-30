@@ -143,6 +143,7 @@ Euler pole determination
 ------------------------
 
 The toolbox proposes tools to manipulate Euler rotation poles:
+
 - to determine the tectonic plate's Euler pole based on some GNSS absolute velocities (:py:func:`geodezyx.geodyn.euler_pole_calc`).
 - to analyze the quality of the Euler Pole estimation (:py:func:`geodezyx.geodyn.euler_pole_quality`).
 - to convert the estimated Euler pole in a vector form to a latitude/longitude/rate form (:py:func:`geodezyx.geodyn.euler_pole_vector_to_latlongrate`), and also do the reverse conversion (:py:func:`geodezyx.geodyn.euler_pole_vector_from_latlongrate`).
