@@ -213,7 +213,6 @@ EPC: Matlab software to estimate Euler pole parameters. GPS Solutions, 18(1),
 <dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_pole_calc">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_pole_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vn_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ve_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incvn_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incve_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6371008.8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_pole_calc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Euler pole of a set of reference points</p>
-<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -247,6 +246,7 @@ IAU value  = 6.378e6</p></li>
 <p class="rubric">Notes</p>
 <p>w is the common element for all Euler pole functions</p>
 <p>Should remains in rad/yr</p>
+<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
 </dd></dl>
 
 <dl class="py function">
@@ -290,7 +290,6 @@ if pretty_output == False : [rad/yr,rad,rad]</p></li>
 <dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlongrate">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_pole_vector_from_latlongrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlong</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_w_in_deg_per_Myr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlongrate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Euler vector from the pole latitude, longitude and rate</p>
-<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -309,13 +308,13 @@ if pretty_output == False : [rad/yr,rad,rad]</p></li>
 <p class="rubric">Notes</p>
 <p>w is the common element for all Euler pole functions</p>
 <p>Should remains in rad/yr per default</p>
+<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_pole_vector_to_latlongrate">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_pole_vector_to_latlongrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_pole_vector_to_latlongrate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Euler pole vector to latitude longitude and rate</p>
-<p>Written by P. Sakic based on C. Geisert’s work</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>w</strong> (<em>numpy.array</em>) – Pole of rotation vector computed by euler_pole_calc (rad/yr)</p>
@@ -332,13 +331,13 @@ if pretty_output == False : [rad/yr,rad,rad]</p></li>
 <p class="rubric">Notes</p>
 <p>w is the common element for all Euler pole functions</p>
 <p>Should remains in rad/yr</p>
+<p>Written by P. Sakic based on C. Geisert’s work</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_vels_relative_to_ref">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_vels_relative_to_ref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vn_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ve_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incvn_ITRF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incve_ITRF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6378000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_vels_relative_to_ref" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute relative velocities of points with respect to an reference plate/Euler pole</p>
-<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
+<dd><p>Compute relative velocities of points with respect to a reference plate/Euler pole</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -361,6 +360,7 @@ if pretty_output == False : [rad/yr,rad,rad]</p></li>
 <p class="rubric">Notes</p>
 <p>w is the common element for all Euler pole functions</p>
 <p>Should remains in rad/yr</p>
+<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
 </dd></dl>
 
 <dl class="py function">

@@ -102,7 +102,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_coords_misc">geodezyx.files_rw.read_coords_misc module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_coords_time_series">geodezyx.files_rw.read_coords_time_series module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_eop">geodezyx.files_rw.read_eop module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_geo_files">geodezyx.files_rw.read_geo_files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#geodezyx-files-rw-read-geo-files-module">geodezyx.files_rw.read_geo_files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_gnss_prods">geodezyx.files_rw.read_gnss_prods module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_igs_combi">geodezyx.files_rw.read_igs_combi module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_logsheets">geodezyx.files_rw.read_logsheets module</a></li>
@@ -435,19 +435,25 @@ SORTIE : 2 x liste de dt</p>
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.station_info_2_gins">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">station_info_2_gins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statinfoin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordfilein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordfile_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pbovelfile'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_stats_lis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ellipsoid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GRS80'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">station_info_columns_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sopac'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.station_info_2_gins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a GAMIT station.info to a GINS stations files</p>
-<dl>
-<dt>Inputs :</dt><dd><p>statinfoin : path of input station.info
-coodfilein : path of input coordinates files
-outfile : path of output GINS station file
-coordfile_type : GAMIT coordinates files type : ‘lfile’ or ‘pbovelfile’
-specific_stats_lis : list of specific stats
-ellipsoid : ‘GRS80’
-station_info_columns_type : it exists different subtypes of station.info …</p>
-<blockquote>
-<div><p>handles “sopac” or “ulr” yet</p>
-</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statinfoin</strong> (<em>str</em>) – path of input station.info.</p></li>
+<li><p><strong>coordfilein</strong> (<em>str</em>) – path of input coordinates files.</p></li>
+<li><p><strong>outfile</strong> (<em>str</em>) – path of output GINS station file.</p></li>
+<li><p><strong>coordfile_type</strong> (<em>str</em><em>, </em><em>optional</em>) – GAMIT coordinates files type : ‘lfile’ or ‘pbovelfile’.
+The default is ‘pbovelfile’.</p></li>
+<li><p><strong>specific_stats_lis</strong> (<em>list</em><em>, </em><em>optional</em>) – list of specific stations. The default is [].</p></li>
+<li><p><strong>ellipsoid</strong> (<em>str</em><em>, </em><em>optional</em>) – ellipsoid. The default is ‘GRS80’.</p></li>
+<li><p><strong>station_info_columns_type</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – it exists different subtypes of station.info …
+handles “sopac” or “ulr” yet. The default is “sopac”.</p></li>
+</ul>
 </dd>
-<dt>Output :</dt><dd><p>path of GINS outfile</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>outfile</strong> – path of GINS outfile.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -473,16 +479,35 @@ as inp_gzip_file</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.write_latlontime_file_4_OTPS_tide">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">write_latlontime_file_4_OTPS_tide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outfilepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_inp_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tide_model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./DATA/Model_atlas'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_relative_path_in_inp_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.write_latlontime_file_4_OTPS_tide" title="Permalink to this definition">¶</a></dt>
-<dd><p>strt    : start as a datetime
-end     : it can be :</p>
-<blockquote>
-<div><p>length of the period in sec (integer)
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outfilepath</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
+<li><p><strong>lat</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
+<li><p><strong>lon</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
+<li><p><strong>strt</strong> (<em>datetime</em>) – start as a datetime.</p></li>
+<li><p><strong>end</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – length of the period in sec (integer)
 OR
-if None, strt is a list</p>
-</div></blockquote>
+if None, strt is a list. The default is None.</p></li>
+<li><p><strong>sec_step</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is 1.</p></li>
+<li><p><strong>generate_inp_file</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is True.</p></li>
+<li><p><strong>tide_model_path</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is ‘./DATA/Model_atlas’.</p></li>
+<li><p><strong>set_relative_path_in_inp_file</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>outdir</strong> – DESCRIPTION.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>TYPE</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>lat&gt;0 - degrees North, lon&gt;0 - degrees East
 lat&lt;0 - degrees South, lon&lt;0 - degrees West</p>
 <p>lat/lon can be a list, with the same size as dates_lis</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -1164,166 +1189,8 @@ The default is True.</p></li>
 </dd></dl>
 
 </div>
-<div class="section" id="module-geodezyx.files_rw.read_geo_files">
-<span id="geodezyx-files-rw-read-geo-files-module"></span><h2>geodezyx.files_rw.read_geo_files module<a class="headerlink" href="#module-geodezyx.files_rw.read_geo_files" title="Permalink to this headline">¶</a></h2>
-<p>&#64;author: psakic</p>
-<p>This sub-module of geodezyx.files_rw contains reading functions to
-import files containing geodetic observations/products.</p>
-<p>it can be imported directly with:
-from geodezyx import files_rw</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
-<p>Copyright (C) 2019 Pierre Sakic et al. (GFZ, <a class="reference external" href="mailto:pierre&#46;sakic&#37;&#52;&#48;gfz-postdam&#46;de">pierre<span>&#46;</span>sakic<span>&#64;</span>gfz-postdam<span>&#46;</span>de</a>)
-GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_geo_files.AC_equiv_vals">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_geo_files.</span></span><span class="sig-name descname"><span class="pre">AC_equiv_vals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AC1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AC2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_geo_files.AC_equiv_vals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find common values between 2 Orbit DataFrame (from SP3)</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Redundant with reffram.OrbDF_common_epoch_finder
-this function should not be used anymore</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>AC1</strong> (<em>DataFrame</em>) – Orbit DataFrame 1.</p></li>
-<li><p><strong>AC2</strong> (<em>DataFrame</em>) – Orbit DataFrame 2.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>AC1_ok</strong> (<em>DataFrame</em>) – Cleaned Orbit DataFrame 1.</p></li>
-<li><p><strong>AC2_ok</strong> (<em>DataFrame</em>) – Cleaned Orbit DataFrame 2.</p></li>
-<li><p><strong>ACmerged</strong> (<em>DataFrame</em>) – Merged orbit DataFrame.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_geo_files.Tropsinex_DataFrame">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_geo_files.</span></span><span class="sig-name descname"><span class="pre">Tropsinex_DataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_sinex_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_geo_files.Tropsinex_DataFrame" title="Permalink to this definition">¶</a></dt>
-<dd><p>General description</p>
-<blockquote>
-<div><dl class="simple">
-<dt>read_sinex_result :</dt><dd><p>List values from read_snx_trop function</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>DF_Sinex :</dt><dd><p>troposphere information from SINEX in Dataframe</p>
-</dd>
-</dl>
-</div></blockquote>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_geo_files.list_files">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_geo_files.</span></span><span class="sig-name descname"><span class="pre">list_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dire</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_geo_files.list_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>written for MGEX combi by GM
-should be discontinued</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_geo_files.read_bernese_trp">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_geo_files.</span></span><span class="sig-name descname"><span class="pre">read_bernese_trp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trpfile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_geo_files.read_bernese_trp" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function reads tropospheric solution in TRP format from Bernese
-GNSS software</p>
-<dl class="simple">
-<dt>trpfile:</dt><dd><p>Filename of TRP file from Bernese</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Tropospheric solutions from Bernese in Dataframe</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>DF</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Written by Chaiyaporn Kitpracha</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_geo_files.read_clk_old">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_geo_files.</span></span><span class="sig-name descname"><span class="pre">read_clk_old</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returns_pandas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_naming</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_geo_files.read_clk_old" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read an IGS clk file
-Slow and complex, use read_clk instead</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path_in</strong> (<em>str</em>) – Path of the file in the local machine.</p></li>
-<li><p><strong>returns_pandas</strong> (<em>bool</em>) – Define if pandas function will be used to put the data on tables</p></li>
-<li><p><strong>interval</strong> (<em>int</em>) – Defines which interval should be used in the data tables. The interval is always in minutes unit.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>out1</strong> (<em>float or int oandas table</em>) – Returns a panda table format with the data extracted from the file.</p></li>
-<li><p><strong>out2</strong> (<em>list</em>) – In case of the pandas function are not in use, the return will be a list with the data extract from the file.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_geo_files.read_erp_bad">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_geo_files.</span></span><span class="sig-name descname"><span class="pre">read_erp_bad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_geo_files.read_erp_bad" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is discontinued, use read_erp1 instead</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_geo_files.read_gfz_trop">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_geo_files.</span></span><span class="sig-name descname"><span class="pre">read_gfz_trop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trpfile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_geo_files.read_gfz_trop" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is reading GFZ troposphere sinex into Pandas DataFrame</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>trpfile</strong> (<em>Str</em>) – File name of GFZ troposphere sinex.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>DF</strong> – Pandas Dataframe of GFZ troposphere sinex.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Pandas DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_geo_files.read_rinex_met">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_geo_files.</span></span><span class="sig-name descname"><span class="pre">read_rinex_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metfile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_geo_files.read_rinex_met" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function reads RINEX Meteorological files and convert to Pandas DataFrame</p>
-<dl class="simple">
-<dt>metfile:</dt><dd><p>Path of RINEX Meteorological file in List/String (e.g. made with glob)</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Meteorological data in DataFrame</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>DF</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Written by Chaiyaporn Kitpracha</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_geo_files.read_rinex_met_2">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_geo_files.</span></span><span class="sig-name descname"><span class="pre">read_rinex_met_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metfile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_geo_files.read_rinex_met_2" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_geo_files.read_snx_trop">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_geo_files.</span></span><span class="sig-name descname"><span class="pre">read_snx_trop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snxfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_geo_files.read_snx_trop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read troposphere solutions from Troposphere SINEX</p>
-</dd></dl>
-
+<div class="section" id="geodezyx-files-rw-read-geo-files-module">
+<h2>geodezyx.files_rw.read_geo_files module<a class="headerlink" href="#geodezyx-files-rw-read-geo-files-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-geodezyx.files_rw.read_gnss_prods">
 <span id="geodezyx-files-rw-read-gnss-prods-module"></span><h2>geodezyx.files_rw.read_gnss_prods module<a class="headerlink" href="#module-geodezyx.files_rw.read_gnss_prods" title="Permalink to this headline">¶</a></h2>

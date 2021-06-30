@@ -166,7 +166,7 @@ def euler_pole_vector_to_latlongrate(w):
 def euler_vels_relative_to_ref(w,lat_ITRF,long_ITRF,vn_ITRF,ve_ITRF,
                                incvn_ITRF=None,incve_ITRF=None,Rt=6.378e6):
     """
-    Compute relative velocities of points with respect to an reference plate/Euler pole
+    Compute relative velocities of points with respect to a reference plate/Euler pole
         
     Parameters
     ----------
