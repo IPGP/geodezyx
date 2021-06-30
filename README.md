@@ -1,4 +1,4 @@
-![GeodeZYX Toolbox's logo](./geodezyx_toolbox_logo.pdf)
+![GeodeZYX Toolbox's logo](./geodezyx_toolbox_logo.png =100px)
 
 
 # GeodeZYX Toolbox
