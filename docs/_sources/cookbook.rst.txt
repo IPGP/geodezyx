@@ -19,7 +19,7 @@ The basic idea behind it is the conversion to and from the ``datetime`` objects 
 The generic structure of the fuctions is ``conv.<input time scale/representation>2<output time scale/representation>``.
 
 Time conversion exemples
-========================
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 First of all:
 ::
@@ -28,7 +28,7 @@ First of all:
     import datetime as dt
 
 Get today as GPS Time (week/day of week)
-----------------------------------------
+""""""""""""""""""""""""""""""""""""""""
 ::
 
     now = dt.datetime.now()    ###  datetime.datetime(2021, 6, 18, 15, 53, 56, 245345)
@@ -39,7 +39,7 @@ Get today as GPS Time (week/day of week)
 
 
 Convert year/day of year to Modified Julian Day
------------------------------------------------
+"""""""""""""""""""""""""""""""""""""""""""""""
 ::
 
     year,doy = (2021, 169)
@@ -50,7 +50,7 @@ Convert year/day of year to Modified Julian Day
     Out: 59383.0
 
 Convert a SP3 name to decimal year
-----------------------------------
+""""""""""""""""""""""""""""""""""
 ::
 
     p = "/home/user/igs20726.sp3"
@@ -65,7 +65,7 @@ It handles also RINEX names with ``conv.rinexname2dt(p_rinex)`` (old and new nam
 (Documentation here: :py:func:`geodezyx.conv.conv_time.rinexname2dt`)
 
 Complete reference
-==================
+~~~~~~~~~~~~~~~~~~
 
 All the module's functionalites can be found here:
 :py:mod:`geodezyx.conv.conv_time`
@@ -76,12 +76,12 @@ Convert coordinates
 
 The `GeodeZYX Toolbox` can easily handle coordinate conversion in Geocentric (X,Y,Z), Geographic (latitude, longitude, height) and topocentric (East, North, Up). 
 
-**Warning**: This is considered as the "low-level" coordinate conversions. It does not deal with the different Reference Frame and their realisations (ITRFxx, ETRFxx...). This is managed by "high-level" functions in the ``reffram``module.
+**Warning**: This is considered as the "low-level" coordinate conversions. It does not deal with the different Reference Frame and their realisations (ITRFxx, ETRFxx...). This is managed by "high-level" functions in the ``reffram`` module.
 
 These functions are optimized for arrays (multiple inputs) but can also handle scalars.
 
 Coordinates conversion exemples
-===============================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We consider as exemple the coordinates of the Helmertturm given in latitude, longitude, height from Wikipedia and the GNSS station POTS in Geocentric XYZ.
 ::
@@ -121,7 +121,7 @@ We can also get the vector between POTS and the Helmertturm
 
 
 Complete reference
-==================
+~~~~~~~~~~~~~~~~~~
 
 All the module's functionalites can be found here:
 :py:mod:`geodezyx.conv.conv_coords`
@@ -131,12 +131,19 @@ Helmert Transformations
 -----------------------
 
 Apply and estimate parameters for an ad-hoc Helmert Transformation
-------------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 The functions :py:func:`geodezyx.reffram.geometry.helmert_trans_estim` and :py:func:`geodezyx.reffram.geometry.helmert_trans_apply` and  offer an interface to estimate parameters and apply an Helmert transformation respectively.
 
 Transform coordinates between two ITRF/ETRF
--------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The functions :py:func:`geodezyx.reffram.geometry.itrf_helmert_get_parameters` and :py:func:`geodezyx.reffram.geometry.itrf_helmert_trans` offer an interface to get the transformation parameters between two ITREF/ETRF realization, and apply the corresponding Helmert transformation respectively.
+
+Complete reference
+~~~~~~~~~~~~~~~~~~
+
+All the module's functionalites can be found here:
+:py:mod:`geodezyx.reffram.geometry`
 
 ------------------------
 Euler pole determination
@@ -144,10 +151,16 @@ Euler pole determination
 
 The toolbox proposes tools to manipulate Euler rotation poles:
 
-- to determine the tectonic plate's Euler pole based on some GNSS absolute velocities (:py:func:`geodezyx.geodyn.euler_pole_calc`).
-- to analyze the quality of the Euler Pole estimation (:py:func:`geodezyx.geodyn.euler_pole_quality`).
-- to convert the estimated Euler pole in a vector form to a latitude/longitude/rate form (:py:func:`geodezyx.geodyn.euler_pole_vector_to_latlongrate`), and also do the reverse conversion (:py:func:`geodezyx.geodyn.euler_pole_vector_from_latlongrate`).
-- to substract the plate's velocity to analyze the residual velocities of the stations (located at the plate's boundary for instance) (:py:func:`geodezyx.geodyn.euler_vels_relative_to_ref`).
+- to determine the tectonic plate's Euler pole based on some GNSS absolute velocities (:py:func:`geodezyx.geodyn.euler_pole_calc.euler_pole_calc`).
+- to analyze the quality of the Euler Pole estimation (:py:func:`geodezyx.geodyn.euler_pole_calc.euler_pole_quality`).
+- to convert the estimated Euler pole in a vector form to a latitude/longitude/rate form (:py:func:`geodezyx.geodyn.euler_pole_calc.euler_pole_vector_to_latlongrate`), and also do the reverse conversion (:py:func:`geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlongrate`).
+- to substract the plate's velocity to analyze the residual velocities of the stations (located at the plate's boundary for instance) (:py:func:`geodezyx.geodyn.euler_pole_calc.euler_vels_relative_to_ref`).
+
+Complete reference
+~~~~~~~~~~~~~~~~~~
+
+All the module's functionalites can be found here:
+:py:mod:`geodezyx.geodyn.euler_pole_calc`
 
 
 ---------------------------------
@@ -155,7 +168,7 @@ Read and import geodetic products
 ---------------------------------
 
 Main import functionalities
-===========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The toolbox mainly handles:
 
@@ -164,7 +177,7 @@ The toolbox mainly handles:
 - The Troposphere files: :py:mod:`geodezyx.files_rw.read_athmo`
 
 Complete reference
-==================
+~~~~~~~~~~~~~~~~~~
 
 All the module's functionalites can be found here:
 :py:mod:`geodezyx.files_rw`
@@ -178,7 +191,7 @@ The toolbox is designed to import and pre-process a wide range of geodetic GNSS 
 Read the dedicated Jupyter notebook stored in  ``<...>/geodezyx/000_exemples/timeseries_reader``
 
 Complete reference
-==================
+~~~~~~~~~~~~~~~~~~
 
 All the module's functionalites can be found here:
 :py:mod:`geodezyx.files_rw.read_coords_time_series`

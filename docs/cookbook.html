@@ -103,11 +103,19 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#convert-coordinates">Convert coordinates</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#coordinates-conversion-exemples">Coordinates conversion exemples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Complete reference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#helmert-transformations">Helmert Transformations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#apply-and-estimate-parameters-for-an-ad-hoc-helmert-transformation">Apply and estimate parameters for an ad-hoc Helmert Transformation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transform-coordinates-between-two-itrf-etrf">Transform coordinates between two ITRF/ETRF</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Complete reference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#euler-pole-determination">Euler pole determination</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id3">Complete reference</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#helmert-transformations">Helmert Transformations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#euler-pole-determination">Euler pole determination</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#read-and-import-geodetic-products">Read and import geodetic products</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#main-import-functionalities">Main import functionalities</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id4">Complete reference</a></li>
@@ -251,7 +259,7 @@
 <div class="section" id="convert-coordinates">
 <h2>Convert coordinates<a class="headerlink" href="#convert-coordinates" title="Permalink to this headline">¶</a></h2>
 <p>The <cite>GeodeZYX Toolbox</cite> can easily handle coordinate conversion in Geocentric (X,Y,Z), Geographic (latitude, longitude, height) and topocentric (East, North, Up).</p>
-<p><strong>Warning</strong>: This is considered as the “low-level” coordinate conversions. It does not deal with the different Reference Frame and their realisations (ITRFxx, ETRFxx…). This is managed by “high-level” functions in the <a href="#id1"><span class="problematic" id="id2">``</span></a>reffram``module.</p>
+<p><strong>Warning</strong>: This is considered as the “low-level” coordinate conversions. It does not deal with the different Reference Frame and their realisations (ITRFxx, ETRFxx…). This is managed by “high-level” functions in the <code class="docutils literal notranslate"><span class="pre">reffram</span></code> module.</p>
 <p>These functions are optimized for arrays (multiple inputs) but can also handle scalars.</p>
 <div class="section" id="coordinates-conversion-exemples">
 <h3>Coordinates conversion exemples<a class="headerlink" href="#coordinates-conversion-exemples" title="Permalink to this headline">¶</a></h3>
@@ -286,26 +294,42 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="id3">
-<h3>Complete reference<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h3>Complete reference<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>All the module’s functionalites can be found here:
 <a class="reference internal" href="geodezyx.conv.html#module-geodezyx.conv.conv_coords" title="geodezyx.conv.conv_coords"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.conv.conv_coords</span></code></a></p>
 </div>
 </div>
 <div class="section" id="helmert-transformations">
 <h2>Helmert Transformations<a class="headerlink" href="#helmert-transformations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="apply-and-estimate-parameters-for-an-ad-hoc-helmert-transformation">
+<h3>Apply and estimate parameters for an ad-hoc Helmert Transformation<a class="headerlink" href="#apply-and-estimate-parameters-for-an-ad-hoc-helmert-transformation" title="Permalink to this headline">¶</a></h3>
 <p>The functions <a class="reference internal" href="geodezyx.reffram.html#geodezyx.reffram.geometry.helmert_trans_estim" title="geodezyx.reffram.geometry.helmert_trans_estim"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.reffram.geometry.helmert_trans_estim()</span></code></a> and <a class="reference internal" href="geodezyx.reffram.html#geodezyx.reffram.geometry.helmert_trans_apply" title="geodezyx.reffram.geometry.helmert_trans_apply"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.reffram.geometry.helmert_trans_apply()</span></code></a> and  offer an interface to estimate parameters and apply an Helmert transformation respectively.</p>
+</div>
+<div class="section" id="transform-coordinates-between-two-itrf-etrf">
+<h3>Transform coordinates between two ITRF/ETRF<a class="headerlink" href="#transform-coordinates-between-two-itrf-etrf" title="Permalink to this headline">¶</a></h3>
 <p>The functions <a class="reference internal" href="geodezyx.reffram.html#geodezyx.reffram.geometry.itrf_helmert_get_parameters" title="geodezyx.reffram.geometry.itrf_helmert_get_parameters"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.reffram.geometry.itrf_helmert_get_parameters()</span></code></a> and <a class="reference internal" href="geodezyx.reffram.html#geodezyx.reffram.geometry.itrf_helmert_trans" title="geodezyx.reffram.geometry.itrf_helmert_trans"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.reffram.geometry.itrf_helmert_trans()</span></code></a> offer an interface to get the transformation parameters between two ITREF/ETRF realization, and apply the corresponding Helmert transformation respectively.</p>
+</div>
+<div class="section" id="id2">
+<h3>Complete reference<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>All the module’s functionalites can be found here:
+<a class="reference internal" href="geodezyx.reffram.html#module-geodezyx.reffram.geometry" title="geodezyx.reffram.geometry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.reffram.geometry</span></code></a></p>
+</div>
 </div>
 <div class="section" id="euler-pole-determination">
 <h2>Euler pole determination<a class="headerlink" href="#euler-pole-determination" title="Permalink to this headline">¶</a></h2>
 <p>The toolbox proposes tools to manipulate Euler rotation poles:</p>
 <ul class="simple">
-<li><p>to determine the tectonic plate’s Euler pole based on some GNSS absolute velocities (<a class="reference internal" href="geodezyx.geodyn.html#module-geodezyx.geodyn.euler_pole_calc" title="geodezyx.geodyn.euler_pole_calc"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_calc()</span></code></a>).</p></li>
-<li><p>to analyze the quality of the Euler Pole estimation (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_quality()</span></code>).</p></li>
-<li><p>to convert the estimated Euler pole in a vector form to a latitude/longitude/rate form (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_vector_to_latlongrate()</span></code>), and also do the reverse conversion (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_vector_from_latlongrate()</span></code>).</p></li>
-<li><p>to substract the plate’s velocity to analyze the residual velocities of the stations (located at the plate’s boundary for instance) (<code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_vels_relative_to_ref()</span></code>).</p></li>
+<li><p>to determine the tectonic plate’s Euler pole based on some GNSS absolute velocities (<a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.euler_pole_calc" title="geodezyx.geodyn.euler_pole_calc.euler_pole_calc"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_calc.euler_pole_calc()</span></code></a>).</p></li>
+<li><p>to analyze the quality of the Euler Pole estimation (<a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.euler_pole_quality" title="geodezyx.geodyn.euler_pole_calc.euler_pole_quality"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_calc.euler_pole_quality()</span></code></a>).</p></li>
+<li><p>to convert the estimated Euler pole in a vector form to a latitude/longitude/rate form (<a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.euler_pole_vector_to_latlongrate" title="geodezyx.geodyn.euler_pole_calc.euler_pole_vector_to_latlongrate"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_calc.euler_pole_vector_to_latlongrate()</span></code></a>), and also do the reverse conversion (<a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlongrate" title="geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlongrate"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlongrate()</span></code></a>).</p></li>
+<li><p>to substract the plate’s velocity to analyze the residual velocities of the stations (located at the plate’s boundary for instance) (<a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.euler_vels_relative_to_ref" title="geodezyx.geodyn.euler_pole_calc.euler_vels_relative_to_ref"><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_calc.euler_vels_relative_to_ref()</span></code></a>).</p></li>
 </ul>
+<div class="section" id="id3">
+<h3>Complete reference<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>All the module’s functionalites can be found here:
+<a class="reference internal" href="geodezyx.geodyn.html#module-geodezyx.geodyn.euler_pole_calc" title="geodezyx.geodyn.euler_pole_calc"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.geodyn.euler_pole_calc</span></code></a></p>
+</div>
 </div>
 <div class="section" id="read-and-import-geodetic-products">
 <h2>Read and import geodetic products<a class="headerlink" href="#read-and-import-geodetic-products" title="Permalink to this headline">¶</a></h2>
