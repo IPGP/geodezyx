@@ -9,6 +9,14 @@ geodezyx.geodyn package
 Submodules
 ----------
 
+geodezyx.geodyn.emsgfz\_load\_interp module
+-------------------------------------------
+
+.. automodule:: geodezyx.geodyn.emsgfz_load_interp
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.geodyn.euler\_pole\_calc module
 ----------------------------------------
 

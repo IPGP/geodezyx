@@ -17,6 +17,14 @@ geodezyx.files\_rw.geo\_files\_converter\_lib module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.files\_rw.read\_athmo module
+-------------------------------------
+
+.. automodule:: geodezyx.files_rw.read_athmo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.files\_rw.read\_coords\_misc module
 --------------------------------------------
 
@@ -41,10 +49,10 @@ geodezyx.files\_rw.read\_eop module
    :undoc-members:
    :show-inheritance:
 
-geodezyx.files\_rw.read\_geo\_files module
-------------------------------------------
+geodezyx.files\_rw.read\_geo\_files\_misc module
+------------------------------------------------
 
-.. automodule:: geodezyx.files_rw.read_geo_files
+.. automodule:: geodezyx.files_rw.read_geo_files_misc
    :members:
    :undoc-members:
    :show-inheritance:
