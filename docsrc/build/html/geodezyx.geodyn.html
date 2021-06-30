@@ -99,6 +99,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.geodyn package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.geodyn.emsgfz_load_interp">geodezyx.geodyn.emsgfz_load_interp module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.geodyn.euler_pole_calc">geodezyx.geodyn.euler_pole_calc module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.geodyn.velo_field_map_plt">geodezyx.geodyn.velo_field_map_plt module</a></li>
 </ul>
@@ -187,6 +188,45 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-geodezyx.geodyn.emsgfz_load_interp">
+<span id="geodezyx-geodyn-emsgfz-load-interp-module"></span><h2>geodezyx.geodyn.emsgfz_load_interp module<a class="headerlink" href="#module-geodezyx.geodyn.emsgfz_load_interp" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Jun 25 16:43:48 2021</p>
+<p>&#64;author: psakicki</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.emsgfz_load_interp.EMSGFZ_extrapolator">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.emsgfz_load_interp.</span></span><span class="sig-name descname"><span class="pre">EMSGFZ_extrapolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_or_netcdf_object_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_xtrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_xtrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_xtrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wished_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('duV',</span> <span class="pre">'duNS',</span> <span class="pre">'duEW',</span> <span class="pre">'dg')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DataFrame'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.emsgfz_load_interp.EMSGFZ_extrapolator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extrapolate loading values from the EMSGFZ models
+esmdata.gfz-potsdam.de:8080/</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_or_netcdf_object_in</strong> (<em>string</em><em> or </em><em>NetCDF object</em>) – Input
+can be a file path (string) or direcly the NetCDF object (faster).</p></li>
+<li><p><strong>time_xtrp</strong> (<em>float</em><em> or </em><em>float iterable</em>) – time for the wished extrapolated values
+for daily files: hours of day [0..23].
+for yearly files: day of years [0..364].</p></li>
+<li><p><strong>lat_xtrp</strong> (<em>float</em><em> or </em><em>float iterable</em>) – latitude component for the wished extrapolated values
+ranging from [-90..90]</p></li>
+<li><p><strong>lon_xtrp</strong> (<em>float</em><em> or </em><em>float iterable</em>) – longitude component for the wished extrapolated values.
+ranging from [-180..180]</p></li>
+<li><p><strong>wished_values</strong> (<em>tuple of string</em><em>, </em><em>optional</em>) – the components of the extrapolated values.
+The default is (“duV”,”duNS”,”duEW”,”dg”).</p></li>
+<li><p><strong>output_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Choose the output type.
+“DataFrame”,”dict”,”array”,”tuple”,”list”
+The default is “DataFrame”.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>optional</em>) – returns the NetCDF object for debug purposes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Points_out</strong> – The extrapolated values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>see output_type</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="module-geodezyx.geodyn.euler_pole_calc">
 <span id="geodezyx-geodyn-euler-pole-calc-module"></span><h2>geodezyx.geodyn.euler_pole_calc module<a class="headerlink" href="#module-geodezyx.geodyn.euler_pole_calc" title="Permalink to this headline">¶</a></h2>
 <p>&#64;author: psakic</p>
@@ -213,7 +253,6 @@ EPC: Matlab software to estimate Euler pole parameters. GPS Solutions, 18(1),
 <dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_pole_calc">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_pole_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vn_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ve_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incvn_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incve_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6371008.8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_pole_calc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Euler pole of a set of reference points</p>
-<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -247,6 +286,7 @@ IAU value  = 6.378e6</p></li>
 <p class="rubric">Notes</p>
 <p>w is the common element for all Euler pole functions</p>
 <p>Should remains in rad/yr</p>
+<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
 </dd></dl>
 
 <dl class="py function">
@@ -290,7 +330,6 @@ if pretty_output == False : [rad/yr,rad,rad]</p></li>
 <dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlongrate">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_pole_vector_from_latlongrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlong</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wrate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_w_in_deg_per_Myr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlongrate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Euler vector from the pole latitude, longitude and rate</p>
-<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -309,13 +348,13 @@ if pretty_output == False : [rad/yr,rad,rad]</p></li>
 <p class="rubric">Notes</p>
 <p>w is the common element for all Euler pole functions</p>
 <p>Should remains in rad/yr per default</p>
+<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_pole_vector_to_latlongrate">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_pole_vector_to_latlongrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_pole_vector_to_latlongrate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Euler pole vector to latitude longitude and rate</p>
-<p>Written by P. Sakic based on C. Geisert’s work</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>w</strong> (<em>numpy.array</em>) – Pole of rotation vector computed by euler_pole_calc (rad/yr)</p>
@@ -332,13 +371,13 @@ if pretty_output == False : [rad/yr,rad,rad]</p></li>
 <p class="rubric">Notes</p>
 <p>w is the common element for all Euler pole functions</p>
 <p>Should remains in rad/yr</p>
+<p>Written by P. Sakic based on C. Geisert’s work</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.geodyn.euler_pole_calc.euler_vels_relative_to_ref">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.euler_pole_calc.</span></span><span class="sig-name descname"><span class="pre">euler_vels_relative_to_ref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vn_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ve_ITRF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incvn_ITRF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incve_ITRF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6378000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.euler_pole_calc.euler_vels_relative_to_ref" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute relative velocities of points with respect to an reference plate/Euler pole</p>
-<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
+<dd><p>Compute relative velocities of points with respect to a reference plate/Euler pole</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -361,6 +400,7 @@ if pretty_output == False : [rad/yr,rad,rad]</p></li>
 <p class="rubric">Notes</p>
 <p>w is the common element for all Euler pole functions</p>
 <p>Should remains in rad/yr</p>
+<p>Written by C. Geisert (ENSTA/LIENSs) - 2017</p>
 </dd></dl>
 
 <dl class="py function">

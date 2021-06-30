@@ -146,15 +146,15 @@ def Tropsinex_DataFrame(read_sinex_result):
      """
       General description
 
-        Parameters
-        ----------
-        read_sinex_result : 
-            List values from read_snx_trop function
+      Parameters
+      ----------
+      read_sinex_result : 
+          List values from read_snx_trop function
                     
-        Returns
-        -------
-        DF_Sinex : 
-            troposphere information from SINEX in Dataframe
+      Returns
+      -------
+      DF_Sinex : 
+          troposphere information from SINEX in Dataframe
             
      """
      DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
@@ -170,18 +170,18 @@ def read_bernese_trp(trpfile):
     This function reads tropospheric solution in TRP format from Bernese
     GNSS software
     
-    Parameter
+    Parameters
     ----------
     trpfile:
         Filename of TRP file from Bernese
     
-    Return
-    ----------
+    Returns
+    -------
     DF:
         Tropospheric solutions from Bernese in Dataframe
     
     Notes
-    ----------
+    -----
         Written by Chaiyaporn Kitpracha
     """
     flagtrop = False
@@ -221,18 +221,18 @@ def read_rinex_met(metfile):
     """
     This function reads RINEX Meteorological files and convert to Pandas DataFrame
 
-    Parameter
+    Parameters
     ----------
     metfile:
         Path of RINEX Meteorological file in List/String (e.g. made with glob)
 
-    Return
-    ----------
+    Returns
+    -------
     DF:
         Meteorological data in DataFrame
 
     Notes
-    ----------
+    -----
         Written by Chaiyaporn Kitpracha
     """
     if utils.is_iterable(metfile):

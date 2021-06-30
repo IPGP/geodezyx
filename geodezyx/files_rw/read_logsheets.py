@@ -24,16 +24,11 @@ import copy
 import datetime as dt
 import dateutil
 import glob
-import linecache
-import io
-import numpy as np
 import os 
-import pandas as pd
 import re 
 
 #### geodeZYX modules
 from geodezyx import conv
-from geodezyx import time_series
 from geodezyx import utils
 
 #### Import star style
@@ -231,6 +226,7 @@ def mono_logsheet_read(logsheet_path,return_lists = False):
 
 def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
                         legacy_mode=False):
+
     """
     Read multiple logsheets
 
@@ -242,7 +238,7 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
     wildcardin : str, optional
         a wildcard describing the logsheet pattern.
         used only for pathin in a string path.
-        The default is '*log'.
+        The default is '\*log'.
     return_dico : bool, optional
         If False, returns period_lis_lis , stat_lis , loc_lis
         this mode is useful for station.info generation
