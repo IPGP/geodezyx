@@ -498,7 +498,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 print("***********",ac,dat)
                 
                 if first_date:
-                    if conv.dt2gpstime(dat) < first_date:
+                    if dat < first_date:
                         print("INFO: SKIP date",dat)
                         continue
                     
