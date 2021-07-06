@@ -13,7 +13,7 @@ import netCDF4 as nc
 import itertools
 import scipy
 
-from geodezyx import utils
+from geodezyx import utils,conv
 
 
 
@@ -23,7 +23,8 @@ def EMSGFZ_extrapolator(path_or_netcdf_object_in,
                         lon_xtrp,
                         wished_values=("duV","duNS","duEW"),
                         output_type = "DataFrame",
-                        debug=False,verbose=True):
+                        debug=False,verbose=True,
+                        time_smart=True):
     """
     Extrapolate loading values from the EMSGFZ models
     esmdata.gfz-potsdam.de:8080/
@@ -78,6 +79,11 @@ def EMSGFZ_extrapolator(path_or_netcdf_object_in,
         return NC
     
     time = np.array(NC['time'])
+    if time_smart:
+        # we work in MJD
+        start_date = conv.dt2MJD(conv.str_date2dt(NC['time'].units[11:]))
+        time = time + start_date
+        
     lat  = np.flip(np.array(NC['lat']))  ### we flip the lat because not ascending !
     lon  = np.array(NC['lon'])
     
@@ -96,13 +102,13 @@ def EMSGFZ_extrapolator(path_or_netcdf_object_in,
     ### do the interpolation for the wished value
     for wishval in wished_values:
         if verbose:
-            print("INFO:",wishval,"start interpolation for",dt.datetime.now())
+            print("INFO:",wishval,"start interpolation at",dt.datetime.now())
         
         #### Val = np.array(NC[wishval]) ### Slow
         Val = NC[wishval][:]
         
         if verbose:
-            print("INFO:",wishval,"grid loaded for",dt.datetime.now())
+            print("INFO:",wishval,"grid loaded at",dt.datetime.now())
             
         Val = np.flip(Val,1) ### we flip the lat because not ascending !
         Val_xtrp = scipy.interpolate.interpn(Points,Val,
@@ -113,6 +119,8 @@ def EMSGFZ_extrapolator(path_or_netcdf_object_in,
     #### choose the output
     if output_type == "DataFrame":
         Points_out = pd.DataFrame(WishVals_dic)
+        if time_smart:
+            Points_out['time_dt'] = conv.MJD2dt(Points_out['time'])
     elif output_type == "dict":
         Points_out = WishVals_dic
     elif output_type == "array":
