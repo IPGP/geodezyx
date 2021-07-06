@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Aug  2 18:00:21 2019
+@author: psakic
 
-@author: psakicki
+This sub-module of geodezyx.files_rw contains functions to 
+write misc. geodetic data in dedicated files.
+
+it can be imported directly with:
+from geodezyx import files_rw
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
-
 
 #### External modules
 import datetime as dt
@@ -20,9 +30,9 @@ from geodezyx import files_rw
 from geodezyx import reffram
 
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 ##########  END IMPORT  ##########
     
 def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',

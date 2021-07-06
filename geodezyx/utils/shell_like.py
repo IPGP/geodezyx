@@ -1,10 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun 28 14:28:06 2019
+@author: psakic
 
-@author: psakicki
+This sub-module of geodezyx.utils contains functions for Shell-like
+ operations in Python. 
+
+it can be imported directly with:
+from geodezyx import utils
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
+
 
 
 ########## BEGIN IMPORT ##########
@@ -487,7 +499,27 @@ def write_in_file(string_to_write,outdir,outname,ext='.txt',encoding='utf8'):
 #     return outpath
 
 def replace(file_path, pattern, subst):
-    """ from http://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python """
+    """
+    Replace a string in a file with a substitute
+
+    Parameters
+    ----------
+    file_path : str
+        path of the file.
+    pattern : str
+        string to be replaced.
+    subst : str
+        string which will be substituted.
+
+    Note
+    ----
+    http://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python
+
+    Returns
+    -------
+    None.
+
+    """
     #Create temp file
     from tempfile import mkstemp
     from os import close

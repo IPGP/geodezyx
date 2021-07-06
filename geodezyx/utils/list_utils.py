@@ -1,9 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jul 31 14:12:12 2019
+@author: psakic
 
-@author: psakicki
+This sub-module of geodezyx.utils contains functions for operations 
+related to Python's list manipulations. 
+
+it can be imported directly with:
+from geodezyx import utils
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
 
 

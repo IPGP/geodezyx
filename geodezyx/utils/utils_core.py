@@ -1,10 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun 28 14:27:56 2019
+@author: psakic
 
-@author: psakicki
+This sub-module of geodezyx.utils contains functions for misc. 
+low level function 
+
+it can be imported directly with:
+from geodezyx import utils
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
+
 
 ########## BEGIN IMPORT ##########
 #### External modules

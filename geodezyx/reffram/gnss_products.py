@@ -1,9 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Aug  2 17:36:39 2019
+@author: psakic
 
-@author: psakicki
+This sub-module of geodezyx.reffram contains functions for operations
+related to GNSS-products
+
+
+it can be imported directly with:
+from geodezyx import reffram
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
 
 ########## BEGIN IMPORT ##########
@@ -17,9 +29,11 @@ import numpy as np
 import os 
 import pandas as pd
 import re
-import datetime as dt
 
-# import sofa
+### disabled and imported directly in the needed fct
+## import geodezyx.reffram.sofa18 as sofa
+
+
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -677,6 +691,9 @@ def compar_orbit_frontend(DataDF1,DataDF2,ac1,ac2, sats_used_list = ['G']):
     return K
 
 
+
+
+
 def compar_clock(DFclk_inp_1,DFclk_inp_2,col_name = "name",bias_Col_name = "bias"):
     """
     Compares 2 GNSS clock bias DataFrames (from .clk), to a
@@ -998,6 +1015,8 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
     """
     
     DForb = DForb_inp.copy()
+    
+    import geodezyx.reffram.sofa18 as sofa
     
     ### bring everything to UTC
     if time_scale_inp.lower() == "gps":

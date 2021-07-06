@@ -1,28 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Apr  6 13:30:07 2019
+@author: psakic
 
-@author: psakicki
+This sub-module of geodezyx.geodyn contains functions to determine the 
+Euler pole of a tectonic plate.
+
+it can be imported directly with:
+from geodezyx import geodyn
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics
+functions for Geodesy and Geophysics under the GNU GPL v3 License
 
-Copyright (C) 2019 Pierre Sakic (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
 GitHub repository :
-https://github.com/PierreS1/GeodeZYX-Toolbox-Lite
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 
 This module is based on the work of :
 Goudarzi, M. A., Cocard, M., & Santerre, R. (2014). 
@@ -48,8 +39,6 @@ def euler_pole_calc(lat_ref,long_ref,vn_ref,ve_ref,
     """
     Compute the Euler pole of a set of reference points
     
-    Written by C. Geisert (ENSTA/LIENSs) - 2017
-
     Parameters
     ----------
     lat_ref,long_ref : list or numpy.array
@@ -91,13 +80,14 @@ def euler_pole_calc(lat_ref,long_ref,vn_ref,ve_ref,
     ------
     based on
     Goudarzi, M. A., Cocard, M., & Santerre, R. (2014). EPC: Matlab software to estimate Euler pole parameters. GPS Solutions, 18(1), 153–162. https://doi.org/10.1007/s10291-013-0354-4
-        
     
     Notes
     -----
     w is the common element for all Euler pole functions
     
     Should remains in rad/yr
+    
+    Written by C. Geisert (ENSTA/LIENSs) - 2017
     """
     if (incve_ref is None) or (incvn_ref is None):
         incve_ref = np.ones(len(ve_ref))
@@ -138,9 +128,7 @@ def euler_pole_calc(lat_ref,long_ref,vn_ref,ve_ref,
 def euler_pole_vector_to_latlongrate(w):   
     """
     Convert Euler pole vector to latitude longitude and rate  
-    
-    Written by P. Sakic based on C. Geisert work
-    
+        
     Parameters
     ----------
     w : numpy.array
@@ -162,6 +150,8 @@ def euler_pole_vector_to_latlongrate(w):
     w is the common element for all Euler pole functions
     
     Should remains in rad/yr
+    
+    Written by P. Sakic based on C. Geisert's work
     """
     wx=w[0]  #[rad/ yr]  
     wy=w[1]  #[rad/ yr] 
@@ -176,10 +166,8 @@ def euler_pole_vector_to_latlongrate(w):
 def euler_vels_relative_to_ref(w,lat_ITRF,long_ITRF,vn_ITRF,ve_ITRF,
                                incvn_ITRF=None,incve_ITRF=None,Rt=6.378e6):
     """
-    Compute relative velocities of points with respect to an reference plate/Euler pole
-    
-    Written by C. Geisert (ENSTA/LIENSs) - 2017
-    
+    Compute relative velocities of points with respect to a reference plate/Euler pole
+        
     Parameters
     ----------
     w : numpy.array
@@ -204,6 +192,8 @@ def euler_vels_relative_to_ref(w,lat_ITRF,long_ITRF,vn_ITRF,ve_ITRF,
     w is the common element for all Euler pole functions
     
     Should remains in rad/yr
+    
+    Written by C. Geisert (ENSTA/LIENSs) - 2017
     """
     if (incvn_ITRF is None) or (incve_ITRF is None):
         incvn_ITRF = np.ones(len(vn_ITRF))
@@ -230,8 +220,6 @@ def euler_pole_vector_from_latlongrate(wlat,wlong,wrate,
     """
     Compute the Euler vector from the pole latitude, longitude and rate
     
-    Written by C. Geisert (ENSTA/LIENSs) - 2017
-
     Parameters
     ----------
     wlat,wlong : float
@@ -250,6 +238,8 @@ def euler_pole_vector_from_latlongrate(wlat,wlong,wrate,
     w is the common element for all Euler pole functions
     
     Should remains in rad/yr per default
+    
+    Written by C. Geisert (ENSTA/LIENSs) - 2017
     """
     # OUTPUT : w [rad/year]
      
@@ -272,8 +262,6 @@ def euler_pole_vector_from_latlongrate(wlat,wlong,wrate,
     w[2]=wz*k 
     
     return w
-
-
 
 #%% ____Estimation de l'incertitude lors du calcul des EPP
 def euler_pole_quality(w,vn_ref,ve_ref,nrmatinv,desmat,wwmat,

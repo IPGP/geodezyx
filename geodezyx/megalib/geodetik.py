@@ -11,3 +11,4 @@ from geodezyx.conv.conv_coords  import *
 from geodezyx.conv.conv_time    import *
 from geodezyx.stats import *
 from geodezyx.reffram.geometry import *
+from geodezyx.reffram.quaternions import *

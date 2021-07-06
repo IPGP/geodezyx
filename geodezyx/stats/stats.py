@@ -1,9 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jul  9 14:01:29 2019
+@author: psakic
 
-@author: chaiyap
+This sub-module of geodezyx.stats contains functions for low-level 
+statistics. 
+
+it can be imported directly with:
+from geodezyx import stats
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
+
 
 ########## BEGIN IMPORT ##########
 #### External modules
@@ -539,6 +551,7 @@ def gaussian_filter_GFZ_style_smoother_improved(tim_ref, dat_ref, width=7):
     num_raw = len(tim_raw)
     
     for ismt in range(num_raw):
+
         tim_raw_work = np.delete(tim_raw , ismt)
         dat_raw_work = np.delete(dat_raw , ismt)
         
@@ -895,7 +908,7 @@ def outlier_mad_binom(Y,X,threshold=3.5,verbose=False,detrend_first=False,
     else:
         _ , Ywork = np.array(X) , np.array(Y)
         
-    _ , bb = outiler_mad(Ywork,threshold,verbose)
+    _ , bb = outlier_mad(Ywork,threshold,verbose)
     
     Xclean = np.array(X)[bb]    
     Yclean = np.array(Y)[bb]

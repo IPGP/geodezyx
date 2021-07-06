@@ -1,30 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Aug 11 15:42:14 2020
+@author: psakic
 
-@author: psakicki, mansur, chaiyap
+This sub-module of geodezyx.files_rw contains reading functions to 
+import GNSS logsheets/sitelogs.
+
+it can be imported directly with:
+from geodezyx import files_rw
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics
+functions for Geodesy and Geophysics under the GNU GPL v3 License
 
-Copyright (C) 2019 Pierre Sakic (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
 GitHub repository :
-https://github.com/PierreS1/GeodeZYX-Toolbox-Lite
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
+
 
 ########## BEGIN IMPORT ##########
 #### External modules
@@ -32,16 +24,11 @@ import copy
 import datetime as dt
 import dateutil
 import glob
-import linecache
-import io
-import numpy as np
 import os 
-import pandas as pd
 import re 
 
 #### geodeZYX modules
 from geodezyx import conv
-from geodezyx import time_series
 from geodezyx import utils
 
 #### Import star style
@@ -239,6 +226,7 @@ def mono_logsheet_read(logsheet_path,return_lists = False):
 
 def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
                         legacy_mode=False):
+
     """
     Read multiple logsheets
 
@@ -250,7 +238,7 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
     wildcardin : str, optional
         a wildcard describing the logsheet pattern.
         used only for pathin in a string path.
-        The default is '*log'.
+        The default is '\*log'.
     return_dico : bool, optional
         If False, returns period_lis_lis , stat_lis , loc_lis
         this mode is useful for station.info generation

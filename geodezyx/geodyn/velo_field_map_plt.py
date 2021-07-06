@@ -1,29 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug 30 16:53:18 2018
+@author: psakic
 
-@author: psakicki
+This sub-module of geodezyx.geodyn contains functions to plot velocity 
+vectors on a map.
+
+it can be imported directly with:
+from geodezyx import geodyn
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics
+functions for Geodesy and Geophysics under the GNU GPL v3 License
 
-Copyright (C) 2019 Pierre Sakic (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
 GitHub repository :
-https://github.com/PierreS1/GeodeZYX-Toolbox-Lite
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
+
 
 
 ########## BEGIN IMPORT ##########

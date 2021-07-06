@@ -1,24 +1,20 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+@author: psakic
+
+This sub-module of geodezyx.files_rw deals with file format conversion 
+between different file standards .
+
+it can be imported directly with:
+from geodezyx import files_rw
+
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics
+functions for Geodesy and Geophysics under the GNU GPL v3 License
 
-Copyright (C) 2019 Pierre Sakic (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
 GitHub repository :
-https://github.com/PierreS1/GeodeZYX-Toolbox-Lite
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
 
 #from geodezyx import utils,dt,time,np,os,re,struct,math,string,pd,copy
@@ -29,10 +25,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ########## BEGIN IMPORT ##########
 #### External modules
-import copy
 import datetime as dt
 import dateutil
-import glob
 from io import BytesIO,StringIO
 import itertools
 import matplotlib
@@ -51,42 +45,13 @@ from geodezyx import utils
 from geodezyx.files_rw import read_logsheets
 
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 ##########  END IMPORT  ##########
 
-#from geodezyx import utils,conv
-#import pandas
 
-
-#import geodezyx.legacy.utils.as genefun
-#import geodezyx.legacy.geodetik as geok
-#import softs_runner
-#
-#
-#import datetime as dt
-#import numpy as np
-#import textwrap
-#import shutil
-#import os
-#import pandas
-#import re
-#
-#import dateutil.parser
-#import geodetik as geok
-#import copy
-#import glob
-#
-#import matplotlib.pyplot as plt
-#
-##for read rinex nav
-#from io import BytesIO,StringIO
-#from pandas import DataFrame,Series
-#from pd.io.pytables import read_hdf
-
-#
    #_____          __  __ _____ _______                                   _
   #/ ____|   /\   |  \/  |_   _|__   __|                                 | |
  #| |  __   /  \  | \  / | | |    | |      __ _  ___ _ __   ___ _ __ __ _| |
@@ -647,18 +612,31 @@ def station_info_2_gins(statinfoin,coordfilein,outfile,
     """
     Convert a GAMIT station.info to a GINS stations files
 
-    Inputs :
-        statinfoin : path of input station.info
-        coodfilein : path of input coordinates files
-        outfile : path of output GINS station file
-        coordfile_type : GAMIT coordinates files type : 'lfile' or 'pbovelfile'
-        specific_stats_lis : list of specific stats
-        ellipsoid : 'GRS80'
-        station_info_columns_type : it exists different subtypes of station.info ...
-                                    handles "sopac" or "ulr" yet
+    Parameters
+    ----------
+    statinfoin : str
+        path of input station.info.
+    coordfilein : str
+        path of input coordinates files.
+    outfile : str
+         path of output GINS station file.
+    coordfile_type : str, optional
+        GAMIT coordinates files type : 'lfile' or 'pbovelfile'.
+        The default is 'pbovelfile'.
+    specific_stats_lis : list, optional
+         list of specific stations. The default is [].
+    ellipsoid : str, optional
+        ellipsoid. The default is 'GRS80'.
+    station_info_columns_type : TYPE, optional
+        it exists different subtypes of station.info ...
+        handles "sopac" or "ulr" yet. The default is "sopac".
 
-    Output :
-          path of GINS outfile
+
+    Returns
+    -------
+    outfile : str
+         path of GINS outfile.
+
     """
 
     # Info de referentiel de la 1ère ligne
@@ -1293,17 +1271,48 @@ def write_latlontime_file_4_OTPS_tide(outfilepath , lat , lon ,
                                       tide_model_path = './DATA/Model_atlas',
                                       set_relative_path_in_inp_file=True):
     """
-    strt    : start as a datetime
-    end     : it can be :
+    
+
+    Parameters
+    ----------
+    outfilepath : TYPE
+        DESCRIPTION.
+    lat : TYPE
+        DESCRIPTION.
+    lon : TYPE
+        DESCRIPTION.
+    strt : datetime
+        start as a datetime.
+    end : TYPE, optional
         length of the period in sec (integer)
         OR
-        if None, strt is a list
+        if None, strt is a list. The default is None.
+    sec_step : TYPE, optional
+        DESCRIPTION. The default is 1.
+    generate_inp_file : TYPE, optional
+        DESCRIPTION. The default is True.
+    tide_model_path : TYPE, optional
+        DESCRIPTION. The default is './DATA/Model_atlas'.
+    set_relative_path_in_inp_file : TYPE, optional
+        DESCRIPTION. The default is True.
 
+    Returns
+    -------
+    outdir : TYPE
+        DESCRIPTION.
+        
+        
+    Note
+    ----
     lat>0 - degrees North, lon>0 - degrees East
     lat<0 - degrees South, lon<0 - degrees West
     
     lat/lon can be a list, with the same size as dates_lis
+    
     """
+    
+    
+
     fil = open(outfilepath,'w+')
 
 
