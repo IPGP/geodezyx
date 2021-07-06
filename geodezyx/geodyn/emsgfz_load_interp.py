@@ -6,6 +6,7 @@ Created on Fri Jun 25 16:43:48 2021
 @author: psakicki
 """
 
+import datetime as dt
 import pandas as pd
 import numpy as np
 import netCDF4 as nc
@@ -20,9 +21,9 @@ def EMSGFZ_extrapolator(path_or_netcdf_object_in,
                         time_xtrp,
                         lat_xtrp,
                         lon_xtrp,
-                        wished_values=("duV","duNS","duEW","dg"),
+                        wished_values=("duV","duNS","duEW"),
                         output_type = "DataFrame",
-                        debug=False):
+                        debug=False,verbose=True):
     """
     Extrapolate loading values from the EMSGFZ models
     esmdata.gfz-potsdam.de:8080/
@@ -44,7 +45,7 @@ def EMSGFZ_extrapolator(path_or_netcdf_object_in,
         ranging from [-180..180]
     wished_values : tuple of string, optional
         the components of the extrapolated values. 
-        The default is ("duV","duNS","duEW","dg").
+        The default is ("duV","duNS","duEW").
     output_type : str, optional
         Choose the output type.
         "DataFrame","dict","array","tuple","list"
@@ -77,7 +78,7 @@ def EMSGFZ_extrapolator(path_or_netcdf_object_in,
         return NC
     
     time = np.array(NC['time'])
-    lat  = np.flip(np.array(NC['lat']))
+    lat  = np.flip(np.array(NC['lat']))  ### we flip the lat because not ascending !
     lon  = np.array(NC['lon'])
     
     Points = (time,lat,lon)    
@@ -94,8 +95,16 @@ def EMSGFZ_extrapolator(path_or_netcdf_object_in,
     
     ### do the interpolation for the wished value
     for wishval in wished_values:
-        Val = np.array(NC[wishval])
-        Val = np.flip(Val,1)
+        if verbose:
+            print("INFO:",wishval,"start interpolation for",dt.datetime.now())
+        
+        #### Val = np.array(NC[wishval]) ### Slow
+        Val = NC[wishval][:]
+        
+        if verbose:
+            print("INFO:",wishval,"grid loaded for",dt.datetime.now())
+            
+        Val = np.flip(Val,1) ### we flip the lat because not ascending !
         Val_xtrp = scipy.interpolate.interpn(Points,Val,
                                              Points_xtrp)
         WishVals_Stk.append(Val_xtrp)
