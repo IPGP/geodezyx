@@ -1408,7 +1408,7 @@ def dt2MJD(dtin):
         typ=utils.get_type_smart(dtin)
         return typ([dt2MJD(t) for t in dtin])
     except:
-        delta = (dtin - dt.datetime(1858,11,17))
+        delta = (dtin.replace(tzinfo=None) - dt.datetime(1858,11,17))
         return delta.days + (delta.seconds / 86400.) + (delta.microseconds / 864e8)
 
 def dt2str(dtin , str_format="%Y-%m-%d %H:%M:%S"):
