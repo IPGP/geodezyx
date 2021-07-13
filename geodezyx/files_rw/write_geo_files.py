@@ -427,7 +427,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         suffix_out_input = None,
                         overlap_size = 7200,
                         force = False,
-                        manage_missing_sats='common_sats_only',
+                        manage_missing_sats='exclude_missing_epoch',
                         eliminate_null_sat=True,
                         severe=False,
                         separated_systems_export=False,
@@ -451,10 +451,11 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
     force : True, optional
         force overwrite. The default is False.
     manage_missing_sats : str, optional
-        'exclude' : generate a file with only the common sat 
-        between the 3 days. Thus, exclude the missing sats
+        'exclude_missing_day' : generate a file with only the common sat 
+        between the 3 days. Thus, exclude the missing sats for a complete day
+        'exclude_missing_epoch' : generate a file with only sat with full epochs
         'extrapolate' : extrapolate the missing sats based on the first/last epoch
-        The default is 'common_sats_only'.
+        The default is 'exclude_missing_epoch'.
     eliminate_null_sat : bool, optional
         eliminate null sat. The default is True.
     severe : bool, optional
@@ -579,10 +580,21 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 SP3concat = SP3concat[(SP3concat["epoch"] >= dat_filter_bef) & (SP3concat["epoch"] <= dat_filter_aft)]
                 
                 ########## HERE WE MANAGE THE MISSING SATS
-                if manage_missing_sats == "exclude":     
-                    print("4))","remove missing sats ")                                     
+                if manage_missing_sats == "exclude_missing_day":     
+                    print("4))","remove missing sats -- day")                                     
                     common_sats = set(SP3_bef["sat"]).intersection(set(SP3["sat"])).intersection(set(SP3_aft["sat"]))
                     SP3concat = SP3concat[SP3concat["sat"].isin(common_sats)]
+                    
+                elif manage_missing_sats == "exclude_missing_epoch":
+                    print("4))","remove missing sats -- epoch")      
+                    nepoc = len(SP3concat["epoch"].unique())
+                    SP3concat_satgrp = SP3concat.groupy("sat")
+                    Good_sats = SP3concat_satgrp.count() == nepoc
+                    Good_sats = Good_sats.reset_index()["sat"]
+                    
+                    SP3concat = SP3concat[SP3concat["sat"].isin(Good_sats)]
+                    
+                
                 elif manage_missing_sats == "extrapolate":
                     print("4))","extrapolate missing sats ")                                     
                     for iovl,SP3_ovl in enumerate((SP3_bef,SP3_aft)):
