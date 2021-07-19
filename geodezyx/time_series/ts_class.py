@@ -614,6 +614,7 @@ class TimeSeriePoint:
         BIG = np.column_stack(ColStk)
         DF = pd.DataFrame(BIG)
         DF.columns = ColNameStk
+        DF = DF.infer_objects()
         
         return DF
 

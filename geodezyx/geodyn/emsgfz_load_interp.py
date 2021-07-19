@@ -70,15 +70,15 @@ def ESMGFZ_downloader(latitude,longitude,output_dir,
     
     ### base entry
     if startdate >= dt.datetime(2010,1,1) and enddate >= dt.datetime(2010,1,1):
-        url_period = '2010-now'
+        url_period = '/2010-now'
     elif startdate < dt.datetime(2010,1,1) and enddate < dt.datetime(2010,1,1):
-        url_period = '2000-2009'
+        url_period = '/2000-2009'
     else:
         url_period = ''
         
         
     for icomp in components:
-        url_entry = icomp +"/" + CM_CF + "/2000-now/" + url_period + "?submit=Get%20Point&output=data.gridaspoint"
+        url_entry = icomp +"/" + CM_CF + "/2000-now" + url_period + "?submit=Get%20Point&output=data.gridaspoint"
         
         ### point
         url_lat = "&location.latitude=" + str(latitude)

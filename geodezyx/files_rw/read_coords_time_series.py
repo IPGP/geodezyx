@@ -591,7 +591,7 @@ def read_gins_solution(filein,mode="cinematic"):
             sZ =  np.sqrt(float(f[11]))
 
             if "T24:00:00.000" in f[1]: # Manage the special case if we are at the border bw 2 days
-                Txyz = conv.string_date2dt(f[1][:10])  + dt.timedelta(days=+1) + dt.timedelta(seconds=-19)
+                Txyz = conv.string_date2dt(f[1][:10]) + dt.timedelta(days=+1) + dt.timedelta(seconds=-19)
             else:
                 Txyz = conv.string_date2dt(f[1]) + dt.timedelta(seconds=-19)
 
