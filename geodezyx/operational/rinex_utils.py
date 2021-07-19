@@ -633,7 +633,8 @@ def rinex_spliter_gfzrnx(input_rinex_path,
                          output_directory,stat_out_name='',
                          interval_size=86400,shift = 0,
                          inclusive = False,gfzrnx_cmd='GFZRNX',
-                         output_name = "::RX3::"):
+                         output_name = "::RX3::",
+                         custom_cmds=''):
 
     interval_size_hour = interval_size / 3600.
     
@@ -708,7 +709,7 @@ def rinex_spliter_gfzrnx(input_rinex_path,
                              stderr=subprocess.PIPE)
         
         # - 1/3600. # one_sec2h
-        command = gfzrnx_cmd + ' -finp ' + input_rinex_path + ' -fout ' + os.path.join(output_directory,output_name)  + ' -site ' + stat_out_name.upper() +' -epo_beg ' +  curr_date.strftime('%Y%m%d_%H%M%S') + ' --duration ' + str(interval_size_ope)
+        command = gfzrnx_cmd + ' -finp ' + input_rinex_path + ' -fout ' + os.path.join(output_directory,output_name)  + ' -site ' + stat_out_name.upper() +' -epo_beg ' +  curr_date.strftime('%Y%m%d_%H%M%S') + ' --duration ' + str(interval_size_ope) + ' ' + custom_cmds
         print(command)
         
         #rinex_out_name = stat_out_name + curr_date.strftime('%j') + rnx_interval_ext + curr_date.strftime('%y') + 'o'
