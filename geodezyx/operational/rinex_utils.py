@@ -21,6 +21,7 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 #### External modules
 import datetime as dt
 import dateutil
+import glob
 import numpy as np
 import os 
 import shutil
@@ -640,7 +641,7 @@ def rinex_spliter_gfzrnx(input_rinex_path,
         stat_out_name = os.path.basename(input_rinex_path)[0:4]
     
     # check if the RINEX is compressed ...
-    bool_comp_rnx = operational.check_if_compressed_rinex(input_rinex_path)
+    bool_comp_rnx = check_if_compressed_rinex(input_rinex_path)
     
     # ... if not crz2rnx !
     if bool_comp_rnx:
@@ -653,7 +654,7 @@ def rinex_spliter_gfzrnx(input_rinex_path,
         os.makedirs(out_dir)
     os.chdir(out_dir)
     
-    first_epoch , last_epoch = operational.rinex_start_end(input_rinex_path)
+    first_epoch , last_epoch = rinex_start_end(input_rinex_path)
     
     # In this function, Date are truncated epochs
     # (only the day if interval == 24 , + the hour else)
