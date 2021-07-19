@@ -687,7 +687,7 @@ def rinex_spliter_gfzrnx(input_rinex_path,
             interval_size_ope = interval_size
     
         if not inclusive:
-            interval_size_ope = interval_size_ope - 1/3600.
+            interval_size_ope = interval_size_ope - 1.
             
         interval_size_ope = int(np.floor(interval_size_ope))
     
