@@ -72,7 +72,6 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
 
     EpochRawList  = SP3_DF_wrk["epoch"].unique()
     SatList    = sorted(SP3_DF_wrk["sat"].unique())
-    SatList    = list(reversed(SatList))
     SatListSet = set(SatList)
     EpochUsedList = []
     
