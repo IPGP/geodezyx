@@ -39,8 +39,6 @@ def euler_pole_calc(lat_ref,long_ref,vn_ref,ve_ref,
     """
     Compute the Euler pole of a set of reference points
     
-    Written by C. Geisert (ENSTA/LIENSs) - 2017
-
     Parameters
     ----------
     lat_ref,long_ref : list or numpy.array
@@ -82,13 +80,14 @@ def euler_pole_calc(lat_ref,long_ref,vn_ref,ve_ref,
     ------
     based on
     Goudarzi, M. A., Cocard, M., & Santerre, R. (2014). EPC: Matlab software to estimate Euler pole parameters. GPS Solutions, 18(1), 153–162. https://doi.org/10.1007/s10291-013-0354-4
-        
     
     Notes
     -----
     w is the common element for all Euler pole functions
     
     Should remains in rad/yr
+    
+    Written by C. Geisert (ENSTA/LIENSs) - 2017
     """
     if (incve_ref is None) or (incvn_ref is None):
         incve_ref = np.ones(len(ve_ref))
@@ -129,9 +128,7 @@ def euler_pole_calc(lat_ref,long_ref,vn_ref,ve_ref,
 def euler_pole_vector_to_latlongrate(w):   
     """
     Convert Euler pole vector to latitude longitude and rate  
-    
-    Written by P. Sakic based on C. Geisert's work
-    
+        
     Parameters
     ----------
     w : numpy.array
@@ -153,6 +150,8 @@ def euler_pole_vector_to_latlongrate(w):
     w is the common element for all Euler pole functions
     
     Should remains in rad/yr
+    
+    Written by P. Sakic based on C. Geisert's work
     """
     wx=w[0]  #[rad/ yr]  
     wy=w[1]  #[rad/ yr] 
@@ -167,10 +166,8 @@ def euler_pole_vector_to_latlongrate(w):
 def euler_vels_relative_to_ref(w,lat_ITRF,long_ITRF,vn_ITRF,ve_ITRF,
                                incvn_ITRF=None,incve_ITRF=None,Rt=6.378e6):
     """
-    Compute relative velocities of points with respect to an reference plate/Euler pole
-    
-    Written by C. Geisert (ENSTA/LIENSs) - 2017
-    
+    Compute relative velocities of points with respect to a reference plate/Euler pole
+        
     Parameters
     ----------
     w : numpy.array
@@ -195,6 +192,8 @@ def euler_vels_relative_to_ref(w,lat_ITRF,long_ITRF,vn_ITRF,ve_ITRF,
     w is the common element for all Euler pole functions
     
     Should remains in rad/yr
+    
+    Written by C. Geisert (ENSTA/LIENSs) - 2017
     """
     if (incvn_ITRF is None) or (incve_ITRF is None):
         incvn_ITRF = np.ones(len(vn_ITRF))
@@ -221,8 +220,6 @@ def euler_pole_vector_from_latlongrate(wlat,wlong,wrate,
     """
     Compute the Euler vector from the pole latitude, longitude and rate
     
-    Written by C. Geisert (ENSTA/LIENSs) - 2017
-
     Parameters
     ----------
     wlat,wlong : float
@@ -241,6 +238,8 @@ def euler_pole_vector_from_latlongrate(wlat,wlong,wrate,
     w is the common element for all Euler pole functions
     
     Should remains in rad/yr per default
+    
+    Written by C. Geisert (ENSTA/LIENSs) - 2017
     """
     # OUTPUT : w [rad/year]
      
