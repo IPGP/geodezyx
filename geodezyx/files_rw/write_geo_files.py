@@ -591,15 +591,12 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 elif manage_missing_sats == "exclude_missing_epoch":
                     print("4))","remove missing sats -- epoch")      
                     nepoc = len(SP3concat["epoch"].unique())
-                    SP3concat_satgrp = SP3concat.groupby("sat")["epoch"]
-                    #print("ZZZZZZ",SP3concat_satgrp.count().to_string()) 
-                    Good_sats_df = SP3concat_satgrp.count() == nepoc
-                    #print("AAAAA",list(Good_sats_df))                                     
-                    Good_sats = Good_sats_df[Good_sats_df == True].reset_index()["sat"]
-                    Bad_sats = Good_sats_df[Good_sats_df == False].reset_index()["sat"]
-                    #All_sats = SP3concat["sat"].unique()
-                    print("   ","sats with missing epochs:",list(Bad_sats))                                     
+                    SP3concat_satgrp = SP3concat.groupy("sat")
+                    Good_sats = SP3concat_satgrp.count() == nepoc
+                    Good_sats = Good_sats.reset_index()["sat"]
+                    
                     SP3concat = SP3concat[SP3concat["sat"].isin(Good_sats)]
+                    
                 
                 elif manage_missing_sats == "extrapolate":
                     print("4))","extrapolate missing sats ")                                     
