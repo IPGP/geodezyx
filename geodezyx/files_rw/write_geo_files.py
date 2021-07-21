@@ -58,7 +58,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
         Do not write an epoch if all sats are null (filtering). 
         The default is True.
     force_format_c : bool, optional
-        DESCRIPTION. The default is False.
+        force SP3's format c. The default is False.
 
     Returns
     -------
@@ -71,8 +71,11 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
     SP3_DF_wrk = SP3_DF_in.sort_values(["epoch","sat"])
 
     EpochRawList  = SP3_DF_wrk["epoch"].unique()
-    SatList    = sorted(SP3_DF_wrk["sat"].unique())
-    SatList    = list(reversed(SatList))
+    SatList    = list(sorted(SP3_DF_wrk["sat"].unique()))
+    ## SatList    = list(reversed(SatList)) 
+    #### PS 210721
+    #### reversed bc the sats are sorted ascending=False, but why???
+    #### to have G before E ??
     SatListSet = set(SatList)
     EpochUsedList = []
     
@@ -96,7 +99,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
             SP3epoc = SP3epoc.append(miss_line)
         #### end of missing sat bloc
 
-        SP3epoc.sort_values("sat",inplace=True,ascending=False)
+        SP3epoc.sort_values("sat",inplace=True,ascending=True)
         timestamp = conv.dt2sp3_timestamp(conv.numpy_dt2dt(epoc)) + "\n"
 
         linefmt = "P{:}{:14.6f}{:14.6f}{:14.6f}{:14.6f}\n"
