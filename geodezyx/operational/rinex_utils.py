@@ -21,6 +21,7 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 #### External modules
 import datetime as dt
 import dateutil
+import glob
 import numpy as np
 import os 
 import shutil
@@ -183,16 +184,35 @@ def rinex_regex_new_name(compressed=True,compiled=False):
 def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
                     add_tzinfo=False,out_array=True):
     """
-    input_rinex_path_or_string :
+    Read the epochs contained in a RINEX File. Can handle RINEX 2 and 3
 
-        can be the path of a RINEX or directly the RINEX content as a string
+    Parameters
+    ----------
+    input_rinex_path_or_string : str
+        path of the rinex file.
+        can be the path of a RINEX or directly
+        the RINEX content as a string
 
-    161019 : dirty copier coller de rinex start end
+    interval_out : bool, optional
+        output also the intervals. The default is False.
+        
+    add_tzinfo : bool, optional
+        add timezone information in the datetime's Epoches.
+        The default is False.
+        
+    out_array : bool, optional
+        output results as array. 
+        The default is True.
+
+    Returns
+    -------
+    array or list
+        the epochs in the RINEX.
     """
+
+    ##161019 : dirty copier coller de rinex start end
     epochs_list = []
     rinex_60sec = False
-
-
 
     if  utils.is_iterable(input_rinex_path_or_string):
         Finp = input_rinex_path_or_string
@@ -276,17 +296,48 @@ def rinex_start_end(input_rinex_path,interval_out=False,
                     add_tzinfo=False,verbose = True,
                     safety_mode = True):
     """
-    safety_mode :
+    Return the first and the last epoch of a RINEX file
+    (based on the actual content of the file, not the header)
+    
+    Can handle REINX 2 and 3
 
+    Parameters
+    ----------
+    input_rinex_path : TYPE
+        path of the rinex file.
+        can be the path of a RINEX or directly
+        the RINEX content as a string     
+    interval_out : bool, optional
+        output also the intervals. The default is False.
+        
+    add_tzinfo : bool, optional
+        add timezone information in the datetime's Epoches.
+        The default is False.
+
+    verbose : bool, optional
+        verbose mode. The default is True.
+        
+    safety_mode : TYPE, optional
         if the epoch reading fails (e.g. in case of a compressed RINEX)
         activate a reading of the header and the file name as backup.
+        The default is True.
 
+    Returns
+    -------
+    first_epoch , last_epoch , [interval]
+        First, las epoches and interval if asked.
 
-    une liste d'epochs en début et fin de fichier
-    => en trouver le min et le max
-    NB : FAIRE UN FONCTION READ EPOCH A L'OCCAZ
-    NBsuite : c'est fait au 161018 mais par contre c'est un dirty copier coller
     """
+    
+    
+    
+
+
+    #une liste d'epochs en début et fin de fichier
+    #=> en trouver le min et le max
+    #NB : FAIRE UN FONCTION READ EPOCH A L'OCCAZ
+    #NBsuite : c'est fait au 161018 mais par contre c'est un dirty copier coller
+
     epochs_list = []
     Head = utils.head(input_rinex_path,1500)
     epochs_list_head = rinex_read_epoch(Head,interval_out=interval_out,
@@ -575,6 +626,128 @@ def rinex_spliter(input_rinex_path,output_directory,stat_out_name='',
         rinex_out_name_lis.append(rinex_out_final)
 
     return rinex_out_name_lis
+
+
+
+def rinex_spliter_gfzrnx(input_rinex_path,
+                         output_directory,stat_out_name='',
+                         interval_size=86400,shift = 0,
+                         inclusive = False,gfzrnx_cmd='GFZRNX',
+                         output_name = "::RX3::",
+                         custom_cmds=''):
+
+    interval_size_hour = interval_size / 3600.
+    
+    if stat_out_name == '':
+        stat_out_name = os.path.basename(input_rinex_path)[0:4]
+    
+    # check if the RINEX is compressed ...
+    bool_comp_rnx = check_if_compressed_rinex(input_rinex_path)
+    
+    # ... if not crz2rnx !
+    if bool_comp_rnx:
+        input_rinex_path = crz2rnx(input_rinex_path)
+    
+    inp_rinex_obj=open(input_rinex_path,'r+')
+    out_dir = output_directory # nom redondant mais j'ai la flemme d'aller corriger le nom de la variable
+    
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+    os.chdir(out_dir)
+    
+    first_epoch , last_epoch = rinex_start_end(input_rinex_path)
+    
+    # In this function, Date are truncated epochs
+    # (only the day if interval == 24 , + the hour else)
+    first_date = dt.datetime(first_epoch.year,first_epoch.month,
+                                   first_epoch.day,first_epoch.hour)
+    last_date = dt.datetime(last_epoch.year,last_epoch.month,
+                                  last_epoch.day,last_epoch.hour)+dt.timedelta(hours=1)
+    
+    print("first & last dates (truncated) : " , first_date , last_date)
+    
+    time_interval = utils.get_interval(first_date,last_date,
+                                         dt.timedelta(hours=interval_size_hour))
+    
+    alphabet = list(string.ascii_lowercase)
+    
+    rinex_out_name_lis = []
+    
+    for i,curr_date in enumerate(time_interval):
+    
+        if shift != 0:
+            print('WARN : rinex_spliter : shifted mode on, be careful !!!')
+    
+    
+        if bool(shift) and i != 0:
+            curr_date = curr_date + dt.timedelta(seconds = shift)
+            interval_size_ope = interval_size
+        #elif bool(shift) and i == 0 :
+        #    interval_size_ope = interval_size + float(shift) / 60.
+        else:
+            interval_size_ope = interval_size
+    
+        if not inclusive:
+            interval_size_ope = interval_size_ope - 1.
+            
+        interval_size_ope = int(np.floor(interval_size_ope))
+    
+        if not bool(shift):
+            if interval_size == 24:
+                rnx_interval_ext = '0.'
+            else:
+                rnx_interval_ext = alphabet[curr_date.hour] + '.'
+        else:
+            if interval_size == 24:
+                rnx_interval_ext = '0.'
+            else:
+                rnx_interval_ext = alphabet[curr_date.hour]  +'.'
+    
+        p = subprocess.Popen('',executable='/bin/bash', 
+                             stdin=subprocess.PIPE ,
+                             stdout=subprocess.PIPE , 
+                             stderr=subprocess.PIPE)
+        
+        # - 1/3600. # one_sec2h
+        command = gfzrnx_cmd + ' -finp ' + input_rinex_path + ' -fout ' + os.path.join(output_directory,output_name)  + ' -site ' + stat_out_name.upper() +' -epo_beg ' +  curr_date.strftime('%Y%m%d_%H%M%S') + ' --duration ' + str(interval_size_ope) + ' ' + custom_cmds
+        print(command)
+        
+        #rinex_out_name = stat_out_name + curr_date.strftime('%j') + rnx_interval_ext + curr_date.strftime('%y') + 'o'
+        std_log_name = curr_date.strftime('%j') + rnx_interval_ext + "err.log"   
+        err_log_name = curr_date.strftime('%j') + rnx_interval_ext + "err.log"   
+        
+        stdout,stderr = p.communicate( command.encode() )
+        
+        std_file = open(std_log_name, "w")
+        std_file.write(stdout.decode("utf-8"))
+        std_file.close()
+        
+        if stderr:
+            print(err_log_name + " output:")
+            print(stderr.decode("utf-8"))
+            err_file = open(err_log_name, "w")
+            err_file.write(stderr.decode("utf-8"))
+            err_file.close()
+    
+        ### get the latest files
+        list_of_files = glob.glob(output_directory + '/*') # * means all if need specific format then *.csv
+        latest_file = sorted(list_of_files, key=os.path.getctime)[-3:] ### -2 and -1 are the logs
+        
+        latest_file = [e for e in latest_file if ".rnx" in e]
+        
+        if len(latest_file) == 0:
+            latest_file = ""
+            rnx_splt_path = ""
+        else:
+            latest_file = latest_file[0]
+            rnx_splt_path = os.path.join(out_dir,latest_file)
+    
+        rinex_out_name_lis.append(rnx_splt_path)
+
+
+
+
+
 
 
 
