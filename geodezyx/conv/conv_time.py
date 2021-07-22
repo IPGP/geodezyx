@@ -937,9 +937,17 @@ def dt2gpstime(dtin,dayinweek=True,inp_ref="utc",outputtype=int):
             
         if dayinweek:
             day = np.floor(np.divide(secs,86400))
-            return outputtype(int(week)) , outputtype(int(day))
+            output1 = outputtype(int(week)) 
+            output2 = outputtype(int(day))
         else:
-            return outputtype(int(week)) , outputtype(int(secs))
+            output1 = outputtype(int(week))             
+            output2 = outputtype(int(secs))
+
+
+        if outputtype == str: ### add an extra 0 if week < 1000
+            output1 = output1.zfill(4)
+            
+        return output1 , output2
 
 
 

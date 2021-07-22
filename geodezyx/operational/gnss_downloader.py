@@ -1212,7 +1212,7 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
         Dates_list.append(Dates_list[-1]  + dt.timedelta(days=1))
         
     ### manage weekly file 
-    Dates_wwwwd_list   = [utils.join_improved("",*conv.dt2gpstime(d)) for d in Dates_list]
+    Dates_wwwwd_list   = [utils.join_improved("",*conv.dt2gpstime(d,outputtype=str)) for d in Dates_list]
     Dates_yyyyddd_list = [utils.join_improved("",*reversed(conv.dt2doy_year(d))) for d in Dates_list]
     
     
