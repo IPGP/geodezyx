@@ -592,7 +592,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 elif manage_missing_sats == "exclude_missing_epoch":
                     print("4))","remove missing sats -- epoch")      
                     nepoc = len(SP3concat["epoch"].unique())
-                    SP3concat_satgrp = SP3concat.groupy("sat")
+                    SP3concat_satgrp = SP3concat.groupby("sat")
                     Good_sats = SP3concat_satgrp.count() == nepoc
                     Good_sats = Good_sats.reset_index()["sat"]
                     
