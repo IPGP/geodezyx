@@ -844,7 +844,7 @@ def outlier_mad(data,threshold=3.5,verbose=False,
     MZS = 0.6745 * np.abs(diff) / MAD
 
     MZS[np.isnan(MZS)] = threshold * 10 ### makes a threshold virtually higher for NaN
-    boolbad = MZS < threshold
+    boolbad = MZS < threshold ## remendir: False means that the values are bad.
 
 
     dataout = data[boolbad]
