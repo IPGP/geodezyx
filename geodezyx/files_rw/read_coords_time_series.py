@@ -1444,6 +1444,7 @@ def read_epos_sta_coords_mono(filein,return_df=True):
             #### And store for the DataFrame
             else:
                 tup_4_DF = (namestat,numstat,tecto_plate,
+                            conv.MJD2dt(MJD_strt),
                             MJD_ref,MJD_strt,MJD_end,
                             X,Y,Z,sX,sY,sZ,
                             Vx,Vy,Vz,sVx,sVy,sVz)
@@ -1452,7 +1453,7 @@ def read_epos_sta_coords_mono(filein,return_df=True):
 
 
     if return_df:
-        columns = ("site","site_num","tecto_plate",
+        columns = ("site","site_num","tecto_plate","epoch",
            "MJD_ref","MJD_start","MJD_end",
            "x","y","z","sx","sy","sz",
            "Vx","Vy","Vz","sVx","sVy","sVz")
@@ -1494,7 +1495,7 @@ def read_epos_sta_coords_multi(filein_list,output_type="DataFrame"):
             DFfil = read_epos_sta_coords_mono(fil,return_df=True)
             DFfil_stk.append(DFfil)  
         DFall = pd.concat(DFfil_stk)
-        DFall.reset_index(inplace=True)
+        DFall.reset_index(inplace=True,drop=True)
         OUT = DFall
         
     return OUT
