@@ -419,9 +419,13 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     Diff_sat_all_df_in : DataFrame
         a DataFrame produced by compar_orbit
         
-    yaxis_limit : 3-tuple iterable
+    yaxis_limit : 3-tuple iterable or 2-element tuple
         force the y axis limits. must look like 
         [(ymin_r,ymax_r),(ymin_t,ymax_t),(ymin_n,ymax_n)]
+        to control all the axis independely
+        OR
+        (ymin,ymax)
+        to set all th axis at the same limits 
 
     Returns
     -------
@@ -489,11 +493,18 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     axt.yaxis.set_major_formatter(y_formatter)
     axn.yaxis.set_major_formatter(y_formatter)
     
-    if yaxis_limit:
+    if yaxis_limit and len(yaxis_limit) == 3: ### indep. axis limit
         axr.set_ylim(yaxis_limit[0])
         axt.set_ylim(yaxis_limit[1])
         axn.set_ylim(yaxis_limit[2])
-    
+    elif yaxis_limit and len(yaxis_limit) == 2:
+        axr.set_ylim(yaxis_limit)
+        axt.set_ylim(yaxis_limit)
+        axn.set_ylim(yaxis_limit)
+    else:
+        pass
+        
+        
     import matplotlib.dates as mdates
     fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
 

@@ -1374,11 +1374,30 @@ def read_epos_sta_kinematics(filein):
 
 def read_epos_sta_coords_mono(filein,return_df=True):
     """
-    read an EPOS's YYYY_DDD_XX_sta_coordinates coordinates files
-    and return a list of Points objects
+    Read an GFZ EPOS's coordinate file.
+    To read several files at the same time see read_epos_sta_coords_multi
 
-    ... TBC ...
+    Parameters
+    ----------
+    filein : str
+        path of the input coordinate file.
+    return_df : bool, optional
+        if True, returns the coordinates as a Pandas DataFrame.
+        if False, return a list of GeodeZYX's point objects (advanced)
+        The default is True.
+
+    Returns
+    -------
+    DataFrame or List of Points
+        Ouput coordinates.
+
     """
+    # """
+    # read an EPOS's YYYY_DDD_XX_sta_coordinates coordinates files
+    # and return a list of Points objects
+
+    # ... TBC ...
+    # """
     F = open(filein)
 
     Points_list_stk = []
@@ -1444,8 +1463,67 @@ def read_epos_sta_coords_mono(filein,return_df=True):
         return DFout
     else:
         return Points_list_stk
+    
 
-def read_epos_sta_coords_multi(filein_list,return_dict = True):
+
+def read_epos_sta_coords_multi(filein_list,output_type="DataFrame"):
+    """
+    Read several GFZ EPOS's coordinate files.
+
+    Parameters
+    ----------
+    filein_list : list
+        list of input coordinate files inputs.
+    output_type : str, optional
+        "DataFrame": returns a Pandas DataFrame containing the coordinates
+        "TSobjects": returns a dictionary of GeodeZYX's TimeSeries objects (advanced)
+        The default is "DataFrame".
+
+    Returns
+    -------
+    OUT : DataFrame or dict
+        See "output_type" input parameter.
+
+    """
+    
+    if output_type == "TSobjects":
+        OUT = read_epos_sta_coords_multi_legacy(filein_list,return_dict = True)
+    elif  output_type == "DataFrame":
+        DFfil_stk = []
+        for fil in filein_list:
+            DFfil = read_epos_sta_coords_mono(fil,return_df=True)
+            DFfil_stk.append(DFfil)  
+        DFall = pd.concat(DFfil_stk)
+        DFall.reset_index(inplace=True)
+        OUT = DFall
+        
+    return OUT
+        
+
+    # print("WARN: you use read_epos_sta_coords_multi_legacy, this function is discontinued")
+    # print("      switch for read_epos_sta_coords_multi_new")
+
+
+def read_epos_sta_coords_multi_legacy(filein_list,return_dict = True):
+    """
+    Read several GFZ EPOS's coordinate files.
+    Legacy version
+    
+    Parameters
+    ----------
+    filein_list : list
+        list of input coordinate files inputs.
+    return_dict : bool, optional
+        True: returns a dictionary of GeodeZYX's TimeSeries objects 
+        "TSobjects": returns a list of GeodeZYX's TimeSeries objects 
+        The default is True.
+
+    Returns
+    -------
+    OUT : dict or list
+        See "return_dict" input parameter.
+    """
+
     filein_list  = sorted(filein_list)
     Points_list  = []
     statname_stk = []
