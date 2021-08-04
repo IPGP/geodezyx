@@ -993,8 +993,12 @@ This Note is in fact usefull if you want to see bad positions on a plot
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Diff_sat_all_df_in</strong> (<em>DataFrame</em>) – a DataFrame produced by compar_orbit</p></li>
-<li><p><strong>yaxis_limit</strong> (<em>3-tuple iterable</em>) – force the y axis limits. must look like
-[(ymin_r,ymax_r),(ymin_t,ymax_t),(ymin_n,ymax_n)]</p></li>
+<li><p><strong>yaxis_limit</strong> (<em>3-tuple iterable</em><em> or </em><em>2-element tuple</em>) – force the y axis limits. must look like
+[(ymin_r,ymax_r),(ymin_t,ymax_t),(ymin_n,ymax_n)]
+to control all the axis independely
+OR
+(ymin,ymax)
+to set all th axis at the same limits</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
