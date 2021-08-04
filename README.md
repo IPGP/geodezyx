@@ -2,7 +2,7 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.2.1 / 2021-06-30**, README Revision: 2021-08-04
+**Version 0.4.2.2 / 2021-08-04**, README Revision: 2021-08-04
 
 
 **Authors:** Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
@@ -13,7 +13,6 @@
 **GitHub repository:** [https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4](https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4)
 
 **PyPi project:** [https://pypi.org/project/geodezyx](https://pypi.org/project/geodezyx/)
-
 
 **Contact e-mail:** pierre.sakic@gfz-potsdam.de
 
