@@ -4,36 +4,26 @@
 
 **Version 0.4.2.1 / 2021-06-30**
 
-README Revision: 2021-06-30
+README Revision: 2021-08-04
 
 
 **Authors:** Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
 (GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
 
+**Documentation:**: [https://geodezyx.github.io/GeodeZYX-Toolbox_v4/](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
+
+**GitHub repository**: [https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4](https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4)
+
+**PyPi project**: [https://pypi.org/project/geodezyx/](https://pypi.org/project/geodezyx/)
+
+
 **Contact e-mail:** pierre.sakic@gfz-potsdam.de
 
-**Citation:*** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
+**Citation:** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
 The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes. 
-V. 4.0. GFZ Data Services. http://doi.org/10.5880/GFZ.1.1.2019.002*
+V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.org/10.5880/GFZ.1.1.2019.002)
 
-## Licence
-
-GNU General Public License, Version 3, 29 June 2007
-
-Copyright © 2019 Helmholtz Centre Potsdam GFZ 
-German Research Centre for Geosciences, Potsdam, Germany 
-(Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu)
-
-The geodeZYX toolbox is free software: you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 3 of the License, or 
-(at your option) any later version. The geodeZYX toolbox is distributed 
-in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even 
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-See the GNU General Public License for more details. 
-
-You should have received a copy of the GNU General Public License 
-along with this program. If not, see http://www.gnu.org/licenses/.
+**Licence**: GNU GPL v3 (see below)
 
 ## Introduction
 
@@ -79,6 +69,24 @@ and install the Toolbox you downloaded with ``python setup.py install``
 
 Alternatively, you can also add the ``geodezyx`` forder in your ``PYTHONPATH`` (for experimented users)
 
+## Licence
+
+GNU General Public License, Version 3, 29 June 2007
+
+Copyright © 2019 Helmholtz Centre Potsdam GFZ 
+German Research Centre for Geosciences, Potsdam, Germany 
+(Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu)
+
+The geodeZYX toolbox is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation, either version 3 of the License, or 
+(at your option) any later version. The geodeZYX toolbox is distributed 
+in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even 
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+See the GNU General Public License for more details. 
+
+You should have received a copy of the GNU General Public License 
+along with this program. If not, see http://www.gnu.org/licenses/.
 
        _____                _      ________     ____   __  _______          _ _
       / ____|              | |    |___  /\ \   / /\ \ / / |__   __|        | | |
