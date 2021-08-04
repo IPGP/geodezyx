@@ -798,70 +798,15 @@ If convert_to_time : time in sec</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_epos_sta_coords_mono">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_epos_sta_coords_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_epos_sta_coords_mono" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read an GFZ EPOS’s coordinate file.
-To read several files at the same time see read_epos_sta_coords_multi</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filein</strong> (<em>str</em>) – path of the input coordinate file.</p></li>
-<li><p><strong>return_df</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, returns the coordinates as a Pandas DataFrame.
-if False, return a list of GeodeZYX’s point objects (advanced)
-The default is True.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Ouput coordinates.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>DataFrame or List of Points</p>
-</dd>
-</dl>
+<dd><p>read an EPOS’s YYYY_DDD_XX_sta_coordinates coordinates files
+and return a list of Points objects</p>
+<p>… TBC …</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_epos_sta_coords_multi">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_epos_sta_coords_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DataFrame'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_epos_sta_coords_multi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read several GFZ EPOS’s coordinate files.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filein_list</strong> (<em>list</em>) – list of input coordinate files inputs.</p></li>
-<li><p><strong>output_type</strong> (<em>str</em><em>, </em><em>optional</em>) – “DataFrame”: returns a Pandas DataFrame containing the coordinates
-“TSobjects”: returns a dictionary of GeodeZYX’s TimeSeries objects (advanced)
-The default is “DataFrame”.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>OUT</strong> – See “output_type” input parameter.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>DataFrame or dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_epos_sta_coords_multi_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_epos_sta_coords_multi_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_epos_sta_coords_multi_legacy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read several GFZ EPOS’s coordinate files.
-Legacy version</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filein_list</strong> (<em>list</em>) – list of input coordinate files inputs.</p></li>
-<li><p><strong>return_dict</strong> (<em>bool</em><em>, </em><em>optional</em>) – True: returns a dictionary of GeodeZYX’s TimeSeries objects
-“TSobjects”: returns a list of GeodeZYX’s TimeSeries objects
-The default is True.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>OUT</strong> – See “return_dict” input parameter.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict or list</p>
-</dd>
-</dl>
-</dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_epos_sta_coords_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_epos_sta_coords_multi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_epos_sta_kinematics">
@@ -1881,7 +1826,7 @@ GitHub repository :
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.write_geo_files.sp3_overlap_creator">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">sp3_overlap_creator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ac_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix_out_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manage_missing_sats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exclude_missing_epoch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eliminate_null_sat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separated_systems_export</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.sp3_overlap_creator" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">sp3_overlap_creator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ac_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix_out_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manage_missing_sats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'common_sats_only'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eliminate_null_sat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separated_systems_export</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.sp3_overlap_creator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate an SP3 Orbit file with overlap based on the SP3s of the
 days before and after</p>
 <dl class="field-list simple">
@@ -1893,11 +1838,10 @@ days before and after</p>
 <li><p><strong>suffix_out_input</strong> (<em>str</em><em>, </em><em>optional</em>) – last char of the 3-char. code. if None, then it is the same as input.</p></li>
 <li><p><strong>overlap_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Overlapsize. The default is 7200.</p></li>
 <li><p><strong>force</strong> (<em>True</em><em>, </em><em>optional</em>) – force overwrite. The default is False.</p></li>
-<li><p><strong>manage_missing_sats</strong> (<em>str</em><em>, </em><em>optional</em>) – ‘exclude_missing_day’ : generate a file with only the common sat
-between the 3 days. Thus, exclude the missing sats for a complete day
-‘exclude_missing_epoch’ : generate a file with only sat with full epochs
+<li><p><strong>manage_missing_sats</strong> (<em>str</em><em>, </em><em>optional</em>) – ‘exclude’ : generate a file with only the common sat
+between the 3 days. Thus, exclude the missing sats
 ‘extrapolate’ : extrapolate the missing sats based on the first/last epoch
-The default is ‘exclude_missing_epoch’.</p></li>
+The default is ‘common_sats_only’.</p></li>
 <li><p><strong>eliminate_null_sat</strong> (<em>bool</em><em>, </em><em>optional</em>) – eliminate null sat. The default is True.</p></li>
 <li><p><strong>severe</strong> (<em>bool</em><em>, </em><em>optional</em>) – raise an exception if problem. The default is False.</p></li>
 <li><p><strong>separated_systems_export</strong> (<em>bool</em><em>, </em><em>optional</em>) – export different sp3 for different system. The default is False.</p></li>
@@ -2003,7 +1947,7 @@ The default is None.</p></li>
 <li><p><strong>prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – the output 3-char. name of the AC. The default is ‘orb’.</p></li>
 <li><p><strong>skip_null_epoch</strong> (<em>bool</em><em>, </em><em>optional</em>) – Do not write an epoch if all sats are null (filtering).
 The default is True.</p></li>
-<li><p><strong>force_format_c</strong> (<em>bool</em><em>, </em><em>optional</em>) – force SP3’s format c. The default is False.</p></li>
+<li><p><strong>force_format_c</strong> (<em>bool</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
