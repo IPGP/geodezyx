@@ -193,15 +193,72 @@
 <p>Created on Fri Jun 25 16:43:48 2021</p>
 <p>&#64;author: psakicki</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.geodyn.emsgfz_load_interp.EMSGFZ_extrapolator">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.emsgfz_load_interp.</span></span><span class="sig-name descname"><span class="pre">EMSGFZ_extrapolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_or_netcdf_object_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_xtrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_xtrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_xtrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wished_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('duV',</span> <span class="pre">'duNS',</span> <span class="pre">'duEW',</span> <span class="pre">'dg')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DataFrame'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.emsgfz_load_interp.EMSGFZ_extrapolator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="geodezyx.geodyn.emsgfz_load_interp.ESMGFZ_DataFrame_reader">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.emsgfz_load_interp.</span></span><span class="sig-name descname"><span class="pre">ESMGFZ_DataFrame_reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.emsgfz_load_interp.ESMGFZ_DataFrame_reader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reader for CSV files downloaded from EMS’s website</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_in</strong> (<em>str</em>) – path of the input CSV file.</p></li>
+<li><p><strong>contribution</strong> (<em>str</em><em>, </em><em>optional</em><em> or </em><em>None</em>) – add a column for the loading contribution name.
+‘auto’ will determine the contribution based on the filename
+None will not generate such column
+‘&lt;contribution name&gt;’: manual name
+The default is ‘auto’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>DF</strong> – output DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.emsgfz_load_interp.ESMGFZ_downloader">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.emsgfz_load_interp.</span></span><span class="sig-name descname"><span class="pre">ESMGFZ_downloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['NTAL',</span> <span class="pre">'NTOL',</span> <span class="pre">'HYDL',</span> <span class="pre">'SLEL']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CM_CF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CF'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputformat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formatvariables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'duNS,duEW,duV'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2010,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2020,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.emsgfz_load_interp.ESMGFZ_downloader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download loading contribution values for a specific point from ESM’s website</p>
+<p><a class="reference external" href="http://rz-vm115.gfz-potsdam.de:8080/repository/entry/show?entryid=2827909c-6c9d-46fd-ba2c-f806bf215170&amp;output=wiki.view">http://rz-vm115.gfz-potsdam.de:8080/repository/entry/show?entryid=2827909c-6c9d-46fd-ba2c-f806bf215170&amp;output=wiki.view</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latitude</strong> (<em>float</em>) – latitude in degrees.</p></li>
+<li><p><strong>longitude</strong> (<em>float</em>) – longitude in degrees.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – ouput directory for the downloaded files.</p></li>
+<li><p><strong>components</strong> (<em>list of str</em><em>, </em><em>optional</em>) – list of the wished loading contributions.
+The default is [“NTAL”,”NTOL”,”HYDL”,”SLEL”].</p></li>
+<li><p><strong>CM_CF</strong> (<em>str</em><em>, </em><em>optional</em>) – Center of Figure (CF) or Center of Mass (CM). The default is “CF”.</p></li>
+<li><p><strong>outputformat</strong> (<em>str</em><em>, </em><em>optional</em>) – choose the output format. CSV is strongly recommended.
+‘netcdf’ and ‘timeseries’ is also supported
+The default is “csv”.</p></li>
+<li><p><strong>formatvariables</strong> (<em>str</em><em>, </em><em>optional</em>) – outputed variables. The default is “duNS,duEW,duV”.</p></li>
+<li><p><strong>startdate</strong> (<em>datetime</em><em>, </em><em>optional</em>) – start date. The default is dt.datetime(2010,1,1).</p></li>
+<li><p><strong>enddate</strong> (<em>datetime</em><em>, </em><em>optional</em>) – start end. The default is dt.datetime(2020,1,1).</p></li>
+<li><p><strong>outfile_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – A custo. The default is “”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>output_path</strong> – DESCRIPTION.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>TYPE</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.geodyn.emsgfz_load_interp.ESMGFZ_extrapolator">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.emsgfz_load_interp.</span></span><span class="sig-name descname"><span class="pre">ESMGFZ_extrapolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_or_netcdf_object_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_xtrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_xtrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_xtrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wished_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('duV',</span> <span class="pre">'duNS',</span> <span class="pre">'duEW')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DataFrame'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_smart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'splinef2d'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.emsgfz_load_interp.ESMGFZ_extrapolator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extrapolate loading values from the EMSGFZ models
 esmdata.gfz-potsdam.de:8080/</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path_or_netcdf_object_in</strong> (<em>string</em><em> or </em><em>NetCDF object</em>) – Input
-can be a file path (string) or direcly the NetCDF object (faster).</p></li>
+<li><p><strong>path_or_netcdf_object_in</strong> (<em>string</em><em>, </em><em>list of strings</em><em> or </em><em>NetCDF object</em>) – Input
+can be a file path (string), a list of string (will be concatenated)
+or direcly the NetCDF object (faster).</p></li>
 <li><p><strong>time_xtrp</strong> (<em>float</em><em> or </em><em>float iterable</em>) – time for the wished extrapolated values
 for daily files: hours of day [0..23].
 for yearly files: day of years [0..364].</p></li>
@@ -210,7 +267,7 @@ ranging from [-90..90]</p></li>
 <li><p><strong>lon_xtrp</strong> (<em>float</em><em> or </em><em>float iterable</em>) – longitude component for the wished extrapolated values.
 ranging from [-180..180]</p></li>
 <li><p><strong>wished_values</strong> (<em>tuple of string</em><em>, </em><em>optional</em>) – the components of the extrapolated values.
-The default is (“duV”,”duNS”,”duEW”,”dg”).</p></li>
+The default is (“duV”,”duNS”,”duEW”).</p></li>
 <li><p><strong>output_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Choose the output type.
 “DataFrame”,”dict”,”array”,”tuple”,”list”
 The default is “DataFrame”.</p></li>
