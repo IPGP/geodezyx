@@ -8,11 +8,11 @@
 **Authors:** Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
 (GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
 
-**Documentation:**: [https://geodezyx.github.io/GeodeZYX-Toolbox_v4](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
+**Documentation:** [https://geodezyx.github.io/GeodeZYX-Toolbox_v4](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
 
-**GitHub repository**: [https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4](https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4)
+**GitHub repository:** [https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4](https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4)
 
-**PyPi project**: [https://pypi.org/project/geodezyx](https://pypi.org/project/geodezyx/)
+**PyPi project:** [https://pypi.org/project/geodezyx](https://pypi.org/project/geodezyx/)
 
 
 **Contact e-mail:** pierre.sakic@gfz-potsdam.de
