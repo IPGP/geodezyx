@@ -2,25 +2,23 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.2.1 / 2021-06-30**
-
-README Revision: 2021-08-04
+**Version 0.4.2.1 / 2021-06-30**, README Revision: 2021-08-04
 
 
 **Authors:** Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
 (GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
 
-**Documentation:**: [https://geodezyx.github.io/GeodeZYX-Toolbox_v4/](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
+**Documentation:**: [https://geodezyx.github.io/GeodeZYX-Toolbox_v4](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
 
 **GitHub repository**: [https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4](https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4)
 
-**PyPi project**: [https://pypi.org/project/geodezyx/](https://pypi.org/project/geodezyx/)
+**PyPi project**: [https://pypi.org/project/geodezyx](https://pypi.org/project/geodezyx/)
 
 
 **Contact e-mail:** pierre.sakic@gfz-potsdam.de
 
 **Citation:** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
-The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes. 
+*The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes*. 
 V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.org/10.5880/GFZ.1.1.2019.002)
 
 **Licence**: GNU GPL v3 (see below)
