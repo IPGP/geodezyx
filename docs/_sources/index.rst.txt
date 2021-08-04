@@ -22,21 +22,31 @@ It includes low level functions, file management functions, time and space-coord
 
 It is designed for Python 3 on a LINUX Ubuntu-like system. Also tested with Anaconda
 
--------
-Authors
--------
-
-Authors: Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn (GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
-
-Contact e-mail: pierre.sakic@gfz-potsdam.de
-
-Citation: Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019): `The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes`. V. 4.0. GFZ Data Services. `<http://doi.org/10.5880/GFZ.1.1.2019.002>`_
-
 ------------
 Installation
 ------------
 
 See the dedicated section: :ref:`install`.
+
+------------
+Useful links
+------------
+
+**Documentation:** https://geodezyx.github.io/GeodeZYX-Toolbox_v4
+
+**GitHub repository:** https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+
+**PyPi project:** https://pypi.org/project/geodezyx
+
+-------
+Authors
+-------
+
+Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn (GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
+
+**Contact e-mail:** pierre.sakic@gfz-potsdam.de
+
+**Citation:** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019): `The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes`. V. 4.0. GFZ Data Services. `<http://doi.org/10.5880/GFZ.1.1.2019.002>`_
 
 -------
 License
