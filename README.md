@@ -21,7 +21,7 @@
 *The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes*. 
 V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.org/10.5880/GFZ.1.1.2019.002)
 
-**Licence**: GNU GPL v3 (see below)
+**Licence:** GNU GPL v3 (see below)
 
 ## Introduction
 
