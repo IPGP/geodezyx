@@ -435,7 +435,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         eliminate_null_sat=True,
                         severe=False,
                         separated_systems_export=False,
-                        first_date=None):
+                        first_date=None,
+                        new_naming = False):
     """
     Generate an SP3 Orbit file with overlap based on the SP3s of the 
     days before and after
@@ -468,7 +469,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         export different sp3 for different system. The default is False.
     first_date : datetime, optional
         exclude SP3 before this epoch
-
+    new_naming: bool, in case of new naming files
+    step : str, used if new naming files are used. Because diff acs have diffs steps 
     Returns
     -------
     None.
@@ -495,10 +497,11 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         if not suffix_out_input:
             suffix_out = ac
         else:
-            suffix_out = ac[:2] + suffix_out_input
+            suffix_out = ac[:2] + suffix_out_input ## GM  2021-09-06 this is not good for the new namning convention
         
         D     = []
         WWWWD = []
+    
             
         for sp3 in Lfile:
             #wwwwd_str = os.path.basename(sp3)[3:8]
@@ -506,9 +509,13 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
 
             dat = conv.sp3name2dt(sp3)
             D.append(dat)
-            
+        
+       
             
         for dat in D[1:-1]: ####if selection manuel, zip > 2lists !!!
+#        for dat in D[293:294]: ####if selection manuel, zip > 2lists !!!
+
+            dummy= 1
             try:
                 print("***********",ac,dat)
                 
@@ -538,10 +545,29 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 ### *************** STEP 1 ***************
                 print("1)) Search for the days before/after")                
                 print("1))",dat_bef,dat_aft)
-                
-                p1    = utils.find_regex_in_list(wwwwd_str     + ".sp3",Lfile,True)
-                p_bef = utils.find_regex_in_list(wwwwd_str_bef + ".sp3",Lfile,True)
-                p_aft = utils.find_regex_in_list(wwwwd_str_aft + ".sp3",Lfile,True)
+    
+    
+                ## GM 2021-09-06 in case of the new naming conventation this is step needs to be done:
+                ## not the best way to handle this, since it is hardcoded and the step needs to be given in a "if"
+                ## maybe try to find a better way with regex!
+                if new_naming:
+                    if ac in ['WUM','GRG']:
+                        step_str = '15'
+                    else:
+                        step_str = '05'
+                        
+                    year,day = conv.dt_to_doy(conv.gpstime2dt(int(wwwwd_str[:4]),int(wwwwd_str[-1])))
+                    p1    = utils.find_regex_in_list(str(year)+str(day)  + "0000_01D_"+step_str+"M_ORB.SP3",Lfile,True)
+                    
+                    year_bef,day_bef = conv.dt_to_doy(conv.gpstime2dt(int(wwwwd_str_bef[:4]),int(wwwwd_str_bef[-1])))
+                    p_bef = utils.find_regex_in_list(str(year_bef)+str(day_bef)  + "0000_01D_"+step_str+"M_ORB.SP3",Lfile,True)
+                    
+                    year_aft,day_aft = conv.dt_to_doy(conv.gpstime2dt(int(wwwwd_str_aft[:4]),int(wwwwd_str_aft[-1])))
+                    p_aft = utils.find_regex_in_list(str(year_aft)+str(day_aft)  + "0000_01D_"+step_str+"M_ORB.SP3",Lfile,True)
+                else: 
+                    p1    = utils.find_regex_in_list(wwwwd_str     + ".sp3",Lfile,True)
+                    p_bef = utils.find_regex_in_list(wwwwd_str_bef + ".sp3",Lfile,True)
+                    p_aft = utils.find_regex_in_list(wwwwd_str_aft + ".sp3",Lfile,True)
 
                 print("1)) Files found for the days before/after")                            
                 print("0b)",p_bef)
