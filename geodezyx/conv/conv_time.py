@@ -34,6 +34,8 @@ import subprocess
 import re
 import time
 import warnings
+## Finding day of year
+from datetime import datetime, date
 
 #### geodeZYX modules
 from geodezyx import utils,stats
@@ -1266,6 +1268,15 @@ def date_string_2_dt(strin):
 string_date2dt = date_string_2_dt
 str_date2dt    = date_string_2_dt
 strdate2dt     = date_string_2_dt
+
+
+
+def dt_to_doy(date_in):
+    day_of_year = date_in.timetuple().tm_yday
+    year = date_in.timetuple().tm_year
+    
+    return year,day_of_year
+
 
 
 
