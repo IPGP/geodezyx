@@ -1281,13 +1281,6 @@ strdate2dt     = date_string_2_dt
 
 
 
-def dt_to_doy(date_in):
-    day_of_year = date_in.timetuple().tm_yday
-    year = date_in.timetuple().tm_year
-    
-    return year,day_of_year
-
-
 
 
 
