@@ -1155,9 +1155,10 @@ def write_station_file_gins_from_rinex(rinex_path,station_file_out,
 # |_|  \___|\__,_|\__,_| |_| \_|_|  |_|______/_/    \_\  \_____|\_____/_/    \_\
 #
 
-def read_nmea(file_path , enuout = True ,
-            startdate = dt.datetime(1980,1,1) ,
-            enddate = dt.datetime(2099,1,1) , export_path = ''):
+def read_nmea(file_path , outtype = "FLH" , df_out = True, use_altitude = False,
+              startdate = dt.datetime(1980,1,1) ,
+              enddate = dt.datetime(2099,1,1) ,
+              export_path = ''):
     """ if export_path != '', export a Matlab readable file to this path
         WARNING !!! la coord de ref est codée en dur, à coriger !!!!"""
     T    = []
@@ -1168,16 +1169,31 @@ def read_nmea(file_path , enuout = True ,
     day = 999
     month = 999
     year = 999
+    
+    if use_altitude:
+        field_h_alt = 9
+    else:
+        field_h_alt = 11
+        
+    
+    ## open the file as binary because can be mixed with bin data
+    for l in open(file_path,"rb"):
+        #print(l)
+        try:
+            l = (l).decode('ascii')
+            #print(l)
 
-    for l in open(file_path):
+        except:
+            continue
+        
         if not l[0] == '$':
             continue
-        if 'GPZDA' in l:
+        if 'GPZDA' in l or 'GNZDA' in l:
             f = l.split(',')
             day = int(f[2])
             month = int(f[3])
             year = int(f[4])
-        if 'GPGGA' in l:
+        if 'GPGGA' in l or 'GNGGA' in l:
             f = l.split(',')
             h = int(f[1][0:2])
             m = int(f[1][2:4])
@@ -1199,7 +1215,7 @@ def read_nmea(file_path , enuout = True ,
             T.append(t)
             Lat.append(float(f[2][0:2]) + float(f[2][2:]) / 60.)
             Long.append( EW * (float(f[4][0:3]) + float(f[4][3:]) / 60.))
-            Haut.append(float(f[9]))
+            Haut.append(float(f[field_h_alt]))
             Qual.append(qual)
 
     X,Y,Z = conv.GEO2XYZ(Lat,Long,Haut)
@@ -1221,10 +1237,25 @@ def read_nmea(file_path , enuout = True ,
             datalis = [str(e) for e in datalis] + ['\n']
             outf.write(','.join(datalis)) #)
         outf.close()
-    if enuout:
-        return T,E,N,U,Qual
+        
+    if outtype == 'ENU':
+        OUTTUP = T,E,N,U,Qual
+        colnames = ('T','E','N','U','Qual')
+    elif outtype == 'XYZ':
+        OUTTUP = T,X,Y,Z,Qual
+        colnames = ('T','X','Y','Z','Qual')        
     else:
-        return T,Lat,Long,Haut,Qual
+        OUTTUP = T,Lat,Long,Haut,Qual
+        colnames = ('T','F','L','H','Qual')
+        
+    if df_out:
+        DFout = pd.DataFrame(np.column_stack(OUTTUP))
+        DFout.columns = colnames
+        DFout = DFout.infer_objects()
+        return DFout
+    else:
+        return OUTTUP
+        
 
 #strtd = dt.datetime(2015,06,19,16,00)
 #T,E,N,U,Q = read_nmea(file_path='/home/psakicki/geodesea_nav_final.dat',enuout=1,export_path='/home/psakicki/Documents/geodesea_nav_matrix.dat') #,startdate=strtd)

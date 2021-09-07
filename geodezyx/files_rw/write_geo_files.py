@@ -554,20 +554,40 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 ## GM 2021-09-06 in case of the new naming conventation this is step needs to be done:
                 ## not the best way to handle this, since it is hardcoded and the step needs to be given in a "if"
                 ## maybe try to find a better way with regex!
-                if new_naming:
-                    if ac in ['WUM','GRG','SHA']:
-                        step_str = '15'
-                    else:
-                        step_str = '05'
+                # if new_naming:
+                #     if ac in ['WUM','GRG','SHA']:
+                #         step_str = '15'
+                #     else:
+                #         step_str = '05'
                         
-                    year,day = conv.dt_to_doy(conv.gpstime2dt(int(wwwwd_str[:4]),int(wwwwd_str[-1])))                    
-                    p1    = utils.find_regex_in_list(str(year)+str(day).zfill(3)  + "0000_01D_"+step_str+"M_ORB.SP3",Lfile,True)
+                #     year,day = conv.dt_to_doy(conv.gpstime2dt(int(wwwwd_str[:4]),int(wwwwd_str[-1])))                    
+                #     p1    = utils.find_regex_in_list(str(year)+str(day).zfill(3)  + "0000_01D_"+step_str+"M_ORB.SP3",Lfile,True)
                     
-                    year_bef,day_bef = conv.dt_to_doy(conv.gpstime2dt(int(wwwwd_str_bef[:4]),int(wwwwd_str_bef[-1])))
-                    p_bef = utils.find_regex_in_list(str(year_bef)+str(day_bef).zfill(3)  + "0000_01D_"+step_str+"M_ORB.SP3",Lfile,True)
+                #     year_bef,day_bef = conv.dt_to_doy(conv.gpstime2dt(int(wwwwd_str_bef[:4]),int(wwwwd_str_bef[-1])))
+                #     p_bef = utils.find_regex_in_list(str(year_bef)+str(day_bef).zfill(3)  + "0000_01D_"+step_str+"M_ORB.SP3",Lfile,True)
                     
-                    year_aft,day_aft = conv.dt_to_doy(conv.gpstime2dt(int(wwwwd_str_aft[:4]),int(wwwwd_str_aft[-1])))
-                    p_aft = utils.find_regex_in_list(str(year_aft)+str(day_aft).zfill(3)  + "0000_01D_"+step_str+"M_ORB.SP3",Lfile,True)
+                #     year_aft,day_aft = conv.dt_to_doy(conv.gpstime2dt(int(wwwwd_str_aft[:4]),int(wwwwd_str_aft[-1])))
+                #     p_aft = utils.find_regex_in_list(str(year_aft)+str(day_aft).zfill(3)  + "0000_01D_"+step_str+"M_ORB.SP3",Lfile,True)
+                    
+                    
+                    
+                if new_naming:
+
+                        
+                    regex_suffix = "[0-9]{4}_[0-9]{2}[A-Z]_[0-9]{2}[A-Z]_ORB.SP3"
+                        
+                    day,year = conv.dt2doy_year(dat)                    
+                    regex_prefix = str(year)+str(day).zfill(3)
+                    p1    = utils.find_regex_in_list(regex_prefix + regex_suffix,Lfile,True)
+
+                    day_bef,year_bef = conv.dt2doy_year(dat_bef)      
+                    regex_prefix_bef = str(year_bef)+str(day_bef).zfill(3)
+                    p_bef = utils.find_regex_in_list(regex_prefix_bef + regex_suffix ,Lfile,True)
+                    
+                    day_aft,year_aft = conv.dt2doy_year(dat_aft)      
+                    regex_prefix_aft = str(year_aft)+str(day_aft).zfill(3) 
+                    p_aft = utils.find_regex_in_list(regex_prefix_aft + regex_suffix ,Lfile,True)
+                    
                 else: 
                     p1    = utils.find_regex_in_list(wwwwd_str     + ".sp3",Lfile,True)
                     p_bef = utils.find_regex_in_list(wwwwd_str_bef + ".sp3",Lfile,True)

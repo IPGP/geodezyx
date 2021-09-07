@@ -199,6 +199,8 @@ def angle2equivalent_earth_radius(angle_in,angtype='deg',
     Quick and simple function which gives the equivalent distance on a 
     Earth great circle of an angle
     
+    Useful to determine metric varations in latitude
+    
     angle can be : "deg", "rad", "mas"
     """
     earth_circum = earth_radius * 2 * np.pi
@@ -210,6 +212,37 @@ def angle2equivalent_earth_radius(angle_in,angtype='deg',
         equiv_out = (angle_in * 10**-3 * earth_circum) / (86400.)  
         
     return equiv_out
+
+
+
+def angle2equivalent_earth_parallel(angle_in,latitude_in,
+                                    angtype='deg',
+                                    earth_radius=6371008.8):
+    """
+    Quick and simple function which gives the equivalent distance on a 
+    Earth parallel circle of an angle
+    
+    Useful to determine metric varaitions in longitude 
+    (but the latitude is also necessary to determine 
+     the radius of the parallel)
+    
+    angle can be : "deg", "rad", "mas"
+    """
+    
+    if angtype == "deg":
+        latitude_rad = np.deg2rad(latitude_in) 
+    elif angtype == "rad":
+        latitude_rad = latitude_in 
+    elif angtype == "mas":
+        latitude_rad =  ( 2*np.pi * (86400. * 10**3) ) /  latitude_in ### a verifier ....
+    
+    
+    parallel_radius = np.cos(latitude_rad) * earth_radius
+    
+    print("AAAAAAAAAAAAAA",parallel_radius)
+    
+    return angle2equivalent_earth_radius(angle_in,angtype,
+                                         parallel_radius)
         
 def anglesfromvects(xa,ya,xb,yb,angtype='deg'):
     """
