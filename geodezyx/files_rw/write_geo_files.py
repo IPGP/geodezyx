@@ -22,7 +22,7 @@ import datetime as dt
 import numpy as np
 import os 
 import pandas as pd
-
+import re
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
@@ -85,6 +85,8 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
     
     for epoc in EpochRawList:
         SP3epoc   = pd.DataFrame(SP3_DF_wrk[SP3_DF_wrk["epoch"] == epoc])
+        
+        ######## if keep_missing_sat_in_epoch:
         ## manage missing Sats for the current epoc
         MissingSats = SatListSet.difference(set(SP3epoc["sat"]))
         
@@ -92,6 +94,9 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
             miss_line = SP3epoc.iloc[0].copy()
             miss_line["sat"]   = miss_sat
             miss_line["const"] = miss_sat[0]
+            ### check the sp3 doc 
+            # bad position = 0.000000
+            # bad clock    = 999999.9999999
             miss_line["x"]     = 0.000000
             miss_line["y"]     = 0.000000
             miss_line["z"]     = 0.000000
@@ -436,7 +441,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         severe=False,
                         separated_systems_export=False,
                         first_date=None,
-                        new_naming = False):
+                        #new_naming = False,
+                        exclude_bad_epoch=True):
     """
     Generate an SP3 Orbit file with overlap based on the SP3s of the 
     days before and after
@@ -469,8 +475,9 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         export different sp3 for different system. The default is False.
     first_date : datetime, optional
         exclude SP3 before this epoch
-    new_naming: bool, in case of new naming files
-    step : str, used if new naming files are used. Because diff acs have diffs steps 
+    exclude_bad_epoch : bool, optional
+        remove bad epoch (usually filled with 99999999.9999999 or 0.00000000)
+    
     Returns
     -------
     None.
@@ -501,7 +508,10 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         
         D     = []
         WWWWD = []
-    
+        
+        New_name_list = []
+        
+        regex_suffix = "[0-9]{4}_[0-9]{2}[A-Z]_[0-9]{2}[A-Z]_ORB.SP3"
          
         for sp3 in Lfile:
             #wwwwd_str = os.path.basename(sp3)[3:8]
@@ -509,6 +519,12 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
 
             dat = conv.sp3name2dt(sp3)
             D.append(dat)
+        
+            if re.search(regex_suffix,sp3):
+                New_name_list.append(True)
+            else:
+                New_name_list.append(False)
+                
        
 #        ## just a check for the files list. May be excluded in the future. 
 #        for item in Lfile:
@@ -516,7 +532,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
 #                print(Lfile.index(item))
        
             
-        for dat in D[1:-1]: ####if selection manuel, zip > 2lists !!!
+        for dat,newnamebool in zip(D[1:-1],New_name_list[1:-1]): ####if selection manuel, zip > 2lists !!!
 #        for dat in D[875:876]: ####if selection manuel, zip > 2lists !!!
 
             dummy= 1
@@ -569,13 +585,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 #     year_aft,day_aft = conv.dt_to_doy(conv.gpstime2dt(int(wwwwd_str_aft[:4]),int(wwwwd_str_aft[-1])))
                 #     p_aft = utils.find_regex_in_list(str(year_aft)+str(day_aft).zfill(3)  + "0000_01D_"+step_str+"M_ORB.SP3",Lfile,True)
                     
-                    
-                    
-                if new_naming:
-
-                        
-                    regex_suffix = "[0-9]{4}_[0-9]{2}[A-Z]_[0-9]{2}[A-Z]_ORB.SP3"
-                        
+                #if re.search(regex_suffix,) 
+                if newnamebool:
                     day,year = conv.dt2doy_year(dat)                    
                     regex_prefix = str(year)+str(day).zfill(3)
                     p1    = utils.find_regex_in_list(regex_prefix + regex_suffix,Lfile,True)
@@ -633,6 +644,15 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 
                 SP3concat = SP3concat[(SP3concat["epoch"] >= dat_filter_bef) & (SP3concat["epoch"] <= dat_filter_aft)]
                 
+                if exclude_bad_epoch:
+                    Good_epochs_bool_999 = SP3concat[['x','y','z']] < 999999.
+                    Good_epochs_bool_000 = np.logical_not(np.isclose(SP3concat[['x','y','z']],0.))
+                    
+                    Good_epochs_bool = np.logical_and(Good_epochs_bool_999,Good_epochs_bool_000)
+                    Good_epochs_bool = np.all(Good_epochs_bool,axis=1)
+                                                            
+                    SP3concat = SP3concat[Good_epochs_bool]
+                
                 ########## HERE WE MANAGE THE MISSING SATS
                 if manage_missing_sats == "exclude_missing_day":     
                     print("4))","remove missing sats -- day")                                     
@@ -643,8 +663,18 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                     print("4))","remove missing sats -- epoch")      
                     nepoc = len(SP3concat["epoch"].unique())
                     SP3concat_satgrp = SP3concat.groupby("sat")
+                    
+                    All_sats = SP3concat["sat"].unique()
                     Good_sats = SP3concat_satgrp.count() == nepoc
-                    Good_sats = Good_sats.reset_index()["sat"]
+
+                    ###### Good_sats = Good_sats.reset_index()["sat"]
+                    ## we get the good sats based one column containing a boolean
+                    ## because of the test just before (abitrarily epoch column)
+                    ## and after get the corresponding good sats names
+                    Good_sats = Good_sats[Good_sats["epoch"]].reset_index()["sat"]
+                    
+                    Bad_sats = list(set(All_sats) - set(Good_sats))
+                    print("excluded bad sats:", Bad_sats)
                     
                     SP3concat = SP3concat[SP3concat["sat"].isin(Good_sats)]
                     
