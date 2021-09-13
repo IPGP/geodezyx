@@ -1765,11 +1765,15 @@ def read_sinex_versatile(sinex_path_in , id_block,
     header_lines = True
     for i_l , l in enumerate(Lines_list):
         if not l[0] in (" ","\n") and header_lines:
+            ## here we store the 1st commented lines i.e. the header
             Lines_list_header.append(l)
-        #if l[0] == " ": ### 1st dataline is excluded if this test is done
-        else:
+        elif l[0] in (" ","\n"):
+            ## here we store the data lines (not commented)
             header_lines = False
             Lines_list_OK.append(l)
+        else:
+            ## here we skip the final commented lines (can happend) 
+            continue
                                 
     if len(Lines_list_header) > 0 and header_line_idx:
         ### define the header
