@@ -246,7 +246,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     ----------
     file_path_in : str
         path of the SP3 file
-        can handle gzip-compressed file (with .gz/.GZ extension) 
+        can handle gzip-compressed file (with .gz/.GZ or .Z extension) 
 
     returns_pandas : bool
         if True, return a Pandas DataFrame.
@@ -282,6 +282,12 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     if file_path_in[-2:] in ("gz","GZ"):
         F = gzip.open(file_path_in, "r+")
         Lines = [e.decode('utf-8') for e in F]
+    elif file_path_in[-2:] in (".Z",):
+        import unlzw
+        fh = open(file_path_in, 'rb')
+        Fcompressed = fh.read()
+        F = unlzw.unlzw(Fcompressed).decode("utf-8") 
+        Lines = F.split('\n')
     else:
         F = open(file_path_in,'r+')
         Lines = F.readlines()
