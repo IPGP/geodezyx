@@ -1742,8 +1742,7 @@ def read_sinex_versatile(sinex_path_in , id_block,
     DF : Pandas DataFrame
         Returned DataFrame
     """
-
-
+    
     ### remove the + or - if any    
     if id_block in ("+","-"):
         id_block = id_block[1:]
