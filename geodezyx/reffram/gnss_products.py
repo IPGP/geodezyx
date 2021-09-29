@@ -1340,11 +1340,10 @@ def svn_prn_equiv_DF(path_meta_snx):
     """
     
     DFsvn  = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/IDENTIFIER",
-                                           header_line_idx=-2)
-    
+                                           header_line_idx=-2)    
+
     DFprn  = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/PRN",
                                            header_line_idx=-2)
-
     
     DFsvn.drop(columns='Comment__________________________________',inplace=True)
     DFprn.drop(columns='Comment_________________________________',inplace=True)
