@@ -1794,6 +1794,7 @@ def read_sinex_versatile(sinex_path_in , id_block,
                     fld_head_regex = re.compile("\*" + fld_head_split[1:] + " *") 
                 else:
                     fld_head_regex_str = fld_head_split + " *"
+                    ### update 202110: now the brackets must be escaped (normal btw...)
                     fld_head_regex_str = fld_head_regex_str.replace("[","\[")
                     fld_head_regex_str = fld_head_regex_str.replace("]","\]")
                     fld_head_regex_str = fld_head_regex_str.replace("(","\(")
