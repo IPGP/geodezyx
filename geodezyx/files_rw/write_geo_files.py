@@ -463,9 +463,9 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         force overwrite. The default is False.
     manage_missing_sats : str, optional
         'exclude_missing_day' : generate a file with only the common sat 
-        between the 3 days. Thus, exclude the missing sats for a complete day
-        'exclude_missing_epoch' : generate a file with only sat with full epochs
-        'extrapolate' : extrapolate the missing sats based on the first/last epoch
+        between the 3 days. Thus, exclude the missing sats for a complete day\n
+        'exclude_missing_epoch' : generate a file with only sat with full epochs\n
+        'extrapolate' : extrapolate the missing sats based on the first/last epoch\n
         The default is 'exclude_missing_epoch'.
     eliminate_null_sat : bool, optional
         eliminate null sat. The default is True.
