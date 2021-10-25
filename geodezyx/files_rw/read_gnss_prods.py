@@ -289,7 +289,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
         F = unlzw.unlzw(Fcompressed).decode("utf-8") 
         Lines = F.split('\n')
     else:
-        F = open(file_path_in,'r+')
+        F = open(file_path_in,'r')
         Lines = F.readlines()
 
     header = True
