@@ -246,10 +246,33 @@ def indice_printer(i,print_every = 10,text_before=''):
 def pickle_saver(datain , outdir = None , outname = None , ext='.pik' ,
                  timestamp = False,full_path=None):
     """
-    if full_path is given, override outdir and outname
-    RETURN :
-        outpath : the output path of the pickle
+    Save a Python object in a Pickle file
+    (wrapper of pickle.dump)
+    
+    Parameters
+    ----------
+    datain : generic
+        Data which will be saved as a pickle.
+    outdir : str, optional
+        output directory. The default is None.
+    outname : str, optional
+        pickle output name. The default is None.
+    ext : str, optional
+        pickle file extension. The default is '.pik'.
+    timestamp : bool, optional
+        add the timestamp in the pickle's filename.
+        The default is False.
+    full_path : str, optional
+        gives the full path where to save the pickle.
+        if full_path is given, override outdir and outname.
+        The default is None.
+    Returns
+    -------
+    outpath : str
+        the output pickle file path.
+
     """
+    
     if not full_path and not outdir and not outname:
         print('ERR : pickle_saver : not full_path and not outdir and not outname are given !')
         raise Exception
@@ -271,6 +294,22 @@ def pickle_saver(datain , outdir = None , outname = None , ext='.pik' ,
     return outpath
 
 def pickle_loader(pathin):
+    """
+    Load a Python object saved as a Pickle file
+    (wrapper of pickle.load)   
+
+    Parameters
+    ----------
+    pathin : str
+        the input pickle file path.
+
+    Returns
+    -------
+    outdata : generic
+        Data which will be loaded from the a pickle..
+
+    """
+    
     try:
         #outdata = pickle.load( open( pathin , "r" ) )
         outdata = pickle.load( open( pathin ,'rb' )  , encoding='latin1')
@@ -624,7 +663,9 @@ def replace_in_file(file_in,str_before,str_after):
 ################
 
 def get_timestamp(outstring = True):
-    """frontend to get easily a timestamp"""
+    """
+    frontend to get easily a timestamp
+    """
     if outstring:
         return dt.datetime.now().strftime('%Y%m%d_%H%M%S')
     else:
