@@ -1785,14 +1785,24 @@ def read_sinex_versatile(sinex_path_in , id_block,
         else: 
             ### Smarter case : we search for the n spaces after the column name
             Fields_size = []
+            
+            
             for fld_head_split in Header_split:
                 if fld_head_split[0] == "*": 
                     ## test to manage a * as 1st character
                     ## which can be wrongly interpreted in the regex
                     fld_head_regex = re.compile("\*" + fld_head_split[1:] + " *") 
                 else:
-                    fld_head_regex = re.compile(fld_head_split + " *") 
+                    fld_head_regex_str = fld_head_split + " *"
+                    fld_head_regex_str = fld_head_regex_str.replace("[","\[")
+                    fld_head_regex_str = fld_head_regex_str.replace("]","\]")
+                    fld_head_regex_str = fld_head_regex_str.replace("(","\(")
+                    fld_head_regex_str = fld_head_regex_str.replace(")","\)")
+
+                    fld_head_regex = re.compile(fld_head_regex_str) 
+
                 fld_head_space = fld_head_regex.search(header_line)
+
                 Fields_size.append(len(fld_head_space.group()))
                 #print(fld_head_space.group())                
                 
