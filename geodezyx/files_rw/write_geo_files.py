@@ -486,7 +486,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
     ----
     start/end date are not implemented
     the force option skips existing files 
-
+    not implemented for new names
     """
 
 
@@ -496,7 +496,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         Dict_Lfiles_ac[ac] = []
         Lfile = Dict_Lfiles_ac[ac]
         
-        Extlist = ["sp3","SP3","sp3.gz","SP3.gz"]
+        #Extlist = ["sp3","SP3","sp3.gz","SP3.gz"]
+        Extlist = ["sp3","sp3.gz"]
         for ext in Extlist:
             Lfile = Lfile + utils.find_recursive(dir_in,"*" + ac + "*" + ext)
         print("Nb of SP3 found for",ac,len(Lfile))
