@@ -784,7 +784,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
 def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
                           no_time_limit_for_first_period = True,
                           no_time_limit_for_last_period = True,
-                          soln_in_DF=True):
+                          soln_in_DF=True,
+                          TRF_name="xTRFnn"):
     """
     Write an EPOS coordinate file
 
@@ -862,6 +863,7 @@ def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
                 
 
             line_site_fmt = " SITE            m {:4d}  {:1d} {:} {:5d} {:5d} {:5d} {:}   {:}  {:1d}      LOG_CAR       LOG_CAR"
+            line_site_fmt = " SITE            m {:4d}  {:1d} {:} {:5d} {:5d} {:5d} {:}   {:}  {:1d}{:>13}       {:<13}"
             line_valu_fmt = " POS_VEL:XYZ     m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
             line_sigm_fmt = " SIG_PV_XYZ      m {:4d}  {:1d} {:+15.4f} {:+15.4f} {:+15.4f}      {:+6.4f} {:+6.4f} {:+6.4f}"
 
@@ -873,7 +875,9 @@ def write_epos_sta_coords(DF_in,file_out,sort_wrt="site",
                                              int(MJD_end),
                                              l["site"],
                                              pt,
-                                             int(iope))
+                                             int(iope),
+                                             TRF_name,
+                                             TRF_name)
             
             line_valu = line_valu_fmt.format(int(l["site_num"]),
                                              int(iope),

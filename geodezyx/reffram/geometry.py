@@ -283,7 +283,8 @@ def itrf_helmert_trans(Xi,
                        velocity_mode=False):
     """
     Do the Helmert transformation I/ETRFxx <=> I/ETRFxx
-
+    
+    The seven Helmert Parameters are generated with ``itrf_helmert_get_parameters``
 
     Parameters
     ----------
@@ -294,26 +295,28 @@ def itrf_helmert_trans(Xi,
     epoch_Xi : float
         epoch of the initial Reference Frame points.
     T : 3-Array
-        Translation.
+        Translation parameter.
     Tdot : 3-Array
-        Translation rate.
+        Translation rate parameter.
     D : float
-        Scale factor.
+        Scale factor parameter.
     Ddot : float
-        Scale factor rate.
+        Scale factor rate parameter.
     R : 3-Array
-        Rotation.
+        Rotation parameter.
     Rdot : 3-Array
-        Rotation rte.
+        Rotation rate parameter.
     epoch_ref_Xe : float
         Reference epoch of the destination TRF.
-        
-    The seven Helmert Parameters are generated with
-    itrf_helmert_get_parameters
-        
     velocity_mode : bool, optional
-        Compute also the velocities. The default is False.
-
+        The default is False (and should be kept this way).
+        For debug and internal purposes only 
+        (this boolean is used recursively within the function).
+        It does not interfer with the velocity transformation
+        of the Xi argument (i.e. a 6 columns input).
+        This mode is designed to handle the velocity transformation and the
+        velocity transformation only.
+        
     Returns
     -------
     Xe : 3-Array or Nx3-Array
@@ -321,8 +324,9 @@ def itrf_helmert_trans(Xi,
         
     Warning
     -------
-    This function does not the velocity shift from one epoch to another
-    The output coordinates will be provided at the same epoch as the input ones
+    This function does not the velocity shift from one epoch to another \n
+    The output coordinates will be provided at the same epoch as the input ones \n
+    Use ``itrf_speed_calc`` function to perform this potential step 
         
     Notes
     -----
@@ -332,8 +336,21 @@ def itrf_helmert_trans(Xi,
     We recommend to confirm the values with the official EUREF converter
     http://www.epncb.oma.be/_productsservices/coord_trans/index.php
     
-    By definition RGF93 = ETRF2000@2009.0
+    
+    Notes for the French geodetic system
+    ------------------------------------
+    
+    By definition, since the 2021/01/04
+    RGF93(v2b) = ETRF2000@2019.0
+    
+    https://geodesie.ign.fr/index.php?page=rgf93 \n
+    https://geodesie.ign.fr/contenu/fichiers/RGF93v2b-RAF18b.pdf \n
+    https://geodesie.ign.fr/contenu/fichiers/rgf93v2b_information_cnig.pdf 
+    
     """
+    
+    if not type(Xi) is np.array:
+        Xi = np.array(Xi)
     
     # manage the case where only one point is given
     if len(np.shape(Xi)) == 1:
@@ -391,11 +408,11 @@ def itrf_helmert_trans(Xi,
     #### with velocity_mode=False to have the positions
     if velocity_mode:
          Xe_pos = itrf_helmert_trans(Xi,epoch_Xi,
-                            T,Tdot,
-                            D,Ddot,
-                            R,Rdot,
-                            epoch_ref_Xe,
-                            velocity_mode=False)
+                                     T,Tdot,
+                                     D,Ddot,
+                                     R,Rdot,
+                                     epoch_ref_Xe,
+                                     velocity_mode=False)
          
          if len(np.shape(Xe)) == 1:
              Xe = np.hstack((Xe_pos,Xe))
