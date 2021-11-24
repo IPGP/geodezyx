@@ -279,8 +279,7 @@ def itrf_helmert_trans(Xi,
                        T,Tdot,
                        D,Ddot,
                        R,Rdot,
-                       epoch_ref_Xe,
-                       velocity_mode=False):
+                       epoch_ref_Xe):
     """
     Do the Helmert transformation I/ETRFxx <=> I/ETRFxx
     
@@ -293,7 +292,7 @@ def itrf_helmert_trans(Xi,
         3 columns if positions only
         6 columns if positions+velocities
     epoch_Xi : float
-        epoch of the initial Reference Frame points.
+        epoch of the initial Reference Frame points (decimal year).
     T : 3-Array
         Translation parameter.
     Tdot : 3-Array
@@ -308,15 +307,7 @@ def itrf_helmert_trans(Xi,
         Rotation rate parameter.
     epoch_ref_Xe : float
         Reference epoch of the destination TRF.
-    velocity_mode : bool, optional
-        The default is False (and should be kept this way).
-        For debug and internal purposes only 
-        (this boolean is used recursively within the function).
-        It does not interfer with the velocity transformation
-        of the Xi argument (i.e. a 6 columns input).
-        This mode is designed to handle the velocity transformation and the
-        velocity transformation only.
-        
+
     Returns
     -------
     Xe : 3-Array or Nx3-Array
@@ -327,6 +318,8 @@ def itrf_helmert_trans(Xi,
     This function does not the velocity shift from one epoch to another \n
     The output coordinates will be provided at the same epoch as the input ones \n
     Use ``itrf_speed_calc`` function to perform this potential step 
+    before (with the initial velocities) or after (with the transformed velocities)
+    calling the present function.
         
     Notes
     -----
@@ -348,6 +341,13 @@ def itrf_helmert_trans(Xi,
     https://geodesie.ign.fr/contenu/fichiers/rgf93v2b_information_cnig.pdf 
     
     """
+    ## prelimiary warning 
+    if utils.is_iterable(epoch_Xi):
+        print("WARN:itrf_helmert_trans: epoch_Xi is an iterable !!!")
+        print("     The function works correctly with a single epoch only !!!")
+        print("     If several initial Reference Frame epoch")
+        print("     use a loop outside the function")
+        
     
     if not type(Xi) is np.array:
         Xi = np.array(Xi)
@@ -356,6 +356,24 @@ def itrf_helmert_trans(Xi,
     if len(np.shape(Xi)) == 1:
         Xi = Xi[...,np.newaxis].T
         
+    
+    ##### Here we manage if there is velocities or not 
+    if Xi.shape[1] == 6:
+        velocity_mode = True     
+    else:
+        velocity_mode = False
+        
+        
+    #### Trick if we are in velocity mode, we recall the fct 
+    #### with velocity_mode=False to have the positions
+    if velocity_mode:
+        Xe_pos = itrf_helmert_trans(Xi[:,:3],epoch_Xi,
+                                     T,Tdot,
+                                     D,Ddot,
+                                     R,Rdot,
+                                     epoch_ref_Xe)
+        
+
     #### Translation
     if velocity_mode:
         Topera = Tdot
@@ -403,23 +421,15 @@ def itrf_helmert_trans(Xi,
     Xe = np.squeeze(Xe)
     Xe = Xe.astype(np.float64)
     
-    
-    #### Trick if we are in velocity mode, we recall the fct 
-    #### with velocity_mode=False to have the positions
+    ### final concat of the position and the velocities
     if velocity_mode:
-         Xe_pos = itrf_helmert_trans(Xi,epoch_Xi,
-                                     T,Tdot,
-                                     D,Ddot,
-                                     R,Rdot,
-                                     epoch_ref_Xe,
-                                     velocity_mode=False)
-         
          if len(np.shape(Xe)) == 1:
              Xe = np.hstack((Xe_pos,Xe))
          else:
              Xe = np.column_stack((Xe_pos,Xe))
 
     return Xe
+
 
 
 def _helmert_trans_estim_matrixs_maker(X1 , X2):
