@@ -37,7 +37,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.4.2.2',  # Required
+    version='0.4.2.3',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -61,7 +61,14 @@ data (especially GNSS observations and orbits) retrieve functions,
 plots and visual selection functions ...
 
 It is designed for Python 3 on a LINUX Ubuntu-like system.
-Also tested with Anaconda""",  # Optional
+Also tested with Anaconda
+
+Documentation: https://geodezyx.github.io/GeodeZYX-Toolbox_v4
+
+GitHub repository: https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+
+PyPi project: https://pypi.org/project/geodezyx
+""",  # Optional
 
     # Denotes that our long_description is in Markdown; valid values are
     # text/plain, text/x-rst, and text/markdown
