@@ -47,6 +47,33 @@ from geodezyx.megalib.megalib import *   # Import the legacy modules names
 #                                                                                                             
 #                                                                                                             
 
+
+def vector_separator(ABC):
+    """
+    Split a Nx3 Array/DataFrame in three separated 1-component vectors
+    To simplify the usage of the conversion functions 
+    (which take single component vectors as input)
+
+    Parameters
+    ----------
+    ABC : Array or DataFrame
+        Nx3 XYZ, ENU... array.
+
+    Returns
+    -------
+    A : Array
+        1st component.
+    B : Array
+        2nd component.
+    C : Array
+        3rd component.
+
+    """
+    ABC = np.array(ABC)
+    return ABC[:,0],ABC[:,1],ABC[:,2]
+
+
+
 def wnorm(phi,a=6378137.,e2=0.00669438003):
     """
     Compute the Ellipsoid "Grande Normale"
