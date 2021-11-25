@@ -33,6 +33,14 @@ geodezyx.conv.conv\_geometric module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.conv.conv\_interpolators module
+----------------------------------------
+
+.. automodule:: geodezyx.conv.conv_interpolators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.conv.conv\_proj\_carto module
 --------------------------------------
 

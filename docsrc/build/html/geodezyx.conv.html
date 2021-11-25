@@ -99,6 +99,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_angle">geodezyx.conv.conv_angle module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_coords">geodezyx.conv.conv_coords module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_geometric">geodezyx.conv.conv_geometric module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_interpolators">geodezyx.conv.conv_interpolators module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_proj_carto">geodezyx.conv.conv_proj_carto module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_rotation_matrices">geodezyx.conv.conv_rotation_matrices module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_time">geodezyx.conv.conv_time module</a></li>
@@ -204,10 +205,24 @@ functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
 GitHub repository :
 <a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_angle.angle2equivalent_earth_parallel">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_angle.</span></span><span class="sig-name descname"><span class="pre">angle2equivalent_earth_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latitude_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">earth_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6371008.8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_angle.angle2equivalent_earth_parallel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quick and simple function which gives the equivalent distance on a
+Earth parallel circle of an angle</p>
+<p>Useful to determine metric varaitions in longitude
+(but the latitude is also necessary to determine</p>
+<blockquote>
+<div><p>the radius of the parallel)</p>
+</div></blockquote>
+<p>angle can be : “deg”, “rad”, “mas”</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_angle.angle2equivalent_earth_radius">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_angle.</span></span><span class="sig-name descname"><span class="pre">angle2equivalent_earth_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">earth_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6371008.8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_angle.angle2equivalent_earth_radius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Quick and simple function which gives the equivalent distance on a
 Earth great circle of an angle</p>
+<p>Useful to determine metric varations in latitude</p>
 <p>angle can be : “deg”, “rad”, “mas”</p>
 </dd></dl>
 
@@ -488,23 +503,32 @@ ans. empirically, only for debug !!</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_coords.ENU2XYZ">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ENU2XYZ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Yref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Zref</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ENU2XYZ" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ENU2XYZ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ENU2XYZ" title="Permalink to this definition">¶</a></dt>
 <dd><p>Coordinates conversion</p>
 <p>ENU Topocentic =&gt; XYZ ECEF Geocentric</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>numpy.array of floats</em>) – cartesian coordinates X,Y,Z in meters</p></li>
-<li><p><strong>Y</strong> (<em>numpy.array of floats</em>) – cartesian coordinates X,Y,Z in meters</p></li>
-<li><p><strong>Z</strong> (<em>numpy.array of floats</em>) – cartesian coordinates X,Y,Z in meters</p></li>
-<li><p><strong>x0</strong> (<em>floats</em>) – coordinate of the topocentric origin point in the geocentric frame</p></li>
-<li><p><strong>y0</strong> (<em>floats</em>) – coordinate of the topocentric origin point in the geocentric frame</p></li>
-<li><p><strong>z0</strong> (<em>floats</em>) – coordinate of the topocentric origin point in the geocentric frame</p></li>
+<li><p><strong>E</strong> (<em>numpy.array of floats</em>) – cartesian coordinates E,N,U in meters</p></li>
+<li><p><strong>N</strong> (<em>numpy.array of floats</em>) – cartesian coordinates E,N,U in meters</p></li>
+<li><p><strong>U</strong> (<em>numpy.array of floats</em>) – cartesian coordinates E,N,U in meters</p></li>
+<li><p><strong>x0</strong> (<em>floats</em><em> or </em><em>numpy.array of floats</em>) – coordinate of the topocentric origin point in the geocentric frame
+if they are iterable arrays (of the same size as E,N,U)
+a different x0,y0,z0 will be applied for each E,N,U element</p></li>
+<li><p><strong>y0</strong> (<em>floats</em><em> or </em><em>numpy.array of floats</em>) – coordinate of the topocentric origin point in the geocentric frame
+if they are iterable arrays (of the same size as E,N,U)
+a different x0,y0,z0 will be applied for each E,N,U element</p></li>
+<li><p><strong>z0</strong> (<em>floats</em><em> or </em><em>numpy.array of floats</em>) – coordinate of the topocentric origin point in the geocentric frame
+if they are iterable arrays (of the same size as E,N,U)
+a different x0,y0,z0 will be applied for each E,N,U element</p></li>
+<li><p><strong>velocity_mode</strong> (<em>bool</em>) – For the Velocity mode, coordinates of the topocentric origin point
+are NOT added at the end of the conversion
+Default is False</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>E,N,U</strong> (<em>numpy.array of floats</em>) – East North Up Component (m) w.r.t. x0,y0,z0</p></li>
+<li><p><strong>X,Y,Z</strong> (<em>numpy.array of floats</em>) – ECEF X,Y,Z Component (m)</p></li>
 <li><p><em>Source</em></p></li>
 <li><p><em>——</em></p></li>
 <li><p><strong>https</strong> (<em>//gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates</em>)</p></li>
@@ -757,6 +781,27 @@ Must be improved</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.vector_separator">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">vector_separator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ABC</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.vector_separator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split a Nx3 Array/DataFrame in three separated 1-component vectors
+To simplify the usage of the conversion functions
+(which take single component vectors as input)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ABC</strong> (<em>Array</em><em> or </em><em>DataFrame</em>) – Nx3 XYZ, ENU… array.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>A</strong> (<em>Array</em>) – 1st component.</p></li>
+<li><p><strong>B</strong> (<em>Array</em>) – 2nd component.</p></li>
+<li><p><strong>C</strong> (<em>Array</em>) – 3rd component.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_coords.wnorm">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">wnorm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6378137.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00669438003</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.wnorm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the Ellipsoid “Grande Normale”</p>
@@ -937,6 +982,38 @@ Gives also the Azimuth between 2 points</p>
 <span class="go">185.414657</span>
 </pre></div>
 </div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-geodezyx.conv.conv_interpolators">
+<span id="geodezyx-conv-conv-interpolators-module"></span><h2>geodezyx.conv.conv_interpolators module<a class="headerlink" href="#module-geodezyx.conv.conv_interpolators" title="Permalink to this headline">¶</a></h2>
+<p>Created on Tue Aug 24 13:58:51 2021</p>
+<p>&#64;author: psakicki</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_interpolators.Slerp_time">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_interpolators.</span></span><span class="sig-name descname"><span class="pre">Slerp_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrapolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_interpolators.Slerp_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.spatial.transform.rotation.Slerp</span></code></p>
+<p>Slerp interpolation (for quaterinons) with datetime as inputs</p>
+<p>This class inherites from scipy.spatial.transform.Slerp
+and can take as input datetime as X</p>
+<ol class="upperalpha simple" start="16">
+<li><p>Sakic 2020-01</p></li>
+</ol>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_interpolators.interp1d_time">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_interpolators.</span></span><span class="sig-name descname"><span class="pre">interp1d_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_sorted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_interpolators.interp1d_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.interpolate.interpolate.interp1d</span></code></p>
+<p>Interpolation with datetime as inputs</p>
+<p>This class inherites from scipy.interpolate.interp1d
+and can take as input datetime as X</p>
+<p>Pierre Sakic 2020-01</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_interpolators.interp1d_time.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#geodezyx.conv.conv_interpolators.interp1d_time.dtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -1207,18 +1284,6 @@ see round_dt function for details</p></li>
 <p>Modified Julian Day starts at 0h Nov 17, 1858  (JD − 2400000.5)</p>
 <p><a class="reference external" href="https://en.wikipedia.org/wiki/Julian_day">https://en.wikipedia.org/wiki/Julian_day</a></p>
 </div>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_time.Slerp_time">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">Slerp_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrapolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.Slerp_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.spatial.transform.rotation.Slerp</span></code></p>
-<p>Slerp interpolation (for quaterinons) with datetime as inputs</p>
-<p>This class inherites from scipy.spatial.transform.Slerp
-and can take as input datetime as X</p>
-<ol class="upperalpha simple" start="16">
-<li><p>Sakic 2020-01</p></li>
-</ol>
 </dd></dl>
 
 <dl class="py function">
@@ -2105,21 +2170,6 @@ The year before 1 A.D. is 0, 10 B.C. is year -9.</p></li>
 <span class="go">(1985, 2, 17.25)</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_time.interp1d_time">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">interp1d_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_sorted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.interp1d_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.interpolate.interpolate.interp1d</span></code></p>
-<p>Interpolation with datetime as inputs</p>
-<p>This class inherites from scipy.interpolate.interp1d
-and can take as input datetime as X</p>
-<p>Pierre Sakic 2020-01</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_time.interp1d_time.dtype">
-<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#geodezyx.conv.conv_time.interp1d_time.dtype" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="py function">

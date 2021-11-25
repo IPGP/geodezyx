@@ -1285,16 +1285,47 @@ from
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.pickle_loader">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">pickle_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.pickle_loader" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Load a Python object saved as a Pickle file
+(wrapper of pickle.load)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pathin</strong> (<em>str</em>) – the input pickle file path.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>outdata</strong> – Data which will be loaded from the a pickle..</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>generic</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.pickle_saver">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">pickle_saver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.pik'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.pickle_saver" title="Permalink to this definition">¶</a></dt>
-<dd><p>if full_path is given, override outdir and outname
-RETURN :</p>
-<blockquote>
-<div><p>outpath : the output path of the pickle</p>
-</div></blockquote>
+<dd><p>Save a Python object in a Pickle file
+(wrapper of pickle.dump)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datain</strong> (<em>generic</em>) – Data which will be saved as a pickle.</p></li>
+<li><p><strong>outdir</strong> (<em>str</em><em>, </em><em>optional</em>) – output directory. The default is None.</p></li>
+<li><p><strong>outname</strong> (<em>str</em><em>, </em><em>optional</em>) – pickle output name. The default is None.</p></li>
+<li><p><strong>ext</strong> (<em>str</em><em>, </em><em>optional</em>) – pickle file extension. The default is ‘.pik’.</p></li>
+<li><p><strong>timestamp</strong> (<em>bool</em><em>, </em><em>optional</em>) – add the timestamp in the pickle’s filename.
+The default is False.</p></li>
+<li><p><strong>full_path</strong> (<em>str</em><em>, </em><em>optional</em>) – gives the full path where to save the pickle.
+if full_path is given, override outdir and outname.
+The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>outpath</strong> – the output pickle file path.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
