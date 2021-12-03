@@ -659,6 +659,7 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
     print(" ... done")
     print(len(urllist),"potential RINEXs")
 
+    return urllist,savedirlist 
 
     if filter_ftp_crawler:
         urllist,savedirlist = ftp_files_crawler(urllist,savedirlist)
@@ -1611,7 +1612,7 @@ def ftp_files_crawler(urllist,savedirlist):
     DF["root"]     = [e.split("/")[0] for e in DF["dirname"].values]
     DF["dir"]      = [e1.replace(e2,"")[1:] for (e1,e2) in zip(DF["dirname"],
                                                                    DF["root"])]
-    DF["bool"] = True
+    DF["bool"] = False
     
     #### Initialisation of the 1st variables for the loop
     prev_row_ftpobj = DF.iloc[0]
@@ -1652,18 +1653,17 @@ def ftp_files_crawler(urllist,savedirlist):
                
         ####### we check if the files is avaiable
         if row.basename in FTP_files_list:
-            row.bool = True
+            DF.loc[irow,'bool'] = True
             #print("INFO :" , row.basename ," found on server :)")
         else:
-            row.bool = False
+            DF.loc[irow,'bool'] = False
             print("WARN:",row.basename ,"not found on server :(")
     
     
     DFgood = DF[DF['bool']].copy()
-
+    
     DFgood['url'] = 'ftp://' + DFgood['url']  
     
-
     ### generate the outputs
     if loginftp:
         urllist_out = list(zip(DFgood.url,DFgood.user,DFgood['pass']))
