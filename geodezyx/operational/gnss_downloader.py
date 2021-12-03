@@ -643,7 +643,15 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
     #savedirlist = [x for (y,x) in sorted(zip(urllist,savedirlist))]
     #urllist     = sorted(urllist)
     
-    urllist,savedirlist = utils.sort_binom_list(urllist,savedirlist)
+    ### experimental but can be useful
+    ## DFsort = pd.concat((pd.DataFrame(urllist),pd.DataFrame(savedirlist)),axis=1)
+
+    try:
+        urllist,savedirlist = utils.sort_binom_list(urllist,savedirlist)
+    except TypeError as err:
+        print("ERR: unable to sort the URL and the save directory") 
+        print("TIP: you maybe asked for servers with & without password in the same statdico") 
+        raise err
 
     print(" ... done")
     print(len(urllist),"potential RINEXs")
