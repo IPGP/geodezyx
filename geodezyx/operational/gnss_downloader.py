@@ -513,7 +513,8 @@ def downloader_wrap(intup):
 
 def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
                            archtype ='stat',parallel_download=4,
-                           sorted_mode=False,user='',passwd=''):
+                           sorted_mode=False,user='',passwd='',
+                           filter_ftp_crawler=True):
     """
     Parameters
     ----------
@@ -576,7 +577,10 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
 
     user & passwd : str
         user & password for a locked server
-
+        
+    filter_ftp_crawler : bool
+        use an improved FTP crawler to find which files actually exist
+        to accelerate the download
 
     Returns
     -------
@@ -643,18 +647,21 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
     #savedirlist = [x for (y,x) in sorted(zip(urllist,savedirlist))]
     #urllist     = sorted(urllist)
     
-    ### experimental but can be useful
-    ## DFsort = pd.concat((pd.DataFrame(urllist),pd.DataFrame(savedirlist)),axis=1)
-
     try:
         urllist,savedirlist = utils.sort_binom_list(urllist,savedirlist)
     except TypeError as err:
         print("ERR: unable to sort the URL and the save directory") 
         print("TIP: you maybe asked for servers with & without password in the same statdico") 
         raise err
+    
 
     print(" ... done")
     print(len(urllist),"potential RINEXs")
+
+
+    if filter_ftp_crawler:
+        urllist,savedirlist = ftp_files_crawler(urllist,savedirlist)
+
 
     if sorted_mode:
         results = [pool.apply_async(downloader , args=(u,sd)) for u,sd in zip(urllist,savedirlist)]
@@ -1554,3 +1561,110 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     
     pool.close()
     return Localfiles_lis
+
+
+ #  _____       _                        _    __                  _   _                 
+ # |_   _|     | |                      | |  / _|                | | (_)                
+ #   | |  _ __ | |_ ___ _ __ _ __   __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___ 
+ #   | | | '_ \| __/ _ \ '__| '_ \ / _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+ #  _| |_| | | | ||  __/ |  | | | | (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+ # |_____|_| |_|\__\___|_|  |_| |_|\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+                                                                                      
+def _ftp_dir_list_files(ftp_obj_in):
+    files = []
+    try:
+        files = ftp_obj_in.nlst()
+    except ftplib.error_perm as resp:
+        if str(resp) == "550 No files found":
+            print("No files in this directory",ftp_obj_in.pwd())
+        else:
+            raise
+    return files
+
+
+def ftp_files_crawler(urllist,savedirlist):
+    """
+    filter urllist,savedirlist generated with multi_downloader_rinex with an
+    optimized FTP crawl
+
+    """
+    ### create a DataFrame based on the urllist and savedirlist lists
+    DF = pd.concat((pd.DataFrame(urllist),pd.DataFrame(savedirlist)),axis=1)
+    DF_orig = DF.copy()
+    
+    ### rename the columns
+    if DF.shape[1] == 4:
+        loginftp = True 
+        DF.columns = ('url','user','pass','savedir')
+    else:
+        loginftp = False
+        DF.columns = ('url','savedir')
+        DF['user'] = "anonymous"
+        DF['pass'] = ""
+        
+    ### Do the correct split for the URLs
+    DF = DF.sort_values('url')
+    DF["url"]      = DF['url'].str.replace("ftp://","")
+    DF["dirname"]  = DF["url"].apply(os.path.dirname)
+    DF["basename"] = DF["url"].apply(os.path.basename)
+    DF["root"]     = [e.split("/")[0] for e in DF["dirname"].values]
+    DF["dir"]      = [e1.replace(e2,"")[1:] for (e1,e2) in zip(DF["dirname"],
+                                                                   DF["root"])]
+    DF["bool"] = True
+    
+    #### Initialisation of the 1st variables for the loop
+    prev_row_ftpobj = DF.iloc[0]
+    prev_row_cwd    = DF.iloc[0]
+    FTP_files_list = []
+    
+    #### Initialisation of the FTP object
+    FTPobj = ftplib.FTP(prev_row_ftpobj.root,
+                        prev_row_ftpobj.user, 
+                        prev_row_ftpobj['pass'])
+    
+    for irow,row in DF.iterrows():
+        #print(irow)
+        
+        ####### we recreate a new FTP object if the root URL is not the same
+        if row.root != prev_row_ftpobj.root:
+    
+            FTPobj = ftplib.FTP(row.root,
+                                row.user, 
+                                row['pass'])
+            
+            prev_row_ftpobj = row
+            
+        ####### we recreate a new file list if the date path is not the same        
+        if prev_row_cwd.dir != row.dir:
+            print("INFO:","chdir",row.dirname)
+            FTPobj.cwd("/")
+    
+            try: #### we try to change for the right folder
+                FTPobj.cwd(row.dir)
+            except: #### If not possible, then no file in the list
+                FTP_files_list = []
+              
+            FTP_files_list = _ftp_dir_list_files(FTPobj)
+            prev_row_cwd = row 
+               
+        ####### we check if the files is avaiable
+        if row.basename in FTP_files_list:
+            row.bool = True
+            #print("INFO :" , row.basename ," found on server :)")
+        else:
+            row.bool = False
+            print("WARN:",row.basename ,"not found on server :(")
+    
+    
+    DFgood = DF[DF['bool']]
+    
+    ### generate the outputs
+    if loginftp:
+        urllist_out = list(zip(DFgood.url,DFgood.user,DFgood['pass']))
+    else:
+        urllist_out = list(DFgood.url)    
+    
+    savedirlist_out = list(DFgood.savedir)
+    
+    return urllist_out, savedirlist_out
+
