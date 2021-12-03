@@ -659,8 +659,6 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
     print(" ... done")
     print(len(urllist),"potential RINEXs")
 
-    return urllist,savedirlist 
-
     if filter_ftp_crawler:
         urllist,savedirlist = ftp_files_crawler(urllist,savedirlist)
 
