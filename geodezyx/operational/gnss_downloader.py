@@ -40,6 +40,7 @@ import os
 import re
 import shutil
 import urllib
+import ftplib
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -1616,7 +1617,7 @@ def ftp_files_crawler(urllist,savedirlist):
     prev_row_ftpobj = DF.iloc[0]
     prev_row_cwd    = DF.iloc[0]
     FTP_files_list = []
-    
+    count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
     #### Initialisation of the FTP object
     FTPobj = ftplib.FTP(prev_row_ftpobj.root,
                         prev_row_ftpobj.user, 
@@ -1624,15 +1625,17 @@ def ftp_files_crawler(urllist,savedirlist):
     
     for irow,row in DF.iterrows():
         #print(irow)
+        count_loop += 1
         
         ####### we recreate a new FTP object if the root URL is not the same
-        if row.root != prev_row_ftpobj.root:
+        if row.root != prev_row_ftpobj.root or count_loop > 50:
     
             FTPobj = ftplib.FTP(row.root,
                                 row.user, 
                                 row['pass'])
             
             prev_row_ftpobj = row
+            count_loop = 0
             
         ####### we recreate a new file list if the date path is not the same        
         if prev_row_cwd.dir != row.dir:
@@ -1656,8 +1659,11 @@ def ftp_files_crawler(urllist,savedirlist):
             print("WARN:",row.basename ,"not found on server :(")
     
     
-    DFgood = DF[DF['bool']]
+    DFgood = DF[DF['bool']].copy()
+
+    DFgood['url'] = 'ftp://' + DFgood['url']  
     
+
     ### generate the outputs
     if loginftp:
         urllist_out = list(zip(DFgood.url,DFgood.user,DFgood['pass']))
