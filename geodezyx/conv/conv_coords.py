@@ -47,6 +47,33 @@ from geodezyx.megalib.megalib import *   # Import the legacy modules names
 #                                                                                                             
 #                                                                                                             
 
+
+def vector_separator(ABC):
+    """
+    Split a Nx3 Array/DataFrame in three separated 1-component vectors
+    To simplify the usage of the conversion functions 
+    (which take single component vectors as input)
+
+    Parameters
+    ----------
+    ABC : Array or DataFrame
+        Nx3 XYZ, ENU... array.
+
+    Returns
+    -------
+    A : Array
+        1st component.
+    B : Array
+        2nd component.
+    C : Array
+        3rd component.
+
+    """
+    ABC = np.array(ABC)
+    return ABC[:,0],ABC[:,1],ABC[:,2]
+
+
+
 def wnorm(phi,a=6378137.,e2=0.00669438003):
     """
     Compute the Ellipsoid "Grande Normale"
@@ -310,7 +337,7 @@ def XYZ2ENU_around_fix_pos(X,Y,Z):
     return XYZ2ENU_2(X,Y,Z,x0,y0,z0) , np.array([x0,y0,z0])
 
 
-def ENU2XYZ(E,N,U,Xref,Yref,Zref):
+def ENU2XYZ(E,N,U,x0,y0,z0,velocity_mode=False):
     """
     Coordinates conversion
 
@@ -318,16 +345,22 @@ def ENU2XYZ(E,N,U,Xref,Yref,Zref):
     
     Parameters
     ----------
-    X,Y,Z : numpy.array of floats
-        cartesian coordinates X,Y,Z in meters
+    E,N,U : numpy.array of floats
+        cartesian coordinates E,N,U in meters
         
-    x0,y0,z0 : floats
-        coordinate of the topocentric origin point in the geocentric frame    
+    x0,y0,z0 : floats or numpy.array of floats
+        coordinate of the topocentric origin point in the geocentric frame   
+        if they are iterable arrays (of the same size as E,N,U) 
+        a different x0,y0,z0 will be applied for each E,N,U element
+    velocity_mode : bool
+        For the Velocity mode, coordinates of the topocentric origin point 
+        are NOT added at the end of the conversion
+        Default is False
 
     Returns
     -------
-    E,N,U : numpy.array of floats
-        East North Up Component (m) w.r.t. x0,y0,z0
+    X,Y,Z : numpy.array of floats
+        ECEF X,Y,Z Component (m)
         
     Source
     ------
@@ -335,16 +368,24 @@ def ENU2XYZ(E,N,U,Xref,Yref,Zref):
     """
     
     if utils.is_iterable(E):
+        if not utils.is_iterable(x0): ### The input x0,y0,z0 is a single point 
+            n = len(E)
+            X0,Y0,Z0 = [x0]*n,[y0]*n,[z0]*n
+        else:                         ### The input x0,y0,z0 is a vector = different x0,y0,z0 for each point
+            X0,Y0,Z0 = x0,y0,z0
+                        
         Xlist , Ylist , Zlist = [] , [] , []
-        for e,n,u in zip(E,N,U):
-            x,y,z = ENU2XYZ(e,n,u,Xref,Yref,Zref)
+        
+        for e,n,u,x0use,y0use,z0use in zip(E,N,U,X0,Y0,Z0):
+            x,y,z = ENU2XYZ(e,n,u,x0use,y0use,z0use,
+                            velocity_mode=velocity_mode)
             Xlist.append(x)
             Ylist.append(y)
             Zlist.append(z)
         return np.array(Xlist) , np.array(Ylist) , np.array(Zlist)
     
     else:
-        fr,lr,hr = XYZ2GEO(Xref,Yref,Zref)
+        fr,lr,hr = XYZ2GEO(x0,y0,z0)
         f0 = np.deg2rad(fr)
         l0 = np.deg2rad(lr)
     
@@ -357,12 +398,17 @@ def ENU2XYZ(E,N,U,Xref,Yref,Zref):
     
         ENU = np.vstack((E,N,U))
     
-        xyz = np.dot(R3,ENU) #+ np.vstack((Xref,Yref,Zref))
+        xyz = np.dot(R3,ENU)
     
-        X = float(xyz[0]) + Xref
-        Y = float(xyz[1]) + Yref
-        Z = float(xyz[2]) + Zref
-    
+        if velocity_mode:
+            X = float(xyz[0])
+            Y = float(xyz[1])
+            Z = float(xyz[2])
+        else:
+            X = float(xyz[0]) + x0
+            Y = float(xyz[1]) + y0
+            Z = float(xyz[2]) + z0
+        
         return X,Y,Z
 
 

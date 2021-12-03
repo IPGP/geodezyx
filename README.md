@@ -2,7 +2,7 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.2.2 / 2021-08-04**, README Revision: 2021-08-04
+**Version 0.4.2.4 / 2021-11-25**, README Revision: 2021-11-25
 
 
 **Authors:** Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
@@ -24,7 +24,7 @@ V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.
 
 ## Introduction
 
-The purpose of this GeodeZYX toolbox is to provide all the functions which
+The purpose of the GeodeZYX toolbox (pronounced *geode-**zeecks***) is to provide all the functions which
 can be useful for Geodesy and Geophysics. 
 
 It includes low level functions, file management functions,

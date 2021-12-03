@@ -421,25 +421,23 @@ for a proper transformation</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.geometry.itrf_helmert_trans">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">itrf_helmert_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_Xi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tdot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ddot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rdot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_ref_Xe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.itrf_helmert_trans" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">itrf_helmert_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_Xi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tdot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ddot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rdot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_ref_Xe</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.itrf_helmert_trans" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do the Helmert transformation I/ETRFxx &lt;=&gt; I/ETRFxx</p>
+<p>The seven Helmert Parameters are generated with <code class="docutils literal notranslate"><span class="pre">itrf_helmert_get_parameters</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Xi</strong> (<em>3-Array</em><em>, </em><em>Nx3-Array OR 6-Array</em><em>, </em><em>Nx6-Array</em>) – Points in the initial Reference Frame.
 3 columns if positions only
 6 columns if positions+velocities</p></li>
-<li><p><strong>epoch_Xi</strong> (<em>float</em>) – epoch of the initial Reference Frame points.</p></li>
-<li><p><strong>T</strong> (<em>3-Array</em>) – Translation.</p></li>
-<li><p><strong>Tdot</strong> (<em>3-Array</em>) – Translation rate.</p></li>
-<li><p><strong>D</strong> (<em>float</em>) – Scale factor.</p></li>
-<li><p><strong>Ddot</strong> (<em>float</em>) – Scale factor rate.</p></li>
-<li><p><strong>R</strong> (<em>3-Array</em>) – Rotation.</p></li>
-<li><p><strong>Rdot</strong> (<em>3-Array</em>) – Rotation rte.</p></li>
+<li><p><strong>epoch_Xi</strong> (<em>float</em>) – epoch of the initial Reference Frame points (decimal year).</p></li>
+<li><p><strong>T</strong> (<em>3-Array</em>) – Translation parameter.</p></li>
+<li><p><strong>Tdot</strong> (<em>3-Array</em>) – Translation rate parameter.</p></li>
+<li><p><strong>D</strong> (<em>float</em>) – Scale factor parameter.</p></li>
+<li><p><strong>Ddot</strong> (<em>float</em>) – Scale factor rate parameter.</p></li>
+<li><p><strong>R</strong> (<em>3-Array</em>) – Rotation parameter.</p></li>
+<li><p><strong>Rdot</strong> (<em>3-Array</em>) – Rotation rate parameter.</p></li>
 <li><p><strong>epoch_ref_Xe</strong> (<em>float</em>) – Reference epoch of the destination TRF.</p></li>
-<li><p><strong>seven Helmert Parameters are generated with</strong> (<em>The</em>) – </p></li>
-<li><p><strong>itrf_helmert_get_parameters</strong> – </p></li>
-<li><p><strong>velocity_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – Compute also the velocities. The default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -451,15 +449,22 @@ for a proper transformation</p></li>
 </dl>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>This function does not the velocity shift from one epoch to another
-The output coordinates will be provided at the same epoch as the input ones</p>
+<p>This function does not the velocity shift from one epoch to another</p>
+<p>The output coordinates will be provided at the same epoch as the input ones</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">itrf_speed_calc</span></code> function to perform this potential step
+before (with the initial velocities) or after (with the transformed velocities)
+calling the present function.</p>
 </div>
 <p class="rubric">Notes</p>
 <p>Based on the theory and values of
 <a class="reference external" href="http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf">http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf</a></p>
 <p>We recommend to confirm the values with the official EUREF converter
 <a class="reference external" href="http://www.epncb.oma.be/_productsservices/coord_trans/index.php">http://www.epncb.oma.be/_productsservices/coord_trans/index.php</a></p>
-<p>By definition RGF93 = <a class="reference external" href="mailto:ETRF2000&#37;&#52;&#48;2009&#46;0">ETRF2000<span>&#64;</span>2009<span>&#46;</span>0</a></p>
+<p>By definition, since the 2021/01/04
+RGF93(v2b) = <a class="reference external" href="mailto:ETRF2000&#37;&#52;&#48;2019&#46;0">ETRF2000<span>&#64;</span>2019<span>&#46;</span>0</a></p>
+<p><a class="reference external" href="https://geodesie.ign.fr/index.php?page=rgf93">https://geodesie.ign.fr/index.php?page=rgf93</a></p>
+<p><a class="reference external" href="https://geodesie.ign.fr/contenu/fichiers/RGF93v2b-RAF18b.pdf">https://geodesie.ign.fr/contenu/fichiers/RGF93v2b-RAF18b.pdf</a></p>
+<p><a class="reference external" href="https://geodesie.ign.fr/contenu/fichiers/rgf93v2b_information_cnig.pdf">https://geodesie.ign.fr/contenu/fichiers/rgf93v2b_information_cnig.pdf</a></p>
 </dd></dl>
 
 <dl class="py function">
