@@ -1652,7 +1652,7 @@ def ftp_files_crawler(urllist,savedirlist):
         ####### we check if the files is avaiable
         if row.basename in FTP_files_list:
             DF.loc[irow,'bool'] = True
-            #print("INFO :" , row.basename ," found on server :)")
+            print("INFO:",row.basename ,"found on server :)")
         else:
             DF.loc[irow,'bool'] = False
             print("WARN:",row.basename ,"not found on server :(")
