@@ -246,8 +246,9 @@ def indice_printer(i,print_every = 10,text_before=''):
 def pickle_saver(datain , outdir = None , outname = None , ext='.pik' ,
                  timestamp = False,full_path=None):
     """
-    Save a Python object in a Pickle file
-    (wrapper of pickle.dump)
+    Save a Python object in a Pickle file.
+    
+    Wrapper of pickle.dump
     
     Parameters
     ----------
@@ -295,8 +296,9 @@ def pickle_saver(datain , outdir = None , outname = None , ext='.pik' ,
 
 def pickle_loader(pathin):
     """
-    Load a Python object saved as a Pickle file
-    (wrapper of pickle.load)   
+    Load a Python object saved as a Pickle file.
+    
+    Wrapper of pickle.load
 
     Parameters
     ----------
