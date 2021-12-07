@@ -1627,7 +1627,7 @@ def ftp_files_crawler(urllist,savedirlist):
         count_loop += 1
         
         ####### we recreate a new FTP object if the root URL is not the same
-        if row.root != prev_row_ftpobj.root or count_loop > 50:
+        if row.root != prev_row_ftpobj.root or count_loop > 20:
     
             FTPobj = ftplib.FTP(row.root,
                                 row.user, 
