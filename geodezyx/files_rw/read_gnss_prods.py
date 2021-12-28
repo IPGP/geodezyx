@@ -283,10 +283,9 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
         F = gzip.open(file_path_in, "r+")
         Lines = [e.decode('utf-8') for e in F]
     elif file_path_in[-2:] in (".Z",):
-        import unlzw
+        import ncompress
         fh = open(file_path_in, 'rb')
-        Fcompressed = fh.read()
-        F = unlzw.unlzw(Fcompressed).decode("utf-8") 
+        F = ncompress.decompress(fh).decode("utf-8") 
         Lines = F.split('\n')
     else:
         F = open(file_path_in,'r')
