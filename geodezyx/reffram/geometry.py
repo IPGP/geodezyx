@@ -323,7 +323,9 @@ def itrf_helmert_trans(Xi,
         
     Notes
     -----
-    Based on the theory and values of
+    Based on the theory and values of *EUREF Technical Note 1: 
+    Relationship and Transformation between the International 
+    and the European Terrestrial Reference Systems, Z. Altamimi, 2018*
     http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf
     
     We recommend to confirm the values with the official EUREF converter
@@ -336,9 +338,10 @@ def itrf_helmert_trans(Xi,
     By definition, since the 2021/01/04
     RGF93(v2b) = ETRF2000@2019.0
     
-    https://geodesie.ign.fr/index.php?page=rgf93 \n
-    https://geodesie.ign.fr/contenu/fichiers/RGF93v2b-RAF18b.pdf \n
-    https://geodesie.ign.fr/contenu/fichiers/rgf93v2b_information_cnig.pdf 
+    Source:
+        https://geodesie.ign.fr/index.php?page=rgf93 \n
+        https://geodesie.ign.fr/contenu/fichiers/RGF93v2b-RAF18b.pdf \n
+        https://geodesie.ign.fr/contenu/fichiers/rgf93v2b_information_cnig.pdf 
     
     """
     ## prelimiary warning 
