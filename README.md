@@ -2,7 +2,7 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.2.4 / 2021-11-25**, README Revision: 2021-11-25
+**Version 0.4.2.5 / 2021-01-25**, README Revision: 2021-11-25
 
 
 **Authors:** Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
