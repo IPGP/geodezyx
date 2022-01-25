@@ -296,7 +296,7 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
             stations_dico[s[0].Four_Character_ID] = (p[0],s[0],l[0])
         elif output_mode == "pretty":
             p_DF = pd.DataFrame(p[0])
-            p_DF.columns = ('start','end','antenna','receiver')
+            p_DF.columns = ('start','end','ant','rec')
             stations_dico[s[0].Four_Character_ID] = (p_DF,s[0],l[0])
         elif output_mode == "legacy":
             stations_dico[s[0].Four_Character_ID] = (p,s,l)
