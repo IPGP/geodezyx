@@ -25,7 +25,9 @@ import datetime as dt
 import dateutil
 import glob
 import os 
+import pandas as pd
 import re 
+
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -79,7 +81,7 @@ def read_blocks_logsheet(input_file, block_id):
          Warning: if the Block contains only one sub-block
          Then the output is a 1-item List
     """
-    proto_objects = [None,Site(),Location(),Reciever(),Antenna()]
+    proto_objects = [None,Site(),Location(),Receiver(),Antenna()]
 
     blkstr = str(block_id) + '.'
     blkstrnxt = str(block_id+1) + '.'
@@ -225,7 +227,7 @@ def mono_logsheet_read(logsheet_path,return_lists = False):
 
 
 def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
-                        legacy_mode=False):
+                        output_mode='classic'):
 
     """
     Read multiple logsheets
@@ -241,18 +243,20 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
         The default is '\*log'.
     return_dico : bool, optional
         If False, returns period_lis_lis , stat_lis , loc_lis
-        this mode is useful for station.info generation
+        the False mode is useful for station.info generation
         The default is True.
-    legacy_mode : bool, optional
-        if True, it will return in the dico period_lis_lis , stat_lis , loc_lis
-        else it will return period_lis , stat , loc
-        should not be used anymore
-        The default is False.
+    output_mode : str, optional
+        'classic': returns in the period_lis , stat , loc
+        'pretty': returns the period_lis, stat, loc but with 
+        period_lis as a DataFrame
+        'legacy': returns in the dico period_lis_lis , stat_lis , loc_lis 
+        (should not be used anymore)
+        The default is 'classic'.
         
     Returns
     -------
     stations_dico : dict
-        a dictionnary like stations_dico['STAT'] = (period_lis_lis, station_lis, loc_lis).
+        a dictionnary like stations_dico['STAT'] = (period_lis, station, loc).
 
     """
     
@@ -287,12 +291,18 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
         period_lis_lis = period_lis_lis + p
         stat_lis       = stat_lis       + s
         loc_lis        = loc_lis        + l
-
-        if not legacy_mode:
+        
+        if output_mode == "classic":
             stations_dico[s[0].Four_Character_ID] = (p[0],s[0],l[0])
-        else:
+        elif output_mode == "pretty":
+            p_DF = pd.DataFrame(p[0])
+            p_DF.columns = ('start','end','ant','rec')
+            stations_dico[s[0].Four_Character_ID] = (p_DF,s[0],l[0])
+        elif output_mode == "legacy":
             stations_dico[s[0].Four_Character_ID] = (p,s,l)
-            
+        else:
+            print('ERR: check output_mode value')
+            raise Exception   
 
 
     if not return_dico:
@@ -345,7 +355,7 @@ class Event(object):
             minute=0, second=0, microsecond=0,tzinfo=dateutil.tz.tzutc())
 #        print self.__Date_Removed
 
-class Reciever(Event):
+class Receiver(Event):
     def __init__(self):
         Event.__init__(self)
         self.Receiver_Type             =  'XXXX'
@@ -359,7 +369,7 @@ class Reciever(Event):
 #        self.Date_Removed              = 'XXXX'
 
     def __repr__(self):
-        return "Antenna Type  :{},\nDate Installed:{},\nDate Removed  :{}".format(self.Receiver_Type,
+        return "Receiver Type  :{},\nDate Installed:{},\nDate Removed  :{}".format(self.Receiver_Type,
                                  self.Date_Installed,
                                  self.Date_Removed)
 

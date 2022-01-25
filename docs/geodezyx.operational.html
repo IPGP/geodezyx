@@ -701,6 +701,13 @@ Implemented only for the  old naming format (for the moment)</p>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gnss_downloader.ftp_files_crawler">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gnss_downloader.</span></span><span class="sig-name descname"><span class="pre">ftp_files_crawler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urllist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savedirlist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gnss_downloader.ftp_files_crawler" title="Permalink to this definition">¶</a></dt>
+<dd><p>filter urllist,savedirlist generated with multi_downloader_rinex with an
+optimized FTP crawl</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.gnss_downloader.geoaus_server">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gnss_downloader.</span></span><span class="sig-name descname"><span class="pre">geoaus_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gnss_downloader.geoaus_server" title="Permalink to this definition">¶</a></dt>
 <dd><p>Geosciences Australia
@@ -818,7 +825,7 @@ dow_manu = 0 or 7: the dow in question</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.gnss_downloader.multi_downloader_rinex">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gnss_downloader.</span></span><span class="sig-name descname"><span class="pre">multi_downloader_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statdico</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorted_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gnss_downloader.multi_downloader_rinex" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gnss_downloader.</span></span><span class="sig-name descname"><span class="pre">multi_downloader_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statdico</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorted_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_ftp_crawler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gnss_downloader.multi_downloader_rinex" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>statdico</strong> (<em>dict</em>) – <p>a statdico is a dictionary associating Archives Centers to list of stations</p>
@@ -866,6 +873,21 @@ in the chrono. order</p>
 <p>The scrambled (False) is better, bc. it doesn’t create zombies processes</p>
 </dd>
 <dt>user &amp; passwd<span class="classifier">str</span></dt><dd><p>user &amp; password for a locked server</p>
+</dd>
+<dt>filter_ftp_crawler<span class="classifier">bool</span></dt><dd><p>use an improved FTP crawler to find which files actually exist
+to accelerate the download. If path_ftp_crawled_files_load is given,
+use this loaded list.</p>
+</dd>
+<dt>path_ftp_crawled_files_save<span class="classifier">str</span></dt><dd><p>will save at the given path (directory+filname) a pickle containing the
+list of the existing RINEXs found on the server by the FTP crawler.
+It allows to use this list directly if one face a timeout during
+the download part.
+NB for advanced users: the pickle is a tuple (urllist,savedirlist)</p>
+</dd>
+<dt>path_ftp_crawled_files_load<span class="classifier">str</span></dt><dd><p>load and use the list of the existing RINEXs found on the FTP server,
+generated by a previous run of the FTP crawler (called by
+multi_downloader_rinex or directly by ftp_files_crawler).
+overrides an internal call of ftp_files_crawler.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1338,7 +1360,7 @@ delta of interval_size - 1s</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_start_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_tzinfo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">safety_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_start_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the first and the last epoch of a RINEX file
 (based on the actual content of the file, not the header)</p>
-<p>Can handle REINX 2 and 3</p>
+<p>Can handle RINEX 2 and 3</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

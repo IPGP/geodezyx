@@ -299,7 +299,7 @@ def rinex_start_end(input_rinex_path,interval_out=False,
     Return the first and the last epoch of a RINEX file
     (based on the actual content of the file, not the header)
     
-    Can handle REINX 2 and 3
+    Can handle RINEX 2 and 3
 
     Parameters
     ----------

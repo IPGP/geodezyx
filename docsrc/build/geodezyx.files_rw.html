@@ -1704,12 +1704,12 @@ GitHub repository :
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_logsheets.Reciever">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_logsheets.</span></span><span class="sig-name descname"><span class="pre">Reciever</span></span><a class="headerlink" href="#geodezyx.files_rw.read_logsheets.Reciever" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_logsheets.Receiver">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_logsheets.</span></span><span class="sig-name descname"><span class="pre">Receiver</span></span><a class="headerlink" href="#geodezyx.files_rw.read_logsheets.Receiver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#geodezyx.files_rw.read_logsheets.Event" title="geodezyx.files_rw.read_logsheets.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">geodezyx.files_rw.read_logsheets.Event</span></code></a></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_logsheets.Reciever.FirmwareSmart">
-<span class="sig-name descname"><span class="pre">FirmwareSmart</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_logsheets.Reciever.FirmwareSmart" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_logsheets.Receiver.FirmwareSmart">
+<span class="sig-name descname"><span class="pre">FirmwareSmart</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_logsheets.Receiver.FirmwareSmart" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1752,7 +1752,7 @@ write_station_info_from_datalists function</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_logsheets.multi_logsheet_read">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_logsheets.</span></span><span class="sig-name descname"><span class="pre">multi_logsheet_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wildcardin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'*log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dico</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legacy_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_logsheets.multi_logsheet_read" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_logsheets.</span></span><span class="sig-name descname"><span class="pre">multi_logsheet_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wildcardin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'*log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dico</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'classic'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_logsheets.multi_logsheet_read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read multiple logsheets</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1763,16 +1763,18 @@ If str: path of the directory containing the Logsheets.</p></li>
 used only for pathin in a string path.
 The default is ‘*log’.</p></li>
 <li><p><strong>return_dico</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, returns period_lis_lis , stat_lis , loc_lis
-this mode is useful for station.info generation
+the False mode is useful for station.info generation
 The default is True.</p></li>
-<li><p><strong>legacy_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, it will return in the dico period_lis_lis , stat_lis , loc_lis
-else it will return period_lis , stat , loc
-should not be used anymore
-The default is False.</p></li>
+<li><p><strong>output_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – ‘classic’: returns in the period_lis , stat , loc
+‘pretty’: returns the period_lis, stat, loc but with
+period_lis as a DataFrame
+‘legacy’: returns in the dico period_lis_lis , stat_lis , loc_lis
+(should not be used anymore)
+The default is ‘classic’.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>stations_dico</strong> – a dictionnary like stations_dico[‘STAT’] = (period_lis_lis, station_lis, loc_lis).</p>
+<dd class="field-even"><p><strong>stations_dico</strong> – a dictionnary like stations_dico[‘STAT’] = (period_lis, station, loc).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
