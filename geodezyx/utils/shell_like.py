@@ -299,8 +299,8 @@ def find_recursive(parent_folder , pattern,
     matches = []
     if case_sensitive:
         for root, dirnames, filenames in os.walk(parent_folder):
-            #for filename in fnmatch.filter(filenames, pattern): ### remove filter because unable to match an equivalent string !?! (210126) 
-            for filename in fnmatch.fnmatch(filenames, pattern):
+            for filename in fnmatch.filter(filenames, pattern):
+            #for filename in fnmatch.fnmatch(filenames, pattern):
                 matches.append(os.path.join(root, filename))
     else: # not case sensitive, use a regex
         for root, dirnames, filenames in os.walk(parent_folder):
