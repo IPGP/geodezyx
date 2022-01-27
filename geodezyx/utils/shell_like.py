@@ -332,8 +332,8 @@ def find_recursive(parent_folder , pattern,
         
     if warn_if_empty and len(matches) == 0:
         print("WARN:find_recursive: no files found! check parent folder and pattern")
-        print(parent_folder)
-        print(pattern)
+        print("INFO:Parent folder:",parent_folder)
+        print("INFO:Pattern      :",pattern)
                 
     return matches
 
