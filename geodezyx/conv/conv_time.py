@@ -26,8 +26,8 @@ import math
 import numpy as np
 import os 
 import pandas as pd
-import scipy
-from scipy.spatial.transform import Rotation
+#import scipy
+#from scipy.spatial.transform import Rotation
 import string
 import struct
 import subprocess
@@ -35,21 +35,14 @@ import re
 import time
 import warnings
 ## Finding day of year
-from datetime import datetime, date
+from datetime import datetime, date 
 
 #### geodeZYX modules
 from geodezyx import utils,stats
-
-#### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+import geodezyx.conv.conv_interpolators as conv_interpolators
 
 ##########  END IMPORT  ##########
 
-
-
-#import utils.utils as utils
 
 #  _______ _                   _____                              _
 # |__   __(_)                 / ____|                            (_)
@@ -868,7 +861,8 @@ def dt_utc2dt_ut1_smart(dtin,DF_EOP_in,
         
         ### We also use the interpolator class
         if use_interp1d_obj:
-            IEOP = interp1d_time(DF_EOP.index.values,DF_EOP['UT1-UTC'])
+            IEOP = conv_interpolators.interp1d_time(DF_EOP.index.values,
+                                                    DF_EOP['UT1-UTC'])
         else:
             IEOP = None
         
@@ -2658,7 +2652,7 @@ def gpstime2utc_bad(gpsweek,gpssecs,utc_offset):
     return utc_time
 
 
-def toYearFraction(date):
+def toYearFraction(date_in):
     """
     DISCONTINUED
     use dt2year_decimal instead (which is the same)
@@ -2675,11 +2669,11 @@ def toYearFraction(date):
         return time.mktime(date.timetuple())
     s = sinceEpoch
 
-    year = date.year
+    year = date_in.year
     startOfThisYear = dt(year=year, month=1, day=1)
     startOfNextYear = dt(year=year+1, month=1, day=1)
 
-    yearElapsed = s(date) - s(startOfThisYear)
+    yearElapsed = s(date_in) - s(startOfThisYear)
     yearDuration = s(startOfNextYear) - s(startOfThisYear)
     fraction = yearElapsed/yearDuration
 
@@ -2700,5 +2694,5 @@ def convert_partial_year(number):
     year = int(number)
     d = timedelta(days=(number - year)*(365 + calendar.isleap(year)))
     day_one = datetime(year,1,1)
-    date = d + day_one
-    return date
+    date_out = d + day_one
+    return date_out
