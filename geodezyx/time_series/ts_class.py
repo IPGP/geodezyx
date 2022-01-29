@@ -93,7 +93,7 @@ class Point():
         elif initype == 'NED':
             self.NEDset(A,B,C,sA,sB,sC)
         else:
-            print("ERR : init point : mauvais initype")
+            log.error("wrong initype")
 
     def __call__(self):
 
@@ -106,7 +106,7 @@ class Point():
         elif self.initype == 'NED':
             return self.N,self.E,self.D,self.Tdt,self.T
         else:
-            print("ERR : call point : mauvais initype")
+            log.error("wrong initype")
 
     def __repr__(self):
         if (not hasattr(self,'X')):
@@ -158,7 +158,7 @@ class Point():
         self.initype = 'NED'
 
     def add_offset(self,dA,dB,dC):
-        print("WARN: add_offset as method are hazardous ...")
+        log.warning("add_offset as method are hazardous ...")
         temp = time_series.add_offset_point(self,dA,dB,dC)
         self.__dict__ = temp.__dict__
 
@@ -206,7 +206,7 @@ class Point():
         """
 
         if epoc_init == 'auto' and epoc_end == 'auto':
-            print('ERR : epoc_init == auto and epoc_end == auto')
+            log.error('epoc_init == auto and epoc_end == auto')
             return None
 
         tdt = conv.posix2dt(self.T)
@@ -378,7 +378,7 @@ class TimeSeriePoint:
 
         """
         ipt = np.random.randint(self.nbpts)
-        print("INFO: point no " + str(ipt))
+        log.info("point no %s",str(ipt))
 
         return self.pts[ipt]
 
@@ -532,17 +532,17 @@ class TimeSeriePoint:
         elif coortype == 'ENU':
 
             if self.boolENU == False:
-                print("WARN : to_list : pas de coord. ENU pour " + self.name)
+                log.warning("no ENU coord. for " + self.name)
                 return 0
 
             A,B,C = 'E','N','U'
             sA,sB,sC = 'sE','sN','sU'
 
         else:
-            print("ERR : to_list : le coortype n'existe pas")
+            log.error("coortype does not exist")
 
         if self.nbpts == 0:
-            print("ERR : to_list : " + self.name + " the timeserie is empty")
+            log.error(self.name + " the timeserie is empty")
 
         A = np.asarray([ getattr(pt,A) for pt in self.pts ])
         B = np.asarray([ getattr(pt,B) for pt in self.pts ])
@@ -572,8 +572,8 @@ class TimeSeriePoint:
         elif type(specific_output) is int:
             return outtup[specific_output]
         else:
-            print("INFO : this mode must be implemented ;)")
-            print("use an int as index instead")
+            log.info("this mode must be implemented ;)")
+            log.info("use an int as index instead")
             return outtup
         
     def to_dataframe(self,coortype ='XYZ'):
@@ -678,8 +678,8 @@ class TimeSeriePoint:
         try:
             A, B, C , T , sA, sB, sC = self.to_list(coortype=coortype)
         except TypeError as tyer:
-            print("ERR   : unable to get coordinates")
-            print("TRICK : check if the given coortype is in the timeserie")
+            log.error("unable to get coordinates")
+            log.info("TRICK : check if the given coortype is in the timeserie")
             raise tyer
 
         if coortype == 'ENU':
@@ -710,7 +710,7 @@ class TimeSeriePoint:
             yylabel = 'displacement (??)'
             ABtitle = 'A & B'
 
-        print("plot :", self.nbpts , "pts, ", self.stat)
+        log.info("plot : %s, pts : %s", self.nbpts, self.stat)
 
         namest=0
         namend=10
@@ -824,7 +824,7 @@ class TimeSeriePoint:
         """
 
         if not self.bool_discont:
-            print("WARN : no discontinuities in TimeSerie")
+            log.warning("no discontinuities in TimeSerie")
             return None
 
         if type(fig) is int:
@@ -874,13 +874,13 @@ class TimeSeriePoint:
         if not self.bool_discont_manu:
             self.discont_manu = []
 
-        print("INFO : press SPACE to record a manual discontinuity")
+        log.info("press SPACE to record a manual discontinuity")
 
 
         def onclick_discont(event):
             ix, iy = matplotlib.dates.num2date(event.xdata).replace(tzinfo=None), event.ydata
 
-            print("INFO : discontinuity recorded : " , ix)
+            log.info("discontinuity recorded : %s" , ix)
             for ax in figobj.axes:
                 stats.plot_vertical_bar_ax([ix],ax,"g")
 #
@@ -992,7 +992,7 @@ class TimeSeriePoint:
 
         """
         if (not hasattr(self.pts[0],'E')) or np.isnan(self.pts[0].E) == True:
-            print("WARN : interp_set : pas de ENU pour " + self.name)
+            log.warning("no ENU for " + self.name)
         else:
             E,N,U,T,_,_,_ = self.to_list('ENU')
             self.EfT = scipy.interpolate.interp1d(T,E,bounds_error=False,kind=interptype)
@@ -1000,7 +1000,7 @@ class TimeSeriePoint:
             self.UfT = scipy.interpolate.interp1d(T,U,bounds_error=False,kind=interptype)
 
         if (not hasattr(self.pts[0],'X')) or np.isnan(self.pts[0].X) == True:
-            print("WARN : interp_set : pas de XYZ pour " + self.name)
+            log.warning("no XYZ for " + self.name)
         else:
 
             X,Y,Z,T,_,_,_ = self.to_list('XYZ')
@@ -1011,7 +1011,7 @@ class TimeSeriePoint:
 
 
         if (not hasattr(self.pts[0],'F')) or np.isnan(self.pts[0].L) == True:
-            print("WARN : interp_set : pas de FLH pour " + self.name)
+            log.warning("no FLH for " + self.name)
         else:
             F,L,H,T,_,_,_ = self.to_list('FLH')
 
@@ -1040,7 +1040,7 @@ class TimeSeriePoint:
         """
 
         if self.bool_interp_uptodate == False:
-            print("WARN : interp obsolete, recalcul auto")
+            log.warning("interp obsolete, recalcul auto")
             self.interp_set()
 
         tsout = copy.copy(self)
@@ -1137,7 +1137,7 @@ class TimeSeriePoint:
         NOTE 160415 : add_offset as method are hazardous ...
         use fct add_offset_ts instead
         """
-        print("NOTE 160415 : add_offset as method are hazardous ...")
+        log.warning("add_offset as method are hazardous ...")
         for pt in self.pts:
             pt.add_offset(dA,dB,dC)
 
@@ -1189,7 +1189,7 @@ class TimeSeriePoint:
         tmax  = self.pts[-1].T
 
         if not ( tmin <= tin <= tmax ):
-            print("WARN : find_point : t !€ [tmin , tmax]")
+            log.warning("t !€ [tmin , tmax]")
 
         if stop_when_found:
             for i,p in enumerate(self.pts):
@@ -1323,7 +1323,7 @@ class TimeSerieObs(object):
         self.nbobs = 0
 
     def readfile(self,filein,indtab=0):
-        print("selection device " , indtab)
+        log.info("selection device %s" , indtab)
         temp = files_rw.read_all_obs(filein)[indtab]
         self.__dict__ = temp.__dict__
 
@@ -1337,9 +1337,9 @@ class TimeSerieObs(object):
 
     def aleaobs(self):
         iobs = randrange(self.nbobs)
-        print("observation no " + str(iobs))
+        log.info("observation no " + str(iobs))
 
-        print(self.obs[iobs])
+        log.info(self.obs[iobs])
 
         return self.obs[iobs]
 
@@ -1365,7 +1365,7 @@ class TimeSerieObs(object):
 
     def to_list(self):
         if self.typeobs == 'NULL':
-            print("ERR : pas de typeobs defini (NULL)")
+            log.error("pas de typeobs defini (NULL)")
             return 0
 
         if self.typeobs == 'RPY':
@@ -1394,7 +1394,7 @@ class TimeSerieObs(object):
     def interp_set(self,interptype='slinear'):
 
         if self.typeobs == 'NULL':
-            print("ERR : pas de typeobs defini (NULL)")
+            log.error("no typeobs defined (NULL)")
             return 0
 
         if self.typeobs == 'RPY':
@@ -1410,7 +1410,7 @@ class TimeSerieObs(object):
     def interp_get(self,T):
 
         if self.bool_interp_uptodate == False:
-            print("WARN : interp obsolete, recalcul auto")
+            log.warning("interp obsolete, recalcul auto")
             self.interp_set()
 
         tsout = copy.copy(self)
@@ -1421,7 +1421,7 @@ class TimeSerieObs(object):
 
 
         if self.typeobs == 'NULL':
-            print("ERR : pas de typeobs defini (NULL)")
+            log.error("no typeobs defined (NULL)")
             return 0
 
         if self.typeobs == 'RPY':
@@ -1438,8 +1438,7 @@ class TimeSerieObs(object):
 
         A, B, C , T , sA, sB, sC = self.to_list()
 
-        print("plot :", self.nbobs , "obs., ", self.name)
-
+        log.info("plot : %s, pts : %s", self.nbpts, self.stat)
 
         if self.typeobs == 'RPY':
             listtitle = ['','Roll','Pitch','Yaw']
@@ -1574,7 +1573,7 @@ class point_n_click_plot():
         elif type(fig) is matplotlib.figure.Figure:
             figobj = fig
 
-        print("INFO : press SPACE to record a X-value, \n       press R to Remove the previously recorded one")
+        log.info("press SPACE to record a X-value, \n       press R to Remove the previously recorded one")
 
 
         def onclick_discont(event):
@@ -1585,7 +1584,7 @@ class point_n_click_plot():
                 else:
                     ix, iy = event.xdata , event.ydata
 
-                print("INFO : X value recorded : " , ix)
+                log.info("X value recorded : " , ix)
 
                 for ax in figobj.axes:
                     out_bar_list = stats.plot_vertical_bar_ax([ix],ax,"b",
@@ -1608,7 +1607,7 @@ class point_n_click_plot():
                     self.ver_bar_stk.remove(bar)    
                     bar.remove()
                     
-                print("INFO : value removed : " , last )
+                log.info("value removed : " , last )
 
                 plt.draw()
 

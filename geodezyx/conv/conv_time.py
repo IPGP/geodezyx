@@ -41,6 +41,12 @@ from datetime import datetime, date
 from geodezyx import utils,stats
 import geodezyx.conv.conv_interpolators as conv_interpolators
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
+
+
 ##########  END IMPORT  ##########
 
 
@@ -464,7 +470,7 @@ def ymdhms2dt(y=0,mo=0,d=0,h=0,mi=0,s=0,ms=0):
             ms_from_s  = (s - np.floor(s)) * 10**6
             if ms_from_s != 0:
                 if ms != 0:
-                    print('WARN : input sec contains microsecs, given microsec are ignored')
+                    log.warning('input sec contains microsecs, given microsec are ignored')
                 ms = ms_from_s
             return dt.datetime(int(y),int(mo),int(d),int(h),int(mi),int(s),int(ms))
         except:
@@ -1377,7 +1383,7 @@ def MJD2dt(mjd_in,seconds=None,round_to='1s'):
         typ=utils.get_type_smart(mjd_in)
         if seconds:
             if len(seconds) != len(mjd_in):
-                print("ERR : MJD2dt : len(seconds) != len(mjd_in) !!")
+                log.error("len(seconds) != len(mjd_in) !!")
                 raise Exception
         else:
             seconds = np.zeros(len(mjd_in))
@@ -1529,7 +1535,7 @@ def rinexname2dt(rinexpath):
         return dt.datetime(year,1,1) + dt.timedelta(days = doy - 1 , seconds = h * 3600)
 
     else:
-        print('ERR: RINEX name is not well formated:',rinexname)
+        log.error('RINEX name is not well formated: %s',rinexname)
         raise Exception
     
 
@@ -2358,14 +2364,14 @@ def epo_epos_converter(inp,inp_type="mjd",out_type="yyyy",verbose=False):
     cmd = " ".join(("perl $EPOS8_BIN_TOOLS/SCRIPTS/get_epoch.pl",epo_cmd,inp_cmd,out_cmd))
 
     if verbose:
-        print(cmd)
+        log.debug(cmd)
     
     result = subprocess.run(cmd,shell=True,stdout=subprocess.PIPE,executable='/bin/bash')
             
     out = int(result.stdout.decode('utf-8'))
     
     if verbose:
-        print(out)
+        log.debug(out)
     
     return out
 
@@ -2405,9 +2411,10 @@ def datetime64_numpy2dt(npdt64_in):
     ------
     
     https://stackoverflow.com/questions/13703720/converting-between-datetime-timestamp-and-datetime64
-    """
-    print("WARN: datetime64_numpy2dt is depreciated, use numpy_dt2dt instead")
-    warnings.warn("WARN: datetime64_numpy2dt is depreciated, use numpy_dt2dt instead",DeprecationWarning)
+    """    
+    
+    log.warning("datetime64_numpy2dt is depreciated, use numpy_dt2dt instead")
+    warnings.warn("datetime64_numpy2dt is depreciated, use numpy_dt2dt instead",DeprecationWarning)
 
 
     if utils.is_iterable(npdt64_in):
@@ -2442,8 +2449,8 @@ def numpy_datetime2dt(npdtin):
     https://stackoverflow.com/questions/29753060/how-to-convert-numpy-datetime64-into-datetime/29755657
     """
     
-    print("WARN: numpy_datetime2dt is depreciated, use numpy_dt2dt instead")
-    warnings.warn("WARN: numpy_datetime2dt is depreciated, use numpy_dt2dt instead",DeprecationWarning)
+    log.warning('datetime64_numpy2dt is depreciated, use numpy_dt2dt instead')
+    warnings.warn("numpy_datetime2dt is depreciated, use numpy_dt2dt instead",DeprecationWarning)
     if utils.is_iterable(npdtin):        
         typ=utils.get_type_smart(npdtin)
         return typ([numpy_datetime2dt(e) for e in npdtin])

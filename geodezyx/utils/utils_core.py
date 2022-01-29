@@ -223,13 +223,13 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
     it.start()
     it.join(timeout_duration)
     if it.isAlive():
-        print('ERR : a timout is triggered !!!')
+        log.error('a timout is triggered !!!')
         stop = time.time() - start
-        print("     runtime : " , stop, 'sec.')
+        log.error("runtime : %s sec.",stop)
         return it.result
     else:
         stop = time.time() - start
-        print("INFO : runtime : " , stop, 'sec.')
+        log.info("runtime : %s sec.",stop)
         return it.result
 
 
@@ -238,7 +238,7 @@ def indice_printer(i,print_every = 10,text_before=''):
     print an index every N iteration
     """
     if np.mod(i,print_every) == 0:
-        print(text_before ,  i)
+        log.info("%s %s",text_before ,  i)
     return None
 
 
@@ -275,7 +275,7 @@ def pickle_saver(datain , outdir = None , outname = None , ext='.pik' ,
     """
     
     if not full_path and not outdir and not outname:
-        print('ERR : pickle_saver : not full_path and not outdir and not outname are given !')
+        log.error('not full_path and not outdir and not outname are given !')
         raise Exception
 
     if timestamp:
@@ -316,11 +316,11 @@ def pickle_loader(pathin):
         #outdata = pickle.load( open( pathin , "r" ) )
         outdata = pickle.load( open( pathin ,'rb' )  , encoding='latin1')
     except UnicodeDecodeError:
-        print('INFO : pickle loader : alternative reading following a UnicodeDecodeError')
+        log.info('alternative reading following a UnicodeDecodeError')
         #outdata = pickle.load( open( pathin ,'rb' )  , encoding='latin1')
         outdata = pickle.load( open( pathin , "r" ) )
     except TypeError:
-        print('INFO : pickle loader : alternative reading following a TypeError (is it a Py2 pickle ?)')
+        log.info('alternative reading following a TypeError (is it a Py2 pickle ?)')
         # source :
         # https://stackoverflow.com/questions/28218466/unpickling-a-python-2-object-with-python-3
         outdata = pickle.load( open( pathin ,'rb' )  , encoding='latin1')
@@ -411,12 +411,12 @@ def save_array_fast(arrin,outname='',
     if scipy.sparse.issparse(arrin):
         arrin = arrin.toarray()
     outpath = os.path.join(outdir,outname)
-    print(outpath)
+    log.info(outpath)
     if txt:
         np.savetxt(outpath,arrin)
     else:
         np.save(outpath,arrin)
-    print(outpath)
+    log.info(outpath)
     return outpath
 
 def join_improved(strseparat,*varsin):
@@ -499,7 +499,7 @@ def eval_a_dict(dictin,where,verbose=True):
     for k,v in dictin.items():
         where[k] = v
         if verbose:
-            print('INFO : eval_a_dict : the 2 values must be equals ', where[k] , v , ", variable",k )
+            log.info('the 2 values must be equals %s, %s variable', where[k] , v , k )
     return None
 
 def boolean_dict(list_of_keywords):
@@ -613,7 +613,7 @@ def extract_text_between_elements_2(file_path , elt_start , elt_end,
                         
         if trigger:
             if verbose:
-                print(line)
+                log.info(line)
             out_lines_list.append(line)
             
         if last_triggered_line:
@@ -698,7 +698,7 @@ def get_specific_locals(prefix):
         can actually be a suffix """
     # MARCHE PAS EN L'ETAT
     loctemp = dict(globals())
-    print(loctemp)
+    log.info(loctemp)
     outlis = []
     for k,v in loctemp.items():
         if prefix in k:

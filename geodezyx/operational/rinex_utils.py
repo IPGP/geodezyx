@@ -33,6 +33,11 @@ import re
 from geodezyx import conv
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
+
 ##########  END IMPORT  ##########
 
 #  _____  _____ _   _ ________   __   _____       _ _ _

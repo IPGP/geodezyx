@@ -28,15 +28,14 @@ import os
 import pandas as pd
 import re 
 
-
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
 
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 
 ##########  END IMPORT  ##########
 
@@ -126,7 +125,6 @@ def read_blocks_logsheet(input_file, block_id):
             elif 'Elevation (m,ellips.)' in prop:
                 prop = 'Elevation'
             data = line[31:].strip()
-            #print prop , data
             try:
                 setattr(Obj,prop,float(data))
             except:
@@ -188,20 +186,20 @@ def mono_logsheet_read(logsheet_path,return_lists = False):
 
         site_code = sit_lis[0].Four_Character_ID
         if len(potential_ant) == 0:
-            print('WARN:',site_code,': missing Antenna',d,'skip ...')
+            log.warning('%s: missing Antenna, %s, skip ...',site_code,d)
             continue
         if len(potential_rec) == 0:
-            print('WARN:',site_code,': missing Receiver',d,'skip ...')
+            log.warning('%s: missing Receiver, %s, skip ...',site_code,d)
             continue
         if len(potential_ant) != 1:
-            print('WARN:',site_code,': several Antennas found',d)
+            log.warning('s%: several Antennas found, %s',site_code,d)
         if len(potential_rec) != 1:
-            print('WARN:',site_code,': several Receivers found',d)
+            log.warning('s%: several Receivers found, %s',site_code,d)
 
         date_ant_rec_couple_lis.append((d , potential_ant[0] , potential_rec[0]))
 
     if len(date_ant_rec_couple_lis) != len(set(date_ant_rec_couple_lis)):
-        print('bug 2')
+        log.debug('bug 2')
 
     # construction of a period
     period_lis = []
@@ -267,12 +265,12 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
         logsheet_list = sorted(glob.glob(fullpath))
         
         if not logsheet_list:
-            print("ERR: no logsheets found, exiting ...")
-            print("    ",fullpath)
+            log.error("no logsheets found, exiting ...")
+            log.error(fullpath)
             return None
         
-    print("INFO: logsheet_list: ")
-    print(logsheet_list)
+    log.info("logsheet_list: ")
+    log.info(logsheet_list)
 
     period_lis_lis = []
     stat_lis       = []
@@ -284,8 +282,8 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
         try:
             p,s,l = mono_logsheet_read(ls,return_lists=True)
         except:
-            print("WARN:",ls,"skipped for unknown reason ...")
-            print("       logsheet must be checked")
+            log.warning("%s skipped for unknown reason ...",ls)
+            log.warning("       logsheet must be checked")
             continue
 
         period_lis_lis = period_lis_lis + p
@@ -301,7 +299,7 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
         elif output_mode == "legacy":
             stations_dico[s[0].Four_Character_ID] = (p,s,l)
         else:
-            print('ERR: check output_mode value')
+            log.error('check output_mode value')
             raise Exception   
 
 
@@ -334,7 +332,6 @@ class Event(object):
         else:
             self.__Date_Installed = dateutil.parser.parse(indate).replace(hour=0,
             minute=0, second=0, microsecond=0,tzinfo=dateutil.tz.tzutc())
-#        print self.Date_Installed
 
     @property
     def Date_Removed(self):
@@ -353,7 +350,6 @@ class Event(object):
         else:
             self.__Date_Removed = dateutil.parser.parse(indate).replace(hour=0,
             minute=0, second=0, microsecond=0,tzinfo=dateutil.tz.tzutc())
-#        print self.__Date_Removed
 
 class Receiver(Event):
     def __init__(self):

@@ -28,6 +28,10 @@ import numpy as np
 import re
 #### geodeZYX modules
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 
 ##########  END IMPORT  ##########
 
@@ -165,7 +169,7 @@ def groups_near_central_values(A,tol,B=None):
                     GroupB.append(B[ia])
 
         if count > 1:
-            print("WARN : " , a , " in " , count , " groups")
+            log.warning("%s in %s groups",a,count)
 
     if Bbool:
         return Grouplis , GrouplisB
@@ -186,7 +190,7 @@ def sort_binom_list(X,Y,array_out=False):
     and sort X
     """
     if len(X) != len(Y):
-        print('WARN : sort_binom_list : len(X) != len(Y) !!!')
+        log.warning('len(X) != len(Y) !!!')
 
     Ynew = [y for (x,y) in sorted(zip(X,Y))]
     Xnew = sorted(X)

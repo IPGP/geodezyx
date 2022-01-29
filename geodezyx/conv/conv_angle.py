@@ -21,17 +21,21 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
-import scipy
-from pyorbital import astronomy
+#import scipy
+#from pyorbital import astronomy
 import re
 
 #### geodeZYX modules
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 ##########  END IMPORT  ##########
 
@@ -128,7 +132,7 @@ def dms2dec(dms_str , onlyDM=False):
     """
     
     if not onlyDM:
-        print("WARN : DMS mode not well implemented yet !!! ")
+        log.warning("DMS mode not well implemented yet !!! ")
     
     
     dms_str = dms_str.strip()
@@ -153,7 +157,6 @@ def dms2dec(dms_str , onlyDM=False):
             lis.remove(e)
 
     lis = [float(e) for e in lis]
-    print(lis)
 
     deg = lis[0]
     minu = lis[1]
@@ -163,7 +166,7 @@ def dms2dec(dms_str , onlyDM=False):
         try:
             sec  = lis[2]
         except IndexError:
-            print("ERR : did you forgot to activate the DM only mode ? ;) ?")
+            log.error("did you forgot to activate the DM only mode ? ;) ?")
             return None
 
     dd_float = sign * (deg + minu / 60. + sec / 3600.)
@@ -238,9 +241,7 @@ def angle2equivalent_earth_parallel(angle_in,latitude_in,
     
     
     parallel_radius = np.cos(latitude_rad) * earth_radius
-    
-    print("AAAAAAAAAAAAAA",parallel_radius)
-    
+        
     return angle2equivalent_earth_radius(angle_in,angtype,
                                          parallel_radius)
         
@@ -261,7 +262,7 @@ def anglesfromvects(xa,ya,xb,yb,angtype='deg'):
     elif angtype == 'rad':
         return a
     else:
-        print('ERR : angfromvects : mauvais angtype')
+        log.error('ERR : angfromvects : mauvais angtype')
 
 def angle_interpolation_quick(A,B,w):
     """

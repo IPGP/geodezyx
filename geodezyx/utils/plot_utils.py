@@ -29,6 +29,10 @@ import scipy
 #### geodeZYX modules
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 
@@ -133,7 +137,7 @@ def figure_saver(figobjt_in , outdir , outname ,
                     elif formt.upper() == "A3":
                         formtup = (16.53,11.69)                        
                     else:
-                        print("WARN: issue in , assume Figure format as A4")
+                        log.warning("assume Figure format as A4")
                         formtup = (11.69,8.27)
                         
                 figobjt_in.set_size_inches(*formtup)

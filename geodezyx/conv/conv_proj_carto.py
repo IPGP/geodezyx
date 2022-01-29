@@ -22,17 +22,17 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
-import scipy
-from pyorbital import astronomy
-import re
+# import scipy
+# from pyorbital import astronomy
+# import re
 
 #### geodeZYX modules
-from geodezyx import utils
+from geodezyx import utils,conv
 
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 ##########  END IMPORT  ##########
 
@@ -72,12 +72,12 @@ def lambert_secante_parameter(a , e , l0 , phi0 , phi1 , phi2 , X0 , Y0):
     ALG0054 in NTG_71 (IGN Lambert Projection Tech document)
     """
     lc = l0
-    A = np.log((wnorm(phi2,a,e**2) * np.cos(phi2)) / (wnorm(phi1,a,e**2) * np.cos(phi1)))
+    A = np.log((conv.wnorm(phi2,a,e**2) * np.cos(phi2)) / (conv.wnorm(phi1,a,e**2) * np.cos(phi1)))
     B = latitude_isometric(phi1,e) - latitude_isometric(phi2,e)
     
     n = A/B
     
-    C = ((wnorm(phi1,a,e**2) * np.cos(phi1))/n) * np.exp(n * latitude_isometric(phi1,e))
+    C = ((conv.wnorm(phi1,a,e**2) * np.cos(phi1))/n) * np.exp(n * latitude_isometric(phi1,e))
         
     if np.isclose(phi0,np.pi/2):
         Xs = X0

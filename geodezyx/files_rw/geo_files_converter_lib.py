@@ -44,10 +44,9 @@ from geodezyx import operational
 from geodezyx import utils
 from geodezyx.files_rw import read_logsheets
 
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
@@ -183,7 +182,7 @@ def read_station_info_solo_date(filein,stat,date,column_type="ulr"):
 
     if i_good is None:
         print('ERR : no corresponding metadata have been found in the station.info for :' )
-        print(stat,date)
+        log.info(stat,date)
         return None
 
     dicout = dict()
@@ -232,7 +231,7 @@ def read_lfile_solo(filein,stat):
 
             return X,Y,Z,T,vX,vY,vZ
 
-    print("WARN : read_lfile_solo : no coords found for : " , stat)
+    log.warning("no coords found for : %s ")
     return None
 
 
@@ -341,7 +340,7 @@ def stat_list_in_station_info(filein):
     fstatinfo = open(filein,"r+")
     for line in fstatinfo:
         if  len(line) == 0:
-            print('WARN : stat_list_in_station_info : empty line in the station.info !!!')
+            log.warning('empty line in the station.info !!!')
             continue
         elif  line[0] != ' ':
             continue
@@ -530,7 +529,7 @@ def statname_of_catsfile(catsneu_path):
 
 def statinfo_2_cats(statinfo_path,catsneu_path):
     stat = statname_of_catsfile(catsneu_path)
-    print('stat = ',stat)
+    log.info('stat = ',stat)
     if stat == 'ABMF':
         return None
     stat_dic = read_station_info_solo(statinfo_path,stat)
@@ -542,7 +541,7 @@ def statinfo_2_cats(statinfo_path,catsneu_path):
 
     antht = [a for (s,a) in sorted(zip(start,antht))]
     start = sorted(start)
-    print(stat_dic,stat)
+    log.info(stat_dic,stat)
     s0 = start[0]
     h0 = antht[0]
     s_stk = []
@@ -550,7 +549,7 @@ def statinfo_2_cats(statinfo_path,catsneu_path):
         if h != h0:
             s_stk.append(s)
             h0 = h
-    print(outcats_path)
+    log.info(outcats_path)
     catsneuout_f = open(outcats_path,'w')
     catsneu_f = open(catsneu_path,'a+')
     lastline=''
@@ -564,7 +563,7 @@ def statinfo_2_cats(statinfo_path,catsneu_path):
         # cleaning outlier
         elif line[0] != '#':
             if (abs(float(line.split()[1])) > 1 or abs(float(line.split()[2])) > 1):
-                print("aaaa")
+                pass
             else:
                 catsneuout_f.write(line)
         else:
@@ -679,7 +678,7 @@ def station_info_2_gins(statinfoin,coordfilein,outfile,
     else:
         listat = specific_stats_lis
 
-    print(listat)
+    log.info(listat)
 
     sigvit = '{:.4f}'.format(sigvit).lstrip('0')
 
@@ -688,7 +687,7 @@ def station_info_2_gins(statinfoin,coordfilein,outfile,
 
     for stat in listat:
 
-        print(stat)
+        log.info(stat)
 
         # On degresse l'ID quoiqu'il arrive après
         # pour conserver une homogenéité dans les pseudoDOMES
@@ -699,7 +698,7 @@ def station_info_2_gins(statinfoin,coordfilein,outfile,
             output_lfile = read_lfile_solo(coordfilein,stat)
 
             if not output_lfile:
-                print("WARN : station_info_2_gins : skip station " , stat )
+                log.info("WARN : station_info_2_gins : skip station " , stat )
                 continue
             else:
                 X,Y,Z,T,vX,vY,vZ = output_lfile
@@ -716,7 +715,7 @@ def station_info_2_gins(statinfoin,coordfilein,outfile,
                 vY = data['dY/dt']
                 vZ = data['dZ/dt']
             else:
-                print('WARN : no', stat,'found in',coordfilein)
+                log.warning('no %s found in %s',stat,coordfilein)
                 continue
         else:
             raise Exception('Wrong coordfile_type')
@@ -734,7 +733,7 @@ def station_info_2_gins(statinfoin,coordfilein,outfile,
                                         column_type=station_info_columns_type)
 
         n = len(dicout['Start'])
-        print("N = ", n)
+        log.info("N = %s", n)
 
         void='             '
         if stat == 'ABMF':
@@ -789,7 +788,7 @@ def station_info_2_gins(statinfoin,coordfilein,outfile,
         statgins_filobj.write('\n')
 
     if station_info_columns_type == "ulr":
-        print("NOTA : input station.info is a 'ulr' type, the antenna/reciever type has to be corrected manually in the returned GINS file")
+        log.info("NOTA : input station.info is a 'ulr' type, the antenna/reciever type has to be corrected manually in the returned GINS file")
 
 
     return outfile
@@ -947,7 +946,7 @@ def header_from_ellipsoid(ellipsoid):
 
             """)
     else:
-        print('ERR : Check ellipsoid Name')
+        log.error('Check ellipsoid Name')
         return None
     return header
 
@@ -1061,8 +1060,8 @@ def smart_elt_list(list_raw,n_elt,replacement=''):
 def read_rinex_2_dataobjts(rinex_path):
 
     if utils.empty_file_check(rinex_path):
-        print('ERR : the RINEX file is empty ...')
-        print('      ' , rinex_path)
+        log.error('the RINEX file is empty ...')
+        log.error(rinex_path)
 
         return None , None , None , None
 

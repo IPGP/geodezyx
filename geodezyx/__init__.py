@@ -10,6 +10,8 @@ import glob
 import inspect
 import itertools
 import linecache
+import logging
+import logging.config
 import math
 import matplotlib
 import matplotlib.pyplot as plt
@@ -19,7 +21,7 @@ import numpy as np
 import numpy as npaa
 import operator
 import os 
-from os import remove, close
+from os import remove, close, path
 import pandas as df
 import pandas as pd
 import pickle
@@ -38,6 +40,9 @@ import time
 import urllib
 import uuid
 
+#### IMPORT CONFIG FOR LOGGER
+log_file_path = os.path.join(path.dirname(path.abspath(__file__)), 'loggzyx.conf')
+logging.config.fileConfig(fname=log_file_path, disable_existing_loggers=False)
 
 #### IMPORT GEODEZYX INTERNAL SUBMODULES
 from . import externlib
