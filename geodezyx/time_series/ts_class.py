@@ -26,9 +26,15 @@ from geodezyx import utils
 from geodezyx import time_series
 from geodezyx import reffram
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
+
 ##########  END IMPORT  ##########
 
 class Point():
+      
     def __init__(self,A=0.,B=0.,C=0.,T=0.,initype='XYZ',
                  sA=0.,sB=0.,sC=0.,name='noname'):
         """
@@ -224,6 +230,7 @@ class Point():
         return None
 
 class TimeSeriePoint:
+    
     def __init__(self,stat='STAT'):
         """
         Initialize a TimeSeriePoint object
@@ -378,7 +385,7 @@ class TimeSeriePoint:
 
         """
         ipt = np.random.randint(self.nbpts)
-        log.info("point no %s",str(ipt))
+        log.info("random point selected #%s",str(ipt))
 
         return self.pts[ipt]
 
@@ -669,6 +676,8 @@ class TimeSeriePoint:
         None.
 
         """
+        
+        log.setLevel(logging.INFO)
 
         if new_style:
             styleint = 310

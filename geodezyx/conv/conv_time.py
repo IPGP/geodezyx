@@ -1243,7 +1243,22 @@ def dt2year_decimal(dtin):
         typ=utils.get_type_smart(dtin)
         return typ([dt2year_decimal(e) for e in dtin])
     else:
-        return toYearFraction(dtin)
+        
+        def sinceEpoch(date): # returns seconds since epoch
+            return time.mktime(date.timetuple())
+       
+        date_in = dtin
+        
+        year = date_in.year
+        startOfThisYear = dt.datetime(year=year, month=1, day=1)
+        startOfNextYear = dt.datetime(year=year+1, month=1, day=1)
+        
+        yearElapsed = sinceEpoch(date_in) - sinceEpoch(startOfThisYear)
+        yearDuration = sinceEpoch(startOfNextYear) - sinceEpoch(startOfThisYear)
+        
+        fraction = yearElapsed/yearDuration
+        
+        return date_in.year + fraction
 
 def date_string_2_dt(strin):
     """
@@ -2662,7 +2677,7 @@ def gpstime2utc_bad(gpsweek,gpssecs,utc_offset):
 def toYearFraction(date_in):
     """
     DISCONTINUED
-    use dt2year_decimal instead (which is the same)
+    use dt2year_decimal instead (does the same)
     """
     #
     # Give the decimal year

@@ -10,6 +10,10 @@ from geodezyx import *
 from geodezyx import utils
 import os,re
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ################ GENERATION OF THE DICT
 p="/home/psakicki/CODES/GeodeZYX-Toolbox_v4/geodezyx"
 
@@ -81,7 +85,7 @@ ExcludedLines = ["pt.helmert_trans(params,invert) for pt in tsout.pts",
                  "return Counter(L).most_common(1)[0][0]"]
 
 for fct,mod_good in FctDict.items():
-    print("FUNCTION",fct)
+    log.info("FUNCTION",fct)
     for mod_replac in Lmodul_clean_replac:
         for l in open(mod_replac):
             
@@ -125,8 +129,8 @@ for fct,mod_good in FctDict.items():
             if match:
                 if l == lnew:
                     continue
-                print("BEF:",l)
-                print("AFT:",lnew)
+                log.info("BEF:",l)
+                log.info("AFT:",lnew)
                 #utils.replace(mod_replac,l,lnew)
 
 

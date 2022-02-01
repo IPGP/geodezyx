@@ -37,7 +37,6 @@ from geodezyx import utils
 import logging
 log = logging.getLogger(__name__)
 
-
 ##########  END IMPORT  ##########
 
 #  _____  _____ _   _ ________   __   _____       _ _ _

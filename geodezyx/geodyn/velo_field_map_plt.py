@@ -40,6 +40,11 @@ from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
 from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 
@@ -189,7 +194,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
     all_posy_proj=[0]*nstation
     for i in range(nstation):
           all_posx_proj[i],all_posy_proj[i] = m(all_pos[i][1],all_pos[i][0]) #positions xy des stations converties a la projection de la carte  [m]         
-          print(i,all_posx_proj[i],all_posy_proj[i])
+          ## print(i,all_posx_proj[i],all_posy_proj[i])
           m.plot(all_posx_proj[i],all_posy_proj[i],'xkcd:black',marker='.',linestyle='none',markersize=4,lw=4,zorder=20) #point rouge à la station, zorder indique l'ordre vertical de dessin sur la carte, les nb elevés sont dessinés les plus hauts
 #          plt.text(all_posx_proj[i], all_posy_proj[i], station_etude[i], size=10,ha="center", va="center",bbox=dict(boxstyle="round",
 #                           ec=(1., 0.5, 0.5),
@@ -224,7 +229,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
             bool_good_lat = latm < all_pos[i][0] < latM
             bool_good_lon = lonm < all_pos[i][1] < lonM
             if exclude_points_out_of_range and not (bool_good_lat and bool_good_lon):
-                print("INFO : exclude point because out of range")
+                log.info("INFO : exclude point because out of range")
                 continue
         
             
@@ -274,7 +279,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
             bool_good_lat = latm < all_pos[i][0] < latM
             bool_good_lon = lonm < all_pos[i][1] < lonM
             if exclude_points_out_of_range and not (bool_good_lat and bool_good_lon):
-                print("INFO : exclude point because out of range")
+                log.info("INFO : exclude point because out of range")
                 continue
         
             ######### AJUSTEMENT SI FLECHES TROP GRANDES
