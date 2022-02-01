@@ -23,8 +23,13 @@ import scipy
 import itertools
 import multiprocessing as mp
 import matplotlib.pyplot as plt
+
 #### geodeZYX modules
 from geodezyx import utils
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
@@ -111,7 +116,7 @@ def partial_derive(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0,accur=-1):
         try:
             var_ind = args_name_list.index(var_name)
         except ValueError:
-            print(args_name_list)
+            log.info("arguments %s",args_name_list)
             raise Exception('wrong var_in name (not in args name list)')
 
     if var_ind < len(args_f):
@@ -120,13 +125,13 @@ def partial_derive(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0,accur=-1):
         x = kwargs_f[var_name]
         
     if utils.is_iterable(x):
-        print("ERR: partial_derive: var_in is not a scalar")
+        log.error("var_in is not a scalar")
         raise Exception
 
     if h == 0:
         h = x * np.sqrt(np.finfo(float).eps)
         if h == 0:
-            print('WARN : h == 0 ! setting @ 10**-6 ')
+            log.warning('h == 0 ! setting @ 10**-6')
             h = 10**-6
 
     res_stk = []
@@ -180,7 +185,7 @@ def kwargs_for_jacobian(kwdic_generik,kwdic_variables):
 
     for k,v in kwdic_variables.items():
         if not utils.is_iterable(v):
-            print('WARN : key',k,'val',v,'is not iterable !!!')
+            log.warning('key %s, val %s is not iterable !!!',k,v)
 
     values_combined = itertools.product(*list(kwdic_variables.values()))
 
@@ -201,7 +206,7 @@ def jacobian(f,var_in_list,var_out,kwargs_f_list=[],h=10**-6,nproc=4):
 
 
     if len(args_f_list) != len(kwargs_f_list):
-        print(len(args_f_list) , len(kwargs_f_list))
+        log.info("%s, %s",len(args_f_list) , len(kwargs_f_list))
         raise Exception("Jacobian : len(args_f_list) != len(kwargs_f_list)")
     jacob_temp = []
     args_list = []
@@ -259,7 +264,7 @@ def weight_mat(Sinp,Ninp=[],fuvinp=1,sparsediag=False):
 
     Sinp = np.array(Sinp)
     if np.any(Sinp == 0):
-        print("WARN : some sigma inputs are == 0 !!!")
+        log.warning("some sigma inputs are == 0 !!!")
 
     if len(Sinp) != len(Ninp):
         raise Exception("S et N de taille differente")
@@ -269,7 +274,7 @@ def weight_mat(Sinp,Ninp=[],fuvinp=1,sparsediag=False):
         try:
             Ktemp = Ktemp + Ninp[i] * [Sinp[i]**2]
         except DeprecationWarning:
-            print("weight_mat : Are you sure you don't invert Sinp <> Ninp ?")
+            log.warning("Are you sure you didn't invert Sinp <> Ninp?")
     Ktemp = np.array(Ktemp).astype(np.float64)
     Qtemp = (1. /fuvinp) * Ktemp
     Qtemp = Ktemp
@@ -324,7 +329,7 @@ def weight_mat_simple(Pinp,Ninp=[],sparsediag=False,
         try:
             Ptemp = Ptemp + Ninp[i] * [Pinp[i]]
         except DeprecationWarning:
-            print("weight_mat_simple : Are you sure you don't invert Pinp <> Ninp ?")
+            log.warning("Are you sure you didn't invert Pinp <> Ninp ?")
 
     if return_digaonal_only:
         P = np.array(Ptemp)
@@ -370,7 +375,7 @@ def fuv_calc(V,A,P=1,normafuv=1):
     elif scipy.sparse.issparse(P):
         P = P.diagonal()
     else:
-        print("DEPRECIATION : modification done in fuv_calc, P should be given as Matrix-shaped now")
+        log.warning("DEPRECIATION : modification done in fuv_calc, P should be given as Matrix-shaped now")
         P = P.diagonal()
 
     P = P * (1 / normafuv)
@@ -416,7 +421,7 @@ def smart_i_giver(subgrp_len_list,i_in_sublis,sublis_id,
     """
 
     if sublis_id_list == [] and not type(sublis_id) is int:
-        print("ERR : smart_i_giver")
+        log.error("smart_i_giver")
         return None
 
     if advanced:
@@ -537,7 +542,7 @@ def chi2_test_lsq(V , A ,  P = None , fuvin = None , risk = 0.05,
     """
 
     if fuvin is None and P is None:
-        print("ERR : chi2_test_lsq : fuvin == None and P == None")
+        log.error("fuvin == None and P == None")
         return None
 
     ddl = (np.max(A.shape) - np.min(A.shape))
@@ -865,20 +870,20 @@ def clean_nan(A,L):
     Lout = L2[~boolA2arenan.any(1)]
 
     if  np.isnan(Lout).sum() != 0 or  np.isnan(Aout).sum() != 0 :
-        print("pour info, isnan(Lout).sum(), isnan(Aout).sum()")
-        print(np.isnan(Lout).sum(), np.isnan(Aout).sum())
+        log.info("pour info, isnan(Lout).sum(), isnan(Aout).sum()")
+        log.info(np.isnan(Lout).sum(), np.isnan(Aout).sum())
         raise Exception("ERREUR : A_out et L_out contiennent des NaN")
 
     if Aout.shape[0] != Lout.shape[0]:
         raise Exception("ERREUR : A_out et L_out ont des longeurs differentes")
 
-    print("%i NaN dans le V" %nbnanL)
-    print("%i NaN dans la M vert., APRES suppr. des NaN du V" %nbnanA2)
-    print("%i lignes supprimées dans le V et la M (en théorie)" %(nbnanA2 + nbnanL))
-    print("")
-    print("pour info :")
-    print("%i NaN dans la M vert., AVANT suppr. des NaN du V" %nbnanA)
-    print("%i NaN dans la M AU TOTAL (vert. et horiz.)" %nbnanAtot)
+    log.info("%i NaN dans le V",nbnanL)
+    log.info("%i NaN dans la M vert., APRES suppr. des NaN du V", nbnanA2)
+    log.info("%i lignes supprimées dans le V et la M (en théorie)", nbnanA2 + nbnanL)
+    log.info("")
+    log.info("pour info :")
+    log.info("%i NaN dans la M vert., AVANT suppr. des NaN du V", nbnanA)
+    log.info("%i NaN dans la M AU TOTAL (vert. et horiz.)", nbnanAtot)
 
     return Aout , Lout
 
@@ -968,7 +973,7 @@ def partial_derive_old(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0):
         try:
             var_ind = args_name_list.index(var_name)
         except ValueError:
-            print(args_name_list)
+            log.error(args_name_list)
             raise Exception('wrong var_in name (not in args name list)')
 
 #    if var_ind < len(args_f):
@@ -999,7 +1004,7 @@ def partial_derive_old(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0):
     if h == 0:
         h = x * np.sqrt(np.finfo(float).eps)
         if h == 0:
-            print('WARN : h == 0 ! setting @ 10**-6 ')
+            log.warning('WARN : h == 0 ! setting @ 10**-6 ')
             h = 10**-6
 
     if var_ind < len(args_f):
@@ -1015,9 +1020,7 @@ def partial_derive_old(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0):
     if utils.is_iterable(m):
         m = m[var_out]
         p = p[var_out]
-#    print p,m,h,x
-#    print h
-#    print h == 0
+
     dout = (p - m) / (2. * float(h))
 
     return dout

@@ -855,22 +855,10 @@ def outlier_mad(data,threshold=3.5,verbose=False,
     nbout = float(sum(boolbad))
     ratio = (nbinp-nbout)/nbinp
     if verbose:
-        print("INFO: MAD outider elimination ratio: %i / %i, %f p.c." %(nbinp-nbout,nbinp,ratio * 100))
+        log.info("MAD outlier elimination ratio: %i / %i, %f p.c.",
+                 nbinp-nbout,nbinp,ratio * 100)
     return dataout , boolbad
 
-
-def outiler_mad(data,threshold=3.5,verbose=False,convert_to_np_array=True,
-                mad_mode = 'median',seuil=None):
-    """
-    wrapper of outlier_mad, maintened for legacy with a typo
-    """
-    
-    print("WARNING: you use outiler_mad,with a typo in the name !!!")
-    print("         you should use outlier_mad instead          !!!")
-
-    
-    return outlier_mad(data,threshold , verbose , convert_to_np_array ,
-                       mad_mode,seuil)
 
 
 def outlier_mad_binom(Y,X,threshold=3.5,verbose=False,detrend_first=False,
@@ -1575,7 +1563,7 @@ def outlier_mad_binom_legacy(X,Y,threshold=3.5,verbose=False,
     else:
         Xwork , _ = np.array(X) , np.array(Y)
         
-    _ , bb = outiler_mad(Xwork,threshold,verbose)
+    _ , bb = outlier_mad(Xwork,threshold,verbose)
     
     Xclean = np.array(X)[bb]    
     Yclean = np.array(Y)[bb]
