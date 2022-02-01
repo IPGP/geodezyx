@@ -25,12 +25,14 @@ import os
 import subprocess
 import collections
 
-
 #### geodeZYX modules
 from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
@@ -129,7 +131,7 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
 
     if not outtype.lower() == 'auto':
         dicoconf['out-solformat'] = outtype.lower()
-        print('out-solformat' , dicoconf['out-solformat'])
+        log.info('out-solformat' , dicoconf['out-solformat'])
 
 
     if base_auto_conf:
@@ -151,7 +153,7 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
 
 
     if not (bas_srt <= rov_srt <= rov_end <= bas_end):
-        print('WARN : not bas_srt <= rov_srt <= rov_end <= bas_end !!!')
+        log.warning('not bas_srt <= rov_srt <= rov_end <= bas_end !!!')
 
     outconffilobj = open(out_conf_fil,'w+')
     for k,v in dicoconf.items():
@@ -198,9 +200,9 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
     bigcomand = ' '.join((exe_path,com_config,com_interval,com_mode,
                           com_resultfile,rnx_rover,rnx_base,nav,sp3))
 
-    print(bigcomand)
+    log.info(bigcomand)
 
     subprocess.call([bigcomand], executable='/bin/bash', shell=True)
-    print("RTKLIB RUN FINISHED")
+    log.info("RTKLIB RUN FINISHED")
 
     return None
