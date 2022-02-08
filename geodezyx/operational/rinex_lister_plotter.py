@@ -30,6 +30,10 @@ from geodezyx import conv
 from geodezyx import operational
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 def rinex_lister(path,add_new_names=True):
@@ -59,7 +63,7 @@ def rinex_lister(path,add_new_names=True):
         rinexfilelist_new_names = [fil for fil in wholefilelist if re.search( conv.rinex_regex_new_name() , os.path.basename(fil))]
         rinexfilelist = rinexfilelist + rinexfilelist_new_names
     
-    print('INFO : ' , len(rinexfilelist) , 'RINEXs found')
+    log.info('%s RINEXs found', len(rinexfilelist))
 
     return rinexfilelist
 
@@ -164,11 +168,11 @@ def rinex_timeline_datadico(inputlist_or_paths,use_rinex_lister = True,
     if not use_rinex_lister:
         rinexfilelist = [os.path.basename(e) for e in rinexfilelist]
 
-    print('INFO : ', len(rinexfilelist), 'RINEXs will be ploted on the timeline')
+    log.info('INFO : %s RINEXs will be ploted on the timeline',len(rinexfilelist))
 
     statname_lis = sorted(list(set([rin[0:4] for rin in rinexfilelist])))
 
-    print('INFO : ', len(statname_lis), 'stations will be ploted on the timeline')
+    log.info('INFO : %s stations will be ploted on the timeline',len(statname_lis))
 
     datadico = dict()
 
@@ -179,7 +183,7 @@ def rinex_timeline_datadico(inputlist_or_paths,use_rinex_lister = True,
         try:
             datadico[rnx[0:4]].append((rnx,optional_info,conv.rinexname2dt(rnx)))
         except:
-            print('error with : ', rnx)
+            log.error('error with : %s', rnx)
 
     return datadico
 
@@ -571,17 +575,16 @@ def listing_gins_timeline(path,stat_strt,stat_end,date_strt,date_end,suffix_rege
             tup = (li , conv.jjulCNES2dt(li[date_strt:date_end] ))
             datadico[li[stat_strt:stat_end]].append(tup)
         except:
-            print('error with : ', li)
+            log.error('error with : %s', li)
     plotstat_lis = []
     for i,stat in enumerate(sorted(datadico.keys())):
-        print(i , stat)
+        log.info("%s %s",i , stat)
         T = [e[-1] for e in datadico[stat]]
         plotstat_lis.append(stat)
         ax.plot(T,i*np.ones(len(T)), '.')
 
     i_list = np.arange(0,len(plotstat_lis))
 
-    print(i_list)
     plt.yticks(i_list,plotstat_lis)
 
     return fig

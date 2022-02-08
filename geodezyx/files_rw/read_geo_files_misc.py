@@ -33,10 +33,10 @@ from geodezyx import conv
 from geodezyx import time_series
 from geodezyx import utils
 
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 
 ##########  END IMPORT  ##########
 
@@ -449,7 +449,6 @@ def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=T
 
           ###############################
     else:
-           print(" ...")
            return  types_m, name_m, year_m, month_m, day_m, hr_m, minute_m, seconds_m, offset_m, rms_m
 
 
@@ -728,7 +727,7 @@ def AC_equiv_vals(AC1,AC2):
         Merged orbit DataFrame.
     """
     
-    print("WARN: This function is redundant with reffram.OrbDF_common_epoch_finder, use the latter one")
+    log.warning("This function is redundant with reffram.OrbDF_common_epoch_finder, use the latter one")
     
     ### 1) Merge the 2 DF to find common lines
     ACmerged = pd.merge(AC1 , AC2 , how='inner', on=['epoch', 'sat'])

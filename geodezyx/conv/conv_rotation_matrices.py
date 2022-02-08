@@ -35,11 +35,6 @@ from geodezyx import utils
 import logging
 log = logging.getLogger(__name__)
 
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
 ##########  END IMPORT  ##########
 
 #  _____       _        _   _               __  __       _        _               
@@ -444,7 +439,7 @@ def add_offset(Direction , Delta , Point = None ,
     Delta_enu = Crpy2enu.dot(C_enu2ned().dot(Delta))
 
     if out_delta_enu:
-        print(out_delta_enu)
+        log.info(out_delta_enu)
 
     if not np.isclose(np.linalg.norm(Delta) , np.linalg.norm(Delta_enu)):
         log.warning("np.linalg.norm(Delta) != np.linalg.norm(Delta_enu)")

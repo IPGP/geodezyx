@@ -33,11 +33,9 @@ import time
 from geodezyx import utils
 from geodezyx import reffram
 
-#### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 #  _    _ ______ _____ _______ ____  _____
@@ -104,16 +102,16 @@ def neufile_outlier_removing(inp_neufile,generik_conf_file,outdir='',remove_ctl_
 
         p = subprocess.Popen('',executable='/bin/bash', stdin=subprocess.PIPE , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
         command = "removeoutliers " +  work_conf_file
-        print('LAUNCHING : ',  command)
+        log.info('LAUNCHING : %s',  command)
         stdout,stderr = p.communicate( command.encode() )
         # logs files
         std_file = open(outdir + '/' + prefix_out + ".std.log", "w")
         std_file.write(stdout.decode("utf-8"))
         std_file.close()
         if stderr:
-            print("err.log is not empty, must be checked !")
-            print(stderr.decode("utf-8"))
-            print('')
+            log.warning("err.log is not empty, must be checked !")
+            log.warning(stderr.decode("utf-8"))
+            log.warning('')
             err_file = open(outdir + '/' + prefix_out + ".err.log", "w")
             err_file.write(stderr.decode("utf-8"))
             err_file.close()
@@ -137,13 +135,13 @@ def multi_neufile_outlier_removing(inpdir,generik_conf_file,outdir='',
     listofenufile = glob.glob(wildcarded_path)
 
     if len(listofenufile) == 0:
-        print("WARN : no files found in specified directory ...")
-        print(wildcarded_path)
+        log.warning("no files found in specified directory ...")
+        log.warning(wildcarded_path)
 
     listofenufile = keeping_specific_stats(listofenufile,specific_stats,
                                            invert=invert_specific)
 
-    print("removing outliers of", len(listofenufile), ' timeseries')
+    log.warning("removing outliers of %s timeseries", len(listofenufile))
 
     for enu in sorted(listofenufile):
         neufile_outlier_removing(enu,generik_conf_file,outdir=outdir,
@@ -172,7 +170,7 @@ def momfile_trend_processing(inp_momfile,generik_conf_file,outdir='',
 
     p = subprocess.Popen('',executable='/bin/bash', stdin=subprocess.PIPE , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
     command = "estimatetrend " +  work_conf_file
-    print('LAUNCHING : ',  command)
+    log.info('LAUNCHING : %s',  command)
     stdout,stderr = p.communicate( command.encode() )
     # logs files
     sumfile = outdir + '/' + prefix_out_name + ".sum"
@@ -180,9 +178,9 @@ def momfile_trend_processing(inp_momfile,generik_conf_file,outdir='',
     std_file.write(stdout.decode("utf-8") )
     std_file.close()
     if stderr:
-        print("err.log is not empty, must be checked !")
-        print(stderr.decode("utf-8"))
-        print('')
+        log.warning("err.log is not empty, must be checked !")
+        log.warning(stderr.decode("utf-8"))
+        log.warning('')
         err_file = open(outdir + '/' + prefix_out_name + ".err.log", "w")
         err_file.write(stderr.decode("utf-8"))
         err_file.close()
@@ -204,7 +202,7 @@ def momfile_trend_processing(inp_momfile,generik_conf_file,outdir='',
         for line in mom_obj:
             if 'offset' in line:
                 offset_stk.append(float(line.split()[-1]))
-        print('offset detected for plot :', offset_stk)
+        log.info('offset detected for plot : %s', offset_stk)
         for off in offset_stk:
             plt.axvline(MJD2dt(off),color='r')
         mom_obj.close()
@@ -255,13 +253,13 @@ def multi_momfile_trend_processing(inpdir,generik_conf_file,outdir='',extention=
     listofmomfile = glob.glob(inpdir + '/' + '*' + extention)
     listofmomfile = keeping_specific_stats(listofmomfile,specific_stats,invert=invert_specific)
 
-    print("processing", len(listofmomfile), 'files')
+    log.info("processing % files", len(listofmomfile))
 
     for imom , mom in enumerate(sorted(listofmomfile)):
-        print("processing file ", imom+1 , "/" , len(listofmomfile))
+        log.info("processing file %s/%s", imom+1 , len(listofmomfile))
         momfile_trend_processing(mom,generik_conf_file,outdir=outdir,remove_ctl_file=remove_ctl_file)
 
-    print('multi_momfile_trend_processing exec time : ' , time.time() - start)
+    log.info('multi_momfile_trend_processing exec time : %s' , time.time() - start)
     return None
 
 # ===== FCTS 4 multi_sumfiles_trend_extract =====
