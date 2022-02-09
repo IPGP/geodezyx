@@ -42,7 +42,7 @@ import urllib
 import uuid
 
 #### IMPORT CONFIG FOR LOGGER
-log_file_path = os.path.join(path.dirname(path.abspath(__file__)), '/toolbox_meta/loggzyx.conf')
+log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'toolbox_meta','loggzyx.conf')
 print(log_file_path)
 logging.config.fileConfig(fname=log_file_path, disable_existing_loggers=False)
 
