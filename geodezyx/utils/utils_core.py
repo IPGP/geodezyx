@@ -35,6 +35,10 @@ import time
 import uuid
 #### geodeZYX modules
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 
 ##########  END IMPORT  ##########
 
@@ -144,8 +148,8 @@ def is_lambda(v):
 
 
 
-def contains_word(s, w):
-    return f' {w} ' in f' {s} '
+# def contains_word(s, w):
+#     return f' {w} ' in f' {s} '
 
 
 def docstring_generic():
