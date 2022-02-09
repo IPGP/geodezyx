@@ -164,6 +164,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'kepler.py',
                       'natsort',
                       'matplotlib',
+                      'ncompress',
                       'numpy',
                       #'netCDF4',
                       'pybind11',
@@ -175,7 +176,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'sympy',
                       'tabulate',
                       'vincenty',
-                      'ncompress',
+                      'wheel',
                       ]  # Optional
 
     # List additional groups of dependencies here (e.g. development
