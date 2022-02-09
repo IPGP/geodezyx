@@ -169,6 +169,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       #'netCDF4',
                       'pybind11',
                       'pyorbital',
+                      'python3-tk',
                       'pytwobodyorbit',
                       'pyyaml',
                       'pandas',
