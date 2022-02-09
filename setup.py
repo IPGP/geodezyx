@@ -165,7 +165,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'natsort',
                       'matplotlib',
                       'numpy',
-                      'netCDF4',
+                      #'netCDF4',
                       'pybind11',
                       'pyorbital',
                       'pytwobodyorbit',
