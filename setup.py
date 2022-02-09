@@ -175,7 +175,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'scipy',
                       'sympy',
                       'tabulate',
-                      'tkinter',
+                      'tk',
                       'vincenty',
                       'wheel',
                       ],  # Optional
