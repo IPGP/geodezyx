@@ -192,7 +192,7 @@ PyPi project: https://pypi.org/project/geodezyx
     #    'test': ['coverage'],
          'full': ['netCDF4'],
 
-    },
+    }
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.
