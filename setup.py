@@ -161,10 +161,10 @@ PyPi project: https://pypi.org/project/geodezyx
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['bs4',
                       'collection',
-                      'kepler.py',
+                      #'kepler.py',
                       'natsort',
                       'matplotlib',
-                      'ncompress',
+                      #'ncompress',
                       'numpy',
                       #'netCDF4',
                       'pybind11',
@@ -190,7 +190,9 @@ PyPi project: https://pypi.org/project/geodezyx
     extras_require={  # Optional
     #    'dev': ['check-manifest'],
     #    'test': ['coverage'],
-         'full': ['netCDF4'],
+         'full': ['netCDF4',
+                  'kepler.py',
+                  'ncompress'],
 
     }
 
