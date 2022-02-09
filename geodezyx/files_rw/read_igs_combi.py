@@ -17,6 +17,10 @@ import re
 from geodezyx import conv
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
  #  _____ _____  _____    _____                _     _             _   _                _____        __ _       ______ _ _           
  # |_   _/ ____|/ ____|  / ____|              | |   (_)           | | (_)              / ____|      / _| |     |  ____(_) |          
  #   | || |  __| (___   | |     ___  _ __ ___ | |__  _ _ __   __ _| |_ _  ___  _ __   | (___   ___ | |_| |_    | |__   _| | ___  ___ 
@@ -206,8 +210,8 @@ def read_combi_clk_rms(sum_file,return_as_df=True,
             else:
                 rms_dict[e[0]] = float(e[index_useful_col])
         except:
-            print("WARN : ", e[index_useful_col],"not handeled")
-            print("replaced with NaN")
+            log.warning("WARN : %s not handeled",e[index_useful_col])
+            log.warning("replaced with NaN")
             rms_dict[e[0]] = np.nan
 
     if return_as_df:

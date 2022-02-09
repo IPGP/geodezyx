@@ -33,6 +33,10 @@ import re
 from geodezyx import conv
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 #  _____  _____ _   _ ________   __   _____       _ _ _
@@ -70,7 +74,7 @@ def crz2rnx(rinex_path,outdir='',force=True,path_of_crz2rnx='CRZ2RNX'):
     out_rinex_path = os.path.join(outdir,out_rinex_name)
 
     if os.path.isfile(out_rinex_path) and not force:
-        print("INFO : crz2rnx : ", out_rinex_path , 'already exists, skiping ...')
+        log.info( out_rinex_path  + 'already exists, skiping ...')
     else:
         os.chdir(outdir)
         #stream = os.popen(command)
@@ -80,9 +84,9 @@ def crz2rnx(rinex_path,outdir='',force=True,path_of_crz2rnx='CRZ2RNX'):
         status = proc.wait()
 
         if status != 0 or not os.path.isfile(out_rinex_path):
-            print('ERR : crz2rnx : ',out_rinex_path,"not created ! :(")
+            log.info(out_rinex_path + " not created ! :(")
         else:
-            print('INFO : crz2rnx : ',out_rinex_path, 'created :)')
+            log.info(out_rinex_path + ' created :)')
         #    print stream.read()
         os.chdir(curdir)
     return out_rinex_path
@@ -114,10 +118,11 @@ def crz2rnx_bad(crinex_in_path,outdir='',force=True,path_of_crz2rnx='CRZ2RNX'):
     temp_rinex_path = os.path.join(convert_dir,out_rinex_name)
 
     if os.path.isfile(out_rinex_path) and not force:
-        print("INFO : crz2rnx : ", out_rinex_path , 'already exists, skiping ...')
+        log.info( out_rinex_path  + 'already exists, skiping ...')
+
     else:
         stream = os.popen(command)
-        print('output in',outdir)
+        log.info('output in ' + outdir)
         try:
             shutil.move(temp_rinex_path, outdir)
         except:
@@ -148,11 +153,11 @@ def rnx2crz(rinex_path,outdir='',force=True,path_of_rnx2crz='RNX2CRZ'):
     out_rinex_path = os.path.join(outdir,out_rinex_name_d_Z)
 
     if os.path.isfile(out_rinex_path) and not force:
-        print("INFO : rnx2crz : ", out_rinex_path , 'already exists, skiping ...')
+        log.info( out_rinex_path  + 'already exists, skiping ...')
     else:
         os.chdir(outdir)
         stream = os.popen(command)
-        print(command,', output in',outdir)
+        log.info(command + ' output in ' + outdir)
         #    print stream.read()
     os.chdir(curdir)
     return out_rinex_path
@@ -251,7 +256,7 @@ def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
                     epochdt = epochdt + dt.timedelta(seconds=1)
                 epochs_list.append(epochdt)
             except:
-                print("ERR : rinex_read_epoch : " , f)
+                log.error(f)
         elif epoch_rnx3:
             fraw = line[1:].split() #fraw est la pour gerer les fracion de sec ...
             fraw = fraw[0:6]
@@ -274,7 +279,7 @@ def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
                     epochdt = epochdt + dt.timedelta(seconds=1)
                 epochs_list.append(epochdt)
             except:
-                print("ERR : rinex_read_epoch : " , f)
+                log.error(f)
             
                 
     if add_tzinfo:
@@ -367,14 +372,14 @@ def rinex_start_end(input_rinex_path,interval_out=False,
         last_epoch = last_epoch.replace(tzinfo=dateutil.tz.tzutc())
 
     if verbose:
-        print("first & last epochs : " , first_epoch , last_epoch)
+        log.info("first & last epochs: %s %s" , first_epoch , last_epoch)
     if not interval_out:
         return first_epoch , last_epoch
     else:
         interv_lis = np.diff(epochs_list)
         interv_lis = [e.seconds + e.microseconds * 10**-6 for e in interv_lis]
         interval   = utils.most_common(interv_lis)
-        print("interval : " , interval , last_epoch)
+        log.info("interval, last epoch: %s %s" , interval , last_epoch)
 
         #return interv_lis , epochs_list
         return first_epoch , last_epoch , interval
@@ -561,7 +566,7 @@ def rinex_spliter(input_rinex_path,output_directory,stat_out_name='',
     last_date = dt.datetime(last_epoch.year,last_epoch.month,
                                   last_epoch.day,last_epoch.hour)+dt.timedelta(hours=1)
 
-    print("first & last dates (truncated) : " , first_date , last_date)
+    log.info("first & last dates (truncated): %s %s" , first_date , last_date)
 
     time_interval = utils.get_interval(first_date,last_date,
                                          dt.timedelta(hours=interval_size))
@@ -573,7 +578,7 @@ def rinex_spliter(input_rinex_path,output_directory,stat_out_name='',
     for i,curr_date in enumerate(time_interval):
 
         if shift != 0:
-            print('WARN : rinex_spliter : shifted mode on, be careful !!!')
+            log.warning('shifted mode on, be careful !!!')
 
 
         if bool(shift) and i != 0:
@@ -601,17 +606,17 @@ def rinex_spliter(input_rinex_path,output_directory,stat_out_name='',
         p = subprocess.Popen('',executable='/bin/bash', stdin=subprocess.PIPE , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
         # - 1/3600. # one_sec2h
         command = teqc_cmd  + ' -O.mo ' + stat_out_name.upper() +' -st ' +  curr_date.strftime('%y%m%d%H%M%S') + ' +dh ' + str(interval_size_ope) + ' ' + input_rinex_path
-        print(command)
+        log.info(command)
         rinex_out_name = stat_out_name + curr_date.strftime('%j') + rnx_interval_ext + curr_date.strftime('%y') + 'o'
         err_log_name = curr_date.strftime('%j') + rnx_interval_ext + "err.log"
-        print(rinex_out_name)
+        log.info(rinex_out_name)
         stdout,stderr = p.communicate( command.encode() )
         std_file = open(rinex_out_name, "w")
         std_file.write(stdout.decode("utf-8"))
         std_file.close()
         if stderr:
-            print(err_log_name + " is not empty, must be checked !")
-            print(stderr.decode("utf-8"))
+            log.warning(err_log_name + " is not empty, must be checked !")
+            log.info(stderr.decode("utf-8"))
             err_file = open(err_log_name, "w")
             err_file.write(stderr.decode("utf-8"))
             err_file.close()
@@ -664,7 +669,7 @@ def rinex_spliter_gfzrnx(input_rinex_path,
     last_date = dt.datetime(last_epoch.year,last_epoch.month,
                                   last_epoch.day,last_epoch.hour)+dt.timedelta(hours=1)
     
-    print("first & last dates (truncated) : " , first_date , last_date)
+    log.info("first & last dates (truncated): %s %s" , first_date , last_date)
     
     time_interval = utils.get_interval(first_date,last_date,
                                          dt.timedelta(hours=interval_size_hour))
@@ -676,7 +681,7 @@ def rinex_spliter_gfzrnx(input_rinex_path,
     for i,curr_date in enumerate(time_interval):
     
         if shift != 0:
-            print('WARN : rinex_spliter : shifted mode on, be careful !!!')
+            log.warning('shifted mode on, be careful !!!')
     
     
         if bool(shift) and i != 0:
@@ -710,7 +715,7 @@ def rinex_spliter_gfzrnx(input_rinex_path,
         
         # - 1/3600. # one_sec2h
         command = gfzrnx_cmd + ' -finp ' + input_rinex_path + ' -fout ' + os.path.join(output_directory,output_name)  + ' -site ' + stat_out_name.upper() +' -epo_beg ' +  curr_date.strftime('%Y%m%d_%H%M%S') + ' --duration ' + str(interval_size_ope) + ' ' + custom_cmds
-        print(command)
+        log.info(command)
         
         #rinex_out_name = stat_out_name + curr_date.strftime('%j') + rnx_interval_ext + curr_date.strftime('%y') + 'o'
         std_log_name = curr_date.strftime('%j') + rnx_interval_ext + "err.log"   
@@ -723,8 +728,8 @@ def rinex_spliter_gfzrnx(input_rinex_path,
         std_file.close()
         
         if stderr:
-            print(err_log_name + " output:")
-            print(stderr.decode("utf-8"))
+            log.info(err_log_name + " output:")
+            log.info(stderr.decode("utf-8"))
             err_file = open(err_log_name, "w")
             err_file.write(stderr.decode("utf-8"))
             err_file.close()
@@ -773,7 +778,7 @@ def teqc_qc(rinex_path,quick_mode=False,optional_args=''):
 
     kommand = " ".join(("teqc" , qcmode , optional_args , rinex_path))
 
-    print(kommand)
+    log.info(kommand)
 
     proc = subprocess.Popen(kommand, shell=True,
                             stdout=subprocess.PIPE,executable='/bin/bash')
@@ -783,7 +788,7 @@ def teqc_qc(rinex_path,quick_mode=False,optional_args=''):
         os.remove(rinex_path_work)
 
     if status:
-        print("ERR : teqc qc : crash for " + rinex_path + ", code " + str(proc.poll()))
+        log.error("crash for " + rinex_path + ", code " + str(proc.poll()))
         return None
 
     output = proc.stdout.read()
@@ -808,21 +813,21 @@ def rinex_renamer(input_rinex_path,output_directory,stat_out_name='',remove=Fals
     rnx_interval_ext = rinex_session_id(first_epoch,last_epoch) + '.'
     rinex_out_name = stat_out_name + first_epoch.strftime('%j') + rnx_interval_ext + first_epoch.strftime('%y') + 'o'
 
-    print(rinex_out_name)
+    lof.info(rinex_out_name)
 
     output_rinex_path = os.path.join(out_dir,rinex_out_name)
 
     if input_rinex_path != output_rinex_path:
-        print("INFO : copy of ", input_rinex_path , ' to ' , output_rinex_path)
+        log.info("copy of " + input_rinex_path + ' to ' + output_rinex_path)
         shutil.copy(input_rinex_path,output_rinex_path)
 
         if remove and os.isfile(output_rinex_path) :
-            print("INFO : removing " , input_rinex_path)
+            log.info("removing " , input_rinex_path)
             os.remove(input_rinex_path)
     else:
-        print("INFO : " , input_rinex_path)
-        print("and", output_rinex_path ,"are the same file")
-        print("nothing's done ...")
+        log.info(input_rinex_path)
+        log.info("and " + output_rinex_path + " are the same file")
+        log.info("nothing's done ...")
 
     return output_rinex_path
 

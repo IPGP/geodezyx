@@ -5,7 +5,8 @@ Created on Fri Jun 25 16:43:48 2021
 
 @author: psakicki
 """
-
+########## BEGIN IMPORT ##########
+#### External modules
 import datetime as dt
 import pandas as pd
 import numpy as np
@@ -13,12 +14,19 @@ import netCDF4 as nc
 import os
 import itertools
 import scipy
-
-from geodezyx import utils,conv
-
-
 import urllib.request
 from urllib.parse import quote
+
+
+#### geodeZYX modules
+from geodezyx import conv
+from geodezyx import utils
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
+##########  END IMPORT  ##########
 
 def ESMGFZ_downloader(latitude,longitude,output_dir,
                       components=["NTAL","NTOL","HYDL","SLEL"],
@@ -97,8 +105,8 @@ def ESMGFZ_downloader(latitude,longitude,output_dir,
         Url_tuple = (url_base,url_entry,url_lat,url_lon,url_format,url_cal,url_var)
         url_out = "".join(Url_tuple)
         
-        print("INFO: downloaded URL")
-        print(url_out)
+        log.info("INFO: downloaded URL")
+        log.info(url_out)
         
         output_file = "_".join((outfile_prefix,
                                 icomp,
@@ -110,8 +118,8 @@ def ESMGFZ_downloader(latitude,longitude,output_dir,
         
         output_path = os.path.join(output_dir,output_file)
         
-        print("INFO: output file")
-        print(output_path)
+        log.info("INFO: output file")
+        log.info(output_path)
             
         DownObjt = urllib.request.urlretrieve(url_out, output_path)
         
@@ -251,13 +259,13 @@ def ESMGFZ_extrapolator(path_or_netcdf_object_in,
     ### do the interpolation for the wished value
     for wishval in wished_values:
         if verbose:
-            print("INFO:",wishval,"start interpolation at",dt.datetime.now())
+            log.info("INFO: %s start interpolation at %s",wishval,dt.datetime.now())
         
         #### Val = np.array(NC[wishval]) ### Slow
         Val = NC[wishval][:]
         
         if verbose:
-            print("INFO:",wishval,"grid loaded at",dt.datetime.now())
+            log.info("INFO: %s grid loaded at %s",wishval,dt.datetime.now())
             
         Val = np.flip(Val,1) ### we flip the lat because not ascending !
         Val_xtrp = scipy.interpolate.interpn(Points,Val,

@@ -27,6 +27,11 @@ import matplotlib.pyplot as plt
 from geodezyx import conv
 from geodezyx import utils
 
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 
@@ -71,9 +76,9 @@ def linear_regression(x,y,fulloutput=False,alpha=.95):
     y = np.array(y)
 
     if len(x) != len(y):
-        print("ERR : linear_regression : len(x) != len(y)")
-        print("      len(x) : " , len(x))
-        print("      len(y) : " , len(y))
+        log.error("ERR : linear_regression : len(x) != len(y)")
+        log.info("      len(x) : " , len(x))
+        log.info("      len(y) : " , len(y))
 
         return 0,0
 
@@ -479,10 +484,10 @@ def gaussian_filter_GFZ_style_smoother(tim_ref, dat_ref, width=7):
     """
         
     
-    print("WARN : THIS function gaussian_filter_GFZ_style_smoother")
-    print("IS VERY SLOW (DIRTY CONVERSION OF A PERL FCT)")
-    print("THE PYTHONIC VERSION gaussian_filter_GFZ_style_smoother_improved")
-    print("BELOW SHOULD BE USED  !!!")
+    log.warning("WARN : THIS function gaussian_filter_GFZ_style_smoother")
+    log.warning("IS VERY SLOW (DIRTY CONVERSION OF A PERL FCT)")
+    log.warning("THE PYTHONIC VERSION gaussian_filter_GFZ_style_smoother_improved")
+    log.warning("BELOW SHOULD BE USED  !!!")
     
     tim_raw = tim_ref
     dat_raw = dat_ref
@@ -659,7 +664,6 @@ def smooth(x,window_len=11,window='hanning'):
 
 
     s=np.r_[x[window_len-1:0:-1],x,x[-2:-window_len-1:-1]]
-    #print(len(s))
     if window == 'flat': #moving average
         w=np.ones(window_len,'d')
     else:
@@ -815,7 +819,7 @@ def outlier_mad(data,threshold=3.5,verbose=False,
     """
     
     if seuil:
-        print("WARNING: seuil argument for outlier_mad is deprecated !!!")
+        log.warning("'seuil' argument for outlier_mad is deprecated !!!")
         threshold = seuil
 
     if convert_to_np_array:
@@ -826,17 +830,17 @@ def outlier_mad(data,threshold=3.5,verbose=False,
 
     if np.isclose(np.sum(np.abs(np.diff(data))) , 0.):
         if verbose:
-            print("ratio d'elimination : 0 , données toutes égales")
+            log.info("elimination ratio: 0 , all values are equals")
         return data , np.array([True] * len(data))
 
     if np.isclose(med , 0.):
         if verbose:
-            print("ratio d'elimination : 0 , mediane nulle")
+            log.info("elimination ratio: 0 , null median")
         return data , np.array([True] * len(data))
 
     if np.isclose(MAD,0.):
         if verbose:
-            print("ratio d'elimination : 0 , MAD nulle")
+            log.info("elimination ratio: 0 , null MAD")
         return data , np.array([True] * len(data))
 
 
@@ -851,22 +855,10 @@ def outlier_mad(data,threshold=3.5,verbose=False,
     nbout = float(sum(boolbad))
     ratio = (nbinp-nbout)/nbinp
     if verbose:
-        print("INFO: MAD outider elimination ratio: %i / %i, %f p.c." %(nbinp-nbout,nbinp,ratio * 100))
+        log.info("MAD outlier elimination ratio: %i / %i, %f p.c.",
+                 nbinp-nbout,nbinp,ratio * 100)
     return dataout , boolbad
 
-
-def outiler_mad(data,threshold=3.5,verbose=False,convert_to_np_array=True,
-                mad_mode = 'median',seuil=None):
-    """
-    wrapper of outlier_mad, maintened for legacy with a typo
-    """
-    
-    print("WARNING: you use outiler_mad,with a typo in the name !!!")
-    print("         you should use outlier_mad instead          !!!")
-
-    
-    return outlier_mad(data,threshold , verbose , convert_to_np_array ,
-                       mad_mode,seuil)
 
 
 def outlier_mad_binom(Y,X,threshold=3.5,verbose=False,detrend_first=False,
@@ -947,9 +939,9 @@ def outlier_above_below_simple(X , low_bound  , upp_bound,
     Xwork = np.array(X)     
     
     if low_bound >= upp_bound:
-        print("WARN : outlier_above_below_simple : lower bound >= upper bound !!!")
-        print("      low_bond : " , low_bound)
-        print("      upp_bond : " , upp_bound)
+        log.warning("lower bound >= upper bound !!!")
+        log.warning("low_bond : " , low_bound)
+        log.warning("upp_bond : " , upp_bound)
     
     bbool = (low_bound <= Xwork) & (Xwork <= upp_bound)
     
@@ -1023,8 +1015,8 @@ def outlier_above_below(X , threshold_values ,
         ths_input_upp = threshold_values        
         
     if ths_input_low < 0. or ths_input_upp < 0.:
-        print("WARN : outlier_above_below : threshold_values have to be positive")
-        print("       minus sign for lower bound will be applied internally")
+        log.warning("threshold_values have to be positive")
+        log.warning("minus sign for lower bound will be applied internally")
         
     
     if callable(reference):
@@ -1048,10 +1040,10 @@ def outlier_above_below(X , threshold_values ,
         ths_upp = ref_val + ths_input_upp * relativ_val
         
     if verbose:
-        print("INFO : outlier_above_below theshold values")
-        print("       reference : " , ref_val )
-        print("       effective lower bound : " , ths_low )
-        print("       effective upper bound : " , ths_upp )
+        log.info("outlier_above_below theshold values")
+        log.info("reference: %s" , ref_val )
+        log.info("effective lower bound: %s" , ths_low )
+        log.info("effective upper bound: %s" , ths_upp )
                 
     Xout , bbool = outlier_above_below_simple(X , ths_low , ths_upp)
     
@@ -1155,7 +1147,7 @@ def outlier_sigma(datasigmain,threshold=3):
     moy = np.median(datasigmain)
     marge = moy * threshold
 
-    print("INFO : outlier_sigma : moy,seuil,marge",  moy,threshold,marge)
+    log.info("moy,threshold,margin",  moy,threshold,marge)
 
     boolbad = np.abs(datasigmain) < marge
 
@@ -1186,8 +1178,8 @@ def outlier_overmean(Xin,Yin,marge=0.1):
     nbout = float(sum(boolbad))
 
     ratio = (nbinp-nbout)/nbinp
-    print("ratio d'elimination : %i / %i, %f" %(nbinp-nbout,nbinp,ratio))
-    print("moyenne : %f" %(moy))
+    log.info("ratio d'elimination : %i / %i, %f",nbinp-nbout,nbinp,ratio)
+    log.info("moyenne : %f" %(moy))
 
     plt.figure(12)
     plt.clf()
@@ -1336,13 +1328,13 @@ def lagrange_interpolate(Tdata,Ydata,Titrp,n=10):
     
     ### some checks
     if np.any(np.diff(Tdata_px) == 0):
-        print("WARN: lagrange_interpolate: some Tdata are equals")
+        log.warning("some Tdata are equals")
 
     if np.any(np.diff(Ydata) == 0):
-        print("WARN: lagrange_interpolate: some Ydata are equals")
+        log.warning("some Ydata are equals")
 
     if np.any(Titrp_px < 0):
-        print("WARN: lagrange_interpolate: some wanted values are outside the data interval!!!!")
+        log.warning("some wanted values are outside the data interval!!!!")
     
     Yintrp = []
     
@@ -1453,7 +1445,7 @@ def time_win_multi(start,end,Tlist,Datalislis,outposix=True,
                    invert=False,out_array=False):
     Datalislisout = []
     for i,datalis in enumerate(Datalislis):
-#        print 'INFO : time_win_multi : list no' , i
+
         Tlisout , datalisout = time_win_basic(start,end,Tlist,datalis,outposix,
                                               invert,out_array=out_array)
         Datalislisout.append(datalisout)
@@ -1475,7 +1467,7 @@ def time_win_multi_start_end(Start_list_in,End_list_in,Tlisin,Datalisin,
     """
     
     if len(Start_list_in) != len(End_list_in):
-        print("ERR : time_win_multi_start_end : len(Start_list_in) != len(End_list_in) !!")
+        log.error("len(Start_list_in) != len(End_list_in) !!")
     
     
     boolis_stk = []
@@ -1571,7 +1563,7 @@ def outlier_mad_binom_legacy(X,Y,threshold=3.5,verbose=False,
     else:
         Xwork , _ = np.array(X) , np.array(Y)
         
-    _ , bb = outiler_mad(Xwork,threshold,verbose)
+    _ , bb = outlier_mad(Xwork,threshold,verbose)
     
     Xclean = np.array(X)[bb]    
     Yclean = np.array(Y)[bb]

@@ -22,6 +22,7 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 #### External modules
 import datetime as dt
 import numpy as np
+import os
 import subprocess
 import re
 import time
@@ -31,9 +32,14 @@ import getpass
 from geodezyx import utils
 
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 
 utils.symbols_list()
 
@@ -113,25 +119,25 @@ def cluster_GFZ_run(commands_list,
             cmd_ope = "cjob -c '" + cmd + "'"
             commands_list_opera.append(cmd_ope)
 
-    print ("****** JOBS THAT WILL BE LAUNCHED ******")
-    print ('Number of jobs : ' + str(len(commands_list_opera)))
-    print ("****************************************")
+    log.info("****** JOBS THAT WILL BE LAUNCHED ******")
+    log.info('Number of jobs : ' + str(len(commands_list_opera)))
+    log.info("****************************************")
 
     for ikommand,kommand in enumerate(commands_list_opera):
 
         ########## LOG/PRINT command
-        print(kommand)
+        log.info(kommand)
         LOGobj.write(kommand + '\n')
 
         ########## LOG/PRINT sleep
-        info_sleep = "INFO : script is sleeping for " +str(wait_sleeping_before_launch) +"sec (so you can cancel it) "
-        print(info_sleep)
+        info_sleep = "script is sleeping for " +str(wait_sleeping_before_launch) +"sec (so you can cancel it) "
+        log.info(info_sleep)
         LOGobj.write(info_sleep + '\n')
         time.sleep(wait_sleeping_before_launch)
 
         ########## LOG/PRINT start
-        info_start = "INFO : script starts @ " + str(dt.datetime.now())
-        print(info_start)
+        info_start = "script starts @ " + str(dt.datetime.now())
+        log.info(info_start)
         LOGobj.write(info_start + '\n')
 
         ########## RUN command here !!
@@ -152,15 +158,15 @@ def cluster_GFZ_run(commands_list,
 
         ########## Bunch On/Off : check if a bunch of job has been launched
         if bunch_on_off and np.mod(i_bunch , bunch_job_nbr) == 0:
-            info_bunch = "INFO : sleeping @ " + str(dt.datetime.now()) + " for " + str(bunch_wait_time) + "s b.c. a bunch of " + str(bunch_job_nbr) + " jobs has been launched"
-            print(info_bunch)
+            info_bunch = "sleeping @ " + str(dt.datetime.now()) + " for " + str(bunch_wait_time) + "s b.c. a bunch of " + str(bunch_job_nbr) + " jobs has been launched"
+            log.info(info_bunch)
             time.sleep(bunch_wait_time)
             LOGobj.write(info_bunch + '\n')
 
             ########## Bunch On/Off Check : check if the bunch is finished (experimental but on is better)
             ###### THIS PART MUST BE MERGE WITH THE SMALLER FCT BELLOW
-            if bj_check_on_off:
-                print("INFO : BJ Check : All jobs should be finished now, let's see if there is some latecomers")
+            if log.info:
+                log.info("All jobs should be finished now, let's see if there is some latecomers")
                 bj_check_tigger = False
             while not bj_check_tigger:
                 bj_check_tigger = sleep_job_user(minjob=bj_check_mini_nbr,
@@ -190,7 +196,7 @@ def number_job_user(bj_check_user=None,verbose=True):
     bj_list_checked_sum = np.sum(bj_list_checked)
     
     if verbose:
-        print("INFO: ",bj_list_checked_sum,"running jobs found for",bj_check_user)
+        log.info(bj_list_checked_sum,"running jobs found for",bj_check_user)
     
     return bj_list_checked_sum,bj_list_checked,bj_pattern_checked
 
@@ -207,11 +213,11 @@ def sleep_job_user(bj_check_user=None,minjob=20,bj_check_wait_time=20):
     
     if n_job >= minjob:
         check_tigger = False
-        print("INFO : sleeping @ " + str(dt.datetime.now()) + " for " + str(bj_check_wait_time) + "s b.c." + str(n_job) + " jobs are runing")
+        log.info("sleeping @ " + str(dt.datetime.now()) + " for " + str(bj_check_wait_time) + "s b.c." + str(n_job) + " jobs are runing")
         time.sleep(bj_check_wait_time)
     else:
         check_tigger = True
-        print("INFO : let's continue, no job matchs the pattern " + bj_pattern_checked)
+        log.info("let's continue, no job matchs the pattern " + bj_pattern_checked)
         
     return check_tigger
     

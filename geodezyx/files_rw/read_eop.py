@@ -13,15 +13,14 @@ import numpy as np
 import os 
 import pandas as pd
 
-
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
 
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 
 def read_erp(file_path_in,ac=None):
     """
@@ -390,7 +389,7 @@ def read_erp_snx(snx_in):
 
     """
     
-    print("WARN read_erp_snx not properly IMPLEMENTED !!!!!")
+    log.warning("read_erp_snx not properly IMPLEMENTED !!!!!")
     
     utils.extract_text_between_elements_2(snx_in,
                                           '\+SOLUTION/ESTIMATE',
@@ -572,7 +571,7 @@ def read_eop_finals(file_path_in,precnut_model = 2000,
         DF2.dropna(axis=1,how="all",inplace=True)
 
     else:
-        print("ERR: read_eop_C04: check the  simplified_EOP_DF parameter !!!")
+        log.error("check the simplified_EOP_DF parameter !!!")
         raise Exception
         
     return DF,DF2

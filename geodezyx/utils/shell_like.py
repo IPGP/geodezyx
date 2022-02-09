@@ -31,6 +31,11 @@ import subprocess
 
 #### geodeZYX modules
 from geodezyx import utils
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 
@@ -159,7 +164,7 @@ def egrep_big_string(regex,bigstring,only_first_occur=False):
     if len(matching_line_list) == 1:
         return matching_line_list[0]
     elif len(matching_line_list) == 0:
-        print("WARN: nothing found... check the input args: 1-regex, 2-bigstring")
+        log.warning("nothing found... check the input args order: 1-regex, 2-bigstring")
         return ''
     
     elif only_first_occur:
@@ -308,7 +313,7 @@ def find_recursive(parent_folder , pattern,
                 try:
                     bool_match = re.search(pattern, filename, re.IGNORECASE)
                 except Exception as e:
-                    print("ERR : if case_sensitive = False, pattern have to be a REGEX (and not only a simple wildcard)")
+                    log.error("if case_sensitive = False, pattern have to be a REGEX (and not only a simple wildcard)")
                     raise e
                     
                 if bool_match:
@@ -324,16 +329,16 @@ def find_recursive(parent_folder , pattern,
             try:
                 stat = os.stat(f)
             except FileNotFoundError:
-                print("WARN: file not found",f)
+                log.warning("file not found %s",f)
                 continue
                 
             matches_ext.append((f,stat))
         matches = matches_ext
         
     if warn_if_empty and len(matches) == 0:
-        print("WARN:find_recursive: no files found! check parent folder and pattern")
-        print("INFO:Parent folder:",parent_folder)
-        print("INFO:Pattern      :",pattern)
+        log.warning("no files found! check parent folder and pattern")
+        log.info("Parent folder  :%s",parent_folder)
+        log.info("Pattern        :%s",pattern)
                 
     return matches
 
@@ -347,9 +352,9 @@ def glob_smart(dir_path,file_pattern=None,verbose=True):
     
     if verbose:
         if not outlist:
-            print("WARN : no file(s) found as" , dir_path_ok)
+            log.warning("no file(s) found as %s" , dir_path_ok)
         else:
-            print("INFO :" , len(outlist),"file(s) found as", dir_path_ok)
+            log.info("%d file(s) found as %s", len(outlist), dir_path_ok)
             
     return outlist
 
@@ -399,7 +404,7 @@ def insert_str_in_file_if_line_contains(file_path,str_to_insert,
                     break
                 
         if only_first_occur and pattern_found:
-            print("break at line " , ilin)
+            log.info("break at line " , ilin)
             break
                 
     f = open(file_path, "w")
@@ -411,7 +416,7 @@ def insert_str_in_file_if_line_contains(file_path,str_to_insert,
     
 def uncompress(pathin,dirout = '', opts='-f'):
     if not os.path.isfile(pathin):
-        print('ERR : uncompress : ', pathin , ' dont exist !!!')
+        log.error('uncompress : %s doesnt exist !!!', pathin)
         return None
     komand = 'uncompress ' + opts + ' ' + pathin
     subprocess.call([komand], shell=True)
@@ -434,7 +439,7 @@ def remove_dir(directory):
     if os.path.exists(directory):
         shutil.rmtree(directory)
     else:
-        print('WARN : remove_dir : ' , directory , ' dont exists ... skip ...')
+        log.warning('%s dont exists ... skip ...',directory)
     return None
 
 def walk_dir(parent_dir):
@@ -455,7 +460,7 @@ def walk_dir(parent_dir):
     return files_list , dirs_list
 
 def fileprint(output,outfile):
-    print(output)
+    log.debug(output)
     with open(outfile, "a") as f:
         f.write("{}\n".format(output))
     return None

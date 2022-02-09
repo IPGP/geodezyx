@@ -24,16 +24,20 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 import numpy as np
 import scipy
 from pyorbital import astronomy
-import re
+#import re
 
 #### geodeZYX modules
 from geodezyx import utils
 from geodezyx.conv import conv_rotation_matrices as rotmat
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 ##########  END IMPORT  ##########
 #### Coordinates conversion
@@ -687,7 +691,7 @@ def ECI2RTN_or_RPY(P,V,C,out_rpy=False,rpy_theo_mode=False):
             # par rapport à l'ordre standard ... (241017)
             TransMat = np.dot(rotmat.C_rtn2rpy().T,C_eci2rtn_mat.T)
         else:
-            print("WARN : using the theoretical mode for RPY conversion, UNSTABLE & WRONG !")
+            log.warning("using the theoretical mode for RPY conversion, UNSTABLE & WRONG !")
             TransMat = np.dot(rotmat.C_rtn2rpy(),C_eci2rtn_mat)
 
         # Mais reste compatible avec Wikipedia

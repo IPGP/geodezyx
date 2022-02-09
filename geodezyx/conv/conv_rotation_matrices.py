@@ -24,17 +24,16 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
-import scipy
-from pyorbital import astronomy
-import re
+# import scipy
+# from pyorbital import astronomy
+# import re
 
 #### geodeZYX modules
 from geodezyx import utils
 
-#### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
@@ -440,11 +439,11 @@ def add_offset(Direction , Delta , Point = None ,
     Delta_enu = Crpy2enu.dot(C_enu2ned().dot(Delta))
 
     if out_delta_enu:
-        print(out_delta_enu)
+        log.info(out_delta_enu)
 
     if not np.isclose(np.linalg.norm(Delta) , np.linalg.norm(Delta_enu)):
-        print("WARN : np.linalg.norm(Delta) != np.linalg.norm(Delta_enu)")
-        print(np.linalg.norm(Delta) , np.linalg.norm(Delta_enu) , \
+        log.warning("np.linalg.norm(Delta) != np.linalg.norm(Delta_enu)")
+        log.warning(np.linalg.norm(Delta) , np.linalg.norm(Delta_enu) , \
         np.linalg.norm(Delta) - np.linalg.norm(Delta_enu))
 
 

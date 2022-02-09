@@ -22,9 +22,14 @@ from geodezyx import time_series
 from geodezyx import reffram
 
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 
@@ -38,35 +43,35 @@ def print4compar(dA,dB,dC,dD,coortype):
     else:
         Astr,Bstr,Cstr = 'A','B','C'
 
-    print("moyenne aritm & RMS et std composante " + Astr)
-    print(str(np.nanmean(dA)))
-    print(stats.RMSmean(dA))
-    print(str(np.nanstd(dA)))
-    print('')
+    log.info("moyenne aritm & RMS et std composante %s", Astr)
+    log.info(str(np.nanmean(dA)))
+    log.info(stats.RMSmean(dA))
+    log.info(str(np.nanstd(dA)))
+    log.info('')
 
-    print("moyenne aritm & RMS et std composante " + Bstr)
-    print(str(np.nanmean(dB)))
-    print(stats.RMSmean(dB))
-    print(str(np.nanstd(dB)))
-    print('')
+    log.info("moyenne aritm & RMS et std composante %s", Bstr)
+    log.info(str(np.nanmean(dB)))
+    log.info(stats.RMSmean(dB))
+    log.info(str(np.nanstd(dB)))
+    log.info('')
 
-    print("moyenne aritm & RMS et std composante " + Cstr)
-    print(str(np.nanmean(dC)))
-    print(stats.RMSmean(dC))
-    print(str(np.nanstd(dC)))
-    print('')
+    log.info("moyenne aritm & RMS et std composante %s", Cstr)
+    log.info(str(np.nanmean(dC)))
+    log.info(stats.RMSmean(dC))
+    log.info(str(np.nanstd(dC)))
+    log.info('')
 
-    print("moyenne aritm & RMS et std composante D")
-    print(str(np.nanmean(dD)))
-    print(stats.RMSmean(dD))
-    print(str(np.nanstd(dD)))
-    print('')
+    log.info("moyenne aritm & RMS et std composante D")
+    log.info(str(np.nanmean(dD)))
+    log.info(stats.RMSmean(dD))
+    log.info(str(np.nanstd(dD)))
+    log.info('')
 
-    print("RMS3D : sqrt((RMS_{}**2 + RMS_{}**2 + RMS_{}**2)/3 ) ".format(Astr,Bstr,Cstr))
-    print(stats.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB),stats.RMSmean(dC)]))
-    print("RMS2D : uniquement sur les 2 composantes plani")
-    print(stats.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB)]))
-    print('')
+    log.info("RMS3D : sqrt((RMS_{}**2 + RMS_{}**2 + RMS_{}**2)/3 ) ".format(Astr,Bstr,Cstr))
+    log.info(stats.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB),stats.RMSmean(dC)]))
+    log.info("RMS2D : uniquement sur les 2 composantes plani")
+    log.info(stats.RMSmean([stats.RMSmean(dA),stats.RMSmean(dB)]))
+    log.info('')
 
 def print4compar_tabular(dicolist,split=0,print_2D3D_if_any=True):
 
@@ -281,15 +286,12 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
     alpha=0.8
 
     if len(tstup) <= 1:
-        print("ERR : compar : len(tstup) <= 1 , on ne compar pas un élément seul ;) !!!!")
+        log.error("len(tstup) <= 1 , do not compare a single element !! ;) ")
 
     if verbose:
-        print("")
-        print("BILAN DE LA COMPARAISON")
-        print("reference : " +  tstup[0].name)
-        print("coordonnées : " +  coortype)
-        print("")
-
+        log.info("COMPARISON SUMMARY")
+        log.info("reference : %s",  tstup[0].name)
+        log.info("coordonnées : %s" , coortype)
 
     dicolist = []
 
@@ -300,9 +302,9 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
         dicovar = dict()
 
         if verbose:
-            print("===========================================================")
-            print(tsvar.name)
-            print("------------------------------")
+            log.info("===========================================================")
+            log.info(tsvar.name)
+            log.info("------------------------------")
 
 
 #        tsout = TimeSeriePoint()
@@ -328,13 +330,11 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
         # (winlis == [] or (ivar in winlis)) and
         if win != []:
             if verbose:
-                print("Application du fenetrage")
-                print("------------------------------")
+                log.info("Windowing")
             bl = time_win_T(T,win,mode=mode)
             if verbose:
-                print("Nb de pts : " , len(bl))
-                print("Pts validés :" , np.sum(bl))
-                print('')
+                log.info("# pts total: %s", len(bl))
+                log.info("# pts valid: %s", np.sum(bl))
 
         else:
             bl = np.asarray([True] * len(Tref))
@@ -359,7 +359,7 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
             dD = np.sqrt(dA ** 2 + dB ** 2 + dC ** 2)
 
         else:
-            print("ERR : compar : wrong Dtype")
+            log.error("wrong Dtype")
 
 
 #        print "Stats sans Nettoyage"
@@ -369,8 +369,8 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
         # nettoyage par la MAD
         if seuil != 0:
             if verbose:
-                print("Nettoyage par la MAD")
-                print("------------------------------")
+                log.info("MAD cleaning")
+                
             dAin = dA
             dA,bb = stats.outlier_mad(dA,seuil=seuil)
             dAout = dA
@@ -401,9 +401,8 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
                 dD3Dout = dD3D
 
             if verbose:
-                print('')
-                print("Stats aprÃ¨s Nettoyage")
-                print("------------------------------")
+                log.info("Stats after cleaning")
+
             if print_report:
                 print4compar(dA,dB,dC,dD,coortype)
 
@@ -535,7 +534,7 @@ def mad_cleaner(tsin,seuil=3.5,method='dist',coortype='ABC',
 
     if coortype == 'ABC':
         coortype = tsin.initype()
-    print(coortype)
+    log.info(coortype)
 
     if detrend_first:
         tswork = detrend_ts(tsin,coortype)
@@ -562,9 +561,7 @@ def mad_cleaner(tsin,seuil=3.5,method='dist',coortype='ABC',
 
     if verbose:
         killratio = np.round(float(tsout.nbpts) / float(tsin.nbpts),4)
-
-        print("INFO : mad_cleaner :" , tsin.stat , "clean ratio" , tsin.nbpts , tsout.nbpts , killratio)
-
+        log.info("%s, clean ratio : %s, %s, %s" , tsin.stat , tsin.nbpts , tsout.nbpts , killratio)
     return tsout
 
 def sigma_cleaner(tsin,seuil=3,coortype='ABC',cleantype='any', verbose=False):
@@ -586,8 +583,7 @@ def sigma_cleaner(tsin,seuil=3,coortype='ABC',cleantype='any', verbose=False):
 
     if verbose:
         killratio = np.round(float(tsout.nbpts) / float(tsin.nbpts),4)
-
-        print("INFO : sigma_cleaner :" , tsin.stat , "clean ratio" , tsin.nbpts , tsout.nbpts , killratio)
+        log.info("%s, clean ratio : %s, %s, %s" , tsin.stat , tsin.nbpts , tsout.nbpts , killratio)
 
     return tsout
 
@@ -616,7 +612,7 @@ def std_dev_cleaner(tsin,stddev_threshold,coortype="ABC",cleantype="any",
     if verbose:
         killratio = np.round(float(tsout.nbpts) / float(tsin.nbpts),4)
 
-        print("INFO : std_dev_cleaner :" , tsin.stat , "clean ratio" , tsin.nbpts , tsout.nbpts , killratio)
+        log.info("%s, clean ratio : %s, %s, %s" , tsin.stat , tsin.nbpts , tsout.nbpts , killratio)
 
     return tsout
 
@@ -626,7 +622,7 @@ def bool_cleaner(tsin,boollist, verbose=False):
     tsout = copy.copy(tsin)
     ptslistin = tsin.pts
     if len(ptslistin) != len(boollist):
-        print("ERR : bool_cleaner : len bool != len pts")
+        log.error("len bool != len pts")
         return 0
     ptslistout = []
     for pt,b in zip(ptslistin,boollist):
@@ -637,7 +633,7 @@ def bool_cleaner(tsin,boollist, verbose=False):
     if verbose:
         killratio = np.round(float(tsout.nbpts) / float(tsin.nbpts),4)
 
-        print("INFO : bool_cleaner :" , tsin.stat , "clean ratio" , tsin.nbpts , tsout.nbpts , killratio)
+        log.info("%s, clean ratio : %s, %s, %s" , tsin.stat , tsin.nbpts , tsout.nbpts , killratio)
 
     return tsout
 
@@ -699,15 +695,19 @@ def linear_regress_ts(tsin,coortype='ENU',titledetails = ''):
             axes[i].set_ylabel('Displacement (m)')
             v = w[0] * 31556926 / 10**-3
             v2 = round(v,2)
-            print('composante ' + coortype[i] + ' = ' + str(v) + 'mm/year')
-            axes[i].text(0.9, 0.1, str(v2) + 'mm/year' , horizontalalignment='center',verticalalignment='center',transform=axes[i].transAxes)
+            log.info('composante %s = %s mm/yr', coortype[i], str(v) )
+            
+            axes[i].text(0.9, 0.1, str(v2) + 'mm/year' , 
+                         horizontalalignment='center',
+                         verticalalignment='center',
+                         transform=axes[i].transAxes)
     except:
         pass
 
 def linear_regress_ts_discont(tsin,coortype = 'ENU') :
     discont_improved = tsin.discont + [dt.datetime(2099,1,1)]
     for j in range(len(discont_improved)-1):
-        print('période ',j,':',discont_improved[j],discont_improved[j+1])
+        log.info('period %s: %s %s',j,discont_improved[j],discont_improved[j+1])
         tsbis = time_win(tsin,[[discont_improved[j],discont_improved[j+1]]])
         datetitle = ' : ' + str(discont_improved[j]) + "\u2192" + str(discont_improved[j+1])
         linear_regress_ts(tsbis,coortype,titledetails=datetitle)
@@ -768,7 +768,7 @@ def export_ts_plot(tsin,export_path,coortype='ENU',export_type=("pdf","png"),
         export_file = os.path.join(export_path,tsin.stat+'a.' + typ)
         f.savefig(export_file,
                   papertype='a4',format=typ)
-        print("INFO : plot exported in " , export_file)
+        log.info("plot exported in %s" , export_file)
     if close_fig_after_export:
         plt.close(f)
 
@@ -789,7 +789,7 @@ def export_ts_plot(tsin,export_path,coortype='ENU',export_type=("pdf","png"),
             export_file = os.path.join(export_path,tsin.stat+'b.' + typ)
             f.savefig(export_file,
                       papertype='a4',format=typ)
-        print("INFO : plot exported in " , export_file)
+        log.info("plot exported in %s" , export_file)
         if close_fig_after_export:
             plt.close(f)
     return None
@@ -838,7 +838,7 @@ def export_ts(ts,outdir,coordtype = 'ENU',outprefix='',write_header=False):
         filobj.write(outlin)
     filobj.close()
 
-    print('INFO : timeserie exported in ' + outpath)
+    log.info('timeserie exported in %s', outpath)
     return None
 
 
@@ -852,7 +852,7 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
     NB: The XYZ mode is quite dirty (191001)
     """
     if not hasattr(tsin[0],'X'):
-        print('WARN : export_ts_as_neu : no XYZ in ts')
+        log.warning('no XYZ in ts')
         noXYZ = True
     else:
         noXYZ = False
@@ -885,7 +885,7 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
     outfile.write('# Solution code: GINS_PS \n')
     outfile.write('# Datum: ITRF2008\n')
     outfile.write('#\n')
-    outfile.write('# Reference epoch: {}\n'.format(conv.toYearFraction(first_pt.Tdt)))
+    outfile.write('# Reference epoch: {}\n'.format(conv.dt2year_decimal(first_pt.Tdt)))
     outfile.write('# X : {}\n'.format(first_pt.X))
     outfile.write('# Y : {}\n'.format(first_pt.Y))
     outfile.write('# Z : {}\n'.format(first_pt.Z))
@@ -904,17 +904,17 @@ def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
         outfile.write('# type_of_offset : from discontinuties got from a station.info\n')
         outfile.write('#\n')
         for disc in sorted(tswork.discont):
-            outfile.write('# offset {} 7\n'.format(conv.toYearFraction(disc)))
+            outfile.write('# offset {} 7\n'.format(conv.dt2year_decimal(disc)))
         outfile.write('#\n')
     # write the data
     for e,n,u,t,se,sn,su in zip(E,N,U,T,sE,sN,sU):
-        t = conv.toYearFraction(conv.posix2dt(t))
+        t = conv.dt2year_decimal(conv.posix2dt(t))
         if coordtype == "ENU":        
             outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
         elif coordtype == "XYZ":
             outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
 
-    print('INFO : timeserie exported in ' + outpath)
+    log.info('timeserie exported in %s',outpath)
     return None
 
 
@@ -929,7 +929,7 @@ def export_ts_as_hector_enu(tsin,outdir,outprefix,coordtype = 'ENU'):
     /outdir/outprefixSTAT.enu
     """
 
-    print("NOT IMPLEMENTED YET !")
+    log.warning("NOT IMPLEMENTED YET !")
 
     return None
 
@@ -948,7 +948,7 @@ def export_ts_as_midas_tenu(tsin,outdir,outprefix,coordtype = 'ENU',
     /outdir/outprefixSTAT.step
     """
     if not hasattr(tsin[0],'X'):
-        print('WARN : export_ts_as_midas_tneu : no XYZ in ts')
+        log.warning('no XYZ in ts')
         noXYZ = True
     else:
         noXYZ = False
@@ -973,21 +973,21 @@ def export_ts_as_midas_tenu(tsin,outdir,outprefix,coordtype = 'ENU',
     e0,n0,u0,t0 = list(zip(E,N,U,T))[0]
 
     for e,n,u,t in zip(E,N,U,T):
-        t = conv.toYearFraction(conv.posix2dt(t))
+        t = conv.dt2year_decimal(conv.posix2dt(t))
         #outfile.write('{} {:.5f} {:+.6f} {:+.6f} {:+.6f} \n'.format(stat,t,n-n0,e-e0,u-u0))
         outfile.write('{} {:.5f} {:+.6f} {:+.6f} {:+.6f} \n'.format(stat,t,e-e0,n-n0,u-u0))
 
-    print('INFO : timeserie exported in ' + outpath)
+    log.info('timeserie exported in %s',outpath)
 
     if export_step and tswork.bool_discont:
         outpath_step = outdir +'/' + outprefix + tswork.stat + '.step'
         outfile_step = open(outpath_step,'w+')
         for d in tswork.discont:
-            d = conv.toYearFraction(d)
+            d = conv.dt2year_decimal(d)
             line = tswork.stat + " " + str(d) + "\n"
             outfile_step.write(line)
 
-            print('INFO : timeserie discont. (steps) exported in ' + outpath_step)
+            log.info('timeserie discont. (steps) exported in %s',outpath_step)
 
     return None
 
@@ -1081,23 +1081,22 @@ def time_win(tsin,windows,mode='keep',outbool=False):
     elif isinstance(tsout,time_series.TimeSerieObs):
         data = 'obs'
     else:
-        print('BUG : time_win : ca chie')
+        log.error('unknown error')
 
     outboollist = []
-
-    print(tsin)
+    
     for i,e in enumerate(windows):
-        print('windows', i)
-        print(e[0] , e[1])
+        log.info('windows %s', i)
+        log.info("%s %s",e[0] , e[1])
 
 
     for pt in getattr(tsin,data):
         boollist = []
         for win in windows:
             if win[1] < win[0]:
-                print("WARN : time_win : le début de periode est + grand que la fin")
-                print(win[0] , win[1])
-                print(mode)
+                log.warning("period start > period end")
+                log.info("%s %s", win[0] , win[1])
+                log.info("%s",mode)
 
             if win[0] < getattr(pt,Ttype) and win[1] > getattr(pt,Ttype):
                 boollist.append(True)
@@ -1305,7 +1304,7 @@ def add_offset_smart_for_GINS_kine(tsin,tslist_offset_3ple,list_windows,coortype
                 curdX , curdY , curdZ = tslist_offset_3ple[i][0],tslist_offset_3ple[i][1],tslist_offset_3ple[i][2]
                 if curdX != olddX or curdY != olddY or curdZ != olddZ:
                     olddX ,olddY , olddZ = curdX , curdY , curdZ
-                    print('INFO : change of time window / offset')
+                    log.info('change of time window / offset')
                 ptout = add_offset_point(pt,curdX,curdY,curdZ,coortype='XYZ')
                 tsout.add_point(ptout)
                 continue
@@ -1317,7 +1316,7 @@ def find_pts_from_ts_with_time(tin,tstupin,tol=0.001):
     for ts in tstupin:
         pt, i = ts.find_point(tin,tol=tol)
         if np.isnan(i):
-            print("WARN : find_pts_from_ts_with_time : no pt find")
+            log.warning("no point found")
         ptsout.append(pt)
     return ptsout
 

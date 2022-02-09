@@ -17,17 +17,24 @@ GitHub repository :
 https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
 
+########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
 import numpy as np
 import os 
 import pandas as pd
 import re
+
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
 from geodezyx import files_rw
 from geodezyx import reffram
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 
 #### Import star style
 # from geodezyx import *                   # Import the GeodeZYX modules
@@ -224,7 +231,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
         outpath_opera = os.path.join(outpath,filename)
         
     elif outname == 'auto_new_cnv':
-        print("ERR: not implemented yet !!!!!")
+        log.error("not implemented yet !!!!!")
         raise Exception
         
     F = open(outpath_opera,"w+")
@@ -317,7 +324,7 @@ def write_clk(DFclk_in,outpath,
         outpath_opera = os.path.join(outpath,filename)
         
     elif outname == 'auto_new_cnv':
-        print("ERR: not implemented yet !!!!!")
+        log.error("not implemented yet !!!!!")
         raise Exception
         
     else:
@@ -500,7 +507,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         Extlist = ["sp3","sp3.gz"]
         for ext in Extlist:
             Lfile = Lfile + utils.find_recursive(dir_in,"*" + ac + "*" + ext)
-        print("Nb of SP3 found for",ac,len(Lfile))
+        log.info("Nb of SP3 found for %s %s",ac,len(Lfile))
         
         if not suffix_out_input:
             suffix_out = ac
@@ -538,11 +545,11 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
 
             dummy= 1
             try:
-                print("***********",ac,dat)
+                log.info("*********** %s %s",ac,dat)
                 
                 if first_date:
                     if dat < first_date:
-                        print("INFO: SKIP date",dat)
+                        log.info("SKIP date",dat)
                         continue
                     
                 wwwwd_str = conv.dt_2_sp3_datestr(dat).zfill(5)
@@ -559,13 +566,13 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 fil_out = dir_out_wk + "/" + suffix_out  + wwwwd_str + ".sp3"
                 
                 if not force and os.path.isfile(fil_out):
-                    print("0))",fil_out,"exists, skipping...")
+                    log.info("0)) " + fil_out + " exists, skipping...")
                     continue
 
 
                 ### *************** STEP 1 ***************
-                print("1)) Search for the days before/after")                
-                print("1))",dat_bef,dat_aft)
+                log.info("1)) Search for the days before/after")                
+                log.info("1)) %s %s",dat_bef,dat_aft)
     
     
                 ## GM 2021-09-06 in case of the new naming conventation this is step needs to be done:
@@ -605,13 +612,13 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                     p_bef = utils.find_regex_in_list(wwwwd_str_bef + ".sp3",Lfile,True)
                     p_aft = utils.find_regex_in_list(wwwwd_str_aft + ".sp3",Lfile,True)
 
-                print("1)) Files found for the days before/after")                            
-                print("0b)",p_bef)
-                print("01)",p1)
-                print("0a)",p_aft)
+                log.info("1)) Files found for the days before/after")                            
+                log.info("0b) %s",p_bef)
+                log.info("01) %s",p1)
+                log.info("0a) %s",p_aft)
             
                 if not p1 or not p_bef or not p_aft:
-                    print("ERROR with day",dat)
+                    log.error("with day %s",dat)
                     continue
                 
                 SP3     = files_rw.read_sp3(p1)
@@ -633,15 +640,15 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 dat_filter_aft = dat + dt.timedelta(seconds=overlap_size) + dt.timedelta(days=1)
 
                 ### *************** STEP 2 ***************
-                print("2)) dates of the overlap period before/after")                   
-                print("2))",dat_filter_bef,dat_filter_aft)
+                log.info("2)) dates of the overlap period before/after")                   
+                log.info("2)) %s %s",dat_filter_bef,dat_filter_aft)
 
                 ### *************** STEP 3 *************** 
-                print("3)) Dates of: SP3 concatenated, before, current, after")                       
-                print("3))",SP3concat["epoch"].min(),SP3concat["epoch"].max())
-                print("3b)",SP3_bef["epoch"].min(),SP3_bef["epoch"].max())
-                print("31)",SP3["epoch"].min(),SP3["epoch"].max())
-                print("3a)",SP3_aft["epoch"].min(),SP3_aft["epoch"].max())
+                log.info("3)) Dates of: SP3 concatenated, before, current, after")                       
+                log.info("3)) %s %s",SP3concat["epoch"].min(),SP3concat["epoch"].max())
+                log.info("3b) %s %s",SP3_bef["epoch"].min(),SP3_bef["epoch"].max())
+                log.info("31) %s %s",SP3["epoch"].min(),SP3["epoch"].max())
+                log.info("3a) %s %s",SP3_aft["epoch"].min(),SP3_aft["epoch"].max())
                 
                 SP3concat = SP3concat[(SP3concat["epoch"] >= dat_filter_bef) & (SP3concat["epoch"] <= dat_filter_aft)]
                 
@@ -656,12 +663,12 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 
                 ########## HERE WE MANAGE THE MISSING SATS
                 if manage_missing_sats == "exclude_missing_day":     
-                    print("4))","remove missing sats -- day")                                     
+                    log.info("4))","remove missing sats -- day")                                     
                     common_sats = set(SP3_bef["sat"]).intersection(set(SP3["sat"])).intersection(set(SP3_aft["sat"]))
                     SP3concat = SP3concat[SP3concat["sat"].isin(common_sats)]
                     
                 elif manage_missing_sats == "exclude_missing_epoch":
-                    print("4))","remove missing sats -- epoch")      
+                    log.info("4))","remove missing sats -- epoch")      
                     nepoc = len(SP3concat["epoch"].unique())
                     SP3concat_satgrp = SP3concat.groupby("sat")
                     
@@ -675,13 +682,13 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                     Good_sats = Good_sats[Good_sats["epoch"]].reset_index()["sat"]
                     
                     Bad_sats = list(set(All_sats) - set(Good_sats))
-                    print("excluded bad sats:", Bad_sats)
+                    log.info("excluded bad sats: %s", Bad_sats)
                     
                     SP3concat = SP3concat[SP3concat["sat"].isin(Good_sats)]
                     
                 
                 elif manage_missing_sats == "extrapolate":
-                    print("4))","extrapolate missing sats ")                                     
+                    log.info("4)) extrapolate missing sats ")                                     
                     for iovl,SP3_ovl in enumerate((SP3_bef,SP3_aft)):
                         if iovl == 0:
                             backward = True
@@ -698,7 +705,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         Sats_miss = Sats.difference(Sats_ovl)
                         if not Sats_miss:
                             continue
-                        print("4a)","extrapolate missing sats",backfor,Sats_miss)                                     
+                        log.info("4a) extrapolate missing sats %s %s",backfor,Sats_miss)                                     
 
                         SP3extrapo_in = SP3concat[SP3concat["sat"].isin(Sats_miss)]
                         
@@ -719,10 +726,10 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                                                                        return_all=False)
                         
                         SP3concat = pd.concat((SP3concat,SP3extrapo))
-                        print(SP3extrapo)
+                        log.info(SP3extrapo)
 
                 else:
-                    print("ERR: check manage_missing_sats value")
+                    log.error("check manage_missing_sats value")
                     raise Exception
                     
                 if eliminate_null_sat:
@@ -735,17 +742,17 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         if V < 0.50:
                             GoodSats.append(sat)
                         else:
-                            print("6) eliminate because null position",sat)
+                            log.info("6) eliminate because null position %s",sat)
                         
                     SP3concat = SP3concat[SP3concat["sat"].isin(GoodSats)]
 
                 ### *************** STEP 7 ***************           
-                print("7))","Start/End Epoch of the concatenated file ")                                     
-                print("7))",SP3concat["epoch"].min(),SP3concat["epoch"].max())
+                log.info("7)) Start/End Epoch of the concatenated file ")                                     
+                log.info("7)) %s %s",SP3concat["epoch"].min(),SP3concat["epoch"].max())
 
                 #### All systems        
-                print("8)) outputed file")
-                print(fil_out)
+                log.info("8)) outputed file")
+                log.info(fil_out)
                 write_sp3(SP3concat,fil_out)
                 
                 #### system separated
@@ -754,8 +761,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         try:
                             SP3concat_sys = SP3concat[SP3concat["const"] == sys]
                             fil_out_sys = dir_out_wk + "/" + suffix_out[:2] + sys.lower() + wwwwd_str.zfill(5) + ".sp3"
-                            print("9)) outputed file")
-                            print(fil_out_sys)
+                            log.info("9)) outputed file")
+                            log.info(fil_out_sys)
                             write_sp3(SP3concat_sys,fil_out_sys)
                         except:
                             continue
@@ -765,10 +772,10 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 
             except Exception as e:
                 if severe:
-                    print("WARN:",e)
+                    log.error(e)
                     raise e
                 else:
-                    print("WARN: Error",e,"but no severe mode, continue...")
+                    log.warning("Error %s but no severe mode, continue...",e)
                     continue
 
 

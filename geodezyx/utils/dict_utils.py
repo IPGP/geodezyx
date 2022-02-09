@@ -17,6 +17,9 @@ GitHub repository :
 https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
 def dicts_merge(*dict_args):
     '''
@@ -63,5 +66,5 @@ def dic_key_for_vals_list_finder(dic_in , value_in):
         if value_in in v:
             return k
     
-    print("WARN : no key found for value",value_in,"... None returned")
+    log.warning("no key found for value %s... None returned",value_in)
     return None

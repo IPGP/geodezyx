@@ -32,6 +32,10 @@ from geodezyx import conv
 from geodezyx import stats
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 
@@ -64,7 +68,7 @@ def midas_run(tenu_file_path,work_dir="",
     for fil in MIDAS_files_rm:
         fil_full_path = os.path.join(work_dir,fil)
         if os.path.isfile(fil_full_path):
-            print("INFO : old",fil,"removed")
+            log.info("old %s removed",fil)
             os.remove(fil_full_path)
 
     ### Find the Station Name
@@ -91,7 +95,7 @@ def midas_run(tenu_file_path,work_dir="",
 
     ### LETS RUN !
     command = path_midas_soft
-    print('LAUNCHING : ',  command, "for stat." , stat)
+    log.info('LAUNCHING : %s for stat. %s' , command , stat)
     p = subprocess.Popen('',executable='/bin/bash', stdin=subprocess.PIPE,
                          stdout=subprocess.PIPE , stderr=subprocess.PIPE)
     stdout,stderr = p.communicate( command.encode() )
@@ -105,15 +109,15 @@ def midas_run(tenu_file_path,work_dir="",
 
     if not utils.empty_file_check(work_file_path_vel):
         exec_OK = True
-        print("INFO : MIDAS.VEL exists for",stat,", should be OK :)")
+        log.info("MIDAS.VEL exists for %s, should be OK :)",stat)
 
     if not utils.empty_file_check(os.path.join(work_dir,'MIDAS.ERR')):
-        print("ERR : MIDAS.ERR is not empty for",stat,", must be checked :(")
+        log.error("MIDAS.ERR is not empty for, must be checked :(", stat)
 
     if stderr:
-        print("err.log is not empty, must be checked !")
-        print(stderr.decode("utf-8"))
-        print('')
+        log.warning("err.log is not empty, must be checked !")
+        log.warning(stderr.decode("utf-8"))
+        log.warning('')
         err_file = os.path.join(work_dir , stat + ".err.log")
         err_file_obj = open(err_file, "w")
         err_file_obj.write(stderr.decode("utf-8"))
@@ -230,7 +234,7 @@ def midas_plot(path_tenu,path_vel="",path_step=""):
 
     if path_step:
         TS.set_discont(Discont)
-        print("AAAAAAAA",Discont)
+        log.info("Discontinuity",Discont)
 
     #### PLOT ########
     TSplot_fig = TS.plot(fig=plt.figure())

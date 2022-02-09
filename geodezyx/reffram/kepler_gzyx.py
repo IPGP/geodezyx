@@ -28,6 +28,10 @@ from pytwobodyorbit import TwoBodyOrbit
 #### geodeZYX modules
 from geodezyx import conv
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 
@@ -157,7 +161,7 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9,
     NewEpoch_stk = []
     
     for sat in DFsp3["sat"].unique():
-        print("INFO:extrapolate_sp3_DataFrame: extrapolate: ",sat)
+        log.info("extrapolate: %s",sat)
         DFsat = DFsp3[(DFsp3["sat"] == sat) & (DFsp3["type"] == "P")].copy()
         DFsat.sort_values("epoch",inplace=True)
         

@@ -96,7 +96,7 @@ def rgp_ign_smn_1Hz_server(stat,date):
         date_session = date
         date_session = date_session.replace(hour=h)
 
-        print(date_session , 'session' , h)
+        log.info('%s session %s' , date_session , h)
         rnxname = conv.statname_dt2rinexname(stat.lower(),date_session ,
                                              session_a_instead_of_daily_session = 1)
         url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) ,
@@ -184,12 +184,12 @@ def force_weekly_file_fct(force_weekly_file,sp3clk,day_in):
         day = day_in
 
     elif type(force_weekly_file) is str or type(force_weekly_file) is int:
-        print("INFO : The weekly file will be downloaded (DoW =",force_weekly_file,")")
-        print("       Check force_weekly_file option if you don't want it")
+        log.info("INFO : The weekly file will be downloaded (DoW = %s)",force_weekly_file)
+        log.info("       Check force_weekly_file option if you don't want it")
         day = force_weekly_file
 
     elif sp3clk in ("erp","sum") and force_weekly_file == True:
-        print("INFO : The weekly file (DoW = 7) will be downloaded for " + sp3clk.upper())
+        log.info("The weekly file (DoW = 7) will be downloaded for " + sp3clk.upper())
         day = 7
         
     return day
@@ -214,7 +214,7 @@ def orbclk_cddis_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
         center[-1] = str(repro)
         center = ''.join(center)
     if center in ("cod","cof","co2","cf2") and sp3clk == "sp3":
-        print("INFO : CODE orbit extension changed to eph")
+        log.info("CODE orbit extension changed to eph")
         sp3clk = "eph"
 
     # date definition
@@ -366,7 +366,7 @@ def orbclk_gfz_local_server(date,center='gfz', sp3clk='sp3',repro=0):
     elif repro == 3:
         urlserver = '/dsk/repro3/ARCHIVE/IGS/SAVE_PROD_1d/'
     else:
-        print("ERR : check the repro !!!")
+        log.error("check the repro !!!")
         raise Exception
 
     week, day = conv.dt2gpstime(date)
@@ -383,7 +383,7 @@ def downloader(url,savedir,force = False,
 
     INTERNAL_FUNCTION
     """
-#    print url
+
     if type(url) is tuple:
         need_auth = True
         username = url[1]
@@ -405,13 +405,13 @@ def downloader(url,savedir,force = False,
 
     for f in Pot_compress_files_list:
         if os.path.isfile(f) and (not force):
-            print("INFO :", os.path.basename(f) , "already exists locally ;)")
+            log.info(os.path.basename(f) + " already exists locally ;)")
             return None
         
     ##### LOCAL FILE (particular case for GFZ)
     if os.path.isfile(url):
-        print("INFO : downloader : the is a local file, a simple copy will be used")
-        print("       URL :",url)
+        log.info("INFO : downloader : the is a local file, a simple copy will be used")
+        log.info("       URL : %s",url)
         shutil.copy(url,savedir)
     
     ##### REMOTE FILE (General case)
@@ -435,10 +435,10 @@ def downloader(url,savedir,force = False,
         try:
             f = opener.open(url)
         except (urllib.error.HTTPError , urllib.error.URLError):
-            print("WARN :",rnxname,"not found on server :(")
-            print(url_print)
+            log.warning("%s not found on server :(",rnxname)
+            log.warning(url_print)
             return ""
-        print("INFO :" , rnxname ," found on server :)")
+        log.info("%s found on server :)",rnxname)
         data = f.read()
         if not os.path.exists(savedir):
             os.makedirs(savedir)
@@ -447,24 +447,10 @@ def downloader(url,savedir,force = False,
             code.write(data)
         return_str = outpath
     else:
-        print("ERR : something goes wrong with the URL")
-        print("     ", url)
+        log.error("something goes wrong with the URL")
+        log.error(url)
         return_str = ""
 
-
-    # effective downloading (old version)
-#    try:
-#        f = urllib2.urlopen(url)
-#    except urllib2.HTTPError:
-#        print rnxname," not found :("
-#        print url
-#        return None
-#    print rnxname," found :)"
-#    data = f.read()
-#    if not os.path.exists(savedir):
-#        os.makedirs(savedir)
-#    with open(os.path.join(savedir , rnxname), "wb") as code:
-#        code.write(data)
     return return_str
 
 def start_end_date_easy(start_year,start_doy,end_year,end_doy):
@@ -616,7 +602,7 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
     savedirlist = []
 
 
-    print("generating the list of potential RINEXs ...")
+    log.info("generating the list of potential RINEXs ...")
     while curdate <= enddate:
         for netwk , statlis in list(statdico.items()):
             for stat in statlis:
@@ -647,7 +633,7 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
                 elif netwk in ('nav' , 'brdc'):
                     url = igs_cddis_nav_server(stat,curdate)
                 else:
-                    print('WARN : unkwn server dic in the dico, skip ...')
+                    log.warning('unkwn server dic in the dico, skip ...')
                     continue
 
                 savedir = effective_save_dir(archive_dir,stat,curdate,archtype)
@@ -667,12 +653,12 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
     try:
         urllist,savedirlist = utils.sort_binom_list(urllist,savedirlist)
     except TypeError as err:
-        print("ERR: unable to sort the URL and the save directory") 
-        print("TIP: you maybe asked for servers with & without password in the same statdico") 
+        log.error("unable to sort the URL and the save directory") 
+        log.error("TIP: you maybe asked for servers with & without password in the same statdico") 
         raise err
 
-    print(" ... done")
-    print(len(urllist),"potential RINEXs")
+    log.info(" ... done")
+    log.info(str(len(urllist)) + " potential RINEXs")
 
     ### Use of the advanced FTP Crawler
     if filter_ftp_crawler:
@@ -707,7 +693,7 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
             continue
 
     pool.close()
-    print('INFO : ' , skiped_url , 'returned url skiped because of a weird error, but it is not important :)')
+    log.info(skiped_url +  ' returned url skiped because of a weird error, but it is not important :)')
     return localfiles_lis
 
 #    return zip(urllist,savedirlist)
@@ -772,7 +758,7 @@ def orbclk_long2short_name(longname_filepath_in,
 
     """
 
-    print("INFO : will rename" , longname_filepath_in)
+    log.info("will rename " + longname_filepath_in)
 
     longname_basename = os.path.basename(longname_filepath_in)
     longname_dirname  = os.path.dirname(longname_filepath_in)
@@ -810,7 +796,7 @@ def orbclk_long2short_name(longname_filepath_in,
     elif "SNX" in longname_basename:
         shortname = shortname_prefix + ".snx"
     else:
-        print("ERR : filetype not found for",longname_basename)
+        log.error("filetype not found for " + longname_basename)
     
     ### Compression handeling
     if longname_basename[-3:] == ".gz":
@@ -821,16 +807,16 @@ def orbclk_long2short_name(longname_filepath_in,
     shortname_filepath = os.path.join(output_dirname , shortname)
     
     if not force and os.path.isfile(shortname_filepath):
-        print("INFO : skip", longname_filepath_in)
-        print("     ",shortname_filepath,"already exists")        
+        log.info("skip " + longname_filepath_in)
+        log.info(shortname_filepath + " already exists")        
         return shortname_filepath
     
     if not dryrun:
-        print("INFO : renaming" , longname_filepath_in,"=>",shortname_filepath)
+        log.info("renaming " + longname_filepath_in + " => " + shortname_filepath)
         shutil.copy2(longname_filepath_in , shortname_filepath)
 
     if rm_longname_file and not dryrun:
-        print("INFO : remove " , longname_filepath_in)
+        log.info("remove " + longname_filepath_in)
         os.remove(longname_filepath_in)
 
     return shortname_filepath
@@ -974,14 +960,14 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
     else:
         typ = '????'
 
-    print("generating the list of potential " + typ + " ...")
+    log.info("generating the list of potential " + typ + " ...")
     
     for cc in calc_center:
             curdate = startdate
             while curdate <= enddate:
                 if re.search("igs([0-9][0-9]|yy|YY)P",cc):
                     cc = "igs" + str(curdate.year)[2:] + "P"
-                    print("INFO : IGS reference frame snx/ssc, correcting the year : ",cc)
+                    log.info("INFO : IGS reference frame snx/ssc, correcting the year : " + cc)
 
                 url = ''
                 if archive_center == 'cddis':
@@ -1009,7 +995,7 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
                                               sp3clk=sp3clk)
 
                 else:
-                    print('ERR : Wrong archive_center name !!! :' , archive_center)
+                    log.error('ERR : Wrong archive_center name !!! :' + archive_center)
                 urllist.append(url)
                 savedir = effective_save_dir_orbit(archive_dir,cc,curdate,archtype)
                 savedirlist.append(savedir)
@@ -1018,17 +1004,9 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
     savedirlist = [x for (y,x) in sorted(zip(urllist,savedirlist))]
     urllist = sorted(urllist)
 
-    print(" ... done")
-    print(len(urllist),"potential " + typ)
+    log.info(" ... done")
+    log.info(str(len(urllist)) + " potential " + typ)
 
-#    if sorted_mode:
-#        print 'aaaa'
-#        results = [pool.apply_async(downloader , args=(u,sd)) for u,sd in zip(urllist,savedirlist)]
-#    else:
-#        print 'bb'
-#        _ = pool.map(downloader_wrap,zip(urllist,savedirlist))
-#
-#
     if not sorted_mode:
         _ = pool.map(downloader_wrap,list(zip(urllist,savedirlist)))
     else:
@@ -1095,7 +1073,7 @@ def multi_finder_rinex(main_dir,rinex_types=('o','d','d.Z','d.z'),
                     rinex_lis2.append(rnx)
         rinex_lis = rinex_lis2
 
-    print('INFO : ' , len(rinex_lis) , 'RINEXs found')
+    log.info(str(len(rinex_lis)) +  ' RINEXs found')
 
     return rinex_lis
 
@@ -1126,7 +1104,7 @@ def multi_archiver_rinex(rinex_lis,parent_archive_dir,archtype='stat',
 
     mv_cnt   = 0
     skip_cnt = 0
-    print('INFO : RINEXs as input :' , len(rinex_lis))
+    log.info('RINEXs as input : %s' , len(rinex_lis))
 
     if move:
         mv_fct = utils.move
@@ -1147,8 +1125,8 @@ def multi_archiver_rinex(rinex_lis,parent_archive_dir,archtype='stat',
             mv_fct(rnx,savedir)
             mv_cnt += 1
 
-    print('INFO : RINEXs skiped   :' , skip_cnt, '(because already existing)')
-    print('INFO : RINEXs moved    :' , mv_cnt)
+    log.info('RINEXs skiped :' + str(skip_cnt) + ' (because already exist)')
+    log.info('RINEXs moved  :' + str(mv_cnt))
 
     return None
 
@@ -1225,8 +1203,8 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     
     ###### Prelim Checks   ##############
     if not os.path.exists(parent_dir):
-        print("ERR : parent directory doesn't exist")
-        print(parent_dir)
+        log.error("parent directory doesn't exist")
+        log.error(parent_dir)
         if severe:
             raise Exception
 
@@ -1287,7 +1265,7 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
     elif compressed == "only":
         re_patt_comp = "(\.Z|\.gz)$"
     else:
-        print("ERR : check 'compressed' keyword (excl,incl, or only)")
+        log.error("check 'compressed' keyword (excl,incl, or only)")
         raise Exception
         
     if regex_old_naming: 
@@ -1330,8 +1308,8 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
 
     re_patt_big = join_regex_and(Re_patt_big_stk)
         
-    print("INFO : REGEX researched :")    
-    print(re_patt_big)
+    log.info("REGEX researched :")    
+    log.info(re_patt_big)
     
     ###### Specific file search management ##############
     Files_select_list = []
@@ -1340,12 +1318,12 @@ def find_IGS_products_files(parent_dir,File_type,ACs,date_start,date_end=None,
             Files_select_list.append(fil)
             
     if len(Files_select_list) == 0:
-        print("ERR : no products found")
+        log.error("no products found")
         if severe:
             raise Exception
 
-    print("INFO : number of files found :",len(Files_select_list))    
-    print(re_patt_big)
+    log.info("number of files found : %s",len(Files_select_list))    
+    log.info(re_patt_big)
     
     return Files_select_list
 
@@ -1353,7 +1331,7 @@ def FTP_downloader(ftp_obj,filename,localdir):
     localpath = os.path.join(localdir,filename)
     
     if not utils.empty_file_check(localpath):
-        print("INFO:",filename,"already exists ;)")
+        log.info(filename + " already exists ;)")
         bool_dl = True
     else:
         try:
@@ -1361,10 +1339,10 @@ def FTP_downloader(ftp_obj,filename,localdir):
             ftp_obj.retrbinary('RETR ' + filename, localfile.write, 1024)
             localfile.close()
             bool_dl = True
-            print("INFO:",filename,"downloaded :)")
+            log.info(filename + " downloaded :)")
     
         except:
-            print("WARN:",localpath,"download failed :(")
+            log.info(localpath + " download failed :(")
             bool_dl = False
     
     return localpath , bool_dl
@@ -1438,7 +1416,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         arch_center_basedir = '/pub/' + mgex_str
 
 
-    print("INFO : data center used :",archive_center)
+    log.info("data center used : %s",archive_center)
 
     Dates_list = conv.dt_range(startdate,enddate)
 
@@ -1472,18 +1450,18 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         else:
             dow = str(dow_manu)
                
-        print("INFO : ","Search products for day",wwww,dow,"AC/prod",ac_cur,prod_cur)
+        log.info("Search products for day %s, AC/prod, %s %s",wwww,dow,ac_cur,prod_cur)
         wwww_dir = os.path.join(arch_center_basedir,str(wwww))
-        print("       Move to:",wwww_dir)
+        log.info("Move to: %s",wwww_dir)
         if wwww_dir_previous != wwww_dir:
             try:
                 ftp.cwd(wwww_dir)
             except:
-                print("WARN:",wwww_dir,"do not exists, skiping...")
+                log.warning("%s do not exists, skiping...",wwww_dir)
             Files_listed_in_FTP = ftp.nlst()
             wwww_dir_previous = wwww_dir
             if len(Files_listed_in_FTP) == 0:
-                print("WARN: no files found in directory",wwww_dir)
+                log.warning("no files found in directory %s",wwww_dir)
                 
                 
         Files_remote_date_list = []
@@ -1497,7 +1475,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         if new_name_conv: ### search for new name convention
             
             if dow is None:
-                print("ERR: dow == None and search for new name convention, Error ...")
+                log.error("dow == None and search for new name convention, Error ...")
                 raise  Exception()
                 
             ac_newnam   = ac_cur.upper()
@@ -1511,11 +1489,12 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
             Files_new_nam   = [f for f in Files_listed_in_FTP if re.search(pattern_new_nam,f)]
         
         
-        print("      ","Regex :",pattern_old_nam,pattern_new_nam)        
+        log.info("      Regex : %s %s",pattern_old_nam,pattern_new_nam)        
         Files = Files + Files_new_nam
         
         if len(Files) == 0:
-            print("WARN : ","no product found for",*patt_tup)
+            log.warning("no product found for" + " %s"*len(patt_tup),
+                        *patt_tup)
         
         Files_remote_date_list = Files_remote_date_list + Files
             
@@ -1599,7 +1578,7 @@ def _ftp_dir_list_files(ftp_obj_in):
         files = ftp_obj_in.nlst()
     except ftplib.error_perm as resp:
         if str(resp) == "550 No files found":
-            print("No files in this directory",ftp_obj_in.pwd())
+            log.warning("No files in this directory" + ftp_obj_in.pwd())
         else:
             raise
     return files
@@ -1646,7 +1625,6 @@ def ftp_files_crawler(urllist,savedirlist):
                         prev_row_ftpobj['pass'])
     
     for irow,row in DF.iterrows():
-        #print(irow)
         count_loop += 1
         
         ####### we recreate a new FTP object if the root URL is not the same
@@ -1661,7 +1639,7 @@ def ftp_files_crawler(urllist,savedirlist):
             
         ####### we recreate a new file list if the date path is not the same        
         if prev_row_cwd.dir != row.dir:
-            print("INFO:","chdir",row.dirname)
+            log.info("chdir " + row.dirname)
             FTPobj.cwd("/")
     
             try: #### we try to change for the right folder
@@ -1675,10 +1653,10 @@ def ftp_files_crawler(urllist,savedirlist):
         ####### we check if the files is avaiable
         if row.basename in FTP_files_list:
             DF.loc[irow,'bool'] = True
-            print("INFO:",row.basename ,"found on server :)")
+            log.info(row.basename + " found on server :)")
         else:
             DF.loc[irow,'bool'] = False
-            print("WARN:",row.basename ,"not found on server :(")
+            log.warning(row.basename  + " not found on server :(")
     
     
     DFgood = DF[DF['bool']].copy()

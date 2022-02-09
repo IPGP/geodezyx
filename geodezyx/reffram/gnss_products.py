@@ -33,13 +33,15 @@ import re
 ### disabled and imported directly in the needed fct
 ## import geodezyx.reffram.sofa18 as sofa
 
-
-
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import files_rw
 from geodezyx import stats
 from geodezyx import utils
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
@@ -195,11 +197,9 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
 
         if np.any(D1_null_bool) or np.any(D2_null_bool):
             sat_nul = utils.join_improved(" " ,*list(set(D1orig[D1_null_bool]["sat"])))
-            print("WARN : Null values contained in SP3 files : ")
-            print("f1:" , np.sum(D1_null_bool) , utils.join_improved(" " ,
-                  *list(set(D1orig[D1_null_bool]["sat"]))))
-            print("f2:" , np.sum(D2_null_bool) , utils.join_improved(" " ,
-                  *list(set(D2orig[D2_null_bool]["sat"]))))
+            log.warning("Null values contained in SP3 files : ")
+            log.warning("f1: %s %s" , np.sum(D1_null_bool) , utils.join_improved(" " , *list(set(D1orig[D1_null_bool]["sat"]))))
+            log.warning("f2: %s %s" , np.sum(D2_null_bool) , utils.join_improved(" " , *list(set(D2orig[D2_null_bool]["sat"]))))
         else:
             sat_nul = []
 
@@ -240,11 +240,11 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 D1sv_orig = D1window[D1window['sv'] == svv].reindex(epoc_set)
                 D2sv_orig = D2window[D2window['sv'] == svv].reindex(epoc_set)
             except Exception as exce:
-                print("ERR : Unable to re-index with an unique epoch")
-                print("      are you sure there is no multiple-defined epochs for the same sat ?")
-                print("      it happens e.g. when multiple ACs are in the same DataFrame ")
-                print("TIP : Filter the input Dataframe before calling this fct with")
-                print("      DF = DF[DF['AC'] == 'gbm']")
+                log.info("ERR : Unable to re-index with an unique epoch")
+                log.info("      are you sure there is no multiple-defined epochs for the same sat ?")
+                log.info("      it happens e.g. when multiple ACs are in the same DataFrame ")
+                log.info("TIP : Filter the input Dataframe before calling this fct with")
+                log.info("      DF = DF[DF['AC'] == 'gbm']")
                 
                 Dtmp1 = D1orig[D1orig['sv'] == svv]
                 Dtmp2 = D2orig[D2orig['sv'] == svv]
@@ -252,7 +252,7 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 dupli1 = np.sum(Dtmp1.duplicated(["epoch","sat"]))
                 dupli2 = np.sum(Dtmp2.duplicated(["epoch","sat"]))
                 
-                print("FWIW : duplicated epoch/sat in DF1 & DF2 : ",dupli1,dupli2)
+                log.info("FWIW: duplicated epoch/sat in DF1 & DF2: %s %s",dupli1,dupli2)
 
                 raise exce
 
@@ -260,7 +260,7 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
             # This step is useless, because .reindex() will fill the DataFrame
             # with NaN
             if len(D1sv_orig) != len(D2sv_orig):
-                print("INFO : different epochs nbr for SV",svv,len(D1sv_orig),len(D2sv_orig))
+                log.info("different epochs nbr for SV %s %s %s",svv,len(D1sv_orig),len(D2sv_orig))
                 epoc_sv_set = sorted(list(set(D1sv_orig.index).intersection(set(D2sv_orig.index))))
                 D1sv = D1sv_orig.loc[epoc_sv_set]
                 D2sv = D2sv_orig.loc[epoc_sv_set]
@@ -784,13 +784,13 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
         week1 = utils.split_improved(os.path.basename(snx1),"_",".")[:]
         week2 = utils.split_improved(os.path.basename(snx2),"_",".")[:]
         if week1 != week2:
-            print("WARN : Dates of 2 input files are differents !!! It might be very bad !!!",week1,week2)
+            log.warning("Dates of 2 input files are differents !!! It might be very bad !!! %s %s",week1,week2)
         else:
             wwwwd = week1
         D1 = files_rw.read_sinex(snx1,True)
         D2 = files_rw.read_sinex(snx2,True)
     else:
-        print("WARN : you are giving the SINEX input as a DataFrame, wwwwd has to be given manually using manu_wwwwd")
+        log.warning("WARN : you are giving the SINEX input as a DataFrame, wwwwd has to be given manually using manu_wwwwd")
         D1 = snx1
         D2 = snx2
 
@@ -815,7 +815,7 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
         elif utils.is_iterable(stat_select):
             STATCommon = [sta for sta in STATCommon_init if select_fct(sta in stat_select) ]
         else:
-            print("WARN : check type of stat_select")
+            log.warning("WARN : check type of stat_select")
 
     D1Common = D1[D1["STAT"].isin(STATCommon)].sort_values("STAT").reset_index(drop=True)
     D2Common = D2[D2["STAT"].isin(STATCommon)].sort_values("STAT").reset_index(drop=True)
@@ -869,7 +869,7 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
 
 
     if not out_means_summary:
-        print("INFO : this is not used operationally and it can be improved")
+        log.info("INFO : this is not used operationally and it can be improved")
         return Ddiff
     else:
         output = []
@@ -885,7 +885,6 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
             output.append(np.nanstd(Ddiff[xyz]))
 
         if out_meta:
-            print(wwwwd)
             nstat = len(STATCommon)
             week   = int(wwwwd[:4])
             day    = int(wwwwd[4:])
@@ -952,7 +951,7 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
     
     for sat,ac in itertools.product(DForb_in.sat.unique(),DForb_in.AC.unique()):
         
-        print("INFO: lagrange_interpolate_sp3: process",ac,sat)
+        log.info("process",ac,sat)
         
         DForb_use = DForb_in[(DForb_in.sat == sat) & (DForb_in.AC == ac)].copy()
             
@@ -1108,10 +1107,8 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
     but can be used for snx files as STAT and epoch
     """
     
-    #print("666:",dt.datetime.now())
     OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
     OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
-    #print("777:",dt.datetime.now())
     
     I1 = OrbDFa.index
     I2 = OrbDFb.index
@@ -1134,10 +1131,8 @@ def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
 
     
     if len(OrbDFa_out) != len(OrbDFb_out):
-        print("WARN : Orb/ClkDF_common_epoch_finder : len(Orb/ClkDFa_out) != len(Orb/ClkDFb_out)")
-        print("TIPS : ClkDFa_in and/or ClkDFb_in might contain duplicates")
-
-#    print("888:",dt.datetime.now())
+        log.warning("len(Orb/ClkDFa_out) != len(Orb/ClkDFb_out)")
+        log.warning("TIPS : ClkDFa_in and/or ClkDFb_in might contain duplicates")
     
     if return_index:
         return OrbDFa_out , OrbDFb_out , Iinter
@@ -1411,7 +1406,7 @@ def svn_prn_equiv(sat_in,date_in,
     DFout = DFsat[Bool_date]
     
     if len(DFout) != 1:
-        print("WARN: several or no " + mode +  " entries !!!",sat_in,date_in)
+        log.warning("several or no %s entries !!! %s %s",mode,sat_in,date_in)
         
     if full_output:
         return DFout
@@ -1501,8 +1496,8 @@ def eop_interpotate(DF_EOP,Epochs_intrp,eop_params = ["x","y"]):
         try:
             Out_eop[eoppar] = I(Epochs_intrp)
         except ValueError as err:
-            print("ERR: in EOP interpolation")
-            print("param.:",eoppar,"epoch:",Epochs_intrp)
+            log.error("in EOP interpolation")
+            log.error("param.: %s, epoch: %s",eoppar,Epochs_intrp)
             raise err
       
     if not singleton:

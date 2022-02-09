@@ -35,6 +35,9 @@ from geodezyx import reffram
 from geodezyx import time_series
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
@@ -85,9 +88,9 @@ def read_all_points(filein):
         tsout= read_nrcan_pos(filein)
 
     else:
-        print("ERR : read_all : pas de motif valide pour lect. auto")
-        print(filein)
-        print(firstline)
+        log.error("pas de motif valide pour lect. auto")
+        log.info(filein)
+        log.info(firstline)
 
     return tsout
 
@@ -103,7 +106,7 @@ def read_all_obs(filein):
         tsout = read_sonardyne_attitude(filein)
 
     else:
-        print("ERR : read_all : pas de motif valide pour lect. auto")
+        log.error("pas de motif valide pour lect. auto")
 
     return tsout
 
@@ -126,7 +129,7 @@ def read_rtklib(filein):
 
         if re.compile('%  UTC').search(line):
             dUTCGPS = 16
-            print('WARN : MAYBE A WRONG LEAP SECOND !!!!')
+            log.warning('MAYBE A WRONG LEAP SECOND !!!!')
         elif re.compile('%  GPST').search(line):
             dUTCGPS = 0
 
@@ -137,8 +140,6 @@ def read_rtklib(filein):
         date1 = re.findall(r"[\w']+",fields[0] + ':' + fields[1])
         date2 = tuple([int(d) for d in date1[:-1]] + [int(date1[-1][:6])])
         
-        print(date2)
-
         T = (dt.datetime(date2[0],date2[1],date2[2],date2[3],date2[4],date2[5],date2[6]) + dt.timedelta(seconds=dUTCGPS))
         A = (float(fields[2]))
         B = (float(fields[3]))
@@ -379,16 +380,18 @@ def read_jpl_timeseries_solo(latlonrad_files_list):
         frad = [float(e) for e in lrad.split()[0:3]]
 
         if not ( flat[0] == flon[0] == frad[0]):
-            print(flat[0] , flon[0] , frad[0])
-            raise Exception('ERR : read_jpl_timeseries_solo : Time dont corresponds !!!')
-
+            log.error("%s %s %s",flat[0] , flon[0] , frad[0])
+            log.error('Time dont corresponds !!!')
+            raise Exception
+            
         statlat = os.path.basename(latpath).split('.')[0]
         statlon = os.path.basename(lonpath).split('.')[0]
         statrad = os.path.basename(radpath).split('.')[0]
 
         if not ( statlat == statlon == statrad):
-            print(statlat , statlon , statrad)
-            raise Exception('ERR : read_jpl_timeseries_solo : station name dont corresponds !!!')
+            log.info("%s %s %s", statlat , statlon , statrad)
+            log.error('Station name do not corresponds !!!')
+            raise Exception
 
         T = conv.year_decimal2dt(flat[0])
 
@@ -528,8 +531,8 @@ def read_track(filein):
             statbase = os.path.basename(stat_n_base_l1l2_files[0])[-10:-6]
             tsout.anex['base'] = statbase
     except:
-        print('WARN : unable to find the base for the TRACK experience')
-        print(filein)
+        log.warning('unable to find the base for the TRACK experience')
+        log.info(filein)
         pass
 
     return tsout
@@ -624,9 +627,9 @@ def read_gins_solution(filein,mode="cinematic"):
 
     #### End of reading, export
     if not Pts_list_tmp:
-        print("WARN : no point found in :")
-        print(filein)
-        print("returns None")
+        log.warning("no point found in :")
+        log.info(filein)
+        log.info("returns None")
         return None
 
     if mode == "cinematic":
@@ -685,7 +688,7 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
     '''
 
     if '.prepars' in filein:
-        print('WARN :',filein, 'seems to be a prepars file, are you sure of what you are doing ?')
+        log.warning('%s seems to be a prepars file, are you sure of what you are doing ?',filein)
 
     # Pour le static, il y a des blancs en fin de ligne ...
 
@@ -700,7 +703,7 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
         regex = '\[S[PLHXYZ][E ].*\]     $'
         tsout = time_series.TimeSeriePoint()
     else:
-        print("ERR")
+        log.error("ERR")
 
     A,B,C = 0,0,0
     Ta , Tb , Tc, T = 111,222,333,0
@@ -715,8 +718,8 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
     if len(grep_conv) == 2:
         IPPmode = True
         converg_compt = 0
-        print("INFO : ", os.path.basename(filein) , 'have 2  c o n v e r g e n c e  fields')
-        print("     keeping the last one")
+        log.info('%s have 2  c o n v e r g e n c e  fields', os.path.basename(filein))
+        log.info("keeping the last one")
     else:
         IPPmode = False
 
@@ -727,8 +730,8 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
     elif len(greped_adj) != 0:
         FinalAdj_mode = True
         FinalAdj_found = False
-        print("INFO : ", os.path.basename(filein) , 'have a COORD STAT AJ EN HTE FREQ  field')
-        print("     keeping this one (and not the convergence)")
+        log.info('%s have a COORD STAT AJ EN HTE FREQ  field', os.path.basename(filein))
+        log.info("     keeping this one (and not the convergence)")
     else:
         FinalAdj_mode = False
 
@@ -776,13 +779,13 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
                 initype = 'FLH'
                 Aref , Bref ,Cref = Fref,Lref,Href
             else:
-                print("ERR : read gins : wrong initype")
+                log.error("wrong initype")
 
             if (float(fields[2]) == 0):
                 continue
 
             if (fields[0] == 'stations'):
-                print('yyyyy')
+                pass
 
             # securité pour les lignes du type
             #  ------------------------------------------------------------------------------------------------------
@@ -835,8 +838,7 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
                     C = (float(fields[3]))
                     sC = (float(fields[4]))
             except ValueError as err:
-                print('ERR :')
-                print('yy,mm,jour,h,m,s ',yy,mm,jour,h,m,s)
+                log.error('yy,mm,jour,h,m,s, %s %s %s %s %S ',yy,mm,jour,h,m,s)
                 raise err
 
             if  Ta == Tb == Tc :
@@ -862,10 +864,10 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
                 elif kineorstatic == 'kine':
                     tsout.add_point(point)
                 else:
-                    print("ERR")
+                    log.error("ERROR")
 
     if  regex_valid_line_count == 0:
-        print("WARN : no valid line (with regex check) was found !!!")
+        log.warning("no valid line (with regex check) was found !!!")
 
 
     tsout.anex['exec_time'] = rawexectime
@@ -1030,7 +1032,7 @@ def read_gins_wrapper(input_list_or_path,flh_in_rad=True):
     tslis = []
     for f in gins_listings_list:
         if not '.gins' in f:
-            print('WARN : no .gins ext, skipping')
+            log.warning('WARN : no .gins ext, skipping')
             continue
 
         ts = read_gins(f,flh_in_rad=flh_in_rad)
@@ -1103,8 +1105,6 @@ def convert_sp3_clk_2_GINS_clk(sp3_path_in,
 
     DF_work.sort_values(["epoch","sv"],inplace=True)
 
-    print("tot",DF_work)
-
     for epoc , sv , clk in zip(DF_work["epoch"],DF_work["sv"],DF_work["clk"]):
         signaletik = write_GINS_signaletic_elt_clk(epoc,sv,clk)
 
@@ -1128,14 +1128,14 @@ def read_gins_multi_raw_listings(filelistin,kineorstatic='static',flh_in_rad=Tru
     refname = 'RIEN'
     if kineorstatic == 'static':
         for filein in filelistin:
-            print(filein)
+            log.info(filein)
             if not utils.check_regex(filein,'c o n v e r g e n c e'):
                 continue
             pt = read_gins(filein,kineorstatic='static',flh_in_rad=flh_in_rad)
             if refname == 'RIEN':
                 refname = pt.name
             if refname != pt.name:
-                print("WARN : read_gins_multi : nom de stat. != reference")
+                log.warning("nom de stat. != reference")
             tsout.add_point(pt)
         tsout.meta_set(stat=refname)
 
@@ -1143,7 +1143,7 @@ def read_gins_multi_raw_listings(filelistin,kineorstatic='static',flh_in_rad=Tru
     elif kineorstatic == 'kine':
         tsoutlis = []
         for filein in filelistin:
-            print(filein)
+            log.info(filein)
             if not utils.check_regex(filein,'c o n v e r g e n c e'):
                 continue
             ts = read_gins(filein,kineorstatic='kine',flh_in_rad=flh_in_rad)
@@ -1151,7 +1151,7 @@ def read_gins_multi_raw_listings(filelistin,kineorstatic='static',flh_in_rad=Tru
         tsout = merge_ts(tsoutlis)
 
     else:
-        print("ERR : check kineorstatic keyword")
+        log.error("check kineorstatic keyword")
 
     tsout.sort()
     return tsout
@@ -1164,15 +1164,15 @@ def read_gins_multi_extracted(filelistin,flh_in_rad=True):
     """
     tsout = time_series.TimeSeriePoint()
     if len(filelistin) != 3:
-        print("ERR : read_gins_multi_extracted : listfilein != 3 elts")
+        log.error("listfilein != 3 elts")
         return None
     statnameset = list(set([ f.split('.')[-1] for f in filelistin ]))
     statname = statnameset[0]
     if len(statnameset) != 1:
-        print("WARN : read_gins_multi_extracted : len(statnameset) != 1")
+        log.error("len(statnameset) != 1")
     fileopenedlist = [ open(f,'r+') for f in filelistin ]
     coortypelist = [ os.path.basename(f)[1] for f in filelistin ]
-    print(coortypelist,filelistin)
+    log.info("%s %s",coortypelist,filelistin)
     if 'X' in coortypelist:
         initype='XYZ'
         ia = coortypelist.index('X')
@@ -1252,7 +1252,7 @@ def read_gins_double_diff(filein):
     """
 
     if utils.grep(filein , 'c o n v e r g e n c e') == '':
-        print('ERR : ' , filein , 'have no convergence, return None')
+        log.error('%s have no convergence, return None',filein)
         return None
 
     fileopened = open(filein)
@@ -1499,10 +1499,7 @@ def read_epos_sta_coords_multi(filein_list,output_type="DataFrame"):
         OUT = DFall
         
     return OUT
-        
 
-    # print("WARN: you use read_epos_sta_coords_multi_legacy, this function is discontinued")
-    # print("      switch for read_epos_sta_coords_multi_new")
 
 
 def read_epos_sta_coords_multi_legacy(filein_list,return_dict = True):
@@ -1613,7 +1610,6 @@ def read_epos_tim(tim_file_in,convert_to_sec=False):
     
     Val_stk = []
     for l in F:
-        #print(l)
         if re.match('^\*  [0-9]{4} *([0-9]{1,2} *){4}',l):
             head_stop = True
             epoc = conv.datetime_improved(*l[3:30].split())
@@ -1749,7 +1745,7 @@ def read_calais(filelist):
     """ filelistin est une liste de 3 fichier E N & U """
 
     if filelist == []:
-        print('WARN : read_calais : files list empty , exiting ...')
+        log.warning('files list empty , exiting ...')
         return None
     filelist.sort()
 
@@ -1852,14 +1848,13 @@ def read_renag_synthetic(filein , discont_file_in = None):
             try:
                 Discont.append(conv.doy2dt(int(f[0]),int(f[1])))
             except:
-                print("WARN : something went wrong during discont. file reading")
+                log.warning("something went wrong during discont. file reading")
                 pass
 
         Discont = sorted(Discont)
         tsout.set_discont(Discont)
 
     stat_name = os.path.basename(filein).split(".")[0].split(".")[0]
-    print(stat_name)
     tsout.meta_set(path=filein,stat=stat_name,name=stat_name)
 
 
@@ -1915,7 +1910,7 @@ def read_jump_file(filein,returned_events=('S','E','D')):
     for l in F:
         l =  l.split("#")[0]
         f =  l.split()
-        print(f)
+
         ## Skip comment lines
         if (not f) or (l[0] != " ") or ("#" in l):
             continue
@@ -2119,7 +2114,7 @@ def read_sonardyne_attitude(filein):
 
     AHRS = list(reader['AHRS Id'])
     nbunit = reffram.guess_seq_len(AHRS)
-    print("nbre de devices ID : " ,nbunit)
+    log.info("nbre de devices ID : %s" ,nbunit)
     AHRS = reader['AHRS Id']
 
     tsout_list = []
@@ -2156,7 +2151,7 @@ def interp_sndy_SYS_UTC(time_conv_file_in):
 
 def read_sndy_mat_att(filein,IntSYSUTCin=None):
     if IntSYSUTCin == None:
-        print("WARN : read_sndy_mat_att : No Interpolator")
+        log.warning("No Interpolator")
     attmat  = utils.read_mat_file(filein)
     Tsys_att = attmat[0,:]
     Tposix_att = IntSYSUTCin(Tsys_att)
@@ -2175,7 +2170,7 @@ def read_sndy_mat_att(filein,IntSYSUTCin=None):
 
 def read_sndy_mat_nav(filein,IntSYSUTCin=None):
     if IntSYSUTCin == None:
-        print("WARN : read_sndy_mat_att : No Interpolator")
+        log.warning("No Interpolator")
     navmat  = utils.read_mat_file(filein)
     Tsys_nav = navmat[0,:]
     Tposix_nav = IntSYSUTCin(Tsys_nav)
@@ -2192,7 +2187,7 @@ def read_sndy_mat_nav(filein,IntSYSUTCin=None):
     return TSout
 
 def read_hector_neu(filein):
-    print("WARN : XYZ/FLH conversion not implemented")
+    log.warning("XYZ/FLH conversion not implemented")
     M = np.loadtxt(filein)
     stat = utils.grep(filein,'Site :',only_first_occur=True).split()[3]
     tsout = time_series.ts_from_list(M[:,2],M[:,1],M[:,3],conv.year_decimal2dt(M[:,0]),

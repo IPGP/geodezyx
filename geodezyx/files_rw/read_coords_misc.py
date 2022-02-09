@@ -15,6 +15,10 @@ import numpy as np
 from geodezyx import conv
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 
 def stations_in_EPOS_sta_coords_file_mono(coords_file_path):
     """
@@ -111,7 +115,7 @@ def stations_in_coords_file_multi(files_path_list,files_type = "sinex"):
     elif files_type == "EPOS_sta_coords":
         extract_fct = stations_in_EPOS_sta_coords_file_mono
     else:
-        print("ERR : check station file type !!")
+        log.error("check station file type !!")
         return None
 
     epoch_list_stk , stats_list_stk = [] , []
@@ -123,8 +127,8 @@ def stations_in_coords_file_multi(files_path_list,files_type = "sinex"):
             epoch_list_stk = epoch_list_stk + epoch_list
             stats_list_stk = stats_list_stk + stats_list
         except:
-            print('WARN : something wrong with' , file_path)
-            print('TIPS : good files type ? ("sinex" or "EPOS_sta_coords") : ', files_type)
+            log.error('something wrong with' , file_path)
+            log.error('TIPS: good files type ? ("sinex" or "EPOS_sta_coords"): ', files_type)
 
             continue
 

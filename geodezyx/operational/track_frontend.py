@@ -33,6 +33,10 @@ from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
@@ -75,7 +79,7 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     out_conf_fil   = os.path.join(out_dir,exp_full_name + '.cmd')
     out_result_fil = os.path.join(out_dir,exp_full_name + '.out' )
 
-    print(out_conf_fil)
+    log.info(out_conf_fil)
 
     confobj = open(out_conf_fil,'w+')
 
@@ -217,8 +221,8 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
     else:
         executable="/bin/bash"
 
-    print('INFO : command launched :')
-    print(bigcomand)
+    log.info('command launched :')
+    log.info(bigcomand)
 
 
     # START OF PROCESSING
@@ -227,7 +231,7 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
         try:
             subprocess.call([bigcomand], executable=executable, shell=True,timeout=60*20)
         except subprocess.TimeoutExpired:
-            print("WARN: command timeout expired, skip")
+            log.warning("command timeout expired, skip")
             pass
     
         outfiles = []
@@ -241,10 +245,10 @@ def track_runner(rnx_rover,rnx_base,working_dir,experience_prefix,
         [shutil.copy(e,out_dir) for e in outfiles]
         [os.remove(e) for e in outfiles]
     
-        print("TRACK RUN FINISHED")
-        print('results available in ' , out_dir)
+        log.info("TRACK RUN FINISHED")
+        log.info('results available in %s' , out_dir)
     else:
-        print("Silent mode ON: nothing is launched")
+        log.info("Silent mode ON: nothing is launched")
         
     return bigcomand
 
@@ -253,8 +257,8 @@ def run_track(temp_dir,exp_full_name,out_conf_fil,date,rnx_rover):
     dowstring = ''.join([str(e) for e in conv.dt2gpstime(date)])
     bigcomand = ' '.join(("track -f" ,  out_conf_fil , '-d' , conv.dt2doy(date) ,'-w', dowstring))
 
-    print('INFO : command launched :')
-    print(bigcomand)
+    log.info('INFO : command launched :')
+    log.info(bigcomand)
 
     # START OF PROCESSING
     os.chdir(temp_dir)
@@ -271,7 +275,7 @@ def run_track(temp_dir,exp_full_name,out_conf_fil,date,rnx_rover):
     [shutil.copy(e,out_dir) for e in outfiles]
     [os.remove(e) for e in outfiles]
 
-    print("TRACK RUN FINISHED")
-    print('results available in ' , out_dir)
+    log.info("TRACK RUN FINISHED")
+    log.info('results available in %s ' , out_dir)
 
     return None

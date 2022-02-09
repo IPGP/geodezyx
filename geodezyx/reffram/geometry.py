@@ -30,6 +30,10 @@ from geodezyx import conv
 from geodezyx import stats
 from geodezyx import utils
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 
@@ -262,14 +266,14 @@ ITRF14,ITRF88,2010.0,25.4,-0.5,-154.8,11.29,0.10,0.00,0.26,0.1,-0.5,-3.3,0.12,0.
     epoch_ref_Xe = DF3["TRF_E_epoch"]
     
     if verbose:
-        print("INFO:itrf_helmert_get_parameters:",TRF_Input_name,"=>",TRF_Ext_name)
-        print("   T:",T,Tdot)
-        print("   D:",D,Ddot)
-        print("   R:",R,Rdot)
-        print("t Xe:",epoch_ref_Xe)
-        print(" Inv:",inver_bool)
-        print("DataFrame:")
-        print(DF2)
+        log.info("%s => %s",TRF_Input_name,TRF_Ext_name)
+        log.info("   T: %s",T,Tdot)
+        log.info("   D: %s",D,Ddot)
+        log.info("   R: %s",R,Rdot)
+        log.info("t Xe: %s",epoch_ref_Xe)
+        log.info(" Inv: %s",inver_bool)
+        log.info("DataFrame:")
+        log.info(DF2)
     
     return T,Tdot,D,Ddot,R,Rdot,epoch_ref_Xe
 
@@ -346,10 +350,10 @@ def itrf_helmert_trans(Xi,
     """
     ## prelimiary warning 
     if utils.is_iterable(epoch_Xi):
-        print("WARN:itrf_helmert_trans: epoch_Xi is an iterable !!!")
-        print("     The function works correctly with a single epoch only !!!")
-        print("     If several initial Reference Frame epoch")
-        print("     use a loop outside the function")
+        log.warning("epoch_Xi is an iterable !!!")
+        log.info("The function works correctly with a single epoch only !!!")
+        log.info("if several initial Reference Frame epoch")
+        log.info("use a loop outside the function")
         
     
     if not type(Xi) is np.array:
@@ -496,7 +500,7 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
     for X1 , X2 in zip(X1list , X2list):
         
         if np.sum(np.isnan(X1)) or np.sum(np.isnan(X2)):
-            print("WARN: helmert_trans_estim: one point component is nan, skipping")
+            log.warning("one point component is nan, skipping")
             Bool_stk.append(False)
             continue
         
@@ -635,9 +639,9 @@ def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
                                            'ftol':tol})
     
     if RES.status != 0:
-        print("WARN: helmert_trans_estim_minimisation: something went wrong (status != 0)")
-        print("      here is the scipy.optimize.minimize message")
-        print("    > " + RES.message)
+        log.warning("something went wrong (status != 0)")
+        log.warning("here is the scipy.optimize.minimize message")
+        log.warning(" > " + RES.message)
     
     if not full_output:
         return RES.x
@@ -655,7 +659,7 @@ def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
      and then the optimization of the 2nd one etc, etc...)
     """
     
-    print("WARN : helmert_trans_estim_minimisation_scalar unstable, avoid !!!!!")
+    log.warning("unstable approach, avoid !!!!!")
     
     def minimiz_helmert_fct_scalar(hparam_mono_in,hparam_mono_id,
                             HParam_mini_in,X1in,X2in):
@@ -683,7 +687,7 @@ def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
         if not j:
             HParam_opti_prev = HParam_opti_wrk.copy()
         else:
-            print("Helmert Param minimisation iter",j+1,HParam_opti_wrk - HParam_opti_prev)
+            log.info("Helmert Param minimisation iter %s %s",j+1,HParam_opti_wrk - HParam_opti_prev)
             HParam_opti_prev = HParam_opti_wrk.copy()
                         
     return HParam_opti_wrk
@@ -804,7 +808,7 @@ def rotate_points(alphal,betal,gammal,pointlin,Rtype='R1',
     for pt in pointlin:
 
         if not utils.is_iterable(pt) or len(pt) != 3:
-            print("ERR : rotate_points : pts != 3 coords")
+            log.error("pts != 3 coords")
             return 0
 
         pointltmp = []
@@ -1103,7 +1107,7 @@ def random_walk_in_a_circle(x0 , y0 , xc , yc ,
         while D > R:
             iwhil += 1
             if iwhil > 500:
-                print('WARN : infinite loop in random_walk_in_a_circle ...' , iwhil)
+                log.warning('infinite loop in random_walk_in_a_circle ... %s')
             if polar:
                 if uniform_or_normal == 'u':
                     dalpha = RAND.uniform(-param,param) * 2 * np.pi
@@ -1120,7 +1124,7 @@ def random_walk_in_a_circle(x0 , y0 , xc , yc ,
                 else:
                     dx = np.random.normal(0,param)
                     dy = np.random.normal(0,param)
-                print(dx , dy)
+
             xtemp = X[-1] + dx
             ytemp = Y[-1] + dy
             D = np.sqrt((xtemp - xc)**2 + (ytemp - yc)**2)
@@ -1362,7 +1366,6 @@ def mat_poids(Sinp,Ninp,fuvinp=1):
     Ktemp = []
 
     for i in range(len(Sinp)):
-        print(Sinp[i])
         Ktemp.append(np.eye(Ninp[i]) * Sinp[i]**2)
 
     K = scipy.linalg.block_diag(*Ktemp)

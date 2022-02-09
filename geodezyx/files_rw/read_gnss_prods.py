@@ -18,11 +18,10 @@ from geodezyx import conv
 #from geodezyx import time_series
 from geodezyx import utils
 
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
  #   _____ _            _       __ _ _           
  #  / ____| |          | |     / _(_) |          
@@ -308,7 +307,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     #### read the Header as a 1st check
     Header = read_sp3_header(Lines,AC_name)
     if Header.empty:
-        print("WARN:read_sp3: The SP3 looks empty: ",file_path_in)
+        log.warning("The SP3 looks empty: ",file_path_in)
         if returns_pandas:
             df = pd.DataFrame([], columns=['epoch','sat', 'const',
                                            'sv','type',
@@ -393,7 +392,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
         return df
     else:
-        print("INFO : return list, very beta : no Sat. Vehicule Number info ...")
+        log.info("return list, very beta : no Sat. Vehicule Number info ...")
         return  epoch_stk ,  Xstk , Ystk , Zstk , Clkstk , AC_name_stk
 
 def read_sp3_header(sp3_in,ac_name_in=None):

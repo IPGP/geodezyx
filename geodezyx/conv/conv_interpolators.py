@@ -9,10 +9,15 @@ Created on Tue Aug 24 13:58:51 2021
 import datetime as dt
 import scipy
 from scipy.spatial.transform import Rotation
-
 import numpy as np
 
 from geodezyx import utils,conv
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
+
 
 #  _______ _                   _____           _             _____       _                        _       _   _             
 # |__   __(_)                 / ____|         (_)           |_   _|     | |                      | |     | | (_)            
@@ -22,8 +27,6 @@ from geodezyx import utils,conv
 #    |_|  |_|_| |_| |_|\___| |_____/ \___|_|  |_|\___||___/ |_____|_| |_|\__\___|_|  | .__/ \___/|_|\__,_|\__|_|\___/|_| |_|
 #                                                                                    | |                                    
 #                                                                                    |_|                                    
-
-
 
 class interp1d_time(scipy.interpolate.interp1d):
    """
@@ -117,14 +120,15 @@ class Slerp_time(scipy.spatial.transform.Slerp):
        #### check if the time_posix are stricly assending
        bool_assending = np.all(np.diff(times_posix) > 0)
        if not bool_assending:
-           print(list(times_posix))
-           print(list(np.diff(times_posix)))
+           log.debug(list(times_posix))
+           log.debug(list(np.diff(times_posix)))
            IndexBad = np.where(np.diff(times_posix) <= 0)
-           print(list(IndexBad))
-           print(list(times_posix[IndexBad]))
-           print(list(np.diff(times_posix)[IndexBad]))
-           print("WARN: times_posix is not stricly assending, it will crash")
-           print("      then we print below the times_posix for investigation ")
+           log.debug(list(IndexBad))
+           log.debug(list(times_posix[IndexBad]))
+           log.debug(list(np.diff(times_posix)[IndexBad]))
+           
+           log.warning("times_posix is not stricly assending, it will crash")
+           log.warning("then we show below the times_posix for debug ")
        
        #### For the extrapolation 
        # first value => begining of posix era

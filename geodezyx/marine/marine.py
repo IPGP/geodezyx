@@ -26,9 +26,13 @@ import numpy as np
 from geodezyx import utils
 
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
@@ -56,19 +60,19 @@ def gebco_bathy_grid_extractor(dataset,latmin,latmax,lonmin,lonmax):
 
 
     if not np.any(latmin_dec == lat):
-        print("ERR : ... replacing to the nearest")
+        log.warning("... replacing to the nearest")
         latmin_dec = utils.find_nearest(lat,latmin_dec)[0]
 
     if not np.any(latmax_dec == lat):
-        print("ERR : ... replacing to the nearest")
+        log.warning("... replacing to the nearest")
         latmax_dec = utils.find_nearest(lat,latmax_dec)[0]
 
     if not np.any(lonmin_dec == lon):
-        print("ERR : ... replacing to the nearest")
+        log.warning("... replacing to the nearest")
         lonmin_dec = utils.find_nearest(lon,lonmin_dec)[0]
 
     if not np.any(lonmax_dec == lon):
-        print("ERR : ... replacing to the nearest")
+        log.warning("... replacing to the nearest")
         lonmax_dec = utils.find_nearest(lon,lonmax_dec)[0]
 
     boollat = np.logical_and(latmin_dec <= lat, lat <= latmax_dec)
