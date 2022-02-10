@@ -46,11 +46,10 @@ log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'toolbox_meta'
 
 if os.path.isfile(log_file_path):
     ##print("INFO:",log_file_path,"found")
-
     logging.config.fileConfig(fname=log_file_path, disable_existing_loggers=False)
 else:
     print("ERR:logger config file",log_file_path,"is missing")
-    
+
 
 #### IMPORT GEODEZYX INTERNAL SUBMODULES
 from . import externlib
@@ -60,9 +59,7 @@ from . import athmo
 from . import conv
 from . import files_rw
 from . import geodyn
-#from . import kepler_core
 from . import operational
-#from . import legacy
 from . import reffram
 from . import stats
 from . import time_series
@@ -74,9 +71,7 @@ __all__ = ['athmo',
            'externlib',
            'files_rw',
            'geodyn',
-#           'kepler_core',
            'operational',
-#           'legacy',
            'reffram',
            'stats',
            'time_series',
