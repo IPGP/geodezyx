@@ -41,7 +41,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="geodezyx.time_series package" href="geodezyx.time_series.html" /> 
+    <link rel="prev" title="geodezyx.toolbox_meta package" href="geodezyx.toolbox_meta.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.utils package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.dict_utils">geodezyx.utils.dict_utils module</a></li>
@@ -811,7 +812,7 @@ NB : Also check if the file exists</p>
 * wildcard (only * and ?) for case_sensitive = True
 * regex for case_sensitive = False</p></li>
 <li><p><strong>sort_results</strong> (<em>bool</em>) – Sort results</p></li>
-<li><p><strong>case_sensitive</strong> (<em>bool</em>) – Case sensitve or not</p></li>
+<li><p><strong>case_sensitive</strong> (<em>bool</em>) – Case sensitve or not. If False, the pattern <em>must</em> be a regex</p></li>
 <li><p><strong>extended_file_stats</strong> (<em>bool</em>) – <p>if True, returns the stats of the files
 the outputed matches list will be a list of tuples
 (file_path,stat_object), where stat_object has the following attributes</p>
@@ -1077,11 +1078,6 @@ de lists =&gt; matrices</p>
 <dd><p>Clears all the variables from the workspace of the spyder
 application.</p>
 </dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.utils_core.contains_word">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">contains_word</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.contains_word" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.dday">
@@ -1443,7 +1439,7 @@ value if the timeout_duration is exceeded</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="geodezyx.time_series.html" class="btn btn-neutral float-left" title="geodezyx.time_series package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.toolbox_meta.html" class="btn btn-neutral float-left" title="geodezyx.toolbox_meta package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

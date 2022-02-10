@@ -2,11 +2,11 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.3.0 / 2021-02-09**, README Revision: 2021-11-25
+**Version 0.4.3.0 / 2021-02-09**, README Revision: 2021-02-10
 
 
-**Authors:** Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
-(GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
+**Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
+(GFZ, Potsdam, Germany), with contributions from Val??rie Ballu (CNRS/La Rochelle University, France)
 
 **Documentation:** [https://geodezyx.github.io/GeodeZYX-Toolbox_v4](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
 
@@ -14,9 +14,9 @@
 
 **PyPi project:** [https://pypi.org/project/geodezyx](https://pypi.org/project/geodezyx/)
 
-**Contact e-mail:** pierre.sakic@gfz-potsdam.de
+**Contact e-mail:** sakic@ipgp.fr
 
-**Citation:** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
+**Citation:** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Val??rie (2019):
 *The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes*. 
 V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.org/10.5880/GFZ.1.1.2019.002)
 
@@ -66,13 +66,20 @@ and install the Toolbox you downloaded with ``python setup.py install``
 
 Alternatively, you can also add the ``geodezyx`` forder in your ``PYTHONPATH`` (for experimented users)
 
+## Changelog
+
+### v0.4.3.0, 2022-02-10
+  * enhanced logger replaces basic prints.
+  * GeodeZYX is now "virtualenv-ready", i.e. stand-alone based on the ``setup.py`` required modules.
+  * a ``full`` version is set, for advanced installation.
+
 ## Licence
 
 GNU General Public License, Version 3, 29 June 2007
 
-Copyright © 2019 Helmholtz Centre Potsdam GFZ 
+Copyright ? 2019 Helmholtz Centre Potsdam GFZ 
 German Research Centre for Geosciences, Potsdam, Germany 
-(Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu)
+(Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Val?rie Ballu)
 
 The geodeZYX toolbox is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the 

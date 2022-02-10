@@ -115,6 +115,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 </ul>
 </li>
@@ -1173,10 +1174,16 @@ in the name the statname and the date</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.rinex_check_epochs_availability">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">rinex_check_epochs_availability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.rinex_check_epochs_availability" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Args :</dt><dd><p>A list of rinex paths</p>
+<dd><p>Gives simple statistics about RINEX avaiability for all the listed stations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>rinex_path_list</strong> (<em>list</em>) – A list of rinex paths</p>
 </dd>
-<dt>Returns :</dt><dd><p>T : a table with results</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>T</strong> – a table with statistics.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1185,26 +1192,76 @@ in the name the statname and the date</p>
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.rinex_lister">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">rinex_lister</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_new_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.rinex_lister" title="Permalink to this definition">¶</a></dt>
 <dd><p>find all rinex in a folder and his subfolders
-path can be a string or a tuple of string =&gt; manage multi files :)</p>
+path can be a string or a tuple of string =&gt; manage multi paths :)</p>
 <p>is very similar with softs_runner.multi_finder_rinex and
 gins_runner.get_rinex_list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – archive path.</p></li>
+<li><p><strong>add_new_names</strong> (<em>bool</em><em>, </em><em>optional</em>) – consider new names. The default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>rinexfilelist</strong> – list of rinex files.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.rinex_timeline">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">rinex_timeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputlist_or_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rinex_lister</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dots_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jul_date_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.rinex_timeline" title="Permalink to this definition">¶</a></dt>
-<dd><p>if use_rinex_lister = True :
-inputlist_or_paths is a path OR a list of path
-where RINEX can be found (use the subfunction rinex_lister for that)
-else if use_rinex_lister = False:
-it’s a list of RINEXs</p>
+<dd><p>Frontend function to plot the aviable RINEXs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputlist_or_paths</strong> (<em>iterable</em>) – list of rinex file paths or list of archive directories.</p></li>
+<li><p><strong>start</strong> (<em>datetime</em><em>, </em><em>optional</em>) – start of the plot time span. The default is dt.datetime(1980,1,1).</p></li>
+<li><p><strong>end</strong> (<em>datetime</em><em>, </em><em>optional</em>) – end of the plot time span. The default is dt.datetime(2099,1,1).</p></li>
+<li><p><strong>use_rinex_lister</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, inputlist_or_paths is a list of archive directories.
+if False, inputlist_or_paths is a list of  rinex file paths.
+The default is True.</p></li>
+<li><p><strong>dots_plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – print dots instead of line.
+This mode should be avoided because it is slower.
+The default is False.</p></li>
+<li><p><strong>jul_date_plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot the date in julian dates. The default is False.</p></li>
+<li><p><strong>return_figure</strong> (<em>bool</em><em>, </em><em>optional</em>) – returns figure. The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>datadico</strong> (<em>dict</em>) – datadico.</p></li>
+<li><p><strong>fig</strong> (<em>matplotlib figure</em>) – figure</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.rinex_timeline_datadico">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">rinex_timeline_datadico</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputlist_or_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rinex_lister</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.rinex_timeline_datadico" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>convention for RINEX datadico :</dt><dd><p>datadico[stat] = [(rinexname1,optional1,date1) … (rinexnameN,optionalN,dateN)]</p>
+<dd><p>Generate a RINEX datadico</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputlist_or_paths</strong> (<em>iterable</em>) – list of rinex file paths or list of archive directories.</p></li>
+<li><p><strong>use_rinex_lister</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, inputlist_or_paths is a list of archive directories.
+if False, inputlist_or_paths is a list of  rinex file paths.
+The default is True.</p></li>
+<li><p><strong>optional_info</strong> (<em>str</em><em>, </em><em>optional</em>) – A addtional information for the rinexs found.
+Usually it is the archive name
+The default is ‘’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>datadico</strong> – datadico[stat] = [(rinexname1,optional1,date1) … (rinexnameN,optionalN,dateN)]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1213,21 +1270,22 @@ it’s a list of RINEXs</p>
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.rinex_timeline_datadico_merge">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">rinex_timeline_datadico_merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datadico_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priority_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.rinex_timeline_datadico_merge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merge different RINEXs datadico, produced by rinex_timeline_datadico
-coming from different archives
-Args :</p>
-<blockquote>
-<div><p>rinex_timeline_datadico : list of RINEX datadico
-priority_list : priority list of ‘optional_info’ (archive ID)</p>
-<blockquote>
-<div><p>it will erase optional_info of lower priority
-NB : it is not very useful, just sort</p>
-<blockquote>
-<div><p>datadico_list in the right order …</p>
-</div></blockquote>
-</div></blockquote>
-</div></blockquote>
-<dl class="simple">
-<dt>Returns :</dt><dd><p>datadico_out : a merged datadico</p>
+coming from different archives</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datadico_list</strong> (<em>list of dict</em>) – list of RINEX datadico.</p></li>
+<li><p><strong>priority_list</strong> (<em>list</em><em>, </em><em>optional</em>) – priority list of ‘optional_info’ (archive ID)
+it will erase optional_info of lower priority
+NB : it is not very useful, just sort datadico_list in the right order ….
+The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>datadico_out</strong> – a merged datadico</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1254,7 +1312,34 @@ priority_list : priority list of ‘optional_info’ (archive ID)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.timeline_plotter">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">timeline_plotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datadico</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dots_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jul_date_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datadico_anex_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_only_stats_of_main_datadico</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colordico_for_main_datadico</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.timeline_plotter" title="Permalink to this definition">¶</a></dt>
-<dd><p>A simpler version has been commited to geodezyx toolbox for archive
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datadico</strong> (<em>dict</em>) – a RINEX datadico (see rinex_timeline_datadico for details).</p></li>
+<li><p><strong>start</strong> (<em>datetime</em><em>, </em><em>optional</em>) – start of the plot time span. The default is dt.datetime(1980,1,1).</p></li>
+<li><p><strong>end</strong> (<em>datetime</em><em>, </em><em>optional</em>) – end of the plot time span. The default is dt.datetime(2099,1,1).</p></li>
+<li><p><strong>dots_plot</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – print dots instead of line.
+This mode should be avoided because it is slower.
+The default is False.</p></li>
+<li><p><strong>jul_date_plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot the date in julian dates. The default is False.</p></li>
+<li><p><strong>datadico_anex_list</strong> (<em>list</em><em>, </em><em>optional</em>) – A list of secondary datadicos. The default is [].</p></li>
+<li><p><strong>use_only_stats_of_main_datadico</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use only stats of main datadico.
+Advanced usage.
+The default is False.</p></li>
+<li><p><strong>colordico_for_main_datadico</strong> (<em>dict</em><em>, </em><em>optional</em>) – Color for the main datadico.
+Advanced usage.
+The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fig</strong> – figure</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib figure</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>A simpler version has been commited to geodezyx toolbox GitHub for archive
 on 20180118 15:59A</p>
 </dd></dl>
 
