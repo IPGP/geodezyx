@@ -39,7 +39,8 @@ from datetime import datetime, date
 
 #### geodeZYX modules
 from geodezyx import utils,stats
-import geodezyx.conv.conv_interpolators as conv_interpolators
+#import geodezyx.conv.conv_interpolators as conv_interpolators
+from geodezyx.conv import conv_interpolators
 
 #### Import the logger
 import logging
