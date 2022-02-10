@@ -61,7 +61,7 @@ def dist(A,B):
     Parameters
     ----------
     A,B : numpy.array of float
-        Description param1
+        3D-points
         
     Returns
     -------
