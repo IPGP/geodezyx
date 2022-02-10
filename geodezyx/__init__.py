@@ -45,11 +45,11 @@ import uuid
 log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'toolbox_meta','loggzyx.conf.py')
 
 if os.path.isfile(log_file_path):
-    print("INFO:",log_file_path,"found")
+    ##print("INFO:",log_file_path,"found")
 
     logging.config.fileConfig(fname=log_file_path, disable_existing_loggers=False)
 else:
-    print("ERR:",log_file_path,"is missing")
+    print("ERR:logger config file",log_file_path,"is missing")
     
 
 #### IMPORT GEODEZYX INTERNAL SUBMODULES
