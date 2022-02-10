@@ -36,9 +36,9 @@ from matplotlib.patches import Ellipse
 from geodezyx import utils
 
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 
 #### Import the logger
@@ -178,7 +178,11 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
         (lats_area,longs_area,gebco_area) = area(long_ini,lats_ini,gebconc,latm,latM,lonm,lonM,'0-180') #lat bas,lat haut, long
         (longs,lats,gebco) = split_grid(longs_area,lats_area,gebco_area,2)
         (longs_gr,lats_gr)=np.meshgrid(longs,lats)  
-        fond = m.pcolormesh(longs_gr,lats_gr,gebco,shading='flat',cmap=LevelColormap(list(np.asarray(levels)*(1)),cmap=cm.deep_r),latlon=True) #ice,deep
+        fond = m.pcolormesh(longs_gr,lats_gr,
+                            gebco,shading='flat',
+                            cmap=LevelColormap(list(np.asarray(levels)*(1)),
+                                               cmap=cm.deep_r),
+                            latlon=True) #ice,deep
         cbar=m.colorbar(location='top',pad=0.5)
         cbar.set_label('Depth [m] ', rotation=0)
         

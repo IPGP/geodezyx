@@ -36,7 +36,8 @@ from ftplib import FTP
 import glob
 import itertools
 import multiprocessing as mp
-import os 
+import os
+import pandas as pd 
 import re
 import shutil
 import urllib
@@ -47,9 +48,14 @@ from geodezyx import conv
 from geodezyx import utils
 
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
