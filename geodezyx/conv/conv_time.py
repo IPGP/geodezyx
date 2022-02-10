@@ -39,8 +39,10 @@ from datetime import datetime, date
 
 #### geodeZYX modules
 from geodezyx import utils,stats
-#import geodezyx.conv.conv_interpolators as conv_interpolators
-from geodezyx.conv import conv_interpolators
+
+### Imported in the corresponding function to avoid cyclic import)
+##from geodezyx.conv import conv_interpolators
+
 
 #### Import the logger
 import logging
@@ -868,6 +870,7 @@ def dt_utc2dt_ut1_smart(dtin,DF_EOP_in,
         
         ### We also use the interpolator class
         if use_interp1d_obj:
+            from geodezyx.conv import conv_interpolators
             IEOP = conv_interpolators.interp1d_time(DF_EOP.index.values,
                                                     DF_EOP['UT1-UTC'])
         else:
