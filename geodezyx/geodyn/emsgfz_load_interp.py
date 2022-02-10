@@ -10,7 +10,6 @@ Created on Fri Jun 25 16:43:48 2021
 import datetime as dt
 import pandas as pd
 import numpy as np
-import netCDF4 as nc
 import os
 import itertools
 import scipy
@@ -211,6 +210,10 @@ def ESMGFZ_extrapolator(path_or_netcdf_object_in,
         The extrapolated values.
 
     """
+    
+    #internal import because this module is complex to install
+    import netCDF4 as nc
+
     
     if not utils.is_iterable(time_xtrp):
         time_xtrp = [time_xtrp]

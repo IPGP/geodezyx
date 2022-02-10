@@ -14,6 +14,7 @@ import logging
 import logging.config
 import math
 import matplotlib
+matplotlib.use("agg") ### avoid tk import error
 import matplotlib.pyplot as plt
 import multiprocessing as mp
 from natsort import natsorted, ns
@@ -41,8 +42,15 @@ import urllib
 import uuid
 
 #### IMPORT CONFIG FOR LOGGER
-log_file_path = os.path.join(path.dirname(path.abspath(__file__)), 'loggzyx.conf')
-logging.config.fileConfig(fname=log_file_path, disable_existing_loggers=False)
+log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'toolbox_meta','loggzyx.conf.py')
+
+if os.path.isfile(log_file_path):
+    ##print("INFO:",log_file_path,"found")
+
+    logging.config.fileConfig(fname=log_file_path, disable_existing_loggers=False)
+else:
+    print("ERR:logger config file",log_file_path,"is missing")
+    
 
 #### IMPORT GEODEZYX INTERNAL SUBMODULES
 from . import externlib

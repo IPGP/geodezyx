@@ -161,20 +161,24 @@ PyPi project: https://pypi.org/project/geodezyx
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['bs4',
                       'collection',
-                      'kepler.py',
+                      #'kepler.py',
                       'natsort',
                       'matplotlib',
+                      #'ncompress',
                       'numpy',
                       #'netCDF4',
                       'pybind11',
                       'pyorbital',
                       'pytwobodyorbit',
+                      'pyyaml',
                       'pandas',
                       'scipy',
                       'sympy',
                       'tabulate',
+                      'tk',
                       'vincenty',
-                      'ncompress']  # Optional
+                      'wheel',
+                      ],  # Optional
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
@@ -184,10 +188,14 @@ PyPi project: https://pypi.org/project/geodezyx
     #
     # Similar to `install_requires` above, these must be valid existing
     # projects.
-    #extras_require={  # Optional
+    extras_require={  # Optional
     #    'dev': ['check-manifest'],
     #    'test': ['coverage'],
-    #},
+         'full': ['netCDF4',
+                  'kepler.py',
+                  'ncompress'],
+
+    }
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.
