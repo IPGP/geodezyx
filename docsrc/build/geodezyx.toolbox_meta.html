@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>geodezyx.megalib package &mdash; GeodeZYX Toolbox 4.x documentation</title>
+  <title>geodezyx.toolbox_meta package &mdash; GeodeZYX Toolbox 4.x documentation</title>
   
 
   
@@ -41,8 +41,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="geodezyx.operational package" href="geodezyx.operational.html" />
-    <link rel="prev" title="geodezyx.geodyn package" href="geodezyx.geodyn.html" /> 
+    <link rel="next" title="geodezyx.utils package" href="geodezyx.utils.html" />
+    <link rel="prev" title="geodezyx.time_series package" href="geodezyx.time_series.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -98,21 +98,18 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.megalib package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.megalib.genefun">geodezyx.megalib.genefun module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.megalib.geo_files_converter_lib">geodezyx.megalib.geo_files_converter_lib module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.megalib.geoclass">geodezyx.megalib.geoclass module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.megalib.geodetik">geodezyx.megalib.geodetik module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.megalib.megalib">geodezyx.megalib.megalib module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.megalib.softs_runner">geodezyx.megalib.softs_runner module</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.toolbox_meta package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#geodezyx-toolbox-meta-import-generic-module">geodezyx.toolbox_meta.import_generic module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#geodezyx-toolbox-meta-loggzyx-module">geodezyx.toolbox_meta.loggzyx module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#geodezyx-toolbox-meta-refactoring-module">geodezyx.toolbox_meta.refactoring module</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 </ul>
 </li>
@@ -168,13 +165,13 @@
         
           <li><a href="geodezyx.html">geodezyx package</a> &raquo;</li>
         
-      <li>geodezyx.megalib package</li>
+      <li>geodezyx.toolbox_meta package</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/geodezyx.megalib.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/geodezyx.toolbox_meta.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -187,38 +184,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-geodezyx.megalib">
-<span id="geodezyx-megalib-package"></span><h1>geodezyx.megalib package<a class="headerlink" href="#module-geodezyx.megalib" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="geodezyx-toolbox-meta-package">
+<h1>geodezyx.toolbox_meta package<a class="headerlink" href="#geodezyx-toolbox-meta-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-geodezyx.megalib.genefun">
-<span id="geodezyx-megalib-genefun-module"></span><h2>geodezyx.megalib.genefun module<a class="headerlink" href="#module-geodezyx.megalib.genefun" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug  2 14:25:54 2019</p>
-<p>&#64;author: psakicki</p>
+<div class="section" id="geodezyx-toolbox-meta-import-generic-module">
+<h2>geodezyx.toolbox_meta.import_generic module<a class="headerlink" href="#geodezyx-toolbox-meta-import-generic-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-geodezyx.megalib.geo_files_converter_lib">
-<span id="geodezyx-megalib-geo-files-converter-lib-module"></span><h2>geodezyx.megalib.geo_files_converter_lib module<a class="headerlink" href="#module-geodezyx.megalib.geo_files_converter_lib" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug  2 14:26:37 2019</p>
-<p>&#64;author: psakicki</p>
+<div class="section" id="geodezyx-toolbox-meta-loggzyx-module">
+<h2>geodezyx.toolbox_meta.loggzyx module<a class="headerlink" href="#geodezyx-toolbox-meta-loggzyx-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-geodezyx.megalib.geoclass">
-<span id="geodezyx-megalib-geoclass-module"></span><h2>geodezyx.megalib.geoclass module<a class="headerlink" href="#module-geodezyx.megalib.geoclass" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug  2 14:26:37 2019</p>
-<p>&#64;author: psakicki</p>
-</div>
-<div class="section" id="module-geodezyx.megalib.geodetik">
-<span id="geodezyx-megalib-geodetik-module"></span><h2>geodezyx.megalib.geodetik module<a class="headerlink" href="#module-geodezyx.megalib.geodetik" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug  2 14:26:37 2019</p>
-<p>&#64;author: psakicki</p>
-</div>
-<div class="section" id="module-geodezyx.megalib.megalib">
-<span id="geodezyx-megalib-megalib-module"></span><h2>geodezyx.megalib.megalib module<a class="headerlink" href="#module-geodezyx.megalib.megalib" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-geodezyx.megalib.softs_runner">
-<span id="geodezyx-megalib-softs-runner-module"></span><h2>geodezyx.megalib.softs_runner module<a class="headerlink" href="#module-geodezyx.megalib.softs_runner" title="Permalink to this headline">¶</a></h2>
-<p>Created on Fri Aug 16 12:03:23 2019</p>
-<p>&#64;author: psakicki</p>
+<div class="section" id="geodezyx-toolbox-meta-refactoring-module">
+<h2>geodezyx.toolbox_meta.refactoring module<a class="headerlink" href="#geodezyx-toolbox-meta-refactoring-module" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -228,8 +206,8 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="geodezyx.operational.html" class="btn btn-neutral float-right" title="geodezyx.operational package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="geodezyx.geodyn.html" class="btn btn-neutral float-left" title="geodezyx.geodyn package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.utils.html" class="btn btn-neutral float-right" title="geodezyx.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="geodezyx.time_series.html" class="btn btn-neutral float-left" title="geodezyx.time_series package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

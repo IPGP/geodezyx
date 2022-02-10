@@ -91,7 +91,11 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to GeodeZYX Toolbox’s documentation!</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#with-pypi-and-pip">with PyPi and pip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#with-pypi-and-pip">with PyPi and pip</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#standard-installation-for-non-admin-users">Standard installation (for non-admin users)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#full-installation-for-sudoers-advanced-users">Full installation (for sudoers/advanced users)</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#clone-and-manually-install-from-github">clone and manually install from GitHub</a></li>
 </ul>
 </li>
@@ -100,7 +104,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>GeodeZYX Toolbox</cite>’s Cookbook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="geodezyx.html">GeodeZYX’s complete reference package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="geodezyx.html">geodezyx package</a></li>
 </ul>
 
             
@@ -174,10 +178,21 @@
 <span id="install"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="with-pypi-and-pip">
 <h3>with PyPi and pip<a class="headerlink" href="#with-pypi-and-pip" title="Permalink to this headline">¶</a></h3>
-<p>We recommend to use pip to do a propper installation:
+<div class="section" id="standard-installation-for-non-admin-users">
+<h4>Standard installation (for non-admin users)<a class="headerlink" href="#standard-installation-for-non-admin-users" title="Permalink to this headline">¶</a></h4>
+<p>We recommend to use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to do a propper installation:
 <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">geodezyx</span></code></p>
 <p>To get the latest working version you can install directly the GitHub-hosted version:
 <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-I</span> <span class="pre">-U</span> <span class="pre">git+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</span></code></p>
+</div>
+<div class="section" id="full-installation-for-sudoers-advanced-users">
+<h4>Full installation (for sudoers/advanced users)<a class="headerlink" href="#full-installation-for-sudoers-advanced-users" title="Permalink to this headline">¶</a></h4>
+<p>This version installs facultative external modules, which require system libraries only installable when you have the sudo/admin rights, namely <code class="docutils literal notranslate"><span class="pre">netCDF4</span></code>, <code class="docutils literal notranslate"><span class="pre">kepler.py</span></code>, <code class="docutils literal notranslate"><span class="pre">ncompress</span></code>.</p>
+<p>We recommend to use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to do a propper installation:
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">geodezyx[full]</span></code></p>
+<p>To get the latest working version you can install directly the GitHub-hosted version:
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-I</span> <span class="pre">-U</span> <span class="pre">'git+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4#egg=geodezyx[full]'</span></code></p>
+</div>
 </div>
 <div class="section" id="clone-and-manually-install-from-github">
 <h3>clone and manually install from GitHub<a class="headerlink" href="#clone-and-manually-install-from-github" title="Permalink to this headline">¶</a></h3>
