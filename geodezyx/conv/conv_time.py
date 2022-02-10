@@ -40,9 +40,9 @@ from datetime import datetime, date
 #### geodeZYX modules
 from geodezyx import utils,stats
 
-### Imported in the corresponding function to avoid cyclic import)
-##from geodezyx.conv import conv_interpolators
-
+### Imported in the corresponding function to avoid cyclic import
+### from geodezyx.conv import conv_interpolators
+### https://stackoverflow.com/questions/1250103/attributeerror-module-object-has-no-attribute
 
 #### Import the logger
 import logging
