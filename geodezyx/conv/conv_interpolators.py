@@ -11,8 +11,7 @@ import scipy
 from scipy.spatial.transform import Rotation
 import numpy as np
 
-from geodezyx import utils
-import geodezyx.conv.conv_time as convtime
+from geodezyx import utils,conv
 
 #### Import the logger
 import logging
@@ -48,12 +47,12 @@ class interp1d_time(scipy.interpolate.interp1d):
        
        ### the datetime is converted to posix
        if isinstance(x[0],dt.datetime):
-           xposix = convtime.dt2posix(x)
+           xposix = conv.dt2posix(x)
        elif isinstance(x[0],np.datetime64):
-           ### xposix = convtime.dt2posix(convtime.numpy_dt2dt(x))
+           ### xposix = conv.dt2posix(conv.numpy_dt2dt(x))
            # dt2posix handles now (202108) the np datetimes 
            # bc of a pb of time resolution
-           xposix = convtime.dt2posix(x)
+           xposix = conv.dt2posix(x)
        else:
            xposix = x
        
@@ -72,12 +71,12 @@ class interp1d_time(scipy.interpolate.interp1d):
 
        ### the datetime is converted to posix
        if isinstance(x[0],dt.datetime):
-           xposix = convtime.dt2posix(x)
+           xposix = conv.dt2posix(x)
        elif isinstance(x[0],np.datetime64):
-           ### xposix = convtime.dt2posix(convtime.numpy_dt2dt(x))
+           ### xposix = conv.dt2posix(conv.numpy_dt2dt(x))
            # dt2posix handles now (202108) the np datetimes 
            # bc of a pb of time resolution
-           xposix = convtime.dt2posix(x)
+           xposix = conv.dt2posix(x)
        else:
            xposix = x
        
@@ -109,12 +108,12 @@ class Slerp_time(scipy.spatial.transform.Slerp):
        
        ### the datetime is converted to posix
        if isinstance(times[0],dt.datetime):
-           times_posix = convtime.dt2posix(times)
+           times_posix = conv.dt2posix(times)
        elif isinstance(times[0],np.datetime64):
-           ### times_posix = convtime.dt2posix(convtime.numpy_dt2dt(times))
+           ### times_posix = conv.dt2posix(conv.numpy_dt2dt(times))
            # dt2posix handles now (202108) the np datetimes 
            # bc of a pb of time resolution
-           times_posix = convtime.dt2posix(times)
+           times_posix = conv.dt2posix(times)
        else:
            times_posix = times
                       
@@ -151,12 +150,12 @@ class Slerp_time(scipy.spatial.transform.Slerp):
        times = np.array(times)
        
        if isinstance(times[0],dt.datetime):
-           times_posix = convtime.dt2posix(times)
+           times_posix = conv.dt2posix(times)
        elif isinstance(times[0],np.datetime64):
-           ### times_posix = convtime.dt2posix(convtime.numpy_dt2dt(times))
+           ### times_posix = conv.dt2posix(conv.numpy_dt2dt(times))
            # dt2posix handles now (202108) the np datetimes 
            # bc of a pb of time resolution
-           times_posix = convtime.dt2posix(times)
+           times_posix = conv.dt2posix(times)
        else:
            times_posix = times
            
