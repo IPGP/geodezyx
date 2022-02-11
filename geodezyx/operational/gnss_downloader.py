@@ -93,6 +93,12 @@ def rgp_ign_smn_server(stat,date):
     url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , 'data_30' , rnxname)
     return url
 
+def rgp_ign_mlv_server(stat,date):
+    urlserver = "ftp://rgpdata.ensg.eu/pub/data/"
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , 'data_30' , rnxname)
+    return url
+
 def rgp_ign_smn_1Hz_server(stat,date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
 
@@ -441,10 +447,10 @@ def downloader(url,savedir,force = False,
         try:
             f = opener.open(url)
         except (urllib.error.HTTPError , urllib.error.URLError):
-            log.warning("%s not found on server :(",rnxname)
+            log.warning("%s not found :(",rnxname)
             log.warning(url_print)
             return ""
-        log.info("%s found on server :)",rnxname)
+        log.info("%s found, downloading :)",rnxname)
         data = f.read()
         if not os.path.exists(savedir):
             os.makedirs(savedir)
@@ -466,7 +472,8 @@ def start_end_date_easy(start_year,start_doy,end_year,end_doy):
 
 
 
-def effective_save_dir_orbit(parent_archive_dir,calc_center,date,
+def effective_save_dir_orbit(parent_archive_dir,
+                             calc_center,date,
                              archtype ='year/doy/'):
     """
     INTERNAL_FUNCTION
@@ -526,6 +533,8 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
             igs_garner (for the garner center, but not very reliable)
 
             rgp (St Mandé center)
+
+            rgp_mlv (Marne la Vallée center)
 
             rgp_1Hz (all the 24 hourly rinex for the day will be downloaded)
 
@@ -621,6 +630,8 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
                     url = igs_garner_server(stat,curdate)
                 elif netwk == 'rgp':
                     url = rgp_ign_smn_server(stat,curdate)
+                elif netwk == 'rgp_mlv':
+                    url = rgp_ign_mlv_server(stat,curdate)
                 elif netwk == 'rgp_1Hz':
                     urls = rgp_ign_smn_1Hz_server(stat,curdate)
                     mode1Hz = True
@@ -699,7 +710,7 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
             continue
 
     pool.close()
-    log.info(skiped_url +  ' returned url skiped because of a weird error, but it is not important :)')
+    log.debug(str(skiped_url) +  ' returned url skiped because of a weird error, but it is not important...')
     return localfiles_lis
 
 #    return zip(urllist,savedirlist)
@@ -1644,7 +1655,7 @@ def ftp_files_crawler(urllist,savedirlist):
             count_loop = 0
             
         ####### we recreate a new file list if the date path is not the same        
-        if prev_row_cwd.dir != row.dir:
+        if (prev_row_cwd.dir != row.dir) or irow == 0:
             log.info("chdir " + row.dirname)
             FTPobj.cwd("/")
     
