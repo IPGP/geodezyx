@@ -14,7 +14,7 @@ import logging
 import logging.config
 import math
 import matplotlib
-matplotlib.use("agg") ### avoid tk import error
+#matplotlib.use("agg") ### avoid tk import error
 import matplotlib.pyplot as plt
 import multiprocessing as mp
 from natsort import natsorted, ns
