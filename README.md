@@ -16,7 +16,7 @@
 
 **Contact e-mail:** sakic@ipgp.fr
 
-**Citation:** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Val??rie (2019):
+**Citation:** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
 *The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes*. 
 V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.org/10.5880/GFZ.1.1.2019.002)
 
