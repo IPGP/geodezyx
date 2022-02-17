@@ -6,7 +6,7 @@
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
-(GFZ, Potsdam, Germany), with contributions from Val??rie Ballu (CNRS/La Rochelle University, France)
+(GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
 
 **Documentation:** [https://geodezyx.github.io/GeodeZYX-Toolbox_v4](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
 
