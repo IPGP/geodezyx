@@ -87,7 +87,8 @@ def rinex_timeline(inputlist_or_paths,
                    use_rinex_lister = True,
                    dots_plot=False,
                    jul_date_plot=False,
-                   return_figure=False):
+                   return_figure=False,
+                   xlim_start_end=False):
     """
     Frontend function to plot the aviable RINEXs
 
@@ -111,6 +112,9 @@ def rinex_timeline(inputlist_or_paths,
         Plot the date in julian dates. The default is False.
     return_figure : bool, optional
         returns figure. The default is False.
+    xlim_start_end : bool, optional
+        Force start and end values to be the x axis limit
+        The default is False.
 
     Returns
     -------
@@ -126,7 +130,8 @@ def rinex_timeline(inputlist_or_paths,
 
     fig  = timeline_plotter(datadico,start = start ,
                      end=end ,dots_plot=dots_plot,
-                     jul_date_plot=jul_date_plot)
+                     jul_date_plot=jul_date_plot,
+                     xlim_start_end=xlim_start_end)
 
     if not return_figure:
         return datadico
@@ -252,7 +257,8 @@ def timeline_plotter(datadico,
                      jul_date_plot=False,
                      datadico_anex_list = [],
                      use_only_stats_of_main_datadico=False,
-                     colordico_for_main_datadico=None):
+                     colordico_for_main_datadico=None,
+                     xlim_start_end=False):
     """
     
 
@@ -280,6 +286,9 @@ def timeline_plotter(datadico,
         Color for the main datadico.
         Advanced usage.
         The default is None.
+    xlim_start_end : bool, optional
+        Force start and end values to be the x axis limit
+        The default is False.
 
     Returns
     -------
@@ -404,6 +413,7 @@ def timeline_plotter(datadico,
     koef = np.sqrt(2) * 1
     fig.set_size_inches(koef*11.69,koef*len(stats_concat_list) * 0.28) #16.53
     ax.set_ylim([-1 , len(stats_concat_list) + 1])
+    ax.set_xlim([start,end])
 
     return fig
 

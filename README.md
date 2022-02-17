@@ -77,9 +77,9 @@ Alternatively, you can also add the ``geodezyx`` forder in your ``PYTHONPATH`` (
 
 GNU General Public License, Version 3, 29 June 2007
 
-Copyright ? 2019 Helmholtz Centre Potsdam GFZ 
+Copyright © 2019 Helmholtz Centre Potsdam GFZ 
 German Research Centre for Geosciences, Potsdam, Germany 
-(Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Val?rie Ballu)
+(Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu)
 
 The geodeZYX toolbox is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the 
