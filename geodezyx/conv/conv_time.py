@@ -664,7 +664,7 @@ def dt2secinday(dtin):
         return typ([dt2secinday(e) for e in dtin])
     else:
         return dtin.hour * 3600 + dtin.minute * 60 + dtin.second
-
+    
 def dt2tuple(dtin):
     return tuple(dtin.timetuple())[:-3]
 
