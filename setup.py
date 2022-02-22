@@ -161,6 +161,7 @@ PyPi project: https://pypi.org/project/geodezyx
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['bs4',
                       'collection',
+                      'ftplib',
                       #'kepler.py',
                       'natsort',
                       'matplotlib',
