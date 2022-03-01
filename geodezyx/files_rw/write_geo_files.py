@@ -308,7 +308,7 @@ def write_clk(DFclk_in,outpath,
     
     CORPSE = "\n".join(Row_str_stk)
        
-    OUT = HEAD + CORPSE
+    OUT = HEAD + "                                                            END OF HEADER\n" + CORPSE
     
     ### Manage the file path
     prefix_opera = prefix
@@ -330,7 +330,7 @@ def write_clk(DFclk_in,outpath,
     else:
         outpath_opera = os.path.join(outpath,outname)
         
-    OUT = "END OF HEADER\n" + OUT
+    OUT = OUT   
 
     with open(outpath_opera,"w+") as Fout:
         Fout.write(OUT)
