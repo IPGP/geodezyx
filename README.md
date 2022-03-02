@@ -6,7 +6,7 @@
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
-(GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
+(GFZ, Potsdam, Germany), with contributions from ValÃ©rie Ballu (CNRS/La Rochelle University, France)
 
 **Documentation:** [https://geodezyx.github.io/GeodeZYX-Toolbox_v4](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
 
@@ -16,7 +16,7 @@
 
 **Contact e-mail:** sakic@ipgp.fr
 
-**Citation:** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
+**Citation:** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, ValÃ©rie (2019):
 *The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes*. 
 V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.org/10.5880/GFZ.1.1.2019.002)
 
@@ -77,9 +77,9 @@ Alternatively, you can also add the ``geodezyx`` forder in your ``PYTHONPATH`` (
 
 GNU General Public License, Version 3, 29 June 2007
 
-Copyright © 2019 Helmholtz Centre Potsdam GFZ 
+Copyright Â© 2019 Helmholtz Centre Potsdam GFZ 
 German Research Centre for Geosciences, Potsdam, Germany 
-(Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu)
+(Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, ValÃ©rie Ballu)
 
 The geodeZYX toolbox is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the 
