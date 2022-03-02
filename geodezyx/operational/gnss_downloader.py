@@ -514,7 +514,8 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
                            filter_ftp_crawler=True,
                            path_ftp_crawled_files_save=None,
                            path_ftp_crawled_files_load=None,
-                           silent_mode=False):
+                           silent_mode=False,
+                           final_archive_for_sup_check=None):
     """
     Parameters
     ----------
@@ -576,7 +577,6 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
             in the chrono. order
         The scrambled (False) is better, bc. it doesn't create zombies processes
 
-
     user & passwd : str
         user & password for a locked server
         
@@ -599,9 +599,13 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
         overrides an internal call of ftp_files_crawler.
         
     silent_mode : bool
-        list the aviable RINEXs without downloading them 
-        useful only if path_ftp_crawled_files_save is given
+        List the available RINEXs without downloading them. 
+        Useful only if path_ftp_crawled_files_save is given
         
+    final_archive_for_sup_check : str
+        The final archive path or a file containing the archived RINEXs in
+        their final destination. 
+        useful if the final archive is different from archive_dir
 
     Returns
     -------
@@ -690,10 +694,25 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
                 savetup = (urllist,savedirlist)
                 utils.pickle_saver(savetup,
                                    full_path=path_ftp_crawled_files_save)
-
+                
+    ##### Check if the rinex file already exists in the final archive
+    if final_archive_for_sup_check:
+        Files_final_arch = utils.find_recursive(final_archive_for_sup_check,
+                                                "*")
+        Files_final_arch_basename = [os.path.basename(e) for e in Files_final_arch]
+        
+        urllist_new,savedirlist_new = [],[]
+        
+        for u,sd in zip(urllist,savedirlist):
+            if not os.path.basename(u) in Files_final_arch_basename:
+                urllist_new.append(u)
+                savedirlist_new.append(sd)
+        
+        urllist,savedirlist = urllist_new,savedirlist_new
+                    
     if not silent_mode:
         if sorted_mode:
-            results = [pool.apply_async(downloader , args=(u,sd)) for u,sd in zip(urllist,savedirlist)]
+            _ = [pool.apply_async(downloader , args=(u,sd)) for u,sd in zip(urllist,savedirlist)]
         else:
             _ = pool.map(downloader_wrap,list(zip(urllist,savedirlist)))
 
