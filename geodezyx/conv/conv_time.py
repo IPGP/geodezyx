@@ -1676,13 +1676,10 @@ def statname_dt2rinexname(statname,datein,rnxtype='d.Z',
 
     alphabet = list(string.ascii_lowercase)
 
-    if datein.hour != 0:
+    if session_a_instead_of_daily_session:
         sess = alphabet[datein.hour]
     else:
-        if session_a_instead_of_daily_session:
-            sess = alphabet[datein.hour]
-        else:
-            sess = '0'
+        sess = '0'
 
     return statname + dt2doy(datein) + sess + '.' + datein.strftime('%y') + rnxtype
 
