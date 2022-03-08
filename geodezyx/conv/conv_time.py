@@ -1134,8 +1134,10 @@ def gpsweek_decimal2dt(gpsweekdec_in, output_time_scale = 'utc'):
         week_floor    = np.floor(gpsweekdec_in)
         week_dec_part = gpsweekdec_in - week_floor 
         
-        dt_out = gpstime2dt(week_floor,week_dec_part * 7. *86400.,
-                            dow_input = False, output_time_scale = output_time_scale)
+
+        dt_out = gpstime2dt(week_floor,week_dec_part * 7 *86400,
+                            dow_input = False, 
+                            output_time_scale = output_time_scale)
         return dt_out
     
 
