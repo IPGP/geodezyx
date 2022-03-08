@@ -1108,7 +1108,7 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True,
         return final_time
 
 
-def gpsweek_decimal2dt(gpsweekdec_in):
+def gpsweek_decimal2dt(gpsweekdec_in, output_time_scale = 'utc'):
     """
     Time representation conversion
     
@@ -1118,6 +1118,8 @@ def gpsweek_decimal2dt(gpsweekdec_in):
     ----------
     gpsweekdec_in : float or list/numpy.array of float
         GPS week in decimal form.
+    output_time_scale : str
+        gives the wished time scale : "utc", "tai", "gps"
 
     Returns
     -------
@@ -1133,7 +1135,7 @@ def gpsweek_decimal2dt(gpsweekdec_in):
         week_dec_part = gpsweekdec_in - week_floor 
         
         dt_out = gpstime2dt(week_floor,week_dec_part * 7 *86400,
-                            dow_input = False)
+                            dow_input = False, output_time_scale = output_time_scale)
         return dt_out
     
 
