@@ -1068,10 +1068,10 @@ def gpstime2dt(gpsweek,gpsdow_or_seconds,dow_input = True,
     
     if utils.is_iterable(gpsweek):
         typ=utils.get_type_smart(gpsweek)
-        return typ([gpstime2dt(w,ds,dow_input,output_time_scale) for w,ds in zip(gpsweek,gpsdow_or_seconds)])
+        return typ([gpstime2dt(w,ds,dow_input,output_time_scale = output_time_scale) for w,ds in zip(gpsweek,gpsdow_or_seconds)])
     else:
         if dow_input:
-            gpsseconds = gpsdow_or_seconds * 86400 + 86400*.5 # so we are around noon
+            gpsseconds = gpsdow_or_seconds * 86400. + 86400.*.5 # so we are around noon
         else:
             gpsseconds = gpsdow_or_seconds
     
@@ -1129,12 +1129,12 @@ def gpsweek_decimal2dt(gpsweekdec_in, output_time_scale = 'utc'):
     """
     if utils.is_iterable(gpsweekdec_in):
         typ=utils.get_type_smart(gpsweekdec_in)
-        return typ([gpsweek_decimal2dt(e) for e in gpsweekdec_in])
+        return typ([gpsweek_decimal2dt(e,output_time_scale = output_time_scale) for e in gpsweekdec_in])
     else:
         week_floor    = np.floor(gpsweekdec_in)
         week_dec_part = gpsweekdec_in - week_floor 
         
-        dt_out = gpstime2dt(week_floor,week_dec_part * 7 *86400,
+        dt_out = gpstime2dt(week_floor,week_dec_part * 7. *86400.,
                             dow_input = False, output_time_scale = output_time_scale)
         return dt_out
     
