@@ -746,10 +746,10 @@ def compar_clock(DFclk_inp_1,DFclk_inp_2,col_name = "name",bias_Col_name = "bias
     
     # Name definitions
 
-    DFclk_diff.name1 = DFclk_inp_1.name
+    DFclk_diff.name1 = DFclk_inp_1.ac
     
 
-    DFclk_diff.name2 = DFclk_inp_2.name
+    DFclk_diff.name2 = DFclk_inp_2.ac
     
     return DFclk_diff
     
