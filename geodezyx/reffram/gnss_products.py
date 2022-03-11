@@ -895,7 +895,7 @@ def compar_clk_plot(Diff_sat_all_df_in,
        
     if save_plot:
         if save_plot_name == "auto":
-            save_plot_name = Diff_sat_all_df_in.name
+            save_plot_name = Diff_sat_all_df_in.name1.values[0]+"_"+Diff_sat_all_df_in.name2.values[0]+"_"+Date.strftime("%Y-%m-%d")
             
         if save_plot_name_suffix:
             save_plot_name = save_plot_name + '_' + save_plot_name_suffix
