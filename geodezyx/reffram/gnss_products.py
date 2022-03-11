@@ -817,7 +817,7 @@ def compar_clk_plot(Diff_sat_all_df_in,
     import matplotlib.dates as mdates
     fig,axr = plt.subplots(1,1,sharex='all')
     Diff_sat_all_df_in = Diff_sat_all_df_in.reset_index()
-    satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in.col_name)))
+    satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in.[col_name])))
     # satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in['sat'])))
        
     SymbStk = []
