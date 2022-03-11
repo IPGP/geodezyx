@@ -743,6 +743,14 @@ def compar_clock(DFclk_inp_1,DFclk_inp_2,col_name = "name",bias_Col_name = "bias
         DFclk_diff.drop("AC",axis=1,inplace=True)
     DFclk_diff.rename({bias_Col_name:bias_Col_name+"_diff"},inplace=True,axis=1)
     
+    
+    # Name definitions
+
+    DFclk_diff.name1 = DFclk_inp_1.name
+    
+
+    DFclk_diff.name2 = DFclk_inp_2.name
+    
     return DFclk_diff
     
 def compar_clock_table(DFclk_diff_in,col_name = "name",bias_Col_name = "bias_diff"):
