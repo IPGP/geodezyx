@@ -796,7 +796,8 @@ def compar_clk_plot(Diff_sat_all_df_in,
                     save_plot_ext=(".pdf",".png",".svg"),
                     yaxis_limit=None,
                     yaxis_label_unit="psec",
-                    col_name = 'name'):
+                    col_name = 'name',
+                    bias_Col_name = 'bias'):
     """
     General description
 
@@ -810,6 +811,8 @@ def compar_clk_plot(Diff_sat_all_df_in,
         (ymin,ymax) to set all th axis at the same limits 
     
     col_name: Normally the name of the column with the sat names
+    bias_Col_name: The column with the clk values
+    Default: 'bias'
 
     Returns
     -------
@@ -852,7 +855,7 @@ def compar_clk_plot(Diff_sat_all_df_in,
         Diffuse = Diff_sat_all_df_in[Diff_sat_all_df_in[col_name] == satuse]
        
         Time = Diffuse.epoch
-        R    = Diffuse['bias_diff']*10**12
+        R    = Diffuse[bias_Col_name+'_diff']*10**12
        
        
         #fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
