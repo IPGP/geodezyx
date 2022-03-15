@@ -2,9 +2,19 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Jun 25 16:43:48 2021
+@author: psakic
 
-@author: psakicki
+This sub-module of geodezyx.geodyn contains functions to load 
+and use the GFZ's ESM loading model.
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 """
+
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
@@ -32,7 +42,7 @@ def ESMGFZ_downloader(latitude,longitude,output_dir,
                       CM_CF="CF",
                       outputformat = "csv",
                       formatvariables = "duNS,duEW,duV",
-                      startdate = dt.datetime(2010,1,1),
+                      startdate = dt.datetime(2019,1,1),
                       enddate   = dt.datetime(2020,1,1),
                       outfile_prefix=""):
     """
