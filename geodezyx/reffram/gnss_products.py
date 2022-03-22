@@ -1122,8 +1122,13 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
         DForb_stk.append(DForb_tmp)
         
         if plot:
-            plt.plot(Tdata,DForb_use.x,'o')
-            plt.plot(Titrp,Xitrp,'.')
+            # plt.plot(Tdata,DForb_use.x,'o')
+            # plt.plot(Titrp,Xitrp,'.')  
+            ## GUS mod 220322
+            fig,axr = plt.subplots(1,1,sharex='all')
+            Symb = axr.plot(Tdata,DForb_use.x,'o')
+            Symb = axr.plot(Titrp,Xitrp,'.')
+
         
     
     DForb_out = pd.concat(DForb_stk)
