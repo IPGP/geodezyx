@@ -830,16 +830,39 @@ def stat_file_GINS_new_fmt(file_out_path,
 
 
 
-def write_station_info_from_datalists(period_lis_lis,site_lis,location_lis,station_info_out_path):
-    ''' 
-    datalists (period_lis_lis , stat_lis , loc_lis  ) are produced by :
+def write_station_info_from_datalists(period_lis_lis,
+                                      site_lis,
+                                      location_lis,
+                                      station_info_out_path):
+    """
+    
+
+    Parameters
+    ----------
+    period_lis_lis : list of lists
+        list of lists of periods.
+    site_lis : list
+        list of sites.
+    location_lis : list
+        list of locations.
+    station_info_out_path : str
+        the full path (directory+name) of the generated station.info.
+        
+    Returns
+    -------
+    None.
+    
+    Note
+    ----
+    The different data lists (i.e. period_lis_lis , stat_lis , loc_lis) 
+    are produced by:
         * mono_logsheet_read
-          do not forget to activate return_lists = True
+              do not forget to activate return_lists = True
           
         * multi_logsheet_read 
-          do not forget to activate return_dico = False
+              do not forget to activate return_dico = False
+    """
 
-    '''
 
     si_file = open(station_info_out_path,'w')
     si_file.write('*SITE  Station Name      Session Start      Session Stop       Ant Ht   HtCod  Ant N    Ant E    Receiver Type         Vers                  SwVer  Receiver SN           Antenna Type     Dome   Antenna SN          \n')
