@@ -743,6 +743,19 @@ def compar_clock(DFclk_inp_1,DFclk_inp_2,col_name = "name",bias_Col_name = "bias
         DFclk_diff.drop("AC",axis=1,inplace=True)
     DFclk_diff.rename({bias_Col_name:bias_Col_name+"_diff"},inplace=True,axis=1)
     
+    
+    # Name definitions
+    if 'ac' in DFclk_inp_1.columns:
+        DFclk_diff['name1'] = DFclk_inp_1.ac.values[0]
+    if 'AC' in DFclk_inp_1.columns:
+        DFclk_diff['name1'] = DFclk_inp_1.AC.values[0]
+    
+    if 'ac' in DFclk_inp_1.columns:
+        DFclk_diff['name2'] = DFclk_inp_2.ac.values[0]
+    if 'AC' in DFclk_inp_1.columns:
+        DFclk_diff['name2'] = DFclk_inp_2.AC.values[0]
+
+    
     return DFclk_diff
     
 def compar_clock_table(DFclk_diff_in,col_name = "name",bias_Col_name = "bias_diff"):
@@ -774,6 +787,140 @@ def compar_clock_table(DFclk_diff_in,col_name = "name",bias_Col_name = "bias_dif
     DFcompar_out.reset_index()
     
     return DFcompar_out
+
+def compar_clk_plot(Diff_sat_all_df_in,
+                    save_plot=False,
+                    save_plot_dir="",
+                    save_plot_name="auto",
+                    save_plot_name_suffix=None,
+                    save_plot_ext=(".pdf",".png",".svg"),
+                    yaxis_limit=None,
+                    yaxis_label_unit="psec",
+                    col_name = 'name',
+                    bias_Col_name = 'bias'):
+    """
+    General description
+
+    Parameters
+    ----------
+    Diff_sat_all_df_in: DataFrame
+        a DataFrame produced by compar_clk
+        
+    yaxis_limit: 3-tuple iterable or 2-element tuple
+        force the y axis limits. must look like 
+        (ymin,ymax) to set all th axis at the same limits 
+    
+    col_name: Normally the name of the column with the sat names
+    bias_Col_name: The column with the clk values
+    Default: 'bias'
+
+    Returns
+    -------
+    the Figure and the 3 Axes if no save is asked
+    export path (str) if save is asked
+    but plot a plot anyway
+    """
+    
+    
+    import matplotlib.dates as mdates
+    fig,axr = plt.subplots(1,1,sharex='all')
+    Diff_sat_all_df_in = Diff_sat_all_df_in.reset_index()
+    satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in[col_name])))
+    # satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in['sat'])))
+       
+    SymbStk = []
+       
+    cm = plt.get_cmap('viridis')
+    NUM_COLORS = len(satdispo)
+    Colors = [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)]
+       
+    
+    
+    Date = conv.numpy_dt2dt(Diff_sat_all_df_in.epoch.values[0])
+    Diff_sat_all_df_in.name = ' '.join(('Clock comparison  b/w',
+                                  Diff_sat_all_df_in.name1.values[0] ,'(ref.) and',
+                                  Diff_sat_all_df_in.name2.values[0] ,',',Date.strftime("%Y-%m-%d")))
+    # Pandas donesn't manage well iterable as attribute
+    # So, it is separated
+    try:
+        col_name0 = Diff_sat_all_df_in.frame_col_name1
+        col_name1 = Diff_sat_all_df_in.frame_col_name2
+        col_name2 = Diff_sat_all_df_in.frame_col_name3
+    except:
+        col_name0 = Diff_sat_all_df_in.columns[0]
+        col_name1 = Diff_sat_all_df_in.columns[1]
+        col_name2 = Diff_sat_all_df_in.columns[2]
+       
+    for satuse,color in zip(satdispo,Colors):
+        Diffuse = Diff_sat_all_df_in[Diff_sat_all_df_in[col_name] == satuse]
+       
+        Time = Diffuse.epoch
+        R    = Diffuse[bias_Col_name+'_diff']*10**12
+       
+       
+        #fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
+       
+        Symb = axr.plot(Time,R,label=satuse,c=color)
+       
+       
+        SymbStk.append(Symb[0])
+       
+        fig.autofmt_xdate()
+       
+       
+    ylabuni = " (" + yaxis_label_unit + ")"
+    
+       
+    axr.set_ylabel('Bias Diff.' + ylabuni)
+       
+       
+       
+    y_formatter = matplotlib.ticker.ScalarFormatter(useOffset=False)
+    axr.yaxis.set_major_formatter(y_formatter)
+       
+    
+    if yaxis_limit and len(yaxis_limit) == 3: ### indep. axis limit
+        axr.set_ylim(yaxis_limit[0])
+       
+    elif yaxis_limit and len(yaxis_limit) == 2:
+        axr.set_ylim(yaxis_limit)
+       
+    else:
+        pass
+        
+        
+    import matplotlib.dates as mdates
+    fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
+       
+    lgd = fig.legend(tuple(SymbStk), satdispo , loc='lower center',ncol=8,
+                     columnspacing=1)
+       
+    fig.set_size_inches(8.27,11.69)
+    plt.suptitle(Diff_sat_all_df_in.name)
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.95)
+    plt.subplots_adjust(bottom=0.15)
+       
+    if save_plot:
+        if save_plot_name == "auto":
+            save_plot_name = Diff_sat_all_df_in.name1.values[0]+"_"+Diff_sat_all_df_in.name2.values[0]+"_"+Date.strftime("%Y-%m-%d")
+            
+        if save_plot_name_suffix:
+            save_plot_name = save_plot_name + '_' + save_plot_name_suffix
+       
+        for ext in save_plot_ext:
+            save_plot_path = os.path.join(save_plot_dir,save_plot_name)
+            plt.savefig(save_plot_path + ext)
+            return_val = save_plot_path
+            
+    else:
+        return_val = fig,(axr)
+
+    return return_val
+
+
+
+
 
 
 def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
@@ -975,8 +1122,13 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
         DForb_stk.append(DForb_tmp)
         
         if plot:
-            plt.plot(Tdata,DForb_use.x,'o')
-            plt.plot(Titrp,Xitrp,'.')
+            # plt.plot(Tdata,DForb_use.x,'o')
+            # plt.plot(Titrp,Xitrp,'.')  
+            ## GUS mod 220322
+            fig,axr = plt.subplots(1,1,sharex='all')
+            Symb = axr.plot(Tdata,DForb_use.x,'o')
+            Symb = axr.plot(Titrp,Xitrp,'.')
+
         
     
     DForb_out = pd.concat(DForb_stk)
