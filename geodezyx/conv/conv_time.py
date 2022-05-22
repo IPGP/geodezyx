@@ -65,7 +65,7 @@ log = logging.getLogger(__name__)
 
 def rinex_regex(compressed=True,compiled=False):
     """
-    Return a regex corresponding to a RINEX name (old convention)
+    Return a regex corresponding to a RINEX name (short convention)
 
     Parameters
     ----------
@@ -93,7 +93,7 @@ def rinex_regex(compressed=True,compiled=False):
 
 def rinex_regex_new_name(compressed=None,compiled=False):
     """
-    Return a regex corresponding to a RINEX name (new convention)
+    Return a regex corresponding to a RINEX name (long convention)
 
     Parameters
     ----------
@@ -1491,7 +1491,7 @@ def rinexname2dt(rinexpath):
     """
     Time representation conversion
     
-    RINEX Name (old or new naming convention)  => Python's Datetime
+    RINEX Name (short or long naming convention)  => Python's Datetime
     
     Extract the date in a RINEX name
 
@@ -1510,7 +1510,7 @@ def rinexname2dt(rinexpath):
     #rinexname = rinexpath
         
     
-    ##### NEW rinex name
+    ##### LONG rinex name
     if re.search(rinex_regex_new_name(),rinexname) or re.search(rinex_regex_new_name_brdc(),rinexname):
         date_str = rinexname.split("_")[2]
         yyyy = int(date_str[:4])
@@ -1520,7 +1520,7 @@ def rinexname2dt(rinexpath):
         dt_out = doy2dt(yyyy,doy) + dt.timedelta(seconds=hh*3600 + mm*60)
         return dt_out 
 
-    ##### NEW rinex name -- GFZ's GODC internal name
+    ##### LONG rinex name -- GFZ's GODC internal name
     ###### OBS RINEX for GFZ GODC not implemented yet !!!!
     if re.search(rinex_regex_new_name_brdc_gfz_godc(),rinexname): 
         date_str = rinexname.split("_")[5]
@@ -1537,10 +1537,9 @@ def rinexname2dt(rinexpath):
         
         return dt_out 
     
-    ##### OLD rinex name    
+    ##### SHORT rinex name
     elif re.search(rinex_regex(),rinexname):
         alphabet = list(string.ascii_lowercase)
-    
 
         doy  = int(rinexname[4:7])
         yy   = int(rinexname[9:11])

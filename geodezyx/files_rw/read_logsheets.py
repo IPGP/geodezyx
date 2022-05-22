@@ -142,9 +142,10 @@ def mono_logsheet_read(logsheet_path,return_lists = False):
         Logsheet path.
     return_lists : Bool, optional
         The default is False.
-        each Logsheet Block object is returned in a list, 
+        if True, this legacy mode returns each Logsheet Block object in a list, 
         so each of them can be managed immediatly by
-        write_station_info_from_datalists function
+        write_station_info_from_datalists function.
+        Useful only for such write_<...> functions.
 
     Returns
     -------
@@ -242,8 +243,11 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
     return_dico : bool, optional
         If False, returns period_lis_lis , stat_lis , loc_lis
         the False mode is useful for station.info generation
+        with write_station_info_from_datalists
         The default is True.
     output_mode : str, optional
+        Defines the output mode if a dictionary is asked.
+        (It is not relevant if list are asked)
         'classic': returns in the period_lis , stat , loc
         'pretty': returns the period_lis, stat, loc but with 
         period_lis as a DataFrame
