@@ -448,8 +448,10 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         severe=False,
                         separated_systems_export=False,
                         first_date=None,
+                        end_date=None,
                         #new_naming = False,
-                        exclude_bad_epoch=True):
+                        exclude_bad_epoch=True,
+                        const = None):
     """
     Generate an SP3 Orbit file with overlap based on the SP3s of the 
     days before and after
@@ -482,8 +484,12 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         export different sp3 for different system. The default is False.
     first_date : datetime, optional
         exclude SP3 before this epoch
+    end_date :datetime, optional
+        exclude SP3 after this epoch
     exclude_bad_epoch : bool, optional
         remove bad epoch (usually filled with 99999999.9999999 or 0.00000000)
+    const : string, optional
+        if just to keep one constellation (e.g.: G)
     
     Returns
     -------
@@ -504,7 +510,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         Lfile = Dict_Lfiles_ac[ac]
         
         #Extlist = ["sp3","SP3","sp3.gz","SP3.gz"]
-        Extlist = ["sp3","sp3.gz"]
+        Extlist = ["sp3","sp3.gz",'eph']
         for ext in Extlist:
             Lfile = Lfile + utils.find_recursive(dir_in,"*" + ac + "*" + ext)
         log.info("Nb of SP3 found for %s %s",ac,len(Lfile))
@@ -524,7 +530,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         for sp3 in Lfile:
             #wwwwd_str = os.path.basename(sp3)[3:8]
             #D.append(conv.gpstime2dt(int(wwwwd_str[:4]),int(wwwwd_str[4:])))
-
+            extension = sp3[-3:]
             dat = conv.sp3name2dt(sp3)
             D.append(dat)
         
@@ -551,6 +557,11 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                     if dat < first_date:
                         log.info("SKIP date",dat)
                         continue
+                if end_date:
+                    if dat > end_date:
+                        log.info("SKIP date",dat)
+                        continue
+                        
                     
                 wwwwd_str = conv.dt_2_sp3_datestr(dat).zfill(5)
             
@@ -608,9 +619,14 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                     p_aft = utils.find_regex_in_list(regex_prefix_aft + regex_suffix ,Lfile,True)
                     
                 else: 
-                    p1    = utils.find_regex_in_list(wwwwd_str     + ".sp3",Lfile,True)
-                    p_bef = utils.find_regex_in_list(wwwwd_str_bef + ".sp3",Lfile,True)
-                    p_aft = utils.find_regex_in_list(wwwwd_str_aft + ".sp3",Lfile,True)
+                    if extension == "eph":
+                        p1    = utils.find_regex_in_list(wwwwd_str     + ".eph",Lfile,True)
+                        p_bef = utils.find_regex_in_list(wwwwd_str_bef + ".eph",Lfile,True)
+                        p_aft = utils.find_regex_in_list(wwwwd_str_aft + ".eph",Lfile,True)
+                    else:
+                        p1    = utils.find_regex_in_list(wwwwd_str     + ".sp3",Lfile,True)
+                        p_bef = utils.find_regex_in_list(wwwwd_str_bef + ".sp3",Lfile,True)
+                        p_aft = utils.find_regex_in_list(wwwwd_str_aft + ".sp3",Lfile,True)
 
                 log.info("1)) Files found for the days before/after")                            
                 log.info("0b) %s",p_bef)
@@ -629,6 +645,11 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 SP3 = SP3[SP3.type == "P"]
                 SP3_bef = SP3_bef[SP3_bef.type == "P"]
                 SP3_aft = SP3_aft[SP3_aft.type == "P"]
+                
+                if const:
+                    SP3     = SP3[SP3.const == const]
+                    SP3_bef = SP3_bef[SP3_bef.const == const]
+                    SP3_aft = SP3_aft[SP3_aft.const == const]
                 
                 
                 SP3_bef = SP3_bef[SP3_bef["epoch"] < SP3["epoch"].min()]
