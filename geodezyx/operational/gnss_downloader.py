@@ -126,11 +126,18 @@ def renag_server(stat,date):
     url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , rnxname)
     return url
 
+def uwiseismic_server(stat,date,user='',passwd=''):
+    urlserver = "ftp://www2.uwiseismic.com/"
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , 'rinex' , str(date.year) , conv.dt2doy(date) , rnxname)
+    return url,user,passwd
+
 def orpheon_server(stat,date,user='',passwd=''):
     urlserver = "ftp://renag.unice.fr/"
     rnxname = conv.statname_dt2rinexname(stat.lower(),date)
     url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , rnxname)
     return url,user,passwd
+
 
 def ovsg_server(stat,date,user='',passwd=''):
     if dt.datetime(2009,1,1) <= date <= dt.datetime(2014,2,10):
@@ -646,6 +653,8 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
                     url = renag_server(stat,curdate)
                 elif netwk == 'orpheon':
                     url = orpheon_server(stat,curdate,user,passwd)
+                elif netwk == 'uwiseismic':
+                    url = uwiseismic_server(stat,curdate,user,passwd)
                 elif netwk == 'ovsg':
                     url = ovsg_server(stat,curdate,user,passwd)
                 elif netwk == 'unavco':
