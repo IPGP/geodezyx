@@ -808,6 +808,14 @@ def alphabet(num=None):
     else:
         return alphabet()[num]
 
+def alphabet_reverse(letter=None):
+    if not letter:
+        import string
+        return list(string.ascii_lowercase)
+    else:
+        return alphabet_reverse().index(letter)
+
+
 def dday():
     D = (dt.datetime(2016,10,14) - dt.datetime.now()).days
     print('J -',  D , 'avant la quille')
