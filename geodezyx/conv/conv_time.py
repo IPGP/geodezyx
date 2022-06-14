@@ -1885,7 +1885,41 @@ def datestr_gins_filename_2_dt(datestrin):
         return dt.datetime(year,mm,dd,hh,mmin,ss)
 
 
-
+def trimble_file2dt(trmfile_in):
+    """
+    Time representation conversion
+    
+    Trimble raw data file => Python's Datetime
+    
+    Trimble file exemple : CASG202101070000A.T02
+        
+    Parameters
+    ----------
+    trmfile_in : string or list/numpy.array of string.
+        Trimble raw data file as string.
+        Can handle several string in an iterable.
+        Will extract the basename of a path.
+    
+    Returns
+    -------
+    dtout : datetime or list of datetime.
+        Datetime(s)
+    """
+    if utils.is_iterable(trmfile_in):
+        typ=utils.get_type_smart(trmfile_in)
+        return typ([trimble_file2dt(e) for e in trmfile_in])
+    else:
+        trmfile = os.path.basename(trmfile_in)
+        year = int(trmfile[4:8])
+        month = int(trmfile[8:10])
+        day = int(trmfile[10:12])
+        hh =  int(trmfile[12:14])
+        mm =  int(trmfile[14:16])
+        
+        return dt.datetime(year,month,day,hh,mm,0)
+    
+    
+        
 
 
 

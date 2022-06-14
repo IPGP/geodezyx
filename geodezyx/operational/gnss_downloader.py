@@ -472,6 +472,28 @@ def downloader(url,savedir,force = False,
     return return_str
 
 def start_end_date_easy(start_year,start_doy,end_year,end_doy):
+    """
+    generates start/end datetimes from a start/end year/day of year
+
+    Parameters
+    ----------
+    start_year : int
+        start year.
+    start_doy : int
+        start day of year.
+    end_year : int
+        end year.
+    end_doy : int
+        end day of year.
+
+    Returns
+    -------
+    start : datetime
+        converted start datetime.
+    end : datetime
+        converted end datetime.
+
+    """
     start = conv.doy2dt(start_year,start_doy)
     end   = conv.doy2dt(end_year,end_doy)
     return start , end
