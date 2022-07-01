@@ -2,7 +2,7 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.3.0 / 2021-02-09**, README Revision: 2021-02-10
+**Version 0.4.3.0 / 2021-02-09**, README Revision: 2021-06-02
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
@@ -64,7 +64,7 @@ You can manually fork and clone the GitHub repository
 
 and install the Toolbox you downloaded with ``python setup.py install``
 
-Alternatively, you can also add the ``geodezyx`` forder in your ``PYTHONPATH`` (for experimented users)
+Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
 
 ## Changelog
 
