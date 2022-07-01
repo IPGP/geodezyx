@@ -1520,7 +1520,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         else:
             dow = str(dow_manu)
                
-        log.info("Search products for day %s, AC/prod, %s %s",wwww,dow,ac_cur,prod_cur)
+        log.info("Search products for day %s-%s, AC/prod, %s/%s",wwww,dow,ac_cur,prod_cur)
         wwww_dir = os.path.join(arch_center_basedir,str(wwww))
         log.info("Move to: %s",wwww_dir)
         if wwww_dir_previous != wwww_dir:
