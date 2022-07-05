@@ -36,26 +36,34 @@ log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
-def rinex_lister(path,add_new_names=True):
+def rinex_lister(path,add_long_names=True):
     """
     find all rinex in a folder and his subfolders
     path can be a string or a tuple of string => manage multi paths :)
 
-    is very similar with softs_runner.multi_finder_rinex and
-    gins_runner.get_rinex_list
+    is very similar with softs_runner.multi_finder_rinex,
+    gins_runner.get_rinex_list and operational.rinex_finder 
     
     Parameters
     ----------
     path : str
         archive path.
-    add_new_names : bool, optional
+    add_long_names : bool, optional
         consider new names. The default is True.
 
     Returns
     -------
     rinexfilelist : list
         list of rinex files.
+        
+    Notes
+    -----
+    
+    operational.rinex_finder must be used in priority !!! (July 2022)
     """
+    
+    log.warning("rinex_lister depreciated, use operational.rinex_finder instead!!")
+    
 
     if type(path) is str:
         path = [path]
@@ -70,8 +78,8 @@ def rinex_lister(path,add_new_names=True):
 
     wholefilelist = list(set(wholefilelist))
     
-    rinexfilelist           = [fil for fil in wholefilelist if re.search( conv.rinex_regex() , os.path.basename(fil))]
-    if add_new_names:
+    rinexfilelist = [fil for fil in wholefilelist if re.search( conv.rinex_regex() , os.path.basename(fil))]
+    if add_long_names:
         rinexfilelist_new_names = [fil for fil in wholefilelist if re.search( conv.rinex_regex_new_name() , os.path.basename(fil))]
         rinexfilelist = rinexfilelist + rinexfilelist_new_names
     
