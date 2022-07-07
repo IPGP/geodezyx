@@ -30,6 +30,7 @@ from geodezyx import conv
 from geodezyx import utils
 from geodezyx import files_rw
 from geodezyx import reffram
+from geodezyx import softs_runner
 
 #### Import the logger
 import logging
@@ -451,7 +452,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         end_date=None,
                         #new_naming = False,
                         exclude_bad_epoch=True,
-                        const = None):
+                        const = None,
+                        new_name = False):
     """
     Generate an SP3 Orbit file with overlap based on the SP3s of the 
     days before and after
@@ -509,10 +511,25 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         Dict_Lfiles_ac[ac] = []
         Lfile = Dict_Lfiles_ac[ac]
         
-        #Extlist = ["sp3","SP3","sp3.gz","SP3.gz"]
-        Extlist = ["sp3","sp3.gz",'eph']
-        for ext in Extlist:
-            Lfile = Lfile + utils.find_recursive(dir_in,"*" + ac + "*" + ext)
+
+        if new_name:   
+            Lfile = softs_runner.find_IGS_products_files(dir_in,["sp3"],
+                                                                  ac_list,
+                                                                  first_date,
+                                                                  date_end=end_date,
+                                                                  severe=False,
+                                                                  recursive_search=True,
+                                                                  regex_old_naming = True,
+                                                                  regex_new_naming = True,
+                                                                  regex_igs_tfcc_naming = False,
+                                                                  compressed="incl") 
+            
+        else:
+            #Extlist = ["sp3","SP3","sp3.gz","SP3.gz"]
+            Extlist = ["sp3","sp3.gz",'eph',"SP3","SP3.gz"]
+            for ext in Extlist:
+                Lfile = Lfile + utils.find_recursive(dir_in,"*" + ac + "*" + ext)
+                
         log.info("Nb of SP3 found for %s %s",ac,len(Lfile))
         
         if not suffix_out_input:
