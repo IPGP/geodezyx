@@ -83,6 +83,14 @@ def igs_cddis_nav_server(stat,date):
     url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , date.strftime('%y') + 'n' , rnxname)
     return url
 
+def rob_nav_server(stat,date):
+    # a privilegier
+    urlserver = "ftp://epncb.oma.be/pub/obs/BRDC/"
+    #ftp://epncb.oma.be/pub/obs/BRDC/2018/BRDC00GOP_R_20180010000_01D_MN.rnx.gz
+    rnxname = "BRDC00GOP_R_" + conv.dt2str(date,'%Y%j') + "0000_01D_MN.rnx.gz"
+    url = os.path.join(urlserver , str(date.year) , rnxname)
+    return url
+
 def rgp_ign_smn_server(stat,date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
     rnxname = conv.statname_dt2rinexname(stat.lower(),date)
@@ -126,11 +134,18 @@ def renag_server(stat,date):
     url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , rnxname)
     return url
 
+def uwiseismic_server(stat,date,user='',passwd=''):
+    urlserver = "ftp://www2.uwiseismic.com/"
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , 'rinex' , str(date.year) , conv.dt2doy(date) , rnxname)
+    return url,user,passwd
+
 def orpheon_server(stat,date,user='',passwd=''):
     urlserver = "ftp://renag.unice.fr/"
     rnxname = conv.statname_dt2rinexname(stat.lower(),date)
     url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , rnxname)
     return url,user,passwd
+
 
 def ovsg_server(stat,date,user='',passwd=''):
     if dt.datetime(2009,1,1) <= date <= dt.datetime(2014,2,10):
@@ -465,6 +480,28 @@ def downloader(url,savedir,force = False,
     return return_str
 
 def start_end_date_easy(start_year,start_doy,end_year,end_doy):
+    """
+    generates start/end datetimes from a start/end year/day of year
+
+    Parameters
+    ----------
+    start_year : int
+        start year.
+    start_doy : int
+        start day of year.
+    end_year : int
+        end year.
+    end_doy : int
+        end day of year.
+
+    Returns
+    -------
+    start : datetime
+        converted start datetime.
+    end : datetime
+        converted end datetime.
+
+    """
     start = conv.doy2dt(start_year,start_doy)
     end   = conv.doy2dt(end_year,end_doy)
     return start , end
@@ -646,6 +683,8 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
                     url = renag_server(stat,curdate)
                 elif netwk == 'orpheon':
                     url = orpheon_server(stat,curdate,user,passwd)
+                elif netwk == 'uwiseismic':
+                    url = uwiseismic_server(stat,curdate,user,passwd)
                 elif netwk == 'ovsg':
                     url = ovsg_server(stat,curdate,user,passwd)
                 elif netwk == 'unavco':
@@ -655,7 +694,7 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
                 elif netwk == 'geoaus':
                     url = geoaus_server(stat,curdate)
                 elif netwk in ('nav' , 'brdc'):
-                    url = igs_cddis_nav_server(stat,curdate)
+                    url = rob_nav_server(stat,curdate)
                 else:
                     log.warning('unkwn server dic in the dico, skip ...')
                     continue
@@ -1076,8 +1115,77 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
     pool.close()
     return localfiles_lis
 
+
+def rinex_finder(main_dir,
+                 short_name=True,
+                 long_name=True,
+                 compressed=None,
+                 specific_sites=[]):
+    """
+    
+
+    Parameters
+    ----------
+    main_dir : str
+        main directory where the RINEXs are stored.
+    short_name : bool, optional
+        check if the pattern matches a short name RINEX. The default is True.
+    long_name : bool, optional
+        check if the pattern matches a long name RINEX. The default is True.
+    compressed : bool or None
+        return a the regex for a compressed rinex
+        if None, does not matter (return both compressed or not)
+    specific_sites : list, optional
+        Filter only those specific sites. The default is [].
+
+    Returns
+    -------
+    Files_rnx_lis : list
+        Found RINEXs list.
+        
+        
+    Notes
+    -----
+    
+    is very similar with geodetik.rinex_lister,  gins_runner.get_rinex_list,
+    operational.multi_finder_rinex
+    
+    But this one is the most recent and elaborated (July 2022),
+    must be used in priority !!!
+
+    """
+    
+
+    Files_raw_lis , _ = utils.walk_dir(main_dir)
+    
+    Files_rnx_lis = []
+    
+    for f in Files_raw_lis:
+        regex_match = conv.rinex_regex_search_tester(f,
+                                       short_name=short_name,
+                                       long_name=long_name,
+                                       compressed=compressed)
+        if regex_match:
+            Files_rnx_lis.append(f)
+                        
+    # SECOND FILTERING IF specific_sites LIST IS DEFINED
+    if len(specific_sites) > 0:
+        Files_rnx_lis2 = []
+        for site in specific_sites:
+            for rnx in Files_rnx_lis:
+                if site in os.path.basename(rnx):
+                    Files_rnx_lis2.append(rnx)
+        Files_rnx_lis = Files_rnx_lis2
+
+    log.info(str(len(Files_rnx_lis)) +  ' RINEXs found')
+
+    return Files_rnx_lis
+
+
+
+
 def multi_finder_rinex(main_dir,rinex_types=('o','d','d.Z','d.z'),
-                       specific_stats = [] ):
+                           specific_stats = [] ):
     """
     from a main_dir, find all the rinexs in this folder and his subfolder
 
@@ -1085,10 +1193,14 @@ def multi_finder_rinex(main_dir,rinex_types=('o','d','d.Z','d.z'),
 
     and return a list of the found rinexs
 
-    is very similar with geodetik.rinex_lister and  gins_runner.get_rinex_list
-
-    But this one is the most elaborated , must be used in priority !!!
+    is very similar with geodetik.rinex_lister,  gins_runner.get_rinex_list,
+    operational.rinex_finder
+    
+    operational.rinex_finder must be used in priority !!! (July 2022)
     """
+    
+    log.warning("multi_finder_rinex depreciated, use rinex_finder instead!!")
+    
     files_raw_lis , _ = utils.walk_dir(main_dir)
 
     yylis = [str(e).zfill(2) for e in list(range(80,100)) + list(range(0,dt.datetime.now().year - 2000 + 1))]
@@ -1115,6 +1227,9 @@ def multi_finder_rinex(main_dir,rinex_types=('o','d','d.Z','d.z'),
     log.info(str(len(rinex_lis)) +  ' RINEXs found')
 
     return rinex_lis
+
+
+
 
 
 def multi_archiver_rinex(rinex_lis,parent_archive_dir,archtype='stat',
@@ -1397,17 +1512,17 @@ def FTP_downloader_wo_objects(tupin):
     
 
 def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
-                            AC_names = ("wum","cod"),
-                            prod_types = ("sp3","clk"),
-                            remove_patterns=("ULA",),
-                            archtype ='week',
-                            new_name_conv = True,
-                            parallel_download=4,
-                            archive_center='ign',
-                            mgex=True,repro=0,sorted_mode=False,
-                            return_also_uncompressed_files=True,
-                            ftp_download=False,
-                            dow_manu=False):
+                                 AC_names = ("wum","cod"),
+                                 prod_types = ("sp3","clk"),
+                                 remove_patterns=("ULA",),
+                                 archtype ='week',
+                                 new_name_conv = True,
+                                 parallel_download=4,
+                                 archive_center='ign',
+                                 mgex=True,repro=0,sorted_mode=False,
+                                 return_also_uncompressed_files=True,
+                                 ftp_download=False,
+                                 dow_manu=False):
     """
     dow_manu = False, no dow manu, consider the converted dow from the time span, regular case
     dow_manu = None, no dow in the REGEX, the crawler will search only for the week
@@ -1489,7 +1604,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         else:
             dow = str(dow_manu)
                
-        log.info("Search products for day %s, AC/prod, %s %s",wwww,dow,ac_cur,prod_cur)
+        log.info("Search products for day %s-%s, AC/prod, %s/%s",wwww,dow,ac_cur,prod_cur)
         wwww_dir = os.path.join(arch_center_basedir,str(wwww))
         log.info("Move to: %s",wwww_dir)
         if wwww_dir_previous != wwww_dir:

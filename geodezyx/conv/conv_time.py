@@ -63,14 +63,66 @@ log = logging.getLogger(__name__)
 ### Time conversion
 
 
+
+def rinex_regex_search_tester(str_in,
+                              short_name=True,
+                              long_name=True,
+                              brdc_long_name=False,
+                              compressed=None):
+    """
+    Frontend function for a RINEX regex search/match    
+
+    Parameters
+    ----------
+    str_in : str
+        input string.
+    short_name : bool, optional
+        check if the pattern matches a short name RINEX. The default is True.
+    long_name : bool, optional
+        check if the pattern matches a long name RINEX. The default is True.
+    brdc_long_name : bool, optional
+        check if the pattern matches a brdc long name RINEX. The default is True.
+    compressed : bool or None
+        return a the regex for a compressed rinex
+        if None, does not matter (return both compressed or not)
+        
+    Returns
+    -------
+    None or re object
+        match result.
+
+    """
+    
+    match = None
+    
+    
+    search_out = re.search(rinex_regex(compressed),str_in)
+    if short_name and search_out:
+        match = search_out
+
+    search_out = re.search(rinex_regex_new_name(compressed),str_in)
+    if long_name and search_out:
+        match = search_out
+        
+    search_out = re.search(rinex_regex_new_name_brdc(compressed),str_in)
+    if brdc_long_name and search_out:
+        match = search_out        
+    
+    return match
+    
+    
+    
+
 def rinex_regex(compressed=True,compiled=False):
     """
     Return a regex corresponding to a RINEX name (short convention)
 
     Parameters
     ----------
-    compressed : bool
+    compressed : bool or None
         return a the regex for a compressed rinex
+        if None, does not matter (return both compressed or not)
+        
 
     compiled : bool
         return a Python regex object already compliled
@@ -80,10 +132,13 @@ def rinex_regex(compressed=True,compiled=False):
     out : string or python's regex
         a regex
     """
-    if compressed:
+    if compressed is None:
         regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(o)|(d))"
-    else:
+    elif not compressed:
         regexstr = "....[0-9]{3}.\.[0-9]{2}o"
+    else:
+        regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(d))"
+        
 
     if compiled:
         return re.compile(regexstr)
@@ -1687,6 +1742,41 @@ def statname_dt2rinexname(statname,datein,rnxtype='d.Z',
     return statname + dt2doy(datein) + sess + '.' + datein.strftime('%y') + rnxtype
 
 
+def statname_dt2rinexname_long(statname,datein,rnxtype='crz.gz'):
+    """
+    Time representation conversion
+    
+    Python's Datetime (and station name) => RINEX name
+    
+    Create a RINEX name from a station name and date
+
+    Parameters
+    ----------
+    statname : string
+        name of the station
+    
+    datein : datetime
+        date of the wished RINEX name
+        
+    rnxtype : string
+        extension of the RINEX ("d.Z",".o") ...
+        
+    session_a_instead_of_daily_session : bool
+        if True, gives an hourly session name (a,b,c ...)
+        instead of a daily session (0)
+
+    Returns
+    -------
+    rinexname : string
+        The name of the RINEX
+    """
+    
+    print("TO BE IMPLEMENTED")
+    return None
+    
+
+
+
 def datestr_sinex_2_dt(datestrin):
     """
     Time representation conversion
@@ -1885,7 +1975,41 @@ def datestr_gins_filename_2_dt(datestrin):
         return dt.datetime(year,mm,dd,hh,mmin,ss)
 
 
-
+def trimble_file2dt(trmfile_in):
+    """
+    Time representation conversion
+    
+    Trimble raw data file => Python's Datetime
+    
+    Trimble file exemple : CASG202101070000A.T02
+        
+    Parameters
+    ----------
+    trmfile_in : string or list/numpy.array of string.
+        Trimble raw data file as string.
+        Can handle several string in an iterable.
+        Will extract the basename of a path.
+    
+    Returns
+    -------
+    dtout : datetime or list of datetime.
+        Datetime(s)
+    """
+    if utils.is_iterable(trmfile_in):
+        typ=utils.get_type_smart(trmfile_in)
+        return typ([trimble_file2dt(e) for e in trmfile_in])
+    else:
+        trmfile = os.path.basename(trmfile_in)
+        year = int(trmfile[4:8])
+        month = int(trmfile[8:10])
+        day = int(trmfile[10:12])
+        hh =  int(trmfile[12:14])
+        mm =  int(trmfile[14:16])
+        
+        return dt.datetime(year,month,day,hh,mm,0)
+    
+    
+        
 
 
 

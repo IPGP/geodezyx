@@ -162,28 +162,28 @@ def rnx2crz(rinex_path,outdir='',force=True,path_of_rnx2crz='RNX2CRZ'):
     os.chdir(curdir)
     return out_rinex_path
 
-def rinex_regex(compressed=True,compiled=False):
-    if compressed:
-        regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(o)|(d))"
-    else:
-        regexstr = "....[0-9]{3}.\.[0-9]{2}o"
+# def rinex_regex(compressed=True,compiled=False):
+#     if compressed:
+#         regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(o)|(d))"
+#     else:
+#         regexstr = "....[0-9]{3}.\.[0-9]{2}o"
 
-    if compiled:
-        return re.compile(regexstr)
-    else:
-        return regexstr
+#     if compiled:
+#         return re.compile(regexstr)
+#     else:
+#         return regexstr
 
 
-def rinex_regex_new_name(compressed=True,compiled=False):
-    if compressed:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
-    else:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}"
+# def rinex_regex_new_name(compressed=True,compiled=False):
+#     if compressed:
+#         regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
+#     else:
+#         regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}"
 
-    if compiled:
-        return re.compile(regexstr)
-    else:
-        return regexstr
+#     if compiled:
+#         return re.compile(regexstr)
+#     else:
+#         return regexstr
 
 
 def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
