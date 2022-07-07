@@ -512,8 +512,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         Lfile = Dict_Lfiles_ac[ac]
         
 
-        if new_name:   
-
+        if new_name:
             Lfile = softs_runner.find_IGS_products_files(dir_in,["sp3"],
                                                                   ac_list,
                                                                   first_date,
