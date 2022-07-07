@@ -30,7 +30,7 @@ from geodezyx import conv
 from geodezyx import utils
 from geodezyx import files_rw
 from geodezyx import reffram
-from geodezyx import softs_runner
+from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 #### Import the logger
 import logging
@@ -513,6 +513,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         
 
         if new_name:   
+
             Lfile = softs_runner.find_IGS_products_files(dir_in,["sp3"],
                                                                   ac_list,
                                                                   first_date,
