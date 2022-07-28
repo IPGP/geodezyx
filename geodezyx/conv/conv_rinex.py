@@ -1,0 +1,294 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Aug 13 15:11:12 2020
+
+@author: psakicki
+
+This sub-module of geodezyx.conv deals with rinex name handeling conversion.
+
+it can be imported directly with:
+from geodezyx import conv
+
+The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License
+
+Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+GitHub repository :
+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+"""
+
+
+########## BEGIN IMPORT ##########
+#### External modules
+import os 
+#import scipy
+#from scipy.spatial.transform import Rotation
+import re
+
+
+### Imported in the corresponding function to avoid cyclic import
+### from geodezyx.conv import conv_interpolators
+### https://stackoverflow.com/questions/1250103/attributeerror-module-object-has-no-attribute
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
+
+def rinex_regex_search_tester(str_in,
+                              short_name=True,
+                              long_name=True,
+                              brdc_long_name=False,
+                              compressed=None):
+    """
+    Frontend function for a RINEX regex search/match    
+
+    Parameters
+    ----------
+    str_in : str
+        input string.
+    short_name : bool, optional
+        check if the pattern matches a short name RINEX. The default is True.
+    long_name : bool, optional
+        check if the pattern matches a long name RINEX. The default is True.
+    brdc_long_name : bool, optional
+        check if the pattern matches a brdc long name RINEX. The default is True.
+    compressed : bool or None
+        return a the regex for a compressed rinex
+        if None, does not matter (return both compressed or not)
+        
+    Returns
+    -------
+    None or re object
+        match result.
+
+    """
+    
+    match = None
+    
+    search_out = re.search(rinex_regex(compressed),str_in)
+    if short_name and search_out:
+        match = search_out
+
+    search_out = re.search(rinex_regex_new_name(compressed),str_in)
+    if long_name and search_out:
+        match = search_out
+        
+    search_out = re.search(rinex_regex_new_name_brdc(compressed),str_in)
+    if brdc_long_name and search_out:
+        match = search_out        
+    
+    return match
+    
+    
+    
+
+def rinex_regex(compressed=True,compiled=False):
+    """
+    Return a regex corresponding to a RINEX name (short convention)
+
+    Parameters
+    ----------
+    compressed : bool or None
+        return a the regex for a compressed rinex
+        if None, does not matter (return both compressed or not)
+        
+
+    compiled : bool
+        return a Python regex object already compliled
+        
+    Returns
+    -------
+    out : string or python's regex
+        a regex
+    """
+    if compressed is None:
+        regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(o)|(d))"
+    elif not compressed:
+        regexstr = "....[0-9]{3}.\.[0-9]{2}o"
+    else:
+        regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(d))"
+        
+
+    if compiled:
+        return re.compile(regexstr)
+    else:
+        return regexstr
+
+
+def rinex_regex_new_name(compressed=None,compiled=False):
+    """
+    Return a regex corresponding to a RINEX name (long convention)
+
+    Parameters
+    ----------
+    compressed : bool or None
+        return a the regex for a compressed rinex
+        if None, does not matter (return both compressed or not)
+        
+
+    compiled : bool
+        return a Python regex object already compliled
+        
+    Returns
+    -------
+    out : string or python's regex
+        a regex
+    """
+    if compressed:
+        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
+    elif compressed is None:
+        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?"        
+    else:
+        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}"
+
+    if compiled:
+        return re.compile(regexstr)
+    else:
+        return regexstr
+
+
+
+def rinex_regex_new_name_brdc(compressed=None,compiled=False):
+    """
+    Return a regex corresponding to a BROADCAST RINEX name (new convention)
+
+    Parameters
+    ----------
+    compressed : bool or None
+        return a the regex for a compressed rinex
+        if None, does not matter (return both compressed or not)
+        
+
+    compiled : bool
+        return a Python regex object already compliled
+        
+    Returns
+    -------
+    out : string or python's regex
+        a regex
+    """
+    if compressed:
+        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
+    elif compressed is None:
+        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?"        
+    else:
+        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}"
+
+    if compiled:
+        return re.compile(regexstr)
+    else:
+        return regexstr    
+    
+    
+def rinex_regex_new_name_brdc_gfz_godc(compressed=None,compiled=False):
+    """
+    Return a regex corresponding to a BROADCAST RINEX name (new convention)
+    from the GFZ's GODC archive
+
+    Parameters
+    ----------
+    compressed : bool or None
+        return a the regex for a compressed rinex
+        if None, does not matter (return both compressed or not)
+        
+
+    compiled : bool
+        return a Python regex object already compliled
+        
+    Returns
+    -------
+    out : string or python's regex
+        a regex
+    """
+    ### BRDC00GFZ_00000000_FRO_RX3_MN_20210114_000000_01D_00U_GFZ.rnx
+    if compressed:
+        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}\.gz"
+    elif compressed is None:
+        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}(\.gz)?"        
+    else:
+        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}"
+
+    if compiled:
+        return re.compile(regexstr)
+    else:
+        return regexstr    
+    
+
+
+def interval_from_rinex_name(rnx_name_inp):
+    """
+    from a RINEX file name (long naming) determines the nominal data interval
+
+    Parameters
+    ----------
+    rnx_name_inp : str
+        long RINEX filename.
+
+    Returns
+    -------
+    interval_ok : int
+        nominal data interval in seconds.
+    """
+    
+    rnx_name = os.path.basename(rnx_name_inp)
+    
+    if not rinex_regex_search_tester(rnx_name,False,True):
+        log.err("the input RINEX %s does not have a long name, unable to detect interval",rnx_name)
+        raise Exception
+
+    interval_str = rnx_name[28:31]
+    
+    if interval_str[-1] == "D":
+        coef = 86400
+    elif interval_str[-1] == "H":
+        coef = 3600
+    elif interval_str[-1] == "M":
+        coef = 60
+    else:
+        coef = 1
+
+    interval_ok = int(interval_str[:2]) * coef
+    
+    return interval_ok
+                
+
+    
+def period_from_rinex_name(rnx_name_inp):
+    """
+    from a RINEX file name (long naming) determines the nominal file period
+
+    Parameters
+    ----------
+    rnx_name_inp : str
+        long RINEX filename.
+
+    Returns
+    -------
+    interval_ok : int
+        nominal data interval in seconds.
+    """
+
+    rnx_name = os.path.basename(rnx_name_inp)
+    
+    if not rinex_regex_search_tester(rnx_name,False,True):
+        log.err("the input RINEX %s does not have a long name, unable to detect period",rnx_name)
+        raise Exception
+    
+    period_str = rnx_name[24:27]
+
+    if period_str[-1] == "D":
+        coef = 86400
+    elif period_str[-1] == "H":
+        coef = 3600
+    elif period_str[-1] == "M":
+        coef = 60
+    else:
+        coef = 1
+
+    period_ok = int(period_str[:2]) * coef
+    
+    return period_ok
+    
+    
