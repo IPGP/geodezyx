@@ -24,6 +24,7 @@ import dateutil
 import glob
 import numpy as np
 import os 
+import pandas as pd
 import shutil
 import string
 import subprocess
@@ -38,6 +39,59 @@ import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
+
+
+
+def rinexs_table_from_list(rnxs_inp,site9_col=False):
+    """
+    From a simple RINEX list as a text file
+
+    Parameters
+    ----------
+    rnxs_inp : iterable or str
+        if iterable, a list of RINEX files
+        if str, path of an input RINEX file list.
+
+    Returns
+    -------
+    DF : Pandas DataFrame
+        A DataFrame with the RINEX info in it.
+    """
+    
+    if utils.is_iterable(rnxs_inp):
+        DF = pd.DataFrame(rnxs_inp,names=["path"])        
+    else:
+        DF = pd.read_csv(rnxs_inp,names=["path"])        
+
+    
+    DF["name"]  = DF["path"].apply(os.path.basename) 
+    DF["site4"] = DF["name"].str[:4].str.lower() 
+    
+    if site9_col:
+        DF["site9"] = DF["name"].str[:9].str.lower() 
+        #### set generic 9-char name if 4 char name file
+        BoolNewName = DF["name"].str.match(conv.rinex_regex_new_name())
+        BoolOldName = np.logical_not(BoolNewName)
+        Site9_generic = DF["site4"].str.upper() + "00XXX"
+        DF["site9"].loc[BoolOldName] = Site9_generic[BoolOldName]
+    
+    
+    DF["date"]  = DF["name"].apply(conv.rinexname2dt) 
+    DoyYear = DF["date"].apply(conv.dt2doy_year)
+    DF["doy"]   = DoyYear.apply(lambda x:x[0])
+    DF["year"]  = DoyYear.apply(lambda x:x[1])
+    
+    cols = DF.columns.tolist()
+    
+    cols =  cols[1:] + [cols[0]]
+    
+    DF = DF[cols]
+    
+    pd.options.display.max_info_columns = 150
+
+    return DF
+
+
 
 #  _____  _____ _   _ ________   __   _____       _ _ _
 # |  __ \|_   _| \ | |  ____\ \ / /  / ____|     | (_) |

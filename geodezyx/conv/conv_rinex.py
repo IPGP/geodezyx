@@ -84,7 +84,7 @@ def rinex_regex_search_tester(str_in,
     
     
 
-def rinex_regex(compressed=True,compiled=False):
+def rinex_regex(compressed=None,compiled=False):
     """
     Return a regex corresponding to a RINEX name (short convention)
 
