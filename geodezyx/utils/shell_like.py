@@ -470,15 +470,20 @@ def fileprint(output,outfile):
 
 
 
-def write_in_file(string_to_write,outdir,outname,ext='.txt',encoding='utf8'):
+def write_in_file(string_to_write,outdir_or_outpath,
+                  outname="",ext='.txt',encoding='utf8'):
     """
-
     encoding : utf8, latin_1
     https://docs.python.org/3/library/codecs.html#standard-encodings
     
     check the following commented old version if troubles
     """
-    outpath = os.path.join(outdir,outname + ext)
+    
+    if outname:
+        outpath = os.path.join(outdir_or_outpath,outname + ext)
+    else:
+        outpath = outdir_or_outpath
+        
     F = open(outpath,'w+',encoding=encoding)
     F.write(string_to_write)
     F.close()
