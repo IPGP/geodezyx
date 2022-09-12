@@ -623,8 +623,8 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
         use this loaded list.
         
     path_ftp_crawled_files_save : str
-        will save at the given path (directory+filname) a pickle containing the 
-        list of the existing RINEXs found on the server by the FTP crawler.
+        will save at the given path (directory+filname) in a pickle containing 
+        the list of the existing RINEXs found on the server by the FTP crawler.
         It allows to use this list directly if one face a timeout during 
         the download part.
         NB for advanced users: the pickle is a tuple (urllist,savedirlist)

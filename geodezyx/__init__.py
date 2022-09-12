@@ -17,7 +17,7 @@ import matplotlib
 #matplotlib.use("agg") ### avoid tk import error
 import matplotlib.pyplot as plt
 import multiprocessing as mp
-from natsort import natsorted, ns
+## from natsort import natsorted, ns
 import numpy as np
 import numpy as npaa
 import operator

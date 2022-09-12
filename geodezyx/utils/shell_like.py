@@ -108,9 +108,11 @@ def grep(file_in,search_string,only_first_occur=False,
     if file_in[-2:] in ("gz","GZ"): ### cand handle gziped files 
         File = gzip.open(file_in, "r+")
         Lines = [e.decode('utf-8') for e in File]
+        File.close()
     else:
         File = open(file_in,encoding = "ISO-8859-1")
         Lines = File.readlines()
+        File.close()
         
     for iline , line in enumerate(Lines):
         trigger = False

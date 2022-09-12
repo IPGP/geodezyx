@@ -42,6 +42,7 @@ from geodezyx import utils,stats
 
 ### Imported in the corresponding function to avoid cyclic import
 ### from geodezyx.conv import conv_interpolators
+from geodezyx.conv import conv_rinex
 ### https://stackoverflow.com/questions/1250103/attributeerror-module-object-has-no-attribute
 
 #### Import the logger
@@ -61,192 +62,7 @@ log = logging.getLogger(__name__)
 #    |_|  |_|_| |_| |_|\___|  \_____\___/|_| |_|\_/ \___|_|  |___/_|\___/|_| |_|
 #
 ### Time conversion
-
-
-
-def rinex_regex_search_tester(str_in,
-                              short_name=True,
-                              long_name=True,
-                              brdc_long_name=False,
-                              compressed=None):
-    """
-    Frontend function for a RINEX regex search/match    
-
-    Parameters
-    ----------
-    str_in : str
-        input string.
-    short_name : bool, optional
-        check if the pattern matches a short name RINEX. The default is True.
-    long_name : bool, optional
-        check if the pattern matches a long name RINEX. The default is True.
-    brdc_long_name : bool, optional
-        check if the pattern matches a brdc long name RINEX. The default is True.
-    compressed : bool or None
-        return a the regex for a compressed rinex
-        if None, does not matter (return both compressed or not)
-        
-    Returns
-    -------
-    None or re object
-        match result.
-
-    """
-    
-    match = None
-    
-    
-    search_out = re.search(rinex_regex(compressed),str_in)
-    if short_name and search_out:
-        match = search_out
-
-    search_out = re.search(rinex_regex_new_name(compressed),str_in)
-    if long_name and search_out:
-        match = search_out
-        
-    search_out = re.search(rinex_regex_new_name_brdc(compressed),str_in)
-    if brdc_long_name and search_out:
-        match = search_out        
-    
-    return match
-    
-    
-    
-
-def rinex_regex(compressed=True,compiled=False):
-    """
-    Return a regex corresponding to a RINEX name (short convention)
-
-    Parameters
-    ----------
-    compressed : bool or None
-        return a the regex for a compressed rinex
-        if None, does not matter (return both compressed or not)
-        
-
-    compiled : bool
-        return a Python regex object already compliled
-        
-    Returns
-    -------
-    out : string or python's regex
-        a regex
-    """
-    if compressed is None:
-        regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(o)|(d))"
-    elif not compressed:
-        regexstr = "....[0-9]{3}.\.[0-9]{2}o"
-    else:
-        regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(d))"
-        
-
-    if compiled:
-        return re.compile(regexstr)
-    else:
-        return regexstr
-
-
-def rinex_regex_new_name(compressed=None,compiled=False):
-    """
-    Return a regex corresponding to a RINEX name (long convention)
-
-    Parameters
-    ----------
-    compressed : bool or None
-        return a the regex for a compressed rinex
-        if None, does not matter (return both compressed or not)
-        
-
-    compiled : bool
-        return a Python regex object already compliled
-        
-    Returns
-    -------
-    out : string or python's regex
-        a regex
-    """
-    if compressed:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
-    elif compressed is None:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?"        
-    else:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}"
-
-    if compiled:
-        return re.compile(regexstr)
-    else:
-        return regexstr
-
-
-
-def rinex_regex_new_name_brdc(compressed=None,compiled=False):
-    """
-    Return a regex corresponding to a BROADCAST RINEX name (new convention)
-
-    Parameters
-    ----------
-    compressed : bool or None
-        return a the regex for a compressed rinex
-        if None, does not matter (return both compressed or not)
-        
-
-    compiled : bool
-        return a Python regex object already compliled
-        
-    Returns
-    -------
-    out : string or python's regex
-        a regex
-    """
-    if compressed:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
-    elif compressed is None:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?"        
-    else:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}"
-
-    if compiled:
-        return re.compile(regexstr)
-    else:
-        return regexstr    
-    
-    
-def rinex_regex_new_name_brdc_gfz_godc(compressed=None,compiled=False):
-    """
-    Return a regex corresponding to a BROADCAST RINEX name (new convention)
-    from the GFZ's GODC archive
-
-    Parameters
-    ----------
-    compressed : bool or None
-        return a the regex for a compressed rinex
-        if None, does not matter (return both compressed or not)
-        
-
-    compiled : bool
-        return a Python regex object already compliled
-        
-    Returns
-    -------
-    out : string or python's regex
-        a regex
-    """
-    ### BRDC00GFZ_00000000_FRO_RX3_MN_20210114_000000_01D_00U_GFZ.rnx
-    if compressed:
-        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}\.gz"
-    elif compressed is None:
-        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}(\.gz)?"        
-    else:
-        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}"
-
-    if compiled:
-        return re.compile(regexstr)
-    else:
-        return regexstr    
-    
-    
-    
-    
+   
 
 def tgipsy2dt(tin):
     """
@@ -1566,7 +1382,7 @@ def rinexname2dt(rinexpath):
         
     
     ##### LONG rinex name
-    if re.search(rinex_regex_new_name(),rinexname) or re.search(rinex_regex_new_name_brdc(),rinexname):
+    if re.search(conv_rinex.rinex_regex_new_name(),rinexname) or re.search(conv_rinex.rinex_regex_new_name_brdc(),rinexname):
         date_str = rinexname.split("_")[2]
         yyyy = int(date_str[:4])
         doy  = int(date_str[4:7])        
@@ -1577,7 +1393,7 @@ def rinexname2dt(rinexpath):
 
     ##### LONG rinex name -- GFZ's GODC internal name
     ###### OBS RINEX for GFZ GODC not implemented yet !!!!
-    if re.search(rinex_regex_new_name_brdc_gfz_godc(),rinexname): 
+    if re.search(conv_rinex.rinex_regex_new_name_brdc_gfz_godc(),rinexname): 
         date_str = rinexname.split("_")[5]
         time_str = rinexname.split("_")[6]
         yyyy = int(date_str[:4])
@@ -1593,7 +1409,7 @@ def rinexname2dt(rinexpath):
         return dt_out 
     
     ##### SHORT rinex name
-    elif re.search(rinex_regex(),rinexname):
+    elif re.search(conv_rinex.rinex_regex(),rinexname):
         alphabet = list(string.ascii_lowercase)
 
         doy  = int(rinexname[4:7])
@@ -1742,37 +1558,134 @@ def statname_dt2rinexname(statname,datein,rnxtype='d.Z',
     return statname + dt2doy(datein) + sess + '.' + datein.strftime('%y') + rnxtype
 
 
-def statname_dt2rinexname_long(statname,datein,rnxtype='crz.gz'):
-    """
+def statname_dt2rinexname_long(statname,datein,
+                               country="XXX",
+                               data_source="R",
+                               file_period="00U",
+                               data_freq="XXU",
+                               data_type="MO",                               
+                               format_compression='crz.gz',
+                               preset_type=None):
+
+
+    """ 
+    
     Time representation conversion
     
-    Python's Datetime (and station name) => RINEX name
+    Python's Datetime (and station name) => RINEX long name convention
     
-    Create a RINEX name from a station name and date
+    Create a RINEX name from a station name, date and ancillary parameters
 
     Parameters
     ----------
     statname : string
         name of the station
+        can be a 4 or 9 char.
     
     datein : datetime
         date of the wished RINEX name
         
-    rnxtype : string
-        extension of the RINEX ("d.Z",".o") ...
+    country : string
+        optional. the 3char. country code
+        if given, will replace the one in an input 9-char statname
+        default value is "XXX"
         
-    session_a_instead_of_daily_session : bool
-        if True, gives an hourly session name (a,b,c ...)
-        instead of a daily session (0)
+    data_source : str, optional
+        Data Source.
+        R – From Receiver, data using vendor or other software
+        S – From data Stream (RTCM or other)
+        U – Unknown
+        The default is "R".
+        
+    file_period : str, optional
+        File Period
+        15M–15 Minutes
+        01H–1 Hour
+        01D–1 Day
+        01Y–1 Year
+        00U-Unspecified
+        The default is "00U".
+        
+    data_freq : str, optional
+        data frequency. 
+        XXC – 100 Hertz
+        XXZ – Hertz,
+        XXS – Seconds,
+        XXM – Minutes,
+        XXH – Hours,
+        XXD – Days
+        XXU – Unspecified
+        The default is "XXU".
+        
+    data_type : str, optional
+        Two characters represent the data type:
+        GO - GPS Obs.
+        RO - GLONASS Obs.
+        EO - Galileo Obs.
+        JO - QZSS Obs.
+        CO - BDS Obs.
+        IO – NavIC/IRNSS Obs.
+        SO - SBAS Obs.
+        MO - Mixed Obs.
+        GN - Nav. GPS
+        RN - GLONASS Nav.
+        EN - Galileo Nav.
+        JN - QZSS Nav.
+        CN - BDS Nav.
+        IN – NavIC/IRNSS Nav.
+        SN - SBAS Nav.
+        MN – Mixed Nav. (All GNSS
+        Constellations)
+        MM-Meteorological Observation
+
+        The default is "MO".
+        
+    format_compression : string
+        extension of the RINEX ("rnx","crz","crz.gz") ...
+        The default is 'crz.gz'.
+        
+    preset_type : str, optional
+        set the most common data_freq and file_period 
+        for an hourly or daily session. 
+        accept 'daily' or 'hourly' values.
+        The default is None.
+
 
     Returns
     -------
-    rinexname : string
-        The name of the RINEX
+    out_rnx_name : str
+        The name of the RINEX.
+
     """
+        
+    if not len(statname) in (4,9):
+        log.error("statname not 4 or 9 chars")
+        raise Exception
     
-    print("TO BE IMPLEMENTED")
-    return None
+    if len(statname) == 4:
+        statname_ok = statname + "00" + country
+    elif len(statname) == 9 and country != "XXX":
+        statname_ok = statname[:4] + "00" + country
+    else:
+        statname_ok = statname
+        
+        
+    if preset_type == "daily":
+        file_period="01D"
+        data_freq="30S"     
+                
+    elif preset_type == "hourly":
+        file_period="01H"
+        data_freq="01S"     
+        
+        
+    date_ok = datein.strftime('%Y') +  dt2doy(datein) + datein.strftime('%H%M')
+    period_freq_ok = "_" + file_period + "_" + data_freq + "_" + data_type
+    data_source_ok = "_" + data_source + "_"
+    
+    out_rnx_name = statname_ok + data_source_ok + date_ok + period_freq_ok + '.' + format_compression
+    
+    return out_rnx_name
     
 
 
