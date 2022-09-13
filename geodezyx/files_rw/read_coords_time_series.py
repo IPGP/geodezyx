@@ -27,7 +27,8 @@ import os
 import pandas as pd
 import scipy
 import re
-
+import gzip
+from unlzw import unlzw
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import files_rw
@@ -1398,7 +1399,23 @@ def read_epos_sta_coords_mono(filein,return_df=True):
 
     # ... TBC ...
     # """
-    F = open(filein)
+    
+    if type(filein) is str: ### case 1 : path compressed 
+        if filein[-2:] in (".Z"):
+            with open(filein, 'rb') as fh:
+                compressed_data = fh.read()
+                F = unlzw(compressed_data)
+            
+        if filein[-2:] in ("gz","GZ"):
+            F = gzip.open(filein, "r+")
+            F = [e.decode('utf-8') for e in F]
+        else:                  ### case 2 : path uncompressed
+            try:
+                F = open(filein,"r",encoding = "ISO-8859-1")
+            except:
+                F = open(filein,"r")
+    else:                      ### case 3 : already a list of lines
+         F = open(filein)
 
     Points_list_stk = []
     Lines_4_DF_stk = []
