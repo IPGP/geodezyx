@@ -121,7 +121,7 @@ def matlab_time2dt(matlab_datenum):
     return python_datetime
 
 
-def round_dt(dtin,round_to,python_dt_out=True):
+def round_dt(dtin,round_to,python_dt_out=True,mode='round'):
     """
     Round a datetime object to any time laps in seconds
     
@@ -146,6 +146,11 @@ def round_dt(dtin,round_to,python_dt_out=True):
         If True, it returns the date as a legacy Python's DateTime.
         If False, it returns a Pandas Timestamp.
         The default is True.
+
+    mode : str
+        define the way you want to round 
+        the values: 'round' (i.e. the nearest), 'floor', 'ceil'
+        The default if 'round'
             
     Returns
     -------  
@@ -167,7 +172,15 @@ def round_dt(dtin,round_to,python_dt_out=True):
         typ=utils.get_type_smart(dtin)
         dtin_use = pd.Series(dtin)
 
-    dtin_out = dtin_use.dt.round(round_to)
+    if mode == 'round':
+        dtin_out = dtin_use.dt.round(round_to)
+    elif mode == 'ceil':
+        dtin_out = dtin_use.dt.ceil(round_to)
+    elif mode == 'floor':
+        dtin_out = dtin_use.dt.floor(round_to)
+    else:
+        log.err("check mode value: 'round', 'floor', 'ceil'")
+        raise Exception
     
     if python_dt_out:
         dtin_out.dt.to_pydatetime()

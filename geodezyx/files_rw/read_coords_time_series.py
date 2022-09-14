@@ -28,7 +28,6 @@ import pandas as pd
 import scipy
 import re
 import gzip
-from unlzw import unlzw
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import files_rw
@@ -1399,6 +1398,8 @@ def read_epos_sta_coords_mono(filein,return_df=True):
 
     # ... TBC ...
     # """
+
+    from unlzw import unlzw
     
     if type(filein) is str: ### case 1 : path compressed 
         if filein[-2:] in (".Z"):
