@@ -44,6 +44,49 @@ log = logging.getLogger(__name__)
 ### SHELL LIKE FCTS
 #################
 
+
+
+def subprocess_frontend(cmd_in,
+                        save_log=False,
+                        log_dir=None,
+                        log_name_out="out.log",
+                        log_name_err="err.log",
+                        logname_timestamp=False):
+    
+    
+    now = utils.get_timestamp()
+    
+    process1 = subprocess.run([cmd_in],
+                              capture_output=True,
+                              text=True,
+                              shell=True)
+    
+    process1_stdout = process1.stdout.strip()
+    process1_stderr = process1.stderr.strip()
+    
+    if save_log:
+        
+        if not log_dir:
+            logdir = os.getcwd()
+            
+        if logname_timestamp:
+            prefix = now + "_" 
+        else:
+            prefix = ""
+        
+        out_file = open(log_dir + "/" + prefix + log_name_out, "a+")
+        err_file = open(log_dir + "/" + prefix + log_name_err, "a+")
+    
+        out_file.write(process1_stdout)
+        err_file.write(process1_stderr)
+    
+        out_file.close()
+        err_file.close()
+    
+    return process1,process1_stdout,process1_stderr
+
+
+
 def tail(filename, count=1, offset=1024):
     """
     A more efficent way of getting the last few lines of a file.
