@@ -113,9 +113,15 @@ def rinex_sats_checker(p_rnx):
 
     """
     
-    F = open(p_rnx,"r+")
+    import hatanaka
     
-    L =  F.readlines()
+    if p_rnx.endswith(".Z") or p_rnx.endswith(".gz"):
+        O = hatanaka.decompress(p_rnx)
+        O = str(O)
+        L = O.split("\\n")
+    else:
+        F = open(p_rnx,"r+")
+        L =  F.readlines()
     
     iline_bloc = 0
     nlines_bloc = -1
