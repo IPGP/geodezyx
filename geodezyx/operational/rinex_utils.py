@@ -93,6 +93,117 @@ def rinexs_table_from_list(rnxs_inp,site9_col=False):
 
 
 
+
+def rinex_sats_checker(p_rnx): 
+    """
+    Check the consistency of a RINEX's sat list for each epoch
+    
+    Designed for checking the consistency of IPGP-OVPF corrupted RINEXs
+
+    Parameters
+    ----------
+    p_rnx : str
+        input RINEX path.
+
+    Returns
+    -------
+    bad RINEX path or None.
+
+    """
+    
+    F = open(p_rnx,"r+")
+    
+    L =  F.readlines()
+    
+    iline_bloc = 0
+    nlines_bloc = -1
+    
+    Blocs_stack = []
+    
+    ###### This function is  to read the epochs
+    def read_epoch_line(line):
+        fraw = line.split() #fraw est la pour gerer les fracion de sec ...
+        fraw = fraw[0:6]
+        fraw = [float(e) for e in fraw]
+        f = [int(e) for e in fraw]
+        msec = (fraw[5] - np.floor(fraw[5]))
+        msec = np.round(msec,4)
+        msec = int(msec * 10**6)
+        f.append( msec )  # ajour des fractions de sec
+    
+        if f[0] < 50:
+            f[0] = f[0] + 2000
+        else:
+            f[0] = f[0] + 1900
+        if f[5] == 60: # cas particulier rencontré dans des rinex avec T = 60sec
+            rinex_60sec = True
+            f[5] = 59
+        else:
+            rinex_60sec = False
+            
+        epochdt = dt.datetime(*f)
+        if rinex_60sec:
+            epochdt = epochdt + dt.timedelta(seconds=1)
+        return  epochdt
+    
+    
+    
+    ###### This loop read all lines
+    for l in L:
+        re_epoch = '^ {1,2}([0-9]{1,2} * ){5}'
+        #re_sat="[A-Z][0-9][0-9]"
+        bool_epoch=re.search(re_epoch,l)
+        #bool_sat=re.search(re_sat,l)
+        
+        ### we found an epoch line
+        if bool_epoch:
+            in_epoch = True
+            nsat = int(l[30:32])
+            iline_bloc = 0
+            nlines_bloc = int(np.ceil(nsat / 12))
+            LineBloc = []
+            lineconcat = ""
+            date = read_epoch_line(l)
+        
+        ### we read the sat lines based on the number of sat
+        if iline_bloc <= nlines_bloc:
+            LineBloc.append(l[32:].strip())
+            lineconcat = lineconcat + l[32:].strip()
+            iline_bloc += 1
+        
+        ### we stack everything when the sat block is over
+        if iline_bloc == nlines_bloc:
+            in_epoch = False
+            bloc_tuple = (date,nsat,lineconcat)
+            Blocs_stack.append(bloc_tuple)
+            
+            
+    #### we do a DF with all the found line
+    DF = pd.DataFrame(Blocs_stack)
+    
+    DF[3] = None
+    
+    for irow, row in DF.iterrows():
+        nsat = str(row[1])
+        satstr = row[2]
+        re_sat="([A-Z][0-9][0-9]){" + nsat  + "}" 
+        bool_sat=re.search(re_sat,satstr)
+        
+        #### the the right number of sat is found True = Good
+        if bool_sat:
+            DF.iloc[irow,3] = True
+        else:
+            DF.iloc[irow,3] = False
+    
+    
+    if DF[3].sum() != len(DF):
+        return rinex_sats_checker
+    else:
+        return None
+    
+    
+
+
 #  _____  _____ _   _ ________   __   _____       _ _ _
 # |  __ \|_   _| \ | |  ____\ \ / /  / ____|     | (_) |
 # | |__) | | | |  \| | |__   \ V /  | (___  _ __ | |_| |_ ___ _ __
