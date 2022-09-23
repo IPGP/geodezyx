@@ -42,7 +42,7 @@ log = logging.getLogger(__name__)
 
 
 
-def rinexs_table_from_list(rnxs_inp,site9_col=False):
+def rinexs_table_from_list(rnxs_inp,site9_col=False,round_date=False):
     """
     From a simple RINEX list as a text file
 
@@ -59,7 +59,7 @@ def rinexs_table_from_list(rnxs_inp,site9_col=False):
     """
     
     if utils.is_iterable(rnxs_inp):
-        DF = pd.DataFrame(rnxs_inp,names=["path"])        
+        DF = pd.DataFrame(rnxs_inp,columns=["path"])        
     else:
         DF = pd.read_csv(rnxs_inp,names=["path"])        
 
@@ -77,6 +77,8 @@ def rinexs_table_from_list(rnxs_inp,site9_col=False):
     
     
     DF["date"]  = DF["name"].apply(conv.rinexname2dt) 
+    if round_date:
+        DF["date"] = conv.round_dt(DF["date"].values,'1D',True,"floor")
     DoyYear = DF["date"].apply(conv.dt2doy_year)
     DF["doy"]   = DoyYear.apply(lambda x:x[0])
     DF["year"]  = DoyYear.apply(lambda x:x[1])
