@@ -29,8 +29,6 @@ log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
-
-
 def anubis_runner(rnx_inp,
                   out_dir_main,
                   xml_config_generic,
