@@ -204,11 +204,15 @@ def rinex_regex_new_name_brdc_gfz_godc(compressed=None,compiled=False):
     """
     ### BRDC00GFZ_00000000_FRO_RX3_MN_20210114_000000_01D_00U_GFZ.rnx
     if compressed:
-        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}\.gz"
+        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}\.gz"
     elif compressed is None:
-        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}(\.gz)?"        
+        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}(\.gz)?"        
     else:
-        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}.\w{3}"
+        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}"
+    # Nouvelle version : peut  normalement digerer tout RINEX du GFZ 
+    # le suffixe GFZ peut etre nimporte quelle chaine  de upper char !
+    # egalement implemene dans RINEXMOD
+    # .{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_[A-Z]*\.\w{3}(\.gz)?
 
     if compiled:
         return re.compile(regexstr)
