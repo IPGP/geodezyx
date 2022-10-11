@@ -24,8 +24,8 @@ import os
 import pandas as pd 
 # import re
 # import shutil
-# import urllib
-# import ftplib
+import urllib
+import ftplib
 
 #### geodeZYX modules
 from geodezyx import conv
