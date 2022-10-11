@@ -16,7 +16,7 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 ########## BEGIN IMPORT ##########
 #### External modules
 # import datetime as dt
-# from ftplib import FTP
+from ftplib import FTP
 # import glob
 # import itertools
 # import multiprocessing as mp
@@ -24,8 +24,8 @@ import os
 import pandas as pd 
 # import re
 # import shutil
-# import urllib
-# import ftplib
+import urllib
+import ftplib
 
 #### geodeZYX modules
 from geodezyx import conv
