@@ -15,4 +15,4 @@ from geodezyx.operational.rinex_utils               import *
 from geodezyx.operational.rtklib_frontend           import *
 from geodezyx.operational.track_frontend            import *
 from geodezyx.operational.track_frontend            import *
-from geodezyx.operational.download_find_files.py    import *
+from geodezyx.operational.download_find_files       import *
