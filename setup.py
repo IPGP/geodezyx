@@ -177,6 +177,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'sympy',
                       'tabulate',
                       'tk',
+                      'tqdm', ## progress bars
                       'vincenty',
                       'wheel',
                       ],  # Optional

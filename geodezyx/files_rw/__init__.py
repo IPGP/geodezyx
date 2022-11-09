@@ -10,5 +10,6 @@ from .read_geo_files_misc     import *
 from .read_gnss_prods         import *
 from .read_logsheets          import *
 from .read_igs_combi          import *
+from .read_rinex              import *
 from .read_slr                import *
 from .write_geo_files         import *
