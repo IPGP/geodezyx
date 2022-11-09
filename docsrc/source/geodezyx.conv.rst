@@ -49,6 +49,14 @@ geodezyx.conv.conv\_proj\_carto module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.conv.conv\_rinex module
+--------------------------------
+
+.. automodule:: geodezyx.conv.conv_rinex
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.conv.conv\_rotation\_matrices module
 ---------------------------------------------
 

@@ -32,3 +32,11 @@ geodezyx.geodyn.velo\_field\_map\_plt module
    :members:
    :undoc-members:
    :show-inheritance:
+
+geodezyx.geodyn.volcano\_mogi module
+------------------------------------
+
+.. automodule:: geodezyx.geodyn.volcano_mogi
+   :members:
+   :undoc-members:
+   :show-inheritance:
