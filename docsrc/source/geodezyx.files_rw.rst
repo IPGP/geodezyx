@@ -81,6 +81,14 @@ geodezyx.files\_rw.read\_logsheets module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.files\_rw.read\_rinex module
+-------------------------------------
+
+.. automodule:: geodezyx.files_rw.read_rinex
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.files\_rw.read\_slr module
 -----------------------------------
 
