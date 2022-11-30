@@ -9,6 +9,7 @@ Created on Thu Nov 17 17:41:32 2022
 from geodezyx import utils
 import matplotlib.pyplot as plt
 import numpy as np
+import itertools
 import scipy
 
 #### Import the logger
@@ -40,7 +41,7 @@ def freq2U(f):
     U0 =  5.766353
     return 1E6/f-U0
 
-def temp2freq(T,output='freq'):
+def temp2freq(T,out='freq'):
     """
     temperature > frequence du capteur de temperature (output == "freq") 
     OU  coef U (output == "U") OU  periode du capteur U (output == "tau")
@@ -48,7 +49,7 @@ def temp2freq(T,output='freq'):
     
     #### Handle T as an interable (array, list....)
     if utils.is_iterable(T):
-        return np.array([temp2freq(t,output) for t in T])
+        return np.array([temp2freq(t,out) for t in T])
     #### Handle T as a scalar
     else:
         U0 =  5.766353
@@ -59,11 +60,11 @@ def temp2freq(T,output='freq'):
         #X = (1/f) * 10**6 # (1/30000) * 10**6
         #U = X - U0
         #Temp = Y1 * U + Y2 * U**2 + Y3 * U**3
-        if ( output == 'freq'):
+        if ( out == 'freq'):
             return [ 10**6/u  for u in U  if ( (10**6/u< 176000) and (10**6/u > 168000 ))][0]
-        elif ( output == 'tau'):
+        elif ( out == 'tau'):
             return [ 10**6/u  for u in U  if ( (10**6/u< 176000) and (10**6/u > 168000 ))][0]**-1
-        elif ( output == "U"):
+        elif ( out == "U"):
             return [ u-U0  for u in U  if ( (u> 10**6/176000) and (u < 10**6/168000 ))][0]
         else:
             return None
@@ -112,7 +113,7 @@ def freq2pres_old(f,U,F0):
 
 
 
-def freq2pres(fpin,tin,output="psi"):
+def freq2pres(fpin,tin,out="psi"):
     """
     frequence capteur pression > pression (output == "psi")
     OU profondeur (output == "meter")
@@ -134,28 +135,35 @@ def freq2pres(fpin,tin,output="psi"):
 
     P = C * (1 - (T0**2)/(T**2)) * (1 - D*(1 - (T0**2)/(T**2)))
     
-    if output == "psi":
+    if out == "psi":
         return (P)
-    elif output == "meter":
+    elif out == "meter":
         return P/psi_per_meter
     else:
         raise Exception("bad output format in freq2pres")
+        
+        
+
     
-def pres2freq(pin,tin,inputt='psi',
+def pres2freq(pin,tin,inp='psi',
               return_optimize_object=False):
     """
     pression > frequence capteur pression
     """
     
     #### Handle pin as an interable (array, list....)
+    if utils.is_iterable(tin):
+        log.err("tin as to be a scalar")
+        raise Exception
+    
     if utils.is_iterable(pin):
-        return np.array([pres2freq(pin_i,tin,inputt,return_optimize_object) for pin_i in pin])
+        return np.array([pres2freq(pin_i,tin,inp,return_optimize_object) for pin_i in pin])
     
     #### Handle pin as a scalar
     else:
-        if inputt == "psi":
+        if inp == "psi":
             puse = pin
-        elif inputt == "meter":
+        elif inp == "meter":
             puse = pin * psi_per_meter
         
         
@@ -168,6 +176,43 @@ def pres2freq(pin,tin,inputt='psi',
             return Opti
         else:
             return Opti.x[0]
+        
+        
+
+def freq2counter(freq_or_tau_sensor,
+                 count_sensor,
+                 freq_or_tau_clk,
+                 inp="freq",
+                 round_fct=np.floor):
+    
+    if inp=="freq":
+        tau_sensor = 1/freq_or_tau_sensor
+        tau_clk = 1/freq_or_tau_clk
+    else:
+        tau_sensor = freq_or_tau_sensor
+        tau_clk = freq_or_tau_clk
+        
+    N = (count_sensor * tau_sensor)/tau_clk
+    
+    if round_fct:
+        return round_fct(N)
+    else:
+        return N  
+
+
+def counter2freq(N_counted_by_clk,
+                 count_sensor,
+                 freq_clk,
+                 out="freq"):
+    
+    
+    tau_sensor = N_counted_by_clk/(freq_clk*count_sensor)
+    
+    if out=="freq":
+        return 1/tau_sensor
+    else:
+        return tau_sensor
+        
         
 def pres_resolution(val_presin,
                     val_tempin,
@@ -218,21 +263,55 @@ def pres_resolution(val_presin,
                                 freq2temp(1/(tau_temp + j*tau_temp_bias)))
                         
         pres_res = np.abs(pres_biased - pres_central)/divider
+        
         PresResArr[i+1,j+1] = pres_res
     
     if output_val == "psi":
         pass
     elif output_val == "meter":
         pres_central=pres_central/psi_per_meter
-        PresResArr=PresResArr/psi_per_meter
+        if not relative_delta:
+            PresResArr=PresResArr/psi_per_meter ### correction only for absolute values !!!
     else:
         raise Exception("bad output format in pres_resolution")
         
     return pres_central,temp_central,PresResArr.max(),PresResArr
 
 
+def resolution_grid_compute(Tau_pres,Tau_temp,fe,
+                            count_pres,count_temp,
+                            output_val="meter",
+                            relative_delta=False):
+
+    PresVals = np.zeros((len(Tau_pres),len(Tau_temp)))
+    TempVals = np.zeros((len(Tau_pres),len(Tau_temp)))
+    ResVals  = np.zeros((len(Tau_pres),len(Tau_temp)))
+    FullResVals = np.zeros((len(Tau_pres),len(Tau_temp),3,3))
+    
+    for itaupres,itautemp in itertools.product(range(len(Tau_pres)),
+                                               range(len(Tau_temp))):
+        
+        taupres,tautemp = Tau_pres[itaupres],Tau_temp[itautemp]
+        
+        OutRes = pres_resolution(taupres, 
+                                 tautemp,
+                                 1/fe, 
+                                 count_pres, 
+                                 count_temp,
+                                 input_val="tau",
+                                 output_val=output_val,
+                                 relative_delta=relative_delta)
+    
+        PresVals[itaupres,itautemp] = OutRes[0]    
+        TempVals[itaupres,itautemp] = OutRes[1]    
+        ResVals[itaupres,itautemp]  = OutRes[2]
+        FullResVals[itaupres,itautemp,:,:]  = OutRes[3]
+
+    return PresVals,TempVals,ResVals,FullResVals
+    
+
 ############ PLOT OF THE RESOLUTION VALUES
-def plot_resolution_as_gradient_grid(PresVals,
+def resolution_plot_as_gradient_grid(PresVals,
                                      TempVals,
                                      ResVals,
                                      temp_ref,
@@ -284,7 +363,7 @@ def plot_resolution_as_gradient_grid(PresVals,
     ax.ticklabel_format(useOffset=False)
     cm = plt.cm.get_cmap('viridis')
     fig.subplots_adjust(right=0.75,top=.85)
-    im1 = ax.contourf(PresVals,TempVals,ResVals,cmap=cm,levels=100)
+    im1 = ax.contourf(PresVals,TempVals,ResVals,cmap=cm,levels=200)
     cbar_ax1 = fig.add_axes([0.88, 0.15, 0.04, 0.7])
     cbar1 = fig.colorbar(im1,cax=cbar_ax1,format=format_colorbar)
 
@@ -303,7 +382,7 @@ def plot_resolution_as_gradient_grid(PresVals,
     
     
     
-                          
+
                           
                           
                           

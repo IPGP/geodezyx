@@ -170,7 +170,7 @@ def sonel_server(stat,date):
     url = os.path.join(urlserver,str(date.year),conv.dt2doy(date),rnxname)
     return url
 
-def effective_save_dir(parent_archive_dir,stat,date,archtype ='stat'):
+def effective_save_dir(parent_archive_dir,stat,date,archtype ='stat'):    
     """
     INTERNAL_FUNCTION
 
@@ -187,7 +187,7 @@ def effective_save_dir(parent_archive_dir,stat,date,archtype ='stat'):
         return parent_archive_dir
     
     if len(archtype) > 0 and archtype[0] == "/":
-        log.error("The archive type description starts with a /, remove it to avoid an error")
+        log.warn("The archive type description starts with a /, remove it to avoid an error")
 
     out_save_dir = parent_archive_dir
     fff = archtype.split('/')
