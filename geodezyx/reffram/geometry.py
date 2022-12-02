@@ -317,16 +317,19 @@ def itrf_helmert_trans(Xi,
     Xe : 3-Array or Nx3-Array
         Points in the destination Reference Frame.
         
-    Warning
-    -------
+
+        
+    Notes
+    -----
+    
+    ** Warning **
     This function does not the velocity shift from one epoch to another \n
     The output coordinates will be provided at the same epoch as the input ones \n
     Use ``itrf_speed_calc`` function to perform this potential step 
     before (with the initial velocities) or after (with the transformed velocities)
     calling the present function.
-        
-    Notes
-    -----
+    
+    
     Based on the theory and values of *EUREF Technical Note 1: 
     Relationship and Transformation between the International 
     and the European Terrestrial Reference Systems, Z. Altamimi, 2018*
@@ -336,16 +339,15 @@ def itrf_helmert_trans(Xi,
     http://www.epncb.oma.be/_productsservices/coord_trans/index.php
     
     
-    Notes for the French geodetic system
-    ------------------------------------
-    
+    ** Notes for the French geodetic system **    
     By definition, since the 2021/01/04
     RGF93(v2b) = ETRF2000@2019.0
     
-    Source:
-        https://geodesie.ign.fr/index.php?page=rgf93 \n
-        https://geodesie.ign.fr/contenu/fichiers/RGF93v2b-RAF18b.pdf \n
-        https://geodesie.ign.fr/contenu/fichiers/rgf93v2b_information_cnig.pdf 
+    References
+    ----------
+    https://geodesie.ign.fr/index.php?page=rgf93 \n
+    https://geodesie.ign.fr/contenu/fichiers/RGF93v2b-RAF18b.pdf \n
+    https://geodesie.ign.fr/contenu/fichiers/rgf93v2b_information_cnig.pdf 
     
     """
     ## prelimiary warning 
@@ -656,8 +658,26 @@ def helmert_trans_estim_minimisation_scalar(X1,X2,HParam_opti_apriori,
     
     NOT STABLE AVOID THE USE
     (it does the optimization of the 1st parameter, 
-     and then the optimization of the 2nd one etc, etc...)
+    and then the optimization of the 2nd one etc, etc...)
+
+    Parameters
+    ----------
+    X1 & X2 : list of N (x,y,z) points, or an (N,3)-shaped numpy array
+        Input point sets
+    HParam_opti_apriori : list of 7 values
+        The Apriori for the Helmert parameter 
+    L1norm : bool
+        Use the L1-norm as a criteria, use the quadratic sum instead if False
+    itera : int, optional
+        number of iterations. The default is 2.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
     """
+
     
     log.warning("unstable approach, avoid !!!!!")
     
@@ -1079,15 +1099,15 @@ def random_walk_in_a_circle(x0 , y0 , xc , yc ,
         
     Exemple
     -------
-        for un in ('u','n'):
-        for pol in range(2):
-            X,Y , Xcircle , Ycircle = random_walk_in_a_circle(10,10,0,0,50,10000,polar = pol,uniform_or_normal=un)
+    for un in ('u','n'):
+    for pol in range(2):
+        X,Y , Xcircle , Ycircle = random_walk_in_a_circle(10,10,0,0,50,10000,polar = pol,uniform_or_normal=un)
 
-            plt.figure()
-            plt.plot(Xcircle,Ycircle)
-            plt.plot(X,Y)
-            plt.axis('equal')
-            plt.suptitle(un + str(pol))
+        plt.figure()
+        plt.plot(Xcircle,Ycircle)
+        plt.plot(X,Y)
+        plt.axis('equal')
+        plt.suptitle(un + str(pol))
 
     """
 
@@ -1253,8 +1273,8 @@ def project_point_on_plan(N,M,A):
     ----
     It can be an ambiguity on the sign
     
-    Source
-    ------
+    References
+    ----------
     https://fr.wikipedia.org/wiki/Distance_d%27un_point_%C3%A0_un_plan
     https://www.mathematex.fr/viewtopic.php?t=923    
     """
@@ -1283,7 +1303,26 @@ def helmert_trans_legacy(Xa,params='itrf2008_2_etrf2000',
                          invert=True,workepoc=2009.):
     """
     This function is highly unstable and should be used only for legacy reason
+
+
+    Parameters
+    ----------
+    Xa : TYPE
+        DESCRIPTION.
+    params : TYPE, optional
+        DESCRIPTION. The default is 'itrf2008_2_etrf2000'.
+    invert : TYPE, optional
+        DESCRIPTION. The default is True.
+    workepoc : TYPE, optional
+        DESCRIPTION. The default is 2009..
     
+    Returns
+    -------
+    Xb : TYPE
+        DESCRIPTION.
+        
+    Notes
+    -----
     NB 1 : http://etrs89.ensg.ign.fr/memo-V8.pdf
     NB 2 :
     Transformation inverse : * -1 pour les paramètres
@@ -1292,17 +1331,23 @@ def helmert_trans_legacy(Xa,params='itrf2008_2_etrf2000',
     optimisé pour RGF93 => ITRF2008 (d'ou le invert = True & workepoc = 2009.)
 
     NB3 : Attention losque l'on compare avec
-          le convertisseur EUREF avec une vitesse
-          parce que elle aussi est modifiée dans la conversion ETRS => ITRS.
-          Conclusion : le faire en 2 étapes ETRS = > ITRS dans la même epoc
-                                            ITRS epoc 1 => ITRS epoc 2
+    le convertisseur EUREF avec une vitesse
+    parce que elle aussi est modifiée dans la conversion ETRS => ITRS.
+    Conclusion : le faire en 2 étapes: 
+    ETRS => ITRS dans la même epoc
+    ITRS epoc 1 => ITRS epoc 2
+                                            
+    NE MARCHE PAS PARCE BESOIN DU RATE(TAUX) DES PARAMS D'HELMERT !!!!!!
+    (160923)
+    
     if manual
     then params is a tuple
     params = (t1,t2,t3,dab,r1,r2,r3)
 
-    NE MARCHE PAS PARCE BESOIN DU RATE(TAUX) DES PARAMS D'HELMERT !!!!!!
-    (160923)
     """
+
+
+    
     if invert:
         inver = -1.
     else:

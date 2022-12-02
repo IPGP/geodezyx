@@ -42,7 +42,7 @@ import urllib
 import uuid
 
 #### IMPORT CONFIG FOR LOGGER
-log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'toolbox_meta','loggzyx.conf.py')
+log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'logconfig','loggzyx.conf.py')
 
 if os.path.isfile(log_file_path):
     ##print("INFO:",log_file_path,"found")

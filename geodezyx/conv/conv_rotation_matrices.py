@@ -195,8 +195,8 @@ def C_eci2rtn(P,V):
     C_eci2rtn : numpy.array
         transformation matrix
             
-    Source
-    ------
+    References
+    ----------
     "Coordinate Systems", ASEN 3200 1/24/06 George H. Born
     https://www.colorado.edu/ASEN/asen3200/handouts/Coordinate%20System.pdf
     """
@@ -224,8 +224,8 @@ def C_cep2itrs(xpole , ypole):
     """
     xpole and ypole are given in mas, miliarcsecond 
     
-    Source
-    ------
+    References
+    ----------
         Hofmann-Wellenhof,et al. 2008 - GNSS - p21
         Xu - 2007 - GPS - p17
         Xu - Orbits - p15
@@ -245,8 +245,8 @@ def C_euler(phi,theta,psi):
     """
     Gives the matrix of an Euler rotation
         
-    Source
-    ------
+    References
+    ----------
         https://fr.wikipedia.org/wiki/Angles_d%27Euler
     """
     Cphi=np.cos(phi)
@@ -273,8 +273,8 @@ def C_x(theta):
     [0,C,-S]
     [0,S, C]
     
-    Source
-    ------
+    References
+    ----------
         https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
         
     """
@@ -306,8 +306,8 @@ def C_y(theta):
     [ 0,1,0]
     [-S,0,C]
     
-    Source
-    ------
+    References
+    ----------
         https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
     """
 
@@ -336,8 +336,8 @@ def C_z(theta):
     [S, C,0]
     [0, 0,1]
     
-    Source
-    ------
+    References
+    ----------
         https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois
     """
     

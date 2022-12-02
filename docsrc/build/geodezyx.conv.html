@@ -145,6 +145,7 @@ Earth great circle of an angle</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_angle.</span></span><span class="sig-name descname"><span class="pre">angle_from_3_pts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_angle.angle_from_3_pts" title="Permalink to this definition"></a></dt>
 <dd><p>Gives angle between 3 points
 p3 is the vertex (sommet)</p>
+<p class="rubric">References</p>
 <p><a class="reference external" href="http://www.les-mathematiques.net/phorum/read.php?8,596072,596231">http://www.les-mathematiques.net/phorum/read.php?8,596072,596231</a></p>
 </dd></dl>
 
@@ -155,6 +156,7 @@ p3 is the vertex (sommet)</p>
 by conversion to the cartesian space
 the parameter w € [0,1] define the interpoled angle C(w)
 where C(w=0) = A  &amp;  C(w=1) = B</p>
+<p class="rubric">References</p>
 <p><a class="reference external" href="https://stackoverflow.com/questions/2708476/rotation-interpolation">https://stackoverflow.com/questions/2708476/rotation-interpolation</a></p>
 </dd></dl>
 
@@ -334,9 +336,10 @@ positions</p>
 [Z]eci [0  0 1][Z]ecf</p>
 <p>C and S are cos() and sin() of gmst (Greenwich Meridian Sideral Time)</p>
 </div></blockquote>
+</div>
+<p class="rubric">References</p>
 <p><a class="reference external" href="http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc">http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc</a>
 Inspired from satellite-js (<a class="reference external" href="https://github.com/shashwatak/satellite-js">https://github.com/shashwatak/satellite-js</a>)</p>
-</div>
 </dd></dl>
 
 <dl class="py function">
@@ -361,11 +364,9 @@ positions</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Requires pyorbital module</p>
-<blockquote>
-<div><p>[X]          ([C -S 0])[X]
+<p>[X]          ([C -S 0])[X]
 [Y]     = inv([S  C 0])[Y]
 [Z]ecef      ([0  0 1])[Z]eci</p>
-</div></blockquote>
 </div>
 <dl>
 <dt>Empirically:</dt><dd><p>[X]       [ C  S  0][X]
@@ -374,6 +375,7 @@ positions</p>
 <p>C and S are cos() and sin() of gmst (Greenwich Meridian Sideral Time)</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
 <p><a class="reference external" href="http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc">http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc</a>
 Inspired from satellite-js (<a class="reference external" href="https://github.com/shashwatak/satellite-js">https://github.com/shashwatak/satellite-js</a>)</p>
 <div class="admonition note">
@@ -404,15 +406,14 @@ ans. empirically, only for debug !!</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>Cout</strong> (<em>conversion of P in RTN or RPY ref. frame</em>)</p></li>
-<li><p><em>Source</em></p></li>
-<li><p><em>——</em></p></li>
-<li><p><em>“Coordinate Systems”, ASEN 3200 1/24/06 George H. Born</em></p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>Cout</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>conversion of P in RTN or RPY ref. frame</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<p>“Coordinate Systems”, ASEN 3200 1/24/06 George H. Born</p>
 </dd></dl>
 
 <dl class="py function">
@@ -441,15 +442,14 @@ Default is False</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>X,Y,Z</strong> (<em>numpy.array of floats</em>) – ECEF X,Y,Z Component (m)</p></li>
-<li><p><em>Source</em></p></li>
-<li><p><em>——</em></p></li>
-<li><p><strong>https</strong> (<em>//gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates</em>)</p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>X,Y,Z</strong> – ECEF X,Y,Z Component (m)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates">https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -483,15 +483,14 @@ est laissé pour des scripts de conversion de GINS (170119)</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>X,Y,Z</strong> (<em>numpy.array of floats</em>) – cartesian coordinates X,Y,Z in meters</p></li>
-<li><p><em>Source</em></p></li>
-<li><p><em>——</em></p></li>
-<li><p><em>Based on PYACS of J.-M. Nocquet</em></p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>X,Y,Z</strong> – cartesian coordinates X,Y,Z in meters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<p>Based on PYACS of J.-M. Nocquet</p>
 </dd></dl>
 
 <dl class="py function">
@@ -523,15 +522,14 @@ a different x0,y0,z0 will be applied for each dX,dY,dZ element</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>E,N,U</strong> (<em>numpy.array of floats</em>) – East North Up Component (m) w.r.t. x0,y0,z0</p></li>
-<li><p><em>Source</em></p></li>
-<li><p><em>——</em></p></li>
-<li><p><strong>https</strong> (<em>//gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates</em>)</p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>E,N,U</strong> – East North Up Component (m) w.r.t. x0,y0,z0</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates">https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates</a></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This recursive fuction should be improved</p>
@@ -561,15 +559,14 @@ a different x0,y0,z0 will be applied for each X,Y,Z element</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>E,N,U</strong> (<em>numpy.array of floats</em>) – East North Up Component (m) w.r.t. x0,y0,z0</p></li>
-<li><p><em>Source</em></p></li>
-<li><p><em>——</em></p></li>
-<li><p><strong>https</strong> (<em>//gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates</em>)</p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>E,N,U</strong> – East North Up Component (m) w.r.t. x0,y0,z0</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates">https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -617,15 +614,14 @@ return the topocentric ENU position around this mean position</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>latitude, longitude, height</strong> (<em>numpy.array of floats</em>) – latitude (deg/rad), longitude (deg/rad), height (m)</p></li>
-<li><p><em>Source</em></p></li>
-<li><p><em>——</em></p></li>
-<li><p><em>Based on PYACS of J.-M. Nocquet</em></p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>latitude, longitude, height</strong> – latitude (deg/rad), longitude (deg/rad), height (m)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<p>Based on PYACS of J.-M. Nocquet</p>
 </dd></dl>
 
 <dl class="py function">
@@ -637,6 +633,7 @@ return the topocentric ENU position around this mean position</p>
 <dt class="sig sig-object py" id="geodezyx.conv.conv_coords.normal_vector">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">normal_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llambda</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.normal_vector" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the Ellipsoid “Normale”</p>
+<p class="rubric">References</p>
 <ol class="upperalpha simple" start="16">
 <li><p>Bosser (2012), Géométrie de l’Ellipsoïde, p27</p></li>
 </ol>
@@ -651,8 +648,9 @@ Cartesian Topocentric ENU =&gt; Geographic FLH</p>
 <p class="admonition-title">Warning</p>
 <p>Inputs values are assumed as uncorrelated, which is not accurate
 Must be improved</p>
-<p>Linear Algebra, Geodesy, and GPS p332</p>
 </div>
+<p class="rubric">References</p>
+<p>Linear Algebra, Geodesy, and GPS p332</p>
 </dd></dl>
 
 <dl class="py function">
@@ -664,8 +662,9 @@ Geographic FLH =&gt; Cartesian Topocentric ENU</p>
 <p class="admonition-title">Warning</p>
 <p>Inputs values are assumed as uncorrelated, which is not accurate
 Must be improved</p>
-<p>Linear Algebra, Geodesy, and GPS p332</p>
 </div>
+<p class="rubric">References</p>
+<p>Linear Algebra, Geodesy, and GPS p332</p>
 </dd></dl>
 
 <dl class="py function">
@@ -677,8 +676,9 @@ Geographic FLH =&gt; Cartesian ECEF XYZ</p>
 <p class="admonition-title">Warning</p>
 <p>Inputs values are assumed as uncorrelated, which is not accurate
 Must be improved</p>
-<p>Linear Algebra, Geodesy, and GPS p332</p>
 </div>
+<p class="rubric">References</p>
+<p>Linear Algebra, Geodesy, and GPS p332</p>
 </dd></dl>
 
 <dl class="py function">
@@ -690,8 +690,9 @@ Cartesian ECEF XYZ =&gt; Cartesian Topocentric ENU</p>
 <p class="admonition-title">Warning</p>
 <p>Inputs values are assumed as uncorrelated, which is not accurate
 Must be improved</p>
-<p>Linear Algebra, Geodesy, and GPS p332</p>
 </div>
+<p class="rubric">References</p>
+<p>Linear Algebra, Geodesy, and GPS p332</p>
 </dd></dl>
 
 <dl class="py function">
@@ -719,6 +720,7 @@ To simplify the usage of the conversion functions
 <dt class="sig sig-object py" id="geodezyx.conv.conv_coords.wnorm">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">wnorm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6378137.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00669438003</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.wnorm" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the Ellipsoid “Grande Normale”</p>
+<p class="rubric">References</p>
 <p>ALG0021 in NTG_71 (IGN Lambert Projection Tech document)
 Based on PYACS of J.-M. Nocquet</p>
 </dd></dl>
@@ -871,13 +873,12 @@ Gives also the Azimuth between 2 points</p>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>s</strong> (<em>float</em>) – Distance betwwen the 2 points</p></li>
 <li><p><strong>fwdAz,revAz</strong> (<em>float</em>) – Forward and Reverse Azimuth between the 2 points</p></li>
-<li><p><em>Source</em></p></li>
-<li><p><em>——</em></p></li>
-<li><p><strong>https</strong> (<em>//github.com/maurycyp/vincenty/blob/master/vincenty/</em>)</p></li>
 </ul>
 </p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://github.com/maurycyp/vincenty/blob/master/vincenty/">https://github.com/maurycyp/vincenty/blob/master/vincenty/</a></p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>  <span class="c1"># coincident points</span>
 <span class="go">0.0</span>
@@ -1177,11 +1178,10 @@ GitHub repository :
 <dt class="sig sig-object py" id="geodezyx.conv.conv_rotation_matrices.C_cep2itrs">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rotation_matrices.</span></span><span class="sig-name descname"><span class="pre">C_cep2itrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xpole</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ypole</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rotation_matrices.C_cep2itrs" title="Permalink to this definition"></a></dt>
 <dd><p>xpole and ypole are given in mas, miliarcsecond</p>
-<blockquote>
-<div><p>Hofmann-Wellenhof,et al. 2008 - GNSS - p21
+<p class="rubric">References</p>
+<p>Hofmann-Wellenhof,et al. 2008 - GNSS - p21
 Xu - 2007 - GPS - p17
 Xu - Orbits - p15</p>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
@@ -1206,16 +1206,15 @@ Xu - Orbits - p15</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>C_eci2rtn</strong> (<em>numpy.array</em>) – transformation matrix</p></li>
-<li><p><em>Source</em></p></li>
-<li><p><em>——</em></p></li>
-<li><p><em>“Coordinate Systems”, ASEN 3200 1/24/06 George H. Born</em></p></li>
-<li><p><strong>https</strong> (<em>//www.colorado.edu/ASEN/asen3200/handouts/Coordinate%20System.pdf</em>)</p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>C_eci2rtn</strong> – transformation matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.array</p>
 </dd>
 </dl>
+<p class="rubric">References</p>
+<p>“Coordinate Systems”, ASEN 3200 1/24/06 George H. Born
+<a class="reference external" href="https://www.colorado.edu/ASEN/asen3200/handouts/Coordinate%20System.pdf">https://www.colorado.edu/ASEN/asen3200/handouts/Coordinate%20System.pdf</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -1232,9 +1231,8 @@ Xu - Orbits - p15</p>
 <dt class="sig sig-object py" id="geodezyx.conv.conv_rotation_matrices.C_euler">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rotation_matrices.</span></span><span class="sig-name descname"><span class="pre">C_euler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rotation_matrices.C_euler" title="Permalink to this definition"></a></dt>
 <dd><p>Gives the matrix of an Euler rotation</p>
-<blockquote>
-<div><p><a class="reference external" href="https://fr.wikipedia.org/wiki/Angles_d%27Euler">https://fr.wikipedia.org/wiki/Angles_d%27Euler</a></p>
-</div></blockquote>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://fr.wikipedia.org/wiki/Angles_d%27Euler">https://fr.wikipedia.org/wiki/Angles_d%27Euler</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -1270,9 +1268,8 @@ Xu - Orbits - p15</p>
 <p>[1,0, 0]
 [0,C,-S]
 [0,S, C]</p>
-<blockquote>
-<div><p><a class="reference external" href="https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois">https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois</a></p>
-</div></blockquote>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois">https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -1283,9 +1280,8 @@ Xu - Orbits - p15</p>
 <p>[ C,0,S]
 [ 0,1,0]
 [-S,0,C]</p>
-<blockquote>
-<div><p><a class="reference external" href="https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois">https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois</a></p>
-</div></blockquote>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois">https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -1295,9 +1291,8 @@ Xu - Orbits - p15</p>
 <p>[C,-S,0]
 [S, C,0]
 [0, 0,1]</p>
-<blockquote>
-<div><p><a class="reference external" href="https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois">https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois</a></p>
-</div></blockquote>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois">https://fr.wikipedia.org/wiki/Matrice_de_rotation#En_dimension_trois</a></p>
 </dd></dl>
 
 <dl class="py function">

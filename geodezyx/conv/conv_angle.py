@@ -66,6 +66,7 @@ def dms2dec_num(deg,minn=0,sec=0):
     -------
     dd_float : float
         Decimal degree Angle
+        
     """
     return deg + minn * (1./60.) +  sec * (1./3600.)
 
@@ -86,6 +87,7 @@ def deg_dec2dms(deg_in,only_dm=False):
     -------
     deg , minu , sec : numpy.array of float
         3 arrays for Degrees, Minutes, Seconds
+        
     """
     deg              = np.floor(deg_in)
     decimal_part     = deg_in - deg 
@@ -129,6 +131,7 @@ def dms2dec(dms_str , onlyDM=False):
     -------
     dd_float : float
         Decimal degree Angle
+        
     """
     
     if not onlyDM:
@@ -180,6 +183,7 @@ def arcsec2deg(arcsec_in):
     Arcsecond => Degrees
     
     NB : Not really useful, should be avoided
+    
     """
         
     return arcsec_in / 3600.
@@ -192,6 +196,7 @@ def deg2arcsec(deg_in):
     Degrees => Arcsecond
     
     NB : Not really useful, should be avoided
+    
     """
     return deg_in * 3600.
 
@@ -205,6 +210,7 @@ def angle2equivalent_earth_radius(angle_in,angtype='deg',
     Useful to determine metric varations in latitude
     
     angle can be : "deg", "rad", "mas"
+    
     """
     earth_circum = earth_radius * 2 * np.pi
     if angtype == "deg":
@@ -230,6 +236,7 @@ def angle2equivalent_earth_parallel(angle_in,latitude_in,
      the radius of the parallel)
     
     angle can be : "deg", "rad", "mas"
+    
     """
     
     if angtype == "deg":
@@ -250,6 +257,7 @@ def anglesfromvects(xa,ya,xb,yb,angtype='deg'):
     Determines the angle between the points A(xa,ya) and B(xb,yb)
     
     angle can be : "deg", "rad"
+    
     """
     A = np.array([xa,ya])
     B = np.array([xb,yb])
@@ -271,10 +279,12 @@ def angle_interpolation_quick(A,B,w):
     the parameter w € [0,1] define the interpoled angle C(w)
     where C(w=0) = A  &  C(w=1) = B
 
-    Source
-    ------
+    References
+    ----------
     https://stackoverflow.com/questions/2708476/rotation-interpolation
+    
     """
+
     CS = (1-w)*np.cos(A) + w*np.cos(B)
     SN = (1-w)*np.sin(A) + w*np.sin(B)
     C = np.atan2(SN,CS)
@@ -286,10 +296,12 @@ def angle_from_3_pts(p1,p2,p3):
     Gives angle between 3 points
     p3 is the vertex (sommet)
     
-    Source
-    ------
+    References
+    ----------
     http://www.les-mathematiques.net/phorum/read.php?8,596072,596231
+    
     """
+    
 
     p1,p2,p3 = [np.array(e) for e in (p1,p2,p3)]
     x1 , y1 = p1
