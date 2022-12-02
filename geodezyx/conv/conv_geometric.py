@@ -163,8 +163,8 @@ def vincenty_full(point1, point2, miles=False,full=True,azimuth_in_deg=True):
     fwdAz,revAz : float
         Forward and Reverse Azimuth between the 2 points 
         
-    Source
-    ------
+    References
+    ----------
     https://github.com/maurycyp/vincenty/blob/master/vincenty/
     
     Examples

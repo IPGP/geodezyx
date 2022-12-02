@@ -65,7 +65,6 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 </ul>
 </li>
@@ -257,35 +256,63 @@ The default is “Powell”.</p></li>
 <dd><p>Estimates the Helmert parameters but based on a minimisation approach
 between X1 and X2 (as suggested in the IGS combination software)</p>
 <p>NOT STABLE AVOID THE USE
-(it does the optimization of the 1st parameter,</p>
-<blockquote>
-<div><p>and then the optimization of the 2nd one etc, etc…)</p>
-</div></blockquote>
+(it does the optimization of the 1st parameter,
+and then the optimization of the 2nd one etc, etc…)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X2</strong> (<em>X1 &amp;</em>) – Input point sets</p></li>
+<li><p><strong>HParam_opti_apriori</strong> (<em>list</em><em> of </em><em>7 values</em>) – The Apriori for the Helmert parameter</p></li>
+<li><p><strong>L1norm</strong> (<em>bool</em>) – Use the L1-norm as a criteria, use the quadratic sum instead if False</p></li>
+<li><p><strong>itera</strong> (<em>int</em><em>, </em><em>optional</em>) – number of iterations. The default is 2.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DESCRIPTION.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TYPE</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.geometry.helmert_trans_legacy">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">helmert_trans_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itrf2008_2_etrf2000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workepoc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2009.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.helmert_trans_legacy" title="Permalink to this definition"></a></dt>
 <dd><p>This function is highly unstable and should be used only for legacy reason</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Xa</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
+<li><p><strong>params</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is ‘itrf2008_2_etrf2000’.</p></li>
+<li><p><strong>invert</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is True.</p></li>
+<li><p><strong>workepoc</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is 2009..</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Xb</strong> – DESCRIPTION.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TYPE</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
 <p>NB 1 : <a class="reference external" href="http://etrs89.ensg.ign.fr/memo-V8.pdf">http://etrs89.ensg.ign.fr/memo-V8.pdf</a>
 NB 2 :
 Transformation inverse : * -1 pour les paramètres
 cf <a class="reference external" href="https://en.wikipedia.org/wiki/Helmert_transformation">https://en.wikipedia.org/wiki/Helmert_transformation</a></p>
 <p>optimisé pour RGF93 =&gt; ITRF2008 (d’ou le invert = True &amp; workepoc = 2009.)</p>
-<dl>
-<dt>NB3<span class="classifier">Attention losque l’on compare avec</span></dt><dd><p>le convertisseur EUREF avec une vitesse
+<p>NB3 : Attention losque l’on compare avec
+le convertisseur EUREF avec une vitesse
 parce que elle aussi est modifiée dans la conversion ETRS =&gt; ITRS.
-Conclusion : le faire en 2 étapes ETRS = &gt; ITRS dans la même epoc</p>
-<blockquote>
-<div><p>ITRS epoc 1 =&gt; ITRS epoc 2</p>
-</div></blockquote>
-</dd>
-</dl>
+Conclusion : le faire en 2 étapes:
+ETRS =&gt; ITRS dans la même epoc
+ITRS epoc 1 =&gt; ITRS epoc 2</p>
+<p>NE MARCHE PAS PARCE BESOIN DU RATE(TAUX) DES PARAMS D’HELMERT !!!!!!
+(160923)</p>
 <p>if manual
 then params is a tuple
 params = (t1,t2,t3,dab,r1,r2,r3)</p>
-<p>NE MARCHE PAS PARCE BESOIN DU RATE(TAUX) DES PARAMS D’HELMERT !!!!!!
-(160923)</p>
 </dd></dl>
 
 <dl class="py class">
@@ -360,29 +387,26 @@ for a proper transformation</p></li>
 <dd class="field-odd"><p>3-Array or Nx3-Array</p>
 </dd>
 </dl>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This function does not the velocity shift from one epoch to another</p>
+<p class="rubric">Notes</p>
+<p>** Warning **
+This function does not the velocity shift from one epoch to another</p>
 <p>The output coordinates will be provided at the same epoch as the input ones</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">itrf_speed_calc</span></code> function to perform this potential step
 before (with the initial velocities) or after (with the transformed velocities)
 calling the present function.</p>
-</div>
-<p class="rubric">Notes</p>
 <p>Based on the theory and values of <em>EUREF Technical Note 1:
 Relationship and Transformation between the International
 and the European Terrestrial Reference Systems, Z. Altamimi, 2018</em>
 <a class="reference external" href="http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf">http://etrs89.ensg.ign.fr/pub/EUREF-TN-1.pdf</a></p>
 <p>We recommend to confirm the values with the official EUREF converter
 <a class="reference external" href="http://www.epncb.oma.be/_productsservices/coord_trans/index.php">http://www.epncb.oma.be/_productsservices/coord_trans/index.php</a></p>
-<p>By definition, since the 2021/01/04
+<p>** Notes for the French geodetic system **
+By definition, since the 2021/01/04
 RGF93(v2b) = <a class="reference external" href="mailto:ETRF2000&#37;&#52;&#48;2019&#46;0">ETRF2000<span>&#64;</span>2019<span>&#46;</span>0</a></p>
-<dl>
-<dt>Source:</dt><dd><p><a class="reference external" href="https://geodesie.ign.fr/index.php?page=rgf93">https://geodesie.ign.fr/index.php?page=rgf93</a></p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://geodesie.ign.fr/index.php?page=rgf93">https://geodesie.ign.fr/index.php?page=rgf93</a></p>
 <p><a class="reference external" href="https://geodesie.ign.fr/contenu/fichiers/RGF93v2b-RAF18b.pdf">https://geodesie.ign.fr/contenu/fichiers/RGF93v2b-RAF18b.pdf</a></p>
 <p><a class="reference external" href="https://geodesie.ign.fr/contenu/fichiers/rgf93v2b_information_cnig.pdf">https://geodesie.ign.fr/contenu/fichiers/rgf93v2b_information_cnig.pdf</a></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -471,9 +495,10 @@ RGF93(v2b) = <a class="reference external" href="mailto:ETRF2000&#37;&#52;&#48;2
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>It can be an ambiguity on the sign</p>
+</div>
+<p class="rubric">References</p>
 <p><a class="reference external" href="https://fr.wikipedia.org/wiki/Distance_d%27un_point_%C3%A0_un_plan">https://fr.wikipedia.org/wiki/Distance_d%27un_point_%C3%A0_un_plan</a>
 <a class="reference external" href="https://www.mathematex.fr/viewtopic.php?t=923">https://www.mathematex.fr/viewtopic.php?t=923</a></p>
-</div>
 </dd></dl>
 
 <dl class="py function">
@@ -508,16 +533,14 @@ RGF93(v2b) = <a class="reference external" href="mailto:ETRF2000&#37;&#52;&#48;2
 <li><p><strong>Xcircle</strong> (<em>np.array</em>) – X-coordinates of the circle.</p></li>
 <li><p><strong>Ycircle</strong> (<em>np.array</em>) – Y-coordinates of the circle.</p></li>
 <li><p><em>Exemple</em></p></li>
-<li><p><em>——-</em> – for un in (‘u’,’n’):
-for pol in range(2):</p>
-<blockquote>
-<div><p>X,Y , Xcircle , Ycircle = random_walk_in_a_circle(10,10,0,0,50,10000,polar = pol,uniform_or_normal=un)</p>
+<li><p><em>——-</em></p></li>
+<li><p><em>for un in (‘u’,’n’)</em></p></li>
+<li><p><em>for pol in range(2)</em> – X,Y , Xcircle , Ycircle = random_walk_in_a_circle(10,10,0,0,50,10000,polar = pol,uniform_or_normal=un)</p>
 <p>plt.figure()
 plt.plot(Xcircle,Ycircle)
 plt.plot(X,Y)
 plt.axis(‘equal’)
 plt.suptitle(un + str(pol))</p>
-</div></blockquote>
 </li>
 </ul>
 </p>
@@ -925,8 +948,9 @@ for a zero-valued position
 But, nevertheless, activating  clean_null_values = True is better
 This Note is in fact usefull if you want to see bad positions on a plot
 =&gt; Then convert_ECEF_ECI = False and clean_null_values = False</p>
-<p>“Coordinate Systems”, ASEN 3200 1/24/06 George H. Born</p>
 </div>
+<p class="rubric">References</p>
+<p>“Coordinate Systems”, ASEN 3200 1/24/06 George H. Born</p>
 </dd></dl>
 
 <dl class="py function">
@@ -970,16 +994,11 @@ to set all th axis at the same limits</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Diff_sat_all_df_in</strong> (<em>Pandas DataFrame</em>) – a DataFrame produced by compar_orbit</p></li>
-<li><p><strong>RMS_style</strong> (<em>str</em>) – <p>‘natural’: use the natural definition of the RMS
-‘GRGS’: RMS calc based on the GRGS definition of the RMS (OV help)</p>
-<blockquote>
-<div><p>is actually the standard deviation</p>
-</div></blockquote>
-<dl class="simple">
-<dt>’kouba’: RMS as defined in Kouba et al. 1994, p75</dt><dd><p>using the degree of freedom (3*Nobs - 7)</p>
-</dd>
-</dl>
-</p></li>
+<li><p><strong>RMS_style</strong> (<em>str</em>) – ‘natural’: use the natural definition of the RMS
+‘GRGS’: RMS calc based on the GRGS definition of the RMS (OV help)
+is actually the standard deviation
+‘kouba’: RMS as defined in Kouba et al. 1994, p75
+using the degree of freedom (3*Nobs - 7)</p></li>
 <li><p><strong>light_tab</strong> (<em>bool</em>) – produce a table with only RMS, with min/max/arithmetic instead</p></li>
 </ul>
 </dd>

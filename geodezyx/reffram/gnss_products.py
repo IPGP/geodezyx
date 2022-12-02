@@ -111,8 +111,8 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
     This Note is in fact usefull if you want to see bad positions on a plot
     => Then convert_ECEF_ECI = False and clean_null_values = False
 
-    Source
-    ------
+    References
+    ----------
     "Coordinate Systems", ASEN 3200 1/24/06 George H. Born
 
     """
@@ -550,9 +550,9 @@ def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
     RMS_style : str
         'natural': use the natural definition of the RMS
         'GRGS': RMS calc based on the GRGS definition of the RMS (OV help)
-                is actually the standard deviation
+        is actually the standard deviation
         'kouba': RMS as defined in Kouba et al. 1994, p75
-                 using the degree of freedom (3*Nobs - 7)
+        using the degree of freedom (3*Nobs - 7)
 
     light_tab : bool
         produce a table with only RMS, with min/max/arithmetic instead
@@ -601,9 +601,6 @@ def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
             rms_A = stats.rms_mean_kouba(Diffwork[col_name0])
             rms_B = stats.rms_mean_kouba(Diffwork[col_name1])
             rms_C = stats.rms_mean_kouba(Diffwork[col_name2])
-
-            
-            
             
         RMS3D = np.sqrt(rms_A**2 + rms_B**2 + rms_C**2)
 
