@@ -62,6 +62,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
@@ -1570,6 +1571,38 @@ Is a list of tuple if the input is an iterable</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tuple of int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_time.dt2epoch_rnx3">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">dt2epoch_rnx3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rec_clk_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.dt2epoch_rnx3" title="Permalink to this definition"></a></dt>
+<dd><p>Time representation conversion</p>
+<p>Python’s Datetime =&gt; RINEX3/4 epoch representation
+e.g.
+&gt; 2022 11 29 17 15 25.0000000  0  0       0.000000000000</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dt_in</strong> (<em>datetime</em><em> or </em><em>list</em><em> of </em><em>datetime.</em>) – Datetime(s).</p></li>
+<li><p><strong>epoch_flag</strong> (<em>int</em><em>, </em><em>optional</em>) – <dl class="simple">
+<dt>Epoch flag:</dt><dd><p>0 : OK
+1 : power failure between previous and current epoch
+&gt;1 : Special event (see RINEX documentation).</p>
+</dd>
+</dl>
+<p>The default is 0.</p>
+</p></li>
+<li><p><strong>nsats</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of satellites observed in current epoch. The default is 0.</p></li>
+<li><p><strong>rec_clk_offset</strong> (<em>float</em><em>, </em><em>optional</em>) – Receiver clock offset correction (seconds). The default is 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>epoch_out</strong> – output RINEX3/4 epoch representation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or list of str</p>
 </dd>
 </dl>
 </dd></dl>
