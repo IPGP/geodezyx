@@ -16,7 +16,7 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
-from ftplib import FTP
+from ftplib import FTP, FTP_TLS
 # import glob
 import itertools
 import multiprocessing as mp
@@ -60,7 +60,6 @@ log = logging.getLogger(__name__)
 ######## PRODUCTS DOWNLOADER
 ############################################################################
 
-
 def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                                  AC_names = ("wum","cod"),
                                  prod_types = ("sp3","clk"),
@@ -84,12 +83,20 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     else:
         mgex_str = ""
         
+    if repro:
+        repro_str = "repro" + str(repro) + "/"
+    else:
+        repro_str = ""
+        
     if not utils.is_iterable(remove_patterns):
         remove_patterns = [remove_patterns]
     
+    secure_ftp = False
+    
     if archive_center == "cddis":
-        arch_center_main    = 'cddis.gsfc.nasa.gov'
+        arch_center_main    = 'gdc.cddis.eosdis.nasa.gov'
         arch_center_basedir = '/pub/gps/products/' + mgex_str
+        secure_ftp = True
         
     elif archive_center == "cddis_glonass":
         arch_center_main    = 'cddis.gsfc.nasa.gov'
@@ -130,12 +137,27 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
    
 
     ## create the FTP object
-    ftp = FTP(arch_center_main)
-    ftp.login()
+    if secure_ftp:
+        ftp_constuctor = FTP_TLS
+        ftp=ftp_constuctor()
+        #ftp.set_debuglevel(2)
+        ftp.connect(arch_center_main)
+        ftp.login('anonymous','')
+        ftp.prot_p()
+    else:     
+        ftp_constuctor = FTP
+        ftp = ftp_constuctor(arch_center_main)
+        ftp.login()
+        
     ## create a list of FTP object for multiple downloads (unstable...)
-    if ftp_download and parallel_download > 1:
-        Ftp_obj_list = [FTP(arch_center_main) for i in range(parallel_download)]
-        [f.login() for f in Ftp_obj_list]    
+    if ftp_download and parallel_download >= 1:
+        Ftp_obj_list = [ftp_constuctor(arch_center_main) for i in range(parallel_download)]
+        if secure_ftp:
+            [f.login('anonymous','') for f in Ftp_obj_list]    
+            [f.prot_p() for f in Ftp_obj_list]    
+        else:
+            [f.login() for f in Ftp_obj_list]    
+            
         # define the main obj for crawling
         ftp = Ftp_obj_list[0]
     
@@ -155,7 +177,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
             dow = str(dow_manu)
                
         log.info("Search products for day %s-%s, AC/prod, %s/%s",wwww,dow,ac_cur,prod_cur)
-        wwww_dir = os.path.join(arch_center_basedir,str(wwww))
+        wwww_dir = os.path.join(arch_center_basedir,str(wwww),repro_str)
         log.info("Move to: %s",wwww_dir)
         if wwww_dir_previous != wwww_dir:
             try:
@@ -166,7 +188,6 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
             wwww_dir_previous = wwww_dir
             if len(Files_listed_in_FTP) == 0:
                 log.warning("no files found in directory %s",wwww_dir)
-                
                 
         Files_remote_date_list = []
 
@@ -210,7 +231,6 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                                                               ac_cur,
                                                               dt_cur,
                                                               archtype)
-            
         utils.create_dir(archive_dir_specif)
         
         ### Generation of the Download fct inputs
@@ -232,7 +252,6 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
             Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
             [Potential_localfiles_list.append(os.path.join(archive_dir_specif,f)) for f in Files_remote_date_list]
 
-            
         ### Actual Download, FTP download is not recommended
         if ftp_download and parallel_download == 1:
             for tup in Downld_tuples_list:
@@ -495,10 +514,14 @@ def orbclk_cddis_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
         rep_fldr = ''
     else:
         rep_fldr = 'repro' + str(repro)
+
     if repro != 0:
         center     = list(center)
         center[-1] = str(repro)
         center = ''.join(center)
+    if repro == 3:
+        longname = True
+        
     if center in ("cod","cof","co2","cf2") and sp3clk == "sp3":
         log.info("CODE orbit extension changed to eph")
         sp3clk = "eph"

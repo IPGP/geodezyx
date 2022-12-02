@@ -1872,7 +1872,6 @@ def datestr_gins_filename_2_dt(datestrin):
     
     else:
         #### CASE WHERE THE DATE LOOKS LIKE 00000:00000
-
         yr = int(datestrin[0:2])
         mm = int(datestrin[2:4])
         dd = int(datestrin[4:6])
@@ -1936,7 +1935,52 @@ def trimble_file2dt(trmfile_in):
     
     
         
+def dt2epoch_rnx3(dt_in,epoch_flag=0,nsats=0,rec_clk_offset=0):
+    """
+    Time representation conversion
+    
+    Python's Datetime => RINEX3/4 epoch representation
+    e.g.
+    > 2022 11 29 17 15 25.0000000  0  0       0.000000000000
 
+    Parameters
+    ----------
+    dt_in : datetime or list of datetime.
+        Datetime(s).
+    epoch_flag : int, optional
+        Epoch flag:
+            0 : OK
+            1 : power failure between previous and current epoch
+            >1 : Special event (see RINEX documentation). 
+        The default is 0.
+    nsats : int, optional
+        Number of satellites observed in current epoch. The default is 0.
+    rec_clk_offset : float, optional
+        Receiver clock offset correction (seconds). The default is 0.
+
+    Returns
+    -------
+    epoch_out : str or list of str
+        output RINEX3/4 epoch representation.
+    """
+
+    if utils.is_iterable(dt_in):
+        typ=utils.get_type_smart(dt_in)
+        return typ([dt2epoch_rnx3(e,epoch_flag,nsats,rec_clk_offset) for e in dt_in])
+    
+    else:
+        fmt="> {:4} {:2n} {:2n} {:2n} {:2n}{:11.7f}  {:1n}{:3n}      {:15.12f}"    
+        epoch_out = fmt.format(dt_in.year,
+                               dt_in.month,
+                               dt_in.day,
+                               dt_in.hour,
+                               dt_in.minute,
+                               dt_in.second,
+                               epoch_flag,
+                               nsats,
+                               rec_clk_offset)
+    
+        return epoch_out
 
 
 #### LEAP SECONDS MANAGEMENT

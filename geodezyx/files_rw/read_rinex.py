@@ -52,7 +52,7 @@ def read_rinex2_obs(rnx_in,
 
     Returns
     -------
-    DFrnxobs : Pandas DataFrame
+    DFrnxobs : Pandas DataFrame / GeodeZYX's RINEX format
     """
     
     
@@ -148,7 +148,7 @@ def read_rinex3_obs(rnx_in,
 
     Returns
     -------
-    DFrnxobs : Pandas DataFrame
+    DFrnxobs : Pandas DataFrame / GeodeZYX's RINEX format
     """
     
     EPOCHS = operational.rinex_read_epoch(rnx_in,out_index=True)
@@ -246,6 +246,66 @@ def read_rinex3_obs(rnx_in,
         DFrnxobs.sort_index(inplace=True)
         
     return DFrnxobs
+
+############ UTILITY FUNCTIONS
+
+
+def DFrnx_clean_LLI_SSI(DFrnx_in):
+    """
+    Remove the Loss of Lock Indicator (LLI) and Signal Strength Indicator (SSI) 
+    columns in a DataFrame RINEX
+    
+    Parameters
+    ----------
+    DFrnx_in : Pandas DataFrame / GeodeZYX's RINEX format
+        A RINEX DataFrame with LLI/SSI columns.
+
+    Returns
+    -------
+    DFrnx_out : Pandas DataFrame / GeodeZYX's RINEX format
+        A RINEX DataFrame without LLI/SSI columns.
+    """
+    cols = DFrnx_in.columns
+    cols_clean = [e for e in cols if not "LLI" in e and not "SSI" in e]
+    DFrnx_out = DFrnx_in[cols_clean]
+    return DFrnx_out
+
+
+def observables_dict_per_sys(DFrnx_in):
+    """
+    Gives the GNSS observables for each GNSS system in a dictionnary
+
+
+    Parameters
+    ----------
+    DFrnx_in : Pandas DataFrame / GeodeZYX's RINEX format
+        A RINEX DataFrame.
+
+    Returns
+    -------
+    dict_sys_obs : dict
+        A dictionnary with GNSS system as key (G,R,E...).
+        And the observalbes for each system as values
+    """
+    
+    dict_sys_obs = dict()
+
+    for sys in DFrnx_in["sys"].unique():
+        DFsys = DFrnx_in[DFrnx_in["sys"] == sys]
+        DFsys_mini = DFrnx_clean_LLI_SSI(DFsys)
+        
+        ObsSys0 = (DFsys_mini.isna().sum() == len(DFsys)).apply(np.logical_not)
+        ObsSys = ObsSys0.index[ObsSys0][3:] ### strating from 3 to clean epoch sys prn
+        
+        #init_tup = ("epoch","sys","prn") 
+        init_tup = []
+        ObsSys_full = [init_tup] + [(e,e+"_LLI",e+"_SSI") for e in ObsSys] 
+        ObsSys_full = [e for sublist in ObsSys_full for e in sublist]
+                    
+        dict_sys_obs[sys] = ObsSys_full
+        
+    return dict_sys_obs
+    
 
 
 ############ INTERNAL FUNCTIONS
