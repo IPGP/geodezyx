@@ -1581,7 +1581,7 @@ def get_block_svn(sat_in,svn_prn_equiv_DF):
     str with the block name
     """
     DFsat = svn_prn_equiv_DF[svn_prn_equiv_DF['SVN'] == sat_in]
-    if DFsat.empty():
+    if DFsat.empty:
         print('SVN NOT FOUND')
     else:        
         block = DFsat.Block.values[0]
