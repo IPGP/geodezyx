@@ -127,7 +127,7 @@ def anubis_runner(rnx_inp,
         date_name_str  = conv.dt2str(date_start,"%Y%m%d%H%M")
         
         ### site name
-        if re.search(conv.rinex_regex_new_name(),rnx_path):
+        if re.search(conv.rinex_regex_long_name(),rnx_path):
             site = os.path.basename(rnx_path)[:9].upper()
         else:
             site = os.path.basename(rnx_path)[:4].upper()

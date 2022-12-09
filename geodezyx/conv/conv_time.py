@@ -1393,9 +1393,8 @@ def rinexname2dt(rinexpath):
     rinexname = os.path.basename(rinexpath)
     #rinexname = rinexpath
         
-    
     ##### LONG rinex name
-    if re.search(conv_rinex.rinex_regex_new_name(),rinexname) or re.search(conv_rinex.rinex_regex_new_name_brdc(),rinexname):
+    if re.search(conv_rinex.rinex_regex_long_name(),rinexname) or re.search(conv_rinex.rinex_regex_long_name_brdc(),rinexname):
         date_str = rinexname.split("_")[2]
         yyyy = int(date_str[:4])
         doy  = int(date_str[4:7])        
@@ -1405,8 +1404,7 @@ def rinexname2dt(rinexpath):
         return dt_out 
 
     ##### LONG rinex name -- GFZ's GODC internal name
-    ###### OBS RINEX for GFZ GODC not implemented yet !!!!
-    if re.search(conv_rinex.rinex_regex_new_name_brdc_gfz_godc(),rinexname): 
+    if re.search(conv_rinex.rinex_regex_long_name_gfz_godc(),rinexname): 
         date_str = rinexname.split("_")[5]
         time_str = rinexname.split("_")[6]
         yyyy = int(date_str[:4])
