@@ -434,7 +434,7 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
 
     pool.close()
     log.debug(str(skiped_url) +  ' returned url skiped because of a weird error, but it is not important...')
-    return localfiles_lis
+    return localfiles_lis , savedirlist
 
 #    return zip(urllist,savedirlist)
 

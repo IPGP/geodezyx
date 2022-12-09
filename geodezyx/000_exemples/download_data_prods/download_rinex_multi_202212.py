@@ -51,18 +51,16 @@ archive_dir = "/wrk/psakicki/PLAYGROUND/psakicki/0000_PROJECTS_OTHERS/2112_jura2
 #archtype ='stat/year'
 #archtype ='year/doy'
 from datetime import datetime
-parallel_download=1
-
 ## login for some servers
 user   = 'garcia'
 passwd = 'testpass' #(dummy value here ;) )
 
 
 statdico = dict()
-statdico['ens_fr'] = ['abel','mesa']
+statdico['igs'] = ['abel','mesa']
 start = datetime.strptime('19/09/20', '%d/%m/%y')
-end = datetime.strptime('20/09/20', '%d/%m/%y')
-archtype ='stat/year/doy'
+end = datetime.strptime('25/09/20', '%d/%m/%y')
+archtype ='stat'
 archive_dir = "/dsk/mansur/tst_rnx/"
 parallel_download=1
 
