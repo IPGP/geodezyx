@@ -37,7 +37,7 @@ statdico['igs'] = ['scub' , 'guat' , 'ssia' , 'slor' , 'mana' , 'cro1']
 
 
 # START & END DATES OF DATA TO DOWNLOAD
-s,e = softs_runner.start_end_date_easy(2011,1,2021,335)
+s,e = conv.start_end_date_easy(2020,300,2020,301)
 
 
 # PLACE OF THE ARCHIVE WHERE THE RINEX WILL BE SAVED
@@ -50,19 +50,26 @@ archive_dir = "/wrk/psakicki/PLAYGROUND/psakicki/0000_PROJECTS_OTHERS/2112_jura2
 #archtype ='week/dow/stat'
 #archtype ='stat/year'
 #archtype ='year/doy'
-archtype ='stat/year/doy'
-
+from datetime import datetime
 parallel_download=1
 
 ## login for some servers
-user   = 'pierres'
-passwd = 'blahblahblah' #(dummy value here ;) )
+user   = 'garcia'
+passwd = 'testpass' #(dummy value here ;) )
 
+
+statdico = dict()
+statdico['ens_fr'] = ['abel','mesa']
+start = datetime.strptime('19/09/20', '%d/%m/%y')
+end = datetime.strptime('20/09/20', '%d/%m/%y')
+archtype ='stat/year/doy'
+archive_dir = "/dsk/mansur/tst_rnx/"
+parallel_download=1
 
 if True:
     urllist,savedirlist = operational.multi_downloader_rinex(statdico,
                                                              archive_dir,
-                                                             s,e,
+                                                             start,end,
                                                              archtype,
                                                              parallel_download,
                                                              sorted_mode=0,

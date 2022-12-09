@@ -199,6 +199,12 @@ def effective_save_dir(parent_archive_dir,stat,date,archtype ='stat'):
     return out_save_dir
 
 
+def ens_fr(stat,date):    
+    urlserver='ftp://gnss.ens.fr/pub/public/crl/GPS/rinex/'
+    rnxname = conv.statname_dt2rinexname(stat.lower(),date)
+    url = os.path.join(urlserver , str(date.year) , conv.dt2doy(date) , rnxname)
+    return url
+
 def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
                            archtype ='stat',parallel_download=4,
                            sorted_mode=False,user='',passwd='',
@@ -349,6 +355,8 @@ def multi_downloader_rinex(statdico,archive_dir,startdate,enddate,
                     url = geoaus_server(stat,curdate)
                 elif netwk in ('nav' , 'brdc'):
                     url = rob_nav_server(stat,curdate)
+                elif netwk == 'ens_fr':
+                    url = ens_fr(stat,curdate)
                 else:
                     log.warning('unkwn server dic in the dico, skip ...')
                     continue
