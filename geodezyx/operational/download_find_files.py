@@ -114,10 +114,10 @@ def multi_finder_rinex(main_dir,
                        specific_stats = [] ):
     """
     from a main_dir, find all the rinexs in this folder and his subfolder
-
     (corresponding to the rinex_types)
-
     and return a list of the found rinexs
+    
+    Designed for RINEX-2 / short names only
 
     is very similar with geodetik.rinex_lister,  gins_runner.get_rinex_list,
     operational.rinex_finder
@@ -132,7 +132,6 @@ def multi_finder_rinex(main_dir,
     yylis = [str(e).zfill(2) for e in list(range(80,100)) + list(range(0,dt.datetime.now().year - 2000 + 1))]
 
     rinex_lis = []
-
 
     for f in files_raw_lis:
         for rnxext in rinex_types:

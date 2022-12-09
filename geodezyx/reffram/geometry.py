@@ -105,8 +105,8 @@ def itrf_psd_fundamuntal_formula(t,A_l,t_l,tau_l,A_e,t_e,tau_e):
     dL : TYPE
         the total sum of PSD corrections.
 
-    Source
-    ------
+    References
+    ----------
         http://itrf.ensg.ign.fr/ITRF_solutions/2014/doc/ITRF2014-PSD-model-eqs-IGN.pdf
     """
     
@@ -490,8 +490,8 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
     l :
         Differences X2 - X1 (before transformation !!!)
         
-    Source
-    ------
+    References
+    ----------
     https://elib.uni-stuttgart.de/bitstream/11682/9661/1/BscThesis_GaoYueqing.pdf
     """
 
