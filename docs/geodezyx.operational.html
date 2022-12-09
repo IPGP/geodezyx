@@ -74,7 +74,6 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 </ul>
 </li>
@@ -364,9 +363,10 @@ Implemented only for the  old naming format (for the moment)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_find_files.multi_finder_rinex">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_find_files.</span></span><span class="sig-name descname"><span class="pre">multi_finder_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rinex_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('o',</span> <span class="pre">'d',</span> <span class="pre">'d.Z',</span> <span class="pre">'d.z')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_find_files.multi_finder_rinex" title="Permalink to this definition"></a></dt>
-<dd><p>from a main_dir, find all the rinexs in this folder and his subfolder</p>
-<p>(corresponding to the rinex_types)</p>
-<p>and return a list of the found rinexs</p>
+<dd><p>from a main_dir, find all the rinexs in this folder and his subfolder
+(corresponding to the rinex_types)
+and return a list of the found rinexs</p>
+<p>Designed for RINEX-2 / short names only</p>
 <p>is very similar with geodetik.rinex_lister,  gins_runner.get_rinex_list,
 operational.rinex_finder</p>
 <p>operational.rinex_finder must be used in priority !!! (July 2022)</p>
@@ -374,16 +374,23 @@ operational.rinex_finder</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_find_files.rinex_finder">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_find_files.</span></span><span class="sig-name descname"><span class="pre">rinex_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_find_files.rinex_finder" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_find_files.</span></span><span class="sig-name descname"><span class="pre">rinex_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gfz_godc_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_find_files.rinex_finder" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>main_dir</strong> (<em>str</em>) – main directory where the RINEXs are stored.</p></li>
 <li><p><strong>short_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – check if the pattern matches a short name RINEX. The default is True.</p></li>
 <li><p><strong>long_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – check if the pattern matches a long name RINEX. The default is True.</p></li>
+<li><p><strong>gfz_godc_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – check if the pattern matches a GFZ’s GODC (GNSS Operational Data Center)
+internal long name RINEX. The default is True.</p></li>
 <li><p><strong>compressed</strong> (<em>bool</em><em> or </em><em>None</em>) – return a the regex for a compressed rinex
 if None, does not matter (return both compressed or not)</p></li>
 <li><p><strong>specific_sites</strong> (<em>list</em><em>, </em><em>optional</em>) – Filter only those specific sites. The default is [].</p></li>
+<li><p><strong>end_epoch</strong> (<em>start_epoch and</em>) – Filter the RINEXs between those two epochs (included)
+Can be for instance
+<cite>start_epoch=dt.datetime(2021,1,1)</cite> and
+<cite>end_epoch=dt.datetime(2021,12,31)</cite>
+The default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
