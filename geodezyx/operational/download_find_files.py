@@ -48,7 +48,9 @@ def rinex_finder(main_dir,
                  long_name=True,
                  gfz_godc_name=True,
                  compressed=None,
-                 specific_sites=[]):
+                 specific_sites=[],
+                 start_epoch=None,
+                 end_epoch=None):
     """
     Parameters
     ----------
@@ -66,6 +68,12 @@ def rinex_finder(main_dir,
         if None, does not matter (return both compressed or not)
     specific_sites : list, optional
         Filter only those specific sites. The default is [].
+    start_epoch and end_epoch : datetime, optional
+        Filter the RINEXs between those two epochs (included)
+        Can be for instance 
+        `start_epoch=dt.datetime(2021,1,1)` and 
+        `end_epoch=dt.datetime(2021,12,31)`
+        The default is None.
 
     Returns
     -------
@@ -100,12 +108,37 @@ def rinex_finder(main_dir,
                         
     # SECOND FILTERING IF specific_sites LIST IS DEFINED
     if len(specific_sites) > 0:
-        Files_rnx_lis2 = []
+        Files_rnx_lis_tmp = []
         for site in specific_sites:
             for rnx in Files_rnx_lis:
                 if site in os.path.basename(rnx):
-                    Files_rnx_lis2.append(rnx)
-        Files_rnx_lis = Files_rnx_lis2
+                    Files_rnx_lis_tmp.append(rnx)
+        Files_rnx_lis = Files_rnx_lis_tmp
+        
+    # THIRD FILTERING IF start or end epoch are defined
+    if start_epoch or end_epoch:
+        if not start_epoch:
+            start_epoch = dt.datetime(1980,1,1)
+        if not end_epoch:
+            end_epoch = dt.datetime(2099,1,1)
+        Files_rnx_lis_tmp = []
+        Dates_rnx = [conv.rinexname2dt(rnx) for rnx in Files_rnx_lis]
+        
+        for rnx,date in zip(Files_rnx_lis,Dates_rnx):
+            if start_epoch <= date and date <= end_epoch:
+                Files_rnx_lis_tmp.append(rnx)
+                
+        Files_rnx_lis = Files_rnx_lis_tmp
+        
+    return Files_rnx_lis
+        
+        
+                
+        
+        
+    
+        
+    
 
     log.info(str(len(Files_rnx_lis)) +  ' RINEXs found')
 
