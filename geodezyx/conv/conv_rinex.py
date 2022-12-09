@@ -40,6 +40,7 @@ def rinex_regex_search_tester(str_in,
                               short_name=True,
                               long_name=True,
                               brdc_long_name=False,
+                              gfz_godc_name=False,
                               compressed=None):
     """
     Frontend function for a RINEX regex search/match    
@@ -54,6 +55,9 @@ def rinex_regex_search_tester(str_in,
         check if the pattern matches a long name RINEX. The default is True.
     brdc_long_name : bool, optional
         check if the pattern matches a brdc long name RINEX. The default is True.
+    gfz_godc_name: bool, optional
+        check if the pattern matches a GFZ's GODC (GNSS Operational Data Center)
+        internal long name RINEX. The default is True.
     compressed : bool or None
         return a the regex for a compressed rinex
         if None, does not matter (return both compressed or not)
@@ -77,6 +81,10 @@ def rinex_regex_search_tester(str_in,
         
     search_out = re.search(rinex_regex_long_name_brdc(compressed),str_in)
     if brdc_long_name and search_out:
+        match = search_out        
+
+    search_out = re.search(rinex_regex_long_name_gfz_godc(compressed),str_in)
+    if gfz_godc_name and search_out:
         match = search_out        
     
     return match

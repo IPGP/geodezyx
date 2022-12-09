@@ -46,6 +46,7 @@ log = logging.getLogger(__name__)
 def rinex_finder(main_dir,
                  short_name=True,
                  long_name=True,
+                 gfz_godc_name=True,
                  compressed=None,
                  specific_sites=[]):
     """
@@ -57,6 +58,9 @@ def rinex_finder(main_dir,
         check if the pattern matches a short name RINEX. The default is True.
     long_name : bool, optional
         check if the pattern matches a long name RINEX. The default is True.
+    gfz_godc_name: bool, optional
+        check if the pattern matches a GFZ's GODC (GNSS Operational Data Center)
+        internal long name RINEX. The default is True.
     compressed : bool or None
         return a the regex for a compressed rinex
         if None, does not matter (return both compressed or not)
@@ -89,6 +93,7 @@ def rinex_finder(main_dir,
         regex_match = conv.rinex_regex_search_tester(f,
                                        short_name=short_name,
                                        long_name=long_name,
+                                       gfz_godc_name=gfz_godc_name,
                                        compressed=compressed)
         if regex_match:
             Files_rnx_lis.append(f)
