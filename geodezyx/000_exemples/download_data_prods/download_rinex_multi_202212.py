@@ -1,0 +1,70 @@
+# -*- coding: utf-8 -*-
+import datetime as dt
+
+#### Import star style
+from geodezyx import operational
+
+# STATDICO 
+# a statdico is a dictionary associating Archives Centers to list of stations 
+# EX :
+# statdico['archive center 1'] = ['STA1','STA2','STA3', ...]
+# statdico['archive center 2'] = ['STA2','STA1','STA4', ...]
+
+# EXEMPLEs
+#statdico['igs'] = ['scub' , 'guat' , 'ssia' , 'slor' , 'mana' , 'cro1']
+#statdico['rgp'] = []
+#statdico['ovsg'] = ['abd0']
+#statdico['unavco'] = ['CN40' , 'CN19' , 'CN38' , 'SAN0' , 'CN35' , 'ROA0' , 'CN29' , 'CN18' , 'CBMD' , 'LCSB' , 'GCFS' , 'GCEA' , 'CN10' , 'CN12' , 'PRCG' , 'SMRT' , 'BARA']
+#statdico['igs'] = ['scub' , 'guat' , 'ssia' , 'slor' , 'mana' , 'cro1']
+#statdico['igs'] = ['SFER','WARN','GANP','UZHL','PTBB','TITZ','FFMJ','WSRT','KOSG','DLFT']
+
+# if you want you can download the same stat. in several servers (assuming is the same data)
+#statdico['igs'] = ['TLSE']
+#statdico['rgp'] = ['TLSE']
+#statdico['renag'] = ['TLSE']
+
+#statdico['igs'] = ['LROC']
+#statdico['rgp'] = ['LROC']
+#statdico['renag'] = ['LROC']
+
+# It can also download broadcasts
+# statdico['brdc'] = ['BRDC']
+#
+# ========= END OF EXEMPLES =========
+
+statdico = dict()
+statdico['igs'] = ['scub' , 'guat' , 'ssia' , 'slor' , 'mana' , 'cro1']
+
+
+# START & END DATES OF DATA TO DOWNLOAD
+s,e = softs_runner.start_end_date_easy(2011,1,2021,335)
+
+
+# PLACE OF THE ARCHIVE WHERE THE RINEX WILL BE SAVED
+archive_dir = "/wrk/psakicki/PLAYGROUND/psakicki/0000_PROJECTS_OTHERS/2112_jura21/02_data_rinexs/orpheon"
+
+
+# ARCHTYPE : structure of the archive like
+#archtype ='stat/year/doy'
+#archtype ='stat'
+#archtype ='week/dow/stat'
+#archtype ='stat/year'
+#archtype ='year/doy'
+archtype ='stat/year/doy'
+
+parallel_download=1
+
+## login for some servers
+user   = 'pierres'
+passwd = 'blahblahblah' #(dummy value here ;) )
+
+
+if True:
+    urllist,savedirlist = operational.multi_downloader_rinex(statdico,
+                                                             archive_dir,
+                                                             s,e,
+                                                             archtype,
+                                                             parallel_download,
+                                                             sorted_mode=0,
+                                                             user=user,
+                                                             passwd=passwd)
