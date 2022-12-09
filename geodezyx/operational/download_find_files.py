@@ -92,7 +92,6 @@ def rinex_finder(main_dir,
 
     """
     
-
     Files_raw_lis , _ = utils.walk_dir(main_dir)
     
     Files_rnx_lis = []
@@ -128,24 +127,11 @@ def rinex_finder(main_dir,
         for rnx,date in zip(Files_rnx_lis,Dates_rnx):
             if start_epoch <= date and date <= end_epoch:
                 Files_rnx_lis_tmp.append(rnx)
-                
         Files_rnx_lis = Files_rnx_lis_tmp
-        
-    return Files_rnx_lis
-        
-        
-                
-        
-        
-    
-        
-    
 
     log.info(str(len(Files_rnx_lis)) +  ' RINEXs found')
 
     return Files_rnx_lis
-
-
 
 
 def multi_finder_rinex(main_dir,

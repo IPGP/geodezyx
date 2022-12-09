@@ -1393,7 +1393,6 @@ def rinexname2dt(rinexpath):
     rinexname = os.path.basename(rinexpath)
     #rinexname = rinexpath
         
-    
     ##### LONG rinex name
     if re.search(conv_rinex.rinex_regex_long_name(),rinexname) or re.search(conv_rinex.rinex_regex_long_name_brdc(),rinexname):
         date_str = rinexname.split("_")[2]
