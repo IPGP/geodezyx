@@ -69,7 +69,7 @@ def rinexs_table_from_list(rnxs_inp,site9_col=False,round_date=False):
     if site9_col:
         DF["site9"] = DF["name"].str[:9].str.lower() 
         #### set generic 9-char name if 4 char name file
-        BoolNewName = DF["name"].str.match(conv.rinex_regex_new_name())
+        BoolNewName = DF["name"].str.match(conv.rinex_regex_long_name())
         BoolOldName = np.logical_not(BoolNewName)
         Site9_generic = DF["site4"].str.upper() + "00XXX"
         DF["site9"].loc[BoolOldName] = Site9_generic[BoolOldName]

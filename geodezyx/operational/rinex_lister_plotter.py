@@ -80,7 +80,7 @@ def rinex_lister(path,add_long_names=True):
     
     rinexfilelist = [fil for fil in wholefilelist if re.search( conv.rinex_regex() , os.path.basename(fil))]
     if add_long_names:
-        rinexfilelist_new_names = [fil for fil in wholefilelist if re.search( conv.rinex_regex_new_name() , os.path.basename(fil))]
+        rinexfilelist_new_names = [fil for fil in wholefilelist if re.search( conv.rinex_regex_long_name() , os.path.basename(fil))]
         rinexfilelist = rinexfilelist + rinexfilelist_new_names
     
     log.info('%s RINEXs found', len(rinexfilelist))
@@ -181,7 +181,7 @@ def rinex_timeline_datadico(inputlist_or_paths,
 
     #rinexfilelist = [fil for fil in filelist if re.search( '.*' + conv.rinex_regex() + '$', fil)]
     rinexfilelist_old = [fil for fil in filelist if re.search( conv.rinex_regex() , fil)]
-    rinexfilelist_new = [fil for fil in filelist if re.search( conv.rinex_regex_new_name() , fil)]
+    rinexfilelist_new = [fil for fil in filelist if re.search( conv.rinex_regex_long_name() , fil)]
 
     rinexfilelist = rinexfilelist_old + rinexfilelist_new
 

@@ -71,11 +71,11 @@ def rinex_regex_search_tester(str_in,
     if short_name and search_out:
         match = search_out
 
-    search_out = re.search(rinex_regex_new_name(compressed),str_in)
+    search_out = re.search(rinex_regex_long_name(compressed),str_in)
     if long_name and search_out:
         match = search_out
         
-    search_out = re.search(rinex_regex_new_name_brdc(compressed),str_in)
+    search_out = re.search(rinex_regex_long_name_brdc(compressed),str_in)
     if brdc_long_name and search_out:
         match = search_out        
     
@@ -117,7 +117,7 @@ def rinex_regex(compressed=None,compiled=False):
         return regexstr
 
 
-def rinex_regex_new_name(compressed=None,compiled=False):
+def rinex_regex_long_name(compressed=None,compiled=False):
     """
     Return a regex corresponding to a RINEX name (long convention)
 
@@ -150,7 +150,7 @@ def rinex_regex_new_name(compressed=None,compiled=False):
 
 
 
-def rinex_regex_new_name_brdc(compressed=None,compiled=False):
+def rinex_regex_long_name_brdc(compressed=None,compiled=False):
     """
     Return a regex corresponding to a BROADCAST RINEX name (new convention)
 
@@ -182,7 +182,7 @@ def rinex_regex_new_name_brdc(compressed=None,compiled=False):
         return regexstr    
     
     
-def rinex_regex_new_name_brdc_gfz_godc(compressed=None,compiled=False):
+def rinex_regex_long_name_brdc_gfz_godc(compressed=None,compiled=False):
     """
     Return a regex corresponding to a BROADCAST RINEX name (new convention)
     from the GFZ's GODC archive
