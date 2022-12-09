@@ -182,10 +182,10 @@ def rinex_regex_long_name_brdc(compressed=None,compiled=False):
         return regexstr    
     
     
-def rinex_regex_long_name_brdc_gfz_godc(compressed=None,compiled=False):
+def rinex_regex_long_name_gfz_godc(compressed=None,compiled=False):
     """
-    Return a regex corresponding to a BROADCAST RINEX name (new convention)
-    from the GFZ's GODC archive
+    Return a regex corresponding to a RINEX name (new convention)
+    from the GFZ's GODC archive (both OBS and NAV types)
 
     Parameters
     ----------
@@ -202,7 +202,12 @@ def rinex_regex_long_name_brdc_gfz_godc(compressed=None,compiled=False):
     out : string or python's regex
         a regex
     """
-    ### BRDC00GFZ_00000000_FRO_RX3_MN_20210114_000000_01D_00U_GFZ.rnx
+    ### Some exemples for tests
+    #BRDC00GFZ_00000000_FRO_RX3_MN_20210114_000000_01D_00U_GFZ.rnx
+    #AIRA00JPN_00001047_FRO_RX3_MO_20220105_000000_01D_30S_IGS.crx.gz
+    #BRDC00GFZ_00000000_FRO_RX3_MN_20220111_000000_01D_00U_GFZ.rnx
+    #YEL200CAN_00002760_FRO_RX3_MO_20220105_000000_01D_30S_IGS.crx.gz
+
     if compressed:
         regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}\.gz"
     elif compressed is None:
