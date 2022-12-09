@@ -98,7 +98,8 @@ def rinex_finder(main_dir,
     Files_rnx_lis = []
     
     for f in Files_raw_lis:
-        regex_match = conv.rinex_regex_search_tester(f,
+        fbase = os.path.basename(f)
+        regex_match = conv.rinex_regex_search_tester(fbase,
                                        short_name=short_name,
                                        long_name=long_name,
                                        gfz_godc_name=gfz_godc_name,

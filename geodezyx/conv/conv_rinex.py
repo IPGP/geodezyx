@@ -54,10 +54,10 @@ def rinex_regex_search_tester(str_in,
     long_name : bool, optional
         check if the pattern matches a long name RINEX. The default is True.
     brdc_long_name : bool, optional
-        check if the pattern matches a brdc long name RINEX. The default is True.
+        check if the pattern matches a brdc long name RINEX. The default is False.
     gfz_godc_name: bool, optional
         check if the pattern matches a GFZ's GODC (GNSS Operational Data Center)
-        internal long name RINEX. The default is True.
+        internal long name RINEX. The default is False.
     compressed : bool or None
         return a the regex for a compressed rinex
         if None, does not matter (return both compressed or not)
@@ -112,11 +112,11 @@ def rinex_regex(compressed=None,compiled=False):
         a regex
     """
     if compressed is None:
-        regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(o)|(d))"
+        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(o)|(d))$"
     elif not compressed:
-        regexstr = "....[0-9]{3}.\.[0-9]{2}o"
+        regexstr = "^....[0-9]{3}.\.[0-9]{2}o$"
     else:
-        regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(d))"
+        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(d))$"
         
 
     if compiled:
@@ -145,11 +145,11 @@ def rinex_regex_long_name(compressed=None,compiled=False):
         a regex
     """
     if compressed:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
+        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz$"
     elif compressed is None:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?"        
+        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?$"        
     else:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}"
+        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}$"
 
     if compiled:
         return re.compile(regexstr)
@@ -178,11 +178,11 @@ def rinex_regex_long_name_brdc(compressed=None,compiled=False):
         a regex
     """
     if compressed:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
+        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}\.gz$"
     elif compressed is None:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?"        
+        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?$"        
     else:
-        regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}"
+        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}$"
 
     if compiled:
         return re.compile(regexstr)
@@ -217,11 +217,11 @@ def rinex_regex_long_name_gfz_godc(compressed=None,compiled=False):
     #YEL200CAN_00002760_FRO_RX3_MO_20220105_000000_01D_30S_IGS.crx.gz
 
     if compressed:
-        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}\.gz"
+        regexstr = "^.{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}\.gz$"
     elif compressed is None:
-        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}(\.gz)?"        
+        regexstr = "^.{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}(\.gz)?$"        
     else:
-        regexstr = ".{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}"
+        regexstr = "^.{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}$"
     # Nouvelle version : peut  normalement digerer tout RINEX du GFZ 
     # le suffixe GFZ peut etre nimporte quelle chaine  de upper char !
     # egalement implemene dans RINEXMOD
@@ -232,11 +232,42 @@ def rinex_regex_long_name_gfz_godc(compressed=None,compiled=False):
     else:
         return regexstr    
     
+    
+def rinex_regex_tester():
+    """
+    Returns two list of string to test the efficiency of the RINEX regexs.
+    
+    True_positive_rnxs is a list of strings describing actual RINEX filenames.
+    They must be matched
+    
+    False_positive_rnxs is a list of strings describing other filenames.
+    But which have been matched at one moment because of too weak regexs
+    They must NOT be matched 
+    """
+    
+    True_positive_rnxs = ["psa13400.21o",
+                          "gps11000.21d.Z",
+                          "tar11320.00d.Z",
+                          "gosi0010.14d.Z",
+                          "YARR00AUS_R_20190100000_01D_30S_MO.rnx.gz",
+                          "BRDC00GOP_R_20190450000_01D_MN.rnx.gz",
+                          "BRDC00GFZ_00000000_FRO_RX3_MN_20210114_000000_01D_00U_GFZ.rnx",
+                          "AIRA00JPN_00001047_FRO_RX3_MO_20220105_000000_01D_30S_IGS.crx.gz",
+                          "BRDC00GFZ_00000000_FRO_RX3_MN_20220111_000000_01D_00U_GFZ.rnx",
+                          "YEL200CAN_00002760_FRO_RX3_MO_20220105_000000_01D_30S_IGS.crx.gz"]
+    
+    False_positive_rnxs = ["LROC00FRA_00001225_FRO_RX3_MO_20220613_000000_01D_30S_IGS.rnx.json",
+                           "SUN600SWE_00002886_FRO_RX3_MO_20220613_000000_01D_30S_EPN.rnx.json",
+                           "_._YELL00CAN_00001441_FRO_RX3_MO_20220613_000000_01D_30S_IGS.rnx"]
+    
+    
+    return True_positive_rnxs, False_positive_rnxs
+    
 
 
 def interval_from_rinex_name(rnx_name_inp):
     """
-    from a RINEX file name (long naming) determines the nominal data interval
+    from a RINEX file name (long name) determines the nominal data interval
 
     Parameters
     ----------
