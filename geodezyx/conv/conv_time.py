@@ -1406,6 +1406,7 @@ def rinexname2dt(rinexpath):
 
     ##### LONG rinex name -- GFZ's GODC internal name
     if re.search(conv_rinex.rinex_regex_long_name_gfz_godc(),rinexname): 
+        print(rinexname)
         date_str = rinexname.split("_")[5]
         time_str = rinexname.split("_")[6]
         yyyy = int(date_str[:4])
