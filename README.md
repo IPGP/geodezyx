@@ -70,7 +70,6 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ### v0.4.3.1, 2022-12-09
   * Routine update: multiple new features/functions and bug corrections
-  * a ``full`` version is set, for advanced installation.
 
 ### v0.4.3.0, 2022-02-10
   * enhanced logger replaces basic prints.

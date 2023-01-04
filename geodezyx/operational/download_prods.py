@@ -68,7 +68,9 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                                  new_name_conv = True,
                                  parallel_download=4,
                                  archive_center='ign',
-                                 mgex=True,repro=0,sorted_mode=False,
+                                 mgex=True,
+                                 repro=0,
+                                 sorted_mode=False,
                                  return_also_uncompressed_files=True,
                                  ftp_download=False,
                                  dow_manu=False):
@@ -93,14 +95,25 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     
     secure_ftp = False
     
+    log.info("data center used : %s",archive_center)
+
+    
     if archive_center == "cddis":
         arch_center_main    = 'gdc.cddis.eosdis.nasa.gov'
         arch_center_basedir = '/pub/gps/products/' + mgex_str
+        ftp_download = True
         secure_ftp = True
+        log.info('cddis as data center, FTP download forced')
         
     elif archive_center == "cddis_glonass":
         arch_center_main    = 'cddis.gsfc.nasa.gov'
         arch_center_basedir = '/pub/glonass/products/' + mgex_str
+        
+    elif archive_center == "acc_xpr_mgex_cmb":
+        ##### DO NOT WORK !!!!!
+        arch_center_main    = 'http://igsacc.s3-eu-central-1.amazonaws.com/products/mgex/final/2069/igm20694.sp3.Z'
+        ftp_download = False
+        log.info('ACC experimental mgex combi. as data center, HTTP download forced')
     
     elif archive_center == "ign":
         arch_center_main    = 'igs.ign.fr'
@@ -127,7 +140,6 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         arch_center_basedir = '/pub/' + mgex_str
 
 
-    log.info("data center used : %s",archive_center)
 
     Dates_list = conv.dt_range(startdate,enddate)
 
@@ -137,14 +149,14 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
    
 
     ## create the FTP object
-    if secure_ftp:
+    if ftp_download and secure_ftp:
         ftp_constuctor = FTP_TLS
         ftp=ftp_constuctor()
         #ftp.set_debuglevel(2)
         ftp.connect(arch_center_main)
         ftp.login('anonymous','')
         ftp.prot_p()
-    else:     
+    elif ftp_download and not secure_ftp:     
         ftp_constuctor = FTP
         ftp = ftp_constuctor(arch_center_main)
         ftp.login()
@@ -191,7 +203,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                 
         Files_remote_date_list = []
 
-        pattern_old_nam = ac_cur+".*"+str(wwww)+str(dow)+".*"+prod_cur+"\..*"
+        pattern_old_nam = ac_cur.lower()+".*"+str(wwww)+str(dow)+".*"+prod_cur.lower()+"\..*"
         Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam,f)]
         
         pattern_new_nam = ""
