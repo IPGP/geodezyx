@@ -33,7 +33,7 @@ start,end = operational.start_end_date_easy(2020, 1,
 
 #####################################################################
 ##### define the local destination folder of the downloaded products  
-archive_dir = '/home/psakicki/aaa_FOURBI/ORBITS'
+archive_dir = '/scratch/calcgnss/prods_gnss/igs'
 
 #####################################################################
 ##### define the IGS data center
