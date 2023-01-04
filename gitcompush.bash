@@ -11,6 +11,7 @@ dat=`date '+%Y-%m-%d %H:%M:%S'`
 #find . -name "__pycache__" -exec rm -fvr "{}" \;
 #find . -name "*.pyc" -exec rm -fv "{}" \;
 find . -name "__pycache__" | xargs rm -fvr
+find . -iname "tmp*" | xargs rm -fvr
 find . -name "*.pyc"       | xargs rm -fv
 git commit -a -m "$user $hosnam $dat"
 git push origin master
