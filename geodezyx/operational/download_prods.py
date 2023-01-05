@@ -150,11 +150,29 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     pool = mp.Pool(processes=parallel_download) 
 
     ## internal fct to create the FTP objects
+    
+    class MyFTP_TLS(FTP_TLS):
+        """Explicit FTPS, with shared TLS session"""
+        ### This new class is to avoid the error 
+        ### ssl.SSLEOFError: EOF occurred in violation of protocol (_ssl.c:2396)
+        ### source:
+        ### https://stackoverflow.com/questions/14659154/ftps-with-python-ftplib-session-reuse-required
+        def ntransfercmd(self, cmd, rest=None):
+            conn, size = FTP.ntransfercmd(self, cmd, rest)
+            if self._prot_p:
+                conn = self.context.wrap_socket(conn,
+                                                server_hostname=self.host,
+                                                session=self.sock.session)  # this is the fix
+            return conn, size
+        
+    
+    
+    
     def ftp_objt_create(secure_ftp_inp,chdir=""):
         
         # define the right constructor
         if secure_ftp_inp:
-            ftp_constuctor = FTP_TLS
+            ftp_constuctor = MyFTP_TLS
             #ftp=ftp_constuctor()
             #ftp.set_debuglevel(2)
             #ftp.connect(arch_center_main)
@@ -206,7 +224,8 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         log.info("*** Search prods. for %s-%s, AC/prod: %s/%s",wwww,dow,ac_cur,prod_cur)
         wwww_dir = os.path.join(arch_center_basedir,str(wwww),repro_str)
         
-        n_ftp_ask = 500 ## Max interrogation of the FTP server to avoid timeout
+        n_ftp_ask = 100 ## Max interrogation of the FTP server to avoid 
+                        ## potential errors
                         ## An new FTP instance is created if above it 
         
         if np.mod(ipatt_tup,n_ftp_ask) == 0:
