@@ -188,10 +188,10 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         else:
             dow = str(dow_manu)
                
-        log.info("Search products for day %s-%s, AC/prod, %s/%s",wwww,dow,ac_cur,prod_cur)
+        log.info("*** Search prods. for %s-%s, AC/prod: %s/%s",wwww,dow,ac_cur,prod_cur)
         wwww_dir = os.path.join(arch_center_basedir,str(wwww),repro_str)
-        log.info("Move to: %s",wwww_dir)
         if wwww_dir_previous != wwww_dir:
+            log.info("Move to: %s",wwww_dir)
             try:
                 ftp.cwd(wwww_dir)
             except:
@@ -226,7 +226,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
             Files_new_nam   = [f for f in Files_listed_in_FTP if re.search(pattern_new_nam,f)]
         
         
-        log.info("      Regex : %s %s",pattern_old_nam,pattern_new_nam)        
+        log.info("Regex : %s %s",pattern_old_nam,pattern_new_nam)        
         Files = Files + Files_new_nam
         
         if len(Files) == 0:
