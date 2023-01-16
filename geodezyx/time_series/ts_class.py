@@ -512,7 +512,7 @@ class TimeSeriePoint:
             ask for a specific list, ranges between 0 and 6.
             The default is None.
         time_as_datetime : bool, optional
-            if True the Time list is exported in DataFrame
+            if True the Time list is exported in datetime
             if False the Time list is exported in Posix time
 
         Returns
@@ -540,7 +540,7 @@ class TimeSeriePoint:
 
             if self.boolENU == False:
                 log.warning("no ENU coord. for " + self.name)
-                return 0
+                return None
 
             A,B,C = 'E','N','U'
             sA,sB,sC = 'sE','sN','sU'
