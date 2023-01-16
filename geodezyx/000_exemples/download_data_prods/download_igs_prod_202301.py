@@ -14,13 +14,13 @@ from geodezyx import operational
 ##### define the wanted products i.e. the file extension
 # upper/lower case does not matter, it will be adjusted internally
 # depending on the short/long naming
-Prod_types  = ("sp3","clk","bia","obx")
+Prod_types  = ["sp3","clk","bia","obx"]
 
 #####################################################################
 ##### define the wanted analysis centers with its 3 char. abreviation
 # upper/lower case does not matter, it will be adjusted internally
 # depending on the short/long naming
-AC_names    = ("IGS")
+AC_names    = ["IGS"]
 
 #####################################################################
 ##### define the wanted period
