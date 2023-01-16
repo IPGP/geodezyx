@@ -12,6 +12,7 @@ import gzip
 import numpy as np
 import os 
 import pandas as pd
+import warnings
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -236,7 +237,8 @@ def clk_diff(file_1,file_2):
                                                                       
 def read_sp3(file_path_in,returns_pandas = True, name = '',
              epoch_as_pd_index = False,km_conv_coef=1,
-             skip_null_epoch=True):
+             skip_null_epoch=True,
+             new_col_names=False):
     """
     Read a SP3 file (GNSS Orbits standard file) and return X,Y,Z coordinates
     for each satellite and for each epoch
@@ -265,6 +267,10 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
         
     skip_null_epoch :bool
         Do not write an epoch if all sats are null (filtering)
+        
+    new_col_names : bool
+        A legacy option to have (or not) consistent column names with read_rinex
+        Default is False
 
     Returns
     -------
@@ -304,15 +310,21 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     #     df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
     #                                        'x','y','z','clk','AC'])
 
+    if not new_col_names:
+        log.warning("you use old column names (not conventionnal) set new_col_names as True and adapt your code")
+        ### DeprecationWarning
+        col_names=['epoch','sat','const','sv',
+                   'type','x','y','z','clk','AC']
+    else:
+        col_names=['epoch','prn','sys','prni',
+                   'rec','x','y','z','clk','AC']   
+
     #### read the Header as a 1st check
     Header = read_sp3_header(Lines,AC_name)
     if Header.empty:
         log.warning("The SP3 looks empty: ",file_path_in)
-        if returns_pandas:
-            df = pd.DataFrame([], columns=['epoch','sat', 'const',
-                                           'sv','type',
-                                           'x','y','z',
-                                           'clk','AC'])
+        if returns_pandas:            
+            df = pd.DataFrame([], columns=col_names)
             return df
         else:
             return  epoch_stk ,  Xstk , Ystk , Zstk , Clkstk , AC_name_stk
@@ -372,10 +384,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     AC_name_stk = [AC_name] * len(Xstk)
 
     if returns_pandas:
-        df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const',
-                                             'sv','type',
-                                             'x','y','z',
-                                             'clk','AC'])
+        df = pd.DataFrame(data_stk, columns=col_names)
         
         if skip_null_epoch:
             df = sp3_DataFrame_zero_epoch_filter(df)

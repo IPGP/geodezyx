@@ -17,10 +17,10 @@ Subpackages
    geodezyx.externlib
    geodezyx.files_rw
    geodezyx.geodyn
+   geodezyx.marine
    geodezyx.megalib
    geodezyx.operational
    geodezyx.reffram
    geodezyx.stats
    geodezyx.time_series
-   geodezyx.toolbox_meta
    geodezyx.utils

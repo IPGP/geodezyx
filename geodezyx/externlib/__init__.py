@@ -1,7 +1,7 @@
 """
 Created on Thu Aug 13 15:11:12 2020
 
-@author: psakicki
+@author: psakic
 
 This module geodezyx.externlib import easily all the useful extrern Python's packages.
 
