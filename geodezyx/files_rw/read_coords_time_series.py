@@ -2208,8 +2208,51 @@ def read_hector_neu(filein):
     log.warning("XYZ/FLH conversion not implemented")
     M = np.loadtxt(filein)
     stat = utils.grep(filein,'Site :',only_first_occur=True).split()[3]
-    tsout = time_series.ts_from_list(M[:,2],M[:,1],M[:,3],conv.year_decimal2dt(M[:,0]),
-                         'ENU',M[:,4],M[:,5],M[:,6],stat=stat,name=stat)
+    tsout = time_series.ts_from_list(M[:,2],M[:,1],M[:,3],
+                                     conv.year_decimal2dt(M[:,0]),
+                                     'ENU',
+                                     M[:,4],M[:,5],M[:,6],
+                                     stat=stat,name=stat)
+
+    return tsout
+
+
+
+ #  _______ _    _  _____     _______ _____   ____   ____  _____   _____   ______ _ _           
+ # |__   __| |  | |/ ____|   / / ____|  __ \ / __ \ / __ \|  __ \ / ____| |  ____(_) |          
+ #    | |  | |  | | |  __   / / |  __| |__) | |  | | |  | | |__) | (___   | |__   _| | ___  ___ 
+ #    | |  | |  | | | |_ | / /| | |_ |  _  /| |  | | |  | |  ___/ \___ \  |  __| | | |/ _ \/ __|
+ #    | |  | |__| | |__| |/ / | |__| | | \ \| |__| | |__| | |     ____) | | |    | | |  __/\__ \
+ #    |_|   \____/ \_____/_/   \_____|_|  \_\\____/ \____/|_|    |_____/  |_|    |_|_|\___||___/
+                                                                                          
+
+
+
+def read_groops_position(Filesin):
+    
+    if not utils.is_iterable(Filesin):
+        Filesin = [Filesin]
+            
+    Statnames = list(set([os.path.basename(f)[-8:-4] for f in Filesin]))
+    
+    if len(Statnames) > 1:
+        log.warn("several stations for the same TimeSerie!:" + str(Statnames))
+    
+    statname = Statnames[0]
+    
+    tsout = time_series.TimeSeriePoint()
+
+    for filein in Filesin:
+        DF = pd.read_csv(filein,skiprows=6,header=None,sep='\s+')
+        T = conv.dt2posix(conv.MJD2dt(DF[0].values))
+        X,Y,Z = DF[1],DF[2],DF[3] 
+        
+        for t,x,y,z in zip(T,X,Y,Z):
+            point = time_series.Point(x,y,z,t,'XYZ', name = statname)
+            tsout.add_point(point)
+    
+    tsout.meta_set(stat=statname)
+    tsout.sort()
 
     return tsout
 

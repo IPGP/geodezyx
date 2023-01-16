@@ -224,7 +224,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         log.info("*** Search prods. for %s-%s, AC/prod: %s/%s",wwww,dow,ac_cur,prod_cur)
         wwww_dir = os.path.join(arch_center_basedir,str(wwww),repro_str)
         
-        n_ftp_ask = 100 ## Max interrogation of the FTP server to avoid 
+        n_ftp_ask = 500 ## Max interrogation of the FTP server to avoid 
                         ## potential errors
                         ## An new FTP instance is created if above it 
         
