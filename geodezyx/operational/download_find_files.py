@@ -111,7 +111,8 @@ def rinex_finder(main_dir,
         Files_rnx_lis_tmp = []
         for site in specific_sites:
             for rnx in Files_rnx_lis:
-                if site in os.path.basename(rnx):
+                rnx_bn = os.path.basename(rnx)
+                if site.lower() in rnx_bn or site.upper() in rnx_bn:
                     Files_rnx_lis_tmp.append(rnx)
         Files_rnx_lis = Files_rnx_lis_tmp
         
