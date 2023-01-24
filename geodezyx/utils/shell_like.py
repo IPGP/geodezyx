@@ -67,7 +67,7 @@ def subprocess_frontend(cmd_in,
     if save_log:
         
         if not log_dir:
-            logdir = os.getcwd()
+            log_dir = os.getcwd()
             
         if logname_timestamp:
             prefix = now + "_" 

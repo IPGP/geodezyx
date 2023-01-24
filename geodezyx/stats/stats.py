@@ -58,8 +58,8 @@ def linear_regression(x,y,fulloutput=False,alpha=.95):
     
     If fulloutput == True:
         
-    confid_interval_slope : float
-        confid_interval_slope
+    confid_interval_slope : float 2-tuple
+        confidence interval for the slope
         
     std_err : float
         standard deviation
@@ -101,7 +101,7 @@ def linear_regression(x,y,fulloutput=False,alpha=.95):
 
 def linear_reg_getvalue(X,a,b,full=True):
     """    
-    From 2 vector X and coefficients a & b, get Y = a*X + b
+    From a vector X and coefficients a & b, get Y = a*X + b
 
     Parameters
     ----------
@@ -436,14 +436,47 @@ def movingaverage_ter(data, window_width):
     return ma_vec
 
 
-def sinusoide(T,A,omega,phi=0):
+def sinusoide(T,A,omega,phi=0,f=None):
     """
-    amplitude de la grandeur, appelée aussi valeur de crête, dans l'unité de la grandeur mesurée
-    omega : pulsation de la grandeur en rad⋅s-1
-    phi : phase instantanée en rad
-    phi : phase à l'origine en rad (souvent fixée par l'expérimentateur)
+    produce a sinusoidal waveform
+
+    Parameters
+    ----------
+    T : float
+        time variable.
+    A : float
+        amplitude, the peak deviation of the function from zero.
+    omega : float, optional
+        ω = 2πf, angular frequency, the rate of change of the 
+        function argument in units of radians per second.
+    phi : float, optional
+        phase, specifies (in radians) where in its cycle 
+        the oscillation is at t = 0. 
+        The default is 0.
+    f : float
+        ordinary frequency, the number of oscillations (cycles) 
+        that occur each second of time.   
+        If given, it overrides the angular frequency omega.
+        Thus, to use it, declare also omega = 0
+        The default is None.
+        
+    Returns
+    -------
+    float
+        a sinusoidal waveform.
+        
+    Notes
+    -----
+    https://en.wikipedia.org/wiki/Sine_wave
+    
     """
-    return A * np.sin(omega * T + phi)
+    
+    if f:
+        omega_use = 2*np.pi*f
+    else:
+        omega_use = omega
+    
+    return A * np.sin(omega_use * T + phi)
 
 def butter_lowpass(cutoff, fs, order=5):
     nyq = 0.5 * fs
@@ -911,7 +944,7 @@ def outlier_mad_binom(Y,X,threshold=3.5,verbose=False,detrend_first=False,
         return Yclean , Xclean , bb
 
 def outlier_above_below_simple(X , low_bound  , upp_bound,
-                        return_booleans = True):    
+                               return_booleans = True):    
     """    
     Gives values of X which are between low_bound & upp_bound
 
