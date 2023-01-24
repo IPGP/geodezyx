@@ -20,7 +20,7 @@ Prod_types  = ["sp3","clk","bia","obx"]
 ##### define the wanted analysis centers with its 3 char. abreviation
 # upper/lower case does not matter, it will be adjusted internally
 # depending on the short/long naming
-AC_names    = ["IGS"]
+AC_names    = ["COD","GRG"]
 
 #####################################################################
 ##### define the wanted period
@@ -28,12 +28,12 @@ AC_names    = ["IGS"]
 # start_end_date_easy is a front end function when you want 
 # to provide year/doy
 
-start,end = operational.start_end_date_easy(2000, 1,
-                                            2021, 365)
+start,end = operational.start_end_date_easy(2022, 300,
+                                            2022, 365)
 
 #####################################################################
 ##### define the local destination folder of the downloaded products  
-archive_dir = '/scratch/calcgnss/prods_gnss/igs_repro3'
+archive_dir = '/scratch/calcgnss/prods_gnss/igs_mgex'
 
 #####################################################################
 ##### define the IGS data center
@@ -45,11 +45,11 @@ data_center = 'cddis'
 ##### choose the reprocessing campaign
 #  3 for repro3 etc...
 # set 0 for the routine products
-repro = 3
+repro = 0
 
 #####################################################################
 ##### choose Multi-GNSS (MGEX) or "legacy" GPS-Only products
-mgex = False
+mgex = True
 
 
 #### create a shorter alias name for the download function

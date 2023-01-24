@@ -282,10 +282,10 @@ def empty_file_check(fpath):
     Returns
     -------  
     True : 
-        if the file is empty
+        the file is empty or does not exist
     
     False : 
-        if the file is not empty
+        the file exists and is not empty
          
     Source
     ------

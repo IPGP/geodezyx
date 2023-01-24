@@ -97,7 +97,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     secure_ftp = False
     
     log.info("data center used : %s",archive_center)
-
+    log.info("mgex/repro : %s/%s",mgex,repro)
     
     if archive_center == "cddis":
         arch_center_main    = 'gdc.cddis.eosdis.nasa.gov'
@@ -165,9 +165,6 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                                                 session=self.sock.session)  # this is the fix
             return conn, size
         
-    
-    
-    
     def ftp_objt_create(secure_ftp_inp,chdir=""):
         
         # define the right constructor
@@ -291,7 +288,9 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
                                                               ac_cur,
                                                               dt_cur,
                                                               archtype)
-        utils.create_dir(archive_dir_specif)
+        
+        if len(Files_remote_date_list) > 0:
+            utils.create_dir(archive_dir_specif)
         
         ### Generation of the Download fct inputs
         Files_remote_date_chunck = utils.chunkIt(Files_remote_date_list,
@@ -328,19 +327,20 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
 
     ### Independent files existence check
     if not return_also_uncompressed_files:
-        for localfile in Potential_localfiles_list:
-            if os.path.isfile(localfile):
-                Localfiles_lis.append(localfile)
+        Pot_locfiles_list_use = Potential_localfiles_list
     else:
+        Pot_locfiles_list_use = []
         for localfile in Potential_localfiles_list:
             Pot_compress_name_list = [localfile]
             Pot_compress_name_list.append(localfile.replace(".gz",""))
             Pot_compress_name_list.append(localfile.replace(".Z",""))
             Pot_compress_name_list = list(set(Pot_compress_name_list))
             
-            for pot_compress_name in Pot_compress_name_list:
-                if os.path.isfile(pot_compress_name):
-                    Localfiles_lis.append(pot_compress_name)
+        Pot_locfiles_list_use = Pot_locfiles_list_use + Pot_compress_name_list
+            
+    for pot_localfile in Pot_locfiles_list_use:
+        if os.path.isfile(pot_localfile):
+            Localfiles_lis.append(pot_localfile)
     
     pool.close()
     return Localfiles_lis
