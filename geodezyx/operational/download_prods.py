@@ -145,7 +145,6 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
 
     Dates_list = conv.dt_range(startdate,enddate)
 
-    Localfiles_lis = []
     wwww_dir_previous = None
     pool = mp.Pool(processes=parallel_download) 
 
@@ -200,6 +199,8 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     
     ###################################################################
     ########### Remote file search      
+
+    Potential_localfiles_list_all = []
     
     ### check if the pattern of the wished products are in the listed daily files
     for ipatt_tup, patt_tup in enumerate(list(itertools.product(Dates_list,
@@ -310,6 +311,8 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
         else: ### HTTP download
             Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
             [Potential_localfiles_list.append(os.path.join(archive_dir_specif,f)) for f in Files_remote_date_list]
+        
+        Potential_localfiles_list_all = Potential_localfiles_list_all +  Potential_localfiles_list 
 
         ### Actual Download
         if ftp_download and parallel_download == 1:
@@ -325,18 +328,21 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
             _ = pool.map(dlutils.downloader_wrap,Downld_tuples_list)
     
 
-    ### Independent files existence check
+    ###################################################################
+    ########### Final Independent files existence check
+
+    Localfiles_lis = []
     if not return_also_uncompressed_files:
-        Pot_locfiles_list_use = Potential_localfiles_list
+        Pot_locfiles_list_use = Potential_localfiles_list_all
     else:
         Pot_locfiles_list_use = []
-        for localfile in Potential_localfiles_list:
+        for localfile in Potential_localfiles_list_all:
             Pot_compress_name_list = [localfile]
             Pot_compress_name_list.append(localfile.replace(".gz",""))
             Pot_compress_name_list.append(localfile.replace(".Z",""))
             Pot_compress_name_list = list(set(Pot_compress_name_list))
             
-        Pot_locfiles_list_use = Pot_locfiles_list_use + Pot_compress_name_list
+            Pot_locfiles_list_use = Pot_locfiles_list_use + Pot_compress_name_list
             
     for pot_localfile in Pot_locfiles_list_use:
         if os.path.isfile(pot_localfile):
