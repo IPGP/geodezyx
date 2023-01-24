@@ -24,5 +24,5 @@ formatter=sampleFormatter
 args=(sys.stdout,)
 
 [formatter_sampleFormatter]
-format=%(asctime)s.%(msecs)03d|%(levelname)7s|%(name)s|%(message)s
-datefmt=%Y-%m-%dT%H:%M:%S 
+format=%(asctime)s.%(msecs)03d|%(levelname).1s|%(name)s|%(message)s
+datefmt=%y%m%dT%H:%M:%S 
