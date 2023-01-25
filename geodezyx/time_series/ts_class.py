@@ -98,6 +98,10 @@ class Point():
 
         elif initype == 'NED':
             self.NEDset(A,B,C,sA,sB,sC)
+            
+        elif initype == 'UTM':
+            log.warning("UTM not implemented")
+            self.NEDset(A,B,C,sA,sB,sC)
         else:
             log.error("wrong initype")
 
@@ -111,6 +115,9 @@ class Point():
             return self.E,self.N,self.U,self.Tdt,self.T
         elif self.initype == 'NED':
             return self.N,self.E,self.D,self.Tdt,self.T
+        elif self.initype == 'UTM':
+            log.warning("UTM not implemented")
+            return self.Eutm,self.Nutm,self.Uutm,self.Tdt,self.T
         else:
             log.error("wrong initype")
 
@@ -142,6 +149,7 @@ class Point():
         self.initype = 'FLH'
         self.X,self.Y,self.Z = conv.GEO2XYZ(self.F,self.L,self.H)
         self.sX,self.sY,self.sZ = conv.sFLH2sXYZ(F,L,H,sF,sL,sH)
+        
 
     def ENUset(self,E=np.nan,N=np.nan,U=np.nan,sE=np.nan,sN=np.nan,sU=np.nan):
         self.E = E
@@ -162,6 +170,19 @@ class Point():
         self.sD = sD
 
         self.initype = 'NED'
+
+
+    def UTMset(self,Eutm=np.nan,Nutm=np.nan,Uutm=np.nan,sEutm=np.nan,sNutm=np.nan,sUutm=np.nan):
+        log.warning("UTM not implemented")
+        self.Eutm = Eutm
+        self.Nutm = Nutm
+        self.Uutm = Uutm
+        self.sEutm = sEutm
+        self.sNutm = sNutm
+        self.sUutm = sUutm
+
+        self.initype = 'UTM'
+        
 
     def add_offset(self,dA,dB,dC):
         log.warning("add_offset as method are hazardous ...")
