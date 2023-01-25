@@ -3,9 +3,9 @@
 """
 Created on Thu Aug 13 15:11:12 2020
 
-@author: psakicki
+@author: psakic
 
-This sub-module of geodezyx.conv deals with cartographic projections.
+This sub-module of geodezyx.conv deals with Lambert/Conform Conic projections.
 
 it can be imported directly with:
 from geodezyx import conv
@@ -22,17 +22,13 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
-# import scipy
-# from pyorbital import astronomy
-# import re
 
 #### geodeZYX modules
 from geodezyx import utils,conv
 
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
@@ -108,7 +104,7 @@ def lambert_projection_CC_frontend(long,lat,NZ = 93):
     Source
     ------
     https://fr.wikipedia.org/wiki/Projection_conique_conforme_de_Lambert   
-    geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf
+    https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf
     https://geodesie.ign.fr/contenu/fichiers/documentation/rgf93/Lambert-93.pdf
  
     """
