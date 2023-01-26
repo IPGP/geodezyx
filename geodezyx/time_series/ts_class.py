@@ -100,8 +100,7 @@ class Point():
             self.NEDset(A,B,C,sA,sB,sC)
             
         elif initype == 'UTM':
-            log.warning("UTM not implemented")
-            self.NEDset(A,B,C,sA,sB,sC)
+            self.UTMset(A,B,C,sA,sB,sC)
         else:
             log.error("wrong initype")
 
@@ -116,7 +115,6 @@ class Point():
         elif self.initype == 'NED':
             return self.N,self.E,self.D,self.Tdt,self.T
         elif self.initype == 'UTM':
-            log.warning("UTM not implemented")
             return self.Eutm,self.Nutm,self.Uutm,self.Tdt,self.T
         else:
             log.error("wrong initype")
@@ -218,6 +216,12 @@ class Point():
             if not np.isnan(self.sX):
                 self.sE,self.sN,self.sU = conv.sXYZ2sENU(self.X,self.Y,self.Z,self.sX,self.sY,self.sZ)
 
+
+    def UTMcalc_pt(self,ellips="wgs84"):
+        self.Eutm , self.Nutm , _ = conv.utm_geo2xy(self.F,self.L)
+        self.Uutm = self.H
+        
+
     def keysanex(self):
         return list(self.anex.keys())
 
@@ -269,6 +273,8 @@ class TimeSeriePoint:
         self.meta_set(stat=stat)
 
         self.boolENU = False
+        self.boolUTM = False
+
         self.bool_interp_uptodate = False
         self.bool_discont = False
         self.bool_discont_manu = False
@@ -558,13 +564,20 @@ class TimeSeriePoint:
             sA,sB,sC = 'sF','sL','sH'
 
         elif coortype == 'ENU':
-
             if self.boolENU == False:
                 log.warning("no ENU coord. for " + self.name)
                 return None
 
             A,B,C = 'E','N','U'
             sA,sB,sC = 'sE','sN','sU'
+
+        elif coortype == 'UTM':
+            if self.boolUTM == False:
+                log.warning("no UTM coord. for " + self.name)
+                return None
+
+            A,B,C = 'Eutm','Nutm','Uutm'
+            sA,sB,sC = 'sEutm','sNutm','sUutm'
 
         else:
             log.error("coortype does not exist")
@@ -631,10 +644,15 @@ class TimeSeriePoint:
         for icoty , coty in enumerate(coortype):
             A,B,C,T,sA,sB,sC = self.to_list(coty)
             
+            if coty == "UTM":
+                cotycolnam = ["Eutm","Nutm","Uutm"]
+            else:
+                cotycolnam = coty
+                
             if icoty == 0:
                 Tdt = conv.posix2dt(T)
                 ColStk = ColStk + (Tdt,T,A,B,C,sA,sB,sC)  
-                ColNameStk = ["Tdt","T"] + [e for e in coty] + ["s" + e for e in coty]
+                ColNameStk = ["Tdt","T"] + [e for e in cotycolnam] + ["s" + e for e in cotycolnam]
             else:
                 ColStk = ColStk + (A,B,C,sA,sB,sC)
                 ColNameStk = [e for e in coty] + ["s" + e for e in coty]
@@ -1001,6 +1019,23 @@ class TimeSeriePoint:
             self.add_point(copy.copy(Point))
 
         self.i_nomi = pas
+        
+        
+    def UTMcalc(self):
+        """
+        Method to determine the UTM E and N projected coordinates
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        None.
+
+        """
+        self.boolUTM = True
+        [ pt.UTMcalc_pt() for pt in self.pts ]
+        
 
     def timewin(self,windows,mode='keep'):
         '''IL EST TRES DANGEREUX DE L'APPLIQUER UN FENETRAGE A SOI MEME'''
