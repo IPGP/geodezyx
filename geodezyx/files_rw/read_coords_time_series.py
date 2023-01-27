@@ -2226,8 +2226,6 @@ def read_hector_neu(filein):
  #    |_|   \____/ \_____/_/   \_____|_|  \_\\____/ \____/|_|    |_____/  |_|    |_|_|\___||___/
                                                                                           
 
-
-
 def read_groops_position(Filesin):
     
     if not utils.is_iterable(Filesin):
@@ -2255,6 +2253,10 @@ def read_groops_position(Filesin):
     tsout.sort()
 
     return tsout
+
+
+#def read_webobs(filein,typein="txt"):
+    
 
 
  #  ______                _   _                _____                                         _ 

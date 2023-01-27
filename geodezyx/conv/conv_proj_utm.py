@@ -78,7 +78,7 @@ def utm_geo2xy(lat,lon,ellips="wgs84",zone=None):
     Precision is near a millimeter.
     
     This function implements the IGN algorithm.
-    This one is *more precise* than `pyproj` or the `utm` python lib 
+    This one is *more accurate* than `pyproj` or `utm` python lib 
     because it implements more coefficients.
     
     Source
@@ -146,8 +146,6 @@ def utm_geo2xy(lat,lon,ellips="wgs84",zone=None):
     Z = np.multiply(np.multiply(N,C[0]),z) + np.multiply(N,(C[1] * np.sin(2 * z) + C[2] * np.sin(4 * z) + C[3] * np.sin(6 * z) + C[4] * np.sin(8 * z)))
     xs = np.imag(Z) + X0
     ys = np.real(Z) + YS
-    # outputs zone if needed: scalar value if unique, or vector/matrix of the
-    # same size as x/y in case of crossed zones
     
     f = np.multiply(F0,np.sign(lat))
     fu = np.unique(f)
@@ -209,4 +207,3 @@ def utm_coef(e = None,m = 0):
     return c
 
 
-ll2utm(-21.246472,55.706936)
