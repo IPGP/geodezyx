@@ -171,7 +171,6 @@ class Point():
 
 
     def UTMset(self,Eutm=np.nan,Nutm=np.nan,Uutm=np.nan,sEutm=np.nan,sNutm=np.nan,sUutm=np.nan):
-        log.warning("UTM not implemented")
         self.Eutm = Eutm
         self.Nutm = Nutm
         self.Uutm = Uutm
@@ -520,6 +519,9 @@ class TimeSeriePoint:
         if coortype == "ENU":
             self.boolENU = True
 
+        if coortype == "UTM":
+            self.boolUTM = True
+
         self.sort()
 
         return None
@@ -750,6 +752,14 @@ class TimeSeriePoint:
             Ctitle = 'Haut'
             yylabel = 'displacement (m)'
             ABtitle = 'Phi Lambda (sans signification)'
+
+
+        elif coortype == 'UTM':
+            Atitle = 'East (UTM)'
+            Btitle = 'East (UTM)'
+            Ctitle = 'Up'
+            yylabel = 'displacement (m)'
+            ABtitle = 'East North (UTM)'
 
         else:
             Atitle = 'A'
@@ -1084,6 +1094,15 @@ class TimeSeriePoint:
             self.LfT = scipy.interpolate.interp1d(T,L,bounds_error=False,kind=interptype)
             self.HfT = scipy.interpolate.interp1d(T,H,bounds_error=False,kind=interptype)
 
+        if (not hasattr(self.pts[0],'Eutm')) or np.isnan(self.pts[0].Eutm) == True:
+            log.warning("no UTM for " + self.name)
+        else:
+            Eutm,Nutm,Uutm,T,_,_,_ = self.to_list('UTM')
+
+            self.EutmfT = scipy.interpolate.interp1d(T,Eutm,bounds_error=False,kind=interptype)
+            self.NutmfT = scipy.interpolate.interp1d(T,Nutm,bounds_error=False,kind=interptype)
+            self.UutmfT = scipy.interpolate.interp1d(T,Uutm,bounds_error=False,kind=interptype)
+
         self.bool_interp_uptodate = True
 
     def interp_get(self,T,coortype='ENU'):
@@ -1128,6 +1147,11 @@ class TimeSeriePoint:
             A = self.FfT(T)
             B = self.LfT(T)
             C = self.HfT(T)
+
+        if coortype == 'UTM':
+            A = self.EutmfT(T)
+            B = self.NutmfT(T)
+            C = self.UutmfT(T)
 
         for i in range(len(T)):
             tsout.add_point(Point(A[i],B[i],C[i],T=T[i],initype=coortype))
