@@ -24,10 +24,12 @@ import pandas as pd
 from io import StringIO
 import re
 import os
+import pathlib
 from tqdm import tqdm
+import hatanaka
 
 #### geodeZYX modules
-from geodezyx import operational
+from geodezyx import operational,utils
 
 
 #### Import the logger
@@ -42,8 +44,11 @@ def read_rinex2_obs(rnx_in,
 
     Parameters
     ----------
-    rnx_in : str
-        path of the input RINEX.
+    rnx_in : see below
+        input RINEX.
+        can be the path of a RINEX file as string or as Path object,
+        or directly the RINEX content as a string, bytes, StringIO object or a 
+        list of lines
     set_index : str or list of str, optional
         define the columns for the index.
         If None, the output DataFrame is "flat", with integer index
@@ -55,10 +60,19 @@ def read_rinex2_obs(rnx_in,
     DFrnxobs : Pandas DataFrame / GeodeZYX's RINEX format
     """
     
+    #### open block
+    try:
+        rnx_wrk = hatanaka.decompress(rnx_in)
+    except:
+        rnx_wrk = rnx_in
+        pass
     
-    EPOCHS = operational.rinex_read_epoch(rnx_in,out_index=True)
-    FILE = open(rnx_in)
-    LINES = FILE.readlines()
+    LINES = utils.open_readlines_smart(rnx_wrk)
+    EPOCHS = operational.rinex_read_epoch(rnx_wrk,out_index=True)
+    if type(rnx_in) is str or type(rnx_in) is pathlib.Path:
+        filename = os.path.basename(rnx_in)
+    else:
+        filename = "unknown filename"
     
     #### Split header and Observation body
     for il,l in enumerate(LINES):
@@ -84,7 +98,7 @@ def read_rinex2_obs(rnx_in,
     DFall_stk = []
     
     #### reading the epochs    
-    for iepoc in tqdm(range(len(EPOCHS)),desc="Reading " + os.path.basename(rnx_in)):
+    for iepoc in tqdm(range(len(EPOCHS)),desc="Reading " + filename):
         epoch = EPOCHS[iepoc,0]
         ## define the start/end indices of the epoch block
         iline_start = EPOCHS[iepoc,1] 
@@ -138,8 +152,11 @@ def read_rinex3_obs(rnx_in,
 
     Parameters
     ----------
-    rnx_in : str
-        path of the input RINEX.
+    rnx_in : see below
+        input RINEX.
+        can be the path of a RINEX file as string or as Path object,
+        or directly the RINEX content as a string, bytes, StringIO object or a 
+        list of lines
     set_index : str or list of str, optional
         define the columns for the index.
         If None, the output DataFrame is "flat", with integer index
@@ -151,10 +168,20 @@ def read_rinex3_obs(rnx_in,
     DFrnxobs : Pandas DataFrame / GeodeZYX's RINEX format
     """
     
-    EPOCHS = operational.rinex_read_epoch(rnx_in,out_index=True)
-    FILE = open(rnx_in)
-    LINES = FILE.readlines()
+    #### open block
+    try:
+        rnx_wrk = hatanaka.decompress(rnx_in)
+    except:
+        rnx_wrk = rnx_in
+        pass
     
+    LINES = utils.open_readlines_smart(rnx_wrk)
+    EPOCHS = operational.rinex_read_epoch(rnx_wrk,out_index=True)
+    if type(rnx_in) is str or type(rnx_in) is pathlib.Path:
+        filename = os.path.basename(rnx_in)
+    else:
+        filename = "unknown filename"
+        
     #### Split header and Observation body
     for il,l in enumerate(LINES):
         if "END OF HEADER" in l:
@@ -198,7 +225,7 @@ def read_rinex3_obs(rnx_in,
     
     DFall_stk = []
     #### reading the epochs
-    for iepoc in tqdm(range(len(EPOCHS)),desc="Reading " + os.path.basename(rnx_in)):
+    for iepoc in tqdm(range(len(EPOCHS)),desc="Reading " + filename):
         epoch = EPOCHS[iepoc,0]
         ## define the start/end indices of the epoch block
         iline_start = EPOCHS[iepoc,1] + 1

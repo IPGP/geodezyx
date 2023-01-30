@@ -2252,11 +2252,50 @@ def read_groops_position(Filesin):
     tsout.meta_set(stat=statname)
     tsout.sort()
 
-    return tsout
+    return tsout    
 
 
-#def read_webobs(filein,typein="txt"):
+def read_webobs(filein,typein="txt",
+                coordtreat=False,
+                dropna=False):
     
+    if coordtreat:
+        lbda_colname = lambda c: c  + "_treat"
+    else:
+        lbda_colname = lambda c: c  + "ern" if c != "Up" else "Up"
+    
+    if typein== "txt":
+        header = utils.grep(filein, "#")[-1][1:].strip().split()
+        DF = pd.read_csv(filein,sep=" ",comment='#',names= header,
+                         on_bad_lines="warn")
+        unit_suffix = "(m)"
+        ### Time  conversion
+        DFtime = DF[["yyyy","mm","dd","HH","MM","SS"]].copy()
+        DFtime.columns = [ 'year' ,'month' ,'day','h','m','s']
+        DF["T"] = pd.to_datetime(DFtime)
+    
+    elif typein == "csv":
+        DF = pd.read_csv(filein,sep=";",
+                         on_bad_lines="warn")
+        unit_suffix = ""
+        ### Time  conversion
+        DFtimedelta = pd.to_timedelta(DF.HH * 3600 + DF.MM * 60 + DF.SS,
+                                      unit="S")
+        DF["T"] = pd.to_datetime(DF["yyyy-mm-dd"]) + DFtimedelta
+        
+    if dropna:
+        DF = DF.dropna()
+    
+    tsout = time_series.TimeSeriePoint()
+    
+    T = conv.dt2posix(DF['T'].values)
+    A = DF[lbda_colname("East")  + unit_suffix].values
+    B = DF[lbda_colname("North") + unit_suffix].values
+    C = DF[lbda_colname("Up") + unit_suffix].values
+    
+    tsout.from_list(T,A,B,C,coortype='UTM')
+    
+    return tsout
 
 
  #  ______                _   _                _____                                         _ 

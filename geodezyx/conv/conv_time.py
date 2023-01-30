@@ -2244,7 +2244,7 @@ def numpy_dt2dt(numpy_dt_in):
         Converted Datetime(s)
         If the input is a Pandas Series, the output is forced as an array
               
-    source
+    Source
     ------
     https://gist.github.com/blaylockbk/1677b446bc741ee2db3e943ab7e4cabd
     """
@@ -2252,9 +2252,11 @@ def numpy_dt2dt(numpy_dt_in):
     if utils.is_iterable(numpy_dt_in):        
         typ=utils.get_type_smart(numpy_dt_in)
         
-        ### If the type is a Series, it has to be forced as an array
+        ### If the type is a pd.core.series.Series or a 
+        ### pd.core.indexes.datetimes.DatetimeIndex,
+        ### it has to be forced as an array
         ### Otherwise, datetime will be converted as numpy_dt again
-        if typ == pd.core.series.Series:
+        if not typ in (list,tuple,np.array):
             typ = np.array
             
         return typ([numpy_dt2dt(e) for e in numpy_dt_in])
@@ -2613,6 +2615,9 @@ def dt_round(dtin=None, roundTo=60):
 def roundTime(*args):
     """
     Wrapper of dt_round for legacy reasons
+    
+    **This function is depreciated !!!**
+    **Use round_dt instead         !!!**
     """
     return dt_round(*args)
 
