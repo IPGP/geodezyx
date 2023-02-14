@@ -2,7 +2,7 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.3.1 / 2021-12-09**, README Revision: 2021-06-02
+**Version 0.4.3.2 / 2023-02-XX**, README Revision: 2023-02-XX
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
@@ -67,6 +67,14 @@ and install the Toolbox you downloaded with ``python setup.py install``
 Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
 
 ## Changelog
+
+### v0.4.3.2, 2022-02-XX
+  * 1000th commit on GitHub 🥳
+  * beta for GROOPS automatized run functions
+  * Dropbox download function
+  * UTM coordinates conversion function (IGN algorithm) 
+  * implementation of UTM coordinates in the TimeSeries class
+  * logger improvement (shorter timestamps & message ranks)
 
 ### v0.4.3.1, 2022-12-09
   * Routine update: multiple new features/functions and bug corrections
