@@ -72,7 +72,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
   * 1000th commit on GitHub 🥳
   * repository is renamed for simplification 
     * GeodeZYX-Toolbox_v4 becomes geodezyx-toolbox (lowercase and without version)
-    * It must be transparent for your clones but updating them is recommended 
+    * It must be transparent for your clones but updating them is recommended \
       https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository  
   * beta for GROOPS automatized run functions
   * Dropbox download function
