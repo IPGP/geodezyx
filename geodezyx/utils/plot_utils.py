@@ -116,6 +116,35 @@ def figure_saver(figobjt_in , outdir , outname ,
                  formt = None ,
                  dpi = 200 ,
                  transparent=False):
+    """
+    This function provides a front end to export pretty-print plots
+
+    Parameters
+    ----------
+    figobjt_in : matplotlib Figure object
+        input matplotlib Figure object. use for instance plt.gcf() to get it.
+    outdir : str
+        the output directory.
+    outname : str
+        output prefix filename.
+    outtype : tuple, optional
+        the output formats. The default is ('.png','.pdf','.figpik').
+    formt : 2-tuple or string , optional
+        the format (size) of the plot. 
+        if string: a Ax format (A4, A3 etc...)
+        if tuple: size of the plot  in inches.
+        The default is None.
+    dpi : int, optional
+        DPI of the figure. The default is 200.
+    transparent : bool, optional
+        make the plot transparent. The default is False.
+
+    Returns
+    -------
+    outpath_stk : string or list of string
+        output paths of the plots.
+
+    """
     
     if not utils.is_iterable(outtype):
          outtype = (outtype,) 

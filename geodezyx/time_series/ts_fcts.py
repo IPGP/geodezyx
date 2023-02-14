@@ -216,6 +216,13 @@ def compar_plot(dico_list_in, namest = 0, namend    = 10  ,
             Cti = 'delta Height'
             Dti = 'delta D ' + Dtype + ' (no sens)'
             ylbl = 'degrees'
+        elif coortype == 'UTM':
+            Ati = 'delta East UTM'
+            Bti = 'delta North UTM'
+            Cti = 'delta Height'
+            Dti = 'delta D UTM ' + Dtype
+            ylbl = 'meters'
+
         else:
             Ati = 'delta A'
             Bti = 'delta B'
@@ -257,7 +264,7 @@ def compar_plot(dico_list_in, namest = 0, namend    = 10  ,
         axD.set_ylabel(ylbl)
         axD.legend()
         axD.set_title(Dti)
-
+        
     return fig
 
 def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
