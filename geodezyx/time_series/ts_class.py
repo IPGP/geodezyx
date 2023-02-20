@@ -756,7 +756,7 @@ class TimeSeriePoint:
 
         elif coortype == 'UTM':
             Atitle = 'East (UTM)'
-            Btitle = 'East (UTM)'
+            Btitle = 'North (UTM)'
             Ctitle = 'Up'
             yylabel = 'displacement (m)'
             ABtitle = 'East North (UTM)'
