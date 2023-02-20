@@ -8,6 +8,7 @@ from .download_find_files    import *
 from .download_prods         import *
 from .download_rinex         import *
 from .download_utils         import *
+from .groops_frontend       import *
 from .hector_frontend       import *
 from .midas_frontend        import *
 from .rinex_lister_plotter  import *
