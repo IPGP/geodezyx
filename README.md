@@ -2,7 +2,7 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.3.2 / 2023-02-XX**, README Revision: 2023-02-XX
+**Version 0.4.3.2 / 2023-03-08**, README Revision: 2023-03-08
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
@@ -68,7 +68,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ## Changelog
 
-### v0.4.3.2, 2022-02-XX
+### v0.4.3.2, 2023-03-08
   * 1000th commit on GitHub 🥳
   * GitHub repository is renamed for simplification 
     * `GeodeZYX-Toolbox_v4` becomes `geodezyx-toolbox` (lowercase and without version)
