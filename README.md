@@ -8,9 +8,9 @@
 **Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
 (GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
 
-**Documentation:** [https://geodezyx.github.io/GeodeZYX-Toolbox_v4](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
+**Documentation:** [https://geodezyx.github.io/geodezyx-toolbox](https://geodezyx.github.io/geodezyx-toolbox/)
 
-**GitHub repository:** [https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4](https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4)
+**GitHub repository:** [https://github.com/GeodeZYX/geodezyx-toolbox](https://github.com/GeodeZYX/geodezyx-toolbox)
 
 **PyPi project:** [https://pypi.org/project/geodezyx](https://pypi.org/project/geodezyx/)
 
@@ -38,12 +38,12 @@ Also tested with Anaconda
 ## Documentation
 
 See the following link:
-[https://geodezyx.github.io/GeodeZYX-Toolbox_v4/](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
+[https://geodezyx.github.io/geodezyx-toolbox/](https://geodezyx.github.io/geodezyx-toolbox/)
 
 ## Installation 
 
 See the following link:
-[https://geodezyx.github.io/GeodeZYX-Toolbox_v4/getting_started.html#installation](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/getting_started.html#installation)
+[https://geodezyx.github.io/geodezyx-toolbox/getting_started.html#installation](https://geodezyx.github.io/geodezyx-toolbox/getting_started.html#installation)
 
 ## Installation (detailed legacy instructions)
 
@@ -55,12 +55,12 @@ We recommend to use pip to do a propper installation:
 
 To get the latest working version you can install directly the GitHub-hosted version:
 
-``pip install -I -U git+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4``
+``pip install -I -U git+https://github.com/GeodeZYX/geodezyx-toolbox``
 
 ### clone and manually install from GitHub
 
 You can manually fork and clone the GitHub repository
-[https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4/](https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4/)
+[https://github.com/GeodeZYX/geodezyx-toolbox/](https://github.com/GeodeZYX/geodezyx-toolbox/)
 
 and install the Toolbox you downloaded with ``python setup.py install``
 
