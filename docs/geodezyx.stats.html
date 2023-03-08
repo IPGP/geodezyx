@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.stats package &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -51,6 +51,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
@@ -355,10 +356,10 @@ with iterable</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A &amp; B withour NaN</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>Aout , Bout</p>
 </dd>
 </dl>
@@ -369,7 +370,7 @@ with iterable</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.least_squares.</span></span><span class="sig-name descname"><span class="pre">partial_derive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.least_squares.partial_derive" title="Permalink to this definition"></a></dt>
 <dd><p>This function computes the partial derivatives of a python function</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>f</strong> (<em>Python function</em>) – the python function which will be derivated.
 this function must return a scalar.
@@ -390,10 +391,10 @@ The default is 0.</p></li>
 <a class="reference external" href="https://en.wikipedia.org/wiki/Finite_difference_coefficient">https://en.wikipedia.org/wiki/Finite_difference_coefficient</a></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dout</strong> – the derivative of f w.r.t. var_in.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -541,13 +542,13 @@ alpha = la probabilité d’erreur tolérée</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">detrend_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.detrend_timeseries" title="Permalink to this definition"></a></dt>
 <dd><p>detrend, i.e. remove linear tendence of a timeserie Y(X)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>Y</strong> (<em>X &amp;</em>) – Values</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>X &amp; Yout</strong> – Detrended Y</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list or numpy.array</p>
 </dd>
 </dl>
@@ -618,10 +619,10 @@ GFZ’s GMT_plus.pm/gaussian_kernel</p>
 <dd><p>Low level function to determine a lagrangian polynom</p>
 <p>Replace scipy.interpolate.lagrange which is HIGHLY instable</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>points</strong> (<em>list</em><em> of </em><em>n-interable</em>) – point list.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>P</strong> (<em>function</em>) – function representing the polynom.</p></li>
 <li><p><em>Source</em></p></li>
@@ -640,10 +641,10 @@ GFZ’s GMT_plus.pm/gaussian_kernel</p>
 <p>Replace scipy.interpolate.lagrange which is HIGHLY instable</p>
 <p>this function is more pythonic, but slower thant lagrange1….</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>points</strong> (<em>list</em><em> of </em><em>n-interable</em>) – point list.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>P</strong> (<em>function</em>) – function representing the polynom.</p></li>
 <li><p><em>Source</em></p></li>
@@ -661,7 +662,7 @@ GFZ’s GMT_plus.pm/gaussian_kernel</p>
 <dd><p>Perform a temporal lagrangian interpolation
 the X-component is a time</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Tdata</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – X/T component of the known points.</p></li>
 <li><p><strong>Ydata</strong> (<em>iterable</em><em> of </em><em>floats</em>) – Y component of the known points..</p></li>
@@ -669,7 +670,7 @@ the X-component is a time</p>
 <li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – degree of the polynom. Better if even. The default is 10.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>Yintrp</strong> (<em>float array</em>) – output interpolated data.</p></li>
 <li><p><em>Tips</em></p></li>
@@ -687,7 +688,7 @@ the X-component is a time</p>
 <dd><p>Gives coefficients of the line between two points (x1,y1) &amp; (x2,y2)
 x1,y1,x2,y2 can be iterables</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x1</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><em>numpy.array</em>) – Coordinates of the 1st and the 2nd point</p></li>
 <li><p><strong>y1</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><em>numpy.array</em>) – Coordinates of the 1st and the 2nd point</p></li>
@@ -695,7 +696,7 @@ x1,y1,x2,y2 can be iterables</p>
 <li><p><strong>y2</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><em>numpy.array</em>) – Coordinates of the 1st and the 2nd point</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>a</strong> (<em>float</em>) – regression coefficient</p></li>
 <li><p><strong>b1 &amp; b2</strong> (<em>float</em>) – regression offsets coefficient (b1 must be equal to b2)</p></li>
@@ -708,16 +709,16 @@ x1,y1,x2,y2 can be iterables</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.linear_reg_getvalue">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">linear_reg_getvalue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.linear_reg_getvalue" title="Permalink to this definition"></a></dt>
-<dd><p>From 2 vector X and coefficients a &amp; b, get Y = a*X + b</p>
+<dd><p>From a vector X and coefficients a &amp; b, get Y = a*X + b</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
 <li><p><strong>b</strong> (<em>a &amp;</em>) – Linear regression coefficients</p></li>
 <li><p><strong>full</strong> (<em>bool</em>) – True : return X , Y = aX + b , False : return Y = aX + b</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>Y</strong> (<em>numpy.array</em>) – if full == False</p></li>
 <li><p><em>OR</em></p></li>
@@ -738,18 +739,18 @@ Decimal Years are recommended</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">linear_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fulloutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.linear_regression" title="Permalink to this definition"></a></dt>
 <dd><p>From 2 vectors X and Y, returns linear regression coefficients a and b</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Y</strong> (<em>X &amp;</em>) – Values</p></li>
 <li><p><strong>fulloutput</strong> (<em>bool</em>) – full output</p></li>
 <li><p><strong>alpha</strong> (<em>float</em>) – alpha value for the confidence interval</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>a &amp; b</strong> (<em>float</em>) – Linear regression coefficients</p></li>
 <li><p><em>If fulloutput == True</em></p></li>
-<li><p><strong>confid_interval_slope</strong> (<em>float</em>) – confid_interval_slope</p></li>
+<li><p><strong>confid_interval_slope</strong> (<em>float 2-tuple</em>) – confidence interval for the slope</p></li>
 <li><p><strong>std_err</strong> (<em>float</em>) – standard deviation</p></li>
 </ul>
 </p>
@@ -799,7 +800,7 @@ Roman Kh ans</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_above_below</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference=&lt;function</span> <span class="pre">nanmean&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theshold_absolute=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theshold_relative_value='reference'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_above_below" title="Permalink to this definition"></a></dt>
 <dd><p>Gives values of X which are between threshold values</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>threshold_values</strong> (<em>single value</em><em> (</em><em>float</em><em>) or </em><em>a 2-tuple</em>) – <p>(lower bound theshold , upper bound theshold)</p>
 <p><cite>WARN</cite> : those value(s) have to be positives.
@@ -832,7 +833,7 @@ Only useful when theshold_absolute = False</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>Xout</strong> (<em>numpy array</em>) – X between low_bound &amp; upp_bound</p></li>
 <li><p><strong>bbool</strong> (<em>numpy array</em>) – X-sized array of booleans</p></li>
@@ -848,7 +849,7 @@ Only useful when theshold_absolute = False</p></li>
 <dd><p>Gives values of Y which are between threshold values, and correct an
 associated X so as X =&gt; Y(X)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>threshold_values</strong> (<em>single value</em><em> (</em><em>float</em><em>) or </em><em>a 2-tuple</em>) – <p>(lower bound theshold , upper bound theshold)</p>
 <p><cite>WARN</cite> : those value(s) have to be positives.
@@ -883,7 +884,7 @@ Recommended</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>Xout</strong> (<em>numpy array</em>) – X between low_bound &amp; upp_bound</p></li>
 <li><p><strong>bbool</strong> (<em>numpy array</em>) – X-sized array of booleans</p></li>
@@ -898,14 +899,14 @@ Recommended</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_above_below_simple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upp_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_above_below_simple" title="Permalink to this definition"></a></dt>
 <dd><p>Gives values of X which are between low_bound &amp; upp_bound</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
 <li><p><strong>upp_bound</strong> (<em>low_bound &amp;</em>) – lower and upper bound of X values wished</p></li>
 <li><p><strong>return_booleans</strong> (<em>bool</em>) – return booleans or not</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>Xout</strong> (<em>numpy.array</em>) – X between low_bound &amp; upp_bound</p></li>
 <li><p><strong>bbool</strong> (<em>bool</em>) – X-sized array of booleans</p></li>
@@ -920,7 +921,7 @@ Recommended</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_mad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_to_np_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mad_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seuil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_mad" title="Permalink to this definition"></a></dt>
 <dd><p>clean the outlier of Ya dataset using the MAD approach</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
 <li><p><strong>threshold</strong> (<em>float</em>) – MAD threshold</p></li>
@@ -931,7 +932,7 @@ Recommended</p></li>
 will override threshold value if given</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>dataout</strong> (<em>numpy.array</em>) – Values cleaned of outliers</p></li>
 <li><p><strong>boolbad</strong> (<em>numpy.array</em>) – Y-sized booleans</p></li>
@@ -954,7 +955,7 @@ and clean the corresponding values in X
 assuming that we have the function : X =&gt; Y(X)
 (be carefull, Y is the first argument)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Y</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
 <li><p><strong>X</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – X Values so as X =&gt; Y(X)</p></li>
@@ -964,7 +965,7 @@ assuming that we have the function : X =&gt; Y(X)
 <li><p><strong>return_booleans</strong> (<em>bool</em>) – return good and bad values of Y and X as booleans</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>Yclean &amp; Xclean</strong> (<em>numpy.array</em>)</p></li>
 <li><p><strong>bb</strong> (<em>numpy.array (if return_booleans == True)</em>) – Y-sized booleans</p></li>
@@ -1039,18 +1040,18 @@ NB 1808 : It is basically the standard deviation …</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">running_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convolve_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'same'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.running_mean" title="Permalink to this definition"></a></dt>
 <dd><p>Gives running mean / moving average of data</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_in</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
 <li><p><strong>window</strong> (<em>float</em><em> or </em><em>int</em>) – Size of the window for the running mean</p></li>
 <li><p><strong>convolve_mode</strong> (<em>str</em>) – (expert) mode for the underlying convolution</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>data_run</strong> – running mean of data_in (sane size as data_in)
 should stay “same”</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array</p>
 </dd>
 </dl>
@@ -1087,11 +1088,34 @@ Alleo answer</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.sinusoide">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">sinusoide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.sinusoide" title="Permalink to this definition"></a></dt>
-<dd><p>amplitude de la grandeur, appelée aussi valeur de crête, dans l’unité de la grandeur mesurée
-omega : pulsation de la grandeur en rad⋅s-1
-phi : phase instantanée en rad
-phi : phase à l’origine en rad (souvent fixée par l’expérimentateur)</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">sinusoide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.sinusoide" title="Permalink to this definition"></a></dt>
+<dd><p>produce a sinusoidal waveform</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>float</em>) – time variable.</p></li>
+<li><p><strong>A</strong> (<em>float</em>) – amplitude, the peak deviation of the function from zero.</p></li>
+<li><p><strong>omega</strong> (<em>float</em><em>, </em><em>optional</em>) – ω = 2πf, angular frequency, the rate of change of the
+function argument in units of radians per second.</p></li>
+<li><p><strong>phi</strong> (<em>float</em><em>, </em><em>optional</em>) – phase, specifies (in radians) where in its cycle
+the oscillation is at t = 0.
+The default is 0.</p></li>
+<li><p><strong>f</strong> (<em>float</em>) – ordinary frequency, the number of oscillations (cycles)
+that occur each second of time.
+If given, it overrides the angular frequency omega.
+Thus, to use it, declare also omega = 0
+The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a sinusoidal waveform.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Sine_wave">https://en.wikipedia.org/wiki/Sine_wave</a></p>
 </dd></dl>
 
 <dl class="py function">
