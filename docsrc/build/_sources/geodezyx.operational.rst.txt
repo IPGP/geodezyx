@@ -33,6 +33,14 @@ geodezyx.operational.download\_cddis module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.operational.download\_dropbox module
+---------------------------------------------
+
+.. automodule:: geodezyx.operational.download_dropbox
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.operational.download\_find\_files module
 -------------------------------------------------
 
@@ -69,6 +77,14 @@ geodezyx.operational.gins\_runner module
 ----------------------------------------
 
 .. automodule:: geodezyx.operational.gins_runner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geodezyx.operational.groops\_frontend module
+--------------------------------------------
+
+.. automodule:: geodezyx.operational.groops_frontend
    :members:
    :undoc-members:
    :show-inheritance:

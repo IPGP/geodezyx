@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.conv package &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -53,7 +53,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_coords">geodezyx.conv.conv_coords module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_geometric">geodezyx.conv.conv_geometric module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_interpolators">geodezyx.conv.conv_interpolators module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_proj_carto">geodezyx.conv.conv_proj_carto module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_proj_lambert">geodezyx.conv.conv_proj_lambert module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_proj_utm">geodezyx.conv.conv_proj_utm module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_rinex">geodezyx.conv.conv_rinex module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_rotation_matrices">geodezyx.conv.conv_rotation_matrices module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_time">geodezyx.conv.conv_time module</a></li>
@@ -68,6 +69,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 </ul>
 </li>
@@ -181,16 +183,16 @@ Arcsecond =&gt; Degrees</p>
 <dd><p>Coordinates conversion</p>
 <p>cartesian =&gt; polar conversion</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – cartesian coordinates</p></li>
 <li><p><strong>y</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – cartesian coordinates</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>r , theta</strong> – polar coordinates (radius / angle in radians)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -212,13 +214,13 @@ Degrees =&gt; Arcsecond</p>
 <p>Convert :
 Decimal Degree =&gt; Degree Minute Seconds</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>deg_in</strong> (<em>float</em><em> or </em><em>iterable</em><em> of </em><em>floats</em>) – Decimal degrees</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>deg , minu , sec</strong> – 3 arrays for Degrees, Minutes, Seconds</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array of float</p>
 </dd>
 </dl>
@@ -233,7 +235,7 @@ Degree Minute Second <cite>string</cite> Angle =&gt; decimal Degree <cite>float<
 <p>can manage only DM angle in input</p>
 <p>NB : Too Complicated …. must be simplified</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dms_str</strong> (<em>str</em>) – string of DMS angle
 e.g.
@@ -244,10 +246,10 @@ e.g.
 “28°31.4136’E”</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dd_float</strong> – Decimal degree Angle</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -260,13 +262,13 @@ e.g.
 <p>Convert :
 Degree Minute Second <cite>float</cite> Angle =&gt; decimal Degree <cite>float</cite> Angle</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>sec</strong> (<em>deg &amp; minn &amp;</em>) – degres, minutes and seconds of the input Angle</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dd_float</strong> – Decimal degree Angle</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -278,17 +280,17 @@ Degree Minute Second <cite>float</cite> Angle =&gt; decimal Degree <cite>float</
 <dd><p>Coordinates conversion</p>
 <p>polar =&gt; cartesian conversion</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>r</strong> (<em>float</em><em> or </em><em>iterable</em><em> of </em><em>floats</em>) – polar coordinates</p></li>
 <li><p><strong>theta</strong> (<em>float</em><em> or </em><em>iterable</em><em> of </em><em>floats</em>) – polar coordinates</p></li>
 <li><p><strong>ang</strong> (<em>string</em>) – ‘deg’ (degrees) or ‘rad’ (radian)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>x , y</strong> – cartesian coordinates</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array of float</p>
 </dd>
 </dl>
@@ -313,16 +315,16 @@ GitHub repository :
 <dd><p>Convert ECEF (Earth Centered Earth Fixed) positions to ECI (Earth Centered Inertial)
 positions</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xyz</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – XYZ are cartesian positions in ECEF. Should have shape (N,3)</p></li>
 <li><p><strong>utc_times</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – UTC_times are UTC timestamps, as datetime objects. Sould have shape (N)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>eci</strong> – Earth Centered Inertial coordinates. will have shape (N,3)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
@@ -347,16 +349,16 @@ Inspired from satellite-js (<a class="reference external" href="https://github.c
 <dd><p>Convert ECI (Earth Centered Inertial) positions to ECEF (Earth Centered Earth Fixed)
 positions</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xyz</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – XYZ are cartesian positions in Earth Centered Inertial. Should have shape (N,3)</p></li>
 <li><p><strong>utc_times</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – UTC_times are UTC timestamps, as datetime objects. Sould have shape (N)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>ecef</strong> – Earth Centered Earth Fixed coordinates. will have shape (N,3)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
@@ -394,7 +396,7 @@ Inspired from satellite-js (<a class="reference external" href="https://github.c
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ECI2RTN_or_RPY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_rpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rpy_theo_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ECI2RTN_or_RPY" title="Permalink to this definition"></a></dt>
 <dd><p>convert ECI coordinates in RTN (RIC) or RPY (Roll Pitch Yaw)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>P</strong> (<em>numpy.array</em>) – 3D vector, position of the ref object in ECI frame</p></li>
 <li><p><strong>V</strong> (<em>numpy.array</em>) – 3D vector, velocity of the ref object in ECI frame</p></li>
@@ -404,10 +406,10 @@ Inspired from satellite-js (<a class="reference external" href="https://github.c
 ans. empirically, only for debug !!</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>Cout</strong></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>conversion of P in RTN or RPY ref. frame</p>
 </dd>
 </dl>
@@ -421,7 +423,7 @@ ans. empirically, only for debug !!</p></li>
 <dd><p>Coordinates conversion</p>
 <p>ENU Topocentic =&gt; XYZ ECEF Geocentric</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>E</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – cartesian coordinates E,N,U in meters</p></li>
 <li><p><strong>N</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – cartesian coordinates E,N,U in meters</p></li>
@@ -440,10 +442,10 @@ are NOT added at the end of the conversion
 Default is False</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>X,Y,Z</strong> – ECEF X,Y,Z Component (m)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
@@ -471,7 +473,7 @@ est laissé pour des scripts de conversion de GINS (170119)</p>
 <dd><p>Coordinates conversion</p>
 <p>FLH Geographic =&gt; XYZ ECEF Cartesian</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>phi</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – latitude (deg/rad), longitude (deg/rad), height (m)</p></li>
 <li><p><strong>llambda</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – latitude (deg/rad), longitude (deg/rad), height (m)</p></li>
@@ -481,10 +483,10 @@ est laissé pour des scripts de conversion de GINS (170119)</p>
 <li><p><strong>e2</strong> (<em>floats</em>) – ellipsoid parameters (WGS84 per default)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>X,Y,Z</strong> – cartesian coordinates X,Y,Z in meters</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
@@ -506,7 +508,7 @@ est laissé pour des scripts de conversion de GINS (170119)</p>
 <p>(XYZ2ENU is a core function for XYZ2ENU_2)</p>
 <p>dXYZ = XYZrover - XYZref</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dX</strong> (<em>floats</em><em> or </em><em>numpy.array</em><em> of </em><em>floats</em>) – cartesian coordinates difference between the considered point(s)
 and the reference point</p></li>
@@ -520,10 +522,10 @@ a different x0,y0,z0 will be applied for each dX,dY,dZ element</p></li>
 a different x0,y0,z0 will be applied for each dX,dY,dZ element</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>E,N,U</strong> – East North Up Component (m) w.r.t. x0,y0,z0</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
@@ -541,7 +543,7 @@ a different x0,y0,z0 will be applied for each dX,dY,dZ element</p></li>
 <dd><p>Coordinates conversion</p>
 <p>XYZ ECEF Geocentric =&gt; ENU Topocentic</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – cartesian coordinates X,Y,Z in meters</p></li>
 <li><p><strong>Y</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – cartesian coordinates X,Y,Z in meters</p></li>
@@ -557,10 +559,10 @@ if they are iterable arrays (of the same size as X,Y,Z)
 a different x0,y0,z0 will be applied for each X,Y,Z element</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>E,N,U</strong> – East North Up Component (m) w.r.t. x0,y0,z0</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
@@ -574,14 +576,14 @@ a different x0,y0,z0 will be applied for each X,Y,Z element</p></li>
 <dd><p>Computes the mean of the X,Y,Z and
 return the topocentric ENU position around this mean position</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>X</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – cartesian coordinates X,Y,Z in meters</p></li>
 <li><p><strong>Y</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – cartesian coordinates X,Y,Z in meters</p></li>
 <li><p><strong>Z</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – cartesian coordinates X,Y,Z in meters</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>E,N,U</strong> (<em>numpy.array of floats</em>) – East North Up Component (m) w.r.t. the mean position</p></li>
 <li><p><strong>x0 , y0 , z0</strong> (<em>floats</em>) – coordinates of the mean position in the geocentic frame</p></li>
@@ -602,7 +604,7 @@ return the topocentric ENU position around this mean position</p>
 <dd><p>Coordinates conversion</p>
 <p>XYZ ECEF Cartesian =&gt; FLH Geographic</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – cartesian coordinates X,Y,Z in meters</p></li>
 <li><p><strong>y</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – cartesian coordinates X,Y,Z in meters</p></li>
@@ -612,10 +614,10 @@ return the topocentric ENU position around this mean position</p>
 <li><p><strong>E2</strong> (<em>floats</em>) – ellipsoid parameters (WGS84 per default)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>latitude, longitude, height</strong> – latitude (deg/rad), longitude (deg/rad), height (m)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array of floats</p>
 </dd>
 </dl>
@@ -701,10 +703,10 @@ Must be improved</p>
 To simplify the usage of the conversion functions
 (which take single component vectors as input)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>ABC</strong> (<em>Array</em><em> or </em><em>DataFrame</em>) – Nx3 XYZ, ENU… array.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>A</strong> (<em>Array</em>) – 1st component.</p></li>
 <li><p><strong>B</strong> (<em>Array</em>) – 2nd component.</p></li>
@@ -748,16 +750,16 @@ GitHub repository :
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_geometric.</span></span><span class="sig-name descname"><span class="pre">dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_geometric.dist" title="Permalink to this definition"></a></dt>
 <dd><p>Cartesian distance between 2 points A &amp; B</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>A</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – 3D-points</p></li>
 <li><p><strong>B</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – 3D-points</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>D</strong> – distance between A &amp; B</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -768,13 +770,13 @@ GitHub repository :
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_geometric.</span></span><span class="sig-name descname"><span class="pre">dist_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_geometric.dist_diff" title="Permalink to this definition"></a></dt>
 <dd><p>First derivative of cartesian distance between 2 points A &amp; B</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>A</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – “points”, can be 2D or 3D vectors (list, np.array …)</p></li>
 <li><p><strong>B</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – “points”, can be 2D or 3D vectors (list, np.array …)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>diffA</strong> (<em>numpy.array of float</em>) – [ dD/dxa , dD/dya , dD/dza ]</p></li>
 <li><p><strong>diffB</strong> (<em>numpy.array of float</em>) – [ dD/dxb , dD/dyb , dD/dzb ] = -diffA</p></li>
@@ -795,7 +797,7 @@ GitHub repository :
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_geometric.</span></span><span class="sig-name descname"><span class="pre">line_maker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbpts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_geometric.line_maker" title="Permalink to this definition"></a></dt>
 <dd><p>Determine points of a line easily</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x1</strong> (<em>float</em>) – Coordinates of the start point</p></li>
 <li><p><strong>y1</strong> (<em>float</em>) – Coordinates of the start point</p></li>
@@ -803,10 +805,10 @@ GitHub repository :
 <li><p><strong>y2</strong> (<em>float</em>) – Coordinates of the end point</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>X,Y</strong> – points of the line</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array of float</p>
 </dd>
 </dl>
@@ -817,14 +819,14 @@ GitHub repository :
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_geometric.</span></span><span class="sig-name descname"><span class="pre">orthogonal_projection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xv</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_geometric.orthogonal_projection" title="Permalink to this definition"></a></dt>
 <dd><p>Project a point A on a line defined with a vector V and a point B</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Xa</strong> (<em>list/numpy.array</em><em> of </em><em>float</em>) – Coordinates of A point, we want to project</p></li>
 <li><p><strong>Xb</strong> (<em>list/numpy.array</em><em> of </em><em>float</em>) – Coordinates of B point, the origin point of the vector</p></li>
 <li><p><strong>Xv</strong> (<em>list/numpy.array</em><em> of </em><em>float</em>) – Coordinates of the line direction vector</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>Xh</strong> (<em>numpy.array of float</em>) – Coordinates of H point, projection of A</p></li>
 <li><p><strong>D</strong> (<em>float</em>) – Distance between A and H</p></li>
@@ -859,7 +861,7 @@ GitHub repository :
 kilometers or miles) between two points on the surface of a spheroid.
 Gives also the Azimuth between 2 points</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>point1</strong> (<em>iterable</em><em> of </em><em>float</em>) – coordinates of the points</p></li>
 <li><p><strong>point2</strong> (<em>iterable</em><em> of </em><em>float</em>) – coordinates of the points</p></li>
@@ -868,7 +870,7 @@ Gives also the Azimuth between 2 points</p>
 <li><p><strong>azimuth_in_deg</strong> (<em>bool</em>) – azimut in Rad if False</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>s</strong> (<em>float</em>) – Distance betwwen the 2 points</p></li>
 <li><p><strong>fwdAz,revAz</strong> (<em>float</em>) – Forward and Reverse Azimuth between the 2 points</p></li>
@@ -931,11 +933,11 @@ and can take as input datetime as X</p>
 </dd></dl>
 
 </section>
-<section id="module-geodezyx.conv.conv_proj_carto">
-<span id="geodezyx-conv-conv-proj-carto-module"></span><h2>geodezyx.conv.conv_proj_carto module<a class="headerlink" href="#module-geodezyx.conv.conv_proj_carto" title="Permalink to this heading"></a></h2>
+<section id="module-geodezyx.conv.conv_proj_lambert">
+<span id="geodezyx-conv-conv-proj-lambert-module"></span><h2>geodezyx.conv.conv_proj_lambert module<a class="headerlink" href="#module-geodezyx.conv.conv_proj_lambert" title="Permalink to this heading"></a></h2>
 <p>Created on Thu Aug 13 15:11:12 2020</p>
-<p>&#64;author: psakicki</p>
-<p>This sub-module of geodezyx.conv deals with cartographic projections.</p>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.conv deals with Lambert/Conform Conic projections.</p>
 <p>it can be imported directly with:
 from geodezyx import conv</p>
 <p>The GeodeZYX Toolbox is a software for simple but useful
@@ -944,30 +946,30 @@ functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
 GitHub repository :
 <a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_proj_carto.lambert_projection">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_proj_carto.</span></span><span class="sig-name descname"><span class="pre">lambert_projection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">long</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_proj_carto.lambert_projection" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_proj_lambert.lambert_projection">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_proj_lambert.</span></span><span class="sig-name descname"><span class="pre">lambert_projection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">long</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_proj_lambert.lambert_projection" title="Permalink to this definition"></a></dt>
 <dd><p>ALG0003 in NTG_71 (IGN Lambert Projection Tech document)</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_proj_carto.lambert_projection_CC_frontend">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_proj_carto.</span></span><span class="sig-name descname"><span class="pre">lambert_projection_CC_frontend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">long</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">93</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_proj_carto.lambert_projection_CC_frontend" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_proj_lambert.lambert_projection_CC_frontend">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_proj_lambert.</span></span><span class="sig-name descname"><span class="pre">lambert_projection_CC_frontend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">long</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NZ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">93</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_proj_lambert.lambert_projection_CC_frontend" title="Permalink to this definition"></a></dt>
 <dd><p>Project WGS84/ITRF Latitude/Longitude to Lambert Conique Conforme</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>long</strong> (<em>float</em>) – WGS84/ITRF Longitude/Latitude</p></li>
 <li><p><strong>lat</strong> (<em>float</em>) – WGS84/ITRF Longitude/Latitude</p></li>
 <li><p><strong>NZ</strong> (<em>int</em>) – Lambert93, NZ = 0 or = 93</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>X,Y</strong> (<em>float</em>) – Projected coordinates</p></li>
 <li><p><em>Source</em></p></li>
 <li><p><em>——</em></p></li>
 <li><p><strong>https</strong> (<em>//fr.wikipedia.org/wiki/Projection_conique_conforme_de_Lambert</em>)</p></li>
-<li><p><em>geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf</em></p></li>
+<li><p><strong>https</strong> (<em>//geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf</em>)</p></li>
 <li><p><strong>https</strong> (<em>//geodesie.ign.fr/contenu/fichiers/documentation/rgf93/Lambert-93.pdf</em>)</p></li>
 </ul>
 </p>
@@ -976,15 +978,118 @@ GitHub repository :
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_proj_carto.lambert_secante_parameter">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_proj_carto.</span></span><span class="sig-name descname"><span class="pre">lambert_secante_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_proj_carto.lambert_secante_parameter" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_proj_lambert.lambert_secante_parameter">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_proj_lambert.</span></span><span class="sig-name descname"><span class="pre">lambert_secante_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_proj_lambert.lambert_secante_parameter" title="Permalink to this definition"></a></dt>
 <dd><p>ALG0054 in NTG_71 (IGN Lambert Projection Tech document)</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_proj_carto.latitude_isometric">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_proj_carto.</span></span><span class="sig-name descname"><span class="pre">latitude_isometric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_proj_carto.latitude_isometric" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_proj_lambert.latitude_isometric">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_proj_lambert.</span></span><span class="sig-name descname"><span class="pre">latitude_isometric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_proj_lambert.latitude_isometric" title="Permalink to this definition"></a></dt>
 <dd><p>ALG0001 in NTG_71 (IGN Lambert Projection Tech document)</p>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.conv.conv_proj_utm">
+<span id="geodezyx-conv-conv-proj-utm-module"></span><h2>geodezyx.conv.conv_proj_utm module<a class="headerlink" href="#module-geodezyx.conv.conv_proj_utm" title="Permalink to this heading"></a></h2>
+<p>Created on Wed Jan 25 20:37:05 2023</p>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.conv deals with UTM projections.</p>
+<p>it can be imported directly with:
+from geodezyx import conv</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU GPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4">https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_proj_utm.utm_coef">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_proj_utm.</span></span><span class="sig-name descname"><span class="pre">utm_coef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_proj_utm.utm_coef" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Projection coefficients</dt><dd><p>returns a vector of 5 coefficients based on the input parameters</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – first ellipsoid excentricity. The default is None.</p></li>
+<li><p><strong>m</strong> (<em>int</em><em>, </em><em>optional</em>) – <dl class="simple">
+<dt>Describes the expected coefficients.</dt><dd><p>M = 0 for transverse mercator
+M = 1 for transverse mercator reverse coefficients
+M = 2 for merdian arc</p>
+</dd>
+</dl>
+<p>The default is 0.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>c</strong> – Coefficient Matrix.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_proj_utm.utm_geo2xy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_proj_utm.</span></span><span class="sig-name descname"><span class="pre">utm_geo2xy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ellips</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'wgs84'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zone</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_proj_utm.utm_geo2xy" title="Permalink to this definition"></a></dt>
+<dd><p>Latitude/Longitude to Universal Transverse Mercator(UTM)
+coordinates precise (mm-level) conversion.
+converts coordinates
+Latitude/Longitude (in degrees) to UTM X and Y (in meters).
+Default ellipsoid is WGS84.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> (<em>float</em><em> or </em><em>numpy array</em>) – Latitude (in degrees).</p></li>
+<li><p><strong>lon</strong> (<em>float</em><em> or </em><em>numpy array</em>) – Longitude (in degrees).</p></li>
+<li><p><strong>ellips</strong> (<em>str</em><em> or </em><em>2-tuple</em><em>, </em><em>optional</em>) – <p>uses specific ellipsoid for conversion. ellipsoid can be one
+of the following strings</p>
+<blockquote>
+<div><p>’wgs84’: World Geodetic System 1984 (default)
+‘nad27’: North American ellips 1927
+‘clk66’: Clarke 1866
+‘nad83’: North American ellips 1983
+‘grs80’: Geodetic Reference System 1980
+‘int24’: International 1924 / Hayford 1909</p>
+</div></blockquote>
+<p>OR
+can be a 2-element tuple [A,F] where A is semimajor axis (in meters)
+F is flattening of the user-defined ellipsoid.
+The default is “wgs84”.</p>
+</p></li>
+<li><p><strong>zone</strong> (<em>int</em><em>, </em><em>optional</em>) – forces the UTM ZONE (scalar integer or same size as
+LAT and LON) instead of automatic set.
+The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>x,y</strong> (<em>float or numpy array</em>) – UTM X and Y coordinates (in meters).</p></li>
+<li><p><strong>f</strong> (<em>float or numpy array</em>) – returns also the computed UTM ZONE (negative
+value for southern hemisphere points).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>It does not perform cross-ellips conversion.
+Precision is near a millimeter.</p>
+<p>This function implements the IGN algorithm.
+This one is <em>more accurate</em> than <cite>pyproj</cite> or <cite>utm</cite> python lib
+because it implements more coefficients.</p>
+<section id="source">
+<h3>Source<a class="headerlink" href="#source" title="Permalink to this heading"></a></h3>
+<p>Adapted from WebObs source code, François Beauducel et al.
+<a class="reference external" href="https://github.com/IPGP/webobs/blob/master/CODE/matlab/ll2utm.m">https://github.com/IPGP/webobs/blob/master/CODE/matlab/ll2utm.m</a></p>
+<blockquote>
+<div><p>I.G.N., Projection cartographique Mercator Transverse: Algorithmes,</p>
+</div></blockquote>
+<p>Notes Techniques NT/G 76, janvier 1995.
+<a class="reference external" href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_76.pdf">https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_76.pdf</a></p>
+</section>
 </dd></dl>
 
 </section>
@@ -1005,13 +1110,13 @@ GitHub repository :
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rinex.</span></span><span class="sig-name descname"><span class="pre">interval_from_rinex_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_name_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rinex.interval_from_rinex_name" title="Permalink to this definition"></a></dt>
 <dd><p>from a RINEX file name (long name) determines the nominal data interval</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>rnx_name_inp</strong> (<em>str</em>) – long RINEX filename.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>interval_ok</strong> – nominal data interval in seconds.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -1022,13 +1127,13 @@ GitHub repository :
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rinex.</span></span><span class="sig-name descname"><span class="pre">period_from_rinex_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_name_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rinex.period_from_rinex_name" title="Permalink to this definition"></a></dt>
 <dd><p>from a RINEX file name (long naming) determines the nominal file period</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>rnx_name_inp</strong> (<em>str</em>) – long RINEX filename.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>interval_ok</strong> – nominal data interval in seconds.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -1039,7 +1144,7 @@ GitHub repository :
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rinex.</span></span><span class="sig-name descname"><span class="pre">rinex_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rinex.rinex_regex" title="Permalink to this definition"></a></dt>
 <dd><p>Return a regex corresponding to a RINEX name (short convention)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>compressed</strong> (<em>bool</em><em> or </em><em>None</em>) – return a the regex for a compressed rinex
 if None, does not matter (return both compressed or not)</p>
 </dd>
@@ -1049,10 +1154,10 @@ if None, does not matter (return both compressed or not)</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><strong>out</strong> – a regex</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>string or python’s regex</p>
 </dd>
 </dl>
@@ -1063,7 +1168,7 @@ if None, does not matter (return both compressed or not)</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rinex.</span></span><span class="sig-name descname"><span class="pre">rinex_regex_long_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rinex.rinex_regex_long_name" title="Permalink to this definition"></a></dt>
 <dd><p>Return a regex corresponding to a RINEX name (long convention)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>compressed</strong> (<em>bool</em><em> or </em><em>None</em>) – return a the regex for a compressed rinex
 if None, does not matter (return both compressed or not)</p>
 </dd>
@@ -1073,10 +1178,10 @@ if None, does not matter (return both compressed or not)</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><strong>out</strong> – a regex</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>string or python’s regex</p>
 </dd>
 </dl>
@@ -1087,7 +1192,7 @@ if None, does not matter (return both compressed or not)</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rinex.</span></span><span class="sig-name descname"><span class="pre">rinex_regex_long_name_brdc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rinex.rinex_regex_long_name_brdc" title="Permalink to this definition"></a></dt>
 <dd><p>Return a regex corresponding to a BROADCAST RINEX name (new convention)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>compressed</strong> (<em>bool</em><em> or </em><em>None</em>) – return a the regex for a compressed rinex
 if None, does not matter (return both compressed or not)</p>
 </dd>
@@ -1097,10 +1202,10 @@ if None, does not matter (return both compressed or not)</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><strong>out</strong> – a regex</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>string or python’s regex</p>
 </dd>
 </dl>
@@ -1112,7 +1217,7 @@ if None, does not matter (return both compressed or not)</p>
 <dd><p>Return a regex corresponding to a RINEX name (new convention)
 from the GFZ’s GODC archive (both OBS and NAV types)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>compressed</strong> (<em>bool</em><em> or </em><em>None</em>) – return a the regex for a compressed rinex
 if None, does not matter (return both compressed or not)</p>
 </dd>
@@ -1122,10 +1227,10 @@ if None, does not matter (return both compressed or not)</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><strong>out</strong> – a regex</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>string or python’s regex</p>
 </dd>
 </dl>
@@ -1136,7 +1241,7 @@ if None, does not matter (return both compressed or not)</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rinex.</span></span><span class="sig-name descname"><span class="pre">rinex_regex_search_tester</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brdc_long_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gfz_godc_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rinex.rinex_regex_search_tester" title="Permalink to this definition"></a></dt>
 <dd><p>Frontend function for a RINEX regex search/match</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>str_in</strong> (<em>str</em>) – input string.</p></li>
 <li><p><strong>short_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – check if the pattern matches a short name RINEX. The default is True.</p></li>
@@ -1148,10 +1253,10 @@ internal long name RINEX. The default is False.</p></li>
 if None, does not matter (return both compressed or not)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>match result.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>None or re object</p>
 </dd>
 </dl>
@@ -1211,16 +1316,16 @@ Xu - Orbits - p15</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rotation_matrices.</span></span><span class="sig-name descname"><span class="pre">C_eci2rtn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rotation_matrices.C_eci2rtn" title="Permalink to this definition"></a></dt>
 <dd><p>gives the transformation matrix between ECI ref. frame and RTN (aka RIC or RSW)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>P</strong> (<em>numpy.array</em>) – 3D vector, position of the object in ECI frame</p></li>
 <li><p><strong>V</strong> (<em>numpy.array</em>) – 3D vector, velocity of the object in ECI frame</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>C_eci2rtn</strong> – transformation matrix</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array</p>
 </dd>
 </dl>
@@ -1353,7 +1458,7 @@ GitHub repository :
 <dd><p>Time representation conversion</p>
 <p>Modified Julian Day  =&gt; Python’s Datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mjd_in</strong> (<em>float/int</em><em> or </em><em>list/numpy.array</em><em> of </em><em>float/int.</em>) – Modified Julian Day.  Can handle several float/int in an iterable.</p></li>
 <li><p><strong>seconds</strong> (<em>float/int</em><em> or </em><em>list/numpy.array</em><em> of </em><em>float/int.</em>) – Handle a number</p></li>
@@ -1361,10 +1466,10 @@ GitHub repository :
 see round_dt function for details</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list of datetime.</p>
 </dd>
 </dl>
@@ -1388,13 +1493,13 @@ use year_decimal2dt instead (which is the same)</p>
 <dd><p>Time Python type conversion</p>
 <p>Python’s Date =&gt; Python’s Datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>date_in</strong> (<em>date</em><em> or </em><em>list/numpy.array</em><em> of </em><em>date.</em>) – Date(s).  Can handle several dates in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Time as Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Datetime or list of Datetime</p>
 </dd>
 </dl>
@@ -1408,13 +1513,13 @@ use year_decimal2dt instead (which is the same)</p>
 <p>Wrapper of dateutil.parser.parse</p>
 <p>The input string should looks like a timestamp</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>strin</strong> (<em>string</em><em> or </em><em>list/numpy.array</em><em> of </em><em>strings.</em>) – string(s). Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list of datetime.</p>
 </dd>
 </dl>
@@ -1433,14 +1538,14 @@ use year_decimal2dt instead (which is the same)</p>
 <p>GINS filename time format : ‘YYMMDD_HHMMSS’</p>
 <p>It is the time format used in the listing names</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>datestrin</strong> (<em>string</em><em> or </em><em>list/numpy.array</em><em> of </em><em>string.</em>) – GINS filename time format string(s).
 Can handle several string in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dtout</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list of datetime.</p>
 </dd>
 </dl>
@@ -1453,13 +1558,13 @@ Can handle several string in an iterable.</p>
 <p>SINEX time format =&gt; Python’s Datetime</p>
 <p>SINEX time format : ‘YY:DDD:SSSSS’ or ‘YYYY:DDD:SSSSS’</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>datestrin</strong> (<em>string</em><em> or </em><em>list/numpy.array</em><em> of </em><em>string.</em>) – SINEX time format string(s).  Can handle several string in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dtout</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list of datetime.</p>
 </dd>
 </dl>
@@ -1473,10 +1578,10 @@ Can handle several string in an iterable.</p>
 <p><strong>This function is depreciated !!!!!</strong></p>
 <p><strong>use numpy_dt2dt instead !!!!!</strong></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>npdt64_in</strong> (<em>datetime64</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime64.</em>) – Numpy’s datetime64(s). Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>L</strong> (<em>Datetime or list of Datetime</em>) – Time as Datetime(s)</p></li>
 <li><p><em>Source</em></p></li>
@@ -1499,7 +1604,7 @@ Can handle several string in an iterable.</p>
 <dd><p>Time representation conversion</p>
 <p>Day of Year Time =&gt; Python’s datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>year</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>floats.</em>) – year, days of year</p></li>
 <li><p><strong>days</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>floats.</em>) – year, days of year</p></li>
@@ -1508,10 +1613,10 @@ Can handle several string in an iterable.</p>
 <li><p><strong>seconds</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>floats</em><em>, </em><em>optional</em>) – hours, minutes, seconds</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list/numpy.array of datetime.</p>
 </dd>
 </dl>
@@ -1523,13 +1628,13 @@ Can handle several string in an iterable.</p>
 <dd><p>Time representation conversion</p>
 <p>Python’s Datetime =&gt; Modified Julian Day</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime.</em>) – Datetime(s).  Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Modified Julian Day(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float or list of floats</p>
 </dd>
 </dl>
@@ -1546,13 +1651,13 @@ Can handle several string in an iterable.</p>
 <dd><p>Time Python type conversion</p>
 <p>Python’s Datetime =&gt; Python’s Date</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dt_in</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime.</em>) – Datetime(s).  Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Time as Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Datetime or list of Datetime</p>
 </dd>
 </dl>
@@ -1569,14 +1674,14 @@ Can handle several string in an iterable.</p>
 <dd><p>Time representation conversion</p>
 <p>Python’s datetime =&gt; Day of Year, Year</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime(s). Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>doy , year</strong> – Day of Year and Year
 Is a list of tuple if the input is an iterable</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>tuple of int</p>
 </dd>
 </dl>
@@ -1590,7 +1695,7 @@ Is a list of tuple if the input is an iterable</p>
 e.g.
 &gt; 2022 11 29 17 15 25.0000000  0  0       0.000000000000</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt_in</strong> (<em>datetime</em><em> or </em><em>list</em><em> of </em><em>datetime.</em>) – Datetime(s).</p></li>
 <li><p><strong>epoch_flag</strong> (<em>int</em><em>, </em><em>optional</em>) – <dl class="simple">
@@ -1605,10 +1710,10 @@ e.g.
 <li><p><strong>rec_clk_offset</strong> (<em>float</em><em>, </em><em>optional</em>) – Receiver clock offset correction (seconds). The default is 0.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>epoch_out</strong> – output RINEX3/4 epoch representation.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str or list of str</p>
 </dd>
 </dl>
@@ -1620,14 +1725,14 @@ e.g.
 <dd><p>Time representation conversion</p>
 <p>Python’s datetime =&gt; Fraction of the day</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime(s). Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>fraction_day</strong> – Fractional of the day
 Is a list of int if the input is an iterable</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -1639,7 +1744,7 @@ Is a list of int if the input is an iterable</p>
 <dd><p>Time scale conversion</p>
 <p>Python’s datetime (UTC,TAI or GPS time scale) =&gt; GPS time</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime(s). Can handle several datetimes in an iterable.</p></li>
 <li><p><strong>inp_ref</strong> (<em>str</em>) – “utc” : apply the 19 sec &amp; leap second correction at the epoch
@@ -1650,12 +1755,12 @@ Is a list of int if the input is an iterable</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><p><strong>GPS_week, GPS_day/GPS_sec</strong> – GPS week or GPS day/GPS sec</p>
 <p>Is a list of tuple if the input is an iterable</p>
 </p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>tuple of int</p>
 </dd>
 </dl>
@@ -1669,18 +1774,18 @@ Is a list of int if the input is an iterable</p>
 <p>Return the GPS week in a decimal mode</p>
 <p>(Easier for plots)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime(s). Can handle several datetimes in an iterable.</p></li>
 <li><p><strong>return_middle_of_day</strong> (<em>bool</em>) – if False, return the decimal part of the week at the begining of the day</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><p><strong>GPS_week_decimal</strong> – decimal GPS week</p>
 <p>Is a list of float if the input is an iterable</p>
 </p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -1692,16 +1797,16 @@ Is a list of int if the input is an iterable</p>
 <dd><p>Time representation &amp; scale conversion</p>
 <p>Python’s Datetime =&gt; Julian Day CNES</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime.</em>) – Datetime(s).  Can handle several datetimes in an iterable.</p></li>
 <li><p><strong>only_days</strong> (<em>bool</em>) – if False, return also the seconds in the day</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Julian Day CNES, [seconds in the Day]</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>int or list of int.</p>
 </dd>
 </dl>
@@ -1718,16 +1823,16 @@ Is a list of int if the input is an iterable</p>
 <dd><p>Time representation conversion</p>
 <p>Python’s Datetime =&gt; Years, Months, Days, Hours, Minutes, Seconds</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em>) – Datetime</p></li>
 <li><p><strong>return_useful_values</strong> (<em>bool</em>) – if True, returns only Years, Months, Days</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Years, Months, Days, [Hours, Minutes, Seconds]</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list of int</p>
 </dd>
 </dl>
@@ -1739,16 +1844,16 @@ Is a list of int if the input is an iterable</p>
 <dd><p>Time representation conversion</p>
 <p>Python’s Datetime =&gt; POSIX Time</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime.</em>) – Datetime(s).  Can handle several datetimes in an iterable.</p></li>
 <li><p><strong>out_array</strong> (<em>bool</em>) – if iterable as input, force the output as a Numpy array</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – POSIX Time(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float or list/numpy.array of floats</p>
 </dd>
 </dl>
@@ -1760,14 +1865,14 @@ Is a list of int if the input is an iterable</p>
 <dd><p>Time representation conversion</p>
 <p>Python’s datetime =&gt; Seconds in days</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime(s). Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>secinday</strong> – Seconds in the day
 Is a list of int if the input is an iterable</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -1791,10 +1896,10 @@ e.g.</p>
 <p>Python’s Datetime =&gt; String</p>
 <p>Just a wrapper of strftime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime.</em>) – Datetime(s).  Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>L</strong> (<em>string or list of strings</em>) – Time as string(s)</p></li>
 <li><p><em>Source</em></p></li>
@@ -1818,13 +1923,13 @@ e.g.</p>
 <dd><p>Time representation conversion</p>
 <p>Python’s Datetime =&gt; Decimal Year</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime.</em>) – Datetime(s).  Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Decimal Year(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float or list/numpy.array of floats</p>
 </dd>
 </dl>
@@ -1836,13 +1941,13 @@ e.g.</p>
 <dd><p>Time representation conversion</p>
 <p>Python’s Datetime =&gt; Lists of Years, Months, Days, Hours, Minutes, Seconds</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Python DateTime</p></li>
 <li><p><strong>with_microsec</strong> (<em>bool</em>) – if False : rounding the microsecs to the nearest sec</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>tuple with year , month , day , hour , minute , second , microsecond</p>
 </dd>
 </dl>
@@ -1854,10 +1959,10 @@ e.g.</p>
 <dd><p>Time representation conversion</p>
 <p>Python’s Datetime =&gt; SINEX time format</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em>) – </p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>dtout</strong> (<em>str</em>) – Date in SINEX format</p></li>
 <li><p><strong>year_sep</strong> (<em>str</em>) – year separator, usually :, but can also be empty</p></li>
@@ -1873,13 +1978,13 @@ e.g.</p>
 <dd><p>Time representation conversion</p>
 <p>Python’s Datetime =&gt; SP3 time format</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em>) – </p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dtout</strong> – Date in SP3 format</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -1890,14 +1995,14 @@ e.g.</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">dt_ceil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.dt_ceil" title="Permalink to this definition"></a></dt>
 <dd><p>Round a datetime object to the begining of the day</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime you want to round, default now.
 Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dtout</strong> – Rounded Datetime</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list/numpy.array of datetime</p>
 </dd>
 </dl>
@@ -1910,16 +2015,16 @@ Can handle several datetimes in an iterable.</p>
 <p>Datetime in GPS Time Scale =&gt; Datetime in TAI Time Scale</p>
 <p>Correct d the 19sec difference between GPS Time and TAI</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime.</em>) – Datetime(s) in GPS Time Scale.  Can handle several datetimes in an iterable.</p></li>
 <li><p><strong>out_array</strong> (<em>bool</em>) – if iterable as input, force the output as a Numpy array</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Datetime(s) in TAI Time Scale</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list/numpy.array of datetime.</p>
 </dd>
 </dl>
@@ -1932,16 +2037,16 @@ Can handle several datetimes in an iterable.</p>
 <p>Datetime in GPS Time Scale =&gt; Datetime in UTC Time Scale</p>
 <p>Correct both the Leap second and the 19sec difference between GPS Time and UTC</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime.</em>) – Datetime(s) in GPS Time Scale.  Can handle several datetimes in an iterable.</p></li>
 <li><p><strong>out_array</strong> (<em>bool</em>) – if iterable as input, force the output as a Numpy array</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Datetime(s) in UTC Time Scale</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list/numpy.array of datetime.</p>
 </dd>
 </dl>
@@ -1962,16 +2067,16 @@ Can handle several datetimes in an iterable.</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">dt_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.dt_range" title="Permalink to this definition"></a></dt>
 <dd><p>Range of datetime between a start and end (included)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>start_dt</strong> (<em>datetime</em>) – Datetimes</p></li>
 <li><p><strong>end_dt</strong> (<em>datetime</em>) – Datetimes</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>Out_range</strong> – range of dates</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list of datetime</p>
 </dd>
 </dl>
@@ -1984,17 +2089,17 @@ Can handle several datetimes in an iterable.</p>
 <p><strong>This function is depreciated !!!</strong>
 <strong>Use round_dt instead         !!!</strong></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime you want to round, default now.
 Can handle several datetimes in an iterable.</p></li>
 <li><p><strong>roundTo</strong> (<em>int</em>) – Closest number of seconds to round to, default 1 minute.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dtout</strong> – Rounded Datetime</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list/numpy.array of datetime</p>
 </dd>
 </dl>
@@ -2011,10 +2116,10 @@ Can handle several datetimes in an iterable.</p></li>
 <dd><p>Time scale conversion</p>
 <p>Python’s datetime in TAI =&gt; Python’s datetime in Terrestrial Time (TT)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime(s). Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>L</strong> (<em>list of datetime</em>) – converted DateTimes</p></li>
 <li><p><em>Source</em></p></li>
@@ -2039,13 +2144,13 @@ Can handle several datetimes in an iterable.</p></li>
 <p>Python’s datetime in TAI =&gt; Python’s datetime in UTC</p>
 <p>(Wrapper to correct the leap second)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime(s). Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – converted DateTimes</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list of datetime</p>
 </dd>
 </dl>
@@ -2062,13 +2167,13 @@ Can handle several datetimes in an iterable.</p></li>
 <p>Python’s datetime in UTC =&gt; Python’s datetime in TAI</p>
 <p>(Wrapper to correct the leap second)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime(s). Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – converted DateTimes</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list of datetime</p>
 </dd>
 </dl>
@@ -2084,16 +2189,16 @@ Can handle several datetimes in an iterable.</p></li>
 <dd><p>Time scale conversion</p>
 <p>Python’s datetime in UTC =&gt; Python’s datetime in UT1</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime(s). Can handle several datetimes in an iterable.</p></li>
 <li><p><strong>dUT1</strong> (<em>float</em>) – UT1-UTC in seconds.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – converted DateTimes</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list of datetime</p>
 </dd>
 </dl>
@@ -2106,7 +2211,7 @@ Can handle several datetimes in an iterable.</p></li>
 <p>Python’s datetime in UTC =&gt; Python’s datetime in UT1
 using an EOP DataFrame provided by files_rw.read_eop_C04</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime(s). Can handle several datetimes in an iterable.</p></li>
 <li><p><strong>DF_EOP_in</strong> (<em>DataFrame</em>) – EOP DataFrame for the UT1-UTC
@@ -2120,10 +2225,10 @@ Will be determined automatically inside the function
 The default is None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>DESCRIPTION.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>TYPE</p>
 </dd>
 </dl>
@@ -2134,7 +2239,7 @@ The default is None.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">epo_epos_converter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mjd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'yyyy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.epo_epos_converter" title="Permalink to this definition"></a></dt>
 <dd><p>Frontend for the GFZ EPOS epo converter</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inp</strong> (<em>string</em><em> or </em><em>int</em>) – the input day, like 58773 2019290 20754 …</p></li>
 <li><p><strong>inp_type</strong> (<em>str</em>) – An output format managed by epo command :
@@ -2143,11 +2248,11 @@ wwwwd,yyddd,yyyyddd,yyyymmdd</p></li>
 mjd,yyyy,yy,ddd,mon,dmon,hour,min,sec,wwww,wd</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>year</strong> – Year as integer. Years preceding 1 A.D. should be 0 or negative.
 The year before 1 A.D. is 0, 10 B.C. is year -9.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -2158,7 +2263,7 @@ The year before 1 A.D. is 0, 10 B.C. is year -9.</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">find_leapsecond</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_leapsec_lis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_initial_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.find_leapsecond" title="Permalink to this definition"></a></dt>
 <dd><p>Find the TAI-UTC leap second for a given datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em>) – Epoch for which the leap second is researched</p></li>
 <li><p><strong>get_leapsec_lis</strong> (<em>list</em><em>, </em><em>optional</em>) – A list of leap second, provided by get_leapsecond_frontend()
@@ -2166,10 +2271,10 @@ automatically determined if given list is empty</p></li>
 <li><p><strong>apply_initial_delta</strong> (<em>bool</em><em>, </em><em>optional</em>) – See note below</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>leapsec_out</strong> – The leap second for the given epoch</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -2212,7 +2317,7 @@ On choisit donc un décalage initial de 10 secondes entre UTC et TAI .</p>
 <dd><p>Time scale &amp; representation conversion</p>
 <p>GPS Time =&gt; Python’s datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>gpsweek</strong> (<em>int</em>) – year, days of year</p></li>
 <li><p><strong>gpsdow_or_seconds</strong> (<em>int</em>) – Day of Week OR Seconds in Weeks</p></li>
@@ -2220,10 +2325,10 @@ On choisit donc un décalage initial de 10 secondes entre UTC et TAI .</p>
 <li><p><strong>output_time_scale</strong> (<em>str</em>) – gives the wished time scale : “utc”, “tai”, “gps”</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – DateTime</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list/numpy.array of datetime.</p>
 </dd>
 </dl>
@@ -2252,16 +2357,16 @@ Converts GPS week and seconds into UTC time, Python version, March 2009</p>
 <dd><p>Time representation conversion</p>
 <p>Decimal GPS Week =&gt; Python’s datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>gpsweekdec_in</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>float</em>) – GPS week in decimal form.</p></li>
 <li><p><strong>output_time_scale</strong> (<em>str</em>) – gives the wished time scale : “utc”, “tai”, “gps”</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – converted DateTimes</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list of datetime</p>
 </dd>
 </dl>
@@ -2272,10 +2377,10 @@ Converts GPS week and seconds into UTC time, Python version, March 2009</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">hr_to_Day</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.hr_to_Day" title="Permalink to this definition"></a></dt>
 <dd><p>Convert Julian Day to date.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>jd</strong> (<em>float</em>) – Julian Day</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>year</strong> (<em>int</em>) – Year as integer. Years preceding 1 A.D. should be 0 or negative.
 The year before 1 A.D. is 0, 10 B.C. is year -9.</p></li>
@@ -2298,10 +2403,10 @@ The year before 1 A.D. is 0, 10 B.C. is year -9.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">jd_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.jd_to_date" title="Permalink to this definition"></a></dt>
 <dd><p>Convert Julian Day to date.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>jd</strong> (<em>float</em>) – Julian Day</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>year</strong> (<em>int</em>) – Year as integer. Years preceding 1 A.D. should be 0 or negative.
 The year before 1 A.D. is 0, 10 B.C. is year -9.</p></li>
@@ -2324,13 +2429,13 @@ The year before 1 A.D. is 0, 10 B.C. is year -9.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">jd_to_mjd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.jd_to_mjd" title="Permalink to this definition"></a></dt>
 <dd><p>Convert Julian Day to Modified Julian Day</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>jd</strong> (<em>float</em>) – Julian Day</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>mjd</strong> – Modified Julian Day</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -2342,13 +2447,13 @@ The year before 1 A.D. is 0, 10 B.C. is year -9.</p></li>
 <dd><p>Time representation &amp; scale conversion</p>
 <p>Julian Day CNES =&gt; Python’s Datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>jjulin</strong> (<em>float/int</em><em> or </em><em>list/numpy.array</em><em> of </em><em>float/int.</em>) – Julian Day CNES.  Can handle several float/int in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list of datetime.</p>
 </dd>
 </dl>
@@ -2368,7 +2473,10 @@ number_of_seconds: how many leap-seconds occur at timestamp</p>
 </dd>
 </dl>
 <p>INTERNAL_FUNCTION</p>
+<section id="id1">
+<h3>Source<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
 <p><a class="reference external" href="http://stackoverflow.com/questions/19332902/extract-historic-leap-seconds-from-tzdata">http://stackoverflow.com/questions/19332902/extract-historic-leap-seconds-from-tzdata</a></p>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -2377,13 +2485,13 @@ number_of_seconds: how many leap-seconds occur at timestamp</p>
 <dd><p>Time representation conversion</p>
 <p>MATLAB Time =&gt; Datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>matlab_datenum</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>float</em>) – MATLAB time(s).  Can handle several time floats in a list.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>python_datetime</strong> – Converted Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list/numpy.array of datetime</p>
 </dd>
 </dl>
@@ -2394,13 +2502,13 @@ number_of_seconds: how many leap-seconds occur at timestamp</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">mjd_to_jd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.mjd_to_jd" title="Permalink to this definition"></a></dt>
 <dd><p>Convert Modified Julian Day to Julian Day.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>mjd</strong> (<em>float</em>) – Modified Julian Day</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>jd</strong> – Julian Day</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -2414,10 +2522,10 @@ number_of_seconds: how many leap-seconds occur at timestamp</p>
 <p><strong>This function is depreciated !!!</strong>
 <strong>Use numpy_dt2dt instead      !!!</strong></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>npdtin</strong> (<em>np.datetime64</em><em> or </em><em>list/numpy.array</em><em> of </em><em>np.datetime64</em>) – Numpy Datetime.  Can handle several time in a list.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>python_datetime</strong> (<em>datetime or list/numpy.array of datetime</em>) – Converted Datetime(s)</p></li>
 <li><p><em>Source</em></p></li>
@@ -2435,14 +2543,14 @@ number_of_seconds: how many leap-seconds occur at timestamp</p>
 <dd><p>Time representation conversion</p>
 <p>Numpy datetime64 object =&gt; Python’s Datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>numpy_dt_in</strong> (<em>numpy datetime64 object</em>) – numpy datetime64 object</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>dt</strong> (<em>datetime or list/numpy.array of datetime</em>) – Converted Datetime(s)
 If the input is a Pandas Series, the output is forced as an array</p></li>
-<li><p><em>source</em></p></li>
+<li><p><em>Source</em></p></li>
 <li><p><em>——</em></p></li>
 <li><p><strong>https</strong> (<em>//gist.github.com/blaylockbk/1677b446bc741ee2db3e943ab7e4cabd</em>)</p></li>
 </ul>
@@ -2457,13 +2565,13 @@ If the input is a Pandas Series, the output is forced as an array</p></li>
 <dd><p>Time Python type conversion</p>
 <p>Pandas’s Timestamp =&gt; Python’s Datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>timestamp_in</strong> (<em>Timestamp</em><em> or </em><em>list/numpy.array</em><em> of </em><em>Timestamp.</em>) – Pandas’s Timestamp(s).  Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Time as Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Datetime or list of Datetime</p>
 </dd>
 </dl>
@@ -2475,16 +2583,16 @@ If the input is a Pandas Series, the output is forced as an array</p></li>
 <dd><p>Time representation conversion</p>
 <p>POSIX Time =&gt; Python’s Datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>posixin</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>floats.</em>) – POSIX Time.  Can handle several time in a list.</p></li>
 <li><p><strong>out_array</strong> (<em>bool</em>) – if iterable as input, force the output as a Numpy array</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Converted Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list/numpy.array of datetime.</p>
 </dd>
 </dl>
@@ -2508,13 +2616,13 @@ If the input is a Pandas Series, the output is forced as an array</p></li>
 <p>RINEX Name (short or long naming convention)  =&gt; Python’s Datetime</p>
 <p>Extract the date in a RINEX name</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>rinexpath</strong> (<em>string</em>) – RINEX path. The RINEX basename will be extracted automatically.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dt</strong> – Datetime</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime</p>
 </dd>
 </dl>
@@ -2524,6 +2632,8 @@ If the input is a Pandas Series, the output is forced as an array</p></li>
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.roundTime">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">roundTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.roundTime" title="Permalink to this definition"></a></dt>
 <dd><p>Wrapper of dt_round for legacy reasons</p>
+<p><strong>This function is depreciated !!!</strong>
+<strong>Use round_dt instead         !!!</strong></p>
 </dd></dl>
 
 <dl class="py function">
@@ -2531,7 +2641,7 @@ If the input is a Pandas Series, the output is forced as an array</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">round_dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round_to</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">python_dt_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'round'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.round_dt" title="Permalink to this definition"></a></dt>
 <dd><p>Round a datetime object to any time laps in seconds</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime</em>) – Datetime you want to round
 Can handle several datetimes in an iterable.</p></li>
@@ -2552,10 +2662,10 @@ the values: ‘round’ (i.e. the nearest), ‘floor’, ‘ceil’
 The default if ‘round’</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dtout</strong> – Rounded Datetime</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list/numpy.array of datetime</p>
 </dd>
 </dl>
@@ -2572,13 +2682,13 @@ The default if ‘round’</p></li>
 <p>Orbit SP3 Name (legacy/new naming convention)  =&gt; Python’s Datetime</p>
 <p>Extract the date in a Orbit SP3 name</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>sp3path</strong> (<em>string</em>) – Orbit SP3 path. The basename will be extracted automatically.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dt</strong> – Datetime</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime</p>
 </dd>
 </dl>
@@ -2591,13 +2701,13 @@ The default if ‘round’</p></li>
 <p>Orbit SP3 Name (old/legacy naming convention)  =&gt; Python’s Datetime</p>
 <p>Extract the date in a Orbit SP3 name</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>sp3path</strong> (<em>string</em>) – Orbit SP3 path. The basename will be extracted automatically.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dt</strong> – Datetime</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime</p>
 </dd>
 </dl>
@@ -2610,13 +2720,13 @@ The default if ‘round’</p></li>
 <p>Orbit SP3 Name (new naming convention)  =&gt; Python’s Datetime</p>
 <p>Extract the date in a Orbit SP3 name</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>sp3path</strong> (<em>string</em>) – Orbit SP3 path. The basename will be extracted automatically.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dt</strong> – Datetime</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime</p>
 </dd>
 </dl>
@@ -2629,7 +2739,7 @@ The default if ‘round’</p></li>
 <p>Python’s Datetime (and station name) =&gt; RINEX name</p>
 <p>Create a RINEX name from a station name and date</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>statname</strong> (<em>string</em>) – name of the station</p></li>
 <li><p><strong>datein</strong> (<em>datetime</em>) – date of the wished RINEX name</p></li>
@@ -2638,10 +2748,10 @@ The default if ‘round’</p></li>
 instead of a daily session (0)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>rinexname</strong> – The name of the RINEX</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>string</p>
 </dd>
 </dl>
@@ -2654,7 +2764,7 @@ instead of a daily session (0)</p></li>
 <p>Python’s Datetime (and station name) =&gt; RINEX long name convention</p>
 <p>Create a RINEX name from a station name, date and ancillary parameters</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>statname</strong> (<em>string</em>) – name of the station
 can be a 4 or 9 char.</p></li>
@@ -2712,10 +2822,10 @@ accept ‘daily’ or ‘hourly’ values.
 The default is None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>out_rnx_name</strong> – The name of the RINEX.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -2729,13 +2839,13 @@ The default is None.</p></li>
 <p>Wrapper of dateutil.parser.parse</p>
 <p>The input string should looks like a timestamp</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>strin</strong> (<em>string</em><em> or </em><em>list/numpy.array</em><em> of </em><em>strings.</em>) – string(s). Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list of datetime.</p>
 </dd>
 </dl>
@@ -2749,13 +2859,13 @@ The default is None.</p></li>
 <p>Wrapper of dateutil.parser.parse</p>
 <p>The input string should looks like a timestamp</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>strin</strong> (<em>string</em><em> or </em><em>list/numpy.array</em><em> of </em><em>strings.</em>) – string(s). Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list of datetime.</p>
 </dd>
 </dl>
@@ -2769,13 +2879,13 @@ The default is None.</p></li>
 <p>Wrapper of dateutil.parser.parse</p>
 <p>The input string should looks like a timestamp</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>strin</strong> (<em>string</em><em> or </em><em>list/numpy.array</em><em> of </em><em>strings.</em>) – string(s). Can handle several datetimes in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list of datetime.</p>
 </dd>
 </dl>
@@ -2787,13 +2897,13 @@ The default is None.</p></li>
 <dd><p>Time representation conversion</p>
 <p>GIPSY Time =&gt; Datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>tin</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>float</em>) – GIPSY time(s). Can handle several time float in a list.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dtout</strong> – Converted Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list/numpy.array of datetime</p>
 </dd>
 </dl>
@@ -2818,15 +2928,15 @@ use dt2year_decimal instead (does the same)</p>
 <p>Trimble raw data file =&gt; Python’s Datetime</p>
 <p>Trimble file exemple : CASG202101070000A.T02</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>trmfile_in</strong> (<em>string</em><em> or </em><em>list/numpy.array</em><em> of </em><em>string.</em>) – Trimble raw data file as string.
 Can handle several string in an iterable.
 Will extract the basename of a path.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dtout</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list of datetime.</p>
 </dd>
 </dl>
@@ -2838,14 +2948,14 @@ Will extract the basename of a path.</p>
 <dd><p>Time representation conversion</p>
 <p>Date-looking strings =&gt; Python’s datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>lisin</strong> (<em>iterable</em><em> (</em><em>tuple/list/numpy.array</em><em>) of </em><em>string.</em>) – list of Date-looking strings
 like : [“2018”,”12”,”31”,”12”,”30”,”00”]</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – converted DateTimes</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list of datetime</p>
 </dd>
 </dl>
@@ -2869,13 +2979,13 @@ like : [“2018”,”12”,”31”,”12”,”30”,”00”]</p>
 <dd><p>Time representation conversion</p>
 <p>Decimal Year =&gt; Python’s Datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>yearin</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>floats.</em>) – Decimal year(s).  Can handle several floats in an iterable.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list of datetime.</p>
 </dd>
 </dl>
@@ -2888,7 +2998,7 @@ like : [“2018”,”12”,”31”,”12”,”30”,”00”]</p>
 <p>can manage list, array, or floats as input
 can manage NaN too (return POSIX 0 epoch if NaN)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>y</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>floats.</em>) – year , month… . Can handle several times in lists.</p></li>
 <li><p><strong>mo</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>floats.</em>) – year , month… . Can handle several times in lists.</p></li>
@@ -2899,10 +3009,10 @@ can manage NaN too (return POSIX 0 epoch if NaN)</p>
 <li><p><strong>ms</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>floats.</em>) – year , month… . Can handle several times in lists.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Converted Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Datetime</p>
 </dd>
 </dl>
@@ -2914,7 +3024,7 @@ can manage NaN too (return POSIX 0 epoch if NaN)</p>
 <dd><p>Time representation conversion</p>
 <p>Lists of Years, Months, Days, Hours, Minutes, Seconds =&gt; Python’s Datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>yrlis</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>floats.</em>) – Lists of Years, Months, Days, Hours, Minutes, Seconds</p></li>
 <li><p><strong>mlis</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>floats.</em>) – Lists of Years, Months, Days, Hours, Minutes, Seconds</p></li>
@@ -2924,10 +3034,10 @@ can manage NaN too (return POSIX 0 epoch if NaN)</p>
 <li><p><strong>slis</strong> (<em>float</em><em> or </em><em>list/numpy.array</em><em> of </em><em>floats.</em>) – Lists of Years, Months, Days, Hours, Minutes, Seconds</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>L</strong> – Datetime(s)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime or list/numpy.array of datetime.</p>
 </dd>
 </dl>
