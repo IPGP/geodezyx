@@ -32,9 +32,9 @@ See the dedicated section: :ref:`install`.
 Useful links
 ------------
 
-**Documentation:** https://geodezyx.github.io/GeodeZYX-Toolbox_v4
+**Documentation:** https://geodezyx.github.io/geodezyx-toolbox
 
-**GitHub repository:** https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+**GitHub repository:** https://github.com/GeodeZYX/geodezyx-toolbox
 
 **PyPi project:** https://pypi.org/project/geodezyx
 
@@ -42,9 +42,9 @@ Useful links
 Authors
 -------
 
-Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn (GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
+Pierre Sakic (IPGP, Paris, France) Gustavo Mansur, and Kitpracha "Na" Chaiyaporn (GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
 
-**Contact e-mail:** pierre.sakic@gfz-potsdam.de
+**Contact e-mail:** sakic@ipgp.fr
 
 **Citation:** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019): `The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes`. V. 4.0. GFZ Data Services. `<http://doi.org/10.5880/GFZ.1.1.2019.002>`_
 

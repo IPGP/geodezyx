@@ -29,6 +29,7 @@ import shutil
 import string
 import subprocess
 import re
+import hatanaka
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -44,13 +45,13 @@ log = logging.getLogger(__name__)
 
 def rinexs_table_from_list(rnxs_inp,site9_col=False,round_date=False):
     """
-    From a simple RINEX list as a text file
+    From a simple RINEX list, summarize the data in an ad-hoc DataFrame
 
     Parameters
     ----------
     rnxs_inp : iterable or str
         if iterable, a list of RINEX files
-        if str, path of an input RINEX file list.
+        if str, path of an input RINEX list as text file.
 
     Returns
     -------
@@ -62,7 +63,6 @@ def rinexs_table_from_list(rnxs_inp,site9_col=False,round_date=False):
         DF = pd.DataFrame(rnxs_inp,columns=["path"])        
     else:
         DF = pd.read_csv(rnxs_inp,names=["path"])        
-
     
     DF["name"]  = DF["path"].apply(os.path.basename) 
     DF["site4"] = DF["name"].str[:4].str.lower() 
@@ -70,7 +70,7 @@ def rinexs_table_from_list(rnxs_inp,site9_col=False,round_date=False):
     if site9_col:
         DF["site9"] = DF["name"].str[:9].str.lower() 
         #### set generic 9-char name if 4 char name file
-        BoolNewName = DF["name"].str.match(conv.rinex_regex_new_name())
+        BoolNewName = DF["name"].str.match(conv.rinex_regex_long_name())
         BoolOldName = np.logical_not(BoolNewName)
         Site9_generic = DF["site4"].str.upper() + "00XXX"
         DF["site9"].loc[BoolOldName] = Site9_generic[BoolOldName]
@@ -93,14 +93,12 @@ def rinexs_table_from_list(rnxs_inp,site9_col=False,round_date=False):
 
     return DF
 
-
-
-
 def rinex_sats_checker(p_rnx): 
     """
     Check the consistency of a RINEX's sat list for each epoch
     
     Designed for checking the consistency of IPGP-OVPF corrupted RINEXs
+    RINEX-2 only
 
     Parameters
     ----------
@@ -115,6 +113,8 @@ def rinex_sats_checker(p_rnx):
     
     import hatanaka
     
+    
+    ### This bloc must  be replaced by open_readlines_smart
     if p_rnx.endswith(".Z") or p_rnx.endswith(".gz"):
         O = hatanaka.decompress(p_rnx)
         O = str(O)
@@ -127,33 +127,6 @@ def rinex_sats_checker(p_rnx):
     nlines_bloc = -1
     
     Blocs_stack = []
-    
-    ###### This function is  to read the epochs
-    def read_epoch_line(line):
-        fraw = line.split() #fraw est la pour gerer les fracion de sec ...
-        fraw = fraw[0:6]
-        fraw = [float(e) for e in fraw]
-        f = [int(e) for e in fraw]
-        msec = (fraw[5] - np.floor(fraw[5]))
-        msec = np.round(msec,4)
-        msec = int(msec * 10**6)
-        f.append( msec )  # ajour des fractions de sec
-    
-        if f[0] < 50:
-            f[0] = f[0] + 2000
-        else:
-            f[0] = f[0] + 1900
-        if f[5] == 60: # cas particulier rencontré dans des rinex avec T = 60sec
-            rinex_60sec = True
-            f[5] = 59
-        else:
-            rinex_60sec = False
-            
-        epochdt = dt.datetime(*f)
-        if rinex_60sec:
-            epochdt = epochdt + dt.timedelta(seconds=1)
-        return  epochdt
-    
     
     
     ###### This loop read all lines
@@ -171,7 +144,7 @@ def rinex_sats_checker(p_rnx):
             nlines_bloc = int(np.ceil(nsat / 12))
             LineBloc = []
             lineconcat = ""
-            date = read_epoch_line(l)
+            date = read_rnx_epoch_line(l,rnx2=True)
         
         ### we read the sat lines based on the number of sat
         if iline_bloc <= nlines_bloc:
@@ -209,8 +182,56 @@ def rinex_sats_checker(p_rnx):
     else:
         return None
     
-    
+def read_rnx_epoch_line(line,rnx2=True):
+    """
+    read the epoch line of a RINEX (2 or 3)
+    and extract it as a datetime
 
+    Parameters
+    ----------
+    line : string
+        input line, assuming it's a RINEX epoch line.
+    rnx2 : TYPE, optional
+        True if RINEX2, False if RINEX3/4.
+        The default is True.
+
+    Returns
+    -------
+    epochdt : datetime
+        The epoch of the line.
+    """
+    
+    if rnx2:
+        strtidx=0
+    else:
+        strtidx=1
+    fraw = line[strtidx:].split() #fraw est la pour gerer les fracion de sec ...
+    fraw = fraw[0:6]
+    fraw = [float(e) for e in fraw]
+                
+    f = [int(e) for e in fraw]
+    msec = (fraw[5] - np.floor(fraw[5]))
+    msec = np.round(msec,4)
+    msec = int(msec * 10**6)
+    f.append( msec )  # ajour des fractions de sec
+
+    if rnx2:
+        if f[0] < 50:
+            f[0] = f[0] + 2000
+        else:
+            f[0] = f[0] + 1900
+
+    if f[5] == 60: # cas particulier rencontré dans des rinex avec T = 60sec
+        rinex_60sec = True
+        f[5] = 59
+    else:
+        rinex_60sec = False
+
+    epochdt = dt.datetime(*f)
+
+    if rinex_60sec:
+        epochdt = epochdt + dt.timedelta(seconds=1)
+    return  epochdt
 
 #  _____  _____ _   _ ________   __   _____       _ _ _
 # |  __ \|_   _| \ | |  ____\ \ / /  / ____|     | (_) |
@@ -360,16 +381,17 @@ def rnx2crz(rinex_path,outdir='',force=True,path_of_rnx2crz='RNX2CRZ'):
 
 
 def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
-                    add_tzinfo=False,out_array=True):
+                    add_tzinfo=False,out_array=True, out_index=False):
     """
     Read the epochs contained in a RINEX File. Can handle RINEX 2 and 3
 
     Parameters
     ----------
-    input_rinex_path_or_string : str
-        path of the rinex file.
-        can be the path of a RINEX or directly
-        the RINEX content as a string
+    input_rinex_path_or_string : see below
+        input RINEX.
+        can be the path of a RINEX file as string or as Path object,
+        or directly the RINEX content as a string, bytes, StringIO object or a 
+        list of lines
 
     interval_out : bool, optional
         output also the intervals. The default is False.
@@ -382,6 +404,10 @@ def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
         output results as array. 
         The default is True.
 
+    out_index : bool, optional
+        output also the index of the epoch line.
+        The default is False.
+
     Returns
     -------
     array or list
@@ -391,77 +417,48 @@ def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
     ##161019 : dirty copier coller de rinex start end
     epochs_list = []
     rinex_60sec = False
+        
+    try:
+        input_rinex_path_or_string = hatanaka.decompress(input_rinex_path_or_string)
+    except:
+        pass
+    
+    RnxLines = utils.open_readlines_smart(input_rinex_path_or_string)
 
-    if  utils.is_iterable(input_rinex_path_or_string):
-        Finp = input_rinex_path_or_string
-    elif os.path.isfile(input_rinex_path_or_string):
-        Finp = open(input_rinex_path_or_string)
-    else:
-        Finp = input_rinex_path_or_string
-
-
-    for line in Finp:
+    Index_list = []
+    for iline, line in enumerate(RnxLines):
         epoch_rnx2=re.search('^ {1,2}([0-9]{1,2} * ){5}',line)
         epoch_rnx3=re.search('^>',line)
         
         if epoch_rnx2:
-            fraw = line.split() #fraw est la pour gerer les fracion de sec ...
-            fraw = fraw[0:6]
-            fraw = [float(e) for e in fraw]
-            f = [int(e) for e in fraw]
-            msec = (fraw[5] - np.floor(fraw[5]))
-            msec = np.round(msec,4)
-            msec = int(msec * 10**6)
-            f.append( msec )  # ajour des fractions de sec
-
-            if f[0] < 50:
-                f[0] = f[0] + 2000
-            else:
-                f[0] = f[0] + 1900
-            if f[5] == 60: # cas particulier rencontré dans des rinex avec T = 60sec
-                rinex_60sec = True
-                f[5] = 59
-            else:
-                rinex_60sec = False
             try:
-                epochdt = dt.datetime(*f)
-                if rinex_60sec:
-                    epochdt = epochdt + dt.timedelta(seconds=1)
+                epochdt = read_rnx_epoch_line(line,rnx2=True)
                 epochs_list.append(epochdt)
+                Index_list.append(iline)
             except:
-                log.error(f)
+                log.error(line)
+                
         elif epoch_rnx3:
-            fraw = line[1:].split() #fraw est la pour gerer les fracion de sec ...
-            fraw = fraw[0:6]
-            fraw = [float(e) for e in fraw]
-                        
-            f = [int(e) for e in fraw]
-            msec = (fraw[5] - np.floor(fraw[5]))
-            msec = np.round(msec,4)
-            msec = int(msec * 10**6)
-            f.append( msec )  # ajour des fractions de sec
-
-            if f[5] == 60: # cas particulier rencontré dans des rinex avec T = 60sec
-                rinex_60sec = True
-                f[5] = 59
-            else:
-                rinex_60sec = False
             try:
-                epochdt = dt.datetime(*f)
-                if rinex_60sec:
-                    epochdt = epochdt + dt.timedelta(seconds=1)
+                epochdt = read_rnx_epoch_line(line,rnx2=False)
                 epochs_list.append(epochdt)
+                Index_list.append(iline)
             except:
-                log.error(f)
-            
+                log.error(line)
                 
     if add_tzinfo:
         epochs_list = [ e.replace(tzinfo=dateutil.tz.tzutc()) for e in epochs_list]
+        
+    if out_index:
+        OUTPUT = [epochs_list,Index_list]
+    else:
+        OUTPUT = epochs_list
 
     if out_array:
-        return np.array(epochs_list)
-    else:
-        return epochs_list
+        OUTPUT = np.array(OUTPUT).T
+        
+    return OUTPUT
+    
 
 def same_day_rinex_check(rinex1,rinex2):
     if os.path.basename(rinex1)[4:7] == os.path.basename(rinex2)[4:7]:
@@ -506,10 +503,6 @@ def rinex_start_end(input_rinex_path,interval_out=False,
         First, las epoches and interval if asked.
 
     """
-    
-    
-    
-
 
     #une liste d'epochs en début et fin de fichier
     #=> en trouver le min et le max
@@ -986,7 +979,7 @@ def rinex_renamer(input_rinex_path,output_directory,stat_out_name='',remove=Fals
     rnx_interval_ext = rinex_session_id(first_epoch,last_epoch) + '.'
     rinex_out_name = stat_out_name + first_epoch.strftime('%j') + rnx_interval_ext + first_epoch.strftime('%y') + 'o'
 
-    lof.info(rinex_out_name)
+    log.info(rinex_out_name)
 
     output_rinex_path = os.path.join(out_dir,rinex_out_name)
 

@@ -82,8 +82,8 @@ def wnorm(phi,a=6378137.,e2=0.00669438003):
     """
     Compute the Ellipsoid "Grande Normale"
     
-    Source
-    ------
+    References
+    ----------
     ALG0021 in NTG_71 (IGN Lambert Projection Tech document)
     Based on PYACS of J.-M. Nocquet
     """
@@ -97,8 +97,8 @@ def normal_vector(phi,llambda,angle='deg',normalized=True):
     """
     Compute the Ellipsoid "Normale"
     
-    Source
-    ------
+    References
+    ----------
     P. Bosser (2012), Géométrie de l'Ellipsoïde, p27
     """
 
@@ -143,8 +143,8 @@ def GEO2XYZ(phi,llambda,he,angle='deg',
     X,Y,Z : numpy.array of floats
         cartesian coordinates X,Y,Z in meters
         
-    Source
-    ------
+    References
+    ----------
     Based on PYACS of J.-M. Nocquet
     """
 
@@ -187,10 +187,11 @@ def XYZ2GEO(x,y,z,outdeg=True,
     latitude, longitude, height : numpy.array of floats
         latitude (deg/rad), longitude (deg/rad), height (m)   
         
-    Source
-    ------
+    References
+    ----------
     Based on PYACS of J.-M. Nocquet
     """
+    
 
     F=1.0 - np.sqrt(1-E2)
 
@@ -244,8 +245,8 @@ def XYZ2ENU(dX,dY,dZ,lat0,lon0):
     E,N,U : numpy.array of floats
         East North Up Component (m) w.r.t. x0,y0,z0
         
-    Source
-    ------
+    References
+    ----------
     https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates
     
     Note
@@ -304,8 +305,8 @@ def XYZ2ENU_2(X,Y,Z,x0,y0,z0):
     E,N,U : numpy.array of floats
         East North Up Component (m) w.r.t. x0,y0,z0
         
-    Source
-    ------
+    References
+    ----------
     https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates
     """
     
@@ -366,8 +367,8 @@ def ENU2XYZ(E,N,U,x0,y0,z0,velocity_mode=False):
     X,Y,Z : numpy.array of floats
         ECEF X,Y,Z Component (m)
         
-    Source
-    ------
+    References
+    ----------
     https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates
     """
     
@@ -516,8 +517,8 @@ def sFLH2sXYZ(F,L,H,sF,sL,sH,ang='deg'):
     Inputs values are assumed as uncorrelated, which is not accurate
     Must be improved
     
-    Source
-    ------
+    References
+    ----------
     Linear Algebra, Geodesy, and GPS p332
     """
     
@@ -548,8 +549,8 @@ def sFLH2sENU(F,L,H,sF,sL,sH,ang='deg'):
     Inputs values are assumed as uncorrelated, which is not accurate
     Must be improved
     
-    Source
-    ------
+    References
+    ----------
     Linear Algebra, Geodesy, and GPS p332
     """
     # conversion batarde du sigma FLH => sigma ENU
@@ -589,8 +590,8 @@ def sENU2sFLH(F,L,H,sE,sN,sU,ang='deg',
     Inputs values are assumed as uncorrelated, which is not accurate
     Must be improved
     
-    Source
-    ------
+    References
+    ----------
     Linear Algebra, Geodesy, and GPS p332
     """
     # conversion batarde du sigma ENU => sigma FLH
@@ -627,8 +628,8 @@ def sXYZ2sENU(X,Y,Z,sX,sY,sZ,sXY=0,sYZ=0,sXZ=0):
     Inputs values are assumed as uncorrelated, which is not accurate
     Must be improved
     
-    Source
-    ------
+    References
+    ----------
     Linear Algebra, Geodesy, and GPS p332
     """
 
@@ -675,8 +676,8 @@ def ECI2RTN_or_RPY(P,V,C,out_rpy=False,rpy_theo_mode=False):
     -------
     Cout : conversion of P in RTN or RPY ref. frame
 
-    Source
-    ------
+    References
+    ----------
     "Coordinate Systems", ASEN 3200 1/24/06 George H. Born
     """
 
@@ -751,10 +752,7 @@ def ECEF2ECI(xyz,utc_times):
 
     Note
     ----
-    Requires pyorbital module
-
-    Theory
-    ------   
+    Requires pyorbital module 
     
      [X]    [C -S 0][X]
      [Y]  = [S  C 0][Y]
@@ -762,8 +760,8 @@ def ECEF2ECI(xyz,utc_times):
 
      C and S are cos() and sin() of gmst (Greenwich Meridian Sideral Time)
 
-    Source
-    ------
+    References
+    ----------
     http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc
     Inspired from satellite-js (https://github.com/shashwatak/satellite-js)
     """
@@ -803,9 +801,7 @@ def ECI2ECEF(xyz,utc_times):
     Note
     ----
     Requires pyorbital module
-
-    Theory
-    ------   
+ 
     
      [X]          ([C -S 0])[X]
      [Y]     = inv([S  C 0])[Y]
@@ -821,8 +817,8 @@ def ECI2ECEF(xyz,utc_times):
 
      C and S are cos() and sin() of gmst (Greenwich Meridian Sideral Time)
 
-    Source
-    ------
+    References
+    ----------
     http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc
     Inspired from satellite-js (https://github.com/shashwatak/satellite-js)
     

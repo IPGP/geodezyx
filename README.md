@@ -2,15 +2,15 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.3.0 / 2021-02-09**, README Revision: 2021-06-02
+**Version 0.4.3.2 / 2023-03-08**, README Revision: 2023-03-08
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
 (GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
 
-**Documentation:** [https://geodezyx.github.io/GeodeZYX-Toolbox_v4](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
+**Documentation:** [https://geodezyx.github.io/geodezyx-toolbox](https://geodezyx.github.io/geodezyx-toolbox/)
 
-**GitHub repository:** [https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4](https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4)
+**GitHub repository:** [https://github.com/GeodeZYX/geodezyx-toolbox](https://github.com/GeodeZYX/geodezyx-toolbox)
 
 **PyPi project:** [https://pypi.org/project/geodezyx](https://pypi.org/project/geodezyx/)
 
@@ -20,7 +20,7 @@
 *The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes*. 
 V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.org/10.5880/GFZ.1.1.2019.002)
 
-**Licence:** GNU GPL v3 (see below)
+**Licence:** GNU GPL v3 (see below) 
 
 ## Introduction
 
@@ -38,12 +38,12 @@ Also tested with Anaconda
 ## Documentation
 
 See the following link:
-[https://geodezyx.github.io/GeodeZYX-Toolbox_v4/](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/)
+[https://geodezyx.github.io/geodezyx-toolbox/](https://geodezyx.github.io/geodezyx-toolbox/)
 
 ## Installation 
 
 See the following link:
-[https://geodezyx.github.io/GeodeZYX-Toolbox_v4/getting_started.html#installation](https://geodezyx.github.io/GeodeZYX-Toolbox_v4/getting_started.html#installation)
+[https://geodezyx.github.io/geodezyx-toolbox/getting_started.html#installation](https://geodezyx.github.io/geodezyx-toolbox/getting_started.html#installation)
 
 ## Installation (detailed legacy instructions)
 
@@ -55,18 +55,33 @@ We recommend to use pip to do a propper installation:
 
 To get the latest working version you can install directly the GitHub-hosted version:
 
-``pip install -I -U git+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4``
+``pip install -I -U git+https://github.com/GeodeZYX/geodezyx-toolbox``
 
 ### clone and manually install from GitHub
 
 You can manually fork and clone the GitHub repository
-[https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4/](https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4/)
+[https://github.com/GeodeZYX/geodezyx-toolbox/](https://github.com/GeodeZYX/geodezyx-toolbox/)
 
 and install the Toolbox you downloaded with ``python setup.py install``
 
 Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
 
 ## Changelog
+
+### v0.4.3.2, 2023-03-08
+  * 1000th commit on GitHub 🥳
+  * GitHub repository is renamed for simplification 
+    * `GeodeZYX-Toolbox_v4` becomes `geodezyx-toolbox` (lowercase and without version)
+    * It must be transparent for your clones but updating them is recommended \
+      https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository  
+  * beta for GROOPS automatized run functions
+  * Dropbox download function
+  * UTM coordinates conversion function (IGN algorithm) 
+  * implementation of UTM coordinates in the TimeSeries class
+  * logger improvement (shorter timestamps & message ranks)
+
+### v0.4.3.1, 2022-12-09
+  * Routine update: multiple new features/functions and bug corrections
 
 ### v0.4.3.0, 2022-02-10
   * enhanced logger replaces basic prints.

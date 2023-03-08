@@ -67,7 +67,7 @@ def subprocess_frontend(cmd_in,
     if save_log:
         
         if not log_dir:
-            logdir = os.getcwd()
+            log_dir = os.getcwd()
             
         if logname_timestamp:
             prefix = now + "_" 
@@ -282,10 +282,10 @@ def empty_file_check(fpath):
     Returns
     -------  
     True : 
-        if the file is empty
+        the file is empty or does not exist
     
     False : 
-        if the file is not empty
+        the file exists and is not empty
          
     Source
     ------

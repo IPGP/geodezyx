@@ -98,6 +98,9 @@ class Point():
 
         elif initype == 'NED':
             self.NEDset(A,B,C,sA,sB,sC)
+            
+        elif initype == 'UTM':
+            self.UTMset(A,B,C,sA,sB,sC)
         else:
             log.error("wrong initype")
 
@@ -111,6 +114,8 @@ class Point():
             return self.E,self.N,self.U,self.Tdt,self.T
         elif self.initype == 'NED':
             return self.N,self.E,self.D,self.Tdt,self.T
+        elif self.initype == 'UTM':
+            return self.Eutm,self.Nutm,self.Uutm,self.Tdt,self.T
         else:
             log.error("wrong initype")
 
@@ -142,6 +147,7 @@ class Point():
         self.initype = 'FLH'
         self.X,self.Y,self.Z = conv.GEO2XYZ(self.F,self.L,self.H)
         self.sX,self.sY,self.sZ = conv.sFLH2sXYZ(F,L,H,sF,sL,sH)
+        
 
     def ENUset(self,E=np.nan,N=np.nan,U=np.nan,sE=np.nan,sN=np.nan,sU=np.nan):
         self.E = E
@@ -162,6 +168,18 @@ class Point():
         self.sD = sD
 
         self.initype = 'NED'
+
+
+    def UTMset(self,Eutm=np.nan,Nutm=np.nan,Uutm=np.nan,sEutm=np.nan,sNutm=np.nan,sUutm=np.nan):
+        self.Eutm = Eutm
+        self.Nutm = Nutm
+        self.Uutm = Uutm
+        self.sEutm = sEutm
+        self.sNutm = sNutm
+        self.sUutm = sUutm
+
+        self.initype = 'UTM'
+        
 
     def add_offset(self,dA,dB,dC):
         log.warning("add_offset as method are hazardous ...")
@@ -196,6 +214,12 @@ class Point():
         elif self.initype == 'XYZ' and hasattr(self,'sX'):
             if not np.isnan(self.sX):
                 self.sE,self.sN,self.sU = conv.sXYZ2sENU(self.X,self.Y,self.Z,self.sX,self.sY,self.sZ)
+
+
+    def UTMcalc_pt(self,ellips="wgs84"):
+        self.Eutm , self.Nutm , _ = conv.utm_geo2xy(self.F,self.L)
+        self.Uutm = self.H
+        
 
     def keysanex(self):
         return list(self.anex.keys())
@@ -248,6 +272,8 @@ class TimeSeriePoint:
         self.meta_set(stat=stat)
 
         self.boolENU = False
+        self.boolUTM = False
+
         self.bool_interp_uptodate = False
         self.bool_discont = False
         self.bool_discont_manu = False
@@ -493,6 +519,9 @@ class TimeSeriePoint:
         if coortype == "ENU":
             self.boolENU = True
 
+        if coortype == "UTM":
+            self.boolUTM = True
+
         self.sort()
 
         return None
@@ -512,7 +541,7 @@ class TimeSeriePoint:
             ask for a specific list, ranges between 0 and 6.
             The default is None.
         time_as_datetime : bool, optional
-            if True the Time list is exported in DataFrame
+            if True the Time list is exported in datetime
             if False the Time list is exported in Posix time
 
         Returns
@@ -537,13 +566,20 @@ class TimeSeriePoint:
             sA,sB,sC = 'sF','sL','sH'
 
         elif coortype == 'ENU':
-
             if self.boolENU == False:
                 log.warning("no ENU coord. for " + self.name)
-                return 0
+                return None
 
             A,B,C = 'E','N','U'
             sA,sB,sC = 'sE','sN','sU'
+
+        elif coortype == 'UTM':
+            if self.boolUTM == False:
+                log.warning("no UTM coord. for " + self.name)
+                return None
+
+            A,B,C = 'Eutm','Nutm','Uutm'
+            sA,sB,sC = 'sEutm','sNutm','sUutm'
 
         else:
             log.error("coortype does not exist")
@@ -610,10 +646,15 @@ class TimeSeriePoint:
         for icoty , coty in enumerate(coortype):
             A,B,C,T,sA,sB,sC = self.to_list(coty)
             
+            if coty == "UTM":
+                cotycolnam = ["Eutm","Nutm","Uutm"]
+            else:
+                cotycolnam = coty
+                
             if icoty == 0:
                 Tdt = conv.posix2dt(T)
                 ColStk = ColStk + (Tdt,T,A,B,C,sA,sB,sC)  
-                ColNameStk = ["Tdt","T"] + [e for e in coty] + ["s" + e for e in coty]
+                ColNameStk = ["Tdt","T"] + [e for e in cotycolnam] + ["s" + e for e in cotycolnam]
             else:
                 ColStk = ColStk + (A,B,C,sA,sB,sC)
                 ColNameStk = [e for e in coty] + ["s" + e for e in coty]
@@ -711,6 +752,14 @@ class TimeSeriePoint:
             Ctitle = 'Haut'
             yylabel = 'displacement (m)'
             ABtitle = 'Phi Lambda (sans signification)'
+
+
+        elif coortype == 'UTM':
+            Atitle = 'East (UTM)'
+            Btitle = 'North (UTM)'
+            Ctitle = 'Up'
+            yylabel = 'displacement (m)'
+            ABtitle = 'East North (UTM)'
 
         else:
             Atitle = 'A'
@@ -980,6 +1029,23 @@ class TimeSeriePoint:
             self.add_point(copy.copy(Point))
 
         self.i_nomi = pas
+        
+        
+    def UTMcalc(self):
+        """
+        Method to determine the UTM E and N projected coordinates
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        None.
+
+        """
+        self.boolUTM = True
+        [ pt.UTMcalc_pt() for pt in self.pts ]
+        
 
     def timewin(self,windows,mode='keep'):
         '''IL EST TRES DANGEREUX DE L'APPLIQUER UN FENETRAGE A SOI MEME'''
@@ -1028,6 +1094,15 @@ class TimeSeriePoint:
             self.LfT = scipy.interpolate.interp1d(T,L,bounds_error=False,kind=interptype)
             self.HfT = scipy.interpolate.interp1d(T,H,bounds_error=False,kind=interptype)
 
+        if (not hasattr(self.pts[0],'Eutm')) or np.isnan(self.pts[0].Eutm) == True:
+            log.warning("no UTM for " + self.name)
+        else:
+            Eutm,Nutm,Uutm,T,_,_,_ = self.to_list('UTM')
+
+            self.EutmfT = scipy.interpolate.interp1d(T,Eutm,bounds_error=False,kind=interptype)
+            self.NutmfT = scipy.interpolate.interp1d(T,Nutm,bounds_error=False,kind=interptype)
+            self.UutmfT = scipy.interpolate.interp1d(T,Uutm,bounds_error=False,kind=interptype)
+
         self.bool_interp_uptodate = True
 
     def interp_get(self,T,coortype='ENU'):
@@ -1072,6 +1147,11 @@ class TimeSeriePoint:
             A = self.FfT(T)
             B = self.LfT(T)
             C = self.HfT(T)
+
+        if coortype == 'UTM':
+            A = self.EutmfT(T)
+            B = self.NutmfT(T)
+            C = self.UutmfT(T)
 
         for i in range(len(T)):
             tsout.add_point(Point(A[i],B[i],C[i],T=T[i],initype=coortype))

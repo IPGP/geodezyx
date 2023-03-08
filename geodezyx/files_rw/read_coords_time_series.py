@@ -2208,9 +2208,93 @@ def read_hector_neu(filein):
     log.warning("XYZ/FLH conversion not implemented")
     M = np.loadtxt(filein)
     stat = utils.grep(filein,'Site :',only_first_occur=True).split()[3]
-    tsout = time_series.ts_from_list(M[:,2],M[:,1],M[:,3],conv.year_decimal2dt(M[:,0]),
-                         'ENU',M[:,4],M[:,5],M[:,6],stat=stat,name=stat)
+    tsout = time_series.ts_from_list(M[:,2],M[:,1],M[:,3],
+                                     conv.year_decimal2dt(M[:,0]),
+                                     'ENU',
+                                     M[:,4],M[:,5],M[:,6],
+                                     stat=stat,name=stat)
 
+    return tsout
+
+
+
+ #  _______ _    _  _____     _______ _____   ____   ____  _____   _____   ______ _ _           
+ # |__   __| |  | |/ ____|   / / ____|  __ \ / __ \ / __ \|  __ \ / ____| |  ____(_) |          
+ #    | |  | |  | | |  __   / / |  __| |__) | |  | | |  | | |__) | (___   | |__   _| | ___  ___ 
+ #    | |  | |  | | | |_ | / /| | |_ |  _  /| |  | | |  | |  ___/ \___ \  |  __| | | |/ _ \/ __|
+ #    | |  | |__| | |__| |/ / | |__| | | \ \| |__| | |__| | |     ____) | | |    | | |  __/\__ \
+ #    |_|   \____/ \_____/_/   \_____|_|  \_\\____/ \____/|_|    |_____/  |_|    |_|_|\___||___/
+                                                                                          
+
+def read_groops_position(Filesin):
+    
+    if not utils.is_iterable(Filesin):
+        Filesin = [Filesin]
+            
+    Statnames = list(set([os.path.basename(f)[-8:-4] for f in Filesin]))
+    
+    if len(Statnames) > 1:
+        log.warn("several stations for the same TimeSerie!:" + str(Statnames))
+    
+    statname = Statnames[0]
+    
+    tsout = time_series.TimeSeriePoint()
+
+    for filein in Filesin:
+        DF = pd.read_csv(filein,skiprows=6,header=None,sep='\s+')
+        T = conv.dt2posix(conv.MJD2dt(DF[0].values))
+        X,Y,Z = DF[1],DF[2],DF[3] 
+        
+        for t,x,y,z in zip(T,X,Y,Z):
+            point = time_series.Point(x,y,z,t,'XYZ', name = statname)
+            tsout.add_point(point)
+    
+    tsout.meta_set(stat=statname)
+    tsout.sort()
+
+    return tsout    
+
+
+def read_webobs(filein,typein="txt",
+                coordtreat=False,
+                dropna=False):
+    
+    if coordtreat:
+        lbda_colname = lambda c: c  + "_treat"
+    else:
+        lbda_colname = lambda c: c  + "ern" if c != "Up" else "Up"
+    
+    if typein== "txt":
+        header = utils.grep(filein, "#")[-1][1:].strip().split()
+        DF = pd.read_csv(filein,sep=" ",comment='#',names= header,
+                         on_bad_lines="warn")
+        unit_suffix = "(m)"
+        ### Time  conversion
+        DFtime = DF[["yyyy","mm","dd","HH","MM","SS"]].copy()
+        DFtime.columns = [ 'year' ,'month' ,'day','h','m','s']
+        DF["T"] = pd.to_datetime(DFtime)
+    
+    elif typein == "csv":
+        DF = pd.read_csv(filein,sep=";",
+                         on_bad_lines="warn")
+        unit_suffix = ""
+        ### Time  conversion
+        DFtimedelta = pd.to_timedelta(DF.HH * 3600 + DF.MM * 60 + DF.SS,
+                                      unit="S")
+        DF["T"] = pd.to_datetime(DF["yyyy-mm-dd"]) + DFtimedelta
+        
+    if dropna:
+        DF = DF.dropna()
+    
+    tsout = time_series.TimeSeriePoint()
+    
+    T = conv.dt2posix(DF['T'].values)
+    A = DF[lbda_colname("East")  + unit_suffix].values
+    B = DF[lbda_colname("North") + unit_suffix].values
+    C = DF[lbda_colname("Up") + unit_suffix].values
+    
+    tsout.from_list(T,A,B,C,coortype='UTM')
+    
     return tsout
 
 

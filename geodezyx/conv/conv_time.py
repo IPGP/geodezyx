@@ -120,7 +120,6 @@ def matlab_time2dt(matlab_datenum):
         dt.timedelta(days=matlab_datenum%1) - dt.timedelta(days = 366)
     return python_datetime
 
-
 def round_dt(dtin,round_to,python_dt_out=True,mode='round'):
     """
     Round a datetime object to any time laps in seconds
@@ -1393,9 +1392,8 @@ def rinexname2dt(rinexpath):
     rinexname = os.path.basename(rinexpath)
     #rinexname = rinexpath
         
-    
     ##### LONG rinex name
-    if re.search(conv_rinex.rinex_regex_new_name(),rinexname) or re.search(conv_rinex.rinex_regex_new_name_brdc(),rinexname):
+    if re.search(conv_rinex.rinex_regex_long_name(),rinexname) or re.search(conv_rinex.rinex_regex_long_name_brdc(),rinexname):
         date_str = rinexname.split("_")[2]
         yyyy = int(date_str[:4])
         doy  = int(date_str[4:7])        
@@ -1405,8 +1403,7 @@ def rinexname2dt(rinexpath):
         return dt_out 
 
     ##### LONG rinex name -- GFZ's GODC internal name
-    ###### OBS RINEX for GFZ GODC not implemented yet !!!!
-    if re.search(conv_rinex.rinex_regex_new_name_brdc_gfz_godc(),rinexname): 
+    if re.search(conv_rinex.rinex_regex_long_name_gfz_godc(),rinexname): 
         date_str = rinexname.split("_")[5]
         time_str = rinexname.split("_")[6]
         yyyy = int(date_str[:4])
@@ -1872,7 +1869,6 @@ def datestr_gins_filename_2_dt(datestrin):
     
     else:
         #### CASE WHERE THE DATE LOOKS LIKE 00000:00000
-
         yr = int(datestrin[0:2])
         mm = int(datestrin[2:4])
         dd = int(datestrin[4:6])
@@ -1936,7 +1932,52 @@ def trimble_file2dt(trmfile_in):
     
     
         
+def dt2epoch_rnx3(dt_in,epoch_flag=0,nsats=0,rec_clk_offset=0):
+    """
+    Time representation conversion
+    
+    Python's Datetime => RINEX3/4 epoch representation
+    e.g.
+    > 2022 11 29 17 15 25.0000000  0  0       0.000000000000
 
+    Parameters
+    ----------
+    dt_in : datetime or list of datetime.
+        Datetime(s).
+    epoch_flag : int, optional
+        Epoch flag:
+            0 : OK
+            1 : power failure between previous and current epoch
+            >1 : Special event (see RINEX documentation). 
+        The default is 0.
+    nsats : int, optional
+        Number of satellites observed in current epoch. The default is 0.
+    rec_clk_offset : float, optional
+        Receiver clock offset correction (seconds). The default is 0.
+
+    Returns
+    -------
+    epoch_out : str or list of str
+        output RINEX3/4 epoch representation.
+    """
+
+    if utils.is_iterable(dt_in):
+        typ=utils.get_type_smart(dt_in)
+        return typ([dt2epoch_rnx3(e,epoch_flag,nsats,rec_clk_offset) for e in dt_in])
+    
+    else:
+        fmt="> {:4} {:2n} {:2n} {:2n} {:2n}{:11.7f}  {:1n}{:3n}      {:15.12f}"    
+        epoch_out = fmt.format(dt_in.year,
+                               dt_in.month,
+                               dt_in.day,
+                               dt_in.hour,
+                               dt_in.minute,
+                               dt_in.second,
+                               epoch_flag,
+                               nsats,
+                               rec_clk_offset)
+    
+        return epoch_out
 
 
 #### LEAP SECONDS MANAGEMENT
@@ -2202,7 +2243,7 @@ def numpy_dt2dt(numpy_dt_in):
         Converted Datetime(s)
         If the input is a Pandas Series, the output is forced as an array
               
-    source
+    Source
     ------
     https://gist.github.com/blaylockbk/1677b446bc741ee2db3e943ab7e4cabd
     """
@@ -2210,9 +2251,11 @@ def numpy_dt2dt(numpy_dt_in):
     if utils.is_iterable(numpy_dt_in):        
         typ=utils.get_type_smart(numpy_dt_in)
         
-        ### If the type is a Series, it has to be forced as an array
+        ### If the type is a pd.core.series.Series or a 
+        ### pd.core.indexes.datetimes.DatetimeIndex,
+        ### it has to be forced as an array
         ### Otherwise, datetime will be converted as numpy_dt again
-        if typ == pd.core.series.Series:
+        if not typ in (list,tuple,np.array):
             typ = np.array
             
         return typ([numpy_dt2dt(e) for e in numpy_dt_in])
@@ -2571,6 +2614,9 @@ def dt_round(dtin=None, roundTo=60):
 def roundTime(*args):
     """
     Wrapper of dt_round for legacy reasons
+    
+    **This function is depreciated !!!**
+    **Use round_dt instead         !!!**
     """
     return dt_round(*args)
 
