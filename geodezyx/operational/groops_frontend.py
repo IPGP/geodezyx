@@ -20,12 +20,10 @@ import time
 import logging
 log = logging.getLogger(__name__)
 
-
-
-
 def log_subprocess_output(pipe,logger=None,file=None,file2=None):
     """
-    Intern fuction to write the stdout/err in the console logger/logfile
+    Intern fuction for subprocess_frontend2
+    to write the stdout/err in the console logger + a logfile
     """
     for line in iter(pipe.readline, b''): # b'\n'-separated lines
         line_clean = line.decode().strip()
@@ -45,7 +43,9 @@ def subprocess_frontend2(cmd_in,
                          log_name_out="out.log",
                          log_name_err="err.log",
                          logname_timestamp=True,
-                         err_also_in_outfile=True):
+                         err_also_in_outfile=True,
+                         logger_objt_level_out=None,
+                         logger_objt_level_err=None):
     """
     A generic frontend to run an extern command through subprocess
     and write the stdout and stderr outputs in log files.
@@ -64,9 +64,15 @@ def subprocess_frontend2(cmd_in,
         filename of the stderr log. The default is "err.log".
     logname_timestamp : str, optional
         add a timestamp as prefix. The default is True.
-    err_also_in_outfile : bool, optional
-        write also the stderr in the stdout log. The default is True.
-
+    logger_objt_level_out : method of a Logger object, optional
+        set the logger level of the stdout messages.
+        can be logger.info or logger.debug for instance.
+        The default is None (logger.info per default then).
+    logger_objt_level_err : method of a Logger object, optional
+        set the logger level of the stderr messages.
+        can be logger.error or logger.critical for instance.
+        The default is None (logger.error per default then).
+        
     Returns
     -------
     exitcode : int
@@ -78,7 +84,6 @@ def subprocess_frontend2(cmd_in,
     https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
     And for the threading:
     https://stackoverflow.com/questions/6809590/merging-a-python-scripts-subprocess-stdout-and-stderr-while-keeping-them-disti
-
     """
     
     from subprocess import Popen, PIPE, STDOUT
@@ -106,6 +111,18 @@ def subprocess_frontend2(cmd_in,
         out_file = None
         err_file = None
         err_in_outfile = None
+        
+    ## set logger level
+    if logger_objt_level_out:
+        loggerout = logger_objt_level_out
+    else:
+        loggerout = log.info
+        
+    if logger_objt_level_err:
+        loggererr = logger_objt_level_err
+    else:
+        loggererr = log.error
+        
                                 
     ## arguments must be splitted 
     if type(cmd_in) is str:
@@ -113,25 +130,26 @@ def subprocess_frontend2(cmd_in,
     else:
         cmd_split = cmd_in
     
-    
     ####### Run the command here  #####################
     process = Popen(cmd_split,
                     stdout=PIPE,
                     stderr=PIPE)
     ##################################################
     
-    
     ### Get out/err simultaneously
     stdout_thread = Thread(target=log_subprocess_output,
-                           args=(process.stdout,log.info,out_file))
+                           args=(process.stdout,
+                                 loggerout,
+                                 out_file))
     stderr_thread = Thread(target=log_subprocess_output,
-                           args=(process.stderr,log.error,err_file,
+                           args=(process.stderr,
+                                 loggererr,
+                                 err_file,
                                  err_in_outfile))
     
     stderr_thread.start()
     stdout_thread.start()
 
-    #while (process.poll() is None) and stdout_thread.is_alive() and stderr_thread.is_alive():
     while stdout_thread.is_alive() or stderr_thread.is_alive():
         pass ### do nothing while the threads are runing
 
@@ -144,90 +162,43 @@ def subprocess_frontend2(cmd_in,
     return exitcode
 
 
-def subprocess_frontend3(cmd_in,
-                         save_log=True,
-                         log_dir=None,
-                         log_name_out="out.log",
-                         logname_timestamp=True):
-    """
-    A generic frontend to run an extern command through subprocess
-    and write the stdout and stderr outputs in log files.
-    
-    Parameters
-    ----------
-    cmd_in : str
-        DESCRIPTION.
-    save_log : str, optional
-        export as log the stdout/stderr in files. The default is True.
-    log_dir : str, optional
-        directory where the logs will be stored. The default is None.
-    log_name_out : str, optional
-        filename of the stdout log. The default is "out.log".
-    logname_timestamp : str, optional
-        add a timestamp as prefix. The default is True.
-        
-    Returns
-    -------
-    exitcode : int
-        the exit code of the command.
-        
-    Notes
-    -----
-    Inspired by:
-    https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    And for the threading:
-    https://stackoverflow.com/questions/6809590/merging-a-python-scripts-subprocess-stdout-and-stderr-while-keeping-them-disti
-
-    """
-    
-    from subprocess import Popen, PIPE, STDOUT
-    now = utils.get_timestamp()
-    
-    #### manage the paths of the output logs
-    if save_log:
-        if not log_dir:
-            log_dir = os.getcwd()
-    
-        if logname_timestamp:
-            prefix = now + "_"
-        else:
-            prefix = ""
-    
-        out_file = open(log_dir + "/" + prefix + log_name_out, "w+")
-        
-    else:
-        out_file = None
-                                
-    ## arguments must be splitted 
-    if type(cmd_in) is str:
-        cmd_split = cmd_in.split()
-    else:
-        cmd_split = cmd_in
-    
-    
-    ####### Run the command here  #####################
-    process = Popen(cmd_split,
-                    stdout=PIPE,
-                    stderr=STDOUT)
-    # Get out/err simultaneously with stderr=STDOUT
-    ##################################################
-    
-    ### Get out/err simultaneously
-    log_subprocess_output(process.stdout,log.info,out_file)
-
-    exitcode = process.wait() # 0 means success
-    
-    if save_log:
-        out_file.close()
-    
-    return exitcode
-
-def groops_basic_runner(xml_config_path="",
+def groops_basic_runner(xml_cfg_path="",
                         global_var_dict=dict(),
                         xml_var_dict=dict(),
-                        quiet=False,
-                        log_dir="/home/ovsgnss/020_CALC/groops_process/031_groops_frontend_logs",
+                        dry_run=False,
+                        verbose=False,
+                        log_dir=None,
                         groops_bin_path='/opt/softs_gnss/groops/bin/groops'):
+    """
+    
+
+    Parameters
+    ----------
+    xml_cfg_path : str, optional
+        the XML config file for GROOPS. The default is "".
+    global_var_dict : dict, optional
+        A dictionnary to change the global variables values, like:
+        global_var_dict["global_var_name"] = new_value
+        The default is dict().
+    xml_var_dict : dict, optional
+        A dictionnary to change the values in the config XML file.
+        Not implemented yet. 
+        The default is dict().
+    dry_run : bool, optional
+        If True print the command but do not run it . The default is False.
+    verbose : bool, optional
+        print the detailled GROOPS's output. The default is False.
+    log_dir : str, optional
+        If provided, directory where the logs are stored. The default is None.
+    groops_bin_path : TYPE, optional
+        Path of the GROOPS bin. 
+        The default is '/opt/softs_gnss/groops/bin/groops'.
+
+    Returns
+    -------
+    None.
+
+    """
 
 
     global_args_str = ""
@@ -235,16 +206,35 @@ def groops_basic_runner(xml_config_path="",
         global_args_str = global_args_str + " ".join((" --global",key+"="+str(val)))
         
         
-    command = " ".join((groops_bin_path,global_args_str,xml_config_path))
+    command = " ".join((groops_bin_path,global_args_str,xml_cfg_path))
     log.info("groops command:")
     log.info("%s",command)
     
-    if not quiet:
+    xml_cfg_bn = os.path.basename(xml_cfg_path)
+
+    if verbose:
+        log.setLevel(logging.DEBUG)
+    else:
+        log.setLevel(logging.INFO)
+
+    if not log_dir:
+        save_log = False
+    else:
+        save_log = True
+
+
+    if not dry_run:
         subprocess_frontend2(command,
                              save_log=True,
                              log_dir=log_dir,
-                             log_name_out="out.log",
-                             logname_timestamp=True)
+                             log_name_out= xml_cfg_bn + ".out.log",
+                             log_name_err= xml_cfg_bn + ".err.log",
+                             logname_timestamp=True,
+                             logger_objt_level_out=log.debug)
+    
+    log.setLevel(logging.INFO)
+    return 
+
 
 def vmf_tropo_downloader(output_dir,
                          startdate = dt.datetime(2019,1,1),
@@ -296,36 +286,67 @@ def vmf_tropo_downloader(output_dir,
 def groops_ppp_full_runner(rinex_path,
                            project_name,
                            igs_ac_10char,
-                           vmf_tropo_root_dir = "/scratch/calcgnss/prods_tropo_vmf3",
-                           prods_gnss_root_dir = "/scratch/calcgnss/prods_gnss/",
-                           config_files_root_dir = "/opt/softs_gnss/groops/config/030_prototype3/"):
+                           cfg_files_dict,
+                           log_root_dir,
+                           vmf_tropo_root_dir,
+                           prods_gnss_root_dir,
+                           cfg_files_root_dir):
     
     ###############################################################################
     ######## Set python fct variables
     
+    
+    #### Internal debug variables
+    log.setLevel(logging.INFO)
     debug_sleep_time = 2
-    quiet=False
+    dry_run=False
 
 
     prods_gnss_dir = os.path.join(prods_gnss_root_dir,igs_ac_10char)
     
-    
+    #### Determine if products are MGEX or not
     if igs_ac_10char[4:7] == "MGX":
         mgex=True
     else:
         mgex=False
-    
+    #### Determine if products are repro or not    
     if (igs_ac_10char[4] == "R") and (igs_ac_10char[6] == "3"):
         repro=3
+        mgex=False        
     else:
         repro=0
     
+    #### Define project name 
     project_name_use = project_name + "_" + igs_ac_10char 
-    
+
+    #### Define rinex-linked variables
     site4char = os.path.basename(rinex_path)[:4]
     date_rnx = conv.rinexname2dt(rinex_path)
     date_rnx_mjd = int(conv.dt2MJD(date_rnx))
     date_rin_ymd = conv.dt2str(date_rnx,"%Y-%m-%d")
+    date_rin_doy = utils.join_improved("-",*list(reversed(conv.dt2doy_year(date_rnx))))
+    date_rin_dow = utils.join_improved("-",*conv.dt2gpstime(date_rnx))
+    
+    #### Create associated log directory    
+    log_dir = os.path.join(log_root_dir,"_".join((utils.get_timestamp(),
+                                                  project_name_use,
+                                                  site4char,
+                                                  date_rin_ymd)))
+    utils.create_dir(log_dir)
+    
+
+    ###############################################################################
+    ######## Initial print
+    log.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    log.info("****** GROOPS RUNNER Start ****************************************")
+    log.info("** RINEX: %s", os.path.basename(rinex_path))
+    log.info("** AC: %s", igs_ac_10char)
+    log.info("** date: %s, MJD: %s",
+             date_rin_ymd,
+             date_rnx_mjd)
+    log.info("** year-doy: %s, GPS week-dow: %s",
+             date_rin_doy,
+             date_rin_dow)
     
     ###############################################################################
     ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -333,7 +354,7 @@ def groops_ppp_full_runner(rinex_path,
     
     ###############################################################################
     ######## Download Tropo
-    log.info("\n****** VMF troposphere grids download *****************************")
+    log.info("****** VMF troposphere grids download *****************************")
     
     VMF_files  = vmf_tropo_downloader(vmf_tropo_root_dir,
                                       startdate = date_rnx  - dt.timedelta(days=0),
@@ -341,9 +362,9 @@ def groops_ppp_full_runner(rinex_path,
     
     ###############################################################################
     ######## Convert Tropo
-    log.info("\n****** VMF troposphere grids conversion ***************************")
+    log.info("****** VMF troposphere grids conversion ***************************")
     
-    xml_config_path=config_files_root_dir + "010_groopsConvert_tropoVmf3_v03a.xml"
+    xml_cfg_path=cfg_files_root_dir + cfg_files_dict["convTropo"]
     
     global_var_dict = dict()
     global_var_dict["timeStart"] = date_rnx_mjd
@@ -353,9 +374,10 @@ def groops_ppp_full_runner(rinex_path,
     global_var_dict["groopsInpVmfGridFile3"] = VMF_files[-2]
     global_var_dict["groopsInpVmfGridFile4"] = VMF_files[-1]
     
-    groops_basic_runner(xml_config_path,
+    groops_basic_runner(xml_cfg_path,
                         global_var_dict,
-                        quiet=quiet)
+                        log_dir=log_dir,
+                        dry_run=dry_run)
     
     ###############################################################################
     ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -365,14 +387,15 @@ def groops_ppp_full_runner(rinex_path,
     ######## Check if converted products exists
     log.info("****** Converted GNSS products existance check ********************")
     
-    paaath = "/home/ovsgnss/020_CALC/groops_process/021_conv_igs_prods"
-    conv_prod_dir = os.path.join(paaath,igs_ac_10char,date_rin_ymd)
+    #### HARDCODED !!!!! XXXXXXXXXXXXXXXXX
+    conv_prod_root_dir = "/home/ovsgnss/020_CALC/groops_process/021_conv_igs_prods"
+    conv_prod_dir = os.path.join(conv_prod_root_dir,igs_ac_10char,date_rin_ymd)
     
     All_conv_prods = utils.find_recursive(conv_prod_dir,"*dat")
     Clk_conv_prods = utils.find_recursive(conv_prod_dir,"clock*dat")
     Orb_conv_prods = utils.find_recursive(conv_prod_dir,"orbit*dat")
         
-    if len(Orb_conv_prods) > 5:
+    if len(Orb_conv_prods) > 12: ## 12 is arbitrary
         download_prods = False
         log.info("Products download/conversion skipped, %s converted files found in %s",
                  len(All_conv_prods),conv_prod_dir)
@@ -423,16 +446,17 @@ def groops_ppp_full_runner(rinex_path,
     if download_prods:
         log.info("****** GNSS products conversion: clocks *******************")
     
-        xml_config_path=config_files_root_dir + "021_groopsConvert_IgsProds_clock_v03a.xml"
+        xml_cfg_path=cfg_files_root_dir + cfg_files_dict["convProds_clock"] 
         
         global_var_dict = dict()
         global_var_dict["timeStart"] = date_rnx_mjd
         global_var_dict["timeEnd"] = date_rnx_mjd + 1
         global_var_dict["igsAC10Char"] = igs_ac_10char
         global_var_dict["inpIgsProdsDir"] = prods_gnss_dir
-        groops_basic_runner(xml_config_path,
+        groops_basic_runner(xml_cfg_path,
                             global_var_dict,
-                            quiet=quiet)
+                            log_dir=log_dir,
+                            dry_run=dry_run)
 
     
         time.sleep(debug_sleep_time)    
@@ -442,11 +466,12 @@ def groops_ppp_full_runner(rinex_path,
     if download_prods:
         log.info("****** GNSS products conversion: bias *******************")
     
-        xml_config_path=config_files_root_dir + "022_groopsConvert_IgsProds_bias_v03a.xml"
+        xml_cfg_path=cfg_files_root_dir + cfg_files_dict["convProds_bias"]
         
-        groops_basic_runner(xml_config_path,
+        groops_basic_runner(xml_cfg_path,
                             global_var_dict,
-                            quiet=quiet)
+                            log_dir=log_dir,
+                            dry_run=dry_run)
 
         time.sleep(debug_sleep_time)    
     
@@ -455,11 +480,12 @@ def groops_ppp_full_runner(rinex_path,
     if download_prods:
         log.info("****** GNSS products conversion: orbits *******************")
     
-        xml_config_path=config_files_root_dir + "023_groopsConvert_IgsProds_orbit_v03a.xml"
+        xml_cfg_path=cfg_files_root_dir + cfg_files_dict["convProds_orbit"]
         
-        groops_basic_runner(xml_config_path,
+        groops_basic_runner(xml_cfg_path,
                             global_var_dict,
-                            quiet=quiet)
+                            log_dir=log_dir,
+                            dry_run=dry_run)
 
         time.sleep(debug_sleep_time)    
 
@@ -468,11 +494,12 @@ def groops_ppp_full_runner(rinex_path,
     if download_prods:
         log.info("****** GNSS products conversion: alternative attitude *****")
     
-        xml_config_path=config_files_root_dir + "024_groopsConvert_IgsProds_alt_attitude_v03a.xml"
+        xml_cfg_path=cfg_files_root_dir + cfg_files_dict["convProds_alt_attitude"]
         
-        groops_basic_runner(xml_config_path,
+        groops_basic_runner(xml_cfg_path,
                             global_var_dict,
-                            quiet=quiet)
+                            log_dir=log_dir,
+                            dry_run=dry_run)
 
         time.sleep(debug_sleep_time)    
 
@@ -483,15 +510,14 @@ def groops_ppp_full_runner(rinex_path,
     if download_prods:
         log.info("****** GNSS products conversion: attitude *****")
     
-        xml_config_path=config_files_root_dir + "025_groopsConvert_IgsProds_attitude_v03a.xml"
+        xml_cfg_path=cfg_files_root_dir + cfg_files_dict["convProds_attitude"]
         
-        groops_basic_runner(xml_config_path,
+        groops_basic_runner(xml_cfg_path,
                             global_var_dict,
-                            quiet=quiet)
+                            log_dir=log_dir,
+                            dry_run=dry_run)
 
         time.sleep(debug_sleep_time)    
-
-
     
     ###############################################################################
     ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -500,13 +526,15 @@ def groops_ppp_full_runner(rinex_path,
     ###############################################################################
     ######## convert sitelog > station info
     
+    ## cfg_files_dict["convSite_sitelog"] 
+    
     # log.info("\n****** sitelog > station info conversion **************************")
     
-    # xmltree = et.parse(xml_config_generic)
+    # xmltree = et.parse(xml_cfg_generic)
     # # get input files
     # xmltree.find('.//rinexo').text
     
-    # xml_config_path=config_files_root_dir + "022_groopsConvert_GnssObs_v02b.xml"
+    # xml_cfg_path=cfg_files_root_dir + "022_groopsConvert_GnssObs_v02b.xml"
     
     # global_var_dict = dict()
     # global_var_dict["timeStart"] = date_rnx_mjd
@@ -514,7 +542,7 @@ def groops_ppp_full_runner(rinex_path,
     # global_var_dict["site4Char"] = site4char
     # global_var_dict["inpGnssObsRnxFile"] = rinex_path
     
-    # groops_basic_runner(xml_config_path,
+    # groops_basic_runner(xml_cfg_path,
     #                     global_var_dict)
     
     ###############################################################################
@@ -522,7 +550,7 @@ def groops_ppp_full_runner(rinex_path,
     
     log.info("****** RINEX observation conversion *******************************")
     
-    xml_config_path=config_files_root_dir + "031_groopsConvert_GnssObs_v03a.xml"
+    xml_cfg_path=cfg_files_root_dir + cfg_files_dict["convSite_rnxObs"]
     
     global_var_dict = dict()
     global_var_dict["timeStart"] = date_rnx_mjd
@@ -530,9 +558,10 @@ def groops_ppp_full_runner(rinex_path,
     global_var_dict["site4Char"] = site4char
     global_var_dict["inpGnssObsRnxFile"] = rinex_path
     
-    groops_basic_runner(xml_config_path,
+    groops_basic_runner(xml_cfg_path,
                         global_var_dict,
-                        quiet=quiet)
+                        log_dir=log_dir,
+                        dry_run=dry_run)
 
     
     ###############################################################################
@@ -540,6 +569,7 @@ def groops_ppp_full_runner(rinex_path,
     
     log.info("****** Station list edition ***************************************")
     
+    #### HARDCODED !!!!! XXXXXXXXXXXXXXXXX
     station_list_path='/opt/softs_gnss/groops/stationlists/station_list_OPERA_01a.txt'
     F=open(station_list_path,"w+")
     F.write(site4char)
@@ -552,7 +582,7 @@ def groops_ppp_full_runner(rinex_path,
     
     log.info("****** Processing run *********************************************")
     
-    xml_config_path=config_files_root_dir + "040_groopsGnssProcessing_v03a.xml"
+    xml_cfg_path=cfg_files_root_dir + cfg_files_dict["gnssProcessing"] 
     
     global_var_dict = dict()
     global_var_dict["igsAC10Char"] = igs_ac_10char
@@ -560,42 +590,18 @@ def groops_ppp_full_runner(rinex_path,
     global_var_dict["timeStart"] = date_rnx_mjd
     global_var_dict["timeEnd"]   = date_rnx_mjd + 1
     
-    groops_basic_runner(xml_config_path,
+    groops_basic_runner(xml_cfg_path,
                         global_var_dict,
-                        quiet=quiet)
+                        log_dir=log_dir,
+                        dry_run=dry_run)
 
     
+    log.info("****** GROOPS RUNNER End ******************************************")
+    log.info("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
     
     return
 
 ### ===========================================================================
 ### ===========================================================================
 
-rinex_path = "/vol/ovpf/miroir_ovpf/DonneesAcquisition/geodesie/GPSData/2023/008/fjag0080.23d.Z"
-rinex_root_path = "/vol/ovpf/miroir_ovpf/DonneesAcquisition/geodesie/GPSData/"
 
-igs_ac_10char = "IGS0OPSFIN"
-igs_ac_10char = "IGS2R03FIN"
-igs_ac_10char = "COD0R03FIN"
-igs_ac_10char = "GRG6RE3FIN"
-igs_ac_10char = "TUG0R03FIN"
-igs_ac_10char = "GFZ0MGXRAP"
-igs_ac_10char = "COD0MGXFIN"
-igs_ac_10char = "GRG0MGXFIN"
-igs_ac_10char = "GRG0OPSFIN"
-
-Rinexs = operational.rinex_finder(rinex_root_path,
-                                  specific_sites=["fjag"], #,"borg","DERG","FJAG"],
-                                  start_epoch=dt.datetime(2023,1,1),
-                                  end_epoch=dt.datetime(2023,1,15))
-
-print(Rinexs)
-project_name="test_calc_PF_03"
-
-for rnx in Rinexs:
-    groops_ppp_full_runner(rnx,
-                           project_name,
-                           igs_ac_10char,
-                           vmf_tropo_root_dir = "/scratch/calcgnss/prods_tropo_vmf3",
-                           prods_gnss_root_dir = "/scratch/calcgnss/prods_gnss/",
-                           config_files_root_dir = "/opt/softs_gnss/groops/config/030_prototype3/")
