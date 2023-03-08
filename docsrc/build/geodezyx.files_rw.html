@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.files_rw package &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -221,7 +221,7 @@ Manage RINEX3
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">read_sinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sinex_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_sites_as_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.read_sinex" title="Permalink to this definition"></a></dt>
 <dd><p>Read a <em>coordinate</em> SINEX file as DataFrame</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sinex_path_in</strong> (<em>str</em>) – path of the SINEX.</p></li>
 <li><p><strong>keep_sites_as_index</strong> (<em>Bool</em><em>, </em><em>optional</em>) – use the site names as index. The default is False.</p></li>
@@ -232,10 +232,10 @@ False: do not remove them
 The default is False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DFout</strong> – SINEX DataFrame.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>DataFrame</p>
 </dd>
 </dl>
@@ -262,7 +262,7 @@ The default is False.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">read_sinex_versatile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sinex_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_date_2_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_line_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">improved_header_detection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.read_sinex_versatile" title="Permalink to this definition"></a></dt>
 <dd><p>Read a block from a SINEX and return the data as a DataFrame</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sinex_path_in</strong> (<em>str</em>) – Description param1</p></li>
 <li><p><strong>id_block</strong> (<em>str</em>) – Name of the block (without “+” or “-“)</p></li>
@@ -279,10 +279,10 @@ Default is True</p></li>
 Default is True</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DF</strong> – Returned DataFrame</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Pandas DataFrame</p>
 </dd>
 </dl>
@@ -351,7 +351,7 @@ SORTIE : 2 x liste de dt</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">station_info_2_gins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statinfoin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordfilein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordfile_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pbovelfile'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_stats_lis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ellipsoid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GRS80'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">station_info_columns_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sopac'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.station_info_2_gins" title="Permalink to this definition"></a></dt>
 <dd><p>Convert a GAMIT station.info to a GINS stations files</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>statinfoin</strong> (<em>str</em>) – path of input station.info.</p></li>
 <li><p><strong>coordfilein</strong> (<em>str</em>) – path of input coordinates files.</p></li>
@@ -364,10 +364,10 @@ The default is ‘pbovelfile’.</p></li>
 handles “sopac” or “ulr” yet. The default is “sopac”.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>outfile</strong> – path of GINS outfile.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -395,7 +395,7 @@ as inp_gzip_file</p>
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.write_latlontime_file_4_OTPS_tide">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">write_latlontime_file_4_OTPS_tide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outfilepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_inp_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tide_model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./DATA/Model_atlas'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_relative_path_in_inp_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.write_latlontime_file_4_OTPS_tide" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outfilepath</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
 <li><p><strong>lat</strong> (<em>TYPE</em>) – DESCRIPTION.</p></li>
@@ -410,10 +410,10 @@ if None, strt is a list. The default is None.</p></li>
 <li><p><strong>set_relative_path_in_inp_file</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – DESCRIPTION. The default is True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>outdir</strong> – DESCRIPTION.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>TYPE</p>
 </dd>
 </dl>
@@ -450,7 +450,7 @@ lat&lt;0 - degrees South, lon&lt;0 - degrees West</p>
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.write_station_info_from_datalists">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">write_station_info_from_datalists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">period_lis_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">station_info_out_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.write_station_info_from_datalists" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>period_lis_lis</strong> (<em>list</em><em> of </em><em>lists</em>) – list of lists of periods.</p></li>
 <li><p><strong>site_lis</strong> (<em>list</em>) – list of sites.</p></li>
@@ -458,7 +458,7 @@ lat&lt;0 - degrees South, lon&lt;0 - degrees West</p>
 <li><p><strong>station_info_out_path</strong> (<em>str</em>) – the full path (directory+name) of the generated station.info.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None.</p>
 </dd>
 </dl>
@@ -493,13 +493,13 @@ are produced by:</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_athmo.</span></span><span class="sig-name descname"><span class="pre">Tropsinex_DataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_sinex_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_athmo.Tropsinex_DataFrame" title="Permalink to this definition"></a></dt>
 <dd><p>General description</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>read_sinex_result</strong> – List values from read_snx_trop function</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>troposphere information from SINEX in Dataframe</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>DF_Sinex</p>
 </dd>
 </dl>
@@ -511,13 +511,13 @@ are produced by:</p>
 <dd><p>This function reads tropospheric solution in TRP format from Bernese
 GNSS software</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>trpfile</strong> – Filename of TRP file from Bernese</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Tropospheric solutions from Bernese in Dataframe</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>DF</p>
 </dd>
 </dl>
@@ -530,13 +530,13 @@ GNSS software</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_athmo.</span></span><span class="sig-name descname"><span class="pre">read_gfz_trop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trpfile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_athmo.read_gfz_trop" title="Permalink to this definition"></a></dt>
 <dd><p>This function is reading GFZ troposphere sinex into Pandas DataFrame</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>trpfile</strong> (<em>Str</em>) – File name of GFZ troposphere sinex.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DF</strong> – Pandas Dataframe of GFZ troposphere sinex.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Pandas DataFrame</p>
 </dd>
 </dl>
@@ -547,13 +547,13 @@ GNSS software</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_athmo.</span></span><span class="sig-name descname"><span class="pre">read_rinex_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metfile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_athmo.read_rinex_met" title="Permalink to this definition"></a></dt>
 <dd><p>This function reads RINEX Meteorological files and convert to Pandas DataFrame</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>metfile</strong> – Path of RINEX Meteorological file in List/String (e.g. made with glob)</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Meteorological data in DataFrame</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>DF</p>
 </dd>
 </dl>
@@ -587,10 +587,10 @@ GNSS software</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_misc.</span></span><span class="sig-name descname"><span class="pre">stations_in_EPOS_sta_coords_file_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords_file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_misc.stations_in_EPOS_sta_coords_file_mono" title="Permalink to this definition"></a></dt>
 <dd><p>Gives stations in a EPOS coords. file (YYYY_DDD_sta_coordinates)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>coords_file_path</strong> (<em>str</em>) – path of the EPOS coords. file.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>epoch</strong> (<em>datetime</em>) – the main mean epoch in the EPOS coords. file.</p></li>
 <li><p><strong>stats_list</strong> (<em>list</em>) – list of 4 char station list.</p></li>
@@ -605,16 +605,16 @@ GNSS software</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_misc.</span></span><span class="sig-name descname"><span class="pre">stations_in_coords_file_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files_path_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sinex'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_misc.stations_in_coords_file_multi" title="Permalink to this definition"></a></dt>
 <dd><p>Gives stations list in a SINEX or EPOS coords. file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>files_path_list</strong> (<em>iterable</em><em> (</em><em>list</em><em>)</em>) – path of the SINEX/coords files list (e.g. made with glob).</p></li>
 <li><p><strong>files_type</strong> (<em>str</em><em>, </em><em>optional</em>) – “sinex” or “EPOS_sta_coords” depending on the type. The default is “sinex”.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>datadico</strong> – a dico with stat 4 char. code as key and epoch list as values (for timeline_plotter)</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict.</p>
 </dd>
 </dl>
@@ -625,10 +625,10 @@ GNSS software</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_misc.</span></span><span class="sig-name descname"><span class="pre">stations_in_sinex_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sinex_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_misc.stations_in_sinex_mono" title="Permalink to this definition"></a></dt>
 <dd><p>Gives stations list in a SINEX file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>sinex_path</strong> (<em>str</em>) – path of the SINEX file.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>epoch</strong> (<em>datetime</em>) – the main mean epoch in the SINEX.</p></li>
 <li><p><strong>stats_list</strong> (<em>list</em>) – list of 4 char station list.</p></li>
@@ -738,7 +738,7 @@ If convert_to_time : time in sec</p>
 <dd><p>Read an GFZ EPOS’s coordinate file.
 To read several files at the same time see read_epos_sta_coords_multi</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filein</strong> (<em>str</em>) – path of the input coordinate file.</p></li>
 <li><p><strong>return_df</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, returns the coordinates as a Pandas DataFrame.
@@ -746,10 +746,10 @@ if False, return a list of GeodeZYX’s point objects (advanced)
 The default is True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Ouput coordinates.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>DataFrame or List of Points</p>
 </dd>
 </dl>
@@ -760,7 +760,7 @@ The default is True.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_epos_sta_coords_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DataFrame'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_epos_sta_coords_multi" title="Permalink to this definition"></a></dt>
 <dd><p>Read several GFZ EPOS’s coordinate files.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filein_list</strong> (<em>list</em>) – list of input coordinate files inputs.</p></li>
 <li><p><strong>output_type</strong> (<em>str</em><em>, </em><em>optional</em>) – “DataFrame”: returns a Pandas DataFrame containing the coordinates
@@ -768,10 +768,10 @@ The default is True.</p></li>
 The default is “DataFrame”.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>OUT</strong> – See “output_type” input parameter.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>DataFrame or dict</p>
 </dd>
 </dl>
@@ -783,7 +783,7 @@ The default is “DataFrame”.</p></li>
 <dd><p>Read several GFZ EPOS’s coordinate files.
 Legacy version</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filein_list</strong> (<em>list</em>) – list of input coordinate files inputs.</p></li>
 <li><p><strong>return_dict</strong> (<em>bool</em><em>, </em><em>optional</em>) – True: returns a dictionary of GeodeZYX’s TimeSeries objects
@@ -791,10 +791,10 @@ Legacy version</p>
 The default is True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>OUT</strong> – See “return_dict” input parameter.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict or list</p>
 </dd>
 </dl>
@@ -854,17 +854,17 @@ pour obtenir UNE SEULE timeserie</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_gins_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cinematic'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_gins_solution" title="Permalink to this definition"></a></dt>
 <dd><p>Read a GINS solution file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filein</strong> (<em>str</em>) – path of the input file.</p></li>
 <li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – cinematic : retrun a TimeSerie
 static : retrun a point</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>output Time Series.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>TimeSeries or Point object</p>
 </dd>
 </dl>
@@ -892,13 +892,13 @@ sont automatiquement exclus</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_gipsy_apps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_gipsy_apps" title="Permalink to this definition"></a></dt>
 <dd><p>Read GIPSY APPS (Online tool) File</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filein</strong> (<em>str</em>) – input file path.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>tsout</strong> – output TimeSerie.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>TimeSeries Object</p>
 </dd>
 </dl>
@@ -909,13 +909,13 @@ sont automatiquement exclus</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_gipsy_bosser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_gipsy_bosser" title="Permalink to this definition"></a></dt>
 <dd><p>Read P. Bosser (&#64;ENSTA Brest) File (GIPSY)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filein</strong> (<em>str</em>) – input file path.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>tsout</strong> – output TimeSerie.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>TimeSeries Object</p>
 </dd>
 </dl>
@@ -932,17 +932,22 @@ sont automatiquement exclus</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_gipsy_tdp_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filelistin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_gipsy_tdp_list" title="Permalink to this definition"></a></dt>
 <dd><p>Read Several GIPSY TDP (Time Dependent Parameter) Files</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filelistin</strong> (<em>list</em>) – input file paths in a list.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>tsout</strong> – output TimeSerie.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>TimeSeries Object</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_groops_position">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_groops_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Filesin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_groops_position" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_hector_neu">
@@ -960,18 +965,18 @@ sont automatiquement exclus</p>
 <dd><p>From a “Jump” File (P. Sakic internal file)
 Return a dictionnairy with events</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filein</strong> (<em>str</em>) – path of the Jump File</p></li>
 <li><p><strong>returned_events</strong> (<em>tuple</em><em> or </em><em>list</em>) – contains the inital letter of the event type which will be stored in the dico
 (See below)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>jump_dico</strong> – outputed events, in the form jump_dico[“STAT”][“L”] = datetime
 where L is the inital letter of the event type</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict of dict of datetime</p>
 </dd>
 </dl>
@@ -1068,13 +1073,13 @@ OUTPUT : Une TimeSeriePoint</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_tdp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_tdp" title="Permalink to this definition"></a></dt>
 <dd><p>Read GIPSY TDP (Time Dependent Parameter) File</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filein</strong> (<em>str</em>) – input file path.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>tsout</strong> – output TimeSerie.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>TimeSeries Object</p>
 </dd>
 </dl>
@@ -1085,13 +1090,13 @@ OUTPUT : Une TimeSeriePoint</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_track" title="Permalink to this definition"></a></dt>
 <dd><p>Read GAMIT/TRACK File</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filein</strong> (<em>str</em>) – input file path.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>tsout</strong> – output TimeSerie.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>TimeSeries Object</p>
 </dd>
 </dl>
@@ -1102,17 +1107,22 @@ OUTPUT : Une TimeSeriePoint</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_track_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_track_2" title="Permalink to this definition"></a></dt>
 <dd><p>Read a kinematic track file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filein</strong> (<em>str</em>) – path of the file.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DF</strong></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Pandas DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_webobs">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_webobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typein</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'txt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordtreat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_webobs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.sorting_a_calais_file">
@@ -1144,13 +1154,13 @@ OUTPUT : Une TimeSeriePoint</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_eop.</span></span><span class="sig-name descname"><span class="pre">read_bull_B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_eop.read_bull_B" title="Permalink to this definition"></a></dt>
 <dd><p>Read an Bulletin B file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file_path_in</strong> (<em>str</em>) – Path of the file in the local machine.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DFout</strong> – Returns a panda table format with the data extracted from the file.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>pandas DataFrame</p>
 </dd>
 </dl>
@@ -1161,13 +1171,13 @@ OUTPUT : Une TimeSeriePoint</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_eop.</span></span><span class="sig-name descname"><span class="pre">read_eop_C04</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_eop.read_eop_C04" title="Permalink to this definition"></a></dt>
 <dd><p>read EOP C04 file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file_path_in</strong> (<em>str</em>) – path of the EOP C04 file.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DF</strong> – out DataFrame.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>DataFrame</p>
 </dd>
 </dl>
@@ -1178,14 +1188,14 @@ OUTPUT : Une TimeSeriePoint</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_eop.</span></span><span class="sig-name descname"><span class="pre">read_eop_finals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precnut_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simplified_EOP_DF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mixed'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_eop.read_eop_finals" title="Permalink to this definition"></a></dt>
 <dd><p>read EOP finals file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_path_in</strong> (<em>str</em>) – path of the EOP finals file.</p></li>
 <li><p><strong>precnut_model</strong> (<em>int</em><em>, </em><em>optional</em>) – IAU Precession-Nutation Model. Valid values are 1980 and 2000.
 The default is 2000.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>DF</strong> (<em>DataFrame</em>) – out DataFrame - Complete content of the finals file.</p></li>
 <li><p><strong>DF2</strong> (<em>DataFrame</em>) – out DataFrame - Simplified content of the finals file.
@@ -1207,17 +1217,17 @@ If no Bulletin-B values provided, use Bulletin-A.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_eop.</span></span><span class="sig-name descname"><span class="pre">read_erp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_eop.read_erp" title="Permalink to this definition"></a></dt>
 <dd><p>Read IGS Analysis Center ERP files</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_path_in</strong> (<em>str</em>) – Path of the file in the local machine.</p></li>
 <li><p><strong>ac</strong> (<em>str</em>) – The analysis center that will be used.
 If not precised, will be the first 3 letters of the input name</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>out1</strong> – Returns a panda table format with the data extracted from the file.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>pandas table</p>
 </dd>
 </dl>
@@ -1235,7 +1245,7 @@ If not precised, will be the first 3 letters of the input name</p></li>
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_eop.read_erp_multi">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_eop.</span></span><span class="sig-name descname"><span class="pre">read_erp_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smart_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_eop.read_erp_multi" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path_list</strong> (<em>list</em>) – a list of ERP files.</p></li>
 <li><p><strong>return_array</strong> (<em>ool</em><em>, </em><em>optional</em>) – retur results in Array or DataFrame. The default is False.</p></li>
@@ -1244,10 +1254,10 @@ The default is True.</p></li>
 <li><p><strong>ac</strong> (<em>str</em><em>, </em><em>optional</em>) – select a specific AC. The default is None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>output ERPs.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Array or DataFrame</p>
 </dd>
 </dl>
@@ -1258,10 +1268,10 @@ The default is True.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_eop.</span></span><span class="sig-name descname"><span class="pre">read_erp_snx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snx_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_eop.read_erp_snx" title="Permalink to this definition"></a></dt>
 <dd><p>Read ERP in SINEX Format</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>snx_in</strong> (<em>str</em>) – path of the SINEX file.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None.</p>
 </dd>
 </dl>
@@ -1290,13 +1300,13 @@ GitHub repository :
 this function should not be used anymore</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>AC1</strong> (<em>DataFrame</em>) – Orbit DataFrame 1.</p></li>
 <li><p><strong>AC2</strong> (<em>DataFrame</em>) – Orbit DataFrame 2.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>AC1_ok</strong> (<em>DataFrame</em>) – Cleaned Orbit DataFrame 1.</p></li>
 <li><p><strong>AC2_ok</strong> (<em>DataFrame</em>) – Cleaned Orbit DataFrame 2.</p></li>
@@ -1320,14 +1330,14 @@ should be discontinued</p>
 <dd><p>Read an IGS clk file
 Slow and complex, use read_clk instead</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_path_in</strong> (<em>str</em>) – Path of the file in the local machine.</p></li>
 <li><p><strong>returns_pandas</strong> (<em>bool</em>) – Define if pandas function will be used to put the data on tables</p></li>
 <li><p><strong>interval</strong> (<em>int</em>) – Defines which interval should be used in the data tables. The interval is always in minutes unit.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>out1</strong> (<em>float or int oandas table</em>) – Returns a panda table format with the data extracted from the file.</p></li>
 <li><p><strong>out2</strong> (<em>list</em>) – In case of the pandas function are not in use, the return will be a list with the data extract from the file.</p></li>
@@ -1353,17 +1363,17 @@ Slow and complex, use read_clk instead</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">clk_decimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.clk_decimate" title="Permalink to this definition"></a></dt>
 <dd><p>Decimate a .clk file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_in</strong> (<em>str</em>) – path of the input clk file.</p></li>
 <li><p><strong>file_out</strong> (<em>str</em>) – path of the output clk file.</p></li>
 <li><p><strong>step</strong> (<em>int</em><em>, </em><em>optional</em>) – decimation step in sec. The default is 300.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>file_out</strong> – path of the output clk file.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -1374,16 +1384,16 @@ Slow and complex, use read_clk instead</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">clk_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.clk_diff" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the clock differences between two .clk file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_1</strong> (<em>str</em>) – file 1 path.</p></li>
 <li><p><strong>file_2</strong> (<em>str</em>) – file 2 path.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DFdiff</strong> – clock differences epoch byx epoch between the two files.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>DataFrame</p>
 </dd>
 </dl>
@@ -1394,7 +1404,7 @@ Slow and complex, use read_clk instead</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">read_clk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names_4char</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.read_clk" title="Permalink to this definition"></a></dt>
 <dd><p>Read an IGS clk file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_path_in</strong> (<em>str</em>) – Path of the file in the local machine.
 can handle gzip-compressed file (with .gz/.GZ extension)</p></li>
@@ -1402,10 +1412,10 @@ can handle gzip-compressed file (with .gz/.GZ extension)</p></li>
 (new naming convention is longer)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DFclk</strong> – Returns a panda table format with the data extracted from the file.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>pandas DataFrame</p>
 </dd>
 </dl>
@@ -1421,13 +1431,13 @@ can handle gzip-compressed file (with .gz/.GZ extension)</p></li>
 <dd><p>Get the clock values from a SP3 file of an Orbit DataFrame,
 formated as a Clock DataFrame</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file_path_or_DForb_in</strong> (<em>str</em><em> or </em><em>DataFrame</em>) – the input SP3 file path or an Orbit DataFrame.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DFclk_sp3</strong> – Clock DataFrame.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>DataFrame</p>
 </dd>
 </dl>
@@ -1439,7 +1449,7 @@ formated as a Clock DataFrame</p>
 <dd><p>Read a SP3 file (GNSS Orbits standard file) and return X,Y,Z coordinates
 for each satellite and for each epoch</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_path_in</strong> (<em>str</em>) – path of the SP3 file
 can handle gzip-compressed file (with .gz/.GZ or .Z extension)</p></li>
@@ -1456,7 +1466,7 @@ to get milimeters : 10**6</p></li>
 Default is False</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>df</strong> (<em>Pandas DataFrame</em>) – if returns_pandas == True</p></li>
 <li><p><strong>epoch_stk ,  Xstk , Ystk , Zstk , Clkstk</strong> (<em>lists</em>) – if returns_pandas == False</p></li>
@@ -1472,7 +1482,7 @@ Default is False</p></li>
 <dd><p>Read a SP3 file header and return a Pandas DataFrame
 with sat. PRNs and sigmas contained in the header</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sp3_in</strong> (<em>str</em><em> or </em><em>list</em>) – <p>path of the SP3 file
 can handle gzip-compressed file (with .gz/.GZ extension)</p>
@@ -1483,10 +1493,10 @@ can handle gzip-compressed file (with .gz/.GZ extension)</p>
 (necessary when read_sp3_header is used as a subfunction of read_sp3)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>Header_DF</strong> – 2 columns “sat”, “sigma”</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Pandas DataFrame</p>
 </dd>
 </dl>
@@ -1502,13 +1512,13 @@ can handle gzip-compressed file (with .gz/.GZ extension)</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">sp3_DataFrame_zero_epoch_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFsp3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.sp3_DataFrame_zero_epoch_filter" title="Permalink to this definition"></a></dt>
 <dd><p>Filter an Orbit DataFrame (from a SP3) by removing the null epochs</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>DFsp3</strong> (<em>DataFrame</em>) – Orbit DataFrame (from a SP3).</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DFsp3_out</strong> – Filtered Orbit DataFrame.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>DataFrame</p>
 </dd>
 </dl>
@@ -1519,17 +1529,17 @@ can handle gzip-compressed file (with .gz/.GZ extension)</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">sp3_decimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.sp3_decimate" title="Permalink to this definition"></a></dt>
 <dd><p>Decimate a SP3 file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_in</strong> (<em>str</em>) – path of the input SP3 file.</p></li>
 <li><p><strong>file_out</strong> (<em>str</em>) – path of the output SP3 file.</p></li>
 <li><p><strong>step</strong> (<em>int</em><em>, </em><em>optional</em>) – decimation step in minutes. The default is 15.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>file_out</strong> – path of the output SP3 file.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -1666,7 +1676,7 @@ GitHub repository :
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_logsheets.</span></span><span class="sig-name descname"><span class="pre">mono_logsheet_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logsheet_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_lists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_logsheets.mono_logsheet_read" title="Permalink to this definition"></a></dt>
 <dd><p>Read a sigle LogSheet File to Logsheet block objects</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>logsheet_path</strong> (<em>str</em>) – Logsheet path.</p></li>
 <li><p><strong>return_lists</strong> (<em>Bool</em><em>, </em><em>optional</em>) – The default is False.
@@ -1676,7 +1686,7 @@ write_station_info_from_datalists function.
 Useful only for such write_&lt;…&gt; functions.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>period_lis</strong> (<em>List of Period Block Object</em>) – Period description in Period Block Object.</p></li>
 <li><p><strong>sit</strong> (<em>Site Block Object</em>) – Site description in Site Block Object.</p></li>
@@ -1692,7 +1702,7 @@ Useful only for such write_&lt;…&gt; functions.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_logsheets.</span></span><span class="sig-name descname"><span class="pre">multi_logsheet_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wildcardin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'*log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dico</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'classic'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_logsheets.multi_logsheet_read" title="Permalink to this definition"></a></dt>
 <dd><p>Read multiple logsheets</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pathin</strong> (<em>list</em><em> or </em><em>str.</em>) – If list: list of the Logsheet paths.
 If str: path of the directory containing the Logsheets.</p></li>
@@ -1713,10 +1723,10 @@ period_lis as a DataFrame
 The default is ‘classic’.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>stations_dico</strong> – a dictionnary like stations_dico[‘STAT’] = (period_lis, station, loc).</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -1727,7 +1737,7 @@ The default is ‘classic’.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_logsheets.</span></span><span class="sig-name descname"><span class="pre">read_blocks_logsheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_logsheets.read_blocks_logsheet" title="Permalink to this definition"></a></dt>
 <dd><p>Read a Logsheet Block</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_file</strong> (<em>str</em>) – Logsheet path.</p></li>
 <li><p><strong>block_id</strong> (<em>int</em>) – the ID of the wished block.
@@ -1742,12 +1752,12 @@ The default is ‘classic’.</p></li>
 etc. etc. …</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>ObjList</strong> – List of Block Objects.
 Warning: if the Block contains only one sub-block
 Then the output is a 1-item List</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>List of Block Objects</p>
 </dd>
 </dl>
@@ -1772,13 +1782,13 @@ GitHub repository :
 <dd><p>Remove the Loss of Lock Indicator (LLI) and Signal Strength Indicator (SSI)
 columns in a DataFrame RINEX</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>DFrnx_in</strong> (<em>Pandas DataFrame / GeodeZYX's RINEX format</em>) – A RINEX DataFrame with LLI/SSI columns.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DFrnx_out</strong> – A RINEX DataFrame without LLI/SSI columns.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
 </dd>
 </dl>
@@ -1789,14 +1799,14 @@ columns in a DataFrame RINEX</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">observables_dict_per_sys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFrnx_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.observables_dict_per_sys" title="Permalink to this definition"></a></dt>
 <dd><p>Gives the GNSS observables for each GNSS system in a dictionnary</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>DFrnx_in</strong> (<em>Pandas DataFrame / GeodeZYX's RINEX format</em>) – A RINEX DataFrame.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>dict_sys_obs</strong> – A dictionnary with GNSS system as key (G,R,E…).
 And the observalbes for each system as values</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -1807,19 +1817,22 @@ And the observalbes for each system as values</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">read_rinex2_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.read_rinex2_obs" title="Permalink to this definition"></a></dt>
 <dd><p>Read a RINEX Observation, version 2</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rnx_in</strong> (<em>str</em>) – path of the input RINEX.</p></li>
+<li><p><strong>rnx_in</strong> (<em>see below</em>) – input RINEX.
+can be the path of a RINEX file as string or as Path object,
+or directly the RINEX content as a string, bytes, StringIO object or a
+list of lines</p></li>
 <li><p><strong>set_index</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – define the columns for the index.
 If None, the output DataFrame is “flat”, with integer index
 [“epoch”,”prn”] for instance set the epoch and the prn as MultiIndex
 The default is None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DFrnxobs</strong></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
 </dd>
 </dl>
@@ -1830,19 +1843,22 @@ The default is None.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">read_rinex3_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.read_rinex3_obs" title="Permalink to this definition"></a></dt>
 <dd><p>Read a RINEX Observation, version 3 or 4</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rnx_in</strong> (<em>str</em>) – path of the input RINEX.</p></li>
+<li><p><strong>rnx_in</strong> (<em>see below</em>) – input RINEX.
+can be the path of a RINEX file as string or as Path object,
+or directly the RINEX content as a string, bytes, StringIO object or a
+list of lines</p></li>
 <li><p><strong>set_index</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – define the columns for the index.
 If None, the output DataFrame is “flat”, with integer index
 [“epoch”,”prn”] for instance set the epoch and the prn as MultiIndex
 The default is None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DFrnxobs</strong></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
 </dd>
 </dl>
@@ -1858,7 +1874,7 @@ The default is None.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_slr.</span></span><span class="sig-name descname"><span class="pre">read_pdm_res_slr_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res_file_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sol'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_slr.read_pdm_res_slr_mono" title="Permalink to this definition"></a></dt>
 <dd><p>Read a PDM7 res(idual) file for SLR Validation</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>res_file_in</strong> (<em>str</em>) – path of the input res file.</p></li>
 <li><p><strong>sol</strong> (<em>str</em><em> or </em><em>lambda fct</em>) – solution name
@@ -1866,10 +1882,10 @@ if it is a lambda fct, it will grab the sol name from the full residual path
 e.g. : solnam = lambda x: x.split(“/”)[-5][4:]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DFout</strong> – output DataFrame.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Pandas DataFrame</p>
 </dd>
 </dl>
@@ -1880,7 +1896,7 @@ e.g. : solnam = lambda x: x.split(“/”)[-5][4:]</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_slr.</span></span><span class="sig-name descname"><span class="pre">read_pdm_res_slr_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Res_file_list_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sol'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_slr.read_pdm_res_slr_multi" title="Permalink to this definition"></a></dt>
 <dd><p>Read a PDM7 res(idual) file for SLR Validation</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Res_file_list_in</strong> (<em>list</em><em> of </em><em>str</em>) – List of path of the input res files.</p></li>
 <li><p><strong>sol</strong> (<em>str</em><em> or </em><em>lambda fct</em>) – solution name
@@ -1888,10 +1904,10 @@ if it is a lambda fct, it will grab the sol name from the full residual path
 e.g. : solnam = lambda x: x.split(“/”)[-5][4:]</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DFout</strong> – output DataFrame</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Pandas DataFrame</p>
 </dd>
 </dl>
@@ -1922,7 +1938,7 @@ GitHub repository :
 <dd><p>Generate an SP3 Orbit file with overlap based on the SP3s of the
 days before and after</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ac_list</strong> (<em>list</em>) – 3-character codes of the ACs.</p></li>
 <li><p><strong>dir_in</strong> (<em>str</em>) – where the input sp3 are.</p></li>
@@ -1945,7 +1961,7 @@ between the 3 days. Thus, exclude the missing sats for a complete day</p>
 <li><p><strong>const</strong> (<em>string</em><em>, </em><em>optional</em>) – if just to keep one constellation (e.g.: G)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None.</p>
 </dd>
 </dl>
@@ -1962,7 +1978,7 @@ not implemented for new names</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_clk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFclk_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'orb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_std_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.write_clk" title="Permalink to this definition"></a></dt>
 <dd><p>Write a SP3 Clock file from an Clock DataFrame</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>DFclk_in</strong> (<em>DataFrame</em>) – Input Clock DataFrame.</p></li>
 <li><p><strong>outpath</strong> (<em>str</em>) – The output path of the file (see also outname).</p></li>
@@ -1976,7 +1992,7 @@ The default is None.</p></li>
 <li><p><strong>output_std_values</strong> (<em>bool</em><em>, </em><em>optional</em>) – Add observation sigmas as the last column. The default is False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>The string containing the formatted clock data.</p>
 </dd>
 </dl>
@@ -1987,7 +2003,7 @@ The default is None.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_epos_sta_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DF_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_wrt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'site'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_time_limit_for_first_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_time_limit_for_last_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soln_in_DF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TRF_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xTRFnn'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.write_epos_sta_coords" title="Permalink to this definition"></a></dt>
 <dd><p>Write an EPOS coordinate file</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>DF_in</strong> (<em>DataFrame</em>) – Input Orbit DataFrame.</p></li>
 <li><p><strong>file_out</strong> (<em>str</em>) – The output path of the file.</p></li>
@@ -2001,7 +2017,7 @@ The default is True.</p></li>
 The default is True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None.</p>
 </dd>
 </dl>
@@ -2024,7 +2040,7 @@ The default is True.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_sp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SP3_DF_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'orb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_null_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_format_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.write_sp3" title="Permalink to this definition"></a></dt>
 <dd><p>Write a SP3 file from an Orbit DataFrame</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>SP3_DF_in</strong> (<em>DataFrame</em>) – Input Orbit DataFrame.</p></li>
 <li><p><strong>outpath</strong> (<em>str</em>) – The output path of the file (see also outname).</p></li>
@@ -2039,7 +2055,7 @@ The default is True.</p></li>
 <li><p><strong>force_format_c</strong> (<em>bool</em><em>, </em><em>optional</em>) – force SP3’s format c. The default is False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>The string containing the formatted SP3 data.</p>
 </dd>
 </dl>

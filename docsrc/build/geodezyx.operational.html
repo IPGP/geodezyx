@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.operational package &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -58,11 +58,13 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.anubis_frontend">geodezyx.operational.anubis_frontend module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.cluster_gfz">geodezyx.operational.cluster_gfz module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.download_cddis">geodezyx.operational.download_cddis module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.download_dropbox">geodezyx.operational.download_dropbox module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.download_find_files">geodezyx.operational.download_find_files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.download_prods">geodezyx.operational.download_prods module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.download_rinex">geodezyx.operational.download_rinex module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.download_utils">geodezyx.operational.download_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.gins_runner">geodezyx.operational.gins_runner module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.groops_frontend">geodezyx.operational.groops_frontend module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.hector_frontend">geodezyx.operational.hector_frontend module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.midas_frontend">geodezyx.operational.midas_frontend module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.rinex_lister_plotter">geodezyx.operational.rinex_lister_plotter module</a></li>
@@ -74,6 +76,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 </ul>
 </li>
@@ -121,7 +124,7 @@
 <dd><p>Run an Anubis quality check
 Designed for Anubis 3.3</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rnx_inp</strong> (<em>str</em><em> or </em><em>list</em>) – Input RINEXs. can be a RINEX path list,
 or the path of the parent archive directory</p></li>
@@ -147,10 +150,10 @@ The default is True.</p></li>
 The default is “/home/psakicki/SOFTWARE/ANUBIS/anubis-3.3.3613-lin-shared-64b”.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>XML_INP_LIST</strong> – list of the generated XML config files.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -173,7 +176,7 @@ GitHub repository :
 <dt class="sig sig-object py" id="geodezyx.operational.cluster_gfz.cluster_GFZ_run">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.cluster_gfz.</span></span><span class="sig-name descname"><span class="pre">cluster_GFZ_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commands_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bunch_on_off</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bunch_job_nbr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bunch_wait_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_on_off</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_mini_nbr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_wait_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_cjob_cmd_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_sleeping_before_launch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.cluster_gfz.cluster_GFZ_run" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>commands_list</strong> (<em>list</em><em> of </em><em>str</em>) – List of commands you want to run (one command per job).</p></li>
 <li><p><strong>bunch_on_off</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, send all the jobs to the cluster at once.
@@ -200,7 +203,7 @@ The default is True.</p></li>
 The default is 5.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None.</p>
 </dd>
 </dl>
@@ -237,7 +240,7 @@ GitHub repository :
 <dd><p>Download sp3 weekly files for repro3 products, from cddis (NASA).
 Note: For the moment is only for sp3 and clk.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>week_ini</strong> (<em>GPS week for download</em>) – </p></li>
 <li><p><strong>fmt</strong> (<em>searching format file e.g. sp3</em>) – </p></li>
@@ -245,7 +248,7 @@ Note: For the moment is only for sp3 and clk.</p>
 <li><p><strong>out_path</strong> (<em>path where the products will be download</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>No returns.</p>
 </dd>
 </dl>
@@ -256,7 +259,7 @@ Note: For the moment is only for sp3 and clk.</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_cddis.</span></span><span class="sig-name descname"><span class="pre">list_daily_files_ftp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftp_dir_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sp3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'COD'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">week</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1900</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dayw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_cddis.list_daily_files_ftp" title="Permalink to this definition"></a></dt>
 <dd><p>List files inside one directory in a ftp serve. Note that this uses an anonymous user.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ftp_dir_list</strong> (<em>list with the files in the ftp</em><em> (</em><em>comming from the previous fct: list_file_in_ftp</em><em>)</em>) – </p></li>
 <li><p><strong>fmt</strong> (<em>searching format file e.g. sp3</em>) – </p></li>
@@ -265,7 +268,7 @@ Note: For the moment is only for sp3 and clk.</p>
 <li><p><strong>day</strong> (<em>day</em><em> of </em><em>the week</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>Return a list with the the information about the directory.</p>
 </dd>
 </dl>
@@ -276,15 +279,93 @@ Note: For the moment is only for sp3 and clk.</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_cddis.</span></span><span class="sig-name descname"><span class="pre">list_file_in_ftp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mansur&#64;gfz-potsdam.de'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gdc.cddis.eosdis.nasa.gov'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gnss/products/repro3/1900'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_cddis.list_file_in_ftp" title="Permalink to this definition"></a></dt>
 <dd><p>List files inside one directory in a ftp serve. Note that this uses an anonymous user.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>email</strong> (<em>login email</em>) – </p></li>
 <li><p><strong>host</strong> (<em>ftp server</em>) – </p></li>
 <li><p><strong>directory</strong> (<em>directory inside the server</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>Return a list with the the information about the directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.download_dropbox">
+<span id="geodezyx-operational-download-dropbox-module"></span><h2>geodezyx.operational.download_dropbox module<a class="headerlink" href="#module-geodezyx.operational.download_dropbox" title="Permalink to this heading"></a></h2>
+<p>Created on Thu Feb  2 14:37:57 2023</p>
+<p>&#64;author: psakic</p>
+<p>Based on
+<a class="reference external" href="https://practicaldatascience.co.uk/data-science/how-to-use-the-dropbox-api-with-python">https://practicaldatascience.co.uk/data-science/how-to-use-the-dropbox-api-with-python</a></p>
+<p>The Dropbox app parameters are here
+<a class="reference external" href="https://www.dropbox.com/developers">https://www.dropbox.com/developers</a></p>
+<dl class="simple">
+<dt>The important permission parameters are:</dt><dd><p>sharing.write
+the other can be read only</p>
+</dd>
+</dl>
+<p>reset the token after changing the permissions!</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_dropbox.dropbox_connect">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_dropbox.</span></span><span class="sig-name descname"><span class="pre">dropbox_connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dropbox_access_token</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_dropbox.dropbox_connect" title="Permalink to this definition"></a></dt>
+<dd><p>Create a connection to Dropbox.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_dropbox.dropbox_list_files">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_dropbox.</span></span><span class="sig-name descname"><span class="pre">dropbox_list_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dbx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_dropbox.dropbox_list_files" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dbx</strong> (<em>dropbox.dropbox_client.Dropbox</em>) – The dropbox_connect output object.</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – the path of your Dropbox folder.
+(the root folder with your name not included)
+e.g.
+dropbox_path = “/split_2021_c/”
+dropbox_path = “/TE/RINEX 3.04/” + str(year)
+dropbox_path = “/RINEX 3.04/” + str(year)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – a Pandas dataframe of files in a given Dropbox folder
+path in the Apps directory.</p></li>
+<li><p><strong>files</strong> (<em>list of dropbox.files.FileMetadata</em>) – list of dropbox.files.FileMetadata.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_dropbox.dropbox_wget_cmds">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_dropbox.</span></span><span class="sig-name descname"><span class="pre">dropbox_wget_cmds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFfiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir_dwnld_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir_cmd_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmd_list_suffix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_get_temp_link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_get_perma_link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teria_archive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_dropbox.dropbox_wget_cmds" title="Permalink to this definition"></a></dt>
+<dd><p>Generate URL and wget commands to download files from a dropbox
+Especially to manage Teria’s RINEXs but no only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DFfiles</strong> (<em>DataFrame</em>) – Files DataFrame outputed from dropbox_list_files.</p></li>
+<li><p><strong>dbx</strong> (<em>dropbox.dropbox_client.Dropbox</em>) – The dropbox_connect output object.</p></li>
+<li><p><strong>out_dir_dwnld_files</strong> (<em>str</em>) – directory for the future downloaded files.</p></li>
+<li><p><strong>out_dir_cmd_list</strong> (<em>str</em>) – directory for the URL list/wget commands.</p></li>
+<li><p><strong>cmd_list_suffix</strong> (<em>str</em>) – suffix for the URL list/wget commands files.</p></li>
+<li><p><strong>run_get_temp_link</strong> (<em>bool</em><em>, </em><em>optional</em>) – request temporary link. The default is False.</p></li>
+<li><p><strong>run_get_perma_link</strong> (<em>bool</em><em>, </em><em>optional</em>) – request permanent link. Recommeded. Overrides run_get_temp_link.
+The default is True.</p></li>
+<li><p><strong>teria_archive</strong> (<em>bool</em><em>, </em><em>optional</em>) – manage time for the Teria archive. The default is True.</p></li>
+<li><p><strong>start_date</strong> (<em>datetime</em><em>, </em><em>optional</em>) – start date. The default is dt.datetime(1980,1,1).</p></li>
+<li><p><strong>end_date</strong> (<em>datetime</em><em>, </em><em>optional</em>) – end date. The default is dt.datetime(2099,1,1).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>WgetList</strong> (<em>list</em>) – list of wget commands.</p></li>
+<li><p><strong>UrlDF</strong> (<em>DataFrame</em>) – DataFrame of the download URLs.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -308,7 +389,7 @@ GitHub repository :
 <dd><p>Find all product files in a parent folder which correspond to file type(s),
 AC(s) and date(s)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>parent_dir</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – The parent directory (i.e. the archive) where files are stored
 can be a string (path of the archive) or a list of file paths
 (given by the function utils.find_recursive) in order to gain time</p>
@@ -351,10 +432,10 @@ Implemented only for the  old naming format (for the moment)</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><strong>Files_select_cumul_list</strong> – List of files found</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -376,7 +457,7 @@ operational.rinex_finder</p>
 <dt class="sig sig-object py" id="geodezyx.operational.download_find_files.rinex_finder">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_find_files.</span></span><span class="sig-name descname"><span class="pre">rinex_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gfz_godc_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_find_files.rinex_finder" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>main_dir</strong> (<em>str</em>) – main directory where the RINEXs are stored.</p></li>
 <li><p><strong>short_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – check if the pattern matches a short name RINEX. The default is True.</p></li>
@@ -393,10 +474,10 @@ Can be for instance
 The default is None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>Files_rnx_lis</strong> – Found RINEXs list.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -431,7 +512,7 @@ GitHub repository :
 <dd><p>Download IGS products. Can manage MGEX products too
 (see archive_center argument)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>archive_dir</strong> (<em>str</em>) – Parent archive directory where files will be stored</p></li>
 <li><p><strong>enddate</strong> (<em>startdate &amp;</em>) – Start and End of the wished period</p></li>
@@ -483,10 +564,10 @@ in the chrono. order</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>localfiles_lis</strong> – list of downloaded products paths</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list of str</p>
 </dd>
 </dl>
@@ -532,7 +613,7 @@ Naming will be done automaticcaly based on the 3 first charaters of the
 long AC id
 e.g. CODE =&gt; cod, GRGS =&gt; grg, NOAA =&gt; noa …</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>longname_filepath_in</strong> (<em>str</em>) – Full path of the long name product file</p></li>
 <li><p><strong>rm_longname_file</strong> (<em>bool</em>) – Remove the original long name product file</p></li>
@@ -546,10 +627,10 @@ overrides center_id_last_letter</p></li>
 if None, will be created in the same folder as the input longname</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>shortname_filepath</strong> – Path of the  short old-named product file</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -645,7 +726,7 @@ string describing how the archive directory is structured, e.g :</p>
 <dt class="sig sig-object py" id="geodezyx.operational.download_rinex.multi_downloader_rinex">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">multi_downloader_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statdico</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorted_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_ftp_crawler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_archive_for_sup_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.multi_downloader_rinex" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>statdico</strong> (<em>dict</em>) – <p>a statdico is a dictionary associating Archives Centers to list of stations</p>
 <dl>
 <dt>Exemple:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">statdico</span><span class="p">[</span><span class="s1">&#39;archive center 1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;STA1&#39;</span><span class="p">,</span><span class="s1">&#39;STA2&#39;</span><span class="p">,</span><span class="s1">&#39;STA3&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
@@ -717,7 +798,7 @@ useful if the final archive is different from archive_dir</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
 <li><p><strong>url_list</strong> (<em>list of str</em>) – list of URLs</p></li>
 <li><p><strong>savedir_list</strong> (<em>list of str</em>) – list of downloaded products paths</p></li>
@@ -849,7 +930,7 @@ optimized FTP crawl</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">start_end_date_easy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_doy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_doy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.start_end_date_easy" title="Permalink to this definition"></a></dt>
 <dd><p>generates start/end datetimes from a start/end year/day of year</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>start_year</strong> (<em>int</em>) – start year.</p></li>
 <li><p><strong>start_doy</strong> (<em>int</em>) – start day of year.</p></li>
@@ -857,7 +938,7 @@ optimized FTP crawl</p>
 <li><p><strong>end_doy</strong> (<em>int</em>) – end day of year.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>start</strong> (<em>datetime</em>) – converted start datetime.</p></li>
 <li><p><strong>end</strong> (<em>datetime</em>) – converted end datetime.</p></li>
@@ -1177,6 +1258,90 @@ eg : i = 18 for filename KARIB_MK3_FLH_v2__bara_22282_2011_003</p>
 <dd></dd></dl>
 
 </section>
+<section id="module-geodezyx.operational.groops_frontend">
+<span id="geodezyx-operational-groops-frontend-module"></span><h2>geodezyx.operational.groops_frontend module<a class="headerlink" href="#module-geodezyx.operational.groops_frontend" title="Permalink to this heading"></a></h2>
+<p>Created on Tue Jan 17 10:54:49 2023</p>
+<p>&#64;author: psakicki</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.groops_frontend.groops_basic_runner">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">groops_basic_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_cfg_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_var_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xml_var_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groops_bin_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/opt/softs_gnss/groops/bin/groops'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.groops_frontend.groops_basic_runner" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xml_cfg_path</strong> (<em>str</em><em>, </em><em>optional</em>) – the XML config file for GROOPS. The default is “”.</p></li>
+<li><p><strong>global_var_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionnary to change the global variables values, like:
+global_var_dict[“global_var_name”] = new_value
+The default is dict().</p></li>
+<li><p><strong>xml_var_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionnary to change the values in the config XML file.
+Not implemented yet.
+The default is dict().</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True print the command but do not run it . The default is False.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – print the detailled GROOPS’s output. The default is False.</p></li>
+<li><p><strong>log_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – If provided, directory where the logs are stored. The default is None.</p></li>
+<li><p><strong>groops_bin_path</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – Path of the GROOPS bin.
+The default is ‘/opt/softs_gnss/groops/bin/groops’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.groops_frontend.groops_ppp_full_runner">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">groops_ppp_full_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">igs_ac_10char</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_files_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmf_tropo_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prods_gnss_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_files_root_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.groops_frontend.groops_ppp_full_runner" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.groops_frontend.log_subprocess_output">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">log_subprocess_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.groops_frontend.log_subprocess_output" title="Permalink to this definition"></a></dt>
+<dd><p>Intern fuction for subprocess_frontend2
+to write the stdout/err in the console logger + a logfile</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.groops_frontend.subprocess_frontend2">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">subprocess_frontend2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_name_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'out.log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_name_err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'err.log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logname_timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">err_also_in_outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_objt_level_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_objt_level_err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.groops_frontend.subprocess_frontend2" title="Permalink to this definition"></a></dt>
+<dd><p>A generic frontend to run an extern command through subprocess
+and write the stdout and stderr outputs in log files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cmd_in</strong> (<em>str</em>) – The subprocess command.</p></li>
+<li><p><strong>save_log</strong> (<em>str</em><em>, </em><em>optional</em>) – export as log the stdout/stderr in files. The default is True.</p></li>
+<li><p><strong>log_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – directory where the logs will be stored. The default is None.</p></li>
+<li><p><strong>log_name_out</strong> (<em>str</em><em>, </em><em>optional</em>) – filename of the stdout log. The default is “out.log”.</p></li>
+<li><p><strong>log_name_err</strong> (<em>str</em><em>, </em><em>optional</em>) – filename of the stderr log. The default is “err.log”.</p></li>
+<li><p><strong>logname_timestamp</strong> (<em>str</em><em>, </em><em>optional</em>) – add a timestamp as prefix. The default is True.</p></li>
+<li><p><strong>logger_objt_level_out</strong> (<em>method</em><em> of </em><em>a Logger object</em><em>, </em><em>optional</em>) – set the logger level of the stdout messages.
+can be logger.info or logger.debug for instance.
+The default is None (logger.info per default then).</p></li>
+<li><p><strong>logger_objt_level_err</strong> (<em>method</em><em> of </em><em>a Logger object</em><em>, </em><em>optional</em>) – set the logger level of the stderr messages.
+can be logger.error or logger.critical for instance.
+The default is None (logger.error per default then).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>exitcode</strong> – the exit code of the command.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Inspired by:
+<a class="reference external" href="https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging">https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging</a>
+And for the threading:
+<a class="reference external" href="https://stackoverflow.com/questions/6809590/merging-a-python-scripts-subprocess-stdout-and-stderr-while-keeping-them-disti">https://stackoverflow.com/questions/6809590/merging-a-python-scripts-subprocess-stdout-and-stderr-while-keeping-them-disti</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.groops_frontend.vmf_tropo_downloader">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">vmf_tropo_downloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2019,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2019,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'VMF3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'OP'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.groops_frontend.vmf_tropo_downloader" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
 <section id="module-geodezyx.operational.hector_frontend">
 <span id="geodezyx-operational-hector-frontend-module"></span><h2>geodezyx.operational.hector_frontend module<a class="headerlink" href="#module-geodezyx.operational.hector_frontend" title="Permalink to this heading"></a></h2>
 <p>&#64;author: psakic</p>
@@ -1288,15 +1453,15 @@ GitHub repository :
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.midas_frontend.</span></span><span class="sig-name descname"><span class="pre">midas_vel_files_2_pandas_DF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vel_files_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.midas_frontend.midas_vel_files_2_pandas_DF" title="Permalink to this definition"></a></dt>
 <dd><p>Convert MIDAS Velocity files to a Pandas DataFrame</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>vel_files_in</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – if list of str, will consider directly the files inside the list
 if str, can be the path of a single file, or a generic (wilcard) path
 to consider several files</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DF</strong></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Pandas DataFrame</p>
 </dd>
 </dl>
@@ -1328,13 +1493,13 @@ in the name the statname and the date</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">rinex_check_epochs_availability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.rinex_check_epochs_availability" title="Permalink to this definition"></a></dt>
 <dd><p>Gives simple statistics about RINEX avaiability for all the listed stations</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>rinex_path_list</strong> (<em>list</em>) – A list of rinex paths</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>T</strong> – a table with statistics.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -1348,16 +1513,16 @@ path can be a string or a tuple of string =&gt; manage multi paths :)</p>
 <p>is very similar with softs_runner.multi_finder_rinex,
 gins_runner.get_rinex_list and operational.rinex_finder</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (<em>str</em>) – archive path.</p></li>
 <li><p><strong>add_long_names</strong> (<em>bool</em><em>, </em><em>optional</em>) – consider new names. The default is True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>rinexfilelist</strong> – list of rinex files.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -1370,7 +1535,7 @@ gins_runner.get_rinex_list and operational.rinex_finder</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">rinex_timeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputlist_or_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rinex_lister</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dots_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jul_date_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim_start_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.rinex_timeline" title="Permalink to this definition"></a></dt>
 <dd><p>Frontend function to plot the aviable RINEXs</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inputlist_or_paths</strong> (<em>iterable</em>) – list of rinex file paths or list of archive directories.</p></li>
 <li><p><strong>start</strong> (<em>datetime</em><em>, </em><em>optional</em>) – start of the plot time span. The default is dt.datetime(1980,1,1).</p></li>
@@ -1387,7 +1552,7 @@ The default is False.</p></li>
 The default is False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>datadico</strong> (<em>dict</em>) – datadico.</p></li>
 <li><p><strong>fig</strong> (<em>matplotlib figure</em>) – figure</p></li>
@@ -1402,7 +1567,7 @@ The default is False.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">rinex_timeline_datadico</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputlist_or_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rinex_lister</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.rinex_timeline_datadico" title="Permalink to this definition"></a></dt>
 <dd><p>Generate a RINEX datadico</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inputlist_or_paths</strong> (<em>iterable</em>) – list of rinex file paths or list of archive directories.</p></li>
 <li><p><strong>use_rinex_lister</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, inputlist_or_paths is a list of archive directories.
@@ -1413,10 +1578,10 @@ Usually it is the archive name
 The default is ‘’.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>datadico</strong> – datadico[stat] = [(rinexname1,optional1,date1) … (rinexnameN,optionalN,dateN)]</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -1428,7 +1593,7 @@ The default is ‘’.</p></li>
 <dd><p>Merge different RINEXs datadico, produced by rinex_timeline_datadico
 coming from different archives</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>datadico_list</strong> (<em>list</em><em> of </em><em>dict</em>) – list of RINEX datadico.</p></li>
 <li><p><strong>priority_list</strong> (<em>list</em><em>, </em><em>optional</em>) – priority list of ‘optional_info’ (archive ID)
@@ -1437,10 +1602,10 @@ NB : it is not very useful, just sort datadico_list in the right order ….
 The default is None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>datadico_out</strong> – a merged datadico</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -1469,7 +1634,7 @@ priority_list : priority list of ‘optional_info’ (archive ID)</p>
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.timeline_plotter">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">timeline_plotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datadico</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dots_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jul_date_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datadico_anex_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_only_stats_of_main_datadico</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colordico_for_main_datadico</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim_start_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.timeline_plotter" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>datadico</strong> (<em>dict</em>) – a RINEX datadico (see rinex_timeline_datadico for details).</p></li>
 <li><p><strong>start</strong> (<em>datetime</em><em>, </em><em>optional</em>) – start of the plot time span. The default is dt.datetime(1980,1,1).</p></li>
@@ -1489,10 +1654,10 @@ The default is None.</p></li>
 The default is False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>fig</strong> – figure</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>matplotlib figure</p>
 </dd>
 </dl>
@@ -1537,17 +1702,17 @@ GitHub repository :
 <dd><p>read the epoch line of a RINEX (2 or 3)
 and extract it as a datetime</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>line</strong> (<em>string</em>) – input line, assuming it’s a RINEX epoch line.</p></li>
 <li><p><strong>rnx2</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – True if RINEX2, False if RINEX3/4.
 The default is True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>epochdt</strong> – The epoch of the line.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>datetime</p>
 </dd>
 </dl>
@@ -1558,11 +1723,12 @@ The default is True.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_read_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_rinex_path_or_string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_tzinfo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_read_epoch" title="Permalink to this definition"></a></dt>
 <dd><p>Read the epochs contained in a RINEX File. Can handle RINEX 2 and 3</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_rinex_path_or_string</strong> (<em>str</em>) – path of the rinex file.
-can be the path of a RINEX or directly
-the RINEX content as a string</p></li>
+<li><p><strong>input_rinex_path_or_string</strong> (<em>see below</em>) – input RINEX.
+can be the path of a RINEX file as string or as Path object,
+or directly the RINEX content as a string, bytes, StringIO object or a
+list of lines</p></li>
 <li><p><strong>interval_out</strong> (<em>bool</em><em>, </em><em>optional</em>) – output also the intervals. The default is False.</p></li>
 <li><p><strong>add_tzinfo</strong> (<em>bool</em><em>, </em><em>optional</em>) – add timezone information in the datetime’s Epoches.
 The default is False.</p></li>
@@ -1572,10 +1738,10 @@ The default is True.</p></li>
 The default is False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the epochs in the RINEX.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>array or list</p>
 </dd>
 </dl>
@@ -1593,10 +1759,10 @@ The default is False.</p></li>
 <p>Designed for checking the consistency of IPGP-OVPF corrupted RINEXs
 RINEX-2 only</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>p_rnx</strong> (<em>str</em>) – input RINEX path.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>bad RINEX path or None.</p>
 </dd>
 </dl>
@@ -1635,7 +1801,7 @@ delta of interval_size - 1s</p>
 (based on the actual content of the file, not the header)</p>
 <p>Can handle RINEX 2 and 3</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_rinex_path</strong> (<em>TYPE</em>) – path of the rinex file.
 can be the path of a RINEX or directly
@@ -1649,10 +1815,10 @@ activate a reading of the header and the file name as backup.
 The default is True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>First, las epoches and interval if asked.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>first_epoch , last_epoch , [interval]</p>
 </dd>
 </dl>
@@ -1663,14 +1829,14 @@ The default is True.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinexs_table_from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnxs_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site9_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinexs_table_from_list" title="Permalink to this definition"></a></dt>
 <dd><p>From a simple RINEX list, summarize the data in an ad-hoc DataFrame</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>rnxs_inp</strong> (<em>iterable</em><em> or </em><em>str</em>) – if iterable, a list of RINEX files
 if str, path of an input RINEX list as text file.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>DF</strong> – A DataFrame with the RINEX info in it.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Pandas DataFrame</p>
 </dd>
 </dl>
