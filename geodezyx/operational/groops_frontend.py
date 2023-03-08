@@ -20,9 +20,6 @@ import time
 import logging
 log = logging.getLogger(__name__)
 
-
-
-
 def log_subprocess_output(pipe,logger=None,file=None,file2=None):
     """
     Intern fuction for subprocess_frontend2
@@ -141,9 +138,13 @@ def subprocess_frontend2(cmd_in,
     
     ### Get out/err simultaneously
     stdout_thread = Thread(target=log_subprocess_output,
-                           args=(process.stdout,loggerout,out_file))
+                           args=(process.stdout,
+                                 loggerout,
+                                 out_file))
     stderr_thread = Thread(target=log_subprocess_output,
-                           args=(process.stderr,loggererr,err_file,
+                           args=(process.stderr,
+                                 loggererr,
+                                 err_file,
                                  err_in_outfile))
     
     stderr_thread.start()

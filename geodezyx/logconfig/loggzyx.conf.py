@@ -8,18 +8,18 @@ keys=consoleHandler
 keys=sampleFormatter
 
 [logger_root]
-level=INFO
+level=DEBUG
 handlers=consoleHandler
 
 [logger_sampleLogger]
-level=INFO
+level=DEBUG
 handlers=consoleHandler
 qualname=sampleLogger
 propagate=0
 
 [handler_consoleHandler]
 class=StreamHandler
-level=INFO
+level=DEBUG
 formatter=sampleFormatter
 args=(sys.stdout,)
 
