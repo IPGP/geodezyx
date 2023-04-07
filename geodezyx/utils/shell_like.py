@@ -315,7 +315,7 @@ def find_recursive(parent_folder , pattern,
         Sort results
         
     case_sensitive : bool
-        Case sensitve or not. If False, the pattern *must* be a regex
+        Case sensitive or not. If False, the pattern *must* be a regex
         
     extended_file_stats : bool
         if True, returns the stats of the files
@@ -514,7 +514,7 @@ def fileprint(output,outfile):
 
 
 def write_in_file(string_to_write,outdir_or_outpath,
-                  outname="",ext='.txt',encoding='utf8'):
+                  outname="",ext='.txt',encoding='utf8',append=False):
     """
     encoding : utf8, latin_1
     https://docs.python.org/3/library/codecs.html#standard-encodings
@@ -527,7 +527,13 @@ def write_in_file(string_to_write,outdir_or_outpath,
     else:
         outpath = outdir_or_outpath
         
-    F = open(outpath,'w+',encoding=encoding)
+    if append:
+        aw = "a+"
+    else:
+        aw = "w+"
+        
+        
+    F = open(outpath,aw,encoding=encoding)
     F.write(string_to_write)
     F.close()
     return outpath
