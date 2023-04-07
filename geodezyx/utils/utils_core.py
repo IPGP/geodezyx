@@ -892,7 +892,7 @@ def alphabet_reverse(letter=None):
 
 def dday():
     D = (dt.datetime(2016,10,14) - dt.datetime.now()).days
-    print('J -',  D , 'avant la quille')
+    log.info('J - %s avant la quille',D)
     return D
 
 def Aformat(A,landscape=True):
