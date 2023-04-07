@@ -210,6 +210,9 @@ def anubis_runner(rnx_inp,
         ### start to modifiy the XML
         xmltree = et.parse(xml_config_generic)
     
+        if type(nav_path) is list: #hotfix 230406 ... must be investigated!
+            nav_path = nav_path[0]
+
         # set input files
         xmltree.find('.//rinexo').text = rnx_path
         xmltree.find('.//rinexn').text = nav_path

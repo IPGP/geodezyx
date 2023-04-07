@@ -529,12 +529,14 @@ def write_in_file(string_to_write,outdir_or_outpath,
         
     if append:
         aw = "a+"
+        newline = "\n"
     else:
         aw = "w+"
+        newline = ""
         
         
     F = open(outpath,aw,encoding=encoding)
-    F.write(string_to_write)
+    F.write(string_to_write + newline)
     F.close()
     return outpath
 
