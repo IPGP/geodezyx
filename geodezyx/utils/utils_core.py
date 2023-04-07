@@ -41,7 +41,6 @@ import io
 import logging
 log = logging.getLogger(__name__)
 
-
 ##########  END IMPORT  ##########
 
 
@@ -892,7 +891,10 @@ def alphabet_reverse(letter=None):
 
 def dday():
     D = (dt.datetime(2016,10,14) - dt.datetime.now()).days
-    print('J -',  D , 'avant la quille')
+    print("used logger",log)
+    log.warning('J - %s avant la quille !!!',D)
+    log.info('J - %s avant la quille',D)
+    log.debug('J - %s avant la quille, chill',D)
     return D
 
 def Aformat(A,landscape=True):
