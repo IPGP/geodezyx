@@ -532,7 +532,6 @@ def write_in_file(string_to_write,outdir_or_outpath,
     else:
         aw = "w+"
         
-        
     F = open(outpath,aw,encoding=encoding)
     F.write(string_to_write)
     F.close()
