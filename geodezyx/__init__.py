@@ -41,12 +41,16 @@ import time
 import urllib
 import uuid
 
-#### IMPORT CONFIG FOR LOGGER
-log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'logconfig','loggzyx.conf.py')
 
+#### IMPORT CONFIG FOR LOGGER
+log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'logconfig','loggzyx.py')
+from . import logconfig
 if os.path.isfile(log_file_path):
     ##print("INFO:",log_file_path,"found")
-    logging.config.fileConfig(fname=log_file_path, disable_existing_loggers=False)
+    ###### old config file format
+    ###logging.config.fileConfig(fname=log_file_path, disable_existing_loggers=False)
+    ###### new dict
+    logging.config.dictConfig(logconfig.loggzyx.log_config_dict)
 else:
     print("ERR:logger config file",log_file_path,"is missing")
 
