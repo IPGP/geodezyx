@@ -19,6 +19,7 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 
 ########## BEGIN IMPORT ##########
 #### External modules
+import datetime as dt
 import numpy as np
 import pandas as pd
 from io import StringIO
@@ -115,6 +116,7 @@ def read_rinex2_obs(rnx_in,
         
         ### for each sat, merge the breaked lines
         Lines_obs = Lines_epoc[iline_sats_end+1:iline_end]
+        Lines_obs = [e.replace("\r","") for e in Lines_obs] # not 100% sure of this
         Lines_obs = [e.replace("\n","") for e in Lines_obs]
         Lines_obs_merg = [Lines_obs[nlines_for_obs*n:nlines_for_obs*n+nlines_for_obs] for n in range(nsat)]
         Lines_obs_merg = ["".join(e) for e in Lines_obs_merg]
@@ -196,7 +198,6 @@ def read_rinex3_obs(rnx_in,
     ## clean SYS / # / OBS TYPES
     Lines_sys = [l[:60] for l in Lines_sys]
     
-    
     ## manage the 2 lines systems
     for il,l in enumerate(Lines_sys):
         if l[0] == " ":
@@ -235,12 +236,16 @@ def read_rinex3_obs(rnx_in,
             iline_end = EPOCHS[iepoc+1,1]
         
         Lines_epoc = LINES[iline_start:iline_end]
-        
+        ###  Remove CR (Carriage Return) and LF (Line Feed) 
+        Lines_epoc = [l.replace('\r', '') for l in Lines_epoc]
+        Lines_epoc = [l.replace('\n', '') for l in Lines_epoc]
+                
         ## read the epoch block using pandas' fixed width reader 
-        B = StringIO("".join(Lines_epoc))
+        B = StringIO("\n".join(Lines_epoc))
+        
         columns_width = [3] + nobs_max*[14,1,1]
         DFepoch = pd.read_fwf(B,header=None,widths=columns_width)      
-        
+               
         DFepoch_ok_stk = []
         #### assign the correct observable names for each system
         for sys in dict_sys_use.keys():
