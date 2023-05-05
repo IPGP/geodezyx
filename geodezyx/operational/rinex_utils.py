@@ -538,14 +538,14 @@ def rinex_start_end(input_rinex_path,interval_out=False,
         last_epoch = last_epoch.replace(tzinfo=dateutil.tz.tzutc())
 
     if verbose:
-        log.info("first & last epochs: %s %s" , first_epoch , last_epoch)
+        log.debug("first & last epochs: %s %s" , first_epoch , last_epoch)
     if not interval_out:
         return first_epoch , last_epoch
     else:
         interv_lis = np.diff(epochs_list)
         interv_lis = [e.seconds + e.microseconds * 10**-6 for e in interv_lis]
         interval   = utils.most_common(interv_lis)
-        log.info("interval, last epoch: %s %s" , interval , last_epoch)
+        log.debug("interval, last epoch: %s %s" , interval , last_epoch)
 
         #return interv_lis , epochs_list
         return first_epoch , last_epoch , interval
