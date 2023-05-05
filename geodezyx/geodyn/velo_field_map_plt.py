@@ -26,6 +26,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 try:
+    import netCDF4
     from mpl_toolkits.basemap import Basemap
 except:
     pass
@@ -56,7 +57,6 @@ log = logging.getLogger(__name__)
 # ------------------
 
 def landmask(M, color='0.8'):
-
    # Make a constant colormap, default = grey
    constmap = matplotlib.colors.ListedColormap([color])
 
@@ -68,8 +68,8 @@ def landmask(M, color='0.8'):
    Y = -0.5 + np.arange(jmax+1)
 
    # Draw the mask by pcolor
-   M = ma.masked_where(M > 0, M)
-   pl.pcolor(X, Y, M, shading='flat', cmap=constmap)
+   M = np.ma.masked_where(M > 0, M)
+   plt.pcolor(X, Y, M, shading='flat', cmap=constmap)
 
 # -------------
 # Colormap
@@ -84,7 +84,7 @@ def LevelColormap(levels, cmap=None):
     
     # Start with an existing colormap
     if cmap == None:
-        cmap = pl.get_cmap()
+        cmap = plt.get_cmap()
 
     # Spread the colours maximally
     nlev = len(levels)
@@ -129,9 +129,6 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
              draw_borders=True,
              full_return=False,
              draw_latlon_lines=True):
-    """
-    """
-    
     
     nstation = len(station_etude)
     fig,ax=plt.subplots(figsize=(7,8))  
@@ -142,7 +139,6 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
         incve_ITRF = np.zeros(len(station_etude))
     if incplot_vertical_ITRF is None:
         incplot_vertical_ITRF = np.zeros(len(station_etude))
-        
 
     if coarse_lines:
         resolution="l"
@@ -170,8 +166,8 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
         color1='black'
     else:
         color1='white'
-        levels = [-8000,-7000,-6000,-5500,-5000,-4500,-4000]#Niveaux pour l'echelle de couleur
-        gebconc = Dataset(path+'GEBCO\\GRIDONE_2D.nc')    
+        levels = [-8000,-7000,-6000,-5500,-5000,-4500,-4000] #Niveaux pour l'echelle de couleur
+        gebconc = netCDF4.Dataset(path+'GEBCO\\GRIDONE_2D.nc')    
         #Vecteur longitudes/latitudes
         long_ini = gebconc.variables['lon'][:]
         lats_ini = gebconc.variables['lat'][:]
@@ -181,7 +177,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
         fond = m.pcolormesh(longs_gr,lats_gr,
                             gebco,shading='flat',
                             cmap=LevelColormap(list(np.asarray(levels)*(1)),
-                                               cmap=cm.deep_r),
+                                               cmap='deep_r'), # cmap=cm.deep_r
                             latlon=True) #ice,deep
         cbar=m.colorbar(location='top',pad=0.5)
         cbar.set_label('Depth [m] ', rotation=0)
@@ -240,7 +236,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
             x_end_arrow_ok = all_posx_proj[i]+np.multiply(ve_ITRF[i],scale_arrow)
             y_end_arrow_ok = all_posy_proj[i]+np.multiply(vn_ITRF[i],scale_arrow)
             
-            ax.annotate(s='', 
+            ax.annotate(text='', 
                          xy=(x_end_arrow_ok,
                              y_end_arrow_ok), 
                          xytext=(all_posx_proj[i], all_posy_proj[i]) , 
@@ -325,7 +321,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                 arrow_prop_dict_V = arrow_prop_dict_V_down_short
                                 
             ### PLOT      
-            ax.annotate(s='',
+            ax.annotate(text='',
                       xy=(x_end_arrow_ok , y_end_arrow_ok),
                       xytext=(all_posx_proj[i], all_posy_proj[i]) , 
                       arrowprops=arrow_prop_dict_V,
@@ -378,7 +374,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
     ### fin de la fleche de legende                
     xe,ye = xl+np.multiply(legend_arrow_length_metric,scale_arrow),yl
     
-    plt.annotate(s='', xy=(xe,ye), xytext=(xl, yl) , 
+    plt.annotate(text='', xy=(xe,ye), xytext=(xl, yl) , 
                  arrowprops=arrow_prop_dict) #xy point arrivee de la fleche, xytext l'origine de la fleche
 
     props = dict(boxstyle='round', facecolor='black', alpha=0)

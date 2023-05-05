@@ -58,7 +58,7 @@ def write_rinex3(DFrnx_in,rnx_header=""):
     ## Observables
     RNX.mod_sys_obs_types(dict_sys_obs)
     ## Time first/last obs
-    RNX.mod_time_obs(RNX.start_date,)
+    RNX.mod_time_obs()
     
     return RNX#.get_rinex_as_string()
     
@@ -100,9 +100,14 @@ def write_rinex3_body(DFrnx_in):
             l = "{:3s}" + "{:14.3f}{:1d}{:1d}" * int(len(dict_sys_obs[sys])/3)
             grpsys2 = grpsys2.apply(lambda x:l.format(*x.values),axis=1)
             grpsys2 = grpsys2.apply(_lli_ssi_0_to_blank)
+            ### we still have to replace the non-LLI/SSI NaN
+            grpsys2 = grpsys2.apply(lambda x:x.replace("nan", "   "))
+
             
-        lines_stk = lines_stk + list(grpsys2)
-        
+            lines_stk = lines_stk + list(grpsys2)
+    
+    ## last line must be a blank one
+    lines_stk.append("")
     rnx_str_out = "\n".join(lines_stk)
     
     return rnx_str_out, dict_sys_obs
