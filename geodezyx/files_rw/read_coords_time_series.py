@@ -58,7 +58,7 @@ def read_all_points(filein):
         tsout = read_gipsy_bosser(filein)
 
     elif re.compile('STA').search(firstline) or re.compile('tdp').search(filein) or re.compile('TRPAZ').search(firstline):
-        tsout = read_tdp(filein)
+        tsout = read_gipsy_tdp(filein)
 
     elif re.compile('YY  MM DD HR MIN').search(firstline):
         tsout = read_track(filein)
@@ -187,7 +187,7 @@ def read_rtklib(filein):
  #  \____/|_|    |______/_/   \_____|_____|_|    |_____/   |_|    |_|    |_|_|\___||___/
                                                                                       
 
-def read_tdp(filein):
+def read_gipsy_tdp(filein):
     """
     Read GIPSY TDP (Time Dependent Parameter) File
 
@@ -243,12 +243,62 @@ def read_tdp(filein):
     return tsout
 
 
-def read_gipsy_tdp(filein):
+def read_gipsyx_tdp(filein):
     """
-    Wrapper of read_tdp 
+    Read GIPSY TDP (Time Dependent Parameter) File
+
+    Parameters
+    ----------
+    filein : str
+        input file path.
+
+    Returns
+    -------
+    tsout : TimeSeries Object
+        output TimeSerie.
     """
-    # pour un nom plus explicite (et qui evitera de recoder la fct ...)
-    return read_tdp(filein)
+
+
+    X,Y,Z = np.nan,np.nan,np.nan
+    Tx , Ty , Tz, T = np.nan,np.nan,np.nan,np.nan
+    sX,sY,sZ = np.nan,np.nan,np.nan
+
+    tsout = time_series.TimeSeriePoint()
+
+    for line in open(filein):
+
+        fields = line.split()
+        attribs = fields[-1].split(".") 
+
+        if attribs[1] == 'Station' and attribs[-1] == 'Z':
+            Tz = conv.tgipsy2dt(fields[0])
+            Z  = (float(fields[2]))
+            sZ = (float(fields[3]))
+
+        if attribs[1] == 'Station' and attribs[-1] == 'Y':
+            Ty = conv.tgipsy2dt(fields[0])
+            Y  = (float(fields[2]))
+            sY = (float(fields[3]))
+
+        if attribs[1] == 'Station' and attribs[-1] == 'X':
+            Tx = conv.tgipsy2dt(fields[0])
+            X  = (float(fields[2]))
+            sX = (float(fields[3]))
+            STAT = attribs[2]
+
+        if  Tx == Ty == Tz :
+            T = Tx
+            point = time_series.Point(X,Y,Z,T,'XYZ',sX,sY,sZ)
+            tsout.add_point(point)
+
+            Tx = np.nan
+            Ty = np.nan
+            Tz = np.nan
+
+    tsout.meta_set(filein,stat=STAT)
+
+    return tsout
+
 
 
 def read_gipsy_tdp_list(filelistin):
@@ -273,6 +323,42 @@ def read_gipsy_tdp_list(filelistin):
         tslist.append(ts)
 
     tsout = time_series.merge_ts(tslist)
+    
+    stat = list(set([ts.stat for ts in tslist]))[0]
+    
+    tsout.meta_set("",stat)
+
+    return tsout
+
+
+
+
+def read_gipsyx_tdp_list(filelistin):
+    """
+    Read Several GIPSYX TDP (Time Dependent Parameter) Files
+    
+
+    Parameters
+    ----------
+    filelistin : list
+        input file paths in a list.
+
+    Returns
+    -------
+    tsout : TimeSeries Object
+        output TimeSerie.    
+    """
+
+    tslist = []
+    for fil in filelistin:
+        ts = read_gipsyx_tdp(fil)
+        tslist.append(ts)
+
+    tsout = time_series.merge_ts(tslist)
+    
+    stat = list(set([ts.stat for ts in tslist]))[0]
+    
+    tsout.meta_set("",stat)
 
     return tsout
 
