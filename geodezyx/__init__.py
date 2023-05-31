@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 #### IMPORT EXTERNAL MODULES
 import bisect
 from collections import defaultdict

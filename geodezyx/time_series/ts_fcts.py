@@ -21,11 +21,6 @@ from geodezyx import utils
 from geodezyx import time_series
 from geodezyx import reffram
 
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
 #### Import the logger
 import logging
 log = logging.getLogger(__name__)
