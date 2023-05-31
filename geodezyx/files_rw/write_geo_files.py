@@ -30,7 +30,7 @@ from geodezyx import conv
 from geodezyx import utils
 from geodezyx import files_rw
 from geodezyx import reffram
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+#from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 #### Import the logger
 import logging
