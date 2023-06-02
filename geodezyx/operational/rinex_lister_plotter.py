@@ -58,7 +58,6 @@ def rinex_lister(path,add_long_names=True):
         
     Notes
     -----
-    
     operational.rinex_finder must be used in priority !!! (July 2022)
     """
     
