@@ -23,7 +23,6 @@ import numpy as np
 import pandas as pd
 from io import StringIO
 
-import rinexfile
 
 #### geodeZYX modules
 from geodezyx import files_rw, utils
@@ -36,6 +35,8 @@ log = logging.getLogger(__name__)
 
 def write_rinex3(DFrnx_in,rnx_header=""):
     
+    import rinexfile
+
     if utils.is_iterable(DFrnx_in) and not type(DFrnx_in) is pd.DataFrame:
         DFrnx = pd.concat(DFrnx_in)
     else:
