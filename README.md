@@ -10,7 +10,7 @@
 
 **Documentation:** [https://geodezyx.github.io/geodezyx-toolbox](https://geodezyx.github.io/geodezyx-toolbox/)
 
-**GitHub repository:** [https://github.com/GeodeZYX/geodezyx-toolbox](https://github.com/GeodeZYX/geodezyx-toolbox)
+**GitHub repository:** [https://github.com/GeodeZYX/geodezyx-toolbox](https://github.com/GeodeZYX/geodezyx-toolbox) 
 
 **PyPi project:** [https://pypi.org/project/geodezyx](https://pypi.org/project/geodezyx/)
 
