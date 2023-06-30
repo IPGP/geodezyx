@@ -1180,7 +1180,7 @@ def outlier_sigma(datasigmain,threshold=3):
     moy = np.median(datasigmain)
     marge = moy * threshold
 
-    log.info("moy,threshold,margin",  moy,threshold,marge)
+    log.info("moy,threshold,margin: %f, %i, %f",  moy,threshold,marge)
 
     boolbad = np.abs(datasigmain) < marge
 

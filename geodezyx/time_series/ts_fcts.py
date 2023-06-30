@@ -262,9 +262,13 @@ def compar_plot(dico_list_in, namest = 0, namend    = 10  ,
         
     return fig
 
+
+
+
+
 def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
-           Dtype='2D3D', namest=0,namend=10,alpha = 5 , diapt = 5 , 
-           verbose=True, print_report=True,plot=True):
+           Dtype='2D3D', namest=0,namend=10,alpha = 0.8 , diapt = 5 , 
+           verbose=True, print_report=True,plot=True,interp=True):
     """
         si seuil == 0, pas de nettoyage
 
@@ -284,8 +288,6 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
     else:
         D2n3 = False
 
-    diapt=10
-    alpha=0.8
 
     if len(tstup) <= 1:
         log.error("len(tstup) <= 1 , do not compare a single element !! ;) ")
@@ -311,6 +313,7 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
 #        tsout = copy.copy(tsvar)
 #        tsout.del_data()
 
+
         if tsvar.bool_interp_uptodate == False:
             tsvar.interp_set()
 
@@ -318,6 +321,8 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
 
         tsref = tstup[0].interp_get(T,coortype=coortype)
         Aref, Bref, Cref , Tref , sA , sB , sC = tsref.to_list(coortype=coortype)
+        
+        
 
 
         # WTF IS THOSE LINES
@@ -529,9 +534,13 @@ def round_time(tsin,round_to,
     
     Tdtout = conv.round_dt(Tdtin,round_to=round_to,mode=mode,
                            python_dt_out=True)
+
+    tsout.bool_interp_uptodate = False
     
     for pt,t in zip(tsout,Tdtout):
         pt.Tset(conv.numpy_dt2dt(t))
+        
+    tsout.interp_set()
         
     return tsout
 
@@ -585,9 +594,9 @@ def sigma_cleaner(tsin,seuil=3,coortype='ABC',cleantype='any', verbose=False):
 
     A,B,C,T,sA,sB,sC = tsin.to_list(coortype)
 
-    sAout , bbsA = stats.outiler_sigma(sA,seuil)
-    sBout , bbsB = stats.outiler_sigma(sB,seuil)
-    sCout , bbsC = stats.outiler_sigma(sC,seuil)
+    sAout , bbsA = stats.outlier_sigma(sA,seuil)
+    sBout , bbsB = stats.outlier_sigma(sB,seuil)
+    sCout , bbsC = stats.outlier_sigma(sC,seuil)
 
     if cleantype == 'any':
         boolbad = bbsA * bbsB * bbsC

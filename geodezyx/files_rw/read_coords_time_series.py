@@ -244,6 +244,38 @@ def read_gipsy_tdp(filein):
     return tsout
 
 
+
+
+def read_gipsy_tdp_list(filelistin):
+    """
+    Read Several GIPSY TDP (Time Dependent Parameter) Files
+    
+
+    Parameters
+    ----------
+    filelistin : list
+        input file paths in a list.
+
+    Returns
+    -------
+    tsout : TimeSeries Object
+        output TimeSerie.    
+    """
+
+    tslist = []
+    for fil in filelistin:
+        ts = read_gipsy_tdp(fil)
+        tslist.append(ts)
+
+    tsout = time_series.merge_ts(tslist)
+    
+    stat = list(set([ts.stat for ts in tslist]))[0]
+    
+    tsout.meta_set("",stat)
+
+    return tsout
+
+
 def read_gipsyx_tdp(filein):
     """
     Read GipsyX TDP (Time Dependent Parameter) File
@@ -300,37 +332,6 @@ def read_gipsyx_tdp(filein):
 
     return tsout
 
-
-def read_gipsy_tdp_list(filelistin):
-    """
-    Read Several GIPSY TDP (Time Dependent Parameter) Files
-    
-
-    Parameters
-    ----------
-    filelistin : list
-        input file paths in a list.
-
-    Returns
-    -------
-    tsout : TimeSeries Object
-        output TimeSerie.    
-    """
-
-    tslist = []
-    for fil in filelistin:
-        ts = read_gipsy_tdp(fil)
-        tslist.append(ts)
-
-    tsout = time_series.merge_ts(tslist)
-    
-    stat = list(set([ts.stat for ts in tslist]))[0]
-    
-    tsout.meta_set("",stat)
-
-    return tsout
-
-
 def read_gipsyx_tdp_list(filelistin):
     """
     Read Several GIPSYX TDP (Time Dependent Parameter) Files
@@ -361,6 +362,75 @@ def read_gipsyx_tdp_list(filelistin):
     return tsout
 
 
+def read_gipsy_gdcov(filein):
+    
+    X,Y,Z = np.nan,np.nan,np.nan
+    Tx , Ty , Tz, T = np.nan,np.nan,np.nan,np.nan
+    sX,sY,sZ = np.nan,np.nan,np.nan
+
+    tsout = time_series.TimeSeriePoint()
+
+    F = open(filein)
+    L = F.readlines()
+    
+    ### parameters search
+    param = int(L[0].split()[0])
+    
+    Lparam = L[1:param+1]
+    Lcovar = L[param+2:]
+    
+    for line in Lparam:
+        fields = line.split()
+        attribs = fields[1].split(".") 
+        
+        if attribs[1] == 'STA' and attribs[-1] == 'Z':
+            Tz = conv.tgipsy2dt(fields[2])
+            Z  = (float(fields[3]))
+            sZ = (float(fields[4]))
+
+        if attribs[1] == 'STA' and attribs[-1] == 'Y':
+            Ty = conv.tgipsy2dt(fields[2])
+            Y  = (float(fields[3]))
+            sY = (float(fields[4]))
+
+        if attribs[1] == 'STA' and attribs[-1] == 'X':
+            Tx = conv.tgipsy2dt(fields[2])
+            X  = (float(fields[3]))
+            sX = (float(fields[4]))
+            STAT = attribs[0]
+
+        if  Tx == Ty == Tz :
+            T = Tx
+            point = time_series.Point(X,Y,Z,T,'XYZ',sX,sY,sZ)
+            tsout.add_point(point)
+
+            Tx = np.nan
+            Ty = np.nan
+            Tz = np.nan
+        
+    tsout.meta_set(filein,stat=STAT)
+
+    return tsout
+
+        
+
+def read_gipsy_gdcov_list(filelistin):
+    tslist = []
+    for fil in filelistin:
+        ts = read_gipsy_gdcov(fil)
+        tslist.append(ts)
+
+    tsout = time_series.merge_ts(tslist)
+    
+    stat = list(set([ts.stat for ts in tslist]))[0]
+    
+    tsout.meta_set("",stat)
+
+    return tsout
+
+    
+pp = "/home/psakicki/GFZ_WORK/IPGP_WORK/OVS/GNSS_OVS/2305_compar_gipsyx/2306_nf_orb_tests/230609b/HOUE/2001/2001-01-01.HOUE.gdcov_trans"
+ts = read_gipsy_gdcov(pp)
 
 def read_gipsyx_xfile(filein):
     """

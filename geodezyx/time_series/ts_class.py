@@ -720,7 +720,7 @@ class TimeSeriePoint:
 
         Returns
         -------
-        None.
+        The matplotlib Figure object.
 
         """
         

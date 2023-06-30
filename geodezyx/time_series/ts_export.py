@@ -22,7 +22,6 @@ log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
 
-
 def export_ts_figure_pdf(fig,export_path,filename,close=False):
     """ fig can accept a int (id of a Figure)
          OR the figure Object itself """
