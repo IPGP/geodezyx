@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.athmo package &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -29,8 +26,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html">
-            <img src="_static/geodezyx_toolbox_logo.png" class="logo" alt="Logo"/>
+            <a href="index.html" class="icon icon-home"> GeodeZYX Toolbox
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -55,6 +51,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
@@ -108,13 +105,13 @@
 <span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">PWV_conversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zwd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.PWV_conversion" title="Permalink to this definition"></a></dt>
 <dd><p>This function convert from Zenith Wet delay to Precipitate Water Vapor (PWV)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>zwd</strong> – Zenith wet delay in meters</p></li>
 <li><p><strong>Tm</strong> – Mean temperature of troposphere</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>PWV</em> – Precipitate Water Vapor in mm</p></li>
 <li><p><em>Sources</em></p></li>
@@ -131,10 +128,10 @@
 <span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">Tm_bevis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.Tm_bevis" title="Permalink to this definition"></a></dt>
 <dd><p>This function determines mean temperature based on surface temperature using Bevis equation</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>Ts</strong> – Surface temperature in Kelvin</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>Tm</em> – Mean temperature in Kevlin</p></li>
 <li><p><em>Sources</em></p></li>
@@ -434,7 +431,7 @@ Download at: <a class="reference external" href="https://link.springer.com/conte
 <span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">trop_saast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dry'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.trop_saast" title="Permalink to this definition"></a></dt>
 <dd><p>This subroutine determines the zenith total delay based on the equation by Saastamoinen (1972) as refined by Davis et al. (1985)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – pressure in hPa</p></li>
 <li><p><strong>dlat</strong> – ellipsoidal latitude in radians</p></li>
@@ -444,7 +441,7 @@ Download at: <a class="reference external" href="https://link.springer.com/conte
 <li><p><strong>mode</strong> – dry, wet or total</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>res</em> – zenith total delay in m (depend on mode)</p></li>
 <li><p><em>Source</em></p></li>
@@ -468,7 +465,7 @@ pp. 1593-1607, 1985.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">vmf1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ah</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.vmf1" title="Permalink to this definition"></a></dt>
 <dd><p>This subroutine determines the VMF1 (Vienna Mapping Functions 1) for specific sites.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ah</strong> – hydrostatic coefficient a</p></li>
 <li><p><strong>aw</strong> – wet coefficient a</p></li>
@@ -477,7 +474,7 @@ pp. 1593-1607, 1985.</p></li>
 <li><p><strong>zd</strong> – zenith distance in radians</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>vmf1h</em> – hydrostatic mapping function</p></li>
 <li><p><em>vmf1w</em> – wet mapping function</p></li>

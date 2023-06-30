@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.utils package &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -28,8 +25,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html">
-            <img src="_static/geodezyx_toolbox_logo.png" class="logo" alt="Logo"/>
+            <a href="index.html" class="icon icon-home"> GeodeZYX Toolbox
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -50,6 +46,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
@@ -227,7 +224,7 @@ moooeeeep solution</p>
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.find_nearest">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">find_nearest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.find_nearest" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>value of the nearest , index of the nearest</p>
 </dd>
 </dl>
@@ -243,10 +240,10 @@ moooeeeep solution</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">find_surrounding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.find_surrounding" title="Permalink to this definition"></a></dt>
 <dd><p>find the surrounding values</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>L</strong> (<em>Iterable</em>) – Input list/array.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>surrounding_values</strong> (<em>tuple</em>) – surounding values.</p></li>
 <li><p><strong>surrounding_index</strong> (<em>tuple</em>) – surounding indexes.</p></li>
@@ -456,16 +453,16 @@ GitHub repository :
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">diff_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.pandas_utils.diff_pandas" title="Permalink to this definition"></a></dt>
 <dd><p>Differentiate a Pandas DataFrame, if index is time</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>DF</strong> (<em>Pandas DataFrame</em>) – input DataFrame</p></li>
 <li><p><strong>col_name</strong> (<em>str</em>) – the column of the DataFrame you want to differentiate</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>DSout</strong> – Differenciated column of the input DataFrame</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Pandas DataFrame</p>
 </dd>
 </dl>
@@ -567,7 +564,7 @@ GitHub repository :
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">figure_saver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figobjt_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.png',</span> <span class="pre">'.pdf',</span> <span class="pre">'.figpik')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transparent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.figure_saver" title="Permalink to this definition"></a></dt>
 <dd><p>This function provides a front end to export pretty-print plots</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>figobjt_in</strong> (<em>matplotlib Figure object</em>) – input matplotlib Figure object. use for instance plt.gcf() to get it.</p></li>
 <li><p><strong>outdir</strong> (<em>str</em>) – the output directory.</p></li>
@@ -581,10 +578,10 @@ The default is None.</p></li>
 <li><p><strong>transparent</strong> (<em>bool</em><em>, </em><em>optional</em>) – make the plot transparent. The default is False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>outpath_stk</strong> – output paths of the plots.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>string or list of string</p>
 </dd>
 </dl>
@@ -595,7 +592,7 @@ The default is None.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">gaussian_for_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.gaussian_for_plot" title="Permalink to this definition"></a></dt>
 <dd><p>generate a gaussian curve for histogram plot</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>D</strong> (<em>iterable</em>) – data vector.</p></li>
 <li><p><strong>density</strong> (<em>bool</em><em>, </em><em>optional</em>) – Adapted curve for desity mode. The default is False.</p></li>
@@ -603,7 +600,7 @@ The default is None.</p></li>
 <li><p><strong>nsigma</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – n sigmas for the x axis. The default is 3.5.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>Xpdf</strong> (<em>array</em>) – gaussian curve x.</p></li>
 <li><p><strong>Ypdf_out</strong> (<em>TYPE</em>) – gaussian curve x.</p></li>
@@ -631,16 +628,16 @@ replace dico bc. set is not supproted as key</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">set_size_for_pub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">418.25368</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.set_size_for_pub" title="Permalink to this definition"></a></dt>
 <dd><p>Set aesthetic figure dimensions to avoid scaling in latex.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>width</strong> (<em>float</em>) – Width in pts</p></li>
 <li><p><strong>fraction</strong> (<em>float</em>) – Fraction of the width which you wish the figure to occupy</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>fig_dim</strong> – Dimensions of figure in inches</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
@@ -717,10 +714,10 @@ retourne un booleen</p>
 <dd><p>Check if a file is empty or not.
 NB : Also check if the file exists</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fpath</strong> (<em>str</em>) – the file path</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>True</em> – the file is empty or does not exist</p></li>
 <li><p><em>False</em> – the file exists and is not empty</p></li>
@@ -743,14 +740,14 @@ NB : Also check if the file exists</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">find_recursive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extended_file_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_if_empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.find_recursive" title="Permalink to this definition"></a></dt>
 <dd><p>Find files in a folder and his sub-folders in a recursive way</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parent_folder</strong> (<em>str</em>) – the parent folder path</p></li>
 <li><p><strong>pattern</strong> (<em>str</em>) – the researched files pattern name (can manage wildcard or regex)
 * wildcard (only * and ?) for case_sensitive = True
 * regex for case_sensitive = False</p></li>
 <li><p><strong>sort_results</strong> (<em>bool</em>) – Sort results</p></li>
-<li><p><strong>case_sensitive</strong> (<em>bool</em>) – Case sensitve or not. If False, the pattern <em>must</em> be a regex</p></li>
+<li><p><strong>case_sensitive</strong> (<em>bool</em>) – Case sensitive or not. If False, the pattern <em>must</em> be a regex</p></li>
 <li><p><strong>extended_file_stats</strong> (<em>bool</em>) – <p>if True, returns the stats of the files
 the outputed matches list will be a list of tuples
 (file_path,stat_object), where stat_object has the following attributes</p>
@@ -773,7 +770,7 @@ the outputed matches list will be a list of tuples
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>matches</strong> (<em>list</em>) – Found files</p></li>
 <li><p><em>Source</em></p></li>
@@ -856,7 +853,7 @@ file : juste les fichiers</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subst</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.replace" title="Permalink to this definition"></a></dt>
 <dd><p>Replace a string in a file with a substitute</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_path</strong> (<em>str</em>) – path of the file.</p></li>
 <li><p><strong>pattern</strong> (<em>str</em>) – string to be replaced.</p></li>
@@ -869,7 +866,7 @@ file : juste les fichiers</p>
 <p><a class="reference external" href="http://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python">http://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python</a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None.</p>
 </dd>
 </dl>
@@ -904,7 +901,7 @@ parent_dir</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.shell_like.write_in_file">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">write_in_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string_to_write</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir_or_outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.txt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.write_in_file" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">write_in_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string_to_write</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir_or_outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.txt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf8'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.write_in_file" title="Permalink to this definition"></a></dt>
 <dd><p>encoding : utf8, latin_1
 <a class="reference external" href="https://docs.python.org/3/library/codecs.html#standard-encodings">https://docs.python.org/3/library/codecs.html#standard-encodings</a></p>
 <p>check the following commented old version if troubles</p>
@@ -975,7 +972,7 @@ Secondary links
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">Tee_frontend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logname_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.Tee_frontend" title="Permalink to this definition"></a></dt>
 <dd><p>Write in a file the console output</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dir_in</strong> (<em>str</em>) – directory path.</p></li>
 <li><p><strong>logname_in</strong> (<em>str</em>) – logfile name.</p></li>
@@ -984,10 +981,10 @@ Secondary links
 <li><p><strong>print_timestamp</strong> (<em>bool</em><em>, </em><em>optional</em>) – print a timestamp in the filename. The default is True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>F_tee</strong> – Object controling the output</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>F_tee object</p>
 </dd>
 </dl>
@@ -1127,10 +1124,10 @@ for instance type(np.array(A)) doesn’t return a constructor</p>
 <dd><p>Filter globals() varirables with only compatible variables for pickle.</p>
 <p><a class="reference external" href="https://stackoverflow.com/questions/2960864/how-to-save-all-the-variables-in-the-current-python-session">https://stackoverflow.com/questions/2960864/how-to-save-all-the-variables-in-the-current-python-session</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data_out</strong> – filtered globals() variables.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
@@ -1152,17 +1149,17 @@ for instance type(np.array(A)) doesn’t return a constructor</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">is_iterable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consider_str_as_iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.is_iterable" title="Permalink to this definition"></a></dt>
 <dd><p>Test if the input is an iterable like a list or a numpy array or not</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inp</strong> (<em>list</em><em>, </em><em>numpy.array</em><em>, </em><em>...</em>) – </p></li>
 <li><p><strong>consider_str_as_iterable</strong> (<em>bool</em>) – string are considered as iterable by Python per default
 This boolean will avoid True as return if you test a string</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>out</strong> – True if inp is iterable, False either</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -1232,17 +1229,17 @@ input file  can be the path of a file as string or as Path object,
 or the file content as a string, bytes, StringIO object or a
 list of lines</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_in</strong> (<em>various</em>) – an inpout object (see description).</p></li>
 <li><p><strong>decode_type</strong> (<em>str</em><em>, </em><em>optional</em>) – the decode standard. The default is “ascii”.</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Describe the input file type. The default is False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>LINES</strong> – list of the lines in file_in.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -1262,13 +1259,13 @@ from
 <dd><p>Load a Python object saved as a Pickle file.</p>
 <p>Wrapper of pickle.load</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>pathin</strong> (<em>str</em>) – the input pickle file path.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>outdata</strong> – Data which will be loaded from the a pickle..</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>generic</p>
 </dd>
 </dl>
@@ -1280,7 +1277,7 @@ from
 <dd><p>Save a Python object in a Pickle file.</p>
 <p>Wrapper of pickle.dump</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>datain</strong> (<em>generic</em>) – Data which will be saved as a pickle.</p></li>
 <li><p><strong>outdir</strong> (<em>str</em><em>, </em><em>optional</em>) – output directory. The default is None.</p></li>
@@ -1293,10 +1290,10 @@ if full_path is given, override outdir and outname.
 The default is None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>outpath</strong> – the output pickle file path.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -1384,13 +1381,13 @@ value if the timeout_duration is exceeded</p>
 <dd><p>transpose a Nx3 array to a 3xN array if necessary
 (necessary for some usages)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>X</strong> (<em>iterable</em>) – </p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>X</strong> – X transposed if necessary.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>iterable</p>
 </dd>
 </dl>
