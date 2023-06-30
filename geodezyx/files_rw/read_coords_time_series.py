@@ -429,9 +429,6 @@ def read_gipsy_gdcov_list(filelistin):
     return tsout
 
     
-pp = "/home/psakicki/GFZ_WORK/IPGP_WORK/OVS/GNSS_OVS/2305_compar_gipsyx/2306_nf_orb_tests/230609b/HOUE/2001/2001-01-01.HOUE.gdcov_trans"
-ts = read_gipsy_gdcov(pp)
-
 def read_gipsyx_xfile(filein):
     """
     Read GIPSYX X file i.e. the transformation parameters and their 
