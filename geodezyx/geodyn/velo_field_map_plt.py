@@ -240,12 +240,13 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
             x_end_arrow_ok = all_posx_proj[i]+np.multiply(ve_ITRF[i],scale_arrow)
             y_end_arrow_ok = all_posy_proj[i]+np.multiply(vn_ITRF[i],scale_arrow)
             
-            ax.annotate(s='', 
+            ax.annotate(text='', 
                          xy=(x_end_arrow_ok,
                              y_end_arrow_ok), 
                          xytext=(all_posx_proj[i], all_posy_proj[i]) , 
                          arrowprops=arrow_prop_dict,
                          annotation_clip=True) #xy point arrivee de la fleche, xytext l'origine de la fleche
+            
             a=math.atan((all_posx_proj[i]+np.multiply(ve_ITRF[i],scale_arrow)-all_posy_proj[i])/(all_posy_proj[i]+np.multiply(ve_ITRF[i],scale_arrow)-all_posy_proj[i])) # l'angle d'orientation de l'ellipsoide, avec 0 au nord et +90 a l'ouest
                 
             e = Ellipse(xy=(x_end_arrow_ok,
@@ -325,7 +326,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                 arrow_prop_dict_V = arrow_prop_dict_V_down_short
                                 
             ### PLOT      
-            ax.annotate(s='',
+            ax.annotate(text='',
                       xy=(x_end_arrow_ok , y_end_arrow_ok),
                       xytext=(all_posx_proj[i], all_posy_proj[i]) , 
                       arrowprops=arrow_prop_dict_V,
@@ -378,7 +379,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
     ### fin de la fleche de legende                
     xe,ye = xl+np.multiply(legend_arrow_length_metric,scale_arrow),yl
     
-    plt.annotate(s='', xy=(xe,ye), xytext=(xl, yl) , 
+    plt.annotate(text='', xy=(xe,ye), xytext=(xl, yl) , 
                  arrowprops=arrow_prop_dict) #xy point arrivee de la fleche, xytext l'origine de la fleche
 
     props = dict(boxstyle='round', facecolor='black', alpha=0)
