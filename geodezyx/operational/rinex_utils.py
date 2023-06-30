@@ -482,6 +482,7 @@ def rinex_start_end(input_rinex_path,interval_out=False,
         path of the rinex file.
         can be the path of a RINEX or directly
         the RINEX content as a string     
+
     interval_out : bool, optional
         output also the intervals. The default is False.
         
@@ -521,17 +522,25 @@ def rinex_start_end(input_rinex_path,interval_out=False,
 
     epochs_list = epochs_list_head + epochs_list_tail
 
-    if len(epochs_list) == 0:
-        first_epoch = conv.rinexname2dt(input_rinex_path)
-        alphabet = list(string.ascii_lowercase)
-
-        if os.path.basename(input_rinex_path)[7] in alphabet:
-            last_epoch = first_epoch + dt.timedelta(hours=1)
-        else:
-            last_epoch = first_epoch + dt.timedelta(hours=24,seconds=-1)
-    else:
+    if len(epochs_list) > 0:
         first_epoch = np.min(epochs_list)
         last_epoch = np.max(epochs_list)
+    else:
+        ## here is the save mode where everything can goes wrong ;)
+        first_epoch = conv.rinexname2dt(input_rinex_path)
+        if first_epoch:
+            last_epoch = first_epoch + dt.timedelta(seconds=85399)
+        else:
+            ### here the return is None, your file is corrupted
+            last_epoch = None
+            return first_epoch,last_epoch 
+
+        ##### this legacy block if for short name only
+        #alphabet = list(string.ascii_lowercase)
+        #if os.path.basename(input_rinex_path)[7] in alphabet:
+        #    last_epoch = first_epoch + dt.timedelta(hours=1)
+        #else:
+        #    last_epoch = first_epoch + dt.timedelta(hours=24,seconds=-1)
 
     if add_tzinfo:
         first_epoch = first_epoch.replace(tzinfo=dateutil.tz.tzutc())
@@ -539,6 +548,7 @@ def rinex_start_end(input_rinex_path,interval_out=False,
 
     if verbose:
         log.debug("first & last epochs: %s %s" , first_epoch , last_epoch)
+
     if not interval_out:
         return first_epoch , last_epoch
     else:

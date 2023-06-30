@@ -21,11 +21,6 @@ from geodezyx import utils
 from geodezyx import time_series
 from geodezyx import reffram
 
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
 #### Import the logger
 import logging
 log = logging.getLogger(__name__)
@@ -267,9 +262,13 @@ def compar_plot(dico_list_in, namest = 0, namend    = 10  ,
         
     return fig
 
+
+
+
+
 def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
-           Dtype='2D3D', namest=0,namend=10,alpha = 5 , diapt = 5 , 
-           verbose=True, print_report=True,plot=True):
+           Dtype='2D3D', namest=0,namend=10,alpha = 0.8 , diapt = 5 , 
+           verbose=True, print_report=True,plot=True,interp=True):
     """
         si seuil == 0, pas de nettoyage
 
@@ -289,8 +288,6 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
     else:
         D2n3 = False
 
-    diapt=10
-    alpha=0.8
 
     if len(tstup) <= 1:
         log.error("len(tstup) <= 1 , do not compare a single element !! ;) ")
@@ -316,6 +313,7 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
 #        tsout = copy.copy(tsvar)
 #        tsout.del_data()
 
+
         if tsvar.bool_interp_uptodate == False:
             tsvar.interp_set()
 
@@ -323,6 +321,8 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
 
         tsref = tstup[0].interp_get(T,coortype=coortype)
         Aref, Bref, Cref , Tref , sA , sB , sC = tsref.to_list(coortype=coortype)
+        
+        
 
 
         # WTF IS THOSE LINES
@@ -377,31 +377,31 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
                 log.info("MAD cleaning")
                 
             dAin = dA
-            dA,bb = stats.outlier_mad(dA,seuil=seuil)
+            dA,bb = stats.outlier_mad(dA,threshold=seuil)
             dAout = dA
             TA = conv.posix2dt(np.array(Tref[bb]))
 
             dBin = dB
-            dB,bb = stats.outlier_mad(dB,seuil=seuil)
+            dB,bb = stats.outlier_mad(dB,threshold=seuil)
             dBout = dB
             TB = conv.posix2dt(np.array(Tref[bb]))
 
             dCin = dC
-            dC,bb = stats.outlier_mad(dC,seuil=seuil)
+            dC,bb = stats.outlier_mad(dC,threshold=seuil)
             dCout = dC
             TC = conv.posix2dt(np.array(Tref[bb]))
 
             dDin = dD
-            dD,bb = stats.outlier_mad(dD,seuil=seuil)
+            dD,bb = stats.outlier_mad(dD,threshold=seuil)
             TD = conv.posix2dt(np.array(Tref[bb]))
             dDout = dD
             if D2n3:
                 dD2Din = dD2D
-                dD2D,bb = stats.outlier_mad(dD2D,seuil=seuil)
+                dD2D,bb = stats.outlier_mad(dD2D,threshold=seuil)
                 TD2D = conv.posix2dt(np.array(Tref[bb]))
                 dD2Dout = dD2D
                 dD3Din = dD3D
-                dD3D,bb = stats.outlier_mad(dD3D,seuil=seuil)
+                dD3D,bb = stats.outlier_mad(dD3D,threshold=seuil)
                 TD3D = conv.posix2dt(np.array(Tref[bb]))
                 dD3Dout = dD3D
 
@@ -534,9 +534,13 @@ def round_time(tsin,round_to,
     
     Tdtout = conv.round_dt(Tdtin,round_to=round_to,mode=mode,
                            python_dt_out=True)
+
+    tsout.bool_interp_uptodate = False
     
     for pt,t in zip(tsout,Tdtout):
         pt.Tset(conv.numpy_dt2dt(t))
+        
+    tsout.interp_set()
         
     return tsout
 
@@ -590,9 +594,9 @@ def sigma_cleaner(tsin,seuil=3,coortype='ABC',cleantype='any', verbose=False):
 
     A,B,C,T,sA,sB,sC = tsin.to_list(coortype)
 
-    sAout , bbsA = stats.outiler_sigma(sA,seuil)
-    sBout , bbsB = stats.outiler_sigma(sB,seuil)
-    sCout , bbsC = stats.outiler_sigma(sC,seuil)
+    sAout , bbsA = stats.outlier_sigma(sA,seuil)
+    sBout , bbsB = stats.outlier_sigma(sB,seuil)
+    sCout , bbsC = stats.outlier_sigma(sC,seuil)
 
     if cleantype == 'any':
         boolbad = bbsA * bbsB * bbsC
@@ -762,287 +766,6 @@ def linear_regress_ts_discont(tsin,coortype = 'ENU') :
         tsbis = time_win(tsin,[[discont_improved[j],discont_improved[j+1]]])
         datetitle = ' : ' + str(discont_improved[j]) + "\u2192" + str(discont_improved[j+1])
         linear_regress_ts(tsbis,coortype,titledetails=datetitle)
-
-#def export_ts_as_pbo_pos(tsin):
-#    # IN PROGRESS
-#    tswork = copy.deepcopy(tsin)
-#    outtfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
-#
-
-def export_ts_figure_pdf(fig,export_path,filename,close=False):
-    """ fig can accept a int (id of a Figure)
-         OR the figure Object itself """
-
-    if type(fig) is int:
-        f = plt.figure(fig)
-    elif type(fig) is plt.Figure:
-        f = fig
-
-    f.set_size_inches(16.53,11.69)
-    # tralala pour avoir des dates propres
-    # parce que dans des cas + simples f.autofmt_xdate() suffit
-    for a in f.axes[1:]:
-        labels = a.get_xticklabels()
-        for l in labels:
-            l.set_rotation(40)
-            l.set_horizontalalignment('right')
-    out_path = os.path.join(export_path,filename+'.pdf')
-    f.tight_layout()
-    f.subplots_adjust(top=0.94)
-    f.savefig(out_path,papertype='a4',format='pdf')
-
-    if close:
-        plt.close(f)
-
-    return None
-
-def export_ts_plot(tsin,export_path,coortype='ENU',export_type=("pdf","png"),
-                   plot_B = False,close_fig_after_export=True):
-    """ Very beta ...
-        to be implemented : merge w/ the export_figure_pdf fct """
-    # plot A avec les barres de sigma
-    plt.clf()
-    tsin.plot(coortype,fig=1)
-    tsin.plot_discont()
-    f = plt.gcf()
-    f.set_size_inches(16.53,11.69)
-    # tralala pour avoir des dates propres
-    # parce que dans des cas + simples f.autofmt_xdate() suffit
-    for a in f.axes[1:]:
-        labels = a.get_xticklabels()
-        for l in labels:
-            l.set_rotation(40)
-            l.set_horizontalalignment('right')
-    f.tight_layout()
-    f.subplots_adjust(top=0.92)
-    for typ in export_type:
-        export_file = os.path.join(export_path,tsin.stat+'a.' + typ)
-        f.savefig(export_file,
-                  papertype='a4',format=typ)
-        log.info("plot exported in %s" , export_file)
-    if close_fig_after_export:
-        plt.close(f)
-
-    # plot B avec une droite de regression
-    if plot_B:
-        linear_regress_ts(tsin)
-        f = plt.gcf()
-        #    f.set_dpi(300)
-        f.set_size_inches(16.53,11.69)
-        for a in f.axes:
-            labels = a.get_xticklabels()
-            for l in labels:
-                l.set_rotation(40)
-                l.set_horizontalalignment('right')
-        f.tight_layout()
-        f.subplots_adjust(top=0.92)
-        for typ in export_type:
-            export_file = os.path.join(export_path,tsin.stat+'b.' + typ)
-            f.savefig(export_file,
-                      papertype='a4',format=typ)
-        log.info("plot exported in %s" , export_file)
-        if close_fig_after_export:
-            plt.close(f)
-    return None
-
-
-def export_ts(ts,outdir,coordtype = 'ENU',outprefix='',write_header=False):
-    """
-    export the timeserie
-
-    write_header not well implemented !!!
-    """
-
-    proto_str = '{:23} ' * 14
-
-    A,B,C,T,sA,sB,sC = ts.to_list(coordtype)
-    if outprefix != '':
-        outprefix = outprefix + '_'
-
-    outfilenam = outprefix +  ts.stat + "_" +  ts.name + '.' + coordtype + '.ts.dat'
-    outpath = os.path.join(outdir,outfilenam)
-
-    filobj = open(outpath,'w+')
-
-    if write_header:
-        header = "#" + proto_str.format(*(coordtype[0],"sigma"+coordtype[0],
-                                          coordtype[1],"sigma"+coordtype[1],
-                                          coordtype[2],"sigma"+coordtype[2],
-                                          "year","month","day",
-                                          "hour","minute","seconds",
-                                          "year_decimal","posix_time"))
-        filobj.write(header + "\n")
-
-    for a,b,c,t,sa,sb,sc in zip(A,B,C,T,sA,sB,sC):
-        paramstr = [str(e) for e in [a,sa,b,sb,c,sc]]
-        #paramstr = [e.ljust(18, '0') for e in paramstr]
-        
-        tt = conv.posix2dt(t)
-        yr_dec_str = str(conv.dt2year_decimal(tt))
-        posix_str = str(t)
-
-        paramstr_time = list(tt.strftime("%Y %m %d %H %M %S").split())
-
-        paramstr2 = paramstr + paramstr_time + [yr_dec_str,posix_str]
-        
-        outlin =  proto_str.format(*paramstr2) + "\n"
-        filobj.write(outlin)
-    filobj.close()
-
-    log.info('timeserie exported in %s', outpath)
-    return None
-
-
-def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
-    """
-    export to a HECTOR .neu compatible format
-
-    outfile will be writed in
-    /outdir/outprefixSTAT.neu
-    
-    NB: The XYZ mode is quite dirty (191001)
-    """
-    if not hasattr(tsin[0],'X'):
-        log.warning('no XYZ in ts')
-        noXYZ = True
-    else:
-        noXYZ = False
-
-    tswork = copy.deepcopy(tsin)
-    #if coordtype == 'XYZ':
-    #    mp = tswork.mean_posi()
-    #    tswork.ENUcalc(mp)
-    outpath = outdir +'/' + outprefix + tswork.stat + '.neu'
-    outfile = open(outpath,'w+')
-    E,N,U,T,sE,sN,sU = tswork.to_list(coordtype)
-    first_pt = tswork.pts[0]
-    if noXYZ:
-        first_pt.X = 0.
-        first_pt.Y = 0.
-        first_pt.Z = 0.
-        first_pt.L = 0.
-        first_pt.H = 0.
-        first_pt.F = 0.
-
-
-    e0,n0,u0,t0 = list(zip(E,N,U,T))[0]
-    # write the header
-    outfile.write('# Site : {} \n'.format(tswork.stat))
-    if 'calc_center' in list(tswork.anex.keys()):
-        outfile.write('# Analysis Centre: {} \n'.format(tswork.anex['calc_center']))
-    else:
-        outfile.write('# Analysis Centre: N/A \n')
-
-    outfile.write('# Solution code: GINS_PS \n')
-    outfile.write('# Datum: ITRF2008\n')
-    outfile.write('#\n')
-    outfile.write('# Reference epoch: {}\n'.format(conv.dt2year_decimal(first_pt.Tdt)))
-    outfile.write('# X : {}\n'.format(first_pt.X))
-    outfile.write('# Y : {}\n'.format(first_pt.Y))
-    outfile.write('# Z : {}\n'.format(first_pt.Z))
-    outfile.write('#\n')
-    outfile.write('# Longitude : {}\n'.format(first_pt.L))
-    outfile.write('# Latitude  : {}\n'.format(first_pt.F))
-    outfile.write('# Height    : {}\n'.format(first_pt.H))
-    outfile.write('#\n')
-    if coordtype == "ENU":
-        outfile.write('# Components : ' + "NEU" + "\n")
-    elif coordtype == "XYZ":
-        outfile.write('# Components : ' + "YXZ" + "\n")
-        outfile.write('# Cartesian components are undirect to maintain consistency with NEU\n')                
-    outfile.write('#\n')
-    if tswork.bool_discont:
-        outfile.write('# type_of_offset : from discontinuties got from a station.info\n')
-        outfile.write('#\n')
-        for disc in sorted(tswork.discont):
-            outfile.write('# offset {} 7\n'.format(conv.dt2year_decimal(disc)))
-        outfile.write('#\n')
-    # write the data
-    for e,n,u,t,se,sn,su in zip(E,N,U,T,sE,sN,sU):
-        t = conv.dt2year_decimal(conv.posix2dt(t))
-        if coordtype == "ENU":        
-            outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
-        elif coordtype == "XYZ":
-            outfile.write('{:.5f}   {:+.6f}    {:+.6f}    {:+.6f} {:+.6f} {:+.6f} {:+.6f}\n'.format(t,n-n0,e-e0,u-u0,se,sn,su))
-
-    log.info('timeserie exported in %s',outpath)
-    return None
-
-
-def export_ts_as_hector_enu(tsin,outdir,outprefix,coordtype = 'ENU'):
-    """
-    export to a HECTOR .enu (and not .neu !) compatible format
-    This format is simpler : just gives MJD E N U
-
-    This format is necessary to force a sampling period.
-
-    outfile will be writed in
-    /outdir/outprefixSTAT.enu
-    """
-
-    log.warning("NOT IMPLEMENTED YET !")
-
-    return None
-
-
-
-def export_ts_as_midas_tenu(tsin,outdir,outprefix,coordtype = 'ENU',
-                            export_step=True):
-    """
-    export to a MIDAS .tneu compatible format
-
-    outfile will be writed in
-    /outdir/outprefixSTAT.tneu
-
-    if export_step == True:
-    export a step file as
-    /outdir/outprefixSTAT.step
-    """
-    if not hasattr(tsin[0],'X'):
-        log.warning('no XYZ in ts')
-        noXYZ = True
-    else:
-        noXYZ = False
-
-    tswork = copy.deepcopy(tsin)
-    stat = tswork.stat
-    if coordtype == 'XYZ':
-        mp = tswork.mean_posi()
-        tswork.ENUcalc(mp)
-    outpath = outdir +'/' + outprefix + tswork.stat + '.tenu'
-    outfile = open(outpath,'w+')
-    E,N,U,T,sE,sN,sU = tswork.to_list('ENU')
-    first_pt = tswork.pts[0]
-    if noXYZ:
-        first_pt.X = 0.
-        first_pt.Y = 0.
-        first_pt.Z = 0.
-        first_pt.L = 0.
-        first_pt.H = 0.
-        first_pt.F = 0.
-
-    e0,n0,u0,t0 = list(zip(E,N,U,T))[0]
-
-    for e,n,u,t in zip(E,N,U,T):
-        t = conv.dt2year_decimal(conv.posix2dt(t))
-        #outfile.write('{} {:.5f} {:+.6f} {:+.6f} {:+.6f} \n'.format(stat,t,n-n0,e-e0,u-u0))
-        outfile.write('{} {:.5f} {:+.6f} {:+.6f} {:+.6f} \n'.format(stat,t,e-e0,n-n0,u-u0))
-
-    log.info('timeserie exported in %s',outpath)
-
-    if export_step and tswork.bool_discont:
-        outpath_step = outdir +'/' + outprefix + tswork.stat + '.step'
-        outfile_step = open(outpath_step,'w+')
-        for d in tswork.discont:
-            d = conv.dt2year_decimal(d)
-            line = tswork.stat + " " + str(d) + "\n"
-            outfile_step.write(line)
-
-            log.info('timeserie discont. (steps) exported in %s',outpath_step)
-
-    return None
-
-
 
 
 def decimate_cleaner(tsin,minval,in_place = False):
@@ -1253,7 +976,9 @@ def compar_elts_in_ts(ts1,ts2):
     return T1
 
 
-def rotate_pt_cls_solo(tsattin,pointin,Rtype='R1', xyzreftuple = ([1, 0, 0], [0, 1, 0], [0, 0, 1]),angtype='deg'):
+def rotate_pt_cls_solo(tsattin,pointin,Rtype='R1',
+                       xyzreftuple = ([1, 0, 0], [0, 1, 0], [0, 0, 1]),
+                       angtype='deg'):
     ''' ENTREE : tsattin : une TS d'attitude  (N angles)
                  pointin : UN Point en entrée
 
@@ -1267,7 +992,8 @@ def rotate_pt_cls_solo(tsattin,pointin,Rtype='R1', xyzreftuple = ([1, 0, 0], [0,
 
     A,B,C,_,_ = pointin()
 
-    ptrotlis = XXX.rotate_points(R,P,Y,[np.array([A,B,C])],Rtype,xyzreftuple,angtype)
+    ptrotlis = XXX.rotate_points(R,P,Y,[np.array([A,B,C])],
+                                 Rtype,xyzreftuple,angtype)
 
     ptrotlis = utils.shrink_listoflist(ptrotlis)
 
@@ -1275,12 +1001,15 @@ def rotate_pt_cls_solo(tsattin,pointin,Rtype='R1', xyzreftuple = ([1, 0, 0], [0,
 
     for p,t in zip(ptrotlis,T):
         #print p
-        tsout.add_point(time_series.Point(p[0],p[1],p[2],t,initype=pointin.initype))
+        tsout.add_point(time_series.Point(p[0],p[1],p[2],t,
+                                          initype=pointin.initype))
 
     return tsout
 
 
-def rotate_points_class(tsattin,ptslin, Rtype='R1', xyzreftuple = ([1, 0, 0], [0, 1, 0], [0, 0, 1]),angtype='deg'):
+def rotate_points_class(tsattin,ptslin, Rtype='R1',
+                        xyzreftuple = ([1, 0, 0], [0, 1, 0], [0, 0, 1]),
+                        angtype='deg'):
 
     listsout = []
 

@@ -104,3 +104,11 @@ geodezyx.files\_rw.write\_geo\_files module
    :members:
    :undoc-members:
    :show-inheritance:
+
+geodezyx.files\_rw.write\_rinex module
+--------------------------------------
+
+.. automodule:: geodezyx.files_rw.write_rinex
+   :members:
+   :undoc-members:
+   :show-inheritance:

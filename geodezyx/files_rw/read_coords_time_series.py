@@ -24,6 +24,7 @@ import dateutil
 import glob
 import numpy as np
 import os 
+from io import StringIO
 import pandas as pd
 import scipy
 import re
@@ -58,7 +59,7 @@ def read_all_points(filein):
         tsout = read_gipsy_bosser(filein)
 
     elif re.compile('STA').search(firstline) or re.compile('tdp').search(filein) or re.compile('TRPAZ').search(firstline):
-        tsout = read_tdp(filein)
+        tsout = read_gipsy_tdp(filein)
 
     elif re.compile('YY  MM DD HR MIN').search(firstline):
         tsout = read_track(filein)
@@ -187,9 +188,9 @@ def read_rtklib(filein):
  #  \____/|_|    |______/_/   \_____|_____|_|    |_____/   |_|    |_|    |_|_|\___||___/
                                                                                       
 
-def read_tdp(filein):
+def read_gipsy_tdp(filein):
     """
-    Read GIPSY TDP (Time Dependent Parameter) File
+    Read legacy Gipsy TDP (Time Dependent Parameter) File
 
     Parameters
     ----------
@@ -243,12 +244,6 @@ def read_tdp(filein):
     return tsout
 
 
-def read_gipsy_tdp(filein):
-    """
-    Wrapper of read_tdp 
-    """
-    # pour un nom plus explicite (et qui evitera de recoder la fct ...)
-    return read_tdp(filein)
 
 
 def read_gipsy_tdp_list(filelistin):
@@ -273,8 +268,261 @@ def read_gipsy_tdp_list(filelistin):
         tslist.append(ts)
 
     tsout = time_series.merge_ts(tslist)
+    
+    stat = list(set([ts.stat for ts in tslist]))[0]
+    
+    tsout.meta_set("",stat)
 
     return tsout
+
+
+def read_gipsyx_tdp(filein):
+    """
+    Read GipsyX TDP (Time Dependent Parameter) File
+
+    Parameters
+    ----------
+    filein : str
+        input file path.
+
+    Returns
+    -------
+    tsout : TimeSeries Object
+        output TimeSerie.
+    """
+
+
+    X,Y,Z = np.nan,np.nan,np.nan
+    Tx , Ty , Tz, T = np.nan,np.nan,np.nan,np.nan
+    sX,sY,sZ = np.nan,np.nan,np.nan
+
+    tsout = time_series.TimeSeriePoint()
+
+    for line in open(filein):
+
+        fields = line.split()
+        attribs = fields[-1].split(".") 
+
+        if attribs[1] == 'Station' and attribs[-1] == 'Z':
+            Tz = conv.tgipsy2dt(fields[0])
+            Z  = (float(fields[2]))
+            sZ = (float(fields[3]))
+
+        if attribs[1] == 'Station' and attribs[-1] == 'Y':
+            Ty = conv.tgipsy2dt(fields[0])
+            Y  = (float(fields[2]))
+            sY = (float(fields[3]))
+
+        if attribs[1] == 'Station' and attribs[-1] == 'X':
+            Tx = conv.tgipsy2dt(fields[0])
+            X  = (float(fields[2]))
+            sX = (float(fields[3]))
+            STAT = attribs[2]
+
+        if  Tx == Ty == Tz :
+            T = Tx
+            point = time_series.Point(X,Y,Z,T,'XYZ',sX,sY,sZ)
+            tsout.add_point(point)
+
+            Tx = np.nan
+            Ty = np.nan
+            Tz = np.nan
+
+    tsout.meta_set(filein,stat=STAT)
+
+    return tsout
+
+def read_gipsyx_tdp_list(filelistin):
+    """
+    Read Several GIPSYX TDP (Time Dependent Parameter) Files
+    
+
+    Parameters
+    ----------
+    filelistin : list
+        input file paths in a list.
+
+    Returns
+    -------
+    tsout : TimeSeries Object
+        output TimeSerie.    
+    """
+
+    tslist = []
+    for fil in filelistin:
+        ts = read_gipsyx_tdp(fil)
+        tslist.append(ts)
+
+    tsout = time_series.merge_ts(tslist)
+    
+    stat = list(set([ts.stat for ts in tslist]))[0]
+    
+    tsout.meta_set("",stat)
+
+    return tsout
+
+
+def read_gipsy_gdcov(filein):
+    
+    X,Y,Z = np.nan,np.nan,np.nan
+    Tx , Ty , Tz, T = np.nan,np.nan,np.nan,np.nan
+    sX,sY,sZ = np.nan,np.nan,np.nan
+
+    tsout = time_series.TimeSeriePoint()
+
+    F = open(filein)
+    L = F.readlines()
+    
+    ### parameters search
+    param = int(L[0].split()[0])
+    
+    Lparam = L[1:param+1]
+    Lcovar = L[param+2:]
+    
+    for line in Lparam:
+        fields = line.split()
+        attribs = fields[1].split(".") 
+        
+        if attribs[1] == 'STA' and attribs[-1] == 'Z':
+            Tz = conv.tgipsy2dt(fields[2])
+            Z  = (float(fields[3]))
+            sZ = (float(fields[4]))
+
+        if attribs[1] == 'STA' and attribs[-1] == 'Y':
+            Ty = conv.tgipsy2dt(fields[2])
+            Y  = (float(fields[3]))
+            sY = (float(fields[4]))
+
+        if attribs[1] == 'STA' and attribs[-1] == 'X':
+            Tx = conv.tgipsy2dt(fields[2])
+            X  = (float(fields[3]))
+            sX = (float(fields[4]))
+            STAT = attribs[0]
+
+        if  Tx == Ty == Tz :
+            T = Tx
+            point = time_series.Point(X,Y,Z,T,'XYZ',sX,sY,sZ)
+            tsout.add_point(point)
+
+            Tx = np.nan
+            Ty = np.nan
+            Tz = np.nan
+        
+    tsout.meta_set(filein,stat=STAT)
+
+    return tsout
+
+        
+
+def read_gipsy_gdcov_list(filelistin):
+    tslist = []
+    for fil in filelistin:
+        ts = read_gipsy_gdcov(fil)
+        tslist.append(ts)
+
+    tsout = time_series.merge_ts(tslist)
+    
+    stat = list(set([ts.stat for ts in tslist]))[0]
+    
+    tsout.meta_set("",stat)
+
+    return tsout
+
+    
+pp = "/home/psakicki/GFZ_WORK/IPGP_WORK/OVS/GNSS_OVS/2305_compar_gipsyx/2306_nf_orb_tests/230609b/HOUE/2001/2001-01-01.HOUE.gdcov_trans"
+ts = read_gipsy_gdcov(pp)
+
+def read_gipsyx_xfile(filein):
+    """
+    Read GIPSYX X file i.e. the transformation parameters and their 
+    residuals
+    
+
+    Parameters
+    ----------
+    filein : str
+        input file path.
+        Can handle gz compressed files
+        
+    Returns
+    -------
+    df_trans_out : DataFrame
+        Helmert transformation parameters and their sigmas.
+    df_resid_out : DataFrame
+        Coordinates residuals (not implemented yet).
+
+    """
+    
+    fname = os.path.basename(filein)
+    
+    date = conv.date_string_2_dt(fname[:11])
+    
+    if filein[-2:] in ("gz","GZ"):
+        F = gzip.open(filein, "r+")
+        lines = [e.decode('utf-8') for e in F]
+    else:
+        F = open(filein,"r+")
+        lines = F.readlines()
+    
+    df_trans_out = pd.DataFrame()
+    df_resid_out = pd.DataFrame()
+    
+    df_trans_out.loc[0,"epoch"] = date
+    
+    for l in lines:
+        #### get transform parameters
+        if re.search(' = ', l):
+            l2 = l.split()
+            label = l2[0]            
+            val = float(l2[2])
+            df_trans_out.loc[0,label] = val
+
+            if len(l2) > 3:
+                val_sigma = float(l2[4])
+                df_trans_out.loc[0,"s" + label] = val_sigma
+                
+                
+        #### get residual values
+        # l_resid = []
+        # if re.search('^ ( POS| RES)', l):
+        #     l_resid.append(l)
+            
+        # df_resid_out = pd.read_csv(StringIO("\n".join(l_resid[:-1])))
+        
+    return df_trans_out, df_resid_out
+    
+
+def read_gipsyx_xfile_list(filelistin):
+    """
+    Read several GIPSYX X files i.e. the transformation parameters and their 
+    residuals
+
+    Parameters
+    ----------
+    filelistin : list
+        input file paths in a list.
+        Can handle gz compressed files
+
+
+    Returns
+    -------
+    df_trans_out : DataFrame
+        Helmert transformation parameters and their sigmas.
+    df_resid_out : DataFrame
+        Coordinates residuals (not implemented yet).
+
+    """
+    dflist = []
+    for fil in filelistin:
+        df_trans_mono,df_resid_mono = read_gipsyx_xfile(fil)
+        dflist.append(df_trans_mono)
+    
+    df_trans_out =pd.concat(dflist)
+    df_trans_out.reset_index(drop=True,inplace=True)
+    df_resid_out = pd.DataFrame()
+    
+    return df_trans_out, df_resid_out
+
 
 def read_gipsy_bosser(filein):
     """
