@@ -19,15 +19,18 @@ https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
 
 ########## BEGIN IMPORT ##########
 #### External modules
+import datetime as dt
 import numpy as np
 import pandas as pd
 from io import StringIO
 import re
 import os
+import pathlib
 from tqdm import tqdm
+import hatanaka
 
 #### geodeZYX modules
-from geodezyx import operational
+from geodezyx import operational,utils
 
 
 #### Import the logger
@@ -42,8 +45,11 @@ def read_rinex2_obs(rnx_in,
 
     Parameters
     ----------
-    rnx_in : str
-        path of the input RINEX.
+    rnx_in : see below
+        input RINEX.
+        can be the path of a RINEX file as string or as Path object,
+        or directly the RINEX content as a string, bytes, StringIO object or a 
+        list of lines
     set_index : str or list of str, optional
         define the columns for the index.
         If None, the output DataFrame is "flat", with integer index
@@ -55,10 +61,19 @@ def read_rinex2_obs(rnx_in,
     DFrnxobs : Pandas DataFrame / GeodeZYX's RINEX format
     """
     
+    #### open block
+    try:
+        rnx_wrk = hatanaka.decompress(rnx_in)
+    except:
+        rnx_wrk = rnx_in
+        pass
     
-    EPOCHS = operational.rinex_read_epoch(rnx_in,out_index=True)
-    FILE = open(rnx_in)
-    LINES = FILE.readlines()
+    LINES = utils.open_readlines_smart(rnx_wrk)
+    EPOCHS = operational.rinex_read_epoch(rnx_wrk,out_index=True)
+    if type(rnx_in) is str or type(rnx_in) is pathlib.Path:
+        filename = os.path.basename(rnx_in)
+    else:
+        filename = "unknown filename"
     
     #### Split header and Observation body
     for il,l in enumerate(LINES):
@@ -78,13 +93,13 @@ def read_rinex2_obs(rnx_in,
     ObsAllList = sorted([e for sublist in [(e,e+"_LLI",e+"_SSI") for e in ObsAllList] for e in sublist])
     
     nobs = int(ObsAllList_raw[0])
-    nlines_for_obs = int(np.ceil(nobs/5)) ## 5 is the man num of obs in the RIENX specs
+    nlines_for_obs = int(np.ceil(nobs/5)) ## 5 is the max num of obs in the RIENX specs
     
     
     DFall_stk = []
     
     #### reading the epochs    
-    for iepoc in tqdm(range(len(EPOCHS)),desc="Reading " + os.path.basename(rnx_in)):
+    for iepoc in tqdm(range(len(EPOCHS)),desc="Reading " + filename):
         epoch = EPOCHS[iepoc,0]
         ## define the start/end indices of the epoch block
         iline_start = EPOCHS[iepoc,1] 
@@ -101,6 +116,7 @@ def read_rinex2_obs(rnx_in,
         
         ### for each sat, merge the breaked lines
         Lines_obs = Lines_epoc[iline_sats_end+1:iline_end]
+        Lines_obs = [e.replace("\r","") for e in Lines_obs] # not 100% sure of this
         Lines_obs = [e.replace("\n","") for e in Lines_obs]
         Lines_obs_merg = [Lines_obs[nlines_for_obs*n:nlines_for_obs*n+nlines_for_obs] for n in range(nsat)]
         Lines_obs_merg = ["".join(e) for e in Lines_obs_merg]
@@ -138,8 +154,11 @@ def read_rinex3_obs(rnx_in,
 
     Parameters
     ----------
-    rnx_in : str
-        path of the input RINEX.
+    rnx_in : see below
+        input RINEX.
+        can be the path of a RINEX file as string or as Path object,
+        or directly the RINEX content as a string, bytes, StringIO object or a 
+        list of lines
     set_index : str or list of str, optional
         define the columns for the index.
         If None, the output DataFrame is "flat", with integer index
@@ -151,10 +170,20 @@ def read_rinex3_obs(rnx_in,
     DFrnxobs : Pandas DataFrame / GeodeZYX's RINEX format
     """
     
-    EPOCHS = operational.rinex_read_epoch(rnx_in,out_index=True)
-    FILE = open(rnx_in)
-    LINES = FILE.readlines()
+    #### open block
+    try:
+        rnx_wrk = hatanaka.decompress(rnx_in)
+    except:
+        rnx_wrk = rnx_in
+        pass
     
+    LINES = utils.open_readlines_smart(rnx_wrk)
+    EPOCHS = operational.rinex_read_epoch(rnx_wrk,out_index=True)
+    if type(rnx_in) is str or type(rnx_in) is pathlib.Path:
+        filename = os.path.basename(rnx_in)
+    else:
+        filename = "unknown filename"
+        
     #### Split header and Observation body
     for il,l in enumerate(LINES):
         if "END OF HEADER" in l:
@@ -168,7 +197,6 @@ def read_rinex3_obs(rnx_in,
     Lines_sys = [l for l in LINES_header if 'SYS / # / OBS TYPES' in l]
     ## clean SYS / # / OBS TYPES
     Lines_sys = [l[:60] for l in Lines_sys]
-    
     
     ## manage the 2 lines systems
     for il,l in enumerate(Lines_sys):
@@ -198,7 +226,7 @@ def read_rinex3_obs(rnx_in,
     
     DFall_stk = []
     #### reading the epochs
-    for iepoc in tqdm(range(len(EPOCHS)),desc="Reading " + os.path.basename(rnx_in)):
+    for iepoc in tqdm(range(len(EPOCHS)),desc="Reading " + filename):
         epoch = EPOCHS[iepoc,0]
         ## define the start/end indices of the epoch block
         iline_start = EPOCHS[iepoc,1] + 1
@@ -208,12 +236,16 @@ def read_rinex3_obs(rnx_in,
             iline_end = EPOCHS[iepoc+1,1]
         
         Lines_epoc = LINES[iline_start:iline_end]
-        
+        ###  Remove CR (Carriage Return) and LF (Line Feed) 
+        Lines_epoc = [l.replace('\r', '') for l in Lines_epoc]
+        Lines_epoc = [l.replace('\n', '') for l in Lines_epoc]
+                
         ## read the epoch block using pandas' fixed width reader 
-        B = StringIO("".join(Lines_epoc))
+        B = StringIO("\n".join(Lines_epoc))
+        
         columns_width = [3] + nobs_max*[14,1,1]
         DFepoch = pd.read_fwf(B,header=None,widths=columns_width)      
-        
+               
         DFepoch_ok_stk = []
         #### assign the correct observable names for each system
         for sys in dict_sys_use.keys():
@@ -286,6 +318,11 @@ def observables_dict_per_sys(DFrnx_in):
     dict_sys_obs : dict
         A dictionnary with GNSS system as key (G,R,E...).
         And the observalbes for each system as values
+        
+    Note
+    ----
+    
+    Use dict_sys_obs_clean_LLI_SSI if your want to remove the LLI & SSI values
     """
     
     dict_sys_obs = dict()
@@ -298,15 +335,39 @@ def observables_dict_per_sys(DFrnx_in):
         ObsSys = ObsSys0.index[ObsSys0][3:] ### strating from 3 to clean epoch sys prn
         
         #init_tup = ("epoch","sys","prn") 
-        init_tup = []
-        ObsSys_full = [init_tup] + [(e,e+"_LLI",e+"_SSI") for e in ObsSys] 
+        #init_tup = []
+        #ObsSys_full = [init_tup] + [(e,e+"_LLI",e+"_SSI") for e in ObsSys] 
+        ObsSys_full = [(e,e+"_LLI",e+"_SSI") for e in ObsSys] 
         ObsSys_full = [e for sublist in ObsSys_full for e in sublist]
                     
         dict_sys_obs[sys] = ObsSys_full
         
     return dict_sys_obs
     
+def dict_sys_obs_clean_LLI_SSI(dict_sys_obs_in):
+    """
+    Clean a `dict_sys_obs` (generated by `observables_dict_per_sys`)
+    of its LLI and SSI values
 
+    Parameters
+    ----------
+    dict_sys_obs_in : dict
+        A dictionnary with GNSS system as key (G,R,E...).
+        And the observalbes for each system as values.
+
+    Returns
+    -------
+    dict_sys_obs_out : dict
+        Same dictionnary cleanned of its LLI and SSI values.
+
+    """
+    dict_sys_obs_out = dict()
+    
+    for sys,obs in dict_sys_obs_in.items():
+        obs_clean = [e for e in obs if not "LLI" in e and not "SSI" in e]
+        dict_sys_obs_out[sys] = obs_clean
+        
+    return dict_sys_obs_out
 
 ############ INTERNAL FUNCTIONS
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.athmo package &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -55,6 +55,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
@@ -107,13 +108,13 @@
 <span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">PWV_conversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zwd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.PWV_conversion" title="Permalink to this definition"></a></dt>
 <dd><p>This function convert from Zenith Wet delay to Precipitate Water Vapor (PWV)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>zwd</strong> – Zenith wet delay in meters</p></li>
 <li><p><strong>Tm</strong> – Mean temperature of troposphere</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>PWV</em> – Precipitate Water Vapor in mm</p></li>
 <li><p><em>Sources</em></p></li>
@@ -130,10 +131,10 @@
 <span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">Tm_bevis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.Tm_bevis" title="Permalink to this definition"></a></dt>
 <dd><p>This function determines mean temperature based on surface temperature using Bevis equation</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>Ts</strong> – Surface temperature in Kelvin</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>Tm</em> – Mean temperature in Kevlin</p></li>
 <li><p><em>Sources</em></p></li>
@@ -149,6 +150,8 @@
 <dt class="sig sig-object py" id="geodezyx.athmo.athmo.calc_stand_ties">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">calc_stand_ties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_rov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mm'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.calc_stand_ties" title="Permalink to this definition"></a></dt>
 <dd><p>Determine standard atmospheric ties with analytical equation from Teke et al. (2011)</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>epoc :</dt><dd><p>time in Python datetime</p>
@@ -169,18 +172,24 @@
 </dd>
 </dl>
 </div></blockquote>
+</section>
+<section id="return">
+<h3>Return:<a class="headerlink" href="#return" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>ties :</dt><dd><p>Standard ties of total delay in milimeters or meters</p>
 </dd>
 </dl>
 </div></blockquote>
+</section>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.athmo.athmo.calc_stand_ties_gpt3">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">calc_stand_ties_gpt3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_rov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_rov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_rov</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mm'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.calc_stand_ties_gpt3" title="Permalink to this definition"></a></dt>
 <dd><p>Determine standard atmospheric ties from meteological information from GPT3 with analytical equation from Teke et al. (2011)</p>
+<section id="id1">
+<h3>Parameters:<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>epoc :</dt><dd><p>time in Python datetime</p>
@@ -199,12 +208,16 @@
 </dd>
 </dl>
 </div></blockquote>
+</section>
+<section id="id2">
+<h3>Return:<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>ties :</dt><dd><p>Standard ties of total delay in milimeters or meters</p>
 </dd>
 </dl>
 </div></blockquote>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -284,6 +297,8 @@ Johannes Boehm, 27 December 2013, copyright notice added
 Johannes Boehm, 25 August 2014, reference changed to Boehm et al. in GPS
 Solutions</p>
 </div></blockquote>
+<section id="source">
+<h3>Source<a class="headerlink" href="#source" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><p>J. Böhm, G. Möller, M. Schindelegger, G. Pain, R. Weber, Development of an
 improved blind model for slant delays in the troposphere (GPT2w),
@@ -291,6 +306,9 @@ GPS Solutions, 2014, doi:10.1007/s10291-014-0403-7</p>
 </div></blockquote>
 <p class="rubric">Notes</p>
 <p>Modified for Python by: Chaiyaporn Kitpracha</p>
+</section>
+<section id="id3">
+<h3>Parameters:<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>mjd:</dt><dd><p>modified Julian date (scalar, only one epoch per call is possible)</p>
 </dd>
@@ -308,6 +326,9 @@ GPS Solutions, 2014, doi:10.1007/s10291-014-0403-7</p>
 <dt>VEC:</dt><dd><p>GPT2 grid data in numpy array size 5 x 5 degree (‘gpt2_5.grd’)</p>
 </dd>
 </dl>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>p:</dt><dd><p>pressure in hPa</p>
@@ -322,6 +343,7 @@ GPS Solutions, 2014, doi:10.1007/s10291-014-0403-7</p>
 </dd>
 </dl>
 </div></blockquote>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -335,6 +357,8 @@ specific sites near the earth’s surface.
 It is based on a 5 x 5 degree external grid file (‘gpt3_5.grd’) with mean
 values as well as sine and cosine amplitudes for the annual and
 semiannual variation of the coefficients.</p>
+<section id="id4">
+<h3>Parameters:<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>dtin :</dt><dd><p>datatime in Python datetime object</p>
 </dd>
@@ -347,6 +371,9 @@ semiannual variation of the coefficients.</p>
 <dt>it:</dt><dd><p>case 1 no time variation but static quantities, case 0 with time variation (annual and semiannual terms)</p>
 </dd>
 </dl>
+</section>
+<section id="id5">
+<h3>Returns:<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>p:</dt><dd><p>pressure in hPa</p>
 </dd>
@@ -377,6 +404,9 @@ semiannual variation of the coefficients.</p>
 </dl>
 <p class="rubric">Notes</p>
 <p>Modified for Python by Chaiyaporn Kitpracha</p>
+</section>
+<section id="id6">
+<h3>Source<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><p>(c) Department of Geodesy and Geoinformation, Vienna University of
 Technology, 2017</p>
@@ -391,6 +421,7 @@ of GEO or in accordance with the terms of ESTEC Contract No.
 J Geod (2018) 92: 349., doi: 10.1007/s00190-017-1066-2.
 Download at: <a class="reference external" href="https://link.springer.com/content/pdf/10.1007%2Fs00190-017-1066-2.pdf">https://link.springer.com/content/pdf/10.1007%2Fs00190-017-1066-2.pdf</a></p>
 </div></blockquote>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -403,7 +434,7 @@ Download at: <a class="reference external" href="https://link.springer.com/conte
 <span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">trop_saast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dry'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.trop_saast" title="Permalink to this definition"></a></dt>
 <dd><p>This subroutine determines the zenith total delay based on the equation by Saastamoinen (1972) as refined by Davis et al. (1985)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – pressure in hPa</p></li>
 <li><p><strong>dlat</strong> – ellipsoidal latitude in radians</p></li>
@@ -413,7 +444,7 @@ Download at: <a class="reference external" href="https://link.springer.com/conte
 <li><p><strong>mode</strong> – dry, wet or total</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>res</em> – zenith total delay in m (depend on mode)</p></li>
 <li><p><em>Source</em></p></li>
@@ -437,7 +468,7 @@ pp. 1593-1607, 1985.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.athmo.</span></span><span class="sig-name descname"><span class="pre">vmf1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ah</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.athmo.vmf1" title="Permalink to this definition"></a></dt>
 <dd><p>This subroutine determines the VMF1 (Vienna Mapping Functions 1) for specific sites.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ah</strong> – hydrostatic coefficient a</p></li>
 <li><p><strong>aw</strong> – wet coefficient a</p></li>
@@ -446,7 +477,7 @@ pp. 1593-1607, 1985.</p></li>
 <li><p><strong>zd</strong> – zenith distance in radians</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>vmf1h</em> – hydrostatic mapping function</p></li>
 <li><p><em>vmf1w</em> – wet mapping function</p></li>

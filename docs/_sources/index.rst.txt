@@ -32,9 +32,9 @@ See the dedicated section: :ref:`install`.
 Useful links
 ------------
 
-**Documentation:** https://geodezyx.github.io/GeodeZYX-Toolbox_v4
+**Documentation:** https://geodezyx.github.io/geodezyx-toolbox
 
-**GitHub repository:** https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+**GitHub repository:** https://github.com/GeodeZYX/geodezyx-toolbox
 
 **PyPi project:** https://pypi.org/project/geodezyx
 

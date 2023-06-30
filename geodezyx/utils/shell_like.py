@@ -67,7 +67,7 @@ def subprocess_frontend(cmd_in,
     if save_log:
         
         if not log_dir:
-            logdir = os.getcwd()
+            log_dir = os.getcwd()
             
         if logname_timestamp:
             prefix = now + "_" 
@@ -282,10 +282,10 @@ def empty_file_check(fpath):
     Returns
     -------  
     True : 
-        if the file is empty
+        the file is empty or does not exist
     
     False : 
-        if the file is not empty
+        the file exists and is not empty
          
     Source
     ------
@@ -315,7 +315,7 @@ def find_recursive(parent_folder , pattern,
         Sort results
         
     case_sensitive : bool
-        Case sensitve or not. If False, the pattern *must* be a regex
+        Case sensitive or not. If False, the pattern *must* be a regex
         
     extended_file_stats : bool
         if True, returns the stats of the files
@@ -514,7 +514,7 @@ def fileprint(output,outfile):
 
 
 def write_in_file(string_to_write,outdir_or_outpath,
-                  outname="",ext='.txt',encoding='utf8'):
+                  outname="",ext='.txt',encoding='utf8',append=False):
     """
     encoding : utf8, latin_1
     https://docs.python.org/3/library/codecs.html#standard-encodings
@@ -527,8 +527,15 @@ def write_in_file(string_to_write,outdir_or_outpath,
     else:
         outpath = outdir_or_outpath
         
-    F = open(outpath,'w+',encoding=encoding)
-    F.write(string_to_write)
+    if append:
+        aw = "a+"
+        newline = "\n"
+    else:
+        aw = "w+"
+        newline = ""
+        
+    F = open(outpath,aw,encoding=encoding)
+    F.write(string_to_write + newline)
     F.close()
     return outpath
 

@@ -13,3 +13,4 @@ from .read_igs_combi          import *
 from .read_rinex              import *
 from .read_slr                import *
 from .write_geo_files         import *
+from .write_rinex             import *

@@ -41,10 +41,18 @@ geodezyx.conv.conv\_interpolators module
    :undoc-members:
    :show-inheritance:
 
-geodezyx.conv.conv\_proj\_carto module
---------------------------------------
+geodezyx.conv.conv\_proj\_lambert module
+----------------------------------------
 
-.. automodule:: geodezyx.conv.conv_proj_carto
+.. automodule:: geodezyx.conv.conv_proj_lambert
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geodezyx.conv.conv\_proj\_utm module
+------------------------------------
+
+.. automodule:: geodezyx.conv.conv_proj_utm
    :members:
    :undoc-members:
    :show-inheritance:

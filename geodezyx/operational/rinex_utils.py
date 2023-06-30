@@ -29,6 +29,7 @@ import shutil
 import string
 import subprocess
 import re
+import hatanaka
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -112,6 +113,8 @@ def rinex_sats_checker(p_rnx):
     
     import hatanaka
     
+    
+    ### This bloc must  be replaced by open_readlines_smart
     if p_rnx.endswith(".Z") or p_rnx.endswith(".gz"):
         O = hatanaka.decompress(p_rnx)
         O = str(O)
@@ -384,10 +387,11 @@ def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
 
     Parameters
     ----------
-    input_rinex_path_or_string : str
-        path of the rinex file.
-        can be the path of a RINEX or directly
-        the RINEX content as a string
+    input_rinex_path_or_string : see below
+        input RINEX.
+        can be the path of a RINEX file as string or as Path object,
+        or directly the RINEX content as a string, bytes, StringIO object or a 
+        list of lines
 
     interval_out : bool, optional
         output also the intervals. The default is False.
@@ -413,16 +417,16 @@ def rinex_read_epoch(input_rinex_path_or_string,interval_out=False,
     ##161019 : dirty copier coller de rinex start end
     epochs_list = []
     rinex_60sec = False
-
-    if  utils.is_iterable(input_rinex_path_or_string):
-        Finp = input_rinex_path_or_string
-    elif os.path.isfile(input_rinex_path_or_string):
-        Finp = open(input_rinex_path_or_string)
-    else:
-        Finp = input_rinex_path_or_string
+        
+    try:
+        input_rinex_path_or_string = hatanaka.decompress(input_rinex_path_or_string)
+    except:
+        pass
+    
+    RnxLines = utils.open_readlines_smart(input_rinex_path_or_string)
 
     Index_list = []
-    for iline, line in enumerate(Finp):
+    for iline, line in enumerate(RnxLines):
         epoch_rnx2=re.search('^ {1,2}([0-9]{1,2} * ){5}',line)
         epoch_rnx3=re.search('^>',line)
         
@@ -534,14 +538,14 @@ def rinex_start_end(input_rinex_path,interval_out=False,
         last_epoch = last_epoch.replace(tzinfo=dateutil.tz.tzutc())
 
     if verbose:
-        log.info("first & last epochs: %s %s" , first_epoch , last_epoch)
+        log.debug("first & last epochs: %s %s" , first_epoch , last_epoch)
     if not interval_out:
         return first_epoch , last_epoch
     else:
         interv_lis = np.diff(epochs_list)
         interv_lis = [e.seconds + e.microseconds * 10**-6 for e in interv_lis]
         interval   = utils.most_common(interv_lis)
-        log.info("interval, last epoch: %s %s" , interval , last_epoch)
+        log.debug("interval, last epoch: %s %s" , interval , last_epoch)
 
         #return interv_lis , epochs_list
         return first_epoch , last_epoch , interval

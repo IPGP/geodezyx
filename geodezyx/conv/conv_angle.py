@@ -68,7 +68,9 @@ def dms2dec_num(deg,minn=0,sec=0):
         Decimal degree Angle
         
     """
-    return deg + minn * (1./60.) +  sec * (1./3600.)
+    sig = np.sign(deg)
+    
+    return deg + sig*minn * (1./60.) +  sig*sec * (1./3600.)
 
 
 def deg_dec2dms(deg_in,only_dm=False):

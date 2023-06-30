@@ -27,18 +27,19 @@ import numpy as np
 import os
 import pandas as pd
 import pickle
+import pathlib
 import re
 import scipy
 import sys
 import tempfile
 import time
 import uuid
+import io
 #### geodeZYX modules
 
 #### Import the logger
 import logging
 log = logging.getLogger(__name__)
-
 
 ##########  END IMPORT  ##########
 
@@ -364,6 +365,78 @@ def globals_filtered():
                          exclude_callables_and_modules=True)
     
     return data_out
+
+
+
+
+def open_readlines_smart(file_in,decode_type="ascii",verbose=False):
+    """
+    Take an input object, open it and reads its lines
+    input file  can be the path of a file as string or as Path object,
+    or the file content as a string, bytes, StringIO object or a 
+    list of lines
+
+
+    Parameters
+    ----------
+    file_in : various
+        an inpout object (see description).
+    decode_type : str, optional
+        the decode standard. The default is "ascii".
+    verbose : bool, optional
+        Describe the input file type. The default is False.
+
+    Returns
+    -------
+    LINES : list
+        list of the lines in file_in.
+    """
+    
+    if verbose:
+        log.info("input file is actually a %s",type(file_in))
+    
+    if type(file_in) is str and os.path.isfile(file_in):
+        if verbose:
+            log.info("input file is a string path")
+        FILE = open(file_in)
+        LINES = FILE.readlines()
+        
+    elif type(file_in) is pathlib.Path and os.path.isfile(file_in):
+        if verbose:
+            log.info("input file is a Path Object")
+        FILE = open(file_in)
+        LINES = FILE.readlines()
+        
+    elif type(file_in) is bytes:
+        if verbose:
+            log.info("input file is bytes")
+        LINES = file_in.decode(decode_type).split("\n")
+
+    elif type(file_in) is str:
+        if verbose:
+            log.info("input file is str")
+        LINES = file_in.split("\n")
+        
+    elif type(file_in) is io.StringIO:
+        if verbose:
+            log.info("input file is StringIO object")
+        LINES = file_in.readlines
+        
+    elif is_iterable(file_in):
+        if verbose:
+            log.info("input file is an iterable")
+        LINES = file_in
+        
+    else:
+        if verbose:
+            log.info("input file is unknown...")
+        log.error("something wrong while opening %s",file_in)
+        
+    
+    return LINES
+    
+        
+
 
 
 
@@ -818,7 +891,10 @@ def alphabet_reverse(letter=None):
 
 def dday():
     D = (dt.datetime(2016,10,14) - dt.datetime.now()).days
-    print('J -',  D , 'avant la quille')
+    print("used logger",log)
+    log.warning('J - %s avant la quille !!!',D)
+    log.info('J - %s avant la quille',D)
+    log.debug('J - %s avant la quille, chill',D)
     return D
 
 def Aformat(A,landscape=True):

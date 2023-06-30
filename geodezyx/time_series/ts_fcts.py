@@ -216,6 +216,13 @@ def compar_plot(dico_list_in, namest = 0, namend    = 10  ,
             Cti = 'delta Height'
             Dti = 'delta D ' + Dtype + ' (no sens)'
             ylbl = 'degrees'
+        elif coortype == 'UTM':
+            Ati = 'delta East UTM'
+            Bti = 'delta North UTM'
+            Cti = 'delta Height'
+            Dti = 'delta D UTM ' + Dtype
+            ylbl = 'meters'
+
         else:
             Ati = 'delta A'
             Bti = 'delta B'
@@ -257,12 +264,12 @@ def compar_plot(dico_list_in, namest = 0, namend    = 10  ,
         axD.set_ylabel(ylbl)
         axD.legend()
         axD.set_title(Dti)
-
+        
     return fig
 
 def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
-           Dtype='2D3D', namest=0,namend=10,alpha = 5 , diapt = 5 , verbose=True,
-           print_report=True,plot=True):
+           Dtype='2D3D', namest=0,namend=10,alpha = 5 , diapt = 5 , 
+           verbose=True, print_report=True,plot=True):
     """
         si seuil == 0, pas de nettoyage
 
@@ -296,8 +303,6 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
     dicolist = []
 
     for ivar,tsvar in enumerate(tstup):
-
-
         #dico de sortie
         dicovar = dict()
 
@@ -521,6 +526,20 @@ def compar2(tstup,coortype='ENU',seuil=3.,win=[],mode='keep',
     return dicolist
 
 
+def round_time(tsin,round_to,
+               mode='round'):
+    tsout = copy.deepcopy(tsin)
+    Tdtin = tsin.to_list(coortype=tsin.initype(),
+                         time_as_datetime=True)[3]
+    
+    Tdtout = conv.round_dt(Tdtin,round_to=round_to,mode=mode,
+                           python_dt_out=True)
+    
+    for pt,t in zip(tsout,Tdtout):
+        pt.Tset(conv.numpy_dt2dt(t))
+        
+    return tsout
+
 def mad_cleaner(tsin,seuil=3.5,method='dist',coortype='ABC',
                 detrend_first=False,output_detrended=False, verbose=False):
     '''
@@ -646,7 +665,7 @@ def linear_regress_find_coeff(tsin,coortype='ENU'):
         outW.append((w[0],w[1]))
     return outW
 
-def detrend_ts(tsin,coortype='ENU'):
+def detrend_ts(tsin,coortype='ENU',t_origin=None):
     A, B, C , T , sA , sB , sC = tsin.to_list(coortype)
     try:
         Xref , Yref , Zref = tsin.mean_posi()
@@ -662,15 +681,47 @@ def detrend_ts(tsin,coortype='ENU'):
         UnTr.append(comp_untrend)
 
     tsout = ts_from_list(UnTr[0],UnTr[1],UnTr[2],T,coortype,sA,sB,sC,tsin.stat,tsin.name)
-
-
-
-
     tsout.anex['Xref'] = Xref
     tsout.anex['Yref'] = Yref
     tsout.anex['Zref'] = Zref
 
     return tsout
+
+def retrend_ts(tsin,a_coef,b_coef,coortype='ENU',t_origin=None):
+    """
+    a_coefs,b_coefs = 3-tuple/list for the 3 component
+    a_coef = m/s
+    """
+    
+    A, B, C , T , sA , sB , sC = tsin.to_list(coortype)
+    
+    if not t_origin:
+        t_origin_use = T[0]
+    else:
+        t_origin_use = t_origin
+        
+        
+    if not type(t_origin_use) in (float,np.float64):
+        print(type(t_origin_use))
+        t_origin_use = conv.dt2posix(t_origin_use)
+
+    W = linear_regress_find_coeff(tsin,coortype)
+    ReTr = []
+    
+    for i,composante in enumerate((A,B,C)):
+        comp_line = a_coef[i]*(T - t_origin_use) + b_coef[i]
+        comp_retrend = composante + comp_line
+        ReTr.append(comp_retrend)
+
+    tsout = ts_from_list(ReTr[0],ReTr[1],ReTr[2],
+                         T,coortype,
+                         sA,sB,sC,
+                         tsin.stat,tsin.name)
+
+    return tsout
+
+
+
 
 def linear_regress_ts(tsin,coortype='ENU',titledetails = ''):
     """ doit être cablé ASAP linear_regress_find_coeff"""
@@ -1427,6 +1478,10 @@ def ts_from_list(A,B,C,T,initype,sA=[],sB=[],sC=[],stat='STAT',name='NoName'):
         tsout.boolENU = True
     else:
         tsout.boolENU = False
+    if initype == 'UTM':
+        tsout.boolUTM = True
+    else:
+        tsout.boolUTM = False
     return tsout
 
 

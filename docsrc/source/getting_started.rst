@@ -20,7 +20,7 @@ We recommend to use ``pip`` to do a propper installation:
 ``pip install geodezyx``
 
 To get the latest working version you can install directly the GitHub-hosted version:
-``pip install -I -U git+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4``
+``pip install -I -U git+https://github.com/GeodeZYX/geodezyx-toolbox``
 
 Full installation (for sudoers/advanced users)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -31,14 +31,14 @@ We recommend to use ``pip`` to do a propper installation:
 ``pip install geodezyx[full]``
 
 To get the latest working version you can install directly the GitHub-hosted version:
-``pip install -I -U 'git+https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4#egg=geodezyx[full]'``
+``pip install -I -U 'git+https://github.com/GeodeZYX/geodezyx-toolbox#egg=geodezyx[full]'``
 
 
 clone and manually install from GitHub
 --------------------------------------
 
 You can manually fork and clone the GitHub repository
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4/
+https://github.com/GeodeZYX/geodezyx-toolbox/
 
 and install the Toolbox you downloaded with ``python setup.py install``
 
