@@ -242,6 +242,7 @@ def draw_map(station_etude,latm,latM,lonm,lonM,path,
                          xytext=(all_posx_proj[i], all_posy_proj[i]) , 
                          arrowprops=arrow_prop_dict,
                          annotation_clip=True) #xy point arrivee de la fleche, xytext l'origine de la fleche
+            
             a=math.atan((all_posx_proj[i]+np.multiply(ve_ITRF[i],scale_arrow)-all_posy_proj[i])/(all_posy_proj[i]+np.multiply(ve_ITRF[i],scale_arrow)-all_posy_proj[i])) # l'angle d'orientation de l'ellipsoide, avec 0 au nord et +90 a l'ouest
                 
             e = Ellipse(xy=(x_end_arrow_ok,
