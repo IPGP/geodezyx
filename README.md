@@ -2,7 +2,7 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.3.2 / 2023-03-08**, README Revision: 2023-03-08
+**Version 0.4.3.3 / 2023-06-30**, README Revision: 2023-06-30
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
@@ -27,7 +27,7 @@ V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.
 The purpose of the GeodeZYX toolbox (pronounced *geode-**zeecks***) is to provide all the functions which
 can be useful for Geodesy and Geophysics. 
 
-It includes low level functions, file management functions,
+It includes low-level functions, file management functions,
 time and space-coordinates conversion functions, 
 data (especially GNSS observations and orbits) retrieve functions, 
 plots and visual selection functions ...
@@ -67,6 +67,9 @@ and install the Toolbox you downloaded with ``python setup.py install``
 Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
 
 ## Changelog
+
+### v0.4.3.3, 2023-06-30
+  * a routine version update (bug corrections...)
 
 ### v0.4.3.2, 2023-03-08
   * 1000th commit on GitHub 🥳
