@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<groops>
+	<global>
+		<time label="timeStart">00000</time>
+		<time label="timeEnd">00000</time>
+		<int label="site4Char">borg</int>
+		<int label="inpGnssObsRnxFile">XXXXXXXX</int>
+		<int label="outGnssObsDir">/scratch/calcgnss/groops_process/022_conv_gnss_obs</int>
+		<int label="stationInfoDir">/scratch/calcgnss/groops_process/020_conv_sitelogs</int>
+		<filename label="groopsDataDir">/opt/softs_gnss/groops/data/data</filename>
+		<loopType label="loopPrn">
+			<fileAscii>
+				<inputfile>{groopsDataDir}/gnss/transmitter/transmitterList.gps.txt</inputfile>
+				<inputfile>{groopsDataDir}/gnss/transmitter/transmitterList.glonass.txt</inputfile>
+				<inputfile>{groopsDataDir}/gnss/transmitter/transmitterList.galileo.txt</inputfile>
+				<sort>0</sort>
+				<removeDuplicates>0</removeDuplicates>
+				<startIndex>0</startIndex>
+				<variableLoopString>prn</variableLoopString>
+			</fileAscii>
+		</loopType>
+	</global>
+	<program comment="daily - RINEX data">
+		<LoopPrograms>
+			<loop>
+				<timeIntervals>
+					<timeIntervals>
+						<uniformSampling>
+							<timeStart link="timeStart"/>
+							<timeEnd link="timeEnd"/>
+							<sampling>1</sampling>
+						</uniformSampling>
+					</timeIntervals>
+					<variableLoopTimeStart>loopTime</variableLoopTimeStart>
+					<variableLoopTimeEnd>loopTimeEnd</variableLoopTimeEnd>
+				</timeIntervals>
+			</loop>
+			<continueAfterError>0</continueAfterError>
+			<processCountPerIteration>0</processCountPerIteration>
+			<parallelLog>1</parallelLog>
+			<program comment="{outGnssObsDir}/{loopTime:%D}/observation">
+				<FileCreateDirectories>
+					<directory>{outGnssObsDir}/{loopTime:%D}/observation</directory>
+				</FileCreateDirectories>
+			</program>
+			<program comment="{outGnssObsDir}/{loopTime:%D}/observation/gnssReceiver_{loopTime:%D}.{site4Char}.dat.gz">
+				<RinexObservation2GnssReceiver>
+					<outputfileGnssReceiver>{outGnssObsDir}/{loopTime:%D}/observation/gnssReceiver_{loopTime:%D}.{site4Char}.dat.gz</outputfileGnssReceiver>
+					<inputfileRinexObservation>{inpGnssObsRnxFile}</inputfileRinexObservation>
+					<inputfileMatrixPrn2FrequencyNumber>{groopsDataDir}/gnss/transmitter/glonassPrnSvn2FrequencyNumber.txt</inputfileMatrixPrn2FrequencyNumber>
+					<inputfileStationInfo>{stationInfoDir}/{site4Char}.xml</inputfileStationInfo>
+					<inputfileSemiCodelessReceivers>{groopsDataDir}/gnss/receiverStation/semiCodelessReceivers.txt</inputfileSemiCodelessReceivers>
+				</RinexObservation2GnssReceiver>
+			</program>
+		</LoopPrograms>
+	</program>
+</groops>

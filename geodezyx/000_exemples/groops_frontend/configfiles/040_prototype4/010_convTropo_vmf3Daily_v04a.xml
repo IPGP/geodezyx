@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<groops>
+	<global>
+		<time label="timeStart">00000</time>
+		<time label="timeEnd">00000</time>
+		<int label="groopsInpVmfGridFile1">XXXXXX</int>
+		<int label="groopsInpVmfGridFile2">XXXXXX</int>
+		<int label="groopsInpVmfGridFile3">XXXXXX</int>
+		<int label="groopsInpVmfGridFile4">XXXXXX</int>
+		<int label="groopsOutTropoGridDir">/scratch/calcgnss/groops_process/010_conv_tropo_vmf3/</int>
+	</global>
+	<program comment="timeSeries">
+		<LoopPrograms>
+			<loop>
+				<timeSeries>
+					<timeSeries>
+						<uniformSampling>
+							<timeStart>timeStart</timeStart>
+							<timeEnd>timeEnd</timeEnd>
+							<sampling>1</sampling>
+						</uniformSampling>
+					</timeSeries>
+					<variableLoopTime>loopTime</variableLoopTime>
+				</timeSeries>
+			</loop>
+			<continueAfterError>0</continueAfterError>
+			<processCountPerIteration>0</processCountPerIteration>
+			<parallelLog>1</parallelLog>
+			<program comment="{groopsOutTropoGridDir}/{loopTime:%y}/">
+				<FileCreateDirectories>
+					<directory>{groopsOutTropoGridDir}/{loopTime:%y}/</directory>
+				</FileCreateDirectories>
+			</program>
+			<program comment="{groopsOutTropoGridDir}/{loopTime:%y}/vmf3_grid_{loopTime:%y-%m-%d}.dat.gz">
+				<ViennaMappingFunctionGrid2File>
+					<outputfileVmfCoefficients>{groopsOutTropoGridDir}/{loopTime:%y}/vmf3_grid_{loopTime:%y-%m-%d}.dat.gz</outputfileVmfCoefficients>
+					<inputfile>{groopsInpVmfGridFile1}</inputfile>
+					<inputfile>{groopsInpVmfGridFile2}</inputfile>
+					<inputfile>{groopsInpVmfGridFile3}</inputfile>
+					<inputfile>{groopsInpVmfGridFile4}</inputfile>
+					<timeSeries>
+						<uniformSampling>
+							<timeStart>loopTime</timeStart>
+							<timeEnd>loopTime+1 - 0.1</timeEnd>
+							<sampling>6/24</sampling>
+						</uniformSampling>
+					</timeSeries>
+					<deltaLambda>1</deltaLambda>
+					<deltaPhi>1</deltaPhi>
+					<isCellRegistered>1</isCellRegistered>
+				</ViennaMappingFunctionGrid2File>
+			</program>
+		</LoopPrograms>
+	</program>
+</groops>
