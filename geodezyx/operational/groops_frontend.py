@@ -307,6 +307,48 @@ def groops_ppp_full_runner(rinex_path,
                            vmf_tropo_root_dir,
                            prods_gnss_root_dir,
                            cfg_files_root_dir):
+    """
+    
+
+    Parameters
+    ----------
+    rinex_path : str
+        the path of the RINEX file to process.
+    project_name : str
+        a personalized name for your processing project
+    igs_ac_10char : str
+        the 10 char. ID for the IGS AC you want to use  
+        e.g. 'COD0OPSFIN'  
+        can handle operational (OPS) and MGEX (MGX) lines 
+    cfg_files_dict : dict
+        a dictionary controlling the conversion/processing steps 
+        and the corresponding config files.
+    log_root_dir : str
+        directory path where the frontend logs will be written
+    vmf_tropo_root_dir : str
+        directory path where the VMF3/ECMWF grids will be stored
+        (auto download)
+    prods_gnss_root_dir : str
+        directory path where the IGS products (not converted) will be stored
+        (auto download)
+    cfg_files_root_dir : str
+        directory path where the config files are stored.
+        
+    Note
+    ----
+    the config files must be checked and edited manually
+    it is the config files which contains the most useful parameters
+    
+    prototype for config files are in:
+    `.../geodezyx/000_exemples/groops_frontend/configfiles/`
+    
+    
+    
+    Returns
+    -------
+    None.
+
+    """
     
     ###############################################################################
     ######## Set python fct variables
@@ -314,9 +356,8 @@ def groops_ppp_full_runner(rinex_path,
     
     #### Internal debug variables
     log.setLevel(logging.INFO)
-    debug_sleep_time = 2
+    debug_sleep_time = 1
     dry_run=False
-
 
     prods_gnss_dir = os.path.join(prods_gnss_root_dir,igs_ac_10char)
     
@@ -582,7 +623,6 @@ def groops_ppp_full_runner(rinex_path,
                         log_dir=log_dir,
                         dry_run=dry_run)
 
-    
     ###############################################################################
     ######## Edit station list
     
