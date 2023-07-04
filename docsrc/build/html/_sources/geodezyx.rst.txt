@@ -17,6 +17,7 @@ Subpackages
    geodezyx.externlib
    geodezyx.files_rw
    geodezyx.geodyn
+   geodezyx.logconfig
    geodezyx.marine
    geodezyx.megalib
    geodezyx.operational

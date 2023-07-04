@@ -149,7 +149,8 @@ class Point():
         self.sX,self.sY,self.sZ = conv.sFLH2sXYZ(F,L,H,sF,sL,sH)
         
 
-    def ENUset(self,E=np.nan,N=np.nan,U=np.nan,sE=np.nan,sN=np.nan,sU=np.nan):
+    def ENUset(self,E=np.nan,N=np.nan,U=np.nan,
+               sE=np.nan,sN=np.nan,sU=np.nan):
         self.E = E
         self.N = N
         self.U = U
@@ -159,7 +160,8 @@ class Point():
 
         self.initype = 'ENU'
 
-    def NEDset(self,N=np.nan,E=np.nan,D=np.nan,sN=np.nan,sE=np.nan,sD=np.nan):
+    def NEDset(self,N=np.nan,E=np.nan,D=np.nan,
+               sN=np.nan,sE=np.nan,sD=np.nan):
         self.N = N
         self.E = E
         self.D = D
@@ -170,7 +172,8 @@ class Point():
         self.initype = 'NED'
 
 
-    def UTMset(self,Eutm=np.nan,Nutm=np.nan,Uutm=np.nan,sEutm=np.nan,sNutm=np.nan,sUutm=np.nan):
+    def UTMset(self,Eutm=np.nan,Nutm=np.nan,Uutm=np.nan,
+               sEutm=np.nan,sNutm=np.nan,sUutm=np.nan):
         self.Eutm = Eutm
         self.Nutm = Nutm
         self.Uutm = Uutm
@@ -206,14 +209,17 @@ class Point():
         dY =  self.Y - refENU.Y
         dZ =  self.Z - refENU.Z
 
-        self.E,self.N,self.U = conv.XYZ2ENU(dX,dY,dZ,refENU.F,refENU.L)
+        Etmp,Ntmp,Utmp = conv.XYZ2ENU(dX,dY,dZ,refENU.F,refENU.L)
+        self.E,self.N,self.U = Etmp[0],Ntmp[0],Utmp[0]
 
         if self.initype == 'FLH' and hasattr(self,'sF'):
             if not np.isnan(self.sF):
-                self.sE,self.sN,self.sU = conv.sFLH2sENU(self.F,self.L,self.H,self.sF,self.sL,self.sH)
+                self.sE,self.sN,self.sU = conv.sFLH2sENU(self.F,self.L,self.H,
+                                                         self.sF,self.sL,self.sH)
         elif self.initype == 'XYZ' and hasattr(self,'sX'):
             if not np.isnan(self.sX):
-                self.sE,self.sN,self.sU = conv.sXYZ2sENU(self.X,self.Y,self.Z,self.sX,self.sY,self.sZ)
+                self.sE,self.sN,self.sU = conv.sXYZ2sENU(self.X,self.Y,self.Z,
+                                                         self.sX,self.sY,self.sZ)
 
 
     def UTMcalc_pt(self,ellips="wgs84"):
@@ -714,7 +720,7 @@ class TimeSeriePoint:
 
         Returns
         -------
-        None.
+        The matplotlib Figure object.
 
         """
         
@@ -1009,6 +1015,19 @@ class TimeSeriePoint:
 
         """
         self.ENUcalc(self.mean_posi())
+        return None
+    
+    
+    def ENUcalc_from_first_posi(self):
+        """
+        Method to determine the ENU components based directly on the mean position
+
+        Returns
+        -------
+        None.
+
+        """
+        self.ENUcalc(self.pts[0])
         return None
 
     def from_uniq_point(self,Point,startdate,enddate,pas=1):

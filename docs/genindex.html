@@ -11,9 +11,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -26,8 +23,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html">
-            <img src="_static/geodezyx_toolbox_logo.png" class="logo" alt="Logo"/>
+            <a href="index.html" class="icon icon-home"> GeodeZYX Toolbox
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -399,6 +395,8 @@
 </li>
       <li><a href="geodezyx.utils.html#geodezyx.utils.list_utils.dicofdic">dicofdic() (in module geodezyx.utils.list_utils)</a>
 </li>
+      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_rinex.dict_sys_obs_clean_LLI_SSI">dict_sys_obs_clean_LLI_SSI() (in module geodezyx.files_rw.read_rinex)</a>
+</li>
       <li><a href="geodezyx.utils.html#geodezyx.utils.dict_utils.dicts_merge">dicts_merge() (in module geodezyx.utils.dict_utils)</a>
 </li>
       <li><a href="geodezyx.utils.html#geodezyx.utils.dict_utils.dicts_of_list_merge">dicts_of_list_merge() (in module geodezyx.utils.dict_utils)</a>
@@ -431,10 +429,10 @@
 </li>
       <li><a href="geodezyx.operational.html#geodezyx.operational.gins_runner.double_diff_multi">double_diff_multi() (in module geodezyx.operational.gins_runner)</a>
 </li>
-      <li><a href="geodezyx.operational.html#geodezyx.operational.gins_runner.download_convert_2_gins_orb_clk">download_convert_2_gins_orb_clk() (in module geodezyx.operational.gins_runner)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="geodezyx.operational.html#geodezyx.operational.gins_runner.download_convert_2_gins_orb_clk">download_convert_2_gins_orb_clk() (in module geodezyx.operational.gins_runner)</a>
+</li>
       <li><a href="geodezyx.operational.html#geodezyx.operational.download_cddis.download_rp3_cddis">download_rp3_cddis() (in module geodezyx.operational.download_cddis)</a>
 </li>
       <li><a href="geodezyx.operational.html#geodezyx.operational.download_utils.downloader">downloader() (in module geodezyx.operational.download_utils)</a>
@@ -571,6 +569,8 @@
 </li>
       <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc">ENUcalc() (geodezyx.time_series.ts_class.TimeSeriePoint method)</a>
 </li>
+      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc_from_first_posi">ENUcalc_from_first_posi() (geodezyx.time_series.ts_class.TimeSeriePoint method)</a>
+</li>
       <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc_from_mean_posi">ENUcalc_from_mean_posi() (geodezyx.time_series.ts_class.TimeSeriePoint method)</a>
 </li>
       <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_class.Point.ENUcalc_pt">ENUcalc_pt() (geodezyx.time_series.ts_class.Point method)</a>
@@ -617,17 +617,19 @@
 </li>
       <li><a href="geodezyx.operational.html#geodezyx.operational.gins_runner.export_results_gins_listing">export_results_gins_listing() (in module geodezyx.operational.gins_runner)</a>
 </li>
-      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_fcts.export_ts">export_ts() (in module geodezyx.time_series.ts_fcts)</a>
+      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_export.export_ts">export_ts() (in module geodezyx.time_series.ts_export)</a>
 </li>
-      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_fcts.export_ts_as_hector_enu">export_ts_as_hector_enu() (in module geodezyx.time_series.ts_fcts)</a>
+      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_export.export_ts_as_hector_enu">export_ts_as_hector_enu() (in module geodezyx.time_series.ts_export)</a>
 </li>
-      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_fcts.export_ts_as_midas_tenu">export_ts_as_midas_tenu() (in module geodezyx.time_series.ts_fcts)</a>
+      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_export.export_ts_as_midas_tenu">export_ts_as_midas_tenu() (in module geodezyx.time_series.ts_export)</a>
 </li>
-      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_fcts.export_ts_as_neu">export_ts_as_neu() (in module geodezyx.time_series.ts_fcts)</a>
+      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_export.export_ts_as_neu">export_ts_as_neu() (in module geodezyx.time_series.ts_export)</a>
 </li>
-      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_fcts.export_ts_figure_pdf">export_ts_figure_pdf() (in module geodezyx.time_series.ts_fcts)</a>
+      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_export.export_ts_as_pbo_pos">export_ts_as_pbo_pos() (in module geodezyx.time_series.ts_export)</a>
 </li>
-      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_fcts.export_ts_plot">export_ts_plot() (in module geodezyx.time_series.ts_fcts)</a>
+      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_export.export_ts_figure_pdf">export_ts_figure_pdf() (in module geodezyx.time_series.ts_export)</a>
+</li>
+      <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_export.export_ts_plot">export_ts_plot() (in module geodezyx.time_series.ts_export)</a>
 </li>
       <li><a href="geodezyx.utils.html#geodezyx.utils.utils_core.extract_text_between_elements">extract_text_between_elements() (in module geodezyx.utils.utils_core)</a>
 </li>
@@ -936,6 +938,13 @@
 </li>
       </ul></li>
       <li>
+    geodezyx.files_rw.write_rinex
+
+      <ul>
+        <li><a href="geodezyx.files_rw.html#module-geodezyx.files_rw.write_rinex">module</a>
+</li>
+      </ul></li>
+      <li>
     geodezyx.geodyn
 
       <ul>
@@ -968,6 +977,20 @@
 
       <ul>
         <li><a href="geodezyx.geodyn.html#module-geodezyx.geodyn.volcano_mogi">module</a>
+</li>
+      </ul></li>
+      <li>
+    geodezyx.logconfig
+
+      <ul>
+        <li><a href="geodezyx.logconfig.html#module-geodezyx.logconfig">module</a>
+</li>
+      </ul></li>
+      <li>
+    geodezyx.logconfig.loggzyx
+
+      <ul>
+        <li><a href="geodezyx.logconfig.html#module-geodezyx.logconfig.loggzyx">module</a>
 </li>
       </ul></li>
       <li>
@@ -1054,6 +1077,8 @@
         <li><a href="geodezyx.operational.html#module-geodezyx.operational.anubis_frontend">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     geodezyx.operational.cluster_gfz
 
@@ -1061,8 +1086,6 @@
         <li><a href="geodezyx.operational.html#module-geodezyx.operational.cluster_gfz">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     geodezyx.operational.download_cddis
 
@@ -1232,6 +1255,13 @@
 </li>
       </ul></li>
       <li>
+    geodezyx.time_series.ts_export
+
+      <ul>
+        <li><a href="geodezyx.time_series.html#module-geodezyx.time_series.ts_export">module</a>
+</li>
+      </ul></li>
+      <li>
     geodezyx.time_series.ts_fcts
 
       <ul>
@@ -1370,6 +1400,8 @@
       <li><a href="geodezyx.utils.html#geodezyx.utils.shell_like.head">head() (in module geodezyx.utils.shell_like)</a>
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.geo_files_converter_lib.header_from_ellipsoid">header_from_ellipsoid() (in module geodezyx.files_rw.geo_files_converter_lib)</a>
+</li>
+      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.write_rinex.header_rinex3_generic">header_rinex3_generic() (in module geodezyx.files_rw.write_rinex)</a>
 </li>
       <li><a href="geodezyx.time_series.html#geodezyx.time_series.ts_class.Point.helmert_trans">helmert_trans() (geodezyx.time_series.ts_class.Point method)</a>
 
@@ -1693,6 +1725,8 @@
 </li>
         <li><a href="geodezyx.files_rw.html#module-geodezyx.files_rw.write_geo_files">geodezyx.files_rw.write_geo_files</a>
 </li>
+        <li><a href="geodezyx.files_rw.html#module-geodezyx.files_rw.write_rinex">geodezyx.files_rw.write_rinex</a>
+</li>
         <li><a href="geodezyx.geodyn.html#module-geodezyx.geodyn">geodezyx.geodyn</a>
 </li>
         <li><a href="geodezyx.geodyn.html#module-geodezyx.geodyn.emsgfz_load_interp">geodezyx.geodyn.emsgfz_load_interp</a>
@@ -1702,6 +1736,10 @@
         <li><a href="geodezyx.geodyn.html#module-geodezyx.geodyn.velo_field_map_plt">geodezyx.geodyn.velo_field_map_plt</a>
 </li>
         <li><a href="geodezyx.geodyn.html#module-geodezyx.geodyn.volcano_mogi">geodezyx.geodyn.volcano_mogi</a>
+</li>
+        <li><a href="geodezyx.logconfig.html#module-geodezyx.logconfig">geodezyx.logconfig</a>
+</li>
+        <li><a href="geodezyx.logconfig.html#module-geodezyx.logconfig.loggzyx">geodezyx.logconfig.loggzyx</a>
 </li>
         <li><a href="geodezyx.marine.html#module-geodezyx.marine">geodezyx.marine</a>
 </li>
@@ -1776,6 +1814,8 @@
         <li><a href="geodezyx.time_series.html#module-geodezyx.time_series">geodezyx.time_series</a>
 </li>
         <li><a href="geodezyx.time_series.html#module-geodezyx.time_series.ts_class">geodezyx.time_series.ts_class</a>
+</li>
+        <li><a href="geodezyx.time_series.html#module-geodezyx.time_series.ts_export">geodezyx.time_series.ts_export</a>
 </li>
         <li><a href="geodezyx.time_series.html#module-geodezyx.time_series.ts_fcts">geodezyx.time_series.ts_fcts</a>
 </li>
@@ -2106,9 +2146,21 @@
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_gipsy_bosser">read_gipsy_bosser() (in module geodezyx.files_rw.read_coords_time_series)</a>
 </li>
+      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_gipsy_gdcov">read_gipsy_gdcov() (in module geodezyx.files_rw.read_coords_time_series)</a>
+</li>
+      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_gipsy_gdcov_list">read_gipsy_gdcov_list() (in module geodezyx.files_rw.read_coords_time_series)</a>
+</li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_gipsy_tdp">read_gipsy_tdp() (in module geodezyx.files_rw.read_coords_time_series)</a>
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_gipsy_tdp_list">read_gipsy_tdp_list() (in module geodezyx.files_rw.read_coords_time_series)</a>
+</li>
+      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_gipsyx_tdp">read_gipsyx_tdp() (in module geodezyx.files_rw.read_coords_time_series)</a>
+</li>
+      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_gipsyx_tdp_list">read_gipsyx_tdp_list() (in module geodezyx.files_rw.read_coords_time_series)</a>
+</li>
+      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_gipsyx_xfile">read_gipsyx_xfile() (in module geodezyx.files_rw.read_coords_time_series)</a>
+</li>
+      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_gipsyx_xfile_list">read_gipsyx_xfile_list() (in module geodezyx.files_rw.read_coords_time_series)</a>
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.geo_files_converter_lib.read_globk_vel_file">read_globk_vel_file() (in module geodezyx.files_rw.geo_files_converter_lib)</a>
 </li>
@@ -2178,6 +2230,8 @@
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.geo_files_converter_lib.read_sinex_discontinuity_solo">read_sinex_discontinuity_solo() (in module geodezyx.files_rw.geo_files_converter_lib)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.geo_files_converter_lib.read_sinex_legacy">read_sinex_legacy() (in module geodezyx.files_rw.geo_files_converter_lib)</a>
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.geo_files_converter_lib.read_sinex_versatile">read_sinex_versatile() (in module geodezyx.files_rw.geo_files_converter_lib)</a>
@@ -2186,8 +2240,6 @@
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_sndy_mat_nav">read_sndy_mat_nav() (in module geodezyx.files_rw.read_coords_time_series)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.geo_files_converter_lib.read_snx_trop">read_snx_trop() (in module geodezyx.files_rw.geo_files_converter_lib)</a>
 
       <ul>
@@ -2207,8 +2259,6 @@
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.geo_files_converter_lib.read_station_info_solo_date">read_station_info_solo_date() (in module geodezyx.files_rw.geo_files_converter_lib)</a>
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.geo_files_converter_lib.read_station_info_time_solo">read_station_info_time_solo() (in module geodezyx.files_rw.geo_files_converter_lib)</a>
-</li>
-      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_tdp">read_tdp() (in module geodezyx.files_rw.read_coords_time_series)</a>
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.read_track">read_track() (in module geodezyx.files_rw.read_coords_time_series)</a>
 </li>
@@ -2736,11 +2786,13 @@
 </li>
       <li><a href="geodezyx.utils.html#geodezyx.utils.utils_core.Tee.write">write() (geodezyx.utils.utils_core.Tee method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.read_coords_time_series.write_ATM_GAMIT">write_ATM_GAMIT() (in module geodezyx.files_rw.read_coords_time_series)</a>
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.write_geo_files.write_clk">write_clk() (in module geodezyx.files_rw.write_geo_files)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.write_rinex.write_epoch_rinex3">write_epoch_rinex3() (in module geodezyx.files_rw.write_rinex)</a>
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.write_geo_files.write_epos_sta_coords">write_epos_sta_coords() (in module geodezyx.files_rw.write_geo_files)</a>
 </li>
@@ -2755,6 +2807,10 @@
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.geo_files_converter_lib.write_lfile_from_datalists">write_lfile_from_datalists() (in module geodezyx.files_rw.geo_files_converter_lib)</a>
 </li>
       <li><a href="geodezyx.operational.html#geodezyx.operational.gins_runner.write_oceanload_file">write_oceanload_file() (in module geodezyx.operational.gins_runner)</a>
+</li>
+      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.write_rinex.write_rinex3">write_rinex3() (in module geodezyx.files_rw.write_rinex)</a>
+</li>
+      <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.write_rinex.write_rinex3_body">write_rinex3_body() (in module geodezyx.files_rw.write_rinex)</a>
 </li>
       <li><a href="geodezyx.files_rw.html#geodezyx.files_rw.write_geo_files.write_sndy_light_dat">write_sndy_light_dat() (in module geodezyx.files_rw.write_geo_files)</a>
 </li>

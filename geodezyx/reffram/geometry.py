@@ -499,6 +499,8 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
     A_stk = []
     Bool_stk = []
     
+    log.error("we have %s points",len(X1list))
+    
     for X1 , X2 in zip(X1list , X2list):
         
         if np.sum(np.isnan(X1)) or np.sum(np.isnan(X2)):
