@@ -1,8 +1,7 @@
-#### GROOPS frontend tutorial
+### GROOPS frontend tutorial
 
-### prerequirment
+#### pre requirement
 
-download the GROOPS data zipfile (and update it on a regular basis)
+download the GROOPS data zip file (and update it on a regular basis)
 `https://ftp.tugraz.at/outgoing/ITSG/groops/data.zip`
-
-unzip it somewhere and change the variable `groopsDataDir` in the configfiles
+unzip it somewhere and change the variable `groopsDataDir` in the config files
