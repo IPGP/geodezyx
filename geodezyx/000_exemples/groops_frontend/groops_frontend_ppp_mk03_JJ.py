@@ -33,8 +33,8 @@ specific_sites=["sneg"]
 #specific_sites=["knkl"]
 specific_sites=["borg","fjag"]
 
-start_epoch=dt.datetime(2023,5,5)
-end_epoch=dt.datetime(2023,5,5)
+start_epoch=dt.datetime(2023,5,7)
+end_epoch=dt.datetime(2023,5,7)
 
 
 
