@@ -1287,8 +1287,48 @@ The default is ‘/opt/softs_gnss/groops/bin/groops’.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.groops_frontend.groops_ppp_full_runner">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">groops_ppp_full_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">igs_ac_10char</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_files_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmf_tropo_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prods_gnss_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_files_root_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.groops_frontend.groops_ppp_full_runner" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">groops_ppp_full_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">igs_ac_10char</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_files_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmf_tropo_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prods_gnss_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_files_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groops_bin_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/opt/softs_gnss/groops/bin/groops'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.groops_frontend.groops_ppp_full_runner" title="Permalink to this definition"></a></dt>
+<dd><p>High level function to run a GROOPS’s PPP job
+This function download IGS’s products, convert them, and run the PPP job
+see the Notes below for more details</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rinex_path</strong> (<em>str</em>) – the path of the RINEX file to process.</p></li>
+<li><p><strong>project_name</strong> (<em>str</em>) – a personalized name for your processing project</p></li>
+<li><p><strong>igs_ac_10char</strong> (<em>str</em>) – the 10 char. ID for the IGS AC you want to use
+e.g. ‘COD0OPSFIN’
+can handle operational (OPS) and MGEX (MGX) lines</p></li>
+<li><p><strong>cfg_files_dict</strong> (<em>dict</em>) – a dictionary controlling the conversion/processing steps
+and the corresponding config files.</p></li>
+<li><p><strong>log_root_dir</strong> (<em>str</em>) – directory path where the frontend logs will be written</p></li>
+<li><p><strong>vmf_tropo_root_dir</strong> (<em>str</em>) – directory path where the VMF3/ECMWF grids will be stored
+(auto download)</p></li>
+<li><p><strong>prods_gnss_root_dir</strong> (<em>str</em>) – directory path where the IGS products (not converted) will be stored
+(auto download)</p></li>
+<li><p><strong>cfg_files_root_dir</strong> (<em>str</em>) – directory path where the config files are stored.</p></li>
+<li><p><strong>groops_bin_path</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – Path of the GROOPS bin.
+The default is ‘/opt/softs_gnss/groops/bin/groops’.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>the config files must be checked and edited manually</strong>
+to fit your environnement config
+it is the config files which contains the most useful parameters
+use <cite>groopsGui</cite> to help you</p>
+<p>prototype for config files are in:
+<cite>…/geodezyx/000_exemples/groops_frontend/configfiles/</cite></p>
+<p>do not forget to update on a regular basis GROOPS’s <cite>data</cite> folder:
+` <a class="reference external" href="https://ftp.tugraz.at/outgoing/ITSG/groops/data">https://ftp.tugraz.at/outgoing/ITSG/groops/data</a>.zip`</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.groops_frontend.log_subprocess_output">
