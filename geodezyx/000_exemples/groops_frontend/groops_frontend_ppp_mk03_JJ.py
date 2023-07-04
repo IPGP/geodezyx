@@ -15,24 +15,26 @@ import os
 from threading import Thread
 import time
 
-### Project name
+### Choose your own project name
 project_name="test_calc_PF_03_testJJ"
 
 ### Paths where the RINEXs/Products/results are/will be stored
+#  Inputs
+cfg_files_root_dir="/home/ovsgnss/010_SOFTS/GeodeZYX-Toolbox_v4/geodezyx/000_exemples/groops_frontend/configfiles/040_prototype4/"
 rinex_root_path = "/vol/ovpf/miroir_ovpf/DonneesAcquisition/geodesie/GPSData/"
 vmf_tropo_root_dir = "/scratch/calcgnss/prods_tropo_vmf3"
 prods_gnss_root_dir = "/scratch/calcgnss/prods_gnss/"
-cfg_files_root_dir="/opt/softs_gnss/groops/config/040_prototype4/"
+# Outputs
 log_root_dir="/home/ovsgnss/020_CALC/groops_process/031_groops_frontend_logs"
 
 
 ### RINEX names and dates
 specific_sites=["sneg"]
-#specific_sites=["borg","fjag"]
-specific_sites=["knkl"]
+#specific_sites=["knkl"]
+specific_sites=["borg","fjag"]
 
-start_epoch=dt.datetime(2023,1,1)
-end_epoch=dt.datetime(2023,1,31)
+start_epoch=dt.datetime(2023,5,7)
+end_epoch=dt.datetime(2023,5,7)
 
 
 

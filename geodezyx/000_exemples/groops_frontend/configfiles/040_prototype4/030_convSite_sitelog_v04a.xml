@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<groops>
+	<global>
+		<string label="sitelogFile">borg00reu_20221005.log</string>
+		<string label="site4Char">borg</string>
+		<string label="inpSitelogMainDir">/scratch/calcgnss/sitelogs/</string>
+		<string label="inpSitelogSubDir">/OVPF/</string>
+		<string label="outStationInfoDir">/scratch/calcgnss/groops_process/020_conv_sitelogs</string>
+	</global>
+	<program comment="GnssStationLog2StationInfo">
+		<GnssStationLog2StationInfo>
+			<outputfileStationInfo>{outStationInfoDir}/{site4Char}.xml</outputfileStationInfo>
+			<inputfileStationLog>{inpSitelogMainDir}/{inpSitelogSubDir}/{sitelogFile}</inputfileStationLog>
+		</GnssStationLog2StationInfo>
+	</program>
+</groops>

@@ -7,6 +7,7 @@ Created on Tue Jan 17 10:54:49 2023
 """
 
 import datetime as dt
+import numpy as np
 import subprocess
 import urllib
 from geodezyx import utils, conv, operational
@@ -280,6 +281,21 @@ def vmf_tropo_downloader(output_dir,
     
 #%%
 
+
+def _search_xml_groops_global(xmlpath,global_label):
+    from xml.etree import ElementTree as et
+    from xml.etree.ElementTree import Element
+
+    xmltree = et.parse(xmlpath)
+
+    for element in xmltree.getroot().find("global"):
+        if element.attrib["label"] == global_label:  
+            elementok = element
+            return elementok.text
+    return None
+
+
+
 ###############################################################################
 ###############################################################################
 
@@ -386,16 +402,19 @@ def groops_ppp_full_runner(rinex_path,
     ###############################################################################
     ######## Check if converted products exists
     log.info("****** Converted GNSS products existance check ********************")
-    
-    #### HARDCODED !!!!! XXXXXXXXXXXXXXXXX
-    conv_prod_root_dir = "/home/ovsgnss/020_CALC/groops_process/021_conv_igs_prods"
+    #### XMLSEARCH  
+    #conv_prod_root_dir = "/home/ovsgnss/020_CALC/groops_process/021_conv_igs_prods"
+    xml_cfg_path=cfg_files_root_dir + cfg_files_dict["convProds_orbit"]
+    conv_prod_root_dir =  _search_xml_groops_global(xml_cfg_path,"outIgsProdsDir")
+    conv_prod_root_dir = os.path.dirname( conv_prod_root_dir) 
     conv_prod_dir = os.path.join(conv_prod_root_dir,igs_ac_10char,date_rin_ymd)
     
     All_conv_prods = utils.find_recursive(conv_prod_dir,"*dat")
     Clk_conv_prods = utils.find_recursive(conv_prod_dir,"clock*dat")
     Orb_conv_prods = utils.find_recursive(conv_prod_dir,"orbit*dat")
-        
-    if len(Orb_conv_prods) > 12: ## 12 is arbitrary
+
+    N_conv_prods = np.array([len(l) for l in [Clk_conv_prods,Orb_conv_prods]])
+    if np.all(N_conv_prods > 12): ## 12 is arbitrary and all the prods must fit the test 
         download_prods = False
         log.info("Products download/conversion skipped, %s converted files found in %s",
                  len(All_conv_prods),conv_prod_dir)
@@ -569,8 +588,12 @@ def groops_ppp_full_runner(rinex_path,
     
     log.info("****** Station list edition ***************************************")
     
-    #### HARDCODED !!!!! XXXXXXXXXXXXXXXXX
-    station_list_path='/opt/softs_gnss/groops/stationlists/station_list_OPERA_01a.txt'
+    #### XMLSEARCH  
+    xml_cfg_path=cfg_files_root_dir + cfg_files_dict["gnssProcessing"] 
+    station_list_dir=_search_xml_groops_global(xml_cfg_path,"groopsStationListDir")
+    station_list_file=_search_xml_groops_global(xml_cfg_path,"groopsStationListFile")
+    station_list_path = os.path.join(station_list_dir,station_list_file)
+
     F=open(station_list_path,"w+")
     F.write(site4char)
     F.close()
