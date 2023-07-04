@@ -15,7 +15,7 @@ import os
 from threading import Thread
 import time
 
-### Project name
+### Choose your own project name
 project_name="test_calc_PF_03_testJJ"
 
 ### Paths where the RINEXs/Products/results are/will be stored
