@@ -308,7 +308,9 @@ def groops_ppp_full_runner(rinex_path,
                            prods_gnss_root_dir,
                            cfg_files_root_dir):
     """
-    
+    High level function to run a GROOPS's PPP job
+    This function download IGS's products, convert them, and run the PPP job
+    see the Notes below for more details
 
     Parameters
     ----------
@@ -336,13 +338,16 @@ def groops_ppp_full_runner(rinex_path,
         
     Note
     ----
-    the config files must be checked and edited manually
+    **the config files must be checked and edited manually** 
+    to fit your environnement config
     it is the config files which contains the most useful parameters
+    use `groopsGui` to help you
     
     prototype for config files are in:
     `.../geodezyx/000_exemples/groops_frontend/configfiles/`
     
-    
+    do not forget to update on a regular basis GROOPS's `data` folder:
+    ` https://ftp.tugraz.at/outgoing/ITSG/groops/data.zip`
     
     Returns
     -------
