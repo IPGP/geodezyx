@@ -3,9 +3,9 @@
 	<global>
 		<time label="timeStart">00000</time>
 		<time label="timeEnd">00000</time>
-		<int label="igsAC10Char">COD0MGXFIN</int>
+		<string label="igsAC10Char">XXXXXXXXXX</string>
 		<string label="inpIgsProdsDir">XXXXXX</string>
-		<int label="outIgsProdsDir">/scratch/calcgnss/groops_process/021_conv_igs_prods/{igsAC10Char}</int>
+		<string label="outIgsProdsDir">/scratch/calcgnss/groops_process/021_conv_igs_prods/{igsAC10Char}</string>
 		<filename label="groopsDataDir">/opt/softs_gnss/groops/data/data</filename>
 		<loopType label="loopPrn">
 			<fileAscii>

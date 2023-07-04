@@ -3,10 +3,10 @@
 	<global>
 		<time label="timeStart">00000</time>
 		<time label="timeEnd">00000</time>
-		<int label="site4Char">borg</int>
-		<int label="inpGnssObsRnxFile">XXXXXXXX</int>
-		<int label="outGnssObsDir">/scratch/calcgnss/groops_process/022_conv_gnss_obs</int>
-		<int label="stationInfoDir">/scratch/calcgnss/groops_process/020_conv_sitelogs</int>
+		<string label="site4Char">XXXX</string>
+		<string label="inpGnssObsRnxFile">XXXXXXXX</string>
+		<string label="outGnssObsDir">/scratch/calcgnss/groops_process/022_conv_gnss_obs</string>
+		<string label="stationInfoDir">/scratch/calcgnss/groops_process/020_conv_sitelogs</string>
 		<filename label="groopsDataDir">/opt/softs_gnss/groops/data/data</filename>
 		<loopType label="loopPrn">
 			<fileAscii>

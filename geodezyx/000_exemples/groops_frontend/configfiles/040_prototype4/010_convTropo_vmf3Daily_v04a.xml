@@ -3,11 +3,11 @@
 	<global>
 		<time label="timeStart">00000</time>
 		<time label="timeEnd">00000</time>
-		<int label="groopsInpVmfGridFile1">XXXXXX</int>
-		<int label="groopsInpVmfGridFile2">XXXXXX</int>
-		<int label="groopsInpVmfGridFile3">XXXXXX</int>
-		<int label="groopsInpVmfGridFile4">XXXXXX</int>
-		<int label="groopsOutTropoGridDir">/scratch/calcgnss/groops_process/010_conv_tropo_vmf3/</int>
+		<string label="groopsInpVmfGridFile1">XXXXXX</string>
+		<string label="groopsInpVmfGridFile2">XXXXXX</string>
+		<string label="groopsInpVmfGridFile3">XXXXXX</string>
+		<string label="groopsInpVmfGridFile4">XXXXXX</string>
+		<string label="groopsOutTropoGridDir">/scratch/calcgnss/groops_process/010_conv_tropo_vmf3/</string>
 	</global>
 	<program comment="timeSeries">
 		<LoopPrograms>

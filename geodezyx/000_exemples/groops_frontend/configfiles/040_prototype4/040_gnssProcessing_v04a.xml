@@ -6,13 +6,13 @@
 		<filename label="igsAC10Char">XXXXXXXXXX</filename>
 		<filename label="projectName">XXXXXXXXXX</filename>
 		<filename label="groopsDataDir">/opt/softs_gnss/groops/data/data</filename>
-		<int label="groopsStationInfoDir">/scratch/calcgnss/groops_process/020_conv_sitelogs</int>
-		<int label="groopsIgsProds">/scratch/calcgnss/groops_process/021_conv_igs_prods/{igsAC10Char}</int>
+		<string label="groopsStationInfoDir">/scratch/calcgnss/groops_process/020_conv_sitelogs</string>
+		<string label="groopsIgsProds">/scratch/calcgnss/groops_process/021_conv_igs_prods/{igsAC10Char}</string>
 		<string label="groopsGnssObs">/scratch/calcgnss/groops_process/022_conv_gnss_obs/</string>
 		<string label="groopsTropoDir">/scratch/calcgnss/groops_process/010_conv_tropo_vmf3/</string>
-		<int label="groopsOutResults">/scratch/calcgnss/groops_process/030_results/{projectName}</int>
+		<string label="groopsOutResults">/scratch/calcgnss/groops_process/030_results/{projectName}</string>
 		<string label="groopsStationListDir">/opt/softs_gnss/groops/stationlists</string>
-		<int label="groopsStationListFile">station_list_OPERA_01a.txt</int>
+		<string label="groopsStationListFile">station_list_OPERA_01a.txt</string>
 	</global>
 	<program comment="daily">
 		<LoopPrograms>
