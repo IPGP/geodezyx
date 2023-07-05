@@ -21,7 +21,7 @@ import time
 import logging
 log = logging.getLogger(__name__)
 
-def log_subprocess_output(pipe,logger=None,file=None,file2=None):
+def log_subprocess(pipe,logger=None,file=None,file2=None):
     """
     Intern fuction for subprocess_frontend2
     to write the stdout/err in the console logger + a logfile
@@ -138,11 +138,11 @@ def subprocess_frontend2(cmd_in,
     ##################################################
     
     ### Get out/err simultaneously
-    stdout_thread = Thread(target=log_subprocess_output,
+    stdout_thread = Thread(target=log_subprocess,
                            args=(process.stdout,
                                  loggerout,
                                  out_file))
-    stderr_thread = Thread(target=log_subprocess_output,
+    stderr_thread = Thread(target=log_subprocess,
                            args=(process.stderr,
                                  loggererr,
                                  err_file,
@@ -167,7 +167,7 @@ def groops_basic_runner(xml_cfg_path="",
                         global_var_dict=dict(),
                         xml_var_dict=dict(),
                         dry_run=False,
-                        verbose=False,
+                        verbosity="ERROR",
                         log_dir=None,
                         groops_bin_path='/opt/softs_gnss/groops/bin/groops'):
     """
@@ -187,8 +187,10 @@ def groops_basic_runner(xml_cfg_path="",
         The default is dict().
     dry_run : bool, optional
         If True print the command but do not run it . The default is False.
-    verbose : bool, optional
-        print the detailled GROOPS's output. The default is False.
+    verbosity : str, optional
+        verbosity level of the console logger
+        use keywords CRITICAL, ERROR, WARNING, INFO, DEBUG
+        The default is 'ERROR'.
     log_dir : str, optional
         If provided, directory where the logs are stored. The default is None.
     groops_bin_path : TYPE, optional
@@ -213,10 +215,8 @@ def groops_basic_runner(xml_cfg_path="",
     
     xml_cfg_bn = os.path.basename(xml_cfg_path)
 
-    if verbose:
-        log.setLevel(logging.DEBUG)
-    else:
-        log.setLevel(logging.INFO)
+    loglevel_prev = logging.getLevelName(log.level) 
+    log.setLevel(verbosity)
 
     if not log_dir:
         save_log = False
@@ -233,7 +233,7 @@ def groops_basic_runner(xml_cfg_path="",
                              logname_timestamp=True,
                              logger_objt_level_out=log.debug)
     
-    log.setLevel(logging.INFO)
+    log.setLevel(loglevel_prev)
     return 
 
 
@@ -308,7 +308,8 @@ def groops_ppp_full_runner(rinex_path,
                            prods_gnss_root_dir,
                            cfg_files_root_dir,
                            sitelogs_root_dir,
-                           groops_bin_path='/opt/softs_gnss/groops/bin/groops'):
+                           groops_bin_path='/opt/softs_gnss/groops/bin/groops',
+                           verbosity="ERROR"):
     """
     High level function to run a GROOPS's PPP job
     This function download IGS's products, convert them, and run the PPP job
@@ -337,9 +338,15 @@ def groops_ppp_full_runner(rinex_path,
         (auto download)
     cfg_files_root_dir : str
         directory path where the config files are stored.
-    groops_bin_path : TYPE, optional
+    sitelogs_root_dir : str
+        directory path where the sitelogs files are stored.
+    groops_bin_path : str, optional
         Path of the GROOPS bin. 
         The default is '/opt/softs_gnss/groops/bin/groops'.
+    verbosity : str, optional
+        verbosity level of the console logger
+        use keywords CRITICAL, ERROR, WARNING, INFO, DEBUG
+        The default is 'ERROR'.
     
     Note
     ----
@@ -396,7 +403,7 @@ def groops_ppp_full_runner(rinex_path,
     project_name_use = project_name + "_" + igs_ac_10char 
 
     #### Define rinex-linked variables
-    site4char = os.path.basename(rinex_path)[:4]
+    site4char = os.path.basename(rinex_path)[:4].lower()
     date_rnx = conv.rinexname2dt(rinex_path)
     date_rnx_mjd = int(conv.dt2MJD(date_rnx))
     date_rin_ymd = conv.dt2str(date_rnx,"%Y-%m-%d")
@@ -454,6 +461,7 @@ def groops_ppp_full_runner(rinex_path,
                         global_var_dict,
                         log_dir=log_dir,
                         dry_run=dry_run,
+                        verbosity=verbosity,
                         groops_bin_path=groops_bin_path)
     
     ###############################################################################
@@ -537,6 +545,7 @@ def groops_ppp_full_runner(rinex_path,
                             global_var_dict,
                             log_dir=log_dir,
                             dry_run=dry_run,
+                            verbosity=verbosity,
                             groops_bin_path=groops_bin_path)
 
     
@@ -553,6 +562,7 @@ def groops_ppp_full_runner(rinex_path,
                             global_var_dict,
                             log_dir=log_dir,
                             dry_run=dry_run,
+                            verbosity=verbosity,
                             groops_bin_path=groops_bin_path)
 
         time.sleep(debug_sleep_time)    
@@ -568,6 +578,7 @@ def groops_ppp_full_runner(rinex_path,
                             global_var_dict,
                             log_dir=log_dir,
                             dry_run=dry_run,
+                            verbosity=verbosity,
                             groops_bin_path=groops_bin_path)
 
         time.sleep(debug_sleep_time)    
@@ -583,6 +594,7 @@ def groops_ppp_full_runner(rinex_path,
                             global_var_dict,
                             log_dir=log_dir,
                             dry_run=dry_run,
+                            verbosity=verbosity,
                             groops_bin_path=groops_bin_path)
 
         time.sleep(debug_sleep_time)    
@@ -598,6 +610,7 @@ def groops_ppp_full_runner(rinex_path,
                             global_var_dict,
                             log_dir=log_dir,
                             dry_run=dry_run,
+                            verbosity=verbosity,
                             groops_bin_path=groops_bin_path)
 
         time.sleep(debug_sleep_time)    
@@ -629,8 +642,13 @@ def groops_ppp_full_runner(rinex_path,
         global_var_dict["sitelogFile"] = os.path.basename(sitelog_path) 
     
         groops_basic_runner(xml_cfg_path,
-                            global_var_dict)
-    
+                            global_var_dict,
+                            log_dir=log_dir,
+                            dry_run=dry_run,
+                            verbosity=verbosity,
+                            groops_bin_path=groops_bin_path)
+
+   
     ###############################################################################
     ######## Convert RINEX
     
@@ -648,6 +666,7 @@ def groops_ppp_full_runner(rinex_path,
                         global_var_dict,
                         log_dir=log_dir,
                         dry_run=dry_run,
+                        verbosity=verbosity,
                         groops_bin_path=groops_bin_path)
 
     ###############################################################################
@@ -665,6 +684,7 @@ def groops_ppp_full_runner(rinex_path,
     F.write(site4char)
     F.close()
     
+    log.info("site %s written in station list file %s",site4char,station_list_path)
     
     ###############################################################################
     ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -684,6 +704,7 @@ def groops_ppp_full_runner(rinex_path,
                         global_var_dict,
                         log_dir=log_dir,
                         dry_run=dry_run,
+                        verbosity=verbosity,
                         groops_bin_path=groops_bin_path)
 
     

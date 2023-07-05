@@ -36,8 +36,8 @@ specific_sites=["borg","fjag"]
 specific_sites=["pmzi"]
 specific_sites=["glor"]
 
-start_epoch=dt.datetime(2023,4,7)
-end_epoch=dt.datetime(2023,4,7)
+start_epoch=dt.datetime(2023,4,9)
+end_epoch=dt.datetime(2023,4,9)
 
 
 
@@ -90,4 +90,6 @@ for rnx in Rinexs:
                            vmf_tropo_root_dir,
                            prods_gnss_root_dir,
                            cfg_files_root_dir,
-                           sitelogs_root_dir)
+                           sitelogs_root_dir,
+                           verbosity="DEBUG")
+
