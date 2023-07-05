@@ -545,24 +545,18 @@ def groops_ppp_full_runner(rinex_path,
     ###############################################################################
     ######## convert sitelog > station info
     
-    ## cfg_files_dict["convSite_sitelog"] 
+    log.info("****** sitelog > station info conversion **************************")
     
-    # log.info("\n****** sitelog > station info conversion **************************")
+    xml_cfg_path=cfg_files_root_dir + cfg_files_dict["convSite_sitelog"] 
     
-    # xmltree = et.parse(xml_cfg_generic)
-    # # get input files
-    # xmltree.find('.//rinexo').text
+    global_var_dict = dict()
+    global_var_dict["timeStart"] = date_rnx_mjd
+    global_var_dict["timeEnd"]   = date_rnx_mjd + 1
+    global_var_dict["site4Char"] = site4char
+    global_var_dict["inpGnssObsRnxFile"] = rinex_path
     
-    # xml_cfg_path=cfg_files_root_dir + "022_groopsConvert_GnssObs_v02b.xml"
-    
-    # global_var_dict = dict()
-    # global_var_dict["timeStart"] = date_rnx_mjd
-    # global_var_dict["timeEnd"]   = date_rnx_mjd + 1
-    # global_var_dict["site4Char"] = site4char
-    # global_var_dict["inpGnssObsRnxFile"] = rinex_path
-    
-    # groops_basic_runner(xml_cfg_path,
-    #                     global_var_dict)
+    groops_basic_runner(xml_cfg_path,
+                        global_var_dict)
     
     ###############################################################################
     ######## Convert RINEX

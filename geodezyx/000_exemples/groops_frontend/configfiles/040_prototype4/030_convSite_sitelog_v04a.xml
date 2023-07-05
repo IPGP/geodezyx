@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <groops>
 	<global>
-		<string label="sitelogFile">borg00reu_20221005.log</string>
-		<string label="site4Char">borg</string>
+		<string label="sitelogFile">XXXX00XXX_YYYYMMDD.log</string>
+		<string label="site4Char">XXXX</string>
 		<string label="inpSitelogMainDir">/scratch/calcgnss/sitelogs/</string>
 		<string label="inpSitelogSubDir">/OVPF/</string>
 		<string label="outStationInfoDir">/scratch/calcgnss/groops_process/020_conv_sitelogs</string>
