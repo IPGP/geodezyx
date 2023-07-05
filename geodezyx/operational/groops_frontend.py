@@ -364,6 +364,12 @@ def groops_ppp_full_runner(rinex_path,
     ######## Set python fct variables
     
     
+
+    #### preliminary test, GROOPS bin is here?
+    if not os.path.isfile(groops_bin_path):
+        log.critical("GROOPS bin is not here: %s",groops_bin_path)
+        return 
+    
     #### Internal debug variables
     log.setLevel(logging.INFO)
     debug_sleep_time = 1
