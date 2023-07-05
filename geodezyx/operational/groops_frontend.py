@@ -306,7 +306,58 @@ def groops_ppp_full_runner(rinex_path,
                            log_root_dir,
                            vmf_tropo_root_dir,
                            prods_gnss_root_dir,
-                           cfg_files_root_dir):
+                           cfg_files_root_dir,
+                           groops_bin_path='/opt/softs_gnss/groops/bin/groops'):
+    """
+    High level function to run a GROOPS's PPP job
+    This function download IGS's products, convert them, and run the PPP job
+    see the Notes below for more details
+
+    Parameters
+    ----------
+    rinex_path : str
+        the path of the RINEX file to process.
+    project_name : str
+        a personalized name for your processing project
+    igs_ac_10char : str
+        the 10 char. ID for the IGS AC you want to use  
+        e.g. 'COD0OPSFIN'  
+        can handle operational (OPS) and MGEX (MGX) lines 
+    cfg_files_dict : dict
+        a dictionary controlling the conversion/processing steps 
+        and the corresponding config files.
+    log_root_dir : str
+        directory path where the frontend logs will be written
+    vmf_tropo_root_dir : str
+        directory path where the VMF3/ECMWF grids will be stored
+        (auto download)
+    prods_gnss_root_dir : str
+        directory path where the IGS products (not converted) will be stored
+        (auto download)
+    cfg_files_root_dir : str
+        directory path where the config files are stored.
+    groops_bin_path : TYPE, optional
+        Path of the GROOPS bin. 
+        The default is '/opt/softs_gnss/groops/bin/groops'.
+    
+    Note
+    ----
+    **the config files must be checked and edited manually** 
+    to fit your environnement config
+    it is the config files which contains the most useful parameters
+    use `groopsGui` to help you
+    
+    prototype for config files are in:
+    `.../geodezyx/000_exemples/groops_frontend/configfiles/`
+    
+    do not forget to update on a regular basis GROOPS's `data` folder:
+    ` https://ftp.tugraz.at/outgoing/ITSG/groops/data.zip`
+    
+    Returns
+    -------
+    None.
+
+    """
     
     ###############################################################################
     ######## Set python fct variables
@@ -314,9 +365,8 @@ def groops_ppp_full_runner(rinex_path,
     
     #### Internal debug variables
     log.setLevel(logging.INFO)
-    debug_sleep_time = 2
+    debug_sleep_time = 1
     dry_run=False
-
 
     prods_gnss_dir = os.path.join(prods_gnss_root_dir,igs_ac_10char)
     
@@ -393,7 +443,8 @@ def groops_ppp_full_runner(rinex_path,
     groops_basic_runner(xml_cfg_path,
                         global_var_dict,
                         log_dir=log_dir,
-                        dry_run=dry_run)
+                        dry_run=dry_run,
+                        groops_bin_path=groops_bin_path)
     
     ###############################################################################
     ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -475,7 +526,8 @@ def groops_ppp_full_runner(rinex_path,
         groops_basic_runner(xml_cfg_path,
                             global_var_dict,
                             log_dir=log_dir,
-                            dry_run=dry_run)
+                            dry_run=dry_run,
+                            groops_bin_path=groops_bin_path)
 
     
         time.sleep(debug_sleep_time)    
@@ -490,7 +542,8 @@ def groops_ppp_full_runner(rinex_path,
         groops_basic_runner(xml_cfg_path,
                             global_var_dict,
                             log_dir=log_dir,
-                            dry_run=dry_run)
+                            dry_run=dry_run,
+                            groops_bin_path=groops_bin_path)
 
         time.sleep(debug_sleep_time)    
     
@@ -504,7 +557,8 @@ def groops_ppp_full_runner(rinex_path,
         groops_basic_runner(xml_cfg_path,
                             global_var_dict,
                             log_dir=log_dir,
-                            dry_run=dry_run)
+                            dry_run=dry_run,
+                            groops_bin_path=groops_bin_path)
 
         time.sleep(debug_sleep_time)    
 
@@ -518,11 +572,10 @@ def groops_ppp_full_runner(rinex_path,
         groops_basic_runner(xml_cfg_path,
                             global_var_dict,
                             log_dir=log_dir,
-                            dry_run=dry_run)
+                            dry_run=dry_run,
+                            groops_bin_path=groops_bin_path)
 
         time.sleep(debug_sleep_time)    
-
-
 
     ###############################################################################
     ######## Convert Products: attitude
@@ -534,7 +587,8 @@ def groops_ppp_full_runner(rinex_path,
         groops_basic_runner(xml_cfg_path,
                             global_var_dict,
                             log_dir=log_dir,
-                            dry_run=dry_run)
+                            dry_run=dry_run,
+                            groops_bin_path=groops_bin_path)
 
         time.sleep(debug_sleep_time)    
     
@@ -574,9 +628,9 @@ def groops_ppp_full_runner(rinex_path,
     groops_basic_runner(xml_cfg_path,
                         global_var_dict,
                         log_dir=log_dir,
-                        dry_run=dry_run)
+                        dry_run=dry_run,
+                        groops_bin_path=groops_bin_path)
 
-    
     ###############################################################################
     ######## Edit station list
     
@@ -610,7 +664,8 @@ def groops_ppp_full_runner(rinex_path,
     groops_basic_runner(xml_cfg_path,
                         global_var_dict,
                         log_dir=log_dir,
-                        dry_run=dry_run)
+                        dry_run=dry_run,
+                        groops_bin_path=groops_bin_path)
 
     
     log.info("****** GROOPS RUNNER End ******************************************")
