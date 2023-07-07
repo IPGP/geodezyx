@@ -307,6 +307,7 @@ def groops_ppp_full_runner(rinex_path,
                            vmf_tropo_root_dir,
                            prods_gnss_root_dir,
                            cfg_files_root_dir,
+                           sitelogs_root_dir,
                            groops_bin_path='/opt/softs_gnss/groops/bin/groops'):
     """
     High level function to run a GROOPS's PPP job
@@ -363,10 +364,19 @@ def groops_ppp_full_runner(rinex_path,
     ######## Set python fct variables
     
     
+
+    #### preliminary test, GROOPS bin is here?
+    if not os.path.isfile(groops_bin_path):
+        log.critical("GROOPS bin is not here: %s",groops_bin_path)
+        return 
+    
     #### Internal debug variables
     log.setLevel(logging.INFO)
     debug_sleep_time = 1
     dry_run=False
+
+    #### add a slash to avoid crash 
+    cfg_files_root_dir = cfg_files_root_dir + "/" 
 
     prods_gnss_dir = os.path.join(prods_gnss_root_dir,igs_ac_10char)
     
@@ -599,24 +609,27 @@ def groops_ppp_full_runner(rinex_path,
     ###############################################################################
     ######## convert sitelog > station info
     
-    ## cfg_files_dict["convSite_sitelog"] 
+    log.info("****** sitelog > station info conversion **************************")
     
-    # log.info("\n****** sitelog > station info conversion **************************")
+    xml_cfg_path=cfg_files_root_dir + cfg_files_dict["convSite_sitelog"] 
+
+    sitelogs = utils.find_recursive(sitelogs_root_dir,".*"+site4char+".*log",
+                                    case_sensitive=False) 
+    if not sitelogs:
+        log.error("no sitelog found, sitelog conversion step is skipped")
+    else:
+        sitelog_path = sitelogs[-1]
+        log.info("sitelog used for conversion: %s",sitelog_path)
+
+        global_var_dict = dict()
+        #global_var_dict["timeStart"] = date_rnx_mjd
+        #global_var_dict["timeEnd"]   = date_rnx_mjd + 1
+        global_var_dict["site4Char"] = site4char
+        global_var_dict["inpSitelogMainDir"] = os.path.dirname(sitelog_path) 
+        global_var_dict["sitelogFile"] = os.path.basename(sitelog_path) 
     
-    # xmltree = et.parse(xml_cfg_generic)
-    # # get input files
-    # xmltree.find('.//rinexo').text
-    
-    # xml_cfg_path=cfg_files_root_dir + "022_groopsConvert_GnssObs_v02b.xml"
-    
-    # global_var_dict = dict()
-    # global_var_dict["timeStart"] = date_rnx_mjd
-    # global_var_dict["timeEnd"]   = date_rnx_mjd + 1
-    # global_var_dict["site4Char"] = site4char
-    # global_var_dict["inpGnssObsRnxFile"] = rinex_path
-    
-    # groops_basic_runner(xml_cfg_path,
-    #                     global_var_dict)
+        groops_basic_runner(xml_cfg_path,
+                            global_var_dict)
     
     ###############################################################################
     ######## Convert RINEX

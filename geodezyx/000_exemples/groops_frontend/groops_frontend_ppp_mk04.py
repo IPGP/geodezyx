@@ -26,6 +26,7 @@ vmf_tropo_root_dir = "/scratch/calcgnss/prods_tropo_vmf3"
 prods_gnss_root_dir = "/scratch/calcgnss/prods_gnss/"
 # Outputs
 log_root_dir="/home/ovsgnss/020_CALC/groops_process/031_groops_frontend_logs"
+sitelogs_root_dir="/home/ovsgnss/040_METADATA_GNSS/010_sitelogs_from_m3g"   
 
 
 ### RINEX names and dates
@@ -33,6 +34,7 @@ specific_sites=["sneg"]
 #specific_sites=["knkl"]
 specific_sites=["borg","fjag"]
 specific_sites=["pmzi"]
+specific_sites=["glor"]
 
 start_epoch=dt.datetime(2023,4,7)
 end_epoch=dt.datetime(2023,4,7)
@@ -87,4 +89,5 @@ for rnx in Rinexs:
                            log_root_dir,
                            vmf_tropo_root_dir,
                            prods_gnss_root_dir,
-                           cfg_files_root_dir)
+                           cfg_files_root_dir,
+                           sitelogs_root_dir)
