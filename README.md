@@ -122,5 +122,5 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 ```
 
 _I'd rather be burned alive than to program in Perl again._  
- G. Mansur, IUGG General Assembly, Berlin, 2023
+ G. Mansur, 28th IUGG General Assembly, Berlin, Germany, 2023
 
