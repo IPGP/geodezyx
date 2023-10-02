@@ -112,10 +112,15 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License 
 along with this program. If not, see http://www.gnu.org/licenses/.
 
+```
        _____                _      ________     ____   __  _______          _ _
       / ____|              | |    |___  /\ \   / /\ \ / / |__   __|        | | |
      | |  __  ___  ___   __| | ___   / /  \ \_/ /  \ V /     | | ___   ___ | | |__   _____  __
      | | |_ |/ _ \/ _ \ / _` |/ _ \ / /    \   /    > <      | |/ _ \ / _ \| | '_ \ / _ \ \/ /
      | |__| |  __/ (_) | (_| |  __// /__    | |    / . \     | | (_) | (_) | | |_) | (_) >  <
       \_____|\___|\___/ \__,_|\___/_____|   |_|   /_/ \_\    |_|\___/ \___/|_|_.__/ \___/_/\_\
+```
+
+_I'd rather be burned alive than to program in Perl again._  
+ G. Mansur, IUGG General Assembly, Berlin, 2023
 
