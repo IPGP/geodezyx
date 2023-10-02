@@ -4,6 +4,9 @@
 Created on Thu Nov 17 17:41:32 2022
 
 @author: psakic
+
+This module regroups the functions for the resolution estimation of the 
+MARMOR OBS-embeded pressure sensor
 """
 
 from geodezyx import utils

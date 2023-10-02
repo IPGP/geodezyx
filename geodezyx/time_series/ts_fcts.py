@@ -179,7 +179,10 @@ def compar_plot(dico_list_in, namest = 0, namend    = 10  ,
         fig.set_size_inches(16.53,11.69)
     else:
         fig , ax_arr = plt.subplots(4,1)
-        fig.set_size_inches(11.69,16.53)
+        #fig.set_size_inches(11.69,16.53) ### A3
+        fig.set_size_inches(8.27,11.69) ### A4
+
+        
 
     cm = plt.get_cmap(colormap)
     NUM_COLORS = len(dico_list_in)
@@ -259,6 +262,11 @@ def compar_plot(dico_list_in, namest = 0, namend    = 10  ,
         axD.set_ylabel(ylbl)
         axD.legend()
         axD.set_title(Dti)
+        axD.set_xlabel('Date')
+
+        fig.autofmt_xdate()        
+        fig.tight_layout()
+        plt.subplots_adjust(top=0.93)
         
     return fig
 

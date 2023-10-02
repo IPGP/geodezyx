@@ -21,7 +21,7 @@ import glob
 # import itertools
 # import multiprocessing as mp
 import os
-# import pandas as pd
+import pandas as pd
 import re
 # import shutil
 # import urllib
@@ -135,6 +135,61 @@ def rinex_finder(main_dir,
     log.info(str(len(Files_rnx_lis)) + ' RINEXs found')
 
     return Files_rnx_lis
+
+
+
+def read_rinex_list_table(rnx_list_inp):
+    """
+    Generate a Table from a RINEX list
+
+    Parameters
+    ----------
+    p : str, list or iterable
+        RINEX list. Can be a Python iterable (a list) or a path to a list file
+        (a string)
+
+    Returns
+    -------
+    DF : DataFrame
+        a RINEX Table.
+        
+    Note
+    ----
+    From script
+    .../geodezyx_toolbox_PS_perso_scripts/IPGP_OVS/rinex_lister/rinex_list_2019_2022_mk01.py
+
+    """
+    
+    if utils.is_iterable(rnx_list_inp):
+        DF = pd.DataFrame(rnx_list_inp)
+    else:
+        DF = pd.read_csv(rnx_list_inp,header=None)
+        
+    DF.columns = ["path"]
+    DF["name"] = DF["path"].apply(os.path.basename)
+    DF["site"] = DF["name"].str[:4]
+    DF["date"] = DF["name"].apply(conv.rinexname2dt)
+    DF["sd"] = list(zip(*(DF["site"],DF["date"])))
+    
+    return DF
+
+
+
+# def date_filter(DFin,strt,end):
+#     return DFin[(DFin.date >= strt) & (DFin.date < end)].copy()
+
+# def clean_w_year_path(DFin):
+    
+#     DF = DFin.copy()
+#     DF["yr_path"] = DF.path.str.extract("([0-9]{4})").astype(int)
+#     BOOL = DF["yr_path"] == DF["date"].dt.year
+#     DF = DF[BOOL]
+    
+#     print("before/after clean_w_year_path",len(DFin),len(DF))
+    
+#     return DF
+    
+
 
 
 def multi_finder_rinex(main_dir,
