@@ -9,6 +9,14 @@ geodezyx.marine package
 Submodules
 ----------
 
+geodezyx.marine.a0a module
+--------------------------
+
+.. automodule:: geodezyx.marine.a0a
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.marine.marine module
 -----------------------------
 

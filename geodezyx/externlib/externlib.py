@@ -24,7 +24,8 @@ import pandas as df
 import pandas as pd
 import pickle
 import scipy
-from scipy.signal import butter, lfilter, freqz
+### desactivated MAYOBS25 230925
+#from scipy.signal import butter, lfilter, freqz
 import shutil
 import string
 import struct

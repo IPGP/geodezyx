@@ -798,7 +798,7 @@ class TimeSeriePoint:
         
         if errbar:
             plt.errorbar(Tdt,A,sA, fmt=symbol,label=name4plot,
-                         markersize=diapt, alpha=alpha,ecolor='tab:cyan',
+                         markersize=diapt, alpha=alpha,ecolor='xkcd:light grey',
                          elinewidth=errbar_width)
         else:
             plt.plot(Tdt,A,symbol,label=name4plot,
@@ -811,7 +811,7 @@ class TimeSeriePoint:
         plt.ylabel(yylabel)
         plt.title(Btitle)
         plt.title(Atitle)
-
+                
 #        ax = plt.gca()
 
 #        if coortype == 'ENU':
@@ -821,7 +821,7 @@ class TimeSeriePoint:
         plt.subplot(styleint+2)
         if errbar:
             plt.errorbar(Tdt,B,sB, fmt=symbol,label=name4plot,
-                         markersize=diapt, alpha=alpha,ecolor='tab:cyan',
+                         markersize=diapt, alpha=alpha,ecolor='xkcd:light grey',
                          elinewidth=errbar_width)
         else:
             plt.plot(Tdt,B,symbol,label=name4plot,
@@ -837,7 +837,7 @@ class TimeSeriePoint:
         plt.subplot(styleint+3)
         if errbar:
             plt.errorbar(Tdt,C,sC, fmt=symbol,label=name4plot,
-                         markersize=diapt, alpha=alpha,ecolor='tab:cyan',
+                         markersize=diapt, alpha=alpha,ecolor='xkcd:light grey',
                          elinewidth=errbar_width)
         else:
             plt.plot(Tdt,C,symbol,label=name4plot,
@@ -849,6 +849,7 @@ class TimeSeriePoint:
         plt.xlabel('Date')
         plt.ylabel(yylabel)
         plt.title(Ctitle)
+        figobj.autofmt_xdate()
         figobj.set_size_inches(8.27,11.69)
         figobj.tight_layout()
         plt.subplots_adjust(top=0.93)
