@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os 
 import scipy
+import itertools
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -386,32 +387,32 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
                 
             dAin = dA
             dA,bb = stats.outlier_mad(dA,threshold=seuil)
-            dAout = dA
+            #dAout = dA
             TA = conv.posix2dt(np.array(Tref[bb]))
 
             dBin = dB
             dB,bb = stats.outlier_mad(dB,threshold=seuil)
-            dBout = dB
+            #dBout = dB
             TB = conv.posix2dt(np.array(Tref[bb]))
 
             dCin = dC
             dC,bb = stats.outlier_mad(dC,threshold=seuil)
-            dCout = dC
+            #dCout = dC
             TC = conv.posix2dt(np.array(Tref[bb]))
 
             dDin = dD
             dD,bb = stats.outlier_mad(dD,threshold=seuil)
             TD = conv.posix2dt(np.array(Tref[bb]))
-            dDout = dD
+            #dDout = dD
             if D2n3:
                 dD2Din = dD2D
                 dD2D,bb = stats.outlier_mad(dD2D,threshold=seuil)
                 TD2D = conv.posix2dt(np.array(Tref[bb]))
-                dD2Dout = dD2D
+                #dD2Dout = dD2D
                 dD3Din = dD3D
                 dD3D,bb = stats.outlier_mad(dD3D,threshold=seuil)
                 TD3D = conv.posix2dt(np.array(Tref[bb]))
-                dD3Dout = dD3D
+                #dD3Dout = dD3D
 
             if verbose:
                 log.info("Stats after cleaning")
@@ -1222,3 +1223,100 @@ def ts_from_list(A,B,C,T,initype,sA=[],sB=[],sC=[],stat='STAT',name='NoName'):
     return tsout
 
 
+def baselines_calc(ts_list,
+                   plani_only=False,
+                   substract_offset = np.median,
+                   symetric_calc  = False,
+                   symetric_storage = True):
+    """
+    
+
+    Parameters
+    ----------
+    ts_list : list
+        list of TimeSeries.
+    plani_only : bool, optional
+        If True, compute the baseline varation on the East and North 
+        component only.
+        The default is False.
+    substract_offset : function or None, optional
+        A function to substract the offset. 
+        Can be `np.mean` (substract the mean value), 
+        `np.median` (substract the median value), 
+        or `lambda x: x[0]` (substract the 1st value)
+        The default is np.median.
+    symetric_calc: bool, optional
+        If True, compute the baseline variation 2 times,
+        for stat1 > stat2 and stat2 > stat1
+        Might be useful to compare planimetic computation
+        The default is False.
+    symetric_storage : bool, optional
+        If True, store the baseline variation 2 times,
+        ``dictstore[stat1][stat2]`` and ``dictstore[stat2][stat1]``
+        ``symetric_calc`` overrides this option
+        The default is True.
+
+    Returns
+    -------
+    dictstore : dict
+        A dictionnary of dictionnaries of Pandas Series, 
+        containing the baseline variations
+        e.g. ``dictstore[stat1][stat2] = bl_series``
+
+    """
+
+    sites_store = [ts.stat for ts in ts_list]
+    
+    if symetric_storage:
+        dictstore = {key2: {key: None for key in sites_store} for key2 in sites_store}
+    else:
+        dictstore = {key2: {} for key2 in sites_store}
+
+    if symetric_calc:
+        couples = itertools.permutations(ts_list, 2)
+    else:
+        couples = itertools.combinations(ts_list, 2)
+
+        
+    for ts1orig, ts2orig in couples:
+        
+        ts1 = copy.deepcopy(ts1orig)
+        ts2 = copy.deepcopy(ts2orig)
+        
+        if plani_only:
+            ts1mean = ts1.mean_posi(meanormed='median')
+            ts1.ENUcalc(ts1mean)
+            ts2.ENUcalc(ts1mean)
+        
+        def _df_prepa(tsin):
+            if not plani_only:
+                dfout = tsin.to_dataframe("XYZ")       
+                dfout = dfout[["Tdt","X","Y","Z"]]
+            else:
+                dfout = tsin.to_dataframe("ENU")       
+                dfout = dfout[["Tdt","E","N"]]
+                
+            dfout = dfout.set_index("Tdt")
+            return dfout
+        
+        df1 = _df_prepa(ts1)
+        df2 = _df_prepa(ts2)
+        
+        i1 = df1.index
+        i2 = df2.index
+        iok = i1.intersection(i2)
+        
+        df1i = df1.loc[iok]
+        df2i = df2.loc[iok]
+            
+        dfbl = (df1i - df2i).apply(np.linalg.norm, axis=1) 
+        
+        if len(dfbl) > 0 and substract_offset:
+            dfbl = dfbl - substract_offset(dfbl)
+          
+        
+        dictstore[ts1.stat][ts2.stat] = dfbl
+        if symetric_storage and not symetric_calc:
+            dictstore[ts2.stat][ts1.stat] = dfbl
+            
+    return dictstore

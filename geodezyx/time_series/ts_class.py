@@ -1006,7 +1006,7 @@ class TimeSeriePoint:
             self.bool_interp_uptodate = False
             self.interp_set()
 
-    def ENUcalc_from_mean_posi(self):
+    def ENUcalc_from_mean_posi(self,meanormed="mean"):
         """
         Method to determine the ENU components based directly on the mean position
 
@@ -1015,7 +1015,7 @@ class TimeSeriePoint:
         None.
 
         """
-        self.ENUcalc(self.mean_posi())
+        self.ENUcalc(self.mean_posi,meanormed=meanormed)
         return None
     
     
@@ -1067,7 +1067,7 @@ class TimeSeriePoint:
         [ pt.UTMcalc_pt() for pt in self.pts ]
         
 
-    def timewin(self,windows,mode='keep'):
+    def time_win(self,windows,mode='keep'):
         '''IL EST TRES DANGEREUX DE L'APPLIQUER UN FENETRAGE A SOI MEME'''
         self.__dict__ = time_series.time_win(self,windows,mode).__dict__
 

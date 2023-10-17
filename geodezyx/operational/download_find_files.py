@@ -65,7 +65,7 @@ def rinex_finder(main_dir,
         check if the pattern matches a GFZ's GODC (GNSS Operational Data Center)
         internal long name RINEX. The default is True.
     compressed : bool or None
-        return a the regex for a compressed rinex
+        check if the pattern matches a compressed RINEX (True) or not (False)
         if None, does not matter (return both compressed or not)
     specific_sites : list, optional
         Filter only those specific sites. The default is [].
