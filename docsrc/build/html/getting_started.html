@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Getting started &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -11,9 +11,11 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=bc16efa3"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
+        <script src="_static/documentation_options.js?v=7b2efbeb"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -26,11 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> GeodeZYX Toolbox
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/geodezyx_toolbox_logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -69,7 +76,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Getting started</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
@@ -81,29 +88,29 @@
            <div itemprop="articleBody">
              
   <section id="getting-started">
-<span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
+<span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
 <section id="installation">
-<span id="install"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<span id="install"></span><h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <section id="with-pypi-and-pip">
-<h3>with PyPi and pip<a class="headerlink" href="#with-pypi-and-pip" title="Permalink to this heading"></a></h3>
+<h3>with PyPi and pip<a class="headerlink" href="#with-pypi-and-pip" title="Link to this heading"></a></h3>
 <section id="standard-installation-for-non-admin-users">
-<h4>Standard installation (for non-admin users)<a class="headerlink" href="#standard-installation-for-non-admin-users" title="Permalink to this heading"></a></h4>
+<h4>Standard installation (for non-admin users)<a class="headerlink" href="#standard-installation-for-non-admin-users" title="Link to this heading"></a></h4>
 <p>We recommend to use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to do a propper installation:
 <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">geodezyx</span></code></p>
 <p>To get the latest working version you can install directly the GitHub-hosted version:
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-I</span> <span class="pre">-U</span> <span class="pre">git+https://github.com/GeodeZYX/geodezyx-toolbox</span></code></p>
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/GeodeZYX/geodezyx-toolbox</span></code></p>
 </section>
 <section id="full-installation-for-sudoers-advanced-users">
-<h4>Full installation (for sudoers/advanced users)<a class="headerlink" href="#full-installation-for-sudoers-advanced-users" title="Permalink to this heading"></a></h4>
+<h4>Full installation (for sudoers/advanced users)<a class="headerlink" href="#full-installation-for-sudoers-advanced-users" title="Link to this heading"></a></h4>
 <p>This version installs facultative external modules, which require system libraries only installable when you have the sudo/admin rights, namely <code class="docutils literal notranslate"><span class="pre">netCDF4</span></code>, <code class="docutils literal notranslate"><span class="pre">kepler.py</span></code>, <code class="docutils literal notranslate"><span class="pre">ncompress</span></code>.</p>
 <p>We recommend to use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to do a propper installation:
 <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">geodezyx[full]</span></code></p>
 <p>To get the latest working version you can install directly the GitHub-hosted version:
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-I</span> <span class="pre">-U</span> <span class="pre">'git+https://github.com/GeodeZYX/geodezyx-toolbox#egg=geodezyx[full]'</span></code></p>
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'git+https://github.com/GeodeZYX/geodezyx-toolbox#egg=geodezyx[full]'</span></code></p>
 </section>
 </section>
 <section id="clone-and-manually-install-from-github">
-<h3>clone and manually install from GitHub<a class="headerlink" href="#clone-and-manually-install-from-github" title="Permalink to this heading"></a></h3>
+<h3>clone and manually install from GitHub<a class="headerlink" href="#clone-and-manually-install-from-github" title="Link to this heading"></a></h3>
 <p>You can manually fork and clone the GitHub repository
 <a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox/">https://github.com/GeodeZYX/geodezyx-toolbox/</a></p>
 <p>and install the Toolbox you downloaded with <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></code></p>
@@ -111,7 +118,7 @@
 </section>
 </section>
 <section id="minimal-exemple">
-<h2>Minimal exemple<a class="headerlink" href="#minimal-exemple" title="Permalink to this heading"></a></h2>
+<h2>Minimal exemple<a class="headerlink" href="#minimal-exemple" title="Link to this heading"></a></h2>
 <p>To test if the <cite>GeodeZYX Toolbox</cite> is well installed, import:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#### Import</span>
 <span class="kn">from</span> <span class="nn">geodezyx</span> <span class="kn">import</span> <span class="o">*</span>                   <span class="c1"># Import the GeodeZYX modules</span>
@@ -128,7 +135,7 @@ If not, check again the potential errors during the installation.</p>
 <p>See the description of each module in the following section</p>
 </section>
 <section id="description-of-the-modules">
-<h2>Description of the Modules<a class="headerlink" href="#description-of-the-modules" title="Permalink to this heading"></a></h2>
+<h2>Description of the Modules<a class="headerlink" href="#description-of-the-modules" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="geodezyx.athmo.html#module-geodezyx.athmo" title="geodezyx.athmo"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.athmo</span></code></a>: functions implementing troposhere/ionosphere models</p></li>
 <li><p><a class="reference internal" href="geodezyx.conv.html#module-geodezyx.conv" title="geodezyx.conv"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.conv</span></code></a>: time and coordinates conversion</p></li>
