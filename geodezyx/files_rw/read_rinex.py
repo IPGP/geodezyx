@@ -218,7 +218,7 @@ def read_rinex3_obs(rnx_in,
         dict_sys_use[Sysobs[0]] = [e for sublist in dict_sys_use[Sysobs[0]] for e in sublist]
         
         if len(Sysobs[2:]) != int(Sysobs[1]):
-            print("WARN: not the same length for XXXXXXXXXXX")
+            print("difference between theorectical and actual obs nbr in the header")  
     
     ## the max number of observable (for the reading)
     ##ObsAllList = list(sorted(set([e for sublist in list(dict_sys_use.values())[1:] for e in sublist]))) 
