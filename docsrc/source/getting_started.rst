@@ -42,7 +42,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox/
 
 and install the Toolbox you downloaded with ``python setup.py install``
 
-Alternatively, you can also add the ``geodezyx`` forder in your ``PYTHONPATH`` (for experimented users)
+Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
 
 ---------------
 Minimal exemple
