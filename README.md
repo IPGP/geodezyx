@@ -55,7 +55,7 @@ We recommend to use pip to do a propper installation:
 
 To get the latest working version you can install directly the GitHub-hosted version:
 
-``pip install -I -U git+https://github.com/GeodeZYX/geodezyx-toolbox``
+``pip install git+https://github.com/GeodeZYX/geodezyx-toolbox``
 
 ### clone and manually install from GitHub
 
