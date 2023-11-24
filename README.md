@@ -68,6 +68,13 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ## Changelog
 
+### v0.4.4.0, 2023-11-24
+  * The toolbox tuns to the _GNU Lesser General Public License version 3_
+  * Module docstring has been updated
+  * Angle conversion functions have been refactored
+  * sp3/clk DataFrame column names are renamed to better fit the data content:
+    * `sat` > `prn`, `const` > `sys`, `sv` > `prni`, `AC` > `ac`
+      
 ### v0.4.3.6, 2023-06-30
   * a routine version update (bug corrections...)
   * colors in the logger
