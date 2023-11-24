@@ -2,7 +2,7 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.3.6 / 2023-06-30**, README Revision: 2023-06-30
+**Version 0.4.4.0 / 2023-11-24**, README Revision: 2023-11-24
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
