@@ -67,6 +67,10 @@ and install the Toolbox you downloaded with ``python setup.py install``
 Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
 
 ## Changelog
+### v0.4.4.0, 2023-11-24
+  * The toolbox tuns to the _GNU Lesser General Public License version 3_
+  * Module docstring has been updated
+  * Angle conversion functions have been refactored
 
 ### v0.4.3.6, 2023-06-30
   * a routine version update (bug corrections...)
