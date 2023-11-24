@@ -16,7 +16,7 @@ with PyPi and pip
 Standard installation (for non-admin users)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We recommend to use ``pip`` to do a propper installation:  
+We recommend to use ``pip`` to do a proper installation:  
 ``pip install geodezyx``
 
 To get the latest working version you can install directly the GitHub-hosted version:  
