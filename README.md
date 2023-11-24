@@ -20,7 +20,7 @@
 *The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes*. 
 V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.org/10.5880/GFZ.1.1.2019.002)
 
-**Licence:** GNU GPL v3 (see below) 
+**Licence:** GNU LGPL v3 (see below) 
 
 ## Introduction
 
@@ -69,7 +69,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 ## Changelog
 
 ### v0.4.4.0, 2023-11-24
-  * The toolbox tuns to the _GNU Lesser General Public License version 3_
+  * The toolbox turns to the _GNU Lesser General Public License version 3_
   * Module docstring has been updated
   * Angle conversion functions have been refactored
   * sp3/clk DataFrame column names are renamed to better fit the data content:
