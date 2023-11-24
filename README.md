@@ -49,7 +49,7 @@ See the following link:
 
 ### with PyPi and pip
 
-We recommend to use pip to do a propper installation:
+We recommend to use pip to do a proper installation:
 
 ``pip install geodezyx``
 
