@@ -321,7 +321,7 @@ def XYZ2ENU_2(X,Y,Z,x0,y0,z0):
 def XYZ2ENU_around_fix_pos(X,Y,Z):
     """
     Computes the mean of the X,Y,Z and
-    return the topocentric ENU position around this mean position
+    return the topocentric ENU position around its mean position
     
     Parameters
     ----------

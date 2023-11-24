@@ -1,0 +1,39 @@
+Metadata-Version: 2.1
+Name: geodezyx
+Version: 0.4.3.6
+Summary: The GeodeZYX toolbox aims to provide simple but useful functions for Geodesy and Geophysics.
+Home-page: https://github.com/GeodeZYX/geodezyx-toolbox
+Author: Pierre Sakic & Gustavo Mansur
+Author-email: sakic@ipgp.fr
+Keywords: geodesy,geophysics,reference frames,gnss
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3 :: Only
+Requires-Python: >=3.5, <4
+Description-Content-Type: text/x-rst
+Provides-Extra: full
+License-File: LICENSE
+
+The purpose of this GeodeZYX toolbox is to provide all the functions which
+can be useful for Geodesy and Geophysics. 
+
+It includes low level functions, file management functions,
+time and space-coordinates conversion functions, 
+data (especially GNSS observations and orbits) retrieve functions, 
+plots and visual selection functions ...
+
+It is designed for Python 3 on a LINUX Ubuntu-like system.
+Also tested with Anaconda
+
+Documentation: https://geodezyx.github.io/geodezyx-toolbox  
+
+GitHub repository: https://github.com/GeodeZYX/geodezyx-toolbox 
+
+PyPi project: https://pypi.org/project/geodezyx

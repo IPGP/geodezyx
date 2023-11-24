@@ -43,7 +43,10 @@ log = logging.getLogger(__name__)
 
 
 
-def rinexs_table_from_list(rnxs_inp,site9_col=False,round_date=False):
+def rinexs_table_from_list(rnxs_inp,
+                           site9_col=False,
+                           round_date=False,
+                           path_col=True):
     """
     From a simple RINEX list, summarize the data in an ad-hoc DataFrame
 
@@ -88,6 +91,9 @@ def rinexs_table_from_list(rnxs_inp,site9_col=False,round_date=False):
     cols =  cols[1:] + [cols[0]]
     
     DF = DF[cols]
+    
+    if not path_col:
+        DF.drop("path",axis=1,inplace=True)
     
     pd.options.display.max_info_columns = 150
 
