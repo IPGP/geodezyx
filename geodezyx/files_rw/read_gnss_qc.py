@@ -53,10 +53,6 @@ def read_ringo_systems(file_in):
         
     return tables
 
-
-file_in="/home/psakicki/Downloads/qc_HOUE_20230990000"
-
-
 def read_ringo_qc(file_in):
     F = open(file_in)
     L = F.readlines()
@@ -136,8 +132,3 @@ def read_ringo_qc(file_in):
         
     
     return tables
-
-
-T = read_ringo_qc(file_in)
-
-T['qc_sys']
