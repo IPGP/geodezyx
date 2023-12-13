@@ -108,13 +108,13 @@ def anubis_runner(rnx_inp,
 
         if period is None:
             period_ok = conv.period_from_rinex_name(rnx_name)
-            print("PERIOD",period_ok)
+            log.info("period auto-detection OK:%s",period_ok)
         else:
             period_ok = period
             
         if interval is None:
             interval_ok = conv.interval_from_rinex_name(rnx_name)
-            print("INTERVAL",interval_ok)
+            log.info("interval auto-detection OK:%s",interval_ok)
         else:
             interval_ok = interval
             
@@ -164,10 +164,12 @@ def anubis_runner(rnx_inp,
         nav_file_exists = os.path.isfile(potential_nav_path)
         
         #### the nav file already exists
-        print(potential_nav_path)
         if nav_file_exists:
-            log.info("%s already exists, download skipped ;)",potential_nav_file)
+            log.debug("%s already exists, download skipped ;)",potential_nav_file)
             nav_path = potential_nav_path
+        else:
+            log.debug("%s not found, we downloading it",potential_nav_file)
+
         
         #### the nav file does not exsits but we want to download it
         elif not nav_file_exists and download_nav:
