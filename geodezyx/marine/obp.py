@@ -3,7 +3,7 @@
 """
 Created on Sat Aug  5 21:08:05 2023
 
-@author: psakicki
+@author: psakic
 
 This module regroups the functions for the exploitation of the A0A pressure
 sensors in the context of the REVOSIMA network
@@ -17,14 +17,14 @@ import xarray as xr
 import numpy as np
 import seawater
 import pandas as pd
-from datetime import datetime, timedelta
+#from datetime import datetime, timedelta
 import scipy.optimize as optimize
 
-from scipy.signal import butter, lfilter, sosfilt
+from scipy.signal import butter, lfilter, sosfilt, filtfilt
 
-import numpy as np
+#import numpy as np
 import matplotlib.pyplot as plt
-from scipy.signal import butter, filtfilt
+#from scipy.signal import butter
 
 def butter_highpass(cutoff, fs, order=5):
     nyq = 0.5 * fs
@@ -56,7 +56,7 @@ def butter_bandpass_filtfilt(data, lowcut, highcut, fs, order=4):
     y = filtfilt(b, a, data)
     return y
 
-def butterworeth(df, t0 = 3*24*3600, t1 = 10*24*3600, kind = 'bandpass', order = 4):
+def butterworth(df, t0 = 3*24*3600, t1 = 10*24*3600, kind = 'bandpass', order = 4):
     dt = np.diff(df.index)
     if not np.all(dt == dt[0]):
         print('The sampling is not regular, return')
@@ -73,12 +73,14 @@ def butterworeth(df, t0 = 3*24*3600, t1 = 10*24*3600, kind = 'bandpass', order =
     elif kind == 'bandpass':
         lowcut = 1/t1
         highcut = 1/t0
-        y = butter_bandpass_filtfilt(df.values, lowcut, highcut, fs, order=order)
+        y = butter_bandpass_filtfilt(df.values, lowcut,
+                                     highcut, fs, order=order)
     return pd.DataFrame(y, index = df.index)[0]
     
 def read_hycom(file):
     ds = xr.open_dataset(file)
-    return ds.rename(lon = 'longitude', lat = 'latitude', water_temp = 'theta', salinity = 'salt', surf_el = 'ssh')
+    return ds.rename(lon = 'longitude', lat = 'latitude',
+                     water_temp = 'theta', salinity = 'salt', surf_el = 'ssh')
 
 def read_ecco2(file):
     ds = xr.open_dataset(file)
@@ -95,6 +97,26 @@ def read_duacs(file):
 g = 9.81
 
 def interp_xy(ds, x=None, y=None, method = 'linear'):
+    """
+    frontend for xarray spatial interpolation
+
+    Parameters
+    ----------
+    ds : xarray
+        input xarray grid.
+    x : float, optional
+        longitude in deg (but depends on ds units). The default is None.
+    y : float, optional
+        latitude in deg (but depends on ds units). The default is None.
+    method : str, optional
+        interpolation method. The default is 'linear'.
+
+    Returns
+    -------
+    ds
+        Interpolated values.
+
+    """
     if not x and not y:
         print('Must give x or/and y coord')
         return
@@ -156,15 +178,31 @@ def compute_steric(profile, integration = 'forward'):
     lat = ds.latitude.mean()
     dens = compute_dens_profile(ds)
     if integration == 'forward':
-        steric = pd.DataFrame(g*np.nansum(np.diff(ds.depth) * dens[:, :-1], axis = 1)/10000, index = ds.time)[0]
+        steric = pd.DataFrame(g*np.nansum(np.diff(ds.depth) * dens[:, :-1],
+                                          axis = 1)/10000, index = ds.time)[0]
     elif integration == 'backward':
-        steric = pd.DataFrame(g*np.nansum(np.diff(ds.depth) * dens[:, 1:], axis = 1)/10000, index = ds.time)[0]
+        steric = pd.DataFrame(g*np.nansum(np.diff(ds.depth) * dens[:, 1:], 
+                                          axis = 1)/10000, index = ds.time)[0]
     elif integration == 'averaged':
         dens = np.vstack([np.sum(dens[:, i:i+2], axis = 1)/2 for i in range(len(ds.depth)-1)]).T
         steric = pd.DataFrame(g*np.nansum(np.diff(ds.depth) * dens, axis = 1)/10000, index = ds.time)[0]
     return steric - steric.median()
 
-def compute_phibot(profile, ssh=None, integration = 'forward', rho = 10.35, remove_median = True):
+def compute_phibot(profile, ssh=None, integration = 'forward',
+                   rho = 10.35, remove_median = True):
+    """
+    phibot = Ocean hydrostatic bottom pressure anomaly
+    https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html
+    
+    
+    PHIBOT		Bottom Pressure Pot. Anomaly (p/rhonil, m^2/s^2)
+                To convert to m, divide by g (g=9.81 m/s^2)
+		PHIBOT is the anomaly relative to Depth * rhonil * g
+		The absolute bottom pressure in Pa is:
+		Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)
+    http://apdrc.soest.hawaii.edu/doc/Readme_ecco2_cube92
+        
+    """
     if isinstance(ssh, type(None)):
         ssh = profile.ssh
     lat = profile.latitude.mean()
@@ -193,7 +231,7 @@ def compute_spectrogram(df, max_period = 45, nchunks = 3600*6):
     
 import scipy.optimize as optimize
 def log_linear(x, A1, A2, A3, A4, **kwargs):
-    x0 = min(x)
+    #x0 = min(x)
     return A1 * np.log(A2 * (1 + x))  +A4 +  A3 * (x)
 
 def log(x, A1, A2, A3, **kwargs):
@@ -201,7 +239,7 @@ def log(x, A1, A2, A3, **kwargs):
     return A1 * np.log(A2 * (1 + x -x0))  + A3  # +A3 * (x - x0)
 
 def exp(x, a, b, c, d, **kwargs):
-    x0 = min(x)
+    #x0 = min(x)
     return a * np.exp(-b * (x )) + c #+ d * (x - x0)
 
 def linear(x, A1, A2, A3, A4, **kwargs):

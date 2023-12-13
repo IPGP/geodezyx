@@ -1186,10 +1186,6 @@ str_date2dt    = date_string_2_dt
 strdate2dt     = date_string_2_dt
 
 
-
-
-
-
 def jjulCNES2dt(jjulin):
     """
     Time representation & scale conversion
