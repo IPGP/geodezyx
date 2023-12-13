@@ -11,11 +11,11 @@ it can be imported directly with:
 from geodezyx import conv
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -24,6 +24,7 @@ import numpy as np
 #import scipy
 #from pyorbital import astronomy
 import re
+import warnings
 
 #### geodeZYX modules
 from geodezyx import utils
@@ -49,31 +50,12 @@ log = logging.getLogger(__name__)
 #                 |___/                                                            
 
 ### Angle conversion
-    
-def dms2dec_num(deg,minn=0,sec=0):
-    """
-    Angle conversion
-    
-    Convert :
-    Degree Minute Second `float` Angle => decimal Degree `float` Angle
-        
-    Parameters
-    ----------
-    deg & minn & sec : float
-        degres, minutes and seconds of the input Angle
-
-    Returns
-    -------
-    dd_float : float
-        Decimal degree Angle
-        
-    """
-    sig = np.sign(deg)
-    
-    return deg + sig*minn * (1./60.) +  sig*sec * (1./3600.)
-
 
 def deg_dec2dms(deg_in,only_dm=False):
+    warnings.warn("deg_dec2dms is depreciated, use degdec2dms instead",DeprecationWarning)
+    return degdec2dms(deg_in,only_dm)
+
+def degdec2dms(deg_in,only_dm=False):
     """
     Angle conversion
     
@@ -101,11 +83,41 @@ def deg_dec2dms(deg_in,only_dm=False):
         return deg , minu , sec
     else:
         return deg , minu + sec * (1./60.)
-        
 
+
+
+def dms2dec_num(deg,minn=0,sec=0):
+    warnings.warn("dms2dec_num is depreciated, use dms2degdec_num instead",DeprecationWarning)
+    return dms2degdec_num(deg,minn,sec)
+
+def dms2degdec_num(deg,minn=0,sec=0):
+    """
+    Angle conversion
+    
+    Convert :
+    Degree Minute Second `float` Angle => decimal Degree `float` Angle
+        
+    Parameters
+    ----------
+    deg & minn & sec : float
+        degres, minutes and seconds of the input Angle
+
+    Returns
+    -------
+    dd_float : float
+        Decimal degree Angle
+        
+    """
+    sig = np.sign(deg)
+    
+    return deg + sig*minn * (1./60.) +  sig*sec * (1./3600.)
 
 
 def dms2dec(dms_str , onlyDM=False):
+    warnings.warn("dms2dec is depreciated, use dms2degdec_str instead",DeprecationWarning)
+    return dms2degdec_str(dms_str , onlyDM)
+
+def dms2degdec_str(dms_str , onlyDM=False):
     """   
     Angle conversion
 
@@ -177,6 +189,9 @@ def dms2dec(dms_str , onlyDM=False):
     dd_float = sign * (deg + minu / 60. + sec / 3600.)
     return dd_float
 
+
+###### arcsec 
+
 def arcsec2deg(arcsec_in):
     """
     Angle conversion
@@ -207,7 +222,7 @@ def angle2equivalent_earth_radius(angle_in,angtype='deg',
                                   earth_radius = 6371008.8):
     """
     Quick and simple function which gives the equivalent distance on a 
-    Earth great circle of an angle
+    spherical Earth great circle of an angle
     
     Useful to determine metric varations in latitude
     

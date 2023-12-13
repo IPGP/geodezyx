@@ -10,11 +10,11 @@ it can be imported directly with:
 from geodezyx import operational
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -43,7 +43,10 @@ log = logging.getLogger(__name__)
 
 
 
-def rinexs_table_from_list(rnxs_inp,site9_col=False,round_date=False):
+def rinexs_table_from_list(rnxs_inp,
+                           site9_col=False,
+                           round_date=False,
+                           path_col=True):
     """
     From a simple RINEX list, summarize the data in an ad-hoc DataFrame
 
@@ -88,6 +91,9 @@ def rinexs_table_from_list(rnxs_inp,site9_col=False,round_date=False):
     cols =  cols[1:] + [cols[0]]
     
     DF = DF[cols]
+    
+    if not path_col:
+        DF.drop("path",axis=1,inplace=True)
     
     pd.options.display.max_info_columns = 150
 

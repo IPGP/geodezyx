@@ -10,11 +10,11 @@ it can be imported directly with:
 from geodezyx import files_rw
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -218,7 +218,7 @@ def read_rinex3_obs(rnx_in,
         dict_sys_use[Sysobs[0]] = [e for sublist in dict_sys_use[Sysobs[0]] for e in sublist]
         
         if len(Sysobs[2:]) != int(Sysobs[1]):
-            print("WARN: not the same length for XXXXXXXXXXX")
+            print("difference between theorectical and actual obs nbr in the header")  
     
     ## the max number of observable (for the reading)
     ##ObsAllList = list(sorted(set([e for sublist in list(dict_sys_use.values())[1:] for e in sublist]))) 

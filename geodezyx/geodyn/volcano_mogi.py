@@ -11,11 +11,11 @@ It is direcly inspired by the work of Scott Henderson
 https://github.com/scottyhq/cov9
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 
@@ -47,7 +47,7 @@ def invert(xargs,xcen,ycen,depth,dV):
 # =====================
 # Forward Models
 # =====================
-def forward(x,y,xcen=0,ycen=0,d=3e3,dV=1e6, nu=0.25):
+def forward(x,y,xcen=0,ycen=0,d=3e3,dV=1e6,nu=0.25):
     """
     Calculates surface deformation based on point source
 
@@ -88,23 +88,24 @@ def forward(x,y,xcen=0,ycen=0,d=3e3,dV=1e6, nu=0.25):
     return np.array([ux,uy,uz])
 
 
-def forward_dp(x,y,xcen=0,ycen=0,d=3e3,a=500,dP=100e6,mu=4e9,nu=0.25):
+def forward_dp(x,y,xcen=0,ycen=0,d=3e3,a=500,
+               dP=100e6,mu=4e9,nu=0.25):
     """
     dP instead of dV, NOTE: dV = pi * dP * a**3 / mu
     981747.7 ~ 1e6
     """
-    dV = np.pi * dP * a**3 / mu
+    dV = dP2dV(dP,a,mu)
     return forward(x,y,xcen,ycen,d,dV,nu)
 
 
 # =====================
 # Utilities
 # =====================
-def dP2dV(dP,a,mu=30e9):
+def dP2dV(dP,a,mu=4e9):
     dV = (np.pi * dP * a**3) / mu
     return dV
 
-def dV2dP(dV,a,mu=30e9):
+def dV2dP(dV,a,mu=4e9):
     dP = (dV * mu) / (np.pi * a**3)
     return dP
 
@@ -134,14 +135,63 @@ def get_cart2los(incidence,heading):
 
     return cart2los
 
+
+
 # =====================
 # Benchmark
 # =====================
-def benchmark(normalize=False,
-              params = None,
-              mesh_size=15000,
-              color="blue",
-              figure=None):
+def benchmark():
+    """
+    Mogi Source in an elastic halfspace
+    (Segall Figure 7.5)
+    """
+    # Set parameters
+    params = dict(xcen = 0,
+                  ycen = 0,
+                  d = 3e3, #m
+                  dV = 1e6, #m^3
+                  nu = 0.25)
+    depth = params['d']
+
+    # 10km x 10km with 100m pixels
+    x = np.linspace(-15000,15000,100)
+    y = np.linspace(-15000,15000,100)
+    X,Y = np.meshgrid(x,y)
+    
+    # Run mogi model with delta volume input
+    dx,dy,dz = forward(X,Y,**params)
+    dr = np.hypot(dx,dy)
+
+    # Normalize results
+    z = dz[50, 50:] / dz.max()
+    r = dr[50, 50:] / dz.max()
+    x = x[50:] / depth
+
+    # Reproduce the figure
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(x, z,'b-', lw=3, label='dz')
+    ax.plot(x, r,'b--', lw=3, label='dr')
+    plt.legend()
+    plt.grid(True)
+    plt.title('Mogi Displacements')
+    plt.xlabel('normalized distance (r/d)')
+    plt.ylabel('normalized displacement (dr / dz.max)')
+    plt.show()
+
+    return z,r,x
+
+
+# =====================
+# Frontend
+# =====================
+def mogi_frontend(normalize=False,
+                  params = None,
+                  mesh_size=15000,
+                  npts = 100,
+                  color="blue",
+                  figure=None,
+                  label_lgd=""):
     """
     Mogi Source in an elastic halfspace
     (Segall Figure 7.5)
@@ -155,13 +205,11 @@ def benchmark(normalize=False,
                       dV = 1e6, #m^3
                       nu = 0.25)
     depth = params['d']
-
-    npts = 100
     
     x = np.linspace(-mesh_size,mesh_size,npts)
     y = np.linspace(-mesh_size,mesh_size,npts)
     X,Y = np.meshgrid(x,y)
-
+    
     # Run mogi model with delta volume input
     dx,dy,dz = forward(X,Y,**params)
     dr = np.hypot(dx,dy)
@@ -187,35 +235,24 @@ def benchmark(normalize=False,
         fig = figure
         ax = plt.gca()
     
-    label = "  " + str(d) 
-    ax.plot(x, z,'-', lw=3, label='dz' + label,color=color)
-    ax.plot(x, r,'--', lw=3, label='dr' + label,color=color)
+    ax.plot(x, z,'-', lw=3, label='dz ' + label_lgd,color=color)
+    ax.plot(x, r,'--', lw=3, label='dr ' + label_lgd,color=color)
     plt.legend()
     plt.grid(True)
     plt.title('Mogi Displacements')
     
     if normalize:
         plt.xlabel('normalized distance (r/d, m)')
-        plt.ylabel('normalized displacement (dxi / dz.max, m)')
+        plt.ylabel('normalized displacement (dr / dz.max, m)')
     else:
         plt.xlabel('distance (m)')
-        plt.ylabel('displacement (dxi)')
+        plt.ylabel('displacement (m)')
         
     plt.show()
+    
+    return z,r,x
+
 
 
 if __name__ == '__main__':
-    
-    figure = plt.figure()
-
-    for idd,d in enumerate((500,600,700,800,900,1000)):
-        params = dict(xcen = 0,
-                      ycen = 0,
-                      d = d, #m
-                      dV = 1e6, #m^3
-                      nu = 0.25)
-        
-        benchmark(params=params,
-                  figure=figure,
-                  mesh_size=200,
-                  color="C" + str(idd))
+    zrxbench = benchmark()

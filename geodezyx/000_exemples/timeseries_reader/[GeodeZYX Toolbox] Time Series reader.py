@@ -20,7 +20,7 @@ from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 
 #### file path of the ENU coordinates
-exemple_dir = "/home/psakicki/CODES/GeodeZYX-Toolbox_v4/geodezyx/000_exemples/timeseries_reader/exemples"
+exemple_dir = "/home/psakicki/CODES/geodezyx-toolbox/geodezyx/000_exemples/timeseries_reader/exemples"
 p_nevada_xyz = exemple_dir + "/POTS.txyz2"
 #### Import the time series
 TS = files_rw.read_nevada(p_nevada_xyz,"xyz")

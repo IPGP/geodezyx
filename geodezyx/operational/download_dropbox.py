@@ -72,19 +72,31 @@ def dropbox_list_files(dbx,path):
     import dropbox
 
     try:
-        files = dbx.files_list_folder(path).entries
+        
+        
+        ### need  this file loop if n files > 100
+        results_block = []
+        res = dbx.files_list_folder(path)
+        results_block.append(res)
+        
+        while res.has_more:
+            res = dbx.files_list_folder_continue(res.cursor)
+            results_block.append(res)
+        
+        files_block = [res.entries for res in results_block]
+        
         files_list = []
-        for file in files:
-            if isinstance(file, dropbox.files.FileMetadata):
-                metadata = {
-                    'name': file.name,
-                    'path_display': file.path_display,
-                    'client_modified': file.client_modified,
-                    'server_modified': file.server_modified,
-                    'size': file.size,
-
-                }
-                files_list.append(metadata)
+        for files in files_block:
+            for file in files:
+                if isinstance(file, dropbox.files.FileMetadata):
+                    metadata = {
+                        'name': file.name,
+                        'path_display': file.path_display,
+                        'client_modified': file.client_modified,
+                        'server_modified': file.server_modified,
+                        'size': file.size,
+                    }
+                    files_list.append(metadata)
 
         df = pd.DataFrame.from_records(files_list)
         #return df.sort_values(by='server_modified', ascending=False)

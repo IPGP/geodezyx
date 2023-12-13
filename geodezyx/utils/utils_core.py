@@ -10,11 +10,11 @@ it can be imported directly with:
 from geodezyx import utils
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 
@@ -890,6 +890,21 @@ def alphabet_reverse(letter=None):
 
 
 def dday():
+    """
+    Give the time span between prensent and toolbox author's PhD defense
+    (tests also the console messages)
+        
+    Note
+    ----
+    https://fr.wiktionary.org/wiki/quille#Dérivés_2
+    https://en.wiktionary.org/wiki/quille
+
+    Returns
+    -------
+    D : datetime
+        elapsed time.
+
+    """
     D = (dt.datetime(2016,10,14) - dt.datetime.now()).days
     print("used logger:",log)
     log.warning('J - %s avant la quille !!!',D)

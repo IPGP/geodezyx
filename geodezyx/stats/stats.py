@@ -9,11 +9,11 @@ it can be imported directly with:
 from geodezyx import stats
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 
@@ -520,7 +520,7 @@ def gaussian_filter_GFZ_style_smoother(tim_ref, dat_ref, width=7):
     log.warning("WARN : THIS function gaussian_filter_GFZ_style_smoother")
     log.warning("IS VERY SLOW (DIRTY CONVERSION OF A PERL FCT)")
     log.warning("THE PYTHONIC VERSION gaussian_filter_GFZ_style_smoother_improved")
-    log.warning("BELOW SHOULD BE USED  !!!")
+    log.warning("SHOULD BE USED  !!!")
     
     tim_raw = tim_ref
     dat_raw = dat_ref
@@ -561,24 +561,31 @@ def gaussian_filter_GFZ_style_smoother(tim_ref, dat_ref, width=7):
 
 def gaussian_filter_GFZ_style_smoother_improved(tim_ref, dat_ref, width=7):
     """
-    Gaussian filter to smooth data, based on
-    GFZ's GMT_plus.pm/gaussian_kernel
-      
-    Args :
-        tim_ref : the X/T component of the time serie (in decimal days !)
-        
-        dat_ref : the Y component (the data)
-        
-        width   : size of the window (odd number is best ?)
-        
-    Returns :
-        dat_smt : smoothed Y
+    Gaussian filter to smooth data, 
+    based on GFZ's GMT_plus.pm/gaussian_kernel
+
+    Parameters
+    ----------
+    tim_ref : iterable (list or array)
+        the X/T component of the time serie (in decimal days!)
+    dat_ref : iterable (list or array)
+        the Y component (the data).
+    width : int, optional
+        size of the window 
+        (odd number is best ?).
+        The default is 7.
+
+    Returns
+    -------
+    dat_smt2 : array
+        smoothed Y.
     
-    NB :
-        Some other nice ideas here
-        http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
-        https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way
-        https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth
+    Note
+    ----
+    Some other nice ideas here
+    http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
+    https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way
+    https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth
     """
 
     tim_raw = tim_ref

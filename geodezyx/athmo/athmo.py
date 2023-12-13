@@ -10,8 +10,10 @@ Created on Tue Jul  9 09:23:54 2019
 #from geodezyx.externlib import *         # Import the external modules
 #from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-
-from geodezyx import np,conv,re,df,utils
+import numpy as np
+import re
+import pandas as df
+from geodezyx import conv,utils
 
 def PWV_conversion(zwd,Tm):
     """
