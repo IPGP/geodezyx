@@ -78,7 +78,7 @@ def anubis_runner(rnx_inp,
         The default is False.
     anubis_path : str, optional
         path of the Anubis executable. 
-        The default is "/home/psakicki/SOFTWARE/ANUBIS/anubis-3.3.3613-lin-shared-64b".
+        The default is "/opt/gnss_softs/bin/anubis" 
 
     Returns
     -------
