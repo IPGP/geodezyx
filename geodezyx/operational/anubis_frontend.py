@@ -167,12 +167,10 @@ def anubis_runner(rnx_inp,
         if nav_file_exists:
             log.debug("%s already exists, download skipped ;)",potential_nav_file)
             nav_path = potential_nav_path
-        else:
-            log.debug("%s not found, we downloading it",potential_nav_file)
 
-        
         #### the nav file does not exsits but we want to download it
         elif not nav_file_exists and download_nav:
+            log.debug("%s not found, we downloading it",potential_nav_file)
             statdico = dict()
             statdico['brdc'] = ['BRDC']
             brdc_list = operational.multi_downloader_rinex(statdico,
