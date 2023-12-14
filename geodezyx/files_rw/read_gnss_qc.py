@@ -10,7 +10,93 @@ import re
 from io import StringIO
 import pandas as pd 
 import numpy as np
+import os 
 
+
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
+#                       _     _     
+#     /\               | |   (_)    
+#    /  \   _ __  _   _| |__  _ ___ 
+#   / /\ \ | '_ \| | | | '_ \| / __|
+#  / ____ \| | | | |_| | |_) | \__ \
+# /_/    \_\_| |_|\__,_|_.__/|_|___/
+                        
+
+def read_anubis_xtr_sum(xtr_in):
+    
+    if os.path.basename(xtr_in).split(".")[-1]  != "xtr":
+        log.warn("%s is not a XTR file",xtr_in)
+    
+    L = open(xtr_in).readlines()
+    
+    def _date_format(linein,end_epoch=False):
+        ltmp = list(linein)
+        ltmp[18] = "T"
+        if end_epoch:
+            ltmp[38] = "T"
+        return "".join(ltmp)
+    
+    sum_pattern = re.compile(r"^(#|=)...SUM ")
+    
+    totsum_stk = []
+    gnssum_stk = []
+    
+    for line in L:
+        sum_match = sum_pattern.match(line)
+        if sum_match:
+            if "TOTSUM" in line:
+                totsum_stk.append(line)
+            else:
+                gnssum_stk.append(line)
+                
+        if "Header information" in line:
+            break
+    
+    ########### GNSSUM
+    ## remove 1st line of GNSSUM
+    gnssum_stk.remove(gnssum_stk[0])
+    
+    for il,l in enumerate(gnssum_stk):
+        gnssum_stk[il] = _date_format(l,False)
+    
+    df_gnssum = pd.read_csv(StringIO("\n".join(gnssum_stk)),
+                            delim_whitespace=True,
+                            na_values="-")
+    
+    df_gnssum.rename({"#GNSSUM":"sys",
+                      df_gnssum.columns[1]:"Epoch"},axis=1,inplace=True)
+    df_gnssum["sys"] = df_gnssum["sys"].apply(lambda x:x[1:4])
+    
+    for epocol in ["Epoch"]:
+        df_gnssum[epocol] = pd.to_datetime(df_gnssum[epocol])
+        
+    
+    
+    ########### TOTSUM
+    totsum_stk[1] = _date_format(totsum_stk[1],True)
+    
+    df_totsum = pd.read_csv(StringIO("\n".join(totsum_stk)),
+                            delim_whitespace=True)
+    
+    for epocol in ["First_Epoch________","Last_Epoch_________"]:
+        df_totsum[epocol] = pd.to_datetime(df_totsum[epocol])
+        
+    df_totsum.drop("#TOTSUM",axis=1,inplace=True)
+    
+    return df_totsum , df_gnssum
+
+
+#  _____  _                   
+# |  __ \(_)                  
+# | |__) |_ _ __   __ _  ___  
+# |  _  /| | '_ \ / _` |/ _ \ 
+# | | \ \| | | | | (_| | (_) |
+# |_|  \_\_|_| |_|\__, |\___/ 
+#                  __/ |      
+#                 |___/   
 
 def read_ringo_systems(file_in):
     
@@ -52,6 +138,7 @@ def read_ringo_systems(file_in):
         tables[sys] = df.rename(columns={"%":"prn"})
         
     return tables
+
 
 def read_ringo_qc(file_in):
     F = open(file_in)
@@ -115,8 +202,6 @@ def read_ringo_qc(file_in):
                 'sor_mp2', 'sor_mp5', 'sor_gf', 'sor_mw', ' sor_iod']
         df.columns = cols
         
-        
-        
         for col in cols[4:]:
             # remove the ratio with / and convert it for a list [slips , nobs]
             df[col] = df[col].str.split("/")
@@ -130,5 +215,4 @@ def read_ringo_qc(file_in):
             
         tables[qc] = df
         
-    
     return tables
