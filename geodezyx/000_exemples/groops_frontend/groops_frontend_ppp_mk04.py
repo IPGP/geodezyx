@@ -91,5 +91,5 @@ for rnx in Rinexs:
                            prods_gnss_root_dir,
                            cfg_files_root_dir,
                            sitelogs_root_dir,
-                           verbosity="DEBUG")
+                           verbosity="INFO")
 

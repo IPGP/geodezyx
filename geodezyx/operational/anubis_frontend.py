@@ -37,7 +37,8 @@ def anubis_runner(rnx_inp,
                   quiet=False,
                   download_nav=True,
                   download_sp3=True,
-                  anubis_path="/home/psakicki/SOFTWARE/ANUBIS/anubis-3.3.3613-lin-shared-64b"):
+                  force=False,
+                  anubis_path="/opt/gnss_softs/bin/anubis"):
     """
     Run an Anubis quality check
     Designed for Anubis 3.3
@@ -62,7 +63,7 @@ def anubis_runner(rnx_inp,
         The default is None.
     quiet : bool, optional
         if True, do not run the Anubis QC.
-        Anubis QC rsults are stored in stored in <out_dir_main>/out
+        Anubis QC results are stored in <out_dir_main>/out
         The default is False.
     download_nav : bool, optional
         Download automatically the Broadcast navigation files. 
@@ -72,9 +73,12 @@ def anubis_runner(rnx_inp,
         Download automatically the SP3 orbit files. CODE's MGEX are used per default.
         will be stored in <out_dir_main>/nav
         The default is True.
+    force : bool, optional
+        Per default, skip anubis execution if a xtr file alread exists in out_dir_main
+        The default is False.
     anubis_path : str, optional
         path of the Anubis executable. 
-        The default is "/home/psakicki/SOFTWARE/ANUBIS/anubis-3.3.3613-lin-shared-64b".
+        The default is "/opt/gnss_softs/bin/anubis" 
 
     Returns
     -------
@@ -104,13 +108,13 @@ def anubis_runner(rnx_inp,
 
         if period is None:
             period_ok = conv.period_from_rinex_name(rnx_name)
-            print("PERIOD",period_ok)
+            log.info("period auto-detection OK:%s",period_ok)
         else:
             period_ok = period
             
         if interval is None:
             interval_ok = conv.interval_from_rinex_name(rnx_name)
-            print("INTERVAL",interval_ok)
+            log.info("interval auto-detection OK:%s",interval_ok)
         else:
             interval_ok = interval
             
@@ -146,6 +150,10 @@ def anubis_runner(rnx_inp,
         out_xtr = os.path.join(out_dir, site_date + ".xtr") 
         out_log = os.path.join(out_dir, site_date + ".log") 
 
+        if not force and (os.path.isfile(out_xtr) or os.path.isfile(out_xml)):
+            log.info("%s/%s already exists, RINEX skipped",os.path.basename(out_xtr),os.path.basename(out_xml))
+            continue
+
         ######## MANAGE NAV FILE #########                
         ### manage the brdc-file download
         nav_path = ""
@@ -156,13 +164,13 @@ def anubis_runner(rnx_inp,
         nav_file_exists = os.path.isfile(potential_nav_path)
         
         #### the nav file already exists
-        print(potential_nav_path)
         if nav_file_exists:
-            log.info("%s already exists, download skipped ;)",potential_nav_file)
+            log.debug("%s already exists, download skipped ;)",potential_nav_file)
             nav_path = potential_nav_path
-        
+
         #### the nav file does not exsits but we want to download it
         elif not nav_file_exists and download_nav:
+            log.debug("%s not found, we downloading it",potential_nav_file)
             statdico = dict()
             statdico['brdc'] = ['BRDC']
             brdc_list = operational.multi_downloader_rinex(statdico,
