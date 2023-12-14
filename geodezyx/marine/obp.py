@@ -57,7 +57,15 @@ def butter_bandpass_filtfilt(data, lowcut, highcut, fs, order=4):
     return y
 
 def butterworth(df, t0 = 3*24*3600, t1 = 10*24*3600, kind = 'bandpass', order = 4):
+    
     dt = np.diff(df.index)
+    if not df.index[0].tzname():
+        pass # directly nanosec
+    else:
+        dt = np.array([e.total_seconds() * 10**9 for e in dt])  # TimeDelta to be conv in nanosec
+            
+    
+    
     if not np.all(dt == dt[0]):
         print('The sampling is not regular, return')
         return
