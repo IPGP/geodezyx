@@ -21,33 +21,60 @@ log = logging.getLogger(__name__)
 
 
 
-psi_per_meter=1.45038
+PSI_PER_METER=1.45038
 
 
+# [PAROS Calibration]
+# Serial number: 158073
+# U0=5.799
+# Y1=-3874.95
+# Y2=-10166.5
+# Y3=0
+# C1=-25657.2
+# C2=-645.802
+# C3=73516
+# D1=0.0397368
+# D2=0
+# T1=30.0018
+# T2=0.723913
+# T3=53.8461
+# T4=147.124
+# T5=0
 
 
-def freq2temp(f):
+def freq2temp(f,
+              U0 =  5.766353,
+              Y1 = -4025.183,
+              Y2 = -11970.76,
+              Y3 =  0.):
     """
     frequence du capteur de temperature > temperature
-
     """
-    U0 =  5.766353
-    Y1 = -4025.183
-    Y2 = -11970.76
-    Y3 =  0.
-    X = (1/f) * 10**6 # (1/30000) * 10**6
-    U = X - U0
-    Temp = Y1 * U + Y2 * U**2 + Y3 * U**3
-    return Temp
+    if utils.is_iterable(f):
+            return np.array([freq2temp(e,U0,Y1,Y2,Y3) for e in f])
+    else:
+        if f == 0.:
+            f = np.nan
+        
+        X = (1/f) * 10**6 # (1/30000) * 10**6
+        U = X - U0
+        Temp = Y1 * U + Y2 * U**2 + Y3 * U**3
+        return Temp
 
-def freq2U(f):
-    U0 =  5.766353
-    return 1E6/f-U0
 
-def temp2freq(T,out='freq'):
+
+def temp2freq(T,
+              out='freq',
+              U0 =  5.766353,
+              Y1 = -4025.183,
+              Y2 = -11970.76,
+              Y3 =  0.):
     """
     temperature > frequence du capteur de temperature (output == "freq") 
-    OU  coef U (output == "U") OU  periode du capteur U (output == "tau")
+    OU  
+    coef U (output == "U") 
+    OU 
+    periode du capteur U (output == "tau")
     """
     
     #### Handle T as an interable (array, list....)
@@ -55,10 +82,6 @@ def temp2freq(T,out='freq'):
         return np.array([temp2freq(t,out) for t in T])
     #### Handle T as a scalar
     else:
-        U0 =  5.766353
-        Y1 = -4025.183
-        Y2 = -11970.76
-        Y3 =  0.
         U = np.roots( [Y3,Y2,Y1,-T]) + U0
         #X = (1/f) * 10**6 # (1/30000) * 10**6
         #U = X - U0
@@ -73,17 +96,17 @@ def temp2freq(T,out='freq'):
             return None
 
 
-def temp2pres_f0(T):
+def temp2pres_f0(T,
+                 U0 =  5.766353,
+                 T1 =  29.89307,
+                 T2 =  0.337614,
+                 T3 =  56.99511,
+                 T4 = 157.6942,
+                 T5 =   0.):
     """
     temperature > composante temp pour le capteur de pression
     (homogène à une frequence)
     """
-    U0 =  5.766353
-    T1 =  29.89307
-    T2 =  0.337614
-    T3 =  56.99511
-    T4 = 157.6942
-    T5 =   0.
     
     F=temp2freq(T)
     U= (1/F)*10**6 - U0
@@ -92,41 +115,16 @@ def temp2pres_f0(T):
     return 10**6/T0
 
 
-def freq2pres_old(f,U,F0):
-    """
-    freqence capteur pression > pression
-    OLD version
-    """
-
-    C1 = -22682.65
-    C2 = -1143.743
-    C3 =  70903.62
-
-    D1 =  0.040903
-    D2 =  0.0
-    
-    C = C1 + C2*U + C3*U**2
-    D = D1 + D2*U 
-
-    T  = (1/f) * 10**6
-    T0 = (1/F0)* 10**6
-
-    P = C * (1 - (T0**2)/(T**2)) * (1 - D*(1 - (T0**2)/(T**2)))
-    return (P)
-
-
-
-def freq2pres(fpin,tin,out="psi"):
+def freq2pres(fpin,tin,out="psi",
+              C1 = -22682.65,
+              C2 = -1143.743,
+              C3 =  70903.62,
+              D1 =  0.040903,
+              D2 =  0.0):
     """
     frequence capteur pression > pression (output == "psi")
     OU profondeur (output == "meter")
     """
-    C1 = -22682.65
-    C2 = -1143.743
-    C3 =  70903.62
-
-    D1 =  0.040903
-    D2 =  0.0
     
     U = temp2freq(tin,'U')
     
@@ -141,7 +139,7 @@ def freq2pres(fpin,tin,out="psi"):
     if out == "psi":
         return (P)
     elif out == "meter":
-        return P/psi_per_meter
+        return P/PSI_PER_METER
     else:
         raise Exception("bad output format in freq2pres")
         
@@ -156,18 +154,19 @@ def pres2freq(pin,tin,inp='psi',
     
     #### Handle pin as an interable (array, list....)
     if utils.is_iterable(tin):
-        log.err("tin as to be a scalar")
+        log.err("tin has to be a scalar")
         raise Exception
     
     if utils.is_iterable(pin):
-        return np.array([pres2freq(pin_i,tin,inp,return_optimize_object) for pin_i in pin])
+        return np.array([pres2freq(pin_i,tin,inp,
+                                   return_optimize_object) for pin_i in pin])
     
     #### Handle pin as a scalar
     else:
         if inp == "psi":
             puse = pin
         elif inp == "meter":
-            puse = pin * psi_per_meter
+            puse = pin * PSI_PER_METER
         
         
         def wrap_zero(fp):
@@ -181,41 +180,118 @@ def pres2freq(pin,tin,inp='psi',
             return Opti.x[0]
         
         
+ #                        _       __    __      __                
+ #                       | |     / /____\ \    / _|               
+ #   ___ ___  _   _ _ __ | |_   / /______\ \  | |_ _ __ ___  __ _ 
+ #  / __/ _ \| | | | '_ \| __| < < ______ > > |  _| '__/ _ \/ _` |
+ # | (_| (_) | |_| | | | | |_   \ \______/ /  | | | | |  __/ (_| |
+ #  \___\___/ \__,_|_| |_|\__|   \_\    /_/   |_| |_|  \___|\__, |
+ #                                                             | |
+ #                                                             |_|
+
 
 def freq2counter(freq_or_tau_sensor,
                  count_sensor,
                  freq_or_tau_clk,
-                 inp="freq",
+                 integ_timespan=1,
+                 inp='freq',
                  round_fct=np.floor):
+    """
+    Convert sensor frequency to count number    
+
+    Parameters
+    ----------
+    freq_or_tau_sensor :
+        freqency ('freq') or period ('tau') of the sensor.
+    count_sensor : int or float
+        number of clock periods counted for one sensor count
+    freq_or_tau_clk :
+        primary frequency/period of the clock that count period..
+    integ_timespan : int or float, optional
+        integration timespan in seconds. The default is 1.
+    inp : str, optional
+        input 'freq' for freqency or 'tau' for period (=1/frequency).
+        The default is 'freq'.
+    round_fct : function, optional
+        the function that round the count values. The default is np.floor.
+
+    Returns
+    -------
+    n_count :
+        number of counts counted by the sensor..
+
+    Note
+    ----
+    usually, ``count_sensor=30e3``  for pressure, ``count_sensor=168e3``
+    for temperature and ``freq_clk=4.096e6``
+
+    """
     
-    if inp=="freq":
+    if inp=='freq':
         tau_sensor = 1/freq_or_tau_sensor
         tau_clk = 1/freq_or_tau_clk
-    else:
+    elif inp=='tau':
         tau_sensor = freq_or_tau_sensor
         tau_clk = freq_or_tau_clk
+    else:
+        print('check inp')
+        return 
         
-    N = (count_sensor * tau_sensor)/tau_clk
+    n_count = (integ_timespan * tau_sensor * count_sensor)/tau_clk
     
     if round_fct:
-        return round_fct(N)
+        return round_fct(n_count)
     else:
-        return N  
+        return n_count  
 
-
-def counter2freq(N_counted_by_clk,
+def counter2freq(n_counted_by_clk,
                  count_sensor,
                  freq_clk,
-                 out="freq"):
-    
-    
-    tau_sensor = N_counted_by_clk/(freq_clk*count_sensor)
-    
-    if out=="freq":
-        return 1/tau_sensor
-    else:
-        return tau_sensor
+                 integ_timespan=1,
+                 out='freq'):
+    """
+    Convert count number to sensor frequency
+
+    Parameters
+    ----------
+    n_counted_by_clk : int or float
+        number of counts counted by the sensor.
+    count_sensor : int or float
+        number of clock periods counted for one sensor count
+    freq_clk : int or float
+        primary frequency of the clock that count period.
+    integ_timespan : int or float, optional
+        integration timespan in seconds. The default is 1.
+    out : str, optional
+        output 'freq' for freqency or 'tau' for period (=1/frequency).
+        The default is 'freq'.
+
+    Returns
+    -------
+    float
+        freqency ('freq') or period ('tau') of the sensor
         
+    Note
+    ----
+    usually, ``count_sensor=30e3``  for pressure, ``count_sensor=168e3``
+    for temperature and ``freq_clk=4.096e6``
+
+    """
+    
+    tau_sensor = n_counted_by_clk/(freq_clk * integ_timespan * count_sensor)
+    
+    if out=='freq':
+        return 1/tau_sensor
+    elif out =='tau':
+        return tau_sensor
+    else:
+        print('check out')
+        return 
+        
+        
+        
+        
+####### HIGHER LEVEL FCTS #####################################################
         
 def pres_resolution(val_presin,
                     val_tempin,
@@ -272,9 +348,9 @@ def pres_resolution(val_presin,
     if output_val == "psi":
         pass
     elif output_val == "meter":
-        pres_central=pres_central/psi_per_meter
+        pres_central=pres_central/PSI_PER_METER
         if not relative_delta:
-            PresResArr=PresResArr/psi_per_meter ### correction only for absolute values !!!
+            PresResArr=PresResArr/PSI_PER_METER ### correction only for absolute values !!!
     else:
         raise Exception("bad output format in pres_resolution")
         
@@ -384,8 +460,36 @@ def resolution_plot_as_gradient_grid(PresVals,
     return fig,ax
     
     
-    
+ #   __                  _   _                                                             _ 
+ #  / _|                | | (_)                                                           | |
+ # | |_ _   _ _ __   ___| |_ _  ___  _ __     __ _ _ __ __ ___   _____ _   _  __ _ _ __ __| |
+ # |  _| | | | '_ \ / __| __| |/ _ \| '_ \   / _` | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
+ # | | | |_| | | | | (__| |_| | (_) | | | | | (_| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+ # |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|  \__, |_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
+ #                                            __/ |                     __/ |                
+ #                                           |___/                     |___/ 
+                                                 
+def freq2U(f):
+    U0 =  5.766353
+    return 1E6/f-U0
 
-                          
-                          
-                          
+def freq2pres_old(f,U,F0,
+                  C1 = -22682.65,
+                  C2 = -1143.743,
+                  C3 =  70903.62,
+                  D1 =  0.040903,
+                  D2 =  0.0):
+    """
+    freqence capteur pression > pression
+    OLD version
+    """
+    
+    C = C1 + C2*U + C3*U**2
+    D = D1 + D2*U 
+
+    T  = (1/f) * 10**6
+    T0 = (1/F0)* 10**6
+
+    P = C * (1 - (T0**2)/(T**2)) * (1 - D*(1 - (T0**2)/(T**2)))
+    return (P)
+            
