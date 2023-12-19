@@ -215,5 +215,4 @@ def read_ringo_qc(file_in):
             
         tables[qc] = df
         
-    
     return tables

@@ -344,9 +344,11 @@ def groops_ppp_full_runner(rinex_path,
         Path of the GROOPS bin. 
         The default is '/opt/softs_gnss/groops/bin/groops'.
     verbosity : str, optional
-        verbosity level of the console logger
+        verbosity level of the console logger for the
+        GROOPS's messages 
         use keywords CRITICAL, ERROR, WARNING, INFO, DEBUG
         The default is 'ERROR'.
+        This verbosity level does not apply to this function
     
     Note
     ----
