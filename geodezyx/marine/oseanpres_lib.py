@@ -42,47 +42,81 @@ PSI_PER_METER=1.45038
 # T5=0
 
 
-def freq2temp(f,
+ #  _                                      _                  
+ # | |                                    | |                 
+ # | |_ ___ _ __ ___  _ __   ___ _ __ __ _| |_ _   _ _ __ ___ 
+ # | __/ _ \ '_ ` _ \| '_ \ / _ \ '__/ _` | __| | | | '__/ _ \
+ # | ||  __/ | | | | | |_) |  __/ | | (_| | |_| |_| | | |  __/
+ #  \__\___|_| |_| |_| .__/ \___|_|  \__,_|\__|\__,_|_|  \___|
+ #                   | |                                      
+ #                   |_| 
+
+def freq2temp(ftin,
               U0 =  5.766353,
               Y1 = -4025.183,
               Y2 = -11970.76,
               Y3 =  0.):
     """
-    frequence du capteur de temperature > temperature
+    Convert temperature sensor frequency to temperature
+    
+    Parameters
+    ----------
+    ftin :
+        frequency of the temperature sensor in Hz.
+    U0, Y1-3 : float, optional
+        Calibration coefficients provided by PAROS.
+
+    Returns
+    -------
+    float
+        temperature in Celsius.
+
     """
-    if utils.is_iterable(f):
-            return np.array([freq2temp(e,U0,Y1,Y2,Y3) for e in f])
+
+    if utils.is_iterable(ftin):
+            return np.array([freq2temp(e,U0,Y1,Y2,Y3) for e in ftin])
     else:
-        if f == 0.:
-            f = np.nan
+        if ftin == 0.:
+            ftin = np.nan
         
-        X = (1/f) * 10**6 # (1/30000) * 10**6
+        X = (1/ftin) * 10**6 # (1/30000) * 10**6
         U = X - U0
         Temp = Y1 * U + Y2 * U**2 + Y3 * U**3
         return Temp
 
 
-
-def temp2freq(T,
+def temp2freq(tin,
               out='freq',
               U0 =  5.766353,
               Y1 = -4025.183,
               Y2 = -11970.76,
               Y3 =  0.):
     """
-    temperature > frequence du capteur de temperature (output == "freq") 
-    OU  
-    coef U (output == "U") 
-    OU 
-    periode du capteur U (output == "tau")
+    Convert temperature to temperature sensor frequency
+
+    Parameters
+    ----------
+    tin : 
+        temperature in Celsius.
+    out : float, optional
+        freqency ('freq') or period ('tau') or coefficient U ('U') 
+        of the sensor. The default is 'freq'.
+    U0, Y1-3 : float, optional
+        Calibration coefficients provided by PAROS.
+        
+    Returns
+    -------
+    float
+        temperature sensor frequency or period.
+
     """
     
     #### Handle T as an interable (array, list....)
-    if utils.is_iterable(T):
-        return np.array([temp2freq(t,out) for t in T])
+    if utils.is_iterable(tin):
+        return np.array([temp2freq(t,out) for t in tin])
     #### Handle T as a scalar
     else:
-        U = np.roots( [Y3,Y2,Y1,-T]) + U0
+        U = np.roots( [Y3,Y2,Y1,-tin]) + U0
         #X = (1/f) * 10**6 # (1/30000) * 10**6
         #U = X - U0
         #Temp = Y1 * U + Y2 * U**2 + Y3 * U**3
@@ -93,28 +127,51 @@ def temp2freq(T,
         elif ( out == "U"):
             return [ u-U0  for u in U  if ( (u> 10**6/176000) and (u < 10**6/168000 ))][0]
         else:
-            return None
+            log.error('bad out value')
+            raise Exception("bad output format")
+    
 
-
-def temp2pres_f0(T,
+def _temp2pres_f0(tin,
                  U0 =  5.766353,
                  T1 =  29.89307,
                  T2 =  0.337614,
                  T3 =  56.99511,
                  T4 = 157.6942,
                  T5 =   0.):
+
     """
-    temperature > composante temp pour le capteur de pression
-    (homogène à une frequence)
+    compute the f0 value, i.e. the temperature component for 
+    the pressure computation 
+    
+    f0 is homogeneous to a frequency
+
+    Parameters
+    ----------
+    tin : float
+        temperature in Celsius.
+    U0, T1-5 : float, optional
+        Calibration coefficients provided by PAROS.
+
+    Returns
+    -------
+    float
+        f0, he temperature component for the pressure computation.
+
     """
     
-    F=temp2freq(T)
+    F=temp2freq(tin)
     U= (1/F)*10**6 - U0
     
     T0 = T1 + T2*U + T3*U**2 + T4*U**3 + T5*U**4
     return 10**6/T0
 
-
+ #  _ __  _ __ ___  ___ ___ _   _ _ __ ___ 
+ # | '_ \| '__/ _ \/ __/ __| | | | '__/ _ \
+ # | |_) | | |  __/\__ \__ \ |_| | | |  __/
+ # | .__/|_|  \___||___/___/\__,_|_|  \___|
+ # | |                                     
+ # |_|  
+ 
 def freq2pres(fpin,tin,out="psi",
               C1 = -22682.65,
               C2 = -1143.743,
@@ -122,9 +179,27 @@ def freq2pres(fpin,tin,out="psi",
               D1 =  0.040903,
               D2 =  0.0):
     """
-    frequence capteur pression > pression (output == "psi")
-    OU profondeur (output == "meter")
+    Convert pressure sensor frequency to pressure or equivalent distance
+    
+    Parameters
+    ----------
+    fpin : TYPE
+        frequency of the pressure sensor in Hz.
+    tin : TYPE
+        temperature in Celsius.
+    out : str, optional
+        output as pressure ('psi') or distance ('meter'). 
+        The default is "psi".
+    C1 C2 C3 D1 D2 : float, optional
+        Calibration coefficients provided by PAROS.
+
+    Returns
+    -------
+    float
+        pressure or equivalent distance.
+
     """
+    
     
     U = temp2freq(tin,'U')
     
@@ -132,7 +207,7 @@ def freq2pres(fpin,tin,out="psi",
     D = D1 + D2*U 
 
     T  = (1/fpin)              * 10**6
-    T0 = (1/temp2pres_f0(tin)) * 10**6
+    T0 = (1/_temp2pres_f0(tin)) * 10**6
 
     P = C * (1 - (T0**2)/(T**2)) * (1 - D*(1 - (T0**2)/(T**2)))
     
@@ -141,7 +216,8 @@ def freq2pres(fpin,tin,out="psi",
     elif out == "meter":
         return P/PSI_PER_METER
     else:
-        raise Exception("bad output format in freq2pres")
+        log.error('bad out value')
+        raise Exception("bad output format")
         
         
 
@@ -149,8 +225,33 @@ def freq2pres(fpin,tin,out="psi",
 def pres2freq(pin,tin,inp='psi',
               return_optimize_object=False):
     """
-    pression > frequence capteur pression
+    Convert pressure to  pressure sensor frequency
+
+    There is no analytic solution, thus an root find is required
+
+    Parameters
+    ----------
+    pin :
+        pressure in psi.
+    tin :
+        temperature in Celsius.
+    inp : optional
+        DESCRIPTION. The default is 'psi'.
+    return_optimize_object : bool, optional
+        if True, return the object of scipy's optimize.root function.
+        if False, return the root value
+        The default is False.
+
+    Returns
+    -------
+    float
+        pressure sensor frequency (Hz).
+        
+    Note
+    ----
+
     """
+
     
     #### Handle pin as an interable (array, list....)
     if utils.is_iterable(tin):
@@ -180,15 +281,13 @@ def pres2freq(pin,tin,inp='psi',
             return Opti.x[0]
         
         
- #                        _       __    __      __                
- #                       | |     / /____\ \    / _|               
- #   ___ ___  _   _ _ __ | |_   / /______\ \  | |_ _ __ ___  __ _ 
- #  / __/ _ \| | | | '_ \| __| < < ______ > > |  _| '__/ _ \/ _` |
- # | (_| (_) | |_| | | | | |_   \ \______/ /  | | | | |  __/ (_| |
- #  \___\___/ \__,_|_| |_|\__|   \_\    /_/   |_| |_|  \___|\__, |
- #                                                             | |
- #                                                             |_|
-
+ #                        _            
+ #                       | |           
+ #   ___ ___  _   _ _ __ | |_ ___ _ __ 
+ #  / __/ _ \| | | | '_ \| __/ _ \ '__|
+ # | (_| (_) | |_| | | | | ||  __/ |   
+ #  \___\___/ \__,_|_| |_|\__\___|_| 
+  
 
 def freq2counter(freq_or_tau_sensor,
                  count_sensor,
@@ -234,8 +333,8 @@ def freq2counter(freq_or_tau_sensor,
         tau_sensor = freq_or_tau_sensor
         tau_clk = freq_or_tau_clk
     else:
-        print('check inp')
-        return 
+        log.error('bad inp value')
+        raise Exception("bad inp format")
         
     n_count = (integ_timespan * tau_sensor * count_sensor)/tau_clk
     
@@ -285,8 +384,8 @@ def counter2freq(n_counted_by_clk,
     elif out =='tau':
         return tau_sensor
     else:
-        print('check out')
-        return 
+        log.error('bad out value')
+        raise Exception("bad output format")
         
         
         
