@@ -14,11 +14,74 @@ import matplotlib.pyplot as plt
 import numpy as np
 import itertools
 import scipy
+import geodezyx as gzyx
+import geodezyx.conv as conv
+import pandas as pd
+
+
 
 #### Import the logger
 import logging
 log = logging.getLogger(__name__)
 
+
+
+def import_presure_df(csv_pres_inp,
+                      dic_coeffs,
+                      freq_clk=4.096e6,
+                      count_sensor_temp=168e3,
+                      count_sensor_pres=30e3,
+                      integ_timespan_temp=10,
+                      integ_timespan_pres=100,
+                      epoc_idx=True):
+    
+    dic_coeffs_temp = _get_coeffs_temp(dic_coeffs)
+    
+    pres_df_raw = pd.read_csv(csv_pres_inp)
+
+    pres_df = pd.DataFrame()
+
+    pres_df['epoc'] = conv.posix2dt(pres_df_raw['Timestamp(unixtime)'])
+    
+    ### rename columns
+    pres_df['cnt_temp'] = pres_df_raw['Temperature']
+    pres_df['cnt_pres'] = pres_df_raw['Pressure']
+
+    ### remove empty values
+    pres_df.replace(0, np.nan, inplace=True)
+    pres_df.dropna(inplace=True)
+    
+    ### compute frequency from counter
+    pres_df['frq_temp'] = counter2freq(pres_df['cnt_temp'],
+                                       count_sensor=count_sensor_temp,
+                                       freq_clk=freq_clk,
+                                       integ_timespan=integ_timespan_temp)
+
+    pres_df['frq_pres'] = counter2freq(pres_df['cnt_pres'],
+                                       count_sensor=count_sensor_pres,
+                                       freq_clk=freq_clk,
+                                       integ_timespan=integ_timespan_pres) 
+    ### compute temperature from frequency
+    pres_df['temp'] = freq2temp(pres_df['frq_temp'],
+                                **dic_coeffs_temp)
+
+    ### compute pressure from frequency
+    pres_df['pres'] = freq2pres(pres_df['frq_pres'],
+                                pres_df['frq_temp'],
+                                out="psi",
+                                inp_temp='freq',
+                                **dic_coeffs)
+    ### compute depth
+    pres_df['dpth'] = freq2pres(pres_df['frq_pres'],
+                                pres_df['temp'],
+                                out="meter",
+                                **dic_coeffs)
+    
+    if epoc_idx:
+        pres_df.set_index('epoc',inplace=True)
+    
+    return pres_df
+    
 
 #                  __  __ _      _            _                                      _             _       
 #                 / _|/ _(_)    (_)          | |         ___                        | |           | |      
@@ -70,17 +133,28 @@ def get_coeffs(sens_type='all',
                       'T4':147.124,
                       'T5':0}
         
-        
     if sens_type == 'all':
         return dic_coeffs
     elif sens_type == 'f0':
-        return { c:dic_coeffs[c] for c in ['U0','T1','T2','T3','T4','T5']}
-
+        return _get_coeffs_f0(dic_coeffs) 
     elif sens_type == 'temp':
-        return { c:dic_coeffs[c] for c in ['U0','Y1','Y2','Y3']}       
-
+        return _get_coeffs_temp(dic_coeffs) 
     else:
         log.error("check sens_type ('pres' or 'temp')")
+        
+def _get_coeffs_temp(dic_coeffs_in):
+    """
+    return only the useful coefficients to compute temp
+    """
+
+    return { c:dic_coeffs_in[c] for c in ['U0','Y1','Y2','Y3']}       
+    
+def _get_coeffs_f0(dic_coeffs_in):
+    """
+    return only the useful coefficients to compute f0
+    """
+
+    return { c:dic_coeffs_in[c] for c in ['U0','T1','T2','T3','T4','T5']}
 
 
 def unitary_tests(sens_id = 158073):
@@ -94,11 +168,13 @@ def unitary_tests(sens_id = 158073):
     -------
     ftemp (Hz), fpres (Hz), temp (°C), f0 (Hz), p (psi)
     """
-    ftemp=172600.0 #Hz 
-    fpres=36300.0 #Hz
-    temp=20.090562800024895 # °C
-    f0=33333.93215844317 # Hz # @ 20.090562800024895°C
-    p=4803.3285794411595 # psi # @ 20.090562800024895 °C
+    
+    if sens_id == 158073:
+        ftemp=172600.0 #Hz 
+        fpres=36300.0 #Hz
+        temp=20.090562800024895 # °C
+        f0=33333.93215844317 # Hz # @ 20.090562800024895°C
+        p=4803.3285794411595 # psi # @ 20.090562800024895 °C
     return ftemp, fpres, temp, f0, p
 
 
@@ -110,8 +186,6 @@ def unitary_tests(sens_id = 158073):
  #  \__\___|_| |_| |_| .__/ \___|_|  \__,_|\__|\__,_|_|  \___|
  #                   | |                                      
  #                   |_| 
- 
- 
  
 def freq2U(ft_in,U0):
     """
