@@ -19,6 +19,15 @@ import scipy
 import logging
 log = logging.getLogger(__name__)
 
+
+#                  __  __ _      _            _                                      _             _       
+#                 / _|/ _(_)    (_)          | |         ___                        | |           | |      
+#   ___ ___   ___| |_| |_ _  ___ _  ___ _ __ | |_ ___   ( _ )     ___ ___  _ __  ___| |_ ___ _ __ | |_ ___ 
+#  / __/ _ \ / _ \  _|  _| |/ __| |/ _ \ '_ \| __/ __|  / _ \/\  / __/ _ \| '_ \/ __| __/ _ \ '_ \| __/ __|
+# | (_| (_) |  __/ | | | | | (__| |  __/ | | | |_\__ \ | (_>  < | (_| (_) | | | \__ \ ||  __/ | | | |_\__ \
+#  \___\___/ \___|_| |_| |_|\___|_|\___|_| |_|\__|___/  \___/\/  \___\___/|_| |_|___/\__\___|_| |_|\__|___/
+#                                                                      
+  
 PSI_PER_METER=1.45038
 PSI_TO_BAR=0.0689475729317831
 PSI_TO_MBAR=PSI_TO_BAR * 1000
@@ -72,6 +81,25 @@ def get_coeffs(sens_type='all',
 
     else:
         log.error("check sens_type ('pres' or 'temp')")
+
+
+def unitary_tests(sens_id = 158073):
+    """
+    return the correct values for pressure/temperature and 
+    intermediates parameters @ ftemp=172600.0 Hz and fpres=36300.0 Hz
+    with the cofficient of the sensor #158073
+    (1st OBSCOM)
+
+    Returns
+    -------
+    ftemp (Hz), fpres (Hz), temp (°C), f0 (Hz), p (psi)
+    """
+    ftemp=172600.0 #Hz 
+    fpres=36300.0 #Hz
+    temp=20.090562800024895 # °C
+    f0=33333.93215844317 # Hz # @ 20.090562800024895°C
+    p=4803.3285794411595 # psi # @ 20.090562800024895 °C
+    return ftemp, fpres, temp, f0, p
 
 
  #  _                                      _                  
