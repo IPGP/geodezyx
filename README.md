@@ -2,11 +2,10 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.4.0 / 2023-11-24**, README Revision: 2023-11-24
+**Version 0.4.4.0 / 2023-11-24**, README Revision: 2024-01-03
 
 
-**Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
-(GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
+**Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
 
 **Documentation:** [https://geodezyx.github.io/geodezyx-toolbox](https://geodezyx.github.io/geodezyx-toolbox/)
 
@@ -21,6 +20,11 @@
 V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.org/10.5880/GFZ.1.1.2019.002)
 
 **Licence:** GNU LGPL v3 (see below) 
+
+**Contributors:**
+* Kitpracha "Na" Chaiyaporn (GFZ, Potsdam, Germany)
+* Valérie Ballu (CNRS/La Rochelle University, France)
+
 
 ## Introduction
 
