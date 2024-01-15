@@ -659,6 +659,3 @@ def is_exe(fpath):
     """
     return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
-is_exe("/home/psakicki/SOFTWARE/ANUBIS/anubis-3.7-lin-static-64b")
-
-
