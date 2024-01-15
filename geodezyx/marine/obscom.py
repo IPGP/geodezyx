@@ -18,13 +18,18 @@ import geodezyx as gzyx
 import geodezyx.conv as conv
 import pandas as pd
 
-
-
 #### Import the logger
 import logging
 log = logging.getLogger(__name__)
 
 
+ #  ______               _                 _    __                  _   _                 
+ # |  ____|             | |               | |  / _|                | | (_)                
+ # | |__ _ __ ___  _ __ | |_ ___ _ __   __| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___ 
+ # |  __| '__/ _ \| '_ \| __/ _ \ '_ \ / _` | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+ # | |  | | | (_) | | | | ||  __/ | | | (_| | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+ # |_|  |_|  \___/|_| |_|\__\___|_| |_|\__,_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+                                                                    
 
 def import_presure_df(csv_pres_inp,
                       dic_coeffs,
@@ -68,11 +73,20 @@ def import_presure_df(csv_pres_inp,
     ### compute pressure from frequency
     pres_df['pres'] = freq2pres(pres_df['frq_pres'],
                                 pres_df['frq_temp'],
-                                out="psi",
+                                out="pa",
                                 inp_temp='freq',
                                 **dic_coeffs)
+    ### compute pressure from temperature (for debug only!)
+    if False:
+        pres_df['pres2'] = freq2pres(pres_df['frq_pres'],
+                                    pres_df['temp'],
+                                    out="pa",
+                                    inp_temp='temp',
+                                    **dic_coeffs)
+
+
     ### compute depth
-    pres_df['dpth'] = freq2pres(pres_df['frq_pres'],
+    pres_df['high'] = freq2pres(pres_df['frq_pres'],
                                 pres_df['temp'],
                                 out="meter",
                                 **dic_coeffs)
@@ -81,7 +95,6 @@ def import_presure_df(csv_pres_inp,
         pres_df.set_index('epoc',inplace=True)
     
     return pres_df
-    
 
 #                  __  __ _      _            _                                      _             _       
 #                 / _|/ _(_)    (_)          | |         ___                        | |           | |      
@@ -90,11 +103,14 @@ def import_presure_df(csv_pres_inp,
 # | (_| (_) |  __/ | | | | | (__| |  __/ | | | |_\__ \ | (_>  < | (_| (_) | | | \__ \ ||  __/ | | | |_\__ \
 #  \___\___/ \___|_| |_| |_|\___|_|\___|_| |_|\__|___/  \___/\/  \___\___/|_| |_|___/\__\___|_| |_|\__|___/
 #                                                                      
-  
-PSI_PER_METER=1.45038
-PSI_TO_BAR=0.0689475729317831
+
+## Wikipedia values
+#  https://en.wikipedia.org/wiki/Pound_per_square_inch
+
+PSI_PER_METER=1.4503773773022 ## 1 METER = 1 DBAR
+PSI_TO_BAR=0.06894757293168 
 PSI_TO_MBAR=PSI_TO_BAR * 1000
-PSI_TO_PA=6894.7572931783
+PSI_TO_PA=6894.757293168 
 
 def get_coeffs(sens_type='all',
                sens_id=158073):
@@ -161,7 +177,7 @@ def unitary_tests(sens_id = 158073):
     """
     return the correct values for pressure/temperature and 
     intermediates parameters @ ftemp=172600.0 Hz and fpres=36300.0 Hz
-    with the cofficient of the sensor #158073
+    with the cofficients of the sensor #158073
     (1st OBSCOM)
 
     Returns
@@ -176,7 +192,6 @@ def unitary_tests(sens_id = 158073):
         f0=33333.93215844317 # Hz # @ 20.090562800024895°C
         p=4803.3285794411595 # psi # @ 20.090562800024895 °C
     return ftemp, fpres, temp, f0, p
-
 
  #  _                                      _                  
  # | |                                    | |                 
