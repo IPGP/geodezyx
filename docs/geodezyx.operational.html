@@ -124,43 +124,62 @@
 <p>&#64;author: psakicki</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.anubis_frontend.anubis_runner">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.anubis_frontend.</span></span><span class="sig-name descname"><span class="pre">anubis_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir_main</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xml_config_generic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_nav</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_sp3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anubis_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/psakicki/SOFTWARE/ANUBIS/anubis-3.3.3613-lin-shared-64b'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.anubis_frontend.anubis_runner" title="Link to this definition"></a></dt>
-<dd><p>Run an Anubis quality check
-Designed for Anubis 3.3</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.anubis_frontend.</span></span><span class="sig-name descname"><span class="pre">anubis_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir_main</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xml_config_generic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_nav</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_sp3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anubis_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/opt/gnss_softs/bin/anubis'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.anubis_frontend.anubis_runner" title="Link to this definition"></a></dt>
+<dd><p>Run an Anubis quality check.
+Designed for Anubis 3.3.
+Works with Anubis 3.7 at least.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rnx_inp</strong> (<em>str</em><em> or </em><em>list</em>) – Input RINEXs. can be a RINEX path list,
-or the path of the parent archive directory</p></li>
+<li><p><strong>rnx_inp</strong> (<em>str</em><em> or </em><em>list</em>) – <p>Input RINEXs. can be a RINEX path list,
+or the path of the parent archive directory</p>
+<p>Note that this function is optimized for the
+batch processing of several RINEXs.
+If you want to process a single RINEX,
+gives its path in a list (<cite>[rnx_inp]</cite>)</p>
+</p></li>
 <li><p><strong>out_dir_main</strong> (<em>str</em>) – output main directory.</p></li>
 <li><p><strong>xml_config_generic</strong> (<em>str</em>) – path of the generic XML configuration file.
-will be stored in &lt;out_dir_main&gt;/inp</p></li>
+will be stored in &lt;out_dir_main&gt;/inp
+See note bellow to find some exemples</p></li>
 <li><p><strong>period</strong> (<em>None</em><em> or </em><em>int</em>) – nominal file period in the RINEX (in hours)
 if None is given, guess based on the RINEX name
 The default is None.</p></li>
 <li><p><strong>interval</strong> (<em>None</em><em> or </em><em>int</em>) – nominal data interval in the RINEX (in sec)
 if None is given, guess based on the RINEX name
 The default is None.</p></li>
-<li><p><strong>quiet</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, do not run the Anubis QC.
-Anubis QC rsults are stored in stored in &lt;out_dir_main&gt;/out
+<li><p><strong>dry_run</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, do not run the Anubis QC.
+Anubis QC results are stored in &lt;out_dir_main&gt;/out
 The default is False.</p></li>
 <li><p><strong>download_nav</strong> (<em>bool</em><em>, </em><em>optional</em>) – Download automatically the Broadcast navigation files.
 will be stored in &lt;out_dir_main&gt;/nav
 The default is True.</p></li>
-<li><p><strong>download_sp3</strong> (<em>bool</em><em>, </em><em>optional</em>) – Download automatically the SP3 orbit files. CODE’s MGEX are used per default.
+<li><p><strong>download_sp3</strong> (<em>bool</em><em>, </em><em>optional</em>) – Download automatically the SP3 orbit files.
+CODE’s MGEX are used per default.
 will be stored in &lt;out_dir_main&gt;/nav
 The default is True.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – Per default, skip anubis execution if a xtr
+file already exists in out_dir_main
+The default is False.</p></li>
 <li><p><strong>anubis_path</strong> (<em>str</em><em>, </em><em>optional</em>) – path of the Anubis executable.
-The default is “/home/psakicki/SOFTWARE/ANUBIS/anubis-3.3.3613-lin-shared-64b”.</p></li>
+The default is “/opt/gnss_softs/bin/anubis”</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>XML_INP_LIST</strong> – list of the generated XML config files.</p>
+<dd class="field-even"><p><strong>xml_cfg_list</strong> – list of the generated XML config files.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generic Configuration files for Anubis version 2 and 3
+can be found here:</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;...&gt;/geodezyx/000_exemples/anubis_configfiles</span></code></p>
+<p>or directly on the GeodeZYX’s toolbox GitHub repository:</p>
+<p><a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox/tree/master/geodezyx/000_exemples/anubis_configfiles">https://github.com/GeodeZYX/geodezyx-toolbox/tree/master/geodezyx/000_exemples/anubis_configfiles</a></p>
+</div>
 </dd></dl>
 
 </section>
@@ -1342,9 +1361,11 @@ and the corresponding config files.</p></li>
 <li><p><strong>sitelogs_root_dir</strong> (<em>str</em>) – directory path where the sitelogs files are stored.</p></li>
 <li><p><strong>groops_bin_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path of the GROOPS bin.
 The default is ‘/opt/softs_gnss/groops/bin/groops’.</p></li>
-<li><p><strong>verbosity</strong> (<em>str</em><em>, </em><em>optional</em>) – verbosity level of the console logger
+<li><p><strong>verbosity</strong> (<em>str</em><em>, </em><em>optional</em>) – verbosity level of the console logger for the
+GROOPS’s messages
 use keywords CRITICAL, ERROR, WARNING, INFO, DEBUG
-The default is ‘ERROR’.</p></li>
+The default is ‘ERROR’.
+This verbosity level does not apply to this function</p></li>
 </ul>
 </dd>
 </dl>
