@@ -478,7 +478,7 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
         Input point sets
 
     Weights : list of N Weights,
-        or an numpy array of shape (N,3)
+        or an numpy array of shape (N,)
     
     Returns
     -------
