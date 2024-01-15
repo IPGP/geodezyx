@@ -639,3 +639,26 @@ def check_regex(filein,regex):
             break
 
     return outbool
+
+
+
+def is_exe(fpath):
+    """
+    Chech if a file is executable
+
+    Parameters
+    ----------
+    fpath : str
+        file path.
+
+    Returns
+    -------
+    bool
+        is executable.
+
+    """
+    return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+is_exe("/home/psakicki/SOFTWARE/ANUBIS/anubis-3.7-lin-static-64b")
+
+
