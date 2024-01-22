@@ -37,7 +37,10 @@ log_config_dict = {
     },
     "formatters":{
         "fmtgzyx1": {
-            "format": "%(asctime)s.%(msecs)03d|%(log_color)s%(levelname).1s%(reset)s|%(log_color)s%(funcName)-15s%(reset)s|%(message)s",
+             ##### full fct name
+            #"format": "%(asctime)s.%(msecs)03d|%(log_color)s%(levelname).1s%(reset)s|%(log_color)s%(funcName)-15s%(reset)s|%(message)s",
+            ##### trunkated fct name
+            "format": "%(asctime)s.%(msecs)03d|%(log_color)s%(levelname).1s%(reset)s|%(log_color)s%(funcName).15s%(reset)s|%(message)s",
             '()': 'colorlog.ColoredFormatter',
             "datefmt":"%y%m%dT%H:%M:%S",
             "log_colors":{

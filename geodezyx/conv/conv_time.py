@@ -3,7 +3,7 @@
 """
 Created on Thu Aug 13 15:11:12 2020
 
-@author: psakicki
+@author: psakic
 
 This sub-module of geodezyx.conv deals with time conversion.
 
