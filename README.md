@@ -2,7 +2,7 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.4.0 / 2023-11-24**, README Revision: 2024-01-03
+**Version 0.4.4.0 / 2023-11-24**, README Revision: 2024-01-25
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
@@ -53,13 +53,14 @@ See the following link:
 
 ### with PyPi and pip
 
-We recommend to use pip to do a proper installation:
-
-``pip install geodezyx``
-
-To get the latest working version you can install directly the GitHub-hosted version:
+We recommend using `pip` to do a proper installation.  
+To get the latest working version you can install directly the GitHub-hosted version (recommended):  
 
 ``pip install git+https://github.com/GeodeZYX/geodezyx-toolbox``
+
+YOu can also install the version hosted on PyPI (but you will not get the latest version)
+
+``pip install geodezyx``
 
 ### clone and manually install from GitHub
 
