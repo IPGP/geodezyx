@@ -875,14 +875,14 @@ def Tee_frontend(dir_in,logname_in,suffix='',ext='log',print_timestamp=True):
     return F_tee
 
 def alphabet(num=None):
-    if not num:
+    if num is None:
         import string
         return list(string.ascii_lowercase)
     else:
         return alphabet()[num]
 
 def alphabet_reverse(letter=None):
-    if not letter:
+    if letter is None:
         import string
         return list(string.ascii_lowercase)
     else:
