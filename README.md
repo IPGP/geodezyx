@@ -51,14 +51,14 @@ See the following link:
 
 ## Installation (detailed legacy instructions)
 
-### with PyPi and pip
+### with PyPI and pip
 
 We recommend using `pip` to do a proper installation.  
-To get the latest working version you can install directly the GitHub-hosted version (recommended):  
+To get the latest working version, you can install directly the GitHub-hosted version (recommended):  
 
 ``pip install git+https://github.com/GeodeZYX/geodezyx-toolbox``
 
-YOu can also install the version hosted on PyPI (but you will not get the latest version)
+You can also install the version hosted on PyPI (but you will not get the latest changes)
 
 ``pip install geodezyx``
 
