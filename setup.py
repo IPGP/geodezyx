@@ -175,6 +175,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'pytwobodyorbit',
                       'pyyaml',
                       'pandas',
+                      'seawater',
                       'scipy',
                       'sympy',
                       'tabulate',
