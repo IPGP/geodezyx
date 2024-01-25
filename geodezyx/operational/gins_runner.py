@@ -43,6 +43,10 @@ from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import time_series
 
+#### Import the logger
+import logging
+log = logging.getLogger(__name__)
+
 ##########  END IMPORT  ##########
 
 def get_gins_path(extended=False):
@@ -178,7 +182,7 @@ def write_oceanload_file(station_file,oceanload_out_file,fes_yyyy=2004):
 #                                 director_name_prefix,out_director_folder='',
 #                                 temp_data_folder='',stations_file='',
 #                                 oceanload_file='',auto_staocl=False,
-#                                 perso_orbclk=False,calc_center='igs',repro=2,
+#                                 perso_orbclk=False,ac='igs',repro=2,
 #                                 auto_interval=True):
 #
 #    """
@@ -205,7 +209,7 @@ def write_oceanload_file(station_file,oceanload_out_file,fes_yyyy=2004):
 #        which will be used
 #    perso_orbclk :
 #        download and use specifics orbits
-#        according to calc_center & repro args
+#        according to ac & repro args
 #        (they are useless if perso_orbclk aren't activated)
 #    auto_interval:
 #        find the interval in RINEX and apply it to the director
@@ -240,7 +244,7 @@ def write_oceanload_file(station_file,oceanload_out_file,fes_yyyy=2004):
 #    stat = stat_lower.upper()
 #
 #    if perso_orbclk:
-#        calccntr_suffix = '_' + calc_center + str(repro)
+#        calccntr_suffix = '_' + ac + str(repro)
 #    else:
 #        calccntr_suffix = ''
 #
@@ -330,7 +334,7 @@ def write_oceanload_file(station_file,oceanload_out_file,fes_yyyy=2004):
 #        orbpath = os.path.join('orbites',gr_gr2,'defaut')
 #    else:
 #        orbpath , horpath = download_convert_2_gins_orb_clk(dt_rinex,temp_data_folder,
-#                                        calc_center=calc_center,repro=repro)
+#                                        ac=ac,repro=repro)
 #        orbpath = make_path_ginsstyle(orbpath)
 #        horpath = make_path_ginsstyle(horpath)
 #
@@ -375,7 +379,7 @@ def write_oceanload_file(station_file,oceanload_out_file,fes_yyyy=2004):
 #def multi_gen_dir_from_rinex_list(rinex_list,director_generik_path,
 #    director_name_prefix,out_director_folder='',temp_data_folder='',
 #    stations_file='',oceanload_file='',auto_staocl=False,
-#    perso_orbclk=False,calc_center='igs',repro=2,auto_interval=True):
+#    perso_orbclk=False,ac='igs',repro=2,auto_interval=True):
 #
 #    multi_gen_dir_from_rinex_list.__doc__ = generate_director_from_rinex.__doc__
 #
@@ -388,7 +392,7 @@ def write_oceanload_file(station_file,oceanload_out_file,fes_yyyy=2004):
 #        out_dir_path = generate_director_from_rinex(rnx,director_generik_path,
 #        director_name_prefix,out_director_folder,temp_data_folder,
 #        stations_file,oceanload_file,auto_staocl=auto_staocl,
-#        perso_orbclk=perso_orbclk,calc_center=calc_center,repro=repro,
+#        perso_orbclk=perso_orbclk,ac=ac,repro=repro,
 #        auto_interval=auto_interval)
 #
 #        director_output_path.append(out_dir_path)
@@ -512,7 +516,7 @@ def gen_dirs_from_rnxs(rinex_paths_in,director_generik_path,
                        director_name_prefix,out_director_folder='',
                        temp_data_folder='',stations_file='',
                        oceanload_file='',auto_staocl=False,
-                       perso_orbclk=False,calc_center='igs',repro=2,
+                       perso_orbclk=False,ac='igs',repro=2,
                        auto_interval=True,out_coords='NULL',prairie=False,
                        prairie_kwargs={'with_historik':1,'with_wsb':1}):
 
@@ -545,7 +549,7 @@ def gen_dirs_from_rnxs(rinex_paths_in,director_generik_path,
         which will be used
     perso_orbclk :  True or False
         download and use specifics orbits
-        according to calc_center & repro args
+        according to ac & repro args
         (they are useless if perso_orbclk aren't activated)
     auto_interval : True or False
         find the interval in RINEX and apply it to the director
@@ -626,7 +630,7 @@ def gen_dirs_from_rnxs(rinex_paths_in,director_generik_path,
         stat = stat_lower.upper()
 
         if perso_orbclk:
-            calccntr_suffix = '_' + calc_center + str(repro)
+            calccntr_suffix = '_' + ac + str(repro)
         else:
             calccntr_suffix = ''
 
@@ -759,7 +763,7 @@ def gen_dirs_from_rnxs(rinex_paths_in,director_generik_path,
             orbpath = os.path.join('orbites',gr_gr2,'defaut')
         else:
             orbpath , horpath = download_convert_2_gins_orb_clk(dt_rinex,temp_data_folder,
-                                            calc_center=calc_center,repro=repro)
+                                            ac=ac,repro=repro)
 
             # Exception case where no sp3/clk was found
             if orbpath == None or horpath == None:
@@ -840,7 +844,7 @@ def gen_dirs_from_double_diff(dd_files_paths_in,director_generik_path,
                        temp_data_folder='',stations_file='',
                        oceanload_file='',auto_staocl=False,
                        perso_orbclk=False,gins_style_orb='GRG',
-                       calc_center='igs',repro=2,
+                       ac='igs',repro=2,
                        auto_interval=True,out_coords='NULL'):
 
     """
@@ -872,7 +876,7 @@ def gen_dirs_from_double_diff(dd_files_paths_in,director_generik_path,
         which will be used
     perso_orbclk :  True or False
         download and use specifics orbits
-        according to calc_center & repro args
+        according to ac & repro args
         (they are useless if perso_orbclk aren't activated)
     auto_interval : True or False
         find the interval in RINEX and apply it to the director
@@ -947,7 +951,7 @@ def gen_dirs_from_double_diff(dd_files_paths_in,director_generik_path,
             out_director_folder = os.path.join(get_gins_path(),'gin','data','directeur')
 
         if perso_orbclk:
-            calccntr_suffix = '_' + calc_center + str(repro)
+            calccntr_suffix = '_' + ac + str(repro)
         else:
             calccntr_suffix = ''
 
@@ -1012,7 +1016,7 @@ def gen_dirs_from_double_diff(dd_files_paths_in,director_generik_path,
             orbpath = os.path.join('orbites',gr_gr2,'defaut')
         else:
             orbpath , horpath = download_convert_2_gins_orb_clk(dd_start_epoch,temp_data_folder,
-                                            calc_center=calc_center,repro=repro)
+                                            ac=ac,repro=repro)
 
             # Exception case where no sp3/clk was found
             if orbpath == None or horpath == None:
@@ -1538,26 +1542,27 @@ def sort_by_stations(archive_path,wildcard,i):
 
 def sp3_2_gins(sp3_pathin):
     os.chdir(os.path.dirname(sp3_pathin))
-    print("WARN : the path of the GINS conversion tool has been hardcoded !!!")
-    kommand_1 = "/dsk/grsp_pf/PLAYGROUND/psakicki/GINS_SOFTWARE/outils_GPS/SP3GINS/"
-    print(kommand_1)
+    #print("WARN : the path of the GINS conversion tool has been hardcoded !!!")
+    kommand_1 = get_gins_path() + "/gins_toolbox/scripts/"
+    log.info(kommand_1)
     kommand = kommand_1 + "sp3-gins " + sp3_pathin
 #    stream = os.popen(kommand) # forrtl: severe if we use os.popen
 #    subprocess.call([kommand], shell=True)
-    print(kommand)
+    log.info(kommand)
     p = subprocess.Popen([kommand], shell=True , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
     out, err = p.communicate()
     return sp3_pathin + '.gin'
 
 def clk_2_gins(clk_pathin):
     os.chdir(os.path.dirname(clk_pathin))
-    print("WARN : the path of the GINS conversion tool has been hardcoded !!!")
-    kommand_1 = "/dsk/grsp_pf/PLAYGROUND/psakicki/GINS_SOFTWARE/outils_GPS/GINS2CLK/"
-    print(kommand_1)
-    kommand = kommand_1 + "clk2gins.ksh " + os.path.basename(clk_pathin)
+    #print("WARN : the path of the GINS conversion tool has been hardcoded !!!")
+    kommand_1 = get_gins_path() + "/gins_toolbox/scripts/"
+    log.info(kommand_1)
+    kommand = kommand_1 + "clk2gins.sh " + os.path.basename(clk_pathin)
+    #kommand = kommand_1 + "clk2gins.sh " + clk_pathin
 #    stream = os.popen(kommand) # forrtl: severe if we use os.popen
 #    subprocess.call([kommand], shell=True)
-    print(kommand)
+    log.info(kommand)
     p = subprocess.Popen([kommand], shell=True , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
     out, err = p.communicate()
     return clk_pathin + '.gins'
@@ -1616,15 +1621,19 @@ def orbit_cleaner(orbfilein,orbfileout):
 
     return bad_sat_lis
 
-def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
-                                    calc_center='jpl',repro=2 ,
-                                    rm_temp_files=True,archive_center='cddis'):
-
-
+def download_convert_2_gins_orb_clk(centraldate,
+                                    work_folder = None ,
+                                    ac='jpl',
+                                    repro=2 ,
+                                    rm_temp_files=True,
+                                    data_center='cddis',
+                                    force=False):
 
     temp_dir = work_folder
-    if temp_dir == '':
+    
+    if not temp_dir:
         temp_dir = os.path.join(get_gins_path(),"gin",'TEMP_DATA')
+        log.info("use default forder %s", temp_dir)
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
 
@@ -1632,26 +1641,26 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
     enddt  = centraldate + dt.timedelta(days=1)
 
     if centraldate > dt.datetime(2013,12,29) and repro != 0:
-        print("WARN : "  + str(centraldate) + " a bit late for repro " + str(repro))
+        log.warn(str(centraldate) + " a bit late for repro " + str(repro))
 
 
 
     # defining names & paths
     if repro != 0:
-        calc_center_prefix =  calc_center[0:2] + str(repro)   #os.path.basename(gins_orb_lis[0])[0:3]
+        ac_prefix =  ac[0:2] + str(repro)   #os.path.basename(gins_orb_lis[0])[0:3]
 
     else:
-        calc_center_prefix =  calc_center
+        ac_prefix =  ac
 
     week , dow = conv.dt2gpstime(centraldate)
     week , dow = str(week) , str(dow)
     centdate = week + dow + centraldate.strftime('_%Y_%j')
-    catoutorb  = calc_center_prefix + centdate + '.3d.orb.gin'
-    sortoutorb = calc_center_prefix + centdate + '.3d.orb.sort.gin'
-    cleanoutorb = calc_center_prefix + centdate + '.3d.orb.clean.gin'
+    catoutorb  = ac_prefix + centdate + '.3d.orb.gin'
+    sortoutorb = ac_prefix + centdate + '.3d.orb.sort.gin'
+    cleanoutorb = ac_prefix + centdate + '.3d.orb.clean.gin'
 
 
-    catoutclk  = calc_center_prefix + centdate + '.3d.clk.gin'
+    catoutclk  = ac_prefix + centdate + '.3d.clk.gin'
 
     catoutorb_path   = os.path.join(temp_dir,catoutorb)
     sortoutorb_path  = os.path.join(temp_dir,sortoutorb)
@@ -1659,24 +1668,24 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
     catoutclk_path   = os.path.join(temp_dir,catoutclk)
 
     #preliminary check, if the orbits already exist
-    if os.path.isfile(cleanoutorb_path) and os.path.isfile(catoutclk_path):
+    if os.path.isfile(cleanoutorb_path) and os.path.isfile(catoutclk_path) and not force:
         print("INFO : converted orbits & clocks already exist, it's nice")
         return cleanoutorb_path , catoutclk_path
 
     # downloading orbits
-    sp3Zlis = operational.multi_downloader_orbs_clks(temp_dir,strtdt, enddt,
-                           sp3clk='sp3', calc_center=calc_center,
-                           archive_center=archive_center,
-                           repro = repro,archtype='/',sorted_mode=0)
+    sp3Zlis = operational.multi_downloader_orbs_clks_2(temp_dir,strtdt, enddt,
+                           prod_types=('sp3',), AC_names=(ac,),
+                           repro = repro,archtype='/',sorted_mode=0,
+                           data_center=data_center)
                            # sorted_mode must be off !!!
                            # elsewhere the cat of the orbits/clock is bad !!!
 
     # downloading clocks
     # 30sec clock prioritary
-    clkZlis = operational.multi_downloader_orbs_clks(temp_dir,strtdt, enddt,
-                           sp3clk='clk_30s', calc_center=calc_center,
-                           archive_center=archive_center,
-                           repro = repro,archtype='/',sorted_mode=0)
+    clkZlis = operational.multi_downloader_orbs_clks_2(temp_dir,strtdt, enddt,
+                           prod_types=('clk',), AC_names=(ac,),
+                           repro = repro,archtype='/',sorted_mode=0,
+                           data_center=data_center)
                            # sorted_mode must be off !!!
                            # elsewhere the cat of the orbits/clock is bad !!!
 
@@ -1685,8 +1694,8 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
     if clkZlis == []:
         print('INFO : clock download : no 30s clock found, trying std. clocks')
         clkZlis = operational.multi_downloader_orbs_clks(temp_dir,strtdt, enddt,
-                               sp3clk='clk', calc_center=calc_center,
-                               archive_center=archive_center,
+                               sp3clk='clk', ac=ac,
+                               data_center=data_center,
                                repro = repro,archtype='/',sorted_mode=0)
                            # sorted_mode must be off !!!
                            # elsewhere the cat of the orbits/clock is bad !!!
@@ -1701,8 +1710,8 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
     # uncompressing orbits
     sp3lis = []
     for Zfil in sp3Zlis:
-        if Zfil[-2:] == ".Z":
-            uncomp_fil = utils.uncompress(Zfil)
+        if Zfil.endswith(".Z") or Zfil.endswith(".gz"):
+            uncomp_fil = files_rw.unzip_gz_Z(Zfil)
         else:
             uncomp_fil = Zfil
         # some SP3 haven't EOF at the end ...
@@ -1717,8 +1726,8 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
     # uncompressing clocks
     clklis = []
     for Zfil in clkZlis:        
-        if Zfil[-2:] == ".Z":
-            uncomp_fil = utils.uncompress(Zfil)
+        if Zfil.endswith(".Z") or Zfil.endswith(".gz"):
+            uncomp_fil = files_rw.unzip_gz_Z(Zfil)
         else:
             uncomp_fil = Zfil
         clklis.append(uncomp_fil)
@@ -1732,7 +1741,6 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
     gins_clk_lis = []
     for clk in clklis:
         gins_clk_lis.append(clk_2_gins(clk))
-
 
     # cating orbits
     utils.cat(catoutorb_path,*gins_orb_lis)
@@ -1754,7 +1762,8 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
 
     if len(badsatlis) != 0:
         print("INFO : " , len(badsatlis) , "bad sats." , Nsort - Nclean , "epochs del.")
-        print("       bad sats :", badsatlis)
+        print("       bad sats :", badsatlis)       
+    
     # cating clocks
     utils.cat(catoutclk_path,*gins_clk_lis)
 
@@ -1762,8 +1771,6 @@ def download_convert_2_gins_orb_clk(centraldate, work_folder = '' ,
         try:
             os.remove(catoutorb_path)
             os.remove(sortoutorb_path)
-            [os.remove(e) for e in gins_orb_lis]
-            [os.remove(e) for e in gins_clk_lis]
             [os.remove(e) for e in sp3lis]
             [os.remove(e) for e in clklis]
             [os.remove(e) for e in gins_orb_lis]

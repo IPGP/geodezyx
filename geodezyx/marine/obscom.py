@@ -6,7 +6,7 @@ Created on Thu Nov 17 17:41:32 2022
 @author: psakic
 
 This module regroups the functions for the resolution estimation of the 
-MARMOR OBS-embeded pressure sensor
+REVOSIMA's OBSCOM-embeded pressure sensor
 """
 
 from geodezyx import utils
@@ -38,7 +38,8 @@ def import_presure_df(csv_pres_inp,
                       count_sensor_pres=30e3,
                       integ_timespan_temp=10,
                       integ_timespan_pres=100,
-                      epoc_idx=True):
+                      epoc_idx=True,
+                      out_pres='pa'):
     
     dic_coeffs_temp = _get_coeffs_temp(dic_coeffs)
     
@@ -70,13 +71,15 @@ def import_presure_df(csv_pres_inp,
     pres_df['temp'] = freq2temp(pres_df['frq_temp'],
                                 **dic_coeffs_temp)
 
-    ### compute pressure from frequency
+    ### compute pressure from frequency, using temperature frequency
     pres_df['pres'] = freq2pres(pres_df['frq_pres'],
                                 pres_df['frq_temp'],
-                                out="pa",
+                                out=out_pres,
                                 inp_temp='freq',
                                 **dic_coeffs)
-    ### compute pressure from temperature (for debug only!)
+    
+    ### compute pressure from frequency, using temperature itself 
+    ### (for debug only!)
     if False:
         pres_df['pres2'] = freq2pres(pres_df['frq_pres'],
                                     pres_df['temp'],
@@ -84,9 +87,8 @@ def import_presure_df(csv_pres_inp,
                                     inp_temp='temp',
                                     **dic_coeffs)
 
-
     ### compute depth
-    pres_df['high'] = freq2pres(pres_df['frq_pres'],
+    pres_df['dept'] = freq2pres(pres_df['frq_pres'],
                                 pres_df['temp'],
                                 out="meter",
                                 **dic_coeffs)
@@ -148,6 +150,24 @@ def get_coeffs(sens_type='all',
                       'T3':53.8461,
                       'T4':147.124,
                       'T5':0}
+    
+    elif sens_id == 158076:
+        ### for the 2nd OBSCOM (T2)
+        dic_coeffs = {'U0':5.76527  ,
+                      'Y1':-3994.58 ,
+                      'Y2':-10705.4 ,
+                      'Y3':0        ,
+                      'C1':-25561.9 ,
+                      'C2':-230.051 ,
+                      'C3':79516.9  ,
+                      'D1':0.0401721,
+                      'D2':0        ,
+                      'T1':30.1394  ,
+                      'T2':0.977439 ,
+                      'T3':56.6499  ,
+                      'T4':158.454  ,
+                      'T5':0        }
+        
         
     if sens_type == 'all':
         return dic_coeffs

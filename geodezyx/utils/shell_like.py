@@ -460,6 +460,7 @@ def insert_str_in_file_if_line_contains(file_path,str_to_insert,
     return file_path
     
 def uncompress(pathin,dirout = '', opts='-f'):
+    log.warn("function discontinued, use files_rw.unzip_gz_Z() instead")
     if not os.path.isfile(pathin):
         log.error('uncompress : %s doesnt exist !!!', pathin)
         return None
@@ -658,7 +659,4 @@ def is_exe(fpath):
 
     """
     return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-is_exe("/home/psakicki/SOFTWARE/ANUBIS/anubis-3.7-lin-static-64b")
-
 
