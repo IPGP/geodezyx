@@ -94,7 +94,7 @@ def read_rinex2_obs(rnx_in,
     
     nobs = int(ObsAllList_raw[0])
     nlines_for_obs = int(np.ceil(nobs/5)) ## 5 is the max num of obs in the RIENX specs
-    
+    columns_width = nobs*[14,1,1]
     
     DFall_stk = []
     
@@ -116,14 +116,14 @@ def read_rinex2_obs(rnx_in,
         
         ### for each sat, merge the breaked lines
         Lines_obs = Lines_epoc[iline_sats_end+1:iline_end]
-        Lines_obs = [e.replace("\r","") for e in Lines_obs] # not 100% sure of this
+        Lines_obs = [e.ljust(80) for e in Lines_obs] # must be exactly 80 char long fut the column trunk !!!!
+        Lines_obs = [e.replace("\r","") for e in Lines_obs] # not 100% sure of this one
         Lines_obs = [e.replace("\n","") for e in Lines_obs]
         Lines_obs_merg = [Lines_obs[nlines_for_obs*n:nlines_for_obs*n+nlines_for_obs] for n in range(nsat)]
         Lines_obs_merg = ["".join(e) for e in Lines_obs_merg]
         
         ## read the epoch block using pandas' fixed width reader 
         B = StringIO("\n".join(Lines_obs_merg))
-        columns_width = nobs*[14,1,1]
         DFepoch = pd.read_fwf(B,header=None,widths=columns_width)  
         DFepoch.columns = ObsAllList
         DFepoch["prn"] = Sats_split
