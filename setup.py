@@ -176,6 +176,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'pyyaml',
                       'pathvalidate',
                       'pandas',
+                      'seawater',
                       'scipy',
                       'sympy',
                       'tabulate',
@@ -183,6 +184,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'tqdm', ## progress bars
                       'vincenty',
                       'wheel',
+                      'xarray',
                       ],  # Optional
 
     # List additional groups of dependencies here (e.g. development
