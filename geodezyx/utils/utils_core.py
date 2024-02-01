@@ -35,6 +35,7 @@ import tempfile
 import time
 import uuid
 import io
+import pathvalidate
 #### geodeZYX modules
 
 #### Import the logger
@@ -395,16 +396,26 @@ def open_readlines_smart(file_in,decode_type="ascii",verbose=False):
     if verbose:
         log.info("input file is actually a %s",type(file_in))
     
-    if type(file_in) is str and os.path.isfile(file_in):
+    if type(file_in) is str and pathvalidate.is_valid_filepath(file_in,
+                                                               platform='auto'):
         if verbose:
             log.info("input file is a string path")
-        FILE = open(file_in)
+        try:
+            FILE = open(file_in)
+        except FileNotFoundError as e:
+            log.error("%s not found",file_in)
+            raise(e)  
         LINES = FILE.readlines()
         
-    elif type(file_in) is pathlib.Path and os.path.isfile(file_in):
+    elif type(file_in) is pathlib.Path and pathvalidate.is_valid_filepath(file_in,
+                                                                          platform='auto'):
         if verbose:
             log.info("input file is a Path Object")
-        FILE = open(file_in)
+        try:
+            FILE = open(file_in)
+        except FileNotFoundError as e:
+            log.error("%s not found",file_in)
+            raise(e)  
         LINES = FILE.readlines()
         
     elif type(file_in) is bytes:
