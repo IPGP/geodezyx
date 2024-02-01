@@ -90,7 +90,7 @@ def read_rinex2_obs(rnx_in,
     
     ObsAllList_raw = " ".join(Lines_obs).split()
     ObsAllList = ObsAllList_raw[1:]
-    ObsAllList = sorted([e for sublist in [(e,e+"_LLI",e+"_SSI") for e in ObsAllList] for e in sublist])
+    ObsAllList = [e for sublist in [(e,e+"_LLI",e+"_SSI") for e in ObsAllList] for e in sublist]
     
     nobs = int(ObsAllList_raw[0])
     nlines_for_obs = int(np.ceil(nobs/5)) ## 5 is the max num of obs in the RIENX specs
