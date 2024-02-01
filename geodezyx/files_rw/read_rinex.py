@@ -67,7 +67,7 @@ def read_rinex2_obs(rnx_in,
     except:
         rnx_wrk = rnx_in
         pass
-    
+
     LINES = utils.open_readlines_smart(rnx_wrk)
     EPOCHS = operational.rinex_read_epoch(rnx_wrk,out_index=True)
     if type(rnx_in) is str or type(rnx_in) is pathlib.Path:
@@ -135,7 +135,7 @@ def read_rinex2_obs(rnx_in,
     
     ## final concat and cosmetic (reorder columns, sort)
     DFrnxobs = pd.concat(DFall_stk)
-    DFrnxobs = DFrnxobs.reindex(["epoch","sys","prn"] + ObsAllList,axis=1)
+    DFrnxobs = DFrnxobs.reindex(["epoch","sys","prn"] + list(sorted(ObsAllList)),axis=1)
     DFrnxobs.sort_values(["epoch","prn"],inplace=True)
     DFrnxobs.reset_index(drop=True,inplace=True)
     

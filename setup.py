@@ -174,6 +174,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'pyorbital',
                       'pytwobodyorbit',
                       'pyyaml',
+                      'pathvalidate',
                       'pandas',
                       'scipy',
                       'sympy',
