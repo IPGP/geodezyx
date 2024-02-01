@@ -135,7 +135,7 @@ def read_rinex2_obs(rnx_in,
     
     ## final concat and cosmetic (reorder columns, sort)
     DFrnxobs = pd.concat(DFall_stk)
-    DFrnxobs = DFrnxobs.reindex(["epoch","sys","prn"] + list(ObsAllList),axis=1)
+    DFrnxobs = DFrnxobs.reindex(["epoch","sys","prn"] + list(sorted(ObsAllList)),axis=1)
     DFrnxobs.sort_values(["epoch","prn"],inplace=True)
     DFrnxobs.reset_index(drop=True,inplace=True)
     
