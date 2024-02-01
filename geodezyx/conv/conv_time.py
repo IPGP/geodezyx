@@ -1568,12 +1568,10 @@ def statname_dt2rinexname_long(statname,datein,
                                country="XXX",
                                data_source="R",
                                file_period="00U",
-                               data_freq="XXU",
+                               data_freq="00U",
                                data_type="MO",                               
-                               format_compression='crz.gz',
+                               format_compression='crx.gz',
                                preset_type=None):
-
-
     """ 
     
     Time representation conversion
@@ -1621,7 +1619,7 @@ def statname_dt2rinexname_long(statname,datein,
         XXH – Hours,
         XXD – Days
         XXU – Unspecified
-        The default is "XXU".
+        The default is "00U".
         
     data_type : str, optional
         Two characters represent the data type:
@@ -1651,11 +1649,10 @@ def statname_dt2rinexname_long(statname,datein,
         The default is 'crz.gz'.
         
     preset_type : str, optional
+        takes "daily" or "hourly" values.
         set the most common data_freq and file_period 
         for an hourly or daily session. 
-        accept 'daily' or 'hourly' values.
         The default is None.
-
 
     Returns
     -------
