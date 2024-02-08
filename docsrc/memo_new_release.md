@@ -9,4 +9,5 @@
 7. with new libraries
 8. with new version
 9. recompile the doc
-10. once everything looks good, push to master  
+10. once everything looks good, push to master
+11. prepare the tag
