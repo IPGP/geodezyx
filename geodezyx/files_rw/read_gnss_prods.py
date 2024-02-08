@@ -503,7 +503,7 @@ def read_sp3_header(sp3_in,ac_name_in=None):
 
 
 def sp3_DataFrame_zero_epoch_filter(DFsp3):
-    """
+    '''
     Filter an Orbit DataFrame (from a SP3) by removing the null epochs
 
     Parameters
@@ -516,7 +516,8 @@ def sp3_DataFrame_zero_epoch_filter(DFsp3):
     DFsp3_out : DataFrame
         Filtered Orbit DataFrame.
 
-    """
+    '''
+
     DFgrp = DFsp3[["epoch","x","y","z"]].groupby("epoch")
     DFsum = DFgrp.agg(np.sum).sum(axis=1)
     Epochs = DFsum[np.isclose(DFsum,0)].index
