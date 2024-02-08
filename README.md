@@ -77,7 +77,9 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
   * The GitHub repository has now been moved under the IPGP organization.
     * It must be transparent for your clones but updating them is recommended \
       https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository  
-  * The numbering goes without a starting zero anymore. The GeodeZYX toolbox is a grown-up project now!
+  * The version numbering goes without a starting zero from now on.  
+    Initially, this first zero was kept as a "perpetual beta" marker,  
+    but The GeodeZYX toolbox is a grown-up project now!
   * Bugs corrected for `read_rnx2_obs` and `OrbDF` manipulation function.
 
 ### v0.4.4.0, 2023-11-24
