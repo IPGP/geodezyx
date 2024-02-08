@@ -10,11 +10,11 @@ it can be imported directly with:
 from geodezyx import reffram
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -478,7 +478,7 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
         Input point sets
 
     Weights : list of N Weights,
-        or an numpy array of shape (N,3)
+        or an numpy array of shape (N,)
     
     Returns
     -------

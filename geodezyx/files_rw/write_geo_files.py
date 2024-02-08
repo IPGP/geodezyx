@@ -10,11 +10,11 @@ it can be imported directly with:
 from geodezyx import files_rw
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -76,11 +76,11 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
     ################## MAIN DATA
     LinesStk = []
 
-    SP3_DF_wrk = SP3_DF_in.sort_values(["epoch","sat"])
+    SP3_DF_wrk = SP3_DF_in.sort_values(["epoch","prn"])
 
     EpochRawList  = SP3_DF_wrk["epoch"].unique()
-    SatList    = sorted(SP3_DF_wrk["sat"].unique())
-    SatList    = list(sorted(SP3_DF_wrk["sat"].unique()))
+    SatList    = sorted(SP3_DF_wrk["prn"].unique())
+    SatList    = list(sorted(SP3_DF_wrk["prn"].unique()))
     ## SatList    = list(reversed(SatList)) 
     #### PS 210721
     #### reversed bc the sats are sorted ascending=False, but why???
@@ -96,12 +96,12 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
         
         ######## if keep_missing_sat_in_epoch:
         ## manage missing Sats for the current epoc
-        MissingSats = SatListSet.difference(set(SP3epoc["sat"]))
+        MissingSats = SatListSet.difference(set(SP3epoc["prn"]))
         
         for miss_sat in MissingSats:
             miss_line = SP3epoc.iloc[0].copy()
-            miss_line["sat"]   = miss_sat
-            miss_line["const"] = miss_sat[0]
+            miss_line["prn"]   = miss_sat
+            miss_line["sys"] = miss_sat[0]
             ### check the sp3 doc 
             # bad position = 0.000000
             # bad clock    = 999999.9999999
@@ -113,7 +113,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
             SP3epoc = SP3epoc.append(miss_line)
         #### end of missing sat bloc
 
-        SP3epoc.sort_values("sat",inplace=True,ascending=True)
+        SP3epoc.sort_values("prn",inplace=True,ascending=True)
         timestamp = conv.dt2sp3_timestamp(conv.numpy_dt2dt(epoc)) + "\n"
 
         linefmt = "P{:}{:14.6f}{:14.6f}{:14.6f}{:14.6f}\n"
@@ -123,7 +123,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
         for ilin , lin in SP3epoc.iterrows():
             if not "clk" in lin.index:  # manage case if no clk in columns
                 lin["clk"] = 999999.999999
-            line_out = linefmt.format(lin["sat"],lin["x"],lin["y"],lin["z"],lin["clk"])
+            line_out = linefmt.format(lin["prn"],lin["x"],lin["y"],lin["z"],lin["clk"])
             
             sum_val_epoch += lin["x"]+lin["y"]+lin["z"]
 
@@ -452,7 +452,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         end_date=None,
                         #new_naming = False,
                         exclude_bad_epoch=True,
-                        const = None,
+                        sys = None,
                         new_name = False):
     """
     Generate an SP3 Orbit file with overlap based on the SP3s of the 
@@ -490,8 +490,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         exclude SP3 after this epoch
     exclude_bad_epoch : bool, optional
         remove bad epoch (usually filled with 99999999.9999999 or 0.00000000)
-    const : string, optional
-        if just to keep one constellation (e.g.: G)
+    sys : string, optional
+        if just to keep one system (e.g.: G)
     
     Returns
     -------
@@ -663,10 +663,10 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 SP3_bef = SP3_bef[SP3_bef.type == "P"]
                 SP3_aft = SP3_aft[SP3_aft.type == "P"]
                 
-                if const:
-                    SP3     = SP3[SP3.const == const]
-                    SP3_bef = SP3_bef[SP3_bef.const == const]
-                    SP3_aft = SP3_aft[SP3_aft.const == const]
+                if sys:
+                    SP3     = SP3[SP3.sys == sys ]
+                    SP3_bef = SP3_bef[SP3_bef.sys == sys ]
+                    SP3_aft = SP3_aft[SP3_aft.sys == sys ]
                 
                 
                 SP3_bef = SP3_bef[SP3_bef["epoch"] < SP3["epoch"].min()]
@@ -702,27 +702,27 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 ########## HERE WE MANAGE THE MISSING SATS
                 if manage_missing_sats == "exclude_missing_day":     
                     log.info("4))","remove missing sats -- day")                                     
-                    common_sats = set(SP3_bef["sat"]).intersection(set(SP3["sat"])).intersection(set(SP3_aft["sat"]))
-                    SP3concat = SP3concat[SP3concat["sat"].isin(common_sats)]
+                    common_sats = set(SP3_bef["prn"]).intersection(set(SP3["prn"])).intersection(set(SP3_aft["prn"]))
+                    SP3concat = SP3concat[SP3concat["prn"].isin(common_sats)]
                     
                 elif manage_missing_sats == "exclude_missing_epoch":
                     log.info("4))","remove missing sats -- epoch")      
                     nepoc = len(SP3concat["epoch"].unique())
-                    SP3concat_satgrp = SP3concat.groupby("sat")
+                    SP3concat_satgrp = SP3concat.groupby("prn")
                     
-                    All_sats = SP3concat["sat"].unique()
+                    All_sats = SP3concat["prn"].unique()
                     Good_sats = SP3concat_satgrp.count() == nepoc
 
                     ###### Good_sats = Good_sats.reset_index()["sat"]
                     ## we get the good sats based one column containing a boolean
                     ## because of the test just before (abitrarily epoch column)
                     ## and after get the corresponding good sats names
-                    Good_sats = Good_sats[Good_sats["epoch"]].reset_index()["sat"]
+                    Good_sats = Good_sats[Good_sats["epoch"]].reset_index()["prn"]
                     
                     Bad_sats = list(set(All_sats) - set(Good_sats))
                     log.info("excluded bad sats: %s", Bad_sats)
                     
-                    SP3concat = SP3concat[SP3concat["sat"].isin(Good_sats)]
+                    SP3concat = SP3concat[SP3concat["prn"].isin(Good_sats)]
                     
                 
                 elif manage_missing_sats == "extrapolate":
@@ -737,15 +737,15 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                             forward  = True
                             backfor = "forward"
                             
-                        Sats = set(SP3["sat"])
-                        Sats_ovl = set(SP3_ovl["sat"])
+                        Sats = set(SP3["prn"])
+                        Sats_ovl = set(SP3_ovl["prn"])
                     
                         Sats_miss = Sats.difference(Sats_ovl)
                         if not Sats_miss:
                             continue
                         log.info("4a) extrapolate missing sats %s %s",backfor,Sats_miss)                                     
 
-                        SP3extrapo_in = SP3concat[SP3concat["sat"].isin(Sats_miss)]
+                        SP3extrapo_in = SP3concat[SP3concat["prn"].isin(Sats_miss)]
                         
                         #step = utils.most_common(SP3concat["epoch"].diff().dropna())
                         #step = step.astype('timedelta64[s]').astype(np.int32)
@@ -772,8 +772,8 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                     
                 if eliminate_null_sat:
                     GoodSats = []
-                    for sat in SP3concat["sat"].unique():
-                        XYZvals = SP3concat[SP3concat["sat"] == sat][["x","y","z"]].sum(axis=1)
+                    for sat in SP3concat["prn"].unique():
+                        XYZvals = SP3concat[SP3concat["prn"] == sat][["x","y","z"]].sum(axis=1)
                         
                         V = np.sum(np.isclose(XYZvals,0)) / len(XYZvals)
                                             
@@ -782,7 +782,7 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         else:
                             log.info("6) eliminate because null position %s",sat)
                         
-                    SP3concat = SP3concat[SP3concat["sat"].isin(GoodSats)]
+                    SP3concat = SP3concat[SP3concat["prn"].isin(GoodSats)]
 
                 ### *************** STEP 7 ***************           
                 log.info("7)) Start/End Epoch of the concatenated file ")                                     
@@ -795,9 +795,9 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 
                 #### system separated
                 if False:
-                    for sys in SP3concat["const"].unique():
+                    for sys in SP3concat["sys"].unique():
                         try:
-                            SP3concat_sys = SP3concat[SP3concat["const"] == sys]
+                            SP3concat_sys = SP3concat[SP3concat["sys"] == sys]
                             fil_out_sys = dir_out_wk + "/" + suffix_out[:2] + sys.lower() + wwwwd_str.zfill(5) + ".sp3"
                             log.info("9)) outputed file")
                             log.info(fil_out_sys)

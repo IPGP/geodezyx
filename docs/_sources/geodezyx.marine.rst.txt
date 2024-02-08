@@ -9,14 +9,6 @@ geodezyx.marine package
 Submodules
 ----------
 
-geodezyx.marine.a0a module
---------------------------
-
-.. automodule:: geodezyx.marine.a0a
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 geodezyx.marine.marine module
 -----------------------------
 
@@ -25,10 +17,18 @@ geodezyx.marine.marine module
    :undoc-members:
    :show-inheritance:
 
-geodezyx.marine.oseanpres\_lib module
--------------------------------------
+geodezyx.marine.obp module
+--------------------------
 
-.. automodule:: geodezyx.marine.oseanpres_lib
+.. automodule:: geodezyx.marine.obp
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geodezyx.marine.obscom module
+-----------------------------
+
+.. automodule:: geodezyx.marine.obscom
    :members:
    :undoc-members:
    :show-inheritance:

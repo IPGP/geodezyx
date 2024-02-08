@@ -112,7 +112,7 @@ def read_clk_from_sp3(file_path_or_DForb_in):
                                 [1] * nlines,
                                 DForb.clk * 10**-6,
                                 [np.nan] * nlines,
-                                DForb.AC,
+                                DForb.ac,
                                 DForb.epoch]).T
     
     DFclk_sp3 = DFclk_sp3.infer_objects()
@@ -238,7 +238,7 @@ def clk_diff(file_1,file_2):
 def read_sp3(file_path_in,returns_pandas = True, name = '',
              epoch_as_pd_index = False,km_conv_coef=1,
              skip_null_epoch=True,
-             new_col_names=False):
+             new_col_names=True):
     """
     Read a SP3 file (GNSS Orbits standard file) and return X,Y,Z coordinates
     for each satellite and for each epoch
@@ -311,13 +311,13 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     #                                        'x','y','z','clk','AC'])
 
     if not new_col_names:
-        log.warning("you use old column names (not conventionnal) set new_col_names as True and adapt your code")
+        log.warning("you use old column names (not conventional) set new_col_names as True and adapt your code")
         ### DeprecationWarning
         col_names=['epoch','sat','const','sv',
                    'type','x','y','z','clk','AC']
     else:
         col_names=['epoch','prn','sys','prni',
-                   'rec','x','y','z','clk','AC']   
+                   'rec','x','y','z','clk','ac']   
 
     #### read the Header as a 1st check
     Header = read_sp3_header(Lines,AC_name)
@@ -497,13 +497,13 @@ def read_sp3_header(sp3_in,ac_name_in=None):
 
     Header_DF = pd.DataFrame(list(zip(AC_name_list,Sat_prn_list_final,
                                       Sat_sig_list_final,Date_list)),
-                             columns=["AC","sat","sigma","epoch"])
+                             columns=["ac","prn","sigma","epoch"])
 
     return Header_DF
 
 
 def sp3_DataFrame_zero_epoch_filter(DFsp3):
-    """
+    '''
     Filter an Orbit DataFrame (from a SP3) by removing the null epochs
 
     Parameters
@@ -516,7 +516,8 @@ def sp3_DataFrame_zero_epoch_filter(DFsp3):
     DFsp3_out : DataFrame
         Filtered Orbit DataFrame.
 
-    """
+    '''
+
     DFgrp = DFsp3[["epoch","x","y","z"]].groupby("epoch")
     DFsum = DFgrp.agg(np.sum).sum(axis=1)
     Epochs = DFsum[np.isclose(DFsum,0)].index

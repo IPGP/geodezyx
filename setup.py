@@ -37,7 +37,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.4.3.6',  # Required
+    version='0.4.4.0',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -110,7 +110,7 @@ PyPi project: https://pypi.org/project/geodezyx
         'Intended Audience :: Science/Research',
 
         # Pick your license as you wish
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'License :: OSI Approved ::  GNU Lesser General Public License v3 (LGPLv3)',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate you support Python 3. These classifiers are *not*
@@ -174,7 +174,9 @@ PyPi project: https://pypi.org/project/geodezyx
                       'pyorbital',
                       'pytwobodyorbit',
                       'pyyaml',
+                      'pathvalidate',
                       'pandas',
+                      'seawater',
                       'scipy',
                       'sympy',
                       'tabulate',
@@ -182,6 +184,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'tqdm', ## progress bars
                       'vincenty',
                       'wheel',
+                      'xarray',
                       ],  # Optional
 
     # List additional groups of dependencies here (e.g. development

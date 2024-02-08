@@ -65,6 +65,14 @@ geodezyx.files\_rw.read\_gnss\_prods module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.files\_rw.read\_gnss\_qc module
+----------------------------------------
+
+.. automodule:: geodezyx.files_rw.read_gnss_qc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.files\_rw.read\_igs\_combi module
 ------------------------------------------
 

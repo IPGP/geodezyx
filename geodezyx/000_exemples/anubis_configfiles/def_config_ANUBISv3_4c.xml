@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE config>
+<config>
+  <!--general settings:
+   max_cores=integer             .. max cores to be used (0=any)
+   max_files=integer             .. max files in a batch (0=all)
+   max_sites=integer             .. max sites in a batch (0=all)
+
+   beg     %Y-%m-%d %H:%M:%S     .. beg time         (empty=auto)
+   end     %Y-%m-%d %H:%M:%S     .. end time         (empty=auto)
+   int     integer               .. data sampling interval (empty=all)
+   rec     list of strings       .. receiver(s)      (empty=all)
+   sys     list of strings       .. GNSS system(s)   (empty=all)
+   -->
+  <gen max_cores="1" max_sites="0" max_files="0">
+   <beg> "XXXSTARTXXX" </beg>
+   <end> "XXXENDXXX" </end>
+   <sys>  GPS GAL GLO BDS QZS SBS IRN GNS </sys>
+   <rec>  XXXSITEXXX        </rec>
+   <int>30</int>
+  </gen>
+  <!--quality check settings:
+   sec_sum=int         .. summary statistics
+   sec_hdr=int         .. header metadata check
+   sec_obs=int         .. observation statistics
+   sec_est=int         .. estimated values
+   sec_gap=int         .. gap & pieces
+   sec_bnd=int         .. observation bands
+   sec_pre=int         .. cycle-slip, clock-jumps
+   sec_ele=int         .. azimuth/elevation (if navigation)
+   sec_mpx=int         .. multipath calculation
+   sec_snr=int         .. signal-to-noise ratio
+   sec_sat=int         .. satellite information
+   sec_kpi=int         .. key-parameter indicators
+
+   int_stp=int         .. [s] interval for time-spacing
+   int_gap=int         .. [s] interval for gap identification
+   int_pcs=int         .. [s] interval for small pieces identification
+   mpx_nep=int         .. number of epochs for multipath calculation
+   mpx_all=bool        .. high-resolution multipath: estimate all or interpolate
+   mpx_lim=double      .. sigma-multiplicator for MP cycle-slip & outlier detection
+   pos_kin=bool        .. kinematic receiver (true = kinematic)
+   pos_int=int         .. positioning interval
+   pos_cut=double      .. positioning elevation angle cut-off (degrees)
+   ele_cut=double      .. user elevation cut-off (only for expt/have, degrees)
+   ele_new=bool        .. new strategy for cut-off + horizon estimates
+   ele_app=bool        .. approximated elevations (true = less precise)
+   col_sat=int         .. number of columns for sat-specific reporting
+   sat_rec=bool        .. expected observations from satellites (true:any | false:signal)
+   ref_sig=double      .. [m] maximum sigma of reference coordinates (default:0, estimated median)
+   max_vpe=double      .. [m] maximum vertical position error
+   max_hpe=double      .. [m] maximum horizontal position error
+   max_dop=double      .. [-] maximum PDOP 
+
+   use_health=enum     .. use of satellite health (position|statistics|all)
+   use_qcmode=enum     .. QC operatin mode (thin|edit|summ|lite|full)
+   -->
+  <qc sec_sum="1" sec_hdr="1" sec_obs="1" sec_est="1" sec_gap="1" sec_bnd="1" sec_pre="1" sec_ele="1" sec_mpx="1" sec_snr="1" sec_sat="1" int_stp="900" int_gap="600" int_pcs="1800" mpx_nep="15" mpx_lim="5" mpx_all="false" pos_kin="false" pos_int="900" pos_cut="5" ele_cut="10" ele_new="true" ele_app="false" col_sat="36" sat_rec="false" use_health="ALL" use_qcmode="SUMM" ref_sig="0" max_vpe="10" max_hpe="10" max_dop="30" />
+  <!--input settings: path may include prefix file:// [..tcp,ntrip]
+   <rinexn>       path1 [path2 ..]    </rinexn>      ... for RINEXN format
+   <rinexo>       path1 [path2 ..]    </rinexo>      ... for RINEXO format
+   <sinex>        path1 [path2 ..]    </sinex>       ... for SINEX format
+   <sp3>          path1 [path2 ..]    </sp3>         ... for SP3 format
+   -->
+  <inp ntrip="0">
+   <rinexo> XXXRNXOXXX </rinexo>         
+   <rinexn> XXXNAVXXX </rinexn>         
+   <sp3>    XXXSP3XXX </sp3>         
+  </inp>
+  <!--output settings: path may include prefix file:// [..tcp,ntrip]
+   verb=int       .. log verbosity (default: 0)
+   append=bool    .. log appending (default: false)
+
+   <json>         path1 [path2 ..]    </json>        ... for JSON format
+   <log>          path1 [path2 ..]    </log>         ... for LOG format
+   <rinexn2>      path1 [path2 ..]    </rinexn2>     ... for RINEXN2 format
+   <rinexn3>      path1 [path2 ..]    </rinexn3>     ... for RINEXN3 format
+   <xml>          path1 [path2 ..]    </xml>         ... for XML format
+   <xtr>          path1 [path2 ..]    </xtr>         ... for XTR format
+   -->
+  <out append="true" verb="1">
+   <xtr> XXXOUTXTRXXX </xtr>       <!-- native Anubis's report, may use $(rec) variable -->
+   <xml> XXXOUTXMLXXX </xml>       <!-- minimum EPOS XML file, may use $(rec) variable -->
+   <log> XXXOUTLOGXXX </log>
+  </out>
+  <!-- nav-data settings:
+   chk_record=bool     .. check navigation data (default:true)
+   chk_health=bool     .. check satellite health (default:true)
+   chk_duplic=bool     .. check duplicate records (default:true)
+
+   chk_header=bool     .. check navigation data time series: file header (default:false)
+   chk_params=bool     .. check navigation data time series: key params (default:false)
+   chk_others=bool     .. check navigation data time series: alt params (default:false)
+   sig_bounds=double   .. sigma multiplicator for outlier identification
+
+   chk_tot=bool        .. check navigation data according to ToT epoch (default:true)
+   key_tot=bool        .. sort navigation data according to ToT epoch (default=false)
+   ext_nav=double      .. interval multiplicator for extending navigation validity
+-->
+  <nav chk_record="true" chk_health="true" chk_duplic="true" chk_header="false" chk_params="false" chk_others="false" sig_bounds="3" chk_tot="true" key_tot="true" ext_nav="1" />
+  <!--gnss settings: observation, satellite filtering etc.
+   nav    list of navigation data types             (default: empty=all)
+   sat    list of satellites                        (default: empty=all)
+   type   list of observation types                 (default: empty=all)
+   band   list of observation bands/freqs           (default: empty=all)
+   attr   list of observation attributes            (default: empty=all)
+   gobs   explicit extending list of observations   (default: empty=no extension)
+          .. optionally, a preference list of observations if empty (type+band+attr)
+   -->
+  <!--  <sys /> -->
+  <!--receiver settings:
+   priority            .. site metadata priority (GNUT|SINEX|RINEX)
+   id=string           .. site unique ID
+   name=string         .. site name
+   domes=string        .. site domes number
+   desc=string         .. site full description
+   ant=string                    .. site antenna type
+   rec=string          .. site receiver type
+   X[YZ]=float         .. X,Y,Z coordinates [m]
+   sX[YZ]=float        .. X,Y,Z sigma [m]
+   dX[YZ]=float        .. X,Y,Z eccentricity [m]
+   ... and time-specific configuration (example below)
+   <set beg=set beg="%Y-%m-%d %H:%M:%S" end="%Y:%m:%d %H:%M:%S" ...
+   -->
+  <site  id="XXXSITEXXX" name="XXXSITEXXX" domes="00000X000" desc="test" priority="RINEX">
+  </site>
+</config>
+

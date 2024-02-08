@@ -10,11 +10,11 @@ it can be imported directly with:
 from geodezyx import files_rw
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -2499,6 +2499,42 @@ def read_groops_position(Filesin):
 
     return tsout    
 
+def read_pridear(filein):
+    F = open(filein)
+    
+    L = F.readlines()
+    
+    stat = "XXXX"
+    colheader=0
+    
+    for i,l in enumerate(L):
+        if "STATION" in l:
+            stat = l.split()[0]
+
+        if "END OF HEADER" in l:
+            colheader = i+1
+            break
+    
+    df = pd.read_csv(filein,skiprows=colheader+1,
+                     delim_whitespace=True,
+                     header=None)
+    
+    t_arr = conv.MJD2dt(df[0]) + df[1].apply(lambda x:dt.timedelta(seconds=x))
+    
+    tsout = time_series.TimeSeriePoint()
+    
+    
+    tsout = time_series.ts_from_list(df[2].values,
+                                     df[3].values,
+                                     df[4].values,
+                                     t_arr, 'XYZ',
+                                     stat=stat,
+                                     name=stat)
+    
+    return tsout
+    
+    
+    
 
 def read_webobs(filein,typein="txt",
                 coordtreat=False,

@@ -1202,6 +1202,11 @@ def time_win_multi(inplis):
 
 def ts_from_list(A,B,C,T,initype,sA=[],sB=[],sC=[],stat='STAT',name='NoName'):
     tsout = time_series.TimeSeriePoint()
+    
+    if not (type(T[0]) is float or type(T[0]) is int):
+        T = conv.dt2posix(T)
+
+
     if len(sA) == 0:
         for a,b,c,t in zip(A,B,C,T):
             pt = time_series.Point(a,b,c,t,initype)

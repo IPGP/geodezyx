@@ -7,10 +7,10 @@ gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -61,24 +61,35 @@ log = logging.getLogger(__name__)
 ######## PRODUCTS DOWNLOADER
 ############################################################################
 
-def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
-                                 AC_names = ("wum","cod"),
-                                 prod_types = ("sp3","clk"),
-                                 remove_patterns=("ULA",),
-                                 archtype ='week',
-                                 new_name_conv = True,
-                                 parallel_download=4,
-                                 archive_center='ign',
-                                 mgex=True,
-                                 repro=0,
-                                 sorted_mode=False,
-                                 return_also_uncompressed_files=True,
-                                 ftp_download=False,
-                                 dow_manu=False):
+def download_products_gnss(archive_dir,
+                           startdate,enddate,
+                           AC_names = ("wum","cod"),
+                           prod_types = ("sp3","clk"),
+                           remove_patterns=("ULA",),
+                           archtype ='week',
+                           new_name_conv = True,
+                           parallel_download=4,
+                           archive_center='ign',
+                           mgex=False,
+                           repro=0,
+                           sorted_mode=False,
+                           return_also_uncompressed_files=True,
+                           ftp_download=False,
+                           dow_manu=False):
     """
     dow_manu = False, no dow manu, consider the converted dow from the time span, regular case
     dow_manu = None, no dow in the REGEX, the crawler will search only for the week
     dow_manu = 0 or 7: the dow in question    
+    
+    
+    to control the lattency with the new naming convention, simply add it completly in the AC name
+    e.g. IGS0OPSRAP
+    
+    Note
+    ----
+    The new naming convention has been fully adopted since GPS Week 2238-0
+
+    
     """
     
     if mgex:
@@ -206,7 +217,7 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     for ipatt_tup, patt_tup in enumerate(list(itertools.product(Dates_list,
                                                                 AC_names,
                                                                 prod_types))):
-        dt_cur , ac_cur , prod_cur = patt_tup
+        dt_cur , ac_cur , prod_cur  = patt_tup
         wwww , dow = conv.dt2gpstime(dt_cur)
         
         #### Manage the cases of manual DOW
@@ -352,7 +363,9 @@ def multi_downloader_orbs_clks_2(archive_dir,startdate,enddate,
     return Localfiles_lis
 
 
-
+def multi_downloader_orbs_clks_2():
+    log.warn('multi_downloader_orbs_clks_2 is a legacy alias for the newly renamed function download_products_gnss')
+    #return download_products_gnss(**kwargs)
 
 
 def orbclk_long2short_name(longname_filepath_in,
@@ -489,9 +502,9 @@ def orbclk_long2short_name(longname_filepath_in,
  
  
 def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
-                            sp3clk='sp3',archtype ='year/doy',parallel_download=4,
-                            archive_center='ign',repro=0,sorted_mode=False,
-                            force_weekly_file=False, return_also_uncompressed_files=True):
+                               sp3clk='sp3',archtype ='year/doy',parallel_download=4,
+                               archive_center='ign',repro=0,sorted_mode=False,
+                               force_weekly_file=False, return_also_uncompressed_files=True):
 
     """
     Download IGS products. Can manage MGEX products too
@@ -577,312 +590,315 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
     localfiles_lis : list of str
         list of downloaded products paths
     """
-
-    if type(calc_center) is str:
-        calc_center =  [ ''.join([calc_center]) ] # POURQUOI CETTE LIGNE ?? (150717)
-#        calc_center =  [calc_center]
-
-    pool = mp.Pool(processes=parallel_download)
-    urllist = []
-    savedirlist = []
-
-    if sp3clk == 'clk':
-        typ = 'Clocks'
-    elif sp3clk == 'clk_30s':
-        typ = 'Clocks (30s)'
-    elif sp3clk == 'sp3':
-        typ = 'Orbits'
-    elif sp3clk == 'erp':
-        typ = 'ERP'
-    elif sp3clk == 'snx':
-        typ = 'SINEXs'
-    elif sp3clk == 'sum':
-        typ = 'SUM files'
-    elif sp3clk == 'bia':
-        typ = 'ISBs'
-    else:
-        typ = '????'
-
-    log.info("generating the list of potential " + typ + " ...")
     
-    for cc in calc_center:
-            curdate = startdate
-            while curdate <= enddate:
-                if re.search("igs([0-9][0-9]|yy|YY)P",cc):
-                    cc = "igs" + str(curdate.year)[2:] + "P"
-                    log.info("INFO : IGS reference frame snx/ssc, correcting the year : " + cc)
+    log.error("multi_downloader_orbs_clks IS DISCONTINUED, use multi_downloader_orbs_clks_2")
+    return None
 
-                url = ''
-                if archive_center == 'cddis':
-                    url = orbclk_cddis_server(curdate,cc,repro=repro,sp3clk=sp3clk,
-                                              force_weekly_file=force_weekly_file)
-                elif archive_center == 'cddis_mgex':
-                    url = orbclk_cddis_server(curdate,cc,repro=repro,sp3clk=sp3clk,
-                                              mgex=True,force_weekly_file=force_weekly_file)
-                elif archive_center == 'cddis_mgex_longname':
-                    url = orbclk_cddis_server(curdate,cc,repro=repro,
-                                              sp3clk=sp3clk,mgex=True,longname=True,
-                                              force_weekly_file=force_weekly_file)
-                elif archive_center == 'ign':
-                    url = orbclk_ign_server(curdate,cc,repro=repro,sp3clk=sp3clk,
-                                              mgex=False,force_weekly_file=force_weekly_file)
-                elif archive_center == 'ign_mgex':
-                    url = orbclk_ign_server(curdate,cc,repro=repro,sp3clk=sp3clk,
-                                              mgex=True,force_weekly_file=force_weekly_file)
-                elif archive_center == 'ign_mgex_longname':
-                    url = orbclk_ign_server(curdate,cc,repro=repro,
-                                              sp3clk=sp3clk,mgex=True,longname=True,
-                                              force_weekly_file=force_weekly_file)
-                elif archive_center == 'gfz_local':
-                    url = orbclk_gfz_local_server(curdate,cc,repro=repro,
-                                              sp3clk=sp3clk)
+#     if type(calc_center) is str:
+#         calc_center =  [ ''.join([calc_center]) ] # POURQUOI CETTE LIGNE ?? (150717)
+# #        calc_center =  [calc_center]
 
-                else:
-                    log.error('ERR : Wrong archive_center name !!! :' + archive_center)
-                urllist.append(url)
-                savedir = dlutils.effective_save_dir_orbit(archive_dir,
-                                                           cc,
-                                                           curdate,
-                                                           archtype)
-                savedirlist.append(savedir)
-                curdate = curdate + dt.timedelta(days=1)
+#     pool = mp.Pool(processes=parallel_download)
+#     urllist = []
+#     savedirlist = []
 
-    savedirlist = [x for (y,x) in sorted(zip(urllist,savedirlist))]
-    urllist = sorted(urllist)
+#     if sp3clk == 'clk':
+#         typ = 'Clocks'
+#     elif sp3clk == 'clk_30s':
+#         typ = 'Clocks (30s)'
+#     elif sp3clk == 'sp3':
+#         typ = 'Orbits'
+#     elif sp3clk == 'erp':
+#         typ = 'ERP'
+#     elif sp3clk == 'snx':
+#         typ = 'SINEXs'
+#     elif sp3clk == 'sum':
+#         typ = 'SUM files'
+#     elif sp3clk == 'bia':
+#         typ = 'ISBs'
+#     else:
+#         typ = '????'
 
-    log.info(" ... done")
-    log.info(str(len(urllist)) + " potential " + typ)
-
-    if not sorted_mode:
-        _ = pool.map(dlutils.downloader_wrap,list(zip(urllist,savedirlist)))
-    else:
-         results = [pool.apply_async(dlutils.downloader , args=(u,sd)) for u,sd in zip(urllist,savedirlist)]
-
-    localfiles_lis = []
+#     log.info("generating the list of potential " + typ + " ...")
     
-    if not return_also_uncompressed_files:
-        for url , savedir in zip(urllist,savedirlist):
-            localfile = os.path.join(savedir,os.path.basename(url))
-            if os.path.isfile(localfile):
-                localfiles_lis.append(localfile)
-    else:
-    
-        for url , savedir in zip(urllist,savedirlist):
+#     for cc in calc_center:
+#             curdate = startdate
+#             while curdate <= enddate:
+#                 if re.search("igs([0-9][0-9]|yy|YY)P",cc):
+#                     cc = "igs" + str(curdate.year)[2:] + "P"
+#                     log.info("INFO : IGS reference frame snx/ssc, correcting the year : " + cc)
 
-            localfile = os.path.join(savedir,os.path.basename(url))        
+#                 url = ''
+#                 if archive_center == 'cddis':
+#                     url = orbclk_cddis_server(curdate,cc,repro=repro,sp3clk=sp3clk,
+#                                               force_weekly_file=force_weekly_file)
+#                 elif archive_center == 'cddis_mgex':
+#                     url = orbclk_cddis_server(curdate,cc,repro=repro,sp3clk=sp3clk,
+#                                               mgex=True,force_weekly_file=force_weekly_file)
+#                 elif archive_center == 'cddis_mgex_longname':
+#                     url = orbclk_cddis_server(curdate,cc,repro=repro,
+#                                               sp3clk=sp3clk,mgex=True,longname=True,
+#                                               force_weekly_file=force_weekly_file)
+#                 elif archive_center == 'ign':
+#                     url = orbclk_ign_server(curdate,cc,repro=repro,sp3clk=sp3clk,
+#                                               mgex=False,force_weekly_file=force_weekly_file)
+#                 elif archive_center == 'ign_mgex':
+#                     url = orbclk_ign_server(curdate,cc,repro=repro,sp3clk=sp3clk,
+#                                               mgex=True,force_weekly_file=force_weekly_file)
+#                 elif archive_center == 'ign_mgex_longname':
+#                     url = orbclk_ign_server(curdate,cc,repro=repro,
+#                                               sp3clk=sp3clk,mgex=True,longname=True,
+#                                               force_weekly_file=force_weekly_file)
+#                 elif archive_center == 'gfz_local':
+#                     url = orbclk_gfz_local_server(curdate,cc,repro=repro,
+#                                               sp3clk=sp3clk)
+
+#                 else:
+#                     log.error('ERR : Wrong archive_center name !!! :' + archive_center)
+#                 urllist.append(url)
+#                 savedir = dlutils.effective_save_dir_orbit(archive_dir,
+#                                                            cc,
+#                                                            curdate,
+#                                                            archtype)
+#                 savedirlist.append(savedir)
+#                 curdate = curdate + dt.timedelta(days=1)
+
+#     savedirlist = [x for (y,x) in sorted(zip(urllist,savedirlist))]
+#     urllist = sorted(urllist)
+
+#     log.info(" ... done")
+#     log.info(str(len(urllist)) + " potential " + typ)
+
+#     if not sorted_mode:
+#         _ = pool.map(dlutils.downloader_wrap,list(zip(urllist,savedirlist)))
+#     else:
+#          results = [pool.apply_async(dlutils.downloader , args=(u,sd)) for u,sd in zip(urllist,savedirlist)]
+
+#     localfiles_lis = []
+    
+#     if not return_also_uncompressed_files:
+#         for url , savedir in zip(urllist,savedirlist):
+#             localfile = os.path.join(savedir,os.path.basename(url))
+#             if os.path.isfile(localfile):
+#                 localfiles_lis.append(localfile)
+#     else:
+    
+#         for url , savedir in zip(urllist,savedirlist):
+
+#             localfile = os.path.join(savedir,os.path.basename(url))        
             
-            Pot_compress_files_list = [localfile]
-            Pot_compress_files_list.append(localfile.replace(".gz",""))
-            Pot_compress_files_list.append(localfile.replace(".Z",""))
-            Pot_compress_files_list = list(set(Pot_compress_files_list))
+#             Pot_compress_files_list = [localfile]
+#             Pot_compress_files_list.append(localfile.replace(".gz",""))
+#             Pot_compress_files_list.append(localfile.replace(".Z",""))
+#             Pot_compress_files_list = list(set(Pot_compress_files_list))
             
-            for potential_exisiting_file in Pot_compress_files_list:
-                if os.path.isfile(potential_exisiting_file):
-                    localfiles_lis.append(potential_exisiting_file)
+#             for potential_exisiting_file in Pot_compress_files_list:
+#                 if os.path.isfile(potential_exisiting_file):
+#                     localfiles_lis.append(potential_exisiting_file)
     
-    pool.close()
-    return localfiles_lis
+#     pool.close()
+#     return localfiles_lis
 
 
 
-def force_weekly_file_fct(force_weekly_file,sp3clk,day_in):
-    if force_weekly_file == False:
-        day = day_in
+# def force_weekly_file_fct(force_weekly_file,sp3clk,day_in):
+#     if force_weekly_file == False:
+#         day = day_in
 
-    elif type(force_weekly_file) is str or type(force_weekly_file) is int:
-        log.info("INFO : The weekly file will be downloaded (DoW = %s)",force_weekly_file)
-        log.info("       Check force_weekly_file option if you don't want it")
-        day = force_weekly_file
+#     elif type(force_weekly_file) is str or type(force_weekly_file) is int:
+#         log.info("INFO : The weekly file will be downloaded (DoW = %s)",force_weekly_file)
+#         log.info("       Check force_weekly_file option if you don't want it")
+#         day = force_weekly_file
 
-    elif sp3clk in ("erp","sum") and force_weekly_file == True:
-        log.info("The weekly file (DoW = 7) will be downloaded for " + sp3clk.upper())
-        day = 7
+#     elif sp3clk in ("erp","sum") and force_weekly_file == True:
+#         log.info("The weekly file (DoW = 7) will be downloaded for " + sp3clk.upper())
+#         day = 7
         
-    return day
+#     return day
 
 
-def orbclk_cddis_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
-                        longname = False, force_weekly_file=False):
-    """
-    longname is experimental and only for MGEX yet !! (180426)
-    """
-    urlserver='ftp://cddis.gsfc.nasa.gov/pub/gps/products/'
-    if mgex:
-        urlserver = urlserver + 'mgex/'
-    if repro == 0:
-        rep_fldr = ''
-    else:
-        rep_fldr = 'repro' + str(repro)
+# def orbclk_cddis_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
+#                         longname = False, force_weekly_file=False):
+#     """
+#     longname is experimental and only for MGEX yet !! (180426)
+#     """
+#     urlserver='ftp://cddis.gsfc.nasa.gov/pub/gps/products/'
+#     if mgex:
+#         urlserver = urlserver + 'mgex/'
+#     if repro == 0:
+#         rep_fldr = ''
+#     else:
+#         rep_fldr = 'repro' + str(repro)
 
-    if repro != 0:
-        center     = list(center)
-        center[-1] = str(repro)
-        center = ''.join(center)
-    if repro == 3:
-        longname = True
+#     if repro != 0:
+#         center     = list(center)
+#         center[-1] = str(repro)
+#         center = ''.join(center)
+#     if repro == 3:
+#         longname = True
         
-    if center in ("cod","cof","co2","cf2") and sp3clk == "sp3":
-        log.info("CODE orbit extension changed to eph")
-        sp3clk = "eph"
+#     if center in ("cod","cof","co2","cf2") and sp3clk == "sp3":
+#         log.info("CODE orbit extension changed to eph")
+#         sp3clk = "eph"
 
-    # date definition
-    week, day = conv.dt2gpstime(date)
+#     # date definition
+#     week, day = conv.dt2gpstime(date)
 
-    ## force_weekly_file handeling
-    day = force_weekly_file_fct(force_weekly_file_fct,sp3clk,day)
+#     ## force_weekly_file handeling
+#     day = force_weekly_file_fct(force_weekly_file_fct,sp3clk,day)
 
-    if not longname: # e.g. gbm19903.sp3.Z
-        if not 'igu' in center:
-            orbname = center + str(week).zfill(4)  + str(day) +'.'+ sp3clk +'.Z'
-            url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
-        else:
-            igusuffix = center[-2:]
-            center    = center[:-2]
-            orbname = center + str(week).zfill(4)  + str(day)  + '_' + igusuffix +'.'+ sp3clk + '.Z'
-            url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
-    else: # e.g. COD0MGXFIN_20180580000_01D_05M_ORB.SP3.gz
-        if len(center) == 3:
-            center = center.upper() + "0"
-        else:
-            center = center.upper()
+#     if not longname: # e.g. gbm19903.sp3.Z
+#         if not 'igu' in center:
+#             orbname = center + str(week).zfill(4)  + str(day) +'.'+ sp3clk +'.Z'
+#             url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
+#         else:
+#             igusuffix = center[-2:]
+#             center    = center[:-2]
+#             orbname = center + str(week).zfill(4)  + str(day)  + '_' + igusuffix +'.'+ sp3clk + '.Z'
+#             url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
+#     else: # e.g. COD0MGXFIN_20180580000_01D_05M_ORB.SP3.gz
+#         if len(center) == 3:
+#             center = center.upper() + "0"
+#         else:
+#             center = center.upper()
 
-        datelong = date.strftime("%Y%j")
+#         datelong = date.strftime("%Y%j")
 
-        if "SHA" in center:
-            if sp3clk == "sp3":
-                sp3clk_long = "_01D_15M_ORB.SP3"
-            elif sp3clk == "clk":
-                sp3clk_long = "_01D_05M_CLK.CLK"
-            elif sp3clk == "erp":
-                sp3clk_long = "_03D_12H_ERP.ERP"
-            elif sp3clk == "bia":
-                sp3clk_long = "_01D_01D_OSB.BIA"
-            elif sp3clk == "snx":
-                sp3clk_long = "_01D_000_SOL.SNX"
+#         if "SHA" in center:
+#             if sp3clk == "sp3":
+#                 sp3clk_long = "_01D_15M_ORB.SP3"
+#             elif sp3clk == "clk":
+#                 sp3clk_long = "_01D_05M_CLK.CLK"
+#             elif sp3clk == "erp":
+#                 sp3clk_long = "_03D_12H_ERP.ERP"
+#             elif sp3clk == "bia":
+#                 sp3clk_long = "_01D_01D_OSB.BIA"
+#             elif sp3clk == "snx":
+#                 sp3clk_long = "_01D_000_SOL.SNX"
 
-            orbname = center + "MGXRAP_" + datelong + "0000"  + sp3clk_long + ".gz"
-        else:
-            if sp3clk == "sp3":
-                sp3clk_long = "_01D_15M_ORB.SP3"
-            elif sp3clk == "clk":
-                sp3clk_long = "_01D_30S_CLK.CLK"
-            elif sp3clk == "erp":
-                sp3clk_long = "_03D_12H_ERP.ERP"
-            elif sp3clk == "bia":
-                sp3clk_long = "_01D_01D_OSB.BIA"
-            elif sp3clk == "snx":
-                sp3clk_long = "_01D_000_SOL.SNX"
+#             orbname = center + "MGXRAP_" + datelong + "0000"  + sp3clk_long + ".gz"
+#         else:
+#             if sp3clk == "sp3":
+#                 sp3clk_long = "_01D_15M_ORB.SP3"
+#             elif sp3clk == "clk":
+#                 sp3clk_long = "_01D_30S_CLK.CLK"
+#             elif sp3clk == "erp":
+#                 sp3clk_long = "_03D_12H_ERP.ERP"
+#             elif sp3clk == "bia":
+#                 sp3clk_long = "_01D_01D_OSB.BIA"
+#             elif sp3clk == "snx":
+#                 sp3clk_long = "_01D_000_SOL.SNX"
 
-            orbname = center + "MGXFIN_" + datelong + "0000"  + sp3clk_long + ".gz"
+#             orbname = center + "MGXFIN_" + datelong + "0000"  + sp3clk_long + ".gz"
 
-        url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
+#         url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
 
-    return url
+#     return url
 
 
 
-def orbclk_ign_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
-                        longname = False,force_weekly_file=False):
-    """
-    longname is experimental and only for MGEX yet !! (180426)
-    Must be merged with orbclk_cddis_server to make a big equivalent fct (180523)
-    """
-    urlserver='ftp://igs.ign.fr/pub/igs/products/'
-    if mgex:
-        urlserver = urlserver + 'mgex/'
-    if repro == 0:
-        rep_fldr = ''
-    else:
-        rep_fldr = 'repro' + str(repro)
-    if repro != 0:
-        center     = list(center)
-        center[-1] = str(repro)
-        center = ''.join(center)
-    week, day = conv.dt2gpstime(date)
+# def orbclk_ign_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
+#                         longname = False,force_weekly_file=False):
+#     """
+#     longname is experimental and only for MGEX yet !! (180426)
+#     Must be merged with orbclk_cddis_server to make a big equivalent fct (180523)
+#     """
+#     urlserver='ftp://igs.ign.fr/pub/igs/products/'
+#     if mgex:
+#         urlserver = urlserver + 'mgex/'
+#     if repro == 0:
+#         rep_fldr = ''
+#     else:
+#         rep_fldr = 'repro' + str(repro)
+#     if repro != 0:
+#         center     = list(center)
+#         center[-1] = str(repro)
+#         center = ''.join(center)
+#     week, day = conv.dt2gpstime(date)
 
-    ## force_weekly_file handeling
-    day = force_weekly_file_fct(force_weekly_file,sp3clk,day)
+#     ## force_weekly_file handeling
+#     day = force_weekly_file_fct(force_weekly_file,sp3clk,day)
 
-    if not longname: # e.g. gbm19903.sp3.Z
-        if not 'igu' in center:
-            orbname = center + str(week).zfill(4)  + str(day) +'.'+ sp3clk +'.Z'
-            url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
-        else:
-            igusuffix = center[-2:]
-            center    = center[:-2]
-            orbname = center + str(week).zfill(4)  + str(day)  + '_' + igusuffix +'.'+ sp3clk + '.Z'
-            url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
-    else: # e.g. COD0MGXFIN_20180580000_01D_05M_ORB.SP3.gz
-        if len(center) == 3:
-            center = center.upper() + "0"
-        else:
-            center = center.upper()
+#     if not longname: # e.g. gbm19903.sp3.Z
+#         if not 'igu' in center:
+#             orbname = center + str(week).zfill(4)  + str(day) +'.'+ sp3clk +'.Z'
+#             url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
+#         else:
+#             igusuffix = center[-2:]
+#             center    = center[:-2]
+#             orbname = center + str(week).zfill(4)  + str(day)  + '_' + igusuffix +'.'+ sp3clk + '.Z'
+#             url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
+#     else: # e.g. COD0MGXFIN_20180580000_01D_05M_ORB.SP3.gz
+#         if len(center) == 3:
+#             center = center.upper() + "0"
+#         else:
+#             center = center.upper()
 
-        datelong = date.strftime("%Y%j")
+#         datelong = date.strftime("%Y%j")
 
-        if "SHA" in center:
-            if sp3clk == "sp3":
-                sp3clk_long = "_01D_15M_ORB.SP3"
-            elif sp3clk == "clk":
-                sp3clk_long = "_01D_05M_CLK.CLK"
-            elif sp3clk == "erp":
-                sp3clk_long = "_03D_12H_ERP.ERP"
-            elif sp3clk == "bia":
-                sp3clk_long = "_01D_01D_OSB.BIA"
+#         if "SHA" in center:
+#             if sp3clk == "sp3":
+#                 sp3clk_long = "_01D_15M_ORB.SP3"
+#             elif sp3clk == "clk":
+#                 sp3clk_long = "_01D_05M_CLK.CLK"
+#             elif sp3clk == "erp":
+#                 sp3clk_long = "_03D_12H_ERP.ERP"
+#             elif sp3clk == "bia":
+#                 sp3clk_long = "_01D_01D_OSB.BIA"
 
-            orbname = center + "MGXRAP_" + datelong + "0000"  + sp3clk_long + ".gz"
-        else:
-            if sp3clk == "sp3":
-                sp3clk_long = "_01D_15M_ORB.SP3"
-            elif sp3clk == "clk":
-                sp3clk_long = "_01D_30S_CLK.CLK"
-            elif sp3clk == "erp":
-                sp3clk_long = "_03D_12H_ERP.ERP"
-            elif sp3clk == "bia":
-                sp3clk_long = "_01D_01D_OSB.BIA"
+#             orbname = center + "MGXRAP_" + datelong + "0000"  + sp3clk_long + ".gz"
+#         else:
+#             if sp3clk == "sp3":
+#                 sp3clk_long = "_01D_15M_ORB.SP3"
+#             elif sp3clk == "clk":
+#                 sp3clk_long = "_01D_30S_CLK.CLK"
+#             elif sp3clk == "erp":
+#                 sp3clk_long = "_03D_12H_ERP.ERP"
+#             elif sp3clk == "bia":
+#                 sp3clk_long = "_01D_01D_OSB.BIA"
 
-            orbname = center + "MGXFIN_" + datelong + "0000"  + sp3clk_long + ".gz"
+#             orbname = center + "MGXFIN_" + datelong + "0000"  + sp3clk_long + ".gz"
 
-        url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
+#         url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
 
-    return url
+#     return url
 
-def orbclk_igscb_server(date,center='gfz', sp3clk = 'sp3',repro=0):
-    urlserver='ftp://igscb.jpl.nasa.gov/pub/product/'
-    if repro == 0:
-        rep_fldr = ''
-    elif repro == 3:
-        rep_fldr = 'repro' + str(repro)
-    if repro != 0:
-        center     = list(center)
-        center[-1] = str(repro)
-        center = ''.join(center)
-    week, day = conv.dt2gpstime(date)
-    if not 'igu' in center:
-        orbname = center + str(week).zfill(4) + str(day) +'.' + sp3clk + '.Z'
-        url = os.path.join(urlserver,str(week).zfill(4) ,rep_fldr,orbname)
-    else:
-        igusuffix = center[-2:]
-        center    = center[:-2]
-        orbname = center + str(week).zfill(4) + str(day)  + '_' + igusuffix +'.' + sp3clk + '.Z'
-        url = os.path.join(urlserver,str(week).zfill(4) ,rep_fldr,orbname)
-    return url
+# def orbclk_igscb_server(date,center='gfz', sp3clk = 'sp3',repro=0):
+#     urlserver='ftp://igscb.jpl.nasa.gov/pub/product/'
+#     if repro == 0:
+#         rep_fldr = ''
+#     elif repro == 3:
+#         rep_fldr = 'repro' + str(repro)
+#     if repro != 0:
+#         center     = list(center)
+#         center[-1] = str(repro)
+#         center = ''.join(center)
+#     week, day = conv.dt2gpstime(date)
+#     if not 'igu' in center:
+#         orbname = center + str(week).zfill(4) + str(day) +'.' + sp3clk + '.Z'
+#         url = os.path.join(urlserver,str(week).zfill(4) ,rep_fldr,orbname)
+#     else:
+#         igusuffix = center[-2:]
+#         center    = center[:-2]
+#         orbname = center + str(week).zfill(4) + str(day)  + '_' + igusuffix +'.' + sp3clk + '.Z'
+#         url = os.path.join(urlserver,str(week).zfill(4) ,rep_fldr,orbname)
+#     return url
 
-def orbclk_gfz_local_server(date,center='gfz', sp3clk='sp3',repro=0):
-    if repro == 0:
-        urlserver = '/dsk/igs_archive/IGS/SAVE_PROD_1d/'
-    elif repro == 3:
-        urlserver = '/dsk/repro3/ARCHIVE/IGS/SAVE_PROD_1d/'
-    else:
-        log.error("check the repro !!!")
-        raise Exception
+# def orbclk_gfz_local_server(date,center='gfz', sp3clk='sp3',repro=0):
+#     if repro == 0:
+#         urlserver = '/dsk/igs_archive/IGS/SAVE_PROD_1d/'
+#     elif repro == 3:
+#         urlserver = '/dsk/repro3/ARCHIVE/IGS/SAVE_PROD_1d/'
+#     else:
+#         log.error("check the repro !!!")
+#         raise Exception
 
-    week, day = conv.dt2gpstime(date)
+#     week, day = conv.dt2gpstime(date)
     
-    orbname = center + str(week).zfill(4) + str(day) +'.' + sp3clk + '.Z'
-    url = os.path.join(urlserver,str(week).zfill(4),orbname)
+#     orbname = center + str(week).zfill(4) + str(day) +'.' + sp3clk + '.Z'
+#     url = os.path.join(urlserver,str(week).zfill(4),orbname)
     
-    return url
+#     return url
 
 
 

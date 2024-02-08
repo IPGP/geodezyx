@@ -1006,22 +1006,24 @@ class TimeSeriePoint:
             self.bool_interp_uptodate = False
             self.interp_set()
 
-    def ENUcalc_from_mean_posi(self,meanormed="mean"):
+    def ENUcalc_from_mean_posi(self,mean_type="median"):
         """
-        Method to determine the ENU components based directly on the mean position
+        Method to determine the ENU components based directly 
+        on the mean/median position
 
         Returns
         -------
         None.
 
         """
-        self.ENUcalc(self.mean_posi,meanormed=meanormed)
+        self.ENUcalc(self.mean_posi(mean_type="median"))
         return None
     
     
     def ENUcalc_from_first_posi(self):
         """
-        Method to determine the ENU components based directly on the mean position
+        Method to determine the ENU components based directly
+        on the mean/median position
 
         Returns
         -------
@@ -1195,7 +1197,7 @@ class TimeSeriePoint:
         self.discont = indiscont
         self.bool_discont = True
 
-    def mean_posi(self,coortype='XYZ',outtype='point',meanormed='mean'):
+    def mean_posi(self,coortype='XYZ',outtype='point',mean_type='median'):
         """
         Method to determine the mean position of the TimeSerie
 
@@ -1205,8 +1207,8 @@ class TimeSeriePoint:
             The coordinates type. The default is 'XYZ'.
         outtype : TYPE, optional
             'point' or 'tuple'. The default is 'point'.
-        meanormed : TYPE, optional
-            'mean' or 'median'. The default is 'mean'.
+        mean_type : TYPE, optional
+            'mean' or 'median'. The default is 'median'.
 
         Returns
         -------
@@ -1221,11 +1223,11 @@ class TimeSeriePoint:
         A,B,C,T,sA,sB,sC = self.to_list(coortype=coortype)
 
 
-        if meanormed == 'mean':
+        if mean_type == 'mean':
             Aout = np.nanmean(A)
             Bout = np.nanmean(B)
             Cout = np.nanmean(C)
-        elif meanormed == 'median':
+        elif mean_type == 'median':
             Aout = np.median(A)
             Bout = np.median(B)
             Cout = np.median(C)

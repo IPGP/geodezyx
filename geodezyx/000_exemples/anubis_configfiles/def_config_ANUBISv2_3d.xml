@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?> 
+<!DOCTYPE config>
+
+<config>
+
+ <!-- general description:
+   beg    .. beg time          (default: empty=all)
+   end    .. end time          (default: empty=all)
+   int    .. data sampling     (default: empty=30s)
+   sys    .. GNSS system(s)    (default: empty=all)
+   rec    .. receiver(s)       (default: empty=all)
+   -->
+ <gen>
+   <beg> "XXXSTARTXXX" </beg>
+   <end> "XXXENDXXX" </end>
+   <sys>  GPS GAL GLO BDS QZS SBS IRN GNS </sys>
+   <rec>  XXXSITEXXX        </rec>
+   <int>30</int>
+ </gen>
+
+
+ <!-- quality check description:
+   sec_sum     [0-9]    .. summary statistics
+   sec_hdr     [0-9]    .. header metadata check
+   sec_obs     [0-9]    .. observation statistics
+   sec_est     [0-9]    .. estimated values
+   sec_gap     [0-9]    .. gap & pieces
+   sec_bnd     [0-9]    .. observation bands
+   sec_pre     [0-9]    .. cycle-slip, clock-jumps
+   sec_ele     [0-9]    .. azimuth/elevation (if navigation)
+   sec_mpx     [0-9]    .. multipath calculation
+   sec_snr     [0-9]    .. signal-to-noise ratio
+   sec_sat     [0-9]    .. satellite information
+   int_stp     int[s]   .. interval for time-spacing
+   int_gap     int[s]   .. interval for gap identification
+   int_pcs     int[s]   .. interval for small pieces identification
+   col_sat     int[#]   .. number of columns for sat-specific reporting
+   mpx_nep     int[#]   .. number of epochs for multipath calculation
+   mpx_lim     double   .. sigma-multiplicator for MP cycle-slip & outlier detection
+   pos_kin     bool     .. kinematic receiver (true = kinematic)
+   pos_int     int      .. positioning interval
+   pos_cut     double   .. positioning elevation angle cut-off (degrees)
+   ele_cut     double   .. user elevation cut-off (only for expt/have, degrees)
+   sat_rec     bool     .. expected observations from satellites (true:all | false:with_signal)
+   use_health  enum     .. use of satellite health (1:position|2:statistics|3:all)
+  -->
+ <qc 
+   sec_sum="1" 
+   sec_hdr="1" 
+   sec_obs="1" 
+   sec_est="1" 
+   sec_gap="1" 
+   sec_bnd="1" 
+   sec_pre="1" 
+   sec_ele="1" 
+   sec_mpx="1" 
+   sec_snr="0" 
+   sec_sat="1" 
+   int_stp="900" 
+   int_gap="600" 
+   int_pcs="1800" 
+   col_sat="36" 
+   mpx_nep="15" 
+   mpx_lim="5" 
+   pos_kin="false" 
+   pos_int="900" 
+   pos_cut="5" 
+   ele_cut="10" 
+   sat_rec="false" 
+   use_health="3" 
+ />
+
+
+ <!-- inputs description:
+   <decoder1> path1 path2 path3  </decoder1>  (path may include [file,tcp,ntrip]) 
+   <decoder2> path1 path2 path3  </decoder2>  (path may include [file,tcp,ntrip]) 
+   e.g. ... 
+   <rinexo> file://dir/name </rinexo>         (RINEX-OBS decoder)
+   <rinexn> file://dir/name </rinexn>         (RINEX-NAV decoder)
+   -->
+ <inputs
+   chk_nav="true"   
+   chk_health="true" > 
+   <rinexo> XXXRNXOXXX </rinexo>         (RINEX-OBS decoder)
+   <rinexn> XXXNAVXXX </rinexn>         (RINEX-NAV decoder)
+   <sp3>    XXXSP3XXX </sp3>         (RINEX-OBS decoder)
+ </inputs>
+
+
+ <!-- outputs description:
+   <encoder1> path1 </encoder1>   (path may include [file,tcp,ntrip]) 
+   <encoder2> path2 </encoder2>   (path may include [file,tcp,ntrip]) 
+   e.g. ... 
+   <log> file://dir/name </log>   (log output)
+   -->
+ <outputs
+   verb="1"   
+   append="false" > 
+   <xtr> XXXOUTXTRXXX </xtr>       <!-- native Anubis's report, may use $(rec) variable -->
+   <xml> XXXOUTXMLXXX </xml>       <!-- minimum EPOS XML file, may use $(rec) variable -->
+   <log> XXXOUTLOGXXX </log>
+ </outputs>
+
+
+ <!-- gnss observation definition:
+   <sat>  .. list of satellites              (default:empty=all)
+   <type> .. list of observation types       (default:empty=all)
+   <band> .. list of observation bands/freqs (default:empty=all)
+   <attr> .. lsit of observation attributes  (default:empty=all)
+   <gobs> .. list (extended) of observations (default:empty=all)
+   -->
+ <gps>            		  <!-- any GNSS constellation: GPS GLO GAL BDS SBS QZS -->
+   <sat>  </sat>  		  <!-- list of sys satellites: G01 G02 .. or empty(ALL) -->
+   <type> </type> 		  <!-- list of obs data types: C L D S P or empty(ALL)  -->
+   <band> </band> 		  <!-- list of obs data bands: 1 2 5 or empty(ALL) -->
+   <attr> </attr> 		  <!-- list of obs data attrs: A B C D I L M N P Q S W X Y Z or empty(ALL) -->
+   <gobs> </gobs> 		  <!-- list of extend signals: C1C C2C L1C L2C ... or empty(ALL) -->
+ </gps>
+
+ <glo>            		  <!-- any GNSS constellation: GPS GLO GAL BDS SBS QZS -->
+   <sat>  </sat>  		  <!-- list of sys satellites: R01 R02 .. or empty(ALL) -->
+   <type> </type> 		  <!-- list of obs data types: C L D S P or empty(ALL)  -->
+   <band> </band> 		  <!-- list of obs data bands: 1 2 3 or empty(ALL) -->
+   <attr> </attr> 		  <!-- list of obs data attrs: A B C D I L M N P Q S W X Y Z or empty(ALL) -->
+   <gobs> </gobs> 		  <!-- list of extend signals: C1C C2C L1C L2C ... or empty(ALL) -->
+ </glo>
+
+
+ <!-- receiver description:
+   id     .. ID name
+   name   .. site name
+   domes  .. site domes number
+   desc   .. site full description
+   ant    .. site antenna name
+   rec    .. site receiver name
+   X[YZ]  .. X,Y,Z-coordinate [m]
+   dX[YZ] .. X,Y,Z-eccentricity [m]
+
+   ... and special configuration within specific intervals (example below)
+   <set beg="YEAR:MM:DD HR:MI:SC" end="YEAR:MM:DD HR:MI:SC" .... 
+  -->
+<!--
+ <rec id="GOPE" name="GOPE" domes="11502M002" desc="Geodetic Observatory Pecny, Czech Republic" >
+   <set beg="1995 05 13 00 00 00" end="1997 06 11 00 00 00" rec="TRIMBLE 4000SSE" ant="TRM14532.00     NONE"
+     X="3979316.0" Y="1050312.0" Z="4857067.0" dX="0.0" dY="0.0" dZ="0.0" dN="0.0" dE="0.0" dU="0.0"   />
+   <set beg="1997 06 11 00 00 00" end="1997 06 20 00 00 00" rec="SPP GEOTRACER100" ant="TRM14532.00     NONE"   />
+   <set beg="1997 06 20 00 00 00" end="1999 11 04 00 00 00" rec="TRIMBLE 4000SSE" ant="TRM14532.00     NONE"   />
+ </rec>
+-->
+
+ <rec id="XXXSITEXXX" name="XXXSITEXXX" domes="00000X000" desc="test" >
+ </rec>
+
+</config>

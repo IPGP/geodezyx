@@ -3,7 +3,7 @@
 """
 Created on Thu Aug 13 15:11:12 2020
 
-@author: psakicki
+@author: psakic
 
 This sub-module of geodezyx.conv deals with time conversion.
 
@@ -11,11 +11,11 @@ it can be imported directly with:
 from geodezyx import conv
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 
@@ -1186,10 +1186,6 @@ str_date2dt    = date_string_2_dt
 strdate2dt     = date_string_2_dt
 
 
-
-
-
-
 def jjulCNES2dt(jjulin):
     """
     Time representation & scale conversion
@@ -1572,12 +1568,10 @@ def statname_dt2rinexname_long(statname,datein,
                                country="XXX",
                                data_source="R",
                                file_period="00U",
-                               data_freq="XXU",
+                               data_freq="00U",
                                data_type="MO",                               
-                               format_compression='crz.gz',
+                               format_compression='crx.gz',
                                preset_type=None):
-
-
     """ 
     
     Time representation conversion
@@ -1625,7 +1619,7 @@ def statname_dt2rinexname_long(statname,datein,
         XXH – Hours,
         XXD – Days
         XXU – Unspecified
-        The default is "XXU".
+        The default is "00U".
         
     data_type : str, optional
         Two characters represent the data type:
@@ -1655,11 +1649,10 @@ def statname_dt2rinexname_long(statname,datein,
         The default is 'crz.gz'.
         
     preset_type : str, optional
+        takes "daily" or "hourly" values.
         set the most common data_freq and file_period 
         for an hourly or daily session. 
-        accept 'daily' or 'hourly' values.
         The default is None.
-
 
     Returns
     -------

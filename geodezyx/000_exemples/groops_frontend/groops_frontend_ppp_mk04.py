@@ -20,7 +20,7 @@ project_name="test_calc_PF_03_testJJ"
 
 ### Paths where the RINEXs/Products/results are/will be stored
 #  Inputs
-cfg_files_root_dir="/home/ovsgnss/010_SOFTS/GeodeZYX-Toolbox_v4/geodezyx/000_exemples/groops_frontend/configfiles/040_prototype4/"
+cfg_files_root_dir="/home/ovsgnss/010_SOFTS/geodezyx-toolbox/geodezyx/000_exemples/groops_frontend/configfiles/040_prototype4/"
 rinex_root_path = "/home/ovsgnss/050_DATA_GNSS/data_ovs_glass/QM/"
 vmf_tropo_root_dir = "/scratch/calcgnss/prods_tropo_vmf3"
 prods_gnss_root_dir = "/scratch/calcgnss/prods_gnss/"
@@ -91,5 +91,5 @@ for rnx in Rinexs:
                            prods_gnss_root_dir,
                            cfg_files_root_dir,
                            sitelogs_root_dir,
-                           verbosity="DEBUG")
+                           verbosity="INFO")
 
