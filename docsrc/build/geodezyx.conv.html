@@ -1161,7 +1161,7 @@ GitHub repository :
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_rinex.rinex_regex">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rinex.</span></span><span class="sig-name descname"><span class="pre">rinex_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rinex.rinex_regex" title="Link to this definition"></a></dt>
-<dd><p>Return a regex corresponding to a RINEX name (short convention)</p>
+<dd><p>Return a regex corresponding to a RINEX name (v2 - short convention)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>compressed</strong> (<em>bool</em><em> or </em><em>None</em>) – return a the regex for a compressed rinex
@@ -1185,7 +1185,7 @@ if None, does not matter (return both compressed or not)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_rinex.rinex_regex_long_name">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rinex.</span></span><span class="sig-name descname"><span class="pre">rinex_regex_long_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rinex.rinex_regex_long_name" title="Link to this definition"></a></dt>
-<dd><p>Return a regex corresponding to a RINEX name (long convention)</p>
+<dd><p>Return a regex corresponding to a RINEX name (v3/4 - long convention)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>compressed</strong> (<em>bool</em><em> or </em><em>None</em>) – return a the regex for a compressed rinex
@@ -1209,7 +1209,7 @@ if None, does not matter (return both compressed or not)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_rinex.rinex_regex_long_name_brdc">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rinex.</span></span><span class="sig-name descname"><span class="pre">rinex_regex_long_name_brdc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compiled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rinex.rinex_regex_long_name_brdc" title="Link to this definition"></a></dt>
-<dd><p>Return a regex corresponding to a BROADCAST RINEX name (new convention)</p>
+<dd><p>Return a regex corresponding to a BROADCAST RINEX name (v3/4 - new convention)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>compressed</strong> (<em>bool</em><em> or </em><em>None</em>) – return a the regex for a compressed rinex
@@ -1262,7 +1262,8 @@ if None, does not matter (return both compressed or not)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>str_in</strong> (<em>str</em>) – input string.</p></li>
+<li><p><strong>str_in</strong> (<em>str</em>) – input string.
+If it is a path, will extract its basename.</p></li>
 <li><p><strong>short_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – check if the pattern matches a short name RINEX. The default is True.</p></li>
 <li><p><strong>long_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – check if the pattern matches a long name RINEX. The default is True.</p></li>
 <li><p><strong>brdc_long_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – check if the pattern matches a brdc long name RINEX. The default is False.</p></li>
@@ -1285,9 +1286,9 @@ if None, does not matter (return both compressed or not)</p></li>
 <dt class="sig sig-object py" id="geodezyx.conv.conv_rinex.rinex_regex_tester">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rinex.</span></span><span class="sig-name descname"><span class="pre">rinex_regex_tester</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rinex.rinex_regex_tester" title="Link to this definition"></a></dt>
 <dd><p>Returns two list of string to test the efficiency of the RINEX regexs.</p>
-<p>True_positive_rnxs is a list of strings describing actual RINEX filenames.
+<p>true_positive_rnxs is a list of strings describing actual RINEX filenames.
 They must be matched</p>
-<p>False_positive_rnxs is a list of strings describing other filenames.
+<p>false_positive_rnxs is a list of strings describing other filenames.
 But which have been matched at one moment because of too weak regexs
 They must NOT be matched</p>
 </dd></dl>
@@ -1462,7 +1463,7 @@ pour l’utilisation de ads_offset
 <section id="module-geodezyx.conv.conv_time">
 <span id="geodezyx-conv-conv-time-module"></span><h2>geodezyx.conv.conv_time module<a class="headerlink" href="#module-geodezyx.conv.conv_time" title="Link to this heading"></a></h2>
 <p>Created on Thu Aug 13 15:11:12 2020</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
 <p>This sub-module of geodezyx.conv deals with time conversion.</p>
 <p>it can be imported directly with:
 from geodezyx import conv</p>
@@ -2778,7 +2779,7 @@ instead of a daily session (0)</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.statname_dt2rinexname_long">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">statname_dt2rinexname_long</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XXX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'R'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'00U'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XXU'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_compression</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'crz.gz'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.statname_dt2rinexname_long" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">statname_dt2rinexname_long</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XXX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'R'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'00U'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'00U'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_compression</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'crx.gz'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preset_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.statname_dt2rinexname_long" title="Link to this definition"></a></dt>
 <dd><p>Time representation conversion</p>
 <p>Python’s Datetime (and station name) =&gt; RINEX long name convention</p>
 <p>Create a RINEX name from a station name, date and ancillary parameters</p>
@@ -2811,7 +2812,7 @@ XXM – Minutes,
 XXH – Hours,
 XXD – Days
 XXU – Unspecified
-The default is “XXU”.</p></li>
+The default is “00U”.</p></li>
 <li><p><strong>data_type</strong> (<em>str</em><em>, </em><em>optional</em>) – <p>Two characters represent the data type:
 GO - GPS Obs.
 RO - GLONASS Obs.
@@ -2835,9 +2836,9 @@ MM-Meteorological Observation</p>
 </p></li>
 <li><p><strong>format_compression</strong> (<em>string</em>) – extension of the RINEX (“rnx”,”crz”,”crz.gz”) …
 The default is ‘crz.gz’.</p></li>
-<li><p><strong>preset_type</strong> (<em>str</em><em>, </em><em>optional</em>) – set the most common data_freq and file_period
+<li><p><strong>preset_type</strong> (<em>str</em><em>, </em><em>optional</em>) – takes “daily” or “hourly” values.
+set the most common data_freq and file_period
 for an hourly or daily session.
-accept ‘daily’ or ‘hourly’ values.
 The default is None.</p></li>
 </ul>
 </dd>
