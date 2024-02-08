@@ -2,14 +2,14 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.4.0 / 2023-11-24**, README Revision: 2024-01-25
+**Version 0.4.4.1 / 2023-02-08**, README Revision: 2024-02-08
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
 
-**Documentation:** [https://geodezyx.github.io/geodezyx-toolbox](https://geodezyx.github.io/geodezyx-toolbox/)
+**Documentation:** [https://ipgp.github.io/geodezyx-toolbox](https://ipgp.github.io/geodezyx-toolbox/)
 
-**GitHub repository:** [https://github.com/GeodeZYX/geodezyx-toolbox](https://github.com/GeodeZYX/geodezyx-toolbox) 
+**GitHub repository:** [https://github.com/IPGP/geodezyx-toolbox](https://github.com/IPGP/geodezyx-toolbox) 
 
 **PyPi project:** [https://pypi.org/project/geodezyx](https://pypi.org/project/geodezyx/)
 
@@ -72,6 +72,13 @@ and install the Toolbox you downloaded with ``python setup.py install``
 Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
 
 ## Changelog
+
+### v4.4.1, 2023-02-08
+  * The GitHub repository has now been moved under the IPGP organization.
+    * It must be transparent for your clones but updating them is recommended \
+      https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository  
+  * The numbering goes without a starting zero anymore. The GeodeZYX toolbox is a grown-up project now!
+  * Bugs corrected for `read_rnx2_obs` and `OrbDF` manipulation function.
 
 ### v0.4.4.0, 2023-11-24
   * The toolbox turns to the _GNU Lesser General Public License version 3_
