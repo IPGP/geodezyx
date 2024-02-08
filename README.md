@@ -56,7 +56,7 @@ See the following link:
 We recommend using `pip` to do a proper installation.  
 To get the latest working version, you can install directly the GitHub-hosted version (recommended):  
 
-``pip install git+https://github.com/GeodeZYX/geodezyx-toolbox``
+``pip install git+https://github.com/IPGP/geodezyx-toolbox``
 
 You can also install the version hosted on PyPI (but you will not get the latest changes)
 
