@@ -37,7 +37,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.4.4.0',  # Required
+    version='0.4.4.1',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -65,7 +65,7 @@ Also tested with Anaconda
 
 Documentation: https://geodezyx.github.io/geodezyx-toolbox  
 
-GitHub repository: https://github.com/GeodeZYX/geodezyx-toolbox 
+GitHub repository: https://github.com/IPGP/geodezyx-toolbox 
 
 PyPi project: https://pypi.org/project/geodezyx
 """,  # Optional
@@ -86,7 +86,7 @@ PyPi project: https://pypi.org/project/geodezyx
     #
     # This field corresponds to the "Home-Page" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#home-page-optional
-    url='https://github.com/GeodeZYX/geodezyx-toolbox',  # Optional
+    url='https://github.com/IPGP/geodezyx-toolbox',  # Optional
 
     # This should be your name or the name of the organization which owns the
     # project.
@@ -243,6 +243,6 @@ PyPi project: https://pypi.org/project/geodezyx
     #    'Bug Reports': 'https://github.com/pypa/sampleproject/issues',
     #    'Funding': 'https://donate.pypi.org',
     #    'Say Thanks!': 'http://saythanks.io/to/example',
-    #    'Source': 'https://github.com/GeodeZYX/geodezyx-toolbox' #,
+    #    'Source': 'https://github.com/IPGP/geodezyx-toolbox' #,
     #}
 )
