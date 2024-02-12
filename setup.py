@@ -63,7 +63,7 @@ plots and visual selection functions ...
 It is designed for Python 3 on a LINUX Ubuntu-like system.
 Also tested with Anaconda
 
-Documentation: https://geodezyx.github.io/geodezyx-toolbox  
+Documentation: https://ipgp.github.io/geodezyx-toolbox  
 
 GitHub repository: https://github.com/IPGP/geodezyx-toolbox 
 
