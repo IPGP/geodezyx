@@ -134,7 +134,7 @@ def get_coeffs(sens_type='all',
                       'D1': 0.040903,
                       'D2': 0.0}
                 
-    elif sens_id == 158073:
+    elif sens_id == 158073 or sens_id == "T3":
         ### for the 1st OBSCOM      
         dic_coeffs = {'U0':5.799,
                       'Y1':-3874.95,
@@ -151,7 +151,7 @@ def get_coeffs(sens_type='all',
                       'T4':147.124,
                       'T5':0}
     
-    elif sens_id == 158076:
+    elif sens_id == 158076 or sens_id == "T2":
         ### for the 2nd OBSCOM (T2)
         dic_coeffs = {'U0':5.76527  ,
                       'Y1':-3994.58 ,
