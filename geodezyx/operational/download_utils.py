@@ -93,8 +93,8 @@ def effective_save_dir_orbit(parent_archive_dir,
 
     out_save_dir = parent_archive_dir
     fff = archtype.split('/')
-    #year = str(date.year)
-    #doy = conv.dt2doy(date)
+    year = str(date.year)
+    doy = conv.dt2doy(date)
     week, dow = conv.dt2gpstime(date)
 
     for f in fff:

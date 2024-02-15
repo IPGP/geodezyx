@@ -2025,10 +2025,35 @@ def read_rinex_nav(fn,writeh5=None,version=2):
     return nav
 
 
-def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False, force = False):
+def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False, 
+               force = False, out_gzip_dir = None):
     """
-    if out_gzip_file if not precised, file will be extracted in the same folder
-    as inp_gzip_file
+    frontend function to unzip files (gzip and legacy Z compression) 
+
+    Parameters
+    ----------
+    inp_gzip_file : str
+        the path of the input file.
+    out_gzip_file : str, optional
+        if out_gzip_file AND out_gzip_dir not precised
+        file will be extracted in the same folder
+        as inp_gzip_file. The default is ''.
+    remove_inp : bool, optional
+        remove the input file. The default is False.
+    force : bool, optional
+        force the decompression. The default is False.
+    out_gzip_dir : str, optional
+        output directory. will be used only if out_gzip_file == ''
+        unzipped file will keep the same 
+        
+
+    Returns
+    -------
+    out_gzip_file : 
+        path of the uncompressed file.
+
+    Warning
+    -------
 
     .Z decompression is implemented, but is very unstable (avoid .Z, prefer .gz)
     """
@@ -2043,9 +2068,18 @@ def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False, force = False):
         is_gz = True
 
     if out_gzip_file == '':
-        out_gzip_file = os.path.join(os.path.dirname(inp_gzip_file) ,
+        if not out_gzip_dir:
+            out_gzip_dir_use = os.path.dirname(inp_gzip_file)
+        else:
+            out_gzip_dir_use = out_gzip_dir
+        
+        if not os.path.isdir(out_gzip_dir_use):
+            log.error("%s does not exists, unzipping is cancelled",
+                      out_gzip_dir_use)
+            raise Exception
+            
+        out_gzip_file = os.path.join( out_gzip_dir_use ,
                                      '.'.join(os.path.basename(inp_gzip_file).split('.')[:-1]))
-
 
     if os.path.isfile(out_gzip_file) and not force:
         print('INFO : ' , out_gzip_file , 'already exists, skiping (use force option)')
@@ -2056,19 +2090,12 @@ def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False, force = False):
                 shutil.copyfileobj(f_in, f_out)
         else:
             print("WARN : zlib decompress is unstable !! and .Z should be definitly avoided ... ")
-            #str_object1 = open(inp_gzip_file, 'rb').read()
-            #str_object2 = zlib.decompress(str_object1)
-            #f = open(out_gzip_file, 'wb')
-            #f.write(str_object2)
-            #f.close()
-
             out_gzip_file = utils.uncompress(inp_gzip_file)
 
-        print('INFO : uncompressing ' + inp_gzip_file + " to " + out_gzip_file )
-
+        print('INFO : uncompressing ' + inp_gzip_file + " to " + out_gzip_file)
 
     ### Removing part
-    if remove_inp and os.path.getsize(out_gzip_file) > 0:
+    if remove_inp and type(remove_inp) is bool and os.path.getsize(out_gzip_file) > 0:
         print("INFO : removing " + inp_gzip_file)
         os.remove(inp_gzip_file)
 
