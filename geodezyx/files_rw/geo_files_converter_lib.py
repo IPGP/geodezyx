@@ -2082,21 +2082,21 @@ def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False,
                                      '.'.join(os.path.basename(inp_gzip_file).split('.')[:-1]))
 
     if os.path.isfile(out_gzip_file) and not force:
-        print('INFO : ' , out_gzip_file , 'already exists, skiping (use force option)')
+        log.info('%s already exists, skiping (use force option)',out_gzip_file)
         pass
     else:
         if is_gz:
             with gzip.open(inp_gzip_file, 'rb') as f_in, open(out_gzip_file, 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
         else:
-            print("WARN : zlib decompress is unstable !! and .Z should be definitly avoided ... ")
+            log.warning("zlib decompress is unstable!! and .Z should be definitly avoided...")
             out_gzip_file = utils.uncompress(inp_gzip_file)
 
-        print('INFO : uncompressing ' + inp_gzip_file + " to " + out_gzip_file)
+        log.info('uncompress %s to  %s',inp_gzip_file, out_gzip_file)
 
     ### Removing part
     if remove_inp and type(remove_inp) is bool and os.path.getsize(out_gzip_file) > 0:
-        print("INFO : removing " + inp_gzip_file)
+        log.info("removing %s")
         os.remove(inp_gzip_file)
 
     return out_gzip_file

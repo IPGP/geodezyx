@@ -1973,6 +1973,36 @@ def dt2epoch_rnx3(dt_in,epoch_flag=0,nsats=0,rec_clk_offset=0):
         return epoch_out
 
 
+def utc2gpstime(year,month,day,hour,min,sec):
+    """
+    Convert UTC Time to GPS Time
+
+    Parameters
+    ----------
+    year,month,day,hour,min,sec : int
+        input UTC time.
+
+    Returns
+    -------
+    gpsweek,gpssecs
+        Converted epoch in GPS time, i.e. GPS Week and GPS seconds in week.
+
+    """
+    
+    date_utc = dt.datetime(year,month,day,hour,min,sec)
+    
+    utc_offset = find_leapsecond(date_utc)
+    
+    start_gps_time   = dt.datetime(1980,1,6)
+    date_diff  = date_utc - start_gps_time + dt.timedelta(seconds=utc_offset) - dt.timedelta(seconds=19)
+    
+    gpsweek_decimal = date_diff.days / 7.
+    gpsweek = np.floor(gpsweek_decimal)
+    gpsweek_decimal_part = np.modf(gpsweek_decimal)[0]
+    gpssecs = np.round(86400 * 7 * gpsweek_decimal_part) + date_diff.seconds
+    
+    return int(gpsweek),int(gpssecs)
+
 #### LEAP SECONDS MANAGEMENT
     
 def leap_seconds(f):
@@ -2034,10 +2064,10 @@ def get_leapsecond_frontend():
     INTERNAL_FUNCTION
 
     Nota :
-        Le temps universel (UT1) et le Temps atomique international (TAI) ont
-        été définis comme égaux en 1958. Lors de la mise en place d’UTC en
-        1972, UT1 s’était décalé d’environ 10 secondes par rapport au TAI.
-        On choisit donc un décalage initial de 10 secondes entre UTC et TAI .
+    Universal Time (UT1) and International Atomic Time (TAI) were defined as equal 
+    in 1958. When UTC was introduced in 1972, UT1 had shifted by around 10 seconds
+    in relation to TAI. 
+    We therefore chose an initial offset of 10 seconds between UTC and TAI.
 
         the initial 10sec are added in find_leapsecond
     """
@@ -2103,11 +2133,10 @@ def find_leapsecond(dtin,get_leapsec_lis=[],
         
     Note
     ----
-    Le temps universel (UT1) et le Temps atomique international (TAI) ont
-    été définis comme égaux en 1958. Lors de la mise en place d’UTC en
-    1972, UT1 s’était décalé d’environ 10 secondes par rapport au TAI.
-    On choisit donc un décalage initial de 10 secondes entre UTC et TAI .
-    
+    Universal Time (UT1) and International Atomic Time (TAI) were defined as equal 
+    in 1958. When UTC was introduced in 1972, UT1 had shifted by around 10 seconds
+    in relation to TAI. 
+    We therefore chose an initial offset of 10 seconds between UTC and TAI.
     
     In 1972, the leap-second system was introduced so that the broadcast UTC 
     seconds could be made exactly equal to the standard SI second, while still
@@ -2613,26 +2642,6 @@ def roundTime(*args):
     """
     return dt_round(*args)
 
-    
-def utc2gpstime(year,month,day,hour,min,sec):
-    """
-    looks useless and discontinued
-    (210219)
-    """
-    
-    date_utc = dt.datetime(year,month,day,hour,min,sec)
-    
-    utc_offset = find_leapsecond(date_utc)
-    
-    start_gps_time   = dt.datetime(1980,1,6)
-    date_diff  = date_utc - start_gps_time + dt.timedelta(seconds=utc_offset) - dt.timedelta(seconds=19)
-    
-    gpsweek_decimal = date_diff.days / 7.
-    gpsweek = np.floor(gpsweek_decimal)
-    gpsweek_decimal_part = np.modf(gpsweek_decimal)[0]
-    gpssecs = np.round(86400 * 7 * gpsweek_decimal_part) + date_diff.seconds
-    
-    return int(gpsweek),int(gpssecs)
 
 
 def utc2gpstime_bad(year,month,day,hour,min,sec):
