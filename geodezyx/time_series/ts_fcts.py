@@ -826,7 +826,9 @@ def mean_list_of_pts(ptslisin):
 
 
 def merge(tsin,N):
-    """ merge N points in one """
+    """ 
+    merge N points in one
+    """
     tsin.sort()
     tsout = copy.deepcopy(tsin)
     tsout.del_data()
@@ -838,15 +840,34 @@ def merge(tsin,N):
     return tsout
 
 def merge_ts(ts_list_in):
+    """
+    Merge several TimeSeriePoint into one
+
+    Parameters
+    ----------
+    ts_list_in : list of TimeSeriePoint
+        list of TimeSeriePoint.
+
+    Returns
+    -------
+    ts_out : TimeSeriePoint
+        merged TimeSeriePoint.
+
+    """
     pts_list_merged = []
+    boolENU_stk = []
     for ts in ts_list_in:
         pts_list_merged = pts_list_merged + ts.pts
+        boolENU_stk.append(ts.boolENU)
 
     ts_out = time_series.TimeSeriePoint()
     ts_out.pts = pts_list_merged
     ts_out.anex = ts_list_in[0].anex
+    ts_out.boolENU = np.all(boolENU_stk)
     ts_out.interval_nominal()
+    ts_out.stat = ts_list_in[0].stat
     ts_out.sort()
+
     return ts_out
 
 
