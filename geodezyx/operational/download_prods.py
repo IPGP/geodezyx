@@ -231,7 +231,6 @@ def download_products_gnss(archive_dir,
             return conn, size
         
     def ftp_objt_create(secure_ftp_inp,chdir=""):
-        
         # define the right constructor
         if secure_ftp_inp:
             ftp_constuctor = MyFTP_TLS

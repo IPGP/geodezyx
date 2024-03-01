@@ -447,15 +447,27 @@ def doy2dt(year,days,hours=0,minutes=0,seconds=0):
     if not utils.is_iterable(year):
         # All this because Python cant handle int with a starting with 0 (like 08)
         # => SyntaxError: invalid token
-        year    = int(str(year))
-        days    = int(str(days))
-        hours   = float(str(hours))
-        minutes = float(str(minutes))
-        seconds = float(str(seconds))
+        
+        if np.any(np.isnan([year,days,hours,minutes,seconds])):
+            log.error('one input is NaN, abort: %s,%s,%s,%s,%s',
+                      year,days,hours,minutes,seconds)
+            raise Exception
+            
+        
+        try:
+            year    = int(float(str(year)))
+            days    = int(float(str(days)))
+            hours   = int(float(str(hours)))
+            minutes = int(float(str(minutes)))
+            seconds = int(float(str(seconds)))
+        except Exception as e:
+            log.error('error with conversion of %s,%s,%s,%s,%s',
+                      year,days,hours,minutes,seconds)
+            raise e
 
         tempsecs = seconds + 60 * minutes + 3600 * hours
         #finalsecs     = np.floor(tempsecs)
-        finalmicrosec = np.round(tempsecs * 10**6)
+        finalmicrosec = int(np.round(tempsecs * 10**6))
 
         return dt.datetime(year, 1, 1) + dt.timedelta(days - 1) + \
         dt.timedelta(microseconds=finalmicrosec)
