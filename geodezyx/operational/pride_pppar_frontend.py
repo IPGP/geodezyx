@@ -71,32 +71,35 @@ def pride_pppar_runner_mono(rnx_path,
 
     if srt < dt.datetime(2023,6,4):
         print("DAY SKIPPED")
-        return 
+        return None 
 
     doy,year = conv.dt2doy_year(srt)
     rnx_file = os.path.basename(rnx_path)
     
-    site = rnx_file[:4]
-    
-    tmp_dir_use = os.path.join(tmp_dir, year, doy, site)
+    site = rnx_file[:4].upper()
+
+    ########## DEFINE DIRECTORIES
+    tmp_dir_use = os.path.join(tmp_dir, year, doy) ### tmp is year/doy only, no site,
+                                                   ### because the 'common' dir must be the same 
     cfg_dir_use = os.path.join(cfg_dir, year, doy, site)
-    run_dir_use = os.path.join(run_dir, site, mode) ### pdp3 add year/doy by itself
+    run_dir_use = os.path.join(run_dir,mode,prod_ac_name, site) ### pdp3 add year/doy by itself
     run_dir_ope = os.path.join(run_dir_use, year, doy)
     
     logs_existing = utils.find_recursive(run_dir_ope, "log*" + site.lower())
     
     if len(logs_existing) > 0 and not force:
         print("log exists for %s, skip",rnx_file)
+        return None
     else:
         print("no skip",rnx_file)
 
-    
     utils.create_dir(tmp_dir_use)
     utils.create_dir(cfg_dir_use)
     utils.create_dir(run_dir_use)
 
     ########### UNCOMPRESS RINEX
-    if 'crx' in os.path.basename(rnx_path):
+    rnx_bnm = os.path.basename(rnx_path) 
+    if 'crx' in rnx_bnm or 'd.Z' in rnx_bnm or 'd.gz' in rnx_bnm:  
         rnx_path_tmp = shutil.copy(rnx_path,tmp_dir_use)
         rnx_path_use = str(hatanaka.decompress_on_disk(rnx_path_tmp,
                                                        delete=True))
@@ -105,7 +108,12 @@ def pride_pppar_runner_mono(rnx_path,
 
     ########### DOWNLOAD PRODUCTS
     if False:
-        for data_center in ('ign','whu'):
+        if 'MGX' in prod_ac_name:
+            mgex=True
+        else:
+            mgex=False
+
+        for data_center in ('ign',):   ##'whu'
             dl_prods_fct = operational.download_products_gnss
             prods=dl_prods_fct(prod_parent_dir,
                                srt,srt,
@@ -116,9 +124,9 @@ def pride_pppar_runner_mono(rnx_path,
                                remove_patterns=("ULA",),
                                archtype ='year/doy',
                                new_name_conv = True,
-                               parallel_download=4,
+                               parallel_download=1,
                                archive_center=data_center,
-                               mgex=True,
+                               mgex=mgex,
                                repro=0,
                                sorted_mode=False,
                                return_also_uncompressed_files=True,
@@ -136,10 +144,10 @@ def pride_pppar_runner_mono(rnx_path,
         """
     
         prod_lis =  operational.find_IGS_products_files(prod_parent_dir,
-                                                    [prod],
-                                                    [prod_ac_name], 
-                                                    srt,
-                                                    severe=False)
+                                                        [prod],
+                                                        [prod_ac_name], 
+                                                        srt,
+                                                        severe=False)
         if len(prod_lis) == 0:
             print("WARN: not prod found")
             prod_out = "Default"
@@ -217,14 +225,40 @@ if __name__ == "__main__":
     cfg_template_path = "/home/ovsgnss/.PRIDE_PPPAR_BIN/config_template"
     rnx_path = '/scratch/calcgnss/temp_stuffs/2402_tests_PF_pride/SNEG/SNEG00REU_R_20232000000_01D_30S_MO.crx.gz' 
     prod_parent_dir = '/scratch/calcgnss/prods_gnss_pride-pppar/prods'  
+    #prod_ac_name = "GRG0OPSFIN"
+    #prod_ac_name = "COD0MGXFIN"
     prod_ac_name = "WUM0MGXFIN" 
     tmp_dir = "/scratch/calcgnss/pride-pppar_process/tmp" 
     cfg_dir = "/scratch/calcgnss/pride-pppar_process/cfg" 
     run_dir = "/scratch/calcgnss/pride-pppar_process/run" 
-    rnx_list = utils.find_recursive('/scratch/calcgnss/temp_stuffs/2402_tests_PF_pride/','*crx*')
-    multi_process = 1
+    #rnx_list = utils.find_recursive('/scratch/calcgnss/temp_stuffs/2402_tests_PF_pride/','*crx*')
+    rnx_list = utils.find_recursive('/vol/ovsg/acqui/GPSOVSG/rinex/2024'  ,'*psa1*d.Z*')
+    rnx_list = utils.find_recursive('/home/ovsgnss/050_DATA_GNSS/baiededix/OVPF/2024','*borg*d.Z*')
+    multi_process = 14
     
     kwargs_list = []
+
+    dl_prods_fct = operational.download_products_gnss
+    prods=dl_prods_fct(prod_parent_dir,
+                       dt.datetime(2023,6,1),
+                       dt.datetime(2023,7,31),
+                       AC_names = (prod_ac_name,),
+                       prod_types = ("sp3","clk",
+                                     "bia","obx",
+                                     "erp"),
+                       remove_patterns=("ULA",),
+                       archtype ='year/doy',
+                       new_name_conv = True,
+                       parallel_download=1,
+                       archive_center='ign',
+                       mgex=True, 
+                       repro=0,
+                       sorted_mode=False,
+                       return_also_uncompressed_files=True,
+                       ftp_download=False,
+                       dow_manu=False)
+
+
     
     for rnx_path in rnx_list:
         kwargs = {'rnx_path' :rnx_path,

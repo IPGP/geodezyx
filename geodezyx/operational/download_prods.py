@@ -211,7 +211,8 @@ def download_products_gnss(archive_dir,
     Dates_list = conv.dt_range(startdate,enddate)
 
     wwww_dir_previous = None
-    pool = mp.Pool(processes=parallel_download) 
+    if parallel_download > 1:
+        pool = mp.Pool(processes=parallel_download) 
 
     ## internal fct to create the FTP objects
     
@@ -413,7 +414,8 @@ def download_products_gnss(archive_dir,
         if os.path.isfile(pot_localfile):
             Localfiles_lis.append(pot_localfile)
     
-    pool.close()
+    if parallel_download > 1:
+        pool.close()
     return Localfiles_lis
 
 
