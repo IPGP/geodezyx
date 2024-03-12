@@ -144,19 +144,20 @@ def ECI_2_kepler_elts(pos,vel,rad2deg=True,
 
     #### case for one point only (bring it back to a scalar)
     sqzflt = lambda x: np.float64(x.squeeze())
-    nu = sqzflt(nu)
+
+    a = sqzflt(a)
     ecc = sqzflt(ecc)
+    i = sqzflt(i)
     o_lan = sqzflt(o_lan)
     o_peri = sqzflt(o_peri)
-    a = sqzflt(a)
-    i = sqzflt(i)
+    m = sqzflt(m)
+
     
     if rad2deg:
         i=np.rad2deg(i)
         o_peri=np.rad2deg(o_peri)
         o_lan=np.rad2deg(o_lan)
         m=np.rad2deg(m)
-        print("AAAAAAAAAAAAA")
         
     return a,ecc,i,o_peri,o_lan,m
 
