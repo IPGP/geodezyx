@@ -35,82 +35,130 @@ log = logging.getLogger(__name__)
 ##########  END IMPORT  ##########
 
 
-def ECI_2_kepler_elts(P,V,rad2deg=True,
+def ECI_2_kepler_elts(pos,vel,rad2deg=True,
                       mu=3.9860044188e14):
     """
     Convert ECI coordinates > Kepler's elements
 
     Parameters
     ----------
-    P : array
-        Position.
-    V : array
-        Velocity.
+    pos : array
+        Position in m. 
+        Can be a 3-element (x,y,z) array (simple point) 
+        or a (N,3)-shaped numpy array
+    vel : array
+        Velocity in m/s.
+        Can be a 3-element (vx,vy,vz) array (simple point) 
+        or a (N,3)-shaped numpy array
     rad2deg : bool, optional
-        canvert Keplerian's angles (anomalies) to deg. The default is True.
+        convert Keplerian's angles (anomalies) to deg. The default is True.
     mu : float, optional
         Standard gravitational parameter. The default is 3.9860044188e14.
 
     Returns
     -------
-    a,ecc,i,omega_periarg,omega_LAN,m : floats
+    a,ecc,i,o_peri,o_lan,n,m : floats
         Kepler's elements.
+        * a : semi-major axis
+        * ecc : orbit eccentricity
+        * i : orbit inclination
+        * o_peri : argument of periapsis ω
+        * o_lan : longitude of the ascending node Ω
+        * n : true anomaly ν
+        * m : mean anomaly m
+
+    Note
+    ----
+    Be sure your input is in ECI (SP3 are in ECEF for instance)
+    use conv.ECEF2ECI() if necessary    
+    
+    Source
+    ------
+    https://downloads.rene-schwarz.com/download/M002-Cartesian_State_Vectors_to_Keplerian_Orbit_Elements.pdf
+
     """
-    Pnorm = np.linalg.norm(P)
-    Vnorm = np.linalg.norm(V)
+    p = np.array(pos)
+    v = np.array(vel)
     
-    ### orbital momentum vector H
-    H = np.cross(P,V)
-    Hnorm = np.linalg.norm(H)
+    #### case for one point only
+    if len(p.shape) < 2:
+        p = np.expand_dims(p,axis=-1).T
+    if len(v.shape) < 2:
+        v = np.expand_dims(v,axis=-1).T
+        
+    pnorm = np.linalg.norm(p,axis=1)
+    vnorm = np.linalg.norm(v,axis=1)
     
-    ### eccentricity vector Ecc
-    Ecc = (np.cross(V,H)/mu) - (P/Pnorm)
-    Ecc_norm = np.linalg.norm(Ecc)
+    ### orbital momentum vector h
+    h = np.cross(p,v)
+    hnorm = np.linalg.norm(h,axis=1)
+    
+    ### eccentricity vector eccvec & orbit eccentricity ecc
+    eccvec = (np.cross(v,h)/mu) - (p/np.expand_dims(pnorm,axis=-1))
+    ecc = np.linalg.norm(eccvec,axis=1)
     
     ### true anomaly ν (nu)
-    N = np.cross(np.array([0,0,1]),H)
-    Nnorm = np.linalg.norm(N)
-    if np.dot(P,V) >= 0:
-        nu = np.arccos(np.dot(Ecc,P)/(Ecc_norm*Pnorm))
-    else:
-        nu = 2*np.pi - np.arccos(np.dot(Ecc,P)/(Ecc_norm*Pnorm))        
+    n = np.cross(np.array([0,0,1]),h)
+    nnorm = np.linalg.norm(n,axis=1)
+    
+    dot_pv_sup0 = np.einsum('ij,ij->i',p,v) >= 0
+    nu_sup0 = np.arccos(np.einsum('ij,ij->i',eccvec,p)/(ecc*pnorm))
+    nu_inf0 = 2*np.pi - np.arccos(np.einsum('ij,ij->i',eccvec,p)/(ecc*pnorm))
+        
+    nu = np.zeros(len(dot_pv_sup0))
+    nu = nu + nu_sup0 * dot_pv_sup0
+    nu = nu + nu_inf0 * np.logical_not(dot_pv_sup0)
     
     ### orbit inclination i
-    i = np.arccos(H[2]/Hnorm)
-    
-    ### orbit eccentricity ecc
-    ecc = np.linalg.norm(Ecc)
-    
+    i = np.arccos(h[:,2]/hnorm)
+
     ### eccentric anomaly E (called e here)
     #e1 = 2*np.arctan(np.tan(nu/2)/np.sqrt((1+ecc)/(1-ecc)))
     e2 = 2*np.arctan2(np.tan(nu/2),np.sqrt((1+ecc)/(1-ecc)))
     e=e2
     
-    ### longitude of the ascending node Ω (omega_LAN)
-    if N[1] >= 0:
-        omega_LAN = np.arccos(N[0]/Nnorm)
-    else:
-        omega_LAN = 2*np.pi - np.arccos(N[0]/Nnorm)
+    ### longitude of the ascending node Ω (o_lan)
+    n1_sup0 = n[:,1] >= 0
+        
+    omega_lan_sup0 = np.arccos(n[:,0]/nnorm)
+    omega_lan_inf0 = 2*np.pi - np.arccos(n[:,0]/nnorm)
     
-    ### argument of periapsis ω (omega_periarg)
-    if Ecc[2] >= 0:
-        omega_periarg = np.arccos((np.dot(N,Ecc))/(Nnorm * Ecc_norm))
-    else:
-        omega_periarg = 2*np.pi - np.arccos((np.dot(N,Ecc))/(Nnorm * Ecc_norm))
+    o_lan = np.zeros(len(n1_sup0))
+    o_lan = o_lan + omega_lan_sup0 * n1_sup0
+    o_lan = o_lan + omega_lan_inf0 * np.logical_not(n1_sup0)
+    
+    ### argument of periapsis ω (o_peri)
+    eccvec2_sup0 = eccvec[:,2] >= 0
+    o_peri_sup0 = np.arccos((np.einsum('ij,ij->i',n, eccvec))/(nnorm * ecc))
+    o_peri_inf0 = 2 * np.pi - np.arccos((np.einsum('ij,ij->i', n, eccvec)) / (nnorm * ecc))
+    
+    o_peri = np.zeros(len(eccvec2_sup0))
+    o_peri = o_peri + o_peri_sup0 * eccvec2_sup0
+    o_peri = o_peri + o_peri_inf0 * np.logical_not(eccvec2_sup0)
     
     ### mean anomaly m, (Kepler’s Equation)
     m = e - ecc*np.sin(e)
     
     ### semi-major axis a
-    a = ((2/Pnorm) - (Vnorm**2 / mu))**-1
+    a = ((2/pnorm) - (vnorm**2 / mu))**-1
 
+    #### case for one point only (bring it back to a scalar)
+    sqzflt = lambda x: np.float64(x.squeeze())
+    nu = sqzflt(nu)
+    ecc = sqzflt(ecc)
+    o_lan = sqzflt(o_lan)
+    o_peri = sqzflt(o_peri)
+    a = sqzflt(a)
+    i = sqzflt(i)
+    
     if rad2deg:
         i=np.rad2deg(i)
-        omega_periarg=np.rad2deg(omega_periarg)
-        omega_LAN=np.rad2deg(omega_LAN)
+        o_peri=np.rad2deg(o_peri)
+        o_lan=np.rad2deg(o_lan)
         m=np.rad2deg(m)
-
-    return a,ecc,i,omega_periarg,omega_LAN,m
+        print("AAAAAAAAAAAAA")
+        
+    return a,ecc,i,o_peri,o_lan,m
 
 
 

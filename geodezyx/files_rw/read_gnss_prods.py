@@ -238,7 +238,8 @@ def clk_diff(file_1,file_2):
 def read_sp3(file_path_in,returns_pandas = True, name = '',
              epoch_as_pd_index = False,km_conv_coef=1,
              skip_null_epoch=True,
-             new_col_names=True):
+             new_col_names=True,
+             pos_vel_col=False):
     """
     Read a SP3 file (GNSS Orbits standard file) and return X,Y,Z coordinates
     for each satellite and for each epoch
@@ -279,6 +280,10 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
     epoch_stk ,  Xstk , Ystk , Zstk , Clkstk : lists
         if returns_pandas == False
+        
+    Note
+    ----
+    Remembers that SP3 coordinates are given in ITRF, i.e. an ECEF system
 
     """
     
@@ -309,15 +314,20 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     # if returns_pandas:
     #     df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
     #                                        'x','y','z','clk','AC'])
-
+    
+    if pos_vel_col:
+        pv_col = ['pv']
+    else:
+        pv_col = []
+        
     if not new_col_names:
         log.warning("you use old column names (not conventional) set new_col_names as True and adapt your code")
         ### DeprecationWarning
         col_names=['epoch','sat','const','sv',
-                   'type','x','y','z','clk','AC']
+                   'type','x','y','z','clk','AC'] + pv_col
     else:
         col_names=['epoch','prn','sys','prni',
-                   'rec','x','y','z','clk','ac']   
+                   'rec','x','y','z','clk','ac'] + pv_col
 
     #### read the Header as a 1st check
     Header = read_sp3_header(Lines,AC_name)
@@ -349,6 +359,11 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
             
             sat_sv  = int(l[2:4].strip())
             sat_sat = l[1:4].strip()
+            
+            if pv_col:
+                pv = [l[0]]
+            else:
+                pv = []
 	    
             # QnD mode, must be imprved to detect nonfloat values
             if '*' in l[4:18] or not (l[4:18] and l[4:18].strip()):
@@ -371,7 +386,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
             typ = l[0]
 
             if returns_pandas:
-                line_data = [epoc,sat_sat,sat_nat,sat_sv,typ,X,Y,Z,Clk,AC_name]
+                line_data = [epoc,sat_sat,sat_nat,sat_sv,typ,X,Y,Z,Clk,AC_name] + pv
                 data_stk.append(line_data)
             else:
                 epoch_stk.append(epoc)
