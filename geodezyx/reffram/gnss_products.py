@@ -30,6 +30,8 @@ import os
 import pandas as pd
 import re
 
+import pyorbital.astronomy
+
 ### disabled and imported directly in the needed fct
 ## import geodezyx.reffram.sofa18 as sofa
 
@@ -38,6 +40,7 @@ from geodezyx import conv
 from geodezyx import files_rw
 from geodezyx import stats
 from geodezyx import utils
+from geodezyx.reffram import kepler_gzyx
 
 #### Import the logger
 import logging
@@ -1061,6 +1064,225 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
 #                                                                                     
        
 ### Orbit DataFrames   
+
+
+def DFOrb_velocity_calc(DFOrb_in,
+                        drop_nan=False):
+    """
+    Compute the velocity of satellites from a DFOrb dataframe
+    (differentiate the position)
+
+    Parameters
+    ----------
+    DFOrb_in : Pandas DataFrame
+        an Orbit DataFrame.
+    drop_nan : bool, optional
+        Remove the nan values 
+        (the first ones, since it is a numerical differentiation).
+        The default is False.
+        It is recommended to keep the NaN values, thus the output will keep
+        same size and index as input
+
+    Returns
+    -------
+    df_vel : Pandas DataFrame
+        an Orbit DataFrame with velocities (vx, vy ,vz columns).
+
+    """
+    
+    dfgrp = DFOrb_in.groupby('prn')
+    
+    dfprn_stk = []
+    for prn,dfprn in dfgrp:    
+        for coord in ['x','y','z']:
+            dcoord = dfprn[coord].diff()
+            dtime = (np.float64(dfprn['epoch'].diff()) * 10**-9) 
+            #timedelta in ns per defalut
+            dfprn['v' + coord] = dcoord / dtime 
+        dfprn_stk.append(dfprn)
+            
+    df_vel = pd.concat(dfprn_stk)
+    
+    df_vel.sort_index(inplace=True)
+    
+    if drop_nan:
+        df_vel.dropna(inplace=True)
+    
+    return df_vel 
+
+
+def beta_sun_ra_dec(sun_dec,sun_ra,sat_i,sat_o_lan):
+    """
+    Compute beta angle based on Sun's right ascension and declination
+    Angles are in radians
+
+    Parameters
+    ----------
+    sun_dec : float
+        Sun's declination.
+    sun_ra : float
+        Sun's right ascension.
+    sat_i : float
+        Satellite's inclination.
+    sat_o_lan : float
+        Satellite's Longitude of the ascending node.
+
+    Returns
+    -------
+    beta : float
+        beta angle (in radians).
+        
+    Source
+    ------
+    `Satellites: de Kepler au GPS`, Michel Capderou (2012)
+    
+    simpler formula here:
+        https://www.fxsolver.com/browse/formulas/Beta+Angle
+        
+    
+    Note
+    ----
+    you can use ``pyorbital.astronomy.sun_ra_dec()`` to compute ``sun_dec``
+    and ``sun_ra``
+    
+    If so, Sun's right ascension and declination computation polynoms are 
+    based on: `Astronomical algorithms`, Jean Meeus (1st edition, 1991)
+    """
+    beta = np.arcsin(np.cos(sun_dec)*np.sin(sat_i)*np.sin(sat_o_lan-sun_ra)+
+                     np.sin(sun_dec)*np.cos(sat_i))
+    return beta
+
+def beta_sun_eclip_long(sun_ecl_long,sat_o_lan,sat_i,earth_i):
+    """
+    Compute beta angle based on Sun's Ecliptic longitude
+    Angles are in radians
+
+    Parameters
+    ----------
+    sun_ecl_long : float
+        Sun's Ecliptic longitude.
+    sat_i : float
+        Satellite's inclination.
+    sat_o_lan : float
+        Satellite's Longitude of the ascending node.
+    earth_i : float
+        Earth's inclination.
+
+    Returns
+    -------
+    beta : float
+        beta angle (in radians).
+        
+    Source
+    ------
+    `Calculation of the Eclipse Factor for Elliptical Satellite Orbits` NASA (1962)
+    https://ntrs.nasa.gov/citations/19630000622
+    `Computation of Eclipse Time for Low-Earth Orbiting Small Satellites` Sumanth R M (2019)
+    https://commons.erau.edu/ijaaa/vol6/iss5/15/
+
+    Simpler formula:
+        https://en.wikipedia.org/wiki/Beta_angle
+    
+    Note
+    ----
+    you can use ``pyorbital.astronomy.sun_ecliptic_longitude()``
+    to compute ``sun_ecl_long``
+    
+    If so, Sun's right ascension and declination computation polynoms are 
+    based on: `Astronomical algorithms`, Jean Meeus (1st edition, 1991)
+
+    """
+    p1 = np.cos(sun_ecl_long)*np.sin(sat_o_lan)*np.sin(sat_i)
+    p2 = np.sin(sun_ecl_long)*np.cos(earth_i)*np.cos(sat_o_lan)*np.sin(sat_i)
+    p3 = np.sin(sun_ecl_long)*np.sin(earth_i)*np.cos(sat_i)
+    beta = np.arcsin(p1-p2+p3)
+    return beta
+
+def beta_angle_calc(DFOrb_in,
+                    calc_beta_sun_ra_dec=True,
+                    calc_beta_sun_eclip_long=True,
+                    beta_rad2deg=True):
+    """
+    Compute beta angle for GNSS satellite's orbits stored in an orbit 
+    DataFrame
+    
+
+    Parameters
+    ----------
+    DFOrb_in : Pandas DataFrame
+        an Orbit DataFrame (ECEF frame).
+    calc_beta_sun_ra_dec : bool, optional
+        compute beta angle with Sun's right ascension and declination.
+        The default is True.
+    calc_beta_sun_eclip_long : bool, optional
+        compute beta angle with Sun's Ecliptic longitude.
+        The default is True.
+    beta_rad2deg : bool, optional
+        convert beta angle to degrees. The default is True.
+
+    Returns
+    -------
+    df_out : Pandas DataFrame
+        DFOrb_in with a new 'beta' column.
+    df_wrk : Pandas DataFrame
+        intermediate values dataframe for debug.
+        here, coordinates are in ECI frame
+    """
+    
+    #### convert in ECI
+    df_eci = DFOrb_in.copy()
+    df_eci[['x','y','z']] = conv.ECEF2ECI(DFOrb_in[['x','y','z']].values,
+                                          DFOrb_in['epoch'].values)
+    
+    #### compute velocity
+    df_wrk = DFOrb_velocity_calc(df_eci,drop_nan=False)
+    ##keep drop nan False, thus the DF will keep same size and index as input
+    
+    #### compute Kepler's parameters
+    p = df_wrk[['x','y','z']].values * 1000
+    v = df_wrk[['vx','vy','vz']].values * 1000
+    
+    kep_col = ['a','ecc','i','o_peri','o_lan','m']
+    kep_params = kepler_gzyx.ECI_2_kepler_elts(p,v,rad2deg=False)
+    df_wrk[kep_col] = np.column_stack(kep_params)
+    ######### COMPUTE BETA
+    
+    #### cosmetic changes
+    if calc_beta_sun_ra_dec and calc_beta_sun_eclip_long:
+        b1="1"
+        b2="2"
+    else:
+        b1=""
+        b2=""    
+    
+    if beta_rad2deg:
+        r2dfct = np.rad2deg
+    else:
+        r2dfct = lambda x:x 
+    
+    ##### Beta computed based on sun declination / right ascension
+    if calc_beta_sun_ra_dec:
+        ##### sun_ra_dec output in RADIANS
+        df_wrk[['sun_ra','sun_dec']] = np.column_stack(pyorbital.astronomy.sun_ra_dec(df_wrk['epoch']))
+        df_wrk['beta'+b1] = beta_sun_ra_dec(df_wrk['sun_dec'], 
+                                            df_wrk['sun_ra'],
+                                            df_wrk['i'],
+                                            df_wrk['o_lan']).apply(r2dfct)
+        
+    ##### Beta computed based on Ecliptic longitude of the sun  
+    if calc_beta_sun_eclip_long:
+        ### sun_ecliptic_longitude output in RADIANS but NO MODULO !!!
+        df_wrk['sun_ecl_long'] = np.mod(pyorbital.astronomy.sun_ecliptic_longitude(df_wrk['epoch']),np.pi*2)
+        df_wrk['beta'+b2] = beta_sun_eclip_long(df_wrk['sun_ecl_long'],
+                                                df_wrk['o_lan'],
+                                                df_wrk['i'],
+                                                np.deg2rad(23.45)).apply(r2dfct)
+    df_out = DFOrb_in.copy()
+    df_out['beta'] = df_wrk['beta'+b1]
+
+    return df_out, df_wrk
+
+
 
 def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
                                append_to_input_DF = False,

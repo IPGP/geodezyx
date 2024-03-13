@@ -3,7 +3,7 @@
 """
 Created on Tue Jul  5 15:48:26 2022
 
-@author: psakicki
+@author: psakic
 """
 
 ########## BEGIN IMPORT ##########

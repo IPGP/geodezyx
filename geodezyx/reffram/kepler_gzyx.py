@@ -35,9 +35,141 @@ log = logging.getLogger(__name__)
 ##########  END IMPORT  ##########
 
 
-def ECI_2_kepler_elts(P,V,rad2deg=True,
+def ECI_2_kepler_elts(pos,vel,rad2deg=True,
                       mu=3.9860044188e14):
     """
+    Convert ECI coordinates > Kepler's elements
+
+    Parameters
+    ----------
+    pos : array
+        Position in m. 
+        Can be a 3-element (x,y,z) array (simple point) 
+        or a (N,3)-shaped numpy array
+    vel : array
+        Velocity in m/s.
+        Can be a 3-element (vx,vy,vz) array (simple point) 
+        or a (N,3)-shaped numpy array
+    rad2deg : bool, optional
+        convert Keplerian's angles (anomalies) to deg. The default is True.
+    mu : float, optional
+        Standard gravitational parameter. The default is 3.9860044188e14.
+
+    Returns
+    -------
+    a,ecc,i,o_peri,o_lan,m: floats
+        Kepler's elements:  
+            
+        * a : semi-major axis
+        * ecc : orbit eccentricity
+        * i : orbit inclination
+        * o_peri : argument of periapsis ω
+        * o_lan : longitude of the ascending node Ω
+        * m : mean anomaly m
+
+    Note
+    ----
+    Be sure your input is in ECI (SP3 are in ECEF for instance).  
+
+    If neeeded, use ``conv.ECEF2ECI()`` (gross results) 
+    or ``reffram.OrbDF_crf2trf(inv_trf2crf=True)`` (precise results)
+    
+    You can get the velocity with ``reffram.DFOrb_velocity_calc()``
+    
+    Source
+    ------
+    https://downloads.rene-schwarz.com/download/M002-Cartesian_State_Vectors_to_Keplerian_Orbit_Elements.pdf
+
+    """
+    p = np.array(pos)
+    v = np.array(vel)
+    
+    #### case for one point only
+    if len(p.shape) < 2:
+        p = np.expand_dims(p,axis=-1).T
+    if len(v.shape) < 2:
+        v = np.expand_dims(v,axis=-1).T
+        
+    pnorm = np.linalg.norm(p,axis=1)
+    vnorm = np.linalg.norm(v,axis=1)
+    
+    ### orbital momentum vector h
+    h = np.cross(p,v)
+    hnorm = np.linalg.norm(h,axis=1)
+    
+    ### eccentricity vector eccvec & orbit eccentricity ecc
+    eccvec = (np.cross(v,h)/mu) - (p/np.expand_dims(pnorm,axis=-1))
+    ecc = np.linalg.norm(eccvec,axis=1)
+    
+    ### true anomaly ν (nu)
+    n = np.cross(np.array([0,0,1]),h)
+    nnorm = np.linalg.norm(n,axis=1)
+    
+    dot_pv_sup0 = np.einsum('ij,ij->i',p,v) >= 0
+    nu_sup0 = np.arccos(np.einsum('ij,ij->i',eccvec,p)/(ecc*pnorm))
+    nu_inf0 = 2*np.pi - nu_sup0
+        
+    nu = np.zeros(len(dot_pv_sup0))
+    nu = nu + nu_sup0 * dot_pv_sup0
+    nu = nu + nu_inf0 * np.logical_not(dot_pv_sup0)
+    
+    ### orbit inclination i
+    i = np.arccos(h[:,2]/hnorm)
+
+    ### eccentric anomaly E (called e here)
+    #e1 = 2*np.arctan(np.tan(nu/2)/np.sqrt((1+ecc)/(1-ecc)))
+    e2 = 2*np.arctan2(np.tan(nu/2),np.sqrt((1+ecc)/(1-ecc)))
+    e=e2
+    
+    ### longitude of the ascending node Ω (o_lan)
+    n1_sup0 = n[:,1] >= 0
+        
+    omega_lan_sup0 = np.arccos(n[:,0]/nnorm)
+    omega_lan_inf0 = 2*np.pi - omega_lan_sup0
+    
+    o_lan = np.zeros(len(n1_sup0))
+    o_lan = o_lan + omega_lan_sup0 * n1_sup0
+    o_lan = o_lan + omega_lan_inf0 * np.logical_not(n1_sup0)
+    
+    ### argument of periapsis ω (o_peri)
+    eccvec2_sup0 = eccvec[:,2] >= 0
+    o_peri_sup0 = np.arccos((np.einsum('ij,ij->i',n, eccvec))/(ecc*nnorm))
+    o_peri_inf0 = 2 * np.pi - o_peri_sup0
+    
+    o_peri = np.zeros(len(eccvec2_sup0))
+    o_peri = o_peri + o_peri_sup0 * eccvec2_sup0
+    o_peri = o_peri + o_peri_inf0 * np.logical_not(eccvec2_sup0)
+    
+    ### mean anomaly m, (Kepler’s Equation)
+    m = e - ecc*np.sin(e)
+    
+    ### semi-major axis a
+    a = ((2/pnorm) - (vnorm**2 / mu))**-1
+
+    #### case for one point only (bring it back to a scalar)
+    sqzflt = lambda x: np.float64(x.squeeze())
+
+    a = sqzflt(a)
+    ecc = sqzflt(ecc)
+    i = sqzflt(i)
+    o_lan = sqzflt(o_lan)
+    o_peri = sqzflt(o_peri)
+    m = sqzflt(m)
+
+    if rad2deg:
+        i=np.rad2deg(i)
+        o_peri=np.rad2deg(o_peri)
+        o_lan=np.rad2deg(o_lan)
+        m=np.rad2deg(m)
+        
+    #### o_peri and m seems to be inverted, must be investigated!!!
+    return a,ecc,i,o_peri,o_lan,m
+
+def ECI_2_kepler_elts_mono(P,V,rad2deg=True,
+                           mu=3.9860044188e14):
+    """
+    **Kept for debug purposes, use** ``ECI_2_kepler_elts(pos, vel)`` **instead**
+    
     Convert ECI coordinates > Kepler's elements
 
     Parameters
@@ -56,6 +188,7 @@ def ECI_2_kepler_elts(P,V,rad2deg=True,
     a,ecc,i,omega_periarg,omega_LAN,m : floats
         Kepler's elements.
     """
+    log.warning('use this function for debug purposes only, use ECI_2_kepler_elts instead')
     Pnorm = np.linalg.norm(P)
     Vnorm = np.linalg.norm(V)
     
@@ -111,8 +244,6 @@ def ECI_2_kepler_elts(P,V,rad2deg=True,
         m=np.rad2deg(m)
 
     return a,ecc,i,omega_periarg,omega_LAN,m
-
-
 
 def extrapolate_orbit_kepler(P,V,t,t0,mu=3.9860044188e14):
     orbit = TwoBodyOrbit("", mu=mu)   # create an instance

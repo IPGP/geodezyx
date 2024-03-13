@@ -23,7 +23,6 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 #### External modules
 import numpy as np
 import scipy
-from pyorbital import astronomy
 import re
 
 #### geodeZYX modules
