@@ -1111,7 +1111,7 @@ def DFOrb_velocity_calc(DFOrb_in,
     return df_vel 
 
 
-def _beta_angle(sun_dec,sun_ra,sat_i,sat_o_lan):
+def beta_sun_ra_dec(sun_dec,sun_ra,sat_i,sat_o_lan):
     """
     Compute beta angle based on Sun's right ascension and declination
     Angles are in radians
@@ -1152,7 +1152,7 @@ def _beta_angle(sun_dec,sun_ra,sat_i,sat_o_lan):
                      np.sin(sun_dec)*np.cos(sat_i))
     return beta
 
-def _beta_angle_alter(sun_ecl_long,sat_o_lan,sat_i,earth_i):
+def beta_sun_eclip_long(sun_ecl_long,sat_o_lan,sat_i,earth_i):
     """
     Compute beta angle based on Sun's Ecliptic longitude
     Angles are in radians
@@ -1199,8 +1199,8 @@ def _beta_angle_alter(sun_ecl_long,sat_o_lan,sat_i,earth_i):
     return beta
 
 def beta_angle_calc(DFOrb_in,
-                    beta_sun_ra_dec=True,
-                    beta_sun_eclip_long=True,
+                    calc_beta_sun_ra_dec=True,
+                    calc_beta_sun_eclip_long=True,
                     beta_rad2deg=True):
     """
     Compute beta angle for GNSS satellite's orbits stored in an orbit 
@@ -1211,10 +1211,10 @@ def beta_angle_calc(DFOrb_in,
     ----------
     DFOrb_in : Pandas DataFrame
         an Orbit DataFrame (ECEF frame).
-    beta_sun_ra_dec : bool, optional
+    calc_beta_sun_ra_dec : bool, optional
         compute beta angle with Sun's right ascension and declination.
         The default is True.
-    beta_sun_eclip_long : bool, optional
+    calc_beta_sun_eclip_long : bool, optional
         compute beta angle with Sun's Ecliptic longitude.
         The default is True.
     beta_rad2deg : bool, optional
@@ -1248,7 +1248,7 @@ def beta_angle_calc(DFOrb_in,
     ######### COMPUTE BETA
     
     #### cosmetic changes
-    if beta_sun_ra_dec and beta_sun_eclip_long:
+    if calc_beta_sun_ra_dec and calc_beta_sun_eclip_long:
         b1="1"
         b2="2"
     else:
@@ -1261,22 +1261,22 @@ def beta_angle_calc(DFOrb_in,
         r2dfct = lambda x:x 
     
     ##### Beta computed based on sun declination / right ascension
-    if beta_sun_ra_dec:
+    if calc_beta_sun_ra_dec:
         ##### sun_ra_dec output in RADIANS
         df_wrk[['sun_ra','sun_dec']] = np.column_stack(pyorbital.astronomy.sun_ra_dec(df_wrk['epoch']))
-        df_wrk['beta'+b1] = _beta_angle(df_wrk['sun_dec'], 
-                                        df_wrk['sun_ra'],
-                                        df_wrk['i'],
-                                        df_wrk['o_lan']).apply(r2dfct)
+        df_wrk['beta'+b1] = beta_sun_ra_dec(df_wrk['sun_dec'], 
+                                            df_wrk['sun_ra'],
+                                            df_wrk['i'],
+                                            df_wrk['o_lan']).apply(r2dfct)
         
     ##### Beta computed based on Ecliptic longitude of the sun  
-    if beta_sun_eclip_long:
+    if calc_beta_sun_eclip_long:
         ### sun_ecliptic_longitude output in RADIANS but NO MODULO !!!
         df_wrk['sun_ecl_long'] = np.mod(pyorbital.astronomy.sun_ecliptic_longitude(df_wrk['epoch']),np.pi*2)
-        df_wrk['beta'+b2] = _beta_angle_alter(df_wrk['sun_ecl_long'],
-                                              df_wrk['o_lan'],
-                                              df_wrk['i'],
-                                              np.deg2rad(23.45)).apply(r2dfct)
+        df_wrk['beta'+b2] = beta_sun_eclip_long(df_wrk['sun_ecl_long'],
+                                                df_wrk['o_lan'],
+                                                df_wrk['i'],
+                                                np.deg2rad(23.45)).apply(r2dfct)
     df_out = DFOrb_in.copy()
     df_out['beta'] = df_wrk['beta'+b1]
 
