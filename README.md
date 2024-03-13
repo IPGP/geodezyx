@@ -2,7 +2,7 @@
 
 # GeodeZYX Toolbox
 
-**Version 4.4.1 / 2023-02-08**, README Revision: 2024-02-08
+**Version 4.4.1 / 2024-02-08**, README Revision: 2024-03-12
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
@@ -73,7 +73,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ## Changelog
 
-### v4.4.1, 2023-02-08
+### v4.4.1, 2024-02-08
   * The GitHub repository has now been moved under the IPGP organization.
     * It must be transparent for your clones but updating them is recommended \
       https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository  
