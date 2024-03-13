@@ -272,7 +272,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     new_col_names : bool
         A legacy option to have (or not) consistent column names with read_rinex
         Default is False
-
+        
     Returns
     -------
     df : Pandas DataFrame
@@ -283,7 +283,13 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
         
     Note
     ----
-    Remembers that SP3 coordinates are given in ITRF, i.e. an ECEF system
+    SP3 coordinates are usually given in ITRF, i.e. an ECEF system
+    
+    If the SP3 contains velocity records, this option adds a 'pv' column
+    containing 'P' for position or 'V' for velocity.
+    
+    Warning: velocity 'V' records are in dm/s per default, and the 
+    same km_conv_coef coefficient as the position records will be applied!
 
     """
     
@@ -314,20 +320,15 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     # if returns_pandas:
     #     df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
     #                                        'x','y','z','clk','AC'])
-    
-    if pos_vel_col:
-        pv_col = ['pv']
-    else:
-        pv_col = []
         
     if not new_col_names:
         log.warning("you use old column names (not conventional) set new_col_names as True and adapt your code")
         ### DeprecationWarning
         col_names=['epoch','sat','const','sv',
-                   'type','x','y','z','clk','AC'] + pv_col
+                   'type','x','y','z','clk','AC']
     else:
         col_names=['epoch','prn','sys','prni',
-                   'rec','x','y','z','clk','ac'] + pv_col
+                   'rec','x','y','z','clk','ac']
 
     #### read the Header as a 1st check
     Header = read_sp3_header(Lines,AC_name)
@@ -359,11 +360,6 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
             
             sat_sv  = int(l[2:4].strip())
             sat_sat = l[1:4].strip()
-            
-            if pv_col:
-                pv = [l[0]]
-            else:
-                pv = []
 	    
             # QnD mode, must be imprved to detect nonfloat values
             if '*' in l[4:18] or not (l[4:18] and l[4:18].strip()):
@@ -386,7 +382,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
             typ = l[0]
 
             if returns_pandas:
-                line_data = [epoc,sat_sat,sat_nat,sat_sv,typ,X,Y,Z,Clk,AC_name] + pv
+                line_data = [epoc,sat_sat,sat_nat,sat_sv,typ,X,Y,Z,Clk,AC_name]
                 data_stk.append(line_data)
             else:
                 epoch_stk.append(epoc)

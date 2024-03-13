@@ -1226,6 +1226,7 @@ def beta_angle_calc(DFOrb_in,
         DFOrb_in with a new 'beta' column.
     df_wrk : Pandas DataFrame
         intermediate values dataframe for debug.
+        here, coordinates are in ECI frame
     """
     
     #### convert in ECI
@@ -1242,8 +1243,8 @@ def beta_angle_calc(DFOrb_in,
     v = df_wrk[['vx','vy','vz']].values * 1000
     
     kep_col = ['a','ecc','i','o_peri','o_lan','m']
-    df_wrk[kep_col] = np.column_stack(kepler_gzyx.ECI_2_kepler_elts(p, v,
-                                                                    rad2deg=False))
+    kep_params = kepler_gzyx.ECI_2_kepler_elts(p,v,rad2deg=False)
+    df_wrk[kep_col] = np.column_stack(kep_params)
     ######### COMPUTE BETA
     
     #### cosmetic changes
