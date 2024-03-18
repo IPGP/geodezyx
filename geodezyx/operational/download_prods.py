@@ -323,7 +323,7 @@ def download_products_gnss(archive_dir,
                 
             ac_newnam   = ac_cur.upper()
 
-            doy_newnam  = "".join(reversed(conv.dt2doy_year(conv.gpstime2dt(wwww,dow))))
+            doy_newnam  = "".join(reversed(conv.dt2doy_year(dt_cur))) + str(dt_cur.hour).zfill(2)
             prod_newnam = prod_cur.upper()
             
             pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
