@@ -118,12 +118,13 @@ def pride_pppar_runner_mono(rnx_path,
     cfg_dir_use = os.path.join(cfg_dir, year, doy, site)
     run_dir_use = os.path.join(run_dir,mode,prod_ac_name, site) ### pdp3 add year/doy by itself
     run_dir_ope = os.path.join(run_dir_use, year, doy)
+    run_dir_fin = run_dir_ope + "_" + hour
     
     ########### CHECK IF 
-    logs_existing = utils.find_recursive(run_dir_ope, "log*" + site.lower())
+    logs_existing = utils.find_recursive(run_dir_fin, "log*" + site.lower())
     
     if len(logs_existing) > 0 and not force:
-        log.info("log exists for %s, skip",rnx_file)
+        log.info("log exists for %s in %s, skip",rnx_file,run_dir_fin)
         return None
     else:
         pass
@@ -159,14 +160,15 @@ def pride_pppar_runner_mono(rnx_path,
             add_hourly_file = False
             
         
-        prod_lis =  operational.find_IGS_products_files(prod_parent_dir,
-                                                        [prod],
-                                                        [prod_ac_name], 
-                                                        srt,
-                                                        severe=False,
-                                                        regex_old_naming=False,
-                                                        regex_igs_tfcc_naming=False,
-                                                        add_hourly_file=add_hourly_file)
+        find_prods =operational.find_IGS_products_files 
+        prod_lis =  find_prods(prod_parent_dir,
+                               [prod],
+                               [prod_ac_name], 
+                               srt,
+                               severe=False,
+                               regex_old_naming=False,
+                               regex_igs_tfcc_naming=False,
+                               add_hourly_file=add_hourly_file)
         if len(prod_lis) == 0:
             print("WARN: not prod found")
             prod_out = "Default"
@@ -237,8 +239,11 @@ def pride_pppar_runner_mono(rnx_path,
     os.chdir(run_dir_use) ## not run_dir_use, pdp3 will goes by itselft to yyyy/doy
 
     run_command(cmd)
+    
+    if force and os.path.isdir(run_dir_fin):
+        shutil.rmtree(run_dir_fin)
 
-    os.rename(run_dir_ope, run_dir_ope + "_" + hour)
+    os.rename(run_dir_ope, run_dir_fin)
     
     return None
 
