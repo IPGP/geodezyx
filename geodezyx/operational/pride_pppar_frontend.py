@@ -118,7 +118,7 @@ def pride_pppar_runner_mono(rnx_path,
     cfg_dir_use = os.path.join(cfg_dir, year, doy, site)
     run_dir_use = os.path.join(run_dir,mode,prod_ac_name, site) ### pdp3 add year/doy by itself
     run_dir_ope = os.path.join(run_dir_use, year, doy)
-    run_dir_fin = run_dir_ope + "_" + hour
+    run_dir_fin = run_dir_ope + "_" + hour.zfill(2)
     
     ########### CHECK IF 
     logs_existing = utils.find_recursive(run_dir_fin, "log*" + site.lower())
