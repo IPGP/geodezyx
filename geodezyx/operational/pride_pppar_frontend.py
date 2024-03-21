@@ -99,7 +99,8 @@ def pride_pppar_runner_mono(rnx_path,
                             options_dic={},
                             bin_dir=None,
                             force=False,
-                            dl_prods=False):
+                            dl_prods=False,
+                            default_fallback=False):
     
     if not bin_dir:
         bin_dir = os.path.join(os.environ['HOME'],'.PRIDE_PPPAR_BIN')
@@ -108,7 +109,7 @@ def pride_pppar_runner_mono(rnx_path,
 
     doy,year = conv.dt2doy_year(srt)
     rnx_file = os.path.basename(rnx_path)
-    hour = str(srt.hour) + str(srt.minute).zfill(2) 
+    hourmin_str = str(srt.hour).zfill(2) + str(srt.minute).zfill(2) 
     
     site = rnx_file[:4].upper()
     
@@ -118,7 +119,7 @@ def pride_pppar_runner_mono(rnx_path,
     cfg_dir_use = os.path.join(cfg_dir, year, doy, site)
     run_dir_use = os.path.join(run_dir,mode,prod_ac_name, site) ### pdp3 add year/doy by itself
     run_dir_ope = os.path.join(run_dir_use, year, doy)
-    run_dir_fin = run_dir_ope + "_" + hour.zfill(2)
+    run_dir_fin = run_dir_ope + "_" + hourmin_str
     
     ########### CHECK IF 
     logs_existing = utils.find_recursive(run_dir_fin, "log*" + site.lower())
@@ -153,35 +154,62 @@ def pride_pppar_runner_mono(rnx_path,
         find the right products for a given day, unzip it in the temp dir,
         return the path of the 2 files
         """
-        
-        if "ULT" in prod_ac_name:
-            add_hourly_file = True
+        if "ULT" in prod_ac_name: 
+            add_hourly_file = True 
         else:
             add_hourly_file = False
-            
+        
+        find_prod_epoch_ini = srt
+
+        smart_ultra=True
+        if "ULT" in prod_ac_name and smart_ultra:
+            delta_epoch_max = 3
+        else:
+            delta_epoch_max = 0
+
         
         find_prods =operational.find_IGS_products_files 
-        prod_lis =  find_prods(prod_parent_dir,
-                               [prod],
-                               [prod_ac_name], 
-                               srt,
-                               severe=False,
-                               regex_old_naming=False,
-                               regex_igs_tfcc_naming=False,
-                               add_hourly_file=add_hourly_file)
-        if len(prod_lis) == 0:
-            print("WARN: not prod found")
+        for i_d_epo in range(delta_epoch_max):
+
+            find_prod_epoch = find_prod_epoch_ini - dt.timedelta(seconds=3600*i_d_epo) 
+
+            if smart_ultra and i_d_epo > 0:
+                log.warn("no prods found for epoch %s, but we try %i hour before (%s)",
+                        find_prod_epoch_ini, i_d_epo, find_prod_epoch)
+
+
+            prod_lis =  find_prods(prod_parent_dir,
+                                   [prod],
+                                   [prod_ac_name], 
+                                   find_prod_epoch,
+                                   severe=False,
+                                   regex_old_naming=False,
+                                   regex_igs_tfcc_naming=False,
+                                   add_hourly_file=add_hourly_file)
+            if len(prod_lis) > 0:
+                break
+
+
+        if len(prod_lis) == 0 and default_fallback:
+            log.warning("no prod. %s found, fallback to Default in cfg file",prod)
             prod_out = "Default"
             prod_ori = "Default"
-            return prod_out, prod_ori
+        elif len(prod_lis) == 0 and not default_fallback:
+            log.warning("no prod. %s found, no fallback to Default set, aborting...",prod)
+            prod_out = None  
+            prod_ori = None 
+        elif len(prod_lis) == 1: ## normal case
+            prod_ori = prod_lis[0]
+            prod_out = files_rw.unzip_gz_Z(prod_ori,out_gzip_dir=tmp_dir_use)
         elif len(prod_lis) > 1:
-            print("WARN: several prod found, keep the 1st one")
-            print(prod_lis)
+            log.warning("several prod found, keep the 1st one")
+            log.warning(prod_lis)
+            prod_ori = prod_lis[0]
+            prod_out = files_rw.unzip_gz_Z(prod_ori,out_gzip_dir=tmp_dir_use)
         else:
+            #### this should never happend
             pass
         
-        prod_ori = prod_lis[0]
-        prod_out = files_rw.unzip_gz_Z(prod_ori,out_gzip_dir=tmp_dir_use)
         
         return prod_out, prod_ori
         
@@ -205,6 +233,12 @@ def pride_pppar_runner_mono(rnx_path,
     clk_path,_ = _find_unzip_prod("CLK")
     obx_path,_ = _find_unzip_prod("OBX")
     erp_path,_ = _find_unzip_prod("ERP")
+
+    if not any((sp3_path,bia_path,clk_path,obx_path,erp_path)) and not default_fallback:
+        log.error("a prod. at least is missing and no fallback to Default is set, abort")
+        return  None
+
+
     
     ## alias for basename
     bnm = os.path.basename
@@ -217,7 +251,7 @@ def pride_pppar_runner_mono(rnx_path,
     _change_value_in_cfg(cfg_lines, "Quaternions", bnm(obx_path))
     _change_value_in_cfg(cfg_lines, "Code/phase bias", bnm(bia_path))
     
-    date_prod_midfix = year + doy + str(srt.hour) + '00'
+    date_prod_midfix = year + doy + hourmin_str  
 
     cfg_name = cfg_prefix + '_' + prod_ac_name + '_' + date_prod_midfix
     cfg_path = os.path.join(cfg_dir_use,cfg_name)
