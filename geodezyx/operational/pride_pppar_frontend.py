@@ -56,8 +56,9 @@ def dl_brdc_pride_pppar(prod_parent_dir,date_list):
     brdc_lis = []    
     ######### BROADCAST
     date_list_uniq = [conv.round_dt(d,'1D','floor') for d in date_list]
-
-    for date in date_list:
+    date_list_uniq = sorted(list(set(date_list_uniq)))
+    
+    for date in date_list_uniq:
         brdc = operational.multi_downloader_rinex({'nav_rt' : ['BRDC']},
                                                   prod_parent_dir,
                                                   date, date,
