@@ -173,7 +173,7 @@ def pride_pppar_runner_mono(rnx_path,
     def _find_unzip_brdc():
         brdc_pattern = "*BRDC00WRD_S_" + year + doy + "*gz"
         prod_dir_year_doy = os.path.join(prod_parent_dir,year,doy)
-        brdc_lis = utils.find_recursive(prod_dir_year_doy, brdc_pattern)
+        brdc_lis = utils.find_recursive(prod_dir_year_doy, brdc_pattern.strip())
         
         if len(brdc_lis) == 1: ## normal case
             brdc_ori = brdc_lis[0]
