@@ -61,7 +61,7 @@ def dl_brdc_pride_pppar(prod_parent_dir,date_list):
                                                   date, date,
                                                   archtype = "year/doy",
                                                   parallel_download=1,
-                                                  force=True)
+                                                  force=False)
         brdc_lis.append(brdc)
     
     return brdc_lis        
@@ -126,7 +126,6 @@ def pride_pppar_runner_mono(rnx_path,
 
     doy,year = conv.dt2doy_year(srt)
     rnx_file = os.path.basename(rnx_path)
-    hour = str(srt.hour).zfill(2) + str(srt.minute).zfill(2) 
     hourmin_str = str(srt.hour).zfill(2) + str(srt.minute).zfill(2) 
     
     site = rnx_file[:4].upper()
@@ -177,12 +176,14 @@ def pride_pppar_runner_mono(rnx_path,
             brdc_ori = brdc_lis[0]
             brdc_out = files_rw.unzip_gz_Z(brdc_ori,out_gzip_dir=tmp_dir_use)
         elif len(brdc_lis) == 0:
+            brdc_ori = None
+            brdc_out = None
             log.warning("no brdc. found")
         elif len(brdc_lis) > 1:
             log.warning("several brdc found, keep the 1st one")
             log.warning(brdc_lis)
             brdc_ori = brdc_lis[0]
-            brdc_out = files_rw.unzip_gz_Z(prod_ori,out_gzip_dir=tmp_dir_use)
+            brdc_out = files_rw.unzip_gz_Z(brdc_ori,out_gzip_dir=tmp_dir_use)
         else:
             #### this should never happend
             pass
