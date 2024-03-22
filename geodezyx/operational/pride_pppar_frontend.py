@@ -171,7 +171,7 @@ def pride_pppar_runner_mono(rnx_path,
     ########### MOVE BRDC IN TMP (so pdp3 can handle it)
     ## we must also rename the BKG brdc to fake it as the IGS one
     def _find_unzip_brdc():
-        brdc_pattern = "	BRDC00WRD_S_" + year + doy + "*gz"
+        brdc_pattern = "	*BRDC00WRD_S_" + year + doy + "*gz"
         prod_dir_year_doy = os.path.join(prod_parent_dir,year,doy)
         brdc_lis = utils.find_recursive(prod_dir_year_doy, brdc_pattern)
         
