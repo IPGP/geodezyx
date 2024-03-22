@@ -282,12 +282,12 @@ def pride_pppar_runner_mono(rnx_path,
         cfg_lines = fil.readlines()
     
     ### find and unzip the right products
-    brdc_path,_ = _find_unzip_brdc()
     sp3_path,_ = _find_unzip_prod("SP3")
     bia_path,_ = _find_unzip_prod("BIA")
     clk_path,_ = _find_unzip_prod("CLK")
     obx_path,_ = _find_unzip_prod("OBX")
     erp_path,_ = _find_unzip_prod("ERP")
+    brdc_path,_ = _find_unzip_brdc()
 
     if not any((sp3_path,bia_path,clk_path,obx_path,erp_path)) and not default_fallback:
         log.error("a prod. at least is missing and no fallback to Default is set, abort")
