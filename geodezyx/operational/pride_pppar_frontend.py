@@ -176,7 +176,7 @@ def pride_pppar_runner_mono(rnx_path,
         if len(brdc_lis) == 1: ## normal case
             brdc_ori = brdc_lis[0]
             brdc_out = files_rw.unzip_gz_Z(brdc_ori,out_gzip_dir=tmp_dir_use)
-        elif len(brdc_lis) == 0 and default_fallback:
+        elif len(brdc_lis) == 0:
             log.warning("no brdc. found")
         elif len(brdc_lis) > 1:
             log.warning("several brdc found, keep the 1st one")
@@ -357,6 +357,7 @@ def pride_pppar_runner(rnx_path_list,
     date_list = [conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list] 
     
     _ = dl_prods_pride_pppar(prod_parent_dir,date_list,prod_ac_name)
+    _ = dl_brdc_pride_pppar(prod_parent_dir, date_list)
         
     kwargs_list = []
     for rnx_path in rnx_path_list:
