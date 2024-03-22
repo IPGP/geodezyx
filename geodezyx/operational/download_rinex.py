@@ -210,8 +210,9 @@ def effective_save_dir(parent_archive_dir, stat, date, archtype='stat'):
 
     out_save_dir = parent_archive_dir
     fff = archtype.split('/')
-    #year = str(date.year)
-    #doy = conv.dt2doy(date)
+    year = str(date.year)
+    doy = conv.dt2doy(date)
+    _,_ = year,doy ## simply to remove the unused linter warning...
     week, dow = conv.dt2gpstime(date)
     for f in fff:
         out_save_dir = os.path.join(out_save_dir, eval(f))
@@ -353,7 +354,8 @@ def multi_downloader_rinex(statdico, archive_dir, startdate, enddate,
         for netwk, statlis in list(statdico.items()):
             
             if not utils.is_iterable(statlis):
-                log.warning("%s stored in the should be a list and it is not.")
+                log.warning("%s given in the 'statdico' should be a list and it is not.",
+                            statlis)
             
             for stat in statlis:
                 stat = stat.lower()

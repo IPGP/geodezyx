@@ -56,7 +56,7 @@ def dl_brdc_pride_pppar(prod_parent_dir,date_list):
     brdc_lis = []    
     ######### BROADCAST
     for date in date_list:
-        brdc = operational.multi_downloader_rinex({'nav_rt' : 'BRDC'},
+        brdc = operational.multi_downloader_rinex({'nav_rt' : ['BRDC']},
                                                   prod_parent_dir,
                                                   date, date,
                                                   archtype = "year/doy",
