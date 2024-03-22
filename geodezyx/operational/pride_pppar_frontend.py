@@ -165,7 +165,7 @@ def pride_pppar_runner_mono(rnx_path,
 
         smart_ultra=True
         if "ULT" in prod_ac_name and smart_ultra:
-            delta_epoch_max = 3
+            delta_epoch_max = 23
         else:
             delta_epoch_max = 0
 
