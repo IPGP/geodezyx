@@ -50,12 +50,29 @@ def run_command(command):
         if return_code is not None:
             print("RETURN CODE: %s",return_code)
             break
-        
+
+
+def dl_brdc_pride_pppar(prod_parent_dir,date_list):
+    brdc_lis = []    
+    ######### BROADCAST
+    for date in date_list:
+        brdc = operational.multi_downloader_rinex({'nav_rt' : 'BRDC'},
+                                                  prod_parent_dir,
+                                                  date, date,
+                                                  archtype = "year/doy",
+                                                  parallel_download=1,
+                                                  force=True)
+        brdc_lis.append(brdc)
+    
+    return brdc_lis        
+    
+
         
 def dl_prods_pride_pppar(prod_parent_dir,date_list,prod_ac_name):
     
     dl_prods_fct = operational.download_products_gnss
     
+    ######### ORBITS CLOCKS ETC...    
     for data_center in ('ign','whu'):   ##'whu'
         if 'MGX' in prod_ac_name:
             mgex=True
@@ -112,7 +129,6 @@ def pride_pppar_runner_mono(rnx_path,
     hour = str(srt.hour).zfill(2) + str(srt.minute).zfill(2) 
     hourmin_str = str(srt.hour).zfill(2) + str(srt.minute).zfill(2) 
     
-    
     site = rnx_file[:4].upper()
     
     ########## DEFINE DIRECTORIES
@@ -148,7 +164,36 @@ def pride_pppar_runner_mono(rnx_path,
     ########### DOWNLOAD PRODUCTS
     if dl_prods:
         _ = dl_prods_pride_pppar(prod_parent_dir,[srt],prod_ac_name)
-
+        _ = dl_brdc_pride_pppar(prod_parent_dir,[srt])
+        
+    ########### MOVE BRDC IN TMP (so pdp3 can handle it)
+    ## we must also rename the BKG brdc to fake it as the IGS one
+    def _find_unzip_brdc():
+        brdc_pattern = "	*BRDC00WRD_S_" + year + doy + "*"
+        prod_dir_year_doy = os.path.join(prod_parent_dir,year,doy)
+        brdc_lis = utils.find_recursive(prod_dir_year_doy, brdc_pattern)
+        
+        if len(brdc_lis) == 1: ## normal case
+            brdc_ori = brdc_lis[0]
+            brdc_out = files_rw.unzip_gz_Z(brdc_ori,out_gzip_dir=tmp_dir_use)
+        elif len(brdc_lis) == 0 and default_fallback:
+            log.warning("no brdc. found")
+        elif len(brdc_lis) > 1:
+            log.warning("several brdc found, keep the 1st one")
+            log.warning(brdc_lis)
+            brdc_ori = brdc_lis[0]
+            brdc_out = files_rw.unzip_gz_Z(prod_ori,out_gzip_dir=tmp_dir_use)
+        else:
+            #### this should never happend
+            pass
+        
+        ##### FINAL STEP: rename the brdc
+        brdc_out_new = brdc_out.replace('BRDC00WRD_S_','BRDC00IGS_R_')
+        brdc_out = os.rename(brdc_out, brdc_out_new)
+        
+        
+        return brdc_out, brdc_ori
+        
         
     ########### GENERATE CONFIG FILE
     def _find_unzip_prod(prod):
@@ -171,6 +216,9 @@ def pride_pppar_runner_mono(rnx_path,
 
         
         find_prods =operational.find_IGS_products_files 
+        
+        #### this loop is to find former ULTRA if the latest is missing
+        # it works for ULTRA only, for other latencies, delta_epoch_max = 0
         for i_d_epo in range(delta_epoch_max):
 
             find_prod_epoch = find_prod_epoch_ini - dt.timedelta(seconds=3600*i_d_epo) 
@@ -178,7 +226,6 @@ def pride_pppar_runner_mono(rnx_path,
             if smart_ultra and i_d_epo > 0:
                 log.warn("no prods found for epoch %s, but we try %i hour before (%s)",
                         find_prod_epoch_ini, i_d_epo, find_prod_epoch)
-
 
             prod_lis =  find_prods(prod_parent_dir,
                                    [prod],
@@ -191,8 +238,11 @@ def pride_pppar_runner_mono(rnx_path,
             if len(prod_lis) > 0:
                 break
 
-
-        if len(prod_lis) == 0 and default_fallback:
+        #### differents behaviors depending on the number of files found
+        if len(prod_lis) == 1: ## normal case
+            prod_ori = prod_lis[0]
+            prod_out = files_rw.unzip_gz_Z(prod_ori,out_gzip_dir=tmp_dir_use)
+        elif len(prod_lis) == 0 and default_fallback:
             log.warning("no prod. %s found, fallback to Default in cfg file",prod)
             prod_out = "Default"
             prod_ori = "Default"
@@ -200,9 +250,6 @@ def pride_pppar_runner_mono(rnx_path,
             log.warning("no prod. %s found, no fallback to Default set, aborting...",prod)
             prod_out = None  
             prod_ori = None 
-        elif len(prod_lis) == 1: ## normal case
-            prod_ori = prod_lis[0]
-            prod_out = files_rw.unzip_gz_Z(prod_ori,out_gzip_dir=tmp_dir_use)
         elif len(prod_lis) > 1:
             log.warning("several prod found, keep the 1st one")
             log.warning(prod_lis)
@@ -211,7 +258,6 @@ def pride_pppar_runner_mono(rnx_path,
         else:
             #### this should never happend
             pass
-        
         
         return prod_out, prod_ori
         
@@ -230,6 +276,7 @@ def pride_pppar_runner_mono(rnx_path,
         cfg_lines = fil.readlines()
     
     ### find and unzip the right products
+    brdc_path,_ = _find_unzip_brdc()
     sp3_path,_ = _find_unzip_prod("SP3")
     bia_path,_ = _find_unzip_prod("BIA")
     clk_path,_ = _find_unzip_prod("CLK")
@@ -239,8 +286,6 @@ def pride_pppar_runner_mono(rnx_path,
     if not any((sp3_path,bia_path,clk_path,obx_path,erp_path)) and not default_fallback:
         log.error("a prod. at least is missing and no fallback to Default is set, abort")
         return  None
-
-
     
     ## alias for basename
     bnm = os.path.basename
