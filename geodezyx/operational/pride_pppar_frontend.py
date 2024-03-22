@@ -64,7 +64,7 @@ def dl_brdc_pride_pppar(prod_parent_dir,date_list):
                                                   date, date,
                                                   archtype = "year/doy",
                                                   parallel_download=1,
-                                                  force=False)
+                                                  force=True)
         brdc_lis.append(brdc)
     
     return brdc_lis        

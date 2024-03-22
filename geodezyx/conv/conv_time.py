@@ -182,7 +182,7 @@ def round_dt(dtin,round_to,python_dt_out=True,mode='round'):
         raise Exception
     
     if python_dt_out:
-        dtin_out.dt.to_pydatetime()
+        dtin_out = np.array(dtin_out.dt.to_pydatetime())
 
     if singleton:
         return dtin_out.iloc[0]
