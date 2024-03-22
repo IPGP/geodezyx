@@ -111,6 +111,9 @@ def pride_pppar_runner_mono(rnx_path,
     rnx_file = os.path.basename(rnx_path)
     hourmin_str = str(srt.hour).zfill(2) + str(srt.minute).zfill(2) 
     
+    hour = str(srt.hour).zfill(2) + str(srt.minute).zfill(2) 
+
+    
     site = rnx_file[:4].upper()
     
     ########## DEFINE DIRECTORIES
@@ -145,7 +148,7 @@ def pride_pppar_runner_mono(rnx_path,
 
     ########### DOWNLOAD PRODUCTS
     if dl_prods:
-        prods = dl_prods_pride_pppar(prod_parent_dir,[srt],prod_ac_name)
+        _ = dl_prods_pride_pppar(prod_parent_dir,[srt],prod_ac_name)
 
         
     ########### GENERATE CONFIG FILE
@@ -309,7 +312,7 @@ def pride_pppar_runner(rnx_path_list,
     
     date_list = [conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list] 
     
-    prods = dl_prods_pride_pppar(prod_parent_dir,date_list,prod_ac_name)
+    _ = dl_prods_pride_pppar(prod_parent_dir,date_list,prod_ac_name)
         
     kwargs_list = []
     for rnx_path in rnx_path_list:
