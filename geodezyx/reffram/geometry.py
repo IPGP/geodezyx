@@ -10,11 +10,11 @@ it can be imported directly with:
 from geodezyx import reffram
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -474,17 +474,20 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
     Parameters
     ----------
     
-    X1list & X2list : list of N (x,y,z) points, or an (N,3)-shaped numpy array
-        Input point sets
+    X1list & X2list : list or np.array
+        Input point set
+        list of N (x,y,z) points, or an (N,3)-shaped numpy array
 
     Weights : list of N Weights,
-        or an numpy array of shape (N,3)
+        or an numpy array of shape (N,)
     
     Returns
     -------
     
     HParam :
         7 Helmert params. : x,y,z translations, x,y,z rotations, scale
+        translations are given in meters, rotations in arcsec, 
+        scale in unitless ratio
     A :
         Design matrix    
     l :
@@ -499,7 +502,7 @@ def helmert_trans_estim(X1list , X2list, Weights=[]):
     A_stk = []
     Bool_stk = []
     
-    log.error("we have %s points",len(X1list))
+    log.info("we have %s points",len(X1list))
     
     for X1 , X2 in zip(X1list , X2list):
         
@@ -541,8 +544,9 @@ def helmert_trans_apply(Xin,SevenParam_in,legacy_mode=False):
 
     Parameters
     ----------
-    Xin : list of N (x,y,z) points, or an (N,3)-shaped numpy array.
-        input set points
+    Xin : list or np.array
+        input point set 
+        list of N (x,y,z) points, or an (N,3)-shaped numpy array.
         
     SevenParam_in : 7 element list or array
         7 Helmert params. : x,y,z translations, x,y,z rotations, scale.
@@ -596,10 +600,12 @@ def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
     Parameters
     ----------
     
-    X1in & X2in : list of N (x,y,z) points, or an (N,3)-shaped numpy array
-        Input point sets
+    X1in & X2in :  list or np.array
+        Input point set
+        list of N (x,y,z) points, or an (N,3)-shaped numpy array
 
-    HParam_apri : list of 7 values,
+    HParam_apri : list 
+        list of 7 values,
         The Apriori for the Helmert parameter 
     
     L1norm : bool
@@ -620,6 +626,8 @@ def helmert_trans_estim_minimisation(X1in,X2in,HParam_apri=np.zeros(7),
     -------
     Res :
         7 Helmert params. : x,y,z translations, x,y,z rotations, scale
+        translations are given in meters, rotations in arcsec, 
+        scale in unitless ratio
     """
     
     def minimiz_helmert_fct(HParam_mini_in,X1in,X2in,L1norm_mini=L1norm):

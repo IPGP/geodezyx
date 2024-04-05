@@ -16,33 +16,34 @@ with PyPi and pip
 Standard installation (for non-admin users)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We recommend to use ``pip`` to do a propper installation:
+We recommend to use ``pip`` to do a proper installation:  
 ``pip install geodezyx``
 
-To get the latest working version you can install directly the GitHub-hosted version:
-``pip install git+https://github.com/GeodeZYX/geodezyx-toolbox``
+To get the latest working version you can install directly the GitHub-hosted version:  
+``pip install git+https://github.com/IPGP/geodezyx-toolbox``
 
 Full installation (for sudoers/advanced users)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This version installs facultative external modules, which require system libraries only installable when you have the sudo/admin rights, namely ``netCDF4``, ``kepler.py``, ``ncompress``.
 
-We recommend to use ``pip`` to do a propper installation:
+We recommend to use ``pip`` to do a propper installation:  
 ``pip install geodezyx[full]``
 
-To get the latest working version you can install directly the GitHub-hosted version:
-``pip install 'git+https://github.com/GeodeZYX/geodezyx-toolbox#egg=geodezyx[full]'``
+To get the latest working version you can install directly the GitHub-hosted version:  
+``pip install 'git+https://github.com/IPGP/geodezyx-toolbox#egg=geodezyx[full]'``
 
 
 clone and manually install from GitHub
 --------------------------------------
 
-You can manually fork and clone the GitHub repository
-https://github.com/GeodeZYX/geodezyx-toolbox/
+You can manually fork and clone the GitHub repository  
+``https://github.com/IPGP/geodezyx-toolbox/``
 
-and install the Toolbox you downloaded with ``python setup.py install``
+and install the Toolbox you downloaded with:  
+``python setup.py install``
 
-Alternatively, you can also add the ``geodezyx`` forder in your ``PYTHONPATH`` (for experimented users)
+Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
 
 ---------------
 Minimal exemple

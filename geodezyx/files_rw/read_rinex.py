@@ -10,11 +10,11 @@ it can be imported directly with:
 from geodezyx import files_rw
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -67,7 +67,7 @@ def read_rinex2_obs(rnx_in,
     except:
         rnx_wrk = rnx_in
         pass
-    
+
     LINES = utils.open_readlines_smart(rnx_wrk)
     EPOCHS = operational.rinex_read_epoch(rnx_wrk,out_index=True)
     if type(rnx_in) is str or type(rnx_in) is pathlib.Path:
@@ -90,11 +90,11 @@ def read_rinex2_obs(rnx_in,
     
     ObsAllList_raw = " ".join(Lines_obs).split()
     ObsAllList = ObsAllList_raw[1:]
-    ObsAllList = sorted([e for sublist in [(e,e+"_LLI",e+"_SSI") for e in ObsAllList] for e in sublist])
+    ObsAllList = [e for sublist in [(e,e+"_LLI",e+"_SSI") for e in ObsAllList] for e in sublist]
     
     nobs = int(ObsAllList_raw[0])
     nlines_for_obs = int(np.ceil(nobs/5)) ## 5 is the max num of obs in the RIENX specs
-    
+    columns_width = nobs*[14,1,1]
     
     DFall_stk = []
     
@@ -116,14 +116,14 @@ def read_rinex2_obs(rnx_in,
         
         ### for each sat, merge the breaked lines
         Lines_obs = Lines_epoc[iline_sats_end+1:iline_end]
-        Lines_obs = [e.replace("\r","") for e in Lines_obs] # not 100% sure of this
+        Lines_obs = [e.ljust(80) for e in Lines_obs] # must be exactly 80 char long fut the column trunk !!!!
+        Lines_obs = [e.replace("\r","") for e in Lines_obs] # not 100% sure of this one
         Lines_obs = [e.replace("\n","") for e in Lines_obs]
         Lines_obs_merg = [Lines_obs[nlines_for_obs*n:nlines_for_obs*n+nlines_for_obs] for n in range(nsat)]
         Lines_obs_merg = ["".join(e) for e in Lines_obs_merg]
         
         ## read the epoch block using pandas' fixed width reader 
         B = StringIO("\n".join(Lines_obs_merg))
-        columns_width = nobs*[14,1,1]
         DFepoch = pd.read_fwf(B,header=None,widths=columns_width)  
         DFepoch.columns = ObsAllList
         DFepoch["prn"] = Sats_split
@@ -135,7 +135,7 @@ def read_rinex2_obs(rnx_in,
     
     ## final concat and cosmetic (reorder columns, sort)
     DFrnxobs = pd.concat(DFall_stk)
-    DFrnxobs = DFrnxobs.reindex(["epoch","sys","prn"] + ObsAllList,axis=1)
+    DFrnxobs = DFrnxobs.reindex(["epoch","sys","prn"] + list(sorted(ObsAllList)),axis=1)
     DFrnxobs.sort_values(["epoch","prn"],inplace=True)
     DFrnxobs.reset_index(drop=True,inplace=True)
     

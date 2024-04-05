@@ -3,7 +3,7 @@
 """
 Created on Tue Jul  5 15:48:26 2022
 
-@author: psakicki
+@author: psakic
 """
 
 ########## BEGIN IMPORT ##########
@@ -34,24 +34,32 @@ def anubis_runner(rnx_inp,
                   xml_config_generic,
                   period=None,
                   interval=None,
-                  quiet=False,
+                  dry_run=False,
                   download_nav=True,
                   download_sp3=True,
-                  anubis_path="/home/psakicki/SOFTWARE/ANUBIS/anubis-3.3.3613-lin-shared-64b"):
+                  force=False,
+                  anubis_path="/opt/gnss_softs/bin/anubis"):
     """
-    Run an Anubis quality check
-    Designed for Anubis 3.3
+    Run an Anubis quality check.  
+    Designed for Anubis 3.3.  
+    Works with Anubis 3.7 at least.  
 
     Parameters
     ----------
     rnx_inp : str or list
         Input RINEXs. can be a RINEX path list,
         or the path of the parent archive directory
+        
+        Note that this function is optimized for the 
+        batch processing of several RINEXs.
+        If you want to process a single RINEX, 
+        gives its path in a list (`[rnx_inp]`) 
     out_dir_main : str
         output main directory.
     xml_config_generic : str
         path of the generic XML configuration file.
         will be stored in <out_dir_main>/inp
+        See note bellow to find some exemples
     period : None or int
         nominal file period in the RINEX (in hours)
         if None is given, guess based on the RINEX name
@@ -60,26 +68,44 @@ def anubis_runner(rnx_inp,
         nominal data interval in the RINEX (in sec)
         if None is given, guess based on the RINEX name
         The default is None.
-    quiet : bool, optional
+    dry_run : bool, optional
         if True, do not run the Anubis QC.
-        Anubis QC rsults are stored in stored in <out_dir_main>/out
+        Anubis QC results are stored in <out_dir_main>/out
         The default is False.
     download_nav : bool, optional
         Download automatically the Broadcast navigation files. 
         will be stored in <out_dir_main>/nav
         The default is True.
     download_sp3 : bool, optional
-        Download automatically the SP3 orbit files. CODE's MGEX are used per default.
+        Download automatically the SP3 orbit files. 
+        CODE's MGEX are used per default.
         will be stored in <out_dir_main>/nav
         The default is True.
+    force : bool, optional
+        Per default, skip anubis execution if a xtr
+        file already exists in out_dir_main
+        The default is False.
     anubis_path : str, optional
         path of the Anubis executable. 
-        The default is "/home/psakicki/SOFTWARE/ANUBIS/anubis-3.3.3613-lin-shared-64b".
+        The default is "/opt/gnss_softs/bin/anubis" 
 
     Returns
     -------
-    XML_INP_LIST : list
+    xml_cfg_list : list
         list of the generated XML config files.
+        
+    Note
+    ----
+    
+    Generic Configuration files for Anubis version 2 and 3
+    can be found here:
+        
+    ``<...>/geodezyx/000_exemples/anubis_configfiles``
+    
+    or directly on the GeodeZYX's toolbox GitHub repository:
+    
+    https://github.com/GeodeZYX/geodezyx-toolbox/tree/master/geodezyx/000_exemples/anubis_configfiles
+    
 
     """
     
@@ -89,7 +115,7 @@ def anubis_runner(rnx_inp,
     else:
         RNXLIST = operational.rinex_finder(rnx_inp) 
     
-    XML_INP_LIST = []
+    xml_cfg_list = []
         
     for rnx_path in RNXLIST:
         log.info("current RINEX: %s",rnx_path)
@@ -104,13 +130,13 @@ def anubis_runner(rnx_inp,
 
         if period is None:
             period_ok = conv.period_from_rinex_name(rnx_name)
-            print("PERIOD",period_ok)
+            log.info("period auto-detection OK:%s",period_ok)
         else:
             period_ok = period
             
         if interval is None:
             interval_ok = conv.interval_from_rinex_name(rnx_name)
-            print("INTERVAL",interval_ok)
+            log.info("interval auto-detection OK:%s",interval_ok)
         else:
             interval_ok = interval
             
@@ -146,6 +172,10 @@ def anubis_runner(rnx_inp,
         out_xtr = os.path.join(out_dir, site_date + ".xtr") 
         out_log = os.path.join(out_dir, site_date + ".log") 
 
+        if not force and (os.path.isfile(out_xtr) or os.path.isfile(out_xml)):
+            log.info("%s/%s already exists, RINEX skipped",os.path.basename(out_xtr),os.path.basename(out_xml))
+            continue
+
         ######## MANAGE NAV FILE #########                
         ### manage the brdc-file download
         nav_path = ""
@@ -156,13 +186,13 @@ def anubis_runner(rnx_inp,
         nav_file_exists = os.path.isfile(potential_nav_path)
         
         #### the nav file already exists
-        print(potential_nav_path)
         if nav_file_exists:
-            log.info("%s already exists, download skipped ;)",potential_nav_file)
+            log.debug("%s already exists, download skipped ;)",potential_nav_file)
             nav_path = potential_nav_path
-        
+
         #### the nav file does not exsits but we want to download it
         elif not nav_file_exists and download_nav:
+            log.debug("%s not found, we downloading it",potential_nav_file)
             statdico = dict()
             statdico['brdc'] = ['BRDC']
             brdc_list = operational.multi_downloader_rinex(statdico,
@@ -237,12 +267,15 @@ def anubis_runner(rnx_inp,
     
         # write output operational xml 
         xmltree.write(xml_path_ope)
-        XML_INP_LIST.append(xml_path_ope)
+        xml_cfg_list.append(xml_path_ope)
         
         ### run Anubis
-        if not quiet:
+        if not dry_run:
             #os.chdir(os.path.dirname(xml_path_ope))
             command = anubis_path + " -x " + xml_path_ope
+            
+            if not utils.is_exe(anubis_path):
+                log.error("the Anubis bin doesn't exists/is not executable. Check %s",anubis_path)
             
             log.info("command: %s",command)
             
@@ -253,4 +286,4 @@ def anubis_runner(rnx_inp,
             
             time.sleep(2)
             
-    return XML_INP_LIST
+    return xml_cfg_list

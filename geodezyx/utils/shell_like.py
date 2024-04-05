@@ -10,11 +10,11 @@ it can be imported directly with:
 from geodezyx import utils
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 
@@ -467,6 +467,7 @@ def insert_str_in_file_if_line_contains(file_path,str_to_insert,
     return file_path
     
 def uncompress(pathin,dirout = '', opts='-f'):
+    log.warn("function discontinued, use files_rw.unzip_gz_Z() instead")
     if not os.path.isfile(pathin):
         log.error('uncompress : %s doesnt exist !!!', pathin)
         return None
@@ -646,3 +647,23 @@ def check_regex(filein,regex):
             break
 
     return outbool
+
+
+
+def is_exe(fpath):
+    """
+    Chech if a file is executable
+
+    Parameters
+    ----------
+    fpath : str
+        file path.
+
+    Returns
+    -------
+    bool
+        is executable.
+
+    """
+    return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+

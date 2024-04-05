@@ -37,7 +37,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.4.3.6',  # Required
+    version='4.4.1',  # Required
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -63,9 +63,9 @@ plots and visual selection functions ...
 It is designed for Python 3 on a LINUX Ubuntu-like system.
 Also tested with Anaconda
 
-Documentation: https://geodezyx.github.io/geodezyx-toolbox  
+Documentation: https://ipgp.github.io/geodezyx-toolbox  
 
-GitHub repository: https://github.com/GeodeZYX/geodezyx-toolbox 
+GitHub repository: https://github.com/IPGP/geodezyx-toolbox 
 
 PyPi project: https://pypi.org/project/geodezyx
 """,  # Optional
@@ -86,7 +86,7 @@ PyPi project: https://pypi.org/project/geodezyx
     #
     # This field corresponds to the "Home-Page" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#home-page-optional
-    url='https://github.com/GeodeZYX/geodezyx-toolbox',  # Optional
+    url='https://github.com/IPGP/geodezyx-toolbox',  # Optional
 
     # This should be your name or the name of the organization which owns the
     # project.
@@ -110,7 +110,7 @@ PyPi project: https://pypi.org/project/geodezyx
         'Intended Audience :: Science/Research',
 
         # Pick your license as you wish
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate you support Python 3. These classifiers are *not*
@@ -174,7 +174,9 @@ PyPi project: https://pypi.org/project/geodezyx
                       'pyorbital',
                       'pytwobodyorbit',
                       'pyyaml',
+                      'pathvalidate',
                       'pandas',
+                      'seawater',
                       'scipy',
                       'sympy',
                       'tabulate',
@@ -182,6 +184,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'tqdm', ## progress bars
                       'vincenty',
                       'wheel',
+                      'xarray',
                       ],  # Optional
 
     # List additional groups of dependencies here (e.g. development
@@ -240,6 +243,6 @@ PyPi project: https://pypi.org/project/geodezyx
     #    'Bug Reports': 'https://github.com/pypa/sampleproject/issues',
     #    'Funding': 'https://donate.pypi.org',
     #    'Say Thanks!': 'http://saythanks.io/to/example',
-    #    'Source': 'https://github.com/GeodeZYX/geodezyx-toolbox' #,
+    #    'Source': 'https://github.com/IPGP/geodezyx-toolbox' #,
     #}
 )

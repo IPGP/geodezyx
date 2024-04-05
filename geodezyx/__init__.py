@@ -66,6 +66,7 @@ from . import athmo
 from . import conv
 from . import files_rw
 from . import geodyn
+from . import marine
 from . import operational
 from . import reffram
 from . import stats
@@ -78,6 +79,7 @@ __all__ = ['athmo',
            'externlib',
            'files_rw',
            'geodyn',
+           'marine',
            'operational',
            'reffram',
            'stats',

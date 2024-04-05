@@ -7,10 +7,10 @@ gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -93,8 +93,8 @@ def effective_save_dir_orbit(parent_archive_dir,
 
     out_save_dir = parent_archive_dir
     fff = archtype.split('/')
-    #year = str(date.year)
-    #doy = conv.dt2doy(date)
+    year = str(date.year)
+    doy = conv.dt2doy(date)
     week, dow = conv.dt2gpstime(date)
 
     for f in fff:

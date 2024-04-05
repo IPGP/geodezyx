@@ -11,11 +11,11 @@ it can be imported directly with:
 from geodezyx import reffram
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -30,6 +30,8 @@ import os
 import pandas as pd
 import re
 
+import pyorbital.astronomy
+
 ### disabled and imported directly in the needed fct
 ## import geodezyx.reffram.sofa18 as sofa
 
@@ -38,6 +40,7 @@ from geodezyx import conv
 from geodezyx import files_rw
 from geodezyx import stats
 from geodezyx import utils
+from geodezyx.reffram import kepler_gzyx
 
 #### Import the logger
 import logging
@@ -196,10 +199,10 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
         D2 = D2orig[np.logical_not(D2_null_bool)]
 
         if np.any(D1_null_bool) or np.any(D2_null_bool):
-            sat_nul = utils.join_improved(" " ,*list(set(D1orig[D1_null_bool]["sat"])))
+            sat_nul = utils.join_improved(" " ,*list(set(D1orig[D1_null_bool]["prn"])))
             log.warning("Null values contained in SP3 files : ")
-            log.warning("f1: %s %s" , np.sum(D1_null_bool) , utils.join_improved(" " , *list(set(D1orig[D1_null_bool]["sat"]))))
-            log.warning("f2: %s %s" , np.sum(D2_null_bool) , utils.join_improved(" " , *list(set(D2orig[D2_null_bool]["sat"]))))
+            log.warning("f1: %s %s" , np.sum(D1_null_bool) , utils.join_improved(" " , *list(set(D1orig[D1_null_bool]["prn"]))))
+            log.warning("f2: %s %s" , np.sum(D2_null_bool) , utils.join_improved(" " , *list(set(D2orig[D2_null_bool]["prn"]))))
         else:
             sat_nul = []
 
@@ -208,8 +211,8 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
         D2 = D2orig.copy()
 
     for constuse in const_used_list:
-        D1const = D1[D1['const'] == constuse]
-        D2const = D2[D2['const'] == constuse]
+        D1const = D1[D1['sys'] == constuse]
+        D2const = D2[D2['sys'] == constuse]
 
         # checking if the data correspond to the step
         bool_step1 = np.mod((D1const.index - np.min(D1.index)).seconds,step_data) == 0
@@ -217,9 +220,9 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
 
         D1window = D1const[bool_step1]
         D2window = D2const[bool_step2]
-
+        
         # find common sats and common epochs
-        sv_set   = sorted(list(set(D1window['sv']).intersection(set(D2window['sv']))))
+        sv_set   = sorted(list(set(D1window['prni']).intersection(set(D2window['prni']))))
         epoc_set = sorted(list(set(D1window.index).intersection(set(D2window.index))))
 
         # if special selection of sats, then apply it
@@ -237,8 +240,8 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
             # NB : .reindex() is smart, it fills the DataFrame
             # with NaN
             try:
-                D1sv_orig = D1window[D1window['sv'] == svv].reindex(epoc_set)
-                D2sv_orig = D2window[D2window['sv'] == svv].reindex(epoc_set)
+                D1sv_orig = D1window[D1window['prni'] == svv].reindex(epoc_set)
+                D2sv_orig = D2window[D2window['prni'] == svv].reindex(epoc_set)
             except Exception as exce:
                 log.info("ERR : Unable to re-index with an unique epoch")
                 log.info("      are you sure there is no multiple-defined epochs for the same sat ?")
@@ -246,11 +249,11 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 log.info("TIP : Filter the input Dataframe before calling this fct with")
                 log.info("      DF = DF[DF['AC'] == 'gbm']")
                 
-                Dtmp1 = D1orig[D1orig['sv'] == svv]
-                Dtmp2 = D2orig[D2orig['sv'] == svv]
+                Dtmp1 = D1orig[D1orig['prni'] == svv]
+                Dtmp2 = D2orig[D2orig['prni'] == svv]
                 
-                dupli1 = np.sum(Dtmp1.duplicated(["epoch","sat"]))
-                dupli2 = np.sum(Dtmp2.duplicated(["epoch","sat"]))
+                dupli1 = np.sum(Dtmp1.duplicated(["epoch","prn"]))
+                dupli2 = np.sum(Dtmp2.duplicated(["epoch","prn"]))
                 
                 log.info("FWIW: duplicated epoch/sat in DF1 & DF2: %s %s",dupli1,dupli2)
 
@@ -342,9 +345,9 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
 
             Diff_sat = Diff_sat * conv_coef # metrer conversion
 
-            Diff_sat['const'] = [constuse] * len(Diff_sat.index)
-            Diff_sat['sv']    = [svv]      * len(Diff_sat.index)
-            Diff_sat['sat']   = [constuse + str(svv).zfill(2)] * len(Diff_sat.index)
+            Diff_sat['sys'] = [constuse] * len(Diff_sat.index)
+            Diff_sat['prni']    = [svv]      * len(Diff_sat.index)
+            Diff_sat['prn']   = [constuse + str(svv).zfill(2)] * len(Diff_sat.index)
 
             Diff_sat_stk.append(Diff_sat)
 
@@ -437,7 +440,7 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     import matplotlib.dates as mdates
     fig,[axr,axt,axn] = plt.subplots(3,1,sharex='all')
 
-    satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in['sat'])))
+    satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in['prn'])))
 
     SymbStk = []
 
@@ -457,7 +460,7 @@ def compar_orbit_plot(Diff_sat_all_df_in,
         col_name2 = Diff_sat_all_df_in.columns[2]
 
     for satuse,color in zip(satdispo,Colors):
-        Diffuse = Diff_sat_all_df_in[Diff_sat_all_df_in['sat'] == satuse]
+        Diffuse = Diff_sat_all_df_in[Diff_sat_all_df_in['prn'] == satuse]
 
         Time = Diffuse.index
         R    = Diffuse[col_name0]
@@ -571,7 +574,7 @@ def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
     >>> print(tabulate(ComparTable,headers="keys",floatfmt=".4f"))
     """
 
-    sat_list = utils.uniq_and_sort(Diff_sat_all_df_in['sat'])
+    sat_list = utils.uniq_and_sort(Diff_sat_all_df_in['prn'])
 
     # Pandas donesn't manage well iterable as attribute
     # So, it is separated
@@ -587,7 +590,7 @@ def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
     rms_stk = []
 
     for sat in sat_list:
-        Diffwork = utils.df_sel_val_in_col(Diff_sat_all_df_in,'sat',sat)
+        Diffwork = utils.df_sel_val_in_col(Diff_sat_all_df_in,'prn',sat)
 
         if RMS_style == "natural":
             rms_A = stats.rms_mean(Diffwork[col_name0])
@@ -692,8 +695,8 @@ def compar_orbit_table(Diff_sat_all_df_in,RMS_style = 'natural',
 
 
 def compar_orbit_frontend(DataDF1,DataDF2,ac1,ac2, sats_used_list = ['G']):
-    K = compar_orbit(DataDF1[DataDF1["AC"] == ac1],
-                     DataDF2[DataDF2["AC"] == ac2],
+    K = compar_orbit(DataDF1[DataDF1["ac"] == ac1],
+                     DataDF2[DataDF2["ac"] == ac2],
                      sats_used_list=sats_used_list)
     compar_orbit_plot(K)
     return K
@@ -1062,6 +1065,225 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
        
 ### Orbit DataFrames   
 
+
+def DFOrb_velocity_calc(DFOrb_in,
+                        drop_nan=False):
+    """
+    Compute the velocity of satellites from a DFOrb dataframe
+    (differentiate the position)
+
+    Parameters
+    ----------
+    DFOrb_in : Pandas DataFrame
+        an Orbit DataFrame.
+    drop_nan : bool, optional
+        Remove the nan values 
+        (the first ones, since it is a numerical differentiation).
+        The default is False.
+        It is recommended to keep the NaN values, thus the output will keep
+        same size and index as input
+
+    Returns
+    -------
+    df_vel : Pandas DataFrame
+        an Orbit DataFrame with velocities (vx, vy ,vz columns).
+
+    """
+    
+    dfgrp = DFOrb_in.groupby('prn')
+    
+    dfprn_stk = []
+    for prn,dfprn in dfgrp:    
+        for coord in ['x','y','z']:
+            dcoord = dfprn[coord].diff()
+            dtime = (np.float64(dfprn['epoch'].diff()) * 10**-9) 
+            #timedelta in ns per defalut
+            dfprn['v' + coord] = dcoord / dtime 
+        dfprn_stk.append(dfprn)
+            
+    df_vel = pd.concat(dfprn_stk)
+    
+    df_vel.sort_index(inplace=True)
+    
+    if drop_nan:
+        df_vel.dropna(inplace=True)
+    
+    return df_vel 
+
+
+def beta_sun_ra_dec(sun_dec,sun_ra,sat_i,sat_o_lan):
+    """
+    Compute beta angle based on Sun's right ascension and declination
+    Angles are in radians
+
+    Parameters
+    ----------
+    sun_dec : float
+        Sun's declination.
+    sun_ra : float
+        Sun's right ascension.
+    sat_i : float
+        Satellite's inclination.
+    sat_o_lan : float
+        Satellite's Longitude of the ascending node.
+
+    Returns
+    -------
+    beta : float
+        beta angle (in radians).
+        
+    Source
+    ------
+    `Satellites: de Kepler au GPS`, Michel Capderou (2012)
+    
+    simpler formula here:
+        https://www.fxsolver.com/browse/formulas/Beta+Angle
+        
+    
+    Note
+    ----
+    you can use ``pyorbital.astronomy.sun_ra_dec()`` to compute ``sun_dec``
+    and ``sun_ra``
+    
+    If so, Sun's right ascension and declination computation polynoms are 
+    based on: `Astronomical algorithms`, Jean Meeus (1st edition, 1991)
+    """
+    beta = np.arcsin(np.cos(sun_dec)*np.sin(sat_i)*np.sin(sat_o_lan-sun_ra)+
+                     np.sin(sun_dec)*np.cos(sat_i))
+    return beta
+
+def beta_sun_eclip_long(sun_ecl_long,sat_o_lan,sat_i,earth_i):
+    """
+    Compute beta angle based on Sun's Ecliptic longitude
+    Angles are in radians
+
+    Parameters
+    ----------
+    sun_ecl_long : float
+        Sun's Ecliptic longitude.
+    sat_i : float
+        Satellite's inclination.
+    sat_o_lan : float
+        Satellite's Longitude of the ascending node.
+    earth_i : float
+        Earth's inclination.
+
+    Returns
+    -------
+    beta : float
+        beta angle (in radians).
+        
+    Source
+    ------
+    `Calculation of the Eclipse Factor for Elliptical Satellite Orbits` NASA (1962)
+    https://ntrs.nasa.gov/citations/19630000622
+    `Computation of Eclipse Time for Low-Earth Orbiting Small Satellites` Sumanth R M (2019)
+    https://commons.erau.edu/ijaaa/vol6/iss5/15/
+
+    Simpler formula:
+        https://en.wikipedia.org/wiki/Beta_angle
+    
+    Note
+    ----
+    you can use ``pyorbital.astronomy.sun_ecliptic_longitude()``
+    to compute ``sun_ecl_long``
+    
+    If so, Sun's right ascension and declination computation polynoms are 
+    based on: `Astronomical algorithms`, Jean Meeus (1st edition, 1991)
+
+    """
+    p1 = np.cos(sun_ecl_long)*np.sin(sat_o_lan)*np.sin(sat_i)
+    p2 = np.sin(sun_ecl_long)*np.cos(earth_i)*np.cos(sat_o_lan)*np.sin(sat_i)
+    p3 = np.sin(sun_ecl_long)*np.sin(earth_i)*np.cos(sat_i)
+    beta = np.arcsin(p1-p2+p3)
+    return beta
+
+def beta_angle_calc(DFOrb_in,
+                    calc_beta_sun_ra_dec=True,
+                    calc_beta_sun_eclip_long=True,
+                    beta_rad2deg=True):
+    """
+    Compute beta angle for GNSS satellite's orbits stored in an orbit 
+    DataFrame
+    
+
+    Parameters
+    ----------
+    DFOrb_in : Pandas DataFrame
+        an Orbit DataFrame (ECEF frame).
+    calc_beta_sun_ra_dec : bool, optional
+        compute beta angle with Sun's right ascension and declination.
+        The default is True.
+    calc_beta_sun_eclip_long : bool, optional
+        compute beta angle with Sun's Ecliptic longitude.
+        The default is True.
+    beta_rad2deg : bool, optional
+        convert beta angle to degrees. The default is True.
+
+    Returns
+    -------
+    df_out : Pandas DataFrame
+        DFOrb_in with a new 'beta' column.
+    df_wrk : Pandas DataFrame
+        intermediate values dataframe for debug.
+        here, coordinates are in ECI frame
+    """
+    
+    #### convert in ECI
+    df_eci = DFOrb_in.copy()
+    df_eci[['x','y','z']] = conv.ECEF2ECI(DFOrb_in[['x','y','z']].values,
+                                          DFOrb_in['epoch'].values)
+    
+    #### compute velocity
+    df_wrk = DFOrb_velocity_calc(df_eci,drop_nan=False)
+    ##keep drop nan False, thus the DF will keep same size and index as input
+    
+    #### compute Kepler's parameters
+    p = df_wrk[['x','y','z']].values * 1000
+    v = df_wrk[['vx','vy','vz']].values * 1000
+    
+    kep_col = ['a','ecc','i','o_peri','o_lan','m']
+    kep_params = kepler_gzyx.ECI_2_kepler_elts(p,v,rad2deg=False)
+    df_wrk[kep_col] = np.column_stack(kep_params)
+    ######### COMPUTE BETA
+    
+    #### cosmetic changes
+    if calc_beta_sun_ra_dec and calc_beta_sun_eclip_long:
+        b1="1"
+        b2="2"
+    else:
+        b1=""
+        b2=""    
+    
+    if beta_rad2deg:
+        r2dfct = np.rad2deg
+    else:
+        r2dfct = lambda x:x 
+    
+    ##### Beta computed based on sun declination / right ascension
+    if calc_beta_sun_ra_dec:
+        ##### sun_ra_dec output in RADIANS
+        df_wrk[['sun_ra','sun_dec']] = np.column_stack(pyorbital.astronomy.sun_ra_dec(df_wrk['epoch']))
+        df_wrk['beta'+b1] = beta_sun_ra_dec(df_wrk['sun_dec'], 
+                                            df_wrk['sun_ra'],
+                                            df_wrk['i'],
+                                            df_wrk['o_lan']).apply(r2dfct)
+        
+    ##### Beta computed based on Ecliptic longitude of the sun  
+    if calc_beta_sun_eclip_long:
+        ### sun_ecliptic_longitude output in RADIANS but NO MODULO !!!
+        df_wrk['sun_ecl_long'] = np.mod(pyorbital.astronomy.sun_ecliptic_longitude(df_wrk['epoch']),np.pi*2)
+        df_wrk['beta'+b2] = beta_sun_eclip_long(df_wrk['sun_ecl_long'],
+                                                df_wrk['o_lan'],
+                                                df_wrk['i'],
+                                                np.deg2rad(23.45)).apply(r2dfct)
+    df_out = DFOrb_in.copy()
+    df_out['beta'] = df_wrk['beta'+b1]
+
+    return df_out, df_wrk
+
+
+
 def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
                                append_to_input_DF = False,
                                plot=False):
@@ -1093,11 +1315,11 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
     """
     DForb_stk = []
     
-    for sat,ac in itertools.product(DForb_in.sat.unique(),DForb_in.AC.unique()):
+    for sat,ac in itertools.product(DForb_in.sat.unique(),DForb_in['ac'].unique()):
         
         log.info("process",ac,sat)
         
-        DForb_use = DForb_in[(DForb_in.sat == sat) & (DForb_in.AC == ac)].copy()
+        DForb_use = DForb_in[(DForb_in.sat == sat) & (DForb_in['ac'] == ac)].copy()
             
         Tdata = DForb_use.epoch.dt.to_pydatetime()
         
@@ -1226,10 +1448,10 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
                                                                      
 
 #### FCT DEF
-def OrbDF_reg_2_multidx(OrbDFin,index_order=["sat","epoch"]):
+def OrbDF_reg_2_multidx(OrbDFin,index_order=["prn","epoch"]):
     """
     From an regular Orbit DF generated by read_sp3(), set some columns 
-    (typically ["sat","epoch"]) as indexes
+    (typically ["prn","epoch"]) as indexes
     The outputed DF is then a Multi-index DF
     """
     OrbDFwrk = OrbDFin.reset_index()
@@ -1237,18 +1459,18 @@ def OrbDF_reg_2_multidx(OrbDFin,index_order=["sat","epoch"]):
     OrbDFwrk = OrbDFwrk.set_index(index_order,inplace=False)
     return OrbDFwrk
 
-def OrbDF_multidx_2_reg(OrbDFin,index_order=["sat","epoch"]):
+def OrbDF_multidx_2_reg(OrbDFin,index_order=["prn","epoch"]):
     """
     Convert a Multi-index formatted OrbitDF to his original form
     """
     OrbDFwrk = OrbDFin.reset_index()
     OrbDFwrk = OrbDFwrk.sort_values(index_order)
-    OrbDFwrk["const"] = OrbDFwrk["sat"].apply(lambda x: x[0])
-    OrbDFwrk["sv"]    = OrbDFwrk["sat"].apply(lambda x: int(x[1:]))
+    OrbDFwrk["sys"] = OrbDFwrk["prn"].apply(lambda x: x[0])
+    OrbDFwrk["prni"] = OrbDFwrk["prn"].apply(lambda x: int(x[1:]))
     return OrbDFwrk
 
 def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
-                              supplementary_sort=False,order=["sat","epoch"]):
+                              supplementary_sort=False,order=["prn","epoch"]):
     """
     Find common sats and epochs in to Orbit DF,
     and output the corresponding Orbit DFs
@@ -1294,13 +1516,13 @@ def OrbDF_const_sv_columns_maker(OrbDFin,inplace=True):
     (re)generate the const and sv columns from the sat one
     """
     if inplace:
-        OrbDFin['const'] = OrbDFin['sat'].str[0]
-        OrbDFin['sv']    = OrbDFin['sat'].apply(lambda x: int(x[1:]))
+        OrbDFin['sys'] = OrbDFin['prn'].str[0]
+        OrbDFin['prni']    = OrbDFin['prn'].apply(lambda x: int(x[1:]))
         return None
     else:
         OrbDFout = OrbDFin.copy()
-        OrbDFout['const'] = OrbDFout['sat'].str[0]
-        OrbDFout['sv']    = OrbDFout['sat'].apply(lambda x: int(x[1:]))
+        OrbDFout['sys'] = OrbDFout['prn'].str[0]
+        OrbDFout['prni']    = OrbDFout['prn'].apply(lambda x: int(x[1:]))
         return OrbDFout
 
  #   _____ _            _      _____        _        ______                              

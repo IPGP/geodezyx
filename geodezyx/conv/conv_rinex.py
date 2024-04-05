@@ -11,11 +11,11 @@ it can be imported directly with:
 from geodezyx import conv
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 
@@ -49,6 +49,7 @@ def rinex_regex_search_tester(str_in,
     ----------
     str_in : str
         input string.
+        If it is a path, will extract its basename.
     short_name : bool, optional
         check if the pattern matches a short name RINEX. The default is True.
     long_name : bool, optional
@@ -68,6 +69,8 @@ def rinex_regex_search_tester(str_in,
         match result.
 
     """
+    
+    str_in = os.path.basename(str_in)
     
     match = None
     
@@ -94,7 +97,7 @@ def rinex_regex_search_tester(str_in,
 
 def rinex_regex(compressed=None,compiled=False):
     """
-    Return a regex corresponding to a RINEX name (short convention)
+    Return a regex corresponding to a RINEX name (v2 - short convention)
 
     Parameters
     ----------
@@ -112,22 +115,24 @@ def rinex_regex(compressed=None,compiled=False):
         a regex
     """
     if compressed is None:
-        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(o)|(d))$"
+        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z|gz))|o|d)$"
     elif not compressed:
         regexstr = "^....[0-9]{3}.\.[0-9]{2}o$"
     else:
-        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(d))$"
+        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z|gz))|d)$"
         
 
     if compiled:
         return re.compile(regexstr)
-    else:
-        return regexstr
+        
+    return regexstr
 
+
+rinex_regex("dsd01120.18d.gz")
 
 def rinex_regex_long_name(compressed=None,compiled=False):
     """
-    Return a regex corresponding to a RINEX name (long convention)
+    Return a regex corresponding to a RINEX name (v3/4 - long convention)
 
     Parameters
     ----------
@@ -153,14 +158,14 @@ def rinex_regex_long_name(compressed=None,compiled=False):
 
     if compiled:
         return re.compile(regexstr)
-    else:
-        return regexstr
+    
+    return regexstr
 
 
 
 def rinex_regex_long_name_brdc(compressed=None,compiled=False):
     """
-    Return a regex corresponding to a BROADCAST RINEX name (new convention)
+    Return a regex corresponding to a BROADCAST RINEX name (v3/4 - new convention)
 
     Parameters
     ----------
@@ -183,11 +188,10 @@ def rinex_regex_long_name_brdc(compressed=None,compiled=False):
         regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?$"        
     else:
         regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}$"
-
     if compiled:
-        return re.compile(regexstr)
-    else:
-        return regexstr    
+        return re.compile(regexstr)    
+    
+    return regexstr    
     
     
 def rinex_regex_long_name_gfz_godc(compressed=None,compiled=False):
@@ -229,39 +233,41 @@ def rinex_regex_long_name_gfz_godc(compressed=None,compiled=False):
 
     if compiled:
         return re.compile(regexstr)
-    else:
-        return regexstr    
+
+    return regexstr    
     
     
 def rinex_regex_tester():
     """
     Returns two list of string to test the efficiency of the RINEX regexs.
     
-    True_positive_rnxs is a list of strings describing actual RINEX filenames.
+    true_positive_rnxs is a list of strings describing actual RINEX filenames.
     They must be matched
     
-    False_positive_rnxs is a list of strings describing other filenames.
+    false_positive_rnxs is a list of strings describing other filenames.
     But which have been matched at one moment because of too weak regexs
     They must NOT be matched 
     """
     
-    True_positive_rnxs = ["psa13400.21o",
+    true_positive_rnxs = ["psa13400.21o",
                           "gps11000.21d.Z",
                           "tar11320.00d.Z",
                           "gosi0010.14d.Z",
                           "YARR00AUS_R_20190100000_01D_30S_MO.rnx.gz",
+                          "REYK00ISL_R_20200420000_01D_30S_MO.crx.gz",
+                          "CFNG00XXX_R_20240241500_01H_01S_MO.crx.gz",
                           "BRDC00GOP_R_20190450000_01D_MN.rnx.gz",
                           "BRDC00GFZ_00000000_FRO_RX3_MN_20210114_000000_01D_00U_GFZ.rnx",
                           "AIRA00JPN_00001047_FRO_RX3_MO_20220105_000000_01D_30S_IGS.crx.gz",
                           "BRDC00GFZ_00000000_FRO_RX3_MN_20220111_000000_01D_00U_GFZ.rnx",
                           "YEL200CAN_00002760_FRO_RX3_MO_20220105_000000_01D_30S_IGS.crx.gz"]
     
-    False_positive_rnxs = ["LROC00FRA_00001225_FRO_RX3_MO_20220613_000000_01D_30S_IGS.rnx.json",
+    false_positive_rnxs = ["LROC00FRA_00001225_FRO_RX3_MO_20220613_000000_01D_30S_IGS.rnx.json",
                            "SUN600SWE_00002886_FRO_RX3_MO_20220613_000000_01D_30S_EPN.rnx.json",
                            "_._YELL00CAN_00001441_FRO_RX3_MO_20220613_000000_01D_30S_IGS.rnx"]
     
     
-    return True_positive_rnxs, False_positive_rnxs
+    return true_positive_rnxs, false_positive_rnxs
     
 
 

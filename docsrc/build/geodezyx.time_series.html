@@ -47,7 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to GeodeZYX Toolbox’s documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>GeodeZYX Toolbox</cite>’s Cookbook</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">GeodeZYX’s complete reference package</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
@@ -89,7 +89,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="geodezyx.html">GeodeZYX’s complete reference package</a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.html">geodezyx package</a></li>
       <li class="breadcrumb-item active">geodezyx.time_series package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/geodezyx.time_series.rst.txt" rel="nofollow"> View page source</a>
@@ -304,7 +304,8 @@ de TS (le cas échéant une liste à 1 élt)
 <dl class="py method">
 <dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc_from_first_posi">
 <span class="sig-name descname"><span class="pre">ENUcalc_from_first_posi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc_from_first_posi" title="Link to this definition"></a></dt>
-<dd><p>Method to determine the ENU components based directly on the mean position</p>
+<dd><p>Method to determine the ENU components based directly
+on the mean/median position</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None.</p>
@@ -314,8 +315,9 @@ de TS (le cas échéant une liste à 1 élt)
 
 <dl class="py method">
 <dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc_from_mean_posi">
-<span class="sig-name descname"><span class="pre">ENUcalc_from_mean_posi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meanormed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc_from_mean_posi" title="Link to this definition"></a></dt>
-<dd><p>Method to determine the ENU components based directly on the mean position</p>
+<span class="sig-name descname"><span class="pre">ENUcalc_from_mean_posi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mean_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.ENUcalc_from_mean_posi" title="Link to this definition"></a></dt>
+<dd><p>Method to determine the ENU components based directly
+on the mean/median position</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None.</p>
@@ -534,14 +536,14 @@ both has to be merged ASAP !!!!!</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.mean_posi">
-<span class="sig-name descname"><span class="pre">mean_posi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'point'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meanormed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.mean_posi" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">mean_posi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'point'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.mean_posi" title="Link to this definition"></a></dt>
 <dd><p>Method to determine the mean position of the TimeSerie</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>coortype</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – The coordinates type. The default is ‘XYZ’.</p></li>
 <li><p><strong>outtype</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – ‘point’ or ‘tuple’. The default is ‘point’.</p></li>
-<li><p><strong>meanormed</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – ‘mean’ or ‘median’. The default is ‘mean’.</p></li>
+<li><p><strong>mean_type</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – ‘mean’ or ‘median’. The default is ‘median’.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

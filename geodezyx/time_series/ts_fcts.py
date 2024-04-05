@@ -826,7 +826,9 @@ def mean_list_of_pts(ptslisin):
 
 
 def merge(tsin,N):
-    """ merge N points in one """
+    """ 
+    merge N points in one
+    """
     tsin.sort()
     tsout = copy.deepcopy(tsin)
     tsout.del_data()
@@ -838,15 +840,34 @@ def merge(tsin,N):
     return tsout
 
 def merge_ts(ts_list_in):
+    """
+    Merge several TimeSeriePoint into one
+
+    Parameters
+    ----------
+    ts_list_in : list of TimeSeriePoint
+        list of TimeSeriePoint.
+
+    Returns
+    -------
+    ts_out : TimeSeriePoint
+        merged TimeSeriePoint.
+
+    """
     pts_list_merged = []
+    boolENU_stk = []
     for ts in ts_list_in:
         pts_list_merged = pts_list_merged + ts.pts
+        boolENU_stk.append(ts.boolENU)
 
     ts_out = time_series.TimeSeriePoint()
     ts_out.pts = pts_list_merged
     ts_out.anex = ts_list_in[0].anex
+    ts_out.boolENU = np.all(boolENU_stk)
     ts_out.interval_nominal()
+    ts_out.stat = ts_list_in[0].stat
     ts_out.sort()
+
     return ts_out
 
 
@@ -1202,6 +1223,11 @@ def time_win_multi(inplis):
 
 def ts_from_list(A,B,C,T,initype,sA=[],sB=[],sC=[],stat='STAT',name='NoName'):
     tsout = time_series.TimeSeriePoint()
+    
+    if not (type(T[0]) is float or type(T[0]) is int):
+        T = conv.dt2posix(T)
+
+
     if len(sA) == 0:
         for a,b,c,t in zip(A,B,C,T):
             pt = time_series.Point(a,b,c,t,initype)

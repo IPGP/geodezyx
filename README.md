@@ -2,15 +2,14 @@
 
 # GeodeZYX Toolbox
 
-**Version 0.4.3.6 / 2023-06-30**, README Revision: 2023-06-30
+**Version 4.4.1 / 2024-02-08**, README Revision: 2024-03-12
 
 
-**Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
-(GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
+**Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
 
-**Documentation:** [https://geodezyx.github.io/geodezyx-toolbox](https://geodezyx.github.io/geodezyx-toolbox/)
+**Documentation:** [https://ipgp.github.io/geodezyx-toolbox](https://ipgp.github.io/geodezyx-toolbox/)
 
-**GitHub repository:** [https://github.com/GeodeZYX/geodezyx-toolbox](https://github.com/GeodeZYX/geodezyx-toolbox) 
+**GitHub repository:** [https://github.com/IPGP/geodezyx-toolbox](https://github.com/IPGP/geodezyx-toolbox) 
 
 **PyPi project:** [https://pypi.org/project/geodezyx](https://pypi.org/project/geodezyx/)
 
@@ -20,7 +19,12 @@
 *The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes*. 
 V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.org/10.5880/GFZ.1.1.2019.002)
 
-**Licence:** GNU GPL v3 (see below) 
+**Licence:** GNU LGPL v3 (see below) 
+
+**Contributors:**
+* Kitpracha "Na" Chaiyaporn (GFZ, Potsdam, Germany)
+* Valérie Ballu (CNRS/La Rochelle University, France)
+
 
 ## Introduction
 
@@ -47,15 +51,16 @@ See the following link:
 
 ## Installation (detailed legacy instructions)
 
-### with PyPi and pip
+### with PyPI and pip
 
-We recommend to use pip to do a propper installation:
+We recommend using `pip` to do a proper installation.  
+To get the latest working version, you can install directly the GitHub-hosted version (recommended):  
+
+``pip install git+https://github.com/IPGP/geodezyx-toolbox``
+
+You can also install the version hosted on PyPI (but you will not get the latest changes)
 
 ``pip install geodezyx``
-
-To get the latest working version you can install directly the GitHub-hosted version:
-
-``pip install -I -U git+https://github.com/GeodeZYX/geodezyx-toolbox``
 
 ### clone and manually install from GitHub
 
@@ -68,6 +73,22 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ## Changelog
 
+### v4.4.1, 2024-02-08
+  * The GitHub repository has now been moved under the IPGP organization.
+    * It must be transparent for your clones but updating them is recommended \
+      https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository  
+  * The version numbering goes without a starting zero from now on.  
+    Initially, this first zero was kept as a "perpetual beta" marker,  
+    but The GeodeZYX toolbox is a grown-up project now!
+  * Bugs corrected for `read_rnx2_obs` and `OrbDF` manipulation function.
+
+### v0.4.4.0, 2023-11-24
+  * The toolbox turns to the _GNU Lesser General Public License version 3_
+  * Module docstring has been updated
+  * Angle conversion functions have been refactored
+  * sp3/clk DataFrame column names are renamed to better fit the data content:
+    * `sat` > `prn`, `const` > `sys`, `sv` > `prni`, `AC` > `ac`
+      
 ### v0.4.3.6, 2023-06-30
   * a routine version update (bug corrections...)
   * colors in the logger
@@ -95,21 +116,21 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ## Licence
 
-GNU General Public License, Version 3, 29 June 2007
+GNU Lesser General Public License, Version 3, 29 June 2007
 
 Copyright © 2019 Helmholtz Centre Potsdam GFZ 
 German Research Centre for Geosciences, Potsdam, Germany 
 (Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu)
 
 The geodeZYX toolbox is free software: you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the 
+under the terms of the GNU Lesser General Public License as published by the 
 Free Software Foundation, either version 3 of the License, or 
 (at your option) any later version. The geodeZYX toolbox is distributed 
 in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even 
 the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-See the GNU General Public License for more details. 
+See the GNU Lesser General Public License for more details. 
 
-You should have received a copy of the GNU General Public License 
+You should have received a copy of the GNU Lesser General Public License 
 along with this program. If not, see http://www.gnu.org/licenses/.
 
 ```

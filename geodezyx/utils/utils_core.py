@@ -10,11 +10,11 @@ it can be imported directly with:
 from geodezyx import utils
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 
@@ -35,6 +35,7 @@ import tempfile
 import time
 import uuid
 import io
+import pathvalidate
 #### geodeZYX modules
 
 #### Import the logger
@@ -66,7 +67,9 @@ def spyder_run_check():
     else:
         return False
 
-def is_iterable(inp,consider_str_as_iterable=False):
+def is_iterable(inp,
+                consider_str_as_iterable=False,
+                consider_dict_as_iterable=False):
     """
     Test if the input is an iterable like a list or a numpy array or not
 
@@ -84,6 +87,9 @@ def is_iterable(inp,consider_str_as_iterable=False):
         True if inp is iterable, False either
     """
     if not consider_str_as_iterable and type(inp) is str:
+        return False
+
+    if not consider_dict_as_iterable and type(inp) is dict:
         return False
 
     try:
@@ -395,16 +401,26 @@ def open_readlines_smart(file_in,decode_type="ascii",verbose=False):
     if verbose:
         log.info("input file is actually a %s",type(file_in))
     
-    if type(file_in) is str and os.path.isfile(file_in):
+    if type(file_in) is str and pathvalidate.is_valid_filepath(file_in,
+                                                               platform='auto'):
         if verbose:
             log.info("input file is a string path")
-        FILE = open(file_in)
+        try:
+            FILE = open(file_in)
+        except FileNotFoundError as e:
+            log.error("%s not found",file_in)
+            raise(e)  
         LINES = FILE.readlines()
         
-    elif type(file_in) is pathlib.Path and os.path.isfile(file_in):
+    elif type(file_in) is pathlib.Path and pathvalidate.is_valid_filepath(file_in,
+                                                                          platform='auto'):
         if verbose:
             log.info("input file is a Path Object")
-        FILE = open(file_in)
+        try:
+            FILE = open(file_in)
+        except FileNotFoundError as e:
+            log.error("%s not found",file_in)
+            raise(e)  
         LINES = FILE.readlines()
         
     elif type(file_in) is bytes:
@@ -875,14 +891,14 @@ def Tee_frontend(dir_in,logname_in,suffix='',ext='log',print_timestamp=True):
     return F_tee
 
 def alphabet(num=None):
-    if not num:
+    if num is None:
         import string
         return list(string.ascii_lowercase)
     else:
         return alphabet()[num]
 
 def alphabet_reverse(letter=None):
-    if not letter:
+    if letter is None:
         import string
         return list(string.ascii_lowercase)
     else:
@@ -890,6 +906,21 @@ def alphabet_reverse(letter=None):
 
 
 def dday():
+    """
+    Give the time span between prensent and toolbox author's PhD defense
+    (tests also the console messages)
+        
+    Note
+    ----
+    https://fr.wiktionary.org/wiki/quille#Dérivés_2
+    https://en.wiktionary.org/wiki/quille
+
+    Returns
+    -------
+    D : datetime
+        elapsed time.
+
+    """
     D = (dt.datetime(2016,10,14) - dt.datetime.now()).days
     print("used logger:",log)
     log.warning('J - %s avant la quille !!!',D)

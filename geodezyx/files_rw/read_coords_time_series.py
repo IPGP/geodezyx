@@ -10,11 +10,11 @@ it can be imported directly with:
 from geodezyx import files_rw
 
 The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU GPL v3 License
+functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
-Copyright (C) 2019 Pierre Sakic et al. (GFZ, pierre.sakic@gfz-postdam.de)
+Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/GeodeZYX-Toolbox_v4
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
@@ -826,7 +826,7 @@ def read_gins_solution(filein,mode="cinematic"):
         if l[0] == '#':
             continue
 
-        Traw = float(f[2])
+        #Traw = float(f[2])
 
         if 'XYZ_SOL' in l:
             coordstype = 'XYZ'
@@ -1393,7 +1393,7 @@ def read_gins_multi_raw_listings(filelistin,kineorstatic='static',flh_in_rad=Tru
                 continue
             ts = read_gins(filein,kineorstatic='kine',flh_in_rad=flh_in_rad)
             tsoutlis.append(ts)
-        tsout = merge_ts(tsoutlis)
+        tsout = time_series.merge_ts(tsoutlis)
 
     else:
         log.error("check kineorstatic keyword")
@@ -2323,7 +2323,7 @@ def read_qinsy(filein,yy,mm,dd):
     tsout.meta_set(filein)
     return tsout
 
-def read_sonardyne_posi(filein):
+def read_sonardyne_posi(filein,dUTCGPS):
     reader = pd.read_csv(open(filein),skip_footer=1)
     T = [ dateutil.parser.parse(e) + dt.timedelta(seconds=dUTCGPS) for e in list(reader['UTCTime'])]
     (L,F,H) = (reader['Longitude'],reader['Latitude'],reader['Altitude'])
@@ -2499,6 +2499,92 @@ def read_groops_position(Filesin):
 
     return tsout    
 
+
+
+def _pride_pppar_end_header(filein):
+    colheader=0
+    stat = "XXXX"
+
+    with open(filein) as F:
+        L = F.readlines()
+    
+    for i,l in enumerate(L):
+        if "STATION" in l:
+            stat = l.split()[0]
+
+        if "END OF HEADER" in l:
+            colheader = i+1
+            break  
+    return colheader,stat
+    
+    
+filein = "/home/psakicki/GFZ_WORK/IPGP_WORK/OVS/GNSS_OVS/2402_test_pride_pppar/240220e_run_pos/run_wo_oload/WUM0MGXFIN/BORG/S/2023/155/pos_2023155_borg"
+
+def read_pride_pppar_pos_mono(filein):
+    colheader,stat_header = _pride_pppar_end_header(filein)
+        
+    df = pd.read_csv(filein,skiprows=colheader+1,
+                     #delim_whitespace=True,
+                     sep='\s?\*?\s+',
+                     engine='python',
+                     header=None)
+    
+    
+    df.columns = ['stat','Mjd','X','Y','Z','Sx','Sy','Sz',
+                  'Rxy','Rxz','Ryz','Sig0','Nobs']
+    
+    df = df.squeeze()
+    
+    T = conv.dt2posix(conv.MJD2dt(df['Mjd']) )
+    
+    pt = time_series.Point(df['X'],df['Y'],df['Z'],T,'XYZ',
+                           df['Sx'],df['Sy'],df['Sz'],
+                           name=df['stat'])
+    
+    return pt
+
+
+def read_pride_pppar_pos(files_list_in):
+    tsout = time_series.TimeSeriePoint()
+
+    for file in files_list_in:
+        pt = read_pride_pppar_pos_mono(file)
+        
+        tsout.add_point(pt)
+    tsout.meta_set(stat=pt.name)
+    tsout.sort()
+    
+    return tsout
+
+
+def read_pride_pppar_kin(filein):
+    
+    stat = "XXXX"
+
+    colheader,stat = _pride_pppar_end_header(filein)
+    
+
+    df = pd.read_csv(filein,skiprows=colheader+1,
+                     #delim_whitespace=True,
+                     sep='\s?\*?\s+',
+                     engine='python',
+                     header=None)
+        
+    t_arr = conv.MJD2dt(df[0]) + df[1].apply(lambda x:dt.timedelta(seconds=x))
+    
+    tsout = time_series.TimeSeriePoint()
+    
+    tsout = time_series.ts_from_list(df[2].values,
+                                      df[3].values,
+                                      df[4].values,
+                                      t_arr, 'XYZ',
+                                      stat=stat,
+                                      name=stat)
+    
+    return tsout
+    
+    
+    
 
 def read_webobs(filein,typein="txt",
                 coordtreat=False,
