@@ -2548,7 +2548,11 @@ def read_pride_pppar_pos(files_list_in):
     tsout = time_series.TimeSeriePoint()
 
     for file in files_list_in:
-        pt = read_pride_pppar_pos_mono(file)
+        try:
+            pt = read_pride_pppar_pos_mono(file)
+        except pd.errors.EmptyDataError as e:
+            log.error("%s, %s skipped",e,file)
+            continue
         
         tsout.add_point(pt)
     tsout.meta_set(stat=pt.name)
