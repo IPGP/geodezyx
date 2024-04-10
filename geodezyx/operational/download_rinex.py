@@ -269,6 +269,8 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
             sonel
 
             geoaus (Geosciences Australia)
+            
+            ens_fr
 
             nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
             from the ROB server, using GOP files
@@ -366,8 +368,8 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
                 secure_ftp = False
 
                 if netwk in ('igs_cddis','igs'):
-                    url = igs_cddis_server(stat, curdate, user, passwd)
                     secure_ftp = True
+                    url = igs_cddis_server(stat, curdate, user, passwd)
                 elif netwk == 'igs_sopac':
                     url = igs_sopac_server(stat, curdate)
                 elif netwk == 'rgp':
@@ -462,7 +464,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
                 _ = pool.map(dlutils.downloader_wrap, list(zip(urllist,
                                                                savedirlist,
                                                                forcelis)))
-        else:
+        else: ## secure FTP i.e. CDDIS
             ftp_obj , _ = dlutils.ftp_objt_create(secure_ftp_inp=secure_ftp,
                                                   host=url[0].split("/")[2],
                                                   user=url[1],
