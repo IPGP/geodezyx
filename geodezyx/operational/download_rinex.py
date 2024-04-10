@@ -68,12 +68,14 @@ def igs_sopac_server(stat, date):
     return url
 
 
-def igs_cddis_server(stat, date):
+def igs_cddis_server(stat, date, user = '', passwd = ''):
     # a privilegier
-    urlserver = "ftp://cddis.gsfc.nasa.gov/gps/data/daily/"
+    urlserver = "ftp://gdc.cddis.eosdis.nasa.gov/gps/data/daily/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
     url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), date.strftime('%y') + 'd', rnxname)
-    return url
+    if not passwd:
+        passwd = 'sakic@ipgp.fr'
+    return url, user, passwd
 
 
 def igs_cddis_nav_server(stat, date):
@@ -225,7 +227,7 @@ def effective_save_dir(parent_archive_dir, stat, date, archtype='stat'):
 
 def multi_downloader_rinex(**kwargs):
     log.warn('multi_downloader_rinex is a legacy alias for the newly renamed function download_gnss_rinex')
-    return download_gnss_products(**kwargs)
+    return download_gnss_rinex(**kwargs)
 
 
 def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
@@ -361,9 +363,11 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
             for stat in statlis:
                 stat = stat.lower()
                 mode1Hz = False
+                secure_ftp = False
 
                 if netwk in ('igs_cddis','igs'):
-                    url = igs_cddis_server(stat, curdate)
+                    url = igs_cddis_server(stat, curdate, user, passwd)
+                    secure_ftp = True
                 elif netwk == 'igs_sopac':
                     url = igs_sopac_server(stat, curdate)
                 elif netwk == 'rgp':
@@ -423,10 +427,12 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
 
     ### Use of the advanced FTP Crawler
     if filter_ftp_crawler:
-        if path_ftp_crawled_files_load:
+        if path_ftp_crawled_files_load: ## if the previous files are loaded
             urllist, savedirlist = utils.pickle_loader(path_ftp_crawled_files_load)
-        else:
-            urllist, savedirlist = dlutils.ftp_files_crawler(urllist, savedirlist)
+        else: ## regular case
+            urllist, savedirlist = dlutils.ftp_files_crawler(urllist,
+                                                             savedirlist, 
+                                                             secure_ftp=secure_ftp)
             if path_ftp_crawled_files_save:
                 savetup = (urllist, savedirlist)
                 utils.pickle_saver(savetup,
