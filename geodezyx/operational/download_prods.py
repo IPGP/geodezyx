@@ -212,42 +212,8 @@ def download_gnss_products(archive_dir,
 
     wwww_dir_previous = None
     if parallel_download > 1:
-        pool = mp.Pool(processes=parallel_download) 
-
-    ## internal fct to create the FTP objects
-    
-
-    def _ftp_objt_create(secure_ftp_inp,chdir=""):
-        # define the right constructor
-        if secure_ftp_inp:
-            ftp_constuctor = dlutils.MyFTP_TLS
-            #ftp=ftp_constuctor()
-            #ftp.set_debuglevel(2)
-            #ftp.connect(arch_center_main)
-            #ftp.login('anonymous','')
-            #ftp.prot_p()
-        else:     
-            ftp_constuctor = FTP
-            #ftp = ftp_constuctor(arch_center_main)
-            #ftp.login()
-            
-        ## create a list of FTP object for multiple downloads
-        Ftp_obj_list_out = [ftp_constuctor(arch_center_main) for i in range(parallel_download)]
-        if secure_ftp:
-            [f.login('anonymous','') for f in Ftp_obj_list_out]
-            [f.prot_p() for f in Ftp_obj_list_out]    
-        else:
-            [f.login() for f in Ftp_obj_list_out]    
-            
-        # define the main obj for crawling
-        ftp_main = Ftp_obj_list_out[0]
-        
-        # change the directory of the main ftp obj if we ask for it
-        if chdir:
-            log.info("Move to: %s",chdir)
-            ftp_main.cwd(chdir)
-        
-        return ftp_main, Ftp_obj_list_out
+        pool = mp.Pool(processes=parallel_download)  
+   
     
     ###################################################################
     ########### Remote file search      
@@ -280,7 +246,8 @@ def download_gnss_products(archive_dir,
         
         if np.mod(ipatt_tup,n_ftp_ask) == 0:
             log.info("Create a new FTP instance")
-            ftp, Ftp_obj_list = _ftp_objt_create(secure_ftp)
+            ftp, Ftp_obj_list = dlutils.ftp_objt_create(secure_ftp_inp=secure_ftp,
+                                                        host=arch_center_main)
             
         if wwww_dir_previous != wwww_dir or np.mod(ipatt_tup,n_ftp_ask) == 0:
             log.info("Move to: %s",wwww_dir)

@@ -250,6 +250,42 @@ def _ftp_dir_list_files(ftp_obj_in):
     return files
 
 
+def ftp_objt_create(secure_ftp_inp,host="",chdir="",
+                    parallel_download=1, 
+                    user="anonymous",passwd=""):
+    # define the right constructor
+    if secure_ftp_inp:
+        ftp_constuctor = MyFTP_TLS
+        #ftp=ftp_constuctor()
+        #ftp.set_debuglevel(2)
+        #ftp.connect(arch_center_main)
+        #ftp.login('anonymous','')
+        #ftp.prot_p()
+    else:     
+        ftp_constuctor = FTP
+        #ftp = ftp_constuctor(arch_center_main)
+        #ftp.login()
+        
+    ## create a list of FTP object for multiple downloads
+    Ftp_obj_list_out = [ftp_constuctor(host) for i in range(parallel_download)]
+    if secure_ftp_inp:
+        [f.login(user,passwd) for f in Ftp_obj_list_out]
+        [f.prot_p() for f in Ftp_obj_list_out]    
+    else:
+        [f.login() for f in Ftp_obj_list_out]    
+        
+    # define the main obj for crawling
+    ftp_main = Ftp_obj_list_out[0]
+    
+    # change the directory of the main ftp obj if we ask for it
+    if chdir:
+        log.info("Move to: %s",chdir)
+        ftp_main.cwd(chdir)
+    
+    return ftp_main, Ftp_obj_list_out
+
+
+
 def ftp_files_crawler(urllist,savedirlist,secure_ftp):
     """
     filter urllist,savedirlist generated with download_gnss_rinex with an
@@ -286,21 +322,11 @@ def ftp_files_crawler(urllist,savedirlist,secure_ftp):
     FTP_files_list = []
     count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
     #### Initialisation of the FTP object
-    
-    def _create_ftp_obj(secure_ftp_inp):
-        if secure_ftp_inp:
-            FTPobj = MyFTP_TLS(prev_row_ftpobj.root,
-                               prev_row_ftpobj.user,
-                               prev_row_ftpobj['pass'])
-            FTPobj.prot_p()
-    
-        else:
-            FTPobj = ftplib.FTP(prev_row_ftpobj.root,
-                                prev_row_ftpobj.user,
-                                prev_row_ftpobj['pass'])
-        return FTPobj
-    
-    FTPobj = _create_ftp_obj(secure_ftp)
+        
+    FTPobj , _  = ftp_objt_create(secure_ftp_inp=secure_ftp,
+                                  host=prev_row_ftpobj.root,
+                                  user=prev_row_ftpobj.user,
+                                  passwd=prev_row_ftpobj['pass'])
     
     for irow,row in DF.iterrows():
         count_loop += 1
@@ -308,7 +334,10 @@ def ftp_files_crawler(urllist,savedirlist,secure_ftp):
         ####### we recreate a new FTP object if the root URL is not the same
         if row.root != prev_row_ftpobj.root or count_loop > 20:
             
-            FTPobj = _create_ftp_obj(secure_ftp)
+            FTPobj , _ = ftp_objt_create(secure_ftp_inp=secure_ftp,
+                                         host=prev_row_ftpobj.root,
+                                         user=prev_row_ftpobj.user,
+                                         passwd=prev_row_ftpobj['pass'])
             
             prev_row_ftpobj = row
             count_loop = 0
@@ -352,6 +381,9 @@ def ftp_files_crawler(urllist,savedirlist,secure_ftp):
 def FTP_downloader(ftp_obj,filename,localdir):   
     localpath = os.path.join(localdir,filename)
     
+    if not os.path.isdir(localdir):
+        utils.create_dir(localdir)
+    
     if not utils.empty_file_check(localpath):
         log.info(filename + " already exists ;)")
         bool_dl = True
@@ -363,11 +395,27 @@ def FTP_downloader(ftp_obj,filename,localdir):
             bool_dl = True
             log.info(filename + " downloaded :)")
     
-        except:
-            log.info(localpath + " download failed :(")
+        except Exception as e:
+            log.warning(localpath + " download failed :(")
+            log.warning(e)
             bool_dl = False
     
     return localpath , bool_dl
+
+def FTP_downloader_full_remote_path(ftp_obj,full_remote_path,localdir):   
+    
+    #host = full_remote_path[0].split("/")[2]          
+    
+    filename = os.path.basename(full_remote_path)
+    intermed_path = full_remote_path.split("/")[3:]
+    intermed_path.remove(filename)
+    intermed_path = "/" + "/".join(intermed_path)
+
+    ftp_obj.cwd(intermed_path)
+    
+    return FTP_downloader(ftp_obj, filename, localdir)
+
+
 
 def FTP_downloader_wo_objects(tupin):
     arch_center_main,wwww_dir,filename,localdir = tupin
@@ -379,12 +427,3 @@ def FTP_downloader_wo_objects(tupin):
     return localpath , bool_dl
     
 
-def FTP_TLS_downloader_wo_objects(tupin):
-    arch_center_main,wwww_dir,filename,localdir = tupin
-    ftp_obj_wk = MyFTP_TLS(arch_center_main)
-    ftp_obj_wk.login()
-    ftp_obj_wk.cwd(wwww_dir)
-    localpath , bool_dl = FTP_downloader(ftp_obj_wk,filename,localdir)
-    ftp_obj_wk.close()
-    return localpath , bool_dl
-    

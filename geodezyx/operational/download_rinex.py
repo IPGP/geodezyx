@@ -236,7 +236,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
                         filter_ftp_crawler=True,
                         path_ftp_crawled_files_save=None,
                         path_ftp_crawled_files_load=None,
-                        silent_mode=False,
+                        quiet_mode=False,
                         final_archive_for_sup_check=None,
                         force=False):
     """
@@ -324,7 +324,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
         download_gnss_rinex or directly by ftp_files_crawler).
         overrides an internal call of ftp_files_crawler.
         
-    silent_mode : bool
+    quiet_mode : bool
         List the available RINEXs without downloading them. 
         Useful only if path_ftp_crawled_files_save is given
         
@@ -453,32 +453,49 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
 
         urllist, savedirlist = urllist_new, savedirlist_new
 
-    if not silent_mode:
-        if sorted_mode:
-            _ = [pool.apply_async(dlutils.downloader, args=(u, sd, force)) for u, sd in zip(urllist, savedirlist)]
+    if not quiet_mode:
+        if not secure_ftp:
+            if sorted_mode:
+                _ = [pool.apply_async(dlutils.downloader, args=(u, sd, force)) for u, sd in zip(urllist, savedirlist)]
+            else:
+                forcelis = [force] * len(urllist)
+                _ = pool.map(dlutils.downloader_wrap, list(zip(urllist,
+                                                               savedirlist,
+                                                               forcelis)))
         else:
-            forcelis = [force] * len(urllist)
-            _ = pool.map(dlutils.downloader_wrap, list(zip(urllist,
-                                                           savedirlist,
-                                                           forcelis)))
+            ftp_obj , _ = dlutils.ftp_objt_create(secure_ftp_inp=secure_ftp,
+                                                  host=url[0].split("/")[2],
+                                                  user=url[1],
+                                                  passwd=url[2])
+            
+            for iurl,isavedir in zip(urllist,savedirlist):
+                localpath , bool_dl = dlutils.FTP_downloader_full_remote_path(ftp_obj,
+                                                                              iurl[0],
+                                                                              isavedir)
+                
 
     localfiles_lis = []
     skiped_url = 0
     for url, savedir in zip(urllist, savedirlist):
         try:
-            localfile = os.path.join(savedir, os.path.basename(url))
+            if type(url) is tuple:
+                url0 = url[0]
+            else:
+                url0 = url
+            localfile = os.path.join(savedir, os.path.basename(url0))
             if os.path.isfile(localfile):
                 localfiles_lis.append(localfile)
-        except:
+        except Exception as e:
             # because of a weird error
             # i = p.rfind('/') + 1
             # AttributeError: 'tuple' object has no attribute 'rfind'
             skiped_url += 1
+            log.warning(e)
             continue
 
     pool.close()
     if skiped_url > 0:
-        log.debug(str(skiped_url) + ' returned url skipped because of a weird error, but it is not important...')
+        log.debug(str(skiped_url) + ' returned url skipped because of an Exception')
     return localfiles_lis, savedirlist
 
 
