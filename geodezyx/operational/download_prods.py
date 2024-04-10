@@ -16,7 +16,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
-from ftplib import FTP, FTP_TLS
+from ftplib import FTP
 # import glob
 import itertools
 import multiprocessing as mp
@@ -61,8 +61,8 @@ log = logging.getLogger(__name__)
 ######## PRODUCTS DOWNLOADER
 ############################################################################
 
-def download_products_gnss(archive_dir,
-                           startdate,enddate,
+def download_gnss_products(archive_dir,
+                           startdate, enddate,
                            AC_names = ("wum","cod"),
                            prod_types = ("sp3","clk"),
                            remove_patterns=("ULA",),
@@ -212,55 +212,8 @@ def download_products_gnss(archive_dir,
 
     wwww_dir_previous = None
     if parallel_download > 1:
-        pool = mp.Pool(processes=parallel_download) 
-
-    ## internal fct to create the FTP objects
-    
-    class MyFTP_TLS(FTP_TLS):
-        """Explicit FTPS, with shared TLS session"""
-        ### This new class is to avoid the error 
-        ### ssl.SSLEOFError: EOF occurred in violation of protocol (_ssl.c:2396)
-        ### source:
-        ### https://stackoverflow.com/questions/14659154/ftps-with-python-ftplib-session-reuse-required
-        def ntransfercmd(self, cmd, rest=None):
-            conn, size = FTP.ntransfercmd(self, cmd, rest)
-            if self._prot_p:
-                conn = self.context.wrap_socket(conn,
-                                                server_hostname=self.host,
-                                                session=self.sock.session)  # this is the fix
-            return conn, size
-        
-    def ftp_objt_create(secure_ftp_inp,chdir=""):
-        # define the right constructor
-        if secure_ftp_inp:
-            ftp_constuctor = MyFTP_TLS
-            #ftp=ftp_constuctor()
-            #ftp.set_debuglevel(2)
-            #ftp.connect(arch_center_main)
-            #ftp.login('anonymous','')
-            #ftp.prot_p()
-        else:     
-            ftp_constuctor = FTP
-            #ftp = ftp_constuctor(arch_center_main)
-            #ftp.login()
-            
-        ## create a list of FTP object for multiple downloads
-        Ftp_obj_list_out = [ftp_constuctor(arch_center_main) for i in range(parallel_download)]
-        if secure_ftp:
-            [f.login('anonymous','') for f in Ftp_obj_list_out]    
-            [f.prot_p() for f in Ftp_obj_list_out]    
-        else:
-            [f.login() for f in Ftp_obj_list_out]    
-            
-        # define the main obj for crawling
-        ftp_main = Ftp_obj_list_out[0]
-        
-        # change the directory of the main ftp obj if we ask for it
-        if chdir:
-            log.info("Move to: %s",chdir)
-            ftp_main.cwd(chdir)
-        
-        return ftp_main, Ftp_obj_list_out
+        pool = mp.Pool(processes=parallel_download)  
+   
     
     ###################################################################
     ########### Remote file search      
@@ -293,7 +246,8 @@ def download_products_gnss(archive_dir,
         
         if np.mod(ipatt_tup,n_ftp_ask) == 0:
             log.info("Create a new FTP instance")
-            ftp, Ftp_obj_list = ftp_objt_create(secure_ftp)
+            ftp, Ftp_obj_list = dlutils.ftp_objt_create(secure_ftp_inp=secure_ftp,
+                                                        host=arch_center_main)
             
         if wwww_dir_previous != wwww_dir or np.mod(ipatt_tup,n_ftp_ask) == 0:
             log.info("Move to: %s",wwww_dir)
@@ -348,8 +302,6 @@ def download_products_gnss(archive_dir,
             
         ###################################################################
         ########### Download
-            
-
         archive_dir_specif = dlutils.effective_save_dir_orbit(archive_dir,
                                                               ac_cur,
                                                               dt_cur,
@@ -369,10 +321,14 @@ def download_products_gnss(archive_dir,
                 for filchunk in Chunk:
                     Potential_localfiles_list.append(os.path.join(archive_dir_specif,filchunk))
                     if parallel_download == 1:
-                        Downld_tuples_list.append((ftpobj,filchunk,archive_dir_specif))
+                        Downld_tuples_list.append((ftpobj,
+                                                   filchunk,
+                                                   archive_dir_specif))
                     else:
-                        Downld_tuples_list.append((arch_center_main,wwww_dir,
-                                                   filchunk,archive_dir_specif))
+                        Downld_tuples_list.append((arch_center_main,
+                                                   wwww_dir,
+                                                   filchunk,
+                                                   archive_dir_specif))
         else: ### HTTP download
             Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
             [Potential_localfiles_list.append(os.path.join(archive_dir_specif,f)) for f in Files_remote_date_list]
@@ -419,8 +375,8 @@ def download_products_gnss(archive_dir,
 
 
 def multi_downloader_orbs_clks_2(**kwargs):
-    log.warn('multi_downloader_orbs_clks_2 is a legacy alias for the newly renamed function download_products_gnss')
-    return download_products_gnss(**kwargs)
+    log.warn('multi_downloader_orbs_clks_2 is a legacy alias for the newly renamed function download_gnss_products')
+    return download_gnss_products(**kwargs)
 
 
 def orbclk_long2short_name(longname_filepath_in,

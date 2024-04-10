@@ -65,11 +65,11 @@ archive_dir = "/dsk/mansur/tst_rnx/"
 parallel_download=1
 
 if True:
-    urllist,savedirlist = operational.multi_downloader_rinex(statdico,
-                                                             archive_dir,
-                                                             start,end,
-                                                             archtype,
-                                                             parallel_download,
-                                                             sorted_mode=0,
-                                                             user=user,
-                                                             passwd=passwd)
+    urllist,savedirlist = operational.download_gnss_rinex(statdico,
+                                                          archive_dir,
+                                                          start, end,
+                                                          archtype,
+                                                          parallel_download,
+                                                          sorted_mode=0,
+                                                          user=user,
+                                                          passwd=passwd)

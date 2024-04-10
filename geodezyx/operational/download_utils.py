@@ -16,7 +16,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 # import datetime as dt
-from ftplib import FTP
+from ftplib import FTP, FTP_TLS
 # import glob
 # import itertools
 # import multiprocessing as mp
@@ -134,7 +134,9 @@ def downloader(url,savedir,force = False,
         url = url[0]
     else:
         need_auth = False
-
+        username = ''
+        password = ''
+        
     url_print = str(url)
 
     rnxname = os.path.basename(url)
@@ -142,8 +144,10 @@ def downloader(url,savedir,force = False,
     Pot_compress_files_list = [os.path.join(savedir , rnxname)]
 
     if check_if_file_already_exists_uncompressed:
-        Pot_compress_files_list.append(os.path.join(savedir , rnxname.replace(".gz","")))
-        Pot_compress_files_list.append(os.path.join(savedir , rnxname.replace(".Z","")))
+        Pot_compress_files_list.append(os.path.join(savedir ,
+                                                    rnxname.replace(".gz","")))
+        Pot_compress_files_list.append(os.path.join(savedir ,
+                                                    rnxname.replace(".Z","")))
         Pot_compress_files_list = list(set(Pot_compress_files_list))
 
     for f in Pot_compress_files_list:
@@ -158,29 +162,27 @@ def downloader(url,savedir,force = False,
         shutil.copy(url,savedir)
     
     ##### REMOTE FILE (General case)
-    elif ("ftp" in url) or ("http" in url) :
+    elif ("http" in url)  or (("ftp" in url) and not need_auth):
         # managing a authentification
-        if need_auth:
-            if 'ftp://' in url: # FTP with Auth
-                url = url.replace('ftp://','ftp://' + username + ':' + password + '@')
-                opener = urllib.request.build_opener()
-            else: # HTTP with Auth
-                password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
-                top_level_url = url
-                password_mgr.add_password(None, top_level_url, username, password)
-                handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
-                # create "opener" (OpenerDirector instance)
-                opener = urllib.request.build_opener(handler)
+        if need_auth: # HTTP with Auth
+            password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+            top_level_url = url
+            password_mgr.add_password(None, top_level_url, username, password)
+            handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+            # create "opener" (OpenerDirector instance)
+            opener = urllib.request.build_opener(handler)
         else: # FTP or HTTP without Auth
             opener = urllib.request.build_opener()
     
         # use the opener to fetch a URL
         try:
             f = opener.open(url)
-        except (urllib.error.HTTPError , urllib.error.URLError):
+        except (urllib.error.HTTPError , urllib.error.URLError) as exp:
             log.warning("%s not found :(",rnxname)
             log.warning(url_print)
+            log.warning(exp)
             return ""
+        
         log.info("%s found, downloading :)",rnxname)
         data = f.read()
         if not os.path.exists(savedir):
@@ -189,10 +191,19 @@ def downloader(url,savedir,force = False,
         with open(outpath, "wb") as code:
             code.write(data)
         return_str = outpath
+        
+    elif (("ftp" in url) and need_auth):
+        log.critical("MUST BE IMPEMENTED")
+        return_str = ""
+
+
+        
+        
     else:
         log.error("something goes wrong with the URL")
         log.error(url)
         return_str = ""
+        
 
     return return_str
 
@@ -209,8 +220,24 @@ def downloader_wrap(intup):
 # | |       | |  | |      | |__| | (_) \ V  V /| | | | | (_) | (_| | (_| |
 # |_|       |_|  |_|      |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|
                                                                         
- 
-#### FTP DOWNLOAD                                                                                      
+
+#### FTP DOWNLOAD
+
+class MyFTP_TLS(FTP_TLS):
+    """Explicit FTPS, with shared TLS session"""
+    ### This new class is to avoid the error
+    ### ssl.SSLEOFError: EOF occurred in violation of protocol (_ssl.c:2396)
+    ### source:
+    ### https://stackoverflow.com/questions/14659154/ftps-with-python-ftplib-session-reuse-required
+    def ntransfercmd(self, cmd, rest=None):
+        conn, size = FTP.ntransfercmd(self, cmd, rest)
+        if self._prot_p:
+            conn = self.context.wrap_socket(conn,
+                                            server_hostname=self.host,
+                                            session=self.sock.session)  # this is the fix
+        return conn, size
+
+
 def _ftp_dir_list_files(ftp_obj_in):
     files = []
     try:
@@ -223,9 +250,45 @@ def _ftp_dir_list_files(ftp_obj_in):
     return files
 
 
-def ftp_files_crawler(urllist,savedirlist):
+def ftp_objt_create(secure_ftp_inp,host="",chdir="",
+                    parallel_download=1, 
+                    user="anonymous",passwd=""):
+    # define the right constructor
+    if secure_ftp_inp:
+        ftp_constuctor = MyFTP_TLS
+        #ftp=ftp_constuctor()
+        #ftp.set_debuglevel(2)
+        #ftp.connect(arch_center_main)
+        #ftp.login('anonymous','')
+        #ftp.prot_p()
+    else:     
+        ftp_constuctor = FTP
+        #ftp = ftp_constuctor(arch_center_main)
+        #ftp.login()
+        
+    ## create a list of FTP object for multiple downloads
+    Ftp_obj_list_out = [ftp_constuctor(host) for i in range(parallel_download)]
+    if secure_ftp_inp:
+        [f.login(user,passwd) for f in Ftp_obj_list_out]
+        [f.prot_p() for f in Ftp_obj_list_out]    
+    else:
+        [f.login() for f in Ftp_obj_list_out]    
+        
+    # define the main obj for crawling
+    ftp_main = Ftp_obj_list_out[0]
+    
+    # change the directory of the main ftp obj if we ask for it
+    if chdir:
+        log.info("Move to: %s",chdir)
+        ftp_main.cwd(chdir)
+    
+    return ftp_main, Ftp_obj_list_out
+
+
+
+def ftp_files_crawler(urllist,savedirlist,secure_ftp):
     """
-    filter urllist,savedirlist generated with multi_downloader_rinex with an
+    filter urllist,savedirlist generated with download_gnss_rinex with an
     optimized FTP crawl
 
     """
@@ -242,7 +305,7 @@ def ftp_files_crawler(urllist,savedirlist):
         DF.columns = ('url','savedir')
         DF['user'] = "anonymous"
         DF['pass'] = ""
-        
+                
     ### Do the correct split for the URLs
     DF = DF.sort_values('url')
     DF["url"]      = DF['url'].str.replace("ftp://","")
@@ -259,19 +322,22 @@ def ftp_files_crawler(urllist,savedirlist):
     FTP_files_list = []
     count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
     #### Initialisation of the FTP object
-    FTPobj = ftplib.FTP(prev_row_ftpobj.root,
-                        prev_row_ftpobj.user, 
-                        prev_row_ftpobj['pass'])
+        
+    FTPobj , _  = ftp_objt_create(secure_ftp_inp=secure_ftp,
+                                  host=prev_row_ftpobj.root,
+                                  user=prev_row_ftpobj.user,
+                                  passwd=prev_row_ftpobj['pass'])
     
     for irow,row in DF.iterrows():
         count_loop += 1
         
         ####### we recreate a new FTP object if the root URL is not the same
         if row.root != prev_row_ftpobj.root or count_loop > 20:
-    
-            FTPobj = ftplib.FTP(row.root,
-                                row.user, 
-                                row['pass'])
+            
+            FTPobj , _ = ftp_objt_create(secure_ftp_inp=secure_ftp,
+                                         host=prev_row_ftpobj.root,
+                                         user=prev_row_ftpobj.user,
+                                         passwd=prev_row_ftpobj['pass'])
             
             prev_row_ftpobj = row
             count_loop = 0
@@ -315,6 +381,9 @@ def ftp_files_crawler(urllist,savedirlist):
 def FTP_downloader(ftp_obj,filename,localdir):   
     localpath = os.path.join(localdir,filename)
     
+    if not os.path.isdir(localdir):
+        utils.create_dir(localdir)
+    
     if not utils.empty_file_check(localpath):
         log.info(filename + " already exists ;)")
         bool_dl = True
@@ -326,11 +395,27 @@ def FTP_downloader(ftp_obj,filename,localdir):
             bool_dl = True
             log.info(filename + " downloaded :)")
     
-        except:
-            log.info(localpath + " download failed :(")
+        except Exception as e:
+            log.warning(localpath + " download failed :(")
+            log.warning(e)
             bool_dl = False
     
     return localpath , bool_dl
+
+def FTP_downloader_full_remote_path(ftp_obj,full_remote_path,localdir):   
+    
+    #host = full_remote_path[0].split("/")[2]          
+    
+    filename = os.path.basename(full_remote_path)
+    intermed_path = full_remote_path.split("/")[3:]
+    intermed_path.remove(filename)
+    intermed_path = "/" + "/".join(intermed_path)
+
+    ftp_obj.cwd(intermed_path)
+    
+    return FTP_downloader(ftp_obj, filename, localdir)
+
+
 
 def FTP_downloader_wo_objects(tupin):
     arch_center_main,wwww_dir,filename,localdir = tupin
@@ -341,3 +426,4 @@ def FTP_downloader_wo_objects(tupin):
     ftp_obj_wk.close()
     return localpath , bool_dl
     
+

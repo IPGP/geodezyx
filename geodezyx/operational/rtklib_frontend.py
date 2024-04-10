@@ -175,12 +175,12 @@ def rtklib_run_from_rinex(rnx_rover,rnx_base,generik_conf,working_dir,
     statdic = dict()
     statdic['nav'] = ['BRDC']
     nav_srt = dt.datetime(bas_srt.year, bas_srt.month , bas_srt.day )
-    orblis = operational.multi_downloader_rinex(statdic,
-                                                temp_dir,
-                                                nav_srt,
-                                                bas_end ,
-                                                archtype='/',
-                                                sorted_mode=False)
+    orblis = operational.download_gnss_rinex(statdic,
+                                             temp_dir,
+                                             nav_srt,
+                                             bas_end,
+                                             archtype='/',
+                                             sorted_mode=False)
     navZ = orblis[0]
     nav = utils.uncompress(navZ)
 

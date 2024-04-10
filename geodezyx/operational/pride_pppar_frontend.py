@@ -59,12 +59,12 @@ def dl_brdc_pride_pppar(prod_parent_dir,date_list):
     date_list_uniq = sorted(list(set(date_list_uniq)))
     
     for date in date_list_uniq:
-        brdc = operational.multi_downloader_rinex({'nav_rt' : ['BRDC']},
-                                                  prod_parent_dir,
-                                                  date, date,
-                                                  archtype = "year/doy",
-                                                  parallel_download=1,
-                                                  force=True)
+        brdc = operational.download_gnss_rinex({'nav_rt' : ['BRDC']},
+                                               prod_parent_dir,
+                                               date, date,
+                                               archtype = "year/doy",
+                                               parallel_download=1,
+                                               force=True)
         brdc_lis.append(brdc)
     
     return brdc_lis        
@@ -73,7 +73,7 @@ def dl_brdc_pride_pppar(prod_parent_dir,date_list):
         
 def dl_prods_pride_pppar(prod_parent_dir,date_list,prod_ac_name):
     
-    dl_prods_fct = operational.download_products_gnss
+    dl_prods_fct = operational.download_gnss_products
     
     ######### ORBITS CLOCKS ETC...    
     for data_center in ('ign','whu'):   ##'whu'
