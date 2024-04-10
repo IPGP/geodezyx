@@ -195,13 +195,13 @@ def anubis_runner(rnx_inp,
             log.debug("%s not found, we downloading it",potential_nav_file)
             statdico = dict()
             statdico['brdc'] = ['BRDC']
-            brdc_list = operational.multi_downloader_rinex(statdico,
-                                                           nav_dir,
-                                                           date_start,date_end,
+            brdc_list = operational.download_gnss_rinex(statdico,
+                                                        nav_dir,
+                                                        date_start, date_end,
                                                            "/",
-                                                           parallel_download=1,
-                                                           sorted_mode=0,
-                                                           final_archive_for_sup_check=nav_dir)    
+                                                        parallel_download=1,
+                                                        sorted_mode=0,
+                                                        final_archive_for_sup_check=nav_dir)
             if brdc_list:
                 nav_path = brdc_list[0]
             else:

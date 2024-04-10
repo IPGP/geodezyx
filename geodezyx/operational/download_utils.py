@@ -225,7 +225,7 @@ def _ftp_dir_list_files(ftp_obj_in):
 
 def ftp_files_crawler(urllist,savedirlist):
     """
-    filter urllist,savedirlist generated with multi_downloader_rinex with an
+    filter urllist,savedirlist generated with download_gnss_rinex with an
     optimized FTP crawl
 
     """

@@ -61,8 +61,8 @@ log = logging.getLogger(__name__)
 ######## PRODUCTS DOWNLOADER
 ############################################################################
 
-def download_products_gnss(archive_dir,
-                           startdate,enddate,
+def download_gnss_products(archive_dir,
+                           startdate, enddate,
                            AC_names = ("wum","cod"),
                            prod_types = ("sp3","clk"),
                            remove_patterns=("ULA",),
@@ -419,8 +419,8 @@ def download_products_gnss(archive_dir,
 
 
 def multi_downloader_orbs_clks_2(**kwargs):
-    log.warn('multi_downloader_orbs_clks_2 is a legacy alias for the newly renamed function download_products_gnss')
-    return download_products_gnss(**kwargs)
+    log.warn('multi_downloader_orbs_clks_2 is a legacy alias for the newly renamed function download_gnss_products')
+    return download_gnss_products(**kwargs)
 
 
 def orbclk_long2short_name(longname_filepath_in,
