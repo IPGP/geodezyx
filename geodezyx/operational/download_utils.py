@@ -415,8 +415,6 @@ def FTP_downloader_full_remote_path(ftp_obj,full_remote_path,localdir):
     
     return FTP_downloader(ftp_obj, filename, localdir)
 
-
-
 def FTP_downloader_wo_objects(tupin):
     arch_center_main,wwww_dir,filename,localdir = tupin
     ftp_obj_wk = FTP(arch_center_main)
