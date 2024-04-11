@@ -549,6 +549,8 @@ def round_time(tsin,round_to,
     for pt,t in zip(tsout,Tdtout):
         pt.Tset(conv.numpy_dt2dt(t))
         
+    tsout.remove_duplicate_pts(tsin.initype())
+        
     tsout.interp_set()
         
     return tsout
