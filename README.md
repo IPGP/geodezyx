@@ -5,7 +5,7 @@
 **Version 4.4.1 / 2024-02-08**, README Revision: 2024-03-12
 
 
-**Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
+**Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany) 
 
 **Documentation:** [https://ipgp.github.io/geodezyx-toolbox](https://ipgp.github.io/geodezyx-toolbox/)
 
