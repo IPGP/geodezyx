@@ -14,7 +14,7 @@ The GeodeZYX Toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
-GitHub repository :
+GitHub repository : 
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
