@@ -95,7 +95,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
         SP3epoc   = pd.DataFrame(SP3_DF_wrk[SP3_DF_wrk["epoch"] == epoc])
         
         ######## if keep_missing_sat_in_epoch:
-        ## manage missing Sats for the current epoc
+        ## manage missing sats for the current epoc
         MissingSats = SatListSet.difference(set(SP3epoc["prn"]))
         
         for miss_sat in MissingSats:
