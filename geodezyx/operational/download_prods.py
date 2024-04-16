@@ -16,7 +16,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
-from ftplib import FTP, FTP_TLS
+from ftplib import FTP
 # import glob
 import itertools
 import multiprocessing as mp
@@ -61,8 +61,8 @@ log = logging.getLogger(__name__)
 ######## PRODUCTS DOWNLOADER
 ############################################################################
 
-def download_products_gnss(archive_dir,
-                           startdate,enddate,
+def download_gnss_products(archive_dir,
+                           startdate, enddate,
                            AC_names = ("wum","cod"),
                            prod_types = ("sp3","clk"),
                            remove_patterns=("ULA",),
@@ -77,19 +77,73 @@ def download_products_gnss(archive_dir,
                            ftp_download=False,
                            dow_manu=False):
     """
-    dow_manu = False, no dow manu, consider the converted dow from the time span, regular case
-    dow_manu = None, no dow in the REGEX, the crawler will search only for the week
-    dow_manu = 0 or 7: the dow in question    
-    
-    
-    to control the lattency with the new naming convention, simply add it completly in the AC name
-    e.g. IGS0OPSRAP
-    
+    Download GNSS products from different IGS data centers
+
+    Parameters
+    ----------
+    archive_dir : str
+        the parent directory where the products will be stored.
+    startdate : datetime
+        the start date in regular calendar date.
+    enddate : datetime
+        the end date in regular calendar date..
+    AC_names : tuple, optional
+        the names of the wished analysis centers.
+        It also control the product's lattency with the new naming convention: 
+        simply add it completly in the AC name e.g. IGS0OPSRAP
+        The default is ("wum","cod").
+    prod_types : tuple, optional
+        the wished products. 
+        The default is ("sp3","clk").
+    remove_patterns : tuple, optional
+        the patterns you want to exclude. 
+        The default is ("ULA",).
+    archtype : str, optional
+        structure of the local archive sub-directories.
+        see `effective_save_dir_orbit` function for more details.
+        The default is 'week'.
+        an alternatiove can be 'year/doy'.
+    new_name_conv : bool, optional
+        Also handle the new name convention. The default is True.
+    parallel_download : int, optional
+        control parallel download.
+        The default is 4.
+    archive_center : TYPE, optional
+        name of the IGS's archive/data center. The default is 'ign'.
+    mgex : bool, optional
+        get MGEX products. The default is False.
+    repro : int, optional
+        get repro products. The default is 0 i.e. operational products.
+    sorted_mode : bool, optional
+        sort the download or not. The default is False.
+    return_also_uncompressed_files : bool, optional
+        in the final list output, return also already downloaded and 
+        uncompressedfiles. The default is True.
+    ftp_download : bool, optional
+        DESCRIPTION. The default is False.
+    dow_manu : int or bool or None, optional
+        Control the download for weekly files
+        dow_manu = False, no dow manu, 
+        consider the converted dow from the time span, regular case
+        dow_manu = None, 
+        no dow in the REGEX, the crawler will search only for the week
+        dow_manu = 0 or 7,
+        the dow in question    
+        The default is False.
+
+
+    Returns
+    -------
+    list
+        list of the local files's paths.
+
     Note
     ----
     The new naming convention has been fully adopted since GPS Week 2238-0
 
-    
+    to control the lattency with the new naming convention, 
+    simply add it completly in the AC name e.g. IGS0OPSRAP
+        
     """
     
     if mgex:
@@ -157,56 +211,9 @@ def download_products_gnss(archive_dir,
     Dates_list = conv.dt_range(startdate,enddate)
 
     wwww_dir_previous = None
-    pool = mp.Pool(processes=parallel_download) 
-
-    ## internal fct to create the FTP objects
-    
-    class MyFTP_TLS(FTP_TLS):
-        """Explicit FTPS, with shared TLS session"""
-        ### This new class is to avoid the error 
-        ### ssl.SSLEOFError: EOF occurred in violation of protocol (_ssl.c:2396)
-        ### source:
-        ### https://stackoverflow.com/questions/14659154/ftps-with-python-ftplib-session-reuse-required
-        def ntransfercmd(self, cmd, rest=None):
-            conn, size = FTP.ntransfercmd(self, cmd, rest)
-            if self._prot_p:
-                conn = self.context.wrap_socket(conn,
-                                                server_hostname=self.host,
-                                                session=self.sock.session)  # this is the fix
-            return conn, size
-        
-    def ftp_objt_create(secure_ftp_inp,chdir=""):
-        
-        # define the right constructor
-        if secure_ftp_inp:
-            ftp_constuctor = MyFTP_TLS
-            #ftp=ftp_constuctor()
-            #ftp.set_debuglevel(2)
-            #ftp.connect(arch_center_main)
-            #ftp.login('anonymous','')
-            #ftp.prot_p()
-        else:     
-            ftp_constuctor = FTP
-            #ftp = ftp_constuctor(arch_center_main)
-            #ftp.login()
-            
-        ## create a list of FTP object for multiple downloads
-        Ftp_obj_list_out = [ftp_constuctor(arch_center_main) for i in range(parallel_download)]
-        if secure_ftp:
-            [f.login('anonymous','') for f in Ftp_obj_list_out]    
-            [f.prot_p() for f in Ftp_obj_list_out]    
-        else:
-            [f.login() for f in Ftp_obj_list_out]    
-            
-        # define the main obj for crawling
-        ftp_main = Ftp_obj_list_out[0]
-        
-        # change the directory of the main ftp obj if we ask for it
-        if chdir:
-            log.info("Move to: %s",chdir)
-            ftp_main.cwd(chdir)
-        
-        return ftp_main, Ftp_obj_list_out
+    if parallel_download > 1:
+        pool = mp.Pool(processes=parallel_download)  
+   
     
     ###################################################################
     ########### Remote file search      
@@ -239,7 +246,8 @@ def download_products_gnss(archive_dir,
         
         if np.mod(ipatt_tup,n_ftp_ask) == 0:
             log.info("Create a new FTP instance")
-            ftp, Ftp_obj_list = ftp_objt_create(secure_ftp)
+            ftp, Ftp_obj_list = dlutils.ftp_objt_create(secure_ftp_inp=secure_ftp,
+                                                        host=arch_center_main)
             
         if wwww_dir_previous != wwww_dir or np.mod(ipatt_tup,n_ftp_ask) == 0:
             log.info("Move to: %s",wwww_dir)
@@ -269,7 +277,7 @@ def download_products_gnss(archive_dir,
                 
             ac_newnam   = ac_cur.upper()
 
-            doy_newnam  = "".join(reversed(conv.dt2doy_year(conv.gpstime2dt(wwww,dow))))
+            doy_newnam  = "".join(reversed(conv.dt2doy_year(dt_cur))) + str(dt_cur.hour).zfill(2)
             prod_newnam = prod_cur.upper()
             
             pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
@@ -294,8 +302,6 @@ def download_products_gnss(archive_dir,
             
         ###################################################################
         ########### Download
-            
-
         archive_dir_specif = dlutils.effective_save_dir_orbit(archive_dir,
                                                               ac_cur,
                                                               dt_cur,
@@ -315,10 +321,14 @@ def download_products_gnss(archive_dir,
                 for filchunk in Chunk:
                     Potential_localfiles_list.append(os.path.join(archive_dir_specif,filchunk))
                     if parallel_download == 1:
-                        Downld_tuples_list.append((ftpobj,filchunk,archive_dir_specif))
+                        Downld_tuples_list.append((ftpobj,
+                                                   filchunk,
+                                                   archive_dir_specif))
                     else:
-                        Downld_tuples_list.append((arch_center_main,wwww_dir,
-                                                   filchunk,archive_dir_specif))
+                        Downld_tuples_list.append((arch_center_main,
+                                                   wwww_dir,
+                                                   filchunk,
+                                                   archive_dir_specif))
         else: ### HTTP download
             Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
             [Potential_localfiles_list.append(os.path.join(archive_dir_specif,f)) for f in Files_remote_date_list]
@@ -359,13 +369,14 @@ def download_products_gnss(archive_dir,
         if os.path.isfile(pot_localfile):
             Localfiles_lis.append(pot_localfile)
     
-    pool.close()
+    if parallel_download > 1:
+        pool.close()
     return Localfiles_lis
 
 
-def multi_downloader_orbs_clks_2():
-    log.warn('multi_downloader_orbs_clks_2 is a legacy alias for the newly renamed function download_products_gnss')
-    #return download_products_gnss(**kwargs)
+def multi_downloader_orbs_clks_2(**kwargs):
+    log.warn('multi_downloader_orbs_clks_2 is a legacy alias for the newly renamed function download_gnss_products')
+    return download_gnss_products(**kwargs)
 
 
 def orbclk_long2short_name(longname_filepath_in,

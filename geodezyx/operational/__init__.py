@@ -11,6 +11,7 @@ from .download_utils         import *
 from .groops_frontend       import *
 from .hector_frontend       import *
 from .midas_frontend        import *
+from .pride_pppar_frontend  import *
 from .rinex_lister_plotter  import *
 from .rinex_utils           import *
 from .rtklib_frontend       import *

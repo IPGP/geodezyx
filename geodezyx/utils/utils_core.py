@@ -67,7 +67,9 @@ def spyder_run_check():
     else:
         return False
 
-def is_iterable(inp,consider_str_as_iterable=False):
+def is_iterable(inp,
+                consider_str_as_iterable=False,
+                consider_dict_as_iterable=False):
     """
     Test if the input is an iterable like a list or a numpy array or not
 
@@ -85,6 +87,9 @@ def is_iterable(inp,consider_str_as_iterable=False):
         True if inp is iterable, False either
     """
     if not consider_str_as_iterable and type(inp) is str:
+        return False
+
+    if not consider_dict_as_iterable and type(inp) is dict:
         return False
 
     try:

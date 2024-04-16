@@ -1320,6 +1320,17 @@ class TimeSeriePoint:
                     pts_stk.append(p)
                     i_stk.append(i)
             return pts_stk  , i_stk
+        
+    def remove_duplicate_pts(self,coortype="XYZ"):
+        T = self.to_dataframe(coortype)["T"] 
+        
+        dup_bool = T.duplicated()
+        
+        if dup_bool.sum() > 0:
+            log.warn("%s duplicated point(s) removed for %s",
+                     dup_bool.sum(), self.name)
+            
+        self.pts = list(pd.Series(self.pts)[np.logical_not(dup_bool)])
     
     
     

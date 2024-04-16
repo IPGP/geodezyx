@@ -238,7 +238,8 @@ def clk_diff(file_1,file_2):
 def read_sp3(file_path_in,returns_pandas = True, name = '',
              epoch_as_pd_index = False,km_conv_coef=1,
              skip_null_epoch=True,
-             new_col_names=True):
+             new_col_names=True,
+             pos_vel_col=False):
     """
     Read a SP3 file (GNSS Orbits standard file) and return X,Y,Z coordinates
     for each satellite and for each epoch
@@ -271,7 +272,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     new_col_names : bool
         A legacy option to have (or not) consistent column names with read_rinex
         Default is False
-
+        
     Returns
     -------
     df : Pandas DataFrame
@@ -279,6 +280,16 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
 
     epoch_stk ,  Xstk , Ystk , Zstk , Clkstk : lists
         if returns_pandas == False
+        
+    Note
+    ----
+    SP3 coordinates are usually given in ITRF, i.e. an ECEF system
+    
+    If the SP3 contains velocity records, this option adds a 'pv' column
+    containing 'P' for position or 'V' for velocity.
+    
+    Warning: velocity 'V' records are in dm/s per default, and the 
+    same km_conv_coef coefficient as the position records will be applied!
 
     """
     
@@ -309,7 +320,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     # if returns_pandas:
     #     df = pd.DataFrame(data_stk, columns=['epoch','sat', 'const', 'sv','type',
     #                                        'x','y','z','clk','AC'])
-
+        
     if not new_col_names:
         log.warning("you use old column names (not conventional) set new_col_names as True and adapt your code")
         ### DeprecationWarning
@@ -317,7 +328,7 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
                    'type','x','y','z','clk','AC']
     else:
         col_names=['epoch','prn','sys','prni',
-                   'rec','x','y','z','clk','ac']   
+                   'rec','x','y','z','clk','ac']
 
     #### read the Header as a 1st check
     Header = read_sp3_header(Lines,AC_name)

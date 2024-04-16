@@ -134,7 +134,24 @@ def get_coeffs(sens_type='all',
                       'D1': 0.040903,
                       'D2': 0.0}
                 
-    elif sens_id == 158073:
+    elif sens_id == 158073 or sens_id == "T3":
+        ### for the 1st OBSCOM      
+        dic_coeffs = {'U0':5.798999,
+                      'Y1':-3874.954,
+                      'Y2':-10166.55,
+                      'Y3':0,
+                      'C1':-25657.25,
+                      'C2':-645.8024,
+                      'C3':73515.96,
+                      'D1':0.039737,
+                      'D2':0,
+                      'T1':30.00177,
+                      'T2':0.723913,
+                      'T3':53.84611,
+                      'T4':147.1236,
+                      'T5':0}
+        
+    elif sens_id == 158073999 or sens_id == "T3gross": ### 999 suffix = gross
         ### for the 1st OBSCOM      
         dic_coeffs = {'U0':5.799,
                       'Y1':-3874.95,
@@ -150,8 +167,26 @@ def get_coeffs(sens_type='all',
                       'T3':53.8461,
                       'T4':147.124,
                       'T5':0}
+            
+    elif sens_id == 158076 or sens_id == "T2":
+        ### for the 2nd OBSCOM (T2)
+        dic_coeffs = {'U0':5.765270 ,
+                      'Y1':-3994.585,
+                      'Y2':-10705.43,
+                      'Y3':0        ,
+                      'C1':-25561.86,
+                      'C2':-230.0508,
+                      'C3':79516.88 ,
+                      'D1':0.040172 ,
+                      'D2':0        ,
+                      'T1':30.13945 ,
+                      'T2':0.977439 ,
+                      'T3':56.64988 ,
+                      'T4':158.4542 ,
+                      'T5':0        }
     
-    elif sens_id == 158076:
+
+    elif sens_id == 158076999 or sens_id == "T2gross": ### 999 suffix = gross
         ### for the 2nd OBSCOM (T2)
         dic_coeffs = {'U0':5.76527  ,
                       'Y1':-3994.58 ,
@@ -167,7 +202,26 @@ def get_coeffs(sens_type='all',
                       'T3':56.6499  ,
                       'T4':158.454  ,
                       'T5':0        }
-        
+
+
+    elif sens_id == 158081 or sens_id == "T4":
+        ### for the 2nd OBSCOM (T2)
+        dic_coeffs = {'U0':5.797503 ,
+                      'Y1':-4022.350,
+                      'Y2':-12679.85,
+                      'Y3':0        ,
+                      'C1':-22175.21,
+                      'C2':-1252.800,
+                      'C3':83574.76 ,
+                      'D1':0.037913 ,
+                      'D2':0        ,
+                      'T1':30.23989 ,
+                      'T2':0.124474 ,
+                      'T3':64.95771 ,
+                      'T4':229.3125 ,
+                      'T5':0        }
+    
+    
         
     if sens_type == 'all':
         return dic_coeffs

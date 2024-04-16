@@ -2,7 +2,7 @@
 
 # geodezyx (a.k.a. The GeodeZYX Toolbox) 
 
-**Version 0.4.4.1 / 2023-02-08**, README Revision: 2024-02-08
+**Version 4.4.1 / 2024-02-08**, README Revision: 2024-03-12
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
@@ -24,6 +24,7 @@ V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.
 **Contributors:**
 * Kitpracha "Na" Chaiyaporn (GFZ, Potsdam, Germany)
 * Valérie Ballu (CNRS/La Rochelle University, France)
+
 
 
 ## Introduction
@@ -73,11 +74,13 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ## Changelog
 
-### v4.4.1, 2023-02-08
+### v4.4.1, 2024-02-08
   * The GitHub repository has now been moved under the IPGP organization.
     * It must be transparent for your clones but updating them is recommended \
       https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository  
-  * The numbering goes without a starting zero anymore. The GeodeZYX toolbox is a grown-up project now!
+  * The version numbering goes without a starting zero from now on.  
+    Initially, this first zero was kept as a "perpetual beta" marker,  
+    but The GeodeZYX toolbox is a grown-up project now!
   * Bugs corrected for `read_rnx2_obs` and `OrbDF` manipulation function.
 
 ### v0.4.4.0, 2023-11-24
