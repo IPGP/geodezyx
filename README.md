@@ -57,7 +57,7 @@ See the following link:
 We recommend using `pip` to do a proper installation.  
 To get the latest working version, you can install directly the GitHub-hosted version (recommended):  
 
-``pip install git+https://github.com/IPGP/geodezyx-toolbox``
+``pip install git+https://github.com/IPGP/geodezyx``
 
 You can also install the version hosted on PyPI (but you will not get the latest changes)
 
@@ -88,7 +88,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
   * The version numbering goes without a starting zero from now on.  
     Initially, this first zero was kept as a "perpetual beta" marker,  
     but The GeodeZYX toolbox is a grown-up project now!
-  * Bugs corrected for `read_rnx2_obs` and `OrbDF` manipulation function.
+  * Bugs corrected for `read_rnx2_obs` and `OrbDF` manipulation functions.
 
 ### v0.4.4.0, 2023-11-24
   * The toolbox turns to the _GNU Lesser General Public License version 3_
