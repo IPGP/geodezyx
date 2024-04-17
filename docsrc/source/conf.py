@@ -21,7 +21,7 @@ import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
-project = 'GeodeZYX Toolbox'
+project = 'geodezyx'
 copyright = '2021, Pierre Sakic - Gustavo Mansur'
 author = 'Pierre Sakic - Gustavo Mansur'
 

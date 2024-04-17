@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GeodeZYX Toolbox’s Cookbook &mdash; GeodeZYX Toolbox 4.x documentation</title>
+  <title>geodezyx’s Cookbook &mdash; geodezyx 4.x documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -44,9 +44,9 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to GeodeZYX Toolbox’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to geodezyx’s documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"><cite>GeodeZYX Toolbox</cite>’s Cookbook</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><cite>geodezyx</cite>’s Cookbook</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#convert-time">Convert time</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#time-conversion-exemples">Time conversion exemples</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#get-today-as-gps-time-week-day-of-week">Get today as GPS Time (week/day of week)</a></li>
@@ -95,7 +95,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">GeodeZYX Toolbox</a>
+          <a href="index.html">geodezyx</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -103,7 +103,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><cite>GeodeZYX Toolbox</cite>’s Cookbook</li>
+      <li class="breadcrumb-item active"><cite>geodezyx</cite>’s Cookbook</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/cookbook.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -113,11 +113,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="geodezyx-toolbox-s-cookbook">
-<span id="cookbook"></span><h1><cite>GeodeZYX Toolbox</cite>’s Cookbook<a class="headerlink" href="#geodezyx-toolbox-s-cookbook" title="Link to this heading"></a></h1>
+  <section id="geodezyx-s-cookbook">
+<span id="cookbook"></span><h1><cite>geodezyx</cite>’s Cookbook<a class="headerlink" href="#geodezyx-s-cookbook" title="Link to this heading"></a></h1>
 <section id="convert-time">
 <h2>Convert time<a class="headerlink" href="#convert-time" title="Link to this heading"></a></h2>
-<p>The <cite>GeodeZYX Toolbox</cite> can handle a lot of time <strong>scales</strong> and time <strong>representations</strong>.</p>
+<p>The <cite>geodezyx</cite> toolbox can handle a lot of time <strong>scales</strong> and time <strong>representations</strong>.</p>
 <p>What we call <cite>scale</cite> is a physical definition: UTC, GPS Time, TAI…</p>
 <p>What we call <cite>representation</cite> is the way the physical value is represented : Julian date, year/day of year, GPS week/day of week, ISO string…</p>
 <p>The basic idea behind it is the conversion to and from the <code class="docutils literal notranslate"><span class="pre">datetime</span></code> objects of the Python’s <code class="docutils literal notranslate"><span class="pre">datetime</span></code> module.</p>
@@ -173,7 +173,7 @@
 </section>
 <section id="convert-coordinates">
 <h2>Convert coordinates<a class="headerlink" href="#convert-coordinates" title="Link to this heading"></a></h2>
-<p>The <cite>GeodeZYX Toolbox</cite> can easily handle coordinate conversion in Geocentric (X,Y,Z), Geographic (latitude, longitude, height) and topocentric (East, North, Up).</p>
+<p>The <cite>geodezyx</cite> toolbox can easily handle coordinate conversion in Geocentric (X,Y,Z), Geographic (latitude, longitude, height) and topocentric (East, North, Up).</p>
 <p><strong>Warning</strong>: This is considered as the “low-level” coordinate conversions. It does not deal with the different Reference Frame and their realisations (ITRFxx, ETRFxx…). This is managed by “high-level” functions in the <code class="docutils literal notranslate"><span class="pre">reffram</span></code> module.</p>
 <p>These functions are optimized for arrays (multiple inputs) but can also handle scalars.</p>
 <section id="coordinates-conversion-exemples">

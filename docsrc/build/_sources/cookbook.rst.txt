@@ -1,14 +1,14 @@
 .. _cookbook:
 
 =============================
-`GeodeZYX Toolbox`'s Cookbook
+`geodezyx`'s Cookbook
 =============================
 
 ------------
 Convert time
 ------------
 
-The `GeodeZYX Toolbox` can handle a lot of time **scales** and time **representations**. 
+The `geodezyx` toolbox can handle a lot of time **scales** and time **representations**. 
 
 What we call `scale` is a physical definition: UTC, GPS Time, TAI...
 
@@ -74,7 +74,7 @@ All the module's functionalites can be found here:
 Convert coordinates 
 -------------------
 
-The `GeodeZYX Toolbox` can easily handle coordinate conversion in Geocentric (X,Y,Z), Geographic (latitude, longitude, height) and topocentric (East, North, Up). 
+The `geodezyx` toolbox can easily handle coordinate conversion in Geocentric (X,Y,Z), Geographic (latitude, longitude, height) and topocentric (East, North, Up). 
 
 **Warning**: This is considered as the "low-level" coordinate conversions. It does not deal with the different Reference Frame and their realisations (ITRFxx, ETRFxx...). This is managed by "high-level" functions in the ``reffram`` module.
 
