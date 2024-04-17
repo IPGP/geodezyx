@@ -2,7 +2,7 @@
 
 # geodezyx (a.k.a. ___The GeodeZYX Toolbox___) 
 
-**Version 4.4.1 / 2024-02-08**, README Revision: 2024-03-12
+**Version 4.4.2 / 2024-04-17**, README Revision: 2024-04-17
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
