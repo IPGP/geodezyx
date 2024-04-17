@@ -105,6 +105,14 @@ geodezyx.operational.midas\_frontend module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.operational.pride\_pppar\_frontend module
+--------------------------------------------------
+
+.. automodule:: geodezyx.operational.pride_pppar_frontend
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.operational.rinex\_lister\_plotter module
 --------------------------------------------------
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.conv package &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -2300,11 +2300,10 @@ automatically determined if given list is empty</p></li>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Le temps universel (UT1) et le Temps atomique international (TAI) ont
-été définis comme égaux en 1958. Lors de la mise en place d’UTC en
-1972, UT1 s’était décalé d’environ 10 secondes par rapport au TAI.
-On choisit donc un décalage initial de 10 secondes entre UTC et TAI .</p>
-</div>
+<p>Universal Time (UT1) and International Atomic Time (TAI) were defined as equal
+in 1958. When UTC was introduced in 1972, UT1 had shifted by around 10 seconds
+in relation to TAI.
+We therefore chose an initial offset of 10 seconds between UTC and TAI.</p>
 <p>In 1972, the leap-second system was introduced so that the broadcast UTC
 seconds could be made exactly equal to the standard SI second, while still
 maintaining the UTC time of day and changes of UTC date synchronized with
@@ -2315,20 +2314,21 @@ since then. After 1972, both clocks have been ticking in SI seconds,
 so the difference between their readouts at any time is 10 seconds plus
 the total number of leap seconds that have been applied to UTC
 (37 seconds as of January 2017).</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.get_leapsecond_frontend">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">get_leapsecond_frontend</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.get_leapsecond_frontend" title="Link to this definition"></a></dt>
 <dd><p>INTERNAL_FUNCTION</p>
-<dl>
-<dt>Nota :</dt><dd><p>Le temps universel (UT1) et le Temps atomique international (TAI) ont
-été définis comme égaux en 1958. Lors de la mise en place d’UTC en
-1972, UT1 s’était décalé d’environ 10 secondes par rapport au TAI.
-On choisit donc un décalage initial de 10 secondes entre UTC et TAI .</p>
-<p>the initial 10sec are added in find_leapsecond</p>
-</dd>
-</dl>
+<p>Nota :
+Universal Time (UT1) and International Atomic Time (TAI) were defined as equal
+in 1958. When UTC was introduced in 1972, UT1 had shifted by around 10 seconds
+in relation to TAI.
+We therefore chose an initial offset of 10 seconds between UTC and TAI.</p>
+<blockquote>
+<div><p>the initial 10sec are added in find_leapsecond</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
@@ -2984,8 +2984,25 @@ like : [“2018”,”12”,”31”,”12”,”30”,”00”]</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.utc2gpstime">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">utc2gpstime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.utc2gpstime" title="Link to this definition"></a></dt>
-<dd><p>looks useless and discontinued
-(210219)</p>
+<dd><p>Convert UTC Time to GPS Time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year</strong> (<em>int</em>) – input UTC time.</p></li>
+<li><p><strong>month</strong> (<em>int</em>) – input UTC time.</p></li>
+<li><p><strong>day</strong> (<em>int</em>) – input UTC time.</p></li>
+<li><p><strong>hour</strong> (<em>int</em>) – input UTC time.</p></li>
+<li><p><strong>min</strong> (<em>int</em>) – input UTC time.</p></li>
+<li><p><strong>sec</strong> (<em>int</em>) – input UTC time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Converted epoch in GPS time, i.e. GPS Week and GPS seconds in week.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>gpsweek,gpssecs</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.reffram package &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -185,7 +185,8 @@ to a set of points</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Xin</strong> (<em>list</em><em> of </em><em>N</em><em> (</em><em>x</em><em>,</em><em>y</em><em>,</em><em>z</em><em>) </em><em>points</em><em>, or </em><em>an</em><em> (</em><em>N</em><em>,</em><em>3</em><em>)</em><em>-shaped numpy array.</em>) – input set points</p></li>
+<li><p><strong>Xin</strong> (<em>list</em><em> or </em><em>np.array</em>) – input point set
+list of N (x,y,z) points, or an (N,3)-shaped numpy array.</p></li>
 <li><p><strong>SevenParam_in</strong> (<em>7 element list</em><em> or </em><em>array</em>) – 7 Helmert params. : x,y,z translations, x,y,z rotations, scale.</p></li>
 <li><p><strong>legacy_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use a non-optimized and slow computation approach (but same result).
 This option should be removed in the Future.
@@ -209,13 +210,16 @@ X1 and a set of points X2 (compute transformation X1 =&gt; X2)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X2list</strong> (<em>X1list &amp;</em>) – Input point sets</p></li>
+<li><p><strong>X2list</strong> (<em>X1list &amp;</em>) – Input point set
+list of N (x,y,z) points, or an (N,3)-shaped numpy array</p></li>
 <li><p><strong>Weights</strong> (<em>list</em><em> of </em><em>N Weights</em><em>,</em>) – or an numpy array of shape (N,)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><em>HParam</em> – 7 Helmert params. : x,y,z translations, x,y,z rotations, scale</p></li>
+<li><p><em>HParam</em> – 7 Helmert params. : x,y,z translations, x,y,z rotations, scale
+translations are given in meters, rotations in arcsec,
+scale in unitless ratio</p></li>
 <li><p><em>A</em> – Design matrix</p></li>
 <li><p><em>l</em> – Differences X2 - X1 (before transformation !!!)</p></li>
 </ul>
@@ -235,8 +239,10 @@ using a Minimization approach (and not a Least Square inversion)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X2in</strong> (<em>X1in &amp;</em>) – Input point sets</p></li>
-<li><p><strong>HParam_apri</strong> (<em>list</em><em> of </em><em>7 values</em><em>,</em>) – The Apriori for the Helmert parameter</p></li>
+<li><p><strong>X2in</strong> (<em>X1in &amp;</em>) – Input point set
+list of N (x,y,z) points, or an (N,3)-shaped numpy array</p></li>
+<li><p><strong>HParam_apri</strong> (<em>list</em>) – list of 7 values,
+The Apriori for the Helmert parameter</p></li>
 <li><p><strong>L1norm</strong> (<em>bool</em>) – Use the L1-norm as a criteria, use the quadratic sum instead if False</p></li>
 <li><p><strong>tol</strong> (<em>float</em>) – tolerence for the convergence</p></li>
 <li><p><strong>full_output</strong> (<em>bool</em>) – return only the result if True, return the scipy optimize result if False</p></li>
@@ -246,7 +252,9 @@ The default is “Powell”.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>7 Helmert params. : x,y,z translations, x,y,z rotations, scale</p>
+<dd class="field-even"><p>7 Helmert params. : x,y,z translations, x,y,z rotations, scale
+translations are given in meters, rotations in arcsec,
+scale in unitless ratio</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Res</p>
@@ -742,6 +750,31 @@ The outputed DF is then a Multi-index DF</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.DFOrb_velocity_calc">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">DFOrb_velocity_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFOrb_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.DFOrb_velocity_calc" title="Link to this definition"></a></dt>
+<dd><p>Compute the velocity of satellites from a DFOrb dataframe
+(differentiate the position)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DFOrb_in</strong> (<em>Pandas DataFrame</em>) – an Orbit DataFrame.</p></li>
+<li><p><strong>drop_nan</strong> (<em>bool</em><em>, </em><em>optional</em>) – Remove the nan values
+(the first ones, since it is a numerical differentiation).
+The default is False.
+It is recommended to keep the NaN values, thus the output will keep
+same size and index as input</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df_vel</strong> – an Orbit DataFrame with velocities (vx, vy ,vz columns).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.OrbDF_common_epoch_finder">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">OrbDF_common_epoch_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">OrbDFa_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">OrbDFb_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['prn',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.OrbDF_common_epoch_finder" title="Link to this definition"></a></dt>
 <dd><p>Find common sats and epochs in to Orbit DF,
@@ -829,6 +862,104 @@ files_rw.read_eop_C04()</p>
 <dd><p>From an regular Orbit DF generated by read_sp3(), set some columns
 (typically [“prn”,”epoch”]) as indexes
 The outputed DF is then a Multi-index DF</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.beta_angle_calc">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">beta_angle_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFOrb_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_beta_sun_ra_dec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_beta_sun_eclip_long</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_rad2deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.beta_angle_calc" title="Link to this definition"></a></dt>
+<dd><p>Compute beta angle for GNSS satellite’s orbits stored in an orbit
+DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DFOrb_in</strong> (<em>Pandas DataFrame</em>) – an Orbit DataFrame (ECEF frame).</p></li>
+<li><p><strong>calc_beta_sun_ra_dec</strong> (<em>bool</em><em>, </em><em>optional</em>) – compute beta angle with Sun’s right ascension and declination.
+The default is True.</p></li>
+<li><p><strong>calc_beta_sun_eclip_long</strong> (<em>bool</em><em>, </em><em>optional</em>) – compute beta angle with Sun’s Ecliptic longitude.
+The default is True.</p></li>
+<li><p><strong>beta_rad2deg</strong> (<em>bool</em><em>, </em><em>optional</em>) – convert beta angle to degrees. The default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df_out</strong> (<em>Pandas DataFrame</em>) – DFOrb_in with a new ‘beta’ column.</p></li>
+<li><p><strong>df_wrk</strong> (<em>Pandas DataFrame</em>) – intermediate values dataframe for debug.
+here, coordinates are in ECI frame</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.beta_sun_eclip_long">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">beta_sun_eclip_long</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sun_ecl_long</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat_o_lan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">earth_i</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.beta_sun_eclip_long" title="Link to this definition"></a></dt>
+<dd><p>Compute beta angle based on Sun’s Ecliptic longitude
+Angles are in radians</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sun_ecl_long</strong> (<em>float</em>) – Sun’s Ecliptic longitude.</p></li>
+<li><p><strong>sat_i</strong> (<em>float</em>) – Satellite’s inclination.</p></li>
+<li><p><strong>sat_o_lan</strong> (<em>float</em>) – Satellite’s Longitude of the ascending node.</p></li>
+<li><p><strong>earth_i</strong> (<em>float</em>) – Earth’s inclination.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>beta</strong> (<em>float</em>) – beta angle (in radians).</p></li>
+<li><p><em>Source</em></p></li>
+<li><p><em>——</em></p></li>
+<li><p><cite>Calculation of the Eclipse Factor for Elliptical Satellite Orbits</cite> NASA (1962)</p></li>
+<li><p><strong>https</strong> (<em>//ntrs.nasa.gov/citations/19630000622</em>)</p></li>
+<li><p><cite>Computation of Eclipse Time for Low-Earth Orbiting Small Satellites</cite> Sumanth R M (2019)</p></li>
+<li><p><strong>https</strong> (<em>//commons.erau.edu/ijaaa/vol6/iss5/15/</em>)</p></li>
+<li><p><em>Simpler formula</em> – <a class="reference external" href="https://en.wikipedia.org/wiki/Beta_angle">https://en.wikipedia.org/wiki/Beta_angle</a></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>you can use <code class="docutils literal notranslate"><span class="pre">pyorbital.astronomy.sun_ecliptic_longitude()</span></code>
+to compute <code class="docutils literal notranslate"><span class="pre">sun_ecl_long</span></code></p>
+<p>If so, Sun’s right ascension and declination computation polynoms are
+based on: <cite>Astronomical algorithms</cite>, Jean Meeus (1st edition, 1991)</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.beta_sun_ra_dec">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">beta_sun_ra_dec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sun_dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sun_ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat_o_lan</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.beta_sun_ra_dec" title="Link to this definition"></a></dt>
+<dd><p>Compute beta angle based on Sun’s right ascension and declination
+Angles are in radians</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sun_dec</strong> (<em>float</em>) – Sun’s declination.</p></li>
+<li><p><strong>sun_ra</strong> (<em>float</em>) – Sun’s right ascension.</p></li>
+<li><p><strong>sat_i</strong> (<em>float</em>) – Satellite’s inclination.</p></li>
+<li><p><strong>sat_o_lan</strong> (<em>float</em>) – Satellite’s Longitude of the ascending node.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>beta</strong> (<em>float</em>) – beta angle (in radians).</p></li>
+<li><p><em>Source</em></p></li>
+<li><p><em>——</em></p></li>
+<li><p><strong>`Satellites</strong> (de Kepler au GPS`, Michel Capderou (2012))</p></li>
+<li><p><em>simpler formula here</em> – <a class="reference external" href="https://www.fxsolver.com/browse/formulas/Beta+Angle">https://www.fxsolver.com/browse/formulas/Beta+Angle</a></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>you can use <code class="docutils literal notranslate"><span class="pre">pyorbital.astronomy.sun_ra_dec()</span></code> to compute <code class="docutils literal notranslate"><span class="pre">sun_dec</span></code>
+and <code class="docutils literal notranslate"><span class="pre">sun_ra</span></code></p>
+<p>If so, Sun’s right ascension and declination computation polynoms are
+based on: <cite>Astronomical algorithms</cite>, Jean Meeus (1st edition, 1991)</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -1152,8 +1283,52 @@ GitHub repository :
 <a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.kepler_gzyx.ECI_2_kepler_elts">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.kepler_gzyx.</span></span><span class="sig-name descname"><span class="pre">ECI_2_kepler_elts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rad2deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">398600441880000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.kepler_gzyx.ECI_2_kepler_elts" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.kepler_gzyx.</span></span><span class="sig-name descname"><span class="pre">ECI_2_kepler_elts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rad2deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">398600441880000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.kepler_gzyx.ECI_2_kepler_elts" title="Link to this definition"></a></dt>
 <dd><p>Convert ECI coordinates &gt; Kepler’s elements</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pos</strong> (<em>array</em>) – Position in m.
+Can be a 3-element (x,y,z) array (simple point)
+or a (N,3)-shaped numpy array</p></li>
+<li><p><strong>vel</strong> (<em>array</em>) – Velocity in m/s.
+Can be a 3-element (vx,vy,vz) array (simple point)
+or a (N,3)-shaped numpy array</p></li>
+<li><p><strong>rad2deg</strong> (<em>bool</em><em>, </em><em>optional</em>) – convert Keplerian’s angles (anomalies) to deg. The default is True.</p></li>
+<li><p><strong>mu</strong> (<em>float</em><em>, </em><em>optional</em>) – Standard gravitational parameter. The default is 3.9860044188e14.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><strong>a,ecc,i,o_peri,o_lan,m</strong> – Kepler’s elements:</p>
+<ul class="simple">
+<li><p>a : semi-major axis</p></li>
+<li><p>ecc : orbit eccentricity</p></li>
+<li><p>i : orbit inclination</p></li>
+<li><p>o_peri : argument of periapsis ω</p></li>
+<li><p>o_lan : longitude of the ascending node Ω</p></li>
+<li><p>m : mean anomaly m</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>floats</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Be sure your input is in ECI (SP3 are in ECEF for instance).</p>
+<p>If neeeded, use <code class="docutils literal notranslate"><span class="pre">conv.ECEF2ECI()</span></code> (gross results)
+or <code class="docutils literal notranslate"><span class="pre">reffram.OrbDF_crf2trf(inv_trf2crf=True)</span></code> (precise results)</p>
+<p>You can get the velocity with <code class="docutils literal notranslate"><span class="pre">reffram.DFOrb_velocity_calc()</span></code></p>
+<p><a class="reference external" href="https://downloads.rene-schwarz.com/download/M002-Cartesian_State_Vectors_to_Keplerian_Orbit_Elements.pdf">https://downloads.rene-schwarz.com/download/M002-Cartesian_State_Vectors_to_Keplerian_Orbit_Elements.pdf</a></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.kepler_gzyx.ECI_2_kepler_elts_mono">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.kepler_gzyx.</span></span><span class="sig-name descname"><span class="pre">ECI_2_kepler_elts_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rad2deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">398600441880000.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.kepler_gzyx.ECI_2_kepler_elts_mono" title="Link to this definition"></a></dt>
+<dd><p><strong>Kept for debug purposes, use</strong> <code class="docutils literal notranslate"><span class="pre">ECI_2_kepler_elts(pos,</span> <span class="pre">vel)</span></code> <strong>instead</strong></p>
+<p>Convert ECI coordinates &gt; Kepler’s elements</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

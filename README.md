@@ -1,15 +1,15 @@
 <img src="./geodezyx_toolbox_logo.png" width="300">
 
-# GeodeZYX Toolbox
+# geodezyx (a.k.a. ___The GeodeZYX Toolbox___) 
 
-**Version 4.4.1 / 2024-02-08**, README Revision: 2024-03-12
+**Version 4.4.2 / 2024-04-17**, README Revision: 2024-04-17
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
 
-**Documentation:** [https://ipgp.github.io/geodezyx-toolbox](https://ipgp.github.io/geodezyx-toolbox/)
+**Documentation:** [https://ipgp.github.io/geodezyx](https://ipgp.github.io/geodezyx/)
 
-**GitHub repository:** [https://github.com/IPGP/geodezyx-toolbox](https://github.com/IPGP/geodezyx-toolbox) 
+**GitHub repository:** [https://github.com/IPGP/geodezyx](https://github.com/IPGP/geodezyx) 
 
 **PyPi project:** [https://pypi.org/project/geodezyx](https://pypi.org/project/geodezyx/)
 
@@ -29,7 +29,7 @@ V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.
 
 ## Introduction
 
-The purpose of the GeodeZYX toolbox (pronounced *geode-**zeecks***) is to provide all the functions which
+The purpose of _geodezyx_ (pronounced *geode-**zeecks***), also known as _the GeodeZYX toolbox_, is to provide all the functions which
 can be useful for Geodesy and Geophysics. 
 
 It includes low-level functions, file management functions,
@@ -43,12 +43,12 @@ Also tested with Anaconda
 ## Documentation
 
 See the following link:
-[https://geodezyx.github.io/geodezyx-toolbox/](https://geodezyx.github.io/geodezyx-toolbox/)
+[https://ipgp.github.io/geodezyx/](https://ipgp.github.io/geodezyx/)
 
 ## Installation 
 
 See the following link:
-[https://geodezyx.github.io/geodezyx-toolbox/getting_started.html#installation](https://geodezyx.github.io/geodezyx-toolbox/getting_started.html#installation)
+[https://ipgp.github.io/geodezyx/getting_started.html#installation](https://ipgp.github.io/geodezyx/getting_started.html#installation)
 
 ## Installation (detailed legacy instructions)
 
@@ -57,7 +57,7 @@ See the following link:
 We recommend using `pip` to do a proper installation.  
 To get the latest working version, you can install directly the GitHub-hosted version (recommended):  
 
-``pip install git+https://github.com/IPGP/geodezyx-toolbox``
+``pip install git+https://github.com/IPGP/geodezyx``
 
 You can also install the version hosted on PyPI (but you will not get the latest changes)
 
@@ -66,7 +66,7 @@ You can also install the version hosted on PyPI (but you will not get the latest
 ### clone and manually install from GitHub
 
 You can manually fork and clone the GitHub repository
-[https://github.com/GeodeZYX/geodezyx-toolbox/](https://github.com/GeodeZYX/geodezyx-toolbox/)
+[https://github.com/IPGP/geodezyx/](https://github.com/IPGP/geodezyx/)
 
 and install the Toolbox you downloaded with ``python setup.py install``
 
@@ -74,6 +74,15 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ## Changelog
 
+
+### v4.4.2, 2024-04-xx
+  * The GitHub repository, and the project in general, has been renamed as ``geodezyx`` (in lower case)
+    to uniformize its multiple spellings and then avoid confusion.
+    * It must be transparent for your clones but updating them is recommended \
+      https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository
+  * misc routine improvements
+  * Refactoring of the GNSS data/products dowmload functions
+      
 ### v4.4.1, 2024-02-08
   * The GitHub repository has now been moved under the IPGP organization.
     * It must be transparent for your clones but updating them is recommended \
@@ -81,7 +90,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
   * The version numbering goes without a starting zero from now on.  
     Initially, this first zero was kept as a "perpetual beta" marker,  
     but The GeodeZYX toolbox is a grown-up project now!
-  * Bugs corrected for `read_rnx2_obs` and `OrbDF` manipulation function.
+  * Bugs corrected for `read_rnx2_obs` and `OrbDF` manipulation functions.
 
 ### v0.4.4.0, 2023-11-24
   * The toolbox turns to the _GNU Lesser General Public License version 3_
