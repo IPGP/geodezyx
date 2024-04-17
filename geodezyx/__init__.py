@@ -13,8 +13,9 @@
 # import inspect
 # import itertools
 # import linecache
-import logging
-import logging.config
+#import logging
+import logging.config # MUST remain logging.config for < v3.10 
+# (import logging alone doesn't work for < 3.10)
 # import math
 # import matplotlib
 #matplotlib.use("agg") ### avoid tk import error
@@ -86,9 +87,6 @@ __all__ = ['athmo',
            'time_series',
            'utils']
 
-
-
-
 #### Import extern libraires in in the geodezyx namespace
 #from geodezyx.extern import *
 
@@ -97,7 +95,4 @@ __all__ = ['athmo',
 #      import geodezyx
 #      but with
 #      from geodezyx import *
-
-
-
 
