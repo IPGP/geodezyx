@@ -292,6 +292,7 @@ def download_gnss_products(archive_dir,
         if len(Files) == 0:
             log.warning("no product found for" + " %s"*len(patt_tup),
                         *patt_tup)
+            #log.warning("found files: %s",Files_listed_in_FTP)
         
         Files_remote_date_list = Files_remote_date_list + Files
             
@@ -319,7 +320,8 @@ def download_gnss_products(archive_dir,
         if ftp_download: ### FTP Download
             for ftpobj , Chunk in zip(Ftp_obj_list,Files_remote_date_chunck):
                 for filchunk in Chunk:
-                    Potential_localfiles_list.append(os.path.join(archive_dir_specif,filchunk))
+                    Potential_localfiles_list.append(os.path.join(archive_dir_specif,
+                                                                  filchunk))
                     if parallel_download == 1:
                         Downld_tuples_list.append((ftpobj,
                                                    filchunk,

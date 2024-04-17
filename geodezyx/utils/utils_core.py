@@ -907,12 +907,14 @@ def alphabet_reverse(letter=None):
 
 def dday():
     """
-    Give the time span between prensent and toolbox author's PhD defense
+    Give the time span between present and toolbox author's PhD defense date
+    
     (tests also the console messages)
         
     Note
     ----
     https://fr.wiktionary.org/wiki/quille#Dérivés_2
+    
     https://en.wiktionary.org/wiki/quille
 
     Returns
