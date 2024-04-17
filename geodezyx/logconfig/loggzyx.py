@@ -1,3 +1,5 @@
+# THE loggers KEY MUST DESCRIBES THE CURRENT MODULE/PROJECT!!!!
+
 ###### USEFUL TUTOS
 ## https://coderzcolumn.com/tutorials/python/logging-simple-guide-to-log-events-in-python
 ## https://coderzcolumn.com/tutorials/python/logging-config-simple-guide-to-configure-loggers-from-dictionary-and-config-files-in-python#2
@@ -15,7 +17,7 @@ log_config_dict = {
     
     
     'loggers': {
-        "geodezyx" : {
+        "geodezyx" : {  # THIS KEY MUST DESCRIBES THE CURRENT MODULE!!!!
             "handlers" : ["console_gyxz"],
             "level": "DEBUG",
             "propagate": False
