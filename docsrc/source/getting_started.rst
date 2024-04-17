@@ -48,7 +48,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 Minimal exemple
 ---------------
 
-To test if the `GeodeZYX Toolbox` is well installed, import:
+To test if the `geodezyx` toolbox is well installed, import:
 ::
 
     #### Import
@@ -56,7 +56,7 @@ To test if the `GeodeZYX Toolbox` is well installed, import:
     from geodezyx.externlib import *         # Import the external modules
     from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
-If the modules are well imported (without errors in the console), fine! you have the `GeodeZYX Toolbox`!
+If the modules are well imported (without errors in the console), fine! you have installed the `geodezyx` toolbox!
 If not, check again the potential errors during the installation.
 
 Nevertheless, star imports are not recomended. It is better to import the modules separatelly, e.g.: 

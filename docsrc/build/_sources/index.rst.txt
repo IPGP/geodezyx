@@ -5,7 +5,7 @@
 
 
 ==============================================
-Welcome to `GeodeZYX Toolbox`'s documentation!
+Welcome to `geodezyx`'s documentation!
 ==============================================
 
 ------------
@@ -16,7 +16,8 @@ Introduction
    :width: 250px
    :align: center
 
-The purpose of this `GeodeZYX Toolbox` is to provide all the functions which can be useful for Geodesy and Geophysics.
+The purpose of `geodezyx` (pronounced `geode-` **zeecks**), also known as `the GeodeZYX toolbox`, is to provide all the functions which
+can be useful for Geodesy and Geophysics. 
 
 It includes low level functions, file management functions, time and space-coordinates conversion functions, data (especially GNSS observations and orbits) retrieve functions, plots and visual selection functions ...
 
@@ -32,9 +33,9 @@ See the dedicated section: :ref:`install`.
 Useful links
 ------------
 
-**Documentation:** https://ipgp.github.io/geodezyx-toolbox
+**Documentation:** https://ipgp.github.io/geodezyx
 
-**GitHub repository:** https://github.com/IPGP/geodezyx-toolbox
+**GitHub repository:** https://github.com/IPGP/geodezyx
 
 **PyPi project:** https://pypi.org/project/geodezyx
 
