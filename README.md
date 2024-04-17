@@ -1,6 +1,6 @@
 <img src="./geodezyx_toolbox_logo.png" width="300">
 
-# geodezyx (a.k.a. The GeodeZYX Toolbox) 
+# geodezyx (a.k.a. ___The GeodeZYX Toolbox___) 
 
 **Version 4.4.1 / 2024-02-08**, README Revision: 2024-03-12
 
@@ -29,7 +29,7 @@ V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.
 
 ## Introduction
 
-The purpose of geodezyx (pronounced *geode-**zeecks***), also known as the GeodeZYX toolbox, is to provide all the functions which
+The purpose of _geodezyx_ (pronounced *geode-**zeecks***), also known as _the GeodeZYX toolbox_, is to provide all the functions which
 can be useful for Geodesy and Geophysics. 
 
 It includes low-level functions, file management functions,
