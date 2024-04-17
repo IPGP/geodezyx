@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.files_rw package &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -386,10 +386,32 @@ handles “sopac” or “ulr” yet. The default is “sopac”.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.unzip_gz_Z">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">unzip_gz_Z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_gzip_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_gzip_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.unzip_gz_Z" title="Link to this definition"></a></dt>
-<dd><p>if out_gzip_file if not precised, file will be extracted in the same folder
-as inp_gzip_file</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">unzip_gz_Z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_gzip_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_gzip_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_gzip_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.unzip_gz_Z" title="Link to this definition"></a></dt>
+<dd><p>frontend function to unzip files (gzip and legacy Z compression)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inp_gzip_file</strong> (<em>str</em>) – the path of the input file.</p></li>
+<li><p><strong>out_gzip_file</strong> (<em>str</em><em>, </em><em>optional</em>) – if out_gzip_file AND out_gzip_dir not precised
+file will be extracted in the same folder
+as inp_gzip_file. The default is ‘’.</p></li>
+<li><p><strong>remove_inp</strong> (<em>bool</em><em>, </em><em>optional</em>) – remove the input file. The default is False.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – force the decompression. The default is False.</p></li>
+<li><p><strong>out_gzip_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – output directory. will be used only if out_gzip_file == ‘’
+unzipped file will keep the same</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>path of the uncompressed file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>out_gzip_file</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
 <p>.Z decompression is implemented, but is very unstable (avoid .Z, prefer .gz)</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -1132,8 +1154,18 @@ because of the time managing</p>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_pridear">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_pridear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_pridear" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_pride_pppar_kin">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_pride_pppar_kin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_pride_pppar_kin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_pride_pppar_pos">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_pride_pppar_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files_list_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_pride_pppar_pos" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_pride_pppar_pos_mono">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_pride_pppar_pos_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_pride_pppar_pos_mono" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -1171,7 +1203,7 @@ OUTPUT : Une TimeSeriePoint</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_sonardyne_posi">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_sonardyne_posi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_sonardyne_posi" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_sonardyne_posi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dUTCGPS</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_sonardyne_posi" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -1534,7 +1566,7 @@ formated as a Clock DataFrame</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_prods.read_sp3">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">read_sp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returns_pandas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_as_pd_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">km_conv_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_null_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_col_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.read_sp3" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">read_sp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returns_pandas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_as_pd_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">km_conv_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_null_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_col_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_vel_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.read_sp3" title="Link to this definition"></a></dt>
 <dd><p>Read a SP3 file (GNSS Orbits standard file) and return X,Y,Z coordinates
 for each satellite and for each epoch</p>
 <dl class="field-list simple">
@@ -1563,6 +1595,14 @@ Default is False</p></li>
 </p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>SP3 coordinates are usually given in ITRF, i.e. an ECEF system</p>
+<p>If the SP3 contains velocity records, this option adds a ‘pv’ column
+containing ‘P’ for position or ‘V’ for velocity.</p>
+<p>Warning: velocity ‘V’ records are in dm/s per default, and the
+same km_conv_coef coefficient as the position records will be applied!</p>
+</div>
 </dd></dl>
 
 <dl class="py function">

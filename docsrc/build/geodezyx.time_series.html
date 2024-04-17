@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.time_series package &mdash; GeodeZYX Toolbox 4.x documentation</title>
@@ -647,6 +647,11 @@ Should be used with care</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.remove_duplicate_pts">
+<span class="sig-name descname"><span class="pre">remove_duplicate_pts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.remove_duplicate_pts" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSeriePoint.set_discont">
 <span class="sig-name descname"><span class="pre">set_discont</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indiscont</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSeriePoint.set_discont" title="Link to this definition"></a></dt>
 <dd><p>Method to set the discontinuties list</p>
@@ -1055,7 +1060,19 @@ ONLY IMPLEMENTED FOR ENU coords for the moment</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.merge_ts">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">merge_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts_list_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.merge_ts" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Merge several TimeSeriePoint into one</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ts_list_in</strong> (<em>list</em><em> of </em><a class="reference internal" href="#geodezyx.time_series.ts_class.TimeSeriePoint" title="geodezyx.time_series.ts_class.TimeSeriePoint"><em>TimeSeriePoint</em></a>) – list of TimeSeriePoint.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ts_out</strong> – merged TimeSeriePoint.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#geodezyx.time_series.ts_class.TimeSeriePoint" title="geodezyx.time_series.ts_class.TimeSeriePoint">TimeSeriePoint</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.print4compar">
