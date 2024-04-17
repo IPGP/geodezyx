@@ -75,7 +75,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 ## Changelog
 
 
-### v4.4.2, 2024-04-xx
+### v4.4.2, 2024-04-17
   * The GitHub repository, and the project in general, has been renamed as ``geodezyx`` (in lower case)
     to uniformize its multiple spellings and then avoid confusion.
     * It must be transparent for your clones but updating them is recommended \
