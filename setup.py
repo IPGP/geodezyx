@@ -42,7 +42,7 @@ setup(
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description='The GeodeZYX toolbox aims to provide simple but useful functions for Geodesy and Geophysics.',  # Optional
+    description='geodezyx (a.k.a. The GeodeZYX toolbox) aims to provide simple but useful functions for Geodesy and Geophysics.',  # Optional
 
     # This is an optional longer description of your project that represents
     # the body of text which users will see when they visit PyPI.
@@ -52,7 +52,7 @@ setup(
     #
     # This field corresponds to the "Description" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#description-optional
-    long_description="""The purpose of this GeodeZYX toolbox is to provide all the functions which
+    long_description="""geodezyx (a.k.a. The GeodeZYX toolbox) aims to provide all the functions which
 can be useful for Geodesy and Geophysics. 
 
 It includes low level functions, file management functions,
@@ -63,9 +63,9 @@ plots and visual selection functions ...
 It is designed for Python 3 on a LINUX Ubuntu-like system.
 Also tested with Anaconda
 
-Documentation: https://ipgp.github.io/geodezyx-toolbox  
+Documentation: https://ipgp.github.io/geodezyx  
 
-GitHub repository: https://github.com/IPGP/geodezyx-toolbox 
+GitHub repository: https://github.com/IPGP/geodezyx 
 
 PyPi project: https://pypi.org/project/geodezyx
 """,  # Optional
@@ -86,7 +86,7 @@ PyPi project: https://pypi.org/project/geodezyx
     #
     # This field corresponds to the "Home-Page" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#home-page-optional
-    url='https://github.com/IPGP/geodezyx-toolbox',  # Optional
+    url='https://github.com/IPGP/geodezyx',  # Optional
 
     # This should be your name or the name of the organization which owns the
     # project.
@@ -243,6 +243,6 @@ PyPi project: https://pypi.org/project/geodezyx
     #    'Bug Reports': 'https://github.com/pypa/sampleproject/issues',
     #    'Funding': 'https://donate.pypi.org',
     #    'Say Thanks!': 'http://saythanks.io/to/example',
-    #    'Source': 'https://github.com/IPGP/geodezyx-toolbox' #,
+    #    'Source': 'https://github.com/IPGP/geodezyx' #,
     #}
 )
