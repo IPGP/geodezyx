@@ -80,6 +80,8 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
     to uniformize its multiple spellings and then avoid confusion.
     * It must be transparent for your clones but updating them is recommended \
       https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository
+  * misc routine improvements
+  * Refactoring of the GNSS data/products dowmload functions
       
 ### v4.4.1, 2024-02-08
   * The GitHub repository has now been moved under the IPGP organization.
