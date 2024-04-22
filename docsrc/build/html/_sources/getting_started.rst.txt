@@ -37,9 +37,8 @@ To get the latest working version you can install directly the GitHub-hosted ver
 clone and manually install from GitHub
 --------------------------------------
 
-You can manually fork and/or clone the GitHub repository
-([https://github.com/IPGP/geodezyx/](https://github.com/IPGP/geodezyx/))
-using your favorite flavor:
+You can manually fork and/or clone the GitHub repository (https://github.com/IPGP/geodezyx/) using your favorite flavor:
+
 * SSH: ``git clone git@github.com:IPGP/geodezyx.git``
 * https: ``git clone https://github.com/IPGP/geodezyx.git``
 
