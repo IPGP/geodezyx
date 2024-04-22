@@ -355,6 +355,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
     savedirlist = []
 
     log.info("generating the list of potential RINEXs ...")
+
     while curdate <= enddate:
         for netwk, statlis in list(statdico.items()):
             
@@ -364,7 +365,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
             
             for stat in statlis:
                 stat = stat.lower()
-                mode1Hz = False
+                mode1hz = False
                 secure_ftp = False
 
                 if netwk in ('igs_cddis','igs'):
@@ -378,7 +379,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
                     url = rgp_ign_mlv_server(stat, curdate)
                 elif netwk == 'rgp_1Hz':
                     urls = rgp_ign_smn_1Hz_server(stat, curdate)
-                    mode1Hz = True
+                    mode1hz = True
                 elif netwk == 'renag':
                     url = renag_server(stat, curdate)
                 elif netwk == 'orpheon':
@@ -405,7 +406,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
 
                 savedir = effective_save_dir(archive_dir, stat, curdate, archtype)
 
-                if not mode1Hz:
+                if not mode1hz:
                     urllist.append(url)
                     savedirlist.append(savedir)
                 else:
@@ -456,7 +457,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
         urllist, savedirlist = urllist_new, savedirlist_new
 
     if not quiet_mode:
-        if not secure_ftp:
+        if not secure_ftp: ### all the servers except CDDIS
             if sorted_mode:
                 _ = [pool.apply_async(dlutils.downloader, args=(u, sd, force)) for u, sd in zip(urllist, savedirlist)]
             else:
