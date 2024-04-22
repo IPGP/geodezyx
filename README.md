@@ -65,8 +65,11 @@ You can also install the version hosted on PyPI (but you will not get the latest
 
 ### clone and manually install from GitHub
 
-You can manually fork and clone the GitHub repository
-[https://github.com/IPGP/geodezyx/](https://github.com/IPGP/geodezyx/)
+You can manually fork and/or clone the GitHub repository
+([https://github.com/IPGP/geodezyx/](https://github.com/IPGP/geodezyx/))
+using your favorite flavor:
+* SSH: ``git clone git@github.com:IPGP/geodezyx.git``
+* https: ``git clone https://github.com/IPGP/geodezyx.git``
 
 and install the Toolbox you downloaded with ``python setup.py install``
 
