@@ -348,7 +348,6 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
         
     Minimal exemple
     ---------------
-        
         >>> statdic = dict()  
         >>> statdic['igs_cddis'] = ['ZIMM']  
         >>> archive_dir = '/home/USER/test_dl_rnx'  
