@@ -345,6 +345,17 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
 
     savedir_list : list of str
         list of downloaded products paths
+        
+    Minimal exemple
+    ---------------
+        
+        >>> statdic = dict()  
+        >>> statdic['igs_cddis'] = ['ZIMM']  
+        >>> archive_dir = '/home/USER/test_dl_rnx'  
+        >>> startdate = dt.datetime(2000,1,1)
+        >>> enddate = dt.datetime(2000,1,31)
+        >>> geodezyx.operational.download_gnss_rinex(statdic, archive_dir, startdate, enddate) 
+    
     """
 
     curdate = startdate
