@@ -23,12 +23,11 @@ import multiprocessing as mp
 from multiprocessing.dummy import Pool as ThreadPool
 
 import logging
-
-log = logging.getLogger('geodezyx')
+log = logging.getLogger(__name__)
 
 
 def _rnx_rgx(stat, date):
-    rnx2rgx = conv.statname_dt2rinexname(stat.lower(), date, rnxtype="*")
+    rnx2rgx = conv.statname_dt2rinexname(stat.lower(), date, rnxtype=".*")
     rnx3rgx = conv.statname_dt2rinexname_long(stat,
                                               date,
                                               country="...",
@@ -201,6 +200,50 @@ def ens_fr(stat, date):
     return url
 
 
+def _server_select(datacenter, site, curdate):
+    mode1hz = False
+    secure_ftp = False
+    urldic = dict()
+    if datacenter in ('igs_cddis', 'igs'):
+        urldic = igs_cddis_server(site, curdate)
+        secure_ftp = True
+    elif datacenter == 'igs_sopac':
+        urldic = igs_sopac_server(site, curdate)
+    elif datacenter == 'rgp':
+        urldic = rgp_ign_smn_server_legacy(site, curdate)
+    elif datacenter == 'rgp_mlv':
+        urldic = rgp_ign_mlv_server(site, curdate)
+    elif datacenter == 'rgp_1Hz':
+        urls = rgp_ign_smn_1_hz_server_legacy(site, curdate)
+        mode1hz = True
+    elif datacenter == 'renag':
+        urldic = renag_server(site, curdate)
+    elif datacenter == 'orpheon':
+        urldic = orpheon_server_legacy(site, curdate)
+    elif datacenter == 'uwiseismic':
+        urldic = uwiseismic_server(site, curdate)
+    elif datacenter == 'ovsg':
+        urldic = ovsg_server_legacy(site, curdate)
+    elif datacenter == 'unavco':
+        urldic = unavco_server_legacy(site, curdate)
+    elif datacenter == 'sonel':
+        urldic = sonel_server_legacy(site, curdate)
+    elif datacenter == 'geoaus':
+        urldic = geoaus_server_legacy(site, curdate)
+    elif datacenter in ('nav', 'brdc'):
+        urldic = nav_rob_server_legacy(site, curdate)
+    elif datacenter in ('nav_rt', 'brdc_rt'):
+        urldic = nav_bkg_server(site, curdate)
+    elif datacenter == 'ens_fr':
+        urldic = ens_fr_legacy(site, curdate)
+    else:
+        log.warning('unkwn server dic in the dico, skip ...')
+        return None, None, None
+
+    return urldic, secure_ftp, mode1hz
+
+
+
 def effective_save_dir(parent_archive_dir, stat, date, archtype='stat'):
     """
     INTERNAL_FUNCTION
@@ -233,7 +276,7 @@ def effective_save_dir(parent_archive_dir, stat, date, archtype='stat'):
 
 def _rnx_regex_in_dir(rnx_regex, dir_files_list):
     r = re.compile(rnx_regex)
-    l = list(filter(r.match, dir_files_list))
+    l = list(filter(r.search, dir_files_list))
     if len(l) == 0:
         return None
     else:
@@ -241,12 +284,28 @@ def _rnx_regex_in_dir(rnx_regex, dir_files_list):
 
 
 def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
-                      path_ftp_crawled_files_save=None):
+                      path_ftp_crawled_files_save=None, force=False):
     """
     filter urllist,savedirlist generated with download_gnss_rinex with an
     optimized FTP crawl
 
     """
+
+    def _save_crawled_files(table_inp):
+        if path_ftp_crawled_files_save:
+            table_inp.to_csv(path_ftp_crawled_files_save)
+        return None
+
+    def _save_all_ftp_files(all_ftp_files_stk_inp):
+        if all_ftp_files_stk_inp:
+            all_ftp_files = pd.concat(all_ftp_files_stk_inp)
+        else:
+            all_ftp_files = pd.Series([])
+
+        if path_ftp_crawled_files_save:
+            all_ftp_files.to_csv(path_ftp_crawled_files_save + '_all_ftp_files')
+
+        return all_ftp_files
 
     ### rename the columns
     if user or passwd:
@@ -261,31 +320,37 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
     prev_row_ftpobj = table_use.iloc[0]
     prev_row_cwd = table_use.iloc[0]
     ftp_files_list = []
-    ftp_files_all_stk = []
+    all_ftp_files_stk = []
+    local_files_lis = []
     count_loop = 0  # restablish the connexion after count_nmax loops (avoid freezing)
     count_nmax = 100
+    ftpobj = None
 
     for irow, row in table_use.iterrows():
-        count_loop = count_loop + 1
 
         #### do a local check
-        rnxlocal = _rnx_regex_in_dir(row['rnxrgx'], glob.glob(row['outdir'] + "/*"))
-        if rnxlocal:
-            log.info("%s already exists locally ;)", rnxlocal)
+        if (prev_row_cwd["outdir"] != row["outdir"]) or irow == 0:
+            local_files_lis = glob.glob(row['outdir'] + "/*")
+        rnxlocal = _rnx_regex_in_dir(row['rnxrgx'], local_files_lis)
+        if rnxlocal and not force:
+            log.info("%s already exists locally ;)", os.path.basename(rnxlocal))
             table_use.loc[irow, 'rnxnam'] = ''
             continue
 
+        count_loop = count_loop + 1 #### must be after local file check
         ####### we recreate a new FTP object if the host URL is not the same
         if row['host'] != prev_row_ftpobj['host'] or count_loop > count_nmax or count_loop == 1:
             ftpobj, _ = dlutils.ftp_objt_create(secure_ftp_inp=secure_ftp,
+                                                #chdir='/',
                                                 host=prev_row_ftpobj['host'],
                                                 user=user,
                                                 passwd=passwd)
+
             prev_row_ftpobj = row
             if count_loop > count_nmax:
                 count_loop = 0
-                if path_ftp_crawled_files_save:
-                    table_use.to_csv(path_ftp_crawled_files_save)
+                _save_crawled_files(table_use)
+                _save_all_ftp_files(all_ftp_files_stk)
 
         ####### we recreate a new file list if the date path is not the same
         if (prev_row_cwd["dir"] != row["dir"]) or irow == 0:
@@ -294,18 +359,18 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
 
             try:  #### we try to change for the right folder
                 ftpobj.cwd(row['dir'])
-            except:  #### If not possible, then no file in the list
+            except Exception as e:  #### If not possible, then no file in the list
+                log.warning("unable to chdir to %s, exception %s", row["dir"], e)
                 ftp_files_list = []
 
             ftp_files_list = dlutils._ftp_dir_list_files(ftpobj)
             ftp_files_series = pd.Series(ftp_files_list)
             ftp_files_series = os.path.join('ftp://', row['host'], row['dir']) + ftp_files_series
-            ftp_files_all_stk.append(ftp_files_series)
+            all_ftp_files_stk.append(ftp_files_series)
 
             prev_row_cwd = row
 
         ####### we check if the files is avaiable
-
         rnx_return = _rnx_regex_in_dir(row["rnxrgx"], ftp_files_list)
 
         if rnx_return:
@@ -320,14 +385,15 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
     join_funal_url = lambda e: os.path.join('ftp://', e['host'], e['dir'], e['rnxnam'])
     table_use.loc[rnx_ok, 'url_true'] = table_use.loc[rnx_ok].apply(join_funal_url, axis=1)
 
-    ftp_files_all = pd.concat(ftp_files_all_stk)
 
-    if path_ftp_crawled_files_save:
-        table_use.to_csv(path_ftp_crawled_files_save)
+    _save_crawled_files(table_use)
+    all_ftp_files = _save_all_ftp_files(all_ftp_files_stk)
 
-    ftpobj.close()
+    if ftpobj:
+        ftpobj.close()
 
-    return table_use , ftp_files_all
+    return table_use, all_ftp_files
+
 
 def ftp_download_frontend(urllist,
                           savedirlist,
@@ -336,7 +402,6 @@ def ftp_download_frontend(urllist,
                           user="anonymous",
                           passwd="anonymous@anonymous.com",
                           force=True):
-
     urlpathobj = pd.Series(urllist).apply(pathlib.Path)
     host_use = urlpathobj.apply(lambda p: p.parts[1]).unique()[0]
 
@@ -364,25 +429,136 @@ def ftp_download_frontend(urllist,
     return
 
 
-if __name__ == "__main__":
-    startdate = dt.datetime(2021, 2, 1)
-    enddate = dt.datetime(2021, 2, 5)
+def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
+                        archtype='stat', parallel_download=4,
+                        user='anonymous', passwd='anonymous@isp.com',
+                        path_ftp_crawled_files_save=None,
+                        path_ftp_crawled_files_load=None,
+                        quiet_mode=False,
+                        final_archive_for_sup_check=None,
+                        force=False):
+    """
+    Parameters
+    ----------
+    statdico : dict
+        a statdico is a dictionary associating Archives Centers to list of stations
+
+        Exemple:
+            >>> statdico['archive center 1'] = ['STA1','STA2','STA3', ...]
+            >>> statdico['archive center 2'] = ['STA2','STA1','STA4', ...]
+
+        the supported archive center are (april 2024):
+            igs_cddis or igs (cddis center)
+
+            igs_sopac (for the sopac/ucsd/sio center, but not very reliable)
+
+            rgp (IGN's RGP St Mandé center)
+
+            rgp_mlv (IGN's RGP Marne la Vallée center)
+
+            rgp_1Hz (IGN's RGP, all the 24 hourly rinex for the day will be downloaded)
+
+            renag
+
+            ovsg
+
+            unavco
+
+            sonel
+
+            geoaus (Geosciences Australia)
+
+            ens_fr
+
+            nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
+            from the ROB server, using GOP files
+
+            nav_rt or brdc_rt as archive center allows to download *real time* nav files
+            from the BKG server
+
+    archive_dir : str
+        the root directory on your local drive were to store the RINEXs
+
+    archtype : str
+        string describing how the archive directory is structured, e.g :
+
+            stat
+
+            stat/year
+
+            stat/year/doy
+
+            year/doy
+
+            year/stat
+
+            week/dow/stat
+
+            ... etc ...
+
+    user & passwd : str
+        user & password for a secure server
+
+    path_ftp_crawled_files_save : str
+        will save at the given path (directory+filename) in a CSV file containing
+        the list of the existing RINEXs found on the server by the FTP crawler.
+        It allows to use this list directly if one face a timeout during
+        the download part.
+
+    path_ftp_crawled_files_load : str
+        load and use the list of the existing RINEXs found on the FTP server,
+        generated by a previous run of the FTP crawler (called by
+        download_gnss_rinex or directly by ftp_files_crawler).
+        overrides an internal call of ftp_files_crawler.
+
+    quiet_mode : bool
+        List the available RINEXs without downloading them.
+        Useful only if path_ftp_crawled_files_save is given
+
+    final_archive_for_sup_check : str
+        The final archive path or a file containing the archived RINEXs in
+        their final destination.
+        useful if the final archive is different from archive_dir
+        *** not re-implemented yet ***
+
+    force : bool
+        Force the download even if the file already exists locally
+
+    Returns
+    -------
+    url_list : list of str
+        list of URLs
+
+    savedir_list : list of str
+        list of downloaded products paths
+
+    Minimal exemple
+    ---------------
+        >>> statdic = dict()
+        >>> statdic['igs_cddis'] = ['ZIMM','tlse']
+        >>> archive_dir = '/home/USER/test_dl_rnx'
+        >>> startdate = dt.datetime(2020,1,1)
+        >>> enddate = dt.datetime(2020,1,31)
+        >>> geodezyx.operational.download_gnss_rinex_legacy(statdic, archive_dir, startdate, enddate)
+    """
 
     date_range = conv.dt_range(startdate, enddate)
 
-    archive_dir = '/home/psakicki/aaa_FOURBI/test_dl_rnx'
-    archtype = 'year/doy/stat'
-
-    user = 'anonymous'
-    passwd = 'toto@toto.com'
-    secure_ftp = True
-    parallel_download = 1
+    #user = 'anonymous'
+    #passwd = 'toto@toto.com'
+    #secure_ftp = True
 
     table_proto = []
-    site_lis = ['zimm', 'tlse', 'abmf']
+
+    for k, v in statdico.items():
+        datacenter = k
+        site_lis = v
+
     for date in date_range:
         for site in site_lis:
-            urldic = igs_cddis_server(site, date)
+            urldic, secure_ftp, mode1hz = _server_select(datacenter, site, date)
+            if not urldic:
+                continue
             outdir = effective_save_dir(archive_dir, site, date, archtype)
             for rnxver, rnxurl in urldic.items():
                 table_proto.append((date, site, outdir, rnxver, rnxurl))
@@ -396,20 +572,26 @@ if __name__ == "__main__":
     table["host"] = urlpathobj.apply(lambda p: p.parts[1])
     table["dir"] = urlpathobj.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
-    path_ftp_crawled_files_save = "/home/psakicki/aaa_FOURBI/crawl"
-    table_use = ftp_files_crawler(table, secure_ftp=secure_ftp,
-                                  user=user, passwd=passwd,
-                                  path_ftp_crawled_files_save=path_ftp_crawled_files_save)
+    if path_ftp_crawled_files_load:
+        table_use = pd.load_csv(path_ftp_crawled_files_load)
+    else:
+        table_use, files_all = ftp_files_crawler(table,
+                                                 secure_ftp=secure_ftp,
+                                                 user=user, passwd=passwd,
+                                                 path_ftp_crawled_files_save=path_ftp_crawled_files_save)
 
     #### get only the valid (true) url
     table_dl = table_use.loc[table_use['url_true'].dropna().index]
 
     if len(table_dl) == 0:
-        log.error("no valid RINEX URL fond on the FTP server, check your inputs")
+        log.error("no valid RINEX URL found/selected on the FTP server, check your inputs")
 
-    ftp_download_frontend(table_dl['url_true'].values,
-                          table_dl['outdir'].values,
-                          parallel_download=parallel_download,
-                          secure_ftp=secure_ftp,
-                          user=user,
-                          passwd=passwd)
+    if not quiet_mode and len(table_dl) > 0:
+        ftp_download_frontend(table_dl['url_true'].values,
+                              table_dl['outdir'].values,
+                              parallel_download=parallel_download,
+                              secure_ftp=secure_ftp,
+                              user=user,
+                              passwd=passwd)
+
+    return None
