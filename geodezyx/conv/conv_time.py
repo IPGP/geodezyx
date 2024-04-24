@@ -246,13 +246,13 @@ def dt_range(start_dt,end_dt,
         
     Returns
     -------
-    Out_range : list of datetime
+    out_range : list of datetime
         range of dates  
     """
-    Out_range = [start_dt]
-    while Out_range[-1] < end_dt:
-        Out_range.append(Out_range[-1] + dt.timedelta(days=day_step) + dt.timedelta(seconds=sec_step))
-    return Out_range
+    out_range = [start_dt]
+    while out_range[-1] < end_dt:
+        out_range.append(out_range[-1] + dt.timedelta(days=day_step) + dt.timedelta(seconds=sec_step))
+    return out_range
 
 def dt2posix(dtin,out_array=False):       
     """
@@ -1683,8 +1683,7 @@ def statname_dt2rinexname_long(statname,datein,
         statname_ok = statname[:4] + "00" + country
     else:
         statname_ok = statname
-        
-        
+
     if preset_type == "daily":
         file_period="01D"
         data_freq="30S"     
@@ -1692,14 +1691,14 @@ def statname_dt2rinexname_long(statname,datein,
     elif preset_type == "hourly":
         file_period="01H"
         data_freq="01S"     
-        
-        
+
     date_ok = datein.strftime('%Y') +  dt2doy(datein) + datein.strftime('%H%M')
     period_freq_ok = "_" + file_period + "_" + data_freq + "_" + data_type
     data_source_ok = "_" + data_source + "_"
     
     out_rnx_name = statname_ok + data_source_ok + date_ok + period_freq_ok + '.' + format_compression
-    
+    out_rnx_name = out_rnx_name.upper()
+
     return out_rnx_name
     
 

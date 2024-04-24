@@ -443,9 +443,9 @@ def download_gnss_rinex_legacy(statdico, archive_dir, startdate, enddate,
         if path_ftp_crawled_files_load: ## if the previous files are loaded
             urllist, savedirlist = utils.pickle_loader(path_ftp_crawled_files_load)
         else: ## regular case
-            urllist, savedirlist = dlutils.ftp_files_crawler(urllist,
-                                                             savedirlist, 
-                                                             secure_ftp=secure_ftp)
+            urllist, savedirlist = dlutils.ftp_files_crawler_legacy(urllist,
+                                                                    savedirlist,
+                                                                    secure_ftp=secure_ftp)
             if path_ftp_crawled_files_save:
                 savetup = (urllist, savedirlist)
                 utils.pickle_saver(savetup,
@@ -482,9 +482,9 @@ def download_gnss_rinex_legacy(statdico, archive_dir, startdate, enddate,
                                                   passwd=url[2])
             
             for iurl,isavedir in zip(urllist,savedirlist):
-                localpath , bool_dl = dlutils.FTP_downloader_full_remote_path(ftp_obj,
-                                                                              iurl[0],
-                                                                              isavedir)
+                localpath , bool_dl = dlutils.ftp_downloader(ftp_obj,
+                                                             iurl[0],
+                                                             isavedir)
                 
 
     localfiles_lis = []

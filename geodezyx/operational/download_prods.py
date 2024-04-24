@@ -340,9 +340,9 @@ def download_gnss_products(archive_dir,
         ### Actual Download
         if ftp_download and parallel_download == 1:
             for tup in Downld_tuples_list:
-                dlutils.FTP_downloader(*tup)
+                dlutils.ftp_downloader_core(*tup)
         elif ftp_download and parallel_download > 1:
-            _ = pool.map_async(dlutils.FTP_downloader_wo_objects,
+            _ = pool.map_async(dlutils.ftp_downloader_wo_objects,
                                Downld_tuples_list)
         elif not ftp_download and parallel_download == 1:
             for tup in Downld_tuples_list:
