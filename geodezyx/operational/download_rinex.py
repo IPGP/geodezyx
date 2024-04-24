@@ -23,6 +23,7 @@ import multiprocessing as mp
 from multiprocessing.dummy import Pool as ThreadPool
 
 import logging
+
 log = logging.getLogger(__name__)
 
 
@@ -243,7 +244,6 @@ def _server_select(datacenter, site, curdate):
     return urldic, secure_ftp, mode1hz
 
 
-
 def effective_save_dir(parent_archive_dir, stat, date, archtype='stat'):
     """
     INTERNAL_FUNCTION
@@ -284,11 +284,11 @@ def _rnx_regex_in_dir(rnx_regex, dir_files_list):
 
 
 def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
-                      path_ftp_crawled_files_save=None, force=False):
+                      path_ftp_crawled_files_save=None, all_ftp_files_save=None,
+                      force=False):
     """
-    filter urllist,savedirlist generated with download_gnss_rinex with an
+    filter the table with download_gnss_rinex with an
     optimized FTP crawl
-
     """
 
     def _save_crawled_files(table_inp):
@@ -296,16 +296,17 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
             table_inp.to_csv(path_ftp_crawled_files_save)
         return None
 
-    def _save_all_ftp_files(all_ftp_files_stk_inp):
+    def _get_and_save_all_ftp_files(all_ftp_files_stk_inp):
         if all_ftp_files_stk_inp:
-            all_ftp_files = pd.concat(all_ftp_files_stk_inp)
+            all_ftp_files_out = pd.concat(all_ftp_files_stk_inp)
+            all_ftp_files_out.reset_index(drop=True,inplace=True)
         else:
-            all_ftp_files = pd.Series([])
+            all_ftp_files_out = pd.Series([])
 
-        if path_ftp_crawled_files_save:
-            all_ftp_files.to_csv(path_ftp_crawled_files_save + '_all_ftp_files')
+        if all_ftp_files_save:
+            all_ftp_files_out.to_csv(all_ftp_files_save)
 
-        return all_ftp_files
+        return all_ftp_files_out
 
     ### rename the columns
     if user or passwd:
@@ -337,7 +338,7 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
             table_use.loc[irow, 'rnxnam'] = ''
             continue
 
-        count_loop = count_loop + 1 #### must be after local file check
+        count_loop = count_loop + 1  #### must be after local file check
         ####### we recreate a new FTP object if the host URL is not the same
         if row['host'] != prev_row_ftpobj['host'] or count_loop > count_nmax or count_loop == 1:
             ftpobj, _ = dlutils.ftp_objt_create(secure_ftp_inp=secure_ftp,
@@ -350,7 +351,7 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
             if count_loop > count_nmax:
                 count_loop = 0
                 _save_crawled_files(table_use)
-                _save_all_ftp_files(all_ftp_files_stk)
+                _get_and_save_all_ftp_files(all_ftp_files_stk)
 
         ####### we recreate a new file list if the date path is not the same
         if (prev_row_cwd["dir"] != row["dir"]) or irow == 0:
@@ -365,7 +366,7 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
 
             ftp_files_list = dlutils._ftp_dir_list_files(ftpobj)
             ftp_files_series = pd.Series(ftp_files_list)
-            ftp_files_series = os.path.join('ftp://', row['host'], row['dir']) + ftp_files_series
+            ftp_files_series = os.path.join('ftp://', row['host'], row['dir']) + '/' + ftp_files_series
             all_ftp_files_stk.append(ftp_files_series)
 
             prev_row_cwd = row
@@ -385,9 +386,8 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
     join_funal_url = lambda e: os.path.join('ftp://', e['host'], e['dir'], e['rnxnam'])
     table_use.loc[rnx_ok, 'url_true'] = table_use.loc[rnx_ok].apply(join_funal_url, axis=1)
 
-
     _save_crawled_files(table_use)
-    all_ftp_files = _save_all_ftp_files(all_ftp_files_stk)
+    all_ftp_files = _get_and_save_all_ftp_files(all_ftp_files_stk)
 
     if ftpobj:
         ftpobj.close()
@@ -434,6 +434,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
                         user='anonymous', passwd='anonymous@isp.com',
                         path_ftp_crawled_files_save=None,
                         path_ftp_crawled_files_load=None,
+                        all_ftp_files_save=None,
                         quiet_mode=False,
                         final_archive_for_sup_check=None,
                         force=False):
@@ -511,6 +512,10 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
         download_gnss_rinex or directly by ftp_files_crawler).
         overrides an internal call of ftp_files_crawler.
 
+    all_ftp_files_save : str
+        will save at the given path (directory+filename) in a CSV file
+        ALL the remote files found on the FTP server.
+
     quiet_mode : bool
         List the available RINEXs without downloading them.
         Useful only if path_ftp_crawled_files_save is given
@@ -544,10 +549,6 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
 
     date_range = conv.dt_range(startdate, enddate)
 
-    #user = 'anonymous'
-    #passwd = 'toto@toto.com'
-    #secure_ftp = True
-
     table_proto = []
 
     for k, v in statdico.items():
@@ -578,7 +579,9 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
         table_use, files_all = ftp_files_crawler(table,
                                                  secure_ftp=secure_ftp,
                                                  user=user, passwd=passwd,
-                                                 path_ftp_crawled_files_save=path_ftp_crawled_files_save)
+                                                 path_ftp_crawled_files_save=path_ftp_crawled_files_save,
+                                                 all_ftp_files_save=all_ftp_files_save,
+                                                 force=force)
 
     #### get only the valid (true) url
     table_dl = table_use.loc[table_use['url_true'].dropna().index]
@@ -592,6 +595,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
                               parallel_download=parallel_download,
                               secure_ftp=secure_ftp,
                               user=user,
-                              passwd=passwd)
+                              passwd=passwd,
+                              force=force)
 
     return None
