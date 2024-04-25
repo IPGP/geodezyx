@@ -410,7 +410,7 @@ def ftp_download_frontend(urllist,
                                                       host=host_use,
                                                       parallel_download=parallel_download,
                                                       user=user,
-                                                      passwd=passwrd)
+                                                      passwd=passwd)
 
     #for url, savedir in zip(urllist, savedirlist):
     #    localpath, bool_dl = dlutils.ftp_downloader(ftpobj_main, url, savedir)
