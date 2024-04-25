@@ -400,8 +400,9 @@ def ftp_download_frontend(urllist,
                           parallel_download=1,
                           secure_ftp=False,
                           user="anonymous",
-                          passwd="anonymous@anonymous.com",
+                          passwd='anonymous@isp.com',
                           force=True):
+
     urlpathobj = pd.Series(urllist).apply(pathlib.Path)
     host_use = urlpathobj.apply(lambda p: p.parts[1]).unique()[0]
 
@@ -409,7 +410,7 @@ def ftp_download_frontend(urllist,
                                                       host=host_use,
                                                       parallel_download=parallel_download,
                                                       user=user,
-                                                      passwd=user)
+                                                      passwd=passwrd)
 
     #for url, savedir in zip(urllist, savedirlist):
     #    localpath, bool_dl = dlutils.ftp_downloader(ftpobj_main, url, savedir)
