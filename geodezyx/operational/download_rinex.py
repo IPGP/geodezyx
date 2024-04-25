@@ -210,33 +210,33 @@ def _server_select(datacenter, site, curdate):
         secure_ftp = True
     elif datacenter == 'igs_sopac':
         urldic = igs_sopac_server(site, curdate)
-    elif datacenter == 'rgp':
-        urldic = rgp_ign_smn_server_legacy(site, curdate)
-    elif datacenter == 'rgp_mlv':
-        urldic = rgp_ign_mlv_server(site, curdate)
-    elif datacenter == 'rgp_1Hz':
-        urls = rgp_ign_smn_1_hz_server_legacy(site, curdate)
-        mode1hz = True
-    elif datacenter == 'renag':
-        urldic = renag_server(site, curdate)
-    elif datacenter == 'orpheon':
-        urldic = orpheon_server_legacy(site, curdate)
-    elif datacenter == 'uwiseismic':
-        urldic = uwiseismic_server(site, curdate)
-    elif datacenter == 'ovsg':
-        urldic = ovsg_server_legacy(site, curdate)
-    elif datacenter == 'unavco':
-        urldic = unavco_server_legacy(site, curdate)
-    elif datacenter == 'sonel':
-        urldic = sonel_server_legacy(site, curdate)
-    elif datacenter == 'geoaus':
-        urldic = geoaus_server_legacy(site, curdate)
-    elif datacenter in ('nav', 'brdc'):
-        urldic = nav_rob_server_legacy(site, curdate)
-    elif datacenter in ('nav_rt', 'brdc_rt'):
-        urldic = nav_bkg_server(site, curdate)
-    elif datacenter == 'ens_fr':
-        urldic = ens_fr_legacy(site, curdate)
+    # elif datacenter == 'rgp':
+    #     urldic = rgp_ign_smn_server_legacy(site, curdate)
+    # elif datacenter == 'rgp_mlv':
+    #     urldic = rgp_ign_mlv_server(site, curdate)
+    # elif datacenter == 'rgp_1Hz':
+    #     urls = rgp_ign_smn_1_hz_server_legacy(site, curdate)
+    #     mode1hz = True
+    # elif datacenter == 'renag':
+    #     urldic = renag_server(site, curdate)
+    # elif datacenter == 'orpheon':
+    #     urldic = orpheon_server_legacy(site, curdate)
+    # elif datacenter == 'uwiseismic':
+    #     urldic = uwiseismic_server(site, curdate)
+    # elif datacenter == 'ovsg':
+    #     urldic = ovsg_server_legacy(site, curdate)
+    # elif datacenter == 'unavco':
+    #     urldic = unavco_server_legacy(site, curdate)
+    # elif datacenter == 'sonel':
+    #     urldic = sonel_server_legacy(site, curdate)
+    # elif datacenter == 'geoaus':
+    #     urldic = geoaus_server_legacy(site, curdate)
+    # elif datacenter in ('nav', 'brdc'):
+    #     urldic = nav_rob_server_legacy(site, curdate)
+    # elif datacenter in ('nav_rt', 'brdc_rt'):
+    #     urldic = nav_bkg_server(site, curdate)
+    # elif datacenter == 'ens_fr':
+    #     urldic = ens_fr_legacy(site, curdate)
     else:
         log.warning('unkwn server dic in the dico, skip ...')
         return None, None, None
@@ -341,12 +341,15 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
         count_loop = count_loop + 1  #### must be after local file check
         ####### we recreate a new FTP object if the host URL is not the same
         if row['host'] != prev_row_ftpobj['host'] or count_loop > count_nmax or count_loop == 1:
+            
+            if ftpobj:  ## close previous FTP object
+                ftpobj.close()
+            
             ftpobj, _ = dlutils.ftp_objt_create(secure_ftp_inp=secure_ftp,
                                                 #chdir='/',
                                                 host=prev_row_ftpobj['host'],
                                                 user=user,
                                                 passwd=passwd)
-
             prev_row_ftpobj = row
             if count_loop > count_nmax:
                 count_loop = 0
