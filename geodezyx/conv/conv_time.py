@@ -1549,6 +1549,8 @@ def statname_dt2rinexname(statname,datein,rnxtype='d.Z',
     ----------
     statname : string
         name of the station
+        if is more than 4 characters long (typically for 9-chars. names), 
+        only the 4 first characters will be used
     
     datein : datetime
         date of the wished RINEX name
@@ -1572,11 +1574,15 @@ def statname_dt2rinexname(statname,datein,rnxtype='d.Z',
         sess = alphabet[datein.hour]
     else:
         sess = '0'
+        
+    out_rnx_name = statname[:4] + dt2doy(datein) + sess + '.' + datein.strftime('%y') + rnxtype
+    out_rnx_name = out_rnx_name.lower()
 
-    return statname + dt2doy(datein) + sess + '.' + datein.strftime('%y') + rnxtype
+    return out_rnx_name
 
 
-def statname_dt2rinexname_long(statname,datein,
+def statname_dt2rinexname_long(statname,
+                               datein,
                                country="XXX",
                                data_source="R",
                                file_period="00U",
