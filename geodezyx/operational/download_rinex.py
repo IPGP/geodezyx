@@ -284,7 +284,7 @@ def _rnx_regex_in_dir(rnx_regex, dir_files_list):
 
 
 def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
-                      path_ftp_crawled_files_save=None, all_ftp_files_save=None,
+                      path_ftp_crawled_files_save=None, path_all_ftp_files_save=None,
                       force=False):
     """
     filter the table with download_gnss_rinex with an
@@ -303,8 +303,8 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
         else:
             all_ftp_files_out = pd.Series([])
 
-        if all_ftp_files_save:
-            all_ftp_files_out.to_csv(all_ftp_files_save)
+        if path_all_ftp_files_save:
+            all_ftp_files_out.to_csv(path_all_ftp_files_save)
 
         return all_ftp_files_out
 
@@ -434,7 +434,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
                         user='anonymous', passwd='anonymous@isp.com',
                         path_ftp_crawled_files_save=None,
                         path_ftp_crawled_files_load=None,
-                        all_ftp_files_save=None,
+                        path_all_ftp_files_save=None,
                         quiet_mode=False,
                         final_archive_for_sup_check=None,
                         force=False):
@@ -512,7 +512,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
         download_gnss_rinex or directly by ftp_files_crawler).
         overrides an internal call of ftp_files_crawler.
 
-    all_ftp_files_save : str
+    path_all_ftp_files_save : str
         will save at the given path (directory+filename) in a CSV file
         ALL the remote files found on the FTP server.
 
@@ -580,7 +580,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
                                                  secure_ftp=secure_ftp,
                                                  user=user, passwd=passwd,
                                                  path_ftp_crawled_files_save=path_ftp_crawled_files_save,
-                                                 all_ftp_files_save=all_ftp_files_save,
+                                                 path_all_ftp_files_save=path_all_ftp_files_save,
                                                  force=force)
 
     #### get only the valid (true) url
