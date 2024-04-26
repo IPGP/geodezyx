@@ -370,6 +370,9 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
     ftpobj = None
 
     for irow, row in table_use.iterrows():
+        
+        if row['crawled']:
+            continue
 
         #### do a local check
         if (prev_row_cwd["outdir"] != row["outdir"]) or irow == 0:
@@ -425,6 +428,8 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
         else:
             table_use.loc[irow, 'rnxnam'] = ''
             log.warning(row["rnxrgx"] + " not found on server :(")
+        table_use.loc[irow, 'crawled'] = True
+
 
     rnx_ok = table_use['rnxnam'].str.len().astype(bool)
 
@@ -625,6 +630,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
                 table_proto.append((date, site, outdir, rnxver, rnxurl))
 
     table = pd.DataFrame(table_proto, columns=['date', 'site', 'outdir', 'ver', 'url_theo'])
+    table['crawled'] = False
     table['url_true'] = None
     table['rnxnam'] = ''
 
