@@ -79,6 +79,44 @@ def igs_cddis_server(stat, date):
 
     return urldic
 
+def igs_ign_server(stat, date):
+    # plante si trop de requete
+    urlserver = "ftp://igs.ign.fr/pub/igs/data/"
+
+    ### generate regex
+    rnx2rgx, rnx3rgx = _rnx_rgx(stat, date)
+
+    ### generate urls
+    urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
+    rnx2url = os.path.join(urldir, rnx2rgx)
+    rnx3url = os.path.join(urldir, rnx3rgx)
+
+    ### generate output urldic, key 2 and 3 are for rinex version
+    urldic = {}
+    urldic[2] = rnx2url
+    urldic[3] = rnx3url
+
+    return urldic
+
+def igs_ign_ensg_server(stat, date):
+    # plante si trop de requete
+    urlserver = "ftp://igs.ensg.eu/pub/igs/data/"
+
+    ### generate regex
+    rnx2rgx, rnx3rgx = _rnx_rgx(stat, date)
+
+    ### generate urls
+    urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
+    rnx2url = os.path.join(urldir, rnx2rgx)
+    rnx3url = os.path.join(urldir, rnx3rgx)
+
+    ### generate output urldic, key 2 and 3 are for rinex version
+    urldic = {}
+    urldic[2] = rnx2url
+    urldic[3] = rnx3url
+
+    return urldic
+
 
 ############ not adapted yet
 def igs_cddis_nav_server(stat, date):
@@ -119,7 +157,7 @@ def rgp_ign_mlv_server(stat, date):
     return url
 
 
-def rgp_ign_smn_1Hz_server(stat, date):
+def rgp_ign_smn_1_hz_server(stat, date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
 
     urls = []
@@ -210,6 +248,10 @@ def _server_select(datacenter, site, curdate):
         secure_ftp = True
     elif datacenter == 'igs_sopac':
         urldic = igs_sopac_server(site, curdate)
+    elif datacenter == 'igs_ign':
+        urldic = igs_ign_server(site, curdate)
+    elif datacenter == 'igs_ign_ensg':
+        urldic = igs_ign_ensg_server(site, curdate)
     # elif datacenter == 'rgp':
     #     urldic = rgp_ign_smn_server_legacy(site, curdate)
     # elif datacenter == 'rgp_mlv':
@@ -454,10 +496,15 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
             >>> statdico['archive center 2'] = ['STA2','STA1','STA4', ...]
 
         the supported archive center are (april 2024):
-            igs_cddis or igs (cddis center)
+            igs_cddis or igs (CDDIS data center)
 
-            igs_sopac (for the sopac/ucsd/sio center, but not very reliable)
+            igs_sopac (for the SOPAC/UCSD/SIO data center, but not very reliable)
 
+            igs_ign (IGN's data center, main server at St Mandé)
+
+            igs_ign_ensg (IGN's data center, secondary server at ENSG, Marne-la-Vallée)
+
+            ***** not reimplemented yet *****
             rgp (IGN's RGP St Mandé center)
 
             rgp_mlv (IGN's RGP Marne la Vallée center)
