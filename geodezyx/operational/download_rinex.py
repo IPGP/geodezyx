@@ -489,7 +489,9 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
                         path_all_ftp_files_save=None,
                         quiet_mode=False,
                         final_archive_for_sup_check=None,
-                        force=False):
+                        force=False,
+                        get_rnx2=True,
+                        get_rnx3=True):
     """
     Parameters
     ----------
@@ -533,6 +535,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
 
             nav_rt or brdc_rt as archive center allows to download *real time* nav files
             from the BKG server
+            ***** not reimplemented yet *****            
 
     archive_dir : str
         the root directory on your local drive were to store the RINEXs
@@ -593,6 +596,10 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
 
     force : bool
         Force the download even if the file already exists locally
+        
+    get_rnx2 & get_rnx3 : bool
+        limit the search/download to RINEX2 (short names) and/or 
+        RINEX3 (long names) depending on the boolean given
 
     Returns
     -------
@@ -627,6 +634,10 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
                 continue
             outdir = effective_save_dir(archive_dir, site, date, archtype)
             for rnxver, rnxurl in urldic.items():
+                if rnxver == 2 and not get_rnx2:
+                    continue
+                if rnxver == 3 and not get_rnx3:
+                    continue
                 table_proto.append((date, site, outdir, rnxver, rnxurl))
 
     table = pd.DataFrame(table_proto, columns=['date', 'site', 'outdir', 'ver', 'url_theo'])
