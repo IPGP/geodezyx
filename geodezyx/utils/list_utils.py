@@ -23,13 +23,14 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 import bisect
 import collections
 import itertools
-import natsort
-import numpy as np
-import re
-#### geodeZYX modules
-
 #### Import the logger
 import logging
+import re
+
+import natsort
+import numpy as np
+
+#### geodeZYX modules
 log = logging.getLogger(__name__)
 
 

@@ -9,17 +9,18 @@ This module regroups the functions for the resolution estimation of the
 REVOSIMA's OBSCOM-embeded pressure sensor
 """
 
-from geodezyx import utils
-import matplotlib.pyplot as plt
-import numpy as np
 import itertools
-import scipy
-import geodezyx as gzyx
-import geodezyx.conv as conv
-import pandas as pd
-
 #### Import the logger
 import logging
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import scipy
+
+import geodezyx.conv as conv
+from geodezyx import utils
+
 log = logging.getLogger(__name__)
 
 

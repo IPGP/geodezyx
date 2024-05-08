@@ -6,24 +6,22 @@ Created on Wed Feb 14 18:01:49 2024
 @author: psakic
 """
 
-#### Import star style
-from geodezyx import operational
-from geodezyx import conv
-from geodezyx import files_rw
-from geodezyx import utils
-
 import datetime as dt
-import os 
-import shutil
-import hatanaka
-from subprocess import Popen, PIPE
-import multiprocessing as mp
-
-
-import subprocess
-
 #### Import the logger
 import logging
+import multiprocessing as mp
+import os
+import shutil
+import subprocess
+
+import hatanaka
+
+from geodezyx import conv
+from geodezyx import files_rw
+#### Import star style
+from geodezyx import operational
+from geodezyx import utils
+
 log = logging.getLogger(__name__)
 
 def run_command(command):

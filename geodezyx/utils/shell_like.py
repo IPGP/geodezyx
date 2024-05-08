@@ -24,6 +24,8 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 import fnmatch
 import glob
 import gzip
+#### Import the logger
+import logging
 import os
 import re
 import shutil
@@ -32,8 +34,6 @@ import subprocess
 #### geodeZYX modules
 from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

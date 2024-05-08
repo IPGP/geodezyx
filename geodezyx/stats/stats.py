@@ -20,16 +20,17 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
+#### Import the logger
+import logging
+
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy
-import matplotlib.pyplot as plt
+
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
 
-
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

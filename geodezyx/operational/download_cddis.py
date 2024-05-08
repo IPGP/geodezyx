@@ -13,32 +13,28 @@ GitHub repository :
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
+#### Import the logger
+import logging
 ########## BEGIN IMPORT ##########
 #### External modules
 # import datetime as dt
-from ftplib import FTP
 # import glob
 # import itertools
 # import multiprocessing as mp
 import os
-import pandas as pd 
-# import re
-# import shutil
-import urllib
-import ftplib
+
+import pandas as pd
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
 
+# import re
+# import shutil
 #### Import star style
 # from geodezyx import *                   # Import the GeodeZYX modules
 # from geodezyx.externlib import *         # Import the external modules
 # from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
-
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

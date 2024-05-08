@@ -13,17 +13,16 @@ It is based on the work of Yann Terden Tranchant
 """
 
 
-import xarray as xr
 import numpy as np
-import seawater
 import pandas as pd
-#from datetime import datetime, timedelta
-import scipy.optimize as optimize
+import seawater
+import xarray as xr
+from scipy.signal import butter, filtfilt
 
-from scipy.signal import butter, lfilter, sosfilt, filtfilt
+
+# from datetime import datetime, timedelta
 
 #import numpy as np
-import matplotlib.pyplot as plt
 #from scipy.signal import butter
 
 def butter_highpass(cutoff, fs, order=5):

@@ -20,20 +20,21 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import glob
-import matplotlib.pyplot as plt
-import numpy as np
-import os 
-import pandas as pd
+#### Import the logger
+import logging
+import os
 import shutil
 import subprocess
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import stats
 from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

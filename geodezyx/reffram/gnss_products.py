@@ -22,18 +22,17 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 #### External modules
 import datetime as dt
 import itertools
+#### Import the logger
+import logging
+import os
+import re
+
 import matplotlib
 import matplotlib.pyplot as plt
 import natsort
 import numpy as np
-import os 
 import pandas as pd
-import re
-
 import pyorbital.astronomy
-
-### disabled and imported directly in the needed fct
-## import geodezyx.reffram.sofa18 as sofa
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -42,8 +41,8 @@ from geodezyx import stats
 from geodezyx import utils
 from geodezyx.reffram import kepler_gzyx
 
-#### Import the logger
-import logging
+### disabled and imported directly in the needed fct
+## import geodezyx.reffram.sofa18 as sofa
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
@@ -437,7 +436,6 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     but plot a plot anyway
     """
 
-    import matplotlib.dates as mdates
     fig,[axr,axt,axn] = plt.subplots(3,1,sharex='all')
 
     satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in['prn'])))
@@ -820,9 +818,7 @@ def compar_clk_plot(Diff_sat_all_df_in,
     export path (str) if save is asked
     but plot a plot anyway
     """
-    
-    
-    import matplotlib.dates as mdates
+
     fig,axr = plt.subplots(1,1,sharex='all')
     Diff_sat_all_df_in = Diff_sat_all_df_in.reset_index()
     satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in[col_name])))

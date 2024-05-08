@@ -23,23 +23,24 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 import datetime as dt
 import gzip
 import inspect
-import numpy as np
+import io
+#### Import the logger
+import logging
 import os
-import pandas as pd
-import pickle
 import pathlib
+import pickle
 import re
-import scipy
 import sys
 import tempfile
 import time
 import uuid
-import io
-import pathvalidate
-#### geodeZYX modules
 
-#### Import the logger
-import logging
+import numpy as np
+import pandas as pd
+import pathvalidate
+import scipy
+
+#### geodeZYX modules
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

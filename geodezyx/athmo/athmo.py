@@ -11,9 +11,9 @@ Created on Tue Jul  9 09:23:54 2019
 #from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 import numpy as np
-import re
-import pandas as df
-from geodezyx import conv,utils
+
+from geodezyx import conv, utils
+
 
 def PWV_conversion(zwd,Tm):
     """

@@ -7,18 +7,17 @@ Created on Tue Jan 17 10:54:49 2023
 """
 
 import datetime as dt
-import numpy as np
-import subprocess
-import urllib
-from geodezyx import utils, conv, operational
-from xml.etree import ElementTree as et
-import os
-from threading import Thread
-import time
-
-
 #### Import the logger
 import logging
+import os
+import time
+import urllib
+from threading import Thread
+
+import numpy as np
+
+from geodezyx import utils, conv, operational
+
 log = logging.getLogger(__name__)
 
 def log_subprocess(pipe,logger=None,file=None,file2=None):
@@ -87,7 +86,7 @@ def subprocess_frontend2(cmd_in,
     https://stackoverflow.com/questions/6809590/merging-a-python-scripts-subprocess-stdout-and-stderr-while-keeping-them-disti
     """
     
-    from subprocess import Popen, PIPE, STDOUT
+    from subprocess import Popen, PIPE
     now = utils.get_timestamp()
     
     #### manage the paths of the output logs
@@ -284,7 +283,6 @@ def vmf_tropo_downloader(output_dir,
 
 def _search_xml_groops_global(xmlpath,global_label):
     from xml.etree import ElementTree as et
-    from xml.etree.ElementTree import Element
 
     xmltree = et.parse(xmlpath)
 

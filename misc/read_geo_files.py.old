@@ -29,21 +29,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ########## BEGIN IMPORT ##########
 #### External modules
-import datetime as dt
-import linecache
-import numpy as np
-import os 
-import pandas as pd
 
 #### geodeZYX modules
-from geodezyx import conv
-from geodezyx import time_series
-from geodezyx import utils
 
 #### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
+
 
 ##########  END IMPORT  ##########
 

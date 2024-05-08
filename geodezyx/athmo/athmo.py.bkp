@@ -8,27 +8,17 @@ Created on Tue Jul  9 09:23:54 2019
 
 ########## BEGIN IMPORT ##########
 #### External modules
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import re
 
 #### geodeZYX modules
-from geodezyx import conv
-from geodezyx import files_rw
-from geodezyx import stats
-from geodezyx import time_series
 
 #### Import star style
-from geodezyx import *                   # Import the GeodeZYX modules
 from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 <<<<<<< master
 ##########  END IMPORT  ##########
 =======
 
-from geodezyx import np,conv,re,df
+from geodezyx import np,conv, df
 
 def PWV_conversion(zwd,Tm):
     """
@@ -818,7 +808,8 @@ def compare_trop_ties(input_file,STA1,STA2,coord_file="",grid_met="",apply_ties=
           STA2 : Rover station
           coord_file : Station coordinates file path
           grid_met : Grid file for meteological information from Global Pressture Temperature (GPT)
-          apply_ties : Apply height coorections from standard ties (Default No)
+          apply_ties : Apply height coorections
+(Default No)
           mode : data in DataFrame (DF) or SINEX (SINEX) (Default DataFrame)
           mode_coor : Coordinates file format in SINEX or EPOS or DataFrame format (Argruments : sinex , epos , df)
           coord_t : static (default) or kinematic
@@ -1030,8 +1021,8 @@ def vmf1(ah,aw,dt,dlat,zd):
     
     Reference
     ----------
-    Boehm, J., B. Werl, H. Schuh (2006), Troposphere mapping functions for GPS and very long baseline interferometry 
-    from European Centre for Medium-Range Weather Forecasts operational analysis data, 
+    Boehm, J., B. Werl, H. Schuh (2006), Troposphere mapping functions for GPS and very long baseline interferometry
+for Medium-Range Weather Forecasts operational analysis data,
     J. Geoph. Res., Vol. 111, B02406, doi:10.1029/2005JB003629.
     
     Notes

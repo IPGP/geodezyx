@@ -21,14 +21,15 @@ reset the token after changing the permissions!
 """
 
 import datetime as dt
-import pandas as pd
-#import wget
-import subprocess
-from geodezyx import conv, utils
-import os
-
 #### Import the logger
 import logging
+import os
+
+import pandas as pd
+
+# import wget
+from geodezyx import conv, utils
+
 log = logging.getLogger(__name__)
 
 def dropbox_connect(dropbox_access_token):

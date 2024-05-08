@@ -6,19 +6,20 @@ Created on Wed Jun 23 11:42:14 2021
 @author: psakicki
 """
 
+#### Import the logger
+import logging
+import os
+import re
+
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
-import os 
 import pandas as pd
-import re
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
  #  _____ _____  _____    _____                _     _             _   _                _____        __ _       ______ _ _           

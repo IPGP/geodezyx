@@ -8,9 +8,6 @@
 
 #### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
 
 # ### Read TimeSeries
 

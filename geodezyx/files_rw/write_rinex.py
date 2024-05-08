@@ -17,19 +17,18 @@ GitHub repository :
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
+#### Import the logger
+import logging
+from io import StringIO
+
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
 import pandas as pd
-from io import StringIO
-
 
 #### geodeZYX modules
 from geodezyx import files_rw, utils
 
-
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 

@@ -9,19 +9,18 @@ Created on Wed Jun 23 10:24:19 2021
 ########## BEGIN IMPORT ##########
 #### External modules
 import gzip
+#### Import the logger
+import logging
+import os
+
 import numpy as np
-import os 
 import pandas as pd
-import warnings
 
 #### geodeZYX modules
 from geodezyx import conv
-#from geodezyx import time_series
+# from geodezyx import time_series
 from geodezyx import utils
 
-
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
  #   _____ _            _       __ _ _           

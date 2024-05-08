@@ -21,7 +21,8 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import pandas as pd
-import numpy as np
+
+
 #### geodeZYX modules
 
 

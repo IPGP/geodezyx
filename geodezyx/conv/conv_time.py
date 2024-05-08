@@ -22,31 +22,31 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
+#### Import the logger
+import logging
 import math
-import numpy as np
-import os 
-import pandas as pd
-#import scipy
-#from scipy.spatial.transform import Rotation
+import os
+import re
+# import scipy
+# from scipy.spatial.transform import Rotation
 import string
 import struct
 import subprocess
-import re
 import time
 import warnings
 ## Finding day of year
-from datetime import datetime, date 
+from datetime import datetime, date
+
+import numpy as np
+import pandas as pd
 
 #### geodeZYX modules
-from geodezyx import utils,stats
-
+from geodezyx import utils, stats
 ### Imported in the corresponding function to avoid cyclic import
 ### from geodezyx.conv import conv_interpolators
 from geodezyx.conv import conv_rinex
-### https://stackoverflow.com/questions/1250103/attributeerror-module-object-has-no-attribute
 
-#### Import the logger
-import logging
+### https://stackoverflow.com/questions/1250103/attributeerror-module-object-has-no-attribute
 log = logging.getLogger(__name__)
 
 

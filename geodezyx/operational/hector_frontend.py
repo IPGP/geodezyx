@@ -21,20 +21,20 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 #### External modules
 import datetime as dt
 import glob
-import matplotlib.pyplot as plt
-import numpy as np
-import os 
-import pandas
+#### Import the logger
+import logging
+import os
 import shutil
 import subprocess
 import time
 
+import matplotlib.pyplot as plt
+import numpy as np
+
+from geodezyx import reffram
 #### geodeZYX modules
 from geodezyx import utils
-from geodezyx import reffram
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

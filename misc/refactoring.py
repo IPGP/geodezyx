@@ -6,12 +6,13 @@ Created on Tue Aug  6 09:32:31 2019
 @author: psakicki
 """
 
-from geodezyx import *
-from geodezyx import utils
-import os,re
-
 #### Import the logger
 import logging
+import os
+import re
+
+from geodezyx import utils
+
 log = logging.getLogger(__name__)
 
 ################ GENERATION OF THE DICT

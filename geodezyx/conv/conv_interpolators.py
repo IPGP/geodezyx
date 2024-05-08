@@ -7,14 +7,15 @@ Created on Tue Aug 24 13:58:51 2021
 """
 
 import datetime as dt
-import scipy
-from scipy.spatial.transform import Rotation
-import numpy as np
-
-from geodezyx import utils,conv
-
 #### Import the logger
 import logging
+
+import numpy as np
+import scipy
+from scipy.spatial.transform import Rotation
+
+from geodezyx import utils, conv
+
 log = logging.getLogger(__name__)
 
 

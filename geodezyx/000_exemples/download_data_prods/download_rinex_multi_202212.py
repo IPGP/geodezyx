@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime as dt
 
 #### Import star style
 from geodezyx import operational

@@ -23,8 +23,9 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 """
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 # =====================
 # Inverse Models

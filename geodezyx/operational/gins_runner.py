@@ -24,27 +24,28 @@ import collections
 import copy
 import datetime as dt
 import glob
+#### Import the logger
+import logging
 import multiprocessing as mp
-import numpy as np
 import os
-import pandas as pd
 import re
 import shutil
 import subprocess
 import sys
 import time
+
+import numpy as np
+import pandas as pd
 import yaml
-from bs4 import UnicodeDammit #finding the right encoding for debug
+from bs4 import UnicodeDammit  # finding the right encoding for debug
 
 #### geodeZYX modules
 from geodezyx import conv
-from geodezyx import utils
 from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import time_series
+from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

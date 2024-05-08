@@ -9,15 +9,16 @@ Created on Fri May 12 15:56:33 2023
 ########## BEGIN IMPORT ##########
 #### External modules
 import copy
+#### Import the logger
+import logging
+import os
+
 import matplotlib.pyplot as plt
-import os 
 
 #### geodeZYX modules
 from geodezyx import conv
-from geodezyx import time_series 
+from geodezyx import time_series
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
