@@ -1532,7 +1532,7 @@ def OrbDF_const_sv_columns_maker(OrbDFin,inplace=True):
  # | |____| | (_) | (__|   <  | |__| | (_| | || (_| | |  | | | (_| | | | | | |  __/\__ \ 
  #  \_____|_|\___/ \___|_|\_\ |_____/ \__,_|\__\__,_|_|  |_|  \__,_|_| |_| |_|\___||___/ 
                                                                                                                                                                         
-### Clock DataFrames   
+### Clock DataFrames
 
 def ClkDF_filter(ClkDF_in,
              typ=("AS","AR"),
@@ -1611,6 +1611,62 @@ def ClkDF_filter(ClkDF_in,
     BOOL    = BOOL & np.array(BOOLtmp)    
     
     return ClkDF_wrk[BOOL]
+
+def ClkDF_filter2(ClkDF_in,
+             typ=("AS","AR"),
+             name=None,
+             ac=None,
+             epoch_strt=dt.datetime(1980,1,1),
+             epoch_end=dt.datetime(2099,1,1),
+             name_regex=False):
+    """
+    attempt for a faster version of ClkDF_filter, but the original is faster
+    """
+    
+    if type(ClkDF_in) is str:
+        ClkDF_wrk = utils.pickle_loader(ClkDF_in)
+    else:
+        ClkDF_wrk = ClkDF_in
+        
+    clkdf_stk = []
+    
+    for (ityp, iname, iac), clkdf_grp in ClkDF_wrk.groupby(["type","name","ac"]):
+        if typ:
+            bool_typ = True if ityp in typ else False
+        else:
+            bool_typ = True
+        
+        if name:
+            if not name_regex:
+                bool_name = True if iname in name else False
+            else:
+                bool_name = any([re.search(n, iname) for n in name])
+        else:
+            bool_name = True
+            
+        if ac:
+            bool_ac = True if iac in ac else False
+        else:
+            bool_ac = True
+            
+        
+        if not (bool_typ and bool_name and bool_ac):
+            continue
+        else:
+            if epoch_strt > dt.datetime(1980,1,1) or epoch_end < dt.datetime(2099,1,1):
+                bool_epoc = (epoch_strt <= clkdf_grp["epoch"]) & (clkdf_grp["epoch"] < epoch_end)
+                clkdf_stk.append(clkdf_grp[bool_epoc])
+            else:
+                clkdf_stk.append(clkdf_grp)
+
+                
+            
+    clkdf_out = pd.concat(clkdf_stk)
+    
+    return clkdf_out
+                
+            
+
 
 def ClkDF_reg_2_multidx(ClkDFin,index_order=["name","epoch"]):
     """
