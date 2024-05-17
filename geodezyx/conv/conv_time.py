@@ -2021,60 +2021,6 @@ def utc2gpstime(year,month,day,hour,min,sec):
     return int(gpsweek),int(gpssecs)
 
 #### LEAP SECONDS MANAGEMENT
-    
-def leap_seconds(f):
-    """
-    Return a list of tuples of this format: (timestamp, number_of_seconds)
-        timestamp: a 32-bit timestamp, seconds since the UNIX epoch
-        number_of_seconds: how many leap-seconds occur at timestamp
-
-    INTERNAL_FUNCTION
-
-    Source
-    ------
-    http://stackoverflow.com/questions/19332902/extract-historic-leap-seconds-from-tzdata
-
-    """
-    TZFILE_MAGIC = 'TZif'.encode('US-ASCII')
-
-    fmt = ">4s c 15x 6l"
-    size = struct.calcsize(fmt)
-    (tzfile_magic, tzfile_format, ttisgmtcnt, ttisstdcnt, leapcnt, timecnt,
-        typecnt, charcnt) =  struct.unpack(fmt, f.read(size))
-    #print("DEBUG: tzfile_magic: {} tzfile_format: {} ttisgmtcnt: {} ttisstdcnt: {} leapcnt: {} timecnt: {} typecnt: {} charcnt: {}".format(tzfile_magic, tzfile_format, ttisgmtcnt, ttisstdcnt, leapcnt, timecnt, typecnt, charcnt))
-
-    # Make sure it is a tzfile(5) file
-    assert tzfile_magic == TZFILE_MAGIC, (
-            "Not a tzfile; file magic was: '{}'".format(tzfile_magic))
-
-    # comments below show struct codes such as "l" for 32-bit long integer
-    offset = (timecnt*4  # transition times, each "l"
-        + timecnt*1  # indices tying transition time to ttinfo values, each "B"
-        + typecnt*6  # ttinfo structs, each stored as "lBB"
-        + charcnt*1)  # timezone abbreviation chars, each "c"
-
-    f.seek(offset, 1) # seek offset bytes from current position
-
-    fmt = '>{}l'.format(leapcnt*2)
-    #print("DEBUG: leapcnt: {}  fmt: '{}'".format(leapcnt, fmt))
-    size = struct.calcsize(fmt)
-    data = struct.unpack(fmt, f.read(size))
-
-    lst = [(data[i], data[i+1]) for i in range(0, len(data), 2)]
-    assert all(lst[i][0] < lst[i+1][0] for i in range(len(lst)-1))
-    assert all(lst[i][1] == lst[i+1][1]-1 for i in range(len(lst)-1))
-    return lst
-
-def print_leaps(leap_lst):
-    """
-    INTERNAL_FUNCTION
-    """
-    # leap_lst is tuples: (timestamp, num_leap_seconds)
-    outlist = []
-    for ts, num_secs in leap_lst:
-        dtime = (dt.datetime.utcfromtimestamp(ts - num_secs+1))
-        outlist.append((dtime,num_secs))
-    return outlist
 
 def get_leapsecond_frontend():
     """
@@ -2088,13 +2034,68 @@ def get_leapsecond_frontend():
 
         the initial 10sec are added in find_leapsecond
     """
+
+    def _parse_leap_seconds_file(f):
+        """
+        Return a list of tuples of this format: (timestamp, number_of_seconds)
+            timestamp: a 32-bit timestamp, seconds since the UNIX epoch
+            number_of_seconds: how many leap-seconds occur at timestamp
+
+        INTERNAL_FUNCTION
+
+        Source
+        ------
+        http://stackoverflow.com/questions/19332902/extract-historic-leap-seconds-from-tzdata
+
+        """
+        TZFILE_MAGIC = 'TZif'.encode('US-ASCII')
+
+        fmt = ">4s c 15x 6l"
+        size = struct.calcsize(fmt)
+        (tzfile_magic, tzfile_format, ttisgmtcnt, ttisstdcnt, leapcnt, timecnt,
+         typecnt, charcnt) = struct.unpack(fmt, f.read(size))
+        # print("DEBUG: tzfile_magic: {} tzfile_format: {} ttisgmtcnt: {} ttisstdcnt: {} leapcnt: {} timecnt: {} typecnt: {} charcnt: {}".format(tzfile_magic, tzfile_format, ttisgmtcnt, ttisstdcnt, leapcnt, timecnt, typecnt, charcnt))
+
+        # Make sure it is a tzfile(5) file
+        assert tzfile_magic == TZFILE_MAGIC, (
+            "Not a tzfile; file magic was: '{}'".format(tzfile_magic))
+
+        # comments below show struct codes such as "l" for 32-bit long integer
+        offset = (timecnt * 4  # transition times, each "l"
+                  + timecnt * 1  # indices tying transition time to ttinfo values, each "B"
+                  + typecnt * 6  # ttinfo structs, each stored as "lBB"
+                  + charcnt * 1)  # timezone abbreviation chars, each "c"
+
+        f.seek(offset, 1)  # seek offset bytes from current position
+
+        fmt = '>{}l'.format(leapcnt * 2)
+        # print("DEBUG: leapcnt: {}  fmt: '{}'".format(leapcnt, fmt))
+        size = struct.calcsize(fmt)
+        data = struct.unpack(fmt, f.read(size))
+
+        lst = [(data[i], data[i + 1]) for i in range(0, len(data), 2)]
+        assert all(lst[i][0] < lst[i + 1][0] for i in range(len(lst) - 1))
+        assert all(lst[i][1] == lst[i + 1][1] - 1 for i in range(len(lst) - 1))
+        return lst
+
+    def _print_leaps(leap_lst):
+        """
+        INTERNAL_FUNCTION
+        """
+        # leap_lst is tuples: (timestamp, num_leap_seconds)
+        outlist = []
+        for ts, num_secs in leap_lst:
+            dtime = (dt.datetime.utcfromtimestamp(ts - num_secs + 1))
+            outlist.append((dtime, num_secs))
+        return outlist
+
     zoneinfo_fname = '/usr/share/zoneinfo/right/UTC'
 
     try:
         ### Linux case : AUTO Mode
         with open(zoneinfo_fname, 'rb') as f:
-            leap_lst = leap_seconds(f)
-            final_leap_lis = print_leaps(leap_lst)
+            leap_lst = _parse_leap_seconds_file(f)
+            final_leap_lis = _print_leaps(leap_lst)
     except:
         ### Windows case : MANUAL Mode
         final_leap_lis = [(dt.datetime(1972, 7, 1, 0, 0), 1),
@@ -2124,9 +2125,14 @@ def get_leapsecond_frontend():
          (dt.datetime(2012, 7, 1, 0, 0), 25),
          (dt.datetime(2015, 7, 1, 0, 0), 26),
          (dt.datetime(2017, 1, 1, 0, 0), 27)]
+        log.warning("Harcoded leap second list loaded\nIt might be wrong if IERS's bulletin C has been updated!\nlast known update: %s",final_leap_lis[-1])
+
     return final_leap_lis
 
-def find_leapsecond(dtin,get_leapsec_lis=[],
+
+LEAP_SEC_LIS = get_leapsecond_frontend()
+
+def find_leapsecond(dtin,get_leapsec_lis=LEAP_SEC_LIS,
                     apply_initial_delta=True):
     """
     Find the TAI-UTC leap second for a given datetime
