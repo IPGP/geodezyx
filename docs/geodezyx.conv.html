@@ -2094,7 +2094,7 @@ Can handle several datetimes in an iterable.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Out_range</strong> – range of dates</p>
+<dd class="field-even"><p><strong>out_range</strong> – range of dates</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of datetime</p>
@@ -2280,7 +2280,7 @@ The year before 1 A.D. is 0, 10 B.C. is year -9.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.find_leapsecond">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">find_leapsecond</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_leapsec_lis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_initial_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.find_leapsecond" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">find_leapsecond</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_leapsec_lis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[(datetime.datetime(1972,</span> <span class="pre">7,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">1),</span> <span class="pre">(datetime.datetime(1973,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">2),</span> <span class="pre">(datetime.datetime(1974,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">3),</span> <span class="pre">(datetime.datetime(1975,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">4),</span> <span class="pre">(datetime.datetime(1976,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">5),</span> <span class="pre">(datetime.datetime(1977,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">6),</span> <span class="pre">(datetime.datetime(1978,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">7),</span> <span class="pre">(datetime.datetime(1979,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">8),</span> <span class="pre">(datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">9),</span> <span class="pre">(datetime.datetime(1981,</span> <span class="pre">7,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">10),</span> <span class="pre">(datetime.datetime(1982,</span> <span class="pre">7,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">11),</span> <span class="pre">(datetime.datetime(1983,</span> <span class="pre">7,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">12),</span> <span class="pre">(datetime.datetime(1985,</span> <span class="pre">7,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">13),</span> <span class="pre">(datetime.datetime(1988,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">14),</span> <span class="pre">(datetime.datetime(1990,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">15),</span> <span class="pre">(datetime.datetime(1991,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">16),</span> <span class="pre">(datetime.datetime(1992,</span> <span class="pre">7,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">17),</span> <span class="pre">(datetime.datetime(1993,</span> <span class="pre">7,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">18),</span> <span class="pre">(datetime.datetime(1994,</span> <span class="pre">7,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">19),</span> <span class="pre">(datetime.datetime(1996,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">20),</span> <span class="pre">(datetime.datetime(1997,</span> <span class="pre">7,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">21),</span> <span class="pre">(datetime.datetime(1999,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">22),</span> <span class="pre">(datetime.datetime(2006,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">23),</span> <span class="pre">(datetime.datetime(2009,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">24),</span> <span class="pre">(datetime.datetime(2012,</span> <span class="pre">7,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">25),</span> <span class="pre">(datetime.datetime(2015,</span> <span class="pre">7,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">26),</span> <span class="pre">(datetime.datetime(2017,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0),</span> <span class="pre">27)]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_initial_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.find_leapsecond" title="Link to this definition"></a></dt>
 <dd><p>Find the TAI-UTC leap second for a given datetime</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2485,21 +2485,6 @@ The year before 1 A.D. is 0, 10 B.C. is year -9.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_time.leap_seconds">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">leap_seconds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.leap_seconds" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Return a list of tuples of this format: (timestamp, number_of_seconds)</dt><dd><p>timestamp: a 32-bit timestamp, seconds since the UNIX epoch
-number_of_seconds: how many leap-seconds occur at timestamp</p>
-</dd>
-</dl>
-<p>INTERNAL_FUNCTION</p>
-<section id="id1">
-<h3>Source<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
-<p><a class="reference external" href="http://stackoverflow.com/questions/19332902/extract-historic-leap-seconds-from-tzdata">http://stackoverflow.com/questions/19332902/extract-historic-leap-seconds-from-tzdata</a></p>
-</section>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.matlab_time2dt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">matlab_time2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matlab_datenum</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.matlab_time2dt" title="Link to this definition"></a></dt>
 <dd><p>Time representation conversion</p>
@@ -2622,12 +2607,6 @@ If the input is a Pandas Series, the output is forced as an array</p></li>
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.posix2dt_in_local_timezone">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">posix2dt_in_local_timezone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">posixin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.posix2dt_in_local_timezone" title="Link to this definition"></a></dt>
 <dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_time.print_leaps">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">print_leaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">leap_lst</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.print_leaps" title="Link to this definition"></a></dt>
-<dd><p>INTERNAL_FUNCTION</p>
-</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.rinexname2dt">
@@ -2761,7 +2740,9 @@ The default if ‘round’</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>statname</strong> (<em>string</em>) – name of the station</p></li>
+<li><p><strong>statname</strong> (<em>string</em>) – name of the station
+if is more than 4 characters long (typically for 9-chars. names),
+only the 4 first characters will be used</p></li>
 <li><p><strong>datein</strong> (<em>datetime</em>) – date of the wished RINEX name</p></li>
 <li><p><strong>rnxtype</strong> (<em>string</em>) – extension of the RINEX (“d.Z”,”.o”) …</p></li>
 <li><p><strong>session_a_instead_of_daily_session</strong> (<em>bool</em>) – if True, gives an hourly session name (a,b,c …)
