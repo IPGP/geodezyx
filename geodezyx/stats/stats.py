@@ -37,68 +37,69 @@ log = logging.getLogger(__name__)
 
 
 
-def linear_regression(x,y,fulloutput=False,alpha=.95):
-    """    
-    From 2 vectors X and Y, returns linear regression coefficients a and b
+def linear_regression(x, y, fulloutput=False, simple_lsq=False, alpha=.95):
+    """
+    Performs linear regression on two vectors, X and Y, and returns the coefficients a (slope) and b (intercept).
 
     Parameters
     ----------
-    X & Y : list or numpy.array
-        Values
+    x : list or numpy.array
+        The X values.
+    y : list or numpy.array
+        The Y values.
+    simple_lsq : bool, optional
+        If True, performs a basic, low-level least square inversion (faster, but less outputs).
+        If False, calls scipy's linregress. Default is False.
+    fulloutput : bool, optional
+        If True, returns additional outputs (confidence interval for the slope and standard deviation).
+        Default is False.
+    alpha : float, optional
+        The alpha value for the confidence interval. Default is .95.
 
-    fulloutput : bool
-        full output
-        
-    alpha : float
-        alpha value for the confidence interval
-                
     Returns
     -------
-    a & b : float
-        Linear regression coefficients
-    
-    If fulloutput == True:
-        
-    confid_interval_slope : float 2-tuple
-        confidence interval for the slope
-        
-    std_err : float
-        standard deviation
-        
-    Note
-    ----
-    http://glowingpython.blogspot.fr/2012/03/linear-regression-with-numpy.html 
-    
-    This function is doing more or less the same job as scipy.stats.linregress
+    slope : float
+        The slope (a) of the linear regression.
+    intercept : float
+        The intercept (b) of the linear regression.
+    confid_interval_slope : tuple of float, optional
+        The confidence interval for the slope. Only returned if fulloutput is True.
+    std_err : float, optional
+        The standard deviation. Only returned if fulloutput is True.
+
+    Notes
+    -----
+    This function performs a similar job to scipy.stats.linregress.
+
+    Regarding computation speed: low-level least square inversion is faster for small datasets.
+    For larger datasets, scipy's linregress is faster (n points > ~13000).
+
     """
+    # Ensure x and y are numpy arrays
+    if not isinstance(x, np.ndarray):
+        x = np.array(x)
+    if not isinstance(y, np.ndarray):
+        y = np.array(y)
 
-    # On bosse avec des arrays
-    x = np.array(x)
-    y = np.array(y)
-
+    # Check if lengths of x and y are equal
     if len(x) != len(y):
-        log.error("ERR : linear_regression : len(x) != len(y)")
-        log.info("      len(x) : " , len(x))
-        log.info("      len(y) : " , len(y))
+        log.error("len(x) (%i) != len(y) (%i)", len(x), len(y))
+        return 0, 0
 
-        return 0,0
-
-    A = np.array([x, np.ones(len(x))])
-    # linearly generated sequence
-    #### Too slow approach
-    ## https://www.freecodecamp.org/news/data-science-with-python-8-ways-to-do-linear-regression-and-measure-their-speed-b5577d75f8b/
-    ## w = np.linalg.lstsq(A.T,y,rcond=None)[0] # obtaining the parameters
-    
-    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(x,y)
-
-    if not fulloutput:
-        #return w[0],w[1]
-        return slope, intercept
-
+    # Perform least squares regression if simple_lsq is True
+    if simple_lsq:
+        A = np.array([x, np.ones(len(x))]) # x2 faster than np.column_stack([x, np.ones(len(x))])
+        slope, intercept = np.linalg.lstsq(A.T, y, rcond=None)[0]  # obtaining the parameters
     else:
-        #slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(x,y)
-        return slope,intercept,confid_interval_slope(x,y,alpha),std_err
+        # Perform scipy's linregress if simple_lsq is False
+        slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(x, y)
 
+    # Return only the slope and intercept if fulloutput is False
+    if simple_lsq or not fulloutput:
+        return slope, intercept
+    else:
+        # Return the slope, intercept, confidence interval, and standard deviation if fulloutput is True
+        return slope, intercept, confid_interval_slope(x, y, alpha), std_err
 
 def linear_reg_getvalue(X,a,b,full=True):
     """    

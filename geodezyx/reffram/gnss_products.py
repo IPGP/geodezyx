@@ -1466,41 +1466,74 @@ def OrbDF_multidx_2_reg(OrbDFin,index_order=["prn","epoch"]):
     return OrbDFwrk
 
 def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
-                              supplementary_sort=False,order=["prn","epoch"]):
+                          supplementary_sort=False,order=["prn","epoch"],
+                          skip_reg2multidx_OrbDFa=False,
+                          skip_reg2multidx_OrbDFb=False):
     """
-    Find common sats and epochs in to Orbit DF,
-    and output the corresponding Orbit DFs
-    order >> normally for sp3 is sat and epoch, 
-    but can be used for snx files as STAT and epoch
+    This function finds common satellites and epochs in two Orbit DataFrames and outputs the corresponding Orbit DataFrames.
+
+    Parameters
+    ----------
+    OrbDFa_in : DataFrame
+        The first input Orbit DataFrame.
+    OrbDFb_in : DataFrame
+        The second input Orbit DataFrame.
+    return_index : bool, optional
+        If True, the function also returns the common index. Default is False.
+    supplementary_sort : bool, optional
+        If True, an additional sort is performed. This is useful for multi GNSS where the output DataFrame may not be well sorted. Default is False.
+    order : list of str, optional
+        The order of the index for the multi-index DataFrame. Default is ["prn","epoch"].
+    skip_reg2multidx_OrbDFa : bool, optional
+        If True, skips the conversion of the first input DataFrame to a multi-index DataFrame. Default is False.
+        The inputs are assumed to be already in multi-index format to optimize execution speed.
+        (For advanced use only)
+    skip_reg2multidx_OrbDFb : bool, optional
+        If True, skips the conversion of the second input DataFrame to a multi-index DataFrame. Default is False.
+        The inputs are assumed to be already in multi-index format to optimize execution speed.
+        (For advanced use only)
+
+    Returns
+    -------
+    OrbDFa_out : DataFrame
+        The first output Orbit DataFrame with common satellites and epochs.
+    OrbDFb_out : DataFrame
+        The second output Orbit DataFrame with common satellites and epochs.
+    Iinter : Index, optional
+        The common index. Only returned if return_index is True.
+
+    Note
+    ----
+    designed for orbits/sp3 first with sat and epoch as order parmeter,
+    but can be used also for instance for snx files with
+    STAT and epoch as order parmeter
     """
-    
-    OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
-    OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
-    
+    if not skip_reg2multidx_OrbDFa:
+        OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
+    else:
+        OrbDFa = OrbDFa_in
+    if not skip_reg2multidx_OrbDFb:
+        OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
+    else:
+        OrbDFb = OrbDFb_in
+
     I1 = OrbDFa.index
     I2 = OrbDFb.index
-    
+
     Iinter = I1.intersection(I2)
-    ### A sort of the Index to avoid issues ...
     Iinter = Iinter.sort_values()
-    
+
     OrbDFa_out = OrbDFa.loc[Iinter]
     OrbDFb_out = OrbDFb.loc[Iinter]
-    
+
     if supplementary_sort:
-        # for multi GNSS, OrbDF_out are not well sorted (why ??? ...)
-        # we do a supplementary sort
-        # NB 202003: maybe because Iiter was not sorted ...
-        # should be fixed with the Iinter.sort_values() above 
-        # but we maintain this sort
         OrbDFa_out = OrbDFa_out.sort_values(order)
         OrbDFb_out = OrbDFb_out.sort_values(order)
 
-    
     if len(OrbDFa_out) != len(OrbDFb_out):
         log.warning("len(Orb/ClkDFa_out) != len(Orb/ClkDFb_out)")
         log.warning("TIPS : ClkDFa_in and/or ClkDFb_in might contain duplicates")
-    
+
     if return_index:
         return OrbDFa_out , OrbDFb_out , Iinter
     else:
@@ -1528,7 +1561,7 @@ def OrbDF_const_sv_columns_maker(OrbDFin,inplace=True):
  # | |____| | (_) | (__|   <  | |__| | (_| | || (_| | |  | | | (_| | | | | | |  __/\__ \ 
  #  \_____|_|\___/ \___|_|\_\ |_____/ \__,_|\__\__,_|_|  |_|  \__,_|_| |_| |_|\___||___/ 
                                                                                                                                                                         
-### Clock DataFrames   
+### Clock DataFrames
 
 def ClkDF_filter(ClkDF_in,
              typ=("AS","AR"),
@@ -1607,6 +1640,62 @@ def ClkDF_filter(ClkDF_in,
     BOOL    = BOOL & np.array(BOOLtmp)    
     
     return ClkDF_wrk[BOOL]
+
+def ClkDF_filter2(ClkDF_in,
+             typ=("AS","AR"),
+             name=None,
+             ac=None,
+             epoch_strt=dt.datetime(1980,1,1),
+             epoch_end=dt.datetime(2099,1,1),
+             name_regex=False):
+    """
+    attempt for a faster version of ClkDF_filter, but the original is faster
+    """
+    
+    if type(ClkDF_in) is str:
+        ClkDF_wrk = utils.pickle_loader(ClkDF_in)
+    else:
+        ClkDF_wrk = ClkDF_in
+        
+    clkdf_stk = []
+    
+    for (ityp, iname, iac), clkdf_grp in ClkDF_wrk.groupby(["type","name","ac"]):
+        if typ:
+            bool_typ = True if ityp in typ else False
+        else:
+            bool_typ = True
+        
+        if name:
+            if not name_regex:
+                bool_name = True if iname in name else False
+            else:
+                bool_name = any([re.search(n, iname) for n in name])
+        else:
+            bool_name = True
+            
+        if ac:
+            bool_ac = True if iac in ac else False
+        else:
+            bool_ac = True
+            
+        
+        if not (bool_typ and bool_name and bool_ac):
+            continue
+        else:
+            if epoch_strt > dt.datetime(1980,1,1) or epoch_end < dt.datetime(2099,1,1):
+                bool_epoc = (epoch_strt <= clkdf_grp["epoch"]) & (clkdf_grp["epoch"] < epoch_end)
+                clkdf_stk.append(clkdf_grp[bool_epoc])
+            else:
+                clkdf_stk.append(clkdf_grp)
+
+                
+            
+    clkdf_out = pd.concat(clkdf_stk)
+    
+    return clkdf_out
+                
+            
+
 
 def ClkDF_reg_2_multidx(ClkDFin,index_order=["name","epoch"]):
     """

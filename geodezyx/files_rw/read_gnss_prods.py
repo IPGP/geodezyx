@@ -62,6 +62,12 @@ def read_clk(file_path_in,names_4char=False):
                         names=['type', 'name', 'year', 'month', 'day', 'hour',
                                'minute', 'second',"n_values",'bias', 'sigma'])
     
+    
+    # Special case when D-0n instead of E-0n (e.g. IAC), 
+    # then values are not converted to float and kept as generic objects...
+    if DFclk['bias'].dtype == "O" and DFclk['bias'].str.match(".*D(\+|-)\d\d$").any():
+        DFclk['bias'] = DFclk['bias'].str.replace("D","E").astype(float)
+    
     DFclk["ac"] = os.path.basename(file_path_in)[:3] 
     DFclk["name"] = DFclk["name"].str.upper()
     if names_4char:
