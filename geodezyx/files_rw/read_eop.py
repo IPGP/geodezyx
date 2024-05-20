@@ -9,16 +9,17 @@ Created on Wed Jun 23 10:24:42 2021
 ########## BEGIN IMPORT ##########
 #### External modules
 import linecache
+#### Import the logger
+import logging
+import os
+
 import numpy as np
-import os 
 import pandas as pd
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 

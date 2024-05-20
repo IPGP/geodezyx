@@ -26,7 +26,7 @@ import logging.config # MUST remain logging.config for < v3.10
 # import numpy as npaa
 # import operator
 import os 
-from os import remove, close, path
+from os import path
 # import pandas as df
 # import pandas as pd
 # import pickle

@@ -21,18 +21,19 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 
 
 
+#### Import the logger
+import logging
+
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
-# import scipy
-# from pyorbital import astronomy
-# import re
 
 #### geodeZYX modules
 from geodezyx import utils
 
-#### Import the logger
-import logging
+# import scipy
+# from pyorbital import astronomy
+# import re
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

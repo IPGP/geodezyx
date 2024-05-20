@@ -6,15 +6,17 @@ Created on Wed Jun 30 10:52:09 2021
 @author: psakic
 """
 
+import re
+
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
 import pandas as pd
-import re
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
+
 
 #### Import star style
 # from geodezyx import *                   # Import the GeodeZYX modules

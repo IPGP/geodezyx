@@ -26,17 +26,20 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
-import dateutil
-from io import BytesIO,StringIO
 import itertools
+#### Import the logger
+import logging
+import os
+import re
+import shutil
+import textwrap
+from io import BytesIO, StringIO
+
+import dateutil
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import os 
 import pandas as pd
-import shutil
-import textwrap
-import re
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -44,8 +47,6 @@ from geodezyx import operational
 from geodezyx import utils
 from geodezyx.files_rw import read_logsheets
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
@@ -473,8 +474,7 @@ def write_eqfile_from_dico(dicoin,outdir,outfilename):
     outfilepath = os.path.join(outdir,outfilename)
     fil = open(outfilepath,'w+')
 
-    from collections import OrderedDict
-#    dicoin = OrderedDict(sorted(dicoin.items(), key=lambda dicoin: dicoin[1]))
+    #    dicoin = OrderedDict(sorted(dicoin.items(), key=lambda dicoin: dicoin[1]))
 #    dicoin = sorted(dicoin, key=dicoin.get)
     for k,v in dicoin.items():
         for i in range(len(v)):

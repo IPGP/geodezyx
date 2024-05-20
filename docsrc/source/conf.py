@@ -15,8 +15,6 @@ import sys
 sys.path.insert(0, os.path.abspath('../..'))
 #sys.path.insert(0, "/home/psakicki/CODES/GeodeZYX-Toolbox_v4/geodezyx")
 #sys.path.insert(0, "/home/psakicki/CODES/GeodeZYX-Toolbox_v4/")
-import geodezyx
-import sphinx_rtd_theme
 
 
 # -- Project information -----------------------------------------------------

@@ -457,20 +457,28 @@ GitHub repository :
 <a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.pandas_utils.diff_pandas">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">diff_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.pandas_utils.diff_pandas" title="Link to this definition"></a></dt>
-<dd><p>Differentiate a Pandas DataFrame, if index is time</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">diff_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_np_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.pandas_utils.diff_pandas" title="Link to this definition"></a></dt>
+<dd><p>Differentiate a Pandas DataFrame, if index is time.</p>
+<p>This function calculates the difference between consecutive elements in a specified column of a DataFrame.
+The difference is divided by the difference in time (seconds) between the corresponding indices.
+This is essentially a derivative operation, assuming the index represents time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>DF</strong> (<em>Pandas DataFrame</em>) – input DataFrame</p></li>
-<li><p><strong>col_name</strong> (<em>str</em>) – the column of the DataFrame you want to differentiate</p></li>
+<li><p><strong>DF</strong> (<em>pandas.DataFrame</em>) – The input DataFrame. The index should represent time.</p></li>
+<li><p><strong>col_name</strong> (<em>str</em>) – The name of the column in the DataFrame that you want to differentiate.</p></li>
+<li><p><strong>use_np_diff</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use Numpy’s diff.
+Default is False.
+This option has a (much) faster execution speed.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DSout</strong> – Differenciated column of the input DataFrame</p>
+<dd class="field-even"><p>The differentiated column of the input DataFrame. The type of the return value depends on the
+‘return_array’ parameter. If ‘return_array’ is False (default), a DataFrame is returned. If
+‘return_array’ is True, a numpy array is returned.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Pandas DataFrame</p>
+<dd class="field-odd"><p>pandas.DataFrame or numpy.array</p>
 </dd>
 </dl>
 </dd></dl>

@@ -2,7 +2,7 @@
 
 # geodezyx (aka ___The GeodeZYX Toolbox___) 
 
-**Version 4.4.2 / 2024-04-17**, README Revision: 2024-04-17
+**Version 4.4.3 / 2024-05-20**, README Revision: 2024-05-20
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
@@ -77,6 +77,9 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ## Changelog
 
+### v4.4.3, 2024-05-20
+  * Speed execution optimization for orbit/clock-related functions
+  * Misc routine improvements
 
 ### v4.4.2, 2024-04-17
   * The GitHub repository, and the project in general, has been renamed as ``geodezyx`` (in lower case)
@@ -85,7 +88,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
       https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository
   * misc routine improvements
   * Refactoring of the GNSS data/products dowmload functions
-      
+
 ### v4.4.1, 2024-02-08
   * The GitHub repository has now been moved under the IPGP organization.
     * It must be transparent for your clones but updating them is recommended \

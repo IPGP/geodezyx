@@ -65,6 +65,14 @@ geodezyx.operational.download\_rinex module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.operational.download\_rinex\_legacy module
+---------------------------------------------------
+
+.. automodule:: geodezyx.operational.download_rinex_legacy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.operational.download\_utils module
 -------------------------------------------
 

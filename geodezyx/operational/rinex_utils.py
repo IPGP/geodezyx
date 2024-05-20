@@ -20,23 +20,24 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
-import dateutil
 import glob
-import numpy as np
-import os 
-import pandas as pd
+#### Import the logger
+import logging
+import os
+import re
 import shutil
 import string
 import subprocess
-import re
+
+import dateutil
 import hatanaka
+import numpy as np
+import pandas as pd
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

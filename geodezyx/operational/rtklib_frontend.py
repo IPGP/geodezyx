@@ -18,20 +18,20 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 
+import collections
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
-import os 
+#### Import the logger
+import logging
+import os
 import subprocess
-import collections
 
 #### geodeZYX modules
 from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

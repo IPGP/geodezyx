@@ -20,20 +20,21 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
-import numpy as np
-import os 
-import pandas as pd
+#### Import the logger
+import logging
+import os
 import re
+
+import numpy as np
+import pandas as pd
 
 #### geodeZYX modules
 from geodezyx import conv
-from geodezyx import utils
 from geodezyx import files_rw
 from geodezyx import reffram
-#from geodezyx.megalib.megalib import *   # Import the legacy modules names
+from geodezyx import utils
 
-#### Import the logger
-import logging
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 log = logging.getLogger(__name__)
 
 

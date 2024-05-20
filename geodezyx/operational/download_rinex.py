@@ -5,24 +5,19 @@ Created on 23/04/2024 21:31:45
 
 @author: psakic
 """
-import re
+import datetime as dt
 import glob
+import logging
+import os
 import pathlib
-import time
+import re
+from multiprocessing.dummy import Pool as ThreadPool
 
 import numpy as np
 import pandas as pd
 
-from geodezyx import conv, utils
-import datetime as dt
-import os
-
 import geodezyx.operational.download_utils as dlutils
-
-import multiprocessing as mp
-from multiprocessing.dummy import Pool as ThreadPool
-
-import logging
+from geodezyx import conv
 
 log = logging.getLogger(__name__)
 

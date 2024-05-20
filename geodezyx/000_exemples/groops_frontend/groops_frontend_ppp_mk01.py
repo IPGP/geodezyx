@@ -8,10 +8,6 @@ Created on Mon Feb 20 17:12:25 2023
 
 #### Import star style
 from geodezyx import *                   # Import the GeodeZYX modules
-from geodezyx.externlib import *         # Import the external modules
-from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
-
 
 rinex_path = "/vol/ovpf/miroir_ovpf/DonneesAcquisition/geodesie/GPSData/2023/008/fjag0080.23d.Z"
 rinex_root_path = "/vol/ovpf/miroir_ovpf/DonneesAcquisition/geodesie/GPSData/"

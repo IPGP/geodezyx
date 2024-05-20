@@ -17,24 +17,23 @@ GitHub repository :
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
-########## BEGIN IMPORT ##########
-#### External modules
-import datetime as dt
-import numpy as np
-import pandas as pd
-from io import StringIO
-import re
-import os
-import pathlib
-from tqdm import tqdm
-import hatanaka
-
-#### geodeZYX modules
-from geodezyx import operational,utils
-
-
 #### Import the logger
 import logging
+import os
+import pathlib
+import re
+from io import StringIO
+
+import hatanaka
+########## BEGIN IMPORT ##########
+#### External modules
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+
+#### geodeZYX modules
+from geodezyx import operational, utils
+
 log = logging.getLogger(__name__)
 
 

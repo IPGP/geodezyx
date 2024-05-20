@@ -6,4 +6,3 @@ Created on Fri Aug  2 14:25:54 2019
 @author: psakicki
 """
 
-from geodezyx.utils import *

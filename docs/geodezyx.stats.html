@@ -751,31 +751,34 @@ Decimal Years are recommended</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.linear_regression">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">linear_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fulloutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.linear_regression" title="Link to this definition"></a></dt>
-<dd><p>From 2 vectors X and Y, returns linear regression coefficients a and b</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">linear_regression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fulloutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simple_lsq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.linear_regression" title="Link to this definition"></a></dt>
+<dd><p>Performs linear regression on two vectors, X and Y, and returns the coefficients a (slope) and b (intercept).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Y</strong> (<em>X &amp;</em>) – Values</p></li>
-<li><p><strong>fulloutput</strong> (<em>bool</em>) – full output</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – alpha value for the confidence interval</p></li>
+<li><p><strong>x</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – The X values.</p></li>
+<li><p><strong>y</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – The Y values.</p></li>
+<li><p><strong>simple_lsq</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, performs a basic, low-level least square inversion (faster, but less outputs).
+If False, calls scipy’s linregress. Default is False.</p></li>
+<li><p><strong>fulloutput</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, returns additional outputs (confidence interval for the slope and standard deviation).
+Default is False.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – The alpha value for the confidence interval. Default is .95.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>a &amp; b</strong> (<em>float</em>) – Linear regression coefficients</p></li>
-<li><p><em>If fulloutput == True</em></p></li>
-<li><p><strong>confid_interval_slope</strong> (<em>float 2-tuple</em>) – confidence interval for the slope</p></li>
-<li><p><strong>std_err</strong> (<em>float</em>) – standard deviation</p></li>
+<li><p><strong>slope</strong> (<em>float</em>) – The slope (a) of the linear regression.</p></li>
+<li><p><strong>intercept</strong> (<em>float</em>) – The intercept (b) of the linear regression.</p></li>
+<li><p><strong>confid_interval_slope</strong> (<em>tuple of float, optional</em>) – The confidence interval for the slope. Only returned if fulloutput is True.</p></li>
+<li><p><strong>std_err</strong> (<em>float, optional</em>) – The standard deviation. Only returned if fulloutput is True.</p></li>
 </ul>
 </p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><a class="reference external" href="http://glowingpython.blogspot.fr/2012/03/linear-regression-with-numpy.html">http://glowingpython.blogspot.fr/2012/03/linear-regression-with-numpy.html</a></p>
-<p>This function is doing more or less the same job as scipy.stats.linregress</p>
-</div>
+<p class="rubric">Notes</p>
+<p>This function performs a similar job to scipy.stats.linregress.</p>
+<p>Regarding computation speed: low-level least square inversion is faster for small datasets.
+For larger datasets, scipy’s linregress is faster (n points &gt; ~13000).</p>
 </dd></dl>
 
 <dl class="py function">

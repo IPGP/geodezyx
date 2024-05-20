@@ -5,29 +5,30 @@ Created on Fri Aug  2 13:55:33 2019
 @author: psakicki
 """
 
+import copy
+import datetime as dt
+#### Import the logger
+import logging
+import os
 ########## BEGIN IMPORT ##########
 #### External modules
 from collections import Counter
-import copy
-import datetime as dt
+
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib.widgets import MultiCursor
 import numpy as np
 import pandas as pd
-import os 
 import scipy
+from matplotlib.widgets import MultiCursor
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import files_rw
-from geodezyx import stats
-from geodezyx import utils
-from geodezyx import time_series
 from geodezyx import reffram
+from geodezyx import stats
+from geodezyx import time_series
+from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 

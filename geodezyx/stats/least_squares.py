@@ -16,19 +16,20 @@ GitHub repository :
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
+import itertools
+#### Import the logger
+import logging
+import multiprocessing as mp
+
+import matplotlib.pyplot as plt
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
 import scipy
-import itertools
-import multiprocessing as mp
-import matplotlib.pyplot as plt
 
 #### geodeZYX modules
 from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

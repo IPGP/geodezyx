@@ -9,22 +9,20 @@ Created on Tue Jul  5 15:48:26 2022
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
-import os 
+#### Import the logger
+import logging
+import os
 import re
 import subprocess
 import time
-
-#manage XML
+# manage XML
 from xml.etree import ElementTree as et
-from xml.etree.ElementTree import Element
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import operational
 from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

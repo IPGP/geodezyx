@@ -7,13 +7,8 @@ Created on Mon Feb 20 17:12:25 2023
 """
 
 import datetime as dt
-import subprocess
-import urllib
-from geodezyx import utils, conv, operational
-from xml.etree import ElementTree as et
-import os
-from threading import Thread
-import time
+
+from geodezyx import operational
 
 ### Choose your own project name
 project_name="test_calc_PF_03_testJJ"

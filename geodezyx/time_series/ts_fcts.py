@@ -9,21 +9,21 @@ Created on Fri Aug  2 17:38:41 2019
 #### External modules
 import copy
 import datetime as dt
+import itertools
+#### Import the logger
+import logging
+
 import matplotlib.pyplot as plt
 import numpy as np
-import os 
 import scipy
-import itertools
 
 #### geodeZYX modules
 from geodezyx import conv
-from geodezyx import stats
-from geodezyx import utils
-from geodezyx import time_series
 from geodezyx import reffram
+from geodezyx import stats
+from geodezyx import time_series
+from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

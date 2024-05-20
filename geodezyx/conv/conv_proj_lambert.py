@@ -19,15 +19,16 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 
+#### Import the logger
+import logging
+
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
 
 #### geodeZYX modules
-from geodezyx import utils,conv
+from geodezyx import conv
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

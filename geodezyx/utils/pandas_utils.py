@@ -22,6 +22,8 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 #### External modules
 import pandas as pd
 import numpy as np
+
+
 #### geodeZYX modules
 
 
@@ -96,26 +98,45 @@ def weighted_average(df,data_col,weight_col,by_col):
     return result
 
 
-def diff_pandas(DF,col_name):
+def diff_pandas(DF, col_name, use_np_diff=False):
     """
-    Differentiate a Pandas DataFrame, if index is time
+    Differentiate a Pandas DataFrame, if index is time.
+
+    This function calculates the difference between consecutive elements in a specified column of a DataFrame.
+    The difference is divided by the difference in time (seconds) between the corresponding indices.
+    This is essentially a derivative operation, assuming the index represents time.
 
     Parameters
     ----------
-    DF : Pandas DataFrame
-         input DataFrame
+    DF : pandas.DataFrame
+        The input DataFrame. The index should represent time.
 
     col_name : str
-        the column of the DataFrame you want to differentiate
+        The name of the column in the DataFrame that you want to differentiate.
+
+    use_np_diff : bool, optional
+        If True, use Numpy's diff.
+        Default is False.
+        This option has a (much) faster execution speed.
 
     Returns
     -------
-    DSout : Pandas DataFrame
-        Differenciated column of the input DataFrame
+    pandas.DataFrame or numpy.array
+        The differentiated column of the input DataFrame. The type of the return value depends on the
+        'return_array' parameter. If 'return_array' is False (default), a DataFrame is returned. If
+        'return_array' is True, a numpy array is returned.
 
     """
-    DSout = DF[col_name].diff() / DF[col_name].index.to_series().diff().dt.total_seconds()
-    return DSout
+    if not use_np_diff:
+        out = DF[col_name].diff() / DF[col_name].index.to_series().diff().dt.total_seconds()
+    else:
+        dif = np.diff(DF[col_name].values) / np.diff(DF.index).astype(np.float32) * 10**-9 ## because it is in nanosec per def
+        out = pd.Series(np.insert(dif,0,np.nan), ## add NaN as the 1st value
+                        index=DF[col_name].index,
+                        name=col_name)
+    return out
+
+        
 
 def pandas_DF_print(DFin):
     string = DFin.to_string()

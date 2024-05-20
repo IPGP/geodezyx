@@ -9,10 +9,10 @@ Created on Wed Jun 23 10:55:04 2021
 import datetime as dt
 import io
 import os
+
 import pandas as pd
 
-
-from geodezyx import conv,utils
+from geodezyx import conv, utils
 
 
 def read_pdm_res_slr_mono(res_file_in,

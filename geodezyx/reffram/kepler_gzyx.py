@@ -17,19 +17,20 @@ GitHub repository :
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
+import datetime as dt
+#### Import the logger
+import logging
+
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
 import pandas as pd
-import datetime as dt
-#from pytwobodyorbit import TwoBodyOrbit
-from pytwobodyorbit import TwoBodyOrbit  
+# from pytwobodyorbit import TwoBodyOrbit
+from pytwobodyorbit import TwoBodyOrbit
 
 #### geodeZYX modules
 from geodezyx import conv
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########

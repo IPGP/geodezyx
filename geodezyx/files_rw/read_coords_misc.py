@@ -9,14 +9,15 @@ Created on Wed Jun 23 11:00:45 2021
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
+#### Import the logger
+import logging
+
 import numpy as np
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
 
-#### Import the logger
-import logging
 log = logging.getLogger(__name__)
 
 

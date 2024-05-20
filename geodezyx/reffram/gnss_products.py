@@ -22,18 +22,17 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 #### External modules
 import datetime as dt
 import itertools
+#### Import the logger
+import logging
+import os
+import re
+
 import matplotlib
 import matplotlib.pyplot as plt
 import natsort
 import numpy as np
-import os 
 import pandas as pd
-import re
-
 import pyorbital.astronomy
-
-### disabled and imported directly in the needed fct
-## import geodezyx.reffram.sofa18 as sofa
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -42,8 +41,8 @@ from geodezyx import stats
 from geodezyx import utils
 from geodezyx.reffram import kepler_gzyx
 
-#### Import the logger
-import logging
+### disabled and imported directly in the needed fct
+## import geodezyx.reffram.sofa18 as sofa
 log = logging.getLogger(__name__)
 
 ##########  END IMPORT  ##########
@@ -70,7 +69,6 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
         used constellation or satellite : G E R C ... E01 , G02 ...
         Individuals satellites are prioritary on whole constellations
         e.g. ['G',"E04"]
-
 
     RTNoutput : bool
         select output, Radial Transverse Normal or XYZ
@@ -121,15 +119,15 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
     """
 
     # selection of both used Constellations AND satellites
-    const_used_list = []
-    sv_used_list    = []
-    for sat in sats_used_list:
-        if len(sat) == 1:
-            const_used_list.append(sat)
-        elif len(sat) == 3:
-            sv_used_list.append(sat)
-            if not sat[0] in const_used_list:
-                const_used_list.append(sat[0])
+    sys_used_list = []
+    prn_used_list  = []
+    for e in sats_used_list:
+        if len(e) == 1: ## it is a constellation
+            sys_used_list.append(e)
+        elif len(e) == 3: ## it is a satellite
+            prn_used_list.append(e)
+            if not e[0] in sys_used_list:
+                sys_used_list.append(e[0])
 
     # Read the files or DataFrames
     # metadata attributes are not copied
@@ -201,8 +199,10 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
         if np.any(D1_null_bool) or np.any(D2_null_bool):
             sat_nul = utils.join_improved(" " ,*list(set(D1orig[D1_null_bool]["prn"])))
             log.warning("Null values contained in SP3 files : ")
-            log.warning("f1: %s %s" , np.sum(D1_null_bool) , utils.join_improved(" " , *list(set(D1orig[D1_null_bool]["prn"]))))
-            log.warning("f2: %s %s" , np.sum(D2_null_bool) , utils.join_improved(" " , *list(set(D2orig[D2_null_bool]["prn"]))))
+            log.warning("f1: %s %s", np.sum(D1_null_bool),
+                        utils.join_improved(" ", *list(set(D1orig[D1_null_bool]["prn"]))))
+            log.warning("f2: %s %s", np.sum(D2_null_bool),
+                        utils.join_improved(" ", *list(set(D2orig[D2_null_bool]["prn"]))))
         else:
             sat_nul = []
 
@@ -210,38 +210,46 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
         D1 = D1orig.copy()
         D2 = D2orig.copy()
 
-    for constuse in const_used_list:
-        D1const = D1[D1['sys'] == constuse]
-        D2const = D2[D2['sys'] == constuse]
+    D1sys_grp = D1.groupby("sys")
+    D2sys_grp = D2.groupby("sys")
+
+    for sysuse in sys_used_list:
+        D1sys = D1sys_grp.get_group(sysuse) # D1sys = D1[D1['sys'] == sysuse]
+        D2sys = D2sys_grp.get_group(sysuse) # D2sys = D2[D2['sys'] == sysuse]
 
         # checking if the data correspond to the step
-        bool_step1 = np.mod((D1const.index - np.min(D1.index)).seconds,step_data) == 0
-        bool_step2 = np.mod((D2const.index - np.min(D2.index)).seconds,step_data) == 0
+        bool_step1 = np.mod((D1sys.index - np.min(D1.index)).seconds,step_data) == 0
+        bool_step2 = np.mod((D2sys.index - np.min(D2.index)).seconds,step_data) == 0
 
-        D1window = D1const[bool_step1]
-        D2window = D2const[bool_step2]
+        D1win = D1sys[bool_step1]
+        D2win = D2sys[bool_step2]
         
         # find common sats and common epochs
-        sv_set   = sorted(list(set(D1window['prni']).intersection(set(D2window['prni']))))
-        epoc_set = sorted(list(set(D1window.index).intersection(set(D2window.index))))
+        prni_set = sorted(list(set(D1win['prni']).intersection(set(D2win['prni']))))
+        epoc_set = sorted(list(set(D1win.index).intersection(set(D2win.index))))
 
         # if special selection of sats, then apply it
         # (it is late and this selection is incredibely complicated ...)
-        if np.any([True  if constuse in e else False for e in sv_used_list]):
+        if np.any([True if sysuse in e else False for e in prn_used_list]):
             # first find the selected sats for the good constellation
-            sv_used_select_list = [int(e[1:]) for e in sv_used_list if constuse in e]
-            #and apply it
-            sv_set = sorted(list(set(sv_set).intersection(set(sv_used_select_list))))
+            prni_used_select_list = [int(e[1:]) for e in prn_used_list if sysuse in e]
+            # and apply it
+            prni_set = sorted(list(set(prni_set).intersection(set(prni_used_select_list))))
 
-        for svv in sv_set:
+        D1win_prni_grp = D1win.groupby("prni")
+        D2win_prni_grp = D2win.groupby("prni")
+
+        for prni in prni_set:
             # First research : find corresponding epoch for the SV
             # this one is sufficent if there is no gaps (e.g. with 0.00000) i.e.
             # same nb of obs in the 2 files
             # NB : .reindex() is smart, it fills the DataFrame
             # with NaN
             try:
-                D1sv_orig = D1window[D1window['prni'] == svv].reindex(epoc_set)
-                D2sv_orig = D2window[D2window['prni'] == svv].reindex(epoc_set)
+                D1prni_orig = D1win_prni_grp.get_group(prni).reindex(epoc_set)
+                # D1win[D1win['prni'] == prni].reindex(epoc_set)
+                D2prni_orig = D2win_prni_grp.get_group(prni).reindex(epoc_set)
+                # D2win[D2win['prni'] == prni].reindex(epoc_set)
             except Exception as exce:
                 log.info("ERR : Unable to re-index with an unique epoch")
                 log.info("      are you sure there is no multiple-defined epochs for the same sat ?")
@@ -249,8 +257,8 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 log.info("TIP : Filter the input Dataframe before calling this fct with")
                 log.info("      DF = DF[DF['AC'] == 'gbm']")
                 
-                Dtmp1 = D1orig[D1orig['prni'] == svv]
-                Dtmp2 = D2orig[D2orig['prni'] == svv]
+                Dtmp1 = D1orig[D1orig['prni'] == prni]
+                Dtmp2 = D2orig[D2orig['prni'] == prni]
                 
                 dupli1 = np.sum(Dtmp1.duplicated(["epoch","prn"]))
                 dupli2 = np.sum(Dtmp2.duplicated(["epoch","prn"]))
@@ -262,32 +270,32 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
             # Second research, it is a security in case of gap
             # This step is useless, because .reindex() will fill the DataFrame
             # with NaN
-            if len(D1sv_orig) != len(D2sv_orig):
-                log.info("different epochs nbr for SV %s %s %s",svv,len(D1sv_orig),len(D2sv_orig))
-                epoc_sv_set = sorted(list(set(D1sv_orig.index).intersection(set(D2sv_orig.index))))
-                D1sv = D1sv_orig.loc[epoc_sv_set]
-                D2sv = D2sv_orig.loc[epoc_sv_set]
+            if len(D1prni_orig) != len(D2prni_orig):
+                log.info("different epochs nbr for SV %s %s %s",prni, len(D1prni_orig), len(D2prni_orig))
+                epoc_prni_set = sorted(list(set(D1prni_orig.index).intersection(set(D2prni_orig.index))))
+                D1prni = D1prni_orig.loc[epoc_prni_set]
+                D2prni = D2prni_orig.loc[epoc_prni_set]
             else:
-                D1sv = D1sv_orig
-                D2sv = D2sv_orig
+                D1prni = D1prni_orig
+                D2prni = D2prni_orig
 
-            P1     = D1sv[['x','y','z']]
-            P2     = D2sv[['x','y','z']]
+            P1 = D1prni[['x','y','z']]
+            P2 = D2prni[['x','y','z']]
 
             # Start ECEF => ECI
             if convert_ECEF_ECI:
                 # Backup because the columns xyz will be reaffected
-                #D1sv_bkp = D1sv.copy()
-                #D2sv_bkp = D2sv.copy()
+                #D1sv_bkp = D1prni.copy()
+                #D2sv_bkp = D2prni.copy()
     
                 P1b = conv.ECEF2ECI(np.array(P1),conv.dt_gpstime2dt_utc(P1.index.to_pydatetime(),out_array=True))
                 P2b = conv.ECEF2ECI(np.array(P2),conv.dt_gpstime2dt_utc(P2.index.to_pydatetime(),out_array=True))
 
-                D1sv[['x','y','z']] = P1b
-                D2sv[['x','y','z']] = P2b
+                D1prni[['x','y','z']] = P1b
+                D2prni[['x','y','z']] = P2b
 
-                P1  = D1sv[['x','y','z']]
-                P2  = D2sv[['x','y','z']]
+                P1 = D1prni[['x','y','z']]
+                P2 = D2prni[['x','y','z']]
             # End ECEF => ECI
 
             if not RTNoutput:
@@ -296,30 +304,29 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 # it is  P1 - P2 (and not P2 - P1)
                 Delta_P = P1 - P2
 
-
                 Diff_sat = Delta_P.copy()
                 Diff_sat.columns = ['dx','dy','dz']
 
             else:
                 rnorm = np.linalg.norm(P1,axis=1)
 
-                Vx = utils.diff_pandas(D1sv,'x')
-                Vy = utils.diff_pandas(D1sv,'y')
-                Vz = utils.diff_pandas(D1sv,'z')
-
-                V =  pd.concat((Vx , Vy , Vz),axis=1)
+                Vx = utils.diff_pandas(D1prni,'x',use_np_diff=True)
+                Vy = utils.diff_pandas(D1prni,'y',use_np_diff=True)
+                Vz = utils.diff_pandas(D1prni,'z',use_np_diff=True)
+                
+                V = pd.concat((Vx , Vy , Vz),axis=1)
                 V.columns = ['vx','vy','vz']
 
                 R = P1.divide(rnorm,axis=0)
                 R.columns = ['xnorm','ynorm','znorm']
 
-                H      = pd.DataFrame(np.cross(R,V),columns=['hx','hy','hz'])
-                hnorm  = np.linalg.norm(H,axis=1)
+                H = pd.DataFrame(np.cross(R,V),columns=['hx','hy','hz'])
+                hnorm = np.linalg.norm(H,axis=1)
 
-                C         = H.divide(hnorm,axis=0)
+                C = H.divide(hnorm,axis=0)
                 C.columns = ['hxnorm','hynorm','hznorm']
 
-                I         = pd.DataFrame(np.cross(C,R),columns=['ix','iy','iz'])
+                I = pd.DataFrame(np.cross(C,R),columns=['ix','iy','iz'])
 
                 R_ar = np.array(R)
                 I_ar = np.array(I)
@@ -341,13 +348,14 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                     Astk.append(A)
 
                 Diff_sat = pd.DataFrame(np.vstack(Astk),
-                                   index = P1.index,columns=['dr','dt','dn'])
+                                        index = P1.index,
+                                        columns=['dr','dt','dn'])
 
             Diff_sat = Diff_sat * conv_coef # metrer conversion
 
-            Diff_sat['sys'] = [constuse] * len(Diff_sat.index)
-            Diff_sat['prni']    = [svv]      * len(Diff_sat.index)
-            Diff_sat['prn']   = [constuse + str(svv).zfill(2)] * len(Diff_sat.index)
+            Diff_sat['sys'] = [sysuse] * len(Diff_sat.index)
+            Diff_sat['prni'] = [prni] * len(Diff_sat.index)
+            Diff_sat['prn'] = [sysuse + str(prni).zfill(2)] * len(Diff_sat.index)
 
             Diff_sat_stk.append(Diff_sat)
 
@@ -376,7 +384,6 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
         else:
             Diff_sat_all.frame_type = 'ECEF'
 
-
     # Name definitions
     if name1:
         Diff_sat_all.name1 = name1
@@ -398,7 +405,6 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                                   Diff_sat_all.name1 ,'(ref.) and',
                                   Diff_sat_all.name2 ,',',Date.strftime("%Y-%m-%d"),
                                   ', doy', str(conv.dt2doy(Date))))
-
     
     if return_satNull:
         return Diff_sat_all, sat_nul
@@ -437,7 +443,6 @@ def compar_orbit_plot(Diff_sat_all_df_in,
     but plot a plot anyway
     """
 
-    import matplotlib.dates as mdates
     fig,[axr,axt,axn] = plt.subplots(3,1,sharex='all')
 
     satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in['prn'])))
@@ -820,9 +825,7 @@ def compar_clk_plot(Diff_sat_all_df_in,
     export path (str) if save is asked
     but plot a plot anyway
     """
-    
-    
-    import matplotlib.dates as mdates
+
     fig,axr = plt.subplots(1,1,sharex='all')
     Diff_sat_all_df_in = Diff_sat_all_df_in.reset_index()
     satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in[col_name])))
@@ -1470,41 +1473,74 @@ def OrbDF_multidx_2_reg(OrbDFin,index_order=["prn","epoch"]):
     return OrbDFwrk
 
 def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
-                              supplementary_sort=False,order=["prn","epoch"]):
+                          supplementary_sort=False,order=["prn","epoch"],
+                          skip_reg2multidx_OrbDFa=False,
+                          skip_reg2multidx_OrbDFb=False):
     """
-    Find common sats and epochs in to Orbit DF,
-    and output the corresponding Orbit DFs
-    order >> normally for sp3 is sat and epoch, 
-    but can be used for snx files as STAT and epoch
+    This function finds common satellites and epochs in two Orbit DataFrames and outputs the corresponding Orbit DataFrames.
+
+    Parameters
+    ----------
+    OrbDFa_in : DataFrame
+        The first input Orbit DataFrame.
+    OrbDFb_in : DataFrame
+        The second input Orbit DataFrame.
+    return_index : bool, optional
+        If True, the function also returns the common index. Default is False.
+    supplementary_sort : bool, optional
+        If True, an additional sort is performed. This is useful for multi GNSS where the output DataFrame may not be well sorted. Default is False.
+    order : list of str, optional
+        The order of the index for the multi-index DataFrame. Default is ["prn","epoch"].
+    skip_reg2multidx_OrbDFa : bool, optional
+        If True, skips the conversion of the first input DataFrame to a multi-index DataFrame. Default is False.
+        The inputs are assumed to be already in multi-index format to optimize execution speed.
+        (For advanced use only)
+    skip_reg2multidx_OrbDFb : bool, optional
+        If True, skips the conversion of the second input DataFrame to a multi-index DataFrame. Default is False.
+        The inputs are assumed to be already in multi-index format to optimize execution speed.
+        (For advanced use only)
+
+    Returns
+    -------
+    OrbDFa_out : DataFrame
+        The first output Orbit DataFrame with common satellites and epochs.
+    OrbDFb_out : DataFrame
+        The second output Orbit DataFrame with common satellites and epochs.
+    Iinter : Index, optional
+        The common index. Only returned if return_index is True.
+
+    Note
+    ----
+    designed for orbits/sp3 first with sat and epoch as order parmeter,
+    but can be used also for instance for snx files with
+    STAT and epoch as order parmeter
     """
-    
-    OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
-    OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
-    
+    if not skip_reg2multidx_OrbDFa:
+        OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
+    else:
+        OrbDFa = OrbDFa_in
+    if not skip_reg2multidx_OrbDFb:
+        OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
+    else:
+        OrbDFb = OrbDFb_in
+
     I1 = OrbDFa.index
     I2 = OrbDFb.index
-    
+
     Iinter = I1.intersection(I2)
-    ### A sort of the Index to avoid issues ...
     Iinter = Iinter.sort_values()
-    
+
     OrbDFa_out = OrbDFa.loc[Iinter]
     OrbDFb_out = OrbDFb.loc[Iinter]
-    
+
     if supplementary_sort:
-        # for multi GNSS, OrbDF_out are not well sorted (why ??? ...)
-        # we do a supplementary sort
-        # NB 202003: maybe because Iiter was not sorted ...
-        # should be fixed with the Iinter.sort_values() above 
-        # but we maintain this sort
         OrbDFa_out = OrbDFa_out.sort_values(order)
         OrbDFb_out = OrbDFb_out.sort_values(order)
 
-    
     if len(OrbDFa_out) != len(OrbDFb_out):
         log.warning("len(Orb/ClkDFa_out) != len(Orb/ClkDFb_out)")
         log.warning("TIPS : ClkDFa_in and/or ClkDFb_in might contain duplicates")
-    
+
     if return_index:
         return OrbDFa_out , OrbDFb_out , Iinter
     else:
