@@ -1470,41 +1470,74 @@ def OrbDF_multidx_2_reg(OrbDFin,index_order=["prn","epoch"]):
     return OrbDFwrk
 
 def OrbDF_common_epoch_finder(OrbDFa_in,OrbDFb_in,return_index=False,
-                              supplementary_sort=False,order=["prn","epoch"]):
+                          supplementary_sort=False,order=["prn","epoch"],
+                          skip_reg2multidx_OrbDFa=False,
+                          skip_reg2multidx_OrbDFb=False):
     """
-    Find common sats and epochs in to Orbit DF,
-    and output the corresponding Orbit DFs
-    order >> normally for sp3 is sat and epoch, 
-    but can be used for snx files as STAT and epoch
+    This function finds common satellites and epochs in two Orbit DataFrames and outputs the corresponding Orbit DataFrames.
+
+    Parameters
+    ----------
+    OrbDFa_in : DataFrame
+        The first input Orbit DataFrame.
+    OrbDFb_in : DataFrame
+        The second input Orbit DataFrame.
+    return_index : bool, optional
+        If True, the function also returns the common index. Default is False.
+    supplementary_sort : bool, optional
+        If True, an additional sort is performed. This is useful for multi GNSS where the output DataFrame may not be well sorted. Default is False.
+    order : list of str, optional
+        The order of the index for the multi-index DataFrame. Default is ["prn","epoch"].
+    skip_reg2multidx_OrbDFa : bool, optional
+        If True, skips the conversion of the first input DataFrame to a multi-index DataFrame. Default is False.
+        The inputs are assumed to be already in multi-index format to optimize execution speed.
+        (For advanced use only)
+    skip_reg2multidx_OrbDFb : bool, optional
+        If True, skips the conversion of the second input DataFrame to a multi-index DataFrame. Default is False.
+        The inputs are assumed to be already in multi-index format to optimize execution speed.
+        (For advanced use only)
+
+    Returns
+    -------
+    OrbDFa_out : DataFrame
+        The first output Orbit DataFrame with common satellites and epochs.
+    OrbDFb_out : DataFrame
+        The second output Orbit DataFrame with common satellites and epochs.
+    Iinter : Index, optional
+        The common index. Only returned if return_index is True.
+
+    Note
+    ----
+    designed for orbits/sp3 first with sat and epoch as order parmeter,
+    but can be used also for instance for snx files with
+    STAT and epoch as order parmeter
     """
-    
-    OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
-    OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
-    
+    if not skip_reg2multidx_OrbDFa:
+        OrbDFa = OrbDF_reg_2_multidx(OrbDFa_in,index_order = order)
+    else:
+        OrbDFa = OrbDFa_in
+    if not skip_reg2multidx_OrbDFb:
+        OrbDFb = OrbDF_reg_2_multidx(OrbDFb_in,index_order = order)
+    else:
+        OrbDFb = OrbDFb_in
+
     I1 = OrbDFa.index
     I2 = OrbDFb.index
-    
+
     Iinter = I1.intersection(I2)
-    ### A sort of the Index to avoid issues ...
     Iinter = Iinter.sort_values()
-    
+
     OrbDFa_out = OrbDFa.loc[Iinter]
     OrbDFb_out = OrbDFb.loc[Iinter]
-    
+
     if supplementary_sort:
-        # for multi GNSS, OrbDF_out are not well sorted (why ??? ...)
-        # we do a supplementary sort
-        # NB 202003: maybe because Iiter was not sorted ...
-        # should be fixed with the Iinter.sort_values() above 
-        # but we maintain this sort
         OrbDFa_out = OrbDFa_out.sort_values(order)
         OrbDFb_out = OrbDFb_out.sort_values(order)
 
-    
     if len(OrbDFa_out) != len(OrbDFb_out):
         log.warning("len(Orb/ClkDFa_out) != len(Orb/ClkDFb_out)")
         log.warning("TIPS : ClkDFa_in and/or ClkDFb_in might contain duplicates")
-    
+
     if return_index:
         return OrbDFa_out , OrbDFb_out , Iinter
     else:
