@@ -1630,6 +1630,8 @@ def statname_dt2rinexname_long(statname,
         
     data_freq : str, optional
         data frequency. 
+        None is allowed (for Navigation RINEX)
+
         XXC – 100 Hertz
         XXZ – Hertz,
         XXS – Seconds,
@@ -1699,8 +1701,12 @@ def statname_dt2rinexname_long(statname,
         data_freq="01S"     
 
     date_ok = datein.strftime('%Y') +  dt2doy(datein) + datein.strftime('%H%M')
-    period_freq_ok = "_" + file_period + "_" + data_freq + "_" + data_type
+    
     data_source_ok = "_" + data_source + "_"
+    
+    # for nav RINEX, data_freq can be None, thus we filter it
+    elts_period_freq = [e for e in  (file_period,data_freq,data_type) if e]
+    period_freq_ok = "_" + "_".join(elts_period_freq)
     
     out_rnx_name = statname_ok + data_source_ok + date_ok + period_freq_ok + '.' + format_compression
     out_rnx_name = out_rnx_name.upper()
