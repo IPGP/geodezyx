@@ -35,6 +35,19 @@ def _rnx_rgx(stat, date):
     return rnx2rgx, rnx3rgx
 
 
+def _rnx_nav_rgx(stat, date):
+    rnx2rgx = conv.statname_dt2rinexname(stat.lower(), date, rnxtype=".*")
+    rnx3rgx = conv.statname_dt2rinexname_long(stat,
+                                              date,
+                                              country="...",
+                                              data_source=".",
+                                              file_period="01D",
+                                              data_freq="",
+                                              data_type=".N",
+                                              format_compression='.*')
+    return rnx2rgx, rnx3rgx
+
+
 def igs_sopac_server(stat, date):
     # plante si trop de requete
     urlserver = "ftp://garner.ucsd.edu/pub/rinex/"
@@ -112,9 +125,47 @@ def igs_ign_ensg_server(stat, date):
 
     return urldic
 
+def nav_rob_server(stat, date):
+    urlserver = "ftp://epncb.oma.be/pub/obs/BRDC/"
 
-############ not adapted yet
-def igs_cddis_nav_server(stat, date):
+    ### generate regex
+    rnx2rgx, rnx3rgx = _rnx_nav_rgx(stat, date) ### NAV RNX HERE !!!
+
+    ### generate urls
+    urldir = os.path.join(urlserver, str(date.year)) ## NO DOY FOR THIS ONE !!!
+    rnx2url = os.path.join(urldir, rnx2rgx)
+    rnx3url = os.path.join(urldir, rnx3rgx)
+
+    ### generate output urldic, key 2 and 3 are for rinex version
+    urldic = {}
+    urldic[2] = rnx2url
+    urldic[3] = rnx3url
+
+    return urldic
+
+def sonel_server(stat, date):
+    urlserver = 'ftp://ftp.sonel.org/gps/data/'
+    
+    ### generate regex
+    rnx2rgx, rnx3rgx = _rnx_rgx(stat, date)
+
+    ### generate urls
+    urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
+    rnx2url = os.path.join(urldir, rnx2rgx)
+    rnx3url = os.path.join(urldir, rnx3rgx)
+
+    ### generate output urldic, key 2 and 3 are for rinex version
+    urldic = {}
+    urldic[2] = rnx2url
+    urldic[3] = rnx3url
+
+    return urldic
+
+
+
+
+############ not adapted yet after april 24 mods
+def igs_cddis_nav_server_legacy(stat, date):
     # table_proto privilegier
     urlserver = "ftp://cddis.gsfc.nasa.gov/gps/data/daily/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date, 'n.Z')
@@ -122,7 +173,7 @@ def igs_cddis_nav_server(stat, date):
     return url
 
 
-def nav_bkg_server(stat, date):
+def nav_bkg_server_legacy(stat, date):
     urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/BRDC/"
     #ftp://igs-ftp.bkg.bund.de/IGS/BRDC/2024/082/BRDC00WRD_S_20240820000_01D_MN.rnx.gz
     rnxname = "BRDC00WRD_S_" + conv.dt2str(date, '%Y%j') + "0000_01D_MN.rnx.gz"
@@ -130,29 +181,21 @@ def nav_bkg_server(stat, date):
     return url
 
 
-def nav_rob_server(stat, date):
-    urlserver = "ftp://epncb.oma.be/pub/obs/BRDC/"
-    #ftp://epncb.oma.be/pub/obs/BRDC/2018/BRDC00GOP_R_20180010000_01D_MN.rnx.gz
-    rnxname = "BRDC00GOP_R_" + conv.dt2str(date, '%Y%j') + "0000_01D_MN.rnx.gz"
-    url = os.path.join(urlserver, str(date.year), rnxname)
-    return url
-
-
-def rgp_ign_smn_server(stat, date):
+def rgp_ign_smn_server_legacy(stat, date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
     url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), 'data_30', rnxname)
     return url
 
 
-def rgp_ign_mlv_server(stat, date):
+def rgp_ign_mlv_server_legacy(stat, date):
     urlserver = "ftp://rgpdata.ensg.eu/pub/data/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
     url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), 'data_30', rnxname)
     return url
 
 
-def rgp_ign_smn_1_hz_server(stat, date):
+def rgp_ign_smn_1_hz_server_legacy(stat, date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
 
     urls = []
@@ -172,35 +215,35 @@ def rgp_ign_smn_1_hz_server(stat, date):
     return urls
 
 
-def unavco_server(stat, date):
+def unavco_server_legacy(stat, date):
     urlserver = 'ftp://data-out.unavco.org/pub/rinex'
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
     url = os.path.join(urlserver, 'obs', str(date.year), conv.dt2doy(date), rnxname)
     return url
 
 
-def renag_server(stat, date):
+def renag_server_legacy(stat, date):
     urlserver = "ftp://renag.unice.fr/data/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
     url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
     return url
 
 
-def uwiseismic_server(stat, date, user='', passwd=''):
+def uwiseismic_server_legacy(stat, date, user='', passwd=''):
     urlserver = "ftp://www2.uwiseismic.com/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
     url = os.path.join(urlserver, 'rinex', str(date.year), conv.dt2doy(date), rnxname)
     return url, user, passwd
 
 
-def orpheon_server(stat, date, user='', passwd=''):
+def orpheon_server_legacy(stat, date, user='', passwd=''):
     urlserver = "ftp://renag.unice.fr/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
     url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
     return url, user, passwd
 
 
-def ovsg_server(stat, date, user='', passwd=''):
+def ovsg_server_legacy(stat, date, user='', passwd=''):
     if dt.datetime(2009, 1, 1) <= date <= dt.datetime(2014, 2, 10):
         urlserver = "http://webobs.ovsg.univ-ag.fr/rawdata/GPS-GPSDATA.backtemp_20140210/"
     else:
@@ -210,7 +253,7 @@ def ovsg_server(stat, date, user='', passwd=''):
     return url, user, passwd
 
 
-def geoaus_server(stat, date):
+def geoaus_server_legacy(stat, date):
     """ Geosciences Australia
         ex : ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/ """
     urlserver = "ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/"
@@ -218,16 +261,7 @@ def geoaus_server(stat, date):
     url = os.path.join(urlserver, str(date.year), date.strftime('%y') + conv.dt2doy(date), rnxname)
     return url
 
-
-def sonel_server(stat, date):
-    """ex : ftp://ftp.sonel.org/gps/data/2015/001/ """
-    urlserver = 'ftp://ftp.sonel.org/gps/data/'
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
-    return url
-
-
-def ens_fr(stat, date):
+def ens_fr_legacy(stat, date):
     urlserver = 'ftp://gnss.ens.fr/pub/public/crl/GPS/rinex/'
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
     url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
@@ -264,12 +298,12 @@ def _server_select(datacenter, site, curdate):
     #     urldic = ovsg_server_legacy(site, curdate)
     # elif datacenter == 'unavco':
     #     urldic = unavco_server_legacy(site, curdate)
-    # elif datacenter == 'sonel':
-    #     urldic = sonel_server_legacy(site, curdate)
+    elif datacenter == 'sonel':
+        urldic = sonel_server(site, curdate)
     # elif datacenter == 'geoaus':
     #     urldic = geoaus_server_legacy(site, curdate)
-    # elif datacenter in ('nav', 'brdc'):
-    #     urldic = nav_rob_server_legacy(site, curdate)
+    elif datacenter in ('nav', 'brdc'):
+        urldic = nav_rob_server(site, curdate)
     # elif datacenter in ('nav_rt', 'brdc_rt'):
     #     urldic = nav_bkg_server(site, curdate)
     # elif datacenter == 'ens_fr':
@@ -506,6 +540,9 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
 
             igs_ign_ensg (IGN's data center, secondary server at ENSG, Marne-la-Vallée)
 
+            nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
+            from the ROB server, using GOP files                          
+
             ***** not reimplemented yet *****
             rgp (IGN's RGP St Mandé center)
 
@@ -525,8 +562,7 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
 
             ens_fr
 
-            nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
-            from the ROB server, using GOP files
+
 
             nav_rt or brdc_rt as archive center allows to download *real time* nav files
             from the BKG server

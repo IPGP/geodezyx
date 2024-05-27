@@ -190,7 +190,7 @@ def anubis_runner(rnx_inp,
 
         #### the nav file does not exsits but we want to download it
         elif not nav_file_exists and download_nav:
-            log.debug("%s not found, we downloading it",potential_nav_file)
+            log.debug("%s not found, we download it",potential_nav_file)
             statdico = dict()
             statdico['brdc'] = ['BRDC']
             brdc_list = operational.download_gnss_rinex(statdico,
@@ -198,7 +198,6 @@ def anubis_runner(rnx_inp,
                                                         date_start, date_end,
                                                            "/",
                                                         parallel_download=1,
-                                                        sorted_mode=0,
                                                         final_archive_for_sup_check=nav_dir)
             if brdc_list:
                 nav_path = brdc_list[0]
@@ -214,7 +213,7 @@ def anubis_runner(rnx_inp,
         ### manage the SP3-file download
         sp3_path = ""
         if download_sp3:
-            sp3_list = operational.multi_downloader_orbs_clks_2(nav_dir,
+            sp3_list = operational.download_gnss_products(nav_dir,
                                                                 date_start,date_end,
                                                                 AC_names = ["COD"],
                                                                 prod_types = ["SP3"],
