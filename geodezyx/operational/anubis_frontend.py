@@ -98,7 +98,7 @@ def anubis_runner(rnx_inp,
     Generic Configuration files for Anubis version 2 and 3
     can be found here:
         
-    ``<...>/geodezyx/000_exemples/anubis_configfiles``
+    ``<...>/geodezyx/exemples/anubis_configfiles``
     
     or directly on the GeodeZYX's toolbox GitHub repository:
     
@@ -107,15 +107,14 @@ def anubis_runner(rnx_inp,
 
     """
     
-    
     if utils.is_iterable(rnx_inp):
-        RNXLIST = rnx_inp 
+        rnxlist = rnx_inp
     else:
-        RNXLIST = operational.rinex_finder(rnx_inp) 
+        rnxlist = operational.rinex_finder(rnx_inp)
     
     xml_cfg_list = []
         
-    for rnx_path in RNXLIST:
+    for rnx_path in rnxlist:
         log.info("current RINEX: %s",rnx_path)
         
         rnx_name = os.path.basename(rnx_path)
@@ -207,7 +206,6 @@ def anubis_runner(rnx_inp,
         #### we do not consider the nav file
         else:
             nav_path = ""
-            
         
         ######## MANAGE SP3 FILE #########                
         ### manage the SP3-file download
@@ -270,17 +268,17 @@ def anubis_runner(rnx_inp,
         if not dry_run:
             #os.chdir(os.path.dirname(xml_path_ope))
             command = anubis_path + " -x " + xml_path_ope
-            
+
+            log.info("command: %s",command)
+
             if not utils.is_exe(anubis_path):
                 log.error("the Anubis bin doesn't exists/is not executable. Check %s",anubis_path)
-            
-            log.info("command: %s",command)
-            
-            process1 = subprocess.run(command,
-                                      capture_output=True,
-                                      text=True,
-                                      shell=True)
-            
+            else:
+                process1 = subprocess.run(command,
+                                          capture_output=True,
+                                          text=True,
+                                          shell=True)
+
             time.sleep(2)
             
     return xml_cfg_list
