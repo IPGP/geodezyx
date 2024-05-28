@@ -22,7 +22,7 @@ from geodezyx import conv
 log = logging.getLogger(__name__)
 
 
-def _rnx_rgx(stat, date):
+def _rnx_obs_rgx(stat, date):
     rnx2rgx = conv.statname_dt2rinexname(stat.lower(), date, rnxtype=".*")
     rnx3rgx = conv.statname_dt2rinexname_long(stat,
                                               date,
@@ -53,7 +53,7 @@ def igs_sopac_server(stat, date):
     urlserver = "ftp://garner.ucsd.edu/pub/rinex/"
 
     ### generate regex
-    rnx2rgx, rnx3rgx = _rnx_rgx(stat, date)
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
 
     ### generate urls
     urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
@@ -73,7 +73,7 @@ def igs_cddis_server(stat, date):
     urlserver = "ftp://gdc.cddis.eosdis.nasa.gov/gps/data/daily/"
 
     ### generate regex
-    rnx2rgx, rnx3rgx = _rnx_rgx(stat, date)
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
 
     ### generate urls
     urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date), date.strftime('%y') + 'd')
@@ -92,7 +92,7 @@ def igs_ign_server(stat, date):
     urlserver = "ftp://igs.ign.fr/pub/igs/data/"
 
     ### generate regex
-    rnx2rgx, rnx3rgx = _rnx_rgx(stat, date)
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
 
     ### generate urls
     urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
@@ -111,7 +111,7 @@ def igs_ign_ensg_server(stat, date):
     urlserver = "ftp://igs.ensg.eu/pub/igs/data/"
 
     ### generate regex
-    rnx2rgx, rnx3rgx = _rnx_rgx(stat, date)
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
 
     ### generate urls
     urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
@@ -147,7 +147,7 @@ def sonel_server(stat, date):
     urlserver = 'ftp://ftp.sonel.org/gps/data/'
     
     ### generate regex
-    rnx2rgx, rnx3rgx = _rnx_rgx(stat, date)
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
 
     ### generate urls
     urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
@@ -161,8 +161,41 @@ def sonel_server(stat, date):
 
     return urldic
 
+def euref_server(stat, date):
+    urlserver = 'ftp://epncb.oma.be/pub/obs/'
 
+    ### generate regex
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
 
+    ### generate urls
+    urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
+    rnx2url = os.path.join(urldir, rnx2rgx)
+    rnx3url = os.path.join(urldir, rnx3rgx)
+
+    ### generate output urldic, key 2 and 3 are for rinex version
+    urldic = {}
+    urldic[2] = rnx2url
+    urldic[3] = rnx3url
+
+    return urldic
+
+def euref_server(stat, date):
+    urlserver = 'ftp://epncb.oma.be/pub/obs/'
+
+    ### generate regex
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
+
+    ### generate urls
+    urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
+    rnx2url = os.path.join(urldir, rnx2rgx)
+    rnx3url = os.path.join(urldir, rnx3rgx)
+
+    ### generate output urldic, key 2 and 3 are for rinex version
+    urldic = {}
+    urldic[2] = rnx2url
+    urldic[3] = rnx3url
+
+    return urldic
 
 ############ not adapted yet after april 24 mods
 def igs_cddis_nav_server_legacy(stat, date):
@@ -300,6 +333,8 @@ def _server_select(datacenter, site, curdate):
     #     urldic = unavco_server_legacy(site, curdate)
     elif datacenter == 'sonel':
         urldic = sonel_server(site, curdate)
+    elif datacenter == 'euref':
+        urldic = euref_server(site, curdate)
     # elif datacenter == 'geoaus':
     #     urldic = geoaus_server_legacy(site, curdate)
     elif datacenter in ('nav', 'brdc'):
@@ -540,6 +575,12 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
 
             igs_ign_ensg (IGN's data center, secondary server at ENSG, Marne-la-Vallée)
 
+            sonel
+
+            euref (EPN data center hosted at ROB)
+
+
+
             nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
             from the ROB server, using GOP files                          
 
@@ -561,8 +602,6 @@ def download_gnss_rinex(statdico, archive_dir, startdate, enddate,
             geoaus (Geosciences Australia)
 
             ens_fr
-
-
 
             nav_rt or brdc_rt as archive center allows to download *real time* nav files
             from the BKG server
