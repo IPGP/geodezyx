@@ -113,11 +113,11 @@ def rinex_regex(compressed=None,compiled=False):
         a regex
     """
     if compressed is None:
-        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z|gz))|o|d)$"
+        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z|z|gz))|o|d)$"
     elif not compressed:
         regexstr = "^....[0-9]{3}.\.[0-9]{2}o$"
     else:
-        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z|gz))|d)$"
+        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z|z|gz))|d)$"
         
 
     if compiled:
@@ -125,8 +125,6 @@ def rinex_regex(compressed=None,compiled=False):
         
     return regexstr
 
-
-rinex_regex("dsd01120.18d.gz")
 
 def rinex_regex_long_name(compressed=None,compiled=False):
     """

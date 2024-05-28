@@ -1427,7 +1427,7 @@ def rinexname2dt(rinexpath):
         return dt_out 
     
     ##### SHORT rinex name
-    elif re.search(conv_rinex.rinex_regex(),rinexname):
+    elif re.search(conv_rinex.rinex_regex(),rinexname.lower()): ##EUREF are upper case...
         alphabet = list(string.ascii_lowercase)
 
         doy  = int(rinexname[4:7])
