@@ -34,7 +34,7 @@ def anubis_runner(rnx_inp,
                   interval=None,
                   dry_run=False,
                   download_nav=True,
-                  download_sp3=True,
+                  download_sp3=False,
                   force=False,
                   anubis_path="/opt/gnss_softs/bin/anubis"):
     """
@@ -59,7 +59,7 @@ def anubis_runner(rnx_inp,
         will be stored in <out_dir_main>/inp
         See note bellow to find some exemples
     period : None or int
-        nominal file period in the RINEX (in hours)
+        nominal file period in the RINEX (in sec)
         if None is given, guess based on the RINEX name
         The default is None.    
     interval : None or int
@@ -76,9 +76,9 @@ def anubis_runner(rnx_inp,
         The default is True.
     download_sp3 : bool, optional
         Download automatically the SP3 orbit files. 
-        CODE's MGEX are used per default.
+        CODE's MGEX or REPRO3 before 2018 are used per default.
         will be stored in <out_dir_main>/nav
-        The default is True.
+        The default is False.
     force : bool, optional
         Per default, skip anubis execution if a xtr
         file already exists in out_dir_main
@@ -122,7 +122,7 @@ def anubis_runner(rnx_inp,
         ###### MANAGE PERIOD AND INTERVAL
         ### check if a valid period/interval is avaiable
         if ((period is None) or (interval is None)) and (not conv.rinex_regex_search_tester(rnx_name,False,True)):
-            log.error("the input RINEX %s does not have a long name, unable to detect period/interval, set them manually",rnx_name)
+            log.error("the input RINEX %s does not have a long name, unable to detect period/interval,\n set them manually with the corresponding args",rnx_name)
             raise Exception
 
         if period is None:
@@ -137,17 +137,20 @@ def anubis_runner(rnx_inp,
         else:
             interval_ok = interval
             
-        log.info("interval:%s,period:%s",interval_ok,period_ok)
+        log.info("interval:%s,period:%s (in sec)",interval_ok,period_ok)
         
         ### manage dates
         date_start = conv.rinexname2dt(rnx_path)
         date_end   = date_start + dt.timedelta(seconds=period_ok) - dt.timedelta(seconds=1)
         
         date_start_str = conv.dt2str(date_start,"%Y-%m-%d %H:%M:%S")
+        date_end_str   = conv.dt2str(date_end,"%Y-%m-%d %H:%M:%S")
+
         date_doy_str   = conv.dt2str(date_start,"%Y%j%H%M")
         date_doy_short_str = conv.dt2str(date_start,"%Y%j")
-        date_end_str   = conv.dt2str(date_end,"%Y-%m-%d %H:%M:%S")
-        date_name_str  = conv.dt2str(date_start,"%Y%m%d%H%M")
+        date_doy_end_str   = conv.dt2str(date_end,"%Y%j%H%M")
+        
+        #date_name_str  = conv.dt2str(date_start,"%Y%m%d%H%M")
         
         ### site name
         if re.search(conv.rinex_regex_long_name(),rnx_path):
@@ -155,7 +158,7 @@ def anubis_runner(rnx_inp,
         else:
             site = os.path.basename(rnx_path)[:4].upper()
     
-        site_date = site + "_" + date_name_str + "_" + date_doy_str
+        site_date = site + "_" + date_doy_str + "_" + date_doy_end_str
     
         ### create directories
         utils.create_dir(out_dir_main)
@@ -211,21 +214,29 @@ def anubis_runner(rnx_inp,
         ### manage the SP3-file download
         sp3_path = ""
         if download_sp3:
+            
+            if date_start < dt.datetime(2018,1,1): # get the repro3 
+                mgex = True
+                repro=0
+            else:
+                mgex = False
+                repro=3                
+            
             sp3_list = operational.download_gnss_products(nav_dir,
-                                                                date_start,date_end,
-                                                                AC_names = ["COD"],
-                                                                prod_types = ["SP3"],
-                                                                remove_patterns=("ULA",),
-                                                                archtype ='/',
-                                                                new_name_conv = True,
-                                                                parallel_download=1,
-                                                                archive_center='ign',
-                                                                mgex=True,
-                                                                repro=0,
-                                                                sorted_mode=False,
-                                                                return_also_uncompressed_files=True,
-                                                                ftp_download=False,
-                                                                dow_manu=False) 
+                                                        date_start,date_end,
+                                                        AC_names = ["COD"],
+                                                        prod_types = ["SP3"],
+                                                        remove_patterns=("ULA",),
+                                                        archtype ='/',
+                                                        new_name_conv = True,
+                                                        parallel_download=1,
+                                                        archive_center='ign',
+                                                        mgex=mgex,
+                                                        repro=repro,
+                                                        sorted_mode=False,
+                                                        return_also_uncompressed_files=True,
+                                                        ftp_download=False,
+                                                        dow_manu=False) 
             
             if sp3_list:
                 sp3_path = sp3_list[0]    
