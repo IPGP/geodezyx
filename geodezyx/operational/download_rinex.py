@@ -11,9 +11,7 @@ import logging
 import os
 import pathlib
 import re
-from multiprocessing.dummy import Pool as ThreadPool
 
-import numpy as np
 import pandas as pd
 
 import geodezyx.operational.download_utils as dlutils
@@ -459,39 +457,7 @@ def ftp_files_crawler(table, secure_ftp=False, user=None, passwd=None,
     return table_use, all_ftp_files
 
 
-def ftp_download_frontend(urllist,
-                          savedirlist,
-                          parallel_download=1,
-                          secure_ftp=False,
-                          user="anonymous",
-                          passwd='anonymous@isp.com',
-                          force=True):
 
-    urlpathobj = pd.Series(urllist).apply(pathlib.Path)
-    host_use = urlpathobj.apply(lambda p: p.parts[1]).unique()[0]
-
-    ftpobj_main, ftpobj_lis = dlutils.ftp_objt_create(secure_ftp_inp=secure_ftp,
-                                                      host=host_use,
-                                                      parallel_download=parallel_download,
-                                                      user=user,
-                                                      passwd=passwd)
-
-    #for url, savedir in zip(urllist, savedirlist):
-    #    localpath, bool_dl = dlutils.ftp_downloader(ftpobj_main, url, savedir)
-
-    ftpobj_mp_lis = ftpobj_lis * int(np.ceil(len(urllist) / parallel_download))
-
-    if len(ftpobj_mp_lis) < len(urllist):
-        log.warning("less FTP objects than URL for parallel download, contact the main developper")
-
-    # alternative solution
-    # https://stackoverflow.com/questions/62903886/why-is-giving-me-this-error-typeerror-cannot-pickle-io-textiowrapper-object
-    pool = ThreadPool(parallel_download)  #mp.Pool(processes=parallel_download)
-
-    _ = pool.map(dlutils.ftp_downloader_wrap, list(zip(ftpobj_mp_lis,
-                                                       urllist,
-                                                       savedirlist)))
-    return
 
 
 def download_gnss_rinex(statdico, archive_dir, startdate, enddate,

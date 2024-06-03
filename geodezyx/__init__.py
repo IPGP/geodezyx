@@ -60,7 +60,7 @@ else:
 
 
 #### IMPORT GEODEZYX INTERNAL SUBMODULES
-from . import externlib
+#from . import externlib # disable 202406xx
 from . import megalib
 
 from . import athmo
