@@ -9,7 +9,6 @@ This module regroups the functions for the exploitation of the A0A pressure
 sensors in the context of the REVOSIMA network
 
 It is based on the work of Yann Terden Tranchant
-
 """
 
 
