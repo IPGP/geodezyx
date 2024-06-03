@@ -36,14 +36,16 @@ log = logging.getLogger(__name__)
 ##########  END IMPORT  ##########
 
 
-def rinex_finder(main_dir,
-                 short_name=True,
-                 long_name=True,
-                 gfz_godc_name=True,
-                 compressed=None,
-                 specific_sites=[],
-                 start_epoch=None,
-                 end_epoch=None):
+def rinex_finder(
+    main_dir,
+    short_name=True,
+    long_name=True,
+    gfz_godc_name=True,
+    compressed=None,
+    specific_sites=[],
+    start_epoch=None,
+    end_epoch=None,
+):
     """
     Parameters
     ----------
@@ -63,8 +65,8 @@ def rinex_finder(main_dir,
         Filter only those specific sites. The default is [].
     start_epoch and end_epoch : datetime, optional
         Filter the RINEXs between those two epochs (included)
-        Can be for instance 
-        `start_epoch=dt.datetime(2021,1,1)` and 
+        Can be for instance
+        `start_epoch=dt.datetime(2021,1,1)` and
         `end_epoch=dt.datetime(2021,12,31)`
         The default is None.
 
@@ -91,11 +93,13 @@ def rinex_finder(main_dir,
 
     for f in Files_raw_lis:
         fbase = os.path.basename(f)
-        regex_match = conv.rinex_regex_search_tester(fbase,
-                                                     short_name=short_name,
-                                                     long_name=long_name,
-                                                     gfz_godc_name=gfz_godc_name,
-                                                     compressed=compressed)
+        regex_match = conv.rinex_regex_search_tester(
+            fbase,
+            short_name=short_name,
+            long_name=long_name,
+            gfz_godc_name=gfz_godc_name,
+            compressed=compressed,
+        )
         if regex_match:
             Files_rnx_lis.append(f)
 
@@ -124,10 +128,9 @@ def rinex_finder(main_dir,
         Files_rnx_lis = Files_rnx_lis_tmp
 
     Files_rnx_lis = list(sorted(Files_rnx_lis))
-    log.info(str(len(Files_rnx_lis)) + ' RINEXs found')
+    log.info(str(len(Files_rnx_lis)) + " RINEXs found")
 
     return Files_rnx_lis
-
 
 
 def read_rinex_list_table(rnx_list_inp):
@@ -144,49 +147,46 @@ def read_rinex_list_table(rnx_list_inp):
     -------
     DF : DataFrame
         a RINEX Table.
-        
+
     Note
     ----
     From script
     .../geodezyx_toolbox_PS_perso_scripts/IPGP_OVS/rinex_lister/rinex_list_2019_2022_mk01.py
 
     """
-    
+
     if utils.is_iterable(rnx_list_inp):
         DF = pd.DataFrame(rnx_list_inp)
     else:
-        DF = pd.read_csv(rnx_list_inp,header=None)
-        
+        DF = pd.read_csv(rnx_list_inp, header=None)
+
     DF.columns = ["path"]
     DF["name"] = DF["path"].apply(os.path.basename)
     DF["site"] = DF["name"].str[:4]
     DF["date"] = DF["name"].apply(conv.rinexname2dt)
-    DF["sd"] = list(zip(*(DF["site"],DF["date"])))
-    
-    return DF
+    DF["sd"] = list(zip(*(DF["site"], DF["date"])))
 
+    return DF
 
 
 # def date_filter(DFin,strt,end):
 #     return DFin[(DFin.date >= strt) & (DFin.date < end)].copy()
 
 # def clean_w_year_path(DFin):
-    
+
 #     DF = DFin.copy()
 #     DF["yr_path"] = DF.path.str.extract("([0-9]{4})").astype(int)
 #     BOOL = DF["yr_path"] == DF["date"].dt.year
 #     DF = DF[BOOL]
-    
+
 #     print("before/after clean_w_year_path",len(DFin),len(DF))
-    
+
 #     return DF
-    
 
 
-
-def multi_finder_rinex(main_dir,
-                       rinex_types=('o', 'd', 'd.Z', 'd.z'),
-                       specific_stats=[]):
+def multi_finder_rinex(
+    main_dir, rinex_types=("o", "d", "d.Z", "d.z"), specific_stats=[]
+):
     """
     from a main_dir, find all the rinexs in this folder and his subfolder
     (corresponding to the rinex_types)
@@ -204,8 +204,11 @@ def multi_finder_rinex(main_dir,
 
     files_raw_lis, _ = utils.walk_dir(main_dir)
 
-    yylis = [str(e).zfill(2) for e in list(range(80, 100)) +
-             list(range(0, dt.datetime.now().year - 2000 + 1))]
+    yylis = [
+        str(e).zfill(2)
+        for e in list(range(80, 100))
+        + list(range(0, dt.datetime.now().year - 2000 + 1))
+    ]
 
     rinex_lis = []
 
@@ -224,19 +227,26 @@ def multi_finder_rinex(main_dir,
                     rinex_lis2.append(rnx)
         rinex_lis = rinex_lis2
 
-    log.info(str(len(rinex_lis)) + ' RINEXs found')
+    log.info(str(len(rinex_lis)) + " RINEXs found")
 
     return rinex_lis
 
 
-def find_IGS_products_files(parent_dir, File_type, ACs, date_start, date_end=None,
-                            recursive_search=True, severe=True,
-                            compressed="incl",
-                            regex_old_naming=True,
-                            regex_new_naming=True,
-                            regex_igs_tfcc_naming=True,
-                            add_weekly_file=False,
-                            add_hourly_file=False):
+def find_IGS_products_files(
+    parent_dir,
+    File_type,
+    ACs,
+    date_start,
+    date_end=None,
+    recursive_search=True,
+    severe=True,
+    compressed="incl",
+    regex_old_naming=True,
+    regex_new_naming=True,
+    regex_igs_tfcc_naming=True,
+    add_weekly_file=False,
+    add_hourly_file=False,
+):
     """
     Find all product files in a parent folder which correspond to file type(s),
     AC(s) and date(s)
@@ -284,7 +294,7 @@ def find_IGS_products_files(parent_dir, File_type, ACs, date_start, date_end=Non
         Handle old naming format
 
     regex_new_naming : bool
-        Handle new naming format        
+        Handle new naming format
 
     regex_igs_tfcc_naming : bool
         Handle TFCC specific format (for SINEX files)
@@ -327,24 +337,32 @@ def find_IGS_products_files(parent_dir, File_type, ACs, date_start, date_end=Non
         date_end_ok = conv.gpstime2dt(*date_end)
     # generate time period with a while loop
     Dates_list = [date_start_ok]
-    
+
     if add_hourly_file:
         deltat = dt.timedelta(seconds=3600)
     else:
         deltat = dt.timedelta(days=1)
-    
+
     while Dates_list[-1] < date_end_ok:
         Dates_list.append(Dates_list[-1] + deltat)
 
     # manage weekly file
-    Dates_wwwwd_list = [utils.join_improved(
-        "", *conv.dt2gpstime(d, outputtype=str)) for d in Dates_list]
-    
+    Dates_wwwwd_list = [
+        utils.join_improved("", *conv.dt2gpstime(d, outputtype=str)) for d in Dates_list
+    ]
+
     if add_hourly_file:
-        Dates_yyyyddd_list = [utils.join_improved("", *reversed(conv.dt2doy_year(d)),str(d.hour).zfill(2)) for d in Dates_list]
+        Dates_yyyyddd_list = [
+            utils.join_improved(
+                "", *reversed(conv.dt2doy_year(d)), str(d.hour).zfill(2)
+            )
+            for d in Dates_list
+        ]
     else:
-        Dates_yyyyddd_list = [utils.join_improved("", *reversed(conv.dt2doy_year(d))) for d in Dates_list]
-        
+        Dates_yyyyddd_list = [
+            utils.join_improved("", *reversed(conv.dt2doy_year(d))) for d in Dates_list
+        ]
+
     ###### File type / ACs management ##############
 
     if not utils.is_iterable(File_type):
@@ -357,14 +375,14 @@ def find_IGS_products_files(parent_dir, File_type, ACs, date_start, date_end=Non
         FILE_LIST = parent_dir
     elif recursive_search:
         # All the files are listed first
-        FILE_LIST = utils.find_recursive(
-            parent_dir, ".*", case_sensitive=False)
+        FILE_LIST = utils.find_recursive(parent_dir, ".*", case_sensitive=False)
     else:
         FILE_LIST = glob.glob(parent_dir + "/*")
 
     ###### Regex Definition ##############
 
-    def join_regex_and(L): return "(" + "|".join(L) + ")"
+    def join_regex_and(L):
+        return "(" + "|".join(L) + ")"
 
     Re_patt_big_stk = []
 
@@ -387,14 +405,16 @@ def find_IGS_products_files(parent_dir, File_type, ACs, date_start, date_end=Non
 
         if add_weekly_file:
             Dates_wwwwd_list_4old = [
-                e[:-1] + "(" + e[-1] + "|" + "7)" for e in Dates_wwwwd_list]
+                e[:-1] + "(" + e[-1] + "|" + "7)" for e in Dates_wwwwd_list
+            ]
         else:
             Dates_wwwwd_list_4old = Dates_wwwwd_list
 
         re_patt_date = join_regex_and(Dates_wwwwd_list_4old)
         re_patt_filtyp = join_regex_and(File_type)
-        re_patt_big_old_naming = re_patt_ac + re_patt_date + \
-            "\." + re_patt_filtyp + re_patt_comp
+        re_patt_big_old_naming = (
+            re_patt_ac + re_patt_date + "\." + re_patt_filtyp + re_patt_comp
+        )
         Re_patt_big_stk.append(re_patt_big_old_naming)
 
     if regex_new_naming:  # search for new name convention
@@ -403,25 +423,38 @@ def find_IGS_products_files(parent_dir, File_type, ACs, date_start, date_end=Non
         else:
             re_patt_ac = join_regex_and([ac.upper() for ac in ACs])
         # add _ because it can raise a conflit with the old format
-        re_patt_date = join_regex_and(["_"+e for e in Dates_yyyyddd_list])
+        re_patt_date = join_regex_and(["_" + e for e in Dates_yyyyddd_list])
         re_patt_filtyp = join_regex_and([fil.upper() for fil in File_type])
-        re_patt_big_new_naming = ".*".join((re_patt_ac,
-                                           re_patt_date,
-                                           re_patt_filtyp + re_patt_comp))
+        re_patt_big_new_naming = ".*".join(
+            (re_patt_ac, re_patt_date, re_patt_filtyp + re_patt_comp)
+        )
         Re_patt_big_stk.append(re_patt_big_new_naming)
 
     if regex_igs_tfcc_naming:
-        Dates_yy_list = list(set([str(conv.gpstime2dt(int(e[0:4]), int(e[4])).year)[
-                             2:] for e in Dates_wwwwd_list]))
+        Dates_yy_list = list(
+            set(
+                [
+                    str(conv.gpstime2dt(int(e[0:4]), int(e[4])).year)[2:]
+                    for e in Dates_wwwwd_list
+                ]
+            )
+        )
         Dates_wwww_list = list(set([e[:-1] for e in Dates_wwwwd_list]))
-        #Dates_wwww_dot_list = [e + "\." for e in Dates_wwww_list]
+        # Dates_wwww_dot_list = [e + "\." for e in Dates_wwww_list]
         re_patt_year = join_regex_and(Dates_yy_list)
         # 2x re_patt_date : because .sum doesn't the day
         re_patt_date = join_regex_and(Dates_wwwwd_list + Dates_wwww_list)
         re_patt_filtyp = "\." + join_regex_and(File_type)
 
-        re_patt_big_igs_tfcc_naming = "igs" + re_patt_year + "P" + \
-            re_patt_date + ".*" + re_patt_filtyp + re_patt_comp
+        re_patt_big_igs_tfcc_naming = (
+            "igs"
+            + re_patt_year
+            + "P"
+            + re_patt_date
+            + ".*"
+            + re_patt_filtyp
+            + re_patt_comp
+        )
         Re_patt_big_stk.append(re_patt_big_igs_tfcc_naming)
 
     re_patt_big = join_regex_and(Re_patt_big_stk)

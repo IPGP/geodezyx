@@ -43,35 +43,37 @@ log = logging.getLogger(__name__)
 ##########  END IMPORT  ##########
 
 
-
-#  _____               _            _         _____                      _                 _           
-# |  __ \             | |          | |       |  __ \                    | |               | |          
-# | |__) | __ ___   __| |_   _  ___| |_ ___  | |  | | _____      ___ __ | | ___   __ _  __| | ___ _ __ 
+#  _____               _            _         _____                      _                 _
+# |  __ \             | |          | |       |  __ \                    | |               | |
+# | |__) | __ ___   __| |_   _  ___| |_ ___  | |  | | _____      ___ __ | | ___   __ _  __| | ___ _ __
 # |  ___/ '__/ _ \ / _` | | | |/ __| __/ __| | |  | |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |/ _ \ '__|
-# | |   | | | (_) | (_| | |_| | (__| |_\__ \ | |__| | (_) \ V  V /| | | | | (_) | (_| | (_| |  __/ |   
-# |_|   |_|  \___/ \__,_|\__,_|\___|\__|___/ |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|   
-                                                                                                      
-                                                                                                      
+# | |   | | | (_) | (_| | |_| | (__| |_\__ \ | |__| | (_) \ V  V /| | | | | (_) | (_| | (_| |  __/ |
+# |_|   |_|  \___/ \__,_|\__,_|\___|\__|___/ |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|
+
 
 ############################################################################
 ######## PRODUCTS DOWNLOADER
 ############################################################################
 
-def download_gnss_products(archive_dir,
-                           startdate, enddate,
-                           AC_names = ("wum","cod"),
-                           prod_types = ("sp3","clk"),
-                           remove_patterns=("ULA",),
-                           archtype ='week',
-                           new_name_conv = True,
-                           parallel_download=4,
-                           archive_center='ign',
-                           mgex=False,
-                           repro=0,
-                           sorted_mode=False,
-                           return_also_uncompressed_files=True,
-                           ftp_download=False,
-                           dow_manu=False):
+
+def download_gnss_products(
+    archive_dir,
+    startdate,
+    enddate,
+    AC_names=("wum", "cod"),
+    prod_types=("sp3", "clk"),
+    remove_patterns=("ULA",),
+    archtype="week",
+    new_name_conv=True,
+    parallel_download=4,
+    archive_center="ign",
+    mgex=False,
+    repro=0,
+    sorted_mode=False,
+    return_also_uncompressed_files=True,
+    ftp_download=False,
+    dow_manu=False,
+):
     """
     Download GNSS products from different IGS data centers
 
@@ -85,14 +87,14 @@ def download_gnss_products(archive_dir,
         the end date in regular calendar date..
     AC_names : tuple, optional
         the names of the wished analysis centers.
-        It also control the product's lattency with the new naming convention: 
+        It also control the product's lattency with the new naming convention:
         simply add it completly in the AC name e.g. IGS0OPSRAP
         The default is ("wum","cod").
     prod_types : tuple, optional
-        the wished products. 
+        the wished products.
         The default is ("sp3","clk").
     remove_patterns : tuple, optional
-        the patterns you want to exclude. 
+        the patterns you want to exclude.
         The default is ("ULA",).
     archtype : str, optional
         structure of the local archive sub-directories.
@@ -113,18 +115,18 @@ def download_gnss_products(archive_dir,
     sorted_mode : bool, optional
         sort the download or not. The default is False.
     return_also_uncompressed_files : bool, optional
-        in the final list output, return also already downloaded and 
+        in the final list output, return also already downloaded and
         uncompressedfiles. The default is True.
     ftp_download : bool, optional
         DESCRIPTION. The default is False.
     dow_manu : int or bool or None, optional
         Control the download for weekly files
-        dow_manu = False, no dow manu, 
+        dow_manu = False, no dow manu,
         consider the converted dow from the time span, regular case
-        dow_manu = None, 
+        dow_manu = None,
         no dow in the REGEX, the crawler will search only for the week
         dow_manu = 0 or 7,
-        the dow in question    
+        the dow in question
         The default is False.
 
 
@@ -137,215 +139,237 @@ def download_gnss_products(archive_dir,
     ----
     The new naming convention has been fully adopted since GPS Week 2238-0
 
-    to control the lattency with the new naming convention, 
+    to control the lattency with the new naming convention,
     simply add it completly in the AC name e.g. IGS0OPSRAP
-        
+
     """
-    
+
     if mgex:
         mgex_str = "mgex/"
     else:
         mgex_str = ""
-        
+
     if repro:
         repro_str = "repro" + str(repro) + "/"
     else:
         repro_str = ""
-        
+
     if not utils.is_iterable(remove_patterns):
         remove_patterns = [remove_patterns]
-    
+
     secure_ftp = False
-    
-    log.info("data center used : %s",archive_center)
-    log.info("mgex/repro : %s/%s",mgex,repro)
-    
+
+    log.info("data center used : %s", archive_center)
+    log.info("mgex/repro : %s/%s", mgex, repro)
+
     if archive_center == "cddis":
-        arch_center_main    = 'gdc.cddis.eosdis.nasa.gov'
-        arch_center_basedir = '/pub/gps/products/' + mgex_str
+        arch_center_main = "gdc.cddis.eosdis.nasa.gov"
+        arch_center_basedir = "/pub/gps/products/" + mgex_str
         ftp_download = True
         secure_ftp = True
         parallel_download = 1
-        log.info('cddis as data center, FTP and no parallel download forced')
-        
+        log.info("cddis as data center, FTP and no parallel download forced")
+
     elif archive_center == "cddis_glonass":
-        arch_center_main    = 'cddis.gsfc.nasa.gov'
-        arch_center_basedir = '/pub/glonass/products/' + mgex_str
-        
+        arch_center_main = "cddis.gsfc.nasa.gov"
+        arch_center_basedir = "/pub/glonass/products/" + mgex_str
+
     elif archive_center == "ign":
-        arch_center_main    = 'igs.ign.fr'
-        arch_center_basedir = '/pub/igs/products/' + mgex_str  
-        
+        arch_center_main = "igs.ign.fr"
+        arch_center_basedir = "/pub/igs/products/" + mgex_str
+
     elif archive_center == "ign_iono":
-        arch_center_main    = 'igs-rf.ign.fr'
-        arch_center_basedir = '/pub/'  
+        arch_center_main = "igs-rf.ign.fr"
+        arch_center_basedir = "/pub/"
 
     elif archive_center == "ensg":
-        arch_center_main    = 'igs.ensg.ign.fr'
-        arch_center_basedir = '/pub/igs/products/' + mgex_str
-        
+        arch_center_main = "igs.ensg.ign.fr"
+        arch_center_basedir = "/pub/igs/products/" + mgex_str
+
     elif archive_center == "whu":
-        arch_center_main    = "igs.gnsswhu.cn"
+        arch_center_main = "igs.gnsswhu.cn"
         arch_center_basedir = "/pub/gps/products/" + mgex_str
-        
+
     elif archive_center == "ign_rf":
-        arch_center_main    = 'igs-rf.ign.fr'
-        arch_center_basedir = '/pub/' + mgex_str  
+        arch_center_main = "igs-rf.ign.fr"
+        arch_center_basedir = "/pub/" + mgex_str
 
     elif archive_center == "ensg_rf":
-        arch_center_main    = 'igs-rf.ensg.ign.fr'
-        arch_center_basedir = '/pub/' + mgex_str
-        
+        arch_center_main = "igs-rf.ensg.ign.fr"
+        arch_center_basedir = "/pub/" + mgex_str
+
     elif archive_center == "acc_xpr_mgex_cmb":
         ##### DO NOT WORK !!!!!
         ## and this archive is not mainteed anyway (2023-01)
-        arch_center_main    = 'http://igsacc.s3-eu-central-1.amazonaws.com/products/mgex/final/2069/igm20694.sp3.Z'
+        arch_center_main = "http://igsacc.s3-eu-central-1.amazonaws.com/products/mgex/final/2069/igm20694.sp3.Z"
         ftp_download = False
-        log.info('ACC experimental mgex combi. as data center, HTTP download forced')
+        log.info("ACC experimental mgex combi. as data center, HTTP download forced")
 
-
-    Dates_list = conv.dt_range(startdate,enddate)
+    Dates_list = conv.dt_range(startdate, enddate)
 
     wwww_dir_previous = None
     if parallel_download > 1:
-        pool = mp.Pool(processes=parallel_download)  
-   
-    
+        pool = mp.Pool(processes=parallel_download)
+
     ###################################################################
-    ########### Remote file search      
+    ########### Remote file search
 
     Potential_localfiles_list_all = []
-    
+
     ### check if the pattern of the wished products are in the listed daily files
-    for ipatt_tup, patt_tup in enumerate(list(itertools.product(Dates_list,
-                                                                AC_names,
-                                                                prod_types))):
-        dt_cur , ac_cur , prod_cur  = patt_tup
-        wwww , dow = conv.dt2gpstime(dt_cur)
-        
+    for ipatt_tup, patt_tup in enumerate(
+        list(itertools.product(Dates_list, AC_names, prod_types))
+    ):
+        dt_cur, ac_cur, prod_cur = patt_tup
+        wwww, dow = conv.dt2gpstime(dt_cur)
+
         #### Manage the cases of manual DOW
         if type(dow_manu) is int:
             dow = dow_manu
         elif dow_manu is None:
             dow = ""
         elif dow_manu is False:
-            pass        
+            pass
         else:
             dow = str(dow_manu)
-               
-        log.info("*** Search prods. for %s-%s, AC/prod: %s/%s",wwww,dow,ac_cur,prod_cur)
-        wwww_dir = os.path.join(arch_center_basedir,str(wwww),repro_str)
-        
-        n_ftp_ask = 500 ## Max interrogation of the FTP server to avoid 
-                        ## potential errors
-                        ## An new FTP instance is created if above it 
-        
-        if np.mod(ipatt_tup,n_ftp_ask) == 0:
+
+        log.info(
+            "*** Search prods. for %s-%s, AC/prod: %s/%s", wwww, dow, ac_cur, prod_cur
+        )
+        wwww_dir = os.path.join(arch_center_basedir, str(wwww), repro_str)
+
+        n_ftp_ask = 500  ## Max interrogation of the FTP server to avoid
+        ## potential errors
+        ## An new FTP instance is created if above it
+
+        if np.mod(ipatt_tup, n_ftp_ask) == 0:
             log.info("Create a new FTP instance")
-            ftp, Ftp_obj_list = dlutils.ftp_objt_create(secure_ftp_inp=secure_ftp,
-                                                        host=arch_center_main)
-            
-        if wwww_dir_previous != wwww_dir or np.mod(ipatt_tup,n_ftp_ask) == 0:
-            log.info("Move to: %s",wwww_dir)
+            ftp, Ftp_obj_list = dlutils.ftp_objt_create(
+                secure_ftp_inp=secure_ftp, host=arch_center_main
+            )
+
+        if wwww_dir_previous != wwww_dir or np.mod(ipatt_tup, n_ftp_ask) == 0:
+            log.info("Move to: %s", wwww_dir)
             try:
                 ftp.cwd(wwww_dir)
             except:
-                log.warning("%s do not exists, skiping...",wwww_dir)
+                log.warning("%s do not exists, skiping...", wwww_dir)
             Files_listed_in_FTP = ftp.nlst()
             wwww_dir_previous = wwww_dir
             if len(Files_listed_in_FTP) == 0:
-                log.warning("no files found in directory %s",wwww_dir)
-            
-            
+                log.warning("no files found in directory %s", wwww_dir)
+
         Files_remote_date_list = []
 
-        pattern_old_nam = ac_cur.lower()+".*"+str(wwww)+str(dow)+".*"+prod_cur.lower()+"\..*"
-        Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam,f)]
-        
+        pattern_old_nam = (
+            ac_cur.lower()
+            + ".*"
+            + str(wwww)
+            + str(dow)
+            + ".*"
+            + prod_cur.lower()
+            + "\..*"
+        )
+        Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam, f)]
+
         pattern_new_nam = ""
-        
+
         Files_new_nam = []
-        if new_name_conv: ### search for new name convention
-            
+        if new_name_conv:  ### search for new name convention
+
             if dow is None:
                 log.error("dow == None and search for new name convention, Error ...")
-                raise  Exception()
-                
-            ac_newnam   = ac_cur.upper()
+                raise Exception()
 
-            doy_newnam  = "".join(reversed(conv.dt2doy_year(dt_cur))) + str(dt_cur.hour).zfill(2)
+            ac_newnam = ac_cur.upper()
+
+            doy_newnam = "".join(reversed(conv.dt2doy_year(dt_cur))) + str(
+                dt_cur.hour
+            ).zfill(2)
             prod_newnam = prod_cur.upper()
-            
-            pattern_new_nam = utils.join_improved(".*",ac_newnam,doy_newnam,prod_newnam)
+
+            pattern_new_nam = utils.join_improved(
+                ".*", ac_newnam, doy_newnam, prod_newnam
+            )
             pattern_new_nam = ".*" + pattern_new_nam + "\..*"
 
-            Files_new_nam   = [f for f in Files_listed_in_FTP if re.search(pattern_new_nam,f)]
-        
-        
-        log.info("Regex : %s %s",pattern_old_nam,pattern_new_nam)        
+            Files_new_nam = [
+                f for f in Files_listed_in_FTP if re.search(pattern_new_nam, f)
+            ]
+
+        log.info("Regex : %s %s", pattern_old_nam, pattern_new_nam)
         Files = Files + Files_new_nam
-        
+
         if len(Files) == 0:
-            log.warning("no product found for" + " %s"*len(patt_tup),
-                        *patt_tup)
-            #log.warning("found files: %s",Files_listed_in_FTP)
-        
+            log.warning("no product found for" + " %s" * len(patt_tup), *patt_tup)
+            # log.warning("found files: %s",Files_listed_in_FTP)
+
         Files_remote_date_list = Files_remote_date_list + Files
-            
+
         ### exclude some pattern
         for negpatt in remove_patterns:
-            Files_remote_date_list = [e for e in Files_remote_date_list if not re.search(negpatt,e)]
-            
-            
+            Files_remote_date_list = [
+                e for e in Files_remote_date_list if not re.search(negpatt, e)
+            ]
+
         ###################################################################
         ########### Download
-        archive_dir_specif = dlutils.effective_save_dir_orbit(archive_dir,
-                                                              ac_cur,
-                                                              dt_cur,
-                                                              archtype)
-        
+        archive_dir_specif = dlutils.effective_save_dir_orbit(
+            archive_dir, ac_cur, dt_cur, archtype
+        )
+
         if len(Files_remote_date_list) > 0:
             utils.create_dir(archive_dir_specif)
-        
+
         ### Generation of the Download fct inputs
-        Files_remote_date_chunck = utils.chunkIt(Files_remote_date_list,
-                                                 parallel_download)
+        Files_remote_date_chunck = utils.chunkIt(
+            Files_remote_date_list, parallel_download
+        )
         Downld_tuples_list = []
         Potential_localfiles_list = []
 
-        if ftp_download: ### FTP Download
-            for ftpobj , Chunk in zip(Ftp_obj_list,Files_remote_date_chunck):
+        if ftp_download:  ### FTP Download
+            for ftpobj, Chunk in zip(Ftp_obj_list, Files_remote_date_chunck):
                 for filchunk in Chunk:
-                    Potential_localfiles_list.append(os.path.join(archive_dir_specif,
-                                                                  filchunk))
+                    Potential_localfiles_list.append(
+                        os.path.join(archive_dir_specif, filchunk)
+                    )
                     if parallel_download == 1:
-                        Downld_tuples_list.append((ftpobj,
-                                                   filchunk,
-                                                   archive_dir_specif))
+                        Downld_tuples_list.append(
+                            (ftpobj, filchunk, archive_dir_specif)
+                        )
                     else:
-                        Downld_tuples_list.append((arch_center_main,
-                                                   wwww_dir,
-                                                   filchunk,
-                                                   archive_dir_specif))
-        else: ### HTTP download
-            Downld_tuples_list = itertools.product(["/".join(('ftp://' + arch_center_main,wwww_dir,f)) for f in Files_remote_date_list],[archive_dir_specif])
-            [Potential_localfiles_list.append(os.path.join(archive_dir_specif,f)) for f in Files_remote_date_list]
-        
-        Potential_localfiles_list_all = Potential_localfiles_list_all +  Potential_localfiles_list 
+                        Downld_tuples_list.append(
+                            (arch_center_main, wwww_dir, filchunk, archive_dir_specif)
+                        )
+        else:  ### HTTP download
+            Downld_tuples_list = itertools.product(
+                [
+                    "/".join(("ftp://" + arch_center_main, wwww_dir, f))
+                    for f in Files_remote_date_list
+                ],
+                [archive_dir_specif],
+            )
+            [
+                Potential_localfiles_list.append(os.path.join(archive_dir_specif, f))
+                for f in Files_remote_date_list
+            ]
+
+        Potential_localfiles_list_all = (
+            Potential_localfiles_list_all + Potential_localfiles_list
+        )
 
         ### Actual Download
         if ftp_download and parallel_download == 1:
             for tup in Downld_tuples_list:
                 dlutils.ftp_downloader_core(*tup)
         elif ftp_download and parallel_download > 1:
-            _ = pool.map_async(dlutils.ftp_downloader_wo_objects,
-                               Downld_tuples_list)
+            _ = pool.map_async(dlutils.ftp_downloader_wo_objects, Downld_tuples_list)
         elif not ftp_download and parallel_download == 1:
             for tup in Downld_tuples_list:
                 dlutils.downloader_wrap(tup)
         elif not ftp_download and parallel_download > 1:
-            _ = pool.map(dlutils.downloader_wrap,Downld_tuples_list)
-    
+            _ = pool.map(dlutils.downloader_wrap, Downld_tuples_list)
 
     ###################################################################
     ########### Final Independent files existence check
@@ -357,33 +381,37 @@ def download_gnss_products(archive_dir,
         Pot_locfiles_list_use = []
         for localfile in Potential_localfiles_list_all:
             Pot_compress_name_list = [localfile]
-            Pot_compress_name_list.append(localfile.replace(".gz",""))
-            Pot_compress_name_list.append(localfile.replace(".Z",""))
+            Pot_compress_name_list.append(localfile.replace(".gz", ""))
+            Pot_compress_name_list.append(localfile.replace(".Z", ""))
             Pot_compress_name_list = list(set(Pot_compress_name_list))
-            
+
             Pot_locfiles_list_use = Pot_locfiles_list_use + Pot_compress_name_list
-            
+
     for pot_localfile in Pot_locfiles_list_use:
         if os.path.isfile(pot_localfile):
             Localfiles_lis.append(pot_localfile)
-    
+
     if parallel_download > 1:
         pool.close()
     return Localfiles_lis
 
 
 def multi_downloader_orbs_clks_2(**kwargs):
-    log.warn('multi_downloader_orbs_clks_2 is a legacy alias for the newly renamed function download_gnss_products')
+    log.warn(
+        "multi_downloader_orbs_clks_2 is a legacy alias for the newly renamed function download_gnss_products"
+    )
     return download_gnss_products(**kwargs)
 
 
-def orbclk_long2short_name(longname_filepath_in,
-                           rm_longname_file=False,
-                           center_id_last_letter=None,
-                           center_manual_short_name=None,
-                           force=False,
-                           dryrun=False,
-                           output_dirname=None):
+def orbclk_long2short_name(
+    longname_filepath_in,
+    rm_longname_file=False,
+    center_id_last_letter=None,
+    center_manual_short_name=None,
+    force=False,
+    dryrun=False,
+    output_dirname=None,
+):
     """
     Rename a long naming new convention IGS product file to the short old
     convention
@@ -402,17 +430,17 @@ def orbclk_long2short_name(longname_filepath_in,
     center_id_last_letter : str
         replace the last letter of the short AC id by another letter
         (see note below)
-        
+
     center_manual_short_name : str
         replace completely the long name with this one
         overrides center_id_last_letter
-        
+
     force : bool
         if False, skip if the file already exsists
 
     dryrun : bool
         if True, don't rename effectively, just output the new name
-        
+
     output_dirname : str
         directory where the output shortname will be created
         if None, will be created in the same folder as the input longname
@@ -439,8 +467,8 @@ def orbclk_long2short_name(longname_filepath_in,
     log.info("will rename " + longname_filepath_in)
 
     longname_basename = os.path.basename(longname_filepath_in)
-    longname_dirname  = os.path.dirname(longname_filepath_in)
-    
+    longname_dirname = os.path.dirname(longname_filepath_in)
+
     if not output_dirname:
         output_dirname = longname_dirname
 
@@ -453,17 +481,17 @@ def orbclk_long2short_name(longname_filepath_in,
         center_as_list[-1] = center_id_last_letter
         center = "".join(center_as_list)
 
-    yyyy   = int(longname_basename.split("_")[1][:4])
-    doy    = int(longname_basename.split("_")[1][4:7])
+    yyyy = int(longname_basename.split("_")[1][:4])
+    doy = int(longname_basename.split("_")[1][4:7])
 
-    day_dt = conv.doy2dt(yyyy,doy)
+    day_dt = conv.doy2dt(yyyy, doy)
 
-    wwww , dow = conv.dt2gpstime(day_dt)
+    wwww, dow = conv.dt2gpstime(day_dt)
 
     shortname_prefix = center.lower() + str(wwww).zfill(4) + str(dow)
 
     ### Type handeling
-    if   "SP3" in longname_basename:
+    if "SP3" in longname_basename:
         shortname = shortname_prefix + ".sp3"
     elif "CLK" in longname_basename:
         shortname = shortname_prefix + ".clk"
@@ -475,23 +503,23 @@ def orbclk_long2short_name(longname_filepath_in,
         shortname = shortname_prefix + ".snx"
     else:
         log.error("filetype not found for " + longname_basename)
-    
+
     ### Compression handeling
     if longname_basename[-3:] == ".gz":
         shortname = shortname + ".gz"
     elif longname_basename[-2:] == ".Z":
         shortname = shortname + ".Z"
-        
-    shortname_filepath = os.path.join(output_dirname , shortname)
-    
+
+    shortname_filepath = os.path.join(output_dirname, shortname)
+
     if not force and os.path.isfile(shortname_filepath):
         log.info("skip " + longname_filepath_in)
-        log.info(shortname_filepath + " already exists")        
+        log.info(shortname_filepath + " already exists")
         return shortname_filepath
-    
+
     if not dryrun:
         log.info("renaming " + longname_filepath_in + " => " + shortname_filepath)
-        shutil.copy2(longname_filepath_in , shortname_filepath)
+        shutil.copy2(longname_filepath_in, shortname_filepath)
 
     if rm_longname_file and not dryrun:
         log.info("remove " + longname_filepath_in)
@@ -500,21 +528,30 @@ def orbclk_long2short_name(longname_filepath_in,
     return shortname_filepath
 
 
- #  ______                _   _                _____                                         _ 
- # |  ____|              | | (_)              / ____|                                       | |
- # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
- # |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | | |_ | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
- # | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
- # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
- #                                                                        __/ |                
- #                                                                       |___/ 
- 
- 
-def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
-                               sp3clk='sp3',archtype ='year/doy',parallel_download=4,
-                               archive_center='ign',repro=0,sorted_mode=False,
-                               force_weekly_file=False, return_also_uncompressed_files=True):
+#  ______                _   _                _____                                         _
+# |  ____|              | | (_)              / ____|                                       | |
+# | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
+# |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | | |_ | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
+# | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+# |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
+#                                                                        __/ |
+#                                                                       |___/
 
+
+def multi_downloader_orbs_clks(
+    archive_dir,
+    startdate,
+    enddate,
+    calc_center="igs",
+    sp3clk="sp3",
+    archtype="year/doy",
+    parallel_download=4,
+    archive_center="ign",
+    repro=0,
+    sorted_mode=False,
+    force_weekly_file=False,
+    return_also_uncompressed_files=True,
+):
     """
     Download IGS products. Can manage MGEX products too
     (see archive_center argument)
@@ -539,9 +576,9 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
             'clk_30s'
 
             'sp3'
-            
+
             'snx'
-            
+
             'sum'
 
             'erp'
@@ -562,7 +599,7 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
             'ign_mgex'
 
             'ign_mgex_longname'
-            
+
             'gfz_local'
 
     archtype: str
@@ -599,9 +636,12 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
     localfiles_lis : list of str
         list of downloaded products paths
     """
-    
-    log.error("multi_downloader_orbs_clks IS DISCONTINUED, use multi_downloader_orbs_clks_2")
+
+    log.error(
+        "multi_downloader_orbs_clks IS DISCONTINUED, use multi_downloader_orbs_clks_2"
+    )
     return None
+
 
 #     if type(calc_center) is str:
 #         calc_center =  [ ''.join([calc_center]) ] # POURQUOI CETTE LIGNE ?? (150717)
@@ -629,7 +669,7 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
 #         typ = '????'
 
 #     log.info("generating the list of potential " + typ + " ...")
-    
+
 #     for cc in calc_center:
 #             curdate = startdate
 #             while curdate <= enddate:
@@ -684,30 +724,29 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
 #          results = [pool.apply_async(dlutils.downloader , args=(u,sd)) for u,sd in zip(urllist,savedirlist)]
 
 #     localfiles_lis = []
-    
+
 #     if not return_also_uncompressed_files:
 #         for url , savedir in zip(urllist,savedirlist):
 #             localfile = os.path.join(savedir,os.path.basename(url))
 #             if os.path.isfile(localfile):
 #                 localfiles_lis.append(localfile)
 #     else:
-    
+
 #         for url , savedir in zip(urllist,savedirlist):
 
-#             localfile = os.path.join(savedir,os.path.basename(url))        
-            
+#             localfile = os.path.join(savedir,os.path.basename(url))
+
 #             Pot_compress_files_list = [localfile]
 #             Pot_compress_files_list.append(localfile.replace(".gz",""))
 #             Pot_compress_files_list.append(localfile.replace(".Z",""))
 #             Pot_compress_files_list = list(set(Pot_compress_files_list))
-            
+
 #             for potential_exisiting_file in Pot_compress_files_list:
 #                 if os.path.isfile(potential_exisiting_file):
 #                     localfiles_lis.append(potential_exisiting_file)
-    
+
 #     pool.close()
 #     return localfiles_lis
-
 
 
 # def force_weekly_file_fct(force_weekly_file,sp3clk,day_in):
@@ -722,7 +761,7 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
 #     elif sp3clk in ("erp","sum") and force_weekly_file == True:
 #         log.info("The weekly file (DoW = 7) will be downloaded for " + sp3clk.upper())
 #         day = 7
-        
+
 #     return day
 
 
@@ -745,7 +784,7 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
 #         center = ''.join(center)
 #     if repro == 3:
 #         longname = True
-        
+
 #     if center in ("cod","cof","co2","cf2") and sp3clk == "sp3":
 #         log.info("CODE orbit extension changed to eph")
 #         sp3clk = "eph"
@@ -803,7 +842,6 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
 #         url = os.path.join(urlserver, str(week).zfill(4) ,rep_fldr,orbname)
 
 #     return url
-
 
 
 # def orbclk_ign_server(date,center='igs', sp3clk = 'sp3', repro=0, mgex=False,
@@ -903,12 +941,8 @@ def multi_downloader_orbs_clks(archive_dir,startdate,enddate,calc_center='igs',
 #         raise Exception
 
 #     week, day = conv.dt2gpstime(date)
-    
+
 #     orbname = center + str(week).zfill(4) + str(day) +'.' + sp3clk + '.Z'
 #     url = os.path.join(urlserver,str(week).zfill(4),orbname)
-    
+
 #     return url
-
-
-
-
