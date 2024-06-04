@@ -196,7 +196,7 @@ def rinex_timeline_datadico(
     rinexfilelist_new = [
         fil for fil in filelist if re.search(conv.rinex_regex_long_name(), fil)
     ]
-
+    
     rinexfilelist = rinexfilelist_old + rinexfilelist_new
 
     if not use_rinex_lister:
@@ -204,7 +204,7 @@ def rinex_timeline_datadico(
 
     log.info("%s RINEXs will be ploted on the timeline", len(rinexfilelist))
 
-    statname_lis = sorted(list(set([rin[0:4] for rin in rinexfilelist])))
+    statname_lis = sorted(list(set([rin[0:4].lower() for rin in rinexfilelist])))
 
     log.info("%s stations will be ploted on the timeline", len(statname_lis))
 
@@ -215,7 +215,7 @@ def rinex_timeline_datadico(
 
     for rnx in rinexfilelist:
         try:
-            datadico[rnx[0:4]].append((rnx, optional_info, conv.rinexname2dt(rnx)))
+            datadico[rnx[0:4].lower()].append((rnx, optional_info, conv.rinexname2dt(rnx)))
         except:
             log.error("error with : %s", rnx)
 
@@ -284,6 +284,7 @@ def timeline_plotter(
     use_only_stats_of_main_datadico=False,
     colordico_for_main_datadico=None,
     xlim_start_end=False,
+    stats_only_list=[],
 ):
     """
 
@@ -315,6 +316,10 @@ def timeline_plotter(
     xlim_start_end : bool, optional
         Force start and end values to be the x axis limit
         The default is False.
+    stats_only_list : list, optional
+        If given, keep only the stations of this list
+        The default is [].
+        
 
     Returns
     -------
@@ -339,6 +344,13 @@ def timeline_plotter(
         stats_concat_list = list(reversed(sorted(list(set(stats_concat_list)))))
     else:
         stats_concat_list = list(reversed(sorted(list(datadico.keys()))))
+        
+    stats_concat_list = [e.lower() for e in stats_concat_list]
+        
+    if stats_only_list:
+        stats_only_list = [e.lower() for e in stats_only_list]
+        stats_concat_list = [e for e in stats_concat_list if e in stats_only_list]
+        
 
     # the plot has not the same behavior if it is the morning or not
     # (rinexs timelines wont be ploted if it is the morning)
@@ -349,8 +361,14 @@ def timeline_plotter(
 
     legend_list = []  # must be here before the loop
     for i, stat in enumerate(stats_concat_list):
+                
+        ## exclude stats
+        if len(stats_only_list) > 0 and not stat in stats_only_list:
+            continue
+        
         # PART 1 : PLOT MAIN DATADICO
         if not stat in datadico.keys():
+            print("AAAAAA",stat)
             continue
 
         # T = Time, O = Station name (Observation)
