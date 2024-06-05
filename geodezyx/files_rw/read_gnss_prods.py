@@ -67,12 +67,21 @@ def read_clk(file_path_in,names_4char=False):
     # then values are not converted to float and kept as generic objects...
     if DFclk['bias'].dtype == "O" and DFclk['bias'].str.match(".*D(\+|-)\d\d$").any():
         DFclk['bias'] = DFclk['bias'].str.replace("D","E").astype(float)
+        
+    # remove EOF line    
+    DFclk = DFclk[DFclk["type"] != "EOF"]
+    
+    # convert date to int
+    #for d in ['year', 'month', 'day', 'hour','minute']:
+    #    DFclk[d] = DFclk[d].astype(int)
+        
+    DFclk["year"] = DFclk["year"].astype(int)
     
     DFclk["ac"] = os.path.basename(file_path_in)[:3] 
     DFclk["name"] = DFclk["name"].str.upper()
     if names_4char:
         DFclk['name'] = DFclk['name'].str[:4]
-    
+            
     DFclk['epoch'] = pd.to_datetime(DFclk[['year', 'month', 'day',
                                            'hour','minute', 'second']])
     DFclk.path = file_path_in
