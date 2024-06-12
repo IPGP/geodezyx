@@ -161,6 +161,7 @@ PyPi project: https://pypi.org/project/geodezyx
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['bs4',
+                      'chardet',
                       'collection',
                       'colorlog',
                       #'ftplib',
