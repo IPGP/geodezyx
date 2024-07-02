@@ -34,6 +34,8 @@ import sys
 import tempfile
 import time
 import uuid
+import chardet 
+
 
 import numpy as np
 import pandas as pd
@@ -373,88 +375,115 @@ def globals_filtered():
     
     return data_out
 
-
-
-
-def open_readlines_smart(file_in,decode_type="ascii",verbose=False):
+def detect_encoding(file_path):
     """
-    Take an input object, open it and reads its lines
-    input file  can be the path of a file as string or as Path object,
-    or the file content as a string, bytes, StringIO object or a 
-    list of lines
+    Detect the encoding of a text file.
 
+    This function uses the chardet library to detect the encoding of a given text file. It reads the file line by line and feeds each line to a chardet UniversalDetector. When the detector has made a determination, it stops reading the file and returns the detected encoding.
+
+    Parameters
+    ----------
+    file_path : str
+        The path to the text file for which to detect the encoding.
+
+    Returns
+    -------
+    str
+        The detected encoding of the text file.
+
+    Source
+    ------
+    https://www.geeksforgeeks.org/detect-encoding-of-a-text-file-with-python/
+    """
+    with open(file_path, 'rb') as file:
+        detector = chardet.universaldetector.UniversalDetector()
+        for line in file:
+            detector.feed(line)
+            if detector.done:
+                break
+        detector.close()
+    return detector.result['encoding']
+
+def open_readlines_smart(file_in, decode_type="iso-8859-1", verbose=False):
+    """
+    This function takes an input object, opens it, and reads its lines.
+    The input file can be the path of a file as a string or as a Path object,
+    or the file content as a string, bytes, StringIO object, or a list of lines.
 
     Parameters
     ----------
     file_in : various
-        an inpout object (see description).
+        An input object. This can be a string representing a file path, a Path object,
+        a string representing file content, bytes, a StringIO object, or a list of lines.
+
     decode_type : str, optional
-        the decode standard. The default is "ascii".
+        The decode standard. Default is "iso-8859-1".
+
     verbose : bool, optional
-        Describe the input file type. The default is False.
+        If set to True, the function will print the type of the input file. Default is False.
 
     Returns
     -------
-    LINES : list
-        list of the lines in file_in.
+    lines : list
+        A list of the lines in the input file.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the file specified by file_in does not exist.
     """
-    
+
     if verbose:
-        log.info("input file is actually a %s",type(file_in))
-    
-    if type(file_in) is str and pathvalidate.is_valid_filepath(file_in,
-                                                               platform='auto'):
+        log.info("input file is actually a %s", type(file_in))
+
+
+    if type(file_in) is str and pathvalidate.is_valid_filepath(file_in, platform='auto'):
         if verbose:
             log.info("input file is a string path")
         try:
             FILE = open(file_in)
         except FileNotFoundError as e:
-            log.error("%s not found",file_in)
-            raise(e)  
-        LINES = FILE.readlines()
-        
-    elif type(file_in) is pathlib.Path and pathvalidate.is_valid_filepath(file_in,
-                                                                          platform='auto'):
+            log.error("%s not found", file_in)
+            raise(e)
+        lines = FILE.readlines()
+
+    elif type(file_in) is pathlib.Path and pathvalidate.is_valid_filepath(file_in, platform='auto'):
         if verbose:
             log.info("input file is a Path Object")
         try:
             FILE = open(file_in)
         except FileNotFoundError as e:
-            log.error("%s not found",file_in)
-            raise(e)  
-        LINES = FILE.readlines()
-        
+            log.error("%s not found", file_in)
+            raise(e)
+        lines = FILE.readlines()
+
     elif type(file_in) is bytes:
         if verbose:
             log.info("input file is bytes")
-        LINES = file_in.decode(decode_type).split("\n")
+            
+        lines = file_in.decode(decode_type).split("\n")
 
     elif type(file_in) is str:
         if verbose:
             log.info("input file is str")
-        LINES = file_in.split("\n")
-        
+        lines = file_in.split("\n")
+
     elif type(file_in) is io.StringIO:
         if verbose:
             log.info("input file is StringIO object")
-        LINES = file_in.readlines
-        
+        lines = file_in.readlines
+
     elif is_iterable(file_in):
         if verbose:
             log.info("input file is an iterable")
-        LINES = file_in
-        
+        lines = file_in
+
     else:
         if verbose:
             log.info("input file is unknown...")
-        log.error("something wrong while opening %s",file_in)
-        
-    
-    return LINES
-    
-        
+        log.error("something wrong while opening %s", file_in)
 
-
+    return lines
 
 
 def memmap_from_array(arrin):

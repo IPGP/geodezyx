@@ -45,12 +45,12 @@ log = logging.getLogger(__name__)
 ##########  END IMPORT  ##########
 
 
-#_____________ _   _ ________   __  _____                      _                 _
-#|  __ \|_   _| \ | |  ____\ \ / / |  __ \                    | |               | |
-#| |__) | | | |  \| | |__   \ V /  | |  | | _____      ___ __ | | ___   __ _  __| | ___ _ __
-#|  _  /  | | | . ` |  __|   > <   | |  | |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |/ _ \ '__|
-#| | \ \ _| |_| |\  | |____ / . \  | |__| | (_) \ V  V /| | | | | (_) | (_| | (_| |  __/ |
-#|_|  \_\_____|_| \_|______/_/ \_\ |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|
+# _____________ _   _ ________   __  _____                      _                 _
+# |  __ \|_   _| \ | |  ____\ \ / / |  __ \                    | |               | |
+# | |__) | | | |  \| | |__   \ V /  | |  | | _____      ___ __ | | ___   __ _  __| | ___ _ __
+# |  _  /  | | | . ` |  __|   > <   | |  | |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |/ _ \ '__|
+# | | \ \ _| |_| |\  | |____ / . \  | |__| | (_) \ V  V /| | | | | (_) | (_| | (_| |  __/ |
+# |_|  \_\_____|_| \_|______/_/ \_\ |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|
 
 
 ############################################################################
@@ -66,36 +66,40 @@ def igs_sopac_server_legacy(stat, date):
     return url
 
 
-def igs_cddis_server_legacy(stat, date, user ='', passwd =''):
+def igs_cddis_server_legacy(stat, date, user="", passwd=""):
     # a privilegier
     urlserver = "ftp://gdc.cddis.eosdis.nasa.gov/gps/data/daily/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), date.strftime('%y') + 'd', rnxname)
+    url = os.path.join(
+        urlserver, str(date.year), conv.dt2doy(date), date.strftime("%y") + "d", rnxname
+    )
     if not passwd:
-        passwd = 'sakic@ipgp.fr'
+        passwd = "sakic@ipgp.fr"
     return url, user, passwd
 
 
 def igs_cddis_nav_server_legacy(stat, date):
     # a privilegier
     urlserver = "ftp://cddis.gsfc.nasa.gov/gps/data/daily/"
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date, 'n.Z')
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), date.strftime('%y') + 'n', rnxname)
+    rnxname = conv.statname_dt2rinexname(stat.lower(), date, "n.Z")
+    url = os.path.join(
+        urlserver, str(date.year), conv.dt2doy(date), date.strftime("%y") + "n", rnxname
+    )
     return url
 
 
 def nav_bkg_server(stat, date):
     urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/BRDC/"
-    #ftp://igs-ftp.bkg.bund.de/IGS/BRDC/2024/082/BRDC00WRD_S_20240820000_01D_MN.rnx.gz
-    rnxname = "BRDC00WRD_S_" + conv.dt2str(date, '%Y%j') + "0000_01D_MN.rnx.gz"
+    # ftp://igs-ftp.bkg.bund.de/IGS/BRDC/2024/082/BRDC00WRD_S_20240820000_01D_MN.rnx.gz
+    rnxname = "BRDC00WRD_S_" + conv.dt2str(date, "%Y%j") + "0000_01D_MN.rnx.gz"
     url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
     return url
 
 
 def nav_rob_server_legacy(stat, date):
     urlserver = "ftp://epncb.oma.be/pub/obs/BRDC/"
-    #ftp://epncb.oma.be/pub/obs/BRDC/2018/BRDC00GOP_R_20180010000_01D_MN.rnx.gz
-    rnxname = "BRDC00GOP_R_" + conv.dt2str(date, '%Y%j') + "0000_01D_MN.rnx.gz"
+    # ftp://epncb.oma.be/pub/obs/BRDC/2018/BRDC00GOP_R_20180010000_01D_MN.rnx.gz
+    rnxname = "BRDC00GOP_R_" + conv.dt2str(date, "%Y%j") + "0000_01D_MN.rnx.gz"
     url = os.path.join(urlserver, str(date.year), rnxname)
     return url
 
@@ -103,14 +107,14 @@ def nav_rob_server_legacy(stat, date):
 def rgp_ign_smn_server_legacy(stat, date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), 'data_30', rnxname)
+    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), "data_30", rnxname)
     return url
 
 
 def rgp_ign_mlv_server(stat, date):
     urlserver = "ftp://rgpdata.ensg.eu/pub/data/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), 'data_30', rnxname)
+    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), "data_30", rnxname)
     return url
 
 
@@ -123,11 +127,13 @@ def rgp_ign_smn_1_hz_server_legacy(stat, date):
         date_session = date
         date_session = date_session.replace(hour=h)
 
-        log.info('%s session %s', date_session, h)
-        rnxname = conv.statname_dt2rinexname(stat.lower(), date_session,
-                                             session_a_instead_of_daily_session=1)
-        url = os.path.join(urlserver, str(date.year), conv.dt2doy(date),
-                           'data_1', rnxname)
+        log.info("%s session %s", date_session, h)
+        rnxname = conv.statname_dt2rinexname(
+            stat.lower(), date_session, session_a_instead_of_daily_session=1
+        )
+        url = os.path.join(
+            urlserver, str(date.year), conv.dt2doy(date), "data_1", rnxname
+        )
 
         urls.append(url)
 
@@ -135,9 +141,9 @@ def rgp_ign_smn_1_hz_server_legacy(stat, date):
 
 
 def unavco_server_legacy(stat, date):
-    urlserver = 'ftp://data-out.unavco.org/pub/rinex'
+    urlserver = "ftp://data-out.unavco.org/pub/rinex"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, 'obs', str(date.year), conv.dt2doy(date), rnxname)
+    url = os.path.join(urlserver, "obs", str(date.year), conv.dt2doy(date), rnxname)
     return url
 
 
@@ -147,54 +153,60 @@ def renag_server(stat, date):
     url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
     return url
 
-def uwiseismic_server(stat, date, user='', passwd=''):
+
+def uwiseismic_server(stat, date, user="", passwd=""):
     urlserver = "ftp://www2.uwiseismic.com/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, 'rinex', str(date.year), conv.dt2doy(date), rnxname)
+    url = os.path.join(urlserver, "rinex", str(date.year), conv.dt2doy(date), rnxname)
     return url, user, passwd
 
 
-def orpheon_server_legacy(stat, date, user='', passwd=''):
+def orpheon_server_legacy(stat, date, user="", passwd=""):
     urlserver = "ftp://renag.unice.fr/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
     url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
     return url, user, passwd
 
 
-def ovsg_server_legacy(stat, date, user='', passwd=''):
+def ovsg_server_legacy(stat, date, user="", passwd=""):
     if dt.datetime(2009, 1, 1) <= date <= dt.datetime(2014, 2, 10):
-        urlserver = "http://webobs.ovsg.univ-ag.fr/rawdata/GPS-GPSDATA.backtemp_20140210/"
+        urlserver = (
+            "http://webobs.ovsg.univ-ag.fr/rawdata/GPS-GPSDATA.backtemp_20140210/"
+        )
     else:
         urlserver = "http://webobs.ovsg.univ-ag.fr/rawdata/GPS/GPSDATA/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), 'rinex', rnxname)
+    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), "rinex", rnxname)
     return url, user, passwd
 
 
 def geoaus_server_legacy(stat, date):
-    """ Geosciences Australia
-        ex : ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/ """
+    """Geosciences Australia
+    ex : ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/"""
     urlserver = "ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), date.strftime('%y') + conv.dt2doy(date), rnxname)
+    url = os.path.join(
+        urlserver, str(date.year), date.strftime("%y") + conv.dt2doy(date), rnxname
+    )
     return url
 
 
 def sonel_server_legacy(stat, date):
-    """ex : ftp://ftp.sonel.org/gps/data/2015/001/ """
-    urlserver = 'ftp://ftp.sonel.org/gps/data/'
+    """ex : ftp://ftp.sonel.org/gps/data/2015/001/"""
+    urlserver = "ftp://ftp.sonel.org/gps/data/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
     url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
     return url
+
 
 def ens_fr_legacy(stat, date):
-    urlserver = 'ftp://gnss.ens.fr/pub/public/crl/GPS/rinex/'
+    urlserver = "ftp://gnss.ens.fr/pub/public/crl/GPS/rinex/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
     url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
     return url
 
 
-def effective_save_dir(parent_archive_dir, stat, date, archtype='stat'):
+def effective_save_dir(parent_archive_dir, stat, date, archtype="stat"):
     """
     INTERNAL_FUNCTION
 
@@ -206,37 +218,50 @@ def effective_save_dir(parent_archive_dir, stat, date, archtype='stat'):
         year/stat
         week/dow
         OR only '/' for a dirty saving in the parent folder
-        ... etc ... """
-    if archtype == '/':
+        ... etc ..."""
+    if archtype == "/":
         return parent_archive_dir
 
     if len(archtype) > 0 and archtype[0] == "/":
-        log.warn("The archive type description starts with a /, remove it to avoid an error")
+        log.warn(
+            "The archive type description starts with a /, remove it to avoid an error"
+        )
 
     out_save_dir = parent_archive_dir
-    fff = archtype.split('/')
+    fff = archtype.split("/")
     year = str(date.year)
     doy = conv.dt2doy(date)
-    _,_ = year,doy ## simply to remove the unused linter warning...
+    _, _ = year, doy  ## simply to remove the unused linter warning...
     week, dow = conv.dt2gpstime(date)
     for f in fff:
         out_save_dir = os.path.join(out_save_dir, eval(f))
     return out_save_dir
 
+
 def multi_downloader_rinex(**kwargs):
-    log.warn('multi_downloader_rinex is a legacy alias for the newly renamed function download_gnss_rinex')
+    log.warn(
+        "multi_downloader_rinex is a legacy alias for the newly renamed function download_gnss_rinex"
+    )
     return download_gnss_rinex_legacy(**kwargs)
 
 
-def download_gnss_rinex_legacy(statdico, archive_dir, startdate, enddate,
-                               archtype='stat', parallel_download=4,
-                               sorted_mode=False, user='', passwd='',
-                               filter_ftp_crawler=True,
-                               path_ftp_crawled_files_save=None,
-                               path_ftp_crawled_files_load=None,
-                               quiet_mode=False,
-                               final_archive_for_sup_check=None,
-                               force=False):
+def download_gnss_rinex_legacy(
+    statdico,
+    archive_dir,
+    startdate,
+    enddate,
+    archtype="stat",
+    parallel_download=4,
+    sorted_mode=False,
+    user="",
+    passwd="",
+    filter_ftp_crawler=True,
+    path_ftp_crawled_files_save=None,
+    path_ftp_crawled_files_load=None,
+    quiet_mode=False,
+    final_archive_for_sup_check=None,
+    force=False,
+):
     """
     Parameters
     ----------
@@ -267,7 +292,7 @@ def download_gnss_rinex_legacy(statdico, archive_dir, startdate, enddate,
             sonel
 
             geoaus (Geosciences Australia)
-            
+
             ens_fr
 
             nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
@@ -305,34 +330,34 @@ def download_gnss_rinex_legacy(statdico, archive_dir, startdate, enddate,
 
     user & passwd : str
         user & password for a locked server
-        
+
     filter_ftp_crawler : bool
         use an improved FTP crawler to find which files actually exist
-        to accelerate the download. If path_ftp_crawled_files_load is given, 
+        to accelerate the download. If path_ftp_crawled_files_load is given,
         use this loaded list.
-        
+
     path_ftp_crawled_files_save : str
-        will save at the given path (directory+filname) in a pickle containing 
+        will save at the given path (directory+filname) in a pickle containing
         the list of the existing RINEXs found on the server by the FTP crawler.
-        It allows to use this list directly if one face a timeout during 
+        It allows to use this list directly if one face a timeout during
         the download part.
         NB for advanced users: the pickle is a tuple (urllist,savedirlist)
-    
+
     path_ftp_crawled_files_load : str
         load and use the list of the existing RINEXs found on the FTP server,
-        generated by a previous run of the FTP crawler (called by 
+        generated by a previous run of the FTP crawler (called by
         download_gnss_rinex or directly by ftp_files_crawler).
         overrides an internal call of ftp_files_crawler.
-        
+
     quiet_mode : bool
-        List the available RINEXs without downloading them. 
+        List the available RINEXs without downloading them.
         Useful only if path_ftp_crawled_files_save is given
-        
+
     final_archive_for_sup_check : str
         The final archive path or a file containing the archived RINEXs in
-        their final destination. 
+        their final destination.
         useful if the final archive is different from archive_dir
-        
+
     force : bool
         Force the download even if the file already exists locally
 
@@ -343,16 +368,16 @@ def download_gnss_rinex_legacy(statdico, archive_dir, startdate, enddate,
 
     savedir_list : list of str
         list of downloaded products paths
-        
+
     Minimal exemple
     ---------------
-        >>> statdic = dict()  
-        >>> statdic['igs_cddis'] = ['ZIMM']  
-        >>> archive_dir = '/home/USER/test_dl_rnx'  
+        >>> statdic = dict()
+        >>> statdic['igs_cddis'] = ['ZIMM']
+        >>> archive_dir = '/home/USER/test_dl_rnx'
         >>> startdate = dt.datetime(2000,1,1)
         >>> enddate = dt.datetime(2000,1,31)
         >>> geodezyx.operational.download_gnss_rinex_legacy(statdic, archive_dir, startdate, enddate)
-    
+
     """
 
     curdate = startdate
@@ -366,50 +391,52 @@ def download_gnss_rinex_legacy(statdico, archive_dir, startdate, enddate,
 
     while curdate <= enddate:
         for netwk, statlis in list(statdico.items()):
-            
+
             if not utils.is_iterable(statlis):
-                log.warning("%s given in the 'statdico' should be a list and it is not.",
-                            statlis)
-            
+                log.warning(
+                    "%s given in the 'statdico' should be a list and it is not.",
+                    statlis,
+                )
+
             for stat in statlis:
                 stat = stat.lower()
                 mode1hz = False
                 secure_ftp = False
 
-                if netwk in ('igs_cddis','igs'):
+                if netwk in ("igs_cddis", "igs"):
                     secure_ftp = True
                     url = igs_cddis_server_legacy(stat, curdate, user, passwd)
-                elif netwk == 'igs_sopac':
+                elif netwk == "igs_sopac":
                     url = igs_sopac_server_legacy(stat, curdate)
-                elif netwk == 'rgp':
+                elif netwk == "rgp":
                     url = rgp_ign_smn_server_legacy(stat, curdate)
-                elif netwk == 'rgp_mlv':
+                elif netwk == "rgp_mlv":
                     url = rgp_ign_mlv_server(stat, curdate)
-                elif netwk == 'rgp_1Hz':
+                elif netwk == "rgp_1Hz":
                     urls = rgp_ign_smn_1_hz_server_legacy(stat, curdate)
                     mode1hz = True
-                elif netwk == 'renag':
+                elif netwk == "renag":
                     url = renag_server(stat, curdate)
-                elif netwk == 'orpheon':
+                elif netwk == "orpheon":
                     url = orpheon_server_legacy(stat, curdate, user, passwd)
-                elif netwk == 'uwiseismic':
+                elif netwk == "uwiseismic":
                     url = uwiseismic_server(stat, curdate, user, passwd)
-                elif netwk == 'ovsg':
+                elif netwk == "ovsg":
                     url = ovsg_server_legacy(stat, curdate, user, passwd)
-                elif netwk == 'unavco':
+                elif netwk == "unavco":
                     url = unavco_server_legacy(stat, curdate)
-                elif netwk == 'sonel':
+                elif netwk == "sonel":
                     url = sonel_server_legacy(stat, curdate)
-                elif netwk == 'geoaus':
+                elif netwk == "geoaus":
                     url = geoaus_server_legacy(stat, curdate)
-                elif netwk in ('nav', 'brdc'):
+                elif netwk in ("nav", "brdc"):
                     url = nav_rob_server_legacy(stat, curdate)
-                elif netwk in ('nav_rt', 'brdc_rt'):
+                elif netwk in ("nav_rt", "brdc_rt"):
                     url = nav_bkg_server(stat, curdate)
-                elif netwk == 'ens_fr':
+                elif netwk == "ens_fr":
                     url = ens_fr_legacy(stat, curdate)
                 else:
-                    log.warning('unkwn server dic in the dico, skip ...')
+                    log.warning("unkwn server dic in the dico, skip ...")
                     continue
 
                 savedir = effective_save_dir(archive_dir, stat, curdate, archtype)
@@ -423,14 +450,16 @@ def download_gnss_rinex_legacy(statdico, archive_dir, startdate, enddate,
 
         curdate = curdate + dt.timedelta(days=1)
 
-    #savedirlist = [x for (y,x) in sorted(zip(urllist,savedirlist))]
-    #urllist     = sorted(urllist)
+    # savedirlist = [x for (y,x) in sorted(zip(urllist,savedirlist))]
+    # urllist     = sorted(urllist)
 
     try:
         urllist, savedirlist = utils.sort_binom_list(urllist, savedirlist)
     except TypeError as err:
         log.error("unable to sort the URL and the save directory")
-        log.error("TIP: you maybe asked for servers with & without password in the same statdico")
+        log.error(
+            "TIP: you maybe asked for servers with & without password in the same statdico"
+        )
         raise err
 
     log.info(" ... done")
@@ -438,21 +467,19 @@ def download_gnss_rinex_legacy(statdico, archive_dir, startdate, enddate,
 
     ### Use of the advanced FTP Crawler
     if filter_ftp_crawler:
-        if path_ftp_crawled_files_load: ## if the previous files are loaded
+        if path_ftp_crawled_files_load:  ## if the previous files are loaded
             urllist, savedirlist = utils.pickle_loader(path_ftp_crawled_files_load)
-        else: ## regular case
-            urllist, savedirlist = dlutils.ftp_files_crawler_legacy(urllist,
-                                                                    savedirlist,
-                                                                    secure_ftp=secure_ftp)
+        else:  ## regular case
+            urllist, savedirlist = dlutils.ftp_files_crawler_legacy(
+                urllist, savedirlist, secure_ftp=secure_ftp
+            )
             if path_ftp_crawled_files_save:
                 savetup = (urllist, savedirlist)
-                utils.pickle_saver(savetup,
-                                   full_path=path_ftp_crawled_files_save)
+                utils.pickle_saver(savetup, full_path=path_ftp_crawled_files_save)
 
     ##### Check if the rinex file already exists in the final archive
     if final_archive_for_sup_check and not force:
-        Files_final_arch = utils.find_recursive(final_archive_for_sup_check,
-                                                "*")
+        Files_final_arch = utils.find_recursive(final_archive_for_sup_check, "*")
         Files_final_arch_basename = [os.path.basename(e) for e in Files_final_arch]
 
         urllist_new, savedirlist_new = [], []
@@ -465,25 +492,27 @@ def download_gnss_rinex_legacy(statdico, archive_dir, startdate, enddate,
         urllist, savedirlist = urllist_new, savedirlist_new
 
     if not quiet_mode:
-        if not secure_ftp: ### all the servers except CDDIS
+        if not secure_ftp:  ### all the servers except CDDIS
             if sorted_mode:
-                _ = [pool.apply_async(dlutils.downloader, args=(u, sd, force)) for u, sd in zip(urllist, savedirlist)]
+                _ = [
+                    pool.apply_async(dlutils.downloader, args=(u, sd, force))
+                    for u, sd in zip(urllist, savedirlist)
+                ]
             else:
                 forcelis = [force] * len(urllist)
-                _ = pool.map(dlutils.downloader_wrap, list(zip(urllist,
-                                                               savedirlist,
-                                                               forcelis)))
-        else: ## secure FTP i.e. CDDIS
-            ftp_obj , _ = dlutils.ftp_objt_create(secure_ftp_inp=secure_ftp,
-                                                  host=url[0].split("/")[2],
-                                                  user=url[1],
-                                                  passwd=url[2])
-            
-            for iurl,isavedir in zip(urllist,savedirlist):
-                localpath , bool_dl = dlutils.ftp_downloader(ftp_obj,
-                                                             iurl[0],
-                                                             isavedir)
-                
+                _ = pool.map(
+                    dlutils.downloader_wrap, list(zip(urllist, savedirlist, forcelis))
+                )
+        else:  ## secure FTP i.e. CDDIS
+            ftp_obj, _ = dlutils.ftp_objt_create(
+                secure_ftp_inp=secure_ftp,
+                host=url[0].split("/")[2],
+                user=url[1],
+                passwd=url[2],
+            )
+
+            for iurl, isavedir in zip(urllist, savedirlist):
+                localpath, bool_dl = dlutils.ftp_downloader(ftp_obj, iurl[0], isavedir)
 
     localfiles_lis = []
     skiped_url = 0
@@ -506,7 +535,7 @@ def download_gnss_rinex_legacy(statdico, archive_dir, startdate, enddate,
 
     pool.close()
     if skiped_url > 0:
-        log.debug(str(skiped_url) + ' returned url skipped because of an Exception')
+        log.debug(str(skiped_url) + " returned url skipped because of an Exception")
     return localfiles_lis, savedirlist
 
 
@@ -532,8 +561,9 @@ def rnx_long2short_name(longname_filepath_in):
     return os.path.join(longname_dirname, shortname_basename)
 
 
-def multi_archiver_rinex(rinex_lis, parent_archive_dir, archtype='stat',
-                         move=True, force_mv_or_cp=False):
+def multi_archiver_rinex(
+    rinex_lis, parent_archive_dir, archtype="stat", move=True, force_mv_or_cp=False
+):
     """
     from rinex_lis, a list of rinex (generated by the function
     multi_finder_rinex)
@@ -558,7 +588,7 @@ def multi_archiver_rinex(rinex_lis, parent_archive_dir, archtype='stat',
 
     mv_cnt = 0
     skip_cnt = 0
-    log.info('RINEXs as input : %s', len(rinex_lis))
+    log.info("RINEXs as input : %s", len(rinex_lis))
 
     if move:
         mv_fct = utils.move
@@ -579,7 +609,7 @@ def multi_archiver_rinex(rinex_lis, parent_archive_dir, archtype='stat',
             mv_fct(rnx, savedir)
             mv_cnt += 1
 
-    log.info('RINEXs skiped :' + str(skip_cnt) + ' (because already exist)')
-    log.info('RINEXs moved  :' + str(mv_cnt))
+    log.info("RINEXs skiped :" + str(skip_cnt) + " (because already exist)")
+    log.info("RINEXs moved  :" + str(mv_cnt))
 
     return None

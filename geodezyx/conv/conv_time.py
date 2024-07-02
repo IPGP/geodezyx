@@ -423,7 +423,13 @@ def ymdhms_vectors2dt(yrlis,mlis,dlis,hlis,minlis,slis):
     """
     dtlis = []
     for yr,m,d,minn,h,s in zip(yrlis,mlis,dlis,hlis,minlis,slis):
-        dtlis.append(dt.datetime(int(yr),int(m),int(d),int(h),int(minn),int(s)))
+        try:
+            dtlis.append(dt.datetime(int(yr),int(m),int(d),int(h),int(minn),int(s)))
+        except ValueError as e:
+            log.error("bad values %s %s %s %s %s %s",int(yr),int(m),int(d),int(h),int(minn),int(s))
+            raise e 
+            
+            
     return np.array(dtlis)
 
 def doy2dt(year,days,hours=0,minutes=0,seconds=0):
@@ -1427,7 +1433,7 @@ def rinexname2dt(rinexpath):
         return dt_out 
     
     ##### SHORT rinex name
-    elif re.search(conv_rinex.rinex_regex(),rinexname):
+    elif re.search(conv_rinex.rinex_regex(),rinexname.lower()): ##EUREF are upper case...
         alphabet = list(string.ascii_lowercase)
 
         doy  = int(rinexname[4:7])

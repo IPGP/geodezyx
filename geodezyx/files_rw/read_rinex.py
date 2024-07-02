@@ -67,7 +67,7 @@ def read_rinex2_obs(rnx_in,
         rnx_wrk = rnx_in
         pass
 
-    LINES = utils.open_readlines_smart(rnx_wrk)
+    LINES = utils.open_readlines_smart(rnx_wrk,verbose=False)
     EPOCHS = operational.rinex_read_epoch(rnx_wrk,out_index=True)
     if type(rnx_in) is str or type(rnx_in) is pathlib.Path:
         filename = os.path.basename(rnx_in)
@@ -126,6 +126,7 @@ def read_rinex2_obs(rnx_in,
         DFepoch = pd.read_fwf(B,header=None,widths=columns_width)  
         DFepoch.columns = ObsAllList
         DFepoch["prn"] = Sats_split
+        DFepoch["prn"] = DFepoch["prn"].str.strip()
         DFepoch["sys"] = DFepoch["prn"].str[0]
         DFepoch["epoch"] = epoch
         
