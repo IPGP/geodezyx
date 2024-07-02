@@ -164,6 +164,7 @@ PyPi project: https://pypi.org/project/geodezyx
                       'chardet',
                       'collection',
                       'colorlog',
+                      'gsw',
                       #'ftplib',
                       'hatanaka',
                       #'kepler.py',

@@ -14,7 +14,7 @@ It is based on the work of Yann Terden Tranchant
 
 import numpy as np
 import pandas as pd
-import seawater
+import gsw
 import xarray as xr
 from scipy.signal import butter, filtfilt
 
@@ -170,6 +170,7 @@ def extract_profile(ds, x, y, method = 'linear', zbottom = None):
     return ds
 
 def compute_dens_profile(profile):
+    import seawater
     ds = profile
     if np.ndim(ds.theta) != 2:
         print(f'Bad dataset dimension : {np.ndim(hycom.theta)}. The function must be applied on a profile.')
