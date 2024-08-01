@@ -302,6 +302,10 @@ def read_gipsyx_tdp(filein):
     for line in open(filein):
 
         fields = line.split()
+        
+        if len(fields) == 0:
+            continue
+
         attribs = fields[-1].split(".") 
 
         if attribs[1] == 'Station' and attribs[-1] == 'Z':
@@ -330,6 +334,7 @@ def read_gipsyx_tdp(filein):
             Tz = np.nan
 
     tsout.meta_set(filein,stat=STAT)
+    tsout.sort()
 
     return tsout
 

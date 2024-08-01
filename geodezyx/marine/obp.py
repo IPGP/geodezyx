@@ -14,8 +14,8 @@ It is based on the work of Yann Terden Tranchant
 
 import numpy as np
 import pandas as pd
-import gsw
 import xarray as xr
+# import gsw
 from scipy.signal import butter, filtfilt
 
 

@@ -34,7 +34,6 @@ import sys
 import tempfile
 import time
 import uuid
-import chardet 
 
 
 import numpy as np
@@ -395,6 +394,9 @@ def detect_encoding(file_path):
     ------
     https://www.geeksforgeeks.org/detect-encoding-of-a-text-file-with-python/
     """
+    
+    import chardet 
+
     with open(file_path, 'rb') as file:
         detector = chardet.universaldetector.UniversalDetector()
         for line in file:
