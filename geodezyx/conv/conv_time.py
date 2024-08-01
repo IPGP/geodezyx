@@ -1714,8 +1714,8 @@ def statname_dt2rinexname_long(statname,
     elts_period_freq = [e for e in  (file_period,data_freq,data_type) if e]
     period_freq_ok = "_" + "_".join(elts_period_freq)
     
-    out_rnx_name = statname_ok + data_source_ok + date_ok + period_freq_ok + '.' + format_compression
-    out_rnx_name = out_rnx_name.upper()
+    out_rnx_name = statname_ok + data_source_ok + date_ok + period_freq_ok
+    out_rnx_name = out_rnx_name.upper() + '.' + format_compression
 
     return out_rnx_name
     
