@@ -79,7 +79,7 @@ def dl_prods_pride_pppar(prod_parent_dir, date_list, prod_ac_name):
     dl_prods_fct = operational.download_gnss_products
 
     ######### ORBITS CLOCKS ETC...
-    for data_center in ("ign", "whu"):  ##'whu'
+    for data_center in ("ign","whu"):  ##'whu'  
         if "MGX" in prod_ac_name:
             mgex = True
         else:
@@ -108,7 +108,7 @@ def dl_prods_pride_pppar(prod_parent_dir, date_list, prod_ac_name):
             log.info("enougth products found: %s", len(prods))
             break
 
-        return prods
+    return prods
 
 
 def pride_pppar_runner_mono(
@@ -219,7 +219,7 @@ def pride_pppar_runner_mono(
         find_prod_epoch_ini = srt
 
         smart_ultra = True
-        if "ULT" in prod_ac_name and smart_ultra:
+        if ("ULT" in prod_ac_name or "NRT" in prod_ac_name) and smart_ultra:
             delta_epoch_max = 23
         else:
             delta_epoch_max = 0
@@ -228,7 +228,7 @@ def pride_pppar_runner_mono(
 
         #### this loop is to find former ULTRA if the latest is missing
         # it works for ULTRA only, for other latencies, delta_epoch_max = 0
-        for i_d_epo in range(delta_epoch_max):
+        for i_d_epo in range(delta_epoch_max + 1):
 
             find_prod_epoch = find_prod_epoch_ini - dt.timedelta(seconds=3600 * i_d_epo)
 

@@ -35,18 +35,19 @@ def _rnx_obs_rgx(stat, date):
     return rnx2rgx, rnx3rgx
 
 
-def _rnx_nav_rgx(stat, date):
+def _rnx_nav_rgx(stat, date, sys=".", data_source="."):
     rnx2rgx = conv.statname_dt2rinexname(stat.lower(), date, rnxtype=".*")
     rnx3rgx = conv.statname_dt2rinexname_long(
         stat,
         date,
         country="...",
-        data_source=".",
+        data_source=data_source,
         file_period="01D",
         data_freq="",
-        data_type=".N",
+        data_type=sys + "N",
         format_compression=".*",
     )
+    
     return rnx2rgx, rnx3rgx
 
 
@@ -156,6 +157,22 @@ def euref_server(stat, date):
 
     return urldic
 
+def nav_bkg_server(stat, date):
+    urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/BRDC/"
+    # ftp://igs-ftp.bkg.bund.de/IGS/BRDC/2024/082/BRDC00WRD_S_20240820000_01D_MN.rnx.gz
+    
+    ### generate regex
+    rnx2rgx, rnx3rgx = _rnx_nav_rgx(stat, date, sys="M", data_source="S") ### NAV RNX HERE !!!
+
+    ### generate urls
+    urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
+    rnx3url = os.path.join(urldir, rnx3rgx)
+    
+    urldic = dict()
+    urldic[3] = rnx3url
+
+    return urldic
+
 
 ############ not adapted yet after april 2024 mods
 def igs_cddis_nav_server_legacy(stat, date):
@@ -167,13 +184,6 @@ def igs_cddis_nav_server_legacy(stat, date):
     )
     return url
 
-
-def nav_bkg_server_legacy(stat, date):
-    urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/BRDC/"
-    # ftp://igs-ftp.bkg.bund.de/IGS/BRDC/2024/082/BRDC00WRD_S_20240820000_01D_MN.rnx.gz
-    rnxname = "BRDC00WRD_S_" + conv.dt2str(date, "%Y%j") + "0000_01D_MN.rnx.gz"
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
-    return url
 
 
 def rgp_ign_smn_server_legacy(stat, date):
@@ -289,6 +299,8 @@ def _server_select(datacenter, site, curdate):
         urldic = euref_server(site, curdate)
     elif datacenter in ("nav", "brdc"):
         urldic = nav_rob_server(site, curdate)
+    elif datacenter in ('nav_rt', 'brdc_rt'):
+        urldic = nav_bkg_server(site, curdate)
     # elif datacenter == 'rgp':
     #     urldic = rgp_ign_smn_server_legacy(site, curdate)
     # elif datacenter == 'rgp_mlv':
@@ -308,8 +320,6 @@ def _server_select(datacenter, site, curdate):
     #     urldic = unavco_server_legacy(site, curdate)
     # elif datacenter == 'geoaus':
     #     urldic = geoaus_server_legacy(site, curdate)
-    # elif datacenter in ('nav_rt', 'brdc_rt'):
-    #     urldic = nav_bkg_server(site, curdate)
     # elif datacenter == 'ens_fr':
     #     urldic = ens_fr_legacy(site, curdate)
     else:
@@ -705,14 +715,14 @@ def download_gnss_rinex(
         )
 
     if not quiet_mode and len(table_dl) > 0:
-        ftp_download_frontend(
-            table_dl["url_true"].values,
-            table_dl["outdir"].values,
-            parallel_download=parallel_download,
-            secure_ftp=secure_ftp,
-            user=user,
-            passwd=passwd,
-            force=force,
-        )
+        dlutils.ftp_download_frontend(
+                table_dl["url_true"].values,
+                table_dl["outdir"].values,
+                parallel_download=parallel_download,
+                secure_ftp=secure_ftp,
+                user=user,
+                passwd=passwd,
+                force=force,
+                )
 
     return None
