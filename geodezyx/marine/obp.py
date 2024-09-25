@@ -51,7 +51,8 @@ def butter_highpass(cutoff, fs, order=5):
     """
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
-    b, a = signal.butter(order, normal_cutoff, btype='high', analog=False, output='ba')
+    out_butter = signal.butter(order, normal_cutoff, btype='high', analog=False, output='ba')
+    b, a = out_butter[0], out_butter[1]
     return b, a
 
 def butter_lowpass(cutoff, fs, order=5):
@@ -76,7 +77,8 @@ def butter_lowpass(cutoff, fs, order=5):
     """
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
-    b, a = signal.butter(order, normal_cutoff, btype='low', analog=False, output='ba')
+    out_butter = signal.butter(order, normal_cutoff, btype='low', analog=False, output='ba')
+    b, a = out_butter[0], out_butter[1]
 
     return b, a
 
@@ -509,6 +511,20 @@ def compute_phibot(profile, ssh=None, integration='forward', rho=10.35, remove_m
     -------
     pandas.DataFrame
         The computed phibot values.
+
+    Notes
+    -----
+    phibot = Ocean hydrostatic bottom pressure anomaly
+    https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html
+    https://cmr.earthdata.nasa.gov/search/concepts/V2146301108-POCLOUD.html
+
+
+    PHIBOT		Bottom Pressure Pot. Anomaly (p/rhonil, m^2/s^2)
+                To convert to m, divide by g (g=9.81 m/s^2)
+		PHIBOT is the anomaly relative to Depth * rhonil * g
+		The absolute bottom pressure in Pa is:
+		Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)
+    http://apdrc.soest.hawaii.edu/doc/Readme_ecco2_cube92
     """
     if isinstance(ssh, type(None)):
         ssh = profile.ssh
@@ -726,19 +742,24 @@ def fit_model(data, t_fit, model='log_linear', offset_last=True, maxfev=1000, pn
         ind_min = np.argmin(fit)
         fit[ind_min:] = fit[ind_min]
     elif model == 'log_linear':
-        popt, pcov = optimize.curve_fit(log_linear, t_num, data.values, maxfev=maxfev)
+        out_opti = optimize.curve_fit(log_linear, t_num, data.values, maxfev=maxfev)
+        popt, pcov = out_opti[0], out_opti[1]
         fit = log_linear(t_fit_num, *popt)
     elif model == 'log':
-        popt, pcov = optimize.curve_fit(log, t_num, data.values, maxfev=maxfev)
+        out_opti = optimize.curve_fit(log, t_num, data.values, maxfev=maxfev)
+        popt, pcov = out_opti[0], out_opti[1]
         fit = log(t_fit_num, *popt)
     elif model == 'exp':
-        popt, pcov = optimize.curve_fit(exp, t_num, data.values, maxfev=maxfev)
+        out_opti = optimize.curve_fit(exp, t_num, data.values, maxfev=maxfev)
+        popt, pcov = out_opti[0], out_opti[1]
         fit = exp(t_fit_num, *popt)
     elif model == 'exp_linear':
-        popt, pcov = optimize.curve_fit(exp_linear, t_num, data.values, maxfev=maxfev)
+        out_opti = optimize.curve_fit(exp_linear, t_num, data.values, maxfev=maxfev)
+        popt, pcov = out_opti[0], out_opti[1]
         fit = exp_linear(t_fit_num, *popt)
     elif model == 'linear':
-        popt, pcov = optimize.curve_fit(linear, t_num, data.values, maxfev=maxfev)
+        out_opti = optimize.curve_fit(linear, t_num, data.values, maxfev=maxfev)
+        popt, pcov = out_opti[0], out_opti[1]
         fit = linear(t_fit_num, *popt)
     else:
         print(f'Invalid model type : {model}. Must be log_linear, log, exp, linear, exp_linear, or poly.')
