@@ -35,13 +35,15 @@ p = '/home/psakicki/aaa_FOURBI/RINEXexemple'
 rnx_path_list = utils.find_recursive(p,'*HOUE*gz')
 
 rnx_path_list = ["/home/psakicki/aaa_FOURBI/FOAG00REU_R_20240762000_01H_01S_MO.crx.gz"]
+rnx_path_list = ["/home/psakicki/aaa_FOURBI/RINEXexemple/ABMF00GLP_R_20242250000_01D_30S_MO.crx.gz",
+                 "/home/psakicki/aaa_FOURBI/RINEXexemple/ABPO00MDG_R_20242250000_01D_30S_MO.crx.gz"]
 
 parent_dir = "/home/psakicki/aaa_FOURBI/pride_pppar_run"
 
 prod_parent_dir = '/home/psakicki/aaa_FOURBI/pride_pppar_prods'  
 #prod_ac_name = "GRG0OPSFIN"
 #prod_ac_name = "COD0MGXFIN"
-prod_ac_name = "WUM0MGXULT" 
+prod_ac_name = "WUM0MGXRAP" 
 tmp_dir = parent_dir + "/tmp" 
 cfg_dir = parent_dir + "/cfg" 
 run_dir = parent_dir + "/run" 

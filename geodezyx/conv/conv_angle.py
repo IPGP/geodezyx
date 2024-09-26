@@ -262,6 +262,7 @@ def angle2equivalent_earth_parallel(angle_in,latitude_in,
     elif angtype == "rad":
         latitude_rad = latitude_in 
     elif angtype == "mas":
+        log.warn("double check the mas coversion for security")
         latitude_rad =  ( 2*np.pi * (86400. * 10**3) ) /  latitude_in ### a verifier ....
     
     

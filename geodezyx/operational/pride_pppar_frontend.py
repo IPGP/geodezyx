@@ -7,6 +7,7 @@ Created on Wed Feb 14 18:01:49 2024
 """
 
 import datetime as dt
+
 #### Import the logger
 import logging
 import multiprocessing as mp
@@ -18,6 +19,7 @@ import hatanaka
 
 from geodezyx import conv
 from geodezyx import files_rw
+
 #### Import star style
 from geodezyx import operational
 from geodezyx import utils
@@ -26,6 +28,20 @@ log = logging.getLogger(__name__)
 
 
 def run_command(command):
+    """
+    Runs a shell command and captures both stdout and stderr.
+
+    Parameters
+    ----------
+    command : str
+        The shell command to be executed.
+
+    Notes
+    -----
+    This function uses subprocess.Popen to run the command in a new process.
+    It continuously reads and prints stdout and stderr until the process finishes.
+    The function prints the return code of the process once it completes.
+    """
     # Run the command and capture both stdout and stderr
     process = subprocess.Popen(
         [command],
@@ -54,6 +70,27 @@ def run_command(command):
 
 
 def dl_brdc_pride_pppar(prod_parent_dir, date_list):
+    """
+    Downloads BRDC (Broadcast Ephemeris) files for PRIDE PPPAR from a given directory and date list.
+
+    Parameters
+    ----------
+    prod_parent_dir : str
+        The parent directory where the products are stored.
+    date_list : list of datetime
+        The list of dates for which the BRDC files are to be downloaded.
+
+    Returns
+    -------
+    list
+        A list of downloaded BRDC files.
+
+    Notes
+    -----
+    This function first rounds the dates in the date list to the nearest day and removes duplicates.
+    It then downloads the BRDC files for each unique date using the operational.download_gnss_rinex function.
+    The downloaded files are appended to a list which is returned at the end.
+    """
     brdc_lis = []
     ######### BROADCAST
     date_list_uniq = [conv.round_dt(d, "1D", "floor") for d in date_list]
@@ -75,6 +112,29 @@ def dl_brdc_pride_pppar(prod_parent_dir, date_list):
 
 
 def dl_prods_pride_pppar(prod_parent_dir, date_list, prod_ac_name):
+    """
+    Downloads GNSS products for PRIDE PPPAR from a given directory and date list.
+
+    Parameters
+    ----------
+    prod_parent_dir : str
+        The parent directory where the products are stored.
+    date_list : iterable of datetime
+        The list of dates for which the GNSS products are to be downloaded.
+    prod_ac_name : str
+        The name of the analysis center providing the products.
+
+    Returns
+    -------
+    list
+        A list of downloaded GNSS products.
+
+    Notes
+    -----
+    This function downloads various GNSS products such as orbits, clocks, biases, etc.
+    It iterates over specified data centers and attempts to download the products.
+    If at least 5 products are found, the function stops further downloads.
+    """
 
     dl_prods_fct = operational.download_gnss_products
 
@@ -108,7 +168,7 @@ def dl_prods_pride_pppar(prod_parent_dir, date_list, prod_ac_name):
             log.info("enougth products found: %s", len(prods))
             break
 
-        return prods
+    return prods
 
 
 def pride_pppar_runner_mono(
@@ -127,7 +187,44 @@ def pride_pppar_runner_mono(
     dl_prods=False,
     default_fallback=False,
 ):
+    """
+    Runs the PRIDE PPPAR process for a single RINEX file.
 
+    Parameters
+    ----------
+    rnx_path : str
+        The path to the RINEX file.
+    cfg_template_path : str
+        The path to the configuration template file.
+    prod_ac_name : str
+        The name of the analysis center providing the products.
+    prod_parent_dir : str
+        The parent directory where the products are stored.
+    tmp_dir : str
+        The temporary directory for intermediate files.
+    cfg_dir : str
+        The directory for configuration files.
+    run_dir : str
+        The directory where the run results will be stored.
+    cfg_prefix : str, optional
+        The prefix for the configuration file name. Default is "pride_pppar_cfg_1a".
+    mode : str, optional
+        The mode for the PRIDE PPPAR process. Default is "K".
+    options_dic : dict, optional
+        Additional options for the PRIDE PPPAR process. Default is an empty dictionary.
+    bin_dir : str, optional
+        The directory where the PRIDE PPPAR binaries are located. Default is None.
+    force : bool, optional
+        If True, forces the process to run even if logs already exist. Default is False.
+    dl_prods : bool, optional
+        If True, downloads the necessary products. Default is False.
+    default_fallback : bool, optional
+        If True, uses default values if products are not found. Default is False.
+
+    Returns
+    -------
+    None
+    """
     if not bin_dir:
         bin_dir = os.path.join(os.environ["HOME"], ".PRIDE_PPPAR_BIN")
 
@@ -178,6 +275,14 @@ def pride_pppar_runner_mono(
     ########### MOVE BRDC IN TMP (so pdp3 can handle it)
     ## we must also rename the BKG brdc to fake it as the IGS one
     def _find_unzip_brdc():
+        """
+        Finds and unzips the BRDC file for the given day.
+
+        Returns
+        -------
+        tuple
+            The path to the unzipped BRDC file and the original BRDC file.
+        """
         brdc_pattern = "*BRDC00WRD_S_" + year + doy + "*gz"
         prod_dir_year_doy = os.path.join(prod_parent_dir, year, doy)
         brdc_lis = utils.find_recursive(prod_dir_year_doy, brdc_pattern.strip())
@@ -208,8 +313,17 @@ def pride_pppar_runner_mono(
     ########### GENERATE CONFIG FILE
     def _find_unzip_prod(prod):
         """
-        find the right products for a given day, unzip it in the temp dir,
-        return the path of the 2 files
+        Finds and unzips the right products for a given day.
+
+        Parameters
+        ----------
+        prod : str
+            The type of product to find and unzip.
+
+        Returns
+        -------
+        tuple
+            The path to the unzipped product file and the original product file.
         """
         if "ULT" in prod_ac_name:
             add_hourly_file = True
@@ -219,7 +333,7 @@ def pride_pppar_runner_mono(
         find_prod_epoch_ini = srt
 
         smart_ultra = True
-        if "ULT" in prod_ac_name and smart_ultra:
+        if ("ULT" in prod_ac_name or "NRT" in prod_ac_name) and smart_ultra:
             delta_epoch_max = 23
         else:
             delta_epoch_max = 0
@@ -228,7 +342,7 @@ def pride_pppar_runner_mono(
 
         #### this loop is to find former ULTRA if the latest is missing
         # it works for ULTRA only, for other latencies, delta_epoch_max = 0
-        for i_d_epo in range(delta_epoch_max):
+        for i_d_epo in range(delta_epoch_max + 1):
 
             find_prod_epoch = find_prod_epoch_ini - dt.timedelta(seconds=3600 * i_d_epo)
 
@@ -280,7 +394,16 @@ def pride_pppar_runner_mono(
 
     def _change_value_in_cfg(lines_file_inp, key_inp, val_inp):
         """
-        change the values in the readed with realine configfile
+        Changes the values in the configuration file.
+
+        Parameters
+        ----------
+        lines_file_inp : list of str
+            The lines of the configuration file.
+        key_inp : str
+            The key to change.
+        val_inp : str
+            The new value for the key.
         """
         for il, l in enumerate(lines_file_inp):
             f = l.split("=")
@@ -345,68 +468,3 @@ def pride_pppar_runner_mono(
     os.rename(run_dir_ope, run_dir_fin)
 
     return None
-
-
-def pride_pppar_mp_wrap(kwargs_inp):
-    try:
-        out_runner = operational.pride_pppar_runner_mono(**kwargs_inp)
-        return out_runner
-    except Exception as e:
-        log.error(
-            "%s raised, RINEX is skiped: %s", type(e).__name__, kwargs_inp["rnx_path"]
-        )
-        raise e
-
-
-def pride_pppar_runner(
-    rnx_path_list,
-    cfg_template_path,
-    prod_ac_name,
-    prod_parent_dir,
-    tmp_dir,
-    cfg_dir,
-    run_dir,
-    multi_process=1,
-    cfg_prefix="pride_pppar_cfg_1a",
-    mode="K",
-    options_dic={},
-    bin_dir=None,
-    force=False,
-    dl_prods=False,
-):
-
-    date_list = [
-        conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list
-    ]
-
-    _ = dl_prods_pride_pppar(prod_parent_dir, date_list, prod_ac_name)
-    _ = dl_brdc_pride_pppar(prod_parent_dir, date_list)
-
-    kwargs_list = []
-    for rnx_path in rnx_path_list:
-        kwargs = {
-            "rnx_path": rnx_path,
-            "cfg_template_path": cfg_template_path,
-            "prod_ac_name": prod_ac_name,
-            "prod_parent_dir": prod_parent_dir,
-            "tmp_dir": tmp_dir,
-            "cfg_dir": cfg_dir,
-            "run_dir": run_dir,
-            "cfg_prefix": cfg_prefix,
-            "bin_dir": bin_dir,
-            "mode": mode,
-            "options_dic": options_dic,
-            "force": force,
-            "dl_prods": dl_prods,
-        }
-
-        kwargs_list.append(kwargs)
-
-    if multi_process > 1:
-        log.info("multiprocessing: %d cores used", multi_process)
-
-    Pool = mp.Pool(processes=multi_process)
-    results_raw = [
-        Pool.apply_async(pride_pppar_mp_wrap, args=(x,)) for x in kwargs_list
-    ]
-    results = [e.get() for e in results_raw]

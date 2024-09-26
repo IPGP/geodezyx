@@ -16,17 +16,12 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 import ftplib
 #### Import the logger
 import logging
-# import glob
-# import itertools
-# import multiprocessing as mp
 import os
 import pathlib
-# import re
 import shutil
 import urllib
 ########## BEGIN IMPORT ##########
 #### External modules
-# import datetime as dt
 from ftplib import FTP, FTP_TLS
 from multiprocessing.dummy import Pool as ThreadPool
 
@@ -36,11 +31,6 @@ import pandas as pd
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
-
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 log = logging.getLogger(__name__)
 
 

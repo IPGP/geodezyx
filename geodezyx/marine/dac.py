@@ -69,7 +69,8 @@ def dac_extract(dac_files_lis,
                 epoch_min=dt.datetime(1980, 1, 1),
                 epoch_max=dt.datetime(2099, 1, 1)):
     """
-    Extracts DAC (Doppler-derived Atmospheric Correction) values from a list of DAC files for a given location and date range.
+    Extracts DAC (Doppler-derived Atmospheric Correction) values from a list
+    of DAC files for a given location and date range.
 
     Parameters
     ----------
@@ -91,6 +92,10 @@ def dac_extract(dac_files_lis,
         the DAC values.
     """
 
+    if not dac_files_lis:
+        log.error("No DAC files provided.")
+        raise FileNotFoundError("No DAC files provided.")
+
     ds_stk = []
     dac_stk = []
 
@@ -99,7 +104,6 @@ def dac_extract(dac_files_lis,
         ds = xr.open_dataset(f)
         bn = os.path.basename(f)
         # tname = conv.jjulCNES2dt(bn[8:13]) + dt.timedelta(hours = int(bn[14:16]))
-
         dac_out = obp.interp_xy(ds, x=mlon, y=mlat).dac
 
         dac_val = float(dac_out.values)
