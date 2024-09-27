@@ -130,6 +130,14 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
   * GeodeZYX is now "virtualenv-ready", i.e. stand-alone based on the ``setup.py`` required modules.
   * a ``full`` version is set, for advanced installation.
 
+## Credits
+`geodezyx` implements several methods, algorithms... initially developed by others authors.
+We thank them for their work and their indirect contribution to this toolbox. Namely:
+  * Goudarzi, M.A., Cocard, M. & Santerre, R. EPC: Matlab software to estimate Euler pole parameters. 
+GPS Solut 18, 153–162 (2014). https://doi.org/10.1007/s10291-013-0354-4
+  * Yann-Treden Tranchant, LIENSs La Rochelle, for the ocean circulation model and OBP processing functions.
+  * Jean-Mathieu Nocquet and its PYACS toolbox for the plate motion model functions. https://github.com/JMNocquet/pyacs36
+
 ## Licence
 
 GNU Lesser General Public License, Version 3, 29 June 2007
