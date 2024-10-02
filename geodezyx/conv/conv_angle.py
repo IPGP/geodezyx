@@ -20,10 +20,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 
 #### Import the logger
 import logging
-# import scipy
-# from pyorbital import astronomy
 import re
-import warnings
 
 ########## BEGIN IMPORT ##########
 #### External modules
@@ -33,11 +30,6 @@ import numpy as np
 from geodezyx import utils
 
 log = logging.getLogger(__name__)
-
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 ##########  END IMPORT  ##########
 
@@ -51,49 +43,78 @@ log = logging.getLogger(__name__)
 #                 |___/                                                            
 
 ### Angle conversion
-
-def deg_dec2dms(deg_in,only_dm=False):
-    warnings.warn("deg_dec2dms is depreciated, use degdec2dms instead",DeprecationWarning)
-    return degdec2dms(deg_in,only_dm)
-
 def degdec2dms(deg_in,only_dm=False):
     """
-    Angle conversion
+    Angle representation conversion
     
     Convert :
     Decimal Degree => Degree Minute Seconds
+    
+    See also dms_num2str for Numeric => String representation conversion
         
     Parameters
     ----------
     deg_in : float or iterable of floats
         Decimal degrees
 
+    only_dm : bool
+        True to get the output string as a Degree Minute Angle only
+
     Returns
     -------
-    deg , minu , sec : numpy.array of float
+    deg , minu , sec : np.array of float
         3 arrays for Degrees, Minutes, Seconds
         
     """
     deg              = np.floor(deg_in)
     decimal_part     = deg_in - deg 
     decimal_part_sec = decimal_part * 3600
-    minu             = np.floor_divide(decimal_part_sec,60)
+    minu             = np.floor_divide(decimal_part_sec, 60)
     sec              = decimal_part_sec - minu * 60
-    sec              = np.round(sec,8)
-    if not only_dm:
-        return deg , minu , sec
-    else:
+    sec              = np.round(sec,10) # ROUNDING is it necessary?
+    
+    if only_dm:
         return deg , minu + sec * (1./60.)
+    else:
+        return deg , minu , sec
 
 
+def dms_num2str(dms_inp, decimal_fmt='7.4f'):
+    """
+    Angle representation conversion
 
-def dms2dec_num(deg,minn=0,sec=0):
-    warnings.warn("dms2dec_num is depreciated, use dms2degdec_num instead",DeprecationWarning)
-    return dms2degdec_num(deg,minn,sec)
+    Convert :
+    numeric Degree-Minute-Second (DMS) angle => a string representation.
+
+    Parameters
+    ----------
+    dms_inp : list or tuple of floats
+        A list or tuple containing the DMS values. The first element is degrees,
+        the second element (optional) is minutes, and the third element (optional) is seconds.
+    decimal_fmt : str, optional
+        The format for the seconds part of the DMS string. Default is '7.4f'.
+
+    Returns
+    -------
+    out_str : str
+        A string representation of the DMS angle in the format "DD°MM'SS.SSSS\"".
+        If only degrees and minutes are provided, the format will be "DD°MM'".
+    """
+
+    out_str = "{:02d}".format(int(dms_inp[0])) + "°"
+    
+    decimal_fmt_use = "{:0" + decimal_fmt + "}"
+
+    if len(dms_inp) == 3:
+        out_str = out_str + "{:02d}".format(int(dms_inp[1])) + "'" + decimal_fmt_use.format(dms_inp[2]) + '"'
+    elif len(dms_inp) == 2:
+        out_str = out_str + decimal_fmt_use.format(dms_inp[1]) + "'"
+
+    return out_str
 
 def dms2degdec_num(deg,minn=0,sec=0):
     """
-    Angle conversion
+    Angle representation conversion
     
     Convert :
     Degree Minute Second `float` Angle => decimal Degree `float` Angle
@@ -114,13 +135,9 @@ def dms2degdec_num(deg,minn=0,sec=0):
     return deg + sig*minn * (1./60.) +  sig*sec * (1./3600.)
 
 
-def dms2dec(dms_str , onlyDM=False):
-    warnings.warn("dms2dec is depreciated, use dms2degdec_str instead",DeprecationWarning)
-    return dms2degdec_str(dms_str , onlyDM)
-
-def dms2degdec_str(dms_str , onlyDM=False):
+def dms2degdec_str(dms_str, only_dm=False):
     """   
-    Angle conversion
+    Angle representation conversion
 
     Convert :
     Degree Minute Second `string` Angle => decimal Degree `float` Angle
@@ -136,7 +153,7 @@ def dms2degdec_str(dms_str , onlyDM=False):
         e.g.
         "2°20'35.09"E"
 
-    onlyDM : bool
+    only_dm : bool
         True if the string is only a Degree Minute Angle 
         e.g.
         "40°52.0931'N"
@@ -149,7 +166,7 @@ def dms2degdec_str(dms_str , onlyDM=False):
         
     """
     
-    if not onlyDM:
+    if not only_dm:
         log.warning("DMS mode not well implemented yet !!! ")
     
     
@@ -178,7 +195,7 @@ def dms2degdec_str(dms_str , onlyDM=False):
 
     deg = lis[0]
     minu = lis[1]
-    if onlyDM:
+    if only_dm:
         sec = 0.
     else:
         try:
@@ -236,7 +253,10 @@ def angle2equivalent_earth_radius(angle_in,angtype='deg',
     elif angtype == "rad":
         equiv_out = (angle_in * earth_circum) / (np.pi *2)
     elif angtype == "mas":
-        equiv_out = (angle_in * 10**-3 * earth_circum) / (86400.)  
+        equiv_out = (angle_in * 10**-3 * earth_circum) / 86400.
+    else:
+        log.error("bad angtype %s",angtype)
+        return None
         
     return equiv_out
 
@@ -246,7 +266,7 @@ def angle2equivalent_earth_parallel(angle_in,latitude_in,
                                     angtype='deg',
                                     earth_radius=6371008.8):
     """
-    Quick and simple function which gives the equivalent distance on a 
+    Quick and simple function which gives the equivalent distance on an
     Earth parallel circle of an angle
     
     Useful to determine metric varaitions in longitude 
@@ -262,8 +282,11 @@ def angle2equivalent_earth_parallel(angle_in,latitude_in,
     elif angtype == "rad":
         latitude_rad = latitude_in 
     elif angtype == "mas":
-        log.warn("double check the mas coversion for security")
+        log.warning("double check the mas coversion for security")
         latitude_rad =  ( 2*np.pi * (86400. * 10**3) ) /  latitude_in ### a verifier ....
+    else:
+        log.error("bad angtype %s",angtype)
+        return None
     
     
     parallel_radius = np.cos(latitude_rad) * earth_radius
@@ -278,11 +301,11 @@ def anglesfromvects(xa,ya,xb,yb,angtype='deg'):
     angle can be : "deg", "rad"
     
     """
-    A = np.array([xa,ya])
-    B = np.array([xb,yb])
+    a = np.array([xa,ya])
+    b = np.array([xb,yb])
 
-    ps = np.inner(A,B)
-    a = np.arccos( ps / (np.linalg.norm(A) * np.linalg.norm(B)) )
+    ps = np.inner(a,b)
+    a = np.arccos( ps / (np.linalg.norm(a) * np.linalg.norm(b)) )
 
     if angtype == 'deg':
         return np.rad2deg(a)
@@ -291,12 +314,12 @@ def anglesfromvects(xa,ya,xb,yb,angtype='deg'):
     else:
         log.error('ERR : angfromvects : mauvais angtype')
 
-def angle_interpolation_quick(A,B,w):
+def angle_interpolation_quick(a,b,w):
     """
     Determine the interpolation between angle A & B
     by conversion to the cartesian space
     the parameter w € [0,1] define the interpoled angle C(w)
-    where C(w=0) = A  &  C(w=1) = B
+    where c(w=0) = a  &  c(w=1) = b
 
     References
     ----------
@@ -304,11 +327,11 @@ def angle_interpolation_quick(A,B,w):
     
     """
 
-    CS = (1-w)*np.cos(A) + w*np.cos(B)
-    SN = (1-w)*np.sin(A) + w*np.sin(B)
-    C = np.atan2(SN,CS)
+    cs = (1-w)*np.cos(a) + w*np.cos(b)
+    sn = (1-w)*np.sin(a) + w*np.sin(b)
+    c = np.arctan2(sn,cs)
 
-    return C
+    return c
 
 def angle_from_3_pts(p1,p2,p3):
     """
