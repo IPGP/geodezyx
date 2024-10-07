@@ -20,6 +20,8 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 
 #### Import the logger
 import logging
+# import scipy
+# from pyorbital import astronomy
 import re
 
 ########## BEGIN IMPORT ##########
@@ -30,6 +32,11 @@ import numpy as np
 from geodezyx import utils
 
 log = logging.getLogger(__name__)
+
+#### Import star style
+# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx.externlib import *         # Import the external modules
+# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 ##########  END IMPORT  ##########
 
@@ -79,7 +86,7 @@ def degdec2dms(deg_in,only_dm=False):
         return deg , minu , sec
 
 
-def dms_num2str(dms_inp, decimal_fmt='7.4f'):
+def dms_num2str(dms_inp, decimal_fmt='6.3f'):
     """
     Angle representation conversion
 
