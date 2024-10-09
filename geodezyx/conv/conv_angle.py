@@ -73,12 +73,19 @@ def degdec2dms(deg_in,only_dm=False):
         3 arrays for Degrees, Minutes, Seconds
         
     """
-    deg              = np.floor(deg_in)
-    decimal_part     = deg_in - deg 
+    # bring everything to positive 
+    sign             = np.sign(deg_in)
+    deg_pos          = np.abs(deg_in)
+    
+    deg              = np.floor(deg_pos)
+    decimal_part     = deg_pos - deg 
     decimal_part_sec = decimal_part * 3600
     minu             = np.floor_divide(decimal_part_sec, 60)
     sec              = decimal_part_sec - minu * 60
     sec              = np.round(sec,10) # ROUNDING is it necessary?
+    
+    # back to the right hemisphere
+    deg              = sign * deg
     
     if only_dm:
         return deg , minu + sec * (1./60.)
