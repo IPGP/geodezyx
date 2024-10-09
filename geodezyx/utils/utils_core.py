@@ -505,22 +505,23 @@ def split_string_after_n_chars_at_space(s, n):
     str
         The modified string with newlines inserted.
     """
-    words = s.split()
     result = []
-    current_line = []
+    lines = s.split("\n")
+    for line in lines:
+        words = line.split()
+        current_line = []
 
-    for word in words:
-        if sum(len(w) for w in current_line) + len(current_line) + len(word) > n:
+        for word in words:
+            if sum(len(w) for w in current_line) + len(current_line) + len(word) > n:
+                result.append(' '.join(current_line))
+                current_line = [word]
+            else:
+                current_line.append(word)
+
+        if current_line:
             result.append(' '.join(current_line))
-            current_line = [word]
-        else:
-            current_line.append(word)
-
-    if current_line:
-        result.append(' '.join(current_line))
 
     return '\n'.join(result)
-
 
 def add_symbol_to_new_lines(s, symbol='·'):
     """
