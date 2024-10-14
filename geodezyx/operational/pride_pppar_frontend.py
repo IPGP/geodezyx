@@ -470,3 +470,59 @@ def pride_pppar_runner_mono(
     os.rename(run_dir_ope, run_dir_fin)
 
     return None
+    
+def pride_pppar_mp_wrap(kwargs_inp):
+    try:
+        out_runner = operational.pride_pppar_runner_mono(**kwargs_inp)
+        return out_runner 
+    except Exception as e:
+        log.error("%s raised, RINEX is skiped: %s",
+                  type(e).__name__,
+                  kwargs_inp['rnx_path'])
+        raise e
+
+def pride_pppar_runner(rnx_path_list,
+                       cfg_template_path,
+                       prod_ac_name,
+                       prod_parent_dir,
+                       tmp_dir,
+                       cfg_dir,
+                       run_dir,
+                       multi_process = 1,
+                       cfg_prefix='pride_pppar_cfg_1a',
+                       mode='K',
+                       options_dic={},
+                       bin_dir=None,
+                       force=False,
+                       dl_prods=False):
+    
+    date_list = [conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list] 
+    
+    _ = dl_prods_pride_pppar(prod_parent_dir,date_list,prod_ac_name)
+    _ = dl_brdc_pride_pppar(prod_parent_dir, date_list)
+        
+    kwargs_list = []
+    for rnx_path in rnx_path_list:
+        kwargs = {'rnx_path' :rnx_path,
+                  'cfg_template_path' : cfg_template_path,
+                  'prod_ac_name' : prod_ac_name,
+                  'prod_parent_dir' : prod_parent_dir,
+                  'tmp_dir' : tmp_dir,
+                  'cfg_dir' : cfg_dir,
+                  'run_dir' : run_dir,
+                  'cfg_prefix' : cfg_prefix,
+                  'bin_dir' : bin_dir,
+                  'mode' : mode,
+                  'options_dic' : options_dic,
+                  'force': force,
+                  'dl_prods' : dl_prods}
+                  
+        kwargs_list.append(kwargs)
+            
+    if multi_process > 1:
+        log.info("multiprocessing: %d cores used",multi_process)
+    
+    Pool = mp.Pool(processes=multi_process)
+    results_raw = [Pool.apply_async(pride_pppar_mp_wrap, args=(x,)) for x in kwargs_list]
+    results     = [e.get() for e in results_raw]
+
