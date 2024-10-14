@@ -234,6 +234,7 @@ if __name__ == "__main__":
     #rnx_list = utils.find_recursive('/scratch/calcgnss/temp_stuffs/2402_tests_PF_pride/','*crx*')
     rnx_list = utils.find_recursive('/vol/ovsg/acqui/GPSOVSG/rinex/2024'  ,'*psa1*d.Z*')
     rnx_list = utils.find_recursive('/home/ovsgnss/050_DATA_GNSS/baiededix/OVPF/2024','*borg*d.Z*')
+    rnx_list = utils.find_recursive('/home/ovsgnss/090_TEMP_STUFFS/autorino_workflow_tests/handle','*BORG*')
     multi_process = 14
     
     kwargs_list = []
