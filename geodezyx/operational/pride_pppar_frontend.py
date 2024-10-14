@@ -335,8 +335,10 @@ def pride_pppar_runner_mono(
         smart_ultra = True
         if ("ULT" in prod_ac_name or "NRT" in prod_ac_name) and smart_ultra:
             delta_epoch_max = 23
+            delta_epoch_max = 24 # => [0 ... 23]
         else:
             delta_epoch_max = 0
+            delta_epoch_max = 1 # => [0]
 
         find_prods = operational.find_IGS_products_files
 
