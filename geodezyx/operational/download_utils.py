@@ -321,6 +321,98 @@ def ftp_objt_create(
     It then creates a list of FTP objects for multiple downloads.
     If a directory is specified, it changes the current working directory of the main FTP object to that directory.
     """
+<<<<<<< HEAD
+=======
+    ### create a DataFrame based on the urllist and savedirlist lists
+    DF = pd.concat((pd.DataFrame(urllist),pd.DataFrame(savedirlist)),axis=1)
+    DF_orig = DF.copy()
+    
+    ### rename the columns
+    if DF.shape[1] == 4:
+        loginftp = True 
+        DF.columns = ('url','user','pass','savedir')
+    else:
+        loginftp = False
+        DF.columns = ('url','savedir')
+        DF['user'] = "anonymous"
+        DF['pass'] = ""
+        
+    ### Do the correct split for the URLs
+    DF = DF.sort_values('url')
+    DF["url"]      = DF['url'].str.replace("ftp://","")
+    DF["dirname"]  = DF["url"].apply(os.path.dirname)
+    DF["basename"] = DF["url"].apply(os.path.basename)
+    DF["root"]     = [e.split("/")[0] for e in DF["dirname"].values]
+    DF["dir"]      = [e1.replace(e2,"")[1:] for (e1,e2) in zip(DF["dirname"],
+                                                                   DF["root"])]
+    DF["bool"] = False
+    
+    #### Initialisation of the 1st variables for the loop
+    prev_row_ftpobj = DF.iloc[0]
+    prev_row_cwd    = DF.iloc[0]
+    FTP_files_list = []
+    count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
+    #### Initialisation of the FTP object
+    try:
+        FTPobj = ftplib.FTP(prev_row_ftpobj.root,
+                            prev_row_ftpobj.user, 
+                            prev_row_ftpobj['pass'])
+    except ftplib.error_perm as e:
+        log.error('unable to create an FTP instance, %s',e.__name__)
+        return [],[]
+    except TimeoutError as e:
+        log.error('unable to create an FTP instance, %s',e.__name__)
+        return [],[]
+
+    for irow,row in DF.iterrows():
+        count_loop += 1
+        
+        ####### we recreate a new FTP object if the root URL is not the same
+        if row.root != prev_row_ftpobj.root or count_loop > 20:
+    
+            FTPobj = ftplib.FTP(row.root,
+                                row.user, 
+                                row['pass'])
+            
+            prev_row_ftpobj = row
+            count_loop = 0
+            
+        ####### we recreate a new file list if the date path is not the same        
+        if (prev_row_cwd.dir != row.dir) or irow == 0:
+            log.info("chdir " + row.dirname)
+            FTPobj.cwd("/")
+    
+            try: #### we try to change for the right folder
+                FTPobj.cwd(row.dir)
+            except: #### If not possible, then no file in the list
+                FTP_files_list = []
+              
+            FTP_files_list = _ftp_dir_list_files(FTPobj)
+            prev_row_cwd = row 
+               
+        ####### we check if the files is avaiable
+        if row.basename in FTP_files_list:
+            DF.loc[irow,'bool'] = True
+            log.info(row.basename + " found on server :)")
+        else:
+            DF.loc[irow,'bool'] = False
+            log.warning(row.basename  + " not found on server :(")
+    
+    
+    DFgood = DF[DF['bool']].copy()
+    
+    DFgood['url'] = 'ftp://' + DFgood['url']  
+    
+    ### generate the outputs
+    if loginftp:
+        urllist_out = list(zip(DFgood.url,DFgood.user,DFgood['pass']))
+    else:
+        urllist_out = list(DFgood.url)    
+    
+    savedirlist_out = list(DFgood.savedir)
+    
+    return urllist_out, savedirlist_out
+>>>>>>> dev_1a
 
     # define the right constructor
     if secure_ftp_inp:
