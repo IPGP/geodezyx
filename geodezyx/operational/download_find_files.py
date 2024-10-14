@@ -243,7 +243,8 @@ def find_IGS_products_files(parent_dir, File_type, ACs, date_start, date_end=Non
                             regex_old_naming=True,
                             regex_new_naming=True,
                             regex_igs_tfcc_naming=True,
-                            add_weekly_file=False):
+                            add_weekly_file=False,
+                            add_hourly_file=False):
     """
     Find all product files in a parent folder which correspond to file type(s),
     AC(s) and date(s)
@@ -300,6 +301,10 @@ def find_IGS_products_files(parent_dir, File_type, ACs, date_start, date_end=Non
         Also handle the weekly file (day 7)
         Implemented only for the  old naming format (for the moment)
 
+    add_hourly_file : bool
+        Also handle ultra rapide hourly file
+        Implemented only for the new naming format
+
     Returns
     -------
     Files_select_cumul_list : list
@@ -330,15 +335,24 @@ def find_IGS_products_files(parent_dir, File_type, ACs, date_start, date_end=Non
         date_end_ok = conv.gpstime2dt(*date_end)
     # generate time period with a while loop
     Dates_list = [date_start_ok]
+    
+    if add_hourly_file:
+        deltat = dt.timedelta(seconds=3600)
+    else:
+        deltat = dt.timedelta(days=1)
+    
     while Dates_list[-1] < date_end_ok:
-        Dates_list.append(Dates_list[-1] + dt.timedelta(days=1))
+        Dates_list.append(Dates_list[-1] + deltat)
 
     # manage weekly file
     Dates_wwwwd_list = [utils.join_improved(
         "", *conv.dt2gpstime(d, outputtype=str)) for d in Dates_list]
-    Dates_yyyyddd_list = [utils.join_improved(
-        "", *reversed(conv.dt2doy_year(d))) for d in Dates_list]
-
+    
+    if add_hourly_file:
+        Dates_yyyyddd_list = [utils.join_improved("", *reversed(conv.dt2doy_year(d)),str(d.hour).zfill(2)) for d in Dates_list]
+    else:
+        Dates_yyyyddd_list = [utils.join_improved("", *reversed(conv.dt2doy_year(d))) for d in Dates_list]
+        
     ###### File type / ACs management ##############
 
     if not utils.is_iterable(File_type):
