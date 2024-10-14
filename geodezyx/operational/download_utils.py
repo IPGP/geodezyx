@@ -259,10 +259,17 @@ def ftp_files_crawler(urllist,savedirlist):
     FTP_files_list = []
     count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
     #### Initialisation of the FTP object
-    FTPobj = ftplib.FTP(prev_row_ftpobj.root,
-                        prev_row_ftpobj.user, 
-                        prev_row_ftpobj['pass'])
-    
+    try:
+        FTPobj = ftplib.FTP(prev_row_ftpobj.root,
+                            prev_row_ftpobj.user, 
+                            prev_row_ftpobj['pass'])
+    except ftplib.error_perm as e:
+        log.error('unable to create an FTP instance, %s',e.__name__)
+        return [],[]
+    except TimeoutError as e:
+        log.error('unable to create an FTP instance, %s',e.__name__)
+        return [],[]
+
     for irow,row in DF.iterrows():
         count_loop += 1
         
