@@ -497,30 +497,32 @@ def doy2dt(year,days,hours=0,minutes=0,seconds=0):
 def dt2doy(dtin,outputtype=str):  
     return outputtype(dtin.strftime('%j'))
 
-def dt2doy_year(dtin,outputtype=str):
+def dt2doy_year(dtin, outputtype=str):
     """
     Time representation conversion
-    
+
     Python's datetime => Day of Year, Year
 
     Parameters
     ----------
     dtin : datetime or list/numpy.array of datetime
         Datetime(s). Can handle several datetimes in an iterable.
-        
+
+    outputtype : type, optional
+        The type to which the output should be converted. Default is str.
+
     Returns
     -------
-    doy , year : tuple of int
-        Day of Year and Year
-        Is a list of tuple if the input is an iterable
+    tuple or list of tuple
+        If dtin is a single datetime, returns a tuple (doy, year) where doy is the day of the year and year is the year.
+        If dtin is an iterable, returns a list of such tuples.
     """
-    
+
     if utils.is_iterable(dtin):
-        typ=utils.get_type_smart(dtin)
-        return typ([dt2doy_year(e,outputtype=outputtype) for e in dtin])
-        
+        typ = utils.get_type_smart(dtin)
+        return typ([dt2doy_year(e, outputtype=outputtype) for e in dtin])
     else:
-        return outputtype(dtin.strftime('%j')),outputtype(dtin.strftime('%Y'))
+        return outputtype(dtin.strftime('%j')), outputtype(dtin.strftime('%Y'))
     
 def dt2fracday(dtin):
     """

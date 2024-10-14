@@ -54,7 +54,7 @@ def run_command(command):
     # Continuously read and print stdout and stderr
     while True:
         # Read a line from stdout
-        stdout_line = process.stdout.read1().decode("utf-8")
+        stdout_line = process.stdout.read().decode("utf-8")
         if stdout_line:
             print("STDOUT: %s", stdout_line.strip())
         # Read a line from stderr
@@ -77,7 +77,7 @@ def dl_brdc_pride_pppar(prod_parent_dir, date_list):
     ----------
     prod_parent_dir : str
         The parent directory where the products are stored.
-    date_list : list of datetime
+    date_list : iterable of datetime
         The list of dates for which the BRDC files are to be downloaded.
 
     Returns
@@ -104,7 +104,7 @@ def dl_brdc_pride_pppar(prod_parent_dir, date_list):
             date,
             archtype="year/doy",
             parallel_download=1,
-            force=True,
+            force=False,
         )
         brdc_lis.append(brdc)
 
@@ -301,12 +301,14 @@ def pride_pppar_runner_mono(
             brdc_out = files_rw.unzip_gz_Z(brdc_ori, out_gzip_dir=tmp_dir_use)
         else:
             #### this should never happend
+            brdc_ori = None
+            brdc_out = None
             pass
 
         ##### FINAL STEP: rename the brdc
         if brdc_out:
             brdc_out_new = brdc_out.replace("BRDC00WRD_S_", "BRDC00IGS_R_")
-            brdc_out = os.rename(brdc_out, brdc_out_new)
+            os.rename(brdc_out, brdc_out_new)
 
         return brdc_out, brdc_ori
 
@@ -334,13 +336,13 @@ def pride_pppar_runner_mono(
 
         smart_ultra = True
         if ("ULT" in prod_ac_name or "NRT" in prod_ac_name) and smart_ultra:
-            delta_epoch_max = 23
             delta_epoch_max = 24 # => [0 ... 23]
         else:
-            delta_epoch_max = 0
             delta_epoch_max = 1 # => [0]
 
         find_prods = operational.find_IGS_products_files
+
+        prod_lis = []
 
         #### this loop is to find former ULTRA if the latest is missing
         # it works for ULTRA only, for other latencies, delta_epoch_max = 0
@@ -349,7 +351,7 @@ def pride_pppar_runner_mono(
             find_prod_epoch = find_prod_epoch_ini - dt.timedelta(seconds=3600 * i_d_epo)
 
             if smart_ultra and i_d_epo > 0:
-                log.warn(
+                log.warning(
                     "no prods found for epoch %s, but we try %i hour before (%s)",
                     find_prod_epoch_ini,
                     i_d_epo,
@@ -390,6 +392,8 @@ def pride_pppar_runner_mono(
             prod_out = files_rw.unzip_gz_Z(prod_ori, out_gzip_dir=tmp_dir_use)
         else:
             #### this should never happend
+            prod_out = None
+            prod_ori = None
             pass
 
         return prod_out, prod_ori
@@ -407,8 +411,8 @@ def pride_pppar_runner_mono(
         val_inp : str
             The new value for the key.
         """
-        for il, l in enumerate(lines_file_inp):
-            f = l.split("=")
+        for il, lin in enumerate(lines_file_inp):
+            f = lin.split("=")
             if key_inp in f[0]:
                 f[1] = val_inp
                 lines_file_inp[il] = "= ".join(f) + "\n"
@@ -522,7 +526,9 @@ def pride_pppar_runner(rnx_path_list,
     if multi_process > 1:
         log.info("multiprocessing: %d cores used",multi_process)
     
-    Pool = mp.Pool(processes=multi_process)
-    results_raw = [Pool.apply_async(pride_pppar_mp_wrap, args=(x,)) for x in kwargs_list]
+    pool = mp.Pool(processes=multi_process)
+    results_raw = [pool.apply_async(pride_pppar_mp_wrap, args=(x,)) for x in kwargs_list]
     results     = [e.get() for e in results_raw]
+
+    return results
 
