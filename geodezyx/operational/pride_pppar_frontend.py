@@ -398,7 +398,7 @@ def pride_pppar_runner_mono(
 
         return prod_out, prod_ori
 
-    def _change_value_in_cfg(lines_file_inp, key_inp, val_inp):
+    def _change_value_in_cfg(lines_file_inp, key_inp, val_inp, basename_on_val_inp=True):
         """
         Changes the values in the configuration file.
 
@@ -410,11 +410,23 @@ def pride_pppar_runner_mono(
             The key to change.
         val_inp : str
             The new value for the key.
+        basename_on_val_inp : bool, optional
+            If True, uses the basename of the value. Default is True.
         """
+
+        if not val_inp:
+            log.warning("no value for %s, keep the Default value", key_inp)
+            return None
+
+        if basename_on_val_inp:
+            val_use = os.path.basename(val_inp)
+        else:
+            val_use = val_inp
+
         for il, lin in enumerate(lines_file_inp):
             f = lin.split("=")
             if key_inp in f[0]:
-                f[1] = val_inp
+                f[1] = val_use
                 lines_file_inp[il] = "= ".join(f) + "\n"
 
     with open(cfg_template_path) as fil:
@@ -437,16 +449,13 @@ def pride_pppar_runner_mono(
         )
         return None
 
-    ## alias for basename
-    bnm = os.path.basename
-
     ### change the values in the config file template
-    _change_value_in_cfg(cfg_lines, "Product directory", tmp_dir_use)
-    _change_value_in_cfg(cfg_lines, "Satellite orbit", bnm(sp3_path))
-    _change_value_in_cfg(cfg_lines, "Satellite clock", bnm(clk_path))
-    _change_value_in_cfg(cfg_lines, "ERP", bnm(erp_path))
-    _change_value_in_cfg(cfg_lines, "Quaternions", bnm(obx_path))
-    _change_value_in_cfg(cfg_lines, "Code/phase bias", bnm(bia_path))
+    _change_value_in_cfg(cfg_lines, "Product directory", tmp_dir_use, basename_on_val_inp=False)
+    _change_value_in_cfg(cfg_lines, "Satellite orbit", sp3_path)
+    _change_value_in_cfg(cfg_lines, "Satellite clock", clk_path)
+    _change_value_in_cfg(cfg_lines, "ERP", erp_path)
+    _change_value_in_cfg(cfg_lines, "Quaternions", obx_path)
+    _change_value_in_cfg(cfg_lines, "Code/phase bias", bia_path)
 
     date_prod_midfix = year + doy + hourmin_str
 
