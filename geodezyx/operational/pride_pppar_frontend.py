@@ -309,6 +309,7 @@ def pride_pppar_runner_mono(
         if brdc_out:
             brdc_out_new = brdc_out.replace("BRDC00WRD_S_", "BRDC00IGS_R_")
             os.rename(brdc_out, brdc_out_new)
+            brdc_out = brdc_out_new
 
         return brdc_out, brdc_ori
 
