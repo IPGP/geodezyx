@@ -16,7 +16,6 @@ import shutil
 import subprocess
 
 import hatanaka
-from mercurial.dirstateutils.timestamp import timestamp
 
 from geodezyx import conv
 from geodezyx import files_rw
