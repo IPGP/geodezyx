@@ -295,9 +295,9 @@ def pride_pppar_runner_mono(
             brdc_unzip = None
             log.warning("no brdc. found")
         elif len(brdc_lis) > 1:
-            log.warning("several brdc found, keep the 1st one")
+            log.warning("several brdc found, keep the last one")
             log.warning(brdc_lis)
-            brdc_ori = brdc_lis[0]
+            brdc_ori = brdc_lis[-1]
             brdc_unzip = files_rw.unzip_gz_Z(brdc_ori, out_gzip_dir=tmp_dir_use)
         else:
             #### this should never happend
@@ -393,9 +393,9 @@ def pride_pppar_runner_mono(
             prod_out = None
             prod_ori = None
         elif len(prod_lis) > 1:
-            log.warning("several prod found, keep the 1st one")
+            log.warning("several prod found, keep the last one")
             log.warning(prod_lis)
-            prod_ori = prod_lis[0]
+            prod_ori = prod_lis[-1]
             prod_out = files_rw.unzip_gz_Z(prod_ori, out_gzip_dir=tmp_dir_use)
         else:
             #### this should never happend
