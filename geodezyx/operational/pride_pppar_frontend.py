@@ -16,6 +16,7 @@ import shutil
 import subprocess
 
 import hatanaka
+from mercurial.dirstateutils.timestamp import timestamp
 
 from geodezyx import conv
 from geodezyx import files_rw
@@ -246,9 +247,8 @@ def pride_pppar_runner_mono(
     run_dir_ope = os.path.join(run_dir_use, year, doy)
     run_dir_fin = run_dir_ope + "_" + hourmin_str
 
-    ########### CHECK IF
+    ########### CHECK IF LOGS ALREADY EXIST
     logs_existing = utils.find_recursive(run_dir_fin, "log*" + site.lower())
-
     if len(logs_existing) > 0 and not force:
         log.info("log exists for %s in %s, skip", rnx_file, run_dir_fin)
         return None
@@ -484,9 +484,20 @@ def pride_pppar_runner_mono(
 
     run_command(cmd)
 
-    if force and os.path.isdir(run_dir_fin):
-        shutil.rmtree(run_dir_fin)
+    # handle the cases where the run_dir_fin already exists
+    if os.path.isdir(run_dir_fin):
+        # the normal case where the run_dir_fin already exists and we want to force the deletion
+        if force:
+            shutil.rmtree(run_dir_fin)
+        # the strange case where the run_dir_fin already exists, we did not want to force the deletion,
+        # and then the process should have been skipped but we keep it anyway
+        else:
+            log.warning("run_dir_fin %s already exists (something weird happened)", run_dir_fin)
+            timstp = utils.get_timestamp()
+            run_dir_fin = run_dir_fin + "_" + timstp
+            log.warning("renaming the final dir as %s",  os.path.basename(run_dir_fin))
 
+    ### FINAL rename the run_dir_fin to its final name run_dir_fin (with hourmin)
     os.rename(run_dir_ope, run_dir_fin)
 
     return None
