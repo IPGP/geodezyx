@@ -267,7 +267,7 @@ def pride_pppar_runner_mono(
     else:
         rnx_path_use = rnx_path
 
-    ########### DOWNLOAD PRODUCTS
+    ########### DOWNLOAD PRODUCTS + BROADCASTS
     if dl_prods:
         _ = dl_prods_pride_pppar(prod_parent_dir, [srt], prod_ac_name)
         _ = dl_brdc_pride_pppar(prod_parent_dir, [srt])
@@ -289,27 +289,31 @@ def pride_pppar_runner_mono(
 
         if len(brdc_lis) == 1:  ## normal case
             brdc_ori = brdc_lis[0]
-            brdc_out = files_rw.unzip_gz_Z(brdc_ori, out_gzip_dir=tmp_dir_use)
+            brdc_unzip = files_rw.unzip_gz_Z(brdc_ori, out_gzip_dir=tmp_dir_use)
         elif len(brdc_lis) == 0:
             brdc_ori = None
-            brdc_out = None
+            brdc_unzip = None
             log.warning("no brdc. found")
         elif len(brdc_lis) > 1:
             log.warning("several brdc found, keep the 1st one")
             log.warning(brdc_lis)
             brdc_ori = brdc_lis[0]
-            brdc_out = files_rw.unzip_gz_Z(brdc_ori, out_gzip_dir=tmp_dir_use)
+            brdc_unzip = files_rw.unzip_gz_Z(brdc_ori, out_gzip_dir=tmp_dir_use)
         else:
             #### this should never happend
             brdc_ori = None
-            brdc_out = None
+            brdc_unzip = None
             pass
 
         ##### FINAL STEP: rename the brdc
-        if brdc_out:
-            brdc_out_new = brdc_out.replace("BRDC00WRD_S_", "BRDC00IGS_R_")
-            os.rename(brdc_out, brdc_out_new)
-            brdc_out = brdc_out_new
+        if brdc_unzip and os.path.isfile(brdc_unzip):
+            brdc_igs_nam = brdc_unzip.replace("BRDC00WRD_S_",
+                                              "BRDC00IGS_R_")
+            shutil.copy(brdc_unzip, brdc_igs_nam)
+            brdc_out = brdc_igs_nam
+        else:
+            brdc_out = brdc_unzip
+
 
         return brdc_out, brdc_ori
 
