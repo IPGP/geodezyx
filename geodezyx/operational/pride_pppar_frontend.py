@@ -306,10 +306,12 @@ def pride_pppar_runner_mono(
             pass
 
         ##### FINAL STEP: rename the brdc
-        if brdc_unzip and os.path.isfile(brdc_unzip):
-            brdc_igs_nam = brdc_unzip.replace("BRDC00WRD_S_",
-                                              "BRDC00IGS_R_")
-            shutil.copy(brdc_unzip, brdc_igs_nam)
+        brdc_igs_nam = brdc_unzip.replace("BRDC00WRD_S_",
+                                          "BRDC00IGS_R_")
+        if os.path.isfile(brdc_igs_nam):
+            brdc_out = brdc_igs_nam
+        elif brdc_unzip and os.path.isfile(brdc_unzip):
+            os.rename(brdc_unzip, brdc_igs_nam)
             brdc_out = brdc_igs_nam
         else:
             brdc_out = brdc_unzip
