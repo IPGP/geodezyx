@@ -547,10 +547,11 @@ def download_gnss_rinex(
 
             euref (EPN data center hosted at ROB)
 
-
-
             nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
             from the ROB server, using GOP files
+
+            nav_rt or brdc_rt as archive center allows to download *real time* nav files
+            from the BKG server
 
             ***** not reimplemented yet *****
             rgp (IGN's RGP St Mandé center)
@@ -570,9 +571,6 @@ def download_gnss_rinex(
             geoaus (Geosciences Australia)
 
             ens_fr
-
-            nav_rt or brdc_rt as archive center allows to download *real time* nav files
-            from the BKG server
             ***** not reimplemented yet *****
 
     archive_dir : str
