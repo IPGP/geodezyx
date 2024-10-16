@@ -19,8 +19,6 @@ import hatanaka
 
 from geodezyx import conv
 from geodezyx import files_rw
-
-#### Import star style
 from geodezyx import operational
 from geodezyx import utils
 
@@ -282,10 +280,12 @@ def pride_pppar_runner_mono(
         tuple
             The path to the unzipped BRDC file and the original BRDC file.
         """
+        # 1ST STEP: find the brdc
         brdc_pattern = "*BRDC00WRD_S_" + year + doy + "*gz"
         prod_dir_year_doy = os.path.join(prod_parent_dir, year, doy)
         brdc_lis = utils.find_recursive(prod_dir_year_doy, brdc_pattern.strip())
 
+        # 2ND STEP: unzip the brdc
         if len(brdc_lis) == 1:  ## normal case
             brdc_ori = brdc_lis[0]
             brdc_unzip = files_rw.unzip_gz_Z(brdc_ori, out_gzip_dir=tmp_dir_use)
@@ -304,17 +304,23 @@ def pride_pppar_runner_mono(
             brdc_unzip = None
             pass
 
-        ##### FINAL STEP: rename the brdc
-        brdc_igs_nam = brdc_unzip.replace("BRDC00WRD_S_",
-                                          "BRDC00IGS_R_")
-        if os.path.isfile(brdc_igs_nam):
-            brdc_out = brdc_igs_nam
-        elif brdc_unzip and os.path.isfile(brdc_unzip):
-            os.rename(brdc_unzip, brdc_igs_nam)
-            brdc_out = brdc_igs_nam
+        ##### 3RD STEP: rename the brdc
+        if not brdc_unzip:
+            brdc_out = None
         else:
-            brdc_out = brdc_unzip
-
+            # generate the final name for the brdc
+            brdc_igs_nam = brdc_unzip.replace("BRDC00WRD_S_",
+                                              "BRDC00IGS_R_")
+            # best case: the final renamed brdc is already here
+            if os.path.isfile(brdc_igs_nam):
+                brdc_out = brdc_igs_nam
+            # if the final renamed brdc is not here, we rename the unzipped one
+            elif brdc_unzip and os.path.isfile(brdc_unzip):
+                os.rename(brdc_unzip, brdc_igs_nam)
+                brdc_out = brdc_igs_nam
+            # a weird case where the unzipped brdc is missing. This should not happend
+            else:
+                brdc_out = brdc_unzip
 
         return brdc_out, brdc_ori
 
@@ -485,11 +491,11 @@ def pride_pppar_runner_mono(
 
     # handle the cases where the run_dir_fin already exists
     if os.path.isdir(run_dir_fin):
-        # the normal case where the run_dir_fin already exists and we want to force the deletion
+        # the normal case where the run_dir_fin already exists, and we want to force the deletion
         if force:
             shutil.rmtree(run_dir_fin)
         # the strange case where the run_dir_fin already exists, we did not want to force the deletion,
-        # and then the process should have been skipped but we keep it anyway
+        # and then the process should have been skipped, but we keep it anyway
         else:
             log.warning("run_dir_fin %s already exists (something weird happened)", run_dir_fin)
             timstp = utils.get_timestamp()
