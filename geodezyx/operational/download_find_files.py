@@ -459,8 +459,7 @@ def find_IGS_products_files(
 
     re_patt_big = join_regex_and(Re_patt_big_stk)
 
-    log.info("REGEX researched :")
-    log.info(re_patt_big)
+    #log.info("REGEX researched: %s",re_patt_big)
 
     ###### Specific file search management ##############
     Files_select_list = []
@@ -473,7 +472,6 @@ def find_IGS_products_files(
         if severe:
             raise Exception
 
-    log.info("number of files found : %s", len(Files_select_list))
-    log.info(re_patt_big)
+    log.info("%i files found matching REGEX %s", len(Files_select_list), re_patt_big)
 
     return Files_select_list

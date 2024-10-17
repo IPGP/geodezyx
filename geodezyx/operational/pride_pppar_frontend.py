@@ -501,13 +501,12 @@ def pride_pppar_runner_mono(
     if clean_run_dir:
         run_dir_files = utils.find_recursive(run_dir_ope, "*")
         idel_files = 0
-        print(run_dir_files)
         for f in run_dir_files:
             if not re.match("[a-z]{3}_[0-9]{7}_.{4}", os.path.basename(f)):
-                log.info("removing %s", f)
+                #log.info("removing %s", f)
+                os.remove(f)
                 idel_files += 1
         log.info("%s tmp files in run_dir removed", idel_files)
-        # os.remove(f)
 
     # handle the cases where the run_dir_fin already exists
     if os.path.isdir(run_dir_fin):
