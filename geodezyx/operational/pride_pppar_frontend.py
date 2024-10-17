@@ -186,7 +186,7 @@ def pride_pppar_runner_mono(
         dl_prods=False,
         default_fallback=False,
         dl_prods_only=False,
-        clean_run_dir=False
+        clean_run_dir=True
 ):
     """
     Runs the PRIDE PPPAR process for a single RINEX file.
@@ -464,7 +464,7 @@ def pride_pppar_runner_mono(
             and not default_fallback
     ):
         log.error(
-            "a prod. at least is missing and no fallback to Default is set, abort"
+            "an essential prod. at least is missing and no fallback to Default is set, abort"
         )
         return None
 
@@ -501,6 +501,7 @@ def pride_pppar_runner_mono(
     if clean_run_dir:
         run_dir_files = utils.find_recursive(run_dir_ope, "*")
         idel_files = 0
+        print(run_dir_files)
         for f in run_dir_files:
             if not re.match("[a-z]{3}_[0-9]{7}_.{4}", os.path.basename(f)):
                 log.info("removing %s", f)
