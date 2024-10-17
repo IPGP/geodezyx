@@ -171,22 +171,22 @@ def dl_prods_pride_pppar(prod_parent_dir, date_list, prod_ac_name):
 
 
 def pride_pppar_runner_mono(
-    rnx_path,
-    cfg_template_path,
-    prod_ac_name,
-    prod_parent_dir,
-    tmp_dir,
-    cfg_dir,
-    run_dir,
-    cfg_prefix="pride_pppar_cfg_1a",
-    mode="K",
-    options_dic={},
-    bin_dir=None,
-    force=False,
-    dl_prods=False,
-    default_fallback=False,
-    dl_prods_only=False,
-    clean_run_dir=False
+        rnx_path,
+        cfg_template_path,
+        prod_ac_name,
+        prod_parent_dir,
+        tmp_dir,
+        cfg_dir,
+        run_dir,
+        cfg_prefix="pride_pppar_cfg_1a",
+        mode="K",
+        options_dic={},
+        bin_dir=None,
+        force=False,
+        dl_prods=False,
+        default_fallback=False,
+        dl_prods_only=False,
+        clean_run_dir=False
 ):
     """
     Runs the PRIDE PPPAR process for a single RINEX file.
@@ -355,9 +355,9 @@ def pride_pppar_runner_mono(
 
         smart_ultra = True
         if ("ULT" in prod_ac_name or "NRT" in prod_ac_name) and smart_ultra:
-            delta_epoch_max = 24 # => [0 ... 23]
+            delta_epoch_max = 24  # => [0 ... 23]
         else:
-            delta_epoch_max = 1 # => [0]
+            delta_epoch_max = 1  # => [0]
 
         find_prods = operational.find_IGS_products_files
 
@@ -460,8 +460,8 @@ def pride_pppar_runner_mono(
     brdc_path, _ = _find_unzip_brdc()
 
     if (
-        not any((sp3_path, bia_path, clk_path, obx_path, erp_path))
-        and not default_fallback
+            not any((sp3_path, bia_path, clk_path, obx_path, erp_path))
+            and not default_fallback
     ):
         log.error(
             "a prod. at least is missing and no fallback to Default is set, abort"
@@ -506,8 +506,7 @@ def pride_pppar_runner_mono(
                 log.info("removing %s", f)
                 idel_files += 1
         log.info("%s tmp files in run_dir removed", idel_files)
-                #os.remove(f)
-
+        # os.remove(f)
 
     # handle the cases where the run_dir_fin already exists
     if os.path.isdir(run_dir_fin):
@@ -520,15 +519,15 @@ def pride_pppar_runner_mono(
             log.warning("run_dir_fin %s already exists, but no log found inside", run_dir_fin)
             timstp = utils.get_timestamp()
             run_dir_fin_old = run_dir_fin + "_" + timstp
-            log.warning("renaming the exisiting final dir as %s",  os.path.basename(run_dir_fin))
+            log.warning("renaming the exisiting final dir as %s", os.path.basename(run_dir_fin))
             os.rename(run_dir_fin, run_dir_fin_old)
-
 
     ### FINAL rename the run_dir_fin to its final name run_dir_fin (with hourmin)
     os.rename(run_dir_ope, run_dir_fin)
 
     return None
-    
+
+
 def pride_pppar_mp_wrap(kwargs_inp):
     try:
         operational.pride_pppar_runner_mono(**kwargs_inp)
@@ -539,6 +538,7 @@ def pride_pppar_mp_wrap(kwargs_inp):
                   kwargs_inp['rnx_path'])
         raise e
 
+
 def pride_pppar_runner(rnx_path_list,
                        cfg_template_path,
                        prod_ac_name,
@@ -546,7 +546,7 @@ def pride_pppar_runner(rnx_path_list,
                        tmp_dir,
                        cfg_dir,
                        run_dir,
-                       multi_process = 1,
+                       multi_process=1,
                        cfg_prefix='pride_pppar_cfg_1a',
                        mode='K',
                        options_dic={},
@@ -554,13 +554,13 @@ def pride_pppar_runner(rnx_path_list,
                        force=False,
                        dl_prods=False,
                        default_fallback=False,
-                       dl_prods_only=False):
-    
-    date_list = [conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list] 
+                       dl_prods_only=False,
+                       clean_run_dir=True):
+    date_list = [conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list]
 
     ## when we do multi_process, we download the products first, all at once, to avoid conflicts
     if dl_prods:
-        _ = dl_prods_pride_pppar(prod_parent_dir,date_list,prod_ac_name)
+        _ = dl_prods_pride_pppar(prod_parent_dir, date_list, prod_ac_name)
         _ = dl_brdc_pride_pppar(prod_parent_dir, date_list)
         if dl_prods_only:
             log.info("products downloaded, exiting (dl_prods_only is activated.)")
@@ -568,29 +568,29 @@ def pride_pppar_runner(rnx_path_list,
 
     kwargs_list = []
     for rnx_path in rnx_path_list:
-        kwargs = {'rnx_path' :rnx_path,
-                  'cfg_template_path' : cfg_template_path,
-                  'prod_ac_name' : prod_ac_name,
-                  'prod_parent_dir' : prod_parent_dir,
-                  'tmp_dir' : tmp_dir,
-                  'cfg_dir' : cfg_dir,
-                  'run_dir' : run_dir,
-                  'cfg_prefix' : cfg_prefix,
-                  'bin_dir' : bin_dir,
-                  'mode' : mode,
-                  'options_dic' : options_dic,
+        kwargs = {'rnx_path': rnx_path,
+                  'cfg_template_path': cfg_template_path,
+                  'prod_ac_name': prod_ac_name,
+                  'prod_parent_dir': prod_parent_dir,
+                  'tmp_dir': tmp_dir,
+                  'cfg_dir': cfg_dir,
+                  'run_dir': run_dir,
+                  'cfg_prefix': cfg_prefix,
+                  'bin_dir': bin_dir,
+                  'mode': mode,
+                  'options_dic': options_dic,
                   'force': force,
-                  'dl_prods' : dl_prods,
-                  'default_fallback' : default_fallback}
-                  
+                  'dl_prods': dl_prods,
+                  'default_fallback': default_fallback,
+                  'clean_run_dir': clean_run_dir}
+
         kwargs_list.append(kwargs)
-            
+
     if multi_process > 1:
-        log.info("multiprocessing: %d cores used",multi_process)
-    
+        log.info("multiprocessing: %d cores used", multi_process)
+
     pool = mp.Pool(processes=multi_process)
     results_raw = [pool.apply_async(pride_pppar_mp_wrap, args=(x,)) for x in kwargs_list]
-    results     = [e.get() for e in results_raw]
+    results = [e.get() for e in results_raw]
 
     return results
-
