@@ -652,7 +652,7 @@ def download_gnss_rinex(
         >>> archive_dir = '/home/USER/test_dl_rnx'
         >>> startdate = dt.datetime(2020,1,1)
         >>> enddate = dt.datetime(2020,1,31)
-        >>> geodezyx.operational.download_gnss_rinex_legacy(statdic, archive_dir, startdate, enddate)
+        >>> geodezyx.operational.download_gnss_rinex(statdic, archive_dir, startdate, enddate)
     """
 
     date_range = conv.dt_range(startdate, enddate)

@@ -554,7 +554,7 @@ def pride_pppar_runner(rnx_path_list,
                        force=False,
                        dl_prods=False,
                        default_fallback=False,
-                       dl_prods_only=True):
+                       dl_prods_only=False):
     
     date_list = [conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list] 
 
