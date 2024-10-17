@@ -514,18 +514,18 @@ def pride_pppar_runner_mono(
         # the normal case where the run_dir_fin already exists, and we want to force the deletion
         if force:
             shutil.rmtree(run_dir_fin)
-        # the strange case where the run_dir_fin already exists, we did not want to force the deletion,
-        # and then the process should have been skipped, but we keep it anyway
+        # the unusual case where the run_dir_fin already exists, we did not want to force the deletion,
+        # and then the process should have been skipped, but no log has been found inside but we keep it anyway
         else:
-            log.warning("run_dir_fin %s already exists (something weird happened)", run_dir_fin)
+            log.warning("run_dir_fin %s already exists, but no log found inside", run_dir_fin)
             timstp = utils.get_timestamp()
-            run_dir_fin = run_dir_fin + "_" + timstp
-            log.warning("renaming the final dir as %s",  os.path.basename(run_dir_fin))
+            run_dir_fin_old = run_dir_fin + "_" + timstp
+            log.warning("renaming the exisiting final dir as %s",  os.path.basename(run_dir_fin))
+            os.rename(run_dir_fin, run_dir_fin_old)
+
 
     ### FINAL rename the run_dir_fin to its final name run_dir_fin (with hourmin)
     os.rename(run_dir_ope, run_dir_fin)
-
-
 
     return None
     
