@@ -365,7 +365,7 @@ def pride_pppar_runner_mono(
 
         #### this loop is to find former ULTRA if the latest is missing
         # it works for ULTRA only, for other latencies, delta_epoch_max = 0
-        for i_d_epo in range(delta_epoch_max + 1):
+        for i_d_epo in range(delta_epoch_max):
 
             find_prod_epoch = find_prod_epoch_ini - dt.timedelta(seconds=3600 * i_d_epo)
 
