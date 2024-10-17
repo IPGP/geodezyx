@@ -214,7 +214,7 @@ def download_gnss_products(
     ###################################################################
     ########### Remote file search
 
-    Potential_localfiles_list_all = []
+    potential_localfiles_list_all = []
 
     ### check if the pattern of the wished products are in the listed daily files
     for ipatt_tup, patt_tup in enumerate(
@@ -244,7 +244,8 @@ def download_gnss_products(
 
         if np.mod(ipatt_tup, n_ftp_ask) == 0:
             log.info("Create a new FTP instance")
-            ftp, Ftp_obj_list = dlutils.ftp_objt_create(
+
+            ftp, ftp_obj_list = dlutils.ftp_objt_create(
                 secure_ftp_inp=secure_ftp, host=arch_center_main
             )
 
@@ -254,12 +255,12 @@ def download_gnss_products(
                 ftp.cwd(wwww_dir)
             except:
                 log.warning("%s do not exists, skiping...", wwww_dir)
-            Files_listed_in_FTP = ftp.nlst()
+            files_listed_in_ftp = ftp.nlst()
             wwww_dir_previous = wwww_dir
-            if len(Files_listed_in_FTP) == 0:
+            if len(files_listed_in_ftp) == 0:
                 log.warning("no files found in directory %s", wwww_dir)
 
-        Files_remote_date_list = []
+        files_remote_date_list = []
 
         pattern_old_nam = (
             ac_cur.lower()
@@ -270,11 +271,11 @@ def download_gnss_products(
             + prod_cur.lower()
             + "\..*"
         )
-        Files = [f for f in Files_listed_in_FTP if re.search(pattern_old_nam, f)]
+        files = [f for f in files_listed_in_ftp if re.search(pattern_old_nam, f)]
 
         pattern_new_nam = ""
 
-        Files_new_nam = []
+        files_new_nam = []
         if new_name_conv:  ### search for new name convention
 
             if dow is None:
@@ -293,23 +294,23 @@ def download_gnss_products(
             )
             pattern_new_nam = ".*" + pattern_new_nam + "\..*"
 
-            Files_new_nam = [
-                f for f in Files_listed_in_FTP if re.search(pattern_new_nam, f)
+            files_new_nam = [
+                f for f in files_listed_in_ftp if re.search(pattern_new_nam, f)
             ]
 
         log.info("Regex : %s %s", pattern_old_nam, pattern_new_nam)
-        Files = Files + Files_new_nam
+        files = files + files_new_nam
 
-        if len(Files) == 0:
+        if len(files) == 0:
             log.warning("no product found for" + " %s" * len(patt_tup), *patt_tup)
-            # log.warning("found files: %s",Files_listed_in_FTP)
+            # log.warning("found files: %s",files_listed_in_ftp)
 
-        Files_remote_date_list = Files_remote_date_list + Files
+        files_remote_date_list = files_remote_date_list + files
 
         ### exclude some pattern
         for negpatt in remove_patterns:
-            Files_remote_date_list = [
-                e for e in Files_remote_date_list if not re.search(negpatt, e)
+            files_remote_date_list = [
+                e for e in files_remote_date_list if not re.search(negpatt, e)
             ]
 
         ###################################################################
@@ -318,86 +319,86 @@ def download_gnss_products(
             archive_dir, ac_cur, dt_cur, archtype
         )
 
-        if len(Files_remote_date_list) > 0:
+        if len(files_remote_date_list) > 0:
             utils.create_dir(archive_dir_specif)
 
         ### Generation of the Download fct inputs
-        Files_remote_date_chunck = utils.chunkIt(
-            Files_remote_date_list, parallel_download
+        files_remote_date_chunck = utils.chunkIt(
+            files_remote_date_list, parallel_download
         )
-        Downld_tuples_list = []
-        Potential_localfiles_list = []
+        downld_tuples_list = []
+        potential_localfiles_list = []
 
         if ftp_download:  ### FTP Download
-            for ftpobj, Chunk in zip(Ftp_obj_list, Files_remote_date_chunck):
+            for ftpobj, Chunk in zip(ftp_obj_list, files_remote_date_chunck):
                 for filchunk in Chunk:
-                    Potential_localfiles_list.append(
+                    potential_localfiles_list.append(
                         os.path.join(archive_dir_specif, filchunk)
                     )
                     if parallel_download == 1:
-                        Downld_tuples_list.append(
+                        downld_tuples_list.append(
                             (ftpobj, filchunk, archive_dir_specif)
                         )
                     else:
-                        Downld_tuples_list.append(
+                        downld_tuples_list.append(
                             (arch_center_main, wwww_dir, filchunk, archive_dir_specif)
                         )
         else:  ### HTTP download
-            Downld_tuples_list = itertools.product(
+            downld_tuples_list = itertools.product(
                 [
                     "/".join(("ftp://" + arch_center_main, wwww_dir, f))
-                    for f in Files_remote_date_list
+                    for f in files_remote_date_list
                 ],
                 [archive_dir_specif],
             )
             [
-                Potential_localfiles_list.append(os.path.join(archive_dir_specif, f))
-                for f in Files_remote_date_list
+                potential_localfiles_list.append(os.path.join(archive_dir_specif, f))
+                for f in files_remote_date_list
             ]
 
-        Potential_localfiles_list_all = (
-            Potential_localfiles_list_all + Potential_localfiles_list
+        potential_localfiles_list_all = (
+            potential_localfiles_list_all + potential_localfiles_list
         )
 
         ### Actual Download
         if ftp_download and parallel_download == 1:
-            for tup in Downld_tuples_list:
+            for tup in downld_tuples_list:
                 dlutils.ftp_downloader_core(*tup)
         elif ftp_download and parallel_download > 1:
-            _ = pool.map_async(dlutils.ftp_downloader_wo_objects, Downld_tuples_list)
+            _ = pool.map_async(dlutils.ftp_downloader_wo_objects, downld_tuples_list)
         elif not ftp_download and parallel_download == 1:
-            for tup in Downld_tuples_list:
+            for tup in downld_tuples_list:
                 dlutils.downloader_wrap(tup)
         elif not ftp_download and parallel_download > 1:
-            _ = pool.map(dlutils.downloader_wrap, Downld_tuples_list)
+            _ = pool.map(dlutils.downloader_wrap, downld_tuples_list)
 
     ###################################################################
     ########### Final Independent files existence check
 
-    Localfiles_lis = []
+    localfiles_lis = []
     if not return_also_uncompressed_files:
-        Pot_locfiles_list_use = Potential_localfiles_list_all
+        pot_locfiles_list_use = potential_localfiles_list_all
     else:
-        Pot_locfiles_list_use = []
-        for localfile in Potential_localfiles_list_all:
+        pot_locfiles_list_use = []
+        for localfile in potential_localfiles_list_all:
             Pot_compress_name_list = [localfile]
             Pot_compress_name_list.append(localfile.replace(".gz", ""))
             Pot_compress_name_list.append(localfile.replace(".Z", ""))
             Pot_compress_name_list = list(set(Pot_compress_name_list))
 
-            Pot_locfiles_list_use = Pot_locfiles_list_use + Pot_compress_name_list
+            pot_locfiles_list_use = pot_locfiles_list_use + Pot_compress_name_list
 
-    for pot_localfile in Pot_locfiles_list_use:
+    for pot_localfile in pot_locfiles_list_use:
         if os.path.isfile(pot_localfile):
-            Localfiles_lis.append(pot_localfile)
+            localfiles_lis.append(pot_localfile)
 
     if parallel_download > 1:
         pool.close()
-    return Localfiles_lis
+    return localfiles_lis
 
 
 def multi_downloader_orbs_clks_2(**kwargs):
-    log.warn(
+    log.warning(
         "multi_downloader_orbs_clks_2 is a legacy alias for the newly renamed function download_gnss_products"
     )
     return download_gnss_products(**kwargs)

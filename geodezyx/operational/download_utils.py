@@ -19,6 +19,7 @@ import logging
 import os
 import pathlib
 import shutil
+import time
 import urllib
 ########## BEGIN IMPORT ##########
 #### External modules
@@ -291,6 +292,7 @@ def ftp_objt_create(
     parallel_download=1,
     user="anonymous",
     passwd="",
+    retry_count=3,
 ):
     """
     This function creates and returns an FTP object and a list of FTP objects for multiple downloads.
@@ -309,6 +311,8 @@ def ftp_objt_create(
         The username for the FTP server. Default is "anonymous".
     passwd : str, optional
         The password for the FTP server. Default is an empty string.
+    retry_count : int, optional
+        The number of times to retry creating the FTP object. Default is 3.
 
     Returns
     -------
@@ -329,7 +333,20 @@ def ftp_objt_create(
         ftp_constuctor = FTP
 
     # create a list of FTP object for multiple downloads
-    ftp_obj_list_out = [ftp_constuctor(host) for i in range(parallel_download)]
+    ftp_obj_list_out = []
+    for i in range(parallel_download):
+        for attempt in range(retry_count):
+            try:
+                current_ftp_obj = ftp_constuctor(host)
+                ftp_obj_list_out.append(current_ftp_obj)
+                break  # Exit the retry loop if successful
+            except Exception as e:
+                log.warning("FTP object creation failed on attempt %d", attempt + 1)
+                log.warning(e)
+                time.sleep(5)
+                if attempt == retry_count - 1:
+                    log.error("Max retries reached. Could not create FTP object.")
+
     if secure_ftp_inp:
         [f.login(user, passwd) for f in ftp_obj_list_out]
         [f.prot_p() for f in ftp_obj_list_out]

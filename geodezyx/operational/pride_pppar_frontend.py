@@ -12,6 +12,7 @@ import datetime as dt
 import logging
 import multiprocessing as mp
 import os
+import re
 import shutil
 import subprocess
 
@@ -184,6 +185,8 @@ def pride_pppar_runner_mono(
     force=False,
     dl_prods=False,
     default_fallback=False,
+    dl_prods_only=False,
+    clean_run_dir=False
 ):
     """
     Runs the PRIDE PPPAR process for a single RINEX file.
@@ -256,6 +259,15 @@ def pride_pppar_runner_mono(
     utils.create_dir(cfg_dir_use)
     utils.create_dir(run_dir_use)
 
+    ########### DOWNLOAD PRODUCTS + BROADCASTS
+    if dl_prods:
+        _ = dl_prods_pride_pppar(prod_parent_dir, [srt], prod_ac_name)
+        _ = dl_brdc_pride_pppar(prod_parent_dir, [srt])
+
+    if dl_prods_only:
+        log.info("products downloaded, exiting (dl_prods_only is activated.)")
+        return None
+
     ########### UNCOMPRESS RINEX
     rnx_bnm = os.path.basename(rnx_path)
     if "crx" in rnx_bnm or "d.Z" in rnx_bnm or "d.gz" in rnx_bnm:
@@ -263,11 +275,6 @@ def pride_pppar_runner_mono(
         rnx_path_use = str(hatanaka.decompress_on_disk(rnx_path_tmp, delete=True))
     else:
         rnx_path_use = rnx_path
-
-    ########### DOWNLOAD PRODUCTS + BROADCASTS
-    if dl_prods:
-        _ = dl_prods_pride_pppar(prod_parent_dir, [srt], prod_ac_name)
-        _ = dl_brdc_pride_pppar(prod_parent_dir, [srt])
 
     ########### MOVE BRDC IN TMP (so pdp3 can handle it)
     ## we must also rename the BKG brdc to fake it as the IGS one
@@ -487,7 +494,20 @@ def pride_pppar_runner_mono(
 
     os.chdir(run_dir_use)  ## not run_dir_use, pdp3 will goes by itselft to yyyy/doy
 
+    ## run the command ####
     run_command(cmd)
+    #######################
+
+    if clean_run_dir:
+        run_dir_files = utils.find_recursive(run_dir_ope, "*")
+        idel_files = 0
+        for f in run_dir_files:
+            if not re.match("[a-z]{3}_[0-9]{7}_.{4}", os.path.basename(f)):
+                log.info("removing %s", f)
+                idel_files += 1
+        log.info("%s tmp files in run_dir removed", idel_files)
+                #os.remove(f)
+
 
     # handle the cases where the run_dir_fin already exists
     if os.path.isdir(run_dir_fin):
@@ -505,12 +525,14 @@ def pride_pppar_runner_mono(
     ### FINAL rename the run_dir_fin to its final name run_dir_fin (with hourmin)
     os.rename(run_dir_ope, run_dir_fin)
 
+
+
     return None
     
 def pride_pppar_mp_wrap(kwargs_inp):
     try:
-        out_runner = operational.pride_pppar_runner_mono(**kwargs_inp)
-        return out_runner 
+        operational.pride_pppar_runner_mono(**kwargs_inp)
+        return None
     except Exception as e:
         log.error("%s raised, RINEX is skiped: %s",
                   type(e).__name__,
@@ -531,6 +553,7 @@ def pride_pppar_runner(rnx_path_list,
                        bin_dir=None,
                        force=False,
                        dl_prods=False,
+                       default_fallback=False,
                        dl_prods_only=True):
     
     date_list = [conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list] 
@@ -539,11 +562,9 @@ def pride_pppar_runner(rnx_path_list,
     _ = dl_prods_pride_pppar(prod_parent_dir,date_list,prod_ac_name)
     _ = dl_brdc_pride_pppar(prod_parent_dir, date_list)
     if dl_prods_only:
-        log.info("products downloaded, exiting (dl_prods_only is activated.")
+        log.info("products downloaded, exiting (dl_prods_only is activated.)")
         return None
 
-
-        
     kwargs_list = []
     for rnx_path in rnx_path_list:
         kwargs = {'rnx_path' :rnx_path,
@@ -558,7 +579,8 @@ def pride_pppar_runner(rnx_path_list,
                   'mode' : mode,
                   'options_dic' : options_dic,
                   'force': force,
-                  'dl_prods' : dl_prods}
+                  'dl_prods' : dl_prods,
+                  'default_fallback' : default_fallback}
                   
         kwargs_list.append(kwargs)
             
