@@ -2036,19 +2036,63 @@ def utc2gpstime(year,month,day,hour,min,sec):
     
     return int(gpsweek),int(gpssecs)
 
+#  _                         _____                          _
+# | |                       / ____|                        | |
+# | |     ___  __ _ _ __   | (___   ___  ___ ___  _ __   __| |___
+# | |    / _ \/ _` | '_ \   \___ \ / _ \/ __/ _ \| '_ \ / _` / __|
+# | |___|  __/ (_| | |_) |  ____) |  __/ (_| (_) | | | | (_| \__ \
+# |______\___|\__,_| .__/  |_____/ \___|\___\___/|_| |_|\__,_|___/
+#                  | |
+#                  |_|
+
 #### LEAP SECONDS MANAGEMENT
 
-def get_leapsecond_frontend():
+
+def leapsecond_harcoded_list():
+    hardcoded_leapsec_lis = [(dt.datetime(1972, 7, 1, 0, 0), 1),
+                      (dt.datetime(1973, 1, 1, 0, 0), 2),
+                      (dt.datetime(1974, 1, 1, 0, 0), 3),
+                      (dt.datetime(1975, 1, 1, 0, 0), 4),
+                      (dt.datetime(1976, 1, 1, 0, 0), 5),
+                      (dt.datetime(1977, 1, 1, 0, 0), 6),
+                      (dt.datetime(1978, 1, 1, 0, 0), 7),
+                      (dt.datetime(1979, 1, 1, 0, 0), 8),
+                      (dt.datetime(1980, 1, 1, 0, 0), 9),
+                      (dt.datetime(1981, 7, 1, 0, 0), 10),
+                      (dt.datetime(1982, 7, 1, 0, 0), 11),
+                      (dt.datetime(1983, 7, 1, 0, 0), 12),
+                      (dt.datetime(1985, 7, 1, 0, 0), 13),
+                      (dt.datetime(1988, 1, 1, 0, 0), 14),
+                      (dt.datetime(1990, 1, 1, 0, 0), 15),
+                      (dt.datetime(1991, 1, 1, 0, 0), 16),
+                      (dt.datetime(1992, 7, 1, 0, 0), 17),
+                      (dt.datetime(1993, 7, 1, 0, 0), 18),
+                      (dt.datetime(1994, 7, 1, 0, 0), 19),
+                      (dt.datetime(1996, 1, 1, 0, 0), 20),
+                      (dt.datetime(1997, 7, 1, 0, 0), 21),
+                      (dt.datetime(1999, 1, 1, 0, 0), 22),
+                      (dt.datetime(2006, 1, 1, 0, 0), 23),
+                      (dt.datetime(2009, 1, 1, 0, 0), 24),
+                      (dt.datetime(2012, 7, 1, 0, 0), 25),
+                      (dt.datetime(2015, 7, 1, 0, 0), 26),
+                      (dt.datetime(2017, 1, 1, 0, 0), 27)]
+    log.warning(
+        "Harcoded leap second list loaded\nIt might be wrong if IERS's bulletin C has been updated!\nlast known update: %s",
+        hardcoded_leapsec_lis[-1])
+
+    return hardcoded_leapsec_lis
+
+def leapsecond_from_system():
     """
     INTERNAL_FUNCTION
 
-    Nota :
+    Note:
     Universal Time (UT1) and International Atomic Time (TAI) were defined as equal 
     in 1958. When UTC was introduced in 1972, UT1 had shifted by around 10 seconds
     in relation to TAI. 
     We therefore chose an initial offset of 10 seconds between UTC and TAI.
 
-        the initial 10sec are added in find_leapsecond
+    the initial 10sec are added in find_leapsecond
     """
 
     def _parse_leap_seconds_file(f):
@@ -2105,6 +2149,8 @@ def get_leapsecond_frontend():
             outlist.append((dtime, num_secs))
         return outlist
 
+
+    zoneinfo_fname = "/usr/share/zoneinfo/leap-seconds.list"
     zoneinfo_fname = '/usr/share/zoneinfo/right/UTC'
 
     try:
@@ -2114,39 +2160,12 @@ def get_leapsecond_frontend():
             final_leap_lis = _print_leaps(leap_lst)
     except:
         ### Windows case : MANUAL Mode
-        final_leap_lis = [(dt.datetime(1972, 7, 1, 0, 0), 1),
-         (dt.datetime(1973, 1, 1, 0, 0), 2),
-         (dt.datetime(1974, 1, 1, 0, 0), 3),
-         (dt.datetime(1975, 1, 1, 0, 0), 4),
-         (dt.datetime(1976, 1, 1, 0, 0), 5),
-         (dt.datetime(1977, 1, 1, 0, 0), 6),
-         (dt.datetime(1978, 1, 1, 0, 0), 7),
-         (dt.datetime(1979, 1, 1, 0, 0), 8),
-         (dt.datetime(1980, 1, 1, 0, 0), 9),
-         (dt.datetime(1981, 7, 1, 0, 0), 10),
-         (dt.datetime(1982, 7, 1, 0, 0), 11),
-         (dt.datetime(1983, 7, 1, 0, 0), 12),
-         (dt.datetime(1985, 7, 1, 0, 0), 13),
-         (dt.datetime(1988, 1, 1, 0, 0), 14),
-         (dt.datetime(1990, 1, 1, 0, 0), 15),
-         (dt.datetime(1991, 1, 1, 0, 0), 16),
-         (dt.datetime(1992, 7, 1, 0, 0), 17),
-         (dt.datetime(1993, 7, 1, 0, 0), 18),
-         (dt.datetime(1994, 7, 1, 0, 0), 19),
-         (dt.datetime(1996, 1, 1, 0, 0), 20),
-         (dt.datetime(1997, 7, 1, 0, 0), 21),
-         (dt.datetime(1999, 1, 1, 0, 0), 22),
-         (dt.datetime(2006, 1, 1, 0, 0), 23),
-         (dt.datetime(2009, 1, 1, 0, 0), 24),
-         (dt.datetime(2012, 7, 1, 0, 0), 25),
-         (dt.datetime(2015, 7, 1, 0, 0), 26),
-         (dt.datetime(2017, 1, 1, 0, 0), 27)]
-        log.warning("Harcoded leap second list loaded\nIt might be wrong if IERS's bulletin C has been updated!\nlast known update: %s",final_leap_lis[-1])
+        final_leap_lis = leapsecond_harcoded_list()
 
     return final_leap_lis
 
 
-LEAP_SEC_LIS = get_leapsecond_frontend()
+LEAP_SEC_LIS = leapsecond_from_system()
 
 def find_leapsecond(dtin,get_leapsec_lis=LEAP_SEC_LIS,
                     apply_initial_delta=True):
@@ -2159,7 +2178,7 @@ def find_leapsecond(dtin,get_leapsec_lis=LEAP_SEC_LIS,
         Epoch for which the leap second is researched
 
     get_leapsec_lis : list, optional
-        A list of leap second, provided by get_leapsecond_frontend() 
+        A list of leap second, provided by leapsecond_from_system()
         automatically determined if given list is empty
         
     apply_initial_delta : bool, optional
@@ -2189,8 +2208,8 @@ def find_leapsecond(dtin,get_leapsec_lis=LEAP_SEC_LIS,
     (37 seconds as of January 2017).
     """
 
-    if get_leapsec_lis == []:
-        get_leapsec_lis = get_leapsecond_frontend()
+    if len(get_leapsec_lis) == 0:
+        get_leapsec_lis = leapsecond_from_system()
 
     get_leapsec_lis2 = [ e[0] for e in get_leapsec_lis ]
 
