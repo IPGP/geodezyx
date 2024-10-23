@@ -2048,7 +2048,7 @@ def utc2gpstime(year,month,day,hour,min,sec):
 #### LEAP SECONDS MANAGEMENT
 
 
-def leapsecond_harcoded_list():
+def leapseconds_harcoded_list():
     hardcoded_leapsec_lis = [(dt.datetime(1972, 7, 1, 0, 0), 1),
                       (dt.datetime(1973, 1, 1, 0, 0), 2),
                       (dt.datetime(1974, 1, 1, 0, 0), 3),
@@ -2082,7 +2082,40 @@ def leapsecond_harcoded_list():
 
     return hardcoded_leapsec_lis
 
-def leapsecond_from_system():
+
+def leapseconds_parse_post2204(file_path):
+    leap_seconds = []
+
+    with open(file_path, 'r') as file:
+        for line in file:
+            # Skip header lines
+            if line.startswith('#'):
+                continue
+
+            # Split the line into components
+            parts = line.split()
+            if len(parts) < 2:
+                continue
+
+            # Extract the timestamp and the leap second value
+            timestamp = int(parts[0])
+            leap_second = int(parts[1])
+
+            # Convert the timestamp to a datetime object
+            date = datetime.utcfromtimestamp(timestamp)
+
+            # Append the parsed data to the list
+            leap_seconds.append((date, leap_second))
+
+    return leap_seconds
+
+# Example usage
+file_path = '/usr/share/zoneinfo/leap-seconds.list'
+leap_seconds = leapseconds_parse_post2204(file_path)
+for date, leap_second in leap_seconds:
+    print(f"Date: {date}, Leap Second: {leap_second}")
+
+def leapseconds_from_system():
     """
     INTERNAL_FUNCTION
 
@@ -2160,12 +2193,12 @@ def leapsecond_from_system():
             final_leap_lis = _print_leaps(leap_lst)
     except:
         ### Windows case : MANUAL Mode
-        final_leap_lis = leapsecond_harcoded_list()
+        final_leap_lis = leapseconds_harcoded_list()
 
     return final_leap_lis
 
 
-LEAP_SEC_LIS = leapsecond_from_system()
+LEAP_SEC_LIS = leapseconds_from_system()
 
 def find_leapsecond(dtin,get_leapsec_lis=LEAP_SEC_LIS,
                     apply_initial_delta=True):
@@ -2178,7 +2211,7 @@ def find_leapsecond(dtin,get_leapsec_lis=LEAP_SEC_LIS,
         Epoch for which the leap second is researched
 
     get_leapsec_lis : list, optional
-        A list of leap second, provided by leapsecond_from_system()
+        A list of leap second, provided by leapseconds_from_system()
         automatically determined if given list is empty
         
     apply_initial_delta : bool, optional
@@ -2209,7 +2242,7 @@ def find_leapsecond(dtin,get_leapsec_lis=LEAP_SEC_LIS,
     """
 
     if len(get_leapsec_lis) == 0:
-        get_leapsec_lis = leapsecond_from_system()
+        get_leapsec_lis = leapseconds_from_system()
 
     get_leapsec_lis2 = [ e[0] for e in get_leapsec_lis ]
 
