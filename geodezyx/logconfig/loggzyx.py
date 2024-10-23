@@ -40,9 +40,9 @@ log_config_dict = {
     "formatters":{
         "fmtgzyx1": {
              ##### n-sized fct name space, truncated after n (here n = 15)
-            "fmt": "%(asctime)s.%(msecs)03d|%(log_color)s%(levelname).1s%(reset)s|%(log_color)s%(funcName)-15s%(reset)s|%(message)s",
+            #"fmt": "%(asctime)s.%(msecs)03d|%(log_color)s%(levelname).1s%(reset)s|%(log_color)s%(funcName)-15s%(reset)s|%(message)s",
             ##### exact fct name space (<= n), truncated after n (here n = 15)
-            #"format": "%(asctime)s.%(msecs)03d|%(log_color)s%(levelname).1s%(reset)s|%(log_color)s%(funcName).15s%(reset)s|%(message)s",
+            "format": "%(asctime)s.%(msecs)03d|%(log_color)s%(levelname).1s%(reset)s|%(log_color)s%(funcName).15s%(reset)s|%(message)s",
             '()': 'colorlog.ColoredFormatter',
             "datefmt":"%y%m%dT%H:%M:%S",
             "log_colors":{
