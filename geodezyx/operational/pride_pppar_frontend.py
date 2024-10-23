@@ -25,6 +25,30 @@ from geodezyx import utils
 
 log = logging.getLogger(__name__)
 
+import re
+
+
+def remove_regex_reserved_characters(input_string):
+    """
+    Removes all REGEX reserved characters from the input string.
+
+    Parameters
+    ----------
+    input_string : str
+        The string to be cleaned of REGEX reserved characters.
+
+    Returns
+    -------
+    str
+        The cleaned string with all REGEX reserved characters removed.
+    """
+    # Define a pattern that matches all REGEX reserved characters
+    regex_reserved_chars = r"[.*+?^${}()|[\]\\]"
+
+    # Use re.sub to replace all occurrences of the reserved characters with an empty string
+    cleaned_string = re.sub(regex_reserved_chars, "", input_string)
+
+    return cleaned_string
 
 def run_command(command):
     """
