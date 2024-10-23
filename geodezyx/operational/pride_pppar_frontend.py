@@ -560,7 +560,9 @@ def pride_pppar_runner(rnx_path_list,
     date_list = [conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list]
 
     ## when we do multi_process, we download the products first, all at once, to avoid conflicts
-    if dl_prods:
+    if dl_prods or dl_prods_only:
+        if dl_prods_only and not dl_prods_only:
+            log.warning("dl_prods_only is activated, but not dl_prods. Products download is forced anyway.")
         _ = dl_prods_pride_pppar(prod_parent_dir, date_list, prod_ac_name)
         _ = dl_brdc_pride_pppar(prod_parent_dir, date_list)
         if dl_prods_only:
