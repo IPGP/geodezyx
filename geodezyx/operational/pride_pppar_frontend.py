@@ -531,12 +531,13 @@ def pride_pppar_runner_mono(
 def pride_pppar_mp_wrap(kwargs_inp):
     try:
         operational.pride_pppar_runner_mono(**kwargs_inp)
-        return None
     except Exception as e:
-        log.error("%s raised, RINEX is skiped: %s",
+        log.error("%s raised, RINEX is skipped: %s",
                   type(e).__name__,
                   kwargs_inp['rnx_path'])
-        raise e
+        #pass
+        #raise
+    return None
 
 
 def pride_pppar_runner(rnx_path_list,
