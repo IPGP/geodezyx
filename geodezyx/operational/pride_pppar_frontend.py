@@ -368,12 +368,14 @@ def pride_pppar_runner_mono(
 
     site = rnx_file[:4].upper()
 
+    prod_ac_name_no_regex_char = re.escape(prod_ac_name)
+
     ########## DEFINE DIRECTORIES
     tmp_dir_use = os.path.join(tmp_dir, year, doy)  ### tmp is year/doy only, no site,
     ### because the 'common' dir must be the same
     cfg_dir_use = os.path.join(cfg_dir, year, doy, site)
     run_dir_use = os.path.join(
-        run_dir, mode, prod_ac_name, site
+        run_dir, mode, prod_ac_name_no_regex_char, site
     )  ### pdp3 add year/doy by itself
     run_dir_ope = os.path.join(run_dir_use, year, doy)
     run_dir_fin = run_dir_ope + "_" + hourmin_str
@@ -571,7 +573,7 @@ def pride_pppar_runner_mono(
 
     date_prod_midfix = year + doy + hourmin_str
 
-    cfg_name = cfg_prefix + "_" + prod_ac_name + "_" + date_prod_midfix
+    cfg_name = cfg_prefix + "_" + prod_ac_name_no_regex_char + "_" + date_prod_midfix
     cfg_path = os.path.join(cfg_dir_use, cfg_name)
 
     ### write the good config file
