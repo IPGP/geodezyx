@@ -392,7 +392,7 @@ def pride_pppar_runner_mono(
 
     site = rnx_file[:4].upper()
 
-    prod_ac_name_no_regex_char = re.escape(prod_ac_name)
+    prod_ac_name_no_regex_char = remove_regex_reserved_characters(prod_ac_name)
 
     ########## DEFINE DIRECTORIES
     tmp_dir_use = os.path.join(tmp_dir, year, doy)  ### tmp is year/doy only, no site,
@@ -676,6 +676,7 @@ def pride_pppar_runner(rnx_path_list,
                        default_fallback=False,
                        dl_prods_only=False,
                        clean_run_dir=True):
+
     date_list = [conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list]
 
     ## when we do multi_process, we download the products first, all at once, to avoid conflicts
