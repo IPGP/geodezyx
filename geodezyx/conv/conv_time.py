@@ -23,7 +23,6 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 import datetime as dt
 #### Import the logger
 import logging
-import math
 import os
 import re
 # import scipy
@@ -748,9 +747,9 @@ def dt_utc2dt_ut1(dtin, dUT1):
         return dtin + dt.timedelta(seconds=dUT1)
 
 
-def dt_utc2dt_ut1_smart(dtin, DF_EOP_in,
+def dt_utc2dt_ut1_smart(dtin, df_eop_in,
                         use_interp1d_obj=True,
-                        EOP_interpolator=None):
+                        eop_interpolator=None):
     """
     Time scale conversion
     
@@ -761,7 +760,7 @@ def dt_utc2dt_ut1_smart(dtin, DF_EOP_in,
     ----------
     dtin : datetime.datetime or list/numpy.array of datetime.datetime
         Datetime(s). Can handle several datetimes in an iterable.
-    DF_EOP_in : DataFrame
+    df_eop_in : DataFrame
         EOP DataFrame for the UT1-UTC
         provided by files_rw.read_eop_C04
     use_interp1d_obj : TYPE, optional
@@ -769,7 +768,7 @@ def dt_utc2dt_ut1_smart(dtin, DF_EOP_in,
         at the right epoch.
         Faster in recursive mode when dtin is a list/array
         The default is True.
-    EOP_interpolator : interp1d_time object, optional
+    eop_interpolator : interp1d_time object, optional
         The interp1d_time Interpolator object for the EOP determination
         Will be determined automatically inside the function
         The default is None.
@@ -781,53 +780,53 @@ def dt_utc2dt_ut1_smart(dtin, DF_EOP_in,
 
     """
     #### internally we work with "epoch" as index
-    if DF_EOP_in.index.name != "epoch":
-        DF_EOP = DF_EOP_in.set_index("epoch")
+    if df_eop_in.index.name != "epoch":
+        df_eop = df_eop_in.set_index("epoch")
     else:
-        DF_EOP = DF_EOP_in
+        df_eop = df_eop_in
 
     if utils.is_iterable(dtin):  #### ITERABLE CASE
         typ = utils.get_type_smart(dtin)
 
-        ### if iterable, we optimize DF_EOP to speed up the fct        
+        ### if iterable, we optimize df_eop to speed up the fct
         dtmin = np.min(dtin)
         dtmax = np.max(dtin)
 
-        BOOL = ((DF_EOP.index > dtmin - dt.timedelta(days=2)) &
-                (DF_EOP.index < dtmax + dt.timedelta(days=2)))
+        BOOL = ((df_eop.index > dtmin - dt.timedelta(days=2)) &
+                (df_eop.index < dtmax + dt.timedelta(days=2)))
 
-        DF_EOP = DF_EOP[BOOL]
+        df_eop = df_eop[BOOL]
 
         ### We also use the interpolator class
         if use_interp1d_obj:
             from geodezyx.conv import conv_interpolators
-            IEOP = conv_interpolators.interp1d_time(DF_EOP.index.values,
-                                                    DF_EOP['UT1-UTC'])
+            ieop = conv_interpolators.interp1d_time(df_eop.index.values,
+                                                    df_eop['UT1-UTC'])
         else:
-            IEOP = None
+            ieop = None
 
-        return typ([dt_utc2dt_ut1_smart(e, DF_EOP,
+        return typ([dt_utc2dt_ut1_smart(e, df_eop,
                                         use_interp1d_obj=use_interp1d_obj,
-                                        EOP_interpolator=IEOP) for e in dtin])
+                                        eop_interpolator=ieop) for e in dtin])
 
     else:  #### SINGLE ELEMENT CASE
-        if (dtin in DF_EOP.index):  ## the EOP value is directly in the EOP DF
-            dUT1 = DF_EOP.iloc[DF_EOP.index.get_loc(dtin)]['UT1-UTC']
-        elif EOP_interpolator and use_interp1d_obj:  ### use the interp class, faster in recursive mode
-            dUT1 = EOP_interpolator(dtin)
+        if (dtin in df_eop.index):  ## the EOP value is directly in the EOP DF
+            d_ut1 = df_eop.iloc[df_eop.index.get_loc(dtin)]['UT1-UTC']
+        elif eop_interpolator and use_interp1d_obj:  ### use the interp class, faster in recursive mode
+            d_ut1 = eop_interpolator(dtin)
         else:  ## the EOP value is interpolated with a "manual" linear interpo.
-            dUT1bef = DF_EOP.iloc[DF_EOP.index.get_loc(dtin, 'ffill')]
-            dUT1aft = DF_EOP.iloc[DF_EOP.index.get_loc(dtin, 'bfill')]
+            d_ut1bef = df_eop.iloc[df_eop.index.get_loc(dtin, 'ffill')]
+            d_ut1aft = df_eop.iloc[df_eop.index.get_loc(dtin, 'bfill')]
 
-            a, b, b2 = stats.linear_coef_a_b(dUT1bef['MJD'],
-                                             dUT1bef['UT1-UTC'],
-                                             dUT1aft['MJD'],
-                                             dUT1aft['UT1-UTC'])
+            a, b, b2 = stats.linear_coef_a_b(d_ut1bef['MJD'],
+                                             d_ut1bef['UT1-UTC'],
+                                             d_ut1aft['MJD'],
+                                             d_ut1aft['UT1-UTC'])
 
-            dUT1 = stats.linear_reg_getvalue(dt2MJD(dtin), a, b,
+            d_ut1 = stats.linear_reg_getvalue(dt2MJD(dtin), a, b,
                                              full=False)
 
-        return dt_utc2dt_ut1(dtin, dUT1)
+        return dt_utc2dt_ut1(dtin, d_ut1)
 
 
 def dt2gpstime(dtin, dayinweek=True, inp_ref="utc", outputtype=int):
@@ -850,6 +849,10 @@ def dt2gpstime(dtin, dayinweek=True, inp_ref="utc", outputtype=int):
         if True : returns  GPS week, day in GPS week
         
         if False : returns  GPS week, sec in GPS week
+
+    outputtype : type
+        the type of the output
+
     Returns
     -------
     GPS_week, GPS_day/GPS_sec : tuple of int
@@ -966,9 +969,9 @@ def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True,
 
     Parameters
     ----------
-    gpsweek : int
+    gpsweek : int or iterable of int
         year, days of year
-    gpsdow_or_seconds : int
+    gpsdow_or_seconds : int or iterable of int
         Day of Week OR Seconds in Weeks
     dow_input : bool
         select if Day of Week (True) OR Seconds in Weeks (False)
@@ -1019,6 +1022,9 @@ def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True,
                 deltasec = leapsec - 19
             elif output_time_scale == "tai":
                 deltasec = 19
+            else:
+                log.error("check output_time_scale value: 'utc', 'tai', 'gps'")
+                raise Exception
 
             ## Second run with leap second
             epoch = dt.datetime(1980, 1, 6)
@@ -1091,11 +1097,11 @@ def dt_gpstime2dt_utc(dtgpsin, out_array=False):
     # on converti le dt gps en dt utc
     if utils.is_iterable(dtgpsin):
         typ = utils.get_type_smart(dtgpsin)
-        Out = typ([dt_gpstime2dt_utc(e) for e in dtgpsin])
+        out = typ([dt_gpstime2dt_utc(e) for e in dtgpsin])
         if not out_array:
-            return Out
+            return out
         else:
-            return np.array(Out)
+            return np.array(out)
     else:
         leapsec = find_leapsecond(dtgpsin)
         dtutc = dtgpsin + dt.timedelta(seconds=19) - dt.timedelta(seconds=leapsec)
@@ -1104,7 +1110,7 @@ def dt_gpstime2dt_utc(dtgpsin, out_array=False):
 
 def dt_gpstime2dt_tai(dtgpsin, out_array=False):
     """
-    Time scale conversion
+    Timescale conversion
     
     Datetime in GPS Time Scale => Datetime in TAI Time Scale
     
@@ -1125,11 +1131,11 @@ def dt_gpstime2dt_tai(dtgpsin, out_array=False):
     # on converti le dt gps en dt utc
     if utils.is_iterable(dtgpsin):
         typ = utils.get_type_smart(dtgpsin)
-        Out = typ([dt_gpstime2dt_tai(e) for e in dtgpsin])
+        out = typ([dt_gpstime2dt_tai(e) for e in dtgpsin])
         if not out_array:
-            return Out
+            return out
         else:
-            return np.array(Out)
+            return np.array(out)
     else:
         dtutc = dtgpsin + dt.timedelta(seconds=19)
         return dtutc
@@ -1144,7 +1150,8 @@ def year_decimal2dt(yearin):
     Parameters
     ----------
     yearin : float or list/numpy.array of floats.
-        Decimal year(s).  Can handle several floats in an iterable.
+        Decimal year(s).
+        Can handle several floats in an iterable.
 
     Returns
     -------
@@ -1155,7 +1162,12 @@ def year_decimal2dt(yearin):
         typ = utils.get_type_smart(yearin)
         return typ([year_decimal2dt(e) for e in yearin])
     else:
-        return convert_partial_year(yearin)
+        import calendar
+        year = int(yearin)
+        d = dt.timedelta(days=(yearin - year) * (365 + calendar.isleap(year)))
+        day_one = dt.datetime(year, 1, 1)
+        date_out = d + day_one
+        return date_out
 
 
 def dt2year_decimal(dtin):
@@ -1179,19 +1191,19 @@ def dt2year_decimal(dtin):
         return typ([dt2year_decimal(e) for e in dtin])
     else:
 
-        def sinceEpoch(date):  # returns seconds since epoch
+        def since_epoch(date):  # returns seconds since epoch
             return time.mktime(date.timetuple())
 
         date_in = dtin
 
         year = date_in.year
-        startOfThisYear = dt.datetime(year=year, month=1, day=1)
-        startOfNextYear = dt.datetime(year=year + 1, month=1, day=1)
+        start_of_this_year = dt.datetime(year=year, month=1, day=1)
+        start_of_next_year = dt.datetime(year=year + 1, month=1, day=1)
 
-        yearElapsed = sinceEpoch(date_in) - sinceEpoch(startOfThisYear)
-        yearDuration = sinceEpoch(startOfNextYear) - sinceEpoch(startOfThisYear)
+        year_elapsed = since_epoch(date_in) - since_epoch(start_of_this_year)
+        year_duration = since_epoch(start_of_next_year) - since_epoch(start_of_this_year)
 
-        fraction = yearElapsed / yearDuration
+        fraction = year_elapsed / year_duration
 
         return date_in.year + fraction
 
@@ -1231,7 +1243,7 @@ str_date2dt = date_string_2_dt
 strdate2dt = date_string_2_dt
 
 
-def jjulCNES2dt(jjulin):
+def jjul_cnes2dt(jjulin):
     """
     Time representation & scale conversion
     
@@ -1256,12 +1268,12 @@ def jjulCNES2dt(jjulin):
 
     if utils.is_iterable(jjulin):
         typ = utils.get_type_smart(jjulin)
-        return typ([jjulCNES2dt(e) for e in jjulin])
+        return typ([jjul_cnes2dt(e) for e in jjulin])
     else:
         return dt.datetime(1950, 0o1, 0o1, 00, 00, 00) + dt.timedelta(float(jjulin))
 
 
-def dt2jjulCNES(dtin, onlydays=True):
+def dt2jjul_cnes(dtin, onlydays=True):
     """
     Time representation & scale conversion
     
@@ -1272,7 +1284,7 @@ def dt2jjulCNES(dtin, onlydays=True):
     dtin : datetime.datetime or list/numpy.array of datetime.datetime.
         Datetime(s).  Can handle several datetimes in an iterable.
         
-    only_days : bool
+    onlydays : bool
         if False, return also the seconds in the day
 
     Returns
@@ -1339,12 +1351,12 @@ def MJD2dt(mjd_in, seconds=None, round_to='1s'):
 
         # return typ(rnd([dt.datetime(1858,11,17)+dt.timedelta(days=m,seconds=sec) for m,sec in zip(mjd_in,seconds)]))
 
-        Outdt_Stk = []
+        outdt_stk = []
         for m, sec in zip(mjd_in, seconds):
             dtout = dt.datetime(1858, 11, 17) + dt.timedelta(days=m, seconds=sec)
-            Outdt_Stk.append(dtout)
+            outdt_stk.append(dtout)
 
-        return typ(rnd(Outdt_Stk))
+        return typ(rnd(outdt_stk))
 
     # NON ITERABLE / FLOAT CASE
     else:
@@ -1376,10 +1388,10 @@ def dt2MJD(dtin):
     https://en.wikipedia.org/wiki/Julian_day
     """
     # cf http://en.wikipedia.org/wiki/Julian_day
-    try:
+    if utils.is_iterable(dtin):
         typ = utils.get_type_smart(dtin)
         return typ([dt2MJD(t) for t in dtin])
-    except:
+    else:
         delta = (dtin.replace(tzinfo=None) - dt.datetime(1858, 11, 17))
         return delta.days + (delta.seconds / 86400.) + (delta.microseconds / 864e8)
 
@@ -2017,13 +2029,13 @@ def dt2epoch_rnx3(dt_in, epoch_flag=0, nsats=0, rec_clk_offset=0):
         return epoch_out
 
 
-def utc2gpstime(year, month, day, hour, min, sec):
+def utc2gpstime(year, month, day, hour, minu, sec):
     """
     Convert UTC Time to GPS Time
 
     Parameters
     ----------
-    year,month,day,hour,min,sec : int
+    year,month,day,hour,minu,sec : int
         input UTC time.
 
     Returns
@@ -2033,7 +2045,7 @@ def utc2gpstime(year, month, day, hour, min, sec):
 
     """
 
-    date_utc = dt.datetime(year, month, day, hour, min, sec)
+    date_utc = dt.datetime(year, month, day, hour, minu, sec)
 
     utc_offset = find_leapsecond(date_utc)
 
@@ -2231,13 +2243,13 @@ def leapseconds_parse_pre2404(leapsec_file_path='/usr/share/zoneinfo/right/UTC')
         # leap_lst is tuples: (timestamp, num_leap_seconds)
         outlist = []
         for ts, num_secs in leap_lst:
-            dtime = (dt.datetime.utcfromtimestamp(ts - num_secs + 1))
+            dtime = (dt.datetime.fromtimestamp(ts - num_secs + 1))
             outlist.append((dtime, num_secs))
         return outlist
 
     f = open(leapsec_file_path, 'rb')
 
-    TZFILE_MAGIC = 'TZif'.encode('US-ASCII')
+    tzfile_magic = 'TZif'.encode('US-ASCII')
 
     fmt = ">4s c 15x 6l"
     size = struct.calcsize(fmt)
@@ -2246,7 +2258,7 @@ def leapseconds_parse_pre2404(leapsec_file_path='/usr/share/zoneinfo/right/UTC')
     # print("DEBUG: tzfile_magic: {} tzfile_format: {} ttisgmtcnt: {} ttisstdcnt: {} leapcnt: {} timecnt: {} typecnt: {} charcnt: {}".format(tzfile_magic, tzfile_format, ttisgmtcnt, ttisstdcnt, leapcnt, timecnt, typecnt, charcnt))
 
     # Make sure it is a tzfile(5) file
-    assert tzfile_magic == TZFILE_MAGIC, (
+    assert tzfile_magic == tzfile_magic, (
         "Not a tzfile; file magic was: '{}'".format(tzfile_magic))
 
     # comments below show struct codes such as "l" for 32-bit long integer
@@ -2456,7 +2468,7 @@ def pandas_timestamp2dt(timestamp_in):
         typ = utils.get_type_smart(timestamp_in)
         return typ([pandas_timestamp2dt(e) for e in timestamp_in])
     else:
-        if isinstance(timestamp_in, pd._libs.tslibs.timedeltas.Timedelta):
+        if isinstance(timestamp_in, pd.Timedelta):
             return timestamp_in.to_pytimedelta()
         else:
             return timestamp_in.to_pydatetime()
@@ -2498,186 +2510,13 @@ def numpy_dt2dt(numpy_dt_in):
 
     timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
                  / np.timedelta64(1, 's'))
-    return dt.datetime.utcfromtimestamp(timestamp)
+
+    return dt.datetime.fromtimestamp(timestamp)
 
 
 ##### Nota Bene
 ##### numpy_datetime2dt & datetime64_numpy2dt have been moved
 ##### to the funtion graveyard (PSakic 2021-02-22)
-
-
-def date_to_jd(year, month, day):
-    if month == 1 or month == 2:
-        yearp = year - 1
-        monthp = month + 12
-    else:
-        yearp = year
-        monthp = month
-
-    # this checks where we are in relation to October 15, 1582, the beginning
-    # of the Gregorian calendar.
-    if ((year < 1582) or
-            (year == 1582 and month < 10) or
-            (year == 1582 and month == 10 and day < 15)):
-        # before start of Gregorian calendar
-        B = 0
-    else:
-        # after start of Gregorian calendar
-        A = math.trunc(yearp / 100.)
-        B = 2 - A + math.trunc(A / 4.)
-
-    if yearp < 0:
-        C = math.trunc((365.25 * yearp) - 0.75)
-    else:
-        C = math.trunc(365.25 * yearp)
-
-    D = math.trunc(30.6001 * (monthp + 1))
-
-    jd = B + C + D + day + 1720994.5
-
-    return jd
-
-
-def jd_to_mjd(jd):
-    """
-    Convert Julian Day to Modified Julian Day
-    
-    Parameters
-    ----------
-    jd : float
-        Julian Day
-        
-    Returns
-    -------
-    mjd : float
-        Modified Julian Day
-    
-    """
-    return jd - 2400000.5
-
-
-def mjd_to_jd(mjd):
-    """
-    Convert Modified Julian Day to Julian Day.
-        
-    Parameters
-    ----------
-    mjd : float
-        Modified Julian Day
-        
-    Returns
-    -------
-    jd : float
-        Julian Day
-    
-        
-    """
-    return mjd + 2400000.5
-
-
-def jd_to_date(jd):
-    """
-    Convert Julian Day to date.
-    
-    
-    Parameters
-    ----------
-    jd : float
-        Julian Day
-        
-    Returns
-    -------
-    year : int
-        Year as integer. Years preceding 1 A.D. should be 0 or negative.
-        The year before 1 A.D. is 0, 10 B.C. is year -9.
-        
-    month : int
-        Month as integer, Jan = 1, Feb. = 2, etc.
-    
-    day : float
-        Day, may contain fractional part.
-        
-    Examples
-    --------
-    Convert Julian Day 2446113.75 to year, month, and day.
-    
-    >>> jd_to_date(2446113.75)
-    (1985, 2, 17.25)
-    
-    """
-    jd = jd + 0.5
-
-    F, I = math.modf(jd)
-    I = int(I)
-
-    A = math.trunc((I - 1867216.25) / 36524.25)
-
-    if I > 2299160:
-        B = I + 1 + A - math.trunc(A / 4.)
-    else:
-        B = I
-
-    C = B + 1524
-
-    D = math.trunc((C - 122.1) / 365.25)
-
-    E = math.trunc(365.25 * D)
-
-    G = math.trunc((C - E) / 30.6001)
-
-    day = C - E + F - math.trunc(30.6001 * G)
-
-    if G < 13.5:
-        month = G - 1
-    else:
-        month = G - 13
-
-    if month > 2.5:
-        year = D - 4716
-    else:
-        year = D - 4715
-
-    return year, month, day
-
-
-def hr_to_Day(hr, minu, sec):
-    """
-    Convert Julian Day to date.
-    
-    
-    Parameters
-    ----------
-    jd : float
-        Julian Day
-        
-    Returns
-    -------
-    year : int
-        Year as integer. Years preceding 1 A.D. should be 0 or negative.
-        The year before 1 A.D. is 0, 10 B.C. is year -9.
-        
-    month : int
-        Month as integer, Jan = 1, Feb. = 2, etc.
-    
-    day : float
-        Day, may contain fractional part.
-        
-    Examples
-    --------
-    Convert Julian Day 2446113.75 to year, month, and day.
-    
-    >>> jd_to_date(2446113.75)
-    (1985, 2, 17.25)
-    
-    """
-    hr = hr
-    minu_hr = minu / 60
-    sec_hr = sec / 3600
-    hr_fim = hr + minu_hr + sec_hr
-    dia_fim = hr_fim / 24
-
-    return dia_fim
-
 
 def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
     """
@@ -2697,6 +2536,8 @@ def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
         An output format managed by epo command :
         mjd,yyyy,yy,ddd,mon,dmon,hour,min,sec,wwww,wd
 
+    verbose : bool
+        verbose mode
 
     Returns
     -------
@@ -2736,52 +2577,225 @@ def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
 # function graveyard
 
 
-def toYearFraction(date_in):
-    """
-    DISCONTINUED
-    use dt2year_decimal instead (does the same)
-    """
-    #
-    # Give the decimal year
-    # source :
-    # http://stackoverflow.com/questions/6451655/python-how-to-convert-datetime-dates-to-decimal-years
+# def date_to_jd(year, month, day):
+#     if month == 1 or month == 2:
+#         yearp = year - 1
+#         monthp = month + 12
+#     else:
+#         yearp = year
+#         monthp = month
+#
+#     # this checks where we are in relation to October 15, 1582, the beginning
+#     # of the Gregorian calendar.
+#     if ((year < 1582) or
+#             (year == 1582 and month < 10) or
+#             (year == 1582 and month == 10 and day < 15)):
+#         # before start of Gregorian calendar
+#         B = 0
+#     else:
+#         # after start of Gregorian calendar
+#         A = math.trunc(yearp / 100.)
+#         B = 2 - A + math.trunc(A / 4.)
+#
+#     if yearp < 0:
+#         C = math.trunc((365.25 * yearp) - 0.75)
+#     else:
+#         C = math.trunc(365.25 * yearp)
+#
+#     D = math.trunc(30.6001 * (monthp + 1))
+#
+#     jd = B + C + D + day + 1720994.5
+#
+#     return jd
 
-    from datetime import datetime as dt
-    import time
 
-    def sinceEpoch(date):  # returns seconds since epoch
-        return time.mktime(dt.date.timetuple())
+# def jd_to_mjd(jd):
+#     """
+#     Convert Julian Day to Modified Julian Day
+#
+#     Parameters
+#     ----------
+#     jd : float
+#         Julian Day
+#
+#     Returns
+#     -------
+#     mjd : float
+#         Modified Julian Day
+#
+#     """
+#     return jd - 2400000.5
+#
 
-    s = sinceEpoch
+# def mjd_to_jd(mjd):
+#     """
+#     Convert Modified Julian Day to Julian Day.
+#
+#     Parameters
+#     ----------
+#     mjd : float
+#         Modified Julian Day
+#
+#     Returns
+#     -------
+#     jd : float
+#         Julian Day
+#
+#
+#     """
+#     return mjd + 2400000.5
 
-    year = date_in.year
-    startOfThisYear = dt(year=year, month=1, day=1)
-    startOfNextYear = dt(year=year + 1, month=1, day=1)
 
-    yearElapsed = s(date_in) - s(startOfThisYear)
-    yearDuration = s(startOfNextYear) - s(startOfThisYear)
-    fraction = yearElapsed / yearDuration
+# def jd_to_date(jd):
+#     """
+#     Convert Julian Day to date.
+#
+#
+#     Parameters
+#     ----------
+#     jd : float
+#         Julian Day
+#
+#     Returns
+#     -------
+#     year : int
+#         Year as integer. Years preceding 1 A.D. should be 0 or negative.
+#         The year before 1 A.D. is 0, 10 B.C. is year -9.
+#
+#     month : int
+#         Month as integer, Jan = 1, Feb. = 2, etc.
+#
+#     day : float
+#         Day, may contain fractional part.
+#
+#     Examples
+#     --------
+#     Convert Julian Day 2446113.75 to year, month, and day.
+#
+#     >>> jd_to_date(2446113.75)
+#     (1985, 2, 17.25)
+#
+#     """
+#     jd = jd + 0.5
+#
+#     F, I = math.modf(jd)
+#     I = int(I)
+#
+#     A = math.trunc((I - 1867216.25) / 36524.25)
+#
+#     if I > 2299160:
+#         B = I + 1 + A - math.trunc(A / 4.)
+#     else:
+#         B = I
+#
+#     C = B + 1524
+#
+#     D = math.trunc((C - 122.1) / 365.25)
+#
+#     E = math.trunc(365.25 * D)
+#
+#     G = math.trunc((C - E) / 30.6001)
+#
+#     day = C - E + F - math.trunc(30.6001 * G)
+#
+#     if G < 13.5:
+#         month = G - 1
+#     else:
+#         month = G - 13
+#
+#     if month > 2.5:
+#         year = D - 4716
+#     else:
+#         year = D - 4715
+#
+#     return year, month, day
+#
+#
+# def hr_to_Day(hr, minu, sec):
+#     """
+#     Convert Julian Day to date.
+#
+#
+#     Parameters
+#     ----------
+#     jd : float
+#         Julian Day
+#
+#     Returns
+#     -------
+#     year : int
+#         Year as integer. Years preceding 1 A.D. should be 0 or negative.
+#         The year before 1 A.D. is 0, 10 B.C. is year -9.
+#
+#     month : int
+#         Month as integer, Jan = 1, Feb. = 2, etc.
+#
+#     day : float
+#         Day, may contain fractional part.
+#
+#     Examples
+#     --------
+#     Convert Julian Day 2446113.75 to year, month, and day.
+#
+#     >>> jd_to_date(2446113.75)
+#     (1985, 2, 17.25)
+#
+#     """
+#     hr = hr
+#     minu_hr = minu / 60
+#     sec_hr = sec / 3600
+#     hr_fim = hr + minu_hr + sec_hr
+#     dia_fim = hr_fim / 24
+#
+#     return dia_fim
 
-    return dt.date.year + fraction
+# def toYearFraction(date_in):
+#     """
+#     toYearFraction
+#     DISCONTINUED
+#     use dt2year_decimal instead (does the same)
+#     """
+#     #
+#     # Give the decimal year
+#     # source :
+#     # http://stackoverflow.com/questions/6451655/python-how-to-convert-datetime-dates-to-decimal-years
+#
+#     from datetime import datetime as dt
+#     import time
+#
+#     def sinceEpoch(date_inp):  # returns seconds since epoch
+#         return time.mktime(date_inp.timetuple())
+#
+#     s = sinceEpoch
+#
+#     year = date_in.year
+#     startOfThisYear = dt(year=year, month=1, day=1)
+#     startOfNextYear = dt(year=year + 1, month=1, day=1)
+#
+#     yearElapsed = s(date_in) - s(startOfThisYear)
+#     yearDuration = s(startOfNextYear) - s(startOfThisYear)
+#     fraction = yearElapsed / yearDuration
+#
+#     return dt.date.year + fraction
 
 
-def convert_partial_year(number):
-    """
-    DISCONTINUED
-    use year_decimal2dt instead (which is the same)
-    """
-
-    # Source
-    # http://stackoverflow.com/questions/19305991/convert-fractional-years-to-a-real-date-in-python
-
-    import calendar
-    from datetime import timedelta, datetime
-
-    year = int(number)
-    d = timedelta(days=(number - year) * (365 + calendar.isleap(year)))
-    day_one = datetime(year, 1, 1)
-    date_out = d + day_one
-    return date_out
+# def year_decimal2dt(number):
+#     """
+#     DISCONTINUED
+#     use year_decimal2dt instead (which is the same)
+#     """
+#
+#     # Source
+#     # http://stackoverflow.com/questions/19305991/convert-fractional-years-to-a-real-date-in-python
+#
+#     import calendar
+#     from datetime import timedelta, datetime
+#
+#     year = int(number)
+#     d = timedelta(days=(number - year) * (365 + calendar.isleap(year)))
+#     day_one = datetime(year, 1, 1)
+#     date_out = d + day_one
+#     return date_out
 
 
 # def datetime64_numpy2dt(npdt64_in):

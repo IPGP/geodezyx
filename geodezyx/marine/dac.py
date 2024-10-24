@@ -48,7 +48,7 @@ def dac_get_aviso(date_srt_inp, date_end_inp, out_dir, user, passwd):
     ftpbase = "ftp://ftp-access.aviso.altimetry.fr/auxiliary/dac/dac_delayed_global/"
     p_stk = []
     for d in date_rng:
-        jjul_cnes = conv.dt2jjulCNES(d)
+        jjul_cnes = conv.dt2jjul_cnes(d)
         dac_name = "dac_dif_" + str(jjul_cnes) + "_" + str(d.hour).zfill(2) + ".nc"
 
         p = ftpbase + str(d.year) + "/" + dac_name
@@ -103,7 +103,7 @@ def dac_extract(dac_files_lis,
         log.debug("read DAC file: %s", f)
         ds = xr.open_dataset(f)
         bn = os.path.basename(f)
-        # tname = conv.jjulCNES2dt(bn[8:13]) + dt.timedelta(hours = int(bn[14:16]))
+        # tname = conv.jjul_cnes2dt(bn[8:13]) + dt.timedelta(hours = int(bn[14:16]))
         dac_out = obp.interp_xy(ds, x=mlon, y=mlat).dac
 
         dac_val = float(dac_out.values)

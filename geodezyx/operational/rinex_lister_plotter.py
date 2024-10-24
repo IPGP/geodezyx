@@ -571,7 +571,7 @@ def listing_gins_timeline(
 
     for li in lifilelist:
         try:
-            tup = (li, conv.jjulCNES2dt(li[date_strt:date_end]))
+            tup = (li, conv.jjul_cnes2dt(li[date_strt:date_end]))
             datadico[li[stat_strt:stat_end]].append(tup)
         except:
             log.error("error with : %s", li)

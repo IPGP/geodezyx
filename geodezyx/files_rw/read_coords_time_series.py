@@ -1234,7 +1234,7 @@ def gins_readTROPOZ(filein):
     L  = utils.grep(filein,"TROPOZ COR_ZEN_ESTIM")
     DF = pd.DataFrame([e.split()[2:] for e in L]).astype(float)
     DF.columns = ['jjul_cnes','tropoz_std','tropoz']
-    DF["epoch"] = conv.jjulCNES2dt(DF['jjul_cnes']).dt.round('1s') - dt.timedelta(seconds=19)
+    DF["epoch"] = conv.jjul_cnes2dt(DF['jjul_cnes']).dt.round('1s') - dt.timedelta(seconds=19)
     
     return DF
 
@@ -1312,8 +1312,8 @@ def convert_sp3_clk_2_GINS_clk(sp3_path_in,
         else:
             dt_work = dt_in
 
-        jjul = conv.dt2jjulCNES(dt_work)
-        sec_in_day = (dt_work - conv.jjulCNES2dt(jjul) ).seconds
+        jjul = conv.dt2jjul_cnes(dt_work)
+        sec_in_day = (dt_work - conv.jjul_cnes2dt(jjul)).seconds
 
         #MNG0000000jjjjjcccccnnnn
 
@@ -2045,7 +2045,7 @@ def read_calais(filelist):
 
     # MAKING POINTS
     for i in range(DATA.shape[0]):
-        pt = time_series.Point(conv.convert_partial_year(bigT[i])
+        pt = time_series.Point(conv.year_decimal2dt(bigT[i])
         ,'ENU',DATA[i,3],DATA[i,4],DATA[i,5])
         ptslist.append(pt)
 

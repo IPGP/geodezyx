@@ -273,7 +273,7 @@ def write_oceanload_file(station_file, oceanload_out_file, fes_yyyy=2004):
 #    else:
 #        freq_rnx_str = ''
 #
-#    director_output_name = director_name_prefix + '_' + stat_lower + '_' + str(geok.dt2jjulCNES(dt_rinex)) + '_' + str(dt_rinex.year) + '_' + geok.dt2doy(dt_rinex) + freq_rnx_str + ses + calccntr_suffix +'.yml'
+#    director_output_name = director_name_prefix + '_' + stat_lower + '_' + str(geok.dt2jjul_cnes(dt_rinex)) + '_' + str(dt_rinex.year) + '_' + geok.dt2doy(dt_rinex) + freq_rnx_str + ses + calccntr_suffix +'.yml'
 #    director_output_path = os.path.join(out_director_folder,director_output_name)
 #    director_generik_file = open(director_generik_path)
 #    director_dic = yaml.load(director_generik_file)
@@ -283,9 +283,9 @@ def write_oceanload_file(station_file, oceanload_out_file, fes_yyyy=2004):
 #    rnx_path_dir_compatible = make_path_ginsstyle(rinex_path)
 #    director_dic['observation']['interobject_data'][1]['file'] = rnx_path_dir_compatible
 #    # date
-#    director_dic['date']['arc_start'][0] = geok.dt2jjulCNES(strt_epoch)
-#    director_dic['date']['arc_stop'][0] = geok.dt2jjulCNES(end_epoch)
-#    director_dic['date']['initial_state_vector_date'][0] = geok.dt2jjulCNES(strt_epoch)
+#    director_dic['date']['arc_start'][0] = geok.dt2jjul_cnes(strt_epoch)
+#    director_dic['date']['arc_stop'][0] = geok.dt2jjul_cnes(end_epoch)
+#    director_dic['date']['initial_state_vector_date'][0] = geok.dt2jjul_cnes(strt_epoch)
 #
 #    director_dic['date']['arc_start'][1] = strt_epoch.hour * 3600 + strt_epoch.second + 19
 #    director_dic['date']['arc_stop'][1]  = end_epoch.hour  * 3600 + end_epoch.second + 19
@@ -715,7 +715,7 @@ def gen_dirs_from_rnxs(
             + "_"
             + stat_lower
             + "_"
-            + str(geok.dt2jjulCNES(dt_rinex))
+            + str(geok.dt2jjul_cnes(dt_rinex))
             + "_"
             + str(dt_rinex.year)
             + "_"
@@ -744,8 +744,8 @@ def gen_dirs_from_rnxs(
             ] = pra_path_dir_compatible
 
         # date
-        strt_day, strt_sec = geok.dt2jjulCNES(strt_epoch, False)
-        end_day, end_sec = geok.dt2jjulCNES(end_epoch, False)
+        strt_day, strt_sec = geok.dt2jjul_cnes(strt_epoch, False)
+        end_day, end_sec = geok.dt2jjul_cnes(end_epoch, False)
 
         director_dic["date"]["arc_start"][0] = strt_day
         director_dic["date"]["arc_stop"][0] = end_day
@@ -1062,10 +1062,10 @@ def gen_dirs_from_double_diff(
         dd_end_jjul = np.max(Table_dd[12])
         dd_end_sec = np.max(Table_dd[13])
 
-        dd_start_epoch = conv.jjulCNES2dt(dd_start_jjul) + dt.timedelta(
+        dd_start_epoch = conv.jjul_cnes2dt(dd_start_jjul) + dt.timedelta(
             seconds=dd_start_sec
         )
-        dd_end_epoch = conv.jjulCNES2dt(dd_end_jjul) + dt.timedelta(seconds=dd_end_sec)
+        dd_end_epoch = conv.jjul_cnes2dt(dd_end_jjul) + dt.timedelta(seconds=dd_end_sec)
 
         freq_dd_true = np.min(np.abs(np.diff(Table_dd[13])))
 
@@ -1139,8 +1139,8 @@ def gen_dirs_from_double_diff(
         ] = dd_path_dir_compatible
 
         # date
-        strt_day, strt_sec = conv.dt2jjulCNES(dd_start_epoch, False)
-        end_day, end_sec = conv.dt2jjulCNES(dd_end_epoch, False)
+        strt_day, strt_sec = conv.dt2jjul_cnes(dd_start_epoch, False)
+        end_day, end_sec = conv.dt2jjul_cnes(dd_end_epoch, False)
 
         director_dic["date"]["arc_start"][0] = strt_day
         director_dic["date"]["arc_stop"][0] = end_day
@@ -1864,7 +1864,7 @@ def bad_sat_finder(orbfilein, egrep_ready=True):
         satid = int(f[0])
         if satid not in satdic:
             satdic[satid] = []
-        D = conv.jjulCNES2dt(int(f[1])) + dt.timedelta(seconds=float(f[2]))
+        D = conv.jjul_cnes2dt(int(f[1])) + dt.timedelta(seconds=float(f[2]))
         satdic[satid].append(D)
 
     epochdic = dict()

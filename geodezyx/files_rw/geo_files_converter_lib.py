@@ -216,9 +216,9 @@ def read_lfile_solo(filein,stat):
             Ttmp = float(f[7])
 
             if np.isclose(Ttmp , 0.):
-                T  = conv.convert_partial_year(2000.)
+                T  = conv.year_decimal2dt(2000.)
             else:
-                T  = conv.convert_partial_year(Ttmp)
+                T  = conv.year_decimal2dt(Ttmp)
 
             if len(l) > 225: # if velocities are given (125 is arbitrary)
                 vX = float(f[8])
@@ -559,7 +559,7 @@ def statinfo_2_cats(statinfo_path,catsneu_path):
         elif 'Height' in line:
             catsneuout_f.write(line)
             for s in s_stk:
-                catsneuout_f.write('# offsets : ' + str(conv.toYearFraction(s)) + ' 1\n')
+                catsneuout_f.write('# offsets : ' + str(conv.dt2year_decimal(s)) + ' 1\n')
         # cleaning outlier
         elif line[0] != '#':
             if (abs(float(line.split()[1])) > 1 or abs(float(line.split()[2])) > 1):
@@ -1484,7 +1484,7 @@ def read_snx_trop(snxfile,dataframe_output=True):
             
             STAT.append(fields[0].upper())
             if not ':' in fields[1]:
-                epoc.append(conv.convert_partial_year(fields[1]))
+                epoc.append(conv.year_decimal2dt(fields[1]))
             else:
                 date_elts_lis = fields[1].split(':')
                 yy =  int(date_elts_lis[0]) + 2000
@@ -1650,7 +1650,7 @@ def read_sinex_legacy(snxfile,dataframe_output=True):
                 STAT.append(fields[2].upper())
                 soln.append(fields[4])
                 if not ':' in fields[5]:
-                    epoc.append(conv.convert_partial_year(fields[5]))
+                    epoc.append(conv.year_decimal2dt(fields[5]))
                 else:
                     date_elts_lis = fields[5].split(':')
                     yy =  int(date_elts_lis[0]) + 2000
@@ -2187,7 +2187,7 @@ def unzip_gz_Z(inp_gzip_file,out_gzip_file='',remove_inp=False,
 #        if not satdic.has_key(prn):
 #            satdic[prn] = []
 #
-#        jjul = conv.dt2jjulCNES(epoch)
+#        jjul = conv.dt2jjul_cnes(epoch)
 #        sec = conv.dt2secinday(epoch) + 19
 #
 #        satdic[prn].append((jjul,sec,x,y,z))
