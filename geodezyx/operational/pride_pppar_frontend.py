@@ -257,6 +257,7 @@ def get_best_latency(prod_lis_inp):
         for prod in prod_lis_inp:
             if lat in prod:
                 out_prods_lis.append(prod)
+                break
 
     if len(out_prods_lis) == 0:
         log.warning("no prod. found with a known latency")
@@ -677,7 +678,7 @@ def pride_pppar_runner(rnx_path_list,
                        dl_prods_only=False,
                        clean_run_dir=True):
 
-    date_list = [conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list]
+    date_list = sorted(list(set([conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list])))
 
     ## when we do multi_process, we download the products first, all at once, to avoid conflicts
     if dl_prods or dl_prods_only:
