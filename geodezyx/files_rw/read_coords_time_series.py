@@ -298,8 +298,14 @@ def read_gipsyx_tdp(filein):
     sX,sY,sZ = np.nan,np.nan,np.nan
 
     tsout = time_series.TimeSeriePoint()
-
-    for line in open(filein):
+    
+    try:
+        fil = open(filein)
+    except Exception as e:
+        log.error("unable to open %s", filein)
+        raise e
+    
+    for line in fil:
 
         fields = line.split()
         
@@ -356,6 +362,7 @@ def read_gipsyx_tdp_list(filelistin):
 
     tslist = []
     for fil in filelistin:
+        
         ts = read_gipsyx_tdp(fil)
         tslist.append(ts)
 
@@ -2154,9 +2161,9 @@ def read_jump_file(filein,returned_events=('S','E','D')):
     ----
     A jump file contains infos like this :
 
-    >>> STAT S 2000 001
-    >>> STAT E 2001 001
-    >>> STAT D 2000 06 01
+    #>>> STAT S 2000 001
+    #>>> STAT E 2001 001
+    #>>> STAT D 2000 06 01
 
     it can manage YEAR DOY or YEAR MM DD or DECIMAL YEAR
 
@@ -2523,8 +2530,6 @@ def _pride_pppar_end_header(filein):
             break  
     return colheader,stat
     
-    
-filein = "/home/psakicki/GFZ_WORK/IPGP_WORK/OVS/GNSS_OVS/2402_test_pride_pppar/240220e_run_pos/run_wo_oload/WUM0MGXFIN/BORG/S/2023/155/pos_2023155_borg"
 
 def read_pride_pppar_pos_mono(filein):
     colheader,stat_header = _pride_pppar_end_header(filein)
@@ -2542,10 +2547,20 @@ def read_pride_pppar_pos_mono(filein):
     df = df.squeeze()
     
     T = conv.dt2posix(conv.MJD2dt(df['Mjd']) )
-    
+
+    fuv = df['Sig0']**2 # variance of unit weight
+
+    anex = dict()
+    anex['sdXY'] = df['Rxy'] * fuv
+    anex['sdXZ'] = df['Rxz'] * fuv
+    anex['sdYZ'] = df['Ryz'] * fuv
+
+    # not sure for the sigma computation
     pt = time_series.Point(df['X'],df['Y'],df['Z'],T,'XYZ',
-                           df['Sx'],df['Sy'],df['Sz'],
-                           name=df['stat'])
+                           np.sqrt(df['Sx']) * fuv,
+                           np.sqrt(df['Sy']) * fuv,
+                           np.sqrt(df['Sz']) * fuv,
+                           name=df['stat'], anex=anex)
     
     return pt
 

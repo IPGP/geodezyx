@@ -37,7 +37,7 @@ log.setLevel(logging.INFO)
 class Point():
       
     def __init__(self,A=0.,B=0.,C=0.,T=0.,initype='XYZ',
-                 sA=0.,sB=0.,sC=0.,name='noname'):
+                 sA=0.,sB=0.,sC=0.,name='noname',anex=None):
         """
         Initialize a Point Object by importing the coordinate component
 
@@ -62,6 +62,8 @@ class Point():
             sigma of C component. The default is 0.
         name : str, optional
             Flexible name for the Point identification. The default is 'noname'.
+        anex : dict, optional
+            Additional data. The default is None. See Note
         
         Note
         ----
@@ -79,7 +81,10 @@ class Point():
         self.Tset(T)
         self.ENUset()
         self.name = name
-        self.anex = dict()
+        if not anex:
+            self.anex = dict()
+        else:
+            self.anex = anex
 
         # le dico "anex" permet de stocker de manière polyvalente des données diverses
         # On trouvera (LISTE SE DEVANT ETRE LA PLUS EXHAUSTIVE POSSIBLE )
@@ -691,7 +696,8 @@ class TimeSeriePoint:
              errbar=True,
              new_style=True,
              symbol = '.',
-             errbar_width=1):
+             errbar_width=1,
+             ylim=None):
         """
         Plot data in a TimeSerie Object
 
@@ -847,6 +853,10 @@ class TimeSeriePoint:
             plt.legend()
         except:
             pass
+        
+        if ylim:
+            [a.set_ylim(ylim) for a in figobj.axes]
+        
         plt.xlabel('Date')
         plt.ylabel(yylabel)
         plt.title(Ctitle)
@@ -1229,9 +1239,9 @@ class TimeSeriePoint:
             Bout = np.nanmean(B)
             Cout = np.nanmean(C)
         elif mean_type == 'median':
-            Aout = np.median(A)
-            Bout = np.median(B)
-            Cout = np.median(C)
+            Aout = np.nanmedian(A)
+            Bout = np.nanmedian(B)
+            Cout = np.nanmedian(C)
 
         Tout = (np.max(T) - np.min(T)) / 2
 
@@ -1478,7 +1488,7 @@ class TimeSerieObs(object):
 
     def timewin(self,windows,mode='keep'):
         '''IL EST TRES DANGEREUX DE L'APPLIQUER UN FENETRAGE A SOI MEME'''
-        self.__dict__ = time_win(self,windows,mode).__dict__
+        self.__dict__ = time_series.time_win(self,windows,mode).__dict__
 
     def startdate(self):
         return self.obs[0].T
