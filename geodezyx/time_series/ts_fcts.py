@@ -469,70 +469,70 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
 
     return dicolist
 
-def compar2(tstup,coortype='ENU',seuil=3.,win=[],mode='keep',
-           Dtype='3D',namest=0,namend=10,alpha = 5 , diapt = 5 ,verbose=True,
-           print_report=True,plot=True):
-    """
-    160903 cette fonction semble discontinuée
-    """
+# def compar2(tstup,coortype='ENU',seuil=3.,win=[],mode='keep',
+#            Dtype='3D',namest=0,namend=10,alpha = 5 , diapt = 5 ,verbose=True,
+#            print_report=True,plot=True):
+#     """
+#     160903 cette fonction semble discontinuée
+#     """
 
-    tsref = tstup[0]
-    dicolist = []
+#     tsref = tstup[0]
+#     dicolist = []
 
-    for tsvar in tstup:
-        Aref,Bref,Cref,Tref,_,_,_  = tsref.to_list()
-        Avar,Bvar,Cvar,Tvar,_,_,_  = tsvar.to_list()
+#     for tsvar in tstup:
+#         Aref,Bref,Cref,Tref,_,_,_  = tsref.to_list()
+#         Avar,Bvar,Cvar,Tvar,_,_,_  = tsvar.to_list()
 
-        Tref = np.round(Tref,1)
-        Tvar = np.round(Tvar,1)
+#         Tref = np.round(Tref,1)
+#         Tvar = np.round(Tvar,1)
 
-        Tcommon    = np.intersect1d(Tref,Tvar)
-        Tcommon_dt = conv.posix2dt(Tcommon)
+#         Tcommon    = np.intersect1d(Tref,Tvar)
+#         Tcommon_dt = conv.posix2dt(Tcommon)
 
-        ind_ref = np.nonzero(np.in1d(Tref , Tcommon))[0]
-        ind_var = np.nonzero(np.in1d(Tvar , Tcommon))[0]
+#         ind_ref = np.nonzero(np.in1d(Tref , Tcommon))[0]
+#         ind_var = np.nonzero(np.in1d(Tvar , Tcommon))[0]
 
-        dA = Avar[ind_var] - Aref[ind_ref]
-        dB = Bvar[ind_var] - Bref[ind_ref]
-        dC = Cvar[ind_var] - Cref[ind_ref]
+#         dA = Avar[ind_var] - Aref[ind_ref]
+#         dB = Bvar[ind_var] - Bref[ind_ref]
+#         dC = Cvar[ind_var] - Cref[ind_ref]
 
-        if Dtype == '2D':
-            dD = np.sqrt(dA ** 2 + dB ** 2)
-        elif Dtype == '3D':
-            dD = np.sqrt(dA ** 2 + dB ** 2 + dC ** 2)
+#         if Dtype == '2D':
+#             dD = np.sqrt(dA ** 2 + dB ** 2)
+#         elif Dtype == '3D':
+#             dD = np.sqrt(dA ** 2 + dB ** 2 + dC ** 2)
 
-        dicovar = dict()
+#         dicovar = dict()
 
-        dicovar['name']     = tsvar.name
-        dicovar['coortype'] = coortype
-        dicovar['Dtype']    = Dtype
+#         dicovar['name']     = tsvar.name
+#         dicovar['coortype'] = coortype
+#         dicovar['Dtype']    = Dtype
 
-        dicovar['TA'] = Tcommon_dt
-        dicovar['dA'] = np.array(dA)
-        dicovar['dAbrut'] = np.array(dA)
-        dicovar['TB'] = Tcommon_dt
-        dicovar['dB'] = np.array(dB)
-        dicovar['dBbrut'] = np.array(dB)
-        dicovar['TC'] = Tcommon_dt
-        dicovar['dC'] = np.array(dC)
-        dicovar['dCbrut'] = np.array(dC)
-        dicovar['TD'] = Tcommon_dt
-        dicovar['dD'] = np.array(dD)
-        dicovar['dDbrut'] = np.array(dD)
-        dicovar['dDtype'] = np.array(Dtype)
+#         dicovar['TA'] = Tcommon_dt
+#         dicovar['dA'] = np.array(dA)
+#         dicovar['dAbrut'] = np.array(dA)
+#         dicovar['TB'] = Tcommon_dt
+#         dicovar['dB'] = np.array(dB)
+#         dicovar['dBbrut'] = np.array(dB)
+#         dicovar['TC'] = Tcommon_dt
+#         dicovar['dC'] = np.array(dC)
+#         dicovar['dCbrut'] = np.array(dC)
+#         dicovar['TD'] = Tcommon_dt
+#         dicovar['dD'] = np.array(dD)
+#         dicovar['dDbrut'] = np.array(dD)
+#         dicovar['dDtype'] = np.array(Dtype)
 
-        dicolist.append(dicovar)
+#         dicolist.append(dicovar)
 
-    if plot:
-        compar_plot(dicolist,namest,namend,alpha,diapt)
-        try:
-            suptit = ' '.join((tstup[-1].stat , str(tstup[-1].startdate()) ,
-                               str(tstup[-1].enddate())))
-            plt.suptitle(suptit)
-        except:
-            pass
+#     if plot:
+#         compar_plot(dicolist,namest,namend,alpha,diapt)
+#         try:
+#             suptit = ' '.join((tstup[-1].stat , str(tstup[-1].startdate()) ,
+#                                str(tstup[-1].enddate())))
+#             plt.suptitle(suptit)
+#         except:
+#             pass
 
-    return dicolist
+#     return dicolist
 
 
 def round_time(tsin,round_to,
