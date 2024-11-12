@@ -677,7 +677,7 @@ def linear_regress_find_coeff(tsin,coortype='ENU'):
     for i,composante in enumerate((A,B,C)):
         M = np.array([ T , np.ones(len(T)) ])
         w  = scipy.linalg.lstsq(M.T,composante)[0]
-        outW.append((w[0],w[1]))
+        outW.append((float(w[0]),float(w[1])))
     return outW
 
 def detrend_ts(tsin,coortype='ENU',t_origin=None):
