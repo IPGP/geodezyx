@@ -64,6 +64,8 @@ def utm_geo2xy(lat,lon,ellips="wgs84",zone=None):
     zone : int, optional
         forces the UTM ZONE (scalar integer or same size as
         LAT and LON) instead of automatic set. 
+        Positive for the nothern hemisphere.
+        Negative for the southern hemisphere.
         The default is None.
 
     Returns
@@ -160,6 +162,8 @@ def utm_xy2geo(x, y, f, ellips='wgs84'):
         UTM Y coordinates (in meters).
     f : int
         UTM zone.
+        Positive for the nothern hemisphere.
+        Negative for the southern hemisphere.
     ellips : str or tuple, optional
         Datum for conversion. Default is 'wgs84'. Can be one of the predefined strings or a tuple (A, F).
 
