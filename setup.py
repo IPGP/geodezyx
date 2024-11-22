@@ -15,6 +15,12 @@ here = pathlib.Path(__file__).parent.resolve()
 # Get the long description from the README file
 long_description = (here / 'README.md').read_text(encoding='utf-8')
 
+# Load the requirements from the requirements.txt file
+# Frederick Brennan answer on stackoverflow
+# https://stackoverflow.com/questions/14399534/reference-requirements-txt-for-the-install-requires-kwarg-in-setuptools-setup-py
+with open(here / 'requirements.txt') as f:
+    required = f.read().splitlines()
+
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
@@ -160,35 +166,41 @@ PyPi project: https://pypi.org/project/geodezyx
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['bs4',
-                      'chardet',
-                      'collection',
-                      'colorlog',
-                      'gsw',
-                      #'ftplib',
-                      'hatanaka',
-                      #'kepler.py',
-                      'natsort',
-                      'matplotlib',
-                      #'ncompress',
-                      'numpy',
-                      #'netCDF4',
-                      'pybind11',
-                      'pyorbital',
-                      'pytwobodyorbit',
-                      'pyyaml',
-                      'pathvalidate',
-                      'pandas',
-                      'seawater',
-                      'scipy',
-                      'sympy',
-                      'tabulate',
-                      'tk',
-                      'tqdm', ## progress bars
-                      'vincenty',
-                      'wheel',
-                      'xarray',
-                      ],  # Optional
+
+    # requirements.txt is read at the beginning of the setup.py file
+    # and the required packages are stored in the list 'required'
+    install_requires=required,  # Optional
+
+    # install are now in requirements.txt (241122)
+    # install_requires=['bs4',
+    #                   'chardet',
+    #                   'collection',
+    #                   'colorlog',
+    #                   'gsw',
+    #                   #'ftplib',
+    #                   'hatanaka',
+    #                   #'kepler.py',
+    #                   'natsort',
+    #                   'matplotlib',
+    #                   #'ncompress',
+    #                   'numpy',
+    #                   #'netCDF4',
+    #                   'pybind11',
+    #                   'pyorbital',
+    #                   'pytwobodyorbit',
+    #                   'pyyaml',
+    #                   'pathvalidate',
+    #                   'pandas',
+    #                   'seawater',
+    #                   'scipy',
+    #                   'sympy',
+    #                   'tabulate',
+    #                   'tk',
+    #                   'tqdm', ## progress bars
+    #                   'vincenty',
+    #                   'wheel',
+    #                   'xarray',
+    #                   ],  # Optional
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
