@@ -2506,13 +2506,18 @@ def numpy_dt2dt(numpy_dt_in):
         ### Otherwise, datetime will be converted as numpy_dt again
         if not typ in (list, tuple, np.array):
             typ = np.array
-
         return typ([numpy_dt2dt(e) for e in numpy_dt_in])
 
-    timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
-                 / np.timedelta64(1, 's'))
+    #timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
+    #             / np.timedelta64(1, 's'))
+    # return dt.datetime.fromtimestamp(timestamp)
 
-    return dt.datetime.fromtimestamp(timestamp)
+    ### better implementation because of the timezone bug (PS 241124)
+
+    else:
+        return pd.Timestamp(numpy_dt_in).to_pydatetime()
+
+
 
 
 ##### Nota Bene
