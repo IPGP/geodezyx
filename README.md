@@ -2,7 +2,7 @@
 
 # geodezyx (aka ___The GeodeZYX Toolbox___) 
 
-**Version 4.4.3 / 2024-05-20**, README Revision: 2024-05-20
+**Version 4.5.0 / 2024-11-28**, README Revision: 2024-11-28
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
@@ -76,6 +76,14 @@ and install the Toolbox you downloaded with ``python setup.py install``
 Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
 
 ## Changelog
+
+### v4.5.0, 2024-11-28
+  * Improvement of PRIDE-related execution functions
+  * New leap second functions, to cope with new Ubuntu 24.04 LTS
+  * `seawater` and `gsw` modules are imported on demand only
+  * Correct angle conversion functions
+  * 
+  * Misc routine improvements
 
 ### v4.4.3, 2024-05-20
   * Speed execution optimization for orbit/clock-related functions
