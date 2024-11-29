@@ -2,46 +2,6 @@
 # -*- coding: utf-8 -*-
 
 #### IMPORT EXTERNAL MODULES
-# import bisect
-# from collections import defaultdict
-# from collections import Counter
-# import copy
-# import datetime as dt
-# import fnmatch
-# from ftplib import FTP
-# import glob
-# import inspect
-# import itertools
-# import linecache
-# import logging
-# import math
-# import matplotlib
-# matplotlib.use("agg") ### avoid tk import error
-# import matplotlib.pyplot as plt
-# import multiprocessing as mp
-## from natsort import natsorted, ns
-# import numpy as np
-# import numpy as npaa
-# import operator
-
-# import pandas as df
-# import pandas as pd
-# import pickle
-# import scipy
-# from scipy.signal import butter, lfilter, freqz
-# import shutil
-# import string
-# import struct
-# import sys
-# import subprocess
-# import re
-# import tempfile
-# from tempfile import mkstemp
-# import tabulate
-# import time
-# import urllib
-# import uuid
-
 import logging.config # MUST remain logging.config for < v3.10
 # (import logging alone doesn't work for < 3.10)
 import os

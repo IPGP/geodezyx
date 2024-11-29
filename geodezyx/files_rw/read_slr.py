@@ -41,8 +41,8 @@ def read_pdm_res_slr_mono(res_file_in,
     
     ### get useful values
     L = utils.extract_text_between_elements_2(res_file_in,
-                                              "\+residuals",
-                                              "\-residuals")
+                                              r"\+residuals",
+                                              r"\-residuals")
     L = L[3:-1]
     
     output = io.StringIO()
