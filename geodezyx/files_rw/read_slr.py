@@ -3,7 +3,7 @@
 """
 Created on Wed Jun 23 10:55:04 2021
 
-@author: psakicki
+@author: psakic
 """
 
 import datetime as dt

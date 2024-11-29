@@ -128,6 +128,9 @@ PyPi project: https://pypi.org/project/geodezyx
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Programming Language :: Python :: 3 :: Only',
     ],
 
@@ -167,11 +170,13 @@ PyPi project: https://pypi.org/project/geodezyx
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
 
+
+    # **********************************************************
+    # install are now in requirements.txt (241122)
     # requirements.txt is read at the beginning of the setup.py file
     # and the required packages are stored in the list 'required'
     install_requires=required,  # Optional
-
-    # install are now in requirements.txt (241122)
+    # **********************************************************
     # install_requires=['bs4',
     #                   'chardet',
     #                   'collection',
@@ -215,7 +220,9 @@ PyPi project: https://pypi.org/project/geodezyx
     #    'test': ['coverage'],
          'full': ['netCDF4',
                   'kepler.py',
-                  'ncompress'],
+                  'ncompress',
+                  'seawater',
+                  'gsw'],
 
     }
 

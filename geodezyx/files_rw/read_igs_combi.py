@@ -3,7 +3,7 @@
 """
 Created on Wed Jun 23 11:42:14 2021
 
-@author: psakicki
+@author: psakic
 """
 
 #### Import the logger

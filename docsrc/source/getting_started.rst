@@ -54,12 +54,12 @@ To test if the `geodezyx` toolbox is well installed, import:
 ::
 
     #### Import
-    from geodezyx import *                   # Import the geodezyx modules
+    import geodezyx           # Import the geodezyx modules
 
-If the modules are well imported (without errors in the console), fine! you have installed the `geodezyx` toolbox!
+If the module are well imported (without errors in the console), fine! you have installed the `geodezyx` toolbox!
 If not, check again the potential errors during the installation.
 
-Nevertheless, star imports are not recomended. It is better to import the modules separatelly, e.g.: 
+It might be better to import the modules separatelly, e.g.:
 
 ::
 

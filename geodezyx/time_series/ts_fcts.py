@@ -459,15 +459,19 @@ def compar(tstup , coortype='ENU' , seuil=3. , win=[] , mode='keep' ,
         dicolist.append(dicovar)
 
     if plot:
-        compar_plot(dicolist,namest,namend,alpha,diapt)
+        fig = compar_plot(dicolist,namest,namend,alpha,diapt)
         try:
             suptit = ' '.join((tstup[-1].stat , str(tstup[-1].startdate()) ,
                                str(tstup[-1].enddate())))
             plt.suptitle(suptit)
         except:
             pass
+        
+        output = (dicolist, fig)
+    else:
+        output = dicolist
 
-    return dicolist
+    return output
 
 # def compar2(tstup,coortype='ENU',seuil=3.,win=[],mode='keep',
 #            Dtype='3D',namest=0,namend=10,alpha = 5 , diapt = 5 ,verbose=True,

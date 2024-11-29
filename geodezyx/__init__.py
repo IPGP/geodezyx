@@ -13,20 +13,17 @@
 # import inspect
 # import itertools
 # import linecache
-#import logging
-import logging.config # MUST remain logging.config for < v3.10 
-# (import logging alone doesn't work for < 3.10)
+# import logging
 # import math
 # import matplotlib
-#matplotlib.use("agg") ### avoid tk import error
+# matplotlib.use("agg") ### avoid tk import error
 # import matplotlib.pyplot as plt
 # import multiprocessing as mp
 ## from natsort import natsorted, ns
 # import numpy as np
 # import numpy as npaa
 # import operator
-import os 
-from os import path
+
 # import pandas as df
 # import pandas as pd
 # import pickle
@@ -45,6 +42,10 @@ from os import path
 # import urllib
 # import uuid
 
+import logging.config # MUST remain logging.config for < v3.10
+# (import logging alone doesn't work for < 3.10)
+import os
+from os import path
 
 #### IMPORT CONFIG FOR LOGGER
 log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'logconfig','loggzyx.py')
