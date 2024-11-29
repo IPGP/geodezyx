@@ -2,7 +2,7 @@
 
 # geodezyx (aka ___The GeodeZYX Toolbox___) 
 
-**Version 4.5.0 / 2024-11-28**, README Revision: 2024-11-28
+**Version 4.5.1 / 2024-11-28**, README Revision: 2024-11-28
 
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
@@ -75,14 +75,15 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ## Changelog
 
-### v4.5.0, 2024-11-28
+### v4.5.1, 2024-11-28
   * Make `geodezyx` compatible with Python 3.12
   * Improvement of PRIDE-related execution functions
   * New leap second functions, to cope with new Ubuntu 24.04 LTS
   * `seawater` and `gsw` modules are installed in `full` mode & imported on demand only
   * Correct angle conversion functions
-  * new version of `conv.numpydt2dt` function
+  * New version of `conv.numpydt2dt` function
   * Misc routine improvements
+  * v4.5.0 is cancelled, because `requirements.txt` is missing
 
 ### v4.4.3, 2024-05-20
   * Speed execution optimization for orbit/clock-related functions
