@@ -3,7 +3,7 @@
 """
 Created on Wed Jun 23 10:24:42 2021
 
-@author: psakicki
+@author: psakic
 """
 
 ########## BEGIN IMPORT ##########
@@ -393,7 +393,7 @@ def read_erp_snx(snx_in):
     log.warning("read_erp_snx not properly IMPLEMENTED !!!!!")
     
     utils.extract_text_between_elements_2(snx_in,
-                                          '\+SOLUTION/ESTIMATE',
+                                          r'\+SOLUTION/ESTIMATE',
                                           '-SOLUTION/ESTIMATE',
                                           return_string = True)
     

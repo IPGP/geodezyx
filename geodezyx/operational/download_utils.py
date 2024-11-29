@@ -19,6 +19,7 @@ import logging
 import os
 import pathlib
 import shutil
+import time
 import urllib
 ########## BEGIN IMPORT ##########
 #### External modules
@@ -291,6 +292,7 @@ def ftp_objt_create(
     parallel_download=1,
     user="anonymous",
     passwd="",
+    retry_count=3,
 ):
     """
     This function creates and returns an FTP object and a list of FTP objects for multiple downloads.
@@ -309,6 +311,8 @@ def ftp_objt_create(
         The username for the FTP server. Default is "anonymous".
     passwd : str, optional
         The password for the FTP server. Default is an empty string.
+    retry_count : int, optional
+        The number of times to retry creating the FTP object. Default is 3.
 
     Returns
     -------
@@ -329,7 +333,20 @@ def ftp_objt_create(
         ftp_constuctor = FTP
 
     # create a list of FTP object for multiple downloads
-    ftp_obj_list_out = [ftp_constuctor(host) for i in range(parallel_download)]
+    ftp_obj_list_out = []
+    for i in range(parallel_download):
+        for attempt in range(retry_count):
+            try:
+                current_ftp_obj = ftp_constuctor(host)
+                ftp_obj_list_out.append(current_ftp_obj)
+                break  # Exit the retry loop if successful
+            except Exception as e:
+                log.warning("FTP object creation failed on attempt %d", attempt + 1)
+                log.warning(e)
+                time.sleep(5)
+                if attempt == retry_count - 1:
+                    log.error("Max retries reached. Could not create FTP object.")
+
     if secure_ftp_inp:
         [f.login(user, passwd) for f in ftp_obj_list_out]
         [f.prot_p() for f in ftp_obj_list_out]
@@ -560,31 +577,31 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
 
     """
     ### create a DataFrame based on the urllist and savedirlist lists
-    DF = pd.concat((pd.DataFrame(urllist), pd.DataFrame(savedirlist)), axis=1)
-    DF_orig = DF.copy()
+    df = pd.concat((pd.DataFrame(urllist), pd.DataFrame(savedirlist)), axis=1)
+    df_orig = df.copy()
 
     ### rename the columns
-    if DF.shape[1] == 4:
+    if df.shape[1] == 4:
         loginftp = True
-        DF.columns = ("url", "user", "pass", "savedir")
+        df.columns = ("url", "user", "pass", "savedir")
     else:
         loginftp = False
-        DF.columns = ("url", "savedir")
-        DF["user"] = "anonymous"
-        DF["pass"] = ""
+        df.columns = ("url", "savedir")
+        df["user"] = "anonymous"
+        df["pass"] = ""
 
     ### Do the correct split for the URLs
-    DF = DF.sort_values("url")
-    DF["url"] = DF["url"].str.replace("ftp://", "")
-    DF["dirname"] = DF["url"].apply(os.path.dirname)
-    DF["basename"] = DF["url"].apply(os.path.basename)
-    DF["root"] = [e.split("/")[0] for e in DF["dirname"].values]
-    DF["dir"] = [e1.replace(e2, "")[1:] for (e1, e2) in zip(DF["dirname"], DF["root"])]
-    DF["bool"] = False
+    df = df.sort_values("url")
+    df["url"] = df["url"].str.replace("ftp://", "")
+    df["dirname"] = df["url"].apply(os.path.dirname)
+    df["basename"] = df["url"].apply(os.path.basename)
+    df["root"] = [e.split("/")[0] for e in df["dirname"].values]
+    df["dir"] = [e1.replace(e2, "")[1:] for (e1, e2) in zip(df["dirname"], df["root"])]
+    df["bool"] = False
 
     #### Initialisation of the 1st variables for the loop
-    prev_row_ftpobj = DF.iloc[0]
-    prev_row_cwd = DF.iloc[0]
+    prev_row_ftpobj = df.iloc[0]
+    prev_row_cwd = df.iloc[0]
     FTP_files_list = []
     count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
     #### Initialisation of the FTP object
@@ -596,7 +613,7 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
         passwd=prev_row_ftpobj["pass"],
     )
 
-    for irow, row in DF.iterrows():
+    for irow, row in df.iterrows():
         count_loop += 1
 
         ####### we recreate a new FTP object if the root URL is not the same
@@ -626,13 +643,13 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
 
             ####### we check if the files is avaiable
         if row.basename in FTP_files_list:
-            DF.loc[irow, "bool"] = True
+            df.loc[irow, "bool"] = True
             log.info(row.basename + " found on server :)")
         else:
-            DF.loc[irow, "bool"] = False
+            df.loc[irow, "bool"] = False
             log.warning(row.basename + " not found on server :(")
 
-    DFgood = DF[DF["bool"]].copy()
+    DFgood = df[df["bool"]].copy()
 
     DFgood["url"] = "ftp://" + DFgood["url"]
 

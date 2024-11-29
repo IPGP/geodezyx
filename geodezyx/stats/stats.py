@@ -16,7 +16,6 @@ GitHub repository :
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
-
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt

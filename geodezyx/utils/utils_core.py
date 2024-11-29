@@ -488,6 +488,63 @@ def open_readlines_smart(file_in, decode_type="iso-8859-1", verbose=False):
     return lines
 
 
+def split_string_after_n_chars_at_space(s, n):
+    """
+    Splits a string into substrings of a maximum length of n characters,
+    but only splits at spaces and inserts a newline (\n) after each substring.
+
+    Parameters
+    ----------
+    s : str
+        The input string to be split.
+    n : int
+        The maximum length of each substring.
+
+    Returns
+    -------
+    str
+        The modified string with newlines inserted.
+    """
+    result = []
+    lines = s.split("\n")
+    for line in lines:
+        words = line.split()
+        current_line = []
+
+        for word in words:
+            if sum(len(w) for w in current_line) + len(current_line) + len(word) > n:
+                result.append(' '.join(current_line))
+                current_line = [word]
+            else:
+                current_line.append(word)
+
+        if current_line:
+            result.append(' '.join(current_line))
+
+    return '\n'.join(result)
+
+def add_symbol_to_new_lines(s, symbol='·'):
+    """
+    Adds a specified symbol to the beginning of each new line in a multi-line string.
+
+    Parameters
+    ----------
+    s : str
+        The input multi-line string.
+    symbol : str, optional
+        The symbol to add to each new line. Default is '·'.
+
+    Returns
+    -------
+    str
+        The modified string with the symbol added to each new line.
+    """
+    lines = s.split('\n')
+    modified_lines = [symbol + line for line in lines]
+    return '\n'.join(modified_lines)
+
+
+
 def memmap_from_array(arrin):
     nam = str(np.random.randint(99999)) + '.mmp.tmp'
     path = os.path.join(tempfile.mkdtemp(), nam)

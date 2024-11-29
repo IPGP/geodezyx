@@ -1,0 +1,28 @@
+bs4
+chardet
+collection
+colorlog
+# gsw # full mode
+#ftplib
+hatanaka
+#kepler.py # full mode
+natsort
+matplotlib
+#ncompress # full mode
+numpy
+#netCDF4 # full mode
+pybind11
+pyorbital
+pytwobodyorbit
+pyyaml
+pathvalidate
+pandas
+# seawater # full mode
+scipy
+sympy
+tabulate
+tk
+tqdm ##progressbars
+vincenty
+wheel
+xarray

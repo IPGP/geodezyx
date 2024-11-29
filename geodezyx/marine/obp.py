@@ -597,9 +597,9 @@ def log_linear(x, a1, a2, a3, a4, **kwargs):
     float
         The computed log-linear value.
     """
-    return a1 * np.log(a2 * (1 + x)) + a4 + a3 * x
+    return a1 * np.log(a2 * (1 + x)) + a3 * x + a4
 
-def log(x, a1, a2, a3, **kwargs):
+def log(x, a1, a2, a3, a4, **kwargs):
     """
     Logarithmic model function.
 
@@ -622,7 +622,7 @@ def log(x, a1, a2, a3, **kwargs):
         The computed logarithmic value.
     """
     x0 = min(x)
-    return a1 * np.log(a2 * (1 + x - x0)) + a3
+    return a1 * np.log(a2 * (1 + x - x0)) + a3 * (x - x0) + a4
 
 def exp(x, a, b, c, d, **kwargs):
     """
@@ -638,8 +638,6 @@ def exp(x, a, b, c, d, **kwargs):
         Coefficient for the exponential term.
     c : float
         Constant term.
-    d : float
-        Linear term coefficient.
     **kwargs : dict
         Additional keyword arguments.
 
@@ -648,7 +646,7 @@ def exp(x, a, b, c, d, **kwargs):
     float
         The computed exponential value.
     """
-    return a * np.exp(-b * x) + c
+    return a * np.exp(-b * x) + c * x + d 
 
 def linear(x, a1, a2, a3, a4, **kwargs):
     """
@@ -690,9 +688,9 @@ def exp_linear(x, a, b, c, d, **kwargs):
     b : float
         Coefficient for the exponential term.
     c : float
-        Constant term.
-    d : float
         Linear term coefficient.
+    d : float
+        Constant term.
     **kwargs : dict
         Additional keyword arguments.
 
@@ -702,9 +700,124 @@ def exp_linear(x, a, b, c, d, **kwargs):
         The computed exponential-linear value.
     """
     x0 = min(x)
-    return a * np.exp(-1/b * (x - x0)) + c + d * (x - x0)
+    return a * np.exp(-1/b * (x - x0)) + c * (x - x0) + d
 
-def fit_model(data, t_fit, model='log_linear', offset_last=True, maxfev=1000, pn=2):
+
+#### Added by PS (2024-10)
+def exp_polynomial_deg2(x, a, b, c,  **kwargs):
+    """
+    Computes an exponential function combined with a second-degree polynomial.
+
+    This function calculates the value of an exponential function combined with a
+    second-degree polynomial given the input data and coefficients.
+
+    Parameters
+    ----------
+    x : array-like
+        The input data.
+    a : float
+        Coefficient for the polynomial term.
+    b : float
+        Coefficient for the exponential term.
+    c : float
+        Constant term.
+    **kwargs : dict
+        Additional keyword arguments.
+
+    Returns
+    -------
+    float
+        The computed value from the exponential function combined with a second-degree polynomial.
+    """
+    x0 = min(x)
+    return (x - x0)**2 * a * np.exp(b * (x-x0) + c)
+
+# Exponential with offset
+def exp_with_offset(x, a, b, c, **kwargs):
+    """
+    Exponential model function with an offset.
+
+    This function calculates an exponential decay with an added constant offset.
+
+    Parameters
+    ----------
+    x : array-like
+        The input data.
+    a : float
+        Coefficient for the exponential term.
+    b : float
+        Exponent for the exponential term.
+    c : float
+        Constant offset term.
+    **kwargs : dict
+        Additional keyword arguments.
+
+    Returns
+    -------
+    float
+        The computed value from the exponential model with offset.
+    """
+    return a * np.exp(-b * x) + c
+
+# Higher degree polynomial (3rd degree)
+def polynomial_3(x, a, b, c, d, **kwargs):
+    """
+    Computes a 3rd degree polynomial.
+
+    This function calculates the value of a 3rd degree polynomial given the input data and coefficients.
+
+    Parameters
+    ----------
+    x : array-like
+        The input data.
+    a : float
+        The constant term of the polynomial.
+    b : float
+        The coefficient of the linear term.
+    c : float
+        The coefficient of the quadratic term.
+    d : float
+        The coefficient of the cubic term.
+    **kwargs : dict
+        Additional keyword arguments.
+
+    Returns
+    -------
+    float
+        The computed value of the 3rd degree polynomial.
+    """
+    return a + b*x + c*x**2 + d*x**3
+# Generalized nonlinear model (exponential + power law)
+def exp_power_combined(x, a, b, c, d, **kwargs):
+    """
+    Generalized nonlinear model function combining exponential decay and power law.
+
+    This function models data using a combination of an exponential decay term and a power law term.
+
+    Parameters
+    ----------
+    x : array-like
+        The input data.
+    a : float
+        Coefficient for the exponential term.
+    b : float
+        Exponent for the exponential term.
+    c : float
+        Coefficient for the power law term.
+    d : float
+        Exponent for the power law term.
+    **kwargs : dict
+        Additional keyword arguments.
+
+    Returns
+    -------
+    float
+        The computed value from the combined exponential and power law model.
+    """
+    return a * np.exp(-b * x) + c * np.power(x + 1, -d)
+
+def fit_model(data, t_fit, model='log_linear', offset_last=True, maxfev=1000, pn=2,
+              normalize_t=False):
     """
     Fits a model to the given data.
 
@@ -712,56 +825,77 @@ def fit_model(data, t_fit, model='log_linear', offset_last=True, maxfev=1000, pn
     ----------
     data : pandas.Series
         The input data to fit the model to.
+        Is a Series with time as Index
     t_fit : pandas.DatetimeIndex
-        The time points to fit the model to.
+        Time points to get fitted values once the fit model has been determeined.
     model : str, optional
-        The model to use for fitting. Options are 'log_linear', 'log', 'exp', 'linear', 'exp_linear', and 'poly'. Default is 'log_linear'.
+        The model to use for fitting. Options are 'log_linear', 'log', 'exp',
+        'linear', 'exp_linear', and 'poly'. Default is 'log_linear'.
     offset_last : bool, optional
         Whether to offset the last value. Default is True.
     maxfev : int, optional
         The maximum number of function evaluations. Default is 1000.
     pn : int, optional
         The degree of the polynomial if the model is 'poly'. Default is 2.
+    normalize_t : bool, optional
+        Whether to normalize the time values. Default is False.
 
     Returns
     -------
     pandas.Series
         The fitted model values.
     """
-    t_num = (data.index.to_julian_date() - data.index.to_julian_date()[0]).values
-    t_fit_num = (t_fit.to_julian_date() - t_fit.to_julian_date()[0]).values
 
-    ref = t_num[-1]
-    t_num /= ref
-    t_fit_num /= ref
+    # initial time implemented in days, but better in seconds
+    #t_num_data = (data.index.to_julian_date() - data.index.to_julian_date()[0]).values
+    #t_num_fit = (t_fit.to_julian_date() - t_fit.to_julian_date()[0]).values
+
+    t_num_data = (data.index - data.index[0]).total_seconds().values
+    t_num_fit = (t_fit - t_fit[0]).total_seconds().values
+
+    ### normalize
+    if normalize_t:
+        ref = t_num_data[-1]
+        t_num_data /= ref
+        t_num_fit /= ref
 
     if model == 'poly':
-        z = np.polyfit(t_num, data.values, pn)
+        z = np.polyfit(t_num_data, data.values, pn)
         p = np.poly1d(z)
-        fit = p(t_fit_num)
+        fit = p(t_num_fit)
         ind_min = np.argmin(fit)
         fit[ind_min:] = fit[ind_min]
+        out_opti = None
     elif model == 'log_linear':
-        out_opti = optimize.curve_fit(log_linear, t_num, data.values, maxfev=maxfev)
+        out_opti = optimize.curve_fit(log_linear, t_num_data, data.values, maxfev=maxfev)
         popt, pcov = out_opti[0], out_opti[1]
-        fit = log_linear(t_fit_num, *popt)
+        fit = log_linear(t_num_fit, *popt)
     elif model == 'log':
-        out_opti = optimize.curve_fit(log, t_num, data.values, maxfev=maxfev)
+        out_opti = optimize.curve_fit(log, t_num_data, data.values, maxfev=maxfev)
         popt, pcov = out_opti[0], out_opti[1]
-        fit = log(t_fit_num, *popt)
+        fit = log(t_num_fit, *popt)
     elif model == 'exp':
-        out_opti = optimize.curve_fit(exp, t_num, data.values, maxfev=maxfev)
+        out_opti = optimize.curve_fit(exp, t_num_data, data.values, maxfev=maxfev)
         popt, pcov = out_opti[0], out_opti[1]
-        fit = exp(t_fit_num, *popt)
+        fit = exp(t_num_fit, *popt)
     elif model == 'exp_linear':
-        out_opti = optimize.curve_fit(exp_linear, t_num, data.values, maxfev=maxfev)
+        out_opti = optimize.curve_fit(exp_linear, t_num_data, data.values, maxfev=maxfev)
         popt, pcov = out_opti[0], out_opti[1]
-        fit = exp_linear(t_fit_num, *popt)
+        fit = exp_linear(t_num_fit, *popt)
+    elif model == 'exp_polynomial_deg2':
+        out_opti = optimize.curve_fit(exp_polynomial_deg2, t_num_data, data.values, maxfev=maxfev)
+        popt, pcov = out_opti[0], out_opti[1]
+        fit = exp_polynomial_deg2(t_num_fit, *popt)
     elif model == 'linear':
-        out_opti = optimize.curve_fit(linear, t_num, data.values, maxfev=maxfev)
+        out_opti = optimize.curve_fit(linear, t_num_data, data.values, maxfev=maxfev)
         popt, pcov = out_opti[0], out_opti[1]
-        fit = linear(t_fit_num, *popt)
+        fit = linear(t_num_fit, *popt)
+    elif model == 'exp_power_combined':
+        out_opti = optimize.curve_fit(exp_power_combined, t_num_data, data.values, maxfev=maxfev)
+        popt, pcov = out_opti[0], out_opti[1]
+        fit = exp_power_combined(t_num_fit, *popt)
     else:
         print(f'Invalid model type : {model}. Must be log_linear, log, exp, linear, exp_linear, or poly.')
-        return None
-    return pd.DataFrame(fit, index=t_fit)[0]
+        return None, None
+
+    return pd.DataFrame(fit, index=t_fit)[0], out_opti

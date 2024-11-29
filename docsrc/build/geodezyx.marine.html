@@ -1,21 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.marine package &mdash; geodezyx 4.x documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
-        <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -57,6 +57,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.marine package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.marine.dac">geodezyx.marine.dac module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.marine.marine">geodezyx.marine.marine module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.marine.obp">geodezyx.marine.obp module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.marine.obscom">geodezyx.marine.obscom module</a></li>
@@ -105,6 +106,59 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
+<section id="module-geodezyx.marine.dac">
+<span id="geodezyx-marine-dac-module"></span><h2>geodezyx.marine.dac module<a class="headerlink" href="#module-geodezyx.marine.dac" title="Link to this heading"></a></h2>
+<p>Created on Mon Jun  3 15:45:36 2024</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.marine.dac.dac_extract">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.dac.</span></span><span class="sig-name descname"><span class="pre">dac_extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dac_files_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">45.46</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-12.78</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.dac.dac_extract" title="Link to this definition"></a></dt>
+<dd><p>Extracts DAC (Doppler-derived Atmospheric Correction) values from a list
+of DAC files for a given location and date range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dac_files_lis</strong> (<em>list</em>) – The list of DAC files from which the DAC values are to be extracted.</p></li>
+<li><p><strong>mlon</strong> (<em>float</em><em>, </em><em>optional</em>) – The longitude of the location for which the DAC values are to be extracted. Default is 45.46.</p></li>
+<li><p><strong>mlat</strong> (<em>float</em><em>, </em><em>optional</em>) – The latitude of the location for which the DAC values are to be extracted. Default is -12.78.</p></li>
+<li><p><strong>epoch_min</strong> (<em>datetime</em><em>, </em><em>optional</em>) – The start date of the range for which the DAC values are to be extracted. Default is January 1, 1980.</p></li>
+<li><p><strong>epoch_max</strong> (<em>datetime</em><em>, </em><em>optional</em>) – The end date of the range for which the DAC values are to be extracted. Default is January 1, 2099.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame with the extracted DAC values. The index of the DataFrame is the date and the column contains
+the DAC values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.marine.dac.dac_get_aviso">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.dac.</span></span><span class="sig-name descname"><span class="pre">dac_get_aviso</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_srt_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.dac.dac_get_aviso" title="Link to this definition"></a></dt>
+<dd><p>Downloads DAC (Doppler-derived Atmospheric Correction) files from the AVISO FTP server for a given date range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date_srt_inp</strong> (<em>datetime</em>) – The start date of the range for which DAC files are to be downloaded.</p></li>
+<li><p><strong>date_end_inp</strong> (<em>datetime</em>) – The end date of the range for which DAC files are to be downloaded.</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em>) – The local directory where the downloaded DAC files should be saved.</p></li>
+<li><p><strong>user</strong> (<em>str</em>) – The username for the FTP server.</p></li>
+<li><p><strong>passwd</strong> (<em>str</em>) – The password for the FTP server.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of paths to the downloaded DAC files.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-geodezyx.marine.marine">
 <span id="geodezyx-marine-marine-module"></span><h2>geodezyx.marine.marine module<a class="headerlink" href="#module-geodezyx.marine.marine" title="Link to this heading"></a></h2>
 <p>&#64;author: psakic</p>
@@ -132,52 +186,207 @@ replaced by the closest elsewhere</p>
 <p>&#64;author: psakic</p>
 <p>This module regroups the functions for the exploitation of the A0A pressure
 sensors in the context of the REVOSIMA network</p>
-<p>It is based on the work of Yann Terden Tranchant</p>
+<p>It is based on the work of Yann-Terden Tranchant, LIENSs, La Rochelle, France</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.butter_bandpass">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">butter_bandpass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lowcut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highcut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.butter_bandpass" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Designs a bandpass Butterworth filter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lowcut</strong> (<em>float</em>) – The lower cutoff frequency of the filter.</p></li>
+<li><p><strong>highcut</strong> (<em>float</em>) – The upper cutoff frequency of the filter.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – The sampling frequency of the signal.</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – The order of the filter. Default is 3.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>b</strong> (<em>ndarray</em>) – The numerator coefficient vector of the filter.</p></li>
+<li><p><strong>a</strong> (<em>ndarray</em>) – The denominator coefficient vector of the filter.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.butter_bandpass_filtfilt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">butter_bandpass_filtfilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowcut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highcut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.butter_bandpass_filtfilt" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Applies a bandpass Butterworth filter to the data using forward and backward filtering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>array_like</em>) – The input data to be filtered.</p></li>
+<li><p><strong>lowcut</strong> (<em>float</em>) – The lower cutoff frequency of the filter.</p></li>
+<li><p><strong>highcut</strong> (<em>float</em>) – The upper cutoff frequency of the filter.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – The sampling frequency of the signal.</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – The order of the filter. Default is 4.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>y</strong> – The filtered data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.butter_highpass">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">butter_highpass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.butter_highpass" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Designs a highpass Butterworth filter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cutoff</strong> (<em>float</em>) – The cutoff frequency of the filter.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – The sampling frequency of the signal.</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – The order of the filter. Default is 5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>b</strong> (<em>ndarray</em>) – The numerator coefficient vector of the filter.</p></li>
+<li><p><strong>a</strong> (<em>ndarray</em>) – The denominator coefficient vector of the filter.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.butter_highpass_filtfilt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">butter_highpass_filtfilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.butter_highpass_filtfilt" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Applies a highpass Butterworth filter to the data using forward and backward filtering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>array_like</em>) – The input data to be filtered.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – The cutoff frequency of the filter.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – The sampling frequency of the signal.</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – The order of the filter. Default is 4.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>y</strong> – The filtered data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.butter_lowpass">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">butter_lowpass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.butter_lowpass" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Designs a lowpass Butterworth filter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cutoff</strong> (<em>float</em>) – The cutoff frequency of the filter.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – The sampling frequency of the signal.</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – The order of the filter. Default is 5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>b</strong> (<em>ndarray</em>) – The numerator coefficient vector of the filter.</p></li>
+<li><p><strong>a</strong> (<em>ndarray</em>) – The denominator coefficient vector of the filter.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.butter_lowpass_filtfilt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">butter_lowpass_filtfilt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.butter_lowpass_filtfilt" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Applies a lowpass Butterworth filter to the data using forward and backward filtering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>array_like</em>) – The input data to be filtered.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – The cutoff frequency of the filter.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – The sampling frequency of the signal.</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – The order of the filter. Default is 4.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>y</strong> – The filtered data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.butterworth">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">butterworth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">259200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">864000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bandpass'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.butterworth" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Applies a Butterworth filter to the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – The input data to be filtered.</p></li>
+<li><p><strong>t0</strong> (<em>int</em><em>, </em><em>optional</em>) – The lower cutoff period in seconds. Default is 3 days (3*24*3600 seconds).</p></li>
+<li><p><strong>t1</strong> (<em>int</em><em>, </em><em>optional</em>) – The upper cutoff period in seconds. Default is 10 days (10*24*3600 seconds).</p></li>
+<li><p><strong>kind</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of filter to apply. Options are ‘highpass’, ‘lowpass’, and ‘bandpass’. Default is ‘bandpass’.</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – The order of the filter. Default is 4.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The filtered data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.Series</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.compute_dens_profile">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">compute_dens_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.compute_dens_profile" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Computes the density profile from the given dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>profile</strong> (<em>xarray.Dataset</em>) – The input dataset containing temperature (theta) and salinity (salt) variables.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed density profile.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.compute_phibot">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">compute_phibot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'forward'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_median</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.compute_phibot" title="Link to this definition"></a></dt>
-<dd><p>phibot = Ocean hydrostatic bottom pressure anomaly
-<a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html</a></p>
+<dd><p>Computes the ocean hydrostatic bottom pressure anomaly (phibot).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<em>xarray.Dataset</em>) – The input dataset containing temperature (theta) and salinity (salt) variables.</p></li>
+<li><p><strong>ssh</strong> (<em>xarray.DataArray</em><em>, </em><em>optional</em>) – The sea surface height data. If None, it is taken from the profile. Default is None.</p></li>
+<li><p><strong>integration</strong> (<em>str</em><em>, </em><em>optional</em>) – The integration method to use for steric height computation.
+Options are ‘forward’, ‘backward’, and ‘averaged’. Default is ‘forward’.</p></li>
+<li><p><strong>rho</strong> (<em>float</em><em>, </em><em>optional</em>) – The reference density in kg/m^3. Default is 10.35.</p></li>
+<li><p><strong>remove_median</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to remove the median from the computed phibot values. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed phibot values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>phibot = Ocean hydrostatic bottom pressure anomaly
+<a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html</a>
+<a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2146301108-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2146301108-POCLOUD.html</a></p>
 <dl class="simple">
 <dt>PHIBOT              Bottom Pressure Pot. Anomaly (p/rhonil, m^2/s^2)</dt><dd><p>To convert to m, divide by g (g=9.81 m/s^2)
 PHIBOT is the anomaly relative to Depth * rhonil * g
@@ -191,42 +400,254 @@ Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.compute_spectrogram">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">compute_spectrogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nchunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">21600</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.compute_spectrogram" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Computes the spectrogram of the given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – The input data to compute the spectrogram for.</p></li>
+<li><p><strong>max_period</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum period to consider in the spectrogram. Default is 45.</p></li>
+<li><p><strong>nchunks</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of chunks to divide the data into. Default is 3600*6.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>p</strong> (<em>numpy.ndarray</em>) – The periods corresponding to the spectrogram.</p></li>
+<li><p><strong>t</strong> (<em>pandas.DatetimeIndex</em>) – The time points corresponding to the spectrogram.</p></li>
+<li><p><strong>sxx</strong> (<em>numpy.ndarray</em>) – The spectrogram values.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.compute_steric">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">compute_steric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'forward'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.compute_steric" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Computes the steric height anomaly from the given profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile</strong> (<em>xarray.Dataset</em>) – The input dataset containing temperature (theta) and salinity (salt) variables.</p></li>
+<li><p><strong>integration</strong> (<em>str</em><em>, </em><em>optional</em>) – The integration method to use. Options are ‘forward’, ‘backward’, and ‘averaged’. Default is ‘forward’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The steric height anomaly.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.Series</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.exp">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.exp" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Exponential model function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – The input data.</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – Coefficient for the exponential term.</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – Coefficient for the exponential term.</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – Constant term.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed exponential value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.exp_linear">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">exp_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.exp_linear" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Exponential-linear model function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – The input data.</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – Coefficient for the exponential term.</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – Coefficient for the exponential term.</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – Linear term coefficient.</p></li>
+<li><p><strong>d</strong> (<em>float</em>) – Constant term.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed exponential-linear value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.marine.obp.exp_polynomial_deg2">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">exp_polynomial_deg2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.exp_polynomial_deg2" title="Link to this definition"></a></dt>
+<dd><p>Computes an exponential function combined with a second-degree polynomial.</p>
+<p>This function calculates the value of an exponential function combined with a
+second-degree polynomial given the input data and coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – The input data.</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – Coefficient for the polynomial term.</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – Coefficient for the exponential term.</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – Constant term.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed value from the exponential function combined with a second-degree polynomial.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.marine.obp.exp_power_combined">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">exp_power_combined</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.exp_power_combined" title="Link to this definition"></a></dt>
+<dd><p>Generalized nonlinear model function combining exponential decay and power law.</p>
+<p>This function models data using a combination of an exponential decay term and a power law term.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – The input data.</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – Coefficient for the exponential term.</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – Exponent for the exponential term.</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – Coefficient for the power law term.</p></li>
+<li><p><strong>d</strong> (<em>float</em>) – Exponent for the power law term.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed value from the combined exponential and power law model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.marine.obp.exp_with_offset">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">exp_with_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.exp_with_offset" title="Link to this definition"></a></dt>
+<dd><p>Exponential model function with an offset.</p>
+<p>This function calculates an exponential decay with an added constant offset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – The input data.</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – Coefficient for the exponential term.</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – Exponent for the exponential term.</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – Constant offset term.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed value from the exponential model with offset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.extract_profile">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">extract_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zbottom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.extract_profile" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Extracts a profile from the dataset at the specified coordinates and interpolates to the given depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> (<em>xarray.Dataset</em>) – The input dataset containing the data.</p></li>
+<li><p><strong>x</strong> (<em>float</em>) – The longitude coordinate.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – The latitude coordinate.</p></li>
+<li><p><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – The interpolation method to use. Default is ‘linear’.</p></li>
+<li><p><strong>zbottom</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – The depth(s) to interpolate to. If None, no depth interpolation is performed. Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The extracted and interpolated profile.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xarray.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.fit_model">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">fit_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log_linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_last</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxfev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.fit_model" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">fit_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log_linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_last</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxfev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.fit_model" title="Link to this definition"></a></dt>
+<dd><p>Fits a model to the given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.Series</em>) – The input data to fit the model to.
+Is a Series with time as Index</p></li>
+<li><p><strong>t_fit</strong> (<em>pandas.DatetimeIndex</em>) – Time points to get fitted values once the fit model has been determeined.</p></li>
+<li><p><strong>model</strong> (<em>str</em><em>, </em><em>optional</em>) – The model to use for fitting. Options are ‘log_linear’, ‘log’, ‘exp’,
+‘linear’, ‘exp_linear’, and ‘poly’. Default is ‘log_linear’.</p></li>
+<li><p><strong>offset_last</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to offset the last value. Default is True.</p></li>
+<li><p><strong>maxfev</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of function evaluations. Default is 1000.</p></li>
+<li><p><strong>pn</strong> (<em>int</em><em>, </em><em>optional</em>) – The degree of the polynomial if the model is ‘poly’. Default is 2.</p></li>
+<li><p><strong>normalize_t</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to normalize the time values. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The fitted model values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.Series</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.get_bottom_depth">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">get_bottom_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.get_bottom_depth" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Computes the bottom depth of the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ds</strong> (<em>xarray.Dataset</em>) – The input dataset containing depth and theta variables.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The bottom depth values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.interp_time">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">interp_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.interp_time" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Interpolates the dataset along the time dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> (<em>xarray.Dataset</em>) – The input dataset to be interpolated.</p></li>
+<li><p><strong>time</strong> (<em>array-like</em><em> or </em><em>scalar</em>) – The new time points to interpolate to.</p></li>
+<li><p><strong>method</strong> (<em>str</em><em> or </em><em>Litteral</em><em>, </em><em>optional</em>) – The interpolation method to use. Default is ‘linear’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The interpolated dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xarray.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.interp_xy">
@@ -235,10 +656,10 @@ Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ds</strong> (<em>xarray</em>) – input xarray grid.</p></li>
+<li><p><strong>ds</strong> (<em>xarray.Dataset</em>) – input xarray grid.</p></li>
 <li><p><strong>x</strong> (<em>float</em><em>, </em><em>optional</em>) – longitude in deg (but depends on ds units). The default is None.</p></li>
 <li><p><strong>y</strong> (<em>float</em><em>, </em><em>optional</em>) – latitude in deg (but depends on ds units). The default is None.</p></li>
-<li><p><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – interpolation method. The default is ‘linear’.</p></li>
+<li><p><strong>method</strong> (<em>str</em><em> or </em><em>Litteral</em><em>, </em><em>optional</em>) – interpolation method. The default is ‘linear’.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -253,42 +674,187 @@ Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.interp_z">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">interp_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.interp_z" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Interpolates the dataset along the depth dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> (<em>xarray.Dataset</em>) – The input dataset to be interpolated.</p></li>
+<li><p><strong>depth</strong> (<em>array-like</em><em> or </em><em>scalar</em>) – The new depth points to interpolate to.</p></li>
+<li><p><strong>method</strong> (<em>str</em><em> or </em><em>Litteral</em><em>, </em><em>optional</em>) – The interpolation method to use. Default is ‘linear’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The interpolated dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xarray.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.linear">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.linear" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a4</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.linear" title="Link to this definition"></a></dt>
+<dd><p>Linear model function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – The input data.</p></li>
+<li><p><strong>a1</strong> (<em>float</em>) – Slope of the linear function.</p></li>
+<li><p><strong>a2</strong> (<em>float</em>) – Intercept of the linear function.</p></li>
+<li><p><strong>a3</strong> (<em>float</em>) – Additional coefficient.</p></li>
+<li><p><strong>a4</strong> (<em>float</em>) – Additional coefficient.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed linear value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.log">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.log" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a4</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.log" title="Link to this definition"></a></dt>
+<dd><p>Logarithmic model function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – The input data.</p></li>
+<li><p><strong>a1</strong> (<em>float</em>) – Coefficient for the logarithmic term.</p></li>
+<li><p><strong>a2</strong> (<em>float</em>) – Coefficient for the logarithmic term.</p></li>
+<li><p><strong>a3</strong> (<em>float</em>) – Constant term.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed logarithmic value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.log_linear">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">log_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A4</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.log_linear" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">log_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a4</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.log_linear" title="Link to this definition"></a></dt>
+<dd><p>Log-linear model function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – The input data.</p></li>
+<li><p><strong>a1</strong> (<em>float</em>) – Coefficient for the logarithmic term.</p></li>
+<li><p><strong>a2</strong> (<em>float</em>) – Coefficient for the logarithmic term.</p></li>
+<li><p><strong>a3</strong> (<em>float</em>) – Coefficient for the linear term.</p></li>
+<li><p><strong>a4</strong> (<em>float</em>) – Constant term.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed log-linear value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.marine.obp.polynomial_3">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">polynomial_3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.polynomial_3" title="Link to this definition"></a></dt>
+<dd><p>Computes a 3rd degree polynomial.</p>
+<p>This function calculates the value of a 3rd degree polynomial given the input data and coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – The input data.</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – The constant term of the polynomial.</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – The coefficient of the linear term.</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – The coefficient of the quadratic term.</p></li>
+<li><p><strong>d</strong> (<em>float</em>) – The coefficient of the cubic term.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed value of the 3rd degree polynomial.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.read_duacs">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">read_duacs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.read_duacs" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Reads a DUACS dataset and renames its variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – The path to the DUACS dataset file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The renamed dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xarray.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.read_ecco2">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">read_ecco2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.read_ecco2" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Reads an ECCO2 dataset and renames its variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – The path to the ECCO2 dataset file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The renamed dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xarray.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.read_glorys">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">read_glorys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.read_glorys" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Reads a GLORYS dataset and renames its variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – The path to the GLORYS dataset file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The renamed dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xarray.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.read_hycom">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">read_hycom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.read_hycom" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Reads a HYCOM dataset and renames its variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – The path to the HYCOM dataset file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The renamed dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>xarray.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-geodezyx.marine.obscom">
@@ -451,9 +1017,62 @@ OLD version</p>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.marine.obscom.import_presure_df">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obscom.</span></span><span class="sig-name descname"><span class="pre">import_presure_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_pres_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dic_coeffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_clk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_sensor_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">168000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_sensor_pres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integ_timespan_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integ_timespan_pres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoc_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_pres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pa'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obscom.import_presure_df" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="geodezyx.marine.obscom.obscom_import_pres_df">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obscom.</span></span><span class="sig-name descname"><span class="pre">obscom_import_pres_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_pres_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dic_coeffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_clk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_sensor_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">168000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_sensor_pres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integ_timespan_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integ_timespan_pres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoc_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_pres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pa'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obscom.obscom_import_pres_df" title="Link to this definition"></a></dt>
+<dd><p>Imports pressure data from a CSV file and computes the frequency, temperature, pressure, and depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>csv_pres_inp</strong> (<em>str</em>) – The path to the CSV file containing the pressure data.</p></li>
+<li><p><strong>dic_coeffs</strong> (<em>dict</em>) – The dictionary of coefficients used for the computations.</p></li>
+<li><p><strong>freq_clk</strong> (<em>float</em><em>, </em><em>optional</em>) – The frequency of the clock in Hertz. Default is 4.096e6.</p></li>
+<li><p><strong>count_sensor_temp</strong> (<em>float</em><em>, </em><em>optional</em>) – The count of the temperature sensor. Default is 168e3.</p></li>
+<li><p><strong>count_sensor_pres</strong> (<em>float</em><em>, </em><em>optional</em>) – The count of the pressure sensor. Default is 30e3.</p></li>
+<li><p><strong>integ_timespan_temp</strong> (<em>int</em><em>, </em><em>optional</em>) – The integration timespan for the temperature sensor. Default is 10.</p></li>
+<li><p><strong>integ_timespan_pres</strong> (<em>int</em><em>, </em><em>optional</em>) – The integration timespan for the pressure sensor. Default is 100.</p></li>
+<li><p><strong>epoc_idx</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, sets the epoch as the index of the DataFrame. Default is True.</p></li>
+<li><p><strong>out_pres</strong> (<em>str</em><em>, </em><em>optional</em>) – The unit of the output pressure. Default is “pa”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame with the epoch, frequency, temperature, pressure, and depth.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function first reads the CSV file and creates a DataFrame.
+It then computes the frequency from the counter for both the temperature and pressure sensors.
+The temperature is computed from the frequency using the coefficients from the dictionary.
+The pressure is computed from the frequency of both the pressure and temperature sensors.
+The depth is also computed from the frequency of both the pressure and temperature sensors.
+If epoc_idx is True, the epoch is set as the index of the DataFrame.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.marine.obscom.obscom_plot_pres_df">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obscom.</span></span><span class="sig-name descname"><span class="pre">obscom_plot_pres_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pres_df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obscom.obscom_plot_pres_df" title="Link to this definition"></a></dt>
+<dd><p>Plots the pressure and temperature data from a DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pres_df_in</strong> (<em>DataFrame</em>) – The DataFrame containing the pressure and temperature data. The index of the DataFrame should be the time.</p></li>
+<li><p><strong>plot_count</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, plots the count of the temperature and pressure sensors. If False, plots the pressure in pa and temperature in °C. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Figure object with the plot of the pressure and temperature data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Figure</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function creates a plot with two y-axes. The left y-axis corresponds to the pressure data and the right y-axis corresponds to the temperature data.
+The x-axis corresponds to the time.
+The function uses different colors for the pressure and temperature data for better distinction.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obscom.pres2freq">
