@@ -1772,33 +1772,33 @@ def read_sinex_versatile(sinex_path_in , id_block,
     id_block_strt = "\+" + id_block
     id_block_end  = "\-" + id_block
     
-    Lines_list = utils.extract_text_between_elements_2(sinex_path_in,
+    lines_list = utils.extract_text_between_elements_2(sinex_path_in,
                                                        id_block_strt,
                                                        id_block_end)
-    Lines_list = Lines_list[1:-1]
+    lines_list = lines_list[1:-1]
     
-    if not Lines_list:
+    if not lines_list:
         print("ERR : read_sinex_versatile : no block found, ",id_block)
     
     #### Remove commented lines
-    Lines_list_header = []
-    Lines_list_OK     = []
+    lines_list_header = []
+    lines_list_ok     = []
     header_lines = True
-    for i_l , l in enumerate(Lines_list):
+    for i_l , l in enumerate(lines_list):
         if not l[0] in (" ","\n") and header_lines:
             ## here we store the 1st commented lines i.e. the header
-            Lines_list_header.append(l)
+            lines_list_header.append(l)
         elif l[0] in (" ","\n"):
             ## here we store the data lines (not commented)
             header_lines = False
-            Lines_list_OK.append(l)
+            lines_list_ok.append(l)
         else:
             ## here we skip the final commented lines (can happend) 
             continue
                                 
-    if len(Lines_list_header) > 0 and header_line_idx:
+    if len(lines_list_header) > 0 and header_line_idx:
         ### define the header
-        header_line = Lines_list_header[header_line_idx]
+        header_line = lines_list_header[header_line_idx]
 
         Header_split = header_line.split()
         if not improved_header_detection: 
@@ -1813,14 +1813,14 @@ def read_sinex_versatile(sinex_path_in , id_block,
                 if fld_head_split[0] == "*": 
                     ## test to manage a * as 1st character
                     ## which can be wrongly interpreted in the regex
-                    fld_head_regex = re.compile("\*" + fld_head_split[1:] + " *") 
+                    fld_head_regex = re.compile(r"\*" + fld_head_split[1:] + " *")
                 else:
                     fld_head_regex_str = fld_head_split + " *"
                     ### update 202110: now the brackets must be escaped (normal btw...)
-                    fld_head_regex_str = fld_head_regex_str.replace("[","\[")
-                    fld_head_regex_str = fld_head_regex_str.replace("]","\]")
-                    fld_head_regex_str = fld_head_regex_str.replace("(","\(")
-                    fld_head_regex_str = fld_head_regex_str.replace(")","\)")
+                    fld_head_regex_str = fld_head_regex_str.replace("[",r"\[")
+                    fld_head_regex_str = fld_head_regex_str.replace("]",r"\]")
+                    fld_head_regex_str = fld_head_regex_str.replace("(",r"\(")
+                    fld_head_regex_str = fld_head_regex_str.replace(")",r"\)")
 
                     fld_head_regex = re.compile(fld_head_regex_str) 
 
@@ -1851,7 +1851,7 @@ def read_sinex_versatile(sinex_path_in , id_block,
             print(Fields_size)
     
         ### Add the header in the big string 
-        Lines_str_w_head = header_line + "".join(Lines_list_OK)
+        Lines_str_w_head = header_line + "".join(lines_list_ok)
 
         ### Read the file
         try:
@@ -1867,7 +1867,7 @@ def read_sinex_versatile(sinex_path_in , id_block,
         DF.rename(columns={DF.columns[0]:DF.columns[0][1:]}, inplace=True)
 
     else: # no header in the SINEX
-        Lines_str = "".join(Lines_list_OK)
+        Lines_str = "".join(lines_list_ok)
         DF = pd.read_csv(StringIO(Lines_str),header=None ,
                              delim_whitespace=True)
 

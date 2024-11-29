@@ -113,11 +113,11 @@ def rinex_regex(compressed=None,compiled=False):
         a regex
     """
     if compressed is None:
-        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z|z|gz))|o|d)$"
+        regexstr = r"^....[0-9]{3}.\.[0-9]{2}((d\.(Z|z|gz))|o|d)$"
     elif not compressed:
-        regexstr = "^....[0-9]{3}.\.[0-9]{2}o$"
+        regexstr = r"^....[0-9]{3}.\.[0-9]{2}o$"
     else:
-        regexstr = "^....[0-9]{3}.\.[0-9]{2}((d\.(Z|z|gz))|d)$"
+        regexstr = r"^....[0-9]{3}.\.[0-9]{2}((d\.(Z|z|gz))|d)$"
         
 
     if compiled:
@@ -146,11 +146,11 @@ def rinex_regex_long_name(compressed=None,compiled=False):
         a regex
     """
     if compressed:
-        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz$"
+        regexstr = r"^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz$"
     elif compressed is None:
-        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?$"        
+        regexstr = r"^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?$"
     else:
-        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}$"
+        regexstr = r"^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}$"
 
     if compiled:
         return re.compile(regexstr)
@@ -179,11 +179,11 @@ def rinex_regex_long_name_brdc(compressed=None,compiled=False):
         a regex
     """
     if compressed:
-        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}\.gz$"
+        regexstr = r"^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}\.gz$"
     elif compressed is None:
-        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?$"        
+        regexstr = r"^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?$"
     else:
-        regexstr = "^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}$"
+        regexstr = r"^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_\w{2}\.\w{3}$"
     if compiled:
         return re.compile(regexstr)    
     
@@ -217,11 +217,11 @@ def rinex_regex_long_name_gfz_godc(compressed=None,compiled=False):
     #YEL200CAN_00002760_FRO_RX3_MO_20220105_000000_01D_30S_IGS.crx.gz
 
     if compressed:
-        regexstr = "^.{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}\.gz$"
+        regexstr = r"^.{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}\.gz$"
     elif compressed is None:
-        regexstr = "^.{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}(\.gz)?$"        
+        regexstr = r"^.{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}(\.gz)?$"
     else:
-        regexstr = "^.{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}$"
+        regexstr = r"^.{4}[0-9]{2}.{3}_[0-9]{8}_.{3}_.{3}_.{2}_[0-9]{8}_[0-9]{6}_[0-9]{2}\w_[0-9]{2}\w_.{3}\.\w{3}$"
     # Nouvelle version : peut  normalement digerer tout RINEX du GFZ 
     # le suffixe GFZ peut etre nimporte quelle chaine  de upper char !
     # egalement implemene dans RINEXMOD

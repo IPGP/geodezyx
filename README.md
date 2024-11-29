@@ -22,7 +22,7 @@ V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.
 **Licence:** GNU LGPL v3 (see below) 
 
 **Contributors:**
-* Kitpracha "Na" Chaiyaporn (GFZ, Potsdam, Germany)
+* Chaiyaporn "Na" Kitpracha (GFZ, Potsdam, Germany)
 * Valérie Ballu (CNRS/La Rochelle University, France)
 
 
@@ -82,7 +82,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
   * New leap second functions, to cope with new Ubuntu 24.04 LTS
   * `seawater` and `gsw` modules are imported on demand only
   * Correct angle conversion functions
-  * 
+  * new version of `conv.numpydt2dt` function
   * Misc routine improvements
 
 ### v4.4.3, 2024-05-20
@@ -143,6 +143,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 We thank them for their work and their indirect contribution to this toolbox. Namely:
   * Goudarzi, M.A., Cocard, M. & Santerre, R. EPC: Matlab software to estimate Euler pole parameters. 
 GPS Solut 18, 153–162 (2014). https://doi.org/10.1007/s10291-013-0354-4
+  * Caroline Geisert, ENSTA ParisTech, for the plate motion model functions, based on Goudarzi et al.'s work.
   * Yann-Treden Tranchant, LIENSs La Rochelle, for the ocean circulation model and OBP processing functions.
   * Jean-Mathieu Nocquet and its PYACS toolbox for the plate motion model functions. https://github.com/JMNocquet/pyacs36
 

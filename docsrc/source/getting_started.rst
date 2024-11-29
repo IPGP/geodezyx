@@ -56,7 +56,6 @@ To test if the `geodezyx` toolbox is well installed, import:
     #### Import
     from geodezyx import *                   # Import the geodezyx modules
     from geodezyx.externlib import *         # Import the external modules
-    from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 If the modules are well imported (without errors in the console), fine! you have installed the `geodezyx` toolbox!
 If not, check again the potential errors during the installation.
