@@ -19,7 +19,6 @@ Subpackages
    geodezyx.geodyn
    geodezyx.logconfig
    geodezyx.marine
-   geodezyx.megalib
    geodezyx.operational
    geodezyx.reffram
    geodezyx.stats
