@@ -8,6 +8,11 @@ This module geodezyx.externlib import easily all the useful extrern Python's pac
 it can be imported directly with:
 from geodezyx.externlib import *  
 
+!!!! THE EXTERN LIB IS JUST A LAZY TRICK FOR THE DEVELOPPER !!!!
+!!!! TO IMPORT ALL THE USEFUL PACKAGES IN ONE LINE !!!!
+!!!! IT SHOULD NOT BE USED OPERATIONNALY !!!!
+!!!! IT IS NOT A GOOD PRACTICE TO IMPORT ALL THE PACKAGES IN ONE LINE !!!!
+
 The GeodeZYX Toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
@@ -18,7 +23,6 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 
 
 from .externlib import *
-
 
 # #### IMPORT EXTERNAL MODULES
 import bisect
