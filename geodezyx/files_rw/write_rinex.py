@@ -42,7 +42,7 @@ def write_rinex3(DFrnx_in,rnx_header=""):
         DFrnx = DFrnx_in
         
     rnx_body, dict_sys_obs = write_rinex3_body(DFrnx)
-    dict_sys_obs = files_rw.dict_sys_obs_clean_LLI_SSI(dict_sys_obs)
+    dict_sys_obs = files_rw.dict_sys_obs_clean_lli_ssi(dict_sys_obs)
     
     if not rnx_header:
         rnx_head = header_rinex3_generic()

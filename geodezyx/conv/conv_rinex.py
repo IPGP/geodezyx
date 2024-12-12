@@ -146,11 +146,11 @@ def rinex_regex_long_name(compressed=None, compiled=False):
     out : string or python's regex
         a regex
     """
-    if compressed:
+    if compressed: # compressed only
         regexstr = r"^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz$"
-    elif compressed is None:
+    elif compressed is None: # compressed or not
         regexstr = r"^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}(\.gz)?$"
-    else:
+    else: # not compressed only
         regexstr = (
             r"^.{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}$"
         )
