@@ -1769,8 +1769,8 @@ def read_sinex_versatile(sinex_path_in , id_block,
     if id_block in ("+","-"):
         id_block = id_block[1:]
     
-    id_block_strt = "\+" + id_block
-    id_block_end  = "\-" + id_block
+    id_block_strt = r"\+" + id_block
+    id_block_end  = r"\-" + id_block
     
     lines_list = utils.extract_text_between_elements_2(sinex_path_in,
                                                        id_block_strt,

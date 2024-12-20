@@ -71,7 +71,7 @@ def read_all_points(filein):
     elif re.compile('Heading').search(firstline):
         tsout = read_sonardyne_attitude(filein)
 
-    elif re.compile('\*\*\* warning').search(firstline):
+    elif re.compile(r'\*\*\* warning').search(firstline):
         tsout = read_gins(filein,'kine')
 
     elif re.compile('#GINS_VERSION').search(firstline):
@@ -952,13 +952,13 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
 
     if kineorstatic == 'kine':
         #regex = '\[S[PLHXYZ] .*\]$'
-        regex = '\[S[PLHXYZ] .*\]$'
+        regex = r'\[S[PLHXYZ] .*\]$'
         tsout = time_series.TimeSeriePoint()
         if kf_result:
-            regex = '\[S[PLHXYZ][E ].*\]     $'
+            regex = r'\[S[PLHXYZ][E ].*\]     $'
     elif kineorstatic == 'static':
         #regex = '\[S[PLHXYZ] .*\]     $'
-        regex = '\[S[PLHXYZ][E ].*\]     $'
+        regex = r'\[S[PLHXYZ][E ].*\]     $'
         tsout = time_series.TimeSeriePoint()
     else:
         log.error("ERR")
@@ -968,7 +968,7 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
     sA,sB,sC = 0,0,0
 
     if kf_result:
-        regex = '\[S[PLHXYZ][E ].*\]     $'
+        regex = r'\[S[PLHXYZ][E ].*\]     $'
 
 
     # Specific si 2ble convergence
@@ -1181,7 +1181,7 @@ def gins_read_MZB(filein,return_df=False):
 
     F = open(filein)
 
-    regex = '\[MZB.*\]     $'
+    regex = r'\[MZB.*\]     $'
 
     Tstk    = []
     MZBstk  = []
@@ -1834,8 +1834,8 @@ def read_epos_slv_times(p,convert_to_time=False):
     If convert_to_time : time in sec
     """
     
-    L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates",
-                                                "\-sum_times/estimates")
+    L = utils.extract_text_between_elements_2(p,r"\+sum_times/estimates",
+                                                r"\-sum_times/estimates")
 
     Lgood_stat  = []
     Lgood_sat   = []
@@ -1886,7 +1886,7 @@ def read_epos_tim(tim_file_in,convert_to_sec=False):
     
     Val_stk = []
     for l in F:
-        if re.match('^\*  [0-9]{4} *([0-9]{1,2} *){4}',l):
+        if re.match(r'^\*  [0-9]{4} *([0-9]{1,2} *){4}',l):
             head_stop = True
             epoc = conv.datetime_improved(*l[3:30].split())
         if head_stop and re.match('[A-Z][0-9]{2}.* [0-9]*',l):
@@ -2499,7 +2499,7 @@ def read_groops_position(Filesin):
     tsout = time_series.TimeSeriePoint()
 
     for filein in Filesin:
-        DF = pd.read_csv(filein,skiprows=6,header=None,sep='\s+')
+        DF = pd.read_csv(filein,skiprows=6,header=None,sep=r'\s+')
         T = conv.dt2posix(conv.MJD2dt(DF[0].values))
         X,Y,Z = DF[1],DF[2],DF[3] 
         
@@ -2536,7 +2536,7 @@ def read_pride_pppar_pos_mono(filein):
         
     df = pd.read_csv(filein,skiprows=colheader+1,
                      #delim_whitespace=True,
-                     sep='\s?\*?\s+',
+                     sep=r'\s?\*?\s+',
                      engine='python',
                      header=None)
     
@@ -2591,7 +2591,7 @@ def read_pride_pppar_kin(filein):
 
     df = pd.read_csv(filein,skiprows=colheader+1,
                      #delim_whitespace=True,
-                     sep='\s?\*?\s+',
+                     sep=r'\s?\*?\s+',
                      engine='python',
                      header=None)
         
