@@ -52,7 +52,7 @@ jobs:
       - release-build
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
-      id-token: ${{ PYPI_TOKEN1A }}
+      id-token: ${{ secrets.PYPITOKENB }}
 
     # Dedicated environments with protections for publishing are strongly recommended.
     # For more information, see: https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#deployment-protection-rules
