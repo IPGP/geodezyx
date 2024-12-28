@@ -1,5 +1,5 @@
-geodezyx package
-================
+GeodeZYX's complete reference package
+=====================================
 
 .. automodule:: geodezyx
    :members:
