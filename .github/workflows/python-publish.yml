@@ -34,7 +34,7 @@ jobs:
           #python -m pip install build
           #python -m build
           #####  *** geodezyx steps ***
-          python -m pip install build twine wheel
+          python -m pip install build twine wheel setuptools
           ### Build
           python setup.py sdist bdist_wheel
           ### Check
