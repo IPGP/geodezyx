@@ -7,7 +7,7 @@ import logging.config # MUST remain logging.config for < v3.10
 import os
 from os import path
 
-__version__='4.5.2'  ## CHANGE IT ALSO IN setup and readme !!!!
+__version__='4.5.2'  ## increase it with bump-my-version !!!
 
 #### IMPORT CONFIG FOR LOGGER
 log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'logconfig','loggzyx.py')
@@ -36,7 +36,6 @@ from . import stats
 from . import time_series
 from . import utils
 
-
 __all__ = ['athmo',
            'conv',
            'externlib',
@@ -48,6 +47,10 @@ __all__ = ['athmo',
            'stats',
            'time_series',
            'utils']
+
+if __name__ == '__main__':
+    print("geodezyx version",__version__)
+    print("geodezyx.__all__",__all__)
 
 #### Import extern libraires in in the geodezyx namespace
 #from geodezyx.extern import *
