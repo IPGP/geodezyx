@@ -1,28 +1,28 @@
-bs4
+bs4~=0.0.2
 chardet
-collection
-colorlog
+collection~=0.1.6
+colorlog~=6.9.0
 # gsw # full mode
 #ftplib
-hatanaka
+hatanaka~=2.8.1
 #kepler.py # full mode
-natsort
-matplotlib
+natsort~=8.4.0
+matplotlib~=3.10.0
 #ncompress # full mode
-numpy
+numpy~=2.2.1
 #netCDF4 # full mode
 pybind11
-pyorbital
-pytwobodyorbit
-pyyaml
-pathvalidate
-pandas
+pyorbital~=1.9.2
+pytwobodyorbit~=1.0.0
+pyyaml~=6.0.2
+pathvalidate~=3.2.1
+pandas~=2.2.3
 # seawater # full mode
-scipy
-sympy
-tabulate
+scipy~=1.14.1
+sympy~=1.13.3
+tabulate~=0.9.0
 tk
-tqdm ##progressbars
+tqdm~=4.67.1
 vincenty
-wheel
-xarray
+wheel~=0.45.1
+xarray~=2024.11.0

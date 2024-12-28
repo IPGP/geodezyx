@@ -1053,7 +1053,7 @@ def gen_dirs_from_double_diff(
             print(" ======== ", i + 1, "/", N, " ======== ")
             print(" === ", os.path.basename(dd_path))
         # names, dates etc ...
-        Table_dd = pd.read_table(dd_path, sep="\s+", header=-1)
+        Table_dd = pd.read_table(dd_path, sep=r"\s+", header=-1)
 
         dd_name = os.path.basename(dd_path)
 

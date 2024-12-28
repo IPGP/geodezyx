@@ -557,7 +557,7 @@ def listing_gins_timeline(
 
     wholefilelist = list(set(wholefilelist))
     lifilelist = [
-        fil for fil in wholefilelist if re.search(suffix_regex + ".*\gins", fil)
+        fil for fil in wholefilelist if re.search(suffix_regex + r".*gins", fil)
     ]
 
     statname_lis = sorted(list(set([li[stat_strt:stat_end] for li in lifilelist])))

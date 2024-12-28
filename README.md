@@ -2,10 +2,11 @@
 
 # geodezyx (aka ___The GeodeZYX Toolbox___) 
 
-**Version 4.5.1 / 2024-11-28**, README Revision: 2024-11-28
+**Version: 4.5.2**  
+**Date: 2024-12-28**  
+**README Revision:** 2024-11-28  
 
-
-**Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
+**Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany) 
 
 **Documentation:** [https://ipgp.github.io/geodezyx](https://ipgp.github.io/geodezyx/)
 
@@ -74,6 +75,11 @@ and install the Toolbox you downloaded with ``python setup.py install``
 Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
 
 ## Changelog
+
+### v4.5.2, 2024-12-28
+  * First version using CI/CD with GitHub Actions
+  * Correct bug for mono-GNSS RINEX in `read_rnx2_obs` and `read_rnx3_obs`.
+  * Correct python 3.12's annoying regex's raw string SyntaxWarning.
 
 ### v4.5.1, 2024-11-28
   * Make `geodezyx` compatible with Python 3.12
