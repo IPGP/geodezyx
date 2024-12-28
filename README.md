@@ -2,7 +2,7 @@
 
 # geodezyx (aka ___The GeodeZYX Toolbox___) 
 
-**Version: 4.5.2**  
+**Version: 4.5.3**  
 **Date: 2024-12-28**  
 **README Revision:** 2024-11-28  
 
