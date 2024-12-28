@@ -76,6 +76,10 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ## Changelog
 
+### v4.5.2, 2024-12-28
+  * correct bug for mono-GNSS RINEX in `read_rnx2_obs` and `read_rnx3_obs`.
+  * correct python 3.12's annoying regex's raw string SyntaxWarning.
+
 ### v4.5.1, 2024-11-28
   * Make `geodezyx` compatible with Python 3.12
   * Improvement of PRIDE-related execution functions
