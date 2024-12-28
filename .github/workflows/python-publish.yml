@@ -8,11 +8,13 @@
 
 name: Upload Python Package
 
-on: workflow_dispatch
 
-#on:
-#  release:
-#    types: [published]
+# on demand run, for tests purposes 
+#on: workflow_dispatch
+
+on:
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -76,5 +78,5 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
-        env:
+        env: ### should not be necessary with Trusted Publisher Management, but we let it here
           PYPI_TOKEN: ${{ secrets.PYPITOKENB }}
