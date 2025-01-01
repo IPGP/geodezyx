@@ -17,6 +17,7 @@ pytwobodyorbit
 pyyaml
 pathvalidate
 pandas
+requests
 # seawater # full mode
 scipy
 sympy
