@@ -31,7 +31,7 @@ import numpy as np
 #### geodeZYX modules
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 #### Import star style
 # from geodezyx import *                   # Import the GeodeZYX modules

@@ -27,7 +27,7 @@ import numpy as np
 
 #### geodeZYX modules
 # from geodezyx import utils,conv
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 

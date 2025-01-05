@@ -35,7 +35,7 @@ from tqdm import tqdm
 #### geodeZYX modules
 from geodezyx import operational, utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 def read_rinex2_obs(rnx_in, set_index=None):

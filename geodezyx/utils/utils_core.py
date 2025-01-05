@@ -42,7 +42,7 @@ import pathvalidate
 import scipy
 
 #### geodeZYX modules
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 

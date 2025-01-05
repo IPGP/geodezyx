@@ -47,7 +47,7 @@ from geodezyx import operational
 from geodezyx import utils
 from geodezyx.files_rw import read_logsheets
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 

@@ -35,7 +35,7 @@ from geodezyx import reffram
 from geodezyx import utils
 
 # from geodezyx.megalib.megalib import *   # Import the legacy modules names
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 #### Import star style

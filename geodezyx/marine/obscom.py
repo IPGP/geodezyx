@@ -21,7 +21,7 @@ import scipy
 import geodezyx.conv as conv
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 #  ______               _                 _    __                  _   _

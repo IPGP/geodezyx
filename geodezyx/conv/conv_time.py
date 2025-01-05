@@ -45,7 +45,7 @@ from geodezyx import utils, stats
 from geodezyx.conv import conv_rinex
 
 ### https://stackoverflow.com/questions/1250103/attributeerror-module-object-has-no-attribute
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 ##########  END IMPORT  ##########

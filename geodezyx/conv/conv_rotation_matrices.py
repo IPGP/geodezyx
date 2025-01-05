@@ -31,7 +31,7 @@ from geodezyx import utils
 # import scipy
 # from pyorbital import astronomy
 # import re
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 ##########  END IMPORT  ##########

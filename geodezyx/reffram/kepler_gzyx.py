@@ -31,7 +31,7 @@ from pytwobodyorbit import TwoBodyOrbit
 #### geodeZYX modules
 from geodezyx import conv
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 

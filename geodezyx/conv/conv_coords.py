@@ -33,7 +33,7 @@ from geodezyx import utils
 from geodezyx.conv import conv_rotation_matrices as rotmat
 
 # import re
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 #### Import star style
 # from geodezyx import *                   # Import the GeodeZYX modules

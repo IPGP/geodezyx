@@ -35,7 +35,7 @@ from geodezyx import reffram
 #### geodeZYX modules
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 #  _    _ ______ _____ _______ ____  _____

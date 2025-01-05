@@ -33,7 +33,7 @@ import re
 ### Imported in the corresponding function to avoid cyclic import
 ### from geodezyx.conv import conv_interpolators
 ### https://stackoverflow.com/questions/1250103/attributeerror-module-object-has-no-attribute
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 def rinex_regex_search_tester(

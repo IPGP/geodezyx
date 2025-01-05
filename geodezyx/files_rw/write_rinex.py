@@ -29,7 +29,7 @@ import pandas as pd
 #### geodeZYX modules
 from geodezyx import files_rw, utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 def write_rinex3(DFrnx_in,rnx_header=""):

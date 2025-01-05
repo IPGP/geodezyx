@@ -31,7 +31,7 @@ import natsort
 import numpy as np
 
 #### geodeZYX modules
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 ##########  END IMPORT  ##########

@@ -21,7 +21,7 @@ from geodezyx import conv
 # from geodezyx import time_series
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
  #   _____ _            _       __ _ _           
  #  / ____| |          | |     / _(_) |          

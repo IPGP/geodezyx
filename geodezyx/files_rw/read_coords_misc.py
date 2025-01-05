@@ -18,7 +18,7 @@ import numpy as np
 from geodezyx import conv
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 def stations_in_EPOS_sta_coords_file_mono(coords_file_path):

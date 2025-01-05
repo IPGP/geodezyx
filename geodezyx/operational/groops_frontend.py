@@ -18,7 +18,7 @@ import numpy as np
 
 from geodezyx import utils, conv, operational
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 def log_subprocess(pipe, logger=None, file=None, file2=None):

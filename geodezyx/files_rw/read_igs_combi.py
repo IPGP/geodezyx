@@ -20,7 +20,7 @@ import pandas as pd
 from geodezyx import conv
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 #  _____ _____  _____    _____                _     _             _   _                _____        __ _       ______ _ _
 # |_   _/ ____|/ ____|  / ____|              | |   (_)           | | (_)              / ____|      / _| |     |  ____(_) |
