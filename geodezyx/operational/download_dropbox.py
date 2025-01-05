@@ -30,7 +30,7 @@ import pandas as pd
 # import wget
 from geodezyx import conv, utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 def dropbox_connect(dropbox_access_token):

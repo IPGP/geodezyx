@@ -33,7 +33,7 @@ from geodezyx import conv
 from geodezyx import operational
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 

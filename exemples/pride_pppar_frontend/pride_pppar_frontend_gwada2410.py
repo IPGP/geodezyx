@@ -14,7 +14,7 @@ import multiprocessing as mp
 
 #### Import the logger
 import logging
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ########################
 

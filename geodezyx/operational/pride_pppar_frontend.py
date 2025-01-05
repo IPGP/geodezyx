@@ -23,7 +23,7 @@ from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 import re
 

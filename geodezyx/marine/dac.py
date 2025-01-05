@@ -16,7 +16,7 @@ import xarray as xr
 from geodezyx import operational, conv
 from geodezyx.marine import obp
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 def dac_get_aviso(date_srt_inp, date_end_inp, out_dir, user, passwd):

@@ -25,7 +25,7 @@ from geodezyx import stats
 from geodezyx import time_series
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 ##########  END IMPORT  ##########
