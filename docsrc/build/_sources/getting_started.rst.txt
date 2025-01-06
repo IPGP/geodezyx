@@ -24,6 +24,13 @@ To get the latest working version you can install directly the GitHub-hosted ver
 
 ``pip install git+https://github.com/IPGP/geodezyx``
 
+If you **reinstall** a new version the package, you should uninstall the existing one and/or use the ``--upgrade`` option:
+
+``pip uninstall geodezyx``
+
+``pip install --upgrade geodezyx``
+
+
 Full installation (for sudoers/advanced users)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
