@@ -152,9 +152,10 @@ def read_rinex2_obs(rnx_in, set_index=None):
         # strip to have just 2 or 3 prn characters
         df_epoch["prn"] = df_epoch["prn"].str.strip()
 
+        # mixed, system is in the epoch line
         if mixed_rnx or df_epoch["prn"].str.len().max() == 3:
             df_epoch["sys"] = df_epoch["prn"].str[0]
-        else:
+        else: # not mixed, system is the header RINEX type
             df_epoch["sys"] = rnx_typ
             df_epoch["prn"] = rnx_typ + df_epoch["prn"].str.strip()
 
