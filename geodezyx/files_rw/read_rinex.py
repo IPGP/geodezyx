@@ -149,14 +149,16 @@ def read_rinex2_obs(rnx_in, set_index=None):
         df_epoch.columns = obs_all_list
         df_epoch["prn"] = sats_split
 
-        if mixed_rnx:
-            df_epoch["prn"] = df_epoch["prn"].str.strip()
+        # strip to have just 2 or 3 prn characters
+        df_epoch["prn"] = df_epoch["prn"].str.strip()
+
+        if mixed_rnx or df_epoch["prn"].str.len().max() == 3:
             df_epoch["sys"] = df_epoch["prn"].str[0]
         else:
-            df_epoch["prn"] = rnx_typ + df_epoch["prn"].str.strip()
             df_epoch["sys"] = rnx_typ
+            df_epoch["prn"] = rnx_typ + df_epoch["prn"].str.strip()
 
-        df_epoch["prni"] = df_epoch["prn"].str[1:].astype(int)
+        df_epoch["prni"] = df_epoch["prn"].str[-2:].astype(int)
         df_epoch["epoch"] = epoch
 
         df_all_stk.append(df_epoch)
@@ -173,7 +175,6 @@ def read_rinex2_obs(rnx_in, set_index=None):
         df_rnx_obs.sort_index(inplace=True)
 
     return df_rnx_obs
-
 
 def read_rinex3_obs(rnx_in, set_index=None):
     """
@@ -501,3 +502,11 @@ def _line_reader(linein, nobs):
                 out_stk.append(np.nan)
 
     return out_stk
+
+
+if __name__ == "__main__":
+    p = "/home/psakicki/aaa_FOURBI/RINEXexemple/smne176z.18o"
+    p = "/home/psakicki/Desktop/daej2220.04o"
+
+    #/home/psakicki/aaa_FOURBI/RINEXexemple/mlvl176z.18o"
+    read_rinex2_obs(p)
