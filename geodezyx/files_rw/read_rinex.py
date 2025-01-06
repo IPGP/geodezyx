@@ -505,9 +505,9 @@ def _line_reader(linein, nobs):
     return out_stk
 
 
-if __name__ == "__main__":
-    p = "/home/psakicki/aaa_FOURBI/RINEXexemple/smne176z.18o"
-    p = "/home/psakicki/Desktop/daej2220.04o"
-
-    #/home/psakicki/aaa_FOURBI/RINEXexemple/mlvl176z.18o"
-    read_rinex2_obs(p)
+# if __name__ == "__main__":
+#     p = "/home/psakicki/aaa_FOURBI/RINEXexemple/smne176z.18o"
+#     p = "/home/psakicki/Desktop/daej2220.04o"
+#
+#     # /home/psakicki/aaa_FOURBI/RINEXexemple/mlvl176z.18o"
+#     read_rinex2_obs(p)
