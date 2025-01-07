@@ -342,7 +342,7 @@ def read_rinex3_obs_dev(rnx_in, set_index=None):
         obs_w_lli_ssi = [(e, e + "_LLI", e + "_SSI") for e in sysobs[2:]]
         obs_all_list.extend([e for sublist in obs_w_lli_ssi for e in sublist])
 
-        dict_sys_cols_tmp = [("prn",)] + obs_w_lli_ssi
+        dict_sys_cols_tmp = [("sys","epoch","prn",)] + obs_w_lli_ssi
         dict_sys_cols[sysobs[0]] = [e for sublist in dict_sys_cols_tmp for e in sublist]
 
         if len(sysobs[2:]) != int(sysobs[1]):
@@ -354,6 +354,8 @@ def read_rinex3_obs_dev(rnx_in, set_index=None):
     nobs_max = max(dict_sys_nobs.values())
 
     df_all_stk = []
+    error_sys_in_obs = False
+
     #### reading the epochs
     for iepoc in tqdm(range(len(epochs)), desc="Reading " + filename):
         epoch = epochs[iepoc, 0]
@@ -365,9 +367,13 @@ def read_rinex3_obs_dev(rnx_in, set_index=None):
             iline_end = epochs[iepoc + 1, 1]
 
         lines_epoc = [re.sub(r"[\r\n]+", "", e) for e in lines[iline_start:iline_end]]
-
         # .replace("\r", "").replace("\n", "") i.e. re.sub(r"[\r\n]+", "", s) IS NOT .strip() !!
         # .strip() removes the spaces at the beginning and end of the string, and they should be kept!
+
+        for line in lines_epoc:
+            if "SYS / # / OBS TYPES" in line:
+                error_sys_in_obs = True
+                break
 
         ## read the epoch block using pandas' fixed width reader
         b = StringIO("\n".join(lines_epoc))
@@ -375,49 +381,34 @@ def read_rinex3_obs_dev(rnx_in, set_index=None):
         columns_width = [3] + nobs_max * [14, 1, 1]
         df_epoch = pd.read_fwf(b, header=None, widths=columns_width)
 
-        # one add the system to use groupby
-        #df_epoch_sysadded = df_epoch.copy()
-        #df_epoch_sysadded["systmp"] = df_epoch_sysadded[0].str[0]
-
-        df_epoch_ok_stk = []
-
-        ## slow method
-        #### assign the correct observable names for each system
-        # for sys in dict_sys_cols.keys():
-        # #for sys, df_epoch_sys in df_epoch_sysadded.groupby("systmp"):
-        #     df_epoch_sys = df_epoch[df_epoch[0].str[0] == sys]
-        #     df_epoch_sys_clean = df_epoch_sys.iloc[:, : len(dict_sys_cols[sys])]
-        #     df_epoch_sys_clean.columns = dict_sys_cols[sys]
-        #     df_epoch_ok_stk.append(df_epoch_sys_clean)
-
-        ## faster method (post 2025-01)
-        #df_epoch['sys'] = df_epoch[0].str.strip().str[0]
-
-        #df_epoch_ok = pd.concat(df_epoch_ok_stk)
-        # An epoch column is created to fasten the process
         col_epoch = pd.Series([epoch] * len(df_epoch), name="epoch")
         df_epoch_ok = pd.concat([col_epoch, df_epoch], axis=1)
 
         df_all_stk.append(df_epoch_ok)
 
+    if error_sys_in_obs:
+        log.error(
+            "SYS / # / OBS TYPES in body, observable's order is modified, read_rinex does not manage this yet")
+        return None
+
     ## final concat and cosmetic (reorder columns, sort)
     df_rnx_obs = pd.concat(df_all_stk)
 
     ## extract the system
-    df_rnx_obs["sys"] = df_rnx_obs[0].str.strip().str[0]
+    col_sys = pd.Series(df_rnx_obs[0].str.strip().str[0], name="sys")
+    df_rnx_obs = pd.concat([col_sys, df_rnx_obs], axis=1)
 
     #### assign the correct observable names for each system
     df_rnx_obs_ok_stk = []
     for sys, df_rnx_obs_sys in df_rnx_obs.groupby("sys"):
         df_rnx_obs_sys_clean = df_rnx_obs_sys.iloc[:, : len(dict_sys_cols[sys])]
-        df_rnx_obs_sys_clean.columns = dict_sys_cols[sys]
+        df_rnx_obs_sys_clean.columns = dict_sys_cols[sys] # sys, epoch & prn are already in dict_sys_cols
         df_rnx_obs_ok_stk.append(df_rnx_obs_sys_clean)
 
     df_rnx_obs_ok = pd.concat(df_rnx_obs_ok_stk)
 
-    col_sys = pd.Series(df_rnx_obs_ok["prn"].str[0], name="sys")
-    col_prni = pd.Series(df_rnx_obs_ok["prn"].str[1:], name="prni", dtype=int)
-    df_rnx_obs_ok = pd.concat([df_rnx_obs_ok, col_sys, col_prni], axis=1)
+    col_prni = pd.Series(df_rnx_obs_ok["prn"].str.strip().str[-2:], name="prni", dtype=int)
+    df_rnx_obs_ok = pd.concat([df_rnx_obs_ok, col_prni], axis=1)
 
     main_cols = ["epoch", "sys", "prn", "prni"]
     obs_used_list = list(set(df_rnx_obs_ok.columns).difference(set(main_cols)))
@@ -648,12 +639,7 @@ def _line_reader(linein, nobs):
 
     return out_stk
 
-if __name__ == "__main__" and True:
-
-
-    # p2 = "/home/psakicki/Desktop/daej2220.04o"
-    # df2 = read_rinex2_obs(p2)
-    # print(df2)
+if __name__ == "__main__" and False:
 
     # p3 = "/home/psakicki/aaa_FOURBI/RINEXexemple/ENOG00REU_R_20243030000_01D_30S_MO.rnx"
     # df3 = read_rinex3_obs(p3)
@@ -673,7 +659,16 @@ read_rinex2_obs(p)
     # print(t)
 
 
-    p2 = "/home/psakicki/Desktop/daej2220.04o"
-    df2 = read_rinex2_obs(p2)
-    print(df2)
+    #p2 = "/home/psakicki/Desktop/daej2220.04o"
+    #df2 = read_rinex2_obs(p2)
+    #print(df2)
+
+    p3 = "/home/psakicki/aaa_FOURBI/RINEXexemple/ENOG00REU_R_20243030000_01D_30S_MO.rnx"
+    p3 = "/home/psakicki/aaa_FOURBI/RINEXexemple/CFNG00REU_R_20240430000_15M_01S_MO.rnx"
+    p3 = "/home/psakicki/aaa_FOURBI/RINEXexemple/REYK00ISL_R_20200420000_01D_30S_MO.rnx"
+    df31 = read_rinex3_obs(p3)
+    df32 = read_rinex3_obs_dev(p3)
+    print(df31)
+    print(df32)
+
 
