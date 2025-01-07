@@ -129,43 +129,33 @@ def read_rinex2_obs(rnx_in, set_index=None):
         epoc, nsat, lineconcat, sats_split, iline_sats_end = _sats_find(lines_epoc)
 
         ### for each sat, merge the breaked lines
-        lines_obs = lines_epoc[iline_sats_end + 1 : iline_end]
-        lines_obs = [
-            e.ljust(80) for e in lines_obs
-        ]  # must be exactly 80 char long fut the column trunk !!!!
-        lines_obs = [
-            e.replace("\r", "") for e in lines_obs
-        ]  # not 100% sure of this one
-        lines_obs = [e.replace("\n", "") for e in lines_obs]
-        lines_obs_merg = [
-            lines_obs[nlines_for_obs * n : nlines_for_obs * n + nlines_for_obs]
-            for n in range(nsat)
-        ]
-        lines_obs_merg = ["".join(e) for e in lines_obs_merg]
+        lines_obs = [e.ljust(80).replace("\r", "").replace("\n", "") for e in lines_epoc[iline_sats_end + 1: iline_end]]
+        lines_obs_merg = ["".join(lines_obs[n * nlines_for_obs:(n + 1) * nlines_for_obs]) for n in range(nsat)]
 
         ## read the epoch block using pandas' fixed width reader
         b = StringIO("\n".join(lines_obs_merg))
         df_epoch = pd.read_fwf(b, header=None, widths=columns_width)
         df_epoch.columns = obs_all_list
         df_epoch["prn"] = sats_split
-
-        # strip to have just 2 or 3 prn characters
-        df_epoch["prn"] = df_epoch["prn"].str.strip()
-
-        # mixed, system is in the epoch line
-        if mixed_rnx or df_epoch["prn"].str.len().max() == 3:
-            df_epoch["sys"] = df_epoch["prn"].str[0]
-        else: # not mixed, system is the header RINEX type
-            df_epoch["sys"] = rnx_typ
-            df_epoch["prn"] = rnx_typ + df_epoch["prn"].str.strip()
-
-        df_epoch["prni"] = df_epoch["prn"].str[-2:].astype(int)
         df_epoch["epoch"] = epoch
 
         df_all_stk.append(df_epoch)
 
     ## final concat and cosmetic (reorder columns, sort)
     df_rnx_obs = pd.concat(df_all_stk)
+
+    # strip to have just 2 or 3 prn characters
+    df_rnx_obs["prn"] = df_rnx_obs["prn"].str.strip()
+
+    # mixed, system is in the epoch line
+    if mixed_rnx or df_rnx_obs["prn"].str.len().max() == 3:
+        df_rnx_obs["sys"] = df_rnx_obs["prn"].str[0]
+    else:  # not mixed, system is the header RINEX type
+        df_rnx_obs["sys"] = rnx_typ
+        df_rnx_obs["prn"] = rnx_typ + df_rnx_obs["prn"].str.strip()
+
+    df_rnx_obs["prni"] = df_rnx_obs["prn"].str[-2:].astype(int)
+
     main_cols = ["epoch", "sys", "prn", "prni"]
     df_rnx_obs = df_rnx_obs.reindex(main_cols + list(sorted(obs_all_list)), axis=1)
     df_rnx_obs.sort_values(["epoch", "prn"], inplace=True)
@@ -374,7 +364,7 @@ def observables_dict_per_sys(df_rnx_in):
         df_sys = df_rnx_in[df_rnx_in["sys"] == sys]
         df_sys_mini = df_rnx_clean_lli_ssi(df_sys)
 
-        obs_sys0 = (df_sys_mini.isna().sum() == len(df_sys)).apply(np.logical_not)
+        obs_sys0 = pd.Series(df_sys_mini.isna().sum() == len(df_sys)).apply(np.logical_not)
         obs_sys = obs_sys0.index[obs_sys0][
             3:
         ]  ### strating from 3 to clean epoch sys prn
@@ -474,8 +464,8 @@ def _sats_find(lines_inp):
         ### we stack everything when the sat block is over
         if iline_bloc == nlines_bloc:
             in_epoch = False
-            Sats_split = [lineconcat[3 * n : 3 * n + 3] for n in range(nsat)]
-            bloc_tuple = (epoc, nsat, lineconcat, Sats_split, il)
+            sats_split = [lineconcat[3 * n : 3 * n + 3] for n in range(nsat)]
+            bloc_tuple = (epoc, nsat, lineconcat, sats_split, il)
             return bloc_tuple
 
 
@@ -507,7 +497,15 @@ def _line_reader(linein, nobs):
 
 # if __name__ == "__main__":
 #     p = "/home/psakicki/aaa_FOURBI/RINEXexemple/smne176z.18o"
-#     p = "/home/psakicki/Desktop/daej2220.04o"
-#
 #     # /home/psakicki/aaa_FOURBI/RINEXexemple/mlvl176z.18o"
-#     read_rinex2_obs(p)
+#
+#     time_readrinex = """
+# from __main__ import read_rinex2_obs
+# p = "/home/psakicki/Desktop/daej2220.04o"
+# read_rinex2_obs(p)
+# """
+#
+#     import timeit
+#
+#     t = timeit.timeit(time_readrinex, number=10)
+#     print(t)
