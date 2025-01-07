@@ -122,8 +122,14 @@ def read_rinex2_obs(rnx_in, set_index=None):
         b = StringIO("\n".join(lines_obs_merg))
         df_epoch = pd.read_fwf(b, header=None, widths=columns_width)
         df_epoch.columns = obs_all_list
-        df_epoch["prn"] = sats_split
-        df_epoch["epoch"] = epoch
+
+        # slow
+        #df_epoch["prn"] = sats_split
+        #df_epoch["epoch"] = epoch
+        # faster
+        col_epoch = pd.Series([epoch] * len(df_epoch), name="epoch")
+        col_prn = pd.Series(sats_split, name="prn")
+        df_epoch = pd.concat([col_epoch, col_prn, df_epoch], axis=1)
 
         df_all_stk.append(df_epoch)
 
@@ -280,6 +286,9 @@ def read_rinex3_obs(rnx_in, set_index=None):
 
 def read_rinex3_obs_dev(rnx_in, set_index=None):
     """
+    DEVELOPPEMENT VERSION TO FASTEN THE PROCESS OF READING RINEX3 OBSERVATION FILES
+    SHOULD NOT BE USED IN PRODUCTION
+
     Read a RINEX Observation, version 3 or 4
 
     Parameters
@@ -557,43 +566,48 @@ def _sats_find(lines_inp):
             epoc : datetime, the epoch of block
             nsat : int, the number of satellites
             lineconcat : str, the satellites as a concatenated string
-            Sats_split : list of str, the satellites as a list
+            sats_split : list of str, the satellites as a list
             il : int, the index of the last line of the EPOCH/SAT record
 
     """
     iline_bloc = 0
     nlines_bloc = -1
+
+    re_epoch = "^ {1,2}([0-9]{1,2} * ){5}"
+
     for il, l in enumerate(lines_inp):
         #####
-        re_epoch = "^ {1,2}([0-9]{1,2} * ){5}"
         # re_sat="[A-Z][0-9][0-9]"
-        bool_epoch = re.search(re_epoch, l)
+        # bool_epoch = re.search(re_epoch, l)
         # bool_sat=re.search(re_sat,l)
 
         ### dummy initialisation of variables
         line_bloc = []
-        lineconcat = []
+        lineconcat_stk = []
         epoc = None
         nsat = 0
 
         ### we found an epoch line
-        if bool_epoch:
+        if re.search(re_epoch, l): # ex bool epoch
             nsat = int(l[30:32])
             iline_bloc = 0
             nlines_bloc = int(np.ceil(nsat / 12))
             line_bloc = []
-            lineconcat = ""
+            #lineconcat = ""
+            lineconcat_stk = []
             epoc = operational.read_rnx_epoch_line(l, rnx2=True)
 
         ### we read the sat lines based on the number of sat
         if iline_bloc <= nlines_bloc:
             line_bloc.append(l[32:].strip())
-            lineconcat = lineconcat + l[32:].strip()
+            # lineconcat = lineconcat + l[32:].strip()
+            lineconcat_stk.append(l[32:].strip())
             iline_bloc += 1
 
         ### we stack everything when the sat block is over
         if iline_bloc == nlines_bloc:
-            in_epoch = False
+            #in_epoch = False
+            lineconcat = "".join(lineconcat_stk)
             sats_split = [lineconcat[3 * n : 3 * n + 3] for n in range(nsat)]
             bloc_tuple = (epoc, nsat, lineconcat, sats_split, il)
             return bloc_tuple
@@ -637,13 +651,13 @@ def _line_reader(linein, nobs):
 if __name__ == "__main__" and True:
 
 
-    #p2 = "/home/psakicki/Desktop/daej2220.04o"
-    #df2 = read_rinex2_obs(p2)
-    #print(df2)
+    # p2 = "/home/psakicki/Desktop/daej2220.04o"
+    # df2 = read_rinex2_obs(p2)
+    # print(df2)
 
-    p3 = "/home/psakicki/aaa_FOURBI/RINEXexemple/ENOG00REU_R_20243030000_01D_30S_MO.rnx"
-    df3 = read_rinex3_obs(p3)
-    print(df3)
+    # p3 = "/home/psakicki/aaa_FOURBI/RINEXexemple/ENOG00REU_R_20243030000_01D_30S_MO.rnx"
+    # df3 = read_rinex3_obs(p3)
+    # print(df3)
 
     time_readrinex = """
 from __main__ import read_rinex2_obs
@@ -653,9 +667,13 @@ p = "/home/psakicki/Desktop/daej2220.04o"
 read_rinex2_obs(p)
 """
 
-    import timeit
+    # import timeit
+    #
+    # t = timeit.timeit(time_readrinex, number=10)
+    # print(t)
 
-    #t = timeit.timeit(time_readrinex, number=10)
-    #print(t)
 
+    p2 = "/home/psakicki/Desktop/daej2220.04o"
+    df2 = read_rinex2_obs(p2)
+    print(df2)
 
