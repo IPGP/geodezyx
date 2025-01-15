@@ -667,3 +667,23 @@ def is_exe(fpath):
     """
     return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
+def copy_recursive(src, dst, force=False):
+    """
+    Copy a directory recursively from src to dst with an option to force overwrite.
+
+    Parameters
+    ----------
+    src : str
+        The source directory path.
+    dst : str
+        The destination directory path.
+    force : bool, optional
+        If True, overwrite the destination directory if it exists. Default is False.
+    """
+    if force and os.path.exists(dst):
+        shutil.rmtree(dst)
+    try:
+        shutil.copytree(src, dst)
+        print(f"Directory '{src}' copied successfully to '{dst}'.")
+    except Exception as e:
+        print(f"Error copying directory '{src}' to '{dst}': {e}")
