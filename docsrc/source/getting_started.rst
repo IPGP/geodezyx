@@ -16,22 +16,35 @@ with PyPi and pip
 Standard installation (for non-admin users)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We recommend to use ``pip`` to do a proper installation:  
+We recommend to use ``pip`` to do a proper installation:
+
 ``pip install geodezyx``
 
-To get the latest working version you can install directly the GitHub-hosted version:  
+To get the latest working version you can install directly the GitHub-hosted version:
+
 ``pip install git+https://github.com/IPGP/geodezyx``
+
+If you **reinstall** a new version the package, you should uninstall the existing one and/or use the ``--upgrade`` option:
+
+``pip uninstall geodezyx``
+
+``pip install --upgrade geodezyx``
+
 
 Full installation (for sudoers/advanced users)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This version installs facultative external modules, which require system libraries only installable when you have the sudo/admin rights, namely ``netCDF4``, ``kepler.py``, ``ncompress``.
+This version installs facultative external modules, which require system libraries only installable when you have the sudo/admin rights, namely ``netCDF4``, ``kepler.py``, ``ncompress``, ``seawater``, ``gsw``.
 
-We recommend to use ``pip`` to do a propper installation:  
+We recommend to use ``pip`` to do a propper installation:
+
 ``pip install geodezyx[full]``
 
-To get the latest working version you can install directly the GitHub-hosted version:  
-``pip install 'git+https://github.com/IPGP/geodezyx#egg=geodezyx[full]'``
+To get the latest working version you can install directly the GitHub-hosted version:
+
+``pip install "geodezyx[full] @ git+https://github.com/IPGP/geodezyx"``
+
+
 
 
 clone and manually install from GitHub
