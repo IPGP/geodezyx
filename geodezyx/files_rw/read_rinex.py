@@ -159,9 +159,11 @@ def read_rinex2_obs(rnx_in, set_index=None):
 
     return df_rnx_obs
 
-def read_rinex3_obs(rnx_in, set_index=None):
+def read_rinex3_obs_legacy(rnx_in, set_index=None):
     """
     Read a RINEX Observation, version 3 or 4
+
+    This legacy version is much slower but maybe mor relaible than the new one
 
     Parameters
     ----------
@@ -284,7 +286,7 @@ def read_rinex3_obs(rnx_in, set_index=None):
 
     return df_rnx_obs
 
-def read_rinex3_obs_dev(rnx_in, set_index=None):
+def read_rinex3_obs(rnx_in, set_index=None):
     """
     DEVELOPPEMENT VERSION TO FASTEN THE PROCESS OF READING RINEX3 OBSERVATION FILES
     SHOULD NOT BE USED IN PRODUCTION
