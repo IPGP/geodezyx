@@ -375,7 +375,7 @@ def find_IGS_products_files(
         FILE_LIST = parent_dir
     elif recursive_search:
         # All the files are listed first
-        FILE_LIST = utils.find_recursive(parent_dir, ".*", case_sensitive=False)
+        FILE_LIST = utils.find_recursive(parent_dir, ".*", regex=True)
     else:
         FILE_LIST = glob.glob(parent_dir + "/*")
 

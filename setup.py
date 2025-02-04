@@ -19,7 +19,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 # Frederick Brennan answer on stackoverflow
 # https://stackoverflow.com/questions/14399534/reference-requirements-txt-for-the-install-requires-kwarg-in-setuptools-setup-py
 with open(here / 'requirements.txt') as f:
-    required = f.read().splitlines()
+    modules_from_requirements_txt = f.read().splitlines()
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
@@ -46,7 +46,7 @@ setup(
     # For a discussion on single-sourcing the version across setup.py and the
     # project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='4.5.3',  ## change it in __init__.py and README.md !!!!
+    version='4.6.0',  ## change it in __init__.py and README.md !!!!
 
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
@@ -176,8 +176,9 @@ PyPi project: https://pypi.org/project/geodezyx
     # **********************************************************
     # install are now in requirements.txt (241122)
     # requirements.txt is read at the beginning of the setup.py file
-    # and the required packages are stored in the list 'required'
-    install_requires=required,  # Optional
+    # and the required packages
+    # are stored in the list 'modules_from_requirements_txt'
+    install_requires=modules_from_requirements_txt,  # Optional
     # **********************************************************
     # install_requires=['bs4',
     #                   'chardet',

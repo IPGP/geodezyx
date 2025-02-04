@@ -304,9 +304,11 @@ def empty_file_check(fpath):
 def find_recursive(parent_folder , pattern, 
                    sort_results = True, case_sensitive = True,
                    extended_file_stats=False,
-                   warn_if_empty=True):
+                   warn_if_empty=True,
+                   regex=False):
     """
-    Find files in a folder and his sub-folders in a recursive way
+    Find files in a folder and his sub-folders in a recursive way.
+
 
     Parameters
     ----------
@@ -315,14 +317,15 @@ def find_recursive(parent_folder , pattern,
 
     pattern : str
         the researched files pattern name (can manage wildcard or regex)
-        * wildcard (only * and ?) for case_sensitive = True
-        * regex for case_sensitive = False
+        - wildcard (only * and ?) for case_sensitive = True
+        - regex for case_sensitive = False
         
     sort_results : bool
         Sort results
         
     case_sensitive : bool
         Case sensitive or not. If False, the pattern *must* be a regex
+        *Deprecated since 2025-01, use regex instead*
         
     extended_file_stats : bool
         if True, returns the stats of the files
@@ -340,6 +343,14 @@ def find_recursive(parent_folder , pattern,
         - st_mtime - time of most recent content modification,
         - st_ctime - platform dependent; time of most recent metadata 
                      change on Unix, or the time of creation on Windows)
+
+    warn_if_empty : bool
+        print a debug warning if no files are found
+
+    regex : bool
+        if True, the pattern in a regular expression.
+        Default is False
+
                 
     Returns
     -------
@@ -354,18 +365,31 @@ def find_recursive(parent_folder , pattern,
     (for the case unsensitive case)
     """
     matches = []
-    if case_sensitive:
+
+    if not case_sensitive:
+        # we test the negation because the default behavior is True
+        msg = "case_sensitive boolean is deprecated, use regex instead"
+        log.warning(msg)
+        DeprecationWarning(msg)
+    ## this is also part of the deprecation transition, force case_sensitive to false
+    if regex and case_sensitive:
+        case_sensitive = False
+
+
+    if case_sensitive or not regex: # standard case, pattern is a wildcard
+        regex_mode = False
         for root, dirnames, filenames in os.walk(parent_folder):
             for filename in fnmatch.filter(filenames, pattern):
             #for filename in fnmatch.fnmatch(filenames, pattern):
                 matches.append(os.path.join(root, filename))
     else: # not case sensitive, use a regex
+        regex_mode = True
         for root, dirnames, filenames in os.walk(parent_folder):
             for filename in filenames:  
                 try:
                     bool_match = re.search(pattern, filename, re.IGNORECASE)
                 except Exception as e:
-                    log.error("if case_sensitive = False, pattern have to be a REGEX (and not only a simple wildcard)")
+                    log.error("if regex = True, pattern have to be a REGEX (and not only a simple wildcard)")
                     raise e
                     
                 if bool_match:
@@ -388,7 +412,7 @@ def find_recursive(parent_folder , pattern,
         matches = matches_ext
         
     if warn_if_empty and len(matches) == 0:
-        log.warning("no files found! check parent folder and pattern")
+        log.warning("no files found! check parent folder and pattern (regex mode: %s)", regex_mode)
         log.info("Parent folder: %s",parent_folder)
         log.info("Pattern      : %s",pattern)
                 
@@ -667,3 +691,23 @@ def is_exe(fpath):
     """
     return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
+def copy_recursive(src, dst, force=False):
+    """
+    Copy a directory recursively from src to dst with an option to force overwrite.
+
+    Parameters
+    ----------
+    src : str
+        The source directory path.
+    dst : str
+        The destination directory path.
+    force : bool, optional
+        If True, overwrite the destination directory if it exists. Default is False.
+    """
+    if force and os.path.exists(dst):
+        shutil.rmtree(dst)
+    try:
+        shutil.copytree(src, dst)
+        print(f"Directory '{src}' copied successfully to '{dst}'.")
+    except Exception as e:
+        print(f"Error copying directory '{src}' to '{dst}': {e}")
