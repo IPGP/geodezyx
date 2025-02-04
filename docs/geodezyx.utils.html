@@ -711,6 +711,21 @@ retourne un booleen</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.shell_like.copy_recursive">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">copy_recursive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.copy_recursive" title="Link to this definition"></a></dt>
+<dd><p>Copy a directory recursively from src to dst with an option to force overwrite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>str</em>) – The source directory path.</p></li>
+<li><p><strong>dst</strong> (<em>str</em>) – The destination directory path.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, overwrite the destination directory if it exists. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.shell_like.create_dir">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">create_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.create_dir" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -751,17 +766,18 @@ NB : Also check if the file exists</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.shell_like.find_recursive">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">find_recursive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extended_file_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_if_empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.find_recursive" title="Link to this definition"></a></dt>
-<dd><p>Find files in a folder and his sub-folders in a recursive way</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">find_recursive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extended_file_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_if_empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.find_recursive" title="Link to this definition"></a></dt>
+<dd><p>Find files in a folder and his sub-folders in a recursive way.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parent_folder</strong> (<em>str</em>) – the parent folder path</p></li>
 <li><p><strong>pattern</strong> (<em>str</em>) – the researched files pattern name (can manage wildcard or regex)
-* wildcard (only * and ?) for case_sensitive = True
-* regex for case_sensitive = False</p></li>
+- wildcard (only * and ?) for case_sensitive = True
+- regex for case_sensitive = False</p></li>
 <li><p><strong>sort_results</strong> (<em>bool</em>) – Sort results</p></li>
-<li><p><strong>case_sensitive</strong> (<em>bool</em>) – Case sensitive or not. If False, the pattern <em>must</em> be a regex</p></li>
+<li><p><strong>case_sensitive</strong> (<em>bool</em>) – Case sensitive or not. If False, the pattern <em>must</em> be a regex
+<em>Deprecated since 2025-01, use regex instead</em></p></li>
 <li><p><strong>extended_file_stats</strong> (<em>bool</em>) – <p>if True, returns the stats of the files
 the outputed matches list will be a list of tuples
 (file_path,stat_object), where stat_object has the following attributes</p>
@@ -782,6 +798,9 @@ the outputed matches list will be a list of tuples
 </li>
 </ul>
 </p></li>
+<li><p><strong>warn_if_empty</strong> (<em>bool</em>) – print a debug warning if no files are found</p></li>
+<li><p><strong>regex</strong> (<em>bool</em>) – if True, the pattern in a regular expression.
+Default is False</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
