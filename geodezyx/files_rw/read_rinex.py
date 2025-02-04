@@ -33,9 +33,42 @@ import pandas as pd
 from tqdm import tqdm
 
 #### geodeZYX modules
-from geodezyx import operational, utils
+from geodezyx import operational, utils, conv
 
 log = logging.getLogger('geodezyx')
+
+
+def read_rinex_obs(rnx_in, set_index=None):
+    """
+    Frontend function to read a RINEX Observation, version 2 or 3
+
+    Parameters
+    ----------
+    rnx_in : see below
+        input RINEX.
+        can be the path of a RINEX file as string or as Path object,
+        or directly the RINEX content as a string, bytes, StringIO object or a
+        list of lines
+    set_index : str or list of str, optional
+        define the columns for the index.
+        If None, the output DataFrame is "flat", with integer index
+        ["epoch","prn"] for instance set the epoch and the prn as MultiIndex
+        The default is None.
+
+    Returns
+    -------
+    df_rnx_obs : Pandas DataFrame / GeodeZYX's RINEX format
+    """
+
+    if conv.rinex_regex_search_tester(rnx_in,short_name=True,long_name=False):
+        return read_rinex2_obs(rnx_in, set_index=set_index)
+    elif conv.rinex_regex_search_tester(rnx_in,short_name=False,long_name=True):
+        return read_rinex3_obs(rnx_in, set_index=set_index)
+    else:
+        log.error("RINEX version not recognized: %s", rnx_in)
+        log.error("use read_rinex2_obs or read_rinex3_obs functions manually")
+        return None
+
 
 
 def read_rinex2_obs(rnx_in, set_index=None):
