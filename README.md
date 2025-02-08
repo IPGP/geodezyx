@@ -76,6 +76,13 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 
 ## Changelog
 
+### v4.6.0, 2025-02-04
+
+  * Faster RINEX3 reading (~ x5)
+  * Frontend `read_rinex_obs` fonction
+  * For `find_recursive` function: no more ambiguous  `case_sensitive` option, replaced with `regex`
+
+
 ### v4.5.3, 2024-12-28
   * First version using CI/CD with GitHub Actions
   * Correct bug for mono-GNSS RINEX in `read_rnx2_obs` and `read_rnx3_obs`.
