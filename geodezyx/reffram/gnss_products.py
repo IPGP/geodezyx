@@ -1318,11 +1318,11 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
     """
     DForb_stk = []
     
-    for sat,ac in itertools.product(DForb_in.sat.unique(),DForb_in['ac'].unique()):
+    for sat,ac in itertools.product(DForb_in['prn'].unique(),DForb_in['ac'].unique()):
         
         log.info("process",ac,sat)
         
-        DForb_use = DForb_in[(DForb_in.sat == sat) & (DForb_in['ac'] == ac)].copy()
+        DForb_use = DForb_in[(DForb_in['prn'] == sat) & (DForb_in['ac'] == ac)].copy()
             
         Tdata = DForb_use.epoch.dt.to_pydatetime()
         
