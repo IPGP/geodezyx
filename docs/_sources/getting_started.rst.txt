@@ -10,17 +10,14 @@ Getting started
 Installation
 ------------
 
-with PyPi and pip
-------------------
-
 Standard installation (for non-admin users)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------------
 
-We recommend to use ``pip`` to do a proper installation:
+We recommend to use ``pip`` to install the last stable `PyPi-hosted <https://pypi.org/project/geodezyx/>`_ version:
 
 ``pip install geodezyx``
 
-To get the latest working version you can install directly the GitHub-hosted version:
+To get the **latest developpement version** you can install directly the `GitHub-hosted <https://github.com/IPGP/geodezyx>`_ version:
 
 ``pip install git+https://github.com/IPGP/geodezyx``
 
@@ -32,32 +29,35 @@ If you **reinstall** a new version the package, you should uninstall the existin
 
 
 Full installation (for sudoers/advanced users)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------------
 
 This version installs facultative external modules, which require system libraries only installable when you have the sudo/admin rights, namely ``netCDF4``, ``kepler.py``, ``ncompress``, ``seawater``, ``gsw``.
 
-We recommend to use ``pip`` to do a propper installation:
+We recommend to use ``pip`` to install the last stable `PyPi-hosted <https://pypi.org/project/geodezyx/>`_ version:
 
 ``pip install geodezyx[full]``
 
-To get the latest working version you can install directly the GitHub-hosted version:
+To get the **latest developpement version** you can install directly the `GitHub-hosted <https://github.com/IPGP/geodezyx>`_ version:
 
 ``pip install "geodezyx[full] @ git+https://github.com/IPGP/geodezyx"``
 
+Clone and manually install from GitHub (for devloppers)
+-------------------------------------------------------
 
+Manually fork and/or clone the GitHub repository (https://github.com/IPGP/geodezyx) using your favorite flavor:
 
-
-clone and manually install from GitHub
---------------------------------------
-
-You can manually fork and/or clone the GitHub repository (https://github.com/IPGP/geodezyx/) using your favorite flavor:
-
+* https: ``git clone https://github.com/IPGP/geodezyx.git`` (recommended)
 * SSH: ``git clone git@github.com:IPGP/geodezyx.git``
-* https: ``git clone https://github.com/IPGP/geodezyx.git``
 
-and install the Toolbox you downloaded with ``python setup.py install``
+Go to the folder where you cloned the repository:
+* ``cd geodezyx``
 
-Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
+And then install the toolbox you downloaded. Three solutions are possible:
+
+1. ``pip install -e .`` (`editable mode <https://setuptools.pypa.io/en/latest/userguide/development_mode.html>`_, recommended if you want to edit the source code)
+2. ``python setup.py install`` (standard mode)
+3. Add the ``geodezyx`` folder in your ``PYTHONPATH``, for experimented (and old-fashoned) users
+
 
 ---------------
 Minimal exemple

@@ -49,19 +49,6 @@ See the following link:
 See the following link:
 [https://ipgp.github.io/geodezyx/getting_started.html#installation](https://ipgp.github.io/geodezyx/getting_started.html#installation)
 
-## Installation (detailed legacy instructions)
-
-### with PyPI and pip
-
-We recommend using `pip` to do a proper installation.  
-To get the latest working version, you can install directly the GitHub-hosted version (recommended):  
-
-``pip install git+https://github.com/IPGP/geodezyx``
-
-You can also install the version hosted on PyPI (but you will not get the latest changes)
-
-``pip install geodezyx``
-
 ### clone and manually install from GitHub
 
 You can manually fork and/or clone the GitHub repository
