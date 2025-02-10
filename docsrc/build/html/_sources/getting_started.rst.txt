@@ -10,6 +10,9 @@ Getting started
 Installation
 ------------
 
+We recommend you to use Python's virtual environnements to have a clean and isolated environment for the `geodezyx` toolbox.
+If you are not familiar with Python's virtual environnements, you can follow the `official documentation <https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/>`_.
+
 Standard installation (for non-admin users)
 -------------------------------------------
 
@@ -50,6 +53,7 @@ Manually fork and/or clone the GitHub repository (https://github.com/IPGP/geodez
 * SSH: ``git clone git@github.com:IPGP/geodezyx.git``
 
 Go to the folder where you cloned the repository:
+
 * ``cd geodezyx``
 
 And then install the toolbox you downloaded. Three solutions are possible:
