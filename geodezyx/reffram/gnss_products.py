@@ -1366,7 +1366,7 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
                   inv_trf2crf=False):
     """
     Convert an Orbit DataFrame from Celetrial Reference Frame to 
-    Terrestrial Reference Frame (.
+    Terrestrial Reference Frame.
     
     Requires EOP to work. Cf. note below.
 
