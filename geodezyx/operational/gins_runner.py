@@ -88,8 +88,8 @@ def find_DOMESstat_in_stationfile(stat, stationfile):
     return 00000, "M000"
 
 
-def check_if_file_in_gin_folder(a_file_path, gins_path=""):
-    if gins_path == "":
+def check_if_file_in_gin_folder(a_file_path, gins_path=None):
+    if not gins_path:
         gins_path = os.path.join(get_gins_path(), "gin")
 
     real_path_file = os.path.realpath(a_file_path)
@@ -100,21 +100,37 @@ def check_if_file_in_gin_folder(a_file_path, gins_path=""):
     else:
         boolout = False
 
-    #    a_file_path_splited = a_file_path.split('/')
-    #    try:
-    #        i_gin = a_file_path_splited.index('gin')
-    #    except:
-    #        i_gin = 9999
-    #    potential_gin_path_splited = ['/'] + a_file_path_splited[:i_gin+1]
-    #    potential_gin_path = os.path.join(*potential_gin_path_splited)
-    #
-    #    boolout = os.path.samefile(gins_path,potential_gin_path)
-
     if not boolout:
-        print("WARN : ", a_file_path, " not in ", gins_path)
-    #        print 'true files:', real_path_file , '&' , real_path_gins
-    #        print '(potential gins path : ',potential_gin_path,')'
+        log.warning("%s not in %s", a_file_path, gins_path)
+
     return boolout
+
+def copy_file_in_gin_folder(
+    a_file_path, repository_folder=""
+):
+    if repository_folder == "":
+        repository_folder = os.path.join(get_gins_path(), "TEMP_DATA")
+    if not os.path.exists(repository_folder):
+        os.makedirs(repository_folder)
+
+    shutil.copy2(a_file_path, repository_folder)
+
+    out = os.path.join(repository_folder, os.path.basename(a_file_path))
+
+    return out
+
+
+def bring_to_gin_folder(a_file_path, temp_data_folder, gins_path=None):
+    if not gins_path:
+        gins_path = os.path.join(get_gins_path(), "gin")
+
+    if not check_if_file_in_gin_folder(a_file_path, gins_path):
+        log.info("copy %s > %s",a_file_path, temp_data_folder)
+        file_path_out = copy_file_in_gin_folder(a_file_path, temp_data_folder)
+    else:
+        file_path_out = a_file_path
+
+    return file_path_out
 
 
 def check_good_exec_of_GINS(streamin, director_name):
@@ -129,14 +145,13 @@ def check_good_exec_of_GINS(streamin, director_name):
 def make_path_ginsstyle(pathin):
     """input path must be an absolute path with /gin/ inside
     output will be .temp.gin/<rest of the path>"""
-    # VERY WEAK SOLUTION ....
 
     if pathin.startswith(".temp.gin"):
-        print("INFO : ", pathin, "already a director compatible path")
+        log.info("already a director compatible path: %s", pathin)
         return pathin
 
     if not "/gin/" in pathin:
-        print("ERR : not /gin/ in", pathin)
+        log.error("not /gin/ in %s", pathin)
         return None
 
     rnx_path_lis = pathin.split("/")
@@ -145,21 +160,6 @@ def make_path_ginsstyle(pathin):
     rnx_path_lis2[0] = ".temp.gin"
     pathout = os.path.join(*rnx_path_lis2)
     return pathout
-
-
-def copy_file_in_gin_folder(
-    a_file_path, repository_folder="/home/psakicki/gin/TP/GWADA/RINEX"
-):
-    if repository_folder == "":
-        repository_folder = os.path.join(get_gins_path(), "TEMP_DATA")
-    if not os.path.exists(repository_folder):
-        os.makedirs(repository_folder)
-
-    shutil.copy2(a_file_path, repository_folder)
-
-    out = os.path.join(repository_folder, os.path.basename(a_file_path))
-
-    return out
 
 
 def write_oceanload_file(station_file, oceanload_out_file, fes_yyyy=2004):
@@ -188,231 +188,6 @@ def write_oceanload_file(station_file, oceanload_out_file, fes_yyyy=2004):
         return oceanload_out_file
     else:
         return ""
-
-
-# def generate_director_from_rinex(rinex_path,director_generik_path,
-#                                 director_name_prefix,out_director_folder='',
-#                                 temp_data_folder='',stations_file='',
-#                                 oceanload_file='',auto_staocl=False,
-#                                 perso_orbclk=False,ac='igs',repro=2,
-#                                 auto_interval=True):
-#
-#    """
-#    produce a director from a rinex, and write it in the specific location
-#
-#    Return :
-#            the path of the produced director as a string
-#
-#    If the rinex is not in a gins style folder, it will be copied in the
-#    ``temp_data_folder``
-#
-#    If ``temp_data_folder`` is not specified ( == '') rinex will be copied in
-#    a ad hoc folder ``../gin/TEMP_DATA``
-#
-#    If ``out_director_folder`` is not specified ( == ''), output director will be
-#    created in the ``../gin/data/directeur folder``
-#
-#    automatic mode : (auto_staocl)
-#        create automaticaly a station file and a ocean loading file
-#        auto mode is prioritary upon the manu mode
-#
-#        so, if a path for stat file or ocload file is specified and
-#        auto_staocl is on, it will be the automatic stat/ocload
-#        which will be used
-#    perso_orbclk :
-#        download and use specifics orbits
-#        according to ac & repro args
-#        (they are useless if perso_orbclk aren't activated)
-#    auto_interval:
-#        find the interval in RINEX and apply it to the director
-#    """
-#
-#    rinex_name = os.path.basename(rinex_path)
-#    dt_rinex  = geok.rinexname2dt(rinex_name)
-#    gins_path = get_gins_path()
-#
-#    # be sure there is a TEMP DATA folder
-#    if temp_data_folder=='':
-#        temp_data_folder = os.path.join(gins_path,'gin','TEMP_DATA')
-#    if not os.path.exists(temp_data_folder):
-#        os.makedirs(temp_data_folder)
-#
-#    # be sure the RINEX is in gins folder ...
-#    bool_rinex_in_gin = check_if_file_in_gin_folder(rinex_path)
-#    # ... and copy it otherwise
-#    if not bool_rinex_in_gin:
-#        print 'INFO : will be copied in ', temp_data_folder
-#        rinex_path = copy_file_in_gin_folder(rinex_path,temp_data_folder)
-#    # check if the RINEX is compressed ...
-#    bool_comp_rnx = check_if_compressed_rinex(rinex_path)
-#    # ... if not crz2rnx !
-#    if bool_comp_rnx:
-#        rinex_path = crz2rnx(rinex_path,temp_data_folder)
-#
-#    if out_director_folder == '':
-#        out_director_folder = os.path.join(get_gins_path(),'gin','data','directeur')
-#
-#    stat_lower = rinex_name[0:4]
-#    stat = stat_lower.upper()
-#
-#    if perso_orbclk:
-#        calccntr_suffix = '_' + ac + str(repro)
-#    else:
-#        calccntr_suffix = ''
-#
-#    # date
-#    strt_epoch , end_epoch = operational.rinex_start_end(rinex_path)
-#    ses = '_' + operational.rinex_session_id(strt_epoch,end_epoch,full_mode=1)
-#
-#    # Interval Initalisation
-#    # interval_line = utils.grep(rinex_path,'INTERVAL',True)
-#    #  float(interval_line.split()[0])
-#    _ , _ , freq_rnx_true = operational.rinex_start_end(rinex_path,True)
-#    if auto_interval:
-#        freq_rnx_str = '_' + str(int(freq_rnx_true)).zfill(2) + 's'
-#    else:
-#        freq_rnx_str = ''
-#
-#    director_output_name = director_name_prefix + '_' + stat_lower + '_' + str(geok.dt2jjul_cnes(dt_rinex)) + '_' + str(dt_rinex.year) + '_' + geok.dt2doy(dt_rinex) + freq_rnx_str + ses + calccntr_suffix +'.yml'
-#    director_output_path = os.path.join(out_director_folder,director_output_name)
-#    director_generik_file = open(director_generik_path)
-#    director_dic = yaml.load(director_generik_file)
-#
-#    # ADDING RINEX NAME & DATES INTO THE DIR
-#    # name
-#    rnx_path_dir_compatible = make_path_ginsstyle(rinex_path)
-#    director_dic['observation']['interobject_data'][1]['file'] = rnx_path_dir_compatible
-#    # date
-#    director_dic['date']['arc_start'][0] = geok.dt2jjul_cnes(strt_epoch)
-#    director_dic['date']['arc_stop'][0] = geok.dt2jjul_cnes(end_epoch)
-#    director_dic['date']['initial_state_vector_date'][0] = geok.dt2jjul_cnes(strt_epoch)
-#
-#    director_dic['date']['arc_start'][1] = strt_epoch.hour * 3600 + strt_epoch.second + 19
-#    director_dic['date']['arc_stop'][1]  = end_epoch.hour  * 3600 + end_epoch.second + 19
-#    director_dic['date']['initial_state_vector_date'][1] = strt_epoch.second + 19
-#
-#    # inteval
-#    if auto_interval: # dir is modified only if freq_rnx >= 0
-#        director_dic['observation']['removal']['simulation_stepsize'] = freq_rnx_true
-#        # check if its not a static dir
-#        if director_dic['parameter']['adjustment_parameters']['stations']['adjustment_frequency'][-1] != 0:
-#            director_dic['parameter']['adjustment_parameters']['stations']['adjustment_frequency'] = [0, 0, 0, freq_rnx_true]
-#
-#
-#    #station file and oceanload file , auto or manu mode
-#    # auto mode is prioritary upon the manu mode
-#
-#    if auto_staocl == False and (oceanload_file == '' or stations_file == ''):
-#        print "WARN : generate dir : Auto mode is off and no stat or oclo file specified !!!"
-#
-#    if auto_staocl:
-#        print '* stat and ocload files generation :'
-#        randid = 'id'+str(np.random.randint(500,999))
-#        stations_file_name = stat_lower + '_' + str(dt_rinex.year) + '_' + \
-#        str(geok.dt2doy(dt_rinex)) + '_' + randid + '.stat'
-#        stations_file = os.path.join(temp_data_folder, stations_file_name)
-#        gfc.write_station_file_gins_from_rinex(rinex_path,stations_file)
-#        oceanload_file_name = stat_lower + '_' + str(dt_rinex.year) + '_' + \
-#        str(geok.dt2doy(dt_rinex)) + '_' + randid + '.oclo'
-#        oceanload_file = os.path.join(temp_data_folder , oceanload_file_name)
-#        write_oceanload_file(stations_file,oceanload_file)
-#        bool_statfil = os.path.isfile(stations_file)
-#        bool_oclofil = os.path.isfile(oceanload_file)
-#        iwhile = 0
-#        while not (bool_statfil and bool_oclofil) or iwhile < 6:
-#            iwhile = iwhile + 1
-#            time.sleep(.5)
-#            bool_statfil = os.path.isfile(stations_file)
-#            bool_oclofil = os.path.isfile(oceanload_file)
-#
-#        print stations_file, bool_oclofil
-#        print oceanload_file , bool_oclofil
-#        if not os.path.isfile(oceanload_file):
-#            print 'ERR : no oceload file !!!'
-#
-#    if oceanload_file != '':
-#        director_dic['object']['station']['ocean_tide_loading'] = make_path_ginsstyle(oceanload_file)
-#    if stations_file != '':
-#        director_dic['object']['station']['station_coordinates'] = make_path_ginsstyle(stations_file)
-#
-#    # =========   ORBITS   =============
-#    if not perso_orbclk:
-#        # GRG or GR2 for clock and orbits
-#        if dt_rinex <= dt.datetime(2013,12,29):
-#            gr_gr2 = 'GR2'
-#        else:
-#            gr_gr2 = 'GRG'
-#        horpath = os.path.join('horloges',gr_gr2,'defaut')
-#        orbpath = os.path.join('orbites',gr_gr2,'defaut')
-#    else:
-#        orbpath , horpath = download_convert_2_gins_orb_clk(dt_rinex,temp_data_folder,
-#                                        ac=ac,repro=repro)
-#        orbpath = make_path_ginsstyle(orbpath)
-#        horpath = make_path_ginsstyle(horpath)
-#
-#    director_dic['model']['environment']['gnss_clock'] = horpath
-#    director_dic['observation']['interobject_data'][0]['file'] = orbpath
-#
-#    # correcting a pyyaml bug : version is interpreted as a int instead of a string
-#    verslis = list(str(director_dic['version']))
-#
-#    verstr = verslis[0] + verslis[1] + '_' + '_'.join(verslis[2:])
-#    director_dic['version'] = verstr
-#
-#    # Security CHECKs
-#    statfile_path_ginsstyle = director_dic['object']['station']['station_coordinates']
-#    statfile_path_full = os.path.join(gins_path,statfile_path_ginsstyle[6:])
-#
-#    ocloadfile_path_ginsstyle = director_dic['object']['station']['ocean_tide_loading']
-#    ocloadfile_path_full = os.path.join(gins_path,ocloadfile_path_ginsstyle[6:])
-#
-#    check_if_stat_in_stationfile(stat,statfile_path_full)
-#
-#    domes = find_DOMESstat_in_stationfile(stat,statfile_path_full)
-#    print 'INFO : DOMES : ',domes
-#    check_if_DOMES_in_oceanloadfile(domes[0],ocloadfile_path_full)
-#
-#    # Case of kinematic process : need to change keys in user extension
-#    if 'user_extension' in director_dic:
-#        if 'userext_gps__haute_freq' in director_dic['user_extension']:
-#            director_dic['user_extension']['userext_gps__haute_freq'] = stat
-#
-#    # WRITING THE NEW DIRECTOR
-#    print 'INFO : writing : ', director_output_path
-#    with open(director_output_path, 'w+') as outfile:
-#        outfile.write( yaml.dump(director_dic,default_flow_style=False) )
-#
-#    # correcting a bug : GINS YAML interpreter can't manage false or true ...
-#    utils.replace(director_output_path,'false','no')
-#    utils.replace(director_output_path,'true','yes')
-#
-#    return director_output_path
-
-# def multi_gen_dir_from_rinex_list(rinex_list,director_generik_path,
-#    director_name_prefix,out_director_folder='',temp_data_folder='',
-#    stations_file='',oceanload_file='',auto_staocl=False,
-#    perso_orbclk=False,ac='igs',repro=2,auto_interval=True):
-#
-#    multi_gen_dir_from_rinex_list.__doc__ = generate_director_from_rinex.__doc__
-#
-#    N = len(rinex_list)
-#    director_output_path = []
-#    print "******** DIRECTORS GENRATION ********"
-#    for i,rnx in enumerate(rinex_list):
-#        print ' ======== ' , i+1 , '/' , N , ' ======== '
-#        print ' === ' , os.path.basename(rnx)
-#        out_dir_path = generate_director_from_rinex(rnx,director_generik_path,
-#        director_name_prefix,out_director_folder,temp_data_folder,
-#        stations_file,oceanload_file,auto_staocl=auto_staocl,
-#        perso_orbclk=perso_orbclk,ac=ac,repro=repro,
-#        auto_interval=auto_interval)
-#
-#        director_output_path.append(out_dir_path)
-#
-#    director_output_path = sorted(director_output_path)
-#    return director_output_path
-#
-#
 
 
 def prairie_manual(
@@ -461,6 +236,7 @@ def prairie_manual(
         else:
             print("INFO : ", expected_rinex_path, "already exists")
             rinex_path = expected_rinex_path
+
         # check if the RINEX is compressed ...
         bool_comp_rnx = operational.check_if_compressed_rinex(rinex_path)
         # ... if not crz2rnx !
@@ -634,7 +410,7 @@ def gen_dirs_from_rnxs(
         bool_rinex_in_gin = check_if_file_in_gin_folder(rinex_path)
         # ... and copy it otherwise
         if not bool_rinex_in_gin:
-            print("INFO : will be copied in ", temp_data_folder)
+            log.info("INFO : will be copied in %s", temp_data_folder)
             rinex_path = copy_file_in_gin_folder(rinex_path, temp_data_folder)
         # check if the RINEX is compressed ...
         bool_comp_rnx = operational.check_if_compressed_rinex(rinex_path)
@@ -643,21 +419,21 @@ def gen_dirs_from_rnxs(
             crinex_path = rinex_path
             rinex_path = operational.crz2rnx(crinex_path, temp_data_folder)
             if not os.path.isfile(rinex_path):
-                print("ERR : something went wrong during CRZ2RNX, skiping the file")
-                print(crinex_path)
+                log.error("something went wrong during CRZ2RNX, skiping the file")
+                log.error(crinex_path)
 
         # prairie extern
         if prairie:
-            print("INFO : run prairie externally")
+            log.info("run prairie externally")
             pra_file_path = prairie_manual(
                 rinex_path, temp_data_folder, **prairie_kwargs
             )
 
             if type(pra_file_path) is list and len(pra_file_path) == 0:
-                print(
-                    "ERR : something went wrong during prairie externally, skip the day"
+                log.error(
+                    "something went wrong during prairie externally, skip the day"
                 )
-                print(rinex_path)
+                log.error(rinex_path)
                 failed_rinex_date_lis.append(dt_rinex)
                 if multimode:
                     continue
@@ -683,11 +459,10 @@ def gen_dirs_from_rnxs(
                 rinex_path, True
             )
         except:
-            print(
-                "ERR : gen_dirs_from_rnxs : unable to get RINEX start/end, skiping ...",
-                end=" ",
+            log.error(
+                "unable to get RINEX start/end, skiping  ... %s", rinex_path
             )
-            print(rinex_path)
+
             failed_rinex_date_lis.append(dt_rinex)
             if multimode:
                 continue
@@ -710,81 +485,76 @@ def gen_dirs_from_rnxs(
         else:
             coord_prefix = ""
 
-        director_output_name = (
-            director_name_prefix
-            + "_"
-            + stat_lower
-            + "_"
-            + str(geok.dt2jjul_cnes(dt_rinex))
-            + "_"
-            + str(dt_rinex.year)
-            + "_"
-            + geok.dt2doy(dt_rinex)
-            + freq_rnx_str
-            + coord_prefix
-            + ses
-            + calccntr_suffix
-            + ".yml"
-        )
+        director_output_name = utils.join_improved("_",
+                                                   director_name_prefix,
+                                                   stat_lower,
+                                                   str(conv.dt2jjul_cnes(dt_rinex)),
+                                                   str(dt_rinex.year),
+                                                   conv.dt2doy(dt_rinex),
+                                                   freq_rnx_str,
+                                                   coord_prefix,
+                                                   ses,
+                                                   calccntr_suffix,
+                                                   ".yml")
+
         director_output_path = os.path.join(out_director_folder, director_output_name)
         director_generik_file = open(director_generik_path)
-        director_dic = yaml.load(director_generik_file)
+        dir_dic = yaml.load(director_generik_file,Loader=yaml.FullLoader)
 
         # ADDING RINEX NAME & DATES INTO THE DIR
         # name
         if not prairie:
-            rnx_path_dir_compatible = make_path_ginsstyle(rinex_path)
-            director_dic["observation"]["interobject_data"][1][
+            rnx_path_gstyl = make_path_ginsstyle(rinex_path)
+            dir_dic["observation"]["interobject_data"][1][
                 "file"
-            ] = rnx_path_dir_compatible
+            ] = rnx_path_gstyl
         else:
-            pra_path_dir_compatible = make_path_ginsstyle(pra_file_path)
-            director_dic["observation"]["interobject_data"][1][
+            pra_path_dir_gstyl = make_path_ginsstyle(pra_file_path)
+            dir_dic["observation"]["interobject_data"][1][
                 "file"
-            ] = pra_path_dir_compatible
+            ] = pra_path_dir_gstyl
 
         # date
-        strt_day, strt_sec = geok.dt2jjul_cnes(strt_epoch, False)
-        end_day, end_sec = geok.dt2jjul_cnes(end_epoch, False)
+        strt_day, strt_sec = conv.dt2jjul_cnes(strt_epoch, False)
+        end_day, end_sec = conv.dt2jjul_cnes(end_epoch, False)
 
-        director_dic["date"]["arc_start"][0] = strt_day
-        director_dic["date"]["arc_stop"][0] = end_day
-        if "initial_state_vector_date" in list(director_dic["date"].keys()):
-            director_dic["date"]["initial_state_vector_date"][0] = strt_day
+        dir_dic["date"]["arc_start"][0] = strt_day
+        dir_dic["date"]["arc_stop"][0] = end_day
+        if "initial_state_vector_date" in list(dir_dic["date"].keys()):
+            dir_dic["date"]["initial_state_vector_date"][0] = strt_day
 
-        director_dic["date"]["arc_start"][1] = strt_sec
-        director_dic["date"]["arc_stop"][1] = end_sec
-        if "initial_state_vector_date" in list(director_dic["date"].keys()):
-            director_dic["date"]["initial_state_vector_date"][1] = strt_sec
+        dir_dic["date"]["arc_start"][1] = strt_sec
+        dir_dic["date"]["arc_stop"][1] = end_sec
+        if "initial_state_vector_date" in list(dir_dic["date"].keys()):
+            dir_dic["date"]["initial_state_vector_date"][1] = strt_sec
 
         # interval
         if auto_interval:  # dir is modified only if freq_rnx >= 0
-            director_dic["observation"]["removal"][
+            dir_dic["observation"]["removal"][
                 "simulation_stepsize"
             ] = freq_rnx_true
             # check if its not a static dir
             if (
-                director_dic["parameter"]["adjustment_parameters"]["stations"][
+                dir_dic["parameter"]["adjustment_parameters"]["stations"][
                     "adjustment_frequency"
                 ][-1]
                 != 0
             ):
-                director_dic["parameter"]["adjustment_parameters"]["stations"][
+                dir_dic["parameter"]["adjustment_parameters"]["stations"][
                     "adjustment_frequency"
                 ] = [0, 0, 0, freq_rnx_true]
-        print(
-            "INFO : auto_interval",
+        log.info(
+            "INFO : auto_interval: %s, simulation_stepsize : %s",
             auto_interval,
-            ", simulation_stepsize : ",
-            director_dic["observation"]["removal"]["simulation_stepsize"],
+            dir_dic["observation"]["removal"]["simulation_stepsize"],
         )
         # output coords
         if out_coords.upper() in ("FLH", "PLH"):
-            director_dic["parameter"]["adjustment_parameters"]["stations"][
+            dir_dic["parameter"]["adjustment_parameters"]["stations"][
                 "coordinates"
             ] = "latitude_longitude_height"
         elif out_coords.upper() == "XYZ":
-            director_dic["parameter"]["adjustment_parameters"]["stations"][
+            dir_dic["parameter"]["adjustment_parameters"]["stations"][
                 "coordinates"
             ] = "cartesian_xyz"
 
@@ -792,35 +562,25 @@ def gen_dirs_from_rnxs(
         # auto mode is prioritary upon the manu mode
 
         if auto_staocl == False and (oceanload_file == "" or stations_file == ""):
-            print(
-                "WARN : generate dir : Auto mode is off and no stat or oclo file specified !!!"
+            log.warning(
+                "Auto mode is off and no stat or oclo file specified !!!"
             )
         if auto_staocl:
-            print("* stat and ocload files generation :")
+            log.info("* stat and ocload files generation :")
             randid = "id" + str(np.random.randint(10000, 99999))
-            stations_file_name = (
-                stat_lower
-                + "_"
-                + str(dt_rinex.year)
-                + "_"
-                + str(geok.dt2doy(dt_rinex))
-                + "_"
-                + randid
-                + ".stat"
-            )
-            stations_file = os.path.join(temp_data_folder, stations_file_name)
-            gfc.write_station_file_gins_from_rinex(rinex_path, stations_file)
-            oceanload_file_name = (
-                stat_lower
-                + "_"
-                + str(dt_rinex.year)
-                + "_"
-                + str(geok.dt2doy(dt_rinex))
-                + "_"
-                + randid
-                + ".oclo"
-            )
-            oceanload_file = os.path.join(temp_data_folder, oceanload_file_name)
+            sta_fname = utils.join_improved("_", stat_lower,
+                                            str(dt_rinex.year),
+                                            str(conv.dt2doy(dt_rinex)),
+                                            randid, ".stat")
+
+            stations_file = os.path.join(temp_data_folder, sta_fname)
+            files_rw.write_station_file_gins_from_rinex(rinex_path, stations_file)
+            oclo_fname =  utils.join_improved("_", stat_lower,
+                                              str(dt_rinex.year),
+                                              str(conv.dt2doy(dt_rinex)),
+                                              randid, ".oclo")
+
+            oceanload_file = os.path.join(temp_data_folder, oclo_fname)
             write_oceanload_file(stations_file, oceanload_file)
 
             bool_statfil = os.path.isfile(stations_file)
@@ -828,8 +588,7 @@ def gen_dirs_from_rnxs(
             iwhile = 0
             while not (bool_statfil and bool_oclofil) or iwhile < 6:
                 if iwhile > 6:
-                    print(
-                        "WARN : something is going wrong in the loop waiting for the ocean loading file ...",
+                    log.warning("something is going wrong in the loop waiting for the ocean loading file ..., %i",
                         iwhile,
                     )
                 iwhile = iwhile + 1
@@ -837,21 +596,19 @@ def gen_dirs_from_rnxs(
                 bool_statfil = os.path.isfile(stations_file)
                 bool_oclofil = os.path.isfile(oceanload_file)
 
-            print(stations_file, bool_oclofil)
-            print(oceanload_file, bool_oclofil)
             if not os.path.isfile(oceanload_file):
-                print("ERR : no oceload file !!!")
+                log.error("no oceload file !!!")
 
         if oceanload_file != "":
-            director_dic["object"]["station"]["ocean_tide_loading"] = (
-                make_path_ginsstyle(oceanload_file)
+            oceanload_file_ingin = bring_to_gin_folder(oceanload_file, temp_data_folder)
+            dir_dic["object"]["station"]["ocean_tide_loading"] = (
+                make_path_ginsstyle(oceanload_file_ingin)
             )
         if stations_file != "":
-            director_dic["object"]["station"]["station_coordinates"] = (
-                make_path_ginsstyle(stations_file)
+            stations_file_ingin = bring_to_gin_folder(stations_file, temp_data_folder)
+            dir_dic["object"]["station"]["station_coordinates"] = (
+                make_path_ginsstyle(stations_file_ingin)
             )
-
-        print("AAA3")
 
         # =========   ORBITS   =============
         if not perso_orbclk:
@@ -862,8 +619,8 @@ def gen_dirs_from_rnxs(
             #        gr_gr2 = 'GR1' # obsolete parce que GR1 intégralement inclu dans GR2
             elif dt_rinex < dt.datetime(1998, 1, 4):
                 gr_gr2 = "IG2"
-                print("INFO : no GRG/GR2 orbit available for day", dt_rinex)
-                print("       (day before 1998/1/4) => using IG2 orb. instead")
+                log.info("no GRG/GR2 orbit available for day %s", dt_rinex)
+                log.info("(day before 1998/1/4) => using IG2 orb. instead")
             else:
                 gr_gr2 = "GRG"
             horpath = os.path.join("horloges", gr_gr2, "defaut")
@@ -874,12 +631,12 @@ def gen_dirs_from_rnxs(
             )
 
             # Exception case where no sp3/clk was found
-            if orbpath == None or horpath == None:
-                print(
-                    "WARN : something went wrong with orbits/clocks download/conversion ",
+            if orbpath is None or horpath is None:
+                log.warning(
+                    "something went wrong with orbits/clocks download/conversion %s",
                     dt_rinex,
                 )
-                print("       skiping the day ...")
+                log.warning("       skiping the day ...")
                 failed_rinex_date_lis.append(dt_rinex)
                 if multimode:
                     continue
@@ -889,75 +646,75 @@ def gen_dirs_from_rnxs(
             orbpath = make_path_ginsstyle(orbpath)
             horpath = make_path_ginsstyle(horpath)
 
-        director_dic["model"]["environment"]["gnss_clock"] = horpath
-        director_dic["observation"]["interobject_data"][0]["file"] = orbpath
+        dir_dic["model"]["environment"]["gnss_clock"] = horpath
+        dir_dic["observation"]["interobject_data"][0]["file"] = orbpath
 
         # correcting a pyyaml bug : version is interpreted as a int instead of a string
-        verslis = list(str(director_dic["version"]))
-
-        verstr = verslis[0] + verslis[1] + "_" + "_".join(verslis[2:])
-        director_dic["version"] = verstr
+        #verslis = list(str(dir_dic["version"]))
+        # verstr = verslis[0] + verslis[1] + "_" + "_".join(verslis[2:])
+        # dir_dic["version"] = verstr
+        # comment 202501
 
         # Security CHECKs
-        statfile_path_ginsstyle = director_dic["object"]["station"][
+        statfile_path_gstyl = dir_dic["object"]["station"][
             "station_coordinates"
         ]
-        statfile_path_full = os.path.join(gins_path, statfile_path_ginsstyle[6:])
+        statfile_path_full = os.path.join(gins_path, statfile_path_gstyl[6:])
 
-        ocloadfile_path_ginsstyle = director_dic["object"]["station"][
+        ocloadfile_path_gstyl = dir_dic["object"]["station"][
             "ocean_tide_loading"
         ]
-        ocloadfile_path_full = os.path.join(gins_path, ocloadfile_path_ginsstyle[6:])
+        ocloadfile_path_full = os.path.join(gins_path, ocloadfile_path_gstyl[6:])
 
         check_if_stat_in_stationfile(stat, statfile_path_full)
 
         domes = find_DOMESstat_in_stationfile(stat, statfile_path_full)
-        print("INFO : DOMES : ", domes)
+        log.info("INFO : DOMES : %s", domes)
         check_if_DOMES_in_oceanloadfile(domes[0], ocloadfile_path_full)
 
         # Case of kinematic process : need to change keys in user extension
-        if "user_extension" in director_dic:
-            print("INFO : kinematic process with 'user_extension' fields")
-            if "userext_gps__haute_freq" in director_dic["user_extension"]:
-                director_dic["user_extension"]["userext_gps__haute_freq"] = stat
-            if "userext_gps__haute_freq".upper() in director_dic["user_extension"]:
-                director_dic["user_extension"]["userext_gps__haute_freq".upper()] = stat
+        if "user_extension" in dir_dic:
+            log.info("INFO : kinematic process with 'user_extension' fields")
+            if "userext_gps__haute_freq" in dir_dic["user_extension"]:
+                dir_dic["user_extension"]["userext_gps__haute_freq"] = stat
+            if "userext_gps__haute_freq".upper() in dir_dic["user_extension"]:
+                dir_dic["user_extension"]["userext_gps__haute_freq".upper()] = stat
 
-            if "userext_addition" in director_dic["user_extension"]:
+            if "userext_addition" in dir_dic["user_extension"]:
                 if (
                     "gps__haute_freq"
-                    in director_dic["user_extension"]["userext_addition"]
+                    in dir_dic["user_extension"]["userext_addition"]
                 ):
-                    director_dic["user_extension"]["userext_addition"][
+                    dir_dic["user_extension"]["userext_addition"][
                         "gps__haute_freq"
                     ] = stat
                 if (
                     "gps__haute_freq".upper()
-                    in director_dic["user_extension"]["userext_addition"]
+                    in dir_dic["user_extension"]["userext_addition"]
                 ):
-                    director_dic["user_extension"]["userext_addition"][
+                    dir_dic["user_extension"]["userext_addition"][
                         "gps__haute_freq".upper()
                     ] = stat
-        if "userext_addition" in director_dic["user_extension"]:
+        if "userext_addition" in dir_dic["user_extension"]:
             if np.any(
                 [
                     "gps__haute_freq".upper() in e
-                    for e in director_dic["user_extension"]["userext_addition"]
+                    for e in dir_dic["user_extension"]["userext_addition"]
                 ]
             ):
-                print("INFO : kinematic process with 'userext_addition' fields")
+                log.info("INFO : kinematic process with 'userext_addition' fields")
                 index_gps_hf = [
                     "gps__haute_freq".upper() in e
-                    for e in director_dic["user_extension"]["userext_addition"]
+                    for e in dir_dic["user_extension"]["userext_addition"]
                 ].index(True)
-                director_dic["user_extension"]["userext_addition"][index_gps_hf] = (
+                dir_dic["user_extension"]["userext_addition"][index_gps_hf] = (
                     "gps__haute_freq ".upper() + stat
                 )
 
         # WRITING THE NEW DIRECTOR
-        print("INFO : writing : ", director_output_path)
+        log.info("writing : %s", director_output_path)
         with open(director_output_path, "w+") as outfile:
-            outfile.write(yaml.dump(director_dic, default_flow_style=False))
+            outfile.write(yaml.dump(dir_dic, default_flow_style=False))
 
         # correcting a bug : GINS YAML interpreter can't manage false or true ...
         utils.replace(director_output_path, "false", "no")
@@ -1202,9 +959,7 @@ def gen_dirs_from_double_diff(
             # Exception case where no sp3/clk was found
             if orbpath == None or horpath == None:
                 print(
-                    "WARN : something went wrong with orbits/clocks download/conversion ",
-                    dt_rinex,
-                )
+                    "WARN : something went wrong with orbits/clocks download/conversion "  )
                 print("       skiping the day ...")
                 failed_dd_date_lis.append(dd_start_epoch)
                 if multimode:
@@ -1242,6 +997,7 @@ def gen_dirs_from_double_diff(
         # check_if_DOMES_in_oceanloadfile(domes[0],ocloadfile_path_full)
 
         # Case of kinematic process : need to change keys in user extension
+        stat_B = None
         if "user_extension" in director_dic:
             print("INFO : kinematic process with 'user_extension' fields")
             if "userext_gps__haute_freq" in director_dic["user_extension"]:
