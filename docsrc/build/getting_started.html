@@ -1,21 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Getting started &mdash; geodezyx 4.x documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
-        <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -95,18 +95,21 @@
 <h3>with PyPi and pip<a class="headerlink" href="#with-pypi-and-pip" title="Link to this heading"></a></h3>
 <section id="standard-installation-for-non-admin-users">
 <h4>Standard installation (for non-admin users)<a class="headerlink" href="#standard-installation-for-non-admin-users" title="Link to this heading"></a></h4>
-<p>We recommend to use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to do a proper installation:
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">geodezyx</span></code></p>
-<p>To get the latest working version you can install directly the GitHub-hosted version:
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/IPGP/geodezyx</span></code></p>
+<p>We recommend to use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to do a proper installation:</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">geodezyx</span></code></p>
+<p>To get the latest working version you can install directly the GitHub-hosted version:</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/IPGP/geodezyx</span></code></p>
+<p>If you <strong>reinstall</strong> a new version the package, you should uninstall the existing one and/or use the <code class="docutils literal notranslate"><span class="pre">--upgrade</span></code> option:</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">uninstall</span> <span class="pre">geodezyx</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">geodezyx</span></code></p>
 </section>
 <section id="full-installation-for-sudoers-advanced-users">
 <h4>Full installation (for sudoers/advanced users)<a class="headerlink" href="#full-installation-for-sudoers-advanced-users" title="Link to this heading"></a></h4>
-<p>This version installs facultative external modules, which require system libraries only installable when you have the sudo/admin rights, namely <code class="docutils literal notranslate"><span class="pre">netCDF4</span></code>, <code class="docutils literal notranslate"><span class="pre">kepler.py</span></code>, <code class="docutils literal notranslate"><span class="pre">ncompress</span></code>.</p>
-<p>We recommend to use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to do a propper installation:
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">geodezyx[full]</span></code></p>
-<p>To get the latest working version you can install directly the GitHub-hosted version:
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'git+https://github.com/IPGP/geodezyx#egg=geodezyx[full]'</span></code></p>
+<p>This version installs facultative external modules, which require system libraries only installable when you have the sudo/admin rights, namely <code class="docutils literal notranslate"><span class="pre">netCDF4</span></code>, <code class="docutils literal notranslate"><span class="pre">kepler.py</span></code>, <code class="docutils literal notranslate"><span class="pre">ncompress</span></code>, <code class="docutils literal notranslate"><span class="pre">seawater</span></code>, <code class="docutils literal notranslate"><span class="pre">gsw</span></code>.</p>
+<p>We recommend to use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to do a propper installation:</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">geodezyx[full]</span></code></p>
+<p>To get the latest working version you can install directly the GitHub-hosted version:</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;geodezyx[full]</span> <span class="pre">&#64;</span> <span class="pre">git+https://github.com/IPGP/geodezyx&quot;</span></code></p>
 </section>
 </section>
 <section id="clone-and-manually-install-from-github">
@@ -124,14 +127,12 @@
 <h2>Minimal exemple<a class="headerlink" href="#minimal-exemple" title="Link to this heading"></a></h2>
 <p>To test if the <cite>geodezyx</cite> toolbox is well installed, import:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#### Import</span>
-<span class="kn">from</span> <span class="nn">geodezyx</span> <span class="kn">import</span> <span class="o">*</span>                   <span class="c1"># Import the geodezyx modules</span>
-<span class="kn">from</span> <span class="nn">geodezyx.externlib</span> <span class="kn">import</span> <span class="o">*</span>         <span class="c1"># Import the external modules</span>
-<span class="kn">from</span> <span class="nn">geodezyx.megalib.megalib</span> <span class="kn">import</span> <span class="o">*</span>   <span class="c1"># Import the legacy modules names</span>
+<span class="kn">import</span> <span class="nn">geodezyx</span>           <span class="c1"># Import the geodezyx modules</span>
 </pre></div>
 </div>
-<p>If the modules are well imported (without errors in the console), fine! you have installed the <cite>geodezyx</cite> toolbox!
+<p>If the module are well imported (without errors in the console), fine! you have installed the <cite>geodezyx</cite> toolbox!
 If not, check again the potential errors during the installation.</p>
-<p>Nevertheless, star imports are not recomended. It is better to import the modules separatelly, e.g.:</p>
+<p>It might be better to import the modules separatelly, e.g.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">geodezyx.conv</span> <span class="k">as</span> <span class="nn">conv</span>                  <span class="c1"># Import the conversion module</span>
 </pre></div>
 </div>

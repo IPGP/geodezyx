@@ -33,7 +33,7 @@ from geodezyx import conv
 from geodezyx import operational
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 
@@ -557,7 +557,7 @@ def listing_gins_timeline(
 
     wholefilelist = list(set(wholefilelist))
     lifilelist = [
-        fil for fil in wholefilelist if re.search(suffix_regex + ".*\gins", fil)
+        fil for fil in wholefilelist if re.search(suffix_regex + r".*gins", fil)
     ]
 
     statname_lis = sorted(list(set([li[stat_strt:stat_end] for li in lifilelist])))
@@ -571,7 +571,7 @@ def listing_gins_timeline(
 
     for li in lifilelist:
         try:
-            tup = (li, conv.jjulCNES2dt(li[date_strt:date_end]))
+            tup = (li, conv.jjul_cnes2dt(li[date_strt:date_end]))
             datadico[li[stat_strt:stat_end]].append(tup)
         except:
             log.error("error with : %s", li)

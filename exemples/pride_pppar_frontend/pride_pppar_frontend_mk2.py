@@ -13,7 +13,7 @@ import os
 
 from geodezyx import operational, utils, conv
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ########################
 

@@ -45,7 +45,7 @@ from geodezyx import utils
 
 #### Import the logger
 import logging
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 

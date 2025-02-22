@@ -2,10 +2,11 @@
 
 # geodezyx (aka ___The GeodeZYX Toolbox___) 
 
-**Version 4.4.3 / 2024-05-20**, README Revision: 2024-05-20
+**Version: 4.6.0**  
+**Date: 2025-02-04**  
+**README Revision:** 2024-11-28  
 
-
-**Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany)
+**Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany) 
 
 **Documentation:** [https://ipgp.github.io/geodezyx](https://ipgp.github.io/geodezyx/)
 
@@ -22,10 +23,8 @@ V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.
 **Licence:** GNU LGPL v3 (see below) 
 
 **Contributors:**
-* Kitpracha "Na" Chaiyaporn (GFZ, Potsdam, Germany)
+* Chaiyaporn "Na" Kitpracha (GFZ, Potsdam, Germany)
 * Valérie Ballu (CNRS/La Rochelle University, France)
-
-
 
 ## Introduction
 
@@ -76,6 +75,22 @@ and install the Toolbox you downloaded with ``python setup.py install``
 Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
 
 ## Changelog
+
+### v4.5.3, 2024-12-28
+  * First version using CI/CD with GitHub Actions
+  * Correct bug for mono-GNSS RINEX in `read_rnx2_obs` and `read_rnx3_obs`.
+  * Correct python 3.12's annoying regex's raw string SyntaxWarning.
+  * v4.5.2 is cancelled, because `requirements.txt` is too version-restrictive. 
+
+### v4.5.1, 2024-11-28
+  * Make `geodezyx` compatible with Python 3.12
+  * Improvement of PRIDE-related execution functions
+  * New leap second functions, to cope with new Ubuntu 24.04 LTS
+  * `seawater` and `gsw` modules are installed in `full` mode & imported on demand only
+  * Correct angle conversion functions
+  * New version of `conv.numpydt2dt` function
+  * Misc routine improvements
+  * v4.5.0 is cancelled, because `requirements.txt` is missing
 
 ### v4.4.3, 2024-05-20
   * Speed execution optimization for orbit/clock-related functions
@@ -135,6 +150,7 @@ Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (
 We thank them for their work and their indirect contribution to this toolbox. Namely:
   * Goudarzi, M.A., Cocard, M. & Santerre, R. EPC: Matlab software to estimate Euler pole parameters. 
 GPS Solut 18, 153–162 (2014). https://doi.org/10.1007/s10291-013-0354-4
+  * Caroline Geisert, ENSTA Bretagne, for the plate motion model functions, based on Goudarzi et al.'s work.
   * Yann-Treden Tranchant, LIENSs La Rochelle, for the ocean circulation model and OBP processing functions.
   * Jean-Mathieu Nocquet and its PYACS toolbox for the plate motion model functions. https://github.com/JMNocquet/pyacs36
 

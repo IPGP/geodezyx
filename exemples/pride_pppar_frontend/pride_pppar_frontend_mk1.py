@@ -12,7 +12,7 @@ import os
 
 from geodezyx import operational, utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 cfg_template_path = "/home/ovsgnss/.PRIDE_PPPAR_BIN/config_template"
 rnx_path = '/scratch/calcgnss/temp_stuffs/2402_tests_PF_pride/SNEG/SNEG00REU_R_20232000000_01D_30S_MO.crx.gz' 

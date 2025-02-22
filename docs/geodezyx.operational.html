@@ -1,26 +1,26 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.operational package &mdash; geodezyx 4.x documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
-        <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="geodezyx.reffram package" href="geodezyx.reffram.html" />
-    <link rel="prev" title="geodezyx.megalib package" href="geodezyx.megalib.html" /> 
+    <link rel="prev" title="geodezyx.marine package" href="geodezyx.marine.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -56,7 +56,6 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.operational package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.anubis_frontend">geodezyx.operational.anubis_frontend module</a></li>
@@ -126,7 +125,7 @@
 <p>&#64;author: psakic</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.anubis_frontend.anubis_runner">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.anubis_frontend.</span></span><span class="sig-name descname"><span class="pre">anubis_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir_main</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xml_config_generic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_nav</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_sp3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anubis_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/opt/gnss_softs/bin/anubis'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.anubis_frontend.anubis_runner" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.anubis_frontend.</span></span><span class="sig-name descname"><span class="pre">anubis_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir_main</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xml_config_generic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_nav</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_sp3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anubis_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/opt/gnss_softs/bin/anubis'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.anubis_frontend.anubis_runner" title="Link to this definition"></a></dt>
 <dd><p>Run an Anubis quality check.
 Designed for Anubis 3.3.
 Works with Anubis 3.7 at least.</p>
@@ -144,7 +143,7 @@ gives its path in a list (<cite>[rnx_inp]</cite>)</p>
 <li><p><strong>xml_config_generic</strong> (<em>str</em>) – path of the generic XML configuration file.
 will be stored in &lt;out_dir_main&gt;/inp
 See note bellow to find some exemples</p></li>
-<li><p><strong>period</strong> (<em>None</em><em> or </em><em>int</em>) – nominal file period in the RINEX (in hours)
+<li><p><strong>period</strong> (<em>None</em><em> or </em><em>int</em>) – nominal file period in the RINEX (in sec)
 if None is given, guess based on the RINEX name
 The default is None.</p></li>
 <li><p><strong>interval</strong> (<em>None</em><em> or </em><em>int</em>) – nominal data interval in the RINEX (in sec)
@@ -157,9 +156,9 @@ The default is False.</p></li>
 will be stored in &lt;out_dir_main&gt;/nav
 The default is True.</p></li>
 <li><p><strong>download_sp3</strong> (<em>bool</em><em>, </em><em>optional</em>) – Download automatically the SP3 orbit files.
-CODE’s MGEX are used per default.
+CODE’s MGEX or REPRO3 before 2018 are used per default.
 will be stored in &lt;out_dir_main&gt;/nav
-The default is True.</p></li>
+The default is False.</p></li>
 <li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – Per default, skip anubis execution if a xtr
 file already exists in out_dir_main
 The default is False.</p></li>
@@ -178,7 +177,7 @@ The default is “/opt/gnss_softs/bin/anubis”</p></li>
 <p class="admonition-title">Note</p>
 <p>Generic Configuration files for Anubis version 2 and 3
 can be found here:</p>
-<p><code class="docutils literal notranslate"><span class="pre">&lt;...&gt;/geodezyx/000_exemples/anubis_configfiles</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;...&gt;/geodezyx/exemples/anubis_configfiles</span></code></p>
 <p>or directly on the GeodeZYX’s toolbox GitHub repository:</p>
 <p><a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox/tree/master/geodezyx/000_exemples/anubis_configfiles">https://github.com/GeodeZYX/geodezyx-toolbox/tree/master/geodezyx/000_exemples/anubis_configfiles</a></p>
 </div>
@@ -267,10 +266,10 @@ Note: For the moment is only for sp3 and clk.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>week_ini</strong> (<em>GPS week for download</em>) – </p></li>
-<li><p><strong>fmt</strong> (<em>searching format file e.g. sp3</em>) – </p></li>
-<li><p><strong>ac</strong> (<em>name</em><em> of </em><em>the anlisys center</em>) – </p></li>
-<li><p><strong>out_path</strong> (<em>path where the products will be download</em>) – </p></li>
+<li><p><strong>week_ini</strong> (<em>GPS week for download</em>)</p></li>
+<li><p><strong>fmt</strong> (<em>searching format file e.g. sp3</em>)</p></li>
+<li><p><strong>ac</strong> (<em>name</em><em> of </em><em>the anlisys center</em>)</p></li>
+<li><p><strong>out_path</strong> (<em>path where the products will be download</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -286,11 +285,11 @@ Note: For the moment is only for sp3 and clk.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ftp_dir_list</strong> (<em>list with the files in the ftp</em><em> (</em><em>comming from the previous fct: list_file_in_ftp</em><em>)</em>) – </p></li>
-<li><p><strong>fmt</strong> (<em>searching format file e.g. sp3</em>) – </p></li>
-<li><p><strong>ac</strong> (<em>name</em><em> of </em><em>the anlisys center</em>) – </p></li>
-<li><p><strong>week</strong> (<em>gps week</em>) – </p></li>
-<li><p><strong>day</strong> (<em>day</em><em> of </em><em>the week</em>) – </p></li>
+<li><p><strong>ftp_dir_list</strong> (<em>list with the files in the ftp</em><em> (</em><em>comming from the previous fct: list_file_in_ftp</em><em>)</em>)</p></li>
+<li><p><strong>fmt</strong> (<em>searching format file e.g. sp3</em>)</p></li>
+<li><p><strong>ac</strong> (<em>name</em><em> of </em><em>the anlisys center</em>)</p></li>
+<li><p><strong>week</strong> (<em>gps week</em>)</p></li>
+<li><p><strong>day</strong> (<em>day</em><em> of </em><em>the week</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -306,9 +305,9 @@ Note: For the moment is only for sp3 and clk.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>email</strong> (<em>login email</em>) – </p></li>
-<li><p><strong>host</strong> (<em>ftp server</em>) – </p></li>
-<li><p><strong>directory</strong> (<em>directory inside the server</em>) – </p></li>
+<li><p><strong>email</strong> (<em>login email</em>)</p></li>
+<li><p><strong>host</strong> (<em>ftp server</em>)</p></li>
+<li><p><strong>directory</strong> (<em>directory inside the server</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -745,6 +744,12 @@ if center_id_last_letter=m, it will become com</p>
 <p>igs_sopac (for the SOPAC/UCSD/SIO data center, but not very reliable)</p>
 <p>igs_ign (IGN’s data center, main server at St Mandé)</p>
 <p>igs_ign_ensg (IGN’s data center, secondary server at ENSG, Marne-la-Vallée)</p>
+<p>sonel</p>
+<p>euref (EPN data center hosted at ROB)</p>
+<p>nav or brdc as archive center allows to download nav files (using ‘BRDC’ as station name)
+from the ROB server, using GOP files</p>
+<p>nav_rt or brdc_rt as archive center allows to download <em>real time</em> nav files
+from the BKG server</p>
 <p><strong>*</strong> not reimplemented yet <strong>*</strong>
 rgp (IGN’s RGP St Mandé center)</p>
 <p>rgp_mlv (IGN’s RGP Marne la Vallée center)</p>
@@ -754,11 +759,7 @@ rgp (IGN’s RGP St Mandé center)</p>
 <p>unavco</p>
 <p>sonel</p>
 <p>geoaus (Geosciences Australia)</p>
-<p>ens_fr</p>
-<p>nav or brdc as archive center allows to download nav files (using ‘BRDC’ as station name)
-from the ROB server, using GOP files</p>
-<p>nav_rt or brdc_rt as archive center allows to download <em>real time</em> nav files
-from the BKG server
+<p>ens_fr
 <strong>*</strong> not reimplemented yet <strong>*</strong></p>
 </dd>
 </dl>
@@ -813,7 +814,7 @@ RINEX3 (long names) depending on the boolean given</p></li>
 &gt;&gt;&gt; archive_dir = ‘/home/USER/test_dl_rnx’
 &gt;&gt;&gt; startdate = dt.datetime(2020,1,1)
 &gt;&gt;&gt; enddate = dt.datetime(2020,1,31)
-&gt;&gt;&gt; geodezyx.operational.download_gnss_rinex_legacy(statdic, archive_dir, startdate, enddate)</p></li>
+&gt;&gt;&gt; geodezyx.operational.download_gnss_rinex(statdic, archive_dir, startdate, enddate)</p></li>
 </ul>
 </p>
 </dd>
@@ -838,13 +839,13 @@ OR only ‘/’ for a dirty saving in the parent folder
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.ens_fr">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">ens_fr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.ens_fr" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.ens_fr_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">ens_fr_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.ens_fr_legacy" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.ftp_download_frontend">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">ftp_download_frontend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urllist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savedirlist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secure_ftp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous&#64;isp.com'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.ftp_download_frontend" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.euref_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">euref_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.euref_server" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -855,15 +856,15 @@ optimized FTP crawl</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.geoaus_server">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">geoaus_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.geoaus_server" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.geoaus_server_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">geoaus_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.geoaus_server_legacy" title="Link to this definition"></a></dt>
 <dd><p>Geosciences Australia
 ex : <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/">ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/</a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.igs_cddis_nav_server">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">igs_cddis_nav_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.igs_cddis_nav_server" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.igs_cddis_nav_server_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">igs_cddis_nav_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.igs_cddis_nav_server_legacy" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -897,49 +898,48 @@ ex : <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gn
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.orpheon_server">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">orpheon_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.orpheon_server" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.orpheon_server_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">orpheon_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.orpheon_server_legacy" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.ovsg_server">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">ovsg_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.ovsg_server" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.ovsg_server_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">ovsg_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.ovsg_server_legacy" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.renag_server">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">renag_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.renag_server" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.renag_server_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">renag_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.renag_server_legacy" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_ign_mlv_server">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ign_mlv_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_ign_mlv_server" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_ign_mlv_server_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ign_mlv_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_ign_mlv_server_legacy" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_ign_smn_1_hz_server">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ign_smn_1_hz_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_ign_smn_1_hz_server" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_ign_smn_1_hz_server_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ign_smn_1_hz_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_ign_smn_1_hz_server_legacy" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_ign_smn_server">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ign_smn_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_ign_smn_server" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_ign_smn_server_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ign_smn_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_ign_smn_server_legacy" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_rinex.sonel_server">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">sonel_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.sonel_server" title="Link to this definition"></a></dt>
-<dd><p>ex : <a class="reference external" href="ftp://ftp.sonel.org/gps/data/2015/001/">ftp://ftp.sonel.org/gps/data/2015/001/</a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.unavco_server">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">unavco_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.unavco_server" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.uwiseismic_server">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">uwiseismic_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.uwiseismic_server" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.unavco_server_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">unavco_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.unavco_server_legacy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.uwiseismic_server_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">uwiseismic_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.uwiseismic_server_legacy" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
@@ -1199,23 +1199,37 @@ GitHub repository :
 <a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geodezyx.operational.download_utils.MyFTP_TLS">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">MyFTP_TLS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acct=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyfile=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">certfile=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout=&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_address=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding='utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.MyFTP_TLS" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">MyFTP_TLS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acct=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout=&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_address=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding='utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.MyFTP_TLS" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FTP_TLS</span></code></p>
-<p>Explicit FTPS, with shared TLS session</p>
+<p>This class is a subclass of FTP_TLS from the ftplib module. It is used to create an FTPS client that shares the TLS session.
+This is to avoid the error: ssl.SSLEOFError: EOF occurred in violation of protocol (_ssl.c:2396)
+Source: <a class="reference external" href="https://stackoverflow.com/questions/14659154/ftps-with-python-ftplib-session-reuse-required">https://stackoverflow.com/questions/14659154/ftps-with-python-ftplib-session-reuse-required</a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="geodezyx.operational.download_utils.MyFTP_TLS.ntransfercmd">
 <span class="sig-name descname"><span class="pre">ntransfercmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.MyFTP_TLS.ntransfercmd" title="Link to this definition"></a></dt>
-<dd><p>Initiate a transfer over the data connection.</p>
-<p>If the transfer is active, send a port command and the
-transfer command, and accept the connection.  If the server is
-passive, send a pasv command, connect to it, and start the
-transfer command.  Either way, return the socket for the
-connection and the expected size of the transfer.  The
-expected size may be None if it could not be determined.</p>
-<p>Optional <a href="#id1"><span class="problematic" id="id2">`</span></a>rest’ argument can be a string that is sent as the
-argument to a REST command.  This is essentially a server
-marker used to tell the server to skip over any data up to the
-given marker.</p>
+<dd><p>Initiate a data transfer over a new connection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">ntransfercmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Initiate a data transfer over a new connection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cmd</strong> (<em>str</em>) – The command to send to the server.</p></li>
+<li><p><strong>rest</strong> (<em>str</em><em>, </em><em>optional</em>) – A string that contains a marker representing where the server is to restart the operation’s data transfer. Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The connection and the expected size of the data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If the protection level is set to private (i.e., _prot_p is True), the connection is wrapped in an SSL/TLS layer.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1251,16 +1265,51 @@ OR only ‘/’ for a dirty saving in the parent folder
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_utils.ftp_downloader">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_downloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftp_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_remote_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.ftp_downloader" title="Link to this definition"></a></dt>
-<dd><p>download a file through FTP protocol</p>
+<dt class="sig sig-object py" id="geodezyx.operational.download_utils.ftp_download_frontend">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_download_frontend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savedirs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secure_ftp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous&#64;isp.com'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.ftp_download_frontend" title="Link to this definition"></a></dt>
+<dd><p>This function is used to download files from FTP servers in parallel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>urls</strong> (<em>str</em><em> or </em><em>list</em>) – The URL or list of URLs of the files to be downloaded.</p></li>
+<li><p><strong>savedirs</strong> (<em>str</em><em> or </em><em>list</em>) – The directory or list of directories where the downloaded files should be saved.</p></li>
+<li><p><strong>parallel_download</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of parallel downloads to be performed. Default is 1.</p></li>
+<li><p><strong>secure_ftp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, uses FTPS for secure file transfer. Default is False.</p></li>
+<li><p><strong>user</strong> (<em>str</em><em>, </em><em>optional</em>) – The username for the FTP server. Default is “anonymous”.</p></li>
+<li><p><strong>passwd</strong> (<em>str</em><em>, </em><em>optional</em>) – The password for the FTP server. Default is <a class="reference external" href="mailto:'anonymous&#37;&#52;&#48;isp&#46;com">‘anonymous<span>&#64;</span>isp<span>&#46;</span>com</a>’.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, forces the download even if the file already exists. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function uses the ThreadPool for parallel downloads.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_utils.ftp_downloader_core">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_downloader_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftp_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.ftp_downloader_core" title="Link to this definition"></a></dt>
-<dd><p>do the FTP download, if we are aleady in the right FTP folder</p>
-<p>internal function of ftp_downloader</p>
+<dt class="sig sig-object py" id="geodezyx.operational.download_utils.ftp_downloader">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_downloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftp_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_remote_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.ftp_downloader" title="Link to this definition"></a></dt>
+<dd><p>Downloads a file through FTP protocol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ftp_obj</strong> (<em>FTP object</em>) – The FTP object used to connect to the FTP server.</p></li>
+<li><p><strong>full_remote_path</strong> (<em>str</em>) – The full path of the file on the FTP server.</p></li>
+<li><p><strong>localdir</strong> (<em>str</em>) – The local directory where the downloaded file should be saved.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output of the ftp_downloader_core function.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function changes the current working directory of the FTP object to the directory of the file to be downloaded,
+and then calls the ftp_downloader_core function to download the file.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1273,7 +1322,19 @@ OR only ‘/’ for a dirty saving in the parent folder
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_utils.ftp_downloader_wrap">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_downloader_wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intup</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.ftp_downloader_wrap" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>This function is a wrapper for the ftp_downloader function. It unpacks the input tuple and passes it to the ftp_downloader function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>intup</strong> (<em>tuple</em>) – A tuple containing the parameters to be passed to the ftp_downloader function.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output of the ftp_downloader function.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_utils.ftp_files_crawler_legacy">
@@ -1284,8 +1345,32 @@ optimized FTP crawl</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_utils.ftp_objt_create">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_objt_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secure_ftp_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.ftp_objt_create" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_objt_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secure_ftp_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.ftp_objt_create" title="Link to this definition"></a></dt>
+<dd><p>This function creates and returns an FTP object and a list of FTP objects for multiple downloads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>secure_ftp_inp</strong> (<em>bool</em>) – If True, uses FTPS for secure file transfer. Default is False.</p></li>
+<li><p><strong>host</strong> (<em>str</em><em>, </em><em>optional</em>) – The hostname of the FTP server. Default is an empty string.</p></li>
+<li><p><strong>chdir</strong> (<em>str</em><em>, </em><em>optional</em>) – The directory to change to after connecting to the FTP server. Default is an empty string.</p></li>
+<li><p><strong>parallel_download</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of parallel downloads to be performed. Default is 1.</p></li>
+<li><p><strong>user</strong> (<em>str</em><em>, </em><em>optional</em>) – The username for the FTP server. Default is “anonymous”.</p></li>
+<li><p><strong>passwd</strong> (<em>str</em><em>, </em><em>optional</em>) – The password for the FTP server. Default is an empty string.</p></li>
+<li><p><strong>retry_count</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of times to retry creating the FTP object. Default is 3.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The main FTP object for crawling and a list of FTP objects for parallel downloads.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function creates an FTP object using the appropriate constructor based on the secure_ftp_inp parameter.
+It then creates a list of FTP objects for multiple downloads.
+If a directory is specified, it changes the current working directory of the main FTP object to that directory.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_utils.start_end_date_easy">
@@ -1885,12 +1970,112 @@ to consider several files</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.pride_pppar_frontend.dl_brdc_pride_pppar">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">dl_brdc_pride_pppar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.pride_pppar_frontend.dl_brdc_pride_pppar" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Downloads BRDC (Broadcast Ephemeris) files for PRIDE PPPAR from a given directory and date list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prod_parent_dir</strong> (<em>str</em>) – The parent directory where the products are stored.</p></li>
+<li><p><strong>date_list</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – The list of dates for which the BRDC files are to be downloaded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of downloaded BRDC files.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function first rounds the dates in the date list to the nearest day and removes duplicates.
+It then downloads the BRDC files for each unique date using the operational.download_gnss_rinex function.
+The downloaded files are appended to a list which is returned at the end.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.pride_pppar_frontend.dl_prods_pride_pppar">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">dl_prods_pride_pppar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.pride_pppar_frontend.dl_prods_pride_pppar" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Downloads GNSS products for PRIDE PPPAR from a given directory and date list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prod_parent_dir</strong> (<em>str</em>) – The parent directory where the products are stored.</p></li>
+<li><p><strong>date_list</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – The list of dates for which the GNSS products are to be downloaded.</p></li>
+<li><p><strong>prod_ac_name</strong> (<em>str</em>) – The name of the analysis center providing the products.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of downloaded GNSS products.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function downloads various GNSS products such as orbits, clocks, biases, etc.
+It iterates over specified data centers and attempts to download the products.
+If at least 5 products are found, the function stops further downloads.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.pride_pppar_frontend.get_best_latency">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">get_best_latency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_lis_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.pride_pppar_frontend.get_best_latency" title="Link to this definition"></a></dt>
+<dd><p>Selects the best latency from a list of product files.</p>
+<p>Internal function for get_right_prod.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prod_lis_inp</strong> (<em>list</em>) – A list of product file paths.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The best latency found in the list.
+But can be several if the latency is the same for several products.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.pride_pppar_frontend.get_right_brdc">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">get_right_brdc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brdc_lis_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.pride_pppar_frontend.get_right_brdc" title="Link to this definition"></a></dt>
+<dd><p>Selects the appropriate BRDC (Broadcast Ephemeris) file from a list and unzips it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>brdc_lis_inp</strong> (<em>list</em>) – A list of BRDC file paths.</p></li>
+<li><p><strong>tmp_dir_inp</strong> (<em>str</em>) – The directory where the unzipped BRDC file will be stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the original BRDC file path and the unzipped BRDC file path.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.pride_pppar_frontend.get_right_prod">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">get_right_prod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_lis_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_fallback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.pride_pppar_frontend.get_right_prod" title="Link to this definition"></a></dt>
+<dd><p>Selects the appropriate product file from a list and unzips it if necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prod_lis_inp</strong> (<em>list</em>) – A list of product file paths.</p></li>
+<li><p><strong>tmp_dir_inp</strong> (<em>str</em>) – The directory where the unzipped product file will be stored.</p></li>
+<li><p><strong>prod_name</strong> (<em>str</em>) – The name of the product.</p></li>
+<li><p><strong>default_fallback</strong> (<em>bool</em>) – If True, uses default values if products are not found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the unzipped product file path and the original product file path.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.pride_pppar_frontend.pride_pppar_mp_wrap">
@@ -1899,18 +2084,71 @@ to consider several files</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.pride_pppar_frontend.pride_pppar_runner">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">pride_pppar_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_path_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_template_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pride_pppar_cfg_1a'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options_dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dl_prods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.pride_pppar_frontend.pride_pppar_runner" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">pride_pppar_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_path_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_template_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pride_pppar_cfg_1a'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options_dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dl_prods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dl_prods_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_run_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.pride_pppar_frontend.pride_pppar_runner" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.pride_pppar_frontend.pride_pppar_runner_mono">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">pride_pppar_runner_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_template_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pride_pppar_cfg_1a'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options_dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dl_prods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.pride_pppar_frontend.pride_pppar_runner_mono" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">pride_pppar_runner_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_template_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pride_pppar_cfg_1a'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options_dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dl_prods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dl_prods_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_run_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.pride_pppar_frontend.pride_pppar_runner_mono" title="Link to this definition"></a></dt>
+<dd><p>Runs the PRIDE PPPAR process for a single RINEX file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rnx_path</strong> (<em>str</em>) – The path to the RINEX file.</p></li>
+<li><p><strong>cfg_template_path</strong> (<em>str</em>) – The path to the configuration template file.</p></li>
+<li><p><strong>prod_ac_name</strong> (<em>str</em>) – The name of the analysis center providing the products.</p></li>
+<li><p><strong>prod_parent_dir</strong> (<em>str</em>) – The parent directory where the products are stored.</p></li>
+<li><p><strong>tmp_dir</strong> (<em>str</em>) – The temporary directory for intermediate files.</p></li>
+<li><p><strong>cfg_dir</strong> (<em>str</em>) – The directory for configuration files.</p></li>
+<li><p><strong>run_dir</strong> (<em>str</em>) – The directory where the run results will be stored.</p></li>
+<li><p><strong>cfg_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – The prefix for the configuration file name. Default is “pride_pppar_cfg_1a”.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode for the PRIDE PPPAR process. Default is “K”.</p></li>
+<li><p><strong>options_dic</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional options for the PRIDE PPPAR process. Default is an empty dictionary.</p></li>
+<li><p><strong>bin_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – The directory where the PRIDE PPPAR binaries are located. Default is None.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, forces the process to run even if logs already exist. Default is False.</p></li>
+<li><p><strong>dl_prods</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, downloads the necessary products. Default is False.</p></li>
+<li><p><strong>default_fallback</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, uses default values if products are not found. Default is False.</p></li>
+<li><p><strong>dl_prods_only</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, only downloads the products and exits. Default is False.</p></li>
+<li><p><strong>clean_run_dir</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, removes temporary files inside the run directory. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.pride_pppar_frontend.remove_regex_reserved_characters">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">remove_regex_reserved_characters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.pride_pppar_frontend.remove_regex_reserved_characters" title="Link to this definition"></a></dt>
+<dd><p>Removes all REGEX reserved characters from the input string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_string</strong> (<em>str</em>) – The string to be cleaned of REGEX reserved characters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cleaned string with all REGEX reserved characters removed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.pride_pppar_frontend.run_command">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.pride_pppar_frontend.run_command" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Runs a shell command and captures both stdout and stderr.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>command</strong> (<em>str</em>) – The shell command to be executed.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function uses subprocess.Popen to run the command in a new process.
+It continuously reads and prints stdout and stderr until the process finishes.
+The function prints the return code of the process once it completes.</p>
+</dd></dl>
 
 </section>
 <section id="module-geodezyx.operational.rinex_lister_plotter">
@@ -2077,7 +2315,7 @@ priority_list : priority list of ‘optional_info’ (archive ID)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.timeline_plotter">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">timeline_plotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datadico</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dots_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jul_date_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datadico_anex_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_only_stats_of_main_datadico</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colordico_for_main_datadico</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim_start_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.timeline_plotter" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">timeline_plotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datadico</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dots_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jul_date_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datadico_anex_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_only_stats_of_main_datadico</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colordico_for_main_datadico</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim_start_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_only_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.timeline_plotter" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2097,6 +2335,8 @@ Advanced usage.
 The default is None.</p></li>
 <li><p><strong>xlim_start_end</strong> (<em>bool</em><em>, </em><em>optional</em>) – Force start and end values to be the x axis limit
 The default is False.</p></li>
+<li><p><strong>stats_only_list</strong> (<em>list</em><em>, </em><em>optional</em>) – If given, keep only the stations of this list
+The default is [].</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2374,7 +2614,7 @@ GitHub repository :
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="geodezyx.megalib.html" class="btn btn-neutral float-left" title="geodezyx.megalib package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.marine.html" class="btn btn-neutral float-left" title="geodezyx.marine package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="geodezyx.reffram.html" class="btn btn-neutral float-right" title="geodezyx.reffram package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -1,21 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.stats package &mdash; geodezyx 4.x documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
-        <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -56,7 +56,6 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.stats package</a><ul>
@@ -848,7 +847,7 @@ if it is a fuction (e.g. np.std()) then it is this value returned
 by this function which is used
 Only useful when theshold_absolute = False</p></li>
 <li><p><strong>return_booleans</strong> (<em>bool</em>) – return booleans or not</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -899,7 +898,7 @@ Only useful when theshold_absolute = False</p></li>
 <li><p><strong>detrend_first</strong> (<em>bool</em>) – detrend linear behavior of Y(X) first
 Recommended</p></li>
 <li><p><strong>return_booleans</strong> (<em>bool</em>) – return booleans or not</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -943,7 +942,7 @@ Recommended</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
 <li><p><strong>threshold</strong> (<em>float</em>) – MAD threshold</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>)</p></li>
 <li><p><strong>convert_to_np_array</strong> (<em>bool</em>) – if True returns output as an array, if False as a regular list</p></li>
 <li><p><strong>mad_mode</strong> (<em>str</em>) – ‘median’ or ‘mean’ : MAD can also be based on mean (for experimental purposes)</p></li>
 <li><p><strong>seuil</strong> (<em>float</em><em>, </em><em>optional</em>) – legacy name of ‘threshold’ argument.
@@ -978,7 +977,7 @@ assuming that we have the function : X =&gt; Y(X)
 <li><p><strong>Y</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
 <li><p><strong>X</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – X Values so as X =&gt; Y(X)</p></li>
 <li><p><strong>threshold</strong> (<em>float</em>) – MAD threshold</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>)</p></li>
 <li><p><strong>detrend_first</strong> (<em>bool</em>) – detrend linear behavior of Y(X) first</p></li>
 <li><p><strong>return_booleans</strong> (<em>bool</em>) – return good and bad values of Y and X as booleans</p></li>
 </ul>

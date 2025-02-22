@@ -33,7 +33,7 @@ from geodezyx import utils
 from geodezyx.conv import conv_rotation_matrices as rotmat
 
 # import re
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 #### Import star style
 # from geodezyx import *                   # Import the GeodeZYX modules
@@ -626,8 +626,7 @@ def sXYZ2sENU(X,Y,Z,sX,sY,sZ,sXY=0,sYZ=0,sXZ=0):
     
     WARNING
     -------
-    Inputs values are assumed as uncorrelated, which is not accurate
-    Must be improved
+    Inputs values are now assumed as correlated (241105)
     
     References
     ----------
@@ -644,7 +643,10 @@ def sXYZ2sENU(X,Y,Z,sX,sY,sZ,sXY=0,sYZ=0,sXZ=0):
 
     F,L,H = XYZ2GEO(X,Y,Z)
 
-    C = rotmat.C_ecef2enu(F,L,angtype='deg')
+    # old and bad rotation matrix (bofore 20241104)
+    # C = rotmat.C_ecef2enu(F,L,angtype='deg')
+    # new and good rotation matrix (after 20241104)
+    C = rotmat.C_ecef2enu_sigma(F,L,angtype='deg')
 
     SIGMAenu = np.dot(np.dot(C,SIGMAxyz),C.T)
 

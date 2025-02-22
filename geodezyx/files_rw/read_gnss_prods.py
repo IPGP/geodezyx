@@ -3,7 +3,7 @@
 """
 Created on Wed Jun 23 10:24:19 2021
 
-@author: psakicki
+@author: psakic
 """
 
 ########## BEGIN IMPORT ##########
@@ -21,7 +21,7 @@ from geodezyx import conv
 # from geodezyx import time_series
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
  #   _____ _            _       __ _ _           
  #  / ____| |          | |     / _(_) |          
@@ -65,7 +65,7 @@ def read_clk(file_path_in,names_4char=False):
     
     # Special case when D-0n instead of E-0n (e.g. IAC), 
     # then values are not converted to float and kept as generic objects...
-    if DFclk['bias'].dtype == "O" and DFclk['bias'].str.match(".*D(\+|-)\d\d$").any():
+    if DFclk['bias'].dtype == "O" and DFclk['bias'].str.match(r".*D(\+|-)\d\d$").any():
         DFclk['bias'] = DFclk['bias'].str.replace("D","E").astype(float)
         
     # remove EOF line    

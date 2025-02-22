@@ -19,7 +19,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 
 #### Import the logger
 import logging
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 def dicts_merge(*dict_args):
     '''

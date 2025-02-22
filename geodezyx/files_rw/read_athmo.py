@@ -63,7 +63,7 @@ def read_snx_trop(snxfile,dataframe_output=True,version=2):
             STAT.append(fields[0].upper())
             
             if not ':' in fields[1]:
-                epoc.append(conv.convert_partial_year(fields[1]))
+                epoc.append(conv.year_decimal2dt(fields[1]))
             else:
                 date_elts_lis = fields[1].split(':')
                 if version == 2:

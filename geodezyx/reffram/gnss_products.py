@@ -43,7 +43,7 @@ from geodezyx.reffram import kepler_gzyx
 
 ### disabled and imported directly in the needed fct
 ## import geodezyx.reffram.sofa18 as sofa
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 

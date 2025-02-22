@@ -38,7 +38,7 @@ from geodezyx import utils
 # from geodezyx import *                   # Import the GeodeZYX modules
 # from geodezyx.externlib import *         # Import the external modules
 # from geodezyx.megalib.megalib import *   # Import the legacy modules names
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 
@@ -269,7 +269,7 @@ def download_gnss_products(
             + str(dow)
             + ".*"
             + prod_cur.lower()
-            + "\..*"
+            + r"\..*"
         )
         files = [f for f in files_listed_in_ftp if re.search(pattern_old_nam, f)]
 
@@ -292,7 +292,7 @@ def download_gnss_products(
             pattern_new_nam = utils.join_improved(
                 ".*", ac_newnam, doy_newnam, prod_newnam
             )
-            pattern_new_nam = ".*" + pattern_new_nam + "\..*"
+            pattern_new_nam = ".*" + pattern_new_nam + r"\..*"
 
             files_new_nam = [
                 f for f in files_listed_in_ftp if re.search(pattern_new_nam, f)

@@ -38,7 +38,7 @@ import pandas as pd
 from geodezyx import conv
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 
@@ -245,7 +245,7 @@ def read_rnx_epoch_line(line, rnx2=True):
 
 
 def check_if_compressed_rinex(rinex_path):
-    boolout = bool(re.search(".*((d|o)\.(Z)|(gz))$", rinex_path))
+    boolout = bool(re.search(r".*((d|o)\.(Z)|(gz))$", rinex_path))
     return boolout
 
 

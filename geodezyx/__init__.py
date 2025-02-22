@@ -2,49 +2,12 @@
 # -*- coding: utf-8 -*-
 
 #### IMPORT EXTERNAL MODULES
-# import bisect
-# from collections import defaultdict
-# from collections import Counter
-# import copy
-# import datetime as dt
-# import fnmatch
-# from ftplib import FTP
-# import glob
-# import inspect
-# import itertools
-# import linecache
-#import logging
-import logging.config # MUST remain logging.config for < v3.10 
+import logging.config # MUST remain logging.config for < v3.10
 # (import logging alone doesn't work for < 3.10)
-# import math
-# import matplotlib
-#matplotlib.use("agg") ### avoid tk import error
-# import matplotlib.pyplot as plt
-# import multiprocessing as mp
-## from natsort import natsorted, ns
-# import numpy as np
-# import numpy as npaa
-# import operator
-import os 
+import os
 from os import path
-# import pandas as df
-# import pandas as pd
-# import pickle
-# import scipy
-# from scipy.signal import butter, lfilter, freqz
-# import shutil
-# import string
-# import struct
-# import sys
-# import subprocess
-# import re
-# import tempfile
-# from tempfile import mkstemp
-# import tabulate
-# import time
-# import urllib
-# import uuid
 
+__version__='4.6.0'  ## increase it with bump-my-version !!!
 
 #### IMPORT CONFIG FOR LOGGER
 log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'logconfig','loggzyx.py')
@@ -60,9 +23,8 @@ else:
 
 
 #### IMPORT GEODEZYX INTERNAL SUBMODULES
-#from . import externlib # disable 202406xx
-from . import megalib
-
+# from . import externlib # disable 202406xx
+# from . import megalib # disable 202411xx
 from . import athmo
 from . import conv
 from . import files_rw
@@ -73,7 +35,6 @@ from . import reffram
 from . import stats
 from . import time_series
 from . import utils
-
 
 __all__ = ['athmo',
            'conv',
@@ -86,6 +47,10 @@ __all__ = ['athmo',
            'stats',
            'time_series',
            'utils']
+
+if __name__ == '__main__':
+    print("geodezyx version",__version__)
+    print("geodezyx.__all__",__all__)
 
 #### Import extern libraires in in the geodezyx namespace
 #from geodezyx.extern import *

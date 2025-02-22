@@ -9,6 +9,14 @@ geodezyx.marine package
 Submodules
 ----------
 
+geodezyx.marine.dac module
+--------------------------
+
+.. automodule:: geodezyx.marine.dac
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.marine.marine module
 -----------------------------
 

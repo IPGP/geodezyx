@@ -17,7 +17,7 @@ import pandas as pd
 import geodezyx.operational.download_utils as dlutils
 from geodezyx import conv
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 def _rnx_obs_rgx(stat, date):

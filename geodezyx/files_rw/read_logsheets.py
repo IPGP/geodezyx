@@ -35,7 +35,7 @@ import pandas as pd
 from geodezyx import conv
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 ##########  END IMPORT  ##########
@@ -240,7 +240,7 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
     wildcardin : str, optional
         a wildcard describing the logsheet pattern.
         used only for pathin in a string path.
-        The default is '\*log'.
+        The default is '*log'.
     return_dico : bool, optional
         If False, returns period_lis_lis , stat_lis , loc_lis
         the False mode is useful for station.info generation

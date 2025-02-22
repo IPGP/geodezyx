@@ -1,21 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.files_rw package &mdash; geodezyx 4.x documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
-        <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -73,7 +73,6 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
@@ -1106,11 +1105,9 @@ where L is the inital letter of the event type</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>A jump file contains infos like this :</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">STAT</span> <span class="n">S</span> <span class="mi">2000</span> <span class="mi">001</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">STAT</span> <span class="n">E</span> <span class="mi">2001</span> <span class="mi">001</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">STAT</span> <span class="n">D</span> <span class="mi">2000</span> <span class="mi">06</span> <span class="mi">01</span>
-</pre></div>
-</div>
+<p>#&gt;&gt;&gt; STAT S 2000 001
+#&gt;&gt;&gt; STAT E 2001 001
+#&gt;&gt;&gt; STAT D 2000 06 01</p>
 <p>it can manage YEAR DOY or YEAR MM DD or DECIMAL YEAR</p>
 <p>A non-blank 1st column is a commented line</p>
 <p>After a #, it is a commentary</p>
@@ -1259,7 +1256,7 @@ OUTPUT : Une TimeSeriePoint</p>
 <section id="module-geodezyx.files_rw.read_eop">
 <span id="geodezyx-files-rw-read-eop-module"></span><h2>geodezyx.files_rw.read_eop module<a class="headerlink" href="#module-geodezyx.files_rw.read_eop" title="Link to this heading"></a></h2>
 <p>Created on Wed Jun 23 10:24:42 2021</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_eop.read_IERS">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_eop.</span></span><span class="sig-name descname"><span class="pre">read_IERS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_eop.read_IERS" title="Link to this definition"></a></dt>
@@ -1478,7 +1475,7 @@ Slow and complex, use read_clk instead</p>
 <section id="module-geodezyx.files_rw.read_gnss_prods">
 <span id="geodezyx-files-rw-read-gnss-prods-module"></span><h2>geodezyx.files_rw.read_gnss_prods module<a class="headerlink" href="#module-geodezyx.files_rw.read_gnss_prods" title="Link to this heading"></a></h2>
 <p>Created on Wed Jun 23 10:24:19 2021</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_prods.clk_decimate">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">clk_decimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.clk_decimate" title="Link to this definition"></a></dt>
@@ -1698,7 +1695,7 @@ can handle gzip-compressed file (with .gz/.GZ extension)</p>
 <section id="module-geodezyx.files_rw.read_igs_combi">
 <span id="geodezyx-files-rw-read-igs-combi-module"></span><h2>geodezyx.files_rw.read_igs_combi module<a class="headerlink" href="#module-geodezyx.files_rw.read_igs_combi" title="Link to this heading"></a></h2>
 <p>Created on Wed Jun 23 11:42:14 2021</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_igs_combi.prn_int_2_prn_str">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_igs_combi.</span></span><span class="sig-name descname"><span class="pre">prn_int_2_prn_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prn_int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_igs_combi.prn_int_2_prn_str" title="Link to this definition"></a></dt>
@@ -1857,7 +1854,7 @@ Useful only for such write_&lt;…&gt; functions.</p></li>
 If str: path of the directory containing the Logsheets.</p></li>
 <li><p><strong>wildcardin</strong> (<em>str</em><em>, </em><em>optional</em>) – a wildcard describing the logsheet pattern.
 used only for pathin in a string path.
-The default is ‘*log’.</p></li>
+The default is ‘<a href="#id1"><span class="problematic" id="id2">*</span></a>log’.</p></li>
 <li><p><strong>return_dico</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, returns period_lis_lis , stat_lis , loc_lis
 the False mode is useful for station.info generation
 with write_station_info_from_datalists
@@ -1926,16 +1923,16 @@ functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 GitHub repository :
 <a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.DFrnx_clean_LLI_SSI">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">DFrnx_clean_LLI_SSI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFrnx_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.DFrnx_clean_LLI_SSI" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.df_rnx_clean_lli_ssi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">df_rnx_clean_lli_ssi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_rnx_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.df_rnx_clean_lli_ssi" title="Link to this definition"></a></dt>
 <dd><p>Remove the Loss of Lock Indicator (LLI) and Signal Strength Indicator (SSI)
 columns in a DataFrame RINEX</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>DFrnx_in</strong> (<em>Pandas DataFrame / GeodeZYX's RINEX format</em>) – A RINEX DataFrame with LLI/SSI columns.</p>
+<dd class="field-odd"><p><strong>df_rnx_in</strong> (<em>Pandas DataFrame / GeodeZYX's RINEX format</em>) – A RINEX DataFrame with LLI/SSI columns.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DFrnx_out</strong> – A RINEX DataFrame without LLI/SSI columns.</p>
+<dd class="field-even"><p><strong>df_rnx_out</strong> – A RINEX DataFrame without LLI/SSI columns.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
@@ -1944,8 +1941,8 @@ columns in a DataFrame RINEX</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.dict_sys_obs_clean_LLI_SSI">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">dict_sys_obs_clean_LLI_SSI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_sys_obs_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.dict_sys_obs_clean_LLI_SSI" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.dict_sys_obs_clean_lli_ssi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">dict_sys_obs_clean_lli_ssi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_sys_obs_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.dict_sys_obs_clean_lli_ssi" title="Link to this definition"></a></dt>
 <dd><p>Clean a <cite>dict_sys_obs</cite> (generated by <cite>observables_dict_per_sys</cite>)
 of its LLI and SSI values</p>
 <dl class="field-list simple">
@@ -1964,11 +1961,11 @@ And the observalbes for each system as values.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.observables_dict_per_sys">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">observables_dict_per_sys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFrnx_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.observables_dict_per_sys" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">observables_dict_per_sys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_rnx_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.observables_dict_per_sys" title="Link to this definition"></a></dt>
 <dd><p>Gives the GNSS observables for each GNSS system in a dictionnary</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>DFrnx_in</strong> (<em>Pandas DataFrame / GeodeZYX's RINEX format</em>) – A RINEX DataFrame.</p>
+<dd class="field-odd"><p><strong>df_rnx_in</strong> (<em>Pandas DataFrame / GeodeZYX's RINEX format</em>) – A RINEX DataFrame.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>dict_sys_obs</strong> – A dictionnary with GNSS system as key (G,R,E…).
@@ -1983,6 +1980,11 @@ And the observalbes for each system as values</p>
 <p>Use dict_sys_obs_clean_LLI_SSI if your want to remove the LLI &amp; SSI values</p>
 </div>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.open_rinex">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">open_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.open_rinex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.read_rinex2_obs">
@@ -2002,7 +2004,7 @@ The default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DFrnxobs</strong></p>
+<dd class="field-even"><p><strong>df_rnx_obs</strong></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
@@ -2013,7 +2015,9 @@ The default is None.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.read_rinex3_obs">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">read_rinex3_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.read_rinex3_obs" title="Link to this definition"></a></dt>
-<dd><p>Read a RINEX Observation, version 3 or 4</p>
+<dd><p>DEVELOPPEMENT VERSION TO FASTEN THE PROCESS OF READING RINEX3 OBSERVATION FILES
+SHOULD NOT BE USED IN PRODUCTION</p>
+<p>Read a RINEX Observation, version 3 or 4</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2028,7 +2032,34 @@ The default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DFrnxobs</strong></p>
+<dd class="field-even"><p><strong>df_rnxobs</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.read_rinex3_obs_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">read_rinex3_obs_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.read_rinex3_obs_legacy" title="Link to this definition"></a></dt>
+<dd><p>Read a RINEX Observation, version 3 or 4</p>
+<p>This legacy version is much slower but maybe mor relaible than the new one</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rnx_in</strong> (<em>see below</em>) – input RINEX.
+can be the path of a RINEX file as string or as Path object,
+or directly the RINEX content as a string, bytes, StringIO object or a
+list of lines</p></li>
+<li><p><strong>set_index</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – define the columns for the index.
+If None, the output DataFrame is “flat”, with integer index
+[“epoch”,”prn”] for instance set the epoch and the prn as MultiIndex
+The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df_rnxobs</strong></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
@@ -2040,7 +2071,7 @@ The default is None.</p></li>
 <section id="module-geodezyx.files_rw.read_slr">
 <span id="geodezyx-files-rw-read-slr-module"></span><h2>geodezyx.files_rw.read_slr module<a class="headerlink" href="#module-geodezyx.files_rw.read_slr" title="Link to this heading"></a></h2>
 <p>Created on Wed Jun 23 10:55:04 2021</p>
-<p>&#64;author: psakicki</p>
+<p>&#64;author: psakic</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_slr.read_pdm_res_slr_mono">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_slr.</span></span><span class="sig-name descname"><span class="pre">read_pdm_res_slr_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res_file_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sol'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_slr.read_pdm_res_slr_mono" title="Link to this definition"></a></dt>

@@ -31,7 +31,7 @@ import pandas as pd
 from geodezyx import conv
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 
@@ -375,7 +375,7 @@ def find_IGS_products_files(
         FILE_LIST = parent_dir
     elif recursive_search:
         # All the files are listed first
-        FILE_LIST = utils.find_recursive(parent_dir, ".*", case_sensitive=False)
+        FILE_LIST = utils.find_recursive(parent_dir, ".*", regex=True)
     else:
         FILE_LIST = glob.glob(parent_dir + "/*")
 
@@ -390,16 +390,16 @@ def find_IGS_products_files(
     if compressed == "excl":
         re_patt_comp = "$"
     elif compressed == "incl":
-        re_patt_comp = "(\.Z|\.gz|)$"
+        re_patt_comp = r"(\.Z|\.gz|)$"
     elif compressed == "only":
-        re_patt_comp = "(\.Z|\.gz)$"
+        re_patt_comp = r"(\.Z|\.gz)$"
     else:
         log.error("check 'compressed' keyword (excl,incl, or only)")
         raise Exception
 
     if regex_old_naming:
         if ACs[0] == "all":
-            re_patt_ac = "\w{3}"
+            re_patt_ac = r"\w{3}"
         else:
             re_patt_ac = join_regex_and([ac.lower() for ac in ACs])
 
@@ -413,13 +413,13 @@ def find_IGS_products_files(
         re_patt_date = join_regex_and(Dates_wwwwd_list_4old)
         re_patt_filtyp = join_regex_and(File_type)
         re_patt_big_old_naming = (
-            re_patt_ac + re_patt_date + "\." + re_patt_filtyp + re_patt_comp
+            re_patt_ac + re_patt_date + r"\." + re_patt_filtyp + re_patt_comp
         )
         Re_patt_big_stk.append(re_patt_big_old_naming)
 
     if regex_new_naming:  # search for new name convention
         if ACs[0] == "all":
-            re_patt_ac = "\W{3}"
+            re_patt_ac = r"\W{3}"
         else:
             re_patt_ac = join_regex_and([ac.upper() for ac in ACs])
         # add _ because it can raise a conflit with the old format
@@ -444,7 +444,7 @@ def find_IGS_products_files(
         re_patt_year = join_regex_and(Dates_yy_list)
         # 2x re_patt_date : because .sum doesn't the day
         re_patt_date = join_regex_and(Dates_wwwwd_list + Dates_wwww_list)
-        re_patt_filtyp = "\." + join_regex_and(File_type)
+        re_patt_filtyp = r"\." + join_regex_and(File_type)
 
         re_patt_big_igs_tfcc_naming = (
             "igs"

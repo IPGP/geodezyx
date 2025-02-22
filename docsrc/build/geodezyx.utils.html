@@ -1,21 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.utils package &mdash; geodezyx 4.x documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
   
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
-        <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -55,7 +55,6 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.megalib.html">geodezyx.megalib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
@@ -712,6 +711,21 @@ retourne un booleen</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.shell_like.copy_recursive">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">copy_recursive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.copy_recursive" title="Link to this definition"></a></dt>
+<dd><p>Copy a directory recursively from src to dst with an option to force overwrite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>str</em>) – The source directory path.</p></li>
+<li><p><strong>dst</strong> (<em>str</em>) – The destination directory path.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, overwrite the destination directory if it exists. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.shell_like.create_dir">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">create_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.create_dir" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -752,17 +766,18 @@ NB : Also check if the file exists</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.shell_like.find_recursive">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">find_recursive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extended_file_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_if_empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.find_recursive" title="Link to this definition"></a></dt>
-<dd><p>Find files in a folder and his sub-folders in a recursive way</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">find_recursive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extended_file_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_if_empty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.find_recursive" title="Link to this definition"></a></dt>
+<dd><p>Find files in a folder and his sub-folders in a recursive way.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parent_folder</strong> (<em>str</em>) – the parent folder path</p></li>
 <li><p><strong>pattern</strong> (<em>str</em>) – the researched files pattern name (can manage wildcard or regex)
-* wildcard (only * and ?) for case_sensitive = True
-* regex for case_sensitive = False</p></li>
+- wildcard (only * and ?) for case_sensitive = True
+- regex for case_sensitive = False</p></li>
 <li><p><strong>sort_results</strong> (<em>bool</em>) – Sort results</p></li>
-<li><p><strong>case_sensitive</strong> (<em>bool</em>) – Case sensitive or not. If False, the pattern <em>must</em> be a regex</p></li>
+<li><p><strong>case_sensitive</strong> (<em>bool</em>) – Case sensitive or not. If False, the pattern <em>must</em> be a regex
+<em>Deprecated since 2025-01, use regex instead</em></p></li>
 <li><p><strong>extended_file_stats</strong> (<em>bool</em>) – <p>if True, returns the stats of the files
 the outputed matches list will be a list of tuples
 (file_path,stat_object), where stat_object has the following attributes</p>
@@ -783,6 +798,9 @@ the outputed matches list will be a list of tuples
 </li>
 </ul>
 </p></li>
+<li><p><strong>warn_if_empty</strong> (<em>bool</em>) – print a debug warning if no files are found</p></li>
+<li><p><strong>regex</strong> (<em>bool</em>) – if True, the pattern in a regular expression.
+Default is False</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1028,6 +1046,26 @@ with F_tee.stop()</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.utils_core.add_symbol_to_new_lines">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">add_symbol_to_new_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'·'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.add_symbol_to_new_lines" title="Link to this definition"></a></dt>
+<dd><p>Adds a specified symbol to the beginning of each new line in a multi-line string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>str</em>) – The input multi-line string.</p></li>
+<li><p><strong>symbol</strong> (<em>str</em><em>, </em><em>optional</em>) – The symbol to add to each new line. Default is ‘·’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The modified string with the symbol added to each new line.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.alphabet">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">alphabet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.alphabet" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -1072,6 +1110,27 @@ application.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.utils_core.detect_encoding">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">detect_encoding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.detect_encoding" title="Link to this definition"></a></dt>
+<dd><p>Detect the encoding of a text file.</p>
+<p>This function uses the chardet library to detect the encoding of a given text file. It reads the file line by line and feeds each line to a chardet UniversalDetector. When the detector has made a determination, it stops reading the file and returns the detected encoding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – The path to the text file for which to detect the encoding.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>str</em> – The detected encoding of the text file.</p></li>
+<li><p><em>Source</em></p></li>
+<li><p><em>——</em></p></li>
+<li><p><strong>https</strong> (<em>//www.geeksforgeeks.org/detect-encoding-of-a-text-file-with-python/</em>)</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1198,7 +1257,7 @@ for instance type(np.array(A)) doesn’t return a constructor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>inp</strong> (<em>list</em><em>, </em><em>numpy.array</em><em>, </em><em>...</em>) – </p></li>
+<li><p><strong>inp</strong> (<em>list</em><em>, </em><em>numpy.array</em><em>, </em><em>...</em>)</p></li>
 <li><p><strong>consider_str_as_iterable</strong> (<em>bool</em>) – string are considered as iterable by Python per default
 This boolean will avoid True as return if you test a string</p></li>
 </ul>
@@ -1270,24 +1329,27 @@ This boolean will avoid True as return if you test a string</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.open_readlines_smart">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">open_readlines_smart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decode_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ascii'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.open_readlines_smart" title="Link to this definition"></a></dt>
-<dd><p>Take an input object, open it and reads its lines
-input file  can be the path of a file as string or as Path object,
-or the file content as a string, bytes, StringIO object or a
-list of lines</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">open_readlines_smart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decode_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iso-8859-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.open_readlines_smart" title="Link to this definition"></a></dt>
+<dd><p>This function takes an input object, opens it, and reads its lines.
+The input file can be the path of a file as a string or as a Path object,
+or the file content as a string, bytes, StringIO object, or a list of lines.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_in</strong> (<em>various</em>) – an inpout object (see description).</p></li>
-<li><p><strong>decode_type</strong> (<em>str</em><em>, </em><em>optional</em>) – the decode standard. The default is “ascii”.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Describe the input file type. The default is False.</p></li>
+<li><p><strong>file_in</strong> (<em>various</em>) – An input object. This can be a string representing a file path, a Path object,
+a string representing file content, bytes, a StringIO object, or a list of lines.</p></li>
+<li><p><strong>decode_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The decode standard. Default is “iso-8859-1”.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – If set to True, the function will print the type of the input file. Default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>LINES</strong> – list of the lines in file_in.</p>
+<dd class="field-even"><p><strong>lines</strong> – A list of the lines in the input file.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> – If the file specified by file_in does not exist.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1380,6 +1442,28 @@ The default is None.</p></li>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.utils_core.split_string_after_n_chars_at_space">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">split_string_after_n_chars_at_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.split_string_after_n_chars_at_space" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Splits a string into substrings of a maximum length of n characters,
+but only splits at spaces and inserts a newline (</p>
+</div></blockquote>
+<p>) after each substring.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>s<span class="classifier">str</span></dt><dd><p>The input string to be split.</p>
+</dd>
+<dt>n<span class="classifier">int</span></dt><dd><p>The maximum length of each substring.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>str</dt><dd><p>The modified string with newlines inserted.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.spyder_run_check">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">spyder_run_check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.spyder_run_check" title="Link to this definition"></a></dt>
 <dd><p>Check if the code is run inside Spyder IDE</p>
@@ -1429,7 +1513,7 @@ value if the timeout_duration is exceeded</p>
 (necessary for some usages)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>iterable</em>) – </p>
+<dd class="field-odd"><p><strong>X</strong> (<em>iterable</em>)</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>X</strong> – X transposed if necessary.</p>

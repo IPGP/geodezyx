@@ -16,7 +16,7 @@ from scipy.spatial.transform import Rotation
 
 from geodezyx import utils, conv
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 
 

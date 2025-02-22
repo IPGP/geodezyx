@@ -13,7 +13,7 @@ import re
 
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ################ GENERATION OF THE DICT
 p="/home/psakicki/CODES/GeodeZYX-Toolbox_v4/geodezyx"

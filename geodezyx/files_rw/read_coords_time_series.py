@@ -39,7 +39,7 @@ from geodezyx import reffram
 from geodezyx import time_series
 from geodezyx import utils
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 
@@ -71,7 +71,7 @@ def read_all_points(filein):
     elif re.compile('Heading').search(firstline):
         tsout = read_sonardyne_attitude(filein)
 
-    elif re.compile('\*\*\* warning').search(firstline):
+    elif re.compile(r'\*\*\* warning').search(firstline):
         tsout = read_gins(filein,'kine')
 
     elif re.compile('#GINS_VERSION').search(firstline):
@@ -298,8 +298,14 @@ def read_gipsyx_tdp(filein):
     sX,sY,sZ = np.nan,np.nan,np.nan
 
     tsout = time_series.TimeSeriePoint()
-
-    for line in open(filein):
+    
+    try:
+        fil = open(filein)
+    except Exception as e:
+        log.error("unable to open %s", filein)
+        raise e
+    
+    for line in fil:
 
         fields = line.split()
         
@@ -356,6 +362,7 @@ def read_gipsyx_tdp_list(filelistin):
 
     tslist = []
     for fil in filelistin:
+        
         ts = read_gipsyx_tdp(fil)
         tslist.append(ts)
 
@@ -945,13 +952,13 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
 
     if kineorstatic == 'kine':
         #regex = '\[S[PLHXYZ] .*\]$'
-        regex = '\[S[PLHXYZ] .*\]$'
+        regex = r'\[S[PLHXYZ] .*\]$'
         tsout = time_series.TimeSeriePoint()
         if kf_result:
-            regex = '\[S[PLHXYZ][E ].*\]     $'
+            regex = r'\[S[PLHXYZ][E ].*\]     $'
     elif kineorstatic == 'static':
         #regex = '\[S[PLHXYZ] .*\]     $'
-        regex = '\[S[PLHXYZ][E ].*\]     $'
+        regex = r'\[S[PLHXYZ][E ].*\]     $'
         tsout = time_series.TimeSeriePoint()
     else:
         log.error("ERR")
@@ -961,7 +968,7 @@ def read_gins(filein,kineorstatic='kine',flh_in_rad=True,
     sA,sB,sC = 0,0,0
 
     if kf_result:
-        regex = '\[S[PLHXYZ][E ].*\]     $'
+        regex = r'\[S[PLHXYZ][E ].*\]     $'
 
 
     # Specific si 2ble convergence
@@ -1174,7 +1181,7 @@ def gins_read_MZB(filein,return_df=False):
 
     F = open(filein)
 
-    regex = '\[MZB.*\]     $'
+    regex = r'\[MZB.*\]     $'
 
     Tstk    = []
     MZBstk  = []
@@ -1234,7 +1241,7 @@ def gins_readTROPOZ(filein):
     L  = utils.grep(filein,"TROPOZ COR_ZEN_ESTIM")
     DF = pd.DataFrame([e.split()[2:] for e in L]).astype(float)
     DF.columns = ['jjul_cnes','tropoz_std','tropoz']
-    DF["epoch"] = conv.jjulCNES2dt(DF['jjul_cnes']).dt.round('1s') - dt.timedelta(seconds=19)
+    DF["epoch"] = conv.jjul_cnes2dt(DF['jjul_cnes']).dt.round('1s') - dt.timedelta(seconds=19)
     
     return DF
 
@@ -1312,8 +1319,8 @@ def convert_sp3_clk_2_GINS_clk(sp3_path_in,
         else:
             dt_work = dt_in
 
-        jjul = conv.dt2jjulCNES(dt_work)
-        sec_in_day = (dt_work - conv.jjulCNES2dt(jjul) ).seconds
+        jjul = conv.dt2jjul_cnes(dt_work)
+        sec_in_day = (dt_work - conv.jjul_cnes2dt(jjul)).seconds
 
         #MNG0000000jjjjjcccccnnnn
 
@@ -1827,8 +1834,8 @@ def read_epos_slv_times(p,convert_to_time=False):
     If convert_to_time : time in sec
     """
     
-    L = utils.extract_text_between_elements_2(p,"\+sum_times/estimates",
-                                                "\-sum_times/estimates")
+    L = utils.extract_text_between_elements_2(p,r"\+sum_times/estimates",
+                                                r"\-sum_times/estimates")
 
     Lgood_stat  = []
     Lgood_sat   = []
@@ -1879,7 +1886,7 @@ def read_epos_tim(tim_file_in,convert_to_sec=False):
     
     Val_stk = []
     for l in F:
-        if re.match('^\*  [0-9]{4} *([0-9]{1,2} *){4}',l):
+        if re.match(r'^\*  [0-9]{4} *([0-9]{1,2} *){4}',l):
             head_stop = True
             epoc = conv.datetime_improved(*l[3:30].split())
         if head_stop and re.match('[A-Z][0-9]{2}.* [0-9]*',l):
@@ -2045,7 +2052,7 @@ def read_calais(filelist):
 
     # MAKING POINTS
     for i in range(DATA.shape[0]):
-        pt = time_series.Point(conv.convert_partial_year(bigT[i])
+        pt = time_series.Point(conv.year_decimal2dt(bigT[i])
         ,'ENU',DATA[i,3],DATA[i,4],DATA[i,5])
         ptslist.append(pt)
 
@@ -2154,9 +2161,9 @@ def read_jump_file(filein,returned_events=('S','E','D')):
     ----
     A jump file contains infos like this :
 
-    >>> STAT S 2000 001
-    >>> STAT E 2001 001
-    >>> STAT D 2000 06 01
+    #>>> STAT S 2000 001
+    #>>> STAT E 2001 001
+    #>>> STAT D 2000 06 01
 
     it can manage YEAR DOY or YEAR MM DD or DECIMAL YEAR
 
@@ -2492,7 +2499,7 @@ def read_groops_position(Filesin):
     tsout = time_series.TimeSeriePoint()
 
     for filein in Filesin:
-        DF = pd.read_csv(filein,skiprows=6,header=None,sep='\s+')
+        DF = pd.read_csv(filein,skiprows=6,header=None,sep=r'\s+')
         T = conv.dt2posix(conv.MJD2dt(DF[0].values))
         X,Y,Z = DF[1],DF[2],DF[3] 
         
@@ -2523,15 +2530,13 @@ def _pride_pppar_end_header(filein):
             break  
     return colheader,stat
     
-    
-filein = "/home/psakicki/GFZ_WORK/IPGP_WORK/OVS/GNSS_OVS/2402_test_pride_pppar/240220e_run_pos/run_wo_oload/WUM0MGXFIN/BORG/S/2023/155/pos_2023155_borg"
 
 def read_pride_pppar_pos_mono(filein):
     colheader,stat_header = _pride_pppar_end_header(filein)
         
     df = pd.read_csv(filein,skiprows=colheader+1,
                      #delim_whitespace=True,
-                     sep='\s?\*?\s+',
+                     sep=r'\s?\*?\s+',
                      engine='python',
                      header=None)
     
@@ -2542,10 +2547,20 @@ def read_pride_pppar_pos_mono(filein):
     df = df.squeeze()
     
     T = conv.dt2posix(conv.MJD2dt(df['Mjd']) )
-    
+
+    fuv = df['Sig0']**2 # variance of unit weight
+
+    anex = dict()
+    anex['sdXY'] = df['Rxy'] * fuv
+    anex['sdXZ'] = df['Rxz'] * fuv
+    anex['sdYZ'] = df['Ryz'] * fuv
+
+    # not sure for the sigma computation
     pt = time_series.Point(df['X'],df['Y'],df['Z'],T,'XYZ',
-                           df['Sx'],df['Sy'],df['Sz'],
-                           name=df['stat'])
+                           np.sqrt(df['Sx']) * fuv,
+                           np.sqrt(df['Sy']) * fuv,
+                           np.sqrt(df['Sz']) * fuv,
+                           name=df['stat'], anex=anex)
     
     return pt
 
@@ -2576,7 +2591,7 @@ def read_pride_pppar_kin(filein):
 
     df = pd.read_csv(filein,skiprows=colheader+1,
                      #delim_whitespace=True,
-                     sep='\s?\*?\s+',
+                     sep=r'\s?\*?\s+',
                      engine='python',
                      header=None)
         
