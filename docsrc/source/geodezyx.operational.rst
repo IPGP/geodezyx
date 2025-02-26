@@ -6,6 +6,14 @@ geodezyx.operational package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   geodezyx.operational.gins_runner
+
 Submodules
 ----------
 
@@ -77,14 +85,6 @@ geodezyx.operational.download\_utils module
 -------------------------------------------
 
 .. automodule:: geodezyx.operational.download_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-geodezyx.operational.gins\_runner module
-----------------------------------------
-
-.. automodule:: geodezyx.operational.gins_runner
    :members:
    :undoc-members:
    :show-inheritance:
