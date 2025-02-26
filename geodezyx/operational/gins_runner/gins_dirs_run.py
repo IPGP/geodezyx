@@ -1,0 +1,325 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on 26/02/2025 11:07:24
+
+@author: psakic
+"""
+
+import datetime as dt
+import time
+import os
+import subprocess
+
+
+#### Import the logger
+import logging
+log = logging.getLogger('geodezyx')
+
+def run_directors(
+    dir_paths_in, opts_gins_pc="", opts_gins_90="  ", version="OPERA", fic_mode=False
+):
+    """
+    NEW FCT WHICH CAN MANAGE BOTH ONE RINEX OR A LIST OF RINEX, OR A FIC file (170613)
+    """
+    # Multi or Single Mode ?
+    if type(dir_paths_in) is list:
+        multimode = True
+        director_path_lis = dir_paths_in
+        print("******** DIRECTORS RUNS *******")
+    elif type(dir_paths_in) is str:
+        multimode = False
+        director_path_lis = [dir_paths_in]
+    else:
+        print("ERR : run_directors : check the rinex_paths_in !!!")
+        return None
+
+    N = len(director_path_lis)
+
+    for i, director_path in enumerate(director_path_lis):
+        if multimode:
+            print(" ======== ", i + 1, "/", N, " ======== ")
+        print("INFO : launching : ", director_path)
+        print("INFO : start at", dt.datetime.now())
+        if director_path[-4:] == ".fic":
+            fic_mode = True
+            print("INFO : input file ends with .fic, fic_mode is activated")
+        start = time.time()
+
+        if director_path[-1] == "~":
+            print("INFO : geany ~ temp file, skiping this dir. ")
+            continue
+
+        director_name = os.path.basename(director_path)
+        opts_gins_pc_ope = "-F" + opts_gins_pc
+
+        print("INFO : options ginsPC / gins90 :", opts_gins_pc_ope, "/", opts_gins_90)
+
+        if "IPPP" in opts_gins_90 and not fic_mode:
+            for grepstr in (
+                "userext_gps__qualiteorb",
+                "userext_gps__haute_freq",
+                "userext_gps__hor_interp",
+                "GPS__QUALITEORB",
+                "GPS__HAUTE_FREQ",
+                "GPS__HOR_INTERP",
+            ):
+                grep_out = utils.grep(director_path, grepstr)
+                if grep_out == "":
+                    print("WARN : IPPP mode on, but no", grepstr, " in the dir !!!")
+
+        if not fic_mode:
+            command = (
+                "ginspc.bash "
+                + opts_gins_pc_ope
+                + " "
+                + director_name
+                + " "
+                + opts_gins_90
+                + " -v "
+                + version
+            )
+        else:
+            command = "exe_gins " + " -fic " + director_name + " -v " + version
+        # l'argument OPERA est super important  !!!
+        # c'est lui qui resoult l'instabilité lors du lancement du subprocess !!!
+        # parce que indirectement exe_gins ne marche pas sans
+        # faire le test avec un exe_gins -v OPERA -fic <fic> et sans
+
+        print("INFO : submit. command : ", command)
+
+        gins_path = get_gins_path()
+        log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
+        log_path = os.path.join(gins_path, "python_logs", director_name + ".log")
+
+        with open(log_path, "w+") as f:
+            process = subprocess.Popen(
+                [command],
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                executable="/bin/bash",
+            )
+            for c in iter(lambda: process.stdout.read(1), ""):
+                # https://stackoverflow.com/questions/436220/determine-the-encoding-of-text-in-python4
+                # find encoding
+                # print(c)
+                dammit = UnicodeDammit(c)
+                # print(dammit.original_encoding)
+                d_deco = c.decode("iso-8859-1", errors="replace")
+                sys.stdout.write(d_deco)
+                f.write(d_deco)
+
+        check_good_exec_of_GINS(open(log_path), director_name)
+
+        with open(log_path + ".exec", "w") as f:
+            f.write("exec time : " + str(time.time() - start))
+
+        print("INFO : end at", dt.datetime.now())
+        print("INFO : exec time : ", str(time.time() - start), "seconds")
+
+    # Vieux lancement avec popen mais ca marche plus (170207)
+    #        stream = os.popen(command)
+    #        stream_str = stream.read()
+    #        check_good_exec_of_gins(stream_str,director_name)
+    #        gins_path = get_gins_path()
+    #        log_path = os.path.join(gins_path,'python_logs',director_name + ".log")
+    #
+    #        if not os.path.exists(os.path.dirname(log_path)):
+    #            os.makedirs(os.path.dirname(log_path))
+    #
+    #        with open(log_path + '.exec', "w") as f:
+    #            f.write('exec time : ' + str(time.time() - start))
+    #        with open(log_path , "w") as f:
+    #            f.write(stream_str)
+    #        print 'INFO : end at' , dt.datetime.now()
+    #        #print 'INFO : exec time : ' , str(time.time() - start))
+
+    return None
+
+
+def run_director_wrap(intup):
+    run_directors(*intup)
+    return None
+
+
+def run_director_list_wrap(tupinp):
+    run_directors(*tupinp)
+
+
+def run_dirs_multislots(
+    director_lis,
+    slots_lis=["", "U", "L", "R"],
+    opts_gins_pc="",
+    opts_gins_90="",
+    version="OPERA",
+    fic_mode=False,
+):
+    """run a list of dir in parallel (using different 'slots')"""
+    """ FRONTEND FUNCTION TO USE """
+    if not type(director_lis) is list:
+        print("ERR : run_dirs_multislots : director_lis in input is not a list !!!")
+        return None
+    print("TOTAL NB OF DIRECTORS :", len(director_lis))
+
+    if type(slots_lis) is int:
+        slots_lis = [""] * slots_lis
+
+    chunk = utils.chunkIt(director_lis, len(slots_lis))
+    pool_size = len(slots_lis)
+    pool = mp.Pool(processes=pool_size)
+    ZIP = list(
+        zip(
+            chunk,
+            [slot + opts_gins_pc for slot in slots_lis],
+            [opts_gins_90] * len(slots_lis),
+            [version] * len(slots_lis),
+            [fic_mode] * len(slots_lis),
+        )
+    )
+    pool.map(run_director_list_wrap, ZIP)
+    return None
+
+
+
+
+def smart_directors_to_run(wildcard_dir="", full_path_out=True):
+    """smart runner check directors who worked, and thus give a list of directors
+    whitout those who worked
+
+    listing and directeur folders are inspected automatically"""
+
+    gins_path = get_gins_path(True)
+
+    # list of corresponding directors
+    dirpath = os.path.join(gins_path, "data", "directeur", wildcard_dir)
+    dirlis = glob.glob(dirpath)
+    dirlis = [os.path.basename(e) for e in dirlis]
+
+    # list of corresponding already lauched listings
+    lipath = os.path.join(gins_path, "batch", "listing", wildcard_dir)
+    lilis = glob.glob(lipath)
+
+    lilis = [os.path.basename(e) for e in lilis]
+    # must treat new and old independently
+    lilis_new = [e for e in lilis if ".yml" in e]
+    lilis_old = [e for e in lilis if not ".yml" in e]
+    # 1) treating OLD case
+    # MAKING LISTS OF TUPLES (PREFIX , <gins or prepars>)
+    li_tuple_lis_old = [(e.split(".")[0], e.split(".")[-1]) for e in lilis_old]
+    li_finished_lis_old = [e[0] for e in li_tuple_lis_old if "gins" in e[1]]
+
+    # 2) treating NEW case
+    # MAKING LISTS OF TUPLES (PREFIX , <gins or prepars>)
+    li_tuple_lis_new = [
+        (e.split(".")[0] + "." + e.split(".")[1], e.split(".")[-1]) for e in lilis_new
+    ]
+    li_finished_lis_new = [e[0] for e in li_tuple_lis_new if "gins" in e[1]]
+
+    li_finished_lis = li_finished_lis_old + li_finished_lis_new
+
+    # director to run are those in the dir list minus those which worked
+    di_run_lis = list(set(dirlis) - set(li_finished_lis))
+
+    print("for wildcard :", wildcard_dir)
+    print("input directors found in the data/dir. folder     :", len(dirlis))
+    print("FINISHED listings found in the batch/list. folder :", len(li_finished_lis))
+    print("directors who need to be launched                 :", len(di_run_lis))
+
+    di_run_lis = sorted(di_run_lis)
+
+    if full_path_out:
+        dirpath = os.path.join(get_gins_path(True), "data", "directeur")
+        di_run_lis = [os.path.join(dirpath, d) for d in di_run_lis]
+
+    return di_run_lis
+
+
+def smart_listing_archive(
+    wildcard_dir,
+    gins_main_archive,
+    gins_anex_archive,
+    prepars_archive,
+    director_archive,
+):
+    """for each listing corresponding to the wildcard :
+    if it's a prepars => go to the prepars_archive
+    if it's a gins without duplicate  => go to the gins_main_archive
+    if it's a gins with duplcates => one goes to gins_main_archive
+                                     the others in gins_anex_archive"""
+
+    listing_path = os.path.join(
+        get_gins_path(), "gin", "batch", "listing", wildcard_dir
+    )
+    listing_lis = [e for e in glob.glob(listing_path)]
+
+    prepars_lis = [e for e in listing_lis if "prepars" in e]
+    gins_lis = [e for e in listing_lis if "gins" in e]
+
+    dirpath = os.path.join(get_gins_path(True), "data", "directeur", wildcard_dir)
+    dirlis = [e for e in glob.glob(dirpath)]
+
+    # searching for doublons
+    # 2 runs of the same day/stat => keeping the first one
+    # Only new case (.yml) is treated ...
+
+    gins_prefix_lis = [os.path.basename(e).split(".")[0] for e in gins_lis]
+    #    gins_tuple_lis  = [(e.split('.')[0] , e.split('.')[2] ,e.split('.')[3]) for e in gins_lis]
+
+    count_gins_prefix = collections.Counter(gins_prefix_lis).most_common()
+    multi_gins_prefix = [elt for elt, count in count_gins_prefix if count > 1]
+    simpl_gins_prefix = [elt for elt, count in count_gins_prefix if count == 1]
+
+    simpl_gins_fullpath = []
+    for s in simpl_gins_prefix:
+        simpl_gins_fullpath = simpl_gins_fullpath + [e for e in gins_lis if s in e]
+
+    multi_gins_fullpath_main = []
+    multi_gins_fullpath_anex = []
+
+    for m in multi_gins_prefix:
+        multi_gins_fullpath_temp = [e for e in gins_lis if m in e]
+        multi_gins_fullpath_main.append(multi_gins_fullpath_temp[0])
+        multi_gins_fullpath_anex = (
+            multi_gins_fullpath_anex + multi_gins_fullpath_temp[1:]
+        )
+
+    for directory in [
+        gins_main_archive,
+        gins_anex_archive,
+        prepars_archive,
+        director_archive,
+    ]:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+    # MOVING
+    for p in prepars_lis:
+        shutil.move(p, prepars_archive)
+    for g in simpl_gins_fullpath:
+        shutil.move(g, gins_main_archive)
+    for g in multi_gins_fullpath_main:
+        shutil.move(g, gins_main_archive)
+    for g in multi_gins_fullpath_anex:
+        shutil.move(g, gins_anex_archive)
+    for d in dirlis:
+        shutil.move(d, director_archive)
+
+    return None
+
+def export_results_gins_listing(
+    listings_list_in, outpath, static_or_kinematic="kine", outprefix="", coordtype="FLH"
+):
+    if len(listings_list_in) == 0:
+        print("ERR : export_results_gins_listing : listings list is empty ...")
+        return None
+    if static_or_kinematic == "stat":
+        ts = files_rw.read_gins_multi_raw_listings(listings_list_in)
+    elif static_or_kinematic == "kine":
+        tslist = []
+        for lising in listings_list_in:
+            tslist.append(files_rw.read_gins(lising))
+        ts = time_series.merge_ts(tslist)
+    time_series.export_ts(ts, outpath, coordtype, outprefix)
+    return outpath
+
