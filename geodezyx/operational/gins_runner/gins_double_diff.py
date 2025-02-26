@@ -282,11 +282,11 @@ def gen_dirs_from_double_diff(
         ]
         ocloadfile_path_full = os.path.join(gins_path, ocloadfile_path_ginsstyle[6:])
 
-        # check_if_stat_in_stationfile(stat,statfile_path_full)
+        # check_stat_in_statfile(stat,statfile_path_full)
 
-        # domes = find_DOMESstat_in_stationfile(stat,statfile_path_full)
+        # domes = find_domes_in_statfile(stat,statfile_path_full)
         # print 'INFO : DOMES : ',domes
-        # check_if_DOMES_in_oceanloadfile(domes[0],ocloadfile_path_full)
+        # check_domes_in_oclo(domes[0],ocloadfile_path_full)
 
         # Case of kinematic process : need to change keys in user extension
         stat_B = None
@@ -526,7 +526,7 @@ def double_diff_multi(
 # ==========================================================================
 
 
-# def check_if_director_path_is_ok(director_path,gins_path=get_gins_path()):
+# def check_if_director_path_is_ok(director_path,gins_path=get_gin_path()):
 # USELESS FOR THE MOMENT
 #    # 2 choices : the director_path is absolute or relative
 #    director_name = os.path.basename(director_path)

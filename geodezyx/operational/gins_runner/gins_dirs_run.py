@@ -11,7 +11,6 @@ import time
 import os
 import subprocess
 
-
 #### Import the logger
 import logging
 log = logging.getLogger('geodezyx')
@@ -121,8 +120,8 @@ def run_directors(
     # Vieux lancement avec popen mais ca marche plus (170207)
     #        stream = os.popen(command)
     #        stream_str = stream.read()
-    #        check_good_exec_of_gins(stream_str,director_name)
-    #        gins_path = get_gins_path()
+    #        check_gins_exe(stream_str,director_name)
+    #        gins_path = get_gin_path()
     #        log_path = os.path.join(gins_path,'python_logs',director_name + ".log")
     #
     #        if not os.path.exists(os.path.dirname(log_path)):

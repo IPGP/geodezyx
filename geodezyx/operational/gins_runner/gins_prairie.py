@@ -47,14 +47,14 @@ def prairie_manual(
 
     # be sure there is a TEMP DATA folder
     if temp_data_folder == "":
-        temp_data_folder = os.path.join(ginscmn.get_gins_path(1), "TEMP_DATA")
+        temp_data_folder = os.path.join(ginscmn.get_gin_path(1), "TEMP_DATA")
     if not os.path.exists(temp_data_folder):
         os.makedirs(temp_data_folder)
 
     out_pra_path_lis = []
     for rinex_path in rinex_path_lis:
         #        # be sure the RINEX is in gins folder ...
-        #        bool_rinex_in_gin = check_if_file_in_gin_folder(rinex_path)
+        #        bool_rinex_in_gin = check_if_in_gin(rinex_path)
         #        # ... and copy it otherwise
         #        if not bool_rinex_in_gin:
         expected_rinex_path = os.path.join(
@@ -62,7 +62,7 @@ def prairie_manual(
         )
         if not os.path.isfile(expected_rinex_path):
             print("INFO : will be copied in ", temp_data_folder)
-            rinex_path = ginscmn.copy_file_in_gin_folder(rinex_path, temp_data_folder)
+            rinex_path = ginscmn.copy_in_gin(rinex_path, temp_data_folder)
         else:
             print("INFO : ", expected_rinex_path, "already exists")
             rinex_path = expected_rinex_path
@@ -100,17 +100,17 @@ def prairie_manual(
 
         if not "-cc2noncc" in list(argsdict.keys()):
             argsdict["-cc2noncc"] = os.path.join(
-                ginscmn.get_gins_path(1), "archives/p1c1bias.2000p"
+                ginscmn.get_gin_path(1), "archives/p1c1bias.2000p"
             )
         if with_historik and not "-historik" in list(argsdict.keys()):
             argsdict["-historik"] = os.path.join(
-                ginscmn.get_gins_path(1), "data/constell/historik_glonass"
+                ginscmn.get_gin_path(1), "data/constell/historik_glonass"
             )
         if with_wsb and not "-wsb" in list(argsdict.keys()):
-            argsdict["-wsb"] = os.path.join(ginscmn.get_gins_path(1), "archives/WSBREF.res.dat")
+            argsdict["-wsb"] = os.path.join(ginscmn.get_gin_path(1), "archives/WSBREF.res.dat")
         if not "-options" in list(argsdict.keys()):
             argsdict["-options"] = os.path.join(
-                ginscmn.get_gins_path(1), "data/prairie/options_GPS.dat"
+                ginscmn.get_gin_path(1), "data/prairie/options_GPS.dat"
             )
 
         for k, v in argsdict.items():

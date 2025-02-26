@@ -27,7 +27,7 @@ log = logging.getLogger('geodezyx')
 def sp3_2_gins(sp3_pathin):
     os.chdir(os.path.dirname(sp3_pathin))
     # print("WARN : the path of the GINS conversion tool has been hardcoded !!!")
-    kommand_1 = ginscmn.get_gins_path() + "/gins_toolbox/scripts/"
+    kommand_1 = ginscmn.get_gin_path() + "/gins_toolbox/scripts/"
     log.info(kommand_1)
     kommand = kommand_1 + "sp3-gins " + sp3_pathin
     #    stream = os.popen(kommand) # forrtl: severe if we use os.popen
@@ -43,7 +43,7 @@ def sp3_2_gins(sp3_pathin):
 def clk_2_gins(clk_pathin):
     os.chdir(os.path.dirname(clk_pathin))
     # print("WARN : the path of the GINS conversion tool has been hardcoded !!!")
-    kommand_1 = ginscmn.get_gins_path() + "/gins_toolbox/scripts/"
+    kommand_1 = ginscmn.get_gin_path() + "/gins_toolbox/scripts/"
     log.info(kommand_1)
     kommand = kommand_1 + "clk2gins.sh " + os.path.basename(clk_pathin)
     # kommand = kommand_1 + "clk2gins.sh " + clk_pathin
@@ -126,7 +126,7 @@ def download_convert_2_gins_orb_clk(
     temp_dir = work_folder
 
     if not temp_dir:
-        temp_dir = os.path.join(ginscmn.get_gins_path(), "gin", "TEMP_DATA")
+        temp_dir = os.path.join(ginscmn.get_gin_path(), "gin", "TEMP_DATA")
         log.info("use default forder %s", temp_dir)
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)

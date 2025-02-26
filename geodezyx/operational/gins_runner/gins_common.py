@@ -2,8 +2,8 @@
 """
 @author: psakic
 
-This sub-module of geodezyx.operational contains functions to run the 
-GNSS processing software GINS. 
+This sub-module of geodezyx.operational contains functions to run the
+GNSS processing software GINS.
 
 it can be imported directly with:
 from geodezyx import operational
@@ -16,44 +16,49 @@ GitHub repository :
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
-
 ########## BEGIN IMPORT ##########
 #### External modules
-import collections
-import copy
 import datetime as dt
 import glob
+
 #### Import the logger
 import logging
-import multiprocessing as mp
 import os
 import re
 import shutil
 import subprocess
-import sys
 import time
-
-import numpy as np
-import pandas as pd
 import yaml
 
 #### geodeZYX modules
 from geodezyx import conv
-from geodezyx import files_rw
 from geodezyx import operational
-from geodezyx import time_series
 from geodezyx import utils
 
-log = logging.getLogger('geodezyx')
+log = logging.getLogger("geodezyx")
 
 ##########  END IMPORT  ##########
 
 
-def get_gins_path(extended=False):
+def get_gin_path(extended=False):
+    """
+    Get the GIN path from the environment variable GS_USER.
+
+    Parameters
+    ----------
+    extended : bool, optional
+        If True, returns the path to the 'gin' directory inside the GIN path.
+        Defaults to False.
+
+    Returns
+    -------
+    str or None
+        The GIN path or None if the environment variable GS_USER does not exist.
+    """
     try:
         gs_user = os.environ["GS_USER"]
     except:
-        print("ERR : env. var. $GS_USER dont exists !!!")
+        log.error("env. var. $GS_USER dont exists !!!")
         return None
         # gs_user =  os.environ['HOME']
     if not extended:
@@ -61,37 +66,81 @@ def get_gins_path(extended=False):
     else:
         return os.path.join(os.environ["GS_USER"], "gin")
 
+def check_stat_in_statfile(stat, stationfile):
+    """
+    Check if a station code is present in a station file.
 
-def check_if_stat_in_stationfile(stat, stationfile):
+    Parameters
+    ----------
+    stat : str
+        The station code to search for.
+    stationfile : str
+        The path to the station file.
+
+    Returns
+    -------
+    bool
+        True if the station code is found in the station file, False otherwise.
+    """
     boolout = utils.check_regex(stationfile, stat)
     if not boolout:
-        print("WARN :", stat, "not in", stationfile)
-        print("       check your RINEX header and particularly")
-        print("       the MARKER NAME field (station 4-char. code)")
+        log.warning("%s not in %s", stat, stationfile)
+        log.warning("check your RINEX header and its the MARKER NAME field (station 4-char. code)")
     return boolout
 
+def check_domes_in_oclo(domes, oclofile):
+    """
+    Check if a DOMES number is present in an OCLO file.
 
-def check_if_DOMES_in_oceanloadfile(domes, oclofile):
+    Parameters
+    ----------
+    domes : str
+        The DOMES number to search for.
+    oclofile : str
+        The path to the OCLO file.
+
+    Returns
+    -------
+    bool
+        True if the DOMES number is found in the OCLO file, False otherwise.
+    """
     boolout = utils.check_regex(oclofile, "^   " + str(domes))
     if not boolout:
-        print("WARN :", domes, "not in", oclofile)
+        log.warning("%s not in %s", domes, oclofile)
+
     return boolout
 
 
-def find_DOMESstat_in_stationfile(stat, stationfile):
+
+def find_domes_in_statfile(stat_code, stationfile):
     fil = open(stationfile)
     for l in fil:
-        if stat in l:
+        if stat_code in l:
             f = l.split()
             return f[0], f[1]
-    return 00000, "M000"
+    return "00000", "M000"
 
 
-def check_if_file_in_gin_folder(a_file_path, gins_path=None):
+def check_if_in_gin(file_path_inp, gins_path=None):
+    """
+    Check if a file is within the GIN path.
+
+    Parameters
+    ----------
+    file_path_inp : str
+        The path of the file to check.
+    gins_path : str, optional
+        The GIN path to check against. If not provided, it defaults to the 'gin' directory inside the GIN path.
+
+    Returns
+    -------
+    bool
+        True if the file is within the GIN path, False otherwise.
+    """
     if not gins_path:
-        gins_path = os.path.join(get_gins_path(), "gin")
+        gins_path = os.path.join(get_gin_path(), "gin")
 
-    real_path_file = os.path.realpath(a_file_path)
+    real_path_file = os.path.realpath(file_path_inp)
     real_path_gins = os.path.realpath(gins_path)
 
     if real_path_gins in real_path_file:
@@ -100,39 +149,83 @@ def check_if_file_in_gin_folder(a_file_path, gins_path=None):
         boolout = False
 
     if not boolout:
-        log.warning("%s not in %s", a_file_path, gins_path)
+        log.warning("%s not in %s", file_path_inp, gins_path)
 
     return boolout
 
-def copy_file_in_gin_folder(
-    a_file_path, repository_folder=""
-):
-    if repository_folder == "":
-        repository_folder = os.path.join(get_gins_path(), "TEMP_DATA")
-    if not os.path.exists(repository_folder):
-        os.makedirs(repository_folder)
 
-    shutil.copy2(a_file_path, repository_folder)
+def copy_in_gin(file_path_inp, temp_data_folder=None):
+    """
+    Copy a file to the GIN temporary data folder.
 
-    out = os.path.join(repository_folder, os.path.basename(a_file_path))
+    Parameters
+    ----------
+    file_path_inp : str
+        The path of the file to be copied.
+    temp_data_folder : str, optional
+        The path to the temporary data folder. If not provided, it defaults to 'TEMP_DATA' inside the GIN path.
 
-    return out
+    Returns
+    -------
+    str
+        The path of the copied file in the temporary data folder.
+    """
+    if not temp_data_folder:
+        temp_data_folder = os.path.join(get_gin_path(), "TEMP_DATA")
+    if not os.path.exists(temp_data_folder):
+        os.makedirs(temp_data_folder)
 
+    log.info("copy %s > %s", file_path_inp, temp_data_folder)
+    shutil.copy2(file_path_inp, temp_data_folder)
 
-def bring_to_gin_folder(a_file_path, temp_data_folder, gins_path=None):
-    if not gins_path:
-        gins_path = os.path.join(get_gins_path(), "gin")
+    file_path_out = os.path.join(temp_data_folder, os.path.basename(file_path_inp))
 
-    if not check_if_file_in_gin_folder(a_file_path, gins_path):
-        log.info("copy %s > %s",a_file_path, temp_data_folder)
-        file_path_out = copy_file_in_gin_folder(a_file_path, temp_data_folder)
+    return file_path_out
+
+def bring_to_gin(file_path_inp, temp_data_folder=None, gins_path=None):
+    """
+    Ensure a file is within the GIN path, copying it to the temporary data folder if necessary.
+
+    Combo of check_if_in_gin and copy_in_gin functions.
+
+    Parameters
+    ----------
+    file_path_inp : str
+        The path of the file to be checked and possibly copied.
+    temp_data_folder : str, optional
+        The path to the temporary data folder. If not provided, it defaults to 'TEMP_DATA' inside the GIN path.
+    gins_path : str, optional
+        The GIN path to check against. If not provided, it defaults to the 'gin' directory inside the GIN path.
+
+    Returns
+    -------
+    str
+        The path of the file within the GIN path.
+    """
+    if not check_if_in_gin(file_path_inp, gins_path=gins_path):
+        file_path_out = copy_in_gin(file_path_inp, temp_data_folder=temp_data_folder)
     else:
-        file_path_out = a_file_path
+        file_path_out = file_path_inp
 
     return file_path_out
 
 
-def check_good_exec_of_gins(streamin, director_name):
+def check_gins_exe(streamin, director_name):
+    """
+    Check the execution status of a GINS director.
+
+    Parameters
+    ----------
+    streamin : file-like object
+        The input stream to read the execution output from.
+    director_name : str
+        The name of the director being checked.
+
+    Returns
+    -------
+    bool
+        True if the execution was successful, False otherwise.
+    """
     if "Exécution terminée du fichier" in streamin.read():
         print("INFO : happy end for " + director_name + " :)")
         return True
@@ -142,9 +235,21 @@ def check_good_exec_of_gins(streamin, director_name):
 
 
 def make_path_ginsstyle(pathin):
-    """input path must be an absolute path with /gin/ inside
-    output will be .temp.gin/<rest of the path>"""
+    """
+    Convert an absolute path containing '/gin/' to a GINS director-compatible path.
 
+    Parameters
+    ----------
+    pathin : str
+        The input path, which must be an absolute path
+        containing '/gin/'.
+
+    Returns
+    -------
+    str or None
+        The converted path with '.temp.gin' as the root directory,
+         or None if the input path does not contain '/gin/'.
+    """
     if pathin.startswith(".temp.gin"):
         log.info("already a director compatible path: %s", pathin)
         return pathin
@@ -161,7 +266,7 @@ def make_path_ginsstyle(pathin):
     return pathout
 
 
-def write_oceanload_file(station_file, oceanload_out_file, fes_yyyy=2004):
+def write_oclo_file(station_file, oceanload_out_file, fes_yyyy=2004):
     temp_cmd_fil = os.path.join(os.path.dirname(oceanload_out_file), "oclo.cmd.tmp")
     temp_cmd_filobj = open(temp_cmd_fil, "w")
 
@@ -170,6 +275,8 @@ def write_oceanload_file(station_file, oceanload_out_file, fes_yyyy=2004):
     if fes_yyyy == 2012:
         exe_loadoce_cmd = "exe_loadoce_fes2012"
     elif fes_yyyy == 2004:
+        exe_loadoce_cmd = "exe_loadoce"
+    else:
         exe_loadoce_cmd = "exe_loadoce"
 
     p = subprocess.Popen(
@@ -191,7 +298,7 @@ def write_oceanload_file(station_file, oceanload_out_file, fes_yyyy=2004):
 
 def get_temp_data_gins_path():
 
-    gins_path = get_gins_path()
+    gins_path = get_gin_path()
 
     # be sure there is a TEMP DATA folder
     temp_data_folder = os.path.join(gins_path, "gin", "TEMP_DATA")
@@ -224,7 +331,7 @@ def dirs_copy_generik_2_working(
 def get_director_list(wildcard_dir):
     """with a wildcard (e.g. 'GWADA_MK2*') and return a list of corresponding
     directors found in gin/data/directeur folder"""
-    gins_path = get_gins_path()
+    gins_path = get_gin_path()
     di_run_lis = [
         os.path.basename(e)
         for e in glob.glob(os.path.join(gins_path, "data", "directeur", wildcard_dir))
@@ -325,6 +432,7 @@ def get_rinex_list(
 
     return goodrnxfilelist_date
 
+
 def sort_by_stations(archive_path, wildcard, i):
     """i is the indice of the first character of the station name in
     eg : i = 18 for filename KARIB_MK3_FLH_v2__bara_22282_2011_003
@@ -349,6 +457,7 @@ def sort_by_stations(archive_path, wildcard, i):
         shutil.move(f, archiv)
 
     return None
+
 
 def merge_yaml(yaml1, yaml2, yaml_out=None):
 
