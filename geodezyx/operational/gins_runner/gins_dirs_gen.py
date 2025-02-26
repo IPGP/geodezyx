@@ -312,14 +312,10 @@ def gen_dirs_from_rnxs(
             )
 
         # ============== PRAIRIE OPTIONS ==============
+        # NB : prairie options path does not have to be in gin style
+        # but in its absolute path
         if options_prairie_file:
-            optpra_file_ingin = gzgicmn.bring_to_gin(
-                options_prairie_file, temp_data_folder
-            )
-
-            dir_dic["model"]["environment"]["gnss_preprocessing_options"] = (
-                gzgicmn.make_path_ginsstyle(optpra_file_ingin)
-            )
+            dir_dic["model"]["environment"]["gnss_preprocessing_options"] = os.path.realpath(options_prairie_file)
 
         # =========   ORBITS/CLOCKS   =============
         if not perso_orbclk:
