@@ -140,8 +140,8 @@ def gen_dirs_from_rnxs(
 
     for i, rnx_path in enumerate(rnx_path_lis):
         if multimode:
-            log.info(" ======== ", i + 1, "/", N, " ======== ")
-            log.info(" === ", os.path.basename(rnx_path))
+            log.info(" ======== %i / %i ======== ", i + 1, N)
+            log.info(" === %s ", os.path.basename(rnx_path))
         rnx_name = os.path.basename(rnx_path)
         rnx_dt = conv.rinexname2dt(rnx_name)
         gins_path = gzgicmn.get_gin_path()

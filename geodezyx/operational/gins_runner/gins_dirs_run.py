@@ -6,20 +6,41 @@ Created on 26/02/2025 11:07:24
 @author: psakic
 """
 
-import datetime as dt
-import time
+
+#### Import the logger
+import shutil
 import os
+import sys
+import time
+import datetime as dt
 import subprocess
+import glob
+import collections
+import multiprocessing as mp
+
+from bs4 import UnicodeDammit
+
+from geodezyx import files_rw, time_series
+
+#### Import geodezyx GINS submodules
+import geodezyx.operational.gins_runner.gins_common as gzgicmn
+
+
+#### geodeZYX modules
+from geodezyx import utils
 
 #### Import the logger
 import logging
 log = logging.getLogger('geodezyx')
 
 def run_directors(
-    dir_paths_in, opts_gins_pc="", opts_gins_90="  ", version="OPERA", fic_mode=False
+    dir_paths_in, opts_gins_pc="", opts_gins_90="  ", version="OPERA", fic_mode=False, exe_gins_mode=False,
+    mode = "ginspc"
 ):
     """
     NEW FCT WHICH CAN MANAGE BOTH ONE RINEX OR A LIST OF RINEX, OR A FIC file (170613)
+
+    mode = "ginspc" or "exe_gins_dir" or "exe_gins_fic"
     """
     # Multi or Single Mode ?
     if type(dir_paths_in) is list:
@@ -41,7 +62,7 @@ def run_directors(
         print("INFO : launching : ", director_path)
         print("INFO : start at", dt.datetime.now())
         if director_path[-4:] == ".fic":
-            fic_mode = True
+            mode = "exe_gins_fic"
             print("INFO : input file ends with .fic, fic_mode is activated")
         start = time.time()
 
@@ -54,7 +75,7 @@ def run_directors(
 
         print("INFO : options ginsPC / gins90 :", opts_gins_pc_ope, "/", opts_gins_90)
 
-        if "IPPP" in opts_gins_90 and not fic_mode:
+        if "IPPP" in opts_gins_90 and mode != "ginspc":
             for grepstr in (
                 "userext_gps__qualiteorb",
                 "userext_gps__haute_freq",
@@ -67,7 +88,7 @@ def run_directors(
                 if grep_out == "":
                     print("WARN : IPPP mode on, but no", grepstr, " in the dir !!!")
 
-        if not fic_mode:
+        if mode == "ginspc":
             command = (
                 "ginspc.bash "
                 + opts_gins_pc_ope
@@ -78,8 +99,14 @@ def run_directors(
                 + " -v "
                 + version
             )
+        elif mode == "exe_gins_fic":
+            command = "exe_gins " + " -fic " + director_name + " -v " + version + " " + opts_gins_90
+        elif mode == "exe_gins_dir":
+            command = "exe_gins " + " -dir " + director_name + " -v " + version + " " + opts_gins_90
         else:
-            command = "exe_gins " + " -fic " + director_name + " -v " + version
+            print("ERR : run_directors : mode not recognized !!!")
+            return None
+
         # l'argument OPERA est super important  !!!
         # c'est lui qui resoult l'instabilité lors du lancement du subprocess !!!
         # parce que indirectement exe_gins ne marche pas sans
@@ -87,7 +114,7 @@ def run_directors(
 
         print("INFO : submit. command : ", command)
 
-        gins_path = get_gins_path()
+        gins_path = gzgicmn.get_gin_path()
         log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
         log_path = os.path.join(gins_path, "python_logs", director_name + ".log")
 
@@ -109,7 +136,7 @@ def run_directors(
                 sys.stdout.write(d_deco)
                 f.write(d_deco)
 
-        check_good_exec_of_GINS(open(log_path), director_name)
+        gzgicmn.check_gins_exe(open(log_path), director_name)
 
         with open(log_path + ".exec", "w") as f:
             f.write("exec time : " + str(time.time() - start))
@@ -152,7 +179,7 @@ def run_dirs_multislots(
     opts_gins_pc="",
     opts_gins_90="",
     version="OPERA",
-    fic_mode=False,
+    mode="ginspc"
 ):
     """run a list of dir in parallel (using different 'slots')"""
     """ FRONTEND FUNCTION TO USE """
@@ -173,14 +200,11 @@ def run_dirs_multislots(
             [slot + opts_gins_pc for slot in slots_lis],
             [opts_gins_90] * len(slots_lis),
             [version] * len(slots_lis),
-            [fic_mode] * len(slots_lis),
+            [mode] * len(slots_lis),
         )
     )
     pool.map(run_director_list_wrap, ZIP)
     return None
-
-
-
 
 def smart_directors_to_run(wildcard_dir="", full_path_out=True):
     """smart runner check directors who worked, and thus give a list of directors
@@ -188,7 +212,7 @@ def smart_directors_to_run(wildcard_dir="", full_path_out=True):
 
     listing and directeur folders are inspected automatically"""
 
-    gins_path = get_gins_path(True)
+    gins_path = gzgicmn.get_gin_path(True)
 
     # list of corresponding directors
     dirpath = os.path.join(gins_path, "data", "directeur", wildcard_dir)
@@ -228,7 +252,7 @@ def smart_directors_to_run(wildcard_dir="", full_path_out=True):
     di_run_lis = sorted(di_run_lis)
 
     if full_path_out:
-        dirpath = os.path.join(get_gins_path(True), "data", "directeur")
+        dirpath = os.path.join(gzgicmn.get_gin_path(True), "data", "directeur")
         di_run_lis = [os.path.join(dirpath, d) for d in di_run_lis]
 
     return di_run_lis
@@ -248,14 +272,14 @@ def smart_listing_archive(
                                      the others in gins_anex_archive"""
 
     listing_path = os.path.join(
-        get_gins_path(), "gin", "batch", "listing", wildcard_dir
+        gzgicmn.get_gin_path(), "gin", "batch", "listing", wildcard_dir
     )
     listing_lis = [e for e in glob.glob(listing_path)]
 
     prepars_lis = [e for e in listing_lis if "prepars" in e]
     gins_lis = [e for e in listing_lis if "gins" in e]
 
-    dirpath = os.path.join(get_gins_path(True), "data", "directeur", wildcard_dir)
+    dirpath = os.path.join(gzgicmn.get_gin_path(True), "data", "directeur", wildcard_dir)
     dirlis = [e for e in glob.glob(dirpath)]
 
     # searching for doublons
