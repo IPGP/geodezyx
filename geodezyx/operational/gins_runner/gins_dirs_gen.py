@@ -40,6 +40,7 @@ def gen_dirs_from_rnxs(
     temp_data_folder=None,
     stations_file=None,
     oceanload_file=None,
+    options_prairie_file=None,
     auto_staocl=False,
     perso_orbclk=False,
     ac="igs",
@@ -77,6 +78,8 @@ def gen_dirs_from_rnxs(
         Path to the stations file. Defaults to None.
     oceanload_file : str, optional
         Path to the ocean load file. Defaults to None.
+    options_prairie_file : str, optional
+        Path to the prairie options file. Defaults to None.
     auto_staocl : bool, optional
         Automatically create station and ocean loading files.
         create automatically a station file and a ocean loading file
@@ -284,6 +287,7 @@ def gen_dirs_from_rnxs(
                 "coordinates"
             ] = "cartesian_xyz"
 
+        # ============== STATION FILE & OCEANLOAD FILE ==============
         # station file and oceanload file , auto or manu mode
         # auto mode is prioritary upon the manu mode
 
@@ -302,14 +306,22 @@ def gen_dirs_from_rnxs(
                 gzgicmn.make_path_ginsstyle(oceanload_file_ingin)
             )
         if stations_file:
-            stations_file_ingin = gzgicmn.bring_to_gin(
-                stations_file, temp_data_folder
-            )
+            stations_file_ingin = gzgicmn.bring_to_gin(stations_file, temp_data_folder)
             dir_dic["object"]["station"]["station_coordinates"] = (
                 gzgicmn.make_path_ginsstyle(stations_file_ingin)
             )
 
-        # =========   ORBITS   =============
+        # ============== PRAIRIE OPTIONS ==============
+        if options_prairie_file:
+            optpra_file_ingin = gzgicmn.bring_to_gin(
+                options_prairie_file, temp_data_folder
+            )
+
+            dir_dic["model"]["environment"]["gnss_preprocessing_options"] = (
+                gzgicmn.make_path_ginsstyle(optpra_file_ingin)
+            )
+
+        # =========   ORBITS/CLOCKS   =============
         if not perso_orbclk:
             orbpath, horpath = _dir_regular_orbclk(rnx_dt)
         else:
