@@ -90,24 +90,11 @@ def run_directors(
             _check_dir_keys(director_path)
 
         if cmd_mode == "ginspc":
-            command = " ".join(
-                (
-                    "ginspc.bash",
-                    opts_gins_pc_ope,
-                    director_name,
-                    opts_gins_90,
-                    "-v",
-                    version,
-                )
-            )
+            cmd = ["ginspc.bash", opts_gins_pc_ope, director_name, opts_gins_90, "-v", version, "-f"]
         elif cmd_mode == "exe_gins_fic":
-            command = " ".join(
-                ("exe_gins", "-fic", director_name, "-v", version, opts_gins_90)
-            )
+            cmd = ["exe_gins", "-fic", director_name, "-v", version, opts_gins_90]
         elif cmd_mode == "exe_gins_dir":
-            command = " ".join(
-                ("exe_gins", "-dir", director_name, "-v", version, opts_gins_90)
-            )
+            cmd = ["exe_gins", "-dir", director_name, "-v", version, opts_gins_90]
         else:
             print("ERR : run_directors : mode not recognized !!!")
             return None
@@ -117,7 +104,7 @@ def run_directors(
         # parce que indirectement exe_gins ne marche pas sans
         # faire le test avec un exe_gins -v OPERA -fic <fic> et sans
 
-        print("INFO : submit. command : ", command)
+        print("INFO : submit. command : ", cmd)
 
         gins_path = gynscmn.get_gin_path()
         log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
@@ -136,7 +123,7 @@ def run_directors(
         #         f.write(d_deco)
 
         process = subprocess.Popen(
-            [command],
+            cmd,
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
