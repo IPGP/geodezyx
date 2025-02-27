@@ -62,10 +62,11 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
         if result.returncode != 0:
             log.warning(f"Download failed :( : {file}: {result.stderr}")
         else:
-            if not re.search(file, result.stdout):
-                log.info(f"File unchanged ;) : {file}")
-            else:
+            if re.search(file, result.stdout):
                 log.info(f"Download successful :) :  {file}")
+            else:
+                log.info(f"File unchanged ;) : {file}")
+
 
 
 def update_env_files(login, password, dir_bdgins):
