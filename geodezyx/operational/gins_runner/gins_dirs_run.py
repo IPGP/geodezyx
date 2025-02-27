@@ -152,6 +152,7 @@ def run_dirs_multi(
 
     kwargs_lis = []
     for dirr in list(sorted(dir_paths_inp)):
+        print(dirr)
         kwargs = dict()
         kwargs["dir_paths_inp"] = dirr
         kwargs["opts_gins_pc"] = opts_gins_pc
@@ -162,7 +163,7 @@ def run_dirs_multi(
 
     pool = mp.Pool(processes=nprocs)
     # res_raw = [pool.apply(run_dirs_kwwrap, args=(x,)) for x in kwargs_lis]
-    res_raw = pool.map_async(run_dirs_kwwrap, kwargs_lis)
+    res_raw = pool.map(run_dirs_kwwrap, kwargs_lis)
 
     return None
 
