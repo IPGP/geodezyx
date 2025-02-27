@@ -139,7 +139,7 @@ def run_dirs_kwwrap(kwarg):
     run_directors(**kwarg)
     return None
 
-def run_dirs_multi(dir_paths_inp, nprocs=4, opts_gins_pc="", opts_gins_90="", version="OPERA", mode = "ginspc"):
+def run_dirs_multi(dir_paths_inp, nprocs=4, opts_gins_pc="", opts_gins_90="", version="OPERA", cmd_mode = "ginspc"):
 
     kwargs_lis = []
     for dirr in sorted(dir_paths_inp):
@@ -148,7 +148,7 @@ def run_dirs_multi(dir_paths_inp, nprocs=4, opts_gins_pc="", opts_gins_90="", ve
         kwargs["opts_gins_pc"] = opts_gins_pc
         kwargs["opts_gins_90"] = opts_gins_90
         kwargs["version"] = version
-        kwargs["mode"] = mode
+        kwargs["cmd_mode"] = mode
         kwargs_lis.append(kwargs)
 
     pool = mp.Pool(processes=nprocs)
