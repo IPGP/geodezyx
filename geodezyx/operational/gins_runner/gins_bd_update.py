@@ -38,7 +38,7 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
     :param password: Optional password for the remote user.
     """
     if not rsync_options:
-        rsync_options = ['-Pah', '--relative']  # Default options: archive mode, verbose, and compression
+        rsync_options = ['-avz', '--relative']  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
     remote_source = f"{remote_user}@{remote_host}:{remote_path}"
