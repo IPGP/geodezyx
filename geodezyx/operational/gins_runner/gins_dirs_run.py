@@ -31,10 +31,17 @@ from geodezyx import utils
 
 #### Import the logger
 import logging
-log = logging.getLogger('geodezyx')
+
+log = logging.getLogger("geodezyx")
+
 
 def run_directors(
-    dir_paths_inp, opts_gins_pc="", opts_gins_90="  ", version="OPERA", cmd_mode ="ginspc", force=False
+    dir_paths_inp,
+    opts_gins_pc="",
+    opts_gins_90="  ",
+    version="OPERA",
+    cmd_mode="exe_gins_dir",
+    force=False,
 ):
     """
     NEW FCT WHICH CAN MANAGE BOTH ONE RINEX OR A LIST OF RINEX, OR A FIC file (170613)
@@ -71,7 +78,7 @@ def run_directors(
 
         sols_exist = gynscmn.check_solution(os.path.dirname(director_path))
         if len(sols_exist) > 0 and not force:
-            print("INFO : solution", sols_exist ,"already exists, skipping ...")
+            print("INFO : solution", sols_exist, "already exists, skipping ...")
             continue
 
         director_name = os.path.basename(director_path)
@@ -83,11 +90,24 @@ def run_directors(
             _check_dir_keys(director_path)
 
         if cmd_mode == "ginspc":
-            command = " ".join(("ginspc.bash", opts_gins_pc_ope, director_name, opts_gins_90, "-v", version))
+            command = " ".join(
+                (
+                    "ginspc.bash",
+                    opts_gins_pc_ope,
+                    director_name,
+                    opts_gins_90,
+                    "-v",
+                    version,
+                )
+            )
         elif cmd_mode == "exe_gins_fic":
-            command = " ".join(("exe_gins", "-fic", director_name, "-v", version, opts_gins_90))
+            command = " ".join(
+                ("exe_gins", "-fic", director_name, "-v", version, opts_gins_90)
+            )
         elif cmd_mode == "exe_gins_dir":
-            command = " ".join(("exe_gins", "-dir", director_name, "-v", version, opts_gins_90))
+            command = " ".join(
+                ("exe_gins", "-dir", director_name, "-v", version, opts_gins_90)
+            )
         else:
             print("ERR : run_directors : mode not recognized !!!")
             return None
@@ -131,15 +151,25 @@ def run_directors(
 
     return None
 
+
 def run_director_list_wrap(tupinp):
     run_directors(*tupinp)
     return None
+
 
 def run_dirs_kwwrap(kwarg):
     run_directors(**kwarg)
     return None
 
-def run_dirs_multi(dir_paths_inp, nprocs=4, opts_gins_pc="", opts_gins_90="", version="OPERA", cmd_mode = "ginspc"):
+
+def run_dirs_multi(
+    dir_paths_inp,
+    nprocs=4,
+    opts_gins_pc="",
+    opts_gins_90="",
+    version="OPERA",
+    cmd_mode="exe_gins_dir",
+):
 
     kwargs_lis = []
     for dirr in sorted(dir_paths_inp):
@@ -156,13 +186,14 @@ def run_dirs_multi(dir_paths_inp, nprocs=4, opts_gins_pc="", opts_gins_90="", ve
 
     return None
 
+
 def run_dirs_multislots_custom(
     director_lis,
     slots_lis=["", "U", "L", "R"],
     opts_gins_pc="",
     opts_gins_90="",
     version="OPERA",
-    mode="ginspc"
+    mode="ginspc",
 ):
     """run a list of dir in parallel (using different 'slots')"""
     """ FRONTEND FUNCTION TO USE """
@@ -188,6 +219,7 @@ def run_dirs_multislots_custom(
     )
     pool.map(run_director_list_wrap, ZIP)
     return None
+
 
 def smart_directors_to_run(wildcard_dir="", full_path_out=True):
     """smart runner check directors who worked, and thus give a list of directors
@@ -262,7 +294,9 @@ def smart_listing_archive(
     prepars_lis = [e for e in listing_lis if "prepars" in e]
     gins_lis = [e for e in listing_lis if "gins" in e]
 
-    dirpath = os.path.join(gynscmn.get_gin_path(True), "data", "directeur", wildcard_dir)
+    dirpath = os.path.join(
+        gynscmn.get_gin_path(True), "data", "directeur", wildcard_dir
+    )
     dirlis = [e for e in glob.glob(dirpath)]
 
     # searching for doublons
@@ -313,6 +347,7 @@ def smart_listing_archive(
 
     return None
 
+
 def export_results_gins_listing(
     listings_list_in, outpath, static_or_kinematic="kine", outprefix="", coordtype="FLH"
 ):
@@ -332,12 +367,12 @@ def export_results_gins_listing(
 
 def _check_dir_keys(director_path_inp):
     for grepstr in (
-            "userext_gps__qualiteorb",
-            "userext_gps__haute_freq",
-            "userext_gps__hor_interp",
-            "GPS__QUALITEORB",
-            "GPS__HAUTE_FREQ",
-            "GPS__HOR_INTERP",
+        "userext_gps__qualiteorb",
+        "userext_gps__haute_freq",
+        "userext_gps__hor_interp",
+        "GPS__QUALITEORB",
+        "GPS__HAUTE_FREQ",
+        "GPS__HOR_INTERP",
     ):
         grep_out = utils.grep(director_path_inp, grepstr)
         if grep_out == "":
