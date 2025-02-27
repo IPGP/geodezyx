@@ -123,23 +123,25 @@ def run_directors(
         log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
         log_path = os.path.join(gins_path, "python_logs", director_name + ".log")
 
-        with open(log_path, "w+") as f:
-            process = subprocess.Popen(
-                [command],
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                executable="/bin/bash",
-            )
-            for c in iter(lambda: process.stdout.read(1), ""):
-                # https://stackoverflow.com/questions/436220/determine-the-encoding-of-text-in-python4
-                # find encoding
-                # print(c)
-                # dammit = UnicodeDammit(c)
-                # print(dammit.original_encoding)
-                d_deco = c.decode("iso-8859-1", errors="replace")
-                # sys.stdout.write(d_deco)
-                f.write(d_deco)
+        # with open(log_path, "w+") as f:
+        #
+        #     for c in iter(lambda: process.stdout.read(1), ""):
+        #         # https://stackoverflow.com/questions/436220/determine-the-encoding-of-text-in-python4
+        #         # find encoding
+        #         # print(c)
+        #         # dammit = UnicodeDammit(c)
+        #         # print(dammit.original_encoding)
+        #         d_deco = c.decode("iso-8859-1", errors="replace")
+        #         # sys.stdout.write(d_deco)
+        #         f.write(d_deco)
+
+        process = subprocess.Popen(
+            [command],
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            executable="/bin/bash",
+        )
 
         gynscmn.check_gins_exe(open(log_path), director_name)
 
@@ -182,7 +184,7 @@ def run_dirs_multi(
         kwargs_lis.append(kwargs)
 
     pool = mp.Pool(processes=nprocs)
-    #res_raw = [pool.apply(run_dirs_kwwrap, args=(x,)) for x in kwargs_lis]
+    # res_raw = [pool.apply(run_dirs_kwwrap, args=(x,)) for x in kwargs_lis]
     res_raw = pool.map(run_dirs_kwwrap, kwargs_lis)
 
     return None
