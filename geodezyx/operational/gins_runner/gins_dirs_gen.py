@@ -323,12 +323,12 @@ def gen_dirs_from_rnxs(
             )
 
         # =========   ORBITS/CLOCKS   =============
-        if not perso_orbclk:
-            orbpath, horpath = _dir_regular_orbclk(rnx_dt)
-        else:
+        if perso_orbclk:
             orbpath, horpath = gynsorb.download_convert_2_gins_orb_clk(
                 rnx_dt, temp_data_folder_use, ac=ac, repro=repro
             )
+        else:
+            orbpath, horpath = _dir_regular_orbclk(rnx_dt)
 
         # Exception case where no sp3/clk was found
         if orbpath is None or horpath is None:
@@ -336,8 +336,9 @@ def gen_dirs_from_rnxs(
             if bool_cntu:
                 continue
 
-        orbpath = gynscmn.make_path_ginsstyle(orbpath)
-        horpath = gynscmn.make_path_ginsstyle(horpath)
+        if perso_orbclk:
+            orbpath = gynscmn.make_path_ginsstyle(orbpath)
+            horpath = gynscmn.make_path_ginsstyle(horpath)
 
         dir_dic["model"]["environment"]["gnss_clock"] = horpath
         dir_dic["observation"]["interobject_data"][0]["file"] = orbpath
