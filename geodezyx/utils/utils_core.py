@@ -846,12 +846,12 @@ def replace_in_file(file_in,str_before,str_after):
 ### "GETTERs" : wrappers to get easily some fcts
 ################
 
-def get_timestamp(outstring = True):
+def get_timestamp(outstring = True, separator = 'T'):
     """
     frontend to get easily a timestamp
     """
     if outstring:
-        return dt.datetime.now().strftime('%Y%m%d_%H%M%S')
+        return dt.datetime.now().strftime('%Y%m%d' + separator + '%H%M%S')
     else:
         return dt.datetime.now()
 
