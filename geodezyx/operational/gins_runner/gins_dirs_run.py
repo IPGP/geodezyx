@@ -89,12 +89,13 @@ def run_directors(
         if "IPPP" in opts_gins_90 and cmd_mode != "ginspc":
             _check_dir_keys(director_path)
 
+        ### cmd must be a string here... (and not a list of small str...)
         if cmd_mode == "ginspc":
-            cmd = " ".join(["ginspc.bash", opts_gins_pc_ope, director_name, opts_gins_90, "-v", version, "-f"])
+            cmd = " ".join(("ginspc.bash", opts_gins_pc_ope, director_name, opts_gins_90, "-v", version, "-f"))
         elif cmd_mode == "exe_gins_fic":
-            cmd = " ".join(["exe_gins", "-fic", director_name, "-v", version, opts_gins_90])
+            cmd = " ".join(("exe_gins", "-fic", director_name, "-v", version, opts_gins_90))
         elif cmd_mode == "exe_gins_dir":
-            cmd = " ".join(["exe_gins", "-dir", director_name, "-v", version, opts_gins_90])
+            cmd = " ".join(("exe_gins", "-dir", director_name, "-v", version, opts_gins_90))
         else:
             print("ERR : run_directors : mode not recognized !!!")
             return None
