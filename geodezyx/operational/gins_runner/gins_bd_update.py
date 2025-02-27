@@ -38,7 +38,7 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
     :param password: Optional password for the remote user.
     """
     if not rsync_options:
-        rsync_options = ['-Pah', '--relative']  # Default options: archive mode, verbose, and compression
+        rsync_options = ['-Pah']  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
     remote_source = f"{remote_user}@{remote_host}:{remote_path}"
@@ -121,12 +121,12 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
         date += dt.timedelta(days=1)
 
     dest_subdir_dic = {
-        'tropo_vmf1': list_trop_file,
         'ionosphere/igs': list_iono_file,
         'mesures/gps/orbites/G20': list_orbite_g20,
         'mesures/gps/orbex/G20': list_orbex_g20,
         'mesures/gps/horloges30/G20': list_horl_g20,
-        #'orbites/SP3/re3': list_sp3_re3
+        # 'orbites/SP3/re3': list_sp3_re3
+        'tropo_vmf1': list_trop_file,
     }
 
     create_dir(dir_bdgins, subdirs=dest_subdir_dic.keys())
