@@ -11,6 +11,7 @@ import argparse
 import os
 import subprocess
 import datetime as dt
+import re
 
 from geodezyx import conv
 
@@ -52,7 +53,7 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
         # Construct the rsync command
         # /./ : https://askubuntu.com/questions/552120/preserve-directory-tree-while-copying-with-rsync
         rsync_cmd = rsync_base + [f"{remote_source}/./{file}", f"{local_destination}/"]
-        log.info(rsync_cmd)
+        #log.info(rsync_cmd)
 
         # Run the rsync command
         result = subprocess.run(rsync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -62,7 +63,7 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
             log.warning(f"Download failed :( : {file}: {result.stderr}")
         else:
             if not re.search(file, result.stdout):
-                log.info(f"File {file} is unchanged. Nothing to do.")
+                log.info(f"File unchanged ;) : {file}")
             else:
                 log.info(f"Download successful :) :  {file}")
 
