@@ -60,8 +60,6 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
     os.remove(tmp_rsync_file_lis)
     return
 
-
-
 def update_env_files(login, password, dir_bdgins):
     os.chdir(dir_bdgins)
     list_files = subprocess.check_output(
