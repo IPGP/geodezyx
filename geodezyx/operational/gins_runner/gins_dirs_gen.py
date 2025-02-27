@@ -134,7 +134,7 @@ def gen_dirs_from_rnxs(
     failed_rinex_date_lis = []
 
     def _fail_rnx(rnx_path_inp, rnx_dt_inp, message):
-        log.error(message + " failed, skip %s", rnx_path_inp)
+        log.error(message + ", skip %s", rnx_path_inp)
         failed_rinex_date_lis.append(rnx_dt_inp)
         bool_continue = False
         if multimode:
@@ -170,11 +170,10 @@ def gen_dirs_from_rnxs(
             ac_suffix,
         )
 
-        # check if the solution already exists
-        sol_folder = os.path.join(gin_path, "gin", "batch", "solution")
-        sols_matching = glob.glob(sol_folder + '/' + dir_name + '*')
+        sols_matching = gynscmn.check_solution(dir_name)
+
         if len(sols_matching) > 0 and not force:
-            log.info("Solution %s already exists for %s", sols_matching[0], rnx_name)
+            _fail_rnx(rnx_path_ori, rnx_dt, "solution already exists")
             continue
 
         # be sure there is a TEMP DATA folder
@@ -199,7 +198,7 @@ def gen_dirs_from_rnxs(
             crinex_path = rnx_path
             rnx_path = operational.crz2rnx(crinex_path, temp_data_folder_use)
             if not os.path.isfile(rnx_path):
-                bool_cntu = _fail_rnx(rnx_path, rnx_dt, "CRZ2RNX")
+                bool_cntu = _fail_rnx(rnx_path, rnx_dt, "CRZ2RNX failed")
                 if bool_cntu:
                     continue
 
@@ -212,7 +211,7 @@ def gen_dirs_from_rnxs(
             )
 
             if type(pra_file_path) is list and len(pra_file_path) == 0:
-                bool_cntu = _fail_rnx(rnx_path, rnx_dt, "manual prairie")
+                bool_cntu = _fail_rnx(rnx_path, rnx_dt, "manual prairie failed")
                 if bool_cntu:
                     continue
 
@@ -224,7 +223,7 @@ def gen_dirs_from_rnxs(
             srt_epo, end_epo, freq_rnx = operational.rinex_start_end(rnx_path, True)
         except:
             srt_epo, end_epo, freq_rnx = None, None, None
-            bool_cntu = _fail_rnx(rnx_path, rnx_dt, "get RINEX start/end")
+            bool_cntu = _fail_rnx(rnx_path, rnx_dt, "get RINEX start/end failed")
             if bool_cntu:
                 continue
 

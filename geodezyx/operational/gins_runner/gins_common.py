@@ -482,6 +482,18 @@ def merge_yaml(yaml1, yaml2, yaml_out=None):
     return dic3
 
 
+def check_solution(dir_name_inp, gin_path_inp=None):
+    if not gin_path_inp:
+        gin_path = get_gin_path()
+    else:
+        gin_path = gin_path_inp
+    # check if the solution already exists
+    sol_folder = os.path.join(gin_path, "gin", "batch", "solution")
+    sols_matching = glob.glob(sol_folder + '/' + dir_name_inp + '*')
+    if len(sols_matching) > 0:
+        log.info("Solution %s already exists for %s", sols_matching, dir_name_inp)
+    return sols_matching
+
 #    return dic1
 
 # yaml1    = '/home/psakicki/GINS/gin/data/EXE_PPP/DIR_REF_PPP.yml'

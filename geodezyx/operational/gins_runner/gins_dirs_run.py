@@ -23,7 +23,7 @@ from bs4 import UnicodeDammit
 from geodezyx import files_rw, time_series
 
 #### Import geodezyx GINS submodules
-import geodezyx.operational.gins_runner.gins_common as gzgicmn
+import geodezyx.operational.gins_runner.gins_common as gynscmn
 
 
 #### geodeZYX modules
@@ -34,8 +34,7 @@ import logging
 log = logging.getLogger('geodezyx')
 
 def run_directors(
-    dir_paths_in, opts_gins_pc="", opts_gins_90="  ", version="OPERA", fic_mode=False, exe_gins_mode=False,
-    mode = "ginspc"
+    dir_paths_inp, opts_gins_pc="", opts_gins_90="  ", version="OPERA", cmd_mode ="ginspc", force=False
 ):
     """
     NEW FCT WHICH CAN MANAGE BOTH ONE RINEX OR A LIST OF RINEX, OR A FIC file (170613)
@@ -43,26 +42,26 @@ def run_directors(
     mode = "ginspc" or "exe_gins_dir" or "exe_gins_fic"
     """
     # Multi or Single Mode ?
-    if type(dir_paths_in) is list:
+    if type(dir_paths_inp) is list:
         multimode = True
-        director_path_lis = dir_paths_in
+        director_path_lis = dir_paths_inp
         print("******** DIRECTORS RUNS *******")
-    elif type(dir_paths_in) is str:
+    elif type(dir_paths_inp) is str:
         multimode = False
-        director_path_lis = [dir_paths_in]
+        director_path_lis = [dir_paths_inp]
     else:
         print("ERR : run_directors : check the rinex_paths_in !!!")
         return None
 
-    N = len(director_path_lis)
+    ndir = len(director_path_lis)
 
     for i, director_path in enumerate(director_path_lis):
         if multimode:
-            print(" ======== ", i + 1, "/", N, " ======== ")
+            print(" ======== ", i + 1, "/", ndir, " ======== ")
         print("INFO : launching : ", director_path)
         print("INFO : start at", dt.datetime.now())
         if director_path[-4:] == ".fic":
-            mode = "exe_gins_fic"
+            cmd_mode = "exe_gins_fic"
             print("INFO : input file ends with .fic, fic_mode is activated")
         start = time.time()
 
@@ -70,39 +69,25 @@ def run_directors(
             print("INFO : geany ~ temp file, skiping this dir. ")
             continue
 
+        sols_exist = gynscmn.check_solution(os.path.dirname(director_path))
+        if len(sols_exist) > 0 and not force:
+            print("INFO : solution", sols_exist ,"already exists, skipping ...")
+            continue
+
         director_name = os.path.basename(director_path)
         opts_gins_pc_ope = "-F" + opts_gins_pc
 
         print("INFO : options ginsPC / gins90 :", opts_gins_pc_ope, "/", opts_gins_90)
 
-        if "IPPP" in opts_gins_90 and mode != "ginspc":
-            for grepstr in (
-                "userext_gps__qualiteorb",
-                "userext_gps__haute_freq",
-                "userext_gps__hor_interp",
-                "GPS__QUALITEORB",
-                "GPS__HAUTE_FREQ",
-                "GPS__HOR_INTERP",
-            ):
-                grep_out = utils.grep(director_path, grepstr)
-                if grep_out == "":
-                    print("WARN : IPPP mode on, but no", grepstr, " in the dir !!!")
+        if "IPPP" in opts_gins_90 and cmd_mode != "ginspc":
+            _check_dir_keys(director_path)
 
-        if mode == "ginspc":
-            command = (
-                "ginspc.bash "
-                + opts_gins_pc_ope
-                + " "
-                + director_name
-                + " "
-                + opts_gins_90
-                + " -v "
-                + version
-            )
-        elif mode == "exe_gins_fic":
-            command = "exe_gins " + " -fic " + director_name + " -v " + version + " " + opts_gins_90
-        elif mode == "exe_gins_dir":
-            command = "exe_gins " + " -dir " + director_name + " -v " + version + " " + opts_gins_90
+        if cmd_mode == "ginspc":
+            command = " ".join(("ginspc.bash", opts_gins_pc_ope, director_name, opts_gins_90, "-v", version))
+        elif cmd_mode == "exe_gins_fic":
+            command = " ".join(("exe_gins", "-fic", director_name, "-v", version, opts_gins_90))
+        elif cmd_mode == "exe_gins_dir":
+            command = " ".join(("exe_gins", "-dir", director_name, "-v", version, opts_gins_90))
         else:
             print("ERR : run_directors : mode not recognized !!!")
             return None
@@ -114,7 +99,7 @@ def run_directors(
 
         print("INFO : submit. command : ", command)
 
-        gins_path = gzgicmn.get_gin_path()
+        gins_path = gynscmn.get_gin_path()
         log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
         log_path = os.path.join(gins_path, "python_logs", director_name + ".log")
 
@@ -136,7 +121,7 @@ def run_directors(
                 sys.stdout.write(d_deco)
                 f.write(d_deco)
 
-        gzgicmn.check_gins_exe(open(log_path), director_name)
+        gynscmn.check_gins_exe(open(log_path), director_name)
 
         with open(log_path + ".exec", "w") as f:
             f.write("exec time : " + str(time.time() - start))
@@ -144,36 +129,34 @@ def run_directors(
         print("INFO : end at", dt.datetime.now())
         print("INFO : exec time : ", str(time.time() - start), "seconds")
 
-    # Vieux lancement avec popen mais ca marche plus (170207)
-    #        stream = os.popen(command)
-    #        stream_str = stream.read()
-    #        check_gins_exe(stream_str,director_name)
-    #        gins_path = get_gin_path()
-    #        log_path = os.path.join(gins_path,'python_logs',director_name + ".log")
-    #
-    #        if not os.path.exists(os.path.dirname(log_path)):
-    #            os.makedirs(os.path.dirname(log_path))
-    #
-    #        with open(log_path + '.exec', "w") as f:
-    #            f.write('exec time : ' + str(time.time() - start))
-    #        with open(log_path , "w") as f:
-    #            f.write(stream_str)
-    #        print 'INFO : end at' , dt.datetime.now()
-    #        #print 'INFO : exec time : ' , str(time.time() - start))
-
     return None
-
-
-def run_director_wrap(intup):
-    run_directors(*intup)
-    return None
-
 
 def run_director_list_wrap(tupinp):
     run_directors(*tupinp)
+    return None
 
+def run_dirs_kwwrap(kwarg):
+    run_directors(**kwarg)
+    return None
 
-def run_dirs_multislots(
+def run_dirs_multi(dir_paths_inp, nprocs=4, opts_gins_pc="", opts_gins_90="", version="OPERA", mode = "ginspc"):
+
+    kwargs_lis = []
+    for dirr in dir_paths_inp:
+        kwargs = dict()
+        kwargs["dir_paths_inp"] = dirr
+        kwargs["opts_gins_pc"] = opts_gins_pc
+        kwargs["opts_gins_90"] = opts_gins_90
+        kwargs["version"] = version
+        kwargs["mode"] = mode
+        kwargs_lis.append(kwargs)
+
+    pool = mp.Pool(processes=nprocs)
+    res_raw = [pool.apply_async(run_dirs_kwwrap, args=(x,)) for x in kwargs_lis]
+
+    return None
+
+def run_dirs_multislots_custom(
     director_lis,
     slots_lis=["", "U", "L", "R"],
     opts_gins_pc="",
@@ -212,7 +195,7 @@ def smart_directors_to_run(wildcard_dir="", full_path_out=True):
 
     listing and directeur folders are inspected automatically"""
 
-    gins_path = gzgicmn.get_gin_path(True)
+    gins_path = gynscmn.get_gin_path(True)
 
     # list of corresponding directors
     dirpath = os.path.join(gins_path, "data", "directeur", wildcard_dir)
@@ -252,7 +235,7 @@ def smart_directors_to_run(wildcard_dir="", full_path_out=True):
     di_run_lis = sorted(di_run_lis)
 
     if full_path_out:
-        dirpath = os.path.join(gzgicmn.get_gin_path(True), "data", "directeur")
+        dirpath = os.path.join(gynscmn.get_gin_path(True), "data", "directeur")
         di_run_lis = [os.path.join(dirpath, d) for d in di_run_lis]
 
     return di_run_lis
@@ -272,14 +255,14 @@ def smart_listing_archive(
                                      the others in gins_anex_archive"""
 
     listing_path = os.path.join(
-        gzgicmn.get_gin_path(), "gin", "batch", "listing", wildcard_dir
+        gynscmn.get_gin_path(), "gin", "batch", "listing", wildcard_dir
     )
     listing_lis = [e for e in glob.glob(listing_path)]
 
     prepars_lis = [e for e in listing_lis if "prepars" in e]
     gins_lis = [e for e in listing_lis if "gins" in e]
 
-    dirpath = os.path.join(gzgicmn.get_gin_path(True), "data", "directeur", wildcard_dir)
+    dirpath = os.path.join(gynscmn.get_gin_path(True), "data", "directeur", wildcard_dir)
     dirlis = [e for e in glob.glob(dirpath)]
 
     # searching for doublons
@@ -346,3 +329,16 @@ def export_results_gins_listing(
     time_series.export_ts(ts, outpath, coordtype, outprefix)
     return outpath
 
+
+def _check_dir_keys(director_path_inp):
+    for grepstr in (
+            "userext_gps__qualiteorb",
+            "userext_gps__haute_freq",
+            "userext_gps__hor_interp",
+            "GPS__QUALITEORB",
+            "GPS__HAUTE_FREQ",
+            "GPS__HOR_INTERP",
+    ):
+        grep_out = utils.grep(director_path_inp, grepstr)
+        if grep_out == "":
+            print("WARN : IPPP mode on, but no", grepstr, " in the dir !!!")
