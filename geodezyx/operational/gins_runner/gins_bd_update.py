@@ -13,7 +13,7 @@ import subprocess
 import datetime as dt
 import re
 
-from geodezyx import conv
+from geodezyx import conv, utils
 
 #### Import the logger
 import logging
@@ -49,23 +49,32 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
     else:
         rsync_base = ['rsync'] + rsync_options
 
-    for file in file_list:
-        # Construct the rsync command
-        # /./ : https://askubuntu.com/questions/552120/preserve-directory-tree-while-copying-with-rsync
-        rsync_cmd = rsync_base + [f"{remote_source}/./{file}", f"{local_destination}/"]
-        #log.info(rsync_cmd)
+    tmp_rsync_file_lis = f"/tmp/tmp_rsync_file_list.lst"
+    utils.write_in_file("\n".join(file_list), tmp_rsync_file_lis)
 
-        # Run the rsync command
-        result = subprocess.run(rsync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    rsync_cmd = rsync_base +['--files-from', tmp_rsync_file_lis] + [f"{remote_source}/./", f"{local_destination}/"]
 
-        # Check if the command was successful
-        if result.returncode != 0:
-            log.warning(f"Download failed :( : {file}: {result.stderr}")
-        else:
-            if re.search(file, result.stdout):
-                log.info(f"Download successful :) :  {file}")
-            else:
-                log.info(f"File unchanged ;) : {file}")
+    result = subprocess.run(rsync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+    # for file in file_list:
+    #     # Construct the rsync command
+    #     # /./ : https://askubuntu.com/questions/552120/preserve-directory-tree-while-copying-with-rsync
+    #     rsync_cmd = rsync_base + [f"{remote_source}/./{file}", f"{local_destination}/"]
+    #     #log.info(rsync_cmd)
+    #
+    #     # Run the rsync command
+    #     result = subprocess.run(rsync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    #
+    #     # Check if the command was successful
+    #     if result.returncode != 0:
+    #         log.warning(f"Download failed :( : {file}: {result.stderr}")
+    #     else:
+    #         if re.search(file, result.stdout):
+    #             log.info(f"Download successful :) :  {file}")
+    #         else:
+    #             log.info(f"File unchanged ;) : {file}")
+
+    return
 
 
 
