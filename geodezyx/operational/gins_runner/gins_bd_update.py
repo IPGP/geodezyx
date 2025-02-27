@@ -52,7 +52,7 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
         # Construct the rsync command
         # /./ : https://askubuntu.com/questions/552120/preserve-directory-tree-while-copying-with-rsync
         rsync_cmd = rsync_base + [f"{remote_source}/./{file}", f"{local_destination}/"]
-        log.debug(rsync_cmd)
+        log.info(rsync_cmd)
 
         # Run the rsync command
         result = subprocess.run(rsync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
