@@ -30,17 +30,9 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
                    rsync_options=None, password=None):
     """
     Downloads a list of files using rsync.
-
-    :param file_list: List of file paths to download (relative to the remote source).
-    :param remote_user: Remote username (e.g., 'user').
-    :param remote_host: Remote host (e.g., 'remote_host').
-    :param remote_path: Remote path (e.g., '/path/to/source/').
-    :param local_destination: Local destination directory to save the files.
-    :param rsync_options: Optional list of additional rsync options (e.g., ['-avz', '--progress']).
-    :param password: Optional password for the remote user.
     """
     if not rsync_options:
-        rsync_options = ['-avz', '--relative']  # Default options: archive mode, verbose, and compression
+        rsync_options = ['-avz', '--progress', '--relative']  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
     remote_source = f"{remote_user}@{remote_host}:{remote_path}"
@@ -50,32 +42,22 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
     else:
         rsync_base = ['rsync'] + rsync_options
 
-    tmp_rsync_file_lis = f"/tmp/tmp_rsync_file_list.lst"
+    tmp_rsync_file_lis = f"/tmp/" + utils.get_timestamp() + "_tmp_rsync_file_list.lst"
     utils.write_in_file("\n".join(file_list), tmp_rsync_file_lis)
 
-    rsync_cmd = rsync_base +['--files-from', tmp_rsync_file_lis] + [f"{remote_source}/./", f"{local_destination}/"]
+    # Construct the rsync command
+    # /./ : https://askubuntu.com/questions/552120/preserve-directory-tree-while-copying-with-rsync
+    rsync_cmd = rsync_base + ['--files-from', tmp_rsync_file_lis] + [f"{remote_source}/./", f"{local_destination}/"]
 
+    # Run the rsync command
     process = subprocess.run(rsync_cmd, stderr=sys.stderr, stdout=sys.stdout, text=True)
 
+    if process.returncode != 0:
+        log.error("Rsync failed with return code :( %d", process.returncode)
+    else:
+        log.info("Rsync completed successfully :)")
 
-    # for file in file_list:
-    #     # Construct the rsync command
-    #     # /./ : https://askubuntu.com/questions/552120/preserve-directory-tree-while-copying-with-rsync
-    #     rsync_cmd = rsync_base + [f"{remote_source}/./{file}", f"{local_destination}/"]
-    #     #log.info(rsync_cmd)
-    #
-    #     # Run the rsync command
-    #     result = subprocess.run(rsync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    #
-    #     # Check if the command was successful
-    #     if result.returncode != 0:
-    #         log.warning(f"Download failed :( : {file}: {result.stderr}")
-    #     else:
-    #         if re.search(file, result.stdout):
-    #             log.info(f"Download successful :) :  {file}")
-    #         else:
-    #             log.info(f"File unchanged ;) : {file}")
-
+    os.remove(tmp_rsync_file_lis)
     return
 
 
