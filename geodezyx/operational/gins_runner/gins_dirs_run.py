@@ -135,10 +135,10 @@ def run_directors(
                 # https://stackoverflow.com/questions/436220/determine-the-encoding-of-text-in-python4
                 # find encoding
                 # print(c)
-                dammit = UnicodeDammit(c)
+                # dammit = UnicodeDammit(c)
                 # print(dammit.original_encoding)
                 d_deco = c.decode("iso-8859-1", errors="replace")
-                sys.stdout.write(d_deco)
+                # sys.stdout.write(d_deco)
                 f.write(d_deco)
 
         gynscmn.check_gins_exe(open(log_path), director_name)
@@ -196,8 +196,7 @@ def run_dirs_multislots_custom(
     version="OPERA",
     mode="ginspc",
 ):
-    """run a list of dir in parallel (using different 'slots')"""
-    """ FRONTEND FUNCTION TO USE """
+
     if not type(director_lis) is list:
         print("ERR : run_dirs_multislots : director_lis in input is not a list !!!")
         return None
