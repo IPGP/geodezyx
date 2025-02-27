@@ -76,7 +76,7 @@ def run_directors(
             print("INFO : geany ~ temp file, skiping this dir. ")
             continue
 
-        sols_exist = gynscmn.check_solution(os.path.dirname(director_path))
+        sols_exist = gynscmn.check_solution(os.path.basename(director_path))
         if len(sols_exist) > 0 and not force:
             print("INFO : solution", sols_exist, "already exists, skipping ...")
             continue
