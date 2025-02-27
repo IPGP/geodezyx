@@ -11,7 +11,7 @@ Created on 26/02/2025 11:06:06
 import datetime as dt
 import os
 import time
-
+import glob
 import numpy as np
 import yaml
 
@@ -49,6 +49,7 @@ def gen_dirs_from_rnxs(
     out_coords="NULL",
     prairie=False,
     prairie_kwargs={"with_historik": 1, "with_wsb": 1},
+    force=False,
 ):
     """
     Generate directors from RINEX files.
@@ -105,6 +106,8 @@ def gen_dirs_from_rnxs(
         prairie_manual (cf above)
     prairie_kwargs : dict, optional
         Arguments for the prairie_manual function. Defaults to {"with_historik": 1, "with_wsb": 1}.
+    force : bool, optional
+        Force the generation of the director even if a solution already exists. Defaults to False.
 
     Returns
     -------
@@ -124,6 +127,7 @@ def gen_dirs_from_rnxs(
         log.error("check the rinex_paths_in !!!")
         return None
 
+    gin_path = gynscmn.get_gin_path()
     rnx_path_lis = list(sorted(rnx_path_lis))
     n_rnxs = len(rnx_path_lis)
     director_output_path_lis = []
@@ -166,7 +170,12 @@ def gen_dirs_from_rnxs(
             ac_suffix,
         )
 
-        gin_path = gynscmn.get_gin_path()
+        # check if the solution already exists
+        sol_folder = os.path.join(gin_path, "gin", "batch", "solution")
+        sols_matching = glob.glob(sol_folder + '/' + dir_name + '*')
+        if len(sols_matching) > 0 and not force:
+            log.info("Solution %s already exists for %s", sols_matching[0], rnx_name)
+            continue
 
         # be sure there is a TEMP DATA folder
         if not temp_data_folder:
