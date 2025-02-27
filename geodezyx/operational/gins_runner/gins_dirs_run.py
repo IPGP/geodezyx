@@ -182,7 +182,7 @@ def run_dirs_multi(
         kwargs_lis.append(kwargs)
 
     pool = mp.Pool(processes=nprocs)
-    res_raw = [pool.apply(run_dirs_kwwrap, args=(x,)) for x in kwargs_lis]
+    res_raw = [pool.apply_async(run_dirs_kwwrap, args=(x,)) for x in kwargs_lis]
 
     return None
 
