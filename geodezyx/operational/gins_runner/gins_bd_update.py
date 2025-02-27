@@ -12,6 +12,7 @@ import os
 import subprocess
 import datetime as dt
 import re
+import sys
 
 from geodezyx import conv, utils
 
