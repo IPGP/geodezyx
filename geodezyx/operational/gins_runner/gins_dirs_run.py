@@ -60,6 +60,8 @@ def run_directors(
         print("ERR : run_directors : check the rinex_paths_in !!!")
         return None
 
+    director_path_lis = list(sorted(director_path_lis))
+
     ndir = len(director_path_lis)
 
     for i, director_path in enumerate(director_path_lis):
