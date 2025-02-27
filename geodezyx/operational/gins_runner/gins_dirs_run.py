@@ -66,8 +66,8 @@ def run_directors(
     for i, director_path in enumerate(director_path_lis):
         if multimode:
             log.info(" ======== %i / %i ======== ", i + 1, ndir,)
-        log.info("launching : ", director_path)
-        log.info("start at", dt.datetime.now())
+        log.info("launching : %s", director_path)
+        log.info("start at : %s", dt.datetime.now())
         if director_path[-4:] == ".fic":
             cmd_mode = "exe_gins_fic"
             log.info("input file ends with .fic, fic_mode is activated")
