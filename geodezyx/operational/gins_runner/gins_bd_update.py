@@ -51,6 +51,7 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
     for file in file_list:
         # Construct the rsync command
         rsync_cmd = rsync_base + [f"{remote_source}/./{file}", f"{local_destination}/"]
+        log.debug(rsync_cmd)
 
         # Run the rsync command
         result = subprocess.run(rsync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
