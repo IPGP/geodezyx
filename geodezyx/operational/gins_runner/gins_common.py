@@ -21,8 +21,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 import datetime as dt
 import glob
 
-#### Import the logger
-import logging
+
 import os
 import re
 import shutil
@@ -35,6 +34,8 @@ from geodezyx import conv
 from geodezyx import operational
 from geodezyx import utils
 
+#### Import the logger
+import logging
 log = logging.getLogger("geodezyx")
 
 ##########  END IMPORT  ##########

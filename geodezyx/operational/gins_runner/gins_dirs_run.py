@@ -31,7 +31,6 @@ from geodezyx import utils
 
 #### Import the logger
 import logging
-
 log = logging.getLogger("geodezyx")
 
 
@@ -52,12 +51,12 @@ def run_directors(
     if type(dir_paths_inp) is list:
         multimode = True
         director_path_lis = dir_paths_inp
-        print("******** DIRECTORS RUNS *******")
+        log.info("******** DIRECTORS RUNS *******")
     elif type(dir_paths_inp) is str:
         multimode = False
         director_path_lis = [dir_paths_inp]
     else:
-        print("ERR : run_directors : check the rinex_paths_in !!!")
+        log.error("check the rinex_paths_in !!!")
         return None
 
     director_path_lis = list(sorted(director_path_lis))
@@ -66,27 +65,27 @@ def run_directors(
 
     for i, director_path in enumerate(director_path_lis):
         if multimode:
-            print(" ======== ", i + 1, "/", ndir, " ======== ")
-        print("INFO : launching : ", director_path)
-        print("INFO : start at", dt.datetime.now())
+            log.info(" ======== %i / %i ======== ", i + 1, ndir,)
+        log.info("launching : ", director_path)
+        log.info("start at", dt.datetime.now())
         if director_path[-4:] == ".fic":
             cmd_mode = "exe_gins_fic"
-            print("INFO : input file ends with .fic, fic_mode is activated")
+            log.info("input file ends with .fic, fic_mode is activated")
         start = time.time()
 
         if director_path[-1] == "~":
-            print("INFO : geany ~ temp file, skiping this dir. ")
+            log.info("geany ~ temp file, skiping this dir. ")
             continue
 
         sols_exist = gynscmn.check_solution(os.path.basename(director_path))
         if len(sols_exist) > 0 and not force:
-            print("INFO : solution", sols_exist, "already exists, skipping ...")
+            log.info("solution %salready exists, skipping ...", sols_exist)
             continue
 
         director_name = os.path.basename(director_path)
         opts_gins_pc_ope = "-F" + opts_gins_pc
 
-        print("INFO : options ginsPC / gins90 :", opts_gins_pc_ope, "/", opts_gins_90)
+        log.info("options ginsPC: %s / gins90: %s", opts_gins_pc_ope, opts_gins_90)
 
         if "IPPP" in opts_gins_90 and cmd_mode != "ginspc":
             _check_dir_keys(director_path)
@@ -99,7 +98,7 @@ def run_directors(
         elif cmd_mode == "exe_gins_dir":
             cmd = " ".join(("exe_gins", "-dir", director_name, "-v", version, opts_gins_90))
         else:
-            print("ERR : run_directors : mode not recognized !!!")
+            log.error("mode not recognized !!!")
             return None
 
         # l'argument OPERA est super important  !!!
@@ -107,7 +106,7 @@ def run_directors(
         # parce que indirectement exe_gins ne marche pas sans
         # faire le test avec un exe_gins -v OPERA -fic <fic> et sans
 
-        print("INFO : submit. command : ", cmd)
+        log.info("submit. command : %s", cmd)
 
         gins_path = gynscmn.get_gin_path()
         log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
@@ -190,9 +189,9 @@ def run_dirs_multislots_custom(
 ):
 
     if not type(director_lis) is list:
-        print("ERR : run_dirs_multislots : director_lis in input is not a list !!!")
+        log.error("director_lis in input is not a list !!!")
         return None
-    print("TOTAL NB OF DIRECTORS :", len(director_lis))
+    log.info("TOTAL NB OF DIRECTORS : %i", len(director_lis))
 
     if type(slots_lis) is int:
         slots_lis = [""] * slots_lis
@@ -368,4 +367,4 @@ def _check_dir_keys(director_path_inp):
     ):
         grep_out = utils.grep(director_path_inp, grepstr)
         if grep_out == "":
-            print("WARN : IPPP mode on, but no", grepstr, " in the dir !!!")
+            log.warning("IPPP mode on, but no %sin the dir !!!", grepstr)
