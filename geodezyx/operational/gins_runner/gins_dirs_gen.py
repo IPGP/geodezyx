@@ -148,7 +148,7 @@ def gen_dirs_from_rnxs(
             log.info(" ======== %i / %i ======== ", i + 1, n_rnxs)
             log.info(" === %s ", os.path.basename(rnx_path_ori))
         rnx_name = os.path.basename(rnx_path_ori)
-        rnx_dt = dt.datetime(conv.rinexname2dt(rnx_name))
+        rnx_dt = conv.rinexname2dt(rnx_name)
         site_id9, site_id4_upper, site_id4_lower = _dir_rnx_site_id(rnx_name)
 
         coord_prefix = (
