@@ -25,7 +25,7 @@ def read_credentials(file_path):
         password = file.readline().strip()
     return login, password
 
-def download_rsync_list(file_list, remote_user, remote_host, remote_path, local_destination,
+def download_rsync(file_list, remote_user, remote_host, remote_path, local_destination,
                    rsync_options=None, password=None):
     """
     Downloads a list of files using rsync.
