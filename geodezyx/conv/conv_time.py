@@ -1270,6 +1270,12 @@ def date_pattern_2_dt(date_str_inp):
     if re.match(r'\d{4}-\d{2}-\d{2}', date_str_inp):
         # Match format YYYY-MM-DD
         date = dt.datetime.strptime(date_str_inp, '%Y-%m-%d')
+    elif re.match(r'\d{4}-\d{3}', date_str_inp):
+        # Match format Year-DayOfYear (e.g., 2023-123)
+        date = doy2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
+    elif re.match(r'\d{4}-\d{1}', date_str_inp):
+        # Match format GPS Week-Day (e.g., 1234-5)
+        date = gpstime2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
     elif re.match(r'\d{8}', date_str_inp):
         # Match format YYYYMMDD
         date = dt.datetime.strptime(date_str_inp, '%Y%m%d')
@@ -1279,12 +1285,6 @@ def date_pattern_2_dt(date_str_inp):
     elif re.match(r'\d{5}', date_str_inp):
         # Match format JJCNES (Julian Day CNES)
         date = jjul_cnes2dt(int(date_str_inp))
-    elif re.match(r'\d{4}-\d{1}', date_str_inp):
-        # Match format GPS Week-Day (e.g., 1234-5)
-        date = gpstime2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
-    elif re.match(r'\d{4}-\d{3}', date_str_inp):
-        # Match format Year-DayOfYear (e.g., 2023-123)
-        date = doy2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
     else:
         raise ValueError("Input string does not match any expected date format.")
     return date
