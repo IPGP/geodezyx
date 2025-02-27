@@ -128,7 +128,6 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
         date += dt.timedelta(days=1)
 
     dest_subdir_dic = {
-        'tropo_vmf1': list_tropo_orography,
         'tropo_vmf1': list_trop_file,
         'ionosphere/igs': list_iono_file,
         'mesures/gps/orbites/G20': list_orbite_g20,
