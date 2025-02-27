@@ -163,7 +163,7 @@ def run_dirs_multi(
 
     pool = mp.Pool(processes=nprocs)
     # res_raw = [pool.apply(run_dirs_kwwrap, args=(x,)) for x in kwargs_lis]
-    res_raw = pool.map(run_dirs_kwwrap, kwargs_lis)
+    res_raw = pool.map(run_dirs_kwwrap, kwargs_lis, chunksize=1)
 
     return None
 
