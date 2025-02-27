@@ -32,7 +32,7 @@ import logging
 log = logging.getLogger("geodezyx")
 
 
-def gen_dirs_from_rnxs(
+def gen_dirs_rnxs(
     rnx_paths_inp,
     director_generik_path,
     director_name_prefix,
