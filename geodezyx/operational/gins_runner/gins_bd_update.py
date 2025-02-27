@@ -113,6 +113,7 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
         wk, wkday = conv.dt2gpstime(date)
         doy = str(conv.dt2doy(date)).zfill(3)
 
+        list_trop_file.append(f"orography_ell")
         list_trop_file.extend([
             f"{year}/VMFG_{year}{month}{day}.H00",
             f"{year}/VMFG_{year}{month}{day}.H06",
@@ -127,6 +128,7 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
         date += dt.timedelta(days=1)
 
     dest_subdir_dic = {
+        'tropo_vmf1': list_tropo_orography,
         'tropo_vmf1': list_trop_file,
         'ionosphere/igs': list_iono_file,
         'mesures/gps/orbites/G20': list_orbite_g20,
