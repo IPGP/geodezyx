@@ -25,7 +25,7 @@ def read_credentials(file_path):
         password = file.readline().strip()
     return login, password
 
-def download_rsync(file_list, remote_user, remote_host, remote_path, local_destination,
+def download_rsync_list(file_list, remote_user, remote_host, remote_path, local_destination,
                    rsync_options=None, password=None):
     """
     Downloads a list of files using rsync.
@@ -54,7 +54,19 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
 
     rsync_cmd = rsync_base +['--files-from', tmp_rsync_file_lis] + [f"{remote_source}/./", f"{local_destination}/"]
 
-    result = subprocess.run(rsync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    process = subprocess.run(rsync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+    while True:
+        output = process.stdout.readline()
+        error = process.stderr.readline()
+
+        if output == '' and error == '' and process.poll() is not None:
+            break  # Exit the loop when the process is complete
+
+        if output:
+            print(output.strip())  # Print stdout live
+        if error:
+            print(error.strip())  # Print stderr live
 
     # for file in file_list:
     #     # Construct the rsync command
