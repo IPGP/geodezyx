@@ -143,13 +143,13 @@ def run_directors(
             executable="/bin/bash",
         )
 
-        gynscmn.check_gins_exe(open(log_path), director_name)
-
-        with open(log_path + ".exec", "w") as f:
-            f.write("exec time : " + str(time.time() - start))
-
-        print("INFO : end at", dt.datetime.now())
-        print("INFO : exec time : ", str(time.time() - start), "seconds")
+        # gynscmn.check_gins_exe(open(log_path), director_name)
+        #
+        # with open(log_path + ".exec", "w") as f:
+        #     f.write("exec time : " + str(time.time() - start))
+        #
+        # print("INFO : end at", dt.datetime.now())
+        # print("INFO : exec time : ", str(time.time() - start), "seconds")
 
     return None
 
