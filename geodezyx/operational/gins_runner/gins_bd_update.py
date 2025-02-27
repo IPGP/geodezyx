@@ -50,7 +50,7 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
 
     for file in file_list:
         # Construct the rsync command
-        rsync_cmd = rsync_base + [f"{remote_source}/{file}", f"{local_destination}/"]
+        rsync_cmd = rsync_base + [f"{remote_source}/./{file}", f"{local_destination}/"]
 
         # Run the rsync command
         result = subprocess.run(rsync_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -121,12 +121,12 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
         date += dt.timedelta(days=1)
 
     dest_subdir_dic = {
-        'ionosphere/igs': list_iono_file,
         'mesures/gps/orbites/G20': list_orbite_g20,
         'mesures/gps/orbex/G20': list_orbex_g20,
         'mesures/gps/horloges30/G20': list_horl_g20,
         # 'orbites/SP3/re3': list_sp3_re3
         'tropo_vmf1': list_trop_file,
+        'ionosphere/igs': list_iono_file,
     }
 
     create_dir(dir_bdgins, subdirs=dest_subdir_dic.keys())
