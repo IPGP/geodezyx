@@ -122,7 +122,7 @@ def run_directors(
         #         # sys.stdout.write(d_deco)
         #         f.write(d_deco)
 
-        process = subprocess.Popen(
+        process = subprocess.run(
             cmd,
             #shell=True,
             stdout=subprocess.PIPE,
