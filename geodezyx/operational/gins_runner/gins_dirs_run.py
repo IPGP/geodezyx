@@ -126,7 +126,7 @@ def run_directors(
         #         f.write(d_deco)
 
         process = subprocess.run(
-            cmd,
+            [cmd],
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
