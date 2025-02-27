@@ -124,7 +124,7 @@ def run_directors(
 
         process = subprocess.Popen(
             cmd,
-            shell=True,
+            #shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             executable="/bin/bash",
