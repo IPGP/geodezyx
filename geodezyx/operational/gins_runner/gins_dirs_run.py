@@ -90,11 +90,11 @@ def run_directors(
             _check_dir_keys(director_path)
 
         if cmd_mode == "ginspc":
-            cmd = ["ginspc.bash", opts_gins_pc_ope, director_name, opts_gins_90, "-v", version, "-f"]
+            cmd = " ".join(["ginspc.bash", opts_gins_pc_ope, director_name, opts_gins_90, "-v", version, "-f"])
         elif cmd_mode == "exe_gins_fic":
-            cmd = ["exe_gins", "-fic", director_name, "-v", version, opts_gins_90]
+            cmd = " ".join(["exe_gins", "-fic", director_name, "-v", version, opts_gins_90])
         elif cmd_mode == "exe_gins_dir":
-            cmd = ["exe_gins", "-dir", director_name, "-v", version, opts_gins_90]
+            cmd = " ".join(["exe_gins", "-dir", director_name, "-v", version, opts_gins_90])
         else:
             print("ERR : run_directors : mode not recognized !!!")
             return None
@@ -125,8 +125,8 @@ def run_directors(
         process = subprocess.run(
             cmd,
             #shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            #stdout=subprocess.PIPE,
+            #stderr=subprocess.PIPE,
             executable="/bin/bash",
         )
 
