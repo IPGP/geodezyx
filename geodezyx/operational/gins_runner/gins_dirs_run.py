@@ -125,7 +125,7 @@ def run_directors(
 
         process = subprocess.run(
             cmd,
-            #shell=True,
+            shell=True,
             #stdout=subprocess.PIPE,
             #stderr=subprocess.PIPE,
             executable="/bin/bash",
