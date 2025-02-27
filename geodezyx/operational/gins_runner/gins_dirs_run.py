@@ -148,7 +148,7 @@ def run_dirs_multi(dir_paths_inp, nprocs=4, opts_gins_pc="", opts_gins_90="", ve
         kwargs["opts_gins_pc"] = opts_gins_pc
         kwargs["opts_gins_90"] = opts_gins_90
         kwargs["version"] = version
-        kwargs["cmd_mode"] = mode
+        kwargs["cmd_mode"] = cmd_mode
         kwargs_lis.append(kwargs)
 
     pool = mp.Pool(processes=nprocs)
