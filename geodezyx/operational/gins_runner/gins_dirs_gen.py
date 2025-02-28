@@ -45,7 +45,7 @@ def gen_dirs_rnxs(
     perso_orbclk=False,
     ac="igs",
     repro=2,
-    auto_interval=True,
+    auto_interval=False,
     out_coords="NULL",
     prairie=False,
     prairie_kwargs={"with_historik": 1, "with_wsb": 1},
@@ -97,7 +97,7 @@ def gen_dirs_rnxs(
     repro : int, optional
         Reprocessing version for perso orbits/clocks. Defaults to 2.
     auto_interval : bool, optional
-        Automatically find the interval in RINEX and apply it to the director. Defaults to True.
+        Automatically find the interval in RINEX and apply it to the director. Defaults to False.
     out_coords : str, optional
         Output coordinates type ('XYZ' or 'FLH'/'PLH'). Defaults to "NULL".
     prairie : bool, optional
