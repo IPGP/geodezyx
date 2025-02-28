@@ -18,8 +18,8 @@ def spotgins_run(
     nprocs=8,
     version="VALIDE_23_1",
     const="G",
-    director_name_prefix_inp="",
     director_generik_path_inp=None,
+    director_name_prefix_inp="",
     stations_file_inp=None,
     oceanload_file_inp=None,
     options_prairie_file_inp=None,
@@ -47,7 +47,7 @@ def spotgins_run(
     )
 
     ##### Multi-processing Wrapper ################
-    def _spotgins_wrap(rnx_mono_path_inp):
+    def spotgins_wrap(rnx_mono_path_inp):
 
         director_generik_path_use = director_generik_path_inp
         dirr = gynsgen.gen_dirs_rnxs(
@@ -73,4 +73,4 @@ def spotgins_run(
     ##### END Multi-processing Wrapper END ################
 
     pool = mp.Pool(processes=nprocs)
-    res_raw = pool.map(_spotgins_wrap, rnxs_path_inp, chunksize=1)
+    res_raw = pool.map(spotgins_wrap, rnxs_path_inp, chunksize=1)
