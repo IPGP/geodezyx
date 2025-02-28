@@ -17,7 +17,7 @@ import os
 def spotgins_run(
     rnxs_path_inp,
     nprocs=8,
-    version="VALIDE_23_1",
+    version="VALIDE_23_2",
     const="G",
     director_generik_path_inp=None,
     director_name_prefix_inp="",
