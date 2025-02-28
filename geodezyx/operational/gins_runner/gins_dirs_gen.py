@@ -189,7 +189,7 @@ def gen_dirs_rnxs(
         os.makedirs(temp_data_folder_use)
 
         # be sure the RINEX is in gins folder ...
-        rnx_path = gynscmn.bring_to_gin(rnx_path_ori)
+        rnx_path = gynscmn.bring_to_gin(rnx_path_ori, temp_data_folder_use)
 
         # check if the RINEX is compressed ...
         bool_comp_rnx = operational.check_if_compressed_rinex(rnx_path)
