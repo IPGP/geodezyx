@@ -45,7 +45,7 @@ def gen_dirs_rnxs(
     perso_orbclk=False,
     ac="igs",
     repro=2,
-    auto_interval=False,
+    auto_interval=True,
     out_coords="NULL",
     prairie=False,
     prairie_kwargs={"with_historik": 1, "with_wsb": 1},
