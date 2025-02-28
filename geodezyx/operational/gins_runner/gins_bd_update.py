@@ -32,7 +32,7 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
     Downloads a list of files using rsync.
     """
     if not rsync_options:
-        rsync_options = ['-avz', '--progress', '--relative']  # Default options: archive mode, verbose, and compression
+        rsync_options = ['-avz', '--progress', '--relative', '--copy-links']  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
     remote_source = f"{remote_user}@{remote_host}:{remote_path}"
