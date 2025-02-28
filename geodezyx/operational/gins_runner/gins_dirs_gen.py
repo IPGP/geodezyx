@@ -146,7 +146,7 @@ def gen_dirs_rnxs(
     for i, rnx_path_ori in enumerate(rnx_path_lis):
         if multimode:
             log.info(" ======== %i / %i ======== ", i + 1, n_rnxs)
-            log.info(" === %s ", os.path.basename(rnx_path_ori))
+        log.info(" === %s ", os.path.basename(rnx_path_ori))
         rnx_name = os.path.basename(rnx_path_ori)
         rnx_dt = conv.rinexname2dt(rnx_name)
         site_id9, site_id4_upper, site_id4_lower = _dir_rnx_site_id(rnx_name)
