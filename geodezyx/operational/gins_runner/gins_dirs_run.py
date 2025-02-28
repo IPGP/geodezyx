@@ -18,8 +18,6 @@ import glob
 import collections
 import multiprocessing as mp
 
-from bs4 import UnicodeDammit
-
 from geodezyx import files_rw, time_series
 
 #### Import geodezyx GINS submodules
@@ -31,6 +29,7 @@ from geodezyx import utils
 
 #### Import the logger
 import logging
+
 log = logging.getLogger("geodezyx")
 
 
@@ -63,40 +62,58 @@ def run_directors(
 
     ndir = len(director_path_lis)
 
-    for i, director_path in enumerate(director_path_lis):
+    for i, dir_path in enumerate(director_path_lis):
         if multimode:
-            log.info(" ======== %i / %i ======== ", i + 1, ndir,)
-        log.info("launching : %s", director_path)
+            log.info(
+                " ======== %i / %i ======== ",
+                i + 1,
+                ndir,
+            )
+        log.info("launching : %s", dir_path)
         log.info("start at : %s", dt.datetime.now())
-        if director_path[-4:] == ".fic":
+        if dir_path[-4:] == ".fic":
             cmd_mode = "exe_gins_fic"
             log.info("input file ends with .fic, fic_mode is activated")
         start = time.time()
 
-        if director_path[-1] == "~":
+        if dir_path[-1] == "~":
             log.info("geany ~ temp file, skiping this dir. ")
             continue
 
-        sols_exist = gynscmn.check_solution(os.path.basename(director_path))
+        sols_exist = gynscmn.check_solution(os.path.basename(dir_path))
         if len(sols_exist) > 0 and not force:
             log.info("solution %salready exists, skipping ...", sols_exist)
             continue
 
-        director_name = os.path.basename(director_path)
+        dir_name = os.path.basename(dir_path)
         opts_gins_pc_ope = "-F" + opts_gins_pc
 
-        log.info("options ginsPC: %s / gins90: %s", opts_gins_pc_ope, opts_gins_90)
+        # log.info("options ginsPC: %s / gins90: %s", opts_gins_pc_ope, opts_gins_90)
 
         if "IPPP" in opts_gins_90 and cmd_mode != "ginspc":
-            _check_dir_keys(director_path)
+            _check_dir_keys(dir_path)
 
         ### cmd must be a string here... (and not a list of small str...)
         if cmd_mode == "ginspc":
-            cmd = " ".join(("ginspc.bash", opts_gins_pc_ope, director_name, opts_gins_90, "-v", version, "-f"))
+            cmd = " ".join(
+                (
+                    "ginspc.bash",
+                    opts_gins_pc_ope,
+                    dir_name,
+                    opts_gins_90,
+                    "-v",
+                    version,
+                    "-f",
+                )
+            )
         elif cmd_mode == "exe_gins_fic":
-            cmd = " ".join(("exe_gins", "-fic", director_name, "-v", version, opts_gins_90))
+            cmd = " ".join(
+                ("exe_gins", "-fic", dir_name, "-v", version, opts_gins_90)
+            )
         elif cmd_mode == "exe_gins_dir":
-            cmd = " ".join(("exe_gins", "-dir", director_name, "-v", version, opts_gins_90))
+            cmd = " ".join(
+                ("exe_gins", "-dir", dir_name, "-v", version, opts_gins_90)
+            )
         else:
             log.error("mode not recognized !!!")
             return None
@@ -110,7 +127,7 @@ def run_directors(
 
         gins_path = gynscmn.get_gin_path()
         log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
-        log_path = os.path.join(gins_path, "python_logs", director_name + ".log")
+        log_path = os.path.join(gins_path, "python_logs", dir_name + ".log")
 
         process = subprocess.run(
             [cmd],
@@ -125,8 +142,18 @@ def run_directors(
         # with open(log_path + ".exec", "w") as f:
         #     f.write("exec time : " + str(time.time() - start))
         #
-        # print("INFO : end at", dt.datetime.now())
-        # print("INFO : exec time : ", str(time.time() - start), "seconds")
+
+        if gynscmn.check_solution(dir_name):
+            log.info("solution for :) : %s", dir_name)
+        else:
+            log.warning("no solution for :( : %s", dir_name)
+
+        log.info(
+            "end %s at %s (exec: %s s)",
+            dir_name,
+            dt.datetime.now(),
+            str(time.time() - start),
+        )
 
     return None
 

@@ -88,13 +88,28 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
 
     date = date_srt
 
-    list_trop_file = []
-    list_iono_file = []
+    ###### LIST INITIALISATION
+    ### static files do not need initialisation
+
+    ### time dependant files
+    list_tropo = []
+    list_iono = []
     list_orbite_g20 = []
     list_orbex_g20 = []
     list_horl_g20 = []
     list_sp3_re3 = []
 
+    ###### LIST FILL
+    ### static files
+    list_mda_snx_pra = [f"igs_satellite_metadata.snx"]
+    list_pole = [f'nominal_NRO']
+    list_antex = [f'igs20.atx']
+    list_valap_static = [f'valap_static']
+    list_macromod = [f'gnss.xml']
+    list_lunisol = [f'de440bdlf.ad']
+    list_maree_pol = [f'nominal']
+
+    ### time dependant files
     while date <= date_end:
         day = str(date.day).zfill(2)
         month = str(date.month).zfill(2)
@@ -104,23 +119,36 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
         wk, wkday = conv.dt2gpstime(date)
         doy = str(conv.dt2doy(date)).zfill(3)
 
-        list_trop_file.append(f"orography_ell")
-        list_trop_file.extend([
+        list_tropo.append(f"orography_ell")
+        list_tropo.extend([
             f"{year}/VMFG_{year}{month}{day}.H00",
             f"{year}/VMFG_{year}{month}{day}.H06",
             f"{year}/VMFG_{year}{month}{day}.H12",
             f"{year}/VMFG_{year}{month}{day}.H18"
         ])
-        list_iono_file.append(f"{year}/igsg{doy}0.{yy}i.Z")
+        list_iono.append(f"{year}/igsg{doy}0.{yy}i.Z")
         list_orbite_g20.append(f"G20{wk}{wkday}.gin")
         list_orbex_g20.append(f"G20{wk}{wkday}.obx.gz")
         list_horl_g20.append(f"hogps_g20{wk}{wkday}")
         #list_sp3_re3.append(f"mg3{wk}{wkday}.sp3.Ci9PAU")
         date += dt.timedelta(days=1)
 
+
+    ###### DESTINATION FOLDERS
+
     dest_subdir_dic = {
-        'tropo_vmf1': list_trop_file,
-        'ionosphere/igs': list_iono_file,
+        ### static files
+        'prairie': list_mda_snx_pra,
+        'pole': list_pole,
+        'ANTEX': list_antex,
+        'EXE_PPP': list_valap_static,
+        'macromod': list_macromod,
+        'lunisolaires': list_lunisol,
+        'maree_polaire/loading': list_maree_pol,
+
+        ### time dependant files
+        'tropo_vmf1': list_tropo,
+        'ionosphere/igs': list_iono,
         'mesures/gps/orbites/G20': list_orbite_g20,
         'mesures/gps/orbex/G20': list_orbex_g20,
         'mesures/gps/horloges30/G20': list_horl_g20,

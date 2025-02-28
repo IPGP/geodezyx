@@ -484,6 +484,9 @@ def merge_yaml(yaml1, yaml2, yaml_out=None):
 
 
 def check_solution(dir_name_inp, gin_path_inp=None):
+
+    dir_name_inp = os.path.basename(dir_name_inp)
+
     if not gin_path_inp:
         gin_path = get_gin_path()
     else:
@@ -492,7 +495,7 @@ def check_solution(dir_name_inp, gin_path_inp=None):
     sol_folder = os.path.join(gin_path, "gin", "batch", "solution")
     sols_matching = glob.glob(sol_folder + '/' + dir_name_inp + '*')
     if len(sols_matching) > 0:
-        log.info("Solution %s already exists for %s", sols_matching, dir_name_inp)
+        log.info("Solution %s exists for %s", sols_matching, dir_name_inp)
     return sols_matching
 
 #    return dic1
