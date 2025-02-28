@@ -67,6 +67,14 @@ def get_gin_path(extended=False):
     else:
         return os.path.join(os.environ["GS_USER"], "gin")
 
+
+def get_spotgins_path():
+    try:
+        return os.environ["SPOTGINS_DIR"]
+    except:
+        log.error("env. var. SPOTGINS_DIR dont exists !!!")
+        return None
+
 def check_stat_in_statfile(stat, stationfile):
     """
     Check if a station code is present in a station file.

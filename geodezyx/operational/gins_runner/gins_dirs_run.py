@@ -36,7 +36,7 @@ log = logging.getLogger("geodezyx")
 def run_directors(
     dir_paths_inp,
     opts_gins_pc="",
-    opts_gins_90="  ",
+    opts_gins_90="",
     version="OPERA",
     cmd_mode="exe_gins_dir",
     force=False,
@@ -157,12 +157,6 @@ def run_directors(
 
     return None
 
-
-def run_director_list_wrap(tupinp):
-    run_directors(*tupinp)
-    return None
-
-
 def run_dirs_kwwrap(kwarg):
     run_directors(**kwarg)
     return None
@@ -175,17 +169,18 @@ def run_dirs_multi(
     opts_gins_90="",
     version="OPERA",
     cmd_mode="exe_gins_dir",
+    force=False,
 ):
 
     kwargs_lis = []
     for dirr in list(sorted(dir_paths_inp)):
-        print(dirr)
         kwargs = dict()
         kwargs["dir_paths_inp"] = dirr
         kwargs["opts_gins_pc"] = opts_gins_pc
         kwargs["opts_gins_90"] = opts_gins_90
         kwargs["version"] = version
         kwargs["cmd_mode"] = cmd_mode
+        kwargs["force"] = force
         kwargs_lis.append(kwargs)
 
     pool = mp.Pool(processes=nprocs)
@@ -194,6 +189,20 @@ def run_dirs_multi(
 
     return None
 
+def _check_dir_keys(director_path_inp):
+    for grepstr in (
+        "userext_gps__qualiteorb",
+        "userext_gps__haute_freq",
+        "userext_gps__hor_interp",
+        "GPS__QUALITEORB",
+        "GPS__HAUTE_FREQ",
+        "GPS__HOR_INTERP",
+    ):
+        grep_out = utils.grep(director_path_inp, grepstr)
+        if grep_out == "":
+            log.warning("IPPP mode on, but no %sin the dir !!!", grepstr)
+
+########## OLD FUNCTIONS ##########
 
 def run_dirs_multislots_custom(
     director_lis,
@@ -371,16 +380,6 @@ def export_results_gins_listing(
     time_series.export_ts(ts, outpath, coordtype, outprefix)
     return outpath
 
-
-def _check_dir_keys(director_path_inp):
-    for grepstr in (
-        "userext_gps__qualiteorb",
-        "userext_gps__haute_freq",
-        "userext_gps__hor_interp",
-        "GPS__QUALITEORB",
-        "GPS__HAUTE_FREQ",
-        "GPS__HOR_INTERP",
-    ):
-        grep_out = utils.grep(director_path_inp, grepstr)
-        if grep_out == "":
-            log.warning("IPPP mode on, but no %sin the dir !!!", grepstr)
+def run_director_list_wrap(tupinp):
+    run_directors(*tupinp)
+    return None
