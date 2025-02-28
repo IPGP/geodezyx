@@ -47,6 +47,7 @@ def spotgins_run(
     )
 
     ##### Multi-processing Wrapper ################
+    global spotgins_wrap
     def spotgins_wrap(rnx_mono_path_inp):
 
         director_generik_path_use = director_generik_path_inp
