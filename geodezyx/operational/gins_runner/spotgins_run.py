@@ -36,15 +36,26 @@ def spotgins_run(
     else:
         sptgns_path = gynscmn.get_spotgins_path()
 
-    stfi_use = stations_file_inp or os.path.join(
-        sptgns_path, "metadata", "directeur", "DIR_SPOTGINS_G20_GE.yml"
-    )
-    oclo_use = oceanload_file_inp or os.path.join(
-        sptgns_path, "metadata", "oceanloading", "load_fes2014b_cf.spotgins"
-    )
-    opra_use = options_prairie_file_inp or os.path.join(
-        sptgns_path, "metadata", "directeur", "options_prairie_static"
-    )
+    if stations_file_inp:
+        stfi_use = stations_file_inp
+    else:
+        stfi_use = os.path.join(
+            sptgns_path, "metadata", "directeur", "DIR_SPOTGINS_G20_GE.yml"
+        )
+
+    if oceanload_file_inp:
+        oclo_use = oceanload_file_inp
+    else:
+        oclo_use =  os.path.join(
+            sptgns_path, "metadata", "oceanloading", "load_fes2014b_cf.spotgins"
+        )
+
+    if options_prairie_file_inp:
+        opra_use = options_prairie_file_inp
+    else:
+        opra_use = os.path.join(
+            sptgns_path, "metadata", "directeur", "options_prairie_static"
+        )
 
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
