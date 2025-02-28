@@ -275,11 +275,11 @@ def gen_dirs_rnxs(
                 dir_dic["parameter"]["adjustment_parameters"]["stations"][
                     "adjustment_frequency"
                 ] = [0, 0, 0, freq_rnx]
-        log.info(
-            "INFO : auto_interval: %s, simulation_stepsize : %s",
-            auto_interval,
-            dir_dic["observation"]["removal"]["simulation_stepsize"],
-        )
+            log.info(
+                "INFO : auto_interval: %s, simulation_stepsize : %s",
+                auto_interval,
+                dir_dic["observation"]["removal"]["simulation_stepsize"],
+            )
         # output coords
         if out_coords.upper() in ("FLH", "PLH"):
             dir_dic["parameter"]["adjustment_parameters"]["stations"][
