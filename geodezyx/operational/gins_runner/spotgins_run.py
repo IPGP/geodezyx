@@ -36,11 +36,18 @@ def spotgins_run(
     else:
         sptgns_path = gynscmn.get_spotgins_path()
 
+    if director_generik_path_inp:
+        dirgen_use = director_generik_path_inp
+    else:
+        dirgen_use = os.path.join(
+            sptgns_path, "metadata", "directeur", "DIR_SPOTGINS_G20_GE.yml"
+        )
+
     if stations_file_inp:
         stfi_use = stations_file_inp
     else:
         stfi_use = os.path.join(
-            sptgns_path, "metadata", "directeur", "DIR_SPOTGINS_G20_GE.yml"
+            sptgns_path, "metadata", "stations", "station_file.dat"
         )
 
     if oceanload_file_inp:
@@ -61,10 +68,9 @@ def spotgins_run(
     global spotgins_wrap
     def spotgins_wrap(rnx_mono_path_inp):
 
-        director_generik_path_use = director_generik_path_inp
         dirr = gynsgen.gen_dirs_rnxs(
             rnx_paths_inp=rnx_mono_path_inp,
-            director_generik_path=director_generik_path_use,
+            director_generik_path=dirgen_use,
             director_name_prefix="_".join(("SPOTGINS", director_name_prefix_inp)),
             stations_file=stfi_use,
             oceanload_file=oclo_use,
