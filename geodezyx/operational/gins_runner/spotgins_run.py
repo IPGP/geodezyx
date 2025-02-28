@@ -27,6 +27,8 @@ def spotgins_run(
     force_run=False,
 ):
 
+    rnxs_path_use = list(sorted(rnxs_path_inp))
+
     if not gynscmn.get_spotgins_path() and (
         not stations_file_inp or not oceanload_file_inp or not options_prairie_file_inp
     ):
@@ -91,4 +93,4 @@ def spotgins_run(
     ##### END Multi-processing Wrapper END ################
 
     pool = mp.Pool(processes=nprocs)
-    res_raw = pool.map(spotgins_wrap, rnxs_path_inp, chunksize=1)
+    res_raw = pool.map(spotgins_wrap, rnxs_path_use, chunksize=1)
