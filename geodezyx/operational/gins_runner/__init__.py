@@ -11,3 +11,4 @@ from .gins_prairie import *
 from .gins_orbclk  import *
 from .gins_dirs_gen import *
 from .gins_dirs_run import *
+from .spotgins_run import *
