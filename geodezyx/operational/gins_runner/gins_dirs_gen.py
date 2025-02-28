@@ -257,8 +257,8 @@ def gen_dirs_rnxs(
         if "initial_state_vector_date" in list(dir_dic["date"].keys()):
             dir_dic["date"]["initial_state_vector_date"][0] = strt_day
 
-        dir_dic["date"]["arc_start"][1] = strt_sec
-        dir_dic["date"]["arc_stop"][1] = end_sec
+        dir_dic["date"]["arc_start"][1] = strt_sec - 1 # -1 to make it SPOTGINS compatible
+        dir_dic["date"]["arc_stop"][1] = end_sec + 1 # +1 to make it SPOTGINS compatible
         if "initial_state_vector_date" in list(dir_dic["date"].keys()):
             dir_dic["date"]["initial_state_vector_date"][1] = strt_sec
 
