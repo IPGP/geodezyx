@@ -44,7 +44,7 @@ def spotgins_run(
         dirr = gynsgen.gen_dirs_rnxs(
             rnx_paths_inp=rnx_mono_path_inp,
             director_generik_path=dirgen_use,
-            director_name_prefix="SPOTGINS"),
+            director_name_prefix="SPOTGINS",
             stations_file=stfi_use,
             oceanload_file=oclo_use,
             options_prairie_file=opra_use,
