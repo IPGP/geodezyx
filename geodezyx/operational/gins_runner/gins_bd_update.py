@@ -89,7 +89,8 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
     date = date_srt
 
     ###### LIST INITIALISATION
-    ### static files do not need initialisation
+    ### misc files do not need initialisation
+    list_misc = []
 
     ### time dependant files
     list_tropo = []
@@ -100,14 +101,22 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
     list_sp3_re3 = []
 
     ###### LIST FILL
-    ### static files
-    list_mda_snx_pra = [f"igs_satellite_metadata.snx"]
-    list_pole = [f'nominal_NRO']
-    list_antex = [f'igs20.atx']
-    list_valap_static = [f'valap_static']
-    list_macromod = [f'gnss.xml']
-    list_lunisol = [f'de440bdlf.ad']
-    list_maree_pol = [f'nominal']
+    ### misc files
+    # list_mda_snx_pra = [f"igs_satellite_metadata.snx"]
+    # list_pole = [f'nominal_NRO']
+    # list_antex = [f'igs20.atx']
+    # list_valap_static = [f'valap_static']
+    # list_macromod = [f'gnss.xml']
+    # list_lunisol = [f'de440bdlf.ad']
+    # list_maree_pol = [f'nominal']
+
+    list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
+    list_misc.extend([f'pole/nominal_NRO'])
+    list_misc.extend([f'ANTEX/igs20.atx'])
+    list_misc.extend([f'EXE_PPP/valap_static'])
+    list_misc.extend([f'macromod/gnss.xml'])
+    list_misc.extend([f'lunisolaires/de440bdlf.ad'])
+    list_misc.extend([f'maree_polaire/loading/nominal'])
 
     ### time dependant files
     while date <= date_end:
@@ -137,14 +146,15 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
     ###### DESTINATION FOLDERS
 
     dest_subdir_dic = {
-        ### static files
-        'prairie': list_mda_snx_pra,
-        'pole': list_pole,
-        'ANTEX': list_antex,
-        'EXE_PPP': list_valap_static,
-        'macromod': list_macromod,
-        'lunisolaires': list_lunisol,
-        'maree_polaire/loading': list_maree_pol,
+        ### misc files
+        # 'prairie': list_mda_snx_pra,
+        # 'pole': list_pole,
+        # 'ANTEX': list_antex,
+        # 'EXE_PPP': list_valap_static,
+        # 'macromod': list_macromod,
+        # 'lunisolaires': list_lunisol,
+        # 'maree_polaire/loading': list_maree_pol,
+        '.': list_misc,
 
         ### time dependant files
         'tropo_vmf1': list_tropo,
