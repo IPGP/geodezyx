@@ -162,6 +162,7 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
         comp_clk_cmd = ['find', os.path.join(dir_bdgins, dirr), '-name', '!', '.gz', '-exec', 'gzip', '-v', '{}', '\;']
         process = subprocess.run(comp_clk_cmd, stderr=sys.stderr, stdout=sys.stdout, text=True)
 
+
     return None
 
 
