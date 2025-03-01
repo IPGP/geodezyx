@@ -13,6 +13,7 @@ import os
 import time
 import glob
 import numpy as np
+import pandas as pd
 import yaml
 
 #### geodeZYX modules
@@ -499,7 +500,7 @@ def _dir_rnx_site_id(rnx_name, sites_id9_series):
     else: ### RINEX2
         site_id4 = rnx_name[0:4].upper()
         site_id9 = site_id4 + "00XXX"
-        if sites_id9_series is not None:
+        if type(sites_id9_series) is pd.Series:
             ser_bool = sites_id9_series["NAME"].str[:4].str.match(site_id4)
             if ser_bool.any():
                 site_id9 = sites_id9_series.loc[ser_bool,"NAME"].values[0]
