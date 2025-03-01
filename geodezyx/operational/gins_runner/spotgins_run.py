@@ -20,6 +20,10 @@ from geodezyx import files_rw
 
 spotgins_wrap = None
 
+#### Import the logger
+import logging
+log = logging.getLogger("geodezyx")
+
 
 def spotgins_run(
     rnxs_path_inp,
@@ -82,6 +86,7 @@ def spotgins_run(
 
         ######## CLEANING ####################
         if not no_clean_tmp and os.path.exists(tmp_folder):
+            log.info(f"Cleaning temporary folder {tmp_folder}")
             shutil.rmtree(tmp_folder)
 
     ##### END Multi-processing Wrapper END ################
@@ -173,6 +178,7 @@ def archive_gins_run(dir_inp, archive_folder):
                                    [dir_arch_fld, li_arch_fld, sol_arch_fld]):
 
         for f in glob.glob(os.path.join(batch_fld, "*" + dir_basename + "*")):
+            log.info(f"Archiving {f} to {arch_fld}")
             shutil.move(f, arch_fld)
 
     return
