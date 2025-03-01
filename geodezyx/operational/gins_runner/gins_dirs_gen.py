@@ -502,12 +502,12 @@ def _dir_rnx_site_id(rnx_name, sites_id9_series):
         site_id9 = site_id4 + "00XXX"
         if type(sites_id9_series) is pd.Series:
             print(sites_id9_series)
-            ser_bool = sites_id9_series["NAME"].str[:4].str.match(site_id4)
+            ser_bool = sites_id9_series.str[:4].str.match(site_id4)
             if ser_bool.any():
-                site_id9 = sites_id9_series.loc[ser_bool,"NAME"].values[0]
+                site_id9 = sites_id9_series.loc[ser_bool].values[0]
             if ser_bool.sum() > 1:
                 log.warning("more than one site_id9 found for %s", site_id4)
-                log.warning("%s", sites_id9_series.loc[ser_bool,"NAME"].values)
+                log.warning("%s", sites_id9_series.loc[ser_bool].values)
                 log.warning("taking the first one : %s", site_id9)
 
     site_id4_upper = site_id9[0:4]
