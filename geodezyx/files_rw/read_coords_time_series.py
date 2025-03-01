@@ -2654,6 +2654,11 @@ def read_webobs(filein,typein="txt",
     return tsout
 
 
+def read_spotgins_masterfile(master_inp):
+    return pd.read_fwf(master_inp, infer_nrows=11,skiprows=5, comment="#")
+
+
+
  #  ______                _   _                _____                                         _ 
  # |  ____|              | | (_)              / ____|                                       | |
  # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |

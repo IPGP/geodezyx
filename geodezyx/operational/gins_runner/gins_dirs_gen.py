@@ -50,6 +50,7 @@ def gen_dirs_rnxs(
     prairie=False,
     prairie_kwargs={"with_historik": 1, "with_wsb": 1},
     force=False,
+    sites_id9_series=None
 ):
     """
     Generate directors from RINEX files.
@@ -74,7 +75,7 @@ def gen_dirs_rnxs(
     temp_data_folder : str, optional
         Temporary data folder. Defaults to None.
         is not specified RINEXs will be copied in
-        an ad hoc folder ``../gin/TEMP_DATA``
+        an ad hoc folder ``../gin/TMP_GYNS``
     stations_file : str, optional
         Path to the stations file. Defaults to None.
     oceanload_file : str, optional
@@ -127,11 +128,15 @@ def gen_dirs_rnxs(
         log.error("check the rinex_paths_in !!!")
         return None
 
-    gin_path = gynscmn.get_gin_path()
+    gin_path = gynscmn.get_gin_path() # must remain not extended
     rnx_path_lis = list(sorted(rnx_path_lis))
     n_rnxs = len(rnx_path_lis)
     director_output_path_lis = []
     failed_rinex_date_lis = []
+    temp_data_folder_lis = []
+
+    dir_out_path = None
+    temp_data_folder_use = None
 
     def _fail_rnx(rnx_path_inp, rnx_dt_inp, message):
         log.error(message + ", skip %s", rnx_path_inp)
@@ -149,7 +154,7 @@ def gen_dirs_rnxs(
         log.info(" === %s ", os.path.basename(rnx_path_ori))
         rnx_name = os.path.basename(rnx_path_ori)
         rnx_dt = conv.rinexname2dt(rnx_name)
-        site_id9, site_id4_upper, site_id4_lower = _dir_rnx_site_id(rnx_name)
+        site_id9, site_id4_upper, site_id4_lower = _dir_rnx_site_id(rnx_name, sites_id9_series)
 
         coord_prefix = (
             f"_{out_coords.lower()}" if out_coords.upper() in ("FLH", "XYZ") else ""
@@ -178,7 +183,7 @@ def gen_dirs_rnxs(
 
         # be sure there is a TEMP DATA folder
         if not temp_data_folder:
-            temp_data_folder = os.path.join(gin_path, "gin", "TEMP_DATA")
+            temp_data_folder = gynscmn.get_temp_data_gins_path()
         if not os.path.exists(temp_data_folder):
             os.makedirs(temp_data_folder)
 
@@ -403,6 +408,7 @@ def gen_dirs_rnxs(
         utils.replace(dir_out_path, "true", "yes")
 
         director_output_path_lis.append(dir_out_path)
+        temp_data_folder_lis.append(temp_data_folder_use)
 
     if multimode:
         if len(failed_rinex_date_lis) > 0:
@@ -410,7 +416,7 @@ def gen_dirs_rnxs(
             print("       ", [str(d) for d in failed_rinex_date_lis])
         return director_output_path_lis
     else:
-        return dir_out_path
+        return dir_out_path, temp_data_folder_use
 
 
 def _dir_regular_orbclk(dt_rinex_inp):
@@ -487,11 +493,21 @@ def _dir_auto_staocl(stat_lower, dt_rinex, rinex_path, temp_data_folder):
     return stat_path_out, oclo_path_out
 
 
-def _dir_rnx_site_id(rnx_name):
-    if conv.rinex_regex_search_tester(rnx_name, short_name=False, long_name=True):
+def _dir_rnx_site_id(rnx_name, sites_id9_series):
+    if conv.rinex_regex_search_tester(rnx_name, short_name=False, long_name=True): ### RINEX3
         site_id9 = rnx_name[0:9].upper()
-    else:
-        site_id9 = rnx_name[0:4].upper() + "00XXX"
+    else: ### RINEX2
+        site_id4 = rnx_name[0:4].upper()
+        site_id9 = site_id4 + "00XXX"
+        if sites_id9_series:
+            ser_bool = sites_id9_series["NAME"].str[:4].str.match(site_id4)
+            if ser_bool.any():
+                site_id9 = sites_id9_series.loc[ser_bool,"NAME"].values[0]
+            if ser_bool.sum() > 1:
+                log.warning("more than one site_id9 found for %s", site_id4)
+                log.warning("%s", sites_id9_series.loc[ser_bool,"NAME"].values)
+                log.warning("taking the first one : %s", site_id9)
+
     site_id4_upper = site_id9[0:4]
     site_id4_lower = site_id4_upper.lower()
 

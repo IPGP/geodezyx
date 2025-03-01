@@ -310,7 +310,7 @@ def get_temp_data_gins_path():
     gins_path = get_gin_path()
 
     # be sure there is a TEMP DATA folder
-    temp_data_folder = os.path.join(gins_path, "gin", "TEMP_DATA")
+    temp_data_folder = os.path.join(gins_path, "gin", "TMP_GYNS")
 
     if not os.path.exists(temp_data_folder):
         os.makedirs(temp_data_folder)
