@@ -60,30 +60,6 @@ def download_rsync(file_list, remote_user, remote_host, remote_path, local_desti
     os.remove(tmp_rsync_file_lis)
     return
 
-def update_env_files(login, password, dir_bdgins):
-    os.chdir(dir_bdgins)
-    list_files = subprocess.check_output(
-        "grep '/' /root/spotgins/metadata/directeur/DIR_SPOTGINS_G20_GE.yml | grep -v 'clock' | grep -v 'orbite' | grep -v 'ionex' | grep -v 'attitude' | awk -F: '{print $2}'",
-        shell=True
-    ).decode().splitlines()
-
-    for fic in list_files:
-        file = fic.split('/')[-1]
-        rep = fic.replace(file, '')
-        if not os.path.exists(rep):
-            os.makedirs(rep)
-        os.chdir(rep)
-        commands = f"set xfer:clobber on\nmget /home/gins/MIROIR_STAF/{fic}\nexit"
-        download_lftp(login, password, commands)
-        os.chdir(dir_bdgins)
-
-    if not os.path.exists('prairie'):
-        os.makedirs('prairie')
-    os.chdir('prairie')
-    commands = "set xfer:clobber on\nmget /home/gins/MIROIR_STAF/prairie/igs_satellite_metadata.snx\nexit"
-    download_lftp(login, password, commands)
-    os.chdir(dir_bdgins)
-
 def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
 
     date = date_srt
@@ -180,6 +156,15 @@ def update_bdgins(date_srt, date_end, dir_bdgins, login ="", password =""):
                        remote_subdir_fullpath,
                        local_subdir_fullpath,
                        password)
+
+    # compress the clock files
+    for dirr in ['mesures/gps/horloges30/G20', 'mesures/gps/orbites/G20']:
+        comp_clk_cmd = ['find', os.path.join(dir_bdgins, dirr), '-name', '!', '.gz', '-exec', 'gzip', '-v', '{}', '\;']
+        process = subprocess.run(comp_clk_cmd, stderr=sys.stderr, stdout=sys.stdout, text=True)
+
+    return None
+
+
 
 def create_dir(parent_dir, subdirs):
     if not os.path.exists(parent_dir):
