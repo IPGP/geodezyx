@@ -135,7 +135,7 @@ def get_spotgins_files(
             sptgns_path, "metadata", "directeur", "options_prairie_static"
         )
 
-    if os.path.isfile(stations_master_file_inp):
+    if stations_master_file_inp and os.path.isfile(stations_master_file_inp):
         siteid9_use = files_rw.read_spotgins_masterfile(stations_master_file_inp)
         siteid9_use = siteid9_use["NAME"]
     elif sptgns_path:
@@ -156,7 +156,6 @@ def archive_gins_run(dir_inp, archive_folder):
     arch_fld_site = str(os.path.join(archive_folder, site_id9))
     if not os.path.exists(arch_fld_site):
         os.makedirs(arch_fld_site)
-
 
     dir_batch_fld = os.path.join(gynscmn.get_gin_path(True), "data", "directeur")
     li_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "listing")
