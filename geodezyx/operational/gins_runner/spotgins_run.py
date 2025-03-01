@@ -82,12 +82,10 @@ def spotgins_run(
         )
 
         ######## ARCHIVING ####################
-        print(f"AAAAAAAAAA Archiving {dirr}, no_archive={no_archive}, archive_folder_inp={archive_folder_inp}")
         if not no_archive and archive_folder_inp:
             archive_gins_run(dirr, archive_folder_inp)
 
         ######## CLEANING ####################
-        print(f"AAAAAAAAAA Cleaning temporary folder {tmp_folder}, no_clean_tmp={no_clean_tmp}")
         if not no_clean_tmp and os.path.exists(tmp_folder):
             log.info(f"Cleaning temporary folder {tmp_folder}")
             shutil.rmtree(tmp_folder)
@@ -160,7 +158,7 @@ def get_spotgins_files(
 
 def archive_gins_run(dir_inp, archive_folder):
     dir_basename = os.path.basename(dir_inp)
-    site_id9 = re.match(r"....00\w{3}", dir_basename).group(1)
+    site_id9 = re.search(r"_(....00\w{3})_", 'SPOTGINS_ALBH00CAN_2011_358_22637__.yml').group(1)
     arch_fld_site = str(os.path.join(archive_folder, site_id9))
     if not os.path.exists(arch_fld_site):
         os.makedirs(arch_fld_site)
@@ -181,7 +179,6 @@ def archive_gins_run(dir_inp, archive_folder):
         [dir_batch_fld, li_batch_fld, sol_batch_fld],
         [dir_arch_fld, li_arch_fld, sol_arch_fld],
     ):
-        log.info(f"Archiving {batch_fld} to {arch_fld}")
 
         for f in glob.glob(os.path.join(batch_fld, "*" + dir_basename + "*")):
             log.info(f"Archiving {f} to {arch_fld}")
