@@ -22,6 +22,7 @@ spotgins_wrap = None
 
 #### Import the logger
 import logging
+
 log = logging.getLogger("geodezyx")
 
 
@@ -81,10 +82,12 @@ def spotgins_run(
         )
 
         ######## ARCHIVING ####################
+        print(f"AAAAAAAAAA Archiving {dirr}, no_archive={no_archive}, archive_folder_inp={archive_folder_inp}")
         if not no_archive and archive_folder_inp:
             archive_gins_run(dirr, archive_folder_inp)
 
         ######## CLEANING ####################
+        print(f"AAAAAAAAAA Cleaning temporary folder {tmp_folder}, no_clean_tmp={no_clean_tmp}")
         if not no_clean_tmp and os.path.exists(tmp_folder):
             log.info(f"Cleaning temporary folder {tmp_folder}")
             shutil.rmtree(tmp_folder)
@@ -174,8 +177,10 @@ def archive_gins_run(dir_inp, archive_folder):
         if not os.path.exists(arch_fld):
             os.makedirs(arch_fld)
 
-    for batch_fld, arch_fld in zip([dir_batch_fld, li_batch_fld, sol_batch_fld],
-                                   [dir_arch_fld, li_arch_fld, sol_arch_fld]):
+    for batch_fld, arch_fld in zip(
+        [dir_batch_fld, li_batch_fld, sol_batch_fld],
+        [dir_arch_fld, li_arch_fld, sol_arch_fld],
+    ):
 
         for f in glob.glob(os.path.join(batch_fld, "*" + dir_basename + "*")):
             log.info(f"Archiving {f} to {arch_fld}")

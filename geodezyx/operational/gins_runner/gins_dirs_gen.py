@@ -415,7 +415,7 @@ def gen_dirs_rnxs(
         if len(failed_rinex_date_lis) > 0:
             print("INFO : ", len(failed_rinex_date_lis), "/", n_rnxs, " RINEXs failed")
             print("       ", [str(d) for d in failed_rinex_date_lis])
-        return director_output_path_lis
+        return director_output_path_lis, temp_data_folder_lis
     else:
         return dir_out_path, temp_data_folder_use
 
