@@ -198,7 +198,7 @@ def update_bdgins(
                 "gzip",
                 "-v",
                 "{}",
-                "\\;",
+                r"\;",
             ]
             process = subprocess.run(
                 cmd, stderr=sys.stderr, stdout=sys.stdout, text=True
