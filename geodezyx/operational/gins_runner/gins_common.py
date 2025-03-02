@@ -348,6 +348,9 @@ def get_director_list(wildcard_dir):
     return di_run_lis
 
 
+
+operational.rinex_finder()
+
 def get_rinex_list(
     parent_folder,
     specific_stats=[],

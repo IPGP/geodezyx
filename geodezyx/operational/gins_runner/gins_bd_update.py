@@ -58,7 +58,7 @@ def download_rsync(
         rsync_base = ["rsync"] + rsync_options
 
     #if exclude_compress:
-    #   '--ignore-existing' '--exclude-from=<(echo "$(find /destination -name '*.gz' | sed 's/\.gz$//')"')
+    #   '--ignore-existing' '--exclude-from=<(echo "$(find /destination -name '*.gz' | sed 's/\.gz$//')"')'
 
     tmp_rsync_file_lis = f"/tmp/" + utils.get_timestamp() + "_tmp_rsync_file_list.lst"
     utils.write_in_file("\n".join(file_list), tmp_rsync_file_lis)
