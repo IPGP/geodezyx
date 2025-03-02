@@ -158,7 +158,7 @@ def get_spotgins_files(
 
 def archive_gins_run(dir_inp, archive_folder):
     dir_basename = os.path.basename(dir_inp)
-    site_id9 = re.search(r"_(....00\w{3})_", 'SPOTGINS_ALBH00CAN_2011_358_22637__.yml').group(1)
+    site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
     arch_fld_site = str(os.path.join(archive_folder, site_id9))
     if not os.path.exists(arch_fld_site):
         os.makedirs(arch_fld_site)
