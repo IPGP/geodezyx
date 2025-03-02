@@ -348,103 +348,6 @@ def get_director_list(wildcard_dir):
     return di_run_lis
 
 
-
-operational.rinex_finder()
-
-def get_rinex_list(
-    parent_folder,
-    specific_stats=[],
-    invert=False,
-    compressed=True,
-    start=dt.datetime(1980, 1, 1),
-    end=dt.datetime(2099, 1, 1),
-):
-    """return :
-        all RINEXs found in a parent folder and his subfolders
-        (compressed or not)
-
-    parent_folder :
-        can be a the path of the partent folder (the rinex archive path)
-        but also a RINEX list already found
-        (modification of 170524 to gain speed)
-
-    specific_stats :
-        MUST BE a list ['STA1','STA2','STA3']
-        So, if only one elt in specific_stats, use a syntax as : ['STA1']
-
-    invert :
-        False = keeping the specific stats
-        True  = removing the specific stats
-        or for all stations, leave a empty
-        tuple in specific_stats
-
-    NB : the end date is included
-    """
-    if type(parent_folder) is str:
-        wholefilelist = []
-        for root, dirs, files in os.walk(parent_folder, topdown=False):
-            for name in files:
-                wholefilelist.append(os.path.join(root, name))
-
-        wholefilelist = list(set(wholefilelist))
-
-        if compressed:
-            rnxregex = operational.rinex_regex()
-        else:
-            rnxregex = operational.rinex_regex(False)
-
-        rinexfilelist = [fil for fil in wholefilelist if re.search(rnxregex, fil)]
-    elif utils.is_iterable(parent_folder):
-        # is parent_folder is a list containing already found RINEXs
-        rinexfilelist = parent_folder
-
-    specific_stats = [e.lower() for e in specific_stats]
-
-    if specific_stats != []:
-        if not invert:
-            goodrnxfilelist = [
-                fil
-                for fil in rinexfilelist
-                if os.path.basename(fil)[0:4] in specific_stats
-            ]
-        else:
-            goodrnxfilelist = [
-                fil
-                for fil in rinexfilelist
-                if os.path.basename(fil)[0:4] not in specific_stats
-            ]
-    else:
-        goodrnxfilelist = rinexfilelist
-
-    goodrnxfilelist = sorted(goodrnxfilelist)
-
-    if goodrnxfilelist == []:
-        print(
-            "WARN : get_rinex_list : no RINEX found, check the path of the parent folder !"
-        )
-    else:
-        print("INFO : get_rinex_list :", len(goodrnxfilelist), "RINEXs found")
-
-    goodrnxfilelist_date = []
-    end = end + dt.timedelta(seconds=86399)
-    for rnx in goodrnxfilelist:
-        dtrnx = conv.rinexname2dt(os.path.basename(rnx))
-        if start <= dtrnx <= end:
-            goodrnxfilelist_date.append(rnx)
-    if len(goodrnxfilelist_date) != len(goodrnxfilelist):
-        dif = len(goodrnxfilelist) - len(goodrnxfilelist_date)
-        print(
-            "INFO : get_rinex_list :",
-            dif,
-            "RINEXs removed bc. not in the date interval",
-        )
-
-    if goodrnxfilelist_date == []:
-        print("WARN : get_rinex_list : all RINEXs removed bc. of date interval")
-
-    return goodrnxfilelist_date
-
-
 def sort_by_stations(archive_path, wildcard, i):
     """i is the indice of the first character of the station name in
     eg : i = 18 for filename KARIB_MK3_FLH_v2__bara_22282_2011_003
@@ -462,8 +365,8 @@ def sort_by_stations(archive_path, wildcard, i):
 
     for f in filis:
         stat = os.path.basename(f)[i : i + 4]
-        STAT = stat.upper()
-        archiv = os.path.join(archive_path, STAT)
+        stat_up = stat.upper()
+        archiv = os.path.join(archive_path, stat_up)
         if not os.path.exists(archiv):
             os.makedirs(archiv)
         shutil.move(f, archiv)
@@ -516,3 +419,100 @@ def check_solution(dir_name_inp, gin_path_inp=None):
 # yaml_out = '/home/psakicki/GINS/gin/TP/TP_RELAX/DIR_MC0_perso2.yml'
 #
 # merge_yaml(yaml1,yaml2,yaml_out)
+
+
+###### FUNCTIONS GRAVEYARD ########
+
+# def get_rinex_list(
+#     parent_folder,
+#     specific_stats=[],
+#     invert=False,
+#     compressed=True,
+#     start=dt.datetime(1980, 1, 1),
+#     end=dt.datetime(2099, 1, 1),
+# ):
+#     """return :
+#         all RINEXs found in a parent folder and his subfolders
+#         (compressed or not)
+#
+#     parent_folder :
+#         can be a the path of the partent folder (the rinex archive path)
+#         but also a RINEX list already found
+#         (modification of 170524 to gain speed)
+#
+#     specific_stats :
+#         MUST BE a list ['STA1','STA2','STA3']
+#         So, if only one elt in specific_stats, use a syntax as : ['STA1']
+#
+#     invert :
+#         False = keeping the specific stats
+#         True  = removing the specific stats
+#         or for all stations, leave a empty
+#         tuple in specific_stats
+#
+#     NB : the end date is included
+#     """
+#     if type(parent_folder) is str:
+#         wholefilelist = []
+#         for root, dirs, files in os.walk(parent_folder, topdown=False):
+#             for name in files:
+#                 wholefilelist.append(os.path.join(root, name))
+#
+#         wholefilelist = list(set(wholefilelist))
+#
+#         if compressed:
+#             rnxregex = operational.rinex_regex()
+#         else:
+#             rnxregex = operational.rinex_regex(False)
+#
+#         rinexfilelist = [fil for fil in wholefilelist if re.search(rnxregex, fil)]
+#     elif utils.is_iterable(parent_folder):
+#         # is parent_folder is a list containing already found RINEXs
+#         rinexfilelist = parent_folder
+#
+#     specific_stats = [e.lower() for e in specific_stats]
+#
+#     if specific_stats != []:
+#         if not invert:
+#             goodrnxfilelist = [
+#                 fil
+#                 for fil in rinexfilelist
+#                 if os.path.basename(fil)[0:4] in specific_stats
+#             ]
+#         else:
+#             goodrnxfilelist = [
+#                 fil
+#                 for fil in rinexfilelist
+#                 if os.path.basename(fil)[0:4] not in specific_stats
+#             ]
+#     else:
+#         goodrnxfilelist = rinexfilelist
+#
+#     goodrnxfilelist = sorted(goodrnxfilelist)
+#
+#     if goodrnxfilelist == []:
+#         print(
+#             "WARN : get_rinex_list : no RINEX found, check the path of the parent folder !"
+#         )
+#     else:
+#         print("INFO : get_rinex_list :", len(goodrnxfilelist), "RINEXs found")
+#
+#     goodrnxfilelist_date = []
+#     end = end + dt.timedelta(seconds=86399)
+#     for rnx in goodrnxfilelist:
+#         dtrnx = conv.rinexname2dt(os.path.basename(rnx))
+#         if start <= dtrnx <= end:
+#             goodrnxfilelist_date.append(rnx)
+#     if len(goodrnxfilelist_date) != len(goodrnxfilelist):
+#         dif = len(goodrnxfilelist) - len(goodrnxfilelist_date)
+#         print(
+#             "INFO : get_rinex_list :",
+#             dif,
+#             "RINEXs removed bc. not in the date interval",
+#         )
+#
+#     if goodrnxfilelist_date == []:
+#         print("WARN : get_rinex_list : all RINEXs removed bc. of date interval")
+#
+#     return goodrnxfilelist_date
+
