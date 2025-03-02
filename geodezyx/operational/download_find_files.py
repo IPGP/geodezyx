@@ -16,12 +16,9 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 # External modules
 import datetime as dt
-# from ftplib import FTP
 import glob
 # Import the logger
 import logging
-# import itertools
-# import multiprocessing as mp
 import os
 import re
 
@@ -34,7 +31,6 @@ from geodezyx import utils
 log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
-
 
 def rinex_finder(
     main_dir,
@@ -63,7 +59,8 @@ def rinex_finder(
         if None, does not matter (return both compressed or not)
     specific_sites : list, optional
         Filter only those specific sites. The default is [].
-    start_epoch and end_epoch : datetime, optional
+    start_epoch : datetime, optional
+    end_epoch : datetime, optional
         Filter the RINEXs between those two epochs (included)
         Can be for instance
         `start_epoch=dt.datetime(2021,1,1)` and
