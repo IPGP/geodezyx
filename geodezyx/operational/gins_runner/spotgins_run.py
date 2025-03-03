@@ -15,8 +15,9 @@ import multiprocessing as mp
 import os
 import shutil
 import glob
+import time
 
-from geodezyx import files_rw
+from geodezyx import files_rw, conv
 
 spotgins_wrap = None
 
@@ -28,8 +29,8 @@ log = logging.getLogger("geodezyx")
 
 def spotgins_run(
     rnxs_path_inp,
+    archive_folder_inp,
     nprocs=8,
-    archive_folder_inp=None,
     version="VALIDE_23_2",
     const="G",
     director_generik_path_inp=None,
@@ -38,8 +39,7 @@ def spotgins_run(
     oceanload_file_inp=None,
     options_prairie_file_inp=None,
     stations_master_file_inp=None,
-    force_gen=False,
-    force_run=False,
+    force=False,
     no_archive=False,
     no_clean_tmp=False,
 ):
@@ -58,6 +58,12 @@ def spotgins_run(
     global spotgins_wrap
 
     def spotgins_wrap(rnx_mono_path_inp):
+
+        ######## QUICK ARCHIVING CHECK ############# # Check if the solution is already archived
+        if not force and check_arch_sol(rnx_mono_path_inp, archive_folder_inp):
+            log.info(f"Solution already archived for {rnx_mono_path_inp}, skip")
+            return
+
         ######## DIRECTORS GENERATION ########
         dirr, tmp_folder = gynsgen.gen_dirs_rnxs(
             rnx_paths_inp=rnx_mono_path_inp,
@@ -67,7 +73,7 @@ def spotgins_run(
             oceanload_file=oclo_use,
             options_prairie_file=opra_use,
             auto_interval=False,
-            force=force_gen,
+            force=force,
             sites_id9_series=siteid9_use,
         )
 
@@ -78,11 +84,11 @@ def spotgins_run(
             opts_gins_90=opt_gins_90_use,
             version=version,
             cmd_mode="exe_gins_dir",
-            force=force_run,
+            force=force,
         )
 
         ######## ARCHIVING ####################
-        if not no_archive and archive_folder_inp:
+        if not no_archive:
             archive_gins_run(dirr, archive_folder_inp)
 
         ######## CLEANING ####################
@@ -110,7 +116,7 @@ def get_spotgins_files(
         not stations_file_inp or not oceanload_file_inp or not options_prairie_file_inp
     ):
         raise ValueError(
-            "SPOTGINS path not set ($SPOTGINS_DIR) and stations_file, oceanload_file or options_prairie_file not provided"
+            "SPOTGINS path not set ($SPOTGINS_DIR) and stations_file/oceanload_file/options_prairie_file not provided"
         )
     else:
         sptgns_path = gynscmn.get_spotgins_path()
@@ -157,6 +163,7 @@ def get_spotgins_files(
 
 
 def archive_gins_run(dir_inp, archive_folder):
+    time.sleep(0.5) # wait a proper GINS end
     dir_basename = os.path.basename(dir_inp)
     site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
     arch_fld_site = str(os.path.join(archive_folder, site_id9))
@@ -180,8 +187,29 @@ def archive_gins_run(dir_inp, archive_folder):
         [dir_arch_fld, li_arch_fld, sol_arch_fld],
     ):
 
-        for f in glob.glob(os.path.join(batch_fld, "*" + dir_basename + "*")):
+        for f in glob.glob(os.path.join(batch_fld, dir_basename + "*")):
             log.info(f"Archiving {f} to {arch_fld}")
             shutil.move(f, arch_fld)
 
     return
+
+
+def check_arch_sol(rnx_path_inp, archive_folder_inp):
+    epo = conv.rinexname2dt(rnx_path_inp)
+    epo_str = epo.strftime("%Y_%j")
+    site_id4 = str(os.path.basename(rnx_path_inp)[0:4].upper())
+
+    potential_sol = glob.glob(
+        os.path.join(
+            archive_folder_inp,
+            "*" + site_id4 + "*",
+            "030_solutions",
+            "*" + site_id4 + "*" + epo_str + "*",
+        )
+    )
+
+    if len(potential_sol) > 0:
+        log.info(f"Solution(s) found: {potential_sol}")
+        return True
+    else:
+        return False
