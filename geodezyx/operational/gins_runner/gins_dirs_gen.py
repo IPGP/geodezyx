@@ -11,7 +11,6 @@ Created on 26/02/2025 11:06:06
 import datetime as dt
 import os
 import time
-import glob
 import numpy as np
 import pandas as pd
 import yaml
@@ -42,7 +41,8 @@ def gen_dirs_rnxs(
     stations_file=None,
     oceanload_file=None,
     options_prairie_file=None,
-    auto_staocl=False,
+    auto_stations_file=False,
+    auto_oceanload=False,
     perso_orbclk=False,
     ac="igs",
     repro=2,
@@ -51,7 +51,7 @@ def gen_dirs_rnxs(
     prairie=False,
     prairie_kwargs={"with_historik": 1, "with_wsb": 1},
     force=False,
-    sites_id9_series=None
+    sites_id9_series=None,
 ):
     """
     Generate directors from RINEX files.
@@ -83,7 +83,8 @@ def gen_dirs_rnxs(
         Path to the ocean load file. Defaults to None.
     options_prairie_file : str, optional
         Path to the prairie options file. Defaults to None.
-    auto_staocl : bool, optional
+    auto_stations_file: bool, optional
+    auto_oceanload: bool, optional
         Automatically create station and ocean loading files.
         create automatically a station file and a ocean loading file
         with the rinex header
@@ -129,7 +130,7 @@ def gen_dirs_rnxs(
         log.error("check the rinex_paths_in !!!")
         return None
 
-    gin_path = gynscmn.get_gin_path() # must remain not extended
+    gin_path = gynscmn.get_gin_path()  # must remain not extended
     rnx_path_lis = list(sorted(rnx_path_lis))
     n_rnxs = len(rnx_path_lis)
     director_output_path_lis = []
@@ -137,7 +138,7 @@ def gen_dirs_rnxs(
     temp_data_folder_lis = []
 
     dir_out_path = None
-    temp_data_folder_use = None
+    tmp_fld_use = None
 
     def _fail_rnx(rnx_path_inp, rnx_dt_inp, message):
         log.error(message + ", skip %s", rnx_path_inp)
@@ -155,7 +156,9 @@ def gen_dirs_rnxs(
         log.info(" === %s ", os.path.basename(rnx_path_ori))
         rnx_name = os.path.basename(rnx_path_ori)
         rnx_dt = conv.rinexname2dt(rnx_name)
-        site_id9, site_id4_upper, site_id4_lower = _dir_rnx_site_id(rnx_name, sites_id9_series)
+        site_id9, site_id4_upper, site_id4_lower = _dir_rnx_site_id(
+            rnx_name, sites_id9_series
+        )
 
         coord_prefix = (
             f"_{out_coords.lower()}" if out_coords.upper() in ("FLH", "XYZ") else ""
@@ -189,20 +192,20 @@ def gen_dirs_rnxs(
             os.makedirs(temp_data_folder)
 
         # go for a sub TEMP folder
-        temp_data_folder_use = os.path.join(
+        tmp_fld_use = os.path.join(
             temp_data_folder, utils.get_timestamp() + "_" + dir_name
         )
-        os.makedirs(temp_data_folder_use)
+        os.makedirs(tmp_fld_use)
 
         # be sure the RINEX is in gins folder ...
-        rnx_path = gynscmn.bring_to_gin(rnx_path_ori, temp_data_folder_use)
+        rnx_path = gynscmn.bring_to_gin(rnx_path_ori, tmp_fld_use)
 
         # check if the RINEX is compressed ...
         bool_comp_rnx = operational.check_if_compressed_rinex(rnx_path)
         # ... if not crz2rnx !
         if bool_comp_rnx:
             crinex_path = rnx_path
-            rnx_path = operational.crz2rnx(crinex_path, temp_data_folder_use)
+            rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use)
             if not os.path.isfile(rnx_path):
                 bool_cntu = _fail_rnx(rnx_path, rnx_dt, "CRZ2RNX failed")
                 if bool_cntu:
@@ -213,7 +216,7 @@ def gen_dirs_rnxs(
         if prairie:
             log.info("run prairie externally")
             pra_file_path = gynspra.prairie_manual(
-                rnx_path, temp_data_folder_use, **prairie_kwargs
+                rnx_path, tmp_fld_use, **prairie_kwargs
             )
 
             if type(pra_file_path) is list and len(pra_file_path) == 0:
@@ -263,8 +266,12 @@ def gen_dirs_rnxs(
         if "initial_state_vector_date" in list(dir_dic["date"].keys()):
             dir_dic["date"]["initial_state_vector_date"][0] = strt_day
 
-        dir_dic["date"]["arc_start"][1] = strt_sec - 1 # -1 to make it SPOTGINS compatible
-        dir_dic["date"]["arc_stop"][1] = end_sec + 1 # +1 to make it SPOTGINS compatible
+        dir_dic["date"]["arc_start"][1] = (
+            strt_sec - 1
+        )  # -1 to make it SPOTGINS compatible
+        dir_dic["date"]["arc_stop"][1] = (
+            end_sec + 1
+        )  # +1 to make it SPOTGINS compatible
         if "initial_state_vector_date" in list(dir_dic["date"].keys()):
             dir_dic["date"]["initial_state_vector_date"][1] = strt_sec
 
@@ -300,23 +307,29 @@ def gen_dirs_rnxs(
         # station file and oceanload file , auto or manu mode
         # auto mode is prioritary upon the manu mode
 
-        if not auto_staocl and (not oceanload_file or not stations_file):
-            log.warning("auto_staocl is off and no stat/oclo file specified !!!")
+        if not auto_stations_file and not stations_file:
+            log.warning("auto_stations_file is off and no stations_file specified !!!")
 
-        if auto_staocl:
-            stations_file, oceanload_file = _dir_auto_staocl(
-                site_id4_lower, rnx_dt, rnx_path, temp_data_folder_use
+        if not auto_oceanload and not oceanload_file:
+            log.warning("auto_oceanload is off and no oceanload_file specified !!!")
+
+        if auto_stations_file:
+            stations_file = _dir_auto_stfi(
+                site_id4_lower, rnx_dt, rnx_path, tmp_fld_use
             )
 
-        if oceanload_file:
-            oclo_ingin = gynscmn.bring_to_gin(oceanload_file, temp_data_folder_use)
-            dir_dic["object"]["station"]["ocean_tide_loading"] = (
-                gynscmn.make_path_ginsstyle(oclo_ingin)
-            )
+        if auto_oceanload:
+            oceanload_file = _dir_auto_oclo(site_id4_lower, rnx_dt, tmp_fld_use)
+
         if stations_file:
-            stfi_ingin = gynscmn.bring_to_gin(stations_file, temp_data_folder_use)
+            stfi_ingin = gynscmn.bring_to_gin(stations_file, tmp_fld_use)
             dir_dic["object"]["station"]["station_coordinates"] = (
                 gynscmn.make_path_ginsstyle(stfi_ingin)
+            )
+        if oceanload_file:
+            oclo_ingin = gynscmn.bring_to_gin(oceanload_file, tmp_fld_use)
+            dir_dic["object"]["station"]["ocean_tide_loading"] = (
+                gynscmn.make_path_ginsstyle(oclo_ingin)
             )
 
         # ============== PRAIRIE OPTIONS ==============
@@ -330,7 +343,7 @@ def gen_dirs_rnxs(
         # =========   ORBITS/CLOCKS   =============
         if perso_orbclk:
             orbpath, horpath = gynsorb.download_convert_2_gins_orb_clk(
-                rnx_dt, temp_data_folder_use, ac=ac, repro=repro
+                rnx_dt, tmp_fld_use, ac=ac, repro=repro
             )
         else:
             orbpath, horpath = _dir_regular_orbclk(rnx_dt)
@@ -409,7 +422,7 @@ def gen_dirs_rnxs(
         utils.replace(dir_out_path, "true", "yes")
 
         director_output_path_lis.append(dir_out_path)
-        temp_data_folder_lis.append(temp_data_folder_use)
+        temp_data_folder_lis.append(tmp_fld_use)
 
     if multimode:
         if len(failed_rinex_date_lis) > 0:
@@ -417,7 +430,7 @@ def gen_dirs_rnxs(
             print("       ", [str(d) for d in failed_rinex_date_lis])
         return director_output_path_lis, temp_data_folder_lis
     else:
-        return dir_out_path, temp_data_folder_use
+        return dir_out_path, tmp_fld_use
 
 
 def _dir_regular_orbclk(dt_rinex_inp):
@@ -446,7 +459,83 @@ def _dir_regular_orbclk(dt_rinex_inp):
     return orbpath, horpath
 
 
+def _dir_auto_stfi(stat_lower, dt_rinex, rinex_path, temp_data_folder):
+    log.info("* Automatic station file generation :")
+    randid = "id" + str(np.random.randint(10000, 99999))
+    stat_fname = utils.join_improved(
+        "_",
+        stat_lower,
+        str(dt_rinex.year),
+        str(conv.dt2doy(dt_rinex)),
+        randid,
+        ".stat",
+    )
+
+    stfi_path_out = os.path.join(temp_data_folder, stat_fname)
+    files_rw.write_station_file_gins_from_rinex(rinex_path, stfi_path_out)
+    bool_statfil = os.path.isfile(stfi_path_out)
+    if not os.path.isfile(stfi_path_out):
+        log.error("no station file genrated !!!")
+        stfi_path_out = None
+
+    return stfi_path_out
+
+
+def _dir_auto_oclo(stat_lower, dt_rinex, temp_data_folder):
+    log.info("* Automatic stat and ocean loading file generation :")
+    randid = "id" + str(np.random.randint(10000, 99999))
+
+    oclo_fname = utils.join_improved(
+        "_",
+        stat_lower,
+        str(dt_rinex.year),
+        str(conv.dt2doy(dt_rinex)),
+        randid,
+        ".oclo",
+    )
+
+    oclo_path_out = os.path.join(temp_data_folder, oclo_fname)
+    bool_oclofil = os.path.isfile(oclo_path_out)
+    iwhile = 0
+    while not bool_oclofil or iwhile < 10:
+        if iwhile > 6:
+            log.warning("waiting for the ocean loading file for a while %i", iwhile)
+        iwhile = iwhile + 1
+        time.sleep(0.5)
+        bool_oclofil = os.path.isfile(oclo_path_out)
+
+    if not os.path.isfile(oclo_path_out):
+        log.error("no oceload file genrated !!!")
+        oclo_path_out = None
+
+    return oclo_path_out
+
+
+def _dir_rnx_site_id(rnx_name, sites_id9_series):
+    if conv.rinex_regex_search_tester(
+        rnx_name, short_name=False, long_name=True
+    ):  ### RINEX3
+        site_id9 = rnx_name[0:9].upper()
+    else:  ### RINEX2
+        site_id4 = rnx_name[0:4].upper()
+        site_id9 = site_id4 + "00XXX"
+        if type(sites_id9_series) is pd.Series:
+            ser_bool = sites_id9_series.str[:4].str.match(site_id4)
+            if ser_bool.any():
+                site_id9 = sites_id9_series.loc[ser_bool].values[0]
+            if ser_bool.sum() > 1:
+                log.warning("more than one site_id9 found for %s", site_id4)
+                log.warning("%s", sites_id9_series.loc[ser_bool].values)
+                log.warning("taking the first one : %s", site_id9)
+
+    site_id4_upper = site_id9[0:4]
+    site_id4_lower = site_id4_upper.lower()
+
+    return site_id9, site_id4_upper, site_id4_lower
+
+
 def _dir_auto_staocl(stat_lower, dt_rinex, rinex_path, temp_data_folder):
+    ##### DEPRECATED, NOW SEPARATED !!!
     log.info("* Automatic stat and ocload files generation :")
     randid = "id" + str(np.random.randint(10000, 99999))
     stat_fname = utils.join_improved(
@@ -492,24 +581,3 @@ def _dir_auto_staocl(stat_lower, dt_rinex, rinex_path, temp_data_folder):
         oclo_path_out = None
 
     return stat_path_out, oclo_path_out
-
-
-def _dir_rnx_site_id(rnx_name, sites_id9_series):
-    if conv.rinex_regex_search_tester(rnx_name, short_name=False, long_name=True): ### RINEX3
-        site_id9 = rnx_name[0:9].upper()
-    else: ### RINEX2
-        site_id4 = rnx_name[0:4].upper()
-        site_id9 = site_id4 + "00XXX"
-        if type(sites_id9_series) is pd.Series:
-            ser_bool = sites_id9_series.str[:4].str.match(site_id4)
-            if ser_bool.any():
-                site_id9 = sites_id9_series.loc[ser_bool].values[0]
-            if ser_bool.sum() > 1:
-                log.warning("more than one site_id9 found for %s", site_id4)
-                log.warning("%s", sites_id9_series.loc[ser_bool].values)
-                log.warning("taking the first one : %s", site_id9)
-
-    site_id4_upper = site_id9[0:4]
-    site_id4_lower = site_id4_upper.lower()
-
-    return site_id9, site_id4_upper, site_id4_lower

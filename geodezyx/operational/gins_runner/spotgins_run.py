@@ -71,6 +71,7 @@ def spotgins_run(
             director_name_prefix="SPOTGINS",
             stations_file=stfi_use,
             oceanload_file=oclo_use,
+            auto_stations_file=True,
             options_prairie_file=opra_use,
             auto_interval=False,
             force=force,
