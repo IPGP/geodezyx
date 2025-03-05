@@ -33,9 +33,42 @@ import pandas as pd
 from tqdm import tqdm
 
 #### geodeZYX modules
-from geodezyx import operational, utils
+from geodezyx import operational, utils, conv
 
 log = logging.getLogger('geodezyx')
+
+
+def read_rinex_obs(rnx_in, set_index=None):
+    """
+    Frontend function to read a RINEX Observation, version 2 or 3
+
+    Parameters
+    ----------
+    rnx_in : see below
+        input RINEX.
+        can be the path of a RINEX file as string or as Path object,
+        or directly the RINEX content as a string, bytes, StringIO object or a
+        list of lines
+    set_index : str or list of str, optional
+        define the columns for the index.
+        If None, the output DataFrame is "flat", with integer index
+        ["epoch","prn"] for instance set the epoch and the prn as MultiIndex
+        The default is None.
+
+    Returns
+    -------
+    df_rnx_obs : Pandas DataFrame / GeodeZYX's RINEX format
+    """
+
+    if conv.rinex_regex_search_tester(rnx_in,short_name=True,long_name=False):
+        return read_rinex2_obs(rnx_in, set_index=set_index)
+    elif conv.rinex_regex_search_tester(rnx_in,short_name=False,long_name=True):
+        return read_rinex3_obs(rnx_in, set_index=set_index)
+    else:
+        log.error("RINEX version not recognized: %s", rnx_in)
+        log.error("use read_rinex2_obs or read_rinex3_obs functions manually")
+        return None
+
 
 
 def read_rinex2_obs(rnx_in, set_index=None):
@@ -106,13 +139,17 @@ def read_rinex2_obs(rnx_in, set_index=None):
         lines_epoc = lines[il_srt:il_end]
 
         ### get the satellites for this epoch block
-        epoc, nsat, _, sats_split, iline_sats_end = _sats_find(lines_epoc)
+        sats_find_out = _sats_find(lines_epoc)
+        flag, epoc, nsat, _, sats_split, iline_sats_end = sats_find_out        
+        
+        if flag != 0: # skip the epoch (which is not an observable one)
+            log.warning("epoch %s skipped, flag %i",epoc, flag)
+            continue
 
         ### for each sat, merge the breaked lines
         resub80 = lambda x: re.sub(r"[\r\n]+", "", x.ljust(80))
         # .replace("\r", "").replace("\n", "") i.e. re.sub(r"[\r\n]+", "", s) IS NOT .strip() !!
         # .strip() removes the spaces at the beginning and end of the string, and they should be kept!
-
         l_obs = [ resub80(e) for e in lines_epoc[iline_sats_end + 1: il_end]]
         l_obs_merg = ["".join(l_obs[n * nl_obs:(n + 1) * nl_obs]) for n in range(nsat)]
 
@@ -127,6 +164,12 @@ def read_rinex2_obs(rnx_in, set_index=None):
         # faster
         col_epoch = pd.Series([epoch] * len(df_epoch), name="epoch")
         col_prn = pd.Series(sats_split, name="prn")
+        
+        if np.any(col_prn.str.len() == 0):
+            log.critical("bad epoch %s" , epoc)
+            raise Exception()
+            
+        
         df_epoch = pd.concat([col_epoch, col_prn, df_epoch], axis=1)
 
         df_all_stk.append(df_epoch)
@@ -159,8 +202,6 @@ def read_rinex2_obs(rnx_in, set_index=None):
 
 def read_rinex3_obs(rnx_in, set_index=None):
     """
-    DEVELOPPEMENT VERSION TO FASTEN THE PROCESS OF READING RINEX3 OBSERVATION FILES
-    SHOULD NOT BE USED IN PRODUCTION
 
     Read a RINEX Observation, version 3 or 4
 
@@ -232,6 +273,13 @@ def read_rinex3_obs(rnx_in, set_index=None):
     #### reading the epochs
     for iepoc in tqdm(range(len(epochs)), desc="Reading " + filename):
         epoch = epochs[iepoc, 0]
+        
+        ## check the flag
+        flag = int(lines[epochs[iepoc, 1]][31])
+        if flag != 0: # skip the epoch (which is not an observable one)
+            log.warning("epoch %s skipped, flag %i", epoch, flag)
+            continue
+
         ## define the start/end indices of the epoch block
         iline_start = epochs[iepoc, 1] + 1
         if iepoc == len(epochs) - 1:
@@ -453,6 +501,7 @@ def _sats_find(lines_inp):
 
         ### we found an epoch line
         if re.search(re_epoch, l):
+            flag = int(l[28])
             nsat = int(l[30:32])
             iline_bloc = 0
             nlines_bloc = int(np.ceil(nsat / 12))
@@ -473,7 +522,7 @@ def _sats_find(lines_inp):
             #in_epoch = False
             lineconcat = "".join(lineconcat_stk)
             sats_split = [lineconcat[3 * n : 3 * n + 3] for n in range(nsat)]
-            bloc_tuple = (epoc, nsat, lineconcat, sats_split, il)
+            bloc_tuple = (flag, epoc, nsat, lineconcat, sats_split, il)
             return bloc_tuple
 
 

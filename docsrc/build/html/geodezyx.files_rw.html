@@ -2067,6 +2067,32 @@ The default is None.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.read_rinex_obs">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">read_rinex_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.read_rinex_obs" title="Link to this definition"></a></dt>
+<dd><p>Frontend function to read a RINEX Observation, version 2 or 3</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rnx_in</strong> (<em>see below</em>) – input RINEX.
+can be the path of a RINEX file as string or as Path object,
+or directly the RINEX content as a string, bytes, StringIO object or a
+list of lines</p></li>
+<li><p><strong>set_index</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – define the columns for the index.
+If None, the output DataFrame is “flat”, with integer index
+[“epoch”,”prn”] for instance set the epoch and the prn as MultiIndex
+The default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df_rnx_obs</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-geodezyx.files_rw.read_slr">
 <span id="geodezyx-files-rw-read-slr-module"></span><h2>geodezyx.files_rw.read_slr module<a class="headerlink" href="#module-geodezyx.files_rw.read_slr" title="Link to this heading"></a></h2>

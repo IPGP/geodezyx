@@ -4,7 +4,7 @@
 
 **Version: 4.6.0**  
 **Date: 2025-02-04**  
-**README Revision:** 2024-11-28  
+**README Revision:** 2025-02-10  
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany) 
 
@@ -41,40 +41,22 @@ Also tested with Anaconda
 
 ## Documentation
 
-See the following link:
+See the following link:  
 [https://ipgp.github.io/geodezyx/](https://ipgp.github.io/geodezyx/)
 
 ## Installation 
 
-See the following link:
+See the following link:  
 [https://ipgp.github.io/geodezyx/getting_started.html#installation](https://ipgp.github.io/geodezyx/getting_started.html#installation)
 
-## Installation (detailed legacy instructions)
-
-### with PyPI and pip
-
-We recommend using `pip` to do a proper installation.  
-To get the latest working version, you can install directly the GitHub-hosted version (recommended):  
-
-``pip install git+https://github.com/IPGP/geodezyx``
-
-You can also install the version hosted on PyPI (but you will not get the latest changes)
-
-``pip install geodezyx``
-
-### clone and manually install from GitHub
-
-You can manually fork and/or clone the GitHub repository
-([https://github.com/IPGP/geodezyx/](https://github.com/IPGP/geodezyx/))
-using your favorite flavor:
-* SSH: ``git clone git@github.com:IPGP/geodezyx.git``
-* https: ``git clone https://github.com/IPGP/geodezyx.git``
-
-and install the Toolbox you downloaded with ``python setup.py install``
-
-Alternatively, you can also add the ``geodezyx`` folder in your ``PYTHONPATH`` (for experimented users)
-
 ## Changelog
+
+### v4.6.0, 2025-02-04
+
+  * Faster RINEX3 reading (~ x5)
+  * Frontend `read_rinex_obs` fonction
+  * For `find_recursive` function: no more ambiguous  `case_sensitive` option, replaced with `regex`
+
 
 ### v4.5.3, 2024-12-28
   * First version using CI/CD with GitHub Actions
