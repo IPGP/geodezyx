@@ -164,7 +164,7 @@ def get_spotgins_files(
 
 
 def archive_gins_run(dir_inp, archive_folder):
-    time.sleep(0.5) # wait a proper GINS end
+    time.sleep(0.5)  # wait a proper GINS end
     dir_basename = os.path.basename(dir_inp)
     site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
     arch_fld_site = str(os.path.join(archive_folder, site_id9))
