@@ -796,7 +796,7 @@ def station_info_2_gins(statinfoin,coordfilein,outfile,
     #oceload_associed(outfile)
 
 
-def stat_file_GINS_new_fmt(file_out_path,
+def stat_file_gins_new_fmt(file_out_path,
                            STAT="STAT",
                            xyz=[0.,0.,0.],
                            ecc_une=[0.,0.,0.],
