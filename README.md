@@ -39,6 +39,14 @@ plots and visual selection functions ...
 It is designed for Python 3 on a LINUX Ubuntu-like system.
 Also tested with Anaconda
 
+## Toolbox's highlights
+* read RINEX2 and RINEX3/4 as Pandas' DataFrame
+* read SINEX, SP3 & Clock RINEX as Pandas' DataFrame
+* convert most time representations and time scales used in geodesy to/from Python's `datetime`
+* convert coordinates in different frames (geographic, geocentric, topocentric)
+* perform easily Helmert's Transformation
+* And many more!
+
 ## Documentation
 
 See the following link:  
