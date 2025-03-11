@@ -314,17 +314,17 @@ def read_gipsyx_tdp(filein):
 
         attribs = fields[-1].split(".") 
 
-        if attribs[1] == 'Station' and attribs[-1] == 'Z':
+        if attribs[1] == 'Station' and attribs[5] == 'Z':
             Tz = conv.tgipsy2dt(fields[0])
             Z  = (float(fields[2]))
             sZ = (float(fields[3]))
 
-        if attribs[1] == 'Station' and attribs[-1] == 'Y':
+        if attribs[1] == 'Station' and attribs[5] == 'Y':
             Ty = conv.tgipsy2dt(fields[0])
             Y  = (float(fields[2]))
             sY = (float(fields[3]))
 
-        if attribs[1] == 'Station' and attribs[-1] == 'X':
+        if attribs[1] == 'Station' and attribs[5] == 'X':
             Tx = conv.tgipsy2dt(fields[0])
             X  = (float(fields[2]))
             sX = (float(fields[3]))
@@ -376,7 +376,7 @@ def read_gipsyx_tdp_list(filelistin):
 
 
 def read_gipsy_gdcov(filein):
-    
+
     X,Y,Z = np.nan,np.nan,np.nan
     Tx , Ty , Tz, T = np.nan,np.nan,np.nan,np.nan
     sX,sY,sZ = np.nan,np.nan,np.nan
@@ -428,6 +428,7 @@ def read_gipsy_gdcov(filein):
         
 
 def read_gipsy_gdcov_list(filelistin):
+
     tslist = []
     for fil in filelistin:
         ts = read_gipsy_gdcov(fil)
