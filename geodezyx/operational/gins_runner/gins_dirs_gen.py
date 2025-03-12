@@ -379,6 +379,44 @@ def gen_dirs_rnxs(
         if add_tropo_sol and "user_extension" in dir_dic:
             dir_dic["user_extension"]['userext_addition'].append("ADD_TROPO_IN_SOLUTION")
 
+        # Case of kinematic process : need to change keys in user extension
+        if "user_extension" in dir_dic:
+            log.info("INFO : kinematic process with 'user_extension' fields")
+            if "userext_gps__haute_freq" in dir_dic["user_extension"]:
+                dir_dic["user_extension"]["userext_gps__haute_freq"] = site_id4_upper
+            if "userext_gps__haute_freq".upper() in dir_dic["user_extension"]:
+                dir_dic["user_extension"][
+                    "userext_gps__haute_freq".upper()
+                ] = site_id4_upper
+
+            if "userext_addition" in dir_dic["user_extension"]:
+                if "gps__haute_freq" in dir_dic["user_extension"]["userext_addition"]:
+                    dir_dic["user_extension"]["userext_addition"][
+                        "gps__haute_freq"
+                    ] = site_id4_upper
+                if (
+                        "gps__haute_freq".upper()
+                        in dir_dic["user_extension"]["userext_addition"]
+                ):
+                    dir_dic["user_extension"]["userext_addition"][
+                        "gps__haute_freq".upper()
+                    ] = site_id4_upper
+        if "userext_addition" in dir_dic["user_extension"]:
+            if np.any(
+                    [
+                        "gps__haute_freq".upper() in e
+                        for e in dir_dic["user_extension"]["userext_addition"]
+                    ]
+            ):
+                log.info("INFO : kinematic process with 'userext_addition' fields")
+                index_gps_hf = [
+                    "gps__haute_freq".upper() in e
+                    for e in dir_dic["user_extension"]["userext_addition"]
+                ].index(True)
+                dir_dic["user_extension"]["userext_addition"][index_gps_hf] = (
+                        "gps__haute_freq ".upper() + site_id4_upper
+                )
+
         # WRITING THE NEW DIRECTOR
         log.info("writing : %s", dir_out_path)
         with open(dir_out_path, "w+") as outfile:
