@@ -21,7 +21,7 @@ from geodezyx import utils
 log = logging.getLogger('geodezyx')
 
 
-def stations_in_EPOS_sta_coords_file_mono(coords_file_path):
+def stations_in_epos_sta_coords_file_mono(coords_file_path):
     """
     Gives stations in a EPOS coords. file (YYYY_DDD_sta_coordinates)
 
@@ -38,11 +38,11 @@ def stations_in_EPOS_sta_coords_file_mono(coords_file_path):
         list of 4 char station list.
     """
 
-    SITE_line_list = utils.grep(coords_file_path , " SITE            m")
+    site_line_list = utils.grep(coords_file_path , " SITE            m")
 
     stats_list = []
     mean_mjd_list = []
-    for l in SITE_line_list:
+    for l in site_line_list:
         stat = l.split()[8].lower()
         stats_list.append(stat)
         mean_mjd = np.mean([float(l.split()[6]) , float(l.split()[7])])
@@ -114,7 +114,7 @@ def stations_in_coords_file_multi(files_path_list,files_type = "sinex"):
     if   files_type == "sinex":
         extract_fct = stations_in_sinex_mono
     elif files_type == "EPOS_sta_coords":
-        extract_fct = stations_in_EPOS_sta_coords_file_mono
+        extract_fct = stations_in_epos_sta_coords_file_mono
     else:
         log.error("check station file type !!")
         return None
@@ -164,15 +164,15 @@ def stations_in_sinex_multi(sinex_path_list):
 
 
 
-def sinex_bench_antenna_DF_2_disconts(DFantenna_in,stat,return_full=False):
-    DFantenna_work = DFantenna_in[DFantenna_in["Code"] == stat]
-    Start_List     = conv.datestr_sinex_2_dt(DFantenna_work["_Data_Start"])
-    End_list       = conv.datestr_sinex_2_dt(DFantenna_work["_Data_End__"])
+def sinex_bench_antenna_df_2_disconts(df_antenna_in, stat, return_full=False):
+    df_antenna_work = df_antenna_in[df_antenna_in["Code"] == stat]
+    start_list     = conv.datestr_sinex_2_dt(df_antenna_work["_Data_Start"])
+    end_list       = conv.datestr_sinex_2_dt(df_antenna_work["_Data_End__"])
     if return_full:
-        return Start_List,End_list
+        return start_list,end_list
     else:
-        Clean_list = sorted(list(set(Start_List + End_list)))
-        Clean_list = [e for e in Clean_list if e != dt.datetime(1970, 1, 1, 0, 0)]
-        return Clean_list
+        clean_list = sorted(list(set(start_list + end_list)))
+        clean_list = [e for e in clean_list if e != dt.datetime(1970, 1, 1, 0, 0)]
+        return clean_list
     
    

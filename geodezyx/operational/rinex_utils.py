@@ -266,9 +266,17 @@ def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX"):
         outdir = os.path.dirname(rinex_path)
 
     out_rinex_name_splited = os.path.basename(rinex_path).split(".")
-    out_rinex_name = ".".join(out_rinex_name_splited[:-1])
-    out_rinex_name = out_rinex_name[:-1] + "o"
-    out_rinex_path = os.path.join(outdir, out_rinex_name)
+
+    if conv.rinex_regex_search_tester(rinex_path,short_name=False, long_name=True):
+        out_rinex_name_splited = os.path.basename(rinex_path).split(".")
+        out_rinex_name = out_rinex_name_splited[0]
+        out_rinex_name = out_rinex_name + ".rnx"
+        out_rinex_path = os.path.join(outdir, out_rinex_name)
+    else:
+        out_rinex_name_splited = os.path.basename(rinex_path).split(".")
+        out_rinex_name = ".".join(out_rinex_name_splited[:-1])
+        out_rinex_name = out_rinex_name[:-1] + "o"
+        out_rinex_path = os.path.join(outdir, out_rinex_name)
 
     if os.path.isfile(out_rinex_path) and not force:
         log.info(out_rinex_path + "already exists, skiping ...")
