@@ -372,7 +372,7 @@ def gen_dirs_rnxs(
         gynscmn.check_stat_in_statfile(site_id4_upper, stfi_path_full)
 
         domes = gynscmn.find_domes_in_statfile(site_id4_upper, stfi_path_full)
-        log.info("INFO : DOMES : %s", domes)
+        log.info("DOMES : %s", domes)
         gynscmn.check_domes_in_oclo(domes[0], oclo_path_full)
 
         # =========   TROPO IN SOLUTION   =============
@@ -465,7 +465,7 @@ def _dir_regular_orbclk(dt_rinex_inp):
 
 
 def _dir_auto_stfi(stat_lower, dt_rinex, rinex_path, temp_data_folder):
-    log.info("* Automatic station file generation :")
+    log.info("* Automatic station file generation")
     randid = "id" + str(np.random.randint(10000, 99999))
     stat_fname = utils.join_improved(
         "_",
@@ -487,7 +487,7 @@ def _dir_auto_stfi(stat_lower, dt_rinex, rinex_path, temp_data_folder):
 
 
 def _dir_auto_oclo(stat_lower, dt_rinex, temp_data_folder):
-    log.info("* Automatic stat and ocean loading file generation :")
+    log.info("* Automatic stat and ocean loading file generation")
     randid = "id" + str(np.random.randint(10000, 99999))
 
     oclo_fname = utils.join_improved(
@@ -537,52 +537,3 @@ def _dir_rnx_site_id(rnx_name, sites_id9_series):
     site_id4_lower = site_id4_upper.lower()
 
     return site_id9, site_id4_upper, site_id4_lower
-
-
-def _dir_auto_staocl(stat_lower, dt_rinex, rinex_path, temp_data_folder):
-    ##### DEPRECATED, NOW SEPARATED !!!
-    log.info("* Automatic stat and ocload files generation :")
-    randid = "id" + str(np.random.randint(10000, 99999))
-    stat_fname = utils.join_improved(
-        "_",
-        stat_lower,
-        str(dt_rinex.year),
-        str(conv.dt2doy(dt_rinex)),
-        randid,
-        ".stat",
-    )
-
-    stat_path_out = os.path.join(temp_data_folder, stat_fname)
-    files_rw.write_station_file_gins_from_rinex(rinex_path, stat_path_out)
-    oclo_fname = utils.join_improved(
-        "_",
-        stat_lower,
-        str(dt_rinex.year),
-        str(conv.dt2doy(dt_rinex)),
-        randid,
-        ".oclo",
-    )
-
-    oclo_path_out = os.path.join(temp_data_folder, oclo_fname)
-    gynscmn.write_oclo_file(stat_path_out, oclo_path_out)
-
-    bool_statfil = os.path.isfile(stat_path_out)
-    bool_oclofil = os.path.isfile(oclo_path_out)
-    iwhile = 0
-    while not (bool_statfil and bool_oclofil) or iwhile < 10:
-        if iwhile > 6:
-            log.warning("waiting for the ocean loading file for a while %i", iwhile)
-        iwhile = iwhile + 1
-        time.sleep(0.5)
-        bool_statfil = os.path.isfile(stat_path_out)
-        bool_oclofil = os.path.isfile(oclo_path_out)
-
-    if not os.path.isfile(stat_path_out):
-        log.error("no station file genrated !!!")
-        stat_path_out = None
-
-    if not os.path.isfile(oclo_path_out):
-        log.error("no oceload file genrated !!!")
-        oclo_path_out = None
-
-    return stat_path_out, oclo_path_out
