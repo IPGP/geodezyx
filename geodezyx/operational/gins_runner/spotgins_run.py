@@ -71,7 +71,8 @@ def spotgins_run(
             director_name_prefix="SPOTGINS",
             stations_file=stfi_use,
             oceanload_file=oclo_use,
-            auto_stations_file=True,
+            auto_stations_file=False,
+            auto_oceanload=False,
             options_prairie_file=opra_use,
             auto_interval=False,
             force=force,
@@ -90,7 +91,7 @@ def spotgins_run(
 
         ######## ARCHIVING ####################
         if not no_archive:
-            archive_gins_run(dirr, archive_folder_inp)
+            archiv_gins_run(dirr, archive_folder_inp)
 
         ######## CLEANING ####################
         if not no_clean_tmp and os.path.exists(tmp_folder):
@@ -113,6 +114,7 @@ def get_spotgins_files(
     options_prairie_file_inp,
     stations_master_file_inp,
 ):
+
     if not gynscmn.get_spotgins_path() and (
         not stations_file_inp or not oceanload_file_inp or not options_prairie_file_inp
     ):
@@ -163,7 +165,7 @@ def get_spotgins_files(
     return dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use
 
 
-def archive_gins_run(dir_inp, archive_folder):
+def archiv_gins_run(dir_inp, archive_folder):
     time.sleep(0.5)  # wait a proper GINS end
     dir_basename = os.path.basename(dir_inp)
     site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
