@@ -190,7 +190,7 @@ def archiv_gins_run(dir_inp, archive_folder):
         [dir_arch_fld, li_arch_fld, sol_arch_fld],
     ):
 
-        for f in glob.glob(os.path.join(batch_fld, dir_basename + "*")):
+        for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
             log.info(f"Archiving {f} to {arch_fld}")
             shutil.move(f, arch_fld)
 
