@@ -63,6 +63,8 @@ And then install the toolbox you downloaded. Three solutions are possible:
 3. Add the ``geodezyx`` folder in your ``PYTHONPATH``, for experimented (and old-fashoned) users
 
 
+To push your changes to the repository, don't forget to set your `GitHub token first <https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_.
+
 ---------------
 Minimal exemple
 ---------------
