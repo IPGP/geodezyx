@@ -75,7 +75,7 @@ def get_spotgins_path():
         log.error("env. var. SPOTGINS_DIR dont exists !!!")
         return None
 
-def check_stat_in_statfile(stat, stationfile):
+def check_site_stfl(stat, stationfile):
     """
     Check if a station code is present in a station file.
 
@@ -97,7 +97,7 @@ def check_stat_in_statfile(stat, stationfile):
         log.warning("check your RINEX header and its the MARKER NAME field (station 4-char. code)")
     return boolout
 
-def check_domes_in_oclo(domes, oclofile):
+def check_domes_oclo(domes, oclofile):
     """
     Check if a DOMES number is present in an OCLO file.
 
@@ -115,13 +115,16 @@ def check_domes_in_oclo(domes, oclofile):
     """
     boolout = utils.check_regex(oclofile, "^   " + str(domes))
     if not boolout:
-        log.warning("%s not in %s", domes, oclofile)
+        log.error("%s not in %s", domes, oclofile, "be sure of what you are doing!")
 
     return boolout
 
 
 
-def find_domes_in_statfile(stat_code, stationfile):
+def find_domes_in_stfl(stat_code, stationfile):
+    """
+    Find the DOMES number for a station code in a station file.
+    """
     fil = open(stationfile)
     for l in fil:
         if stat_code in l:
@@ -274,6 +277,8 @@ def make_path_ginsstyle(pathin):
     pathout = os.path.join(*rnx_path_lis2)
     return pathout
 
+
+############### OLD FCTS
 
 def write_oclo_file(station_file, oceanload_out_file, fes_yyyy=2004):
     temp_cmd_fil = os.path.join(os.path.dirname(oceanload_out_file), "oclo.cmd.tmp")

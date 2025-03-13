@@ -52,7 +52,7 @@ def gen_dirs_rnxs(
     prairie_kwargs={"with_historik": 1, "with_wsb": 1},
     force=False,
     sites_id9_series=None,
-    add_tropo_sol=True
+    add_tropo_sol=True,
 ):
     """
     Generate directors from RINEX files.
@@ -157,9 +157,7 @@ def gen_dirs_rnxs(
         log.info(" === %s ", os.path.basename(rnx_path_ori))
         rnx_name = os.path.basename(rnx_path_ori)
         rnx_dt = conv.rinexname2dt(rnx_name)
-        site_id9, site_id4_upper, site_id4_lower = _dir_rnx_site_id(
-            rnx_name, sites_id9_series
-        )
+        siteid9, siteid4_upp, siteid4_low = _dir_rnx_site_id(rnx_name, sites_id9_series)
 
         coord_prefix = (
             f"_{out_coords.lower()}" if out_coords.upper() in ("FLH", "XYZ") else ""
@@ -170,7 +168,7 @@ def gen_dirs_rnxs(
         dir_name = utils.join_improved(
             "_",
             director_name_prefix,
-            site_id9,
+            siteid9,
             str(rnx_dt.year),
             conv.dt2doy(rnx_dt),
             str(conv.dt2jjul_cnes(rnx_dt)),
@@ -278,22 +276,8 @@ def gen_dirs_rnxs(
 
         # interval
         if auto_interval:  # dir is modified only if freq_rnx >= 0
-            dir_dic["observation"]["removal"]["simulation_stepsize"] = freq_rnx
-            # check if its not a static dir
-            if (
-                dir_dic["parameter"]["adjustment_parameters"]["stations"][
-                    "adjustment_frequency"
-                ][-1]
-                != 0
-            ):
-                dir_dic["parameter"]["adjustment_parameters"]["stations"][
-                    "adjustment_frequency"
-                ] = [0, 0, 0, freq_rnx]
-            log.info(
-                "INFO : auto_interval: %s, simulation_stepsize : %s",
-                auto_interval,
-                dir_dic["observation"]["removal"]["simulation_stepsize"],
-            )
+            dir_dic = _dir_auto_intrvl(dir_dic, freq_rnx)
+
         # output coords
         if out_coords.upper() in ("FLH", "PLH"):
             dir_dic["parameter"]["adjustment_parameters"]["stations"][
@@ -315,20 +299,20 @@ def gen_dirs_rnxs(
             log.warning("auto_oceanload is off and no oceanload_file specified !!!")
 
         if auto_stations_file:
-            stations_file = _dir_auto_stfi(
-                site_id4_lower, rnx_dt, rnx_path, tmp_fld_use
-            )
+            stations_file = _dir_auto_stfi(siteid4_low, rnx_dt, rnx_path, tmp_fld_use)
 
         if auto_oceanload:
-            oceanload_file = _dir_auto_oclo(site_id4_lower, rnx_dt, tmp_fld_use)
+            oceanload_file = _dir_auto_oclo(
+                siteid4_low, rnx_dt, tmp_fld_use, stations_file
+            )
 
         if stations_file:
-            stfi_ingin = gynscmn.bring_to_gin(stations_file, tmp_fld_use)
+            stfi_ingin = gynscmn.bring_to_gin(str(stations_file), tmp_fld_use)
             dir_dic["object"]["station"]["station_coordinates"] = (
                 gynscmn.make_path_ginsstyle(stfi_ingin)
             )
         if oceanload_file:
-            oclo_ingin = gynscmn.bring_to_gin(oceanload_file, tmp_fld_use)
+            oclo_ingin = gynscmn.bring_to_gin(str(oceanload_file), tmp_fld_use)
             dir_dic["object"]["station"]["ocean_tide_loading"] = (
                 gynscmn.make_path_ginsstyle(oclo_ingin)
             )
@@ -341,7 +325,7 @@ def gen_dirs_rnxs(
                 os.path.realpath(options_prairie_file)
             )
 
-        # =========   ORBITS/CLOCKS   =============
+        # ============== ORBITS/CLOCKS ================
         if perso_orbclk:
             orbpath, horpath = gynsorb.download_convert_2_gins_orb_clk(
                 rnx_dt, tmp_fld_use, ac=ac, repro=repro
@@ -369,53 +353,14 @@ def gen_dirs_rnxs(
         oclo_path_gstyl = dir_dic["object"]["station"]["ocean_tide_loading"]
         oclo_path_full = str(os.path.join(gin_path, oclo_path_gstyl[6:]))
 
-        gynscmn.check_stat_in_statfile(site_id4_upper, stfi_path_full)
+        gynscmn.check_site_stfl(siteid4_upp, stfi_path_full)
 
-        domes = gynscmn.find_domes_in_statfile(site_id4_upper, stfi_path_full)
+        domes = gynscmn.find_domes_in_stfl(siteid4_upp, stfi_path_full)
         log.info("DOMES : %s", domes)
-        gynscmn.check_domes_in_oclo(domes[0], oclo_path_full)
+        gynscmn.check_domes_oclo(domes[0], oclo_path_full)
 
-        # =========   TROPO IN SOLUTION   =============
-        if add_tropo_sol and "user_extension" in dir_dic:
-            dir_dic["user_extension"]['userext_addition'].append("ADD_TROPO_IN_SOLUTION")
-
-        # Case of kinematic process : need to change keys in user extension
-        if "user_extension" in dir_dic:
-            log.info("INFO : kinematic process with 'user_extension' fields")
-            if "userext_gps__haute_freq" in dir_dic["user_extension"]:
-                dir_dic["user_extension"]["userext_gps__haute_freq"] = site_id4_upper
-            if "userext_gps__haute_freq".upper() in dir_dic["user_extension"]:
-                dir_dic["user_extension"][
-                    "userext_gps__haute_freq".upper()
-                ] = site_id4_upper
-
-            if "userext_addition" in dir_dic["user_extension"]:
-                if "gps__haute_freq" in dir_dic["user_extension"]["userext_addition"]:
-                    dir_dic["user_extension"]["userext_addition"][
-                        "gps__haute_freq"
-                    ] = site_id4_upper
-                if (
-                        "gps__haute_freq".upper()
-                        in dir_dic["user_extension"]["userext_addition"]
-                ):
-                    dir_dic["user_extension"]["userext_addition"][
-                        "gps__haute_freq".upper()
-                    ] = site_id4_upper
-        if "userext_addition" in dir_dic["user_extension"]:
-            if np.any(
-                    [
-                        "gps__haute_freq".upper() in e
-                        for e in dir_dic["user_extension"]["userext_addition"]
-                    ]
-            ):
-                log.info("INFO : kinematic process with 'userext_addition' fields")
-                index_gps_hf = [
-                    "gps__haute_freq".upper() in e
-                    for e in dir_dic["user_extension"]["userext_addition"]
-                ].index(True)
-                dir_dic["user_extension"]["userext_addition"][index_gps_hf] = (
-                        "gps__haute_freq ".upper() + site_id4_upper
-                )
+        # =========   CUSTOM USER EXTENSION (tropo, high freq...) =============
+        dir_dic = _dir_userext(dir_dic, siteid4_upp, add_tropo_sol)
 
         # WRITING THE NEW DIRECTOR
         log.info("writing : %s", dir_out_path)
@@ -439,6 +384,9 @@ def gen_dirs_rnxs(
 
 
 def _dir_regular_orbclk(dt_rinex_inp):
+    """
+    Get the regular orbits and clocks path for a given date
+    """
 
     if dt_rinex_inp <= dt.datetime.now() - dt.timedelta(days=14):
         prod_id = "G20"
@@ -446,17 +394,6 @@ def _dir_regular_orbclk(dt_rinex_inp):
         prod_id = "G20"
 
     ### ALL THE OTHER ORBITS/CLOCKS ARE NOW OBSOLETE (2025)
-    # # GRG or GR2 for clock and orbits
-    # if dt.datetime(1998, 1, 4) <= dt_rinex_inp <= dt.datetime(2013, 12, 29):
-    #     prod_id = "GR2"
-    # #    elif dt_rinex < dt.datetime(1998,1,4):
-    # #        prod_id = 'GR1' # obsolete parce que GR1 intégralement inclu dans GR2
-    # elif dt_rinex_inp < dt.datetime(1998, 1, 4):
-    #     prod_id = "IG2"
-    #     log.info("no GRG/GR2 orbit available for day %s", dt_rinex_inp)
-    #     log.info("(day before 1998/1/4) => using IG2 orb. instead")
-    # else:
-    #     prod_id = "GRG"
 
     horpath = os.path.join("horloges", prod_id, "defaut")
     orbpath = os.path.join("orbites", prod_id, "defaut")
@@ -464,7 +401,33 @@ def _dir_regular_orbclk(dt_rinex_inp):
     return orbpath, horpath
 
 
+def _dir_auto_intrvl(dir_dic, freq_rnx):
+    """
+    Automatically set the interval in the director
+    """
+    dir_dic["observation"]["removal"]["simulation_stepsize"] = freq_rnx
+    # check if its not a static dir
+    if (
+        dir_dic["parameter"]["adjustment_parameters"]["stations"][
+            "adjustment_frequency"
+        ][-1]
+        != 0
+    ):
+        dir_dic["parameter"]["adjustment_parameters"]["stations"][
+            "adjustment_frequency"
+        ] = [0, 0, 0, freq_rnx]
+    log.info(
+        "auto_interval, simulation_stepsize : %s",
+        dir_dic["observation"]["removal"]["simulation_stepsize"],
+    )
+
+    return dir_dic
+
+
 def _dir_auto_stfi(stat_lower, dt_rinex, rinex_path, temp_data_folder):
+    """
+    Generate an ad hoc station file from a RINEX file
+    """
     log.info("* Automatic station file generation")
     randid = "id" + str(np.random.randint(10000, 99999))
     stat_fname = utils.join_improved(
@@ -486,7 +449,10 @@ def _dir_auto_stfi(stat_lower, dt_rinex, rinex_path, temp_data_folder):
     return stfi_path_out
 
 
-def _dir_auto_oclo(stat_lower, dt_rinex, temp_data_folder):
+def _dir_auto_oclo(stat_lower, dt_rinex, temp_data_folder, stat_path_inp):
+    """
+    Generate an ad hoc ocean loading file from a station file
+    """
     log.info("* Automatic stat and ocean loading file generation")
     randid = "id" + str(np.random.randint(10000, 99999))
 
@@ -500,6 +466,8 @@ def _dir_auto_oclo(stat_lower, dt_rinex, temp_data_folder):
     )
 
     oclo_path_out = os.path.join(temp_data_folder, oclo_fname)
+    gynscmn.write_oclo_file(stat_path_inp, oclo_path_out)
+
     bool_oclofil = os.path.isfile(oclo_path_out)
     iwhile = 0
     while not bool_oclofil or iwhile < 10:
@@ -517,6 +485,10 @@ def _dir_auto_oclo(stat_lower, dt_rinex, temp_data_folder):
 
 
 def _dir_rnx_site_id(rnx_name, sites_id9_series):
+    """
+    Extract the site_id9 from a Series (from e.g. a SPOTGINS master file)
+    based on the RINEX name
+    """
     if conv.rinex_regex_search_tester(
         rnx_name, short_name=False, long_name=True
     ):  ### RINEX3
@@ -537,3 +509,82 @@ def _dir_rnx_site_id(rnx_name, sites_id9_series):
     site_id4_lower = site_id4_upper.lower()
 
     return site_id9, site_id4_upper, site_id4_lower
+
+
+def _dir_userext(dir_dic, site_id4_upper, add_tropo_sol=True):
+    """
+    Customize the user_extension fields with the site_id4_upper
+    """
+    uext = "user_extension"
+    uadd = "userext_addition"
+
+    if uext in dir_dic:
+        log.info("customize 'user_extension' fields")
+        if "USEREXT_GPS__HAUTE_FREQ" in dir_dic[uext]:
+            dir_dic[uext]["USEREXT_GPS__HAUTE_FREQ"] = site_id4_upper
+
+        if uadd in dir_dic[uext]:
+            if "GPS__HAUTE_FREQ" in dir_dic[uext][uadd]:
+                dir_dic[uext][uadd]["GPS__HAUTE_FREQ"] = site_id4_upper
+
+        if add_tropo_sol:
+            dir_dic[uext][uadd].append("ADD_TROPO_IN_SOLUTION")
+
+    ### DUPLICATE DELETE THIS BLOCK
+    # if uadd in dir_dic[uext]:
+    #     is_gpshf = ["GPS__HAUTE_FREQ" in e for e in dir_dic[uext][uadd]]
+    #     if np.any(is_gpshf):
+    #         log.info("customize 'userext_addition' fields")
+    #         idx_gpshf = is_gpshf.index(True)
+    #         dir_dic[uext][uadd][idx_gpshf] = "GPS__HAUTE_FREQ " + site_id4_upper
+
+    return dir_dic
+
+
+def _dir_auto_staocl(stat_lower, dt_rinex, rinex_path, temp_data_folder):
+    ##### DEPRECATED, NOW SEPARATED !!!
+    log.info("* Automatic stat and ocload files generation")
+    randid = "id" + str(np.random.randint(10000, 99999))
+    stat_fname = utils.join_improved(
+        "_",
+        stat_lower,
+        str(dt_rinex.year),
+        str(conv.dt2doy(dt_rinex)),
+        randid,
+        ".stat",
+    )
+
+    stat_path_out = os.path.join(temp_data_folder, stat_fname)
+    files_rw.write_station_file_gins_from_rinex(rinex_path, stat_path_out)
+    oclo_fname = utils.join_improved(
+        "_",
+        stat_lower,
+        str(dt_rinex.year),
+        str(conv.dt2doy(dt_rinex)),
+        randid,
+        ".oclo",
+    )
+
+    oclo_path_out = os.path.join(temp_data_folder, oclo_fname)
+    gynscmn.write_oclo_file(stat_path_out, oclo_path_out)
+
+    bool_statfil = os.path.isfile(stat_path_out)
+    bool_oclofil = os.path.isfile(oclo_path_out)
+    iwhile = 0
+    while not (bool_statfil and bool_oclofil) or iwhile < 10:
+        if iwhile > 6:
+            log.warning("waiting for the ocean loading file for a while %i", iwhile)
+        iwhile = iwhile + 1
+        time.sleep(0.5)
+        bool_statfil = os.path.isfile(stat_path_out)
+        bool_oclofil = os.path.isfile(oclo_path_out)
+
+    if not os.path.isfile(stat_path_out):
+        log.error("no station file genrated !!!")
+        stat_path_out = None
+
+    if not os.path.isfile(oclo_path_out):
+        log.error("no oceload file genrated !!!")
+        oclo_path_out = None
+
+    return stat_path_out, oclo_path_out
