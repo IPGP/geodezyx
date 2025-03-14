@@ -519,7 +519,6 @@ def _dir_userext(dir_dic, site_id4_upper, add_tropo_sol=True):
     uadd = "userext_addition"
 
     if uext in dir_dic:
-        log.info("customize 'user_extension' fields")
         if "USEREXT_GPS__HAUTE_FREQ" in dir_dic[uext]:
             dir_dic[uext]["USEREXT_GPS__HAUTE_FREQ"] = site_id4_upper
 

@@ -10,6 +10,7 @@ import re
 import geodezyx.operational.gins_runner.gins_common as gynscmn
 import geodezyx.operational.gins_runner.gins_dirs_gen as gynsgen
 import geodezyx.operational.gins_runner.gins_dirs_run as gynsrun
+from geodezyx import utils
 
 import multiprocessing as mp
 import os
@@ -173,18 +174,22 @@ def archiv_gins_run(dir_inp, archive_folder):
     if not os.path.exists(arch_fld_site):
         os.makedirs(arch_fld_site)
 
+    # get input directories
     dir_batch_fld = os.path.join(gynscmn.get_gin_path(True), "data", "directeur")
     li_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "listing")
     sol_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "solution")
 
+    # get destination
     dir_arch_fld = os.path.join(arch_fld_site, "010_directeurs")
     li_arch_fld = os.path.join(arch_fld_site, "020_listings")
     sol_arch_fld = os.path.join(arch_fld_site, "030_solutions")
 
+    # create directories
     for arch_fld in [dir_arch_fld, li_arch_fld, sol_arch_fld]:
         if not os.path.exists(arch_fld):
             os.makedirs(arch_fld)
 
+    # move files to their destination
     for batch_fld, arch_fld in zip(
         [dir_batch_fld, li_batch_fld, sol_batch_fld],
         [dir_arch_fld, li_arch_fld, sol_arch_fld],
@@ -194,6 +199,11 @@ def archiv_gins_run(dir_inp, archive_folder):
             log.info(f"Archiving {f} to {arch_fld}")
             shutil.move(f, arch_fld)
 
+    # compress the listings
+    for f in glob.glob(li_arch_fld + "/*"):
+        if not f.endswith("gz"):
+            log.info(f"g-zip compress listing {os.path.basename(f)}")
+            utils.gzip_compress(f)
     return
 
 

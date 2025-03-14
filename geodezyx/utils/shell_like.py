@@ -489,7 +489,19 @@ def insert_str_in_file_if_line_contains(file_path,str_to_insert,
     f.close()
 
     return file_path
-    
+
+def gzip_compress(inp_path, out_dir=None, out_fname=None):
+    if not out_dir:
+        out_dir = os.path.dirname(inp_path)
+    if not out_fname:
+        out_fname = os.path.basename(inp_path) + ".gz"
+    out_path = os.path.join(out_dir, out_fname)
+    with open(inp_path, 'rb') as f_in:
+        with gzip.open(out_path, 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
+    return out_path
+
+
 def uncompress(pathin,dirout = '', opts='-f'):
     log.warn("function discontinued, use files_rw.unzip_gz_Z() instead")
     if not os.path.isfile(pathin):
@@ -505,6 +517,8 @@ def uncompress(pathin,dirout = '', opts='-f'):
         pathout = os.path.join(dirout,os.path.basename(pathout_temp))
         shutil.move(pathout_temp,pathout)
     return pathout
+
+
 
 
 def create_dir(directory):
