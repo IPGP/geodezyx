@@ -68,8 +68,7 @@ def run_directors(
                 i + 1,
                 ndir,
             )
-        log.info("launching : %s", dir_path)
-        log.info("start at : %s", dt.datetime.now())
+        log.info("start %s at %s", dir_path, dt.datetime.now())
         if dir_path[-4:] == ".fic":
             cmd_mode = "exe_gins_fic"
             log.info("input file ends with .fic, fic_mode is activated")
@@ -143,9 +142,9 @@ def run_directors(
         #
 
         if gynscmn.check_solution(dir_name):
-            log.info("solution for :) : %s", dir_name)
+            log.info("solution for: %s :)", dir_name)
         else:
-            log.warning("no solution for :( : %s", dir_name)
+            log.error("no solution for: %s :(", dir_name)
 
         log.info(
             "end %s at %s (exec: %s s)",
