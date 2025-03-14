@@ -527,7 +527,6 @@ def _dir_userext(dir_dic, site_id4_upper, add_tropo_sol=True):
         if uadd in dir_dic[uext]:
             is_gpshf = ["GPS__HAUTE_FREQ" in e for e in dir_dic[uext][uadd]]
             if np.any(is_gpshf):
-                log.info("customize 'userext_addition' fields")
                 idx_gpshf = is_gpshf.index(True)
                 dir_dic[uext][uadd][idx_gpshf] = "GPS__HAUTE_FREQ " + site_id4_upper
 
