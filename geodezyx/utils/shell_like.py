@@ -490,7 +490,7 @@ def insert_str_in_file_if_line_contains(file_path,str_to_insert,
 
     return file_path
 
-def gzip_compress(inp_path, out_dir=None, out_fname=None):
+def gzip_compress(inp_path, out_dir=None, out_fname=None, rm_inp=False):
     if not out_dir:
         out_dir = os.path.dirname(inp_path)
     if not out_fname:
@@ -499,6 +499,9 @@ def gzip_compress(inp_path, out_dir=None, out_fname=None):
     with open(inp_path, 'rb') as f_in:
         with gzip.open(out_path, 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
+    if rm_inp and os.path.isfile(inp_path):
+        os.remove(inp_path)
+
     return out_path
 
 

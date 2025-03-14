@@ -200,10 +200,10 @@ def archiv_gins_run(dir_inp, archive_folder):
             shutil.move(f, arch_fld)
 
     # compress the listings
-    for f in glob.glob(li_arch_fld + "/*"):
+    for f in glob.glob(os.path.join(li_arch_fld, dir_basename)+ "*"):
         if not f.endswith("gz"):
-            log.info(f"g-zip compress listing {os.path.basename(f)}")
-            utils.gzip_compress(f)
+            log.info(f"compress listing {os.path.basename(f)}")
+            utils.gzip_compress(f, rm_inp=True)
     return
 
 
