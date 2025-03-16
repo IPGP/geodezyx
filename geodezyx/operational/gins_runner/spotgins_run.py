@@ -167,6 +167,8 @@ def get_spotgins_files(
 
 
 def archiv_gins_run(dir_inp, archive_folder):
+    if not dir_inp:
+        return None
     time.sleep(0.5)  # wait a proper GINS end
     dir_basename = os.path.basename(dir_inp)
     site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
@@ -204,7 +206,7 @@ def archiv_gins_run(dir_inp, archive_folder):
         if not f.endswith("gz"):
             log.info(f"Compressing listing {os.path.basename(f)}")
             utils.gzip_compress(f, rm_inp=True)
-    return
+    return None
 
 
 def check_arch_sol(rnx_path_inp, archive_folder_inp):
