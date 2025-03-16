@@ -102,7 +102,7 @@ def spotgins_run(
     ##### END Multi-processing Wrapper END ################
 
     pool = mp.Pool(processes=nprocs)
-    res_raw = pool.map(spotgins_wrap, rnxs_path_use, chunksize=1)
+    res_raw = pool.map_async(spotgins_wrap, rnxs_path_use, chunksize=1)
     pool.close()
 
     return
@@ -185,6 +185,7 @@ def archiv_gins_run(dir_inp, archive_folder):
     dir_arch_fld = os.path.join(arch_fld_site, "010_directeurs")
     li_arch_fld = os.path.join(arch_fld_site, "020_listings")
     sol_arch_fld = os.path.join(arch_fld_site, "030_solutions")
+    trash_arch_fld = os.path.join(arch_fld_site, "090_trash")
 
     # create directories
     for arch_fld in [dir_arch_fld, li_arch_fld, sol_arch_fld]:
@@ -200,8 +201,12 @@ def archiv_gins_run(dir_inp, archive_folder):
         for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
             log.info(f"Archiving {f} to {arch_fld}")
             ### check if the file is already in the archive (crash if yes)
-            if not os.path.exists(os.path.join(arch_fld, os.path.basename(f))):
-                shutil.move(f, arch_fld)
+            # and move it to the trash archive
+            f_preexi = os.path.join(arch_fld, os.path.basename(f))
+            if os.path.exists(f_preexi):
+                shutil.move(f_preexi, trash_arch_fld)
+            ### move the file
+            shutil.move(f, arch_fld)
 
     # compress the listings
     for f in glob.glob(os.path.join(li_arch_fld, dir_basename)+ "*"):
