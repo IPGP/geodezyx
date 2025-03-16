@@ -147,9 +147,9 @@ def gen_dirs_rnxs(
         bool_continue = False
         if multimode:
             bool_continue = True
-            return bool_continue
-        else:
-            raise Exception
+        return bool_continue
+        #else:
+        #    raise Exception
 
     for i, rnx_path_ori in enumerate(rnx_path_lis):
         if multimode:

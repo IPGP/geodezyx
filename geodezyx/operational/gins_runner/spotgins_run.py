@@ -202,7 +202,7 @@ def archiv_gins_run(dir_inp, archive_folder):
     # compress the listings
     for f in glob.glob(os.path.join(li_arch_fld, dir_basename)+ "*"):
         if not f.endswith("gz"):
-            log.info(f"compress listing {os.path.basename(f)}")
+            log.info(f"Compressing listing {os.path.basename(f)}")
             utils.gzip_compress(f, rm_inp=True)
     return
 
