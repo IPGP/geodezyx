@@ -199,7 +199,9 @@ def archiv_gins_run(dir_inp, archive_folder):
 
         for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
             log.info(f"Archiving {f} to {arch_fld}")
-            shutil.move(f, arch_fld)
+            ### check if the file is already in the archive (crash if yes)
+            if not os.path.exists(os.path.join(arch_fld, os.path.basename(f))):
+                shutil.move(f, arch_fld)
 
     # compress the listings
     for f in glob.glob(os.path.join(li_arch_fld, dir_basename)+ "*"):
