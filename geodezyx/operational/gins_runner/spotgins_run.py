@@ -102,7 +102,7 @@ def spotgins_run(
     ##### END Multi-processing Wrapper END ################
 
     pool = mp.Pool(processes=nprocs)
-    res_raw = pool.map_async(spotgins_wrap, rnxs_path_use, chunksize=1)
+    res_raw = pool.map(spotgins_wrap, rnxs_path_use, chunksize=1)
     pool.close()
 
     return
