@@ -169,7 +169,7 @@ def get_spotgins_files(
 def archiv_gins_run(dir_inp, archive_folder):
     if not dir_inp:
         return None
-    time.sleep(0.5)  # wait a proper GINS end
+    time.sleep(1)  # wait a proper GINS end
     dir_basename = os.path.basename(dir_inp)
     site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
     arch_fld_site = str(os.path.join(archive_folder, site_id9))
@@ -185,10 +185,10 @@ def archiv_gins_run(dir_inp, archive_folder):
     dir_arch_fld = os.path.join(arch_fld_site, "010_directeurs")
     li_arch_fld = os.path.join(arch_fld_site, "020_listings")
     sol_arch_fld = os.path.join(arch_fld_site, "030_solutions")
-    trash_arch_fld = os.path.join(arch_fld_site, "090_trash")
+    trsh_arch_fld = os.path.join(arch_fld_site, "090_trash")
 
     # create directories
-    for arch_fld in [dir_arch_fld, li_arch_fld, sol_arch_fld]:
+    for arch_fld in [dir_arch_fld, li_arch_fld, sol_arch_fld, trsh_arch_fld]:
         if not os.path.exists(arch_fld):
             os.makedirs(arch_fld)
 
@@ -201,15 +201,18 @@ def archiv_gins_run(dir_inp, archive_folder):
         for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
             log.info(f"Archiving {f} to {arch_fld}")
             ### check if the file is already in the archive (crash if yes)
-            # and move it to the trash archive
-            f_preexi = os.path.join(arch_fld, os.path.basename(f))
-            if os.path.exists(f_preexi):
-                shutil.move(f_preexi, trash_arch_fld)
-            ### move the file
+            # and move it to the trash folder
+            f_bn = os.path.basename(f)
+            f_prex = os.path.join(arch_fld, f_bn)
+            if os.path.exists(f_prex):
+                timstp = utils.get_timestamp()
+                f_prex_trsh = os.path.join(trsh_arch_fld, f_bn + "_" + timstp)
+                shutil.move(f_prex, f_prex_trsh)
+            ### move the actual correct file
             shutil.move(f, arch_fld)
 
     # compress the listings
-    for f in glob.glob(os.path.join(li_arch_fld, dir_basename)+ "*"):
+    for f in glob.glob(os.path.join(li_arch_fld, dir_basename) + "*"):
         if not f.endswith("gz"):
             log.info(f"Compressing listing {os.path.basename(f)}")
             utils.gzip_compress(f, rm_inp=True)

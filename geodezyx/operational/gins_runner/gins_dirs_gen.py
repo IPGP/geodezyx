@@ -359,7 +359,7 @@ def gen_dirs_rnxs(
         log.info("DOMES : %s", domes)
         gynscmn.check_domes_oclo(domes[0], oclo_path_full)
 
-        # =========   CUSTOM USER EXTENSION (tropo, high freq...) =============
+        # ========= CUSTOM USER EXTENSION (tropo, high freq...) =============
         dir_dic = _dir_userext(dir_dic, siteid4_upp, add_tropo_sol)
 
         # WRITING THE NEW DIRECTOR
