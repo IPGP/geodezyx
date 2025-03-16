@@ -115,7 +115,7 @@ def check_domes_oclo(domes, oclofile):
     """
     boolout = utils.check_regex(oclofile, "^   " + str(domes))
     if not boolout:
-        log.error("%s not in %s", domes, oclofile, "be sure of what you are doing!")
+        log.error("%s not in %s, %s", domes, oclofile, "be sure of what you are doing!")
 
     return boolout
 
