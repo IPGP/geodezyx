@@ -225,7 +225,7 @@ def bring_to_gin(file_path_inp, temp_data_folder=None, gins_path=None, verbose=T
         The path of the file within the GIN path.
     """
     if not check_if_in_gin(file_path_inp, gins_path=gins_path, verbose=verbose):
-        file_path_out = copy_in_gin(file_path_inp, temp_data_folder=temp_data_folder)
+        file_path_out = copy_in_gin(file_path_inp, temp_data_folder=temp_data_folder, verbose=verbose)
     else:
         file_path_out = file_path_inp
 

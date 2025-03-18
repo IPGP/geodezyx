@@ -62,9 +62,11 @@ def run_directors(
     ndir = len(director_path_lis)
 
     for i, dir_path in enumerate(director_path_lis):
+        dir_nam = os.path.basename(dir_path)
+
         if multimode:
             log.info(f"======== {i + 1} / {ndir} ======== ")
-        log.info("start %s at %s", dir_path, dt.datetime.now())
+        log.info("start %s at %s", dir_nam, dt.datetime.now())
         if dir_path[-4:] == ".fic":
             cmd_mode = "exe_gins_fic"
             log.debug("input file ends with .fic, fic_mode is activated")
@@ -79,7 +81,6 @@ def run_directors(
             log.info("solution %s already exists, skipping ...", sols_exist)
             continue
 
-        dir_nam = os.path.basename(dir_path)
         opts_ginspc_ope = "-F" + opts_gins_pc
 
         # log.info("options ginsPC: %s / gins90: %s", opts_gins_pc_ope, opts_gins_90)
@@ -143,7 +144,7 @@ def run_directors(
             log.error("no solution for: %s :(", dir_nam)
 
         log.info(
-            "end %s at %s (exec: %7.4f s)",
+            "end %s at %s (exec: %s s)",
             dir_nam,
             dt.datetime.now(),
             str(time.time() - start),
