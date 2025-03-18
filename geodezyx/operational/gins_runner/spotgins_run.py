@@ -178,7 +178,7 @@ def get_spotgins_files(
         oclo_use = oceanload_file_inp
     else:
         oclo_use = os.path.join(
-            sptgns_path, "metadata", "oceanloading", "load_fes2014_cf.spotgins"
+            sptgns_path, "metadata", "oceanloading", "load_fes2014b_cf.spotgins"
         )
 
     if options_prairie_file_inp:
