@@ -32,8 +32,8 @@ def spotgins_run(
     rnxs_path_inp,
     archive_folder_inp,
     nprocs=8,
-    version="VALIDE_24_2",
-    const="GE",
+    version="VALIDE_23_2",
+    const="G",
     director_generik_path_inp=None,
     director_name_prefix_inp="",
     stations_file_inp=None,
@@ -178,7 +178,7 @@ def get_spotgins_files(
         oclo_use = oceanload_file_inp
     else:
         oclo_use = os.path.join(
-            sptgns_path, "metadata", "oceanloading", "load_fes2022_cf.spotgins"
+            sptgns_path, "metadata", "oceanloading", "load_fes2014_cf.spotgins"
         )
 
     if options_prairie_file_inp:
