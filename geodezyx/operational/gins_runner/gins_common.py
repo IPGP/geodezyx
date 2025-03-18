@@ -135,7 +135,7 @@ def find_domes_in_stfl(stat_code, stationfile):
     return "00000", "M000"
 
 
-def check_if_in_gin(file_path_inp, gins_path=None):
+def check_if_in_gin(file_path_inp, gins_path=None, verbose=True):
     """
     Check if a file is within the GIN path.
 
@@ -145,6 +145,8 @@ def check_if_in_gin(file_path_inp, gins_path=None):
         The path of the file to check.
     gins_path : str, optional
         The GIN path to check against. If not provided, it defaults to the 'gin' directory inside the GIN path.
+    verbose : bool
+        verbose messages. Default is True.
 
     Returns
     -------
@@ -162,13 +164,13 @@ def check_if_in_gin(file_path_inp, gins_path=None):
     else:
         boolout = False
 
-    if not boolout:
+    if not boolout and verbose:
         log.warning("%s not in %s", file_path_inp, gins_path)
 
     return boolout
 
 
-def copy_in_gin(file_path_inp, temp_data_folder=None):
+def copy_in_gin(file_path_inp, temp_data_folder=None, verbose=True):
     """
     Copy a file to the GIN temporary data folder.
 
@@ -177,7 +179,10 @@ def copy_in_gin(file_path_inp, temp_data_folder=None):
     file_path_inp : str
         The path of the file to be copied.
     temp_data_folder : str, optional
-        The path to the temporary data folder. If not provided, it defaults to 'TEMP_DATA' inside the GIN path.
+        The path to the temporary data folder.
+        If not provided, it defaults to 'TEMP_DATA' inside the GIN path.
+    verbose : bool
+        verbose messages. Default is True.
 
     Returns
     -------
@@ -188,8 +193,8 @@ def copy_in_gin(file_path_inp, temp_data_folder=None):
         temp_data_folder = os.path.join(get_gin_path(), "TEMP_DATA")
     if not os.path.exists(temp_data_folder):
         os.makedirs(temp_data_folder)
-
-    log.info("copy %s > %s", file_path_inp, temp_data_folder)
+    if verbose:
+        log.info("copy %s > %s", file_path_inp, temp_data_folder)
     shutil.copy2(file_path_inp, temp_data_folder)
 
     file_path_out = os.path.join(temp_data_folder, os.path.basename(file_path_inp))
@@ -197,7 +202,7 @@ def copy_in_gin(file_path_inp, temp_data_folder=None):
     return file_path_out
 
 
-def bring_to_gin(file_path_inp, temp_data_folder=None, gins_path=None):
+def bring_to_gin(file_path_inp, temp_data_folder=None, gins_path=None, verbose=True):
     """
     Ensure a file is within the GIN path, copying it to the temporary data folder if necessary.
 
@@ -211,43 +216,20 @@ def bring_to_gin(file_path_inp, temp_data_folder=None, gins_path=None):
         The path to the temporary data folder. If not provided, it defaults to 'TEMP_DATA' inside the GIN path.
     gins_path : str, optional
         The GIN path to check against. If not provided, it defaults to the 'gin' directory inside the GIN path.
+    verbose : bool
+        verbose messages. Default is True.
 
     Returns
     -------
     str
         The path of the file within the GIN path.
     """
-    if not check_if_in_gin(file_path_inp, gins_path=gins_path):
+    if not check_if_in_gin(file_path_inp, gins_path=gins_path, verbose=verbose):
         file_path_out = copy_in_gin(file_path_inp, temp_data_folder=temp_data_folder)
     else:
         file_path_out = file_path_inp
 
     return file_path_out
-
-
-def check_gins_exe(streamin, director_name):
-    """
-    Check the execution status of a GINS director.
-
-    Parameters
-    ----------
-    streamin : file-like object
-        The input stream to read the execution output from.
-    director_name : str
-        The name of the director being checked.
-
-    Returns
-    -------
-    bool
-        True if the execution was successful, False otherwise.
-    """
-    if "Exécution terminée du fichier" in streamin.read():
-        print("INFO : happy end for " + director_name + " :)")
-        return True
-    else:
-        print("WARN : bad end for " + director_name + " :(")
-        return False
-
 
 def make_path_ginsstyle(pathin):
     """
@@ -282,8 +264,6 @@ def make_path_ginsstyle(pathin):
 
 
 ############### OLD FCTS
-
-
 def write_oclo_file(station_file, oceanload_out_file, fes_yyyy=2004):
     temp_cmd_fil = os.path.join(os.path.dirname(oceanload_out_file), "oclo.cmd.tmp")
     temp_cmd_filobj = open(temp_cmd_fil, "w")
@@ -406,7 +386,7 @@ def merge_yaml(yaml1, yaml2, yaml_out=None):
     return dic3
 
 
-def check_solution(dir_name_inp, gin_path_inp=None):
+def check_solution(dir_name_inp, gin_path_inp=None, verbose=True):
 
     dir_name_inp = os.path.basename(dir_name_inp)
 
@@ -417,9 +397,34 @@ def check_solution(dir_name_inp, gin_path_inp=None):
     # check if the solution already exists
     sol_folder = os.path.join(gin_path, "gin", "batch", "solution")
     sols_matching = glob.glob(sol_folder + "/" + dir_name_inp + "*")
-    if len(sols_matching) > 0:
+    if len(sols_matching) > 0 and verbose:
         log.info("Solution %s exists for %s", sols_matching, dir_name_inp)
     return sols_matching
+
+
+
+def check_gins_exe(streamin, director_name):
+    """
+    Check the execution status of a GINS director.
+
+    Parameters
+    ----------
+    streamin : file-like object
+        The input stream to read the execution output from.
+    director_name : str
+        The name of the director being checked.
+
+    Returns
+    -------
+    bool
+        True if the execution was successful, False otherwise.
+    """
+    if "Exécution terminée du fichier" in streamin.read():
+        print("INFO : happy end for " + director_name + " :)")
+        return True
+    else:
+        print("WARN : bad end for " + director_name + " :(")
+        return False
 
 
 #    return dic1

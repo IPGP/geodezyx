@@ -6,7 +6,6 @@ Created on 26/02/2025 11:07:24
 @author: psakic
 """
 
-
 #### Import the logger
 import shutil
 import os
@@ -23,22 +22,23 @@ from geodezyx import files_rw, time_series
 #### Import geodezyx GINS submodules
 import geodezyx.operational.gins_runner.gins_common as gynscmn
 
-
 #### geodeZYX modules
 from geodezyx import utils
 
 #### Import the logger
 import logging
+
 log = logging.getLogger("geodezyx")
 
 
 def run_directors(
-    dir_paths_inp,
-    opts_gins_pc="",
-    opts_gins_90="",
-    version="OPERA",
-    cmd_mode="exe_gins_dir",
-    force=False,
+        dir_paths_inp,
+        opts_gins_pc="",
+        opts_gins_90="",
+        version="OPERA",
+        cmd_mode="exe_gins_dir",
+        force=False,
+        verbose=True
 ):
     """
     NEW FCT WHICH CAN MANAGE BOTH ONE RINEX OR A LIST OF RINEX, OR A FIC file (170613)
@@ -63,28 +63,24 @@ def run_directors(
 
     for i, dir_path in enumerate(director_path_lis):
         if multimode:
-            log.info(
-                " ======== %i / %i ======== ",
-                i + 1,
-                ndir,
-            )
+            log.info(f"======== {i + 1} / {ndir} ======== ")
         log.info("start %s at %s", dir_path, dt.datetime.now())
         if dir_path[-4:] == ".fic":
             cmd_mode = "exe_gins_fic"
-            log.info("input file ends with .fic, fic_mode is activated")
+            log.debug("input file ends with .fic, fic_mode is activated")
         start = time.time()
 
         if dir_path[-1] == "~":
-            log.info("geany ~ temp file, skiping this dir. ")
+            log.warning("geany ~ temp file, skiping this dir. ")
             continue
 
-        sols_exist = gynscmn.check_solution(os.path.basename(dir_path))
+        sols_exist = gynscmn.check_solution(os.path.basename(dir_path), verbose=verbose)
         if len(sols_exist) > 0 and not force:
-            log.info("solution %salready exists, skipping ...", sols_exist)
+            log.info("solution %s already exists, skipping ...", sols_exist)
             continue
 
-        dir_name = os.path.basename(dir_path)
-        opts_gins_pc_ope = "-F" + opts_gins_pc
+        dir_nam = os.path.basename(dir_path)
+        opts_ginspc_ope = "-F" + opts_gins_pc
 
         # log.info("options ginsPC: %s / gins90: %s", opts_gins_pc_ope, opts_gins_90)
 
@@ -96,8 +92,8 @@ def run_directors(
             cmd = " ".join(
                 (
                     "ginspc.bash",
-                    opts_gins_pc_ope,
-                    dir_name,
+                    opts_ginspc_ope,
+                    dir_nam,
                     opts_gins_90,
                     "-v",
                     version,
@@ -106,11 +102,11 @@ def run_directors(
             )
         elif cmd_mode == "exe_gins_fic":
             cmd = " ".join(
-                ("exe_gins", "-fic", dir_name, "-v", version, opts_gins_90)
+                ("exe_gins", "-fic", dir_nam, "-v", version, opts_gins_90)
             )
         elif cmd_mode == "exe_gins_dir":
             cmd = " ".join(
-                ("exe_gins", "-dir", dir_name, "-v", version, opts_gins_90)
+                ("exe_gins", "-dir", dir_nam, "-v", version, opts_gins_90)
             )
         else:
             log.error("mode not recognized !!!")
@@ -120,12 +116,12 @@ def run_directors(
         # c'est lui qui resoult l'instabilité lors du lancement du subprocess !!!
         # parce que indirectement exe_gins ne marche pas sans
         # faire le test avec un exe_gins -v OPERA -fic <fic> et sans
-
-        log.info("submit. command : %s", cmd)
+        if verbose:
+            log.info("submit. command : %s", cmd)
 
         gins_path = gynscmn.get_gin_path()
         log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
-        log_path = os.path.join(gins_path, "python_logs", dir_name + ".log")
+        log_path = os.path.join(gins_path, "python_logs", dir_nam + ".log")
 
         process = subprocess.run(
             [cmd],
@@ -141,19 +137,20 @@ def run_directors(
         #     f.write("exec time : " + str(time.time() - start))
         #
 
-        if gynscmn.check_solution(dir_name):
-            log.info("solution for: %s :)", dir_name)
+        if gynscmn.check_solution(dir_nam, verbose=verbose):
+            log.info("solution for: %s :)", dir_nam)
         else:
-            log.error("no solution for: %s :(", dir_name)
+            log.error("no solution for: %s :(", dir_nam)
 
         log.info(
-            "end %s at %s (exec: %s s)",
-            dir_name,
+            "end %s at %s (exec: %7.4f s)",
+            dir_nam,
             dt.datetime.now(),
             str(time.time() - start),
         )
 
     return None
+
 
 def run_dirs_kwwrap(kwarg):
     run_directors(**kwarg)
@@ -161,15 +158,14 @@ def run_dirs_kwwrap(kwarg):
 
 
 def run_dirs_multi(
-    dir_paths_inp,
-    nprocs=4,
-    opts_gins_pc="",
-    opts_gins_90="",
-    version="OPERA",
-    cmd_mode="exe_gins_dir",
-    force=False,
+        dir_paths_inp,
+        nprocs=4,
+        opts_gins_pc="",
+        opts_gins_90="",
+        version="OPERA",
+        cmd_mode="exe_gins_dir",
+        force=False,
 ):
-
     kwargs_lis = []
     for dirr in list(sorted(dir_paths_inp)):
         kwargs = dict()
@@ -187,30 +183,31 @@ def run_dirs_multi(
 
     return None
 
+
 def _check_dir_keys(director_path_inp):
     for grepstr in (
-        "userext_gps__qualiteorb",
-        "userext_gps__haute_freq",
-        "userext_gps__hor_interp",
-        "GPS__QUALITEORB",
-        "GPS__HAUTE_FREQ",
-        "GPS__HOR_INTERP",
+            "userext_gps__qualiteorb",
+            "userext_gps__haute_freq",
+            "userext_gps__hor_interp",
+            "GPS__QUALITEORB",
+            "GPS__HAUTE_FREQ",
+            "GPS__HOR_INTERP",
     ):
         grep_out = utils.grep(director_path_inp, grepstr)
         if grep_out == "":
             log.warning("IPPP mode on, but no %sin the dir !!!", grepstr)
 
+
 ########## OLD FUNCTIONS ##########
 
 def run_dirs_multislots_custom(
-    director_lis,
-    slots_lis=["", "U", "L", "R"],
-    opts_gins_pc="",
-    opts_gins_90="",
-    version="OPERA",
-    mode="ginspc",
+        director_lis,
+        slots_lis=["", "U", "L", "R"],
+        opts_gins_pc="",
+        opts_gins_90="",
+        version="OPERA",
+        mode="ginspc",
 ):
-
     if not type(director_lis) is list:
         log.error("director_lis in input is not a list !!!")
         return None
@@ -288,11 +285,11 @@ def smart_directors_to_run(wildcard_dir="", full_path_out=True):
 
 
 def smart_listing_archive(
-    wildcard_dir,
-    gins_main_archive,
-    gins_anex_archive,
-    prepars_archive,
-    director_archive,
+        wildcard_dir,
+        gins_main_archive,
+        gins_anex_archive,
+        prepars_archive,
+        director_archive,
 ):
     """for each listing corresponding to the wildcard :
     if it's a prepars => go to the prepars_archive
@@ -335,7 +332,7 @@ def smart_listing_archive(
         multi_gins_fullpath_temp = [e for e in gins_lis if m in e]
         multi_gins_fullpath_main.append(multi_gins_fullpath_temp[0])
         multi_gins_fullpath_anex = (
-            multi_gins_fullpath_anex + multi_gins_fullpath_temp[1:]
+                multi_gins_fullpath_anex + multi_gins_fullpath_temp[1:]
         )
 
     for directory in [
@@ -363,7 +360,7 @@ def smart_listing_archive(
 
 
 def export_results_gins_listing(
-    listings_list_in, outpath, static_or_kinematic="kine", outprefix="", coordtype="FLH"
+        listings_list_in, outpath, static_or_kinematic="kine", outprefix="", coordtype="FLH"
 ):
     if len(listings_list_in) == 0:
         print("ERR : export_results_gins_listing : listings list is empty ...")
@@ -377,6 +374,7 @@ def export_results_gins_listing(
         ts = time_series.merge_ts(tslist)
     time_series.export_ts(ts, outpath, coordtype, outprefix)
     return outpath
+
 
 def run_director_list_wrap(tupinp):
     run_directors(*tupinp)

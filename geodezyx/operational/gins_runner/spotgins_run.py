@@ -43,6 +43,7 @@ def spotgins_run(
     force=False,
     no_archive=False,
     no_clean_tmp=False,
+    verbose=False,
 ):
     """
     Run the SPOTGINS process on the provided RINEX paths using multiprocessing.
@@ -114,6 +115,7 @@ def spotgins_run(
             options_prairie_file=opra_use,
             auto_interval=False,
             force=force,
+            verbose=verbose,
             sites_id9_series=siteid9_use,
         )
 
@@ -125,6 +127,7 @@ def spotgins_run(
             version=version,
             cmd_mode="exe_gins_dir",
             force=force,
+            verbose=verbose
         )
 
         ######## ARCHIVING ####################
@@ -133,7 +136,8 @@ def spotgins_run(
 
         ######## CLEANING ####################
         if not no_clean_tmp and os.path.exists(tmp_folder):
-            log.info(f"Cleaning temporary folder {tmp_folder}")
+            if verbose:
+                log.info(f"Cleaning temporary folder {tmp_folder}")
             shutil.rmtree(tmp_folder)
 
     ##### END Multi-processing Wrapper END ################
@@ -203,7 +207,7 @@ def get_spotgins_files(
     return dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use
 
 
-def archiv_gins_run(dir_inp, archive_folder):
+def archiv_gins_run(dir_inp, archive_folder, verbose=True):
     if not dir_inp:
         return None
     time.sleep(1)  # wait a proper GINS end
@@ -236,7 +240,8 @@ def archiv_gins_run(dir_inp, archive_folder):
     ):
 
         for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
-            log.info(f"Archiving {f} to {arch_fld}")
+            if verbose:
+                log.info(f"Archiving {f} to {arch_fld}")
             ### check if the file is already in the archive (crash if yes)
             # and move it to the trash folder
             f_bn = os.path.basename(f)
@@ -251,7 +256,8 @@ def archiv_gins_run(dir_inp, archive_folder):
     # compress the listings
     for f in glob.glob(os.path.join(li_arch_fld, dir_basename) + "*"):
         if not f.endswith("gz"):
-            log.info(f"Compressing listing {os.path.basename(f)}")
+            if verbose:
+                log.info(f"Compressing listing {os.path.basename(f)}")
             utils.gzip_compress(f, rm_inp=True)
     return None
 

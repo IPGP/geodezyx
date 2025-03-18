@@ -33,26 +33,27 @@ log = logging.getLogger("geodezyx")
 
 
 def gen_dirs_rnxs(
-    rnx_paths_inp,
-    director_generik_path,
-    director_name_prefix,
-    out_director_folder=None,
-    temp_data_folder=None,
-    stations_file=None,
-    oceanload_file=None,
-    options_prairie_file=None,
-    auto_stations_file=False,
-    auto_oceanload=False,
-    perso_orbclk=False,
-    ac="igs",
-    repro=2,
-    auto_interval=True,
-    out_coords="NULL",
-    prairie=False,
-    prairie_kwargs={"with_historik": 1, "with_wsb": 1},
-    force=False,
-    sites_id9_series=None,
-    add_tropo_sol=True,
+        rnx_paths_inp,
+        director_generik_path,
+        director_name_prefix,
+        out_director_folder=None,
+        temp_data_folder=None,
+        stations_file=None,
+        oceanload_file=None,
+        options_prairie_file=None,
+        auto_stations_file=False,
+        auto_oceanload=False,
+        perso_orbclk=False,
+        ac="igs",
+        repro=2,
+        auto_interval=True,
+        out_coords="NULL",
+        prairie=False,
+        prairie_kwargs={"with_historik": 1, "with_wsb": 1},
+        force=False,
+        verbose=True,
+        sites_id9_series=None,
+        add_tropo_sol=True,
 ):
     """
     Generate directors from RINEX files.
@@ -101,7 +102,8 @@ def gen_dirs_rnxs(
     repro : int, optional
         Reprocessing version for perso orbits/clocks. Defaults to 2.
     auto_interval : bool, optional
-        Automatically find the interval in RINEX and apply it to the director. Defaults to False.
+        Automatically find the interval in RINEX and apply it to the director.
+         Defaults to False.
     out_coords : str, optional
         Output coordinates type ('XYZ' or 'FLH'/'PLH'). Defaults to "NULL".
     prairie : bool, optional
@@ -109,9 +111,13 @@ def gen_dirs_rnxs(
         if True, prairie_kwargs control the arguments of the function
         prairie_manual (cf above)
     prairie_kwargs : dict, optional
-        Arguments for the prairie_manual function. Defaults to {"with_historik": 1, "with_wsb": 1}.
+        Arguments for the prairie_manual function.
+        Defaults to {"with_historik": 1, "with_wsb": 1}.
     force : bool, optional
-        Force the generation of the director even if a solution already exists. Defaults to False.
+        Force the generation of the director even if a solution already exists.
+        Defaults to False.
+    verbose : bool
+        verbose messages. Default is True.
 
     Returns
     -------
@@ -197,14 +203,12 @@ def gen_dirs_rnxs(
         os.makedirs(tmp_fld_use)
 
         # be sure the RINEX is in gins folder ...
-        rnx_path = gynscmn.bring_to_gin(rnx_path_ori, tmp_fld_use)
+        rnx_path = gynscmn.bring_to_gin(rnx_path_ori, tmp_fld_use, verbose=verbose)
 
-        # check if the RINEX is compressed ...
-        bool_comp_rnx = operational.check_if_compressed_rinex(rnx_path)
-        # ... if not crz2rnx !
-        if bool_comp_rnx:
+        # check if the RINEX is compressed ... if not crz2rnx !
+        if operational.check_if_compressed_rinex(rnx_path):
             crinex_path = rnx_path
-            rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use)
+            rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use, verbose=verbose)
             if not os.path.isfile(rnx_path):
                 bool_cntu = _fail_rnx(rnx_path, rnx_dt, "CRZ2RNX failed")
                 if bool_cntu:
@@ -228,7 +232,7 @@ def gen_dirs_rnxs(
 
         # date
         try:
-            srt_epo, end_epo, freq_rnx = operational.rinex_start_end(rnx_path, True)
+            srt_epo, end_epo, freq_rnx = operational.rinex_start_end(rnx_path, True, verbose=verbose)
         except:
             srt_epo, end_epo, freq_rnx = None, None, None
             bool_cntu = _fail_rnx(rnx_path, rnx_dt, "get RINEX start/end failed")
@@ -266,10 +270,10 @@ def gen_dirs_rnxs(
             dir_dic["date"]["initial_state_vector_date"][0] = strt_day
 
         dir_dic["date"]["arc_start"][1] = (
-            strt_sec - 1
+                strt_sec - 1
         )  # -1 to make it SPOTGINS compatible
         dir_dic["date"]["arc_stop"][1] = (
-            end_sec + 1
+                end_sec + 1
         )  # +1 to make it SPOTGINS compatible
         if "initial_state_vector_date" in list(dir_dic["date"].keys()):
             dir_dic["date"]["initial_state_vector_date"][1] = strt_sec
@@ -307,12 +311,12 @@ def gen_dirs_rnxs(
             )
 
         if stations_file:
-            stfi_ingin = gynscmn.bring_to_gin(str(stations_file), tmp_fld_use)
+            stfi_ingin = gynscmn.bring_to_gin(str(stations_file), tmp_fld_use, verbose=verbose)
             dir_dic["object"]["station"]["station_coordinates"] = (
                 gynscmn.make_path_ginsstyle(stfi_ingin)
             )
         if oceanload_file:
-            oclo_ingin = gynscmn.bring_to_gin(str(oceanload_file), tmp_fld_use)
+            oclo_ingin = gynscmn.bring_to_gin(str(oceanload_file), tmp_fld_use, verbose=verbose)
             dir_dic["object"]["station"]["ocean_tide_loading"] = (
                 gynscmn.make_path_ginsstyle(oclo_ingin)
             )
@@ -356,14 +360,16 @@ def gen_dirs_rnxs(
         gynscmn.check_site_stfl(siteid4_upp, stfi_path_full)
 
         domes = gynscmn.find_domes_in_stfl(siteid4_upp, stfi_path_full)
-        log.info("DOMES : %s", domes)
+        if verbose:
+            log.info("DOMES: %s", domes)
         gynscmn.chek_domes_oclo(domes[0], oclo_path_full)
 
         # ========= CUSTOM USER EXTENSION (tropo, high freq...) =============
         dir_dic = _dir_userext(dir_dic, siteid4_upp, add_tropo_sol)
 
         # WRITING THE NEW DIRECTOR
-        log.info("writing : %s", dir_out_path)
+        if verbose:
+            log.info("writing: %s", dir_out_path)
         with open(dir_out_path, "w+") as outfile:
             outfile.write(yaml.dump(dir_dic, default_flow_style=False))
 
@@ -408,10 +414,10 @@ def _dir_auto_intrvl(dir_dic, freq_rnx):
     dir_dic["observation"]["removal"]["simulation_stepsize"] = freq_rnx
     # check if its not a static dir
     if (
-        dir_dic["parameter"]["adjustment_parameters"]["stations"][
-            "adjustment_frequency"
-        ][-1]
-        != 0
+            dir_dic["parameter"]["adjustment_parameters"]["stations"][
+                "adjustment_frequency"
+            ][-1]
+            != 0
     ):
         dir_dic["parameter"]["adjustment_parameters"]["stations"][
             "adjustment_frequency"
@@ -490,7 +496,7 @@ def _dir_rnx_site_id(rnx_name, sites_id9_series):
     based on the RINEX name
     """
     if conv.rinex_regex_search_tester(
-        rnx_name, short_name=False, long_name=True
+            rnx_name, short_name=False, long_name=True
     ):  ### RINEX3
         site_id9 = rnx_name[0:9].upper()
     else:  ### RINEX2
@@ -501,8 +507,8 @@ def _dir_rnx_site_id(rnx_name, sites_id9_series):
             if ser_bool.any():
                 site_id9 = sites_id9_series.loc[ser_bool].values[0]
             if ser_bool.sum() > 1:
-                log.warning("more than one site_id9 found for %s", site_id4)
-                log.warning("%s", sites_id9_series.loc[ser_bool].values)
+                log.warning("more than one site_id9 found for %s: %s", site_id4,
+                            sites_id9_series.loc[ser_bool].values)
                 log.warning("taking the first one : %s", site_id9)
 
     site_id4_upper = site_id9[0:4]
