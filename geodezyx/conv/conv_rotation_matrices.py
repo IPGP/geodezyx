@@ -119,8 +119,8 @@ def C_ecef2enu(phi, llambda, angtype='deg'):
 
 def C_ecef2enu_sigma(phi, llambda, angtype='deg'):
     """
-    Gives the transformation matrix between ECEF and ENU (East North Up) ref. frame
-    for the sigmas (variance propagation)
+    Gives the transformation matrix between ECEF and ENU (East North Up) 
+    ref. frame for the sigmas (variance propagation)
 
 
     Source
@@ -134,7 +134,7 @@ def C_ecef2enu_sigma(phi, llambda, angtype='deg'):
 
     C_ecef2enu_sigma_out = np.array([[- np.sin(llambda), np.cos(llambda), 0],
                                      [-np.sin(phi) * np.cos(llambda), -np.sin(phi) * np.sin(llambda), np.cos(phi)],
-                                     [np.cos(phi) * np.cos(llambda), np.cos(phi) * np.sin(llambda), np.sin(llambda)]])
+                                     [np.cos(phi) * np.cos(llambda), np.cos(phi) * np.sin(llambda), np.sin(phi)]])
 
     return C_ecef2enu_sigma_out
 

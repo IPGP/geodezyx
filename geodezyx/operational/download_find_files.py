@@ -30,17 +30,18 @@ from geodezyx import utils
 
 log = logging.getLogger('geodezyx')
 
+
 ##########  END IMPORT  ##########
 
 def rinex_finder(
-    main_dir,
-    short_name=True,
-    long_name=True,
-    gfz_godc_name=True,
-    compressed=None,
-    specific_sites=[],
-    start_epoch=None,
-    end_epoch=None,
+        main_dir,
+        short_name=True,
+        long_name=True,
+        gfz_godc_name=True,
+        compressed=None,
+        specific_sites=[],
+        start_epoch=None,
+        end_epoch=None,
 ):
     """
     Parameters
@@ -106,7 +107,7 @@ def rinex_finder(
         for site in specific_sites:
             for rnx in files_rnx_lis:
                 rnx_bn = os.path.basename(rnx)
-                if site[0:4].lower() in rnx_bn or site.upper() in rnx_bn:
+                if utils.is_in_str(rnx_bn, site.upper(), site[0:4].lower(), site[0:4].upper()):
                     files_rnx_lis_tmp.append(rnx)
         files_rnx_lis = files_rnx_lis_tmp
 
@@ -182,19 +183,19 @@ def read_rinex_list_table(rnx_list_inp):
 
 
 def find_igs_products_files(
-    parent_dir,
-    file_type,
-    ACs,
-    date_start,
-    date_end=None,
-    recursive_search=True,
-    severe=True,
-    compressed="incl",
-    regex_old_naming=True,
-    regex_new_naming=True,
-    regex_igs_tfcc_naming=True,
-    add_weekly_file=False,
-    add_hourly_file=False,
+        parent_dir,
+        file_type,
+        ACs,
+        date_start,
+        date_end=None,
+        recursive_search=True,
+        severe=True,
+        compressed="incl",
+        regex_old_naming=True,
+        regex_new_naming=True,
+        regex_igs_tfcc_naming=True,
+        add_weekly_file=False,
+        add_hourly_file=False,
 ):
     """
     Find all product files in a parent folder which correspond to file type(s),
@@ -362,7 +363,7 @@ def find_igs_products_files(
         re_patt_date = join_regex_and(dates_wwwwd_list_4old)
         re_patt_filtyp = join_regex_and(file_type)
         re_patt_big_old_naming = (
-            re_patt_ac + re_patt_date + r"\." + re_patt_filtyp + re_patt_comp
+                re_patt_ac + re_patt_date + r"\." + re_patt_filtyp + re_patt_comp
         )
         re_patt_big_stk.append(re_patt_big_old_naming)
 
@@ -396,19 +397,19 @@ def find_igs_products_files(
         re_patt_filtyp = r"\." + join_regex_and(file_type)
 
         re_patt_big_igs_tfcc_naming = (
-            "igs"
-            + re_patt_year
-            + "P"
-            + re_patt_date
-            + ".*"
-            + re_patt_filtyp
-            + re_patt_comp
+                "igs"
+                + re_patt_year
+                + "P"
+                + re_patt_date
+                + ".*"
+                + re_patt_filtyp
+                + re_patt_comp
         )
         re_patt_big_stk.append(re_patt_big_igs_tfcc_naming)
 
     re_patt_big = join_regex_and(re_patt_big_stk)
 
-    #log.info("REGEX researched: %s",re_patt_big)
+    # log.info("REGEX researched: %s",re_patt_big)
 
     ###### Specific file search management ##############
     files_select_list = []
@@ -424,7 +425,6 @@ def find_igs_products_files(
     log.info("%i files found matching REGEX %s", len(files_select_list), re_patt_big)
 
     return files_select_list
-
 
 ##### FUNCTION GRAVEYARD #####
 

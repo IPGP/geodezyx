@@ -36,6 +36,7 @@ from geodezyx import utils
 
 #### Import the logger
 import logging
+
 log = logging.getLogger("geodezyx")
 
 ##########  END IMPORT  ##########
@@ -75,6 +76,7 @@ def get_spotgins_path():
         log.error("env. var. SPOTGINS_DIR dont exists !!!")
         return None
 
+
 def check_site_stfl(stat, stationfile):
     """
     Check if a station code is present in a station file.
@@ -94,10 +96,11 @@ def check_site_stfl(stat, stationfile):
     boolout = utils.check_regex(stationfile, stat)
     if not boolout:
         log.warning("%s not in %s", stat, stationfile)
-        log.warning("check your RINEX header and its the MARKER NAME field (station 4-char. code)")
+        log.warning("check RINEX header and its MARKER NAME field (4-char. code)")
     return boolout
 
-def check_domes_oclo(domes, oclofile):
+
+def chek_domes_oclo(domes, oclofile):
     """
     Check if a DOMES number is present in an OCLO file.
 
@@ -118,7 +121,6 @@ def check_domes_oclo(domes, oclofile):
         log.error("%s not in %s, %s", domes, oclofile, "be sure of what you are doing!")
 
     return boolout
-
 
 
 def find_domes_in_stfl(stat_code, stationfile):
@@ -193,6 +195,7 @@ def copy_in_gin(file_path_inp, temp_data_folder=None):
     file_path_out = os.path.join(temp_data_folder, os.path.basename(file_path_inp))
 
     return file_path_out
+
 
 def bring_to_gin(file_path_inp, temp_data_folder=None, gins_path=None):
     """
@@ -279,6 +282,7 @@ def make_path_ginsstyle(pathin):
 
 
 ############### OLD FCTS
+
 
 def write_oclo_file(station_file, oceanload_out_file, fes_yyyy=2004):
     temp_cmd_fil = os.path.join(os.path.dirname(oceanload_out_file), "oclo.cmd.tmp")
@@ -412,10 +416,11 @@ def check_solution(dir_name_inp, gin_path_inp=None):
         gin_path = gin_path_inp
     # check if the solution already exists
     sol_folder = os.path.join(gin_path, "gin", "batch", "solution")
-    sols_matching = glob.glob(sol_folder + '/' + dir_name_inp + '*')
+    sols_matching = glob.glob(sol_folder + "/" + dir_name_inp + "*")
     if len(sols_matching) > 0:
         log.info("Solution %s exists for %s", sols_matching, dir_name_inp)
     return sols_matching
+
 
 #    return dic1
 
@@ -520,4 +525,3 @@ def check_solution(dir_name_inp, gin_path_inp=None):
 #         print("WARN : get_rinex_list : all RINEXs removed bc. of date interval")
 #
 #     return goodrnxfilelist_date
-

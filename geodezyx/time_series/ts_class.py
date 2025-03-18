@@ -215,7 +215,9 @@ class Point():
         dY =  self.Y - refENU.Y
         dZ =  self.Z - refENU.Z
 
-        Etmp,Ntmp,Utmp = conv.XYZ2ENU(dX,dY,dZ,refENU.F,refENU.L)
+        Etmp,Ntmp,Utmp = conv.XYZ2ENU_2(self.X, self.Y, self.Z,
+                                        refENU.X, refENU.Y, refENU.Z)
+        
         self.E,self.N,self.U = Etmp[0],Ntmp[0],Utmp[0]
 
         if self.initype == 'FLH' and hasattr(self,'sF'):
@@ -223,9 +225,20 @@ class Point():
                 self.sE,self.sN,self.sU = conv.sFLH2sENU(self.F,self.L,self.H,
                                                          self.sF,self.sL,self.sH)
         elif self.initype == 'XYZ' and hasattr(self,'sX'):
-            if not np.isnan(self.sX):
-                self.sE,self.sN,self.sU = conv.sXYZ2sENU(self.X,self.Y,self.Z,
-                                                         self.sX,self.sY,self.sZ)
+            if np.isnan(self.sX):
+                
+                return
+                
+            if 'sdXY' in self.anex.keys():
+                sXY = self.anex['sdXY']
+                sXZ = self.anex['sdXZ']
+                sYZ = self.anex['sdYZ']
+            else:
+                sXY, sXZ, sYZ = 0,0,0
+                
+            self.sE,self.sN,self.sU = conv.sXYZ2sENU(self.X,self.Y,self.Z,
+                                                     self.sX,self.sY,self.sZ,
+                                                     sXY=sXY, sYZ=sYZ, sXZ=sXZ)
 
 
     def UTMcalc_pt(self,ellips="wgs84"):
@@ -394,20 +407,20 @@ class TimeSeriePoint:
 
         self.interp_set()
 
-    def add_point(self,inPoint):
+    def add_point(self, point_inp):
         """
         Method to add a Point in the TimeSerie Object
 
         Parameters
         ----------
-        inPoint : Point Object
+        point_inp : Point Object
 
         Returns
         -------
         None.
 
         """
-        self.pts.append(inPoint)
+        self.pts.append(point_inp)
         # this line is discontiued, because now nbpts is a property
         #self.nbpts = len(self.pts)
 
@@ -1332,19 +1345,29 @@ class TimeSeriePoint:
                     i_stk.append(i)
             return pts_stk  , i_stk
         
-    def remove_duplicate_pts(self,coortype="XYZ"):
-        T = self.to_dataframe(coortype)["T"] 
-        
+    def rm_duplicat_pts(self, coortype="XYZ"):
+        """
+        Remove duplicate points from the time series.
+
+        Parameters
+        ----------
+        coortype : str, optional
+            The coordinate type to consider for duplication check. The default is "XYZ".
+
+        Returns
+        -------
+        None
+        """
+        T = self.to_dataframe(coortype)["T"]
+
         dup_bool = T.duplicated()
-        
+
         if dup_bool.sum() > 0:
-            log.warn("%s duplicated point(s) removed for %s",
-                     dup_bool.sum(), self.name)
-            
+            log.warning("%s duplicated point(s) removed for %s",
+                        dup_bool.sum(), self.name)
+
         self.pts = list(pd.Series(self.pts)[np.logical_not(dup_bool)])
-    
-    
-    
+
 
 
  #  ______                      _                      _        _    _____ _                         

@@ -148,7 +148,7 @@ def gen_dirs_rnxs(
         if multimode:
             bool_continue = True
         return bool_continue
-        #else:
+        # else:
         #    raise Exception
 
     for i, rnx_path_ori in enumerate(rnx_path_lis):
@@ -357,7 +357,7 @@ def gen_dirs_rnxs(
 
         domes = gynscmn.find_domes_in_stfl(siteid4_upp, stfi_path_full)
         log.info("DOMES : %s", domes)
-        gynscmn.check_domes_oclo(domes[0], oclo_path_full)
+        gynscmn.chek_domes_oclo(domes[0], oclo_path_full)
 
         # ========= CUSTOM USER EXTENSION (tropo, high freq...) =============
         dir_dic = _dir_userext(dir_dic, siteid4_upp, add_tropo_sol)
@@ -529,7 +529,6 @@ def _dir_userext(dir_dic, site_id4_upper, add_tropo_sol=True):
             if np.any(is_gpshf):
                 idx_gpshf = is_gpshf.index(True)
                 dir_dic[uext][uadd][idx_gpshf] = "GPS__HAUTE_FREQ " + site_id4_upper
-
 
     return dir_dic
 

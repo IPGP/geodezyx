@@ -32,8 +32,8 @@ def spotgins_run(
     rnxs_path_inp,
     archive_folder_inp,
     nprocs=8,
-    version="VALIDE_23_2",
-    const="G",
+    version="VALIDE_24_2",
+    const="GE",
     director_generik_path_inp=None,
     director_name_prefix_inp="",
     stations_file_inp=None,
@@ -44,6 +44,44 @@ def spotgins_run(
     no_archive=False,
     no_clean_tmp=False,
 ):
+    """
+    Run the SPOTGINS process on the provided RINEX paths using multiprocessing.
+
+    Parameters
+    ----------
+    rnxs_path_inp : list
+        List of input RINEX file paths.
+    archive_folder_inp : str
+        Path to the archive folder.
+    nprocs : int, optional
+        Number of processes to use for multiprocessing. Default is 8.
+    version : str, optional
+        Version of the GINS software to use. Default is "VALIDE_23_2".
+    const : str, optional
+        GNSS constellation to use. Default is "G".
+    director_generik_path_inp : str, optional
+        Path to the generic director file. Default is None.
+    director_name_prefix_inp : str, optional
+        Prefix for the director name. Default is an empty string.
+    stations_file_inp : str, optional
+        Path to the stations file. Default is None.
+    oceanload_file_inp : str, optional
+        Path to the ocean load file. Default is None.
+    options_prairie_file_inp : str, optional
+        Path to the options prairie file. Default is None.
+    stations_master_file_inp : str, optional
+        Path to the stations master file. Default is None.
+    force : bool, optional
+        Force the generation and run of directors even if they already exist. Default is False.
+    no_archive : bool, optional
+        If True, do not archive the results. Default is False.
+    no_clean_tmp : bool, optional
+        If True, do not clean the temporary files. Default is False.
+
+    Returns
+    -------
+    None
+    """
 
     rnxs_path_use = list(sorted(rnxs_path_inp))
     ##### get the paths of the files needed for SPOTGINS
@@ -57,7 +95,6 @@ def spotgins_run(
 
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
-
     def spotgins_wrap(rnx_mono_path_inp):
 
         ######## QUICK ARCHIVING CHECK ############# # Check if the solution is already archived
@@ -141,7 +178,7 @@ def get_spotgins_files(
         oclo_use = oceanload_file_inp
     else:
         oclo_use = os.path.join(
-            sptgns_path, "metadata", "oceanloading", "load_fes2014b_cf.spotgins"
+            sptgns_path, "metadata", "oceanloading", "load_fes2022_cf.spotgins"
         )
 
     if options_prairie_file_inp:

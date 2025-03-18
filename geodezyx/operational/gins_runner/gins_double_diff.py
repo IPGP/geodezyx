@@ -286,7 +286,7 @@ def gen_dirs_from_double_diff(
 
         # domes = find_domes_in_statfile(stat,statfile_path_full)
         # print 'INFO : DOMES : ',domes
-        # check_domes_oclo(domes[0],ocloadfile_path_full)
+        # chek_domes_oclo(domes[0],ocloadfile_path_full)
 
         # Case of kinematic process : need to change keys in user extension
         stat_B = None

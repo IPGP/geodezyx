@@ -710,7 +710,7 @@ def line_count(filein):
     return num_lines
 
 
-def patterns_in_string_checker(string,*patterns):
+def is_in_str(string, *patterns):
     """
     recipe to the famous problem of pattern in string
     from

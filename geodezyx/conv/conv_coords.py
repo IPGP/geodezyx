@@ -523,6 +523,9 @@ def sFLH2sXYZ(F,L,H,sF,sL,sH,ang='deg'):
     Linear Algebra, Geodesy, and GPS p332
     """
     
+    log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
+    log.warning("Prefer sXYZ2sENU")
+    
     if ang == 'deg':
         F  = np.deg2rad(F)
         L  = np.deg2rad(L)
@@ -556,6 +559,10 @@ def sFLH2sENU(F,L,H,sF,sL,sH,ang='deg'):
     """
     # conversion batarde du sigma FLH => sigma ENU
     # Par conversion des angles en distance
+    
+    log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
+    log.warning("Prefer sXYZ2sENU")
+    
     if ang == 'deg':
         F = np.deg2rad(F)
         L = np.deg2rad(L)
@@ -595,6 +602,10 @@ def sENU2sFLH(F,L,H,sE,sN,sU,ang='deg',
     ----------
     Linear Algebra, Geodesy, and GPS p332
     """
+    
+    log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
+    log.warning("Prefer sXYZ2sENU")
+    
     # conversion batarde du sigma ENU => sigma FLH
     # Par conversion des angles en distance
     
@@ -624,18 +635,14 @@ def sXYZ2sENU(X,Y,Z,sX,sY,sZ,sXY=0,sYZ=0,sXZ=0):
     Convert standard deviation
     Cartesian ECEF XYZ => Cartesian Topocentric ENU 
     
-    WARNING
-    -------
+    Note
+    ----
     Inputs values are now assumed as correlated (241105)
     
     References
     ----------
     Linear Algebra, Geodesy, and GPS p332
     """
-
-    #conversion "batarde" en assumant par défaut
-    #que XYZ ne sont pas corrélé (pas bien ...)
-    #Linear Algebra, Geodesy, and GPS p332
 
     SIGMAxyz = np.array([[sX**2,sXY,sXZ],
                          [sXY,sY**2,sYZ],
@@ -648,7 +655,11 @@ def sXYZ2sENU(X,Y,Z,sX,sY,sZ,sXY=0,sYZ=0,sXZ=0):
     # new and good rotation matrix (after 20241104)
     C = rotmat.C_ecef2enu_sigma(F,L,angtype='deg')
 
-    SIGMAenu = np.dot(np.dot(C,SIGMAxyz),C.T)
+    SIGMAenu  = np.dot(np.dot(C,SIGMAxyz),C.T)
+    SIGMAenu2 = np.dot(C,np.dot(SIGMAxyz,C.T))
+        
+    lon = np.deg2rad(L)
+    lat = np.deg2rad(F)
 
     sE = np.sqrt(SIGMAenu[0,0])
     sN = np.sqrt(SIGMAenu[1,1])
