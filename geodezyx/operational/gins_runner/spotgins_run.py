@@ -108,10 +108,13 @@ def spotgins_run(
     if not no_updatebd:
         rnxs_dates = [conv.rinexname2dt(e) for e in rnxs_path_use]
         rnxs_dates = [e for e in rnxs_dates if e is not None]
-        gynsbdu.update_bdgins(min(rnxs_dates), max(rnxs_dates))
+        gynsbdu.update_bdgins(min(rnxs_dates), max(rnxs_dates),
+                              dir_bdgins="",
+                              login=updatebd_login)
 
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
+
     def spotgins_wrap(rnx_mono_path_inp):
         ######## QUICK ARCHIVING CHECK ############# # Check if the solution is already archived
         if not force and check_arch_sol(rnx_mono_path_inp, archive_folder_inp):
