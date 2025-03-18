@@ -29,21 +29,21 @@ log = logging.getLogger("geodezyx")
 
 
 def spotgins_run(
-    rnxs_path_inp,
-    archive_folder_inp,
-    nprocs=8,
-    version="VALIDE_23_2",
-    const="G",
-    director_generik_path_inp=None,
-    director_name_prefix_inp="",
-    stations_file_inp=None,
-    oceanload_file_inp=None,
-    options_prairie_file_inp=None,
-    stations_master_file_inp=None,
-    force=False,
-    no_archive=False,
-    no_clean_tmp=False,
-    verbose=False,
+        rnxs_path_inp,
+        archive_folder_inp,
+        nprocs=8,
+        version="VALIDE_23_2",
+        const="G",
+        director_generik_path_inp=None,
+        director_name_prefix_inp="",
+        stations_file_inp=None,
+        oceanload_file_inp=None,
+        options_prairie_file_inp=None,
+        stations_master_file_inp=None,
+        force=False,
+        no_archive=False,
+        no_clean_tmp=False,
+        verbose=False,
 ):
     """
     Run the SPOTGINS process on the provided RINEX paths using multiprocessing.
@@ -96,6 +96,7 @@ def spotgins_run(
 
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
+
     def spotgins_wrap(rnx_mono_path_inp):
 
         ######## QUICK ARCHIVING CHECK ############# # Check if the solution is already archived
@@ -132,7 +133,7 @@ def spotgins_run(
 
         ######## ARCHIVING ####################
         if not no_archive:
-            archiv_gins_run(dirr, archive_folder_inp)
+            archiv_gins_run(dirr, archive_folder_inp, verbose=verbose)
 
         ######## CLEANING ####################
         if not no_clean_tmp and os.path.exists(tmp_folder):
@@ -150,15 +151,14 @@ def spotgins_run(
 
 
 def get_spotgins_files(
-    director_generik_path_inp,
-    stations_file_inp,
-    oceanload_file_inp,
-    options_prairie_file_inp,
-    stations_master_file_inp,
+        director_generik_path_inp,
+        stations_file_inp,
+        oceanload_file_inp,
+        options_prairie_file_inp,
+        stations_master_file_inp,
 ):
-
     if not gynscmn.get_spotgins_path() and (
-        not stations_file_inp or not oceanload_file_inp or not options_prairie_file_inp
+            not stations_file_inp or not oceanload_file_inp or not options_prairie_file_inp
     ):
         raise ValueError(
             "SPOTGINS path not set ($SPOTGINS_DIR) and stations_file/oceanload_file/options_prairie_file not provided"
@@ -235,8 +235,8 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
 
     # move files to their destination
     for batch_fld, arch_fld in zip(
-        [dir_batch_fld, li_batch_fld, sol_batch_fld],
-        [dir_arch_fld, li_arch_fld, sol_arch_fld],
+            [dir_batch_fld, li_batch_fld, sol_batch_fld],
+            [dir_arch_fld, li_arch_fld, sol_arch_fld],
     ):
 
         for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):

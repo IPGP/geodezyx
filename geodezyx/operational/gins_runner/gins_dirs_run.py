@@ -81,34 +81,22 @@ def run_directors(
             log.info("solution %s already exists, skipping ...", sols_exist)
             continue
 
-        opts_ginspc_ope = "-F" + opts_gins_pc
+        ogpc = "-F" + opts_gins_pc
+        og90 = opts_gins_90
+        vers = version
 
-        # log.info("options ginsPC: %s / gins90: %s", opts_gins_pc_ope, opts_gins_90)
+        # log.info("options ginsPC: %s / gins90: %s", ogpc, og90)
 
-        if "IPPP" in opts_gins_90 and cmd_mode != "ginspc":
+        if "IPPP" in og90 and cmd_mode != "ginspc":
             _check_dir_keys(dir_path)
 
         ### cmd must be a string here... (and not a list of small str...)
         if cmd_mode == "ginspc":
-            cmd = " ".join(
-                (
-                    "ginspc.bash",
-                    opts_ginspc_ope,
-                    dir_nam,
-                    opts_gins_90,
-                    "-v",
-                    version,
-                    "-f",
-                )
-            )
+            cmd = " ".join(("ginspc.bash", ogpc, dir_nam, og90, "-v", vers, "-f"))
         elif cmd_mode == "exe_gins_fic":
-            cmd = " ".join(
-                ("exe_gins", "-fic", dir_nam, "-v", version, opts_gins_90)
-            )
+            cmd = " ".join(("exe_gins", "-fic", dir_nam, "-v", vers, og90))
         elif cmd_mode == "exe_gins_dir":
-            cmd = " ".join(
-                ("exe_gins", "-dir", dir_nam, "-v", version, opts_gins_90)
-            )
+            cmd = " ".join(("exe_gins", "-dir", dir_nam, "-v", vers, og90))
         else:
             log.error("mode not recognized !!!")
             return None
@@ -139,15 +127,15 @@ def run_directors(
         #
 
         if gynscmn.check_solution(dir_nam, verbose=verbose):
-            log.info("solution for: %s :)", dir_nam)
+            log.info("solution ok for: %s :)", dir_nam)
         else:
             log.error("no solution for: %s :(", dir_nam)
 
         log.info(
-            "end %s at %s (exec: %s s)",
+            "run %s end at %s (exec: %9.4f s)",
             dir_nam,
             dt.datetime.now(),
-            str(time.time() - start),
+            time.time() - start,
         )
 
     return None

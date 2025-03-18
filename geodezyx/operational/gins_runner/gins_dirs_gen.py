@@ -159,8 +159,8 @@ def gen_dirs_rnxs(
 
     for i, rnx_path_ori in enumerate(rnx_path_lis):
         if multimode:
-            log.info(" ======== %i / %i ======== ", i + 1, n_rnxs)
-        log.info(" === %s ", os.path.basename(rnx_path_ori))
+            log.info(f"======== {i + 1} / {n_rnxs} ======== ")
+        log.info(" *** Generate directeur for: %s ", os.path.basename(rnx_path_ori))
         rnx_name = os.path.basename(rnx_path_ori)
         rnx_dt = conv.rinexname2dt(rnx_name)
         siteid9, siteid4_upp, siteid4_low = _dir_rnx_site_id(rnx_name, sites_id9_series)
