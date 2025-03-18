@@ -6,8 +6,8 @@ Created on 27/02/2025 10:37:26
 @author: psakic
 """
 
-
 import argparse
+import getpass
 import os
 import subprocess
 import datetime as dt
@@ -15,6 +15,7 @@ import re
 import sys
 
 from geodezyx import conv, utils
+import geodezyx.operational.gins_runner.gins_common as gynscmn
 
 #### Import the logger
 import logging
@@ -30,13 +31,13 @@ def read_credentials(file_path):
 
 
 def download_rsync(
-    file_list,
-    remote_user,
-    remote_host,
-    remote_path,
-    local_destination,
-    rsync_options=None,
-    password=None,
+        file_list,
+        remote_user,
+        remote_host,
+        remote_path,
+        local_destination,
+        rsync_options=None,
+        password=None,
 ):
     """
     Downloads a list of files using rsync.
@@ -57,7 +58,7 @@ def download_rsync(
     else:
         rsync_base = ["rsync"] + rsync_options
 
-    #if exclude_compress:
+    # if exclude_compress:
     #   '--ignore-existing' '--exclude-from=<(echo "$(find /destination -name '*.gz' | sed 's/\.gz$//')"')'
 
     tmp_rsync_file_lis = f"/tmp/" + utils.get_timestamp() + "_tmp_rsync_file_list.lst"
@@ -66,9 +67,9 @@ def download_rsync(
     # Construct the rsync command
     # /./ : https://askubuntu.com/questions/552120/preserve-directory-tree-while-copying-with-rsync
     rsync_cmd = (
-        rsync_base
-        + ["--files-from", tmp_rsync_file_lis]
-        + [f"{remote_source}/./", f"{local_destination}/"]
+            rsync_base
+            + ["--files-from", tmp_rsync_file_lis]
+            + [f"{remote_source}/./", f"{local_destination}/"]
     )
 
     # Run the rsync command
@@ -83,9 +84,35 @@ def download_rsync(
     return
 
 
-def update_bdgins(
-    date_srt, date_end, dir_bdgins, login="", password="", compress=True
-):
+def update_bdgins(date_srt, date_end, dir_bdgins="",
+                  login="", password="", compress=True):
+    """
+    Update the BDGINS repository with the necessary files for the given date range.
+
+    Parameters
+    ----------
+    date_srt : datetime
+        The start date for the update.
+    date_end : datetime
+        The end date for the update.
+    dir_bdgins : str, optional
+        The directory for BDGINS. Defaults to an empty string.
+    login : str, optional
+        The login for the remote server. Defaults to an empty string.
+    password : str, optional
+        The password for the remote server. Defaults to an empty string.
+    compress : bool, optional
+        Whether to compress the clock files. Defaults to True.
+
+    Returns
+    -------
+    None
+    """
+    if not dir_bdgins:
+        dir_bdgins = os.path.join(gynscmn.get_gin_path(True), 'data')
+
+    if not login:
+        login = getpass.getuser()
 
     date = date_srt
 
@@ -103,14 +130,6 @@ def update_bdgins(
 
     ###### LIST FILL
     ### misc files
-    # list_mda_snx_pra = [f"igs_satellite_metadata.snx"]
-    # list_pole = [f'nominal_NRO']
-    # list_antex = [f'igs20.atx']
-    # list_valap_static = [f'valap_static']
-    # list_macromod = [f'gnss.xml']
-    # list_lunisol = [f'de440bdlf.ad']
-    # list_maree_pol = [f'nominal']
-
     list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
     list_misc.extend([f"pole/nominal_NRO"])
     list_misc.extend([f"ANTEX/igs20.atx"])
@@ -146,17 +165,9 @@ def update_bdgins(
         date += dt.timedelta(days=1)
 
     ###### DESTINATION FOLDERS
-
     dest_subdir_dic = {
         ### misc files
-        # 'prairie': list_mda_snx_pra,
-        # 'pole': list_pole,
-        # 'ANTEX': list_antex,
-        # 'EXE_PPP': list_valap_static,
-        # 'macromod': list_macromod,
-        # 'lunisolaires': list_lunisol,
-        # 'maree_polaire/loading': list_maree_pol,
-        ".": list_misc,
+        ".": list_misc,  ## for misc files, destination is in the input path
         ### time dependant files
         "tropo_vmf1": list_tropo,
         "ionosphere/igs": list_iono,
@@ -170,7 +181,8 @@ def update_bdgins(
     os.chdir(dir_bdgins)
 
     for subdir, files_list in dest_subdir_dic.items():
-        log.info("Downloading files for %s", subdir)
+        subdir_print = "misc. files" if subdir == "." else subdir
+        log.info("Downloading files for %s", subdir_print)
 
         local_subdir_fullpath = os.path.join(dir_bdgins, subdir)
         remote_subdir_fullpath = os.path.join("/home/gins/MIROIR_STAF", subdir)
@@ -206,6 +218,7 @@ def update_bdgins(
 
     return None
 
+
 def create_dir(parent_dir, subdirs):
     if not os.path.exists(parent_dir):
         os.makedirs(parent_dir)
@@ -214,17 +227,6 @@ def create_dir(parent_dir, subdirs):
         subdir_fullpath = os.path.join(parent_dir, subdir)
         if not os.path.exists(subdir_fullpath):
             os.makedirs(subdir_fullpath)
-
-def download_fes2014b_files(login, password):
-    base_dir = "/root/gin/data/OCELOAD/FES2014b"
-    os.makedirs(base_dir, exist_ok=True)
-    commands = "cd /home/gins/MIROIR_STAF/OCELOAD/FES2014b\nmget *\nquit"
-    download_lftp(login, password, commands)
-
-    base_dir = "/root/gin/data/OCELOAD/data"
-    os.makedirs(base_dir, exist_ok=True)
-    commands = "cd /home/gins/MIROIR_STAF/OCELOAD/FES2014b\nmget *\nquit"
-    download_lftp(login, password, commands)
 
 
 def main():
@@ -244,10 +246,10 @@ def main():
         help="End date in various format.",
     )
     parser.add_argument(
-        "-d", "--dir_bdgins", help="Directory for BDGINS", required=True
+        "-d", "--dir_bdgins", help="Directory for BDGINS", required=False
     )
     parser.add_argument(
-        "-l", "--login", help="Login for the remote server.", required=True
+        "-l", "--login", help="Login for the remote server.", required=False
     )
     parser.add_argument(
         "-p",

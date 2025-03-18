@@ -10,6 +10,8 @@ import re
 import geodezyx.operational.gins_runner.gins_common as gynscmn
 import geodezyx.operational.gins_runner.gins_dirs_gen as gynsgen
 import geodezyx.operational.gins_runner.gins_dirs_run as gynsrun
+import geodezyx.operational.gins_runner.gins_bd_update as gynsbdu
+
 from geodezyx import utils
 
 import multiprocessing as mp
@@ -43,7 +45,10 @@ def spotgins_run(
         force=False,
         no_archive=False,
         no_clean_tmp=False,
+        no_updatebd=False,
         verbose=False,
+        updatebd_login=""
+
 ):
     """
     Run the SPOTGINS process on the provided RINEX paths using multiprocessing.
@@ -78,12 +83,17 @@ def spotgins_run(
         If True, do not archive the results. Default is False.
     no_clean_tmp : bool, optional
         If True, do not clean the temporary files. Default is False.
-
+    no_updatebd : bool, optional
+        If True, do not update the BDGINS repository. Default is False.
+    verbose : bool, optional
+        If True, enable verbose logging. Default is False.
+    updatebd_login : str
+        The login to connect to the remote tite GINS server to update the database.
+        We assume that SSH keys have been exchanged to automatize the connexion
     Returns
     -------
     None
     """
-
     rnxs_path_use = list(sorted(rnxs_path_inp))
     ##### get the paths of the files needed for SPOTGINS
     dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use = get_spotgins_files(
@@ -94,11 +104,15 @@ def spotgins_run(
         stations_master_file_inp,
     )
 
+    ##### get the
+    if not no_updatebd:
+        rnxs_dates = [conv.rinexname2dt(e) for e in rnxs_path_use]
+        rnxs_dates = [e for e in rnxs_dates if e is not None]
+        gynsbdu.update_bdgins(min(rnxs_dates), max(rnxs_dates))
+
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
-
     def spotgins_wrap(rnx_mono_path_inp):
-
         ######## QUICK ARCHIVING CHECK ############# # Check if the solution is already archived
         if not force and check_arch_sol(rnx_mono_path_inp, archive_folder_inp):
             log.info(f"Solution already archived for {rnx_mono_path_inp}, skip")
@@ -240,8 +254,14 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
     ):
 
         for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
+            if f.endswith(".qsub") or f.endswith("sh"):
+                if verbose:
+                    log.info(f"skip archive of qsub/sh file {f}")
+                continue
+
             if verbose:
                 log.info(f"Archiving {f} to {arch_fld}")
+
             ### check if the file is already in the archive (crash if yes)
             # and move it to the trash folder
             f_bn = os.path.basename(f)

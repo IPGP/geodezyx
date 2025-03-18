@@ -132,7 +132,7 @@ def run_directors(
             log.error("no solution for: %s :(", dir_nam)
 
         log.info(
-            "run %s end at %s (exec: %9.4f s)",
+            "run %s end at %s (exec: %7.3f s)",
             dir_nam,
             dt.datetime.now(),
             time.time() - start,
