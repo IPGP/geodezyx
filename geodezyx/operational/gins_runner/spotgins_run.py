@@ -34,8 +34,8 @@ def spotgins_run(
         rnxs_path_inp,
         archive_folder_inp,
         nprocs=8,
-        version="VALIDE_23_2",
-        const="G",
+        version="VALIDE_24_2",
+        const="GE",
         director_generik_path_inp=None,
         director_name_prefix_inp="",
         stations_file_inp=None,
@@ -104,20 +104,19 @@ def spotgins_run(
         stations_master_file_inp,
     )
 
-    ##### get the
+    ##### Update the database
     if not no_updatebd:
         rnxs_dates = [conv.rinexname2dt(e) for e in rnxs_path_use]
-        rnxs_dates = [e for e in rnxs_dates if e is not None]
+        rnxs_dates = [e for e in rnxs_dates if not e is None]
         gynsbdu.update_bdgins(min(rnxs_dates), max(rnxs_dates),
                               dir_bdgins="",
                               login=updatebd_login)
 
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
-
     def spotgins_wrap(rnx_mono_path_inp):
         ######## QUICK ARCHIVING CHECK ############# # Check if the solution is already archived
-        if not force and check_arch_sol(rnx_mono_path_inp, archive_folder_inp):
+        if not force and check_arch_sol(rnx_mono_path_inp, archive_folder_inp, verbose=verbose):
             log.info(f"Solution already archived for {rnx_mono_path_inp}, skip")
             return
 
@@ -285,7 +284,7 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
     return None
 
 
-def check_arch_sol(rnx_path_inp, archive_folder_inp):
+def check_arch_sol(rnx_path_inp, archive_folder_inp, verbose=True):
     epo = conv.rinexname2dt(rnx_path_inp)
     epo_str = epo.strftime("%Y_%j")
     site_id4 = str(os.path.basename(rnx_path_inp)[0:4].upper())
@@ -299,7 +298,7 @@ def check_arch_sol(rnx_path_inp, archive_folder_inp):
         )
     )
 
-    if len(potential_sol) > 0:
+    if verbose and len(potential_sol) > 0:
         log.info(f"Solution(s) found: {potential_sol}")
         return True
     else:
