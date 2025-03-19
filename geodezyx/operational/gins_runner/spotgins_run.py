@@ -320,7 +320,7 @@ def const_adapt(const_inp,dir_inp,verbose=True):
 
     import yaml
 
-    dir_dic = yaml.load(dir_inp, Loader=yaml.FullLoader)
+    dir_dic = yaml.load(open(dir_inp), Loader=yaml.FullLoader)
     rnx_date = conv.jjul_cnes2dt(dir_dic["date"]["arc_start"][0])
     if "E" in const_inp and rnx_date < dt.datetime(2018, 10, 7):
         if verbose:
