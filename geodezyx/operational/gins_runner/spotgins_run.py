@@ -20,7 +20,6 @@ import os
 import shutil
 import glob
 import time
-import yaml
 
 from geodezyx import files_rw, conv
 
@@ -96,7 +95,7 @@ def spotgins_run(
     -------
     None
     """
-    rnxs_path_use = list(sorted(rnxs_path_inp))
+
     ##### get the paths of the files needed for SPOTGINS
     dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use = get_spotgins_files(
         director_generik_path_inp,
@@ -316,6 +315,8 @@ def const_adapt(const_inp,dir_inp,verbose=True):
     solution
     GPS-only before this date
     """
+
+    import yaml
 
     dir_dic = yaml.load(dir_inp, Loader=yaml.FullLoader)
     rnx_date = conv.jjul_cnes2dt(dir_dic["date"]["arc_start"][0])
