@@ -96,6 +96,8 @@ def spotgins_run(
     None
     """
 
+    ##### sort the input list
+    rnxs_path_use = list(sorted(utils.listify(rnxs_path_inp)))
     ##### get the paths of the files needed for SPOTGINS
     dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use = get_spotgins_files(
         director_generik_path_inp,

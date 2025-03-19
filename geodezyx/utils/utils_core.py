@@ -102,6 +102,26 @@ def is_iterable(inp,
         out = True
     return out
 
+def listify(inp):
+    """
+    Convert the input into a list.
+
+    Parameters
+    ----------
+    inp : any
+        The input to be converted into a list.
+
+    Returns
+    -------
+    list
+        A list containing the input elements if the input is iterable,
+        otherwise a list with the input as its single element.
+    """
+    if is_iterable(inp):
+        return list(inp)
+    else:
+        return [inp]
+
 def is_not_iterable(inp,consider_str_as_iterable=False):
     """
     Simple negation of is_iterable()
