@@ -11,6 +11,7 @@ import geodezyx.operational.gins_runner.gins_common as gynscmn
 import geodezyx.operational.gins_runner.gins_dirs_gen as gynsgen
 import geodezyx.operational.gins_runner.gins_dirs_run as gynsrun
 import geodezyx.operational.gins_runner.gins_bd_update as gynsbdu
+import datetime as dt
 
 from geodezyx import utils
 
@@ -19,6 +20,7 @@ import os
 import shutil
 import glob
 import time
+import yaml
 
 from geodezyx import files_rw, conv
 
@@ -137,7 +139,8 @@ def spotgins_run(
         )
 
         ######## DIRECTORS RUN ###############
-        opt_gins_90_use = "-const " + const
+        const_use = const_adapt(const, rnx_mono_path_inp. verbose=verbose)
+        opt_gins_90_use = "-const " + const_use
         gynsrun.run_directors(
             dirr,
             opts_gins_90=opt_gins_90_use,
@@ -304,3 +307,22 @@ def check_arch_sol(rnx_path_inp, archive_folder_inp, verbose=True):
         return True
     else:
         return False
+
+
+def const_adapt(const_inp,dir_inp,verbose=True):
+    """
+    manage
+    ERREUR : Galileo integer ambiguity fixing not possible before 7th October 2018.
+    solution
+    GPS-only before this date
+    """
+
+    dir_dic = yaml.load(dir_inp, Loader=yaml.FullLoader)
+    rnx_date = conv.jjul_cnes2dt(dir_dic["date"]["arc_start"][0])
+    if "E" in const_inp and rnx_date < dt.datetime(2018, 10, 7):
+        if verbose:
+            log.warning("Galileo not recommended before 2018-10-07, switch for GPS-only")
+        return "G"
+    else:
+        return const_inp
+
