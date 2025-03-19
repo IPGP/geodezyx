@@ -303,8 +303,9 @@ def check_arch_sol(rnx_path_inp, archive_folder_inp, verbose=True):
         )
     )
 
-    if verbose and len(potential_sol) > 0:
-        log.info(f"Solution(s) found: {potential_sol}")
+    if len(potential_sol) > 0:
+        if verbose:
+            log.info(f"Solution(s) found: {potential_sol}")
         return True
     else:
         return False
