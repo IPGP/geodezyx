@@ -249,6 +249,7 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
         if not os.path.exists(arch_fld):
             os.makedirs(arch_fld)
 
+    log.info(f"Archive {dir_basename} run in {arch_fld_site}")
     # move files to their destination
     for batch_fld, arch_fld in zip(
             [dir_batch_fld, li_batch_fld, sol_batch_fld],
