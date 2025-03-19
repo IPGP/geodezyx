@@ -139,7 +139,7 @@ def spotgins_run(
         )
 
         ######## DIRECTORS RUN ###############
-        const_use = const_adapt(const, rnx_mono_path_inp. verbose=verbose)
+        const_use = const_adapt(const, dirr, verbose=verbose)
         opt_gins_90_use = "-const " + const_use
         gynsrun.run_directors(
             dirr,
