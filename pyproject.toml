@@ -95,7 +95,7 @@ classifiers = [
   "Intended Audience :: Science/Research",
 
   # Pick your license as you wish
-  "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+  'License :: OSI Approved ::  GNU General Public License v3 (GPLv3)',
 
   # Specify the Python versions you support here. In particular, ensure
   # that you indicate you support Python 3. These classifiers are *not*
@@ -165,7 +165,9 @@ full = ["netCDF4", "kepler.py", "ncompress", "seawater", "gsw"]
 [tool.setuptools]
 # If there are data files included in your packages that need to be
 # installed, specify them here.
-package-data = { "sample" = ["*.dat"] }
+# package-data = { "sample" = ["*.dat"] }
+packages = ["geodezyx"]
+
 
 [tool.bumpversion]
 current_version = "4.6.0"
