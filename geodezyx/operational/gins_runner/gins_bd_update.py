@@ -48,6 +48,9 @@ def download_rsync(
             "--progress",
             "--relative",
             "--copy-links",
+            "--no-perms",
+            "--no-owner",
+            "--no-group"
         ]  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
