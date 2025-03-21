@@ -89,7 +89,7 @@ def spotgins_run(
     verbose : bool, optional
         If True, enable verbose logging. Default is False.
     updatebd_login : str
-        The login to connect to the remote tite GINS server to update the database.
+        The login to connect to the remote ``tite` GINS server to update the database.
         We assume that SSH keys have been exchanged to automatize the connexion
     Returns
     -------
@@ -98,6 +98,11 @@ def spotgins_run(
 
     ##### sort the input list
     rnxs_path_use = list(sorted(utils.listify(rnxs_path_inp)))
+
+    if len(rnxs_path_use) == 0:
+        log.error("No input RINEX files to process, skip")
+        return
+
     ##### get the paths of the files needed for SPOTGINS
     dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use = get_spotgins_files(
         director_generik_path_inp,
@@ -177,6 +182,27 @@ def get_spotgins_files(
         options_prairie_file_inp,
         stations_master_file_inp,
 ):
+    """
+    Retrieve the paths of the files needed for the SPOTGINS process.
+
+    Parameters
+    ----------
+    director_generik_path_inp : str
+        Path to the generic director file.
+    stations_file_inp : str
+        Path to the stations file.
+    oceanload_file_inp : str
+        Path to the ocean load file.
+    options_prairie_file_inp : str
+        Path to the options prairie file.
+    stations_master_file_inp : str
+        Path to the stations master file.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the paths to the director file, stations file, ocean load file, options prairie file, and site IDs.
+    """
     if not gynscmn.get_spotgins_path() and (
             not stations_file_inp or not oceanload_file_inp or not options_prairie_file_inp
     ):
@@ -228,68 +254,100 @@ def get_spotgins_files(
 
 
 def archiv_gins_run(dir_inp, archive_folder, verbose=True):
-    if not dir_inp:
-        return None
-    time.sleep(1)  # wait a proper GINS end
-    dir_basename = os.path.basename(dir_inp)
-    site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
-    arch_fld_site = str(os.path.join(archive_folder, site_id9))
-    if not os.path.exists(arch_fld_site):
-        os.makedirs(arch_fld_site)
+     """
+     Archive the GINS run results to the specified archive folder.
 
-    # get input directories
-    dir_batch_fld = os.path.join(gynscmn.get_gin_path(True), "data", "directeur")
-    li_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "listing")
-    sol_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "solution")
+     Parameters
+     ----------
+     dir_inp : str
+         Path to the directory containing the GINS run results.
+     archive_folder : str
+         Path to the archive folder.
+     verbose : bool, optional
+         If True, enable verbose logging. Default is True.
 
-    # get destination
-    dir_arch_fld = os.path.join(arch_fld_site, "010_directeurs")
-    li_arch_fld = os.path.join(arch_fld_site, "020_listings")
-    sol_arch_fld = os.path.join(arch_fld_site, "030_solutions")
-    trsh_arch_fld = os.path.join(arch_fld_site, "090_trash")
+     Returns
+     -------
+     None
+     """
+     if not dir_inp:
+         return None
+     time.sleep(1)  # wait a proper GINS end
+     dir_basename = os.path.basename(dir_inp)
+     site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
+     arch_fld_site = str(os.path.join(archive_folder, site_id9))
+     if not os.path.exists(arch_fld_site):
+         os.makedirs(arch_fld_site)
 
-    # create directories
-    for arch_fld in [dir_arch_fld, li_arch_fld, sol_arch_fld, trsh_arch_fld]:
-        if not os.path.exists(arch_fld):
-            os.makedirs(arch_fld)
+     # get input directories
+     dir_batch_fld = os.path.join(gynscmn.get_gin_path(True), "data", "directeur")
+     li_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "listing")
+     sol_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "solution")
 
-    log.info(f"Archive {dir_basename} run in {arch_fld_site}")
-    # move files to their destination
-    for batch_fld, arch_fld in zip(
-            [dir_batch_fld, li_batch_fld, sol_batch_fld],
-            [dir_arch_fld, li_arch_fld, sol_arch_fld],
-    ):
+     # get destination
+     dir_arch_fld = os.path.join(arch_fld_site, "010_directeurs")
+     li_arch_fld = os.path.join(arch_fld_site, "020_listings")
+     sol_arch_fld = os.path.join(arch_fld_site, "030_solutions")
+     trsh_arch_fld = os.path.join(arch_fld_site, "090_trash")
 
-        for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
-            if f.endswith(".qsub") or f.endswith("sh"):
-                if verbose:
-                    log.info(f"skip archive of qsub/sh file {f}")
-                continue
+     # create directories
+     for arch_fld in [dir_arch_fld, li_arch_fld, sol_arch_fld, trsh_arch_fld]:
+         if not os.path.exists(arch_fld):
+             os.makedirs(arch_fld)
 
-            if verbose:
-                log.info(f"Archiving {f} to {arch_fld}")
+     log.info(f"archive {dir_basename} run in {arch_fld_site}")
+     # move files to their destination
+     for batch_fld, arch_fld in zip(
+             [dir_batch_fld, li_batch_fld, sol_batch_fld],
+             [dir_arch_fld, li_arch_fld, sol_arch_fld],
+     ):
 
-            ### check if the file is already in the archive (crash if yes)
-            # and move it to the trash folder
-            f_bn = os.path.basename(f)
-            f_prex = os.path.join(arch_fld, f_bn)
-            if os.path.exists(f_prex):
-                timstp = utils.get_timestamp()
-                f_prex_trsh = os.path.join(trsh_arch_fld, f_bn + "_" + timstp)
-                shutil.move(f_prex, f_prex_trsh)
-            ### move the actual correct file
-            shutil.move(f, arch_fld)
+         for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
+             if f.endswith(".qsub") or f.endswith("sh"):
+                 if verbose:
+                     log.info(f"skip archive of qsub/sh file {f}")
+                 continue
 
-    # compress the listings
-    for f in glob.glob(os.path.join(li_arch_fld, dir_basename) + "*"):
-        if not f.endswith("gz"):
-            if verbose:
-                log.info(f"Compressing listing {os.path.basename(f)}")
-            utils.gzip_compress(f, rm_inp=True)
-    return None
+             if verbose:
+                 log.info(f"Archiving {f} to {arch_fld}")
 
+             # check if the file is already in the archive (crash if yes)
+             # and move it to the trash folder
+             f_bn = os.path.basename(f)
+             f_prex = os.path.join(arch_fld, f_bn)
+             if os.path.exists(f_prex):
+                 timstp = utils.get_timestamp()
+                 f_prex_trsh = os.path.join(trsh_arch_fld, f_bn + "_" + timstp)
+                 shutil.move(f_prex, f_prex_trsh)
+             # move the actual correct file
+             shutil.move(f, arch_fld)
+
+     # compress the listings
+     for f in glob.glob(os.path.join(li_arch_fld, dir_basename) + "*"):
+         if not f.endswith("gz"):
+             if verbose:
+                 log.info(f"Compressing listing {os.path.basename(f)}")
+             utils.gzip_compress(f, rm_inp=True)
+     return None
 
 def check_arch_sol(rnx_path_inp, archive_folder_inp, verbose=True):
+    """
+    Check if the solution for the given RINEX file is already archived.
+
+    Parameters
+    ----------
+    rnx_path_inp : str
+        Path to the input RINEX file.
+    archive_folder_inp : str
+        Path to the archive folder.
+    verbose : bool, optional
+        If True, enable verbose logging. Default is True.
+
+    Returns
+    -------
+    bool
+        True if the solution is found in the archive, False otherwise.
+    """
     epo = conv.rinexname2dt(rnx_path_inp)
     epo_str = epo.strftime("%Y_%j")
     site_id4 = str(os.path.basename(rnx_path_inp)[0:4].upper())
@@ -309,7 +367,6 @@ def check_arch_sol(rnx_path_inp, archive_folder_inp, verbose=True):
         return True
     else:
         return False
-
 
 def const_adapt(const_inp,dir_inp,verbose=True):
     """

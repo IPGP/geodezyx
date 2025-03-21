@@ -85,9 +85,10 @@ def download_rsync(
 
 
 def update_bdgins(date_srt, date_end, dir_bdgins="",
-                  login="", password="", compress=True):
+                  login="", password="", compress=False):
     """
-    Update the BDGINS repository with the necessary files for the given date range.
+    Update the BDGINS repository with the necessary files
+    for the given date range.
 
     Parameters
     ----------
@@ -102,8 +103,9 @@ def update_bdgins(date_srt, date_end, dir_bdgins="",
     password : str, optional
         The password for the remote server. Defaults to an empty string.
     compress : bool, optional
-        Whether to compress the clock files. Defaults to True.
-
+        Whether to gzip-compress the clock files.
+        experimental, and not recommended
+        Defaults to False.
     Returns
     -------
     None
@@ -196,7 +198,7 @@ def update_bdgins(date_srt, date_end, dir_bdgins="",
             password,
         )
 
-    # compress the clock files
+    # compress the clock files (experimental, and not recommended)
     if compress:
         for dirr in ["mesures/gps/horloges30/G20", "mesures/gps/orbites/G20"]:
             d = os.path.join(dir_bdgins, dirr)
