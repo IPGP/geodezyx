@@ -156,8 +156,10 @@ full = ["netCDF4", "kepler.py", "ncompress", "seawater", "gsw"]
 
 # The following would provide a command line executable called `sample`
 # which executes the function `main` from this package when invoked.
-# [project.scripts]
+[project.scripts]
 # sample = "sample:main"
+gzyx_singugins_run = "geodezyx.operational.gins_runner.singugins_run:main"
+gzyx_bdgins_update = "geodezyx.operational.gins_runner.gins_bd_update:main"
 
 
 # This is configuration specific to the `setuptools` build backend.

@@ -32,5 +32,5 @@ print("# OF RINEXS",len(l))
 #ocloadfil = "/home/ovsgnss/010_SOFTS/spotgins/metadata/oceanloading/load_fes2014b_cf.spotgins"
 #optprafil = "/home/ovsgnss/010_SOFTS/spotgins/metadata/directeur/options_prairie_static"
 
-#geodezyx.operational.spotgins_run(l, archive_folder_inp=arcfld,force=False, nprocs=8, stations_file_inp=stafil)
-geodezyx.operational.spotgins_run(rnxs_path_inp=l, archive_folder_inp=archive_folder, updatebd_login='sakic')
+#geodezyx.operational.spotgins_run(l, results_folder_inp=arcfld,force=False, nprocs=8, stations_file_inp=stafil)
+geodezyx.operational.spotgins_run(rnxs_path_inp=l, results_folder_inp=archive_folder, updatebd_login='sakic')

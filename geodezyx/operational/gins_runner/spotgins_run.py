@@ -33,7 +33,7 @@ log = logging.getLogger("geodezyx")
 
 def spotgins_run(
         rnxs_path_inp,
-        archive_folder_inp,
+        results_folder_inp,
         nprocs=8,
         version="VALIDE_24_2",
         const="GE",
@@ -58,7 +58,7 @@ def spotgins_run(
     ----------
     rnxs_path_inp : list
         List of input RINEX file paths.
-    archive_folder_inp : str
+    results_folder_inp : str
         Path to the archive folder.
     nprocs : int, optional
         Number of processes to use for multiprocessing. Default is 8.
@@ -116,7 +116,7 @@ def spotgins_run(
     if not no_updatebd:
         rnxs_dates = [conv.rinexname2dt(e) for e in rnxs_path_use]
         rnxs_dates = [e for e in rnxs_dates if not e is None]
-        gynsbdu.update_bdgins(min(rnxs_dates), max(rnxs_dates),
+        gynsbdu.bdgins_update(min(rnxs_dates), max(rnxs_dates),
                               dir_bdgins="",
                               login=updatebd_login)
 
@@ -124,7 +124,7 @@ def spotgins_run(
     global spotgins_wrap
     def spotgins_wrap(rnx_mono_path_inp):
         ######## QUICK ARCHIVING CHECK ############# # Check if the solution is already archived
-        if not force and check_arch_sol(rnx_mono_path_inp, archive_folder_inp, verbose=verbose):
+        if not force and check_arch_sol(rnx_mono_path_inp, results_folder_inp, verbose=verbose):
             log.info(f"Solution already archived for {rnx_mono_path_inp}, skip")
             return
 
@@ -158,7 +158,7 @@ def spotgins_run(
 
         ######## ARCHIVING ####################
         if not no_archive:
-            archiv_gins_run(dirr, archive_folder_inp, verbose=verbose)
+            archiv_gins_run(dirr, results_folder_inp, verbose=verbose)
 
         ######## CLEANING ####################
         if not no_clean_tmp and os.path.exists(tmp_folder):

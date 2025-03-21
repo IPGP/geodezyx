@@ -87,7 +87,7 @@ def download_rsync(
     return
 
 
-def update_bdgins(date_srt, date_end, dir_bdgins="",
+def bdgins_update(date_srt, date_end, dir_bdgins="",
                   login="", password="", compress=False):
     """
     Update the BDGINS repository with the necessary files
@@ -272,7 +272,7 @@ def main():
     )
     args = parser.parse_args()
 
-    update_bdgins(
+    bdgins_update(
         date_srt=args.date_srt,
         date_end=args.date_end,
         login=args.login,
