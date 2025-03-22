@@ -32,7 +32,8 @@ def singugins_run(
       the default SINGUGINS results folder
       `/root/030_RESULTS/<your_subfolder>`
     specific_sites : list, optional
-      List of specific RINEXs site IDs to include in the process. Default is an empty list.
+      List of specific RINEXs site IDs to include in the process.
+       Default is an empty list.
     start_epoch : datetime, optional
       Start date and time for the selected RINEXs. Default is May 3, 2000.
     end_epoch : datetime, optional
