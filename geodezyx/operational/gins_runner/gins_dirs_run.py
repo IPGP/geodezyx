@@ -32,13 +32,13 @@ log = logging.getLogger("geodezyx")
 
 
 def run_directors(
-        dir_paths_inp,
-        opts_gins_pc="",
-        opts_gins_90="",
-        version="OPERA",
-        cmd_mode="exe_gins_dir",
-        force=False,
-        verbose=True
+    dir_paths_inp,
+    opts_gins_pc="",
+    opts_gins_90="",
+    version="OPERA",
+    cmd_mode="exe_gins_dir",
+    force=False,
+    verbose=True,
 ):
     """
     NEW FCT WHICH CAN MANAGE BOTH ONE RINEX OR A LIST OF RINEX, OR A FIC file (170613)
@@ -147,13 +147,13 @@ def run_dirs_kwwrap(kwarg):
 
 
 def run_dirs_multi(
-        dir_paths_inp,
-        nprocs=4,
-        opts_gins_pc="",
-        opts_gins_90="",
-        version="OPERA",
-        cmd_mode="exe_gins_dir",
-        force=False,
+    dir_paths_inp,
+    nprocs=4,
+    opts_gins_pc="",
+    opts_gins_90="",
+    version="OPERA",
+    cmd_mode="exe_gins_dir",
+    force=False,
 ):
     kwargs_lis = []
     for dirr in list(sorted(dir_paths_inp)):
@@ -175,12 +175,12 @@ def run_dirs_multi(
 
 def _check_dir_keys(director_path_inp):
     for grepstr in (
-            "userext_gps__qualiteorb",
-            "userext_gps__haute_freq",
-            "userext_gps__hor_interp",
-            "GPS__QUALITEORB",
-            "GPS__HAUTE_FREQ",
-            "GPS__HOR_INTERP",
+        "userext_gps__qualiteorb",
+        "userext_gps__haute_freq",
+        "userext_gps__hor_interp",
+        "GPS__QUALITEORB",
+        "GPS__HAUTE_FREQ",
+        "GPS__HOR_INTERP",
     ):
         grep_out = utils.grep(director_path_inp, grepstr)
         if grep_out == "":
@@ -189,13 +189,14 @@ def _check_dir_keys(director_path_inp):
 
 ########## OLD FUNCTIONS ##########
 
+
 def run_dirs_multislots_custom(
-        director_lis,
-        slots_lis=["", "U", "L", "R"],
-        opts_gins_pc="",
-        opts_gins_90="",
-        version="OPERA",
-        mode="ginspc",
+    director_lis,
+    slots_lis=["", "U", "L", "R"],
+    opts_gins_pc="",
+    opts_gins_90="",
+    version="OPERA",
+    mode="ginspc",
 ):
     if not type(director_lis) is list:
         log.error("director_lis in input is not a list !!!")
@@ -274,11 +275,11 @@ def smart_directors_to_run(wildcard_dir="", full_path_out=True):
 
 
 def smart_listing_archive(
-        wildcard_dir,
-        gins_main_archive,
-        gins_anex_archive,
-        prepars_archive,
-        director_archive,
+    wildcard_dir,
+    gins_main_archive,
+    gins_anex_archive,
+    prepars_archive,
+    director_archive,
 ):
     """for each listing corresponding to the wildcard :
     if it's a prepars => go to the prepars_archive
@@ -321,7 +322,7 @@ def smart_listing_archive(
         multi_gins_fullpath_temp = [e for e in gins_lis if m in e]
         multi_gins_fullpath_main.append(multi_gins_fullpath_temp[0])
         multi_gins_fullpath_anex = (
-                multi_gins_fullpath_anex + multi_gins_fullpath_temp[1:]
+            multi_gins_fullpath_anex + multi_gins_fullpath_temp[1:]
         )
 
     for directory in [
@@ -349,7 +350,7 @@ def smart_listing_archive(
 
 
 def export_results_gins_listing(
-        listings_list_in, outpath, static_or_kinematic="kine", outprefix="", coordtype="FLH"
+    listings_list_in, outpath, static_or_kinematic="kine", outprefix="", coordtype="FLH"
 ):
     if len(listings_list_in) == 0:
         print("ERR : export_results_gins_listing : listings list is empty ...")

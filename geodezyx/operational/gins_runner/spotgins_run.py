@@ -32,24 +32,23 @@ log = logging.getLogger("geodezyx")
 
 
 def spotgins_run(
-        rnxs_path_inp,
-        results_folder_inp,
-        nprocs=8,
-        version="VALIDE_24_2",
-        const="GE",
-        director_generik_path_inp=None,
-        director_name_prefix_inp="",
-        stations_file_inp=None,
-        oceanload_file_inp=None,
-        options_prairie_file_inp=None,
-        stations_master_file_inp=None,
-        force=False,
-        no_archive=False,
-        no_clean_tmp=False,
-        no_updatebd=False,
-        verbose=False,
-        updatebd_login=""
-
+    rnxs_path_inp,
+    results_folder_inp,
+    nprocs=8,
+    version="VALIDE_24_2",
+    const="GE",
+    director_generik_path_inp=None,
+    director_name_prefix_inp="",
+    stations_file_inp=None,
+    oceanload_file_inp=None,
+    options_prairie_file_inp=None,
+    stations_master_file_inp=None,
+    force=False,
+    no_archive=False,
+    no_clean_tmp=False,
+    no_updatebd=False,
+    verbose=False,
+    updatebd_login="",
 ):
     """
     Run the SPOTGINS process on the provided RINEX paths using multiprocessing.
@@ -116,15 +115,18 @@ def spotgins_run(
     if not no_updatebd:
         rnxs_dates = [conv.rinexname2dt(e) for e in rnxs_path_use]
         rnxs_dates = [e for e in rnxs_dates if not e is None]
-        gynsbdu.bdgins_update(min(rnxs_dates), max(rnxs_dates),
-                              dir_bdgins="",
-                              login=updatebd_login)
+        gynsbdu.bdgins_update(
+            min(rnxs_dates), max(rnxs_dates), dir_bdgins="", login=updatebd_login
+        )
 
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
+
     def spotgins_wrap(rnx_mono_path_inp):
         ######## QUICK ARCHIVING CHECK ############# # Check if the solution is already archived
-        if not force and check_arch_sol(rnx_mono_path_inp, results_folder_inp, verbose=verbose):
+        if not force and check_arch_sol(
+            rnx_mono_path_inp, results_folder_inp, verbose=verbose
+        ):
             log.info(f"Solution already archived for {rnx_mono_path_inp}, skip")
             return
 
@@ -153,7 +155,7 @@ def spotgins_run(
             version=version,
             cmd_mode="exe_gins_dir",
             force=force,
-            verbose=verbose
+            verbose=verbose,
         )
 
         ######## ARCHIVING ####################
@@ -169,18 +171,24 @@ def spotgins_run(
     ##### END Multi-processing Wrapper END ################
 
     pool = mp.Pool(processes=nprocs)
-    res_raw = pool.map(spotgins_wrap, rnxs_path_use, chunksize=1)
+    try:
+        res_raw = pool.map(spotgins_wrap, rnxs_path_use, chunksize=1)
+    except Exception as e:
+        log.error("error in the pool.map : %s", e)
     pool.close()
+
+    nrnxs = len(rnxs_path_use)
+    log.info("multi run end, all of the %i RINEXs have been procssed", nrnxs)
 
     return
 
 
 def get_spotgins_files(
-        director_generik_path_inp,
-        stations_file_inp,
-        oceanload_file_inp,
-        options_prairie_file_inp,
-        stations_master_file_inp,
+    director_generik_path_inp,
+    stations_file_inp,
+    oceanload_file_inp,
+    options_prairie_file_inp,
+    stations_master_file_inp,
 ):
     """
     Retrieve the paths of the files needed for the SPOTGINS process.
@@ -204,7 +212,7 @@ def get_spotgins_files(
         A tuple containing the paths to the director file, stations file, ocean load file, options prairie file, and site IDs.
     """
     if not gynscmn.get_spotgins_path() and (
-            not stations_file_inp or not oceanload_file_inp or not options_prairie_file_inp
+        not stations_file_inp or not oceanload_file_inp or not options_prairie_file_inp
     ):
         raise ValueError(
             "SPOTGINS path not set ($SPOTGINS_DIR) and stations_file/oceanload_file/options_prairie_file not provided"
@@ -254,81 +262,82 @@ def get_spotgins_files(
 
 
 def archiv_gins_run(dir_inp, archive_folder, verbose=True):
-     """
-     Archive the GINS run results to the specified archive folder.
+    """
+    Archive the GINS run results to the specified archive folder.
 
-     Parameters
-     ----------
-     dir_inp : str
-         Path to the directory containing the GINS run results.
-     archive_folder : str
-         Path to the archive folder.
-     verbose : bool, optional
-         If True, enable verbose logging. Default is True.
+    Parameters
+    ----------
+    dir_inp : str
+        Path to the directory containing the GINS run results.
+    archive_folder : str
+        Path to the archive folder.
+    verbose : bool, optional
+        If True, enable verbose logging. Default is True.
 
-     Returns
-     -------
-     None
-     """
-     if not dir_inp:
-         return None
-     time.sleep(1)  # wait a proper GINS end
-     dir_basename = os.path.basename(dir_inp)
-     site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
-     arch_fld_site = str(os.path.join(archive_folder, site_id9))
-     if not os.path.exists(arch_fld_site):
-         os.makedirs(arch_fld_site)
+    Returns
+    -------
+    None
+    """
+    if not dir_inp:
+        return None
+    time.sleep(1)  # wait a proper GINS end
+    dir_basename = os.path.basename(dir_inp)
+    site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
+    arch_fld_site = str(os.path.join(archive_folder, site_id9))
+    if not os.path.exists(arch_fld_site):
+        os.makedirs(arch_fld_site)
 
-     # get input directories
-     dir_batch_fld = os.path.join(gynscmn.get_gin_path(True), "data", "directeur")
-     li_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "listing")
-     sol_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "solution")
+    # get input directories
+    dir_batch_fld = os.path.join(gynscmn.get_gin_path(True), "data", "directeur")
+    li_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "listing")
+    sol_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "solution")
 
-     # get destination
-     dir_arch_fld = os.path.join(arch_fld_site, "010_directeurs")
-     li_arch_fld = os.path.join(arch_fld_site, "020_listings")
-     sol_arch_fld = os.path.join(arch_fld_site, "030_solutions")
-     trsh_arch_fld = os.path.join(arch_fld_site, "090_trash")
+    # get destination
+    dir_arch_fld = os.path.join(arch_fld_site, "010_directeurs")
+    li_arch_fld = os.path.join(arch_fld_site, "020_listings")
+    sol_arch_fld = os.path.join(arch_fld_site, "030_solutions")
+    trsh_arch_fld = os.path.join(arch_fld_site, "090_trash")
 
-     # create directories
-     for arch_fld in [dir_arch_fld, li_arch_fld, sol_arch_fld, trsh_arch_fld]:
-         if not os.path.exists(arch_fld):
-             os.makedirs(arch_fld)
+    # create directories
+    for arch_fld in [dir_arch_fld, li_arch_fld, sol_arch_fld, trsh_arch_fld]:
+        if not os.path.exists(arch_fld):
+            os.makedirs(arch_fld)
 
-     log.info(f"archive {dir_basename} run in {arch_fld_site}")
-     # move files to their destination
-     for batch_fld, arch_fld in zip(
-             [dir_batch_fld, li_batch_fld, sol_batch_fld],
-             [dir_arch_fld, li_arch_fld, sol_arch_fld],
-     ):
+    log.info(f"archive {dir_basename} run in {arch_fld_site}")
+    # move files to their destination
+    for batch_fld, arch_fld in zip(
+        [dir_batch_fld, li_batch_fld, sol_batch_fld],
+        [dir_arch_fld, li_arch_fld, sol_arch_fld],
+    ):
 
-         for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
-             if f.endswith(".qsub") or f.endswith("sh"):
-                 if verbose:
-                     log.info(f"skip archive of qsub/sh file {f}")
-                 continue
+        for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
+            if f.endswith(".qsub") or f.endswith("sh"):
+                if verbose:
+                    log.info(f"skip archive of qsub/sh file {f}")
+                continue
 
-             if verbose:
-                 log.info(f"Archiving {f} to {arch_fld}")
+            if verbose:
+                log.info(f"Archiving {f} to {arch_fld}")
 
-             # check if the file is already in the archive (crash if yes)
-             # and move it to the trash folder
-             f_bn = os.path.basename(f)
-             f_prex = os.path.join(arch_fld, f_bn)
-             if os.path.exists(f_prex):
-                 timstp = utils.get_timestamp()
-                 f_prex_trsh = os.path.join(trsh_arch_fld, f_bn + "_" + timstp)
-                 shutil.move(f_prex, f_prex_trsh)
-             # move the actual correct file
-             shutil.move(f, arch_fld)
+            # check if the file is already in the archive (crash if yes)
+            # and move it to the trash folder
+            f_bn = os.path.basename(f)
+            f_prex = os.path.join(arch_fld, f_bn)
+            if os.path.exists(f_prex):
+                timstp = utils.get_timestamp()
+                f_prex_trsh = os.path.join(trsh_arch_fld, f_bn + "_" + timstp)
+                shutil.move(f_prex, f_prex_trsh)
+            # move the actual correct file
+            shutil.move(f, arch_fld)
 
-     # compress the listings
-     for f in glob.glob(os.path.join(li_arch_fld, dir_basename) + "*"):
-         if not f.endswith("gz"):
-             if verbose:
-                 log.info(f"Compressing listing {os.path.basename(f)}")
-             utils.gzip_compress(f, rm_inp=True)
-     return None
+    # compress the listings
+    for f in glob.glob(os.path.join(li_arch_fld, dir_basename) + "*"):
+        if not f.endswith("gz"):
+            if verbose:
+                log.info(f"Compressing listing {os.path.basename(f)}")
+            utils.gzip_compress(f, rm_inp=True)
+    return None
+
 
 def check_arch_sol(rnx_path_inp, archive_folder_inp, verbose=True):
     """
@@ -368,7 +377,8 @@ def check_arch_sol(rnx_path_inp, archive_folder_inp, verbose=True):
     else:
         return False
 
-def const_adapt(const_inp,dir_inp,verbose=True):
+
+def const_adapt(const_inp, dir_inp, verbose=True):
     """
     manage
     ERREUR : Galileo integer ambiguity fixing not possible before 7th October 2018.
@@ -382,8 +392,9 @@ def const_adapt(const_inp,dir_inp,verbose=True):
     rnx_date = conv.jjul_cnes2dt(dir_dic["date"]["arc_start"][0])
     if "E" in const_inp and rnx_date < dt.datetime(2018, 10, 7):
         if verbose:
-            log.warning("Galileo not recommended before 2018-10-07, switch for GPS-only")
+            log.warning(
+                "Galileo not recommended before 2018-10-07, switch for GPS-only"
+            )
         return "G"
     else:
         return const_inp
-
