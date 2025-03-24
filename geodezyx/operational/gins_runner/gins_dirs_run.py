@@ -16,6 +16,7 @@ import subprocess
 import glob
 import collections
 import multiprocessing as mp
+import numpy as np
 
 from geodezyx import files_rw, time_series
 
@@ -111,6 +112,8 @@ def run_directors(
         gins_path = gynscmn.get_gin_path()
         log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
         log_path = os.path.join(gins_path, "python_logs", dir_nam + ".log")
+
+        time.sleep(np.random.randint(1, 30000) * 10**-4)
 
         process = subprocess.run(
             [cmd],

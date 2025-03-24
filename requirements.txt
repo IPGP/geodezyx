@@ -1,6 +1,5 @@
 bs4
 chardet
-#collection
 colorlog
 # gsw # full mode
 #ftplib
