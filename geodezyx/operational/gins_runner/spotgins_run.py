@@ -291,23 +291,31 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
     dir_batch_fld = os.path.join(gynscmn.get_gin_path(True), "data", "directeur")
     li_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "listing")
     sol_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "solution")
+    stat_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "statistiques")
 
     # get destination
     dir_arch_fld = os.path.join(arch_fld_site, "010_directeurs")
     li_arch_fld = os.path.join(arch_fld_site, "020_listings")
     sol_arch_fld = os.path.join(arch_fld_site, "030_solutions")
+    stat_arch_fld = os.path.join(arch_fld_site, "040_statistiques")
     trsh_arch_fld = os.path.join(arch_fld_site, "090_trash")
 
     # create directories
-    for arch_fld in [dir_arch_fld, li_arch_fld, sol_arch_fld, trsh_arch_fld]:
+    for arch_fld in [
+        dir_arch_fld,
+        li_arch_fld,
+        sol_arch_fld,
+        stat_arch_fld,
+        trsh_arch_fld,
+    ]:
         if not os.path.exists(arch_fld):
             os.makedirs(arch_fld)
 
     log.info(f"archive {dir_basename} run in {arch_fld_site}")
     # move files to their destination
     for batch_fld, arch_fld in zip(
-        [dir_batch_fld, li_batch_fld, sol_batch_fld],
-        [dir_arch_fld, li_arch_fld, sol_arch_fld],
+        [dir_batch_fld, li_batch_fld, sol_batch_fld, stat_batch_fld],
+        [dir_arch_fld, li_arch_fld, sol_arch_fld, stat_arch_fld],
     ):
 
         for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
