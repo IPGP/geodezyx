@@ -9,7 +9,6 @@ Created on 26/02/2025 11:07:24
 #### Import the logger
 import shutil
 import os
-import sys
 import time
 import datetime as dt
 import subprocess
@@ -123,6 +122,7 @@ def run_directors(
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            text=True,
             executable="/bin/bash",
         )
 
@@ -136,6 +136,8 @@ def run_directors(
             log.info("solution ok for: %s :)", dir_nam)
         else:
             log.error("no solution for: %s :(", dir_nam)
+            log.error("STDOUT: %s", process.stdout)
+            log.error("STDERR: %s", process.stderr)
 
         log.info(
             "run %s end at %s (exec: %8.3f s)",
