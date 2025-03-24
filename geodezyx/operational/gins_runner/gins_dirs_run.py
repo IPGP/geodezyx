@@ -114,7 +114,8 @@ def run_directors(
         log_path = os.path.join(gins_path, "python_logs", dir_nam + ".log")
 
         ## artifical sleep to avoid conflict when parallelizing
-        time.sleep(np.random.randint(1, 5*1000) * 10**-3)
+        nsecmax = 2
+        time.sleep(np.random.randint(1, nsecmax*1000) * 10**-3)
 
         process = subprocess.run(
             [cmd],
