@@ -113,7 +113,8 @@ def run_directors(
         log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
         log_path = os.path.join(gins_path, "python_logs", dir_nam + ".log")
 
-        time.sleep(np.random.randint(1, 30000) * 10**-4)
+        ## artifical sleep to avoid conflict when parallelizing
+        time.sleep(np.random.randint(1, 5*1000) * 10**-3)
 
         process = subprocess.run(
             [cmd],
