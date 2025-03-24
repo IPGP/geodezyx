@@ -156,6 +156,7 @@ def spotgins_run(
             cmd_mode="exe_gins_dir",
             force=force,
             verbose=verbose,
+            sleep_time_max=nprocs * 10**-1, # eq 128 procs -> 12.8s max sleep time
         )
 
         ######## ARCHIVING ####################

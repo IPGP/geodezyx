@@ -40,6 +40,7 @@ def run_directors(
     cmd_mode="exe_gins_dir",
     force=False,
     verbose=True,
+    sleep_time_max=10,
 ):
     """
     NEW FCT WHICH CAN MANAGE BOTH ONE RINEX OR A LIST OF RINEX, OR A FIC file (170613)
@@ -114,8 +115,8 @@ def run_directors(
         log_path = os.path.join(gins_path, "python_logs", dir_nam + ".log")
 
         ## artifical sleep to avoid conflict when parallelizing
-        nsecmax = 10
-        time.sleep(np.random.randint(1, nsecmax*1000) * 10**-3)
+        if sleep_time_max > 0:
+            time.sleep(np.random.randint(1, sleep_time_max * 1000) * 10**-3)
 
         process = subprocess.run(
             [cmd],
