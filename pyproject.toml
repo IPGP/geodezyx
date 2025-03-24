@@ -9,7 +9,7 @@
 # https://packaging.python.org/en/latest/tutorials/packaging-projects/#choosing-a-build-backend
 [build-system]
 # A list of packages that are needed to build your package:
-requires = ["setuptools>=64.0.0"] # REQUIRED if [build-system] table is used (maybe wheel too)
+requires = ["setuptools>=61.0.0", "wheel"] # REQUIRED if [build-system] table is used (maybe wheel too)
 # The name of the Python object that frontends will use to perform the build:
 build-backend = "setuptools.build_meta" # If not defined, then legacy behavior can happen.
 
