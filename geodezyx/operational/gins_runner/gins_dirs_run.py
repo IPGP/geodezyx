@@ -132,13 +132,16 @@ def run_directors(
             log.error("no solution for: %s :(", dir_nam)
 
         log.info(
-            "run %s end at %s (exec: %7.3f s)",
+            "run %s end at %s (exec: %8.3f s)",
             dir_nam,
             dt.datetime.now(),
             time.time() - start,
         )
 
     return None
+
+
+########## OLD FUNCTIONS ##########
 
 
 def run_dirs_kwwrap(kwarg):
@@ -185,9 +188,6 @@ def _check_dir_keys(director_path_inp):
         grep_out = utils.grep(director_path_inp, grepstr)
         if grep_out == "":
             log.warning("IPPP mode on, but no %sin the dir !!!", grepstr)
-
-
-########## OLD FUNCTIONS ##########
 
 
 def run_dirs_multislots_custom(

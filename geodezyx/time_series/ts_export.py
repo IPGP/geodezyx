@@ -476,28 +476,30 @@ def export_ts_as_pbo_pos(tsin, outdir, outprefix='' ,
     return
 
 
-def export_ts_as_spotgins(tsin,outdir):
+def export_ts_as_spotgins(tsin, outdir, ac, data_src = "unknown"):
     df = tsin.to_dataframe("ENU")
+    datexelis = [p.anex['dateofexe'] for p in tsin.pts]
+    ginsverslis = [p.anex['gins_version'] for p in tsin.pts]
     name = tsin.stat
     df["Tdt"] = df["Tdt"] + dt.timedelta(seconds=19)
 
-    fmtstr = " %14.8f %14.6f %14.6f %14.6f %14.6f %14.6f %14.6f  %4s%2s%2s%2s%2s%2.0f  %12.7f\n"
+    fmtstr = " {:14.8f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f}  {:4s}{:2s}{:2s}{:2s}{:2s}{:2.0f}  {:12.7f}  {:5s}  {:s}   {:s}\n"
+    #fmtstr = " %14.8f %14.6f %14.6f %14.6f %14.6f %14.6f %14.6f  %4s%2s%2s%2s%2s%2.0f  %12.7f  %5s  %s   %s\n"
     outfile = open(os.path.join(outdir,f"{name}.enu"),"w")
 
     now_date = utils.get_timestamp()
     const = "G"
-    data_src = "VOLOBSIS"
-    ac = "IPGP"
+    vers = ""
 
     head = f"""# SPOTGINS SOLUTION [POSITION] v2
 # DATE             : {now_date}
 #------------------------------------
 # STATION          : {name}
-# ANALYSIS_CENTRE  : {ac}
-# STRATEGY_SUMMARY : https://www.poleterresolide.fr/geodesy-plotter/#/solution/SPOTGINS
+# OPERATOR         : {ac}
+# STRATEGY_SUMMARY : https://www.poleterresolide.fr/visualisation-gnss/#/solution/SPOTGINS
 # REF_FRAME        : IGS20
 # PRODUCTS         : G20/GRG
-# CONSTELLATION    : {const}
+# CONSTEL          : {const}
 # UNITS            : meters
 # ELLIPSOID        : GRS80
 # DATA_SOURCE      : {data_src}
@@ -514,19 +516,22 @@ def export_ts_as_spotgins(tsin,outdir):
 """
 
     outfile.write(head)
-
+    
     for ir, r in df.iterrows():
         t = r["Tdt"]
-        outstr = fmtstr % (np.round(conv.dt2MJD(t),7),
+        outstr = fmtstr.format(np.round(conv.dt2MJD(t),7),
                       r["E"],r["N"],r["U"],
                       r["sE"],r["sN"],r["sU"],
-                      t.year,
+                      str(t.year),
                       str(t.month).zfill(2),
                       str(t.day).zfill(2),
                       str(t.hour).zfill(2),
                       str(t.minute).zfill(2),
                       t.second,
-                      conv.dt2year_decimal(t))
+                      conv.dt2year_decimal(t),
+                      const,
+                      datexelis[ir],
+                      ginsverslis[ir])
         outfile.write(outstr)
         
 

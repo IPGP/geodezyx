@@ -13,6 +13,7 @@ import datetime as dt
 import logging
 
 import numpy as np
+import pandas as pd
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -20,6 +21,13 @@ from geodezyx import utils
 
 log = logging.getLogger('geodezyx')
 
+
+
+def read_spotgins_materfile(materfile_path):
+    df = pd.read_csv(materfile_path, header=None, sep=r'\s+', comment='#',
+                names=['AC', 'NAME', 'ID', 'LATITUDE', 'LONGITUDE', 'HEIGHT', 'X_position',
+                       'Y_position', 'Z_position', 'LOGFILE_NAME', 'DATA_SOURCE'])
+    return df
 
 def stations_in_epos_sta_coords_file_mono(coords_file_path):
     """

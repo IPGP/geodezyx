@@ -812,7 +812,15 @@ def read_gins_solution(filein, mode="cinematic"):
 
     pts_list_tmp = []
     namestat = "XXXX"
-
+    
+    datexere = re.search(r"[0-9]{6}_[0-9]{6}", os.path.basename(filein))
+    if not datexere:
+        datexe = '991231_235959'
+    else:
+        datexe = datexere[0]
+        
+    ginsvers = 'unknown'
+    
     for l in F:
         f = l.split()
 
@@ -827,8 +835,10 @@ def read_gins_solution(filein, mode="cinematic"):
             reout = re.search(namestat + "[0-9]{2}[A-Z]{3}", filnam)
             if reout:
                 namestat = reout.group(0)
-
-        if l[0] == '#':
+                
+        if "GINS_VERSION" in l:
+            ginsvers = f[1]
+        elif l[0] == '#':
             continue
 
         # Traw = float(f[2])
@@ -854,6 +864,9 @@ def read_gins_solution(filein, mode="cinematic"):
             point.anex['sdXZ'] = float(f[13])
             point.anex['sdYZ'] = float(f[14])
             point.anex['sol_path'] = filein
+            point.anex['dateofexe'] = datexe
+            point.anex['gins_version'] = ginsvers
+            
 
         elif 'FLH_SOL' in l:
             coordstype = 'FLH'

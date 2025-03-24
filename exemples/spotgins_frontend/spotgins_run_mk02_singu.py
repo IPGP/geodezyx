@@ -8,7 +8,7 @@ p = "/scratch/calcgnss/data_spotgins_labeli/METS00FIN/*"
 p = "/scratch/calcgnss/data_spotgins_labeli/ALBH00CAN/ALBH00CAN_R_2023*_01D_30S_MO.crx.gz"
 p = "/scratch/calcgnss/data_spotgins_labeli/ALBH00CAN/albh*1?d*"
 p = "/scratch/calcgnss/data_spotgins_labeli/"
-p = "/root/020_BDRNX/"
+p = "/root/020_BDRNX/data_ovs_glass/GL"
 archive_folder = "/root/030_RESULTS/spotgins_singu_2503a" 
 
 specific_sites=['HOUZ00GLP']
@@ -33,4 +33,8 @@ print("# OF RINEXS",len(l))
 #optprafil = "/home/ovsgnss/010_SOFTS/spotgins/metadata/directeur/options_prairie_static"
 
 #geodezyx.operational.spotgins_run(l, results_folder_inp=arcfld,force=False, nprocs=8, stations_file_inp=stafil)
-geodezyx.operational.spotgins_run(rnxs_path_inp=l, results_folder_inp=archive_folder, updatebd_login='sakic')
+geodezyx.operational.spotgins_run(rnxs_path_inp=l,
+                                  results_folder_inp=archive_folder,
+                                  nprocs=32,
+                                  force=False,
+                                  updatebd_login='sakic')
