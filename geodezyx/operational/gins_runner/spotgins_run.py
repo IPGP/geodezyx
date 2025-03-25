@@ -297,6 +297,8 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20"):
 
     date_lis = conv.dt_range(date_srt, date_end)
 
+    print(date_lis)
+
     pool = mp.Pool(processes=nprocs)
     try:
         _ = pool.map(cat_orbclk_wrap, date_lis, chunksize=1)
