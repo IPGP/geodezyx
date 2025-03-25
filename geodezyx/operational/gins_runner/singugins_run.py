@@ -63,10 +63,6 @@ def singugins_run(
 
     return
 
-
-conv.rinexname2dt()
-
-
 def main():
     parser = argparse.ArgumentParser(
         description="Run the SPOTGINS process within a SINGUGINS container."
