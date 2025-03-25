@@ -117,16 +117,15 @@ def spotgins_run(
     if not no_updatebd or not no_concat_orb_clk:
         rnxs_dates = [conv.rinexname2dt(e) for e in rnxs_path_use]
         rnxs_dates = [e for e in rnxs_dates if not e is None]
+        date_min, date_max = min(rnxs_dates), max(rnxs_dates)
 
     ##### Update the database ################
     if not no_updatebd:
-        gynsbdu.bdgins_update(
-            min(rnxs_dates), max(rnxs_dates), dir_bdgins="", login=updatebd_login
-        )
+        gynsbdu.bdgins_update(date_min, date_max, dir_bdgins="", login=updatebd_login)
 
     ##### concatenate hor/orb ################
     if not no_concat_orb_clk:
-        concat_orb_clk(rnxs_dates, nprocs=nprocs)
+        concat_orb_clk(date_min, date_max, nprocs=nprocs)
 
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
@@ -306,7 +305,6 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20"):
     pool.close()
 
     return
-
 
 
 def archiv_gins_run(dir_inp, archive_folder, verbose=True):
