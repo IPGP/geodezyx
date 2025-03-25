@@ -141,7 +141,7 @@ def run_directors(
             #
             ok_sol = gynscmn.check_solution(dir_nam, verbose=verbose)
             if ok_sol:
-                log.info("solution ok for: %s :)", dir_nam)
+                log.info("solution ok for: %s :) %s", dir_nam, retry_str)
             else:
                 log.error("no solution for: %s :( %s", dir_nam, retry_str)
                 #log.error("STDOUT: %s", process.stdout)
