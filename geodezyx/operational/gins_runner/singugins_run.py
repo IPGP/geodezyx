@@ -6,7 +6,6 @@ Created on 21/03/2025 21:57:04
 @author: psakic
 """
 
-
 import geodezyx.operational as opera
 import geodezyx.conv as conv
 import datetime as dt
@@ -19,6 +18,8 @@ def singugins_run(
     start_epoch=dt.datetime(2000, 5, 3),
     end_epoch=dt.datetime(2099, 12, 31),
     bdrnx_folder="/root/020_BDRNX/",
+    nprocs=8,
+    no_updatebd=False,
     spotgins_run_kwargs={},
 ):
     """
@@ -27,22 +28,26 @@ def singugins_run(
     Parameters
     ----------
     results_folder : str
-      Path to the folder where the results will be stored.
-      we strongly recommed to use a subfolder within
-      the default SINGUGINS results folder
-      `/root/030_RESULTS/<your_subfolder>`
+        Path to the folder where the results will be stored.
+        We strongly recommend using a subfolder within
+        the default SINGUGINS results folder
+        `/root/030_RESULTS/<your_subfolder>`.
     specific_sites : list, optional
-      List of specific RINEXs site IDs to include in the process.
-       Default is an empty list.
+        List of specific RINEXs site IDs to include in the process.
+        Default is an empty list.
     start_epoch : datetime, optional
-      Start date and time for the selected RINEXs. Default is May 3, 2000.
+        Start date and time for the selected RINEXs. Default is May 3, 2000.
     end_epoch : datetime, optional
-      End date and time for the selected RINEXs. Default is December 31, 2099.
+        End date and time for the selected RINEXs. Default is December 31, 2099.
     bdrnx_folder : str, optional
-      Path to the folder containing the RINEX files. Default is "/root/020_BDRNX/".
+        Path to the folder containing the RINEX files. Default is "/root/020_BDRNX/".
+    nprocs : int, optional
+        Number of processes to use. Default is 8.
+    no_updatebd : bool, optional
+        Flag to indicate whether to update the database. Default is False.
     spotgins_run_kwargs : dict, optional
-      Additional keyword arguments to pass to the `spotgins_run` function.
-      Default is an empty dictionary.
+        Additional keyword arguments to pass to the `spotgins_run` function.
+        Default is an empty dictionary.
 
     Returns
     -------
@@ -58,6 +63,8 @@ def singugins_run(
     opera.spotgins_run(
         rnxs_path_inp=rnxs_lis,
         results_folder_inp=results_folder,
+        nprocs=nprocs,
+        no_updatebd=no_updatebd,
         **spotgins_run_kwargs,
     )
 
@@ -111,6 +118,20 @@ def main():
         help="Additional keyword arguments to pass to the `spotgins_run` function (as a JSON string).",
     )
 
+    parser.add_argument(
+        "-p",
+        "--nprocs",
+        type=int,
+        default=8,
+        help="Number of processes to use.",
+    )
+    parser.add_argument(
+        "-nu",
+        "--no_updatebd",
+        action="store_true",
+        help="Flag to indicate whether to update the database.",
+    )
+
     args = parser.parse_args()
 
     # Convert spotgins_run_kwargs from JSON string to dictionary
@@ -125,6 +146,8 @@ def main():
         end_epoch=args.end_epoch,
         bdrnx_folder=args.bdrnx_folder,
         spotgins_run_kwargs=spotgins_run_kwargs,
+        no_updatebd=args.no_updatebd,
+        nprocs=args.nprocs,
     )
 
 
