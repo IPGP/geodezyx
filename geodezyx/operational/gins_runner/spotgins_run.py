@@ -6,6 +6,7 @@ Created on 28/02/2025 18:52:44
 @author: psakic
 """
 import re
+import subprocess
 
 import geodezyx.operational.gins_runner.gins_common as gynscmn
 import geodezyx.operational.gins_runner.gins_dirs_gen as gynsgen
@@ -47,6 +48,7 @@ def spotgins_run(
     no_archive=False,
     no_clean_tmp=False,
     no_updatebd=False,
+    no_concat_orb_clk=False,
     verbose=False,
     updatebd_login="",
 ):
@@ -111,13 +113,20 @@ def spotgins_run(
         stations_master_file_inp,
     )
 
-    ##### Update the database
-    if not no_updatebd:
+    ##### Need timespan
+    if not no_updatebd or not no_concat_orb_clk:
         rnxs_dates = [conv.rinexname2dt(e) for e in rnxs_path_use]
         rnxs_dates = [e for e in rnxs_dates if not e is None]
+
+    ##### Update the database ################
+    if not no_updatebd:
         gynsbdu.bdgins_update(
             min(rnxs_dates), max(rnxs_dates), dir_bdgins="", login=updatebd_login
         )
+
+    ##### concatenate hor/orb ################
+    if not no_concat_orb_clk:
+        concat_orb_clk(rnxs_dates, nprocs=nprocs)
 
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
@@ -156,7 +165,7 @@ def spotgins_run(
             cmd_mode="exe_gins_dir",
             force=force,
             verbose=verbose,
-            sleep_time_max=nprocs * 10**-1, # eq 128 procs -> 12.8s max sleep time
+            sleep_time_max=nprocs * 10**-1,  # eq 128 procs -> 12.8s max sleep time
         )
 
         ######## ARCHIVING ####################
@@ -210,7 +219,9 @@ def get_spotgins_files(
     Returns
     -------
     tuple
-        A tuple containing the paths to the director file, stations file, ocean load file, options prairie file, and site IDs.
+        A tuple containing the paths to the director file,
+        stations file, ocean load file, options prairie file,
+        and site IDs.
     """
     if not gynscmn.get_spotgins_path() and (
         not stations_file_inp or not oceanload_file_inp or not options_prairie_file_inp
@@ -260,6 +271,42 @@ def get_spotgins_files(
         siteid9_use = None
 
     return dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use
+
+
+def concat_orb_clk(date_srt, date_end, nprocs, prod="G20"):
+
+    def cat_orbclk_wrap(date_inp):
+        jjul_bef = str(conv.dt2jjul_cnes(date_inp - dt.datetime(day=1)))
+        jjul_aft = str(conv.dt2jjul_cnes(date_inp + dt.datetime(day=1)))
+        gs_user = os.environ["GS_USER"]
+
+        orb_out = os.path(gs_user, "_".join(prod + "ORB", "AUTOM", jjul_bef, jjul_aft))
+        subprocess.run(
+            ["rapat_orb_gnss.sh", jjul_bef, jjul_aft, "3", orb_out, "0"],
+            executable="/bin/bash",
+            shell=True,
+        )
+
+        clk_out = os.path(gs_user, "_".join(prod, "AUTOM", jjul_bef, jjul_aft))
+        subprocess.run(
+            ["get_hor_hautes", jjul_bef, jjul_aft, prod, clk_out],
+            executable="/bin/bash",
+            shell=True,
+        )
+
+        return orb_out, clk_out
+
+    date_lis = conv.dt_range(date_srt, date_end):
+
+    pool = mp.Pool(processes=nprocs)
+    try:
+        _ = pool.map(cat_orbclk_wrap, date_lis, chunksize=1)
+    except Exception as e:
+        log.error("error in the pool.map : %s", e)
+    pool.close()
+
+    return
+
 
 
 def archiv_gins_run(dir_inp, archive_folder, verbose=True):
