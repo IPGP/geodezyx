@@ -299,7 +299,7 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
             stderr=subprocess.PIPE,
             shell=True,
         )
-        utils.gzip_compress(out_fil)
+        utils.gzip_compress(out_fil, rm_inp=True)
         _chk_cat_orbclk(out_fil)
         return None
 
