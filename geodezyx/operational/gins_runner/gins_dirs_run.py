@@ -117,27 +117,39 @@ def run_directors(
         if sleep_time_max > 0:
             time.sleep(np.random.randint(1, sleep_time_max * 1000) * 10**-3)
 
-        process = subprocess.run(
-            [cmd],
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            executable="/bin/bash",
-        )
+        iproc_loop = 0
+        iproc_loop_max = 4
 
-        # gynscmn.check_gins_exe(open(log_path), director_name)
-        #
-        # with open(log_path + ".exec", "w") as f:
-        #     f.write("exec time : " + str(time.time() - start))
-        #
+        while iproc_loop < iproc_loop_max:
+            iproc_loop += 1
+            process = subprocess.run(
+                [cmd],
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                executable="/bin/bash",
+            )
 
-        if gynscmn.check_solution(dir_nam, verbose=verbose):
-            log.info("solution ok for: %s :)", dir_nam)
-        else:
-            log.error("no solution for: %s :(", dir_nam)
-            log.error("STDOUT: %s", process.stdout)
-            log.error("STDERR: %s", process.stderr)
+            # gynscmn.check_gins_exe(open(log_path), director_name)
+            #
+            # with open(log_path + ".exec", "w") as f:
+            #     f.write("exec time : " + str(time.time() - start))
+            #
+            ok_sol = gynscmn.check_solution(dir_nam, verbose=verbose)
+            if ok_sol:
+                log.info("solution ok for: %s :)", dir_nam)
+            else:
+                log.error("no solution for: %s :(", dir_nam)
+                #log.error("STDOUT: %s", process.stdout)
+                #log.error("STDERR: %s", process.stderr)
+
+            if not ok_sol and check_for_retry(process.stderr):
+                log.warning("retryable directeur %s",
+                            dir_nam)
+                iproc_loop = iproc_loop + 1
+            else:
+                iproc_loop = iproc_loop_max + 1
 
         log.info(
             "run %s end at %s (exec: %8.3f s)",
@@ -372,6 +384,14 @@ def export_results_gins_listing(
         ts = time_series.merge_ts(tslist)
     time_series.export_ts(ts, outpath, coordtype, outprefix)
     return outpath
+
+
+def check_for_retry(stderr_inp):
+    if "exe_gins_recup_fic.sh: 67: [: =: unexpected operator" in stderr_inp:
+        return True
+    else:
+        return False
+
 
 
 def run_director_list_wrap(tupinp):
