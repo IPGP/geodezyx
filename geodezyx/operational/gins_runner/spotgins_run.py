@@ -289,8 +289,8 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
     def cat_orbclk_wrap(date_inp):
         jjul_bef = str(conv.dt2jjul_cnes(date_inp - dt.timedelta(days=1)))
         jjul_aft = str(conv.dt2jjul_cnes(date_inp + dt.timedelta(days=1)))
-        gs_user = get_gin_path(extended=False)
-        gins_data = get_gin_path(extended=True) + "/data"
+        gs_user = gynscmn.get_gin_path(extended=False)
+        gins_data = gynscmn.get_gin_path(extended=True) + "/data"
 
         orb_out = os.path.join(
             gs_user, "GPSDATA", "_".join((prod + "ORB", "AUTOM", jjul_bef, jjul_aft))
