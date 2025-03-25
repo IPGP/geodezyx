@@ -117,11 +117,12 @@ def run_directors(
         if sleep_time_max > 0:
             time.sleep(np.random.randint(1, sleep_time_max * 1000) * 10**-3)
 
-        iproc_loop = 0
-        iproc_loop_max = 4
+        itry = 0
+        itry_max = 4
+        retry_str = ""
 
-        while iproc_loop < iproc_loop_max:
-            iproc_loop += 1
+        while itry < itry_max:
+            itry += 1
             process = subprocess.run(
                 [cmd],
                 shell=True,
@@ -140,16 +141,17 @@ def run_directors(
             if ok_sol:
                 log.info("solution ok for: %s :)", dir_nam)
             else:
-                log.error("no solution for: %s :(", dir_nam)
+                log.error("no solution for: %s :( %s", dir_nam, retry_str)
                 #log.error("STDOUT: %s", process.stdout)
                 #log.error("STDERR: %s", process.stderr)
 
             if not ok_sol and check_for_retry(process.stderr):
-                log.warning("retryable directeur %s",
-                            dir_nam)
-                iproc_loop = iproc_loop + 1
+                log.warning(f"retryable directeur {dir_nam} (try {itry} / {itry_max})")
+                itry = itry + 1
+                retry_str = f"(try {itry} / {itry_max})"
+                time.sleep(3)
             else:
-                iproc_loop = iproc_loop_max + 1
+                itry = itry_max + 1
 
         log.info(
             "run %s end at %s (exec: %8.3f s)",
