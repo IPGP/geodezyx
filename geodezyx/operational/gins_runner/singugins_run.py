@@ -20,6 +20,7 @@ def singugins_run(
     bdrnx_folder="/root/020_BDRNX/",
     nprocs=8,
     no_updatebd=False,
+    verbose=False,
     spotgins_run_kwargs={},
 ):
     """
@@ -65,6 +66,7 @@ def singugins_run(
         results_folder_inp=results_folder,
         nprocs=nprocs,
         no_updatebd=no_updatebd,
+        verbose=verbose,
         **spotgins_run_kwargs,
     )
 
@@ -132,6 +134,13 @@ def main():
         help="Flag to indicate whether to update the database.",
     )
 
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Verbose mode.",
+    )
+
     args = parser.parse_args()
 
     # Convert spotgins_run_kwargs from JSON string to dictionary
@@ -148,6 +157,7 @@ def main():
         spotgins_run_kwargs=spotgins_run_kwargs,
         no_updatebd=args.no_updatebd,
         nprocs=args.nprocs,
+        verbose=args.verbose
     )
 
 
