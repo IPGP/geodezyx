@@ -273,15 +273,16 @@ def get_spotgins_files(
     return dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use
 
 
-def concat_orb_clk(date_srt, date_end, nprocs, prod="G20",verbose=True):
+def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
 
-    def cat_orb_clk_ok(orbclk_out):
-        orbclk_out = orbclk_out + '.gz'
-
-    if os.path.isfile(orbclk_out):
-        log.info("%s created :)", orbclk_out)
-    else:
-        log.error("%s not created :(", orbclk_out)
+    def _chk_cat_orbclk(orbclk_out):
+        orbclk_out = orbclk_out + ".gz"
+        if os.path.isfile(orbclk_out):
+            log.info("%s created :)", orbclk_out)
+            return True
+        else:
+            log.error("%s not created :(", orbclk_out)
+            return False
 
     global cat_orbclk_wrap
     def cat_orbclk_wrap(date_inp):
@@ -289,7 +290,9 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20",verbose=True):
         jjul_aft = str(conv.dt2jjul_cnes(date_inp + dt.timedelta(days=1)))
         gs_user = os.environ["GS_USER"]
 
-        orb_out = os.path.join(gs_user,"GPSDATA", "_".join((prod + "ORB", "AUTOM", jjul_bef, jjul_aft)))
+        orb_out = os.path.join(
+            gs_user, "GPSDATA", "_".join((prod + "ORB", "AUTOM", jjul_bef, jjul_aft))
+        )
         cmd_orb = " ".join(["rapat_orb_gnss.sh", jjul_bef, jjul_aft, "3", orb_out, "0"])
         if verbose:
             log.info(cmd_orb)
@@ -301,10 +304,11 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20",verbose=True):
             shell=True,
         )
         utils.gzip_compress(orb_out)
-        cat_orb_clk_ok(orb_out)
+        _chk_cat_orbclk(orb_out)
 
-
-        clk_out = os.path.join(gs_user, "GPSDATA", "_".join((prod, "AUTOM", jjul_bef, jjul_aft)))
+        clk_out = os.path.join(
+            gs_user, "GPSDATA", "_".join((prod, "AUTOM", jjul_bef, jjul_aft))
+        )
         cmd_clk = " ".join(["get_hor_hautes", jjul_bef, jjul_aft, prod, clk_out])
 
         if verbose:
@@ -317,7 +321,7 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20",verbose=True):
             shell=True,
         )
         utils.gzip_compress(clk_out)
-        cat_orb_clk_ok(clk_out)
+        _chk_cat_orbclk(clk_out)
 
         return orb_out, clk_out
 
