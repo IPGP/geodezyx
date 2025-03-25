@@ -296,7 +296,7 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20"):
 
         return orb_out, clk_out
 
-    date_lis = conv.dt_range(date_srt, date_end):
+    date_lis = conv.dt_range(date_srt, date_end)
 
     pool = mp.Pool(processes=nprocs)
     try:
