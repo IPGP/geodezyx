@@ -118,7 +118,12 @@ def bdgins_update(date_srt, date_end, dir_bdgins="",
         dir_bdgins = os.path.join(gynscmn.get_gin_path(True), 'data')
 
     if not login:
-        login = getpass.getuser()
+        home = os.path.expanduser("~")
+        ginspcrc = os.path.join(home, ".ginspc")
+        if os.path.isfile(ginspcrc):
+            login = open(ginspcrc, "r").read().split("=")[1].strip()
+        else:
+            login = getpass.getuser()
 
     date = date_srt
 
