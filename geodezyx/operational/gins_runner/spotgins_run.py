@@ -275,13 +275,21 @@ def get_spotgins_files(
 
 def concat_orb_clk(date_srt, date_end, nprocs, prod="G20",verbose=True):
 
+    def cat_orb_clk_ok(orbclk_out):
+        orbclk_out = orbclk_out + '.gz'
+
+    if os.path.isfile(orbclk_out):
+        log.info("%s created :)", orbclk_out)
+    else:
+        log.error("%s not created :(", orbclk_out)
+
     global cat_orbclk_wrap
     def cat_orbclk_wrap(date_inp):
         jjul_bef = str(conv.dt2jjul_cnes(date_inp - dt.timedelta(days=1)))
         jjul_aft = str(conv.dt2jjul_cnes(date_inp + dt.timedelta(days=1)))
         gs_user = os.environ["GS_USER"]
 
-        orb_out = os.path.join(gs_user, "_".join((prod + "ORB", "AUTOM", jjul_bef, jjul_aft)))
+        orb_out = os.path.join(gs_user,"GPSDATA", "_".join((prod + "ORB", "AUTOM", jjul_bef, jjul_aft)))
         cmd_orb = " ".join(["rapat_orb_gnss.sh", jjul_bef, jjul_aft, "3", orb_out, "0"])
         if verbose:
             log.info(cmd_orb)
@@ -292,15 +300,13 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20",verbose=True):
             stderr=subprocess.PIPE,
             shell=True,
         )
-
-        if os.path.isfile(orb_out):
-            log.info("%s created", orb_out)
-        else:
-            log.error("%s not created :(", orb_out)
+        utils.gzip_compress(orb_out)
+        cat_orb_clk_ok(orb_out)
 
 
-        clk_out = os.path.join(gs_user, "_".join((prod, "AUTOM", jjul_bef, jjul_aft)))
+        clk_out = os.path.join(gs_user, "GPSDATA", "_".join((prod, "AUTOM", jjul_bef, jjul_aft)))
         cmd_clk = " ".join(["get_hor_hautes", jjul_bef, jjul_aft, prod, clk_out])
+
         if verbose:
             log.info(cmd_clk)
         subprocess.run(
@@ -310,11 +316,8 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20",verbose=True):
             stderr=subprocess.PIPE,
             shell=True,
         )
-
-        if os.path.isfile(clk_out):
-            log.info("%s created :)", clk_out)
-        else:
-            log.error("%s not created :(", clk_out)
+        utils.gzip_compress(clk_out)
+        cat_orb_clk_ok(clk_out)
 
         return orb_out, clk_out
 
