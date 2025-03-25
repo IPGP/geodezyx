@@ -281,15 +281,17 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20"):
         gs_user = os.environ["GS_USER"]
 
         orb_out = os.path.join(gs_user, "_".join((prod + "ORB", "AUTOM", jjul_bef, jjul_aft)))
+        cmd_orb = " ".join(["rapat_orb_gnss.sh", jjul_bef, jjul_aft, "3", orb_out, "0"])
         subprocess.run(
-            ["rapat_orb_gnss.sh", jjul_bef, jjul_aft, "3", orb_out, "0"],
+            cmd_orb,
             executable="/bin/bash",
             shell=True,
         )
 
         clk_out = os.path.join(gs_user, "_".join((prod, "AUTOM", jjul_bef, jjul_aft)))
+        cmd_clk = " ".join(["get_hor_hautes", jjul_bef, jjul_aft, prod, clk_out])
         subprocess.run(
-            ["get_hor_hautes", jjul_bef, jjul_aft, prod, clk_out],
+            cmd_clk,
             executable="/bin/bash",
             shell=True,
         )
