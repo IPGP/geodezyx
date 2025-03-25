@@ -322,7 +322,7 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
         )
         cmd_clk = " ".join(["get_hor_hautes", jjul_bef, jjul_aft, prod, clk_out])
 
-        for cmd, out_fil in [(cmd_orb, orb_out), (cmd_clk, orb_out)]:
+        for cmd, out_fil in [(cmd_orb, orb_out), (cmd_clk, clk_out)]:
             _run_cat_orbclk(cmd, out_fil)
 
         return orb_out, clk_out
@@ -330,8 +330,6 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
     date_lis = conv.dt_range(date_srt, date_end)
 
     pool = mp.Pool(processes=nprocs)
-    _ = pool.map(cat_orbclk_wrap, date_lis, chunksize=1)
-
     try:
         _ = pool.map(cat_orbclk_wrap, date_lis, chunksize=1)
     except Exception as e:
