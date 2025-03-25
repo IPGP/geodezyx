@@ -274,6 +274,7 @@ def get_spotgins_files(
 
 def concat_orb_clk(date_srt, date_end, nprocs, prod="G20"):
 
+    global cat_orbclk_wrap
     def cat_orbclk_wrap(date_inp):
         jjul_bef = str(conv.dt2jjul_cnes(date_inp - dt.datetime(day=1)))
         jjul_aft = str(conv.dt2jjul_cnes(date_inp + dt.datetime(day=1)))
