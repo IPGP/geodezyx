@@ -275,17 +275,35 @@ def get_spotgins_files(
 
 def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
 
-    def _chk_cat_orbclk(orbclk_out):
+    def _chk_cat_orbclk(orbclk_out, silent=False):
         orbclk_out = orbclk_out + ".gz"
         if os.path.isfile(orbclk_out):
-            log.info("%s created :)", orbclk_out)
+            log.info("%s here :)", orbclk_out)
             return True
+        elif not silent:
+            log.error("%s not here :(", orbclk_out)
+            return False
         else:
-            log.error("%s not created :(", orbclk_out)
             return False
 
-    global cat_orbclk_wrap
+    def _run_cat_orbclk(cmd, out_fil):
+        if _chk_cat_orbclk(out_fil, silent=True):
+            return None
 
+        if verbose:
+            log.info(cmd)
+        subprocess.run(
+            cmd,
+            executable="/bin/bash",
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=True,
+        )
+        utils.gzip_compress(out_fil)
+        _chk_cat_orbclk(out_fil)
+        return None
+
+    global cat_orbclk_wrap
     def cat_orbclk_wrap(date_inp):
         jjul_bef = str(conv.dt2jjul_cnes(date_inp - dt.timedelta(days=1)))
         jjul_aft = str(conv.dt2jjul_cnes(date_inp + dt.timedelta(days=1)))
@@ -298,34 +316,14 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
         cmd_orb = " ".join(
             ["rapat_orb_gnss.sh", jjul_bef, jjul_aft, "3", gins_data, orb_out, "0"]
         )
-        if verbose:
-            log.info(cmd_orb)
-        subprocess.run(
-            cmd_orb,
-            executable="/bin/bash",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=True,
-        )
-        utils.gzip_compress(orb_out)
-        _chk_cat_orbclk(orb_out)
 
         clk_out = os.path.join(
             gs_user, "GPSDATA", "_".join((prod, "AUTOM", jjul_bef, jjul_aft))
         )
         cmd_clk = " ".join(["get_hor_hautes", jjul_bef, jjul_aft, prod, clk_out])
 
-        if verbose:
-            log.info(cmd_clk)
-        subprocess.run(
-            cmd_clk,
-            executable="/bin/bash",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=True,
-        )
-        utils.gzip_compress(clk_out)
-        _chk_cat_orbclk(clk_out)
+        for cmd, out_fil in [(cmd_orb, orb_out), (cmd_clk, orb_out)]:
+            _run_cat_orbclk(cmd, out_fil)
 
         return orb_out, clk_out
 
