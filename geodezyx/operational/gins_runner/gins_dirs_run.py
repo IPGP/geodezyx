@@ -106,8 +106,6 @@ def run_directors(
         # c'est lui qui resoult l'instabilité lors du lancement du subprocess !!!
         # parce que indirectement exe_gins ne marche pas sans
         # faire le test avec un exe_gins -v OPERA -fic <fic> et sans
-        if verbose:
-            log.info("submit. command : %s", cmd)
 
         gins_path = gynscmn.get_gin_path()
         log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
@@ -118,11 +116,15 @@ def run_directors(
             time.sleep(np.random.randint(1, sleep_time_max * 1000) * 10**-3)
 
         itry = 0
-        itry_max = 4
+        itry_max = 3
         retry_str = ""
 
-        while itry < itry_max:
+        while itry <= itry_max:
             itry += 1
+
+            if verbose:
+                log.info("submit. command : %s", cmd)
+
             process = subprocess.run(
                 [cmd],
                 shell=True,
