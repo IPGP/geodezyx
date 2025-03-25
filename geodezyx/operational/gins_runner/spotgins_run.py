@@ -7,6 +7,7 @@ Created on 28/02/2025 18:52:44
 """
 import re
 import subprocess
+from tabnanny import verbose
 
 import geodezyx.operational.gins_runner.gins_common as gynscmn
 import geodezyx.operational.gins_runner.gins_dirs_gen as gynsgen
@@ -272,7 +273,7 @@ def get_spotgins_files(
     return dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use
 
 
-def concat_orb_clk(date_srt, date_end, nprocs, prod="G20"):
+def concat_orb_clk(date_srt, date_end, nprocs, prod="G20",verbose=True):
 
     global cat_orbclk_wrap
     def cat_orbclk_wrap(date_inp):
@@ -282,25 +283,37 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20"):
 
         orb_out = os.path.join(gs_user, "_".join((prod + "ORB", "AUTOM", jjul_bef, jjul_aft)))
         cmd_orb = " ".join(["rapat_orb_gnss.sh", jjul_bef, jjul_aft, "3", orb_out, "0"])
+        if verbose:
+            log.info(cmd_orb)
         subprocess.run(
             cmd_orb,
             executable="/bin/bash",
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             shell=True,
         )
 
+        if os.path.isfile(orb_out):
+            log.info("%s created", orb_out)
+
         clk_out = os.path.join(gs_user, "_".join((prod, "AUTOM", jjul_bef, jjul_aft)))
         cmd_clk = " ".join(["get_hor_hautes", jjul_bef, jjul_aft, prod, clk_out])
+        if verbose:
+            log.info(cmd_clk)
         subprocess.run(
             cmd_clk,
             executable="/bin/bash",
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             shell=True,
         )
+
+        if os.path.isfile(clk_out):
+            log.info("%s created", clk_out)
 
         return orb_out, clk_out
 
     date_lis = conv.dt_range(date_srt, date_end)
-
-    print(date_lis)
 
     pool = mp.Pool(processes=nprocs)
     _ = pool.map(cat_orbclk_wrap, date_lis, chunksize=1)
