@@ -295,6 +295,9 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20",verbose=True):
 
         if os.path.isfile(orb_out):
             log.info("%s created", orb_out)
+        else:
+            log.error("%s not created :(", orb_out)
+
 
         clk_out = os.path.join(gs_user, "_".join((prod, "AUTOM", jjul_bef, jjul_aft)))
         cmd_clk = " ".join(["get_hor_hautes", jjul_bef, jjul_aft, prod, clk_out])
@@ -309,7 +312,9 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20",verbose=True):
         )
 
         if os.path.isfile(clk_out):
-            log.info("%s created", clk_out)
+            log.info("%s created :)", clk_out)
+        else:
+            log.error("%s not created :(", clk_out)
 
         return orb_out, clk_out
 
