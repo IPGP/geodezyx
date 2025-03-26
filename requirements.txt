@@ -18,7 +18,7 @@ pathvalidate
 pandas
 requests
 # seawater # full mode
-scipy
+scipy==1.14.1
 sympy
 tabulate
 tk
