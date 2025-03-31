@@ -46,20 +46,25 @@ log = logging.getLogger('geodezyx')
 
 def rinexs_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=True):
     """
-    From a simple RINEX list, summarize the data in an ad-hoc DataFrame
+    From a simple RINEX list, summarize the data in an ad-hoc DataFrame.
 
     Parameters
     ----------
     rnxs_inp : iterable or str
-        if iterable, a list of RINEX files
-        if str, path of an input RINEX list as text file.
+        If iterable, a list of RINEX files.
+        If str, path of an input RINEX list as text file.
+    site9_col : bool, optional
+        If True, include a 'site9' column in the DataFrame. Defaults to False.
+    round_date : bool, optional
+        If True, round the dates to the nearest day. Defaults to False.
+    path_col : bool, optional
+        If True, include the 'path' column in the DataFrame. Defaults to True.
 
     Returns
     -------
-    df : Pandas DataFrame
+    df : pandas.DataFrame
         A DataFrame with the RINEX info in it.
     """
-
     if utils.is_iterable(rnxs_inp):
         df = pd.DataFrame(rnxs_inp, columns=["path"])
     else:
@@ -70,7 +75,7 @@ def rinexs_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col
 
     if site9_col:
         df["site9"] = df["name"].str[:9].str.lower()
-        #### set generic 9-char name if 4 char name file
+        # Set generic 9-char name if 4 char name file
         bool_new_name = df["name"].str.match(conv.rinex_regex_long_name())
         bool_old_name = np.logical_not(bool_new_name)
         site9_generic = df["site4"].str.upper() + "00XXX"
@@ -79,14 +84,12 @@ def rinexs_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col
     df["date"] = df["name"].apply(conv.rinexname2dt)
     if round_date:
         df["date"] = conv.round_dt(df["date"].values, "1D", True, "floor")
-    DoyYear = df["date"].apply(conv.dt2doy_year)
-    df["doy"] = DoyYear.apply(lambda x: x[0])
-    df["year"] = DoyYear.apply(lambda x: x[1])
+    doy_year = df["date"].apply(conv.dt2doy_year)
+    df["doy"] = doy_year.apply(lambda x: x[0])
+    df["year"] = doy_year.apply(lambda x: x[1])
 
     cols = df.columns.tolist()
-
     cols = cols[1:] + [cols[0]]
-
     df = df[cols]
 
     if not path_col:
@@ -95,6 +98,69 @@ def rinexs_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col
     pd.options.display.max_info_columns = 150
 
     return df
+
+def diff_rinexs_lists(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col=False):
+    """
+    Compare two lists of RINEX files and identify differences.
+
+    Parameters
+    ----------
+    rnx_lis1 : list
+        First list of RINEX file paths.
+    rnx_lis2 : list
+        Second list of RINEX file paths.
+    out_dir : str, optional
+        Directory to save the output files. If None, no files are saved.
+    out_name : str, optional
+        Base name for the output files. Defaults to 'rnx_diff' if not provided.
+    site9_col : bool, optional
+        If True, use 'site9' as the column name for site identification. Defaults to False.
+
+    Returns
+    -------
+    d1m2 : pandas.DataFrame
+        DataFrame containing entries in rnx_lis1 but not in rnx_lis2.
+    d2m1 : pandas.DataFrame
+        DataFrame containing entries in rnx_lis2 but not in rnx_lis1.
+    """
+    if site9_col:
+        site_col = "site9"
+    else:
+        site_col = "site4"
+
+    # Create DataFrames from the RINEX lists
+    d1 = rinexs_table_from_list(rnx_lis1, path_col=True, round_date=False, site9_col=site9_col)
+    d2 = rinexs_table_from_list(rnx_lis2, path_col=True, round_date=False, site9_col=site9_col)
+
+    # Set the index to the site and date columns
+    d1 = d1.set_index([site_col, "date"])
+    d2 = d2.set_index([site_col, "date"])
+
+    # Find the differences in the indices
+    idx_diff1m2 = d1.index.difference(d2.index)
+    idx_diff2m1 = d2.index.difference(d1.index)
+
+    # Locate the differences in the DataFrames
+    d1m2 = d1.loc[idx_diff1m2]
+    d2m1 = d2.loc[idx_diff2m1]
+
+    # If an output directory is specified, save the differences to files
+    if out_dir:
+        if not out_name:
+            out_name = "rnx_diff"
+
+        out_path1m2 = os.path.join(out_dir, out_name + "_1m2")
+        out_path2m1 = os.path.join(out_dir, out_name + "_2m1")
+
+        # Save the paths of the differences to text files
+        d1m2['path'].to_csv(out_path1m2 + ".txt", index=False, header=False)
+        d2m1['path'].to_csv(out_path2m1 + ".txt", index=False, header=False)
+
+        # Save the full DataFrames of the differences to CSV files
+        d1m2.to_csv(out_path1m2 + ".csv", index=False, header=True)
+        d2m1.to_csv(out_path2m1 + ".csv", index=False, header=True)
+
+    return d1m2, d2m1
 
 
 def rinex_sats_checker(p_rnx):
