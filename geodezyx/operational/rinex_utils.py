@@ -99,6 +99,7 @@ def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=
 
     return df
 
+
 def rinex_lists_diff(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col=False):
     """
     Compare two lists of RINEX files and identify differences.
@@ -165,13 +166,14 @@ def rinex_lists_diff(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col=
         # Save the full DataFrames of the differences to CSV files
         for k, v in res_dic.items():
             if len(v) > 0:
-                out_suffix = k.replace(".","").replace("-","_").replace(" ","_")
+                out_suffix = k.replace(".", "").replace("-", "_").replace(" ", "_")
                 out_path = os.path.join(out_dir, out_name + "_" + out_suffix)
                 log.info("Saving rinex %s to %s", k, out_path + ".txt/.csv")
                 v['path'].to_csv(out_path + ".txt", index=False, header=False)
                 v.to_csv(out_path + ".csv", index=False, header=True)
 
     return diff1m2, diff2m1, intrsec, symdiff
+
 
 def rinex_sats_checker(p_rnx):
     """
