@@ -44,7 +44,7 @@ log = logging.getLogger('geodezyx')
 ##########  END IMPORT  ##########
 
 
-def rinexs_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=True):
+def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=True):
     """
     From a simple RINEX list, summarize the data in an ad-hoc DataFrame.
 
@@ -99,7 +99,7 @@ def rinexs_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col
 
     return df
 
-def diff_rinexs_lists(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col=False):
+def rinex_lists_diff(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col=False):
     """
     Compare two lists of RINEX files and identify differences.
 
@@ -123,14 +123,12 @@ def diff_rinexs_lists(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col
     d2m1 : pandas.DataFrame
         DataFrame containing entries in rnx_lis2 but not in rnx_lis1.
     """
-    if site9_col:
-        site_col = "site9"
-    else:
-        site_col = "site4"
+
+    site_col = "site9" if site9_col else "site4"
 
     # Create DataFrames from the RINEX lists
-    d1 = rinexs_table_from_list(rnx_lis1, path_col=True, round_date=False, site9_col=site9_col)
-    d2 = rinexs_table_from_list(rnx_lis2, path_col=True, round_date=False, site9_col=site9_col)
+    d1 = rinex_table_from_list(rnx_lis1, path_col=True, round_date=False, site9_col=site9_col)
+    d2 = rinex_table_from_list(rnx_lis2, path_col=True, round_date=False, site9_col=site9_col)
 
     # Set the index to the site and date columns
     d1 = d1.set_index([site_col, "date"])
@@ -153,12 +151,14 @@ def diff_rinexs_lists(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col
         out_path2m1 = os.path.join(out_dir, out_name + "_2m1")
 
         # Save the paths of the differences to text files
-        d1m2['path'].to_csv(out_path1m2 + ".txt", index=False, header=False)
-        d2m1['path'].to_csv(out_path2m1 + ".txt", index=False, header=False)
-
         # Save the full DataFrames of the differences to CSV files
-        d1m2.to_csv(out_path1m2 + ".csv", index=False, header=True)
-        d2m1.to_csv(out_path2m1 + ".csv", index=False, header=True)
+
+        if len(d2m1) > 0:
+            d2m1['path'].to_csv(out_path2m1 + ".txt", index=False, header=False)
+            d2m1.to_csv(out_path2m1 + ".csv", index=False, header=True)
+        if len(d1m2) > 0:
+            d1m2['path'].to_csv(out_path1m2 + ".txt", index=False, header=False)
+            d1m2.to_csv(out_path1m2 + ".csv", index=False, header=True)
 
     return d1m2, d2m1
 
