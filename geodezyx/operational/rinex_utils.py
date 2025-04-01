@@ -118,10 +118,14 @@ def rinex_lists_diff(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col=
 
     Returns
     -------
-    d1m2 : pandas.DataFrame
+    diff1m2 : pandas.DataFrame
         DataFrame containing entries in rnx_lis1 but not in rnx_lis2.
-    d2m1 : pandas.DataFrame
+    diff2m1 : pandas.DataFrame
         DataFrame containing entries in rnx_lis2 but not in rnx_lis1.
+    intrsec : pandas.DataFrame
+        DataFrame containing entries common to both rnx_lis1 and rnx_lis2.
+    symdiff : pandas.DataFrame
+        DataFrame containing entries that are in either rnx_lis1 or rnx_lis2 but not in both.
     """
 
     site_col = "site9" if site9_col else "site4"
@@ -137,31 +141,37 @@ def rinex_lists_diff(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col=
     # Find the differences in the indices
     idx_diff1m2 = d1.index.difference(d2.index)
     idx_diff2m1 = d2.index.difference(d1.index)
+    idx_intrsec = d1.index.intersection(d2.index)
+    idx_symdiff = d1.index.symmetric_difference(d2.index)
 
     # Locate the differences in the DataFrames
-    d1m2 = d1.loc[idx_diff1m2]
-    d2m1 = d2.loc[idx_diff2m1]
+    diff1m2 = d1.loc[idx_diff1m2]
+    diff2m1 = d2.loc[idx_diff2m1]
+    intrsec = d1.loc[idx_intrsec]
+    symdiff = d1.loc[idx_symdiff]
+
+    res_dic = dict()
+    res_dic['diff. 1-2'] = diff1m2
+    res_dic['diff. 2-1'] = diff2m1
+    res_dic['intersection'] = intrsec
+    res_dic['sym. diff.'] = intrsec
 
     # If an output directory is specified, save the differences to files
     if out_dir:
         if not out_name:
-            out_name = "rnx_diff"
-
-        out_path1m2 = os.path.join(out_dir, out_name + "_1m2")
-        out_path2m1 = os.path.join(out_dir, out_name + "_2m1")
+            out_name = ""
 
         # Save the paths of the differences to text files
         # Save the full DataFrames of the differences to CSV files
+        for k, v in res_dic.items():
+            if len(v) > 0:
+                out_suffix = k.replace(".","").replace("-","_").replace(" ","_")
+                out_path = os.path.join(out_dir, out_name + "_" + out_suffix)
+                log.info("Saving rinex %s to %s", k, out_path + ".txt/.csv")
+                v['path'].to_csv(out_path + ".txt", index=False, header=False)
+                v.to_csv(out_path + ".csv", index=False, header=True)
 
-        if len(d2m1) > 0:
-            d2m1['path'].to_csv(out_path2m1 + ".txt", index=False, header=False)
-            d2m1.to_csv(out_path2m1 + ".csv", index=False, header=True)
-        if len(d1m2) > 0:
-            d1m2['path'].to_csv(out_path1m2 + ".txt", index=False, header=False)
-            d1m2.to_csv(out_path1m2 + ".csv", index=False, header=True)
-
-    return d1m2, d2m1
-
+    return diff1m2, diff2m1, intrsec, symdiff
 
 def rinex_sats_checker(p_rnx):
     """
