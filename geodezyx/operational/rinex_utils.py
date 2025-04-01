@@ -149,7 +149,8 @@ def rinex_lists_diff(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col=
     diff1m2 = d1.loc[idx_diff1m2]
     diff2m1 = d2.loc[idx_diff2m1]
     intrsec = d1.loc[idx_intrsec]
-    symdiff = d1.loc[idx_symdiff]
+    d12 = pd.concat([d1, d2], axis=0)
+    symdiff = d12.loc[idx_symdiff]
 
     res_dic = dict()
     res_dic['diff. 1-2'] = diff1m2
