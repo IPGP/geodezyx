@@ -119,7 +119,8 @@ def spotgins_run(
     if not no_updatebd or not no_concat_orb_clk:
         rnxs_dates = [conv.rinexname2dt(e) for e in rnxs_path_use]
         rnxs_dates = [e for e in rnxs_dates if not e is None]
-        date_min, date_max = min(rnxs_dates) - dt.datetime(days=1), max(rnxs_dates) + dt.datetime(days=1)
+        date_min, date_max = (min(rnxs_dates) - dt.timedelta(days=1),
+                              max(rnxs_dates) + dt.timedelta(days=1))
 
     ##### Update the database ################
     if not no_updatebd:
