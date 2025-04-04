@@ -15,7 +15,7 @@ import geodezyx.operational.gins_runner.gins_dirs_run as gynsrun
 import geodezyx.operational.gins_runner.gins_bd_update as gynsbdu
 import datetime as dt
 
-from geodezyx import utils
+from geodezyx import utils, operational
 
 import multiprocessing as mp
 import os
@@ -100,7 +100,7 @@ def spotgins_run(
 
     ##### sort the input list
     rnxs_path_use = utils.listify(rnxs_path_inp)
-    rnxs_path_use = utils.sort_basename(rnxs_path_use)
+    rnxs_path_use = operational.rinex_table_from_list(rnxs_path_use)['path'].to_list()
 
     if len(rnxs_path_use) == 0:
         log.error("No input RINEX files to process, skip")

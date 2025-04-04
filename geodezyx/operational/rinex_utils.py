@@ -44,7 +44,7 @@ log = logging.getLogger('geodezyx')
 ##########  END IMPORT  ##########
 
 
-def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=True):
+def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=True, sort=True):
     """
     From a simple RINEX list, summarize the data in an ad-hoc DataFrame.
 
@@ -59,6 +59,8 @@ def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=
         If True, round the dates to the nearest day. Defaults to False.
     path_col : bool, optional
         If True, include the 'path' column in the DataFrame. Defaults to True.
+    sort : bool, optional
+        If True, sort the DataFrame by 'site4' and 'date'. Defaults to True.
 
     Returns
     -------
@@ -96,6 +98,10 @@ def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=
         df.drop("path", axis=1, inplace=True)
 
     pd.options.display.max_info_columns = 150
+
+    if sort:
+        df.sort_values(by=["site4", "date"], inplace=True)
+        df.reset_index(drop=True, inplace=True)
 
     return df
 
