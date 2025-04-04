@@ -118,6 +118,7 @@ def run_directors(
         itry = 0
         itry_max = 3
         retry_str = ""
+        timeout = 600
 
         while itry <= itry_max:
             itry += 1
@@ -132,6 +133,7 @@ def run_directors(
                 stderr=subprocess.PIPE,
                 text=True,
                 executable="/bin/bash",
+                timeout=timeout
             )
 
             # gynscmn.check_gins_exe(open(log_path), director_name)

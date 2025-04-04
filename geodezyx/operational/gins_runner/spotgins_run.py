@@ -99,7 +99,8 @@ def spotgins_run(
     """
 
     ##### sort the input list
-    rnxs_path_use = list(sorted(utils.listify(rnxs_path_inp)))
+    rnxs_path_use = utils.listify(rnxs_path_inp)
+    rnxs_path_use = utils.sort_basename(rnxs_path_use)
 
     if len(rnxs_path_use) == 0:
         log.error("No input RINEX files to process, skip")
@@ -271,7 +272,6 @@ def get_spotgins_files(
         siteid9_use = None
 
     return dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use
-
 
 def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
 
