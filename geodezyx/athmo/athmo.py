@@ -11,7 +11,6 @@ Created on Tue Jul  9 09:23:54 2019
 #from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 import numpy as np
-
 from geodezyx import conv, utils
 
 

@@ -12,7 +12,6 @@ import logging
 
 import numpy as np
 import scipy
-from scipy.spatial.transform import Rotation
 
 from geodezyx import utils, conv
 
@@ -101,8 +100,9 @@ class Slerp_time(scipy.spatial.transform.Slerp):
    P. Sakic 2020-01
    """
    
-   def __init__(self, times, rotations,extrapolate=True):   
-       
+   def __init__(self, times, rotations,extrapolate=True):
+       from scipy.spatial.transform import Rotation
+
        ### time is converted as an array
        times = np.array(times)
        

@@ -28,9 +28,6 @@ import numpy as np
 #### geodeZYX modules
 from geodezyx import utils
 
-# import scipy
-# from pyorbital import astronomy
-# import re
 log = logging.getLogger('geodezyx')
 
 

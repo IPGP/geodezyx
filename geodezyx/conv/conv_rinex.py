@@ -25,9 +25,6 @@ import logging
 ########## BEGIN IMPORT ##########
 #### External modules
 import os
-
-# import scipy
-# from scipy.spatial.transform import Rotation
 import re
 
 ### Imported in the corresponding function to avoid cyclic import
