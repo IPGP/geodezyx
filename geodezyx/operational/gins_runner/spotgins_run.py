@@ -91,7 +91,7 @@ def spotgins_run(
     verbose : bool, optional
         If True, enable verbose logging. Default is False.
     updatebd_login : str
-        The login to connect to the remote ``tite` GINS server to update the database.
+        The login to connect to the remote `tite` GINS server to update the database.
         We assume that SSH keys have been exchanged to automatize the connexion
     Returns
     -------
