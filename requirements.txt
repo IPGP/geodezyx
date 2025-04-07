@@ -26,3 +26,4 @@ tqdm ##progressbars
 vincenty
 wheel
 xarray
+logging_tree

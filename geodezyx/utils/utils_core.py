@@ -1034,6 +1034,10 @@ def dday():
     """
     D = (dt.datetime(2016,10,14) - dt.datetime.now()).days
     print("used logger:",log)
+
+    from logging_tree import printout
+    printout()
+
     log.warning('J - %s avant la quille !!!',D)
     log.info('J - %s avant la quille',D)
     log.debug('J - %s avant la quille, chill',D)
