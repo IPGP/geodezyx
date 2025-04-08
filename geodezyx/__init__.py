@@ -52,7 +52,7 @@ if __name__ == '__main__':
     print("geodezyx version",__version__)
     print("geodezyx.__all__",__all__)
 
-#### Import extern libraires in in the geodezyx namespace
+#### Import extern libraires in the geodezyx namespace
 #from geodezyx.extern import *
 
 # NB : if you want extern in the main namespace 

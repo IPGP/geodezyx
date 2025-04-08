@@ -71,7 +71,8 @@ keywords = ["geodesy", "geophysics", "reference frames", "gnss"]
 # This should be your name or the name of the organization who originally
 # authored the project, and a valid email address corresponding to the name
 # listed.
-authors = [{name = "Pierre Sakic & Gustavo Mansur", email = "sakic@ipgp.fr"}]
+authors = [{name = "Pierre Sakic", email = "sakic@ipgp.fr"},
+           {name = "Gustavo Mansur", email = "mansur@gfz-potsdam.de"}]
 
 # This should be your name or the names of the organization who currently
 # maintains the project, and a valid email address corresponding to the name
