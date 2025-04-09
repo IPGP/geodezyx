@@ -65,6 +65,14 @@ geodezyx.operational.gins\_runner.gins\_prairie module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.operational.gins\_runner.singugins\_run module
+-------------------------------------------------------
+
+.. automodule:: geodezyx.operational.gins_runner.singugins_run
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.operational.gins\_runner.spotgins\_run module
 ------------------------------------------------------
 
