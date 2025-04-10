@@ -527,6 +527,7 @@ def _dir_userext(dir_dic, site_id4_upper, add_tropo_sol=True):
     if uext in dir_dic:
         if add_tropo_sol:
             dir_dic[uext][uadd].append("ADD_TROPO_IN_SOLUTION")
+            dir_dic[uext][uadd].append("GPS__AFF_SINEX")
 
         # GPS__HAUTE_FREQ STAT is not a key/value couple, but is considered a single string
         # we must search this string and concatenate it with the right site code
