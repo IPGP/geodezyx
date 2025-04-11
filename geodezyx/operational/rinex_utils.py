@@ -60,7 +60,8 @@ def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=
     path_col : bool, optional
         If True, include the 'path' column in the DataFrame. Defaults to True.
     sort : bool, optional
-        If True, sort the DataFrame by 'site4' and 'date'. Defaults to True.
+        If True, sort the DataFrame by 'site4' or 'site9' (if site9_col is True) and 'date'.
+         Defaults to True.
 
     Returns
     -------
@@ -100,7 +101,8 @@ def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=
     pd.options.display.max_info_columns = 150
 
     if sort:
-        df.sort_values(by=["site4", "date"], inplace=True)
+        site_col = "site9" if site9_col else "site4"
+        df.sort_values(by=[site_col, "date"], inplace=True)
         df.reset_index(drop=True, inplace=True)
 
     return df

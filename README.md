@@ -65,11 +65,7 @@ GPS Solut 18, 153–162 (2014). https://doi.org/10.1007/s10291-013-0354-4
 ## Licence
 GNU Lesser General Public License, Version 3, 29 June 2007
 
-Copyright © 2019 Helmholtz Centre Potsdam GFZ 
-German Research Centre for Geosciences, Potsdam, Germany 
-(Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu)
-
-The geodeZYX toolbox is free software: you can redistribute it and/or modify it
+_geodezyx_ is free software: you can redistribute it and/or modify it
 under the terms of the GNU Lesser General Public License as published by the 
 Free Software Foundation, either version 3 of the License, or 
 (at your option) any later version. The geodeZYX toolbox is distributed 
