@@ -91,6 +91,9 @@ def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=
     df["doy"] = doy_year.apply(lambda x: x[0])
     df["year"] = doy_year.apply(lambda x: x[1])
 
+    size_path  = lambda f: os.path.getsize(f) if os.path.isfile(f) else np.nan
+    df["size"] = df["path"].apply(size_path)
+
     cols = df.columns.tolist()
     cols = cols[1:] + [cols[0]]
     df = df[cols]
