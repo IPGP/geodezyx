@@ -136,7 +136,7 @@ dependencies = {file = ["requirements.txt"]}
 [project.optional-dependencies]
 #dev = ["check-manifest"]
 #test = ["coverage"]
-full = ["netCDF4", "kepler.py", "ncompress", "seawater", "gsw"]
+full = ["netCDF4", "kepler.py", "ncompress", "seawater", "gsw", "pyorbital", "pytwobodyorbit"]
 
 # List URLs that are relevant to your project
 #

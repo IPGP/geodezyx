@@ -21,7 +21,6 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
-import gzip
 import inspect
 import io
 #### Import the logger
@@ -33,8 +32,6 @@ import re
 import sys
 import tempfile
 import time
-import uuid
-
 
 import numpy as np
 import pandas as pd
@@ -608,6 +605,7 @@ def save_obj_as_file(objin,pathin,prefix,ext='.exp',suffix=''):
 def save_array_fast(arrin,outname='',
                     outdir='/home/psakicki/aaa_FOURBI',
                     txt=True):
+    import uuid
     if outname == '':
         outname = str(uuid.uuid4())[:8]
     if scipy.sparse.issparse(arrin):
@@ -772,8 +770,9 @@ def extract_text_between_elements_2(file_path , elt_start , elt_end,
     NB2 : think about StingIO for a Pandas DataFrame Handeling
     https://docs.python.org/2/library/stringio.html
     """
-    
-    
+
+    import gzip
+
     ## 3 possibilities
     # file_path is a path, uncompressed
     # file_path in a path, gzip compressed

@@ -32,7 +32,6 @@ import matplotlib.pyplot as plt
 import natsort
 import numpy as np
 import pandas as pd
-import pyorbital.astronomy
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -1231,7 +1230,8 @@ def beta_angle_calc(DFOrb_in,
         intermediate values dataframe for debug.
         here, coordinates are in ECI frame
     """
-    
+    import pyorbital.astronomy
+
     #### convert in ECI
     df_eci = DFOrb_in.copy()
     df_eci[['x','y','z']] = conv.ECEF2ECI(DFOrb_in[['x','y','z']].values,

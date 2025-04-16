@@ -19,17 +19,11 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 
 
 ########## BEGIN IMPORT ##########
-#### External modules
-import bisect
-import collections
-import itertools
-
 #### Import the logger
 import logging
 import re
 import os
 
-import natsort
 import numpy as np
 
 #### geodeZYX modules
@@ -107,6 +101,7 @@ def uniq_and_sort(L, natural_sort=True):
     """
     In a list, remove duplicates and sort the list
     """
+    import natsort
     if natural_sort:
         return natsort.natsorted(list(set(L)))
     else:
@@ -427,6 +422,7 @@ def find_interval_bound(listin, val, outindexes=True):
     trouve les bornes d'un intervalle
     (listin est supposé triée)
     """
+    import bisect
     i = bisect.bisect(listin, val)
     if outindexes:
         return i - 1, i
@@ -491,10 +487,10 @@ def consecutive_groupIt(data, only_start_end=False):
     https://stackoverflow.com/questions/2154249/identify-groups-of-continuous-numbers-in-a-list
     """
     from operator import itemgetter
-    from itertools import groupby
+    import itertools
 
     groups_stk = []
-    for k, g in groupby(enumerate(data), lambda A: A[0] - A[1]):
+    for k, g in itertools.groupby(enumerate(data), lambda A: A[0] - A[1]):
         groups_stk.append(list(map(itemgetter(1), g)))
 
     if only_start_end:
@@ -508,6 +504,7 @@ def identical_groupIt(data):
     Source :
         https://stackoverflow.com/questions/30293071/python-find-same-values-in-a-list-and-group-together-a-new-list
     """
+    import itertools
     return [list(j) for i, j in itertools.groupby(data)]
 
 
@@ -554,7 +551,7 @@ def dicofdic(mat, names):
     # et d'une liste de N noms
     # Fabrique un dictionnaire 2D dic[nom1][nom2] = M[n1,n2]
     # http://stackoverflow.com/questions/13326042/2d-dictionary-with-multiple-keys-per-value
-
+    import collections
     d2_dict = collections.defaultdict(dict)
 
     for i in range(mat.shape[0]):
