@@ -5,8 +5,13 @@ Created on Mon Apr 14 23:31:09 2025
 
 @author: psakic
 """
+import datetime
+import re
+
 import numpy as np
 import os
+import datetime as dt
+from geodezyx import conv
 
 
 def read_antex(filepath, ant_type=None):
@@ -29,26 +34,41 @@ def read_antex(filepath, ant_type=None):
 
     Note
     ----
+
+    The `<Antenna Type>` key in the returned dictionary differs for satellite and non-satellite antennas:
+
+    - **Satellite Antennas**: The key is `SVN`_`VALID FROM`_`VALID UNTIL`.
+        Example: `"G042"`
+
+    - **Receiver Antennas**: The key is `TYPE`.
+        Example: `"TPSPG_A1+GP     NONE"`
+
+    If the `<Antenna Type>` key already exists, it is incremented with a `_01`...`_nn` suffix
+
+
     Structure of the returned dictionary:
 
-    dict
-    ├── HEADER (list of str)
-    ├── ANTS (dict)
-    │   ├── <Antenna Type> (str)
-    │   │   ├── TYPE (str)
-    │   │   ├── SERIAL (str)
-    │   │   ├── METH (str)
-    │   │   ├── DAZI (float)
-    │   │   ├── ZEN (list of float)
-    │   │   ├── NFREQ (int)
-    │   │   ├── SINEX_CODE (str)
-    │   │   ├── COMMENT (list of str)
-    │   │   ├── FREQS (dict)
-    │   │   │   ├── <Frequency> (str)
-    │   │   │   │   ├── PCO (list of float)
-    │   │   │   │   ├── NOAZI (numpy array)
-    │   │   │   │   ├── AZI (numpy array)
-    """
+    dict  # Root dictionary
+    ├── HEADER (list of str)  # List of header lines from the ANTEX file.
+    ├── ANTS (dict)  # Dictionary containing antenna data.
+    │   ├── <Antenna Type> (str)  # Key representing the antenna type (e.g., "AS-ANT3BCAL").
+    │   │   ├── TYPE (str)  # Antenna type (e.g., "AS-ANT3BCAL").
+    │   │   ├── SERIAL (str)  # Serial number of the antenna.
+    │   │   ├── METH (str)  # Method information (e.g., calibration method).
+    │   │   ├── DAZI (float)  # Azimuth increment in degrees.
+    │   │   ├── ZEN (list of float)  # Zenith angle range and increment [ZEN1, ZEN2, DZEN].
+    │   │   ├── NFREQ (int)  # Number of frequencies for the antenna.
+    │   │   ├── SINEX CODE (str, optional)  # SINEX code for the antenna (optional).
+    │   │   ├── COMMENT (list of str, optional)  # List of comments related to the antenna (optional).
+    │   │   ├── VALID FROM (datetime, optional)  # Start of the validity period (optional).
+    │   │   ├── VALID UNTIL (datetime, optional)  # End of the validity period (optional).
+    │   │   ├── FREQS (dict)  # Dictionary containing frequency-specific data.
+    │   │   │   ├── <Frequency> (str)  # Key representing the frequency (e.g., "G01").
+    │   │   │   │   ├── PCO (list of float)  # Phase center offset [NORTH, EAST, UP].
+    │   │   │   │   ├── NOAZI (numpy array)  # Elevation-dependent phase center variations.
+    │   │   │   │   ├── AZI (numpy array)  # Azimuth-dependent phase center variations.
+
+   """
     atx_dic = {"ANTS": {}, "HEADER": []}
     ant_dic = None
     freq_dic = None
@@ -82,7 +102,9 @@ def read_antex(filepath, ant_type=None):
                 "SERIAL": "",
                 "SVN": "",
                 "COSPAR": "",
-                "SINEX_CODE": "",
+                "SINEX CODE": "",
+                "VALID FROM": None,
+                "VALID UNTIL": None,
                 "NFREQ": 0,
                 "ZEN": 0,
             }
@@ -101,6 +123,14 @@ def read_antex(filepath, ant_type=None):
             ant_dic["SVN"] = line[40:50].strip()
             ant_dic["COSPAR"] = line[50:60].strip()
 
+        elif label == "TYPE / SERIAL NO":
+            if ant_type and not line[:20].strip().startswith(ant_type):
+                skip_to_next_ant = True
+
+            ant_dic["TYPE"] = line[0:20].strip()
+            ant_dic["SERIAL"] = line[20:40].strip()
+            ant_dic["SVN"] = line[40:50].strip()
+            ant_dic["COSPAR"] = line[50:60].strip()
 
         # Parse azimuth increment
         elif label == "DAZI":
@@ -118,9 +148,20 @@ def read_antex(filepath, ant_type=None):
         elif label == "# OF FREQUENCIES":
             ant_dic["NFREQ"] = int(line[:20].strip())
 
+        # Parse Validity dates
+        elif label == "VALID FROM":
+            ant_dic["VALID FROM"] = dt.datetime(
+                *list(map(int, line[:35].strip().split()))
+            ) + dt.timedelta(microseconds=0)
+
+        elif label == "VALID UNTIL":
+            ant_dic["VALID UNTIL"] = dt.datetime(
+                *list(map(int, line[:35].strip().split()))
+            ) + dt.timedelta(microseconds=999999)
+
         # Parse SINEX code
         elif label == "SINEX CODE":
-            ant_dic["SINEX_CODE"] = line[:20].strip()
+            ant_dic["SINEX CODE"] = line[:20].strip()
 
         # Parse method, author, and date
         elif label == "METH / BY / # / DATE":
@@ -158,7 +199,24 @@ def read_antex(filepath, ant_type=None):
             for f in ant_dic["FREQS"].keys():
                 if ant_dic["FREQS"][f]["AZI"]:
                     ant_dic["FREQS"][f]["AZI"] = np.vstack(ant_dic["FREQS"][f]["AZI"])
-            atx_dic["ANTS"][ant_dic["TYPE"]] = ant_dic
+
+            ### must define a specific antenna key kant
+            if ant_dic["COSPAR"]:  # Antenna is a satellite one
+                s = ant_dic["VALID FROM"].strftime('%y%m%d') if ant_dic["VALID UNTIL"] else '000000'
+                e = ant_dic["VALID UNTIL"].strftime('%y%m%d') if ant_dic["VALID UNTIL"] else '999999'
+                kant = "_".join((ant_dic["SVN"],s,e))
+            else: # Antenna is a receiver one
+                kant = ant_dic["TYPE"]
+
+            ### we must increment antenna key if already one defined
+            ## (not very useful and not really tested)
+            if kant in ant_dic.keys():
+                if re.search(".*_[0-9]{2}$",kant):
+                    kant = kant[:-3] + "_" + str(int(kant[:-2]) + 1)
+                else:
+                    kant = kant + "_01"
+
+            atx_dic["ANTS"][kant] = ant_dic
             ant_dic = None
 
     return atx_dic
@@ -180,8 +238,9 @@ def l_atx_std(val_inp, label_inp, newline=True):
     str
         Formatted ANTEX line.
     """
-    nl = "\n" if newline else  ""
+    nl = "\n" if newline else ""
     return f"{val_inp:60}{label_inp:20}" + nl
+
 
 def l_atx_cal(val_inp, noazi=True, newline=True):
     """
@@ -199,21 +258,21 @@ def l_atx_cal(val_inp, noazi=True, newline=True):
     str
         Formatted calibration data.
     """
-    nl = "\n" if newline else  ""
+    nl = "\n" if newline else ""
     if noazi:
         n = len(val_inp)
-        lin = "   NOAZI" + n * "{:+8.2f}" + nl
+        lin = "   NOAZI" + n * "{:8.2f}" + nl
         return lin.format(*val_inp)
     else:
         lin_stk = []
         for lmat in val_inp:
             n = len(lmat)
-            lin = "{:8.1f}" + (n - 1) * "{:+8.2f}"
+            lin = "{:8.1f}" + (n - 1) * "{:8.2f}"
             lin_stk.append(lin.format(*lmat))
         return "\n".join(lin_stk) + nl
 
 
-def write_antex(atx_dic_inp, dir_out, fname_out="out.atx",erase_header=False):
+def write_antex(atx_dic_inp, dir_out, fname_out="out.atx", erase_header=False):
     """
     Write antenna calibration information to an ANTEX file.
 
@@ -247,11 +306,20 @@ def write_antex(atx_dic_inp, dir_out, fname_out="out.atx",erase_header=False):
     if "HEADER" in atx_dic_inp and not erase_header:
         lhead = atx_dic_inp["HEADER"]
     else:
-        lhead = [l_atx_std("     1.4            M", "ANTEX VERSION / SYST"),
-                 l_atx_std("A", "PCV TYPE / REFANT"),
-                 l_atx_std("", "END OF HEADER")]
+        lhead = [
+            l_atx_std("     1.4            M", "ANTEX VERSION / SYST"),
+            l_atx_std("A", "PCV TYPE / REFANT"),
+            l_atx_std("", "END OF HEADER"),
+        ]
 
-    lhead = lhead[:-1] + [l_atx_std("HANDELED WITH GEODEZYX TOOLBOX - github.com/IPGP/geodezyx", "COMMENT")] + lhead[-1:]
+    gyx_hd = l_atx_std(
+        "HANDELED WITH GEODEZYX TOOLBOX - github.com/IPGP/geodezyx", "COMMENT"
+    )
+
+    if not "END OF HEADER" in lhead[-1]:
+        lhead.append(60 * " " + "END OF HEADER       \n")
+
+    lhead = lhead[:-1] + [gyx_hd] + lhead[-1:]
     lout.append("".join(lhead))
 
     # Iterate over antennas in the input dictionary
@@ -263,12 +331,12 @@ def write_antex(atx_dic_inp, dir_out, fname_out="out.atx",erase_header=False):
 
         # Write antenna type and serial number
         label = "TYPE / SERIAL NO"
-        val = f"{ant['TYPE']:20}{ant['SERIAL']:40}{ant['SVN']:20}{ant['COSPAR']:40}"
+        val = f"{ant['TYPE']:20}{ant['SERIAL']:20}{ant['SVN']:10}{ant['COSPAR']:10}"
         lout.append(l_atx_std(val, label))
 
         # Write method, date, and other metadata
         label = "METH / BY / # / DATE"
-        val = f"{ant['METH']:20}{ant['BY']:20}{ant['NCAL']:6}    {ant['DATE']:10}"
+        val = f"{ant['METH']:20}{ant['BY']:20}{ant['NCAL']:>6}    {ant['DATE']:10}"
         lout.append(l_atx_std(val, label))
 
         label = "DAZI"
@@ -281,16 +349,26 @@ def write_antex(atx_dic_inp, dir_out, fname_out="out.atx",erase_header=False):
 
         label = "# OF FREQUENCIES"
         nfreq = len(ant["FREQS"])
-        if nfreq != ant['NFREQ']:
-            print("# OF FREQUENCIES will be updated!")
-            ant['NFREQ'] = nfreq
+        if nfreq != ant["NFREQ"]:
+            print(
+                f"# OF FREQUENCIES for {ant['TYPE']} will be updated! old:{ant["NFREQ"]} new:{nfreq}"
+            )
+            ant["NFREQ"] = nfreq
         val = f"{ant['NFREQ']:6}"
         lout.append(l_atx_std(val, label))
 
+        dat_fmt = 5 * "{:6i}" + "{:13.7f}"
+
+        for label in ["VALID FROM", "VALID UNTIL"]:
+            if ant[label]:
+                d = ant[label]
+                val = d.strftime("  %Y    %m    %d    %H    %M    %S.%f")
+                lout.append(l_atx_std(val, label))
+
         # Facultative labels
-        if "SINEX_CODE" in ant.keys():
+        if "SINEX CODE" in ant.keys():
             label = "SINEX CODE"
-            val = f"{ant['SINEX_CODE']:60}"
+            val = f"{ant['SINEX CODE']:60}"
             lout.append(l_atx_std(val, label))
 
         # Write comments
@@ -332,55 +410,4 @@ def write_antex(atx_dic_inp, dir_out, fname_out="out.atx",erase_header=False):
 
     return path_out
 
-pigs = "/home/psakicki/Downloads/igs20(2).atx"
 
-
-p = "/home/psakicki/Downloads/AS-ANT3BCAL_NONE.atx"
-antname = "AS-ANT3BCAL     NONE"
-
-p = "/home/psakicki/Downloads/igs20(2).atx"
-antname = "TPSPG_A1+GP     NONE"
-
-atx_igs_dic = read_antex(pigs)
-
-atx_dic = read_antex(p, antname)
-
-atx_dic_use = atx_dic.copy()
-#atx_dic_use["HEADER"] = atx_dic_use["HEADER"][:2]
-freq_use = atx_dic_use["ANTS"][antname]["FREQS"]
-atx_dic_use["ANTS"][antname]["COMMENT"].append("*** PSK (IPGP-OVS) 2025-04:")
-atx_dic_use["ANTS"][antname]["COMMENT"].append("*** MANUAL DUPLICATION OF MULTI-GNSS SIGNALS")
-freq_use["E01"] = freq_use["G01"]
-freq_use["C01"] = freq_use["G01"]
-freq_use["J01"] = freq_use["G01"]
-freq_use["C02"] = freq_use["G02"]
-freq_use["G05"] = freq_use["G02"]
-freq_use["E05"] = freq_use["G02"]
-freq_use["C05"] = freq_use["G02"]
-freq_use["E06"] = freq_use["G02"]
-freq_use["C06"] = freq_use["G02"]
-freq_use["R06"] = freq_use["G02"]
-freq_use["J06"] = freq_use["G02"]
-freq_use["E07"] = freq_use["G02"]
-freq_use["C07"] = freq_use["G02"]
-freq_use["E08"] = freq_use["G02"]
-freq_use["C08"] = freq_use["G02"]
-
-# f = open("/home/psakicki/Downloads/igs20(2).atx")
-
-write_antex(atx_dic_use, "/home/psakicki/aaa_FOURBI",
-            antname + ".atx",
-            erase_header=True)
-
-p1 = "/home/psakicki/aaa_FOURBI/AS-ANT3BCAL     NONE.atx"
-p2 = "/home/psakicki/aaa_FOURBI/TPSPG_A1+GP     NONE.atx"
-
-atx_dic_perso1 = read_antex(p1)
-atx_dic_perso2 = read_antex(p2)
-
-import mergedeep
-merged_dic = dict(mergedeep.merge({},atx_igs_dic,atx_dic_perso1,atx_dic_perso2))
-merged_dic['HEADER'] = atx_igs_dic['HEADER']
-write_antex(merged_dic, "/home/psakicki/aaa_FOURBI",
-            "merged" + ".atx",
-            erase_header=False)
