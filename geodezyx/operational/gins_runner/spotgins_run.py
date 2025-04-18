@@ -100,7 +100,8 @@ def spotgins_run(
 
     ##### sort the input list
     rnxs_path_use = utils.listify(rnxs_path_inp)
-    rnxs_path_use = operational.rinex_table_from_list(rnxs_path_use)['path'].to_list()
+    rnxs_path_use = operational.rinex_table_from_list(rnxs_path_use, size_col=False)
+    rnxs_path_use = rnxs_path_use["path"].to_list()
 
     if len(rnxs_path_use) == 0:
         log.error("No input RINEX files to process, skip")
@@ -119,8 +120,10 @@ def spotgins_run(
     if not no_updatebd or not no_concat_orb_clk:
         rnxs_dates = [conv.rinexname2dt(e) for e in rnxs_path_use]
         rnxs_dates = [e for e in rnxs_dates if not e is None]
-        date_min, date_max = (min(rnxs_dates) - dt.timedelta(days=1),
-                              max(rnxs_dates) + dt.timedelta(days=1))
+        date_min, date_max = (
+            min(rnxs_dates) - dt.timedelta(days=1),
+            max(rnxs_dates) + dt.timedelta(days=1),
+        )
 
     ##### Update the database ################
     if not no_updatebd:
@@ -274,6 +277,7 @@ def get_spotgins_files(
 
     return dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use
 
+
 def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
 
     def _chk_cat_orbclk(orbclk_out, silent=False):
@@ -305,6 +309,7 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
         return None
 
     global cat_orbclk_wrap
+
     def cat_orbclk_wrap(date_inp):
         jjul_bef = str(conv.dt2jjul_cnes(date_inp - dt.timedelta(days=1)))
         jjul_aft = str(conv.dt2jjul_cnes(date_inp + dt.timedelta(days=1)))
@@ -488,5 +493,3 @@ def const_adapt(const_inp, dir_inp, verbose=True):
 
 
 import subprocess
-
-

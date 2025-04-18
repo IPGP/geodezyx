@@ -44,7 +44,8 @@ log = logging.getLogger('geodezyx')
 ##########  END IMPORT  ##########
 
 
-def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=True, sort=True):
+def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=True,
+                          size_col=True, sort=True):
     """
     From a simple RINEX list, summarize the data in an ad-hoc DataFrame.
 
@@ -59,6 +60,10 @@ def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=
         If True, round the dates to the nearest day. Defaults to False.
     path_col : bool, optional
         If True, include the 'path' column in the DataFrame. Defaults to True.
+    size_col : bool, optional
+        If True, include a 'size' column in the DataFrame. Defaults to True.
+        Corresponds to the size of the file in bytes.
+        It can slow down the process if the list is long.
     sort : bool, optional
         If True, sort the DataFrame by 'site4' or 'site9' (if site9_col is True) and 'date'.
          Defaults to True.
@@ -91,8 +96,9 @@ def rinex_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=
     df["doy"] = doy_year.apply(lambda x: x[0])
     df["year"] = doy_year.apply(lambda x: x[1])
 
-    size_path  = lambda f: os.path.getsize(f) if os.path.isfile(f) else np.nan
-    df["size"] = df["path"].apply(size_path)
+    if size_col:
+        size_path  = lambda f: os.path.getsize(f) if os.path.isfile(f) else np.nan
+        df["size"] = df["path"].apply(size_path)
 
     cols = df.columns.tolist()
     cols = cols[1:] + [cols[0]]
