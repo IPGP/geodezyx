@@ -98,6 +98,9 @@ def spotgins_run(
     None
     """
 
+    ##### Clean tmp folder
+    rm_old_tmp_files('/tmp', age_minutes=10)
+
     ##### sort the input list
     rnxs_path_use = utils.listify(rnxs_path_inp)
     rnxs_path_use = operational.rinex_table_from_list(rnxs_path_use)['path'].to_list()
@@ -154,7 +157,7 @@ def spotgins_run(
             auto_interval=False,
             force=force,
             verbose=verbose,
-            sites_id9_series=siteid9_use,
+            sites_id9=siteid9_use,
         )
 
         ######## DIRECTORS RUN ###############
@@ -485,3 +488,27 @@ def const_adapt(const_inp, dir_inp, verbose=True):
         return "G"
     else:
         return const_inp
+
+
+import subprocess
+
+def rm_old_tmp_files(directory='/tmp', age_minutes=10):
+    """
+    Removes files in the specified directory older than the given age in minutes.
+
+    Parameters:
+    directory (str): The directory to search in.
+    age_minutes (int): Age of files in minutes to delete. Default is 10 minutes.
+    """
+    try:
+        # Convert minutes to seconds for the `find` command
+        age_seconds = age_minutes * 60
+        # Call the `find` command to delete files older than the specified age
+        subprocess.run(
+            ['find', directory, '-type', 'f', '-mmin', f'+{age_minutes}', '-delete'],
+            check=True
+        )
+        print(f"Removed files older than {age_minutes} minutes in {directory}")
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e.stderr}")
+

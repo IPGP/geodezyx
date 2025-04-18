@@ -52,7 +52,7 @@ def gen_dirs_rnxs(
         prairie_kwargs={"with_historik": 1, "with_wsb": 1},
         force=False,
         verbose=True,
-        sites_id9_series=None,
+        sites_id9=None,
         add_tropo_sol=True,
 ):
     """
@@ -118,6 +118,12 @@ def gen_dirs_rnxs(
         Defaults to False.
     verbose : bool
         verbose messages. Default is True.
+    sites_id9 : iterable, optional
+        A list, Pandas series... containing the site_id9 information.
+        This is used to extract the site_id9 if the RINEX name is ambiguous.
+    add_tropo_sol : bool, optional
+        Add tropospheric solution keys to the director and
+        then results in the listing and solution. Defaults to True.
 
     Returns
     -------
@@ -163,6 +169,7 @@ def gen_dirs_rnxs(
         log.info(" *** Generate directeur for: %s ", os.path.basename(rnx_path_ori))
         rnx_name = os.path.basename(rnx_path_ori)
         rnx_dt = conv.rinexname2dt(rnx_name)
+        sites_id9_series = pd.Series(sites_id9)
         siteid9, siteid4_upp, siteid4_low = _dir_rnx_site_id(rnx_name, sites_id9_series)
 
         coord_prefix = (
