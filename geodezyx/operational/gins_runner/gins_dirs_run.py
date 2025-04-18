@@ -151,7 +151,7 @@ def run_directors(
         timeout = 600
 
         ##### Clean tmp folder
-        gynscmn.rm_old_tmp('/tmp', age_sec=timeout)
+        #gynscmn.rm_old_tmp('/tmp', age_sec=timeout)
 
         while itry <= itry_max:
             itry += 1

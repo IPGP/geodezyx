@@ -18,7 +18,7 @@ pathvalidate
 pandas
 # requests # USELESS
 # seawater # full mode
-scipy==1.14.1
+scipy
 sympy
 tabulate
 # tk # USELESS
