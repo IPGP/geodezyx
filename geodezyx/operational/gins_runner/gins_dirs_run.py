@@ -42,9 +42,38 @@ def run_directors(
     sleep_time_max=10,
 ):
     """
-    NEW FCT WHICH CAN MANAGE BOTH ONE RINEX OR A LIST OF RINEX, OR A FIC file (170613)
+    Executes GINS commands for a single or multiple directories, handling different modes and retry logic.
 
-    mode = "ginspc" or "exe_gins_dir" or "exe_gins_fic"
+    Parameters
+    ----------
+    dir_paths_inp : str or list
+        Path(s) to the directory/directories to process. Can be a single directory (str) or a list of directories (list).
+    opts_gins_pc : str, optional
+        Options for the GINS PC command. Default is an empty string.
+    opts_gins_90 : str, optional
+        Options for the GINS 90 command. Default is an empty string.
+    version : str, optional
+        Version of the GINS software to use. Default is "OPERA".
+    cmd_mode : str, optional
+        Mode of execution. Can be "ginspc", "exe_gins_dir", or "exe_gins_fic". Default is "exe_gins_dir".
+    force : bool, optional
+        If True, forces execution even if solutions already exist. Default is False.
+    verbose : bool, optional
+        If True, enables verbose logging. Default is True.
+    sleep_time_max : int, optional
+        Maximum sleep time (in seconds) to avoid conflicts during parallel execution. Default is 10.
+
+    Returns
+    -------
+    None
+        The function does not return any value.
+
+    Notes
+    -----
+    - Handles both single and multi-directory modes.
+    - Automatically detects `.fic` files and adjusts the command mode accordingly.
+    - Implements retry logic for failed executions.
+    - Logs execution details, including start and end times, and handles parallel execution conflicts.
     """
     # Multi or Single Mode ?
     if type(dir_paths_inp) is list:
@@ -115,6 +144,7 @@ def run_directors(
         if sleep_time_max > 0:
             time.sleep(np.random.randint(1, sleep_time_max * 1000) * 10**-3)
 
+        ## parameters for retry
         itry = 0
         itry_max = 1
         retry_str = ""
@@ -165,6 +195,23 @@ def run_directors(
         )
 
     return None
+
+
+#######################################################################################################
+
+#  ______                _   _                                                             _
+# |  ____|              | | (_)                                                           | |
+# | |__ _   _ _ __   ___| |_ _  ___  _ __     __ _ _ __ __ ___   _____ _   _  __ _ _ __ __| |
+# |  __| | | | '_ \ / __| __| |/ _ \| '_ \   / _` | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
+# | |  | |_| | | | | (__| |_| | (_) | | | | | (_| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+# |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \__, |_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
+#                                             __/ |                     __/ |
+#                                            |___/                     |___/
+
+
+
+
+
 
 
 ########## OLD FUNCTIONS ##########
