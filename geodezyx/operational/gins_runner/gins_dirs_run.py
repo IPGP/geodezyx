@@ -116,7 +116,7 @@ def run_directors(
             time.sleep(np.random.randint(1, sleep_time_max * 1000) * 10**-3)
 
         itry = 0
-        itry_max = 3
+        itry_max = 1
         retry_str = ""
         timeout = 600
 
@@ -149,7 +149,7 @@ def run_directors(
                 #log.error("STDOUT: %s", process.stdout)
                 #log.error("STDERR: %s", process.stderr)
 
-            if not ok_sol and check_for_retry(process.stderr):
+            if not ok_sol and check_for_retry(process.stderr) and itry < itry_max:
                 log.warning(f"retryable directeur {dir_nam} (try {itry} / {itry_max})")
                 itry = itry + 1
                 retry_str = f"(try {itry} / {itry_max})"
