@@ -26,7 +26,6 @@ import logging
 #### External modules
 import numpy as np
 import scipy
-from pyorbital import astronomy
 
 #### geodeZYX modules
 from geodezyx import utils
@@ -785,6 +784,7 @@ def ECEF2ECI(xyz,utc_times):
     #    raise ValueError("shape mismatch for XYZ and utc_times (got {} and {})".format(xyz.shape[:-1],utc_times.shape))
 
     #    gmst = -1 * astronomy.gmst(utc_times) # EDIT 180430 : Why this -1 ??? removed because wrong ! ...
+    from pyorbital import astronomy
     gmst = 1 * astronomy.gmst(utc_times)
 
     eci = xyz.copy()
@@ -847,6 +847,7 @@ def ECI2ECEF(xyz,utc_times):
 
     #    gmst = -1 * astronomy.gmst(utc_times) 
     # EDIT 180430 : Why this -1 ??? removed because wrong ! ...
+    from pyorbital import astronomy
     gmst = 1 * astronomy.gmst(utc_times)
     
     ecef = xyz.copy()

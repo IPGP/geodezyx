@@ -26,7 +26,6 @@ import logging
 import numpy as np
 import pandas as pd
 # from pytwobodyorbit import TwoBodyOrbit
-from pytwobodyorbit import TwoBodyOrbit
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -247,6 +246,7 @@ def ECI_2_kepler_elts_mono(P,V,rad2deg=True,
     return a,ecc,i,omega_periarg,omega_LAN,m
 
 def extrapolate_orbit_kepler(P,V,t,t0,mu=3.9860044188e14):
+    from pytwobodyorbit import TwoBodyOrbit
     orbit = TwoBodyOrbit("", mu=mu)   # create an instance
     orbit.setOrbCart(t0, P, V)        # define the orbit
     Pout, Vout = orbit.posvelatt(t)   # get position and velocity at t1
@@ -318,6 +318,7 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9,
             ##
             ## CORRDS ARE GIVEN IN ECI HERE !!!
             ##
+            from pytwobodyorbit import TwoBodyOrbit
             orbit_back = TwoBodyOrbit("orbit", mu=3.9860044188e14)  # create an instance    
             orbit_back.setOrbCart(Tsec[i_ref], P[i_ref], V[i_ref])  # define the orbit
             
