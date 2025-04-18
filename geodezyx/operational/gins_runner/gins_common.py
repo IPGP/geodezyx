@@ -262,6 +262,34 @@ def make_path_ginsstyle(pathin):
     pathout = os.path.join(*rnx_path_lis2)
     return pathout
 
+def rm_old_tmp(directory='/tmp', age_sec=600):
+    """
+    Removes files in the specified directory older than the given age in minutes.
+
+    Parameters:
+    directory (str): The directory to search in.
+    age_sec (int): Age of files in minutes to delete. Default is 10 minutes.
+    """
+    try:
+        # Convert minutes to seconds for the `find` command
+        age_seconds = age_sec * 60
+        # Call the `find` command to delete files older than the specified age
+        subprocess.run(
+            ['find', directory, '-type', 'f', '-mmin', f'+{age_sec}', '-delete'],
+            check=True
+        )
+    except subprocess.CalledProcessError as e:
+        log.error(f"Error: {e.stderr}")
+
+
+#  ______                _   _                                                             _
+# |  ____|              | | (_)                                                           | |
+# | |__ _   _ _ __   ___| |_ _  ___  _ __     __ _ _ __ __ ___   _____ _   _  __ _ _ __ __| |
+# |  __| | | | '_ \ / __| __| |/ _ \| '_ \   / _` | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
+# | |  | |_| | | | | (__| |_| | (_) | | | | | (_| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+# |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \__, |_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
+#                                             __/ |                     __/ |
+#                                            |___/                     |___/
 
 ############### OLD FCTS
 def write_oclo_file(station_file, oceanload_out_file, fes_yyyy=2004):
@@ -425,6 +453,9 @@ def check_gins_exe(streamin, director_name):
     else:
         print("WARN : bad end for " + director_name + " :(")
         return False
+
+
+
 
 
 #    return dic1
