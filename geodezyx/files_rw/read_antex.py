@@ -13,6 +13,10 @@ import os
 import datetime as dt
 from geodezyx import conv
 
+import logging
+
+log = logging.getLogger("geodezyx")
+
 
 def read_antex(filepath, ant_type=None):
     """
@@ -68,7 +72,7 @@ def read_antex(filepath, ant_type=None):
     │   │   │   │   ├── NOAZI (numpy array)  # Elevation-dependent phase center variations.
     │   │   │   │   ├── AZI (numpy array)  # Azimuth-dependent phase center variations.
 
-   """
+    """
     atx_dic = {"ANTS": {}, "HEADER": []}
     ant_dic = None
     freq_dic = None
@@ -202,16 +206,24 @@ def read_antex(filepath, ant_type=None):
 
             ### must define a specific antenna key kant
             if ant_dic["COSPAR"]:  # Antenna is a satellite one
-                s = ant_dic["VALID FROM"].strftime('%y%m%d') if ant_dic["VALID UNTIL"] else '000000'
-                e = ant_dic["VALID UNTIL"].strftime('%y%m%d') if ant_dic["VALID UNTIL"] else '999999'
-                kant = "_".join((ant_dic["SVN"],s,e))
-            else: # Antenna is a receiver one
+                s = (
+                    ant_dic["VALID FROM"].strftime("%y%m%d")
+                    if ant_dic["VALID UNTIL"]
+                    else "000000"
+                )
+                e = (
+                    ant_dic["VALID UNTIL"].strftime("%y%m%d")
+                    if ant_dic["VALID UNTIL"]
+                    else "999999"
+                )
+                kant = "_".join((ant_dic["SVN"], s, e))
+            else:  # Antenna is a receiver one
                 kant = ant_dic["TYPE"]
 
             ### we must increment antenna key if already one defined
             ## (not very useful and not really tested)
             if kant in ant_dic.keys():
-                if re.search(".*_[0-9]{2}$",kant):
+                if re.search(".*_[0-9]{2}$", kant):
                     kant = kant[:-3] + "_" + str(int(kant[:-2]) + 1)
                 else:
                     kant = kant + "_01"
@@ -350,19 +362,22 @@ def write_antex(atx_dic_inp, dir_out, fname_out="out.atx", erase_header=False):
         label = "# OF FREQUENCIES"
         nfreq = len(ant["FREQS"])
         if nfreq != ant["NFREQ"]:
-            print(
+            log.info(
                 f"# OF FREQUENCIES for {ant['TYPE']} will be updated! old:{ant["NFREQ"]} new:{nfreq}"
             )
             ant["NFREQ"] = nfreq
         val = f"{ant['NFREQ']:6}"
         lout.append(l_atx_std(val, label))
 
-        dat_fmt = 5 * "{:6i}" + "{:13.7f}"
+        dat_fmt = 5 * "{:6d}" + "{:13.7f}"
 
         for label in ["VALID FROM", "VALID UNTIL"]:
             if ant[label]:
                 d = ant[label]
-                val = d.strftime("  %Y    %m    %d    %H    %M    %S.%f")
+                datlis = list(d.timetuple())[:6]
+                lastmusec = 9 * 10**-7 if d.microsecond == 999999 else 0
+                datlis[-1] = datlis[-1] + d.microsecond * 10**-6 + lastmusec
+                val = dat_fmt.format(*datlis)
                 lout.append(l_atx_std(val, label))
 
         # Facultative labels
@@ -409,5 +424,3 @@ def write_antex(atx_dic_inp, dir_out, fname_out="out.atx", erase_header=False):
         f_out.write(l)
 
     return path_out
-
-
