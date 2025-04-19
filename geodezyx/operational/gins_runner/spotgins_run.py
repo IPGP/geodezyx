@@ -25,7 +25,7 @@ import time
 
 from geodezyx import files_rw, conv
 
-spotgins_wrap  = None
+spotgins_wrap = None
 spotgins_wrap2 = None
 
 #### Import the logger
@@ -101,7 +101,9 @@ def spotgins_run(
 
     ##### sort the input list
     rnxs_path_use = utils.listify(rnxs_path_inp)
-    rnxs_path_use = operational.rinex_table_from_list(rnxs_path_use, size_col=False)
+    rnxs_path_use = operational.rinex_table_from_list(
+        rnxs_path_use, site9_col=True, size_col=False
+    )
     rnxs_path_use = rnxs_path_use["path"].to_list()
 
     if len(rnxs_path_use) == 0:
@@ -136,6 +138,7 @@ def spotgins_run(
 
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
+
     def spotgins_wrap(rnx_mono_path_inp):
         ######## QUICK ARCHIVING CHECK ############# # Check if the solution is already archived
         if not force and check_arch_sol(
@@ -186,6 +189,7 @@ def spotgins_run(
     ##### END Multi-processing Wrapper END ################
 
     global spotgins_wrap2
+
     def spotgins_wrap2(*args):
         try:
             return spotgins_wrap(*args)
@@ -386,7 +390,9 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
     stat_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "statistiques")
 
     # remove the PROV folder
-    for prov in glob.glob(os.path.join(li_batch_fld,"PROV" + "*" + dir_basename + "*")):
+    for prov in glob.glob(
+        os.path.join(li_batch_fld, "PROV" + "*" + dir_basename + "*")
+    ):
         shutil.rmtree(prov)
 
     # get destination
@@ -419,9 +425,9 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
                 os.remove(f)
                 continue
 
-                #if verbose:
+                # if verbose:
                 #    log.info(f"skip archive of qsub/sh file {f}")
-                #continue
+                # continue
 
             if verbose:
                 log.info(f"Archiving {f} to {arch_fld}")

@@ -21,6 +21,7 @@ def singugins_run(
     nprocs=8,
     no_updatebd=False,
     verbose=False,
+    force=False,
     spotgins_run_kwargs={},
 ):
     """
@@ -46,6 +47,8 @@ def singugins_run(
         Number of processes to use. Default is 8.
     no_updatebd : bool, optional
         Flag to indicate whether to update the database. Default is False.
+    force : bool, optional
+        Flag to force the process to run even if the results already exist.
     spotgins_run_kwargs : dict, optional
         Additional keyword arguments to pass to the `spotgins_run` function.
         Default is an empty dictionary.
@@ -67,6 +70,7 @@ def singugins_run(
         nprocs=nprocs,
         no_updatebd=no_updatebd,
         verbose=verbose,
+        force=force,
         **spotgins_run_kwargs,
     )
 
@@ -141,6 +145,13 @@ def main():
         help="Verbose mode.",
     )
 
+    parser.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        help="Flag to force the process to run even if the results already exist.",
+    )
+
     args = parser.parse_args()
 
     # Convert spotgins_run_kwargs from JSON string to dictionary
@@ -158,6 +169,7 @@ def main():
         no_updatebd=args.no_updatebd,
         nprocs=args.nprocs,
         verbose=args.verbose
+        force=args.force,
     )
 
 
