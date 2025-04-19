@@ -168,7 +168,7 @@ def main():
         spotgins_run_kwargs=spotgins_run_kwargs,
         no_updatebd=args.no_updatebd,
         nprocs=args.nprocs,
-        verbose=args.verbose
+        verbose=args.verbose,
         force=args.force,
     )
 
