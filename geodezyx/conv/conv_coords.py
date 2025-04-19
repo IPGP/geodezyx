@@ -25,7 +25,6 @@ import logging
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
-import scipy
 
 #### geodeZYX modules
 from geodezyx import utils
@@ -399,7 +398,7 @@ def ENU2XYZ(E,N,U,x0,y0,z0,velocity_mode=False):
                       [  np.cos(f0)*np.cos(l0) , np.cos(f0)*np.sin(l0)  , np.sin(f0)]])
     
         R3 = R.T
-        R3 = scipy.linalg.inv(R)
+        R3 = np.linalg.inv(R)
     
         ENU = np.vstack((E,N,U))
     

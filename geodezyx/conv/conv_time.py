@@ -25,8 +25,6 @@ import datetime as dt
 import logging
 import os
 import re
-# import scipy
-# from scipy.spatial.transform import Rotation
 import string
 import struct
 import subprocess
@@ -765,12 +763,12 @@ def dt_utc2dt_ut1_smart(dtin, df_eop_in,
         EOP DataFrame for the UT1-UTC
         provided by files_rw.read_eop_C04
     use_interp1d_obj : TYPE, optional
-        Use an interp1d_time Interpolator object for the EOP determination 
+        Use an Interp1dTime Interpolator object for the EOP determination
         at the right epoch.
         Faster in recursive mode when dtin is a list/array
         The default is True.
-    eop_interpolator : interp1d_time object, optional
-        The interp1d_time Interpolator object for the EOP determination
+    eop_interpolator : Interp1dTime object, optional
+        The Interp1dTime Interpolator object for the EOP determination
         Will be determined automatically inside the function
         The default is None.
 
@@ -800,9 +798,9 @@ def dt_utc2dt_ut1_smart(dtin, df_eop_in,
 
         ### We also use the interpolator class
         if use_interp1d_obj:
-            from geodezyx.conv import conv_interpolators
-            ieop = conv_interpolators.interp1d_time(df_eop.index.values,
-                                                    df_eop['UT1-UTC'])
+            from geodezyx import interp
+            ieop = interp.Interp1dTime(df_eop.index.values,
+                                       df_eop['UT1-UTC'])
         else:
             ieop = None
 

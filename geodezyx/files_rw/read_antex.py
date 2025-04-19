@@ -11,7 +11,6 @@ import re
 import numpy as np
 import os
 import datetime as dt
-from geodezyx import conv
 
 import logging
 

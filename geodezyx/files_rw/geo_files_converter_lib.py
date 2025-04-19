@@ -17,12 +17,6 @@ GitHub repository :
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
-# from geodezyx import utils,dt,time,np,os,re,struct,math,string,pd,copy
-# from geodezyx import *
-# import dateutil
-
-# import geodezyx.megalib.geodetik as geok
-
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt

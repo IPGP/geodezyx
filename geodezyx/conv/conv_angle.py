@@ -20,8 +20,6 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 
 #### Import the logger
 import logging
-# import scipy
-# from pyorbital import astronomy
 import re
 
 ########## BEGIN IMPORT ##########

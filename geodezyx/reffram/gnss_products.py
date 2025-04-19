@@ -1962,32 +1962,35 @@ def eop_interpotate(DF_EOP,Epochs_intrp,eop_params = ["x","y"]):
 
     Returns
     -------
-    OUT : DataFrame or Series
+    out : DataFrame or Series
         Interpolated parameters.
         Series if onely one epoch is provided, DF_EOP elsewere
     """
+
+    from geodezyx import interp
+
     if not utils.is_iterable(Epochs_intrp):
         singleton = True
     else:
         singleton = False
     
-    I_eop   = dict()
-    Out_eop = dict()
-    Out_eop["epoch"] = Epochs_intrp    
+    i_eop   = dict()
+    out_eop = dict()
+    out_eop["epoch"] = Epochs_intrp
     
     for eoppar in eop_params:
-        I = conv.interp1d_time(DF_EOP.epoch,DF_EOP[eoppar])
-        I_eop[eoppar] = I
+        intrp = interp.Interp1dTime(DF_EOP.epoch, DF_EOP[eoppar])
+        i_eop[eoppar] = intrp
         try:
-            Out_eop[eoppar] = I(Epochs_intrp)
+            out_eop[eoppar] = intrp(Epochs_intrp)
         except ValueError as err:
             log.error("in EOP interpolation")
             log.error("param.: %s, epoch: %s",eoppar,Epochs_intrp)
             raise err
       
     if not singleton:
-        OUT = pd.DataFrame(Out_eop)
+        out = pd.DataFrame(out_eop)
     else:
-        OUT = pd.Series(Out_eop)
+        out = pd.Series(out_eop)
         
-    return OUT
+    return out
