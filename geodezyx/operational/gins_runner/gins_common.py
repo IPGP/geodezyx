@@ -262,7 +262,7 @@ def make_path_ginsstyle(pathin):
     pathout = os.path.join(*rnx_path_lis2)
     return pathout
 
-def rm_old_tmp(directory='/tmp', age_sec=600):
+def rm_old_tmp_shel(directory='/tmp', age_sec=600):
     """
     Removes files in the specified directory older than the given age in minutes.
 
@@ -271,8 +271,6 @@ def rm_old_tmp(directory='/tmp', age_sec=600):
     age_sec (int): Age of files in minutes to delete. Default is 10 minutes.
     """
     try:
-        # Convert minutes to seconds for the `find` command
-        age_seconds = age_sec * 60
         # Call the `find` command to delete files older than the specified age
         subprocess.run(
             ['find', directory, '-type', 'f', '-mmin', f'+{age_sec}', '-delete'],

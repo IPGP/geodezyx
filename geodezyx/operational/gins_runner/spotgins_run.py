@@ -185,9 +185,16 @@ def spotgins_run(
 
     ##### END Multi-processing Wrapper END ################
 
+    def spotgins_wrap2(*args):
+        try:
+            return spotgins_wrap(*args)
+        except Exception as e:
+            log.error(f"spotgins wrapper error: {e}")
+            return None  # or something that won't break your pipeline
+
     pool = mp.Pool(processes=nprocs)
     try:
-        res_raw = pool.map(spotgins_wrap, rnxs_path_use, chunksize=1)
+        res_raw = pool.map(spotgins_wrap2, rnxs_path_use, chunksize=1)
     except Exception as e:
         log.error("error in the pool.map : %s", e)
     pool.close()
@@ -376,6 +383,10 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
     li_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "listing")
     sol_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "solution")
     stat_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "statistiques")
+
+    # remove the PROV folder
+    for prov in glob.glob(os.path.join(li_batch_fld,"PROV" + "*" + dir_basename + "*")):
+        os.remove(prov)
 
     # get destination
     dir_arch_fld = os.path.join(arch_fld_site, "010_directeurs")

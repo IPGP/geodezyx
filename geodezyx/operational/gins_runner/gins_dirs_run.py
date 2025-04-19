@@ -150,9 +150,6 @@ def run_directors(
         retry_str = ""
         timeout = 600
 
-        ##### Clean tmp folder
-        #gynscmn.rm_old_tmp('/tmp', age_sec=timeout)
-
         while itry <= itry_max:
             itry += 1
 
@@ -210,10 +207,6 @@ def run_directors(
 # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \__, |_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
 #                                             __/ |                     __/ |
 #                                            |___/                     |___/
-
-
-
-
 
 
 
