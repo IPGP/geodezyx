@@ -367,7 +367,13 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
 
 def rm_prov_listing(dir_inp):
     """
-    Remove potential PROV folders and related files to a given directory.
+    Remove potential PROV folders and related files in the listing folder.
+
+    If a processing is interrupted this temp PROV folder remains,
+    occupy a lot of space and can eventually crashs the whole machine/container.
+
+    Thus it must be removed ASAP
+
 
     Parameters
     ----------
@@ -377,7 +383,7 @@ def rm_prov_listing(dir_inp):
 
     Functionality
     -------------
-    1. Identifies and removes all PROV folders associated with the given directory.
+    1. Identifies and removes all PROV folders associated with the given directeur.
     2. Identifies and removes specific files (e.g., `.qsub` and `.sh` files)
        related to the directory in the batch listing folder.
 
@@ -429,7 +435,7 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
     time.sleep(1)  # wait a proper GINS end
 
     # do first the PROV folder cleaning
-    rm_prov_listing(dirr)
+    rm_prov_listing(dir_inp)
 
     dir_basename = os.path.basename(dir_inp)
     site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
