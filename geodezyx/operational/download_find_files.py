@@ -21,12 +21,10 @@ import glob
 import logging
 import os
 import re
-
 import pandas as pd
 
 # geodeZYX modules
-from geodezyx import conv
-from geodezyx import utils
+from geodezyx import conv, utils
 
 log = logging.getLogger('geodezyx')
 

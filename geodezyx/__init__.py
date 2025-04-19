@@ -25,16 +25,17 @@ else:
 #### IMPORT GEODEZYX INTERNAL SUBMODULES
 # from . import externlib # disable 202406xx
 # from . import megalib # disable 202411xx
-from . import athmo
+
+#from . import athmo
 from . import conv
 from . import files_rw
-from . import geodyn
-from . import interp
-from . import marine
+#from . import geodyn
+#from . import interp
+#from . import marine
 from . import operational
-from . import reffram
-from . import stats
-from . import time_series
+#from . import reffram
+#from . import stats
+#from . import time_series
 from . import utils
 
 __all__ = ['athmo',
