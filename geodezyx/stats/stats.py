@@ -22,7 +22,6 @@ import datetime as dt
 #### Import the logger
 import logging
 
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 
@@ -243,20 +242,6 @@ def confid_interval_slope(x,y,alpha=.95):
     mi=b1-t*np.sqrt(s2b1)
     ma=b1+t*np.sqrt(s2b1)
     return mi,ma
-
-def plot_vertical_bar(xlis , color='r',linewidth=1):
-    out_bar_list = []
-    for x in xlis:
-        out_bar = plt.axvline(x,color=color,linewidth=linewidth)
-        out_bar_list.append(out_bar)
-    return out_bar_list
-
-def plot_vertical_bar_ax(xlis,ax_in,color='r',linewidth=1):
-    out_bar_list = []
-    for x in xlis:
-        out_bar = ax_in.axvline(x,color=color,linewidth=linewidth)
-        out_bar_list.append(out_bar)
-    return out_bar_list
 
 
 def running_mean(data_in , window , convolve_mode="same"):   
@@ -1197,43 +1182,6 @@ def outlier_sigma(datasigmain,threshold=3):
     return datasigmaout,boolbad
 
 
-def outlier_overmean(Xin,Yin,marge=0.1):
-    """
-    really old and discontinued, use outlier_above_below instead
-    """
-
-    # elimine les points qui sont au dela d'une certaine marge au dessus de la moyenne
-
-    nbinp = float(len(Yin))
-
-    # Xin sont des array pas des listes
-
-    moy = np.abs(np.nanmean(Yin))
-
-    boolbad = np.abs(np.abs(Yin) - np.abs(moy)) < marge
-
-    Yout = Yin[boolbad]
-    Xout = Xin[boolbad]
-
-
-    nbout = float(sum(boolbad))
-
-    ratio = (nbinp-nbout)/nbinp
-    log.info("ratio d'elimination : %i / %i, %f",nbinp-nbout,nbinp,ratio)
-    log.info("moyenne : %f" %(moy))
-
-    plt.figure(12)
-    plt.clf()
-    plt.plot(Xin,[moy + marge] * len(Xin))
-    plt.plot(Xin,[moy - marge] * len(Xin))
-    plt.plot(Xin,[moy] * len(Xin))
-    plt.plot(Xin,Yin,'*')
-    plt.plot(Xout,Yout,'+')
-
-
-    return Xout , Yout, boolbad
-
-
 def lagrange1(points):
     """
     Low level function to determine a lagrangian polynom
@@ -1586,10 +1534,6 @@ def color_of_season(datein):
 
 
 
-
-
-
-
 def outlier_mad_binom_legacy(X,Y,threshold=3.5,verbose=False,
                              detrend_first=False,
                              return_booleans = False):
@@ -1613,5 +1557,17 @@ def outlier_mad_binom_legacy(X,Y,threshold=3.5,verbose=False,
         return Xclean , Yclean
     else:
         return Xclean , Yclean , bb
-        
 
+# def plot_vertical_bar(xlis , color='r',linewidth=1):
+#     out_bar_list = []
+#     for x in xlis:
+#         out_bar = plt.axvline(x,color=color,linewidth=linewidth)
+#         out_bar_list.append(out_bar)
+#     return out_bar_list
+#
+# def plot_vertical_bar_ax(xlis,ax_in,color='r',linewidth=1):
+#     out_bar_list = []
+#     for x in xlis:
+#         out_bar = ax_in.axvline(x,color=color,linewidth=linewidth)
+#         out_bar_list.append(out_bar)
+#     return out_bar_list

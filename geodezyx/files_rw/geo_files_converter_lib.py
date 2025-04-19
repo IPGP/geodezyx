@@ -31,8 +31,6 @@ import textwrap
 from io import BytesIO, StringIO
 
 import dateutil
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -1478,6 +1476,10 @@ def read_nmea(
 
 def plot_nmea(T, E, N, U, Q):
     """a quick and dirty fct to plot the NMEA"""
+
+    import matplotlib
+    import matplotlib.pyplot as plt
+
     plt.close("all")
 
     y_formatter = matplotlib.ticker.ScalarFormatter(useOffset=1)

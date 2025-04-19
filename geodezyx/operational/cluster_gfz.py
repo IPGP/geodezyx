@@ -40,10 +40,6 @@ from geodezyx import utils
 # from geodezyx.megalib.megalib import *   # Import the legacy modules names
 log = logging.getLogger('geodezyx')
 
-
-utils.symbols_list()
-
-
 ##########  END IMPORT  ##########
 def cluster_GFZ_run(
     commands_list,
