@@ -95,7 +95,7 @@ def rinex_table_from_list(
         bool_new_name = df["name"].str.match(conv.rinex_regex_long_name())
         bool_old_name = np.logical_not(bool_new_name)
         site9_generic = df["site4"].str.upper() + "00XXX"
-        df["site9"].loc[bool_old_name] = site9_generic[bool_old_name]
+        df.loc[bool_old_name, "site9"] = site9_generic[bool_old_name]
 
     df["date"] = df["name"].apply(conv.rinexname2dt)
     if round_date:

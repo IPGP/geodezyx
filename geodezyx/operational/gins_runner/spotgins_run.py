@@ -7,7 +7,6 @@ Created on 28/02/2025 18:52:44
 """
 import re
 import subprocess
-from tabnanny import verbose
 
 import geodezyx.operational.gins_runner.gins_common as gynscmn
 import geodezyx.operational.gins_runner.gins_dirs_gen as gynsgen
@@ -89,6 +88,9 @@ def spotgins_run(
         If True, do not clean the temporary files. Default is False.
     no_updatebd : bool, optional
         If True, do not update the BDGINS repository. Default is False.
+    no_concat_orb_clk : bool, optional
+        If True, do not concatenate the orbit and clock files prior to the main processing.
+         Default is False.
     verbose : bool, optional
         If True, enable verbose logging. Default is False.
     updatebd_login : str
@@ -189,19 +191,18 @@ def spotgins_run(
     ##### END Multi-processing Wrapper END ################
 
     global spotgins_wrap2
-
     def spotgins_wrap2(*args):
         try:
             return spotgins_wrap(*args)
         except Exception as e:
-            log.error(f"spotgins wrapper error: {e}")
+            log.error(f"spotgins_wrap error: {e}")
             return None  # or something that won't break your pipeline
 
     pool = mp.Pool(processes=nprocs)
     try:
         res_raw = pool.map(spotgins_wrap2, rnxs_path_use, chunksize=1)
     except Exception as e:
-        log.error("error in the pool.map : %s", e)
+        log.error("pool.map error: %s", e)
     pool.close()
 
     nrnxs = len(rnxs_path_use)
@@ -354,7 +355,7 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
         log.error("error in the pool.map : %s", e)
     pool.close()
 
-    return
+    return None
 
 
 def archiv_gins_run(dir_inp, archive_folder, verbose=True):
@@ -393,6 +394,7 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
     for prov in glob.glob(
         os.path.join(li_batch_fld, "PROV" + "*" + dir_basename + "*")
     ):
+        log.info("removing PROV folder %s", prov)
         shutil.rmtree(prov)
 
     # get destination
