@@ -31,13 +31,13 @@ def read_credentials(file_path):
 
 
 def download_rsync(
-        file_list,
-        remote_user,
-        remote_host,
-        remote_path,
-        local_destination,
-        rsync_options=None,
-        password=None,
+    file_list,
+    remote_user,
+    remote_host,
+    remote_path,
+    local_destination,
+    rsync_options=None,
+    password=None,
 ):
     """
     Downloads a list of files using rsync.
@@ -51,7 +51,7 @@ def download_rsync(
             "--no-perms",
             "--no-owner",
             "--no-group",
-            "--omit-dir-times"
+            "--omit-dir-times",
         ]  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
@@ -71,9 +71,9 @@ def download_rsync(
     # Construct the rsync command
     # /./ : https://askubuntu.com/questions/552120/preserve-directory-tree-while-copying-with-rsync
     rsync_cmd = (
-            rsync_base
-            + ["--files-from", tmp_rsync_file_lis]
-            + [f"{remote_source}/./", f"{local_destination}/"]
+        rsync_base
+        + ["--files-from", tmp_rsync_file_lis]
+        + [f"{remote_source}/./", f"{local_destination}/"]
     )
 
     # Run the rsync command
@@ -88,8 +88,14 @@ def download_rsync(
     return
 
 
-def bdgins_update(date_srt, date_end, dir_bdgins="",
-                  login="", password="", compress=False):
+def bdgins_update(
+    date_srt=dt.datetime(2020, 5, 3),
+    date_end=None,
+    dir_bdgins="",
+    login="",
+    password="",
+    compress=False,
+):
     """
     Update the BDGINS repository with the necessary files
     for the given date range.
@@ -98,8 +104,10 @@ def bdgins_update(date_srt, date_end, dir_bdgins="",
     ----------
     date_srt : datetime
         The start date for the update.
+        The default is 2020-05-03 (origin of G20 products, end of GPS's Selectable Avaiability).
     date_end : datetime
         The end date for the update.
+        If not provided, the default is the 15 days ago.
     dir_bdgins : str, optional
         The directory for BDGINS. Defaults to an empty string.
     login : str, optional
@@ -114,8 +122,12 @@ def bdgins_update(date_srt, date_end, dir_bdgins="",
     -------
     None
     """
+    if not date_end:
+        date_end = dt.datetime.now() - dt.timedelta(days=15)
+        date_end = conv.round_dt(date_end,'1D', mode="floor")
+
     if not dir_bdgins:
-        dir_bdgins = os.path.join(gynscmn.get_gin_path(True), 'data')
+        dir_bdgins = os.path.join(gynscmn.get_gin_path(True), "data")
 
     if not login:
         home = os.path.expanduser("~")
@@ -246,33 +258,58 @@ def main():
         "-s",
         "--date_srt",
         type=lambda s: conv.date_pattern_2_dt(s),
-        required=True,
-        help="Start date in various format.",
+        required=False,
+        help=(
+            "Start date for the update in various formats. "
+            "Default is 2020-05-03 "
+            "(origin of G20 products, end of GPS's Selective Availability)."
+        ),
     )
     parser.add_argument(
         "-e",
         "--date_end",
         type=lambda s: conv.date_pattern_2_dt(s),
-        required=True,
-        help="End date in various format.",
+        required=False,
+        help=(
+            "End date for the update in various formats. "
+            "Default is 15 days before the current date."
+        ),
     )
     parser.add_argument(
-        "-d", "--dir_bdgins", help="Directory for BDGINS", required=False
+        "-d",
+        "--dir_bdgins",
+        help=(
+            "Directory for the BDGINS repository. "
+            "Defaults to a predefined path if not provided."
+        ),
+        required=False,
     )
     parser.add_argument(
-        "-l", "--login", help="Login for the remote server.", required=False
+        "-l",
+        "--login",
+        help=(
+            "Login for the remote server. "
+            "Defaults to the current user or a value from the `.ginspc` file."
+        ),
+        required=False,
     )
     parser.add_argument(
         "-p",
         "--password",
-        help="Password for the remote server.",
+        help=(
+            "Password for the remote server. "
+            "Defaults to an empty string if not provided."
+        ),
         required=False,
         default=None,
     )
     parser.add_argument(
         "-c",
         "--compress",
-        help="Compress the clock files.",
+        help=(
+            "Flag to enable gzip compression of clock files. "
+            "Defaults to `False` and is experimental."
+        ),
         action="store_true",
         default=False,
     )
@@ -286,7 +323,6 @@ def main():
         dir_bdgins=args.dir_bdgins,
         compress=args.compress,
     )
-
 
 if __name__ == "__main__":
     main()

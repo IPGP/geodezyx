@@ -132,7 +132,10 @@ def spotgins_run(
 
     ##### Update the database ################
     if not no_updatebd:
-        gynsbdu.bdgins_update(date_min, date_max, dir_bdgins="", login=updatebd_login)
+        gynsbdu.bdgins_update(
+            date_srt=date_min, date_end=date_max,
+            dir_bdgins="", login=updatebd_login
+        )
 
     ##### concatenate hor/orb ################
     if not no_concat_orb_clk:
@@ -191,6 +194,7 @@ def spotgins_run(
     ##### END Multi-processing Wrapper END ################
 
     global spotgins_wrap2
+
     def spotgins_wrap2(*args):
         try:
             return spotgins_wrap(*args)
