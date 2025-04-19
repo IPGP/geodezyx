@@ -34,7 +34,7 @@ import time
 # from datetime import datetime, date
 
 import numpy as np
-# import pandas as pd # LAZY IMPORTED
+# import pandas as pd # >>> LAZY IMPORTED
 
 #### geodeZYX modules
 from geodezyx import utils, stats

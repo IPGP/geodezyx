@@ -133,8 +133,7 @@ def spotgins_run(
     ##### Update the database ################
     if not no_updatebd:
         gynsbdu.bdgins_update(
-            date_srt=date_min, date_end=date_max,
-            dir_bdgins="", login=updatebd_login
+            date_srt=date_min, date_end=date_max, dir_bdgins="", login=updatebd_login
         )
 
     ##### concatenate hor/orb ################
@@ -171,15 +170,19 @@ def spotgins_run(
         ######## DIRECTORS RUN ###############
         const_use = const_adapt(const, dirr, verbose=verbose)
         opt_gins_90_use = "-const " + const_use
-        gynsrun.run_directors(
-            dirr,
-            opts_gins_90=opt_gins_90_use,
-            version=version,
-            cmd_mode="exe_gins_dir",
-            force=force,
-            verbose=verbose,
-            sleep_time_max=nprocs * 10**-1,  # eq 128 procs -> 12.8s max sleep time
-        )
+        try:
+            gynsrun.run_directors(
+                dirr,
+                opts_gins_90=opt_gins_90_use,
+                version=version,
+                cmd_mode="exe_gins_dir",
+                force=force,
+                verbose=verbose,
+                sleep_time_max=nprocs * 10**-1,  # eq 128 procs -> 12.8s max sleep time
+            )
+        except Exception as e:
+            log.error(f"run_directors error: {e}")
+            rm_prov_listing(dirr)
 
         ######## ARCHIVING ####################
         if not no_archive:
@@ -190,6 +193,7 @@ def spotgins_run(
             if verbose:
                 log.info(f"Cleaning temporary folder {tmp_folder}")
             shutil.rmtree(tmp_folder)
+        return None
 
     ##### END Multi-processing Wrapper END ################
 
@@ -361,6 +365,45 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
 
     return None
 
+def rm_prov_listing(dir_inp):
+    """
+    Remove potential PROV folders and related files to a given directory.
+
+    Parameters
+    ----------
+    dir_inp : str
+        Path to the input directeur whose associated PROV folders and files
+        need to be removed.
+
+    Functionality
+    -------------
+    1. Identifies and removes all PROV folders associated with the given directory.
+    2. Identifies and removes specific files (e.g., `.qsub` and `.sh` files)
+       related to the directory in the batch listing folder.
+
+    Returns
+    -------
+    None
+    """
+    # Get the path to the batch listing folder
+    li_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "listing")
+    # Extract the base name of the input directory
+    dir_basename = os.path.basename(dir_inp)
+
+    # Find and remove all PROV folders associated with the directory
+    prov_lis = glob.glob(os.path.join(li_batch_fld, "PROV" + "*" + dir_basename + "*"))
+    for prov in prov_lis:
+        log.info("removing PROV folder %s", prov)
+        shutil.rmtree(prov)
+
+    # Find and remove specific files (e.g., `.qsub` and `.sh`) in the batch listing folder
+    lifil_lis = glob.glob(os.path.join(li_batch_fld, dir_basename) + "*")
+    for f in lifil_lis:
+        if f.endswith(".qsub") or f.endswith("sh"):
+            os.remove(f)
+
+    return None
+
 
 def archiv_gins_run(dir_inp, archive_folder, verbose=True):
     """
@@ -379,9 +422,15 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
     -------
     None
     """
+
     if not dir_inp:
         return None
+
     time.sleep(1)  # wait a proper GINS end
+
+    # do first the PROV folder cleaning
+    rm_prov_listing(dirr)
+
     dir_basename = os.path.basename(dir_inp)
     site_id9 = re.search(r"_(....00\w{3})_", dir_inp).group(1)
     arch_fld_site = str(os.path.join(archive_folder, site_id9))
@@ -393,13 +442,6 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
     li_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "listing")
     sol_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "solution")
     stat_batch_fld = os.path.join(gynscmn.get_gin_path(True), "batch", "statistiques")
-
-    # remove the PROV folder
-    for prov in glob.glob(
-        os.path.join(li_batch_fld, "PROV" + "*" + dir_basename + "*")
-    ):
-        log.info("removing PROV folder %s", prov)
-        shutil.rmtree(prov)
 
     # get destination
     dir_arch_fld = os.path.join(arch_fld_site, "010_directeurs")
