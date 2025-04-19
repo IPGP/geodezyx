@@ -25,7 +25,8 @@ import time
 
 from geodezyx import files_rw, conv
 
-spotgins_wrap = None
+spotgins_wrap  = None
+spotgins_wrap2 = None
 
 #### Import the logger
 import logging
@@ -135,7 +136,6 @@ def spotgins_run(
 
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
-
     def spotgins_wrap(rnx_mono_path_inp):
         ######## QUICK ARCHIVING CHECK ############# # Check if the solution is already archived
         if not force and check_arch_sol(
@@ -185,6 +185,7 @@ def spotgins_run(
 
     ##### END Multi-processing Wrapper END ################
 
+    global spotgins_wrap2
     def spotgins_wrap2(*args):
         try:
             return spotgins_wrap(*args)
@@ -415,9 +416,12 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
 
         for f in glob.glob(os.path.join(batch_fld, dir_basename) + "*"):
             if f.endswith(".qsub") or f.endswith("sh"):
-                if verbose:
-                    log.info(f"skip archive of qsub/sh file {f}")
+                os.remove(f)
                 continue
+
+                #if verbose:
+                #    log.info(f"skip archive of qsub/sh file {f}")
+                #continue
 
             if verbose:
                 log.info(f"Archiving {f} to {arch_fld}")
