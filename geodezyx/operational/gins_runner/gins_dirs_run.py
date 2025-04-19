@@ -148,7 +148,7 @@ def run_directors(
         itry = 0
         itry_max = 1
         retry_str = ""
-        timeout = 600
+        timeout = 300
 
         while itry <= itry_max:
             itry += 1

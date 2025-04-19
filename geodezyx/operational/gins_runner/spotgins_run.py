@@ -300,8 +300,43 @@ def get_spotgins_files(
 
 
 def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
+    """
+    Concatenate orbit and clock files for a given date range using multiprocessing.
+
+    Parameters
+    ----------
+    date_srt : datetime
+        Start date for the concatenation process.
+    date_end : datetime
+        End date for the concatenation process.
+    nprocs : int
+        Number of processes to use for multiprocessing.
+    prod : str, optional
+        Product type (e.g., "G20"). Default is "G20".
+    verbose : bool, optional
+        If True, enable verbose logging. Default is True.
+
+    Returns
+    -------
+    None
+    """
 
     def _chk_cat_orbclk(orbclk_out, silent=False):
+        """
+        Check if the concatenated orbit/clock file exists.
+
+        Parameters
+        ----------
+        orbclk_out : str
+            Path to the output orbit/clock file.
+        silent : bool, optional
+            If True, suppress logging. Default is False.
+
+        Returns
+        -------
+        bool
+            True if the file exists, False otherwise.
+        """
         orbclk_out = orbclk_out + ".gz"
         if os.path.isfile(orbclk_out):
             log.info("%s here :)", orbclk_out)
@@ -313,6 +348,20 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
             return False
 
     def _run_cat_orbclk(cmd, out_fil):
+        """
+        Run the command to generate the concatenated orbit/clock file.
+
+        Parameters
+        ----------
+        cmd : str
+            Command to execute.
+        out_fil : str
+            Path to the output file.
+
+        Returns
+        -------
+        None
+        """
         if _chk_cat_orbclk(out_fil, silent=True):
             return None
 
@@ -332,6 +381,19 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
     global cat_orbclk_wrap
 
     def cat_orbclk_wrap(date_inp):
+        """
+        Wrapper function to process a single date for orbit/clock concatenation.
+
+        Parameters
+        ----------
+        date_inp : datetime
+            Date to process.
+
+        Returns
+        -------
+        tuple
+            Paths to the concatenated orbit and clock files.
+        """
         jjul_bef = str(conv.dt2jjul_cnes(date_inp - dt.timedelta(days=1)))
         jjul_aft = str(conv.dt2jjul_cnes(date_inp + dt.timedelta(days=1)))
         gs_user = gynscmn.get_gin_path(extended=False)
@@ -354,8 +416,10 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
 
         return orb_out, clk_out
 
+    # Generate a list of dates to process
     date_lis = conv.dt_range(date_srt, date_end)
 
+    # Use multiprocessing to process the dates
     pool = mp.Pool(processes=nprocs)
     try:
         _ = pool.map(cat_orbclk_wrap, date_lis, chunksize=1)
@@ -399,7 +463,7 @@ def rm_prov_listing(dir_inp):
     # Find and remove all PROV folders associated with the directory
     prov_lis = glob.glob(os.path.join(li_batch_fld, "PROV" + "*" + dir_basename + "*"))
     for prov in prov_lis:
-        log.info("removing PROV folder %s", prov)
+        log.warning("removing PROV folder %s", prov)
         shutil.rmtree(prov)
 
     # Find and remove specific files (e.g., `.qsub` and `.sh`) in the batch listing folder
