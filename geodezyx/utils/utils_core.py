@@ -34,7 +34,6 @@ import tempfile
 import time
 
 import numpy as np
-import pandas as pd
 import pathvalidate
 import scipy
 
@@ -150,7 +149,7 @@ def transpose_vector_array(X):
         X transposed if necessary.
 
     """
-    
+    import pandas as pd
     if isinstance(X,pd.core.frame.DataFrame):
         X = X.values
         

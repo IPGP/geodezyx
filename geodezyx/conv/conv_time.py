@@ -34,7 +34,7 @@ import time
 # from datetime import datetime, date
 
 import numpy as np
-import pandas as pd
+# import pandas as pd # LAZY IMPORTED
 
 #### geodeZYX modules
 from geodezyx import utils, stats
@@ -153,7 +153,7 @@ def round_dt(dtin, round_to, python_dt_out=True, mode='round'):
     ----
     https://pandas.pydata.org/docs/user_guide/timeseries.html#timeseries-offset-aliases
     """
-
+    import pandas as pd
     ### Here we adopt a new scheme for the recursive approach
     ### because we switch per defaut to a Pandas Series (PSakic 2021-02-22)
     if not utils.is_iterable(dtin):
@@ -420,10 +420,10 @@ def dt2ymdhms(dtin, with_microsec=True):
     """
     if not utils.is_iterable(dtin):
         if with_microsec:
-            return (dtin.year, dtin.month, dtin.day, dtin.hour, dtin.minute, dtin.second, dtin.microsecond)
+            return dtin.year, dtin.month, dtin.day, dtin.hour, dtin.minute, dtin.second, dtin.microsecond
         else:
-            dt2 = roundTime(dtin, 1)
-            return (dt2.year, dt2.month, dt2.day, dt2.hour, dt2.minute, dt2.second)
+            dt2 = round_dt(dtin, '1s')
+            return dt2.year, dt2.month, dt2.day, dt2.hour, dt2.minute, dt2.second
     else:
         typ = utils.get_type_smart(dtin)
         return typ([dt2ymdhms(e, with_microsec) for e in dtin])
@@ -2508,6 +2508,9 @@ def pandas_timestamp2dt(timestamp_in):
     L : Datetime or list of Datetime
         Time as Datetime(s)  
     """
+
+    import pandas as pd
+
     if utils.is_iterable(timestamp_in):
         typ = utils.get_type_smart(timestamp_in)
         return typ([pandas_timestamp2dt(e) for e in timestamp_in])
@@ -2558,6 +2561,7 @@ def numpy_dt2dt(numpy_dt_in):
     ### better implementation because of the timezone bug (PS 241124)
 
     else:
+        import pandas as pd
         return pd.Timestamp(numpy_dt_in).to_pydatetime()
 
 
@@ -2917,55 +2921,55 @@ def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
 #     return python_datetime
 
 
-def dt_round(dtin=None, roundTo=60):
-    """
-    Round a datetime object to any time laps in seconds
-
-    **This function is depreciated !!!**
-    **Use round_dt instead         !!!**
-
-
-    Parameters
-    ----------
-    dtin : datetime.datetime or list/numpy.array of datetime.datetime
-        Datetime you want to round, default now.
-        Can handle several datetimes in an iterable.
-
-    roundTo : int
-        Closest number of seconds to round to, default 1 minute.
-
-    Returns
-    -------
-    dtout : datetime.datetime or list/numpy.array of datetime.datetime
-        Rounded Datetime
-
-    Note
-    ----
-    Based on :
-    http://stackoverflow.com/questions/3463930/how-to-round-the-minute-of-a-datetime-object-python
-    """
-    import datetime as dtmod
-
-    if utils.is_iterable(dtin):
-        typ = utils.get_type_smart(dtin)
-        return typ([dt_round(e, roundTo=roundTo) for e in dtin])
-    else:
-        if not dtin:
-            dtin = dtmod.datetime.now()
-        seconds = (dtin - dtin.min).seconds
-        # // is a floor division, not a comment on following line:
-        rounding = (seconds + roundTo / 2) // roundTo * roundTo
-        return dtin + dtmod.timedelta(0, rounding - seconds, -dtin.microsecond)
-
-
-def roundTime(*args):
-    """
-    Wrapper of dt_round for legacy reasons
-
-    **This function is depreciated !!!**
-    **Use round_dt instead         !!!**
-    """
-    return dt_round(*args)
+# def dt_round(dtin=None, roundTo=60):
+#     """
+#     Round a datetime object to any time laps in seconds
+#
+#     **This function is depreciated !!!**
+#     **Use round_dt instead         !!!**
+#
+#
+#     Parameters
+#     ----------
+#     dtin : datetime.datetime or list/numpy.array of datetime.datetime
+#         Datetime you want to round, default now.
+#         Can handle several datetimes in an iterable.
+#
+#     roundTo : int
+#         Closest number of seconds to round to, default 1 minute.
+#
+#     Returns
+#     -------
+#     dtout : datetime.datetime or list/numpy.array of datetime.datetime
+#         Rounded Datetime
+#
+#     Note
+#     ----
+#     Based on :
+#     http://stackoverflow.com/questions/3463930/how-to-round-the-minute-of-a-datetime-object-python
+#     """
+#     import datetime as dtmod
+#
+#     if utils.is_iterable(dtin):
+#         typ = utils.get_type_smart(dtin)
+#         return typ([dt_round(e, roundTo=roundTo) for e in dtin])
+#     else:
+#         if not dtin:
+#             dtin = dtmod.datetime.now()
+#         seconds = (dtin - dtin.min).seconds
+#         # // is a floor division, not a comment on following line:
+#         rounding = (seconds + roundTo / 2) // roundTo * roundTo
+#         return dtin + dtmod.timedelta(0, rounding - seconds, -dtin.microsecond)
+#
+#
+# def roundTime(*args):
+#     """
+#     Wrapper of dt_round for legacy reasons
+#
+#     **This function is depreciated !!!**
+#     **Use round_dt instead         !!!**
+#     """
+#     return dt_round(*args)
 
 
 # def utc2gpstime_bad(year, month, day, hour, min, sec):

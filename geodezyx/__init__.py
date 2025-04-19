@@ -28,16 +28,16 @@ else:
 
 #from . import athmo
 from . import conv
-from . import files_rw
-from . import geodyn
-from . import interp
-from . import marine
-from . import operational
-from . import reffram
-from . import stats
-from . import time_series
+#from . import files_rw
+#from . import geodyn
+#from . import interp
+#from . import marine
+#from . import operational
+#from . import reffram
+#from . import stats
+#from . import time_series
 from . import utils
-from . import utils_xtra
+#from . import utils_xtra
 
 __all__ = ['athmo',
            'conv',

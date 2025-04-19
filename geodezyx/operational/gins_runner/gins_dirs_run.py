@@ -17,7 +17,7 @@ import collections
 import multiprocessing as mp
 import numpy as np
 
-from geodezyx import files_rw, time_series
+from geodezyx import files_rw
 
 #### Import geodezyx GINS submodules
 import geodezyx.operational.gins_runner.gins_common as gynscmn
@@ -421,6 +421,7 @@ def smart_listing_archive(
 def export_results_gins_listing(
     listings_list_in, outpath, static_or_kinematic="kine", outprefix="", coordtype="FLH"
 ):
+    from geodezyx import time_series
     if len(listings_list_in) == 0:
         print("ERR : export_results_gins_listing : listings list is empty ...")
         return None
@@ -440,8 +441,6 @@ def check_for_retry(stderr_inp):
         return True
     else:
         return False
-
-
 
 def run_director_list_wrap(tupinp):
     run_directors(*tupinp)

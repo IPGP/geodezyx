@@ -309,10 +309,10 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
             else:
                 rnorm = np.linalg.norm(P1,axis=1)
 
-                from geodezyx import utils_xtra.pandas_utils
-                Vx = utils_xtra.pandas_utils.diff_pandas(D1prni,'x',use_np_diff=True)
-                Vy = utils_xtra.pandas_utils.diff_pandas(D1prni,'y',use_np_diff=True)
-                Vz = utils_xtra.pandas_utils.diff_pandas(D1prni,'z',use_np_diff=True)
+                from geodezyx.utils_xtra import pandas_utils
+                Vx = pandas_utils.diff_pandas(D1prni,'x',use_np_diff=True)
+                Vy = pandas_utils.diff_pandas(D1prni,'y',use_np_diff=True)
+                Vz = pandas_utils.diff_pandas(D1prni,'z',use_np_diff=True)
                 
                 V = pd.concat((Vx , Vy , Vz),axis=1)
                 V.columns = ['vx','vy','vz']
