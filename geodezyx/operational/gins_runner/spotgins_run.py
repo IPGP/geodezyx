@@ -387,7 +387,7 @@ def archiv_gins_run(dir_inp, archive_folder, verbose=True):
 
     # remove the PROV folder
     for prov in glob.glob(os.path.join(li_batch_fld,"PROV" + "*" + dir_basename + "*")):
-        os.remove(prov)
+        shutil.rmtree(prov)
 
     # get destination
     dir_arch_fld = os.path.join(arch_fld_site, "010_directeurs")
