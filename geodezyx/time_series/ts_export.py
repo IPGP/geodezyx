@@ -392,7 +392,7 @@ def export_ts_as_pbo_pos(tsin, outdir, outprefix='' ,
         for pt in tsinin.pts:
             YYYYMMDD = int(conv.dt2str(pt.Tdt,"%Y%m%d"))
             HHMMSS = int(conv.dt2str(pt.Tdt,"%H%M%S"))
-            MJD = conv.dt2MJD(pt.Tdt)
+            MJD = conv.dt2mjd(pt.Tdt)
             X, Y, Z = pt.X, pt.Y, pt.Z
             Sx, Sy, Sz = pt.sX, pt.sY, pt.sZ  
             Rxy,Rxz,Ryz = 0.,0.,0.
@@ -519,19 +519,19 @@ def export_ts_as_spotgins(tsin, outdir, ac, data_src = "unknown"):
     
     for ir, r in df.iterrows():
         t = r["Tdt"]
-        outstr = fmtstr.format(np.round(conv.dt2MJD(t),7),
-                      r["E"],r["N"],r["U"],
-                      r["sE"],r["sN"],r["sU"],
-                      str(t.year),
-                      str(t.month).zfill(2),
-                      str(t.day).zfill(2),
-                      str(t.hour).zfill(2),
-                      str(t.minute).zfill(2),
-                      t.second,
-                      conv.dt2year_decimal(t),
-                      const,
-                      datexelis[ir],
-                      ginsverslis[ir])
+        outstr = fmtstr.format(np.round(conv.dt2mjd(t), 7),
+                               r["E"], r["N"], r["U"],
+                               r["sE"], r["sN"], r["sU"],
+                               str(t.year),
+                               str(t.month).zfill(2),
+                               str(t.day).zfill(2),
+                               str(t.hour).zfill(2),
+                               str(t.minute).zfill(2),
+                               t.second,
+                               conv.dt2year_decimal(t),
+                               const,
+                               datexelis[ir],
+                               ginsverslis[ir])
         outfile.write(outstr)
         
 

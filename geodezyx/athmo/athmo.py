@@ -1155,7 +1155,7 @@ def vmf1(ah, aw, dt, dlat, zd):
     """
 
     pi = 3.14159265359
-    dmjd = conv.dt2MJD(dt)
+    dmjd = conv.dt2mjd(dt)
     doy = dmjd - 44239.0 + 1 - 28
 
     bh = 0.0029

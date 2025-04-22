@@ -1714,7 +1714,7 @@ def read_epos_sta_coords_mono(filein, return_df=True):
             MJD_strt = int(fields[6])
             MJD_end = int(fields[7])
             MJD_mid = np.mean([MJD_strt, MJD_end])
-            T = conv.numpy_dt2dt(conv.MJD2dt(MJD_mid))
+            T = conv.numpy_dt2dt(conv.mjd2dt(MJD_mid))
 
         if "POS_VEL:XYZ" in fields[0]:
             X = float(fields[4])
@@ -1743,7 +1743,7 @@ def read_epos_sta_coords_mono(filein, return_df=True):
             #### And store for the DataFrame
             else:
                 tup_4_DF = (namestat, numstat, tecto_plate,
-                            conv.MJD2dt(MJD_strt),
+                            conv.mjd2dt(MJD_strt),
                             MJD_ref, MJD_strt, MJD_end,
                             X, Y, Z, sX, sY, sZ,
                             Vx, Vy, Vz, sVx, sVy, sVz)
@@ -1862,7 +1862,7 @@ def read_epos_slv_times(p, convert_to_time=False):
         if "EPOCHE" in l:
             cur_epoc_line = l
             cur_epoc_f = cur_epoc_line.split()
-            cur_epoc = conv.MJD2dt(int(cur_epoc_f[1])) + dt.timedelta(seconds=int(86400 * float(cur_epoc_f[2])))
+            cur_epoc = conv.mjd2dt(int(cur_epoc_f[1])) + dt.timedelta(seconds=int(86400 * float(cur_epoc_f[2])))
 
         if re.match("^   [0-9]{4}.*", l):
             Lgood_stat.append([cur_epoc] + [float(e) for e in l.split()])
@@ -1998,7 +1998,7 @@ def read_IGS_coords(filein, initype='auto'):
             elif "xyz" in os.path.basename(filein):
                 initype = 'XYZ'
 
-        T = conv.MJD2dt(float(f[3]))
+        T = conv.mjd2dt(float(f[3]))
         A = float(f[6])
         B = float(f[7])
         C = float(f[8])
@@ -2518,7 +2518,7 @@ def read_groops_position(Filesin):
 
     for filein in Filesin:
         DF = pd.read_csv(filein, skiprows=6, header=None, sep=r'\s+')
-        T = conv.dt2posix(conv.MJD2dt(DF[0].values))
+        T = conv.dt2posix(conv.mjd2dt(DF[0].values))
         X, Y, Z = DF[1], DF[2], DF[3]
 
         for t, x, y, z in zip(T, X, Y, Z):
@@ -2562,7 +2562,7 @@ def read_pride_pppar_pos_mono(filein):
 
     df = df.squeeze()
 
-    T = conv.dt2posix(conv.MJD2dt(df['Mjd']))
+    T = conv.dt2posix(conv.mjd2dt(df['Mjd']))
 
     fuv = df['Sig0'] ** 2  # variance of unit weight
 
@@ -2609,7 +2609,7 @@ def read_pride_pppar_kin(filein):
                      engine='python',
                      header=None)
 
-    t_arr = conv.MJD2dt(df[0]) + df[1].apply(lambda x: dt.timedelta(seconds=x))
+    t_arr = conv.mjd2dt(df[0]) + df[1].apply(lambda x: dt.timedelta(seconds=x))
 
     tsout = time_series.TimeSeriePoint()
 

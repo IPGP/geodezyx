@@ -133,7 +133,7 @@ def read_gfz_trop(trpfile):
     DF.columns = ['STAT','epoc','year','doy','secofday','ztd_est','ztd_est_std','num_sat','tgn_est','tgn_est_std','tge_est','tge_est_std']
     cols_numeric = ['epoc','ztd_est','ztd_est_std','num_sat','tgn_est','tgn_est_std','tge_est','tge_est_std']
     DF[cols_numeric] = DF[cols_numeric].apply(pd.to_numeric, errors='coerce')
-    DF['epoc'] = conv.MJD2dt(DF['epoc'].values)
+    DF['epoc'] = conv.mjd2dt(DF['epoc'].values)
     DF['epoc'] = DF['epoc'].dt.floor('H')
     return DF
 

@@ -248,7 +248,7 @@ def ESMGFZ_extrapolator(path_or_netcdf_object_in,
     
     if time_smart:
         # we work in MJD
-        start_date = conv.dt2MJD(conv.str_date2dt(NC['time'].units[11:]))
+        start_date = conv.dt2mjd(conv.str_date2dt(NC['time'].units[11:]))
         if len(time_orig) <= 366:
             time = start_date - .0 + time_orig 
         else:
@@ -291,7 +291,7 @@ def ESMGFZ_extrapolator(path_or_netcdf_object_in,
     if output_type == "DataFrame":
         Points_out = pd.DataFrame(WishVals_dic)
         if time_smart:
-            Points_out['time_dt'] = conv.MJD2dt(Points_out['time'])
+            Points_out['time_dt'] = conv.mjd2dt(Points_out['time'])
     elif output_type == "dict":
         Points_out = WishVals_dic
     elif output_type == "array":

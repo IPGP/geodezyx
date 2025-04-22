@@ -751,7 +751,7 @@ def station_info_2_gins(
                 X = data["Ref_X"]
                 Y = data["Ref_Y"]
                 Z = data["Ref_Z"]
-                T = conv.MJD2dt(data["Ref_jday"])
+                T = conv.mjd2dt(data["Ref_jday"])
                 vX = data["dX/dt"]
                 vY = data["dY/dt"]
                 vZ = data["dZ/dt"]

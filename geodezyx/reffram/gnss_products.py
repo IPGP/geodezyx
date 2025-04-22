@@ -1431,10 +1431,10 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
                                       DForb['x'],DForb['y'],DForb['z']):
     
         MatCRF22TRF = sofa.iau_c2t06a(2400000.5,
-                                      conv.dt2MJD(tt),
+                                      conv.dt2mjd(tt),
                                       2400000.5,
-                                      conv.dt2MJD(ut1),
-                                      xeop,yeop)
+                                      conv.dt2mjd(ut1),
+                                      xeop, yeop)
         if inv_trf2crf:
             MatCRF22TRF = np.linalg.inv(MatCRF22TRF)
     

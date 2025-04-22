@@ -478,7 +478,7 @@ def read_sp3_header(sp3_in,ac_name_in=None):
 
     for il , l in enumerate(Lines):
         if il == 1:
-            date = conv.MJD2dt(int(l.split()[4]))
+            date = conv.mjd2dt(int(l.split()[4]))
         if l[:2] == "+ ":
             Sat_prn_list.append(l)
         if l[:2] == "++":

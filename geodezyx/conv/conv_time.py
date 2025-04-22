@@ -822,8 +822,8 @@ def dt_utc2dt_ut1_smart(dtin, df_eop_in,
                                              d_ut1aft['MJD'],
                                              d_ut1aft['UT1-UTC'])
 
-            d_ut1 = stats.linear_reg_getvalue(dt2MJD(dtin), a, b,
-                                             full=False)
+            d_ut1 = stats.linear_reg_getvalue(dt2mjd(dtin), a, b,
+                                              full=False)
 
         return dt_utc2dt_ut1(dtin, d_ut1)
 
@@ -1350,7 +1350,7 @@ def dt2jjul_cnes(dtin, onlydays=True):
         return epok.days, epok.seconds
 
 
-def MJD2dt(mjd_in, seconds=None, round_to='1s'):
+def mjd2dt(mjd_in, seconds=None, round_to='1s'):
     """
     Time representation conversion
     
@@ -1409,7 +1409,7 @@ def MJD2dt(mjd_in, seconds=None, round_to='1s'):
         return rnd(dt.datetime(1858, 11, 17) + dt.timedelta(days=mjd_in, seconds=seconds))
 
 
-def dt2MJD(dtin):
+def dt2mjd(dtin):
     """
     Time representation conversion
     
@@ -1434,7 +1434,7 @@ def dt2MJD(dtin):
     # cf http://en.wikipedia.org/wiki/Julian_day
     if utils.is_iterable(dtin):
         typ = utils.get_type_smart(dtin)
-        return typ([dt2MJD(t) for t in dtin])
+        return typ([dt2mjd(t) for t in dtin])
     else:
         delta = (dtin.replace(tzinfo=None) - dt.datetime(1858, 11, 17))
         return delta.days + (delta.seconds / 86400.) + (delta.microseconds / 864e8)

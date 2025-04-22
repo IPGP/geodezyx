@@ -570,7 +570,7 @@ def read_sp3_header(sp3_path):
 
     for il , l in enumerate(Lines):
         if il == 1:
-            date = conv.MJD2dt(int(l.split()[4]))
+            date = conv.mjd2dt(int(l.split()[4]))
         if l[:2] == "+ ":
             Sat_prn_list.append(l)
         if l[:2] == "++":
@@ -1119,7 +1119,7 @@ def read_erp2(caminho_arq,ac=None):
                     XPO_std = float(Lines[i][69:80])*(10**-3)
                     XPO_stk.append(XPO)
                     XPO_std_stk.append(XPO_std)
-                    MJD_stk.append(conv.dt2MJD(Date))
+                    MJD_stk.append(conv.dt2mjd(Date))
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
                     
                 if utils.contains_word(Lines[i],'YPO') and marker:
@@ -1133,7 +1133,7 @@ def read_erp2(caminho_arq,ac=None):
                     YPO_std = float(Lines[i][69:80])*(10**-3)
                     YPO_stk.append(YPO)
                     YPO_std_stk.append(YPO_std)
-                    MJD_stk.append(conv.dt2MJD(Date))
+                    MJD_stk.append(conv.dt2mjd(Date))
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
 
                     
@@ -1149,7 +1149,7 @@ def read_erp2(caminho_arq,ac=None):
                     LOD_stk.append(LOD)
                     LOD_std_stk.append(LOD_std)
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
-                    MJD_stk.append(conv.dt2MJD(Date))
+                    MJD_stk.append(conv.dt2mjd(Date))
 
         MJD = list(sorted(set(MJD_stk)))
         if len(LOD_stk) == 0:
@@ -1439,7 +1439,7 @@ def stations_in_EPOS_sta_coords_file_mono(coords_file_path):
         mean_mjd_list.append(mean_mjd)
 
     mjd_final = utils.most_common(mean_mjd_list)
-    epoch = conv.MJD2dt(mjd_final)
+    epoch = conv.mjd2dt(mjd_final)
     return epoch , stats_list
 
 
