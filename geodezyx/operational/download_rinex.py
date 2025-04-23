@@ -417,7 +417,7 @@ def ftp_files_crawler(
     all_ftp_files_stk = []
     local_files_lis = []
     count_loop = 0  # restablish the connexion after count_nmax loops (avoid freezing)
-    count_nmax = 100
+    count_nmax = 50
     ftpobj = None
 
     for irow, row in table_use.iterrows():

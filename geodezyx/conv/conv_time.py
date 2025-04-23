@@ -29,7 +29,7 @@ import string
 import struct
 import subprocess
 import time
-#import warnings
+import warnings
 ## Finding day of year
 # from datetime import datetime, date
 
@@ -1408,6 +1408,19 @@ def mjd2dt(mjd_in, seconds=None, round_to='1s'):
             seconds = 0
         return rnd(dt.datetime(1858, 11, 17) + dt.timedelta(days=mjd_in, seconds=seconds))
 
+def MJD2dt(*args, **kwargs):
+    """
+    Alias for the mjd2dt function.
+
+    This function is deprecated and will be removed in future versions.
+    Use mjd2dt instead.
+    """
+    warnings.warn(
+        "MJD2dt is deprecated and will be removed in future versions. Use mjd2dt instead.",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    return mjd2dt(*args, **kwargs)
 
 def dt2mjd(dtin):
     """
@@ -1438,6 +1451,22 @@ def dt2mjd(dtin):
     else:
         delta = (dtin.replace(tzinfo=None) - dt.datetime(1858, 11, 17))
         return delta.days + (delta.seconds / 86400.) + (delta.microseconds / 864e8)
+
+
+def dt2MJD(*args, **kwargs):
+    """
+    Alias for the dt2mjd function.
+
+    This function is deprecated and will be removed in future versions.
+    Use dt2mjd instead.
+    """
+    warnings.warn(
+        "dt2MJD is deprecated and will be removed in future versions. Use dt2mjd instead.",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    return dt2mjd(*args, **kwargs)
+
 
 
 def dt2str(dtin, str_format="%Y-%m-%d %H:%M:%S"):
@@ -2352,7 +2381,7 @@ def extract_leapseconds_from_system():
         try:
             leapsec_lis = leapseconds_parse_pre2404(leapsec_fname_pre2404)
             success_parsing = True
-        except Exception:
+        except Exception as e:
             log.warning("Error while parsing leap seconds file %s", leapsec_fname_pre2404)
             pass
 
