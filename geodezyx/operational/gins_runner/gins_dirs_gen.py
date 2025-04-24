@@ -240,7 +240,7 @@ def gen_dirs_rnxs(
         # date
         try:
             srt_epo, end_epo, freq_rnx = operational.rinex_start_end(rnx_path, True, verbose=verbose)
-        except Exception as e:
+        except ValueError:
             log.warning("Unable to read RINEX, fallback to filename to guess its start/end")
             srt_epo = conv.rinexname2dt(rnx_path)
             end_epo = srt_epo + dt.timedelta(days=1)
