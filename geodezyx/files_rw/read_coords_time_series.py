@@ -834,11 +834,11 @@ def read_gins_solution(filein, mode="cinematic"):
 
             # try to catch the 9char name in the filename 
             filnam = os.path.basename(filein)
-            print("AAAAAAA", filnam)
             reout = re.search(namestat + "[0-9]{2}[A-Z]{3}", filnam)
             if reout:
                 namestat = reout.group(0)
-                
+                print("AAAAAAA", namestat)
+
         if "GINS_VERSION" in l:
             ginsvers = f[1]
         elif l[0] == '#':
