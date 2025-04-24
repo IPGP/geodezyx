@@ -7,17 +7,11 @@ Created on 26/02/2025 11:07:24
 """
 
 #### Import the logger
-import shutil
 import os
 import time
 import datetime as dt
 import subprocess
-import glob
-import collections
-import multiprocessing as mp
 import numpy as np
-
-from geodezyx import files_rw
 
 #### Import geodezyx GINS submodules
 import geodezyx.operational.gins_runner.gins_common as gynscmn
@@ -195,6 +189,26 @@ def run_directors(
         )
 
     return None
+
+
+def check_for_retry(stderr_inp):
+    if "exe_gins_recup_fic.sh: 67: [: =: unexpected operator" in stderr_inp:
+        return True
+    else:
+        return False
+
+def _check_dir_keys(director_path_inp):
+    for grepstr in (
+        "userext_gps__qualiteorb",
+        "userext_gps__haute_freq",
+        "userext_gps__hor_interp",
+        "GPS__QUALITEORB",
+        "GPS__HAUTE_FREQ",
+        "GPS__HOR_INTERP",
+    ):
+        grep_out = utils.grep(director_path_inp, grepstr)
+        if grep_out == "":
+            log.warning("IPPP mode on, but no %sin the dir !!!", grepstr)
 
 
 #######################################################################################################

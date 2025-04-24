@@ -520,14 +520,14 @@ def rinex_read_epoch(
         epochs_list = [e.replace(tzinfo=dateutil.tz.tzutc()) for e in epochs_list]
 
     if out_index:
-        OUTPUT = [epochs_list, index_list]
+        output = [epochs_list, index_list]
     else:
-        OUTPUT = epochs_list
+        output = epochs_list
 
     if out_array:
-        OUTPUT = np.array(OUTPUT).T
+        output = np.array(output).T
 
-    return OUTPUT
+    return output
 
 
 def same_day_rinex_check(rinex1, rinex2):

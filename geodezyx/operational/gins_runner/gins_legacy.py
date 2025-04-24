@@ -194,19 +194,6 @@ def run_dirs_multi(
     return None
 
 
-def _check_dir_keys(director_path_inp):
-    for grepstr in (
-        "userext_gps__qualiteorb",
-        "userext_gps__haute_freq",
-        "userext_gps__hor_interp",
-        "GPS__QUALITEORB",
-        "GPS__HAUTE_FREQ",
-        "GPS__HOR_INTERP",
-    ):
-        grep_out = utils.grep(director_path_inp, grepstr)
-        if grep_out == "":
-            log.warning("IPPP mode on, but no %sin the dir !!!", grepstr)
-
 
 def run_dirs_multislots_custom(
     director_lis,
@@ -384,12 +371,6 @@ def export_results_gins_listing(
     time_series.export_ts(ts, outpath, coordtype, outprefix)
     return outpath
 
-
-def check_for_retry(stderr_inp):
-    if "exe_gins_recup_fic.sh: 67: [: =: unexpected operator" in stderr_inp:
-        return True
-    else:
-        return False
 
 def run_director_list_wrap(tupinp):
     run_directors(*tupinp)
