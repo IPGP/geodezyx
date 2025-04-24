@@ -825,6 +825,7 @@ def read_gins_solution(filein, mode="cinematic"):
         f = l.split()
 
         if 'STATION_NAME' in l:
+            # get per default 4char name
             if len(f) > 1:
                 namestat = f[1]
             else:
@@ -832,6 +833,7 @@ def read_gins_solution(filein, mode="cinematic"):
 
             # try to catch the 9char name in the filename 
             filnam = os.path.basename(filein)
+            print("AAAAAAA", filnam)
             reout = re.search(namestat + "[0-9]{2}[A-Z]{3}", filnam)
             if reout:
                 namestat = reout.group(0)
