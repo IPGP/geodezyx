@@ -818,18 +818,15 @@ def read_gins_solution(filein, mode="cinematic"):
         datexe = '991231_235959'
     else:
         datexe = datexere[0]
-        
+
     ginsvers = 'unknown'
-    
+
     for l in F:
         f = l.split()
 
         if 'STATION_NAME' in l:
             # get per default 4char name
-            if len(f) > 1:
-                namestat = f[1]
-            else:
-                namestat = f[-1]
+            namestat = f[1] if len(f) > 1 else f[-1]
 
             # try to catch the 9char name in the filename 
             filnam = os.path.basename(filein)
@@ -867,7 +864,7 @@ def read_gins_solution(filein, mode="cinematic"):
             point.anex['sol_path'] = filein
             point.anex['dateofexe'] = datexe
             point.anex['gins_version'] = ginsvers
-            
+
 
         elif 'FLH_SOL' in l:
             coordstype = 'FLH'
