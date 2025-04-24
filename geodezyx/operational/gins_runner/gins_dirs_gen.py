@@ -245,18 +245,13 @@ def gen_dirs_rnxs(
             srt_epo = conv.rinexname2dt(rnx_path)
             end_epo = srt_epo + dt.timedelta(days=1)
             freq_rnx = 30
+            print("AAAAAAAAAAAAAA", srt_epo)
+
         # else:
         #     srt_epo, end_epo, freq_rnx = None, None, None
         #     bool_cntu = _fail_rnx(rnx_path, rnx_dt, "get RINEX start/end failed")
         #     if bool_cntu:
         #         continue
-
-        # freq_rnx_str = f"_{int(freq_rnx):02d}s" if auto_interval else ""
-        # ses = "_" + operational.rinex_session_id(srt_epo, end_epo, full_mode=True)
-
-        # Interval Initalisation
-        # interval_line = utils.grep(rnx_path,'INTERVAL',True)
-        #  float(interval_line.split()[0])
 
         dir_out_fname = dir_name + ".yml"
         dir_out_path = os.path.join(out_director_folder, dir_out_fname)
