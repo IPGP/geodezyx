@@ -812,7 +812,6 @@ def read_gins_solution(filein, mode="cinematic"):
 
     pts_list_tmp = []
     namestat = "XXXX"
-    print("AAAAAAABBBBBB", namestat)
 
     datexere = re.search(r"[0-9]{6}_[0-9]{6}", os.path.basename(filein))
     if not datexere:
@@ -837,7 +836,6 @@ def read_gins_solution(filein, mode="cinematic"):
             reout = re.search(namestat + "[0-9]{2}[A-Z]{3}", filnam)
             if reout:
                 namestat = reout.group(0)
-                print("AAAAAAA", namestat)
 
         if "GINS_VERSION" in l:
             ginsvers = f[1]
