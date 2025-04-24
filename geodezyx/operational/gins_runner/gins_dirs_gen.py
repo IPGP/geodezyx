@@ -238,14 +238,18 @@ def gen_dirs_rnxs(
             out_director_folder = os.path.join(gin_path, "gin", "data", "directeur")
 
         # date
+
+        srt_epo, end_epo, freq_rnx = None, None, None
+
         try:
             srt_epo, end_epo, freq_rnx = operational.rinex_start_end(rnx_path, True, verbose=verbose)
-        except ValueError:
-            log.warning("Unable to read RINEX, fallback to filename to guess its start/end")
-            srt_epo = conv.rinexname2dt(rnx_path)
+        except Exception:
+            log.warning("Unable to read RINEX, fallback to filename to get its start/end")
+            srt_epo = rnx_dt
             end_epo = srt_epo + dt.timedelta(days=1)
             freq_rnx = 30
-        else:
+
+        if not srt_epo and not end_epo and not freq_rnx:
             srt_epo, end_epo, freq_rnx = None, None, None
             bool_cntu = _fail_rnx(rnx_path, rnx_dt, "get RINEX start/end failed")
             if bool_cntu:
