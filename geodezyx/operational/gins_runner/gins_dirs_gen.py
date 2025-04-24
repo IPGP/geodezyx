@@ -245,7 +245,8 @@ def gen_dirs_rnxs(
             srt_epo = conv.rinexname2dt(rnx_path)
             end_epo = srt_epo + dt.timedelta(days=1)
             freq_rnx = 30
-            print("AAAAAAAAAAAAAA", srt_epo)
+
+        print("AAAAAAAAAAAAAA", srt_epo)
 
         # else:
         #     srt_epo, end_epo, freq_rnx = None, None, None
