@@ -1697,8 +1697,8 @@ def read_epos_sta_coords_mono(filein, return_df=True):
     else:  ### case 3 : already a list of lines
         F = open(filein)
 
-    Points_list_stk = []
-    Lines_4_DF_stk = []
+    points_list_stk = []
+    lines_4_df_stk = []
 
     for l in F:
         fields = l.split()
@@ -1736,7 +1736,7 @@ def read_epos_sta_coords_mono(filein, return_df=True):
                 point.anex["Vx"] = sVx
                 point.anex["Vy"] = sVy
                 point.anex["Vz"] = sVz
-                Points_list_stk.append(point)
+                points_list_stk.append(point)
 
             #### And store for the DataFrame
             else:
@@ -1746,7 +1746,7 @@ def read_epos_sta_coords_mono(filein, return_df=True):
                             X, Y, Z, sX, sY, sZ,
                             Vx, Vy, Vz, sVx, sVy, sVz)
 
-                Lines_4_DF_stk.append(tup_4_DF)
+                lines_4_df_stk.append(tup_4_DF)
 
     if return_df:
         columns = ("site", "site_num", "tecto_plate", "epoch",
@@ -1754,12 +1754,12 @@ def read_epos_sta_coords_mono(filein, return_df=True):
                    "x", "y", "z", "sx", "sy", "sz",
                    "Vx", "Vy", "Vz", "sVx", "sVy", "sVz")
 
-        DFout = pd.DataFrame(Lines_4_DF_stk,
+        DFout = pd.DataFrame(lines_4_df_stk,
                              columns=columns)
 
         return DFout
     else:
-        return Points_list_stk
+        return points_list_stk
 
 
 def read_epos_sta_coords_multi(filein_list, output_type="DataFrame"):

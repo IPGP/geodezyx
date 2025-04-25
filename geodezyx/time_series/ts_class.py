@@ -1141,7 +1141,8 @@ class TimeSeriePoint:
             self.HfT = scipy.interpolate.interp1d(T,H,bounds_error=False,kind=interptype)
 
         if (not hasattr(self.pts[0],'Eutm')) or np.isnan(self.pts[0].Eutm) == True:
-            log.warning("no UTM for " + self.name)
+            #log.warning("no UTM for " + self.name)
+            pass
         else:
             Eutm,Nutm,Uutm,T,_,_,_ = self.to_list('UTM')
 

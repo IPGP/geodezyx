@@ -140,7 +140,7 @@ def run_directors(
 
         ## parameters for retry
         itry = 0
-        itry_max = 1
+        itry_max = 2
         retry_str = ""
         timeout = 300
 
