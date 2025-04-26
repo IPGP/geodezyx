@@ -487,10 +487,10 @@ def export_ts_as_spotgins(tsin, outdir, ac, data_src = "unknown"):
     #fmtstr = " %14.8f %14.6f %14.6f %14.6f %14.6f %14.6f %14.6f  %4s%2s%2s%2s%2s%2.0f  %12.7f  %5s  %s   %s\n"
     outfile = open(os.path.join(outdir,f"SPOTGINS_{name}.enu"),"w")
 
-    now_date = utils.get_timestamp()
+    now_date = utils.get_timestamp(utc=True)
 
-    const = "G"
     const_lbda = lambda x: "GE" if x >= dt.datetime(2018,10,7) else "G"
+    const = const_lbda(np.max(df["Tdt"]))
     vers = ""
 
     head = f"""# SPOTGINS SOLUTION [POSITION] v2

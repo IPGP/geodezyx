@@ -28,6 +28,29 @@ log = logging.getLogger('geodezyx')
 #                        'Y_position', 'Z_position', 'LOGFILE_NAME', 'DATA_SOURCE'])
 #     return df
 
+
+def read_spotgins_quick(p):
+    df = pd.read_csv(p , comment='#', header=None, sep=r'\s+')
+    
+
+    with open(p) as f:
+        header_line = [line for line in f if line.startswith('#')][-1]
+    df.columns = header_line.strip().split()
+    df = df[df.columns[:4]]
+    df.columns = ['mjd',"E","N","U"]
+    df['date'] = conv.mjd2dt(df['mjd'])    
+    df.set_index('date', inplace=True)
+    df = df.drop("mjd",axis=1)
+
+    return df
+
+
+
+def diff_spotgins_quick(df1,df2):
+    dfout = (df1 - df2).dropna()
+    #print(dfout.to_string())
+    return dfout
+
 def stations_in_epos_sta_coords_file_mono(coords_file_path):
     """
     Gives stations in a EPOS coords. file (YYYY_DDD_sta_coordinates)
