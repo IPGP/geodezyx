@@ -394,22 +394,22 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
         tuple
             Paths to the concatenated orbit and clock files.
         """
-        jjul_bef = str(conv.dt2jjul_cnes(date_inp - dt.timedelta(days=1)))
-        jjul_aft = str(conv.dt2jjul_cnes(date_inp + dt.timedelta(days=1)))
+        jjul_srt = str(conv.dt2jjul_cnes(date_inp - dt.timedelta(days=0)))
+        jjul_end = str(conv.dt2jjul_cnes(date_inp + dt.timedelta(days=1)))
         gs_user = gynscmn.get_gin_path(extended=False)
         gins_data = gynscmn.get_gin_path(extended=True) + "/data"
 
         orb_out = os.path.join(
-            gs_user, "GPSDATA", "_".join((prod + "ORB", "AUTOM", jjul_bef, jjul_aft))
+            gs_user, "GPSDATA", "_".join((prod + "ORB", "AUTOM", jjul_srt, jjul_end))
         )
         cmd_orb = " ".join(
-            ["rapat_orb_gnss.sh", jjul_bef, jjul_aft, "3", gins_data, orb_out, "0"]
+            ["rapat_orb_gnss.sh", jjul_srt, jjul_end, "3", gins_data, orb_out, "0"]
         )
 
         clk_out = os.path.join(
-            gs_user, "GPSDATA", "_".join((prod, "AUTOM", jjul_bef, jjul_aft))
+            gs_user, "GPSDATA", "_".join((prod, "AUTOM", jjul_srt, jjul_end))
         )
-        cmd_clk = " ".join(["get_hor_hautes", jjul_bef, jjul_aft, prod, clk_out])
+        cmd_clk = " ".join(["get_hor_hautes", jjul_srt, jjul_end, prod, clk_out])
 
         for cmd, out_fil in [(cmd_orb, orb_out), (cmd_clk, clk_out)]:
             _run_cat_orbclk(cmd, out_fil)
