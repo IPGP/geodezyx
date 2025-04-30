@@ -20,6 +20,7 @@ def singugins_run(
     bdrnx_folder="/root/020_BDRNX/",
     nprocs=8,
     no_updatebd=False,
+    no_concat_orb_clk=False,
     verbose=False,
     force=False,
     spotgins_run_kwargs={},
@@ -47,6 +48,10 @@ def singugins_run(
         Number of processes to use. Default is 8.
     no_updatebd : bool, optional
         Flag to indicate whether to update the database. Default is False.
+    no_concat_orb_clk : bool, optional
+        Flag to indicate whether to concatenate the orbit and
+        clock files prior to the main processing
+        Default is False.
     force : bool, optional
         Flag to force the process to run even if the results already exist.
     spotgins_run_kwargs : dict, optional
@@ -69,6 +74,7 @@ def singugins_run(
         results_folder_inp=results_folder,
         nprocs=nprocs,
         no_updatebd=no_updatebd,
+        no_concat_orb_clk=no_concat_orb_clk,
         verbose=verbose,
         force=force,
         **spotgins_run_kwargs,
@@ -139,6 +145,14 @@ def main():
     )
 
     parser.add_argument(
+        "-nc",
+        "--no_concat_orb_clk",
+        action="store_true",
+        help="Flag to indicate whether to concatenate the"
+             "orbit and clock files prior to the main processing",
+    )
+
+    parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
@@ -167,6 +181,7 @@ def main():
         bdrnx_folder=args.bdrnx_folder,
         spotgins_run_kwargs=spotgins_run_kwargs,
         no_updatebd=args.no_updatebd,
+        no_concat_orb_clk=args.no_concat_orb_clk,
         nprocs=args.nprocs,
         verbose=args.verbose,
         force=args.force,
