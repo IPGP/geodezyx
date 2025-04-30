@@ -362,7 +362,7 @@ def pickle_loader(pathin):
 
 def globals_filtered():
     """
-    Filter globals() varirables with only compatible variables for pickle.
+    Filter globals() variables with only compatible variables for pickle.
     
     https://stackoverflow.com/questions/2960864/how-to-save-all-the-variables-in-the-current-python-session
 
@@ -879,10 +879,10 @@ def get_timestamp(outstring=True, separator='T', utc=False):
     """
 
     if utc:
-        now = datetime.now(dt.timezone.utc)
+        now = dt.datetime.now(dt.timezone.utc)
         zulu = "Z"
     else:
-        now = datetime.now()
+        now = dt.datetime.now()
         zulu = ""
 
     if outstring:
