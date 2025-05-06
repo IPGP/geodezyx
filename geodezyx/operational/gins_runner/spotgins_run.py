@@ -629,6 +629,3 @@ def const_adapt(const_inp, dir_inp, verbose=True):
         return "G"
     else:
         return const_inp
-
-
-import subprocess
