@@ -87,10 +87,12 @@ def rinex_finder(
     if "%" in main_dir and start_epoch and end_epoch:
         files_raw_lis = []
         for epo in conv.dt_range(start_epoch, end_epoch, day_step=1):
-            files_raw_lis_epo, _ = utils.walk_dir(epo.strftime(main_dir))
+            main_dir_abs = os.path.abspath(epo.strftime(main_dir))
+            files_raw_lis_epo, _ = utils.walk_dir(main_dir_abs)
             files_raw_lis.extend(files_raw_lis_epo)
     else:
-        files_raw_lis, _ = utils.walk_dir(main_dir)
+        main_dir_abs = os.path.abspath(main_dir)
+        files_raw_lis, _ = utils.walk_dir(main_dir_abs)
 
     files_rnx_lis = []
 
