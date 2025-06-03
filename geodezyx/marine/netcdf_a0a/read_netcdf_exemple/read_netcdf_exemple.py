@@ -22,8 +22,6 @@ time = time.squeeze()
 plt.plot(time,pres)
 ncfile_ifremer["LATITUDE"][:]
 
-
-
 p = "./netcdf_exemples/wc32_19910624to19920604.nc"
 ncfile_noaa = netCDF4.Dataset(p,mode='r',format='NETCDF4_CLASSIC')
 print(ncfile_noaa)
@@ -32,6 +30,6 @@ ncfile_noaa["timeSeries"]
 ncfile_noaa["pressure_sensor_info"]
 
 
-p_homemade = "/home/psakicki/aaa_FOURBI/out.nc"
+p_homemade = "/home/psakicki/CODES/geodezyx/geodezyx/marine/netcdf_a0a/output_netcdf/out.nc"
 ncfile_homemade = netCDF4.Dataset(p_homemade,mode='r',format='NETCDF4_CLASSIC')
 print(ncfile_homemade)
