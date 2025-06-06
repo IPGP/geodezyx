@@ -18,7 +18,7 @@ def parse_args():
     )
     parser.add_argument("-l", "--stations_list", nargs="+", required=True, help="List of station names")
     parser.add_argument("-c", "--datacenter", required=True, help="Archive center (e.g. igs_cddis, euref, etc.)")
-    parser.add_argument("-o","--output-dir", required=True, help="Root directory to store RINEX files")
+    parser.add_argument("-o","--output_dir", required=True, help="Root directory to store RINEX files")
     parser.add_argument("-s","--startdate", required=True, help="Start date (YYYY-MM-DD)")
     parser.add_argument("-e","--enddate", required=True, help="End date (YYYY-MM-DD)")
     parser.add_argument("-a","--archtype", default="stat", help="Archive directory structure type")
@@ -43,7 +43,7 @@ def main():
 
     download_gnss_rinex(
         statdico=statdico,
-        output_dir=args.output-dir,
+        output_dir=args.output_dir,
         startdate=startdate,
         enddate=enddate,
         archtype=args.archtype,
