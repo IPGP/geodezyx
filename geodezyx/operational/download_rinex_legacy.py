@@ -342,7 +342,7 @@ def download_gnss_rinex_legacy(
     final_archive_for_sup_check : str
         The final archive path or a file containing the archived RINEXs in
         their final destination.
-        useful if the final archive is different from archive_dir
+        useful if the final archive is different from output_dir
 
     force : bool
         Force the download even if the file already exists locally
@@ -359,10 +359,10 @@ def download_gnss_rinex_legacy(
     ---------------
         >>> statdic = dict()
         >>> statdic['igs_cddis'] = ['ZIMM']
-        >>> archive_dir = '/home/USER/test_dl_rnx'
+        >>> output_dir = '/home/USER/test_dl_rnx'
         >>> startdate = dt.datetime(2000,1,1)
         >>> enddate = dt.datetime(2000,1,31)
-        >>> geodezyx.operational.download_gnss_rinex_legacy(statdic, archive_dir, startdate, enddate)
+        >>> geodezyx.operational.download_gnss_rinex_legacy(statdic, output_dir, startdate, enddate)
 
     """
 

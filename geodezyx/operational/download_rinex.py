@@ -507,7 +507,7 @@ def ftp_files_crawler(
 
 def download_gnss_rinex(
     statdico,
-    archive_dir,
+    output_dir,
     startdate,
     enddate,
     archtype="stat",
@@ -573,7 +573,7 @@ def download_gnss_rinex(
             ens_fr
             ***** not reimplemented yet *****
 
-    archive_dir : str
+    output_dir : str
         the root directory on your local drive were to store the RINEXs
 
     archtype : str
@@ -652,7 +652,7 @@ def download_gnss_rinex(
         >>> archive_dir = '/home/USER/test_dl_rnx'
         >>> startdate = dt.datetime(2020,1,1)
         >>> enddate = dt.datetime(2020,1,31)
-        >>> geodezyx.operational.download_gnss_rinex(statdic, archive_dir, startdate, enddate)
+        >>> geodezyx.operational.download_gnss_rinex(statdic, output_dir, startdate, enddate)
     """
 
     date_range = conv.dt_range(startdate, enddate)
@@ -668,7 +668,7 @@ def download_gnss_rinex(
             urldic, secure_ftp, mode1hz = _server_select(datacenter, site, date)
             if not urldic:
                 continue
-            outdir = effective_save_dir(archive_dir, site, date, archtype)
+            outdir = effective_save_dir(output_dir, site, date, archtype)
             for rnxver, rnxurl in urldic.items():
                 if rnxver == 2 and not get_rnx2:
                     continue

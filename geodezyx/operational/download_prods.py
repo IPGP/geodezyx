@@ -696,7 +696,7 @@ def multi_downloader_orbs_clks(
 #                 else:
 #                     log.error('ERR : Wrong archive_center name !!! :' + archive_center)
 #                 urllist.append(url)
-#                 savedir = dlutils.effective_save_dir_orbit(archive_dir,
+#                 savedir = dlutils.effective_save_dir_orbit(output_dir,
 #                                                            cc,
 #                                                            curdate,
 #                                                            archtype)
