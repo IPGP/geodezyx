@@ -9,6 +9,7 @@ Created on 06/06/2025 11:23:06
 import argparse
 import datetime as dt
 import sys
+from geodezyx import conv
 
 from geodezyx.operational.download_rinex import download_gnss_rinex
 
@@ -24,8 +25,8 @@ def parse_args():
     parser.add_argument("-a","--archtype", default="stat", help="Archive directory structure type")
     parser.add_argument("-u","--user", default="anonymous", help="FTP username")
     parser.add_argument("-p","--passwd", default="anonymous@isp.com", help="FTP password")
-    parser.add_argument("-nr2","--no-rnx2", action="store_false", help="Download RINEX2 files")
-    parser.add_argument("-nr3","--no-rnx3", action="store_false", help="Download RINEX3 files")
+    parser.add_argument("-nr2","--no_rnx2", action="store_false", help="Download RINEX2 files")
+    parser.add_argument("-nr3","--no_rnx3", action="store_false", help="Download RINEX3 files")
     parser.add_argument("-f","--force", action="store_true", help="Force download even if file exists")
     parser.add_argument("-q","--quiet", action="store_true", help="List available RINEXs without downloading")
     return parser.parse_args()
@@ -33,8 +34,10 @@ def parse_args():
 def main():
     args = parse_args()
     try:
-        startdate = dt.datetime.strptime(args.startdate, "%Y-%m-%d")
-        enddate = dt.datetime.strptime(args.enddate, "%Y-%m-%d")
+        startdate = conv.date_pattern_2_dt(args.startdate)
+        enddate = conv.date_pattern_2_dt(args.enddate)
+        startdate = min((startdate, enddate))
+        enddate = min((startdate, enddate))
     except Exception as e:
         print(f"Error parsing dates: {e}")
         sys.exit(1)

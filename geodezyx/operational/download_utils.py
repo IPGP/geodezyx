@@ -602,11 +602,11 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
     #### Initialisation of the 1st variables for the loop
     prev_row_ftpobj = df.iloc[0]
     prev_row_cwd = df.iloc[0]
-    FTP_files_list = []
+    ftp_files_list = []
     count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
     #### Initialisation of the FTP object
 
-    FTPobj, _ = ftp_objt_create(
+    ftpobj, _ = ftp_objt_create(
         secure_ftp_inp=secure_ftp,
         host=prev_row_ftpobj.root,
         user=prev_row_ftpobj.user,
@@ -618,7 +618,7 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
 
         ####### we recreate a new FTP object if the root URL is not the same
         if row.root != prev_row_ftpobj.root or count_loop > 20:
-            FTPobj, _ = ftp_objt_create(
+            ftpobj, _ = ftp_objt_create(
                 secure_ftp_inp=secure_ftp,
                 host=prev_row_ftpobj.root,
                 user=prev_row_ftpobj.user,
@@ -631,34 +631,34 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
         ####### we recreate a new file list if the date path is not the same
         if (prev_row_cwd.dir != row.dir) or irow == 0:
             log.info("chdir " + row.dirname)
-            FTPobj.cwd("/")
+            ftpobj.cwd("/")
 
             try:  #### we try to change for the right folder
-                FTPobj.cwd(row.dir)
+                ftpobj.cwd(row.dir)
             except:  #### If not possible, then no file in the list
-                FTP_files_list = []
+                ftp_files_list = []
 
-            FTP_files_list = _ftp_dir_list_files(FTPobj)
+            ftp_files_list = _ftp_dir_list_files(ftpobj)
             prev_row_cwd = row
 
             ####### we check if the files is avaiable
-        if row.basename in FTP_files_list:
+        if row.basename in ftp_files_list:
             df.loc[irow, "bool"] = True
             log.info(row.basename + " found on server :)")
         else:
             df.loc[irow, "bool"] = False
             log.warning(row.basename + " not found on server :(")
 
-    DFgood = df[df["bool"]].copy()
+    df_good = df[df["bool"]].copy()
 
-    DFgood["url"] = "ftp://" + DFgood["url"]
+    df_good["url"] = "ftp://" + df_good["url"]
 
     ### generate the outputs
     if loginftp:
-        urllist_out = list(zip(DFgood.url, DFgood.user, DFgood["pass"]))
+        urllist_out = list(zip(df_good.url, df_good.user, df_good["pass"]))
     else:
-        urllist_out = list(DFgood.url)
+        urllist_out = list(df_good.url)
 
-    savedirlist_out = list(DFgood.savedir)
+    savedirlist_out = list(df_good.savedir)
 
     return urllist_out, savedirlist_out

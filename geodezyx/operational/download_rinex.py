@@ -7,6 +7,7 @@ Created on 23/04/2024 21:31:45
 """
 import datetime as dt
 import glob
+import itertools
 import logging
 import os
 import pathlib
@@ -17,7 +18,7 @@ import pandas as pd
 import geodezyx.operational.download_utils as dlutils
 from geodezyx import conv
 
-log = logging.getLogger('geodezyx')
+log = logging.getLogger("geodezyx")
 
 
 def _rnx_obs_rgx(stat, date):
@@ -47,7 +48,7 @@ def _rnx_nav_rgx(stat, date, sys=".", data_source="."):
         data_type=sys + "N",
         format_compression=".*",
     )
-    
+
     return rnx2rgx, rnx3rgx
 
 
@@ -157,17 +158,20 @@ def euref_server(stat, date):
 
     return urldic
 
+
 def nav_bkg_server(stat, date):
     urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/BRDC/"
     # ftp://igs-ftp.bkg.bund.de/IGS/BRDC/2024/082/BRDC00WRD_S_20240820000_01D_MN.rnx.gz
-    
+
     ### generate regex
-    rnx2rgx, rnx3rgx = _rnx_nav_rgx(stat, date, sys="M", data_source="S") ### NAV RNX HERE !!!
+    rnx2rgx, rnx3rgx = _rnx_nav_rgx(
+        stat, date, sys="M", data_source="S"
+    )  ### NAV RNX HERE !!!
 
     ### generate urls
     urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
     rnx3url = os.path.join(urldir, rnx3rgx)
-    
+
     urldic = dict()
     urldic[3] = rnx3url
 
@@ -298,7 +302,7 @@ def _server_select(datacenter, site, curdate):
         urldic = euref_server(site, curdate)
     elif datacenter in ("nav", "brdc"):
         urldic = nav_rob_server(site, curdate)
-    elif datacenter in ('nav_rt', 'brdc_rt'):
+    elif datacenter in ("nav_rt", "brdc_rt"):
         urldic = nav_bkg_server(site, curdate)
     # elif datacenter == 'rgp':
     #     urldic = rgp_ign_smn_server_legacy(site, curdate)
@@ -503,7 +507,6 @@ def ftp_files_crawler(
 
     return table_use, all_ftp_files
 
-
 def download_gnss_rinex(
     statdico,
     output_dir,
@@ -664,22 +667,18 @@ def download_gnss_rinex(
     log.info("dates: %s to %s", startdate, enddate)
     log.info("datacenter/stations: %s/%s", datacenter, " ".join(site_lis))
 
-
     if path_ftp_crawled_files_load:
         table = pd.read_csv(path_ftp_crawled_files_load)
     else:
-        for date in date_range:
-            for site in site_lis:
-                urldic, secure_ftp, mode1hz = _server_select(datacenter, site, date)
-                if not urldic:
+        for date, site in itertools.product(date_range, site_lis):
+            urldic, secure_ftp, mode1hz = _server_select(datacenter, site, date)
+            if not urldic:
+                continue
+            outdir = effective_save_dir(output_dir, site, date, archtype)
+            for rnxver, rnxurl in urldic.items():
+                if (rnxver == 2 and not get_rnx2) or (rnxver == 3 and not get_rnx3):
                     continue
-                outdir = effective_save_dir(output_dir, site, date, archtype)
-                for rnxver, rnxurl in urldic.items():
-                    if rnxver == 2 and not get_rnx2:
-                        continue
-                    if rnxver == 3 and not get_rnx3:
-                        continue
-                    table_proto.append((date, site, outdir, rnxver, rnxurl))
+                table_proto.append((date, site, outdir, rnxver, rnxurl))
 
         if len(table_proto) == 0:
             log.error("No RINEX files found for the given criteria.")
@@ -720,13 +719,13 @@ def download_gnss_rinex(
 
     if not quiet_mode and len(table_dl) > 0:
         dlutils.ftp_download_frontend(
-                table_dl["url_true"].values,
-                table_dl["outdir"].values,
-                parallel_download=parallel_download,
-                secure_ftp=secure_ftp,
-                user=user,
-                passwd=passwd,
-                force=force,
-                )
+            table_dl["url_true"].values,
+            table_dl["outdir"].values,
+            parallel_download=parallel_download,
+            secure_ftp=secure_ftp,
+            user=user,
+            passwd=passwd,
+            force=force,
+        )
 
     return None

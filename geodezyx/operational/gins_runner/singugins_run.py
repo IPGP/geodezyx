@@ -24,6 +24,8 @@ def singugins_run(
     verbose=False,
     force=False,
     spotgins_run_kwargs={},
+    no_rnx2=False,
+    no_rnx3=False,
 ):
     """
     Run the SPOTGINS process within a SINGUGINS container.
@@ -57,16 +59,28 @@ def singugins_run(
     spotgins_run_kwargs : dict, optional
         Additional keyword arguments to pass to the `spotgins_run` function.
         Default is an empty dictionary.
+    no_rnx2 : bool, optional
+        If True, RINEX2 files will not be processed.
+        Default is False (RINEX2 files will be processed).
+    no_rnx3 : bool, optional
+        If True, RINEX3 files will not be processed.
+        Default is False (RINEX3 files will be processed).
 
     Returns
     -------
     None
     """
+
+    start_epoch = min((start_epoch, end_epoch))
+    end_epoch = max((start_epoch, end_epoch))
+
     rnxs_lis = opera.rinex_finder(
         bdrnx_folder,
         specific_sites=specific_sites,
         start_epoch=start_epoch,
         end_epoch=end_epoch,
+        short_name=not no_rnx2,
+        long_name=not no_rnx3,
     )
 
     opera.spotgins_run(
@@ -166,6 +180,20 @@ def main():
         help="Flag to force the process to run even if the results already exist.",
     )
 
+    parser.add_argument(
+        "-nr2",
+        "--no_rnx2",
+        action="store_true",
+        help="If True, RINEX2 files will not be processed.",
+    )
+
+    parser.add_argument(
+        "-nr3",
+        "--no_rnx3",
+        action="store_true",
+        help="If True, RINEX3 files will not be processed.",
+    )
+
     args = parser.parse_args()
 
     # Convert spotgins_run_kwargs from JSON string to dictionary
@@ -185,6 +213,8 @@ def main():
         nprocs=args.nprocs,
         verbose=args.verbose,
         force=args.force,
+        no_rnx2=args.no_rnx2,
+        no_rnx3=args.no_rnx3,
     )
 
 
