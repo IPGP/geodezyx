@@ -185,7 +185,6 @@ def igs_cddis_nav_server_legacy(stat, date):
     return url
 
 
-
 def rgp_ign_smn_server_legacy(stat, date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
     rnxname = conv.statname_dt2rinexname(stat.lower(), date)
@@ -662,34 +661,41 @@ def download_gnss_rinex(
     for k, v in statdico.items():
         datacenter = k
         site_lis = v
+    log.info("dates: %s to %s", startdate, enddate)
+    log.info("datacenter/stations: %s/%s", datacenter, " ".join(site_lis))
 
-    for date in date_range:
-        for site in site_lis:
-            urldic, secure_ftp, mode1hz = _server_select(datacenter, site, date)
-            if not urldic:
-                continue
-            outdir = effective_save_dir(output_dir, site, date, archtype)
-            for rnxver, rnxurl in urldic.items():
-                if rnxver == 2 and not get_rnx2:
-                    continue
-                if rnxver == 3 and not get_rnx3:
-                    continue
-                table_proto.append((date, site, outdir, rnxver, rnxurl))
-
-    table = pd.DataFrame(
-        table_proto, columns=["date", "site", "outdir", "ver", "url_theo"]
-    )
-    table["crawled"] = False
-    table["url_true"] = None
-    table["rnxnam"] = ""
-
-    urlpathobj = table["url_theo"].apply(pathlib.Path)
-    table["rnxrgx"] = urlpathobj.apply(lambda p: p.name)
-    table["host"] = urlpathobj.apply(lambda p: p.parts[1])
-    table["dir"] = urlpathobj.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
     if path_ftp_crawled_files_load:
         table = pd.read_csv(path_ftp_crawled_files_load)
+    else:
+        for date in date_range:
+            for site in site_lis:
+                urldic, secure_ftp, mode1hz = _server_select(datacenter, site, date)
+                if not urldic:
+                    continue
+                outdir = effective_save_dir(output_dir, site, date, archtype)
+                for rnxver, rnxurl in urldic.items():
+                    if rnxver == 2 and not get_rnx2:
+                        continue
+                    if rnxver == 3 and not get_rnx3:
+                        continue
+                    table_proto.append((date, site, outdir, rnxver, rnxurl))
+
+        if len(table_proto) == 0:
+            log.error("No RINEX files found for the given criteria.")
+            return None
+
+        table = pd.DataFrame(
+            table_proto, columns=["date", "site", "outdir", "ver", "url_theo"]
+        )
+        table["crawled"] = False
+        table["url_true"] = None
+        table["rnxnam"] = ""
+
+        urlpathobj = table["url_theo"].apply(pathlib.Path)
+        table["rnxrgx"] = urlpathobj.apply(lambda p: p.name)
+        table["host"] = urlpathobj.apply(lambda p: p.parts[1])
+        table["dir"] = urlpathobj.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
     if skip_crawl:
         table_crawl = table
