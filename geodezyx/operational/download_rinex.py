@@ -348,10 +348,8 @@ def effective_save_dir(parent_archive_dir, stat, date, archtype="stat"):
     if archtype == "/":
         return parent_archive_dir
 
-    if len(archtype) > 0 and archtype[0] == "/":
-        log.warn(
-            "The archive type description starts with a /, remove it to avoid an error"
-        )
+    if len(archtype) > 0 and archtype.startswith("/"):
+        log.warning("The archive type starts with /, remove it to avoid error")
 
     out_save_dir = parent_archive_dir
     fff = archtype.split("/")
@@ -507,6 +505,7 @@ def ftp_files_crawler(
 
     return table_use, all_ftp_files
 
+
 def download_gnss_rinex(
     statdico,
     output_dir,
@@ -523,8 +522,8 @@ def download_gnss_rinex(
     quiet_mode=False,
     final_archive_for_sup_check=None,
     force=False,
-    get_rnx2=True,
-    get_rnx3=True,
+    no_rnx2=False,
+    no_rnx3=False,
 ):
     """
     Parameters
@@ -537,63 +536,38 @@ def download_gnss_rinex(
             >>> statdico['archive center 2'] = ['STA2','STA1','STA4', ...]
 
         the supported archive center are (april 2024):
-            igs_cddis or igs (CDDIS data center)
-
-            igs_sopac (for the SOPAC/UCSD/SIO data center, but not very reliable)
-
-            igs_ign (IGN's data center, main server at St Mandé)
-
-            igs_ign_ensg (IGN's data center, secondary server at ENSG, Marne-la-Vallée)
-
-            sonel
-
-            euref (EPN data center hosted at ROB)
-
-            nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
-            from the ROB server, using GOP files
-
-            nav_rt or brdc_rt as archive center allows to download *real time* nav files
-            from the BKG server
-
-            ***** not reimplemented yet *****
-            rgp (IGN's RGP St Mandé center)
-
-            rgp_mlv (IGN's RGP Marne la Vallée center)
-
-            rgp_1Hz (IGN's RGP, all the 24 hourly rinex for the day will be downloaded)
-
-            renag
-
-            ovsg
-
-            unavco
-
-            sonel
-
-            geoaus (Geosciences Australia)
-
-            ens_fr
-            ***** not reimplemented yet *****
+            * igs_cddis or igs (CDDIS data center)
+            * igs_sopac (for the SOPAC/UCSD/SIO data center, but not very reliable)
+            * igs_ign (IGN's data center, main server at St Mandé)
+            * igs_ign_ensg (IGN's data center, secondary server at ENSG, Marne-la-Vallée)
+            * sonel
+            * euref (EPN data center hosted at ROB)
+            * nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
+            * from the ROB server, using GOP files
+            * nav_rt or brdc_rt as archive center allows to download *real time* nav files from the BKG server
+            * _not reimplemented yet_
+            * rgp (IGN's RGP St Mandé center)
+            * rgp_mlv (IGN's RGP Marne la Vallée center)
+            * rgp_1Hz (IGN's RGP, all the 24 hourly rinex for the day will be downloaded)
+            * renag
+            * ovsg
+            * unavco
+            * geoaus (Geosciences Australia)
+            * ens_fr
+            * _not reimplemented yet_
 
     output_dir : str
         the root directory on your local drive were to store the RINEXs
 
     archtype : str
-        string describing how the archive directory is structured, e.g :
-
-            stat
-
-            stat/year
-
-            stat/year/doy
-
-            year/doy
-
-            year/stat
-
-            week/dow/stat
-
-            ... etc ...
+        string describing how the archive directory is structured, e.g:
+            * stat
+            * stat/year
+            * stat/year/doy
+            * year/doy
+            * year/stat
+            * week/dow/stat
+            * etc ...
 
     user & passwd : str
         user & password for a secure server
@@ -635,7 +609,7 @@ def download_gnss_rinex(
     force : bool
         Force the download even if the file already exists locally
 
-    get_rnx2 & get_rnx3 : bool
+    no_rnx2 & no_rnx3 : bool
         limit the search/download to RINEX2 (short names) and/or
         RINEX3 (long names) depending on the boolean given
 
@@ -659,13 +633,16 @@ def download_gnss_rinex(
 
     date_range = conv.dt_range(startdate, enddate)
 
-    table_proto = []
-
     for k, v in statdico.items():
         datacenter = k
         site_lis = v
+
     log.info("dates: %s to %s", startdate, enddate)
     log.info("datacenter/stations: %s/%s", datacenter, " ".join(site_lis))
+
+    
+
+    table_proto = []
 
     if path_ftp_crawled_files_load:
         table = pd.read_csv(path_ftp_crawled_files_load)
@@ -676,7 +653,7 @@ def download_gnss_rinex(
                 continue
             outdir = effective_save_dir(output_dir, site, date, archtype)
             for rnxver, rnxurl in urldic.items():
-                if (rnxver == 2 and not get_rnx2) or (rnxver == 3 and not get_rnx3):
+                if (rnxver == 2 and no_rnx2) or (rnxver == 3 and no_rnx3):
                     continue
                 table_proto.append((date, site, outdir, rnxver, rnxurl))
 

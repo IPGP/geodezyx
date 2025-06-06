@@ -135,7 +135,7 @@ def download_convert_2_gins_orb_clk(
     enddt = centraldate + dt.timedelta(days=1)
 
     if centraldate > dt.datetime(2013, 12, 29) and repro != 0:
-        log.warn(str(centraldate) + " a bit late for repro " + str(repro))
+        log.warning(str(centraldate) + " a bit late for repro " + str(repro))
 
     # defining names & paths
     if repro != 0:
@@ -168,7 +168,7 @@ def download_convert_2_gins_orb_clk(
         return cleanoutorb_path, catoutclk_path
 
     # downloading orbits
-    sp3Zlis = operational.multi_downloader_orbs_clks_2(
+    sp3_zlis = operational.multi_downloader_orbs_clks_2(
         temp_dir,
         strtdt,
         enddt,
@@ -184,7 +184,7 @@ def download_convert_2_gins_orb_clk(
 
     # downloading clocks
     # 30sec clock prioritary
-    clkZlis = operational.multi_downloader_orbs_clks_2(
+    clk_zlis = operational.multi_downloader_orbs_clks_2(
         temp_dir,
         strtdt,
         enddt,
@@ -199,9 +199,9 @@ def download_convert_2_gins_orb_clk(
     # elsewhere the cat of the orbits/clock is bad !!!
 
     # standard clock else
-    if clkZlis == []:
+    if not clk_zlis:
         print("INFO : clock download : no 30s clock found, trying std. clocks")
-        clkZlis = operational.multi_downloader_orbs_clks(
+        clk_zlis = operational.multi_downloader_orbs_clks(
             temp_dir,
             strtdt,
             enddt,
@@ -216,17 +216,17 @@ def download_convert_2_gins_orb_clk(
         # elsewhere the cat of the orbits/clock is bad !!!
 
     # Exception case where no files are found
-    if len(sp3Zlis) < 3 or len(clkZlis) < 3:
+    if len(sp3_zlis) < 3 or len(clk_zlis) < 3:
         print(
             "ERR : download_convert_2_gins_orb_clk : missing sp3/clk for", centraldate
         )
-        print("list of sp3 : ", sp3Zlis)
-        print("list of clk : ", clkZlis)
+        print("list of sp3 : ", sp3_zlis)
+        print("list of clk : ", clk_zlis)
         return None, None
 
     # uncompressing orbits
     sp3lis = []
-    for Zfil in sp3Zlis:
+    for Zfil in sp3_zlis:
         if Zfil.endswith(".Z") or Zfil.endswith(".gz"):
             uncomp_fil = files_rw.unzip_gz_Z(Zfil)
         else:
@@ -242,7 +242,7 @@ def download_convert_2_gins_orb_clk(
 
     # uncompressing clocks
     clklis = []
-    for Zfil in clkZlis:
+    for Zfil in clk_zlis:
         if Zfil.endswith(".Z") or Zfil.endswith(".gz"):
             uncomp_fil = files_rw.unzip_gz_Z(Zfil)
         else:
