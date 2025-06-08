@@ -26,8 +26,11 @@ else:
 # from . import externlib # disable 202406xx
 # from . import megalib # disable 202411xx
 
-#from . import athmo
+
 from . import conv
+from . import utils
+
+#from . import athmo
 #from . import files_rw
 #from . import geodyn
 #from . import interp
@@ -36,7 +39,6 @@ from . import conv
 #from . import reffram
 #from . import stats
 #from . import time_series
-from . import utils
 #from . import utils_xtra
 
 __all__ = ['athmo',

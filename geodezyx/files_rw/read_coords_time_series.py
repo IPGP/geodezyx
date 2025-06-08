@@ -1024,7 +1024,7 @@ def read_gins(filein, kineorstatic='kine', flh_in_rad=True,
             Yref = float(nextline[5])
             Zref = float(nextline[6])
 
-            Fref, Lref, Href = conv.XYZ2GEO(Xref, Yref, Zref)
+            Fref, Lref, Href = conv.xyz2geo(Xref, Yref, Zref)
 
         #        if 'angles en deg' in line:
         #            flh_in_rad = False
@@ -2340,7 +2340,7 @@ def read_qinsy(filein, yy, mm, dd):
     reader = pd.read_csv(open(filein))
     T = [dateutil.parser.parse(e).replace(year=yy, month=mm, day=dd) + dt.timedelta(seconds=dUTCGPS) for e in
          list(reader.icol(0))]
-    (X, Y, Z) = np.array(conv.GEO2XYZ(reader.icol(12), reader.icol(13), reader.icol(14)))
+    (X, Y, Z) = np.array(conv.geo2xyz(reader.icol(12), reader.icol(13), reader.icol(14)))
     # sX,sY,sZ = [] , [] , []
     initype = 'XYZ'
     tsout = time_series.TimeSeriePoint()

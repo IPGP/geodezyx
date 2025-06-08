@@ -115,7 +115,7 @@ We can also get the vector between POTS and the Helmertturm
 
 ::
 
-    conv.XYZ2ENU_2(Helmertturm[0], Helmertturm[1], Helmertturm[2], 
+    conv.xyz2enu(Helmertturm[0], Helmertturm[1], Helmertturm[2],
                    POTS[0],POTS[1],POTS[2])
     Out: (array([0.88515353]), array([20735.55848087]), array([-6364723.46820732]))
 

@@ -1374,7 +1374,7 @@ or a (N,3)-shaped numpy array</p></li>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Be sure your input is in ECI (SP3 are in ECEF for instance).</p>
-<p>If neeeded, use <code class="docutils literal notranslate"><span class="pre">conv.ECEF2ECI()</span></code> (gross results)
+<p>If neeeded, use <code class="docutils literal notranslate"><span class="pre">conv.ecef2eci()</span></code> (gross results)
 or <code class="docutils literal notranslate"><span class="pre">reffram.OrbDF_crf2trf(inv_trf2crf=True)</span></code> (precise results)</p>
 <p>You can get the velocity with <code class="docutils literal notranslate"><span class="pre">reffram.DFOrb_velocity_calc()</span></code></p>
 <p><a class="reference external" href="https://downloads.rene-schwarz.com/download/M002-Cartesian_State_Vectors_to_Keplerian_Orbit_Elements.pdf">https://downloads.rene-schwarz.com/download/M002-Cartesian_State_Vectors_to_Keplerian_Orbit_Elements.pdf</a></p>

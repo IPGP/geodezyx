@@ -341,8 +341,8 @@ functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 GitHub repository :
 <a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.ECEF2ECI">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ECEF2ECI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utc_times</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ECEF2ECI" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.ecef2eci">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ecef2eci</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utc_times</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ecef2eci" title="Link to this definition"></a></dt>
 <dd><p>Convert ECEF (Earth Centered Earth Fixed) positions to ECI (Earth Centered Inertial)
 positions</p>
 <dl class="field-list simple">
@@ -375,8 +375,8 @@ Inspired from satellite-js (<a class="reference external" href="https://github.c
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.ECI2ECEF">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ECI2ECEF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utc_times</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ECI2ECEF" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.eci2ecef">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">eci2ecef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utc_times</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.eci2ecef" title="Link to this definition"></a></dt>
 <dd><p>Convert ECI (Earth Centered Inertial) positions to ECEF (Earth Centered Earth Fixed)
 positions</p>
 <dl class="field-list simple">
@@ -417,14 +417,14 @@ Inspired from satellite-js (<a class="reference external" href="https://github.c
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.ECI2RTN">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ECI2RTN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ECI2RTN" title="Link to this definition"></a></dt>
-<dd><p>legacy wrapper of ECI2RTN_or_RPY</p>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.eci2rtn">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">eci2rtn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.eci2rtn" title="Link to this definition"></a></dt>
+<dd><p>legacy wrapper of eci2rtn_or_rpy</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.ECI2RTN_or_RPY">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ECI2RTN_or_RPY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_rpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rpy_theo_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ECI2RTN_or_RPY" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.eci2rtn_or_rpy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">eci2rtn_or_rpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_rpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rpy_theo_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.eci2rtn_or_rpy" title="Link to this definition"></a></dt>
 <dd><p>convert ECI coordinates in RTN (RIC) or RPY (Roll Pitch Yaw)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -449,8 +449,8 @@ ans. empirically, only for debug !!</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.ENU2XYZ">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ENU2XYZ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ENU2XYZ" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.enu2xyz">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">enu2xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocity_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.enu2xyz" title="Link to this definition"></a></dt>
 <dd><p>Coordinates conversion</p>
 <p>ENU Topocentic =&gt; XYZ ECEF Geocentric</p>
 <dl class="field-list simple">
@@ -487,8 +487,8 @@ Default is False</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_coords.ENU2XYZ_legacy">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ENU2XYZ_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Yref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Zref</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ENU2XYZ_legacy" title="Link to this definition"></a></dt>
-<dd><p>KEPT FOR LEGACY REASONS, use ENU2XYZ</p>
-<p>diffère de ENU2XYZ pour d’obscure raisons, à investiguer !!!
+<dd><p>KEPT FOR LEGACY REASONS, use enu2xyz</p>
+<p>diffère de enu2xyz pour d’obscure raisons, à investiguer !!!
 est laissé pour des scripts de conversion de GINS (170119)</p>
 <p>this fct compute the dXYZ and not the final XYZ</p>
 </dd></dl>
@@ -526,17 +526,17 @@ est laissé pour des scripts de conversion de GINS (170119)</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.GEO2XYZ_vector">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">GEO2XYZ_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FLH</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6378137.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00669438003</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.GEO2XYZ_vector" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.geo2xyz_vector">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">geo2xyz_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FLH</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6378137.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00669438003</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.geo2xyz_vector" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.XYZ2ENU">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">XYZ2ENU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.XYZ2ENU" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.xyz2enu_core">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">xyz2enu_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.xyz2enu_core" title="Link to this definition"></a></dt>
 <dd><p>Coordinates conversion</p>
 <p>XYZ ECEF Geocentric =&gt; ENU Topocentic</p>
-<p><strong>use XYZ2ENU_2 in priority</strong></p>
-<p>(XYZ2ENU is a core function for XYZ2ENU_2)</p>
+<p><strong>use xyz2enu in priority</strong></p>
+<p>(xyz2enu_core is a core function for xyz2enu)</p>
 <p>dXYZ = XYZrover - XYZref</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -569,8 +569,8 @@ a different x0,y0,z0 will be applied for each dX,dY,dZ element</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.XYZ2ENU_2">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">XYZ2ENU_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.XYZ2ENU_2" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.xyz2enu">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">xyz2enu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.xyz2enu" title="Link to this definition"></a></dt>
 <dd><p>Coordinates conversion</p>
 <p>XYZ ECEF Geocentric =&gt; ENU Topocentic</p>
 <dl class="field-list simple">
@@ -602,8 +602,8 @@ a different x0,y0,z0 will be applied for each X,Y,Z element</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.XYZ2ENU_around_fix_pos">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">XYZ2ENU_around_fix_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.XYZ2ENU_around_fix_pos" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.xyz2enu_around_fix_pos">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">xyz2enu_around_fix_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.xyz2enu_around_fix_pos" title="Link to this definition"></a></dt>
 <dd><p>Computes the mean of the X,Y,Z and
 return the topocentric ENU position around its mean position</p>
 <dl class="field-list simple">
@@ -657,8 +657,8 @@ return the topocentric ENU position around its mean position</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.XYZ2GEO_vector">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">XYZ2GEO_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XYZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdeg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6378137.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00669438003</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.XYZ2GEO_vector" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.xyz2geo_vector">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">xyz2geo_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">XYZ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdeg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6378137.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00669438003</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.xyz2geo_vector" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">

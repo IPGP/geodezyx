@@ -68,7 +68,7 @@ class Point():
         Note
         ----
         
-        A dictionary called anex is also initialized to allow a 
+        A dictionary called anex is also initialized to allow a
         versatile storage of a variety of data
         
         Exemple of dictionary keys 
@@ -140,7 +140,7 @@ class Point():
         self.sZ = sZ
 
         self.initype = 'XYZ'
-        self.F,self.L,self.H = conv.XYZ2GEO(self.X,self.Y,self.Z)
+        self.F,self.L,self.H = conv.xyz2geo(self.X, self.Y, self.Z)
 
     def FLHset(self,F=0,L=0,H=0,sF=0,sL=0,sH=0):
         self.F = F
@@ -151,7 +151,7 @@ class Point():
         self.sH = sH
 
         self.initype = 'FLH'
-        self.X,self.Y,self.Z = conv.GEO2XYZ(self.F,self.L,self.H)
+        self.X,self.Y,self.Z = conv.geo2xyz(self.F, self.L, self.H)
         self.sX,self.sY,self.sZ = conv.sFLH2sXYZ(F,L,H,sF,sL,sH)
         
 
@@ -215,8 +215,8 @@ class Point():
         dY =  self.Y - refENU.Y
         dZ =  self.Z - refENU.Z
 
-        Etmp,Ntmp,Utmp = conv.XYZ2ENU_2(self.X, self.Y, self.Z,
-                                        refENU.X, refENU.Y, refENU.Z)
+        Etmp,Ntmp,Utmp = conv.xyz2enu(self.X, self.Y, self.Z,
+                                      refENU.X, refENU.Y, refENU.Z)
         
         self.E,self.N,self.U = Etmp[0],Ntmp[0],Utmp[0]
 
