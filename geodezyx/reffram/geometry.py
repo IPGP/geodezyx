@@ -936,7 +936,7 @@ def rotate_points(
         for a, b, g in zip(alphal, betal, gammal):
 
             R1 = rotmat3(a, b, g, angtype=angtype, xyzreftuple=xyzreftuple)
-            R2 = conv.C_rpy2enu(a, b, g, angtype=angtype)
+            R2 = conv.c_rpy2enu(a, b, g, angtype=angtype)
 
             if Rtype == "R1":
                 R = R1
