@@ -157,7 +157,7 @@ def read_rtklib(filein):
             sA = (float(fields[7]))
             sB = (float(fields[8]))
             sC = (float(fields[9]))
-            sA, sB, sC = conv.sENU2sFLH(A, B, C, sA, sB, sC)
+            sA, sB, sC = conv.sigma_enu2geo(A, B, C, sA, sB, sC)
 
         point = time_series.Point(A, B, C, T, initype, sA, sB, sC)
         point.anex['sdAB'] = float(fields[10])
@@ -1644,7 +1644,7 @@ def read_epos_sta_kinematics(filein):
     columns = ("site", "site_num",
                "MJD_epo", "numobs",
                "x", "y", "z", "sx", "sy", "sz",
-               "N", "E", "U", "sN", "sE", "sU")
+               "N", "E", "U", "sN", "sE", "s_u")
 
     DFout = pd.DataFrame(Lines_4_DF_stk,
                          columns=columns)
@@ -2323,7 +2323,7 @@ def read_nrcan_pos(filein):
             # sE = float(f[15])
             # sN = float(f[16])
             # sU = float(f[17])
-            # slat , slon , sh = conv.sENU2sFLH(lat,lon,h,sE,sN,sU)
+            # slat , slon , sh = conv.sigma_enu2geo(lat,lon,h,sE,sN,sU)
 
             slat, slon, sh = float(f[i_slat]), float(f[i_slon]), float(f[i_sh])
 

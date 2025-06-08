@@ -152,7 +152,7 @@ class Point():
 
         self.initype = 'FLH'
         self.X,self.Y,self.Z = conv.geo2xyz(self.F, self.L, self.H)
-        self.sX,self.sY,self.sZ = conv.sFLH2sXYZ(F,L,H,sF,sL,sH)
+        self.sX,self.sY,self.sZ = conv.sigma_geo2xyz(F, L, H, sF, sL, sH)
         
 
     def ENUset(self,E=np.nan,N=np.nan,U=np.nan,
@@ -220,10 +220,10 @@ class Point():
         
         self.E,self.N,self.U = Etmp[0],Ntmp[0],Utmp[0]
 
-        if self.initype == 'FLH' and hasattr(self,'sF'):
+        if self.initype == 'FLH' and hasattr(self,'s_f'):
             if not np.isnan(self.sF):
-                self.sE,self.sN,self.sU = conv.sFLH2sENU(self.F,self.L,self.H,
-                                                         self.sF,self.sL,self.sH)
+                self.sE,self.sN,self.sU = conv.sigma_geo2enu(self.F, self.L, self.H,
+                                                             self.sF, self.sL, self.sH)
         elif self.initype == 'XYZ' and hasattr(self,'sX'):
             if np.isnan(self.sX):
                 
@@ -236,9 +236,9 @@ class Point():
             else:
                 sXY, sXZ, sYZ = 0,0,0
                 
-            self.sE,self.sN,self.sU = conv.sXYZ2sENU(self.X,self.Y,self.Z,
-                                                     self.sX,self.sY,self.sZ,
-                                                     sXY=sXY, sYZ=sYZ, sXZ=sXZ)
+            self.sE,self.sN,self.sU = conv.sigma_xyz2enu(self.X, self.Y, self.Z,
+                                                         self.sX, self.sY, self.sZ,
+                                                         s_xy=sXY, s_yz=sYZ, s_xz=sXZ)
 
 
     def UTMcalc_pt(self,ellips="wgs84"):
@@ -588,7 +588,7 @@ class TimeSeriePoint:
 
         elif coortype == 'FLH':
             A,B,C = 'F','L','H'
-            sA,sB,sC = 'sF','sL','sH'
+            sA,sB,sC = 's_f','s_l','s_h'
 
         elif coortype == 'ENU':
             if self.boolENU == False:
@@ -596,7 +596,7 @@ class TimeSeriePoint:
                 return None
 
             A,B,C = 'E','N','U'
-            sA,sB,sC = 'sE','sN','sU'
+            sA,sB,sC = 'sE','sN','s_u'
 
         elif coortype == 'UTM':
             if self.boolUTM == False:
