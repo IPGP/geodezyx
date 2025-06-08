@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>geodezyx.utils_xtra package &mdash; geodezyx 4.x documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="geodezyx.utils package" href="geodezyx.utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/geodezyx_toolbox_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to geodezyx’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.utils_xtra package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils_xtra.pandas_utils">geodezyx.utils_xtra.pandas_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils_xtra.plot_utils">geodezyx.utils_xtra.plot_utils module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.html">geodezyx package</a></li>
+      <li class="breadcrumb-item active">geodezyx.utils_xtra package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/geodezyx.utils_xtra.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-geodezyx.utils_xtra">
+<span id="geodezyx-utils-xtra-package"></span><h1>geodezyx.utils_xtra package<a class="headerlink" href="#module-geodezyx.utils_xtra" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-geodezyx.utils_xtra.pandas_utils">
+<span id="geodezyx-utils-xtra-pandas-utils-module"></span><h2>geodezyx.utils_xtra.pandas_utils module<a class="headerlink" href="#module-geodezyx.utils_xtra.pandas_utils" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.utils contains functions for operations
+related to Python’s Pandas object manipulations.</p>
+<p>it can be imported directly with:
+from geodezyx import utils</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.diff_pandas">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">diff_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_np_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.diff_pandas" title="Link to this definition"></a></dt>
+<dd><p>Differentiate a Pandas DataFrame, if index is time.</p>
+<p>This function calculates the difference between consecutive elements in a specified column of a DataFrame.
+The difference is divided by the difference in time (seconds) between the corresponding indices.
+This is essentially a derivative operation, assuming the index represents time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DF</strong> (<em>pandas.DataFrame</em>) – The input DataFrame. The index should represent time.</p></li>
+<li><p><strong>col_name</strong> (<em>str</em>) – The name of the column in the DataFrame that you want to differentiate.</p></li>
+<li><p><strong>use_np_diff</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use Numpy’s diff.
+Default is False.
+This option has a (much) faster execution speed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The differentiated column of the input DataFrame. The type of the return value depends on the
+‘return_array’ parameter. If ‘return_array’ is False (default), a DataFrame is returned. If
+‘return_array’ is True, a numpy array is returned.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame or numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.pandas_DF_2_tuple_serie">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_DF_2_tuple_serie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns_name_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_index_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.pandas_DF_2_tuple_serie" title="Link to this definition"></a></dt>
+<dd><p>This function is made to solve the multiple columns selection
+problem
+the idea is :</p>
+<blockquote>
+<div><p>S1 = pandas_DF_2_tuple_serie(DF1 , columns_name_list)
+S2 = pandas_DF_2_tuple_serie(DF2 , columns_name_list)
+BOOL = S1.isin(S2)
+DF1[BOOL]</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Source :</dt><dd><p><a class="reference external" href="https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns">https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.pandas_DF_print">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_DF_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.pandas_DF_print" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.pandas_column_rename_dic">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_column_rename_dic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inpnames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.pandas_column_rename_dic" title="Link to this definition"></a></dt>
+<dd><p>wrapper of renamedic_fast_4_pandas</p>
+<p>EXEMPLE :
+rnamedic = utils.renamedic_fast_4_pandas(<a href="#id1"><span class="problematic" id="id2">*</span></a>[“zmax”,”ang”,”zsmooth”,”smoothtype”,”xgrad”,”ygrad”,</p>
+<blockquote>
+<div><p>‘r_eiko’,’z_eiko’,’pt_eiko_x’,’pt_eiko_y’,”t_eiko”,
+‘r_sd’,  ‘z_sd’,  ‘pt_sd_x’  ,’pt_sd_y’  ,’t_sd’,
+‘diff_x’,’diff_y’,’diff’,’diff_t’])</p>
+</div></blockquote>
+<p>pda = pda.rename(columns = rnamedic)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.renamedic_fast_4_pandas">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">renamedic_fast_4_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inpnames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.renamedic_fast_4_pandas" title="Link to this definition"></a></dt>
+<dd><p>EXEMPLE :
+rnamedic = utils.renamedic_fast_4_pandas(<a href="#id3"><span class="problematic" id="id4">*</span></a>[“zmax”,”ang”,”zsmooth”,”smoothtype”,”xgrad”,”ygrad”,</p>
+<blockquote>
+<div><p>‘r_eiko’,’z_eiko’,’pt_eiko_x’,’pt_eiko_y’,”t_eiko”,
+‘r_sd’,  ‘z_sd’,  ‘pt_sd_x’  ,’pt_sd_y’  ,’t_sd’,
+‘diff_x’,’diff_y’,’diff’,’diff_t’])</p>
+</div></blockquote>
+<p>pda = pda.rename(columns = rnamedic)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.weighted_average">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">weighted_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by_col</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.weighted_average" title="Link to this definition"></a></dt>
+<dd><section id="source">
+<h3>Source<a class="headerlink" href="#source" title="Link to this heading"></a></h3>
+<blockquote>
+<div><p><a class="reference external" href="https://stackoverflow.com/questions/31521027/groupby-weighted-average-and-sum-in-pandas-dataframe">https://stackoverflow.com/questions/31521027/groupby-weighted-average-and-sum-in-pandas-dataframe</a></p>
+</div></blockquote>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.utils_xtra.plot_utils">
+<span id="geodezyx-utils-xtra-plot-utils-module"></span><h2>geodezyx.utils_xtra.plot_utils module<a class="headerlink" href="#module-geodezyx.utils_xtra.plot_utils" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.utils contains functions for operations
+related to Python’s plot operations.</p>
+<p>it can be imported directly with:
+from geodezyx import utils</p>
+<p>The GeodeZYX Toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.axis_data_coords_sys_transform">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">axis_data_coords_sys_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis_obj_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.axis_data_coords_sys_transform" title="Link to this definition"></a></dt>
+<dd><p>inverse = False : Axis =&gt; Data
+= True  : Data =&gt; Axis</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.color_list">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">color_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jet'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.color_list" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.colors_from_colormap_getter">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">colors_from_colormap_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ncolors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.colors_from_colormap_getter" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.figure_saver">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">figure_saver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figobjt_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.png',</span> <span class="pre">'.pdf',</span> <span class="pre">'.figpik')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transparent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.figure_saver" title="Link to this definition"></a></dt>
+<dd><p>This function provides a front end to export pretty-print plots</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>figobjt_in</strong> (<em>matplotlib Figure object</em>) – input matplotlib Figure object. use for instance plt.gcf() to get it.</p></li>
+<li><p><strong>outdir</strong> (<em>str</em>) – the output directory.</p></li>
+<li><p><strong>outname</strong> (<em>str</em>) – output prefix filename.</p></li>
+<li><p><strong>outtype</strong> (<em>tuple</em><em>, </em><em>optional</em>) – the output formats. The default is (‘.png’,’.pdf’,’.figpik’).</p></li>
+<li><p><strong>formt</strong> (<em>2-tuple</em><em> or </em><em>string</em><em> , </em><em>optional</em>) – the format (size) of the plot.
+if string: a Ax format (A4, A3 etc…)
+if tuple: size of the plot  in inches.
+The default is None.</p></li>
+<li><p><strong>dpi</strong> (<em>int</em><em>, </em><em>optional</em>) – DPI of the figure. The default is 200.</p></li>
+<li><p><strong>transparent</strong> (<em>bool</em><em>, </em><em>optional</em>) – make the plot transparent. The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>outpath_stk</strong> – output paths of the plots.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string or list of string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.gaussian_for_plot">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">gaussian_for_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.gaussian_for_plot" title="Link to this definition"></a></dt>
+<dd><p>generate a gaussian curve for histogram plot</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>D</strong> (<em>iterable</em>) – data vector.</p></li>
+<li><p><strong>density</strong> (<em>bool</em><em>, </em><em>optional</em>) – Adapted curve for desity mode. The default is False.</p></li>
+<li><p><strong>nbins</strong> (<em>int</em><em>, </em><em>optional</em>) – number of bins. The default is 500.</p></li>
+<li><p><strong>nsigma</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – n sigmas for the x axis. The default is 3.5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Xpdf</strong> (<em>array</em>) – gaussian curve x.</p></li>
+<li><p><strong>Ypdf_out</strong> (<em>TYPE</em>) – gaussian curve x.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.get_figure">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">get_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.get_figure" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.id2val">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">id2val</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.id2val" title="Link to this definition"></a></dt>
+<dd><p>from a value list and a id pointer list
+return the good val from the good id
+replace dico bc. set is not supproted as key</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.set_size_for_pub">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">set_size_for_pub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">418.25368</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.set_size_for_pub" title="Link to this definition"></a></dt>
+<dd><p>Set aesthetic figure dimensions to avoid scaling in latex.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> (<em>float</em>) – Width in pts</p></li>
+<li><p><strong>fraction</strong> (<em>float</em>) – Fraction of the width which you wish the figure to occupy</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fig_dim</strong> – Dimensions of figure in inches</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.symbols_list">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">symbols_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.symbols_list" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.ylim_easy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">ylim_easy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Lin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_null_if_neg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.ylim_easy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="geodezyx.utils.html" class="btn btn-neutral float-left" title="geodezyx.utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
