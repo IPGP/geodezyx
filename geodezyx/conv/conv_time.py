@@ -1287,6 +1287,32 @@ def date_pattern_2_dt(date_str_inp):
         raise ValueError("Input string does not match any expected date format.")
     return date
 
+
+def minmax_pattern_dt(date1_inp, date2_inp):
+    """
+    Convert two date strings into datetime objects and return the minimum and maximum.
+
+    Parameters
+    ----------
+    date1_inp : str
+        The first date string to be converted.
+    date2_inp : str
+        The second date string to be converted.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the minimum and maximum datetime objects derived from the input strings.
+
+    Raises
+    ------
+    ValueError
+        If the input strings cannot be converted into valid datetime objects.
+    """
+    datetup = (date_pattern_2_dt(date1_inp), date_pattern_2_dt(date2_inp))
+    return min(datetup), max(datetup)
+
+
 def jjul_cnes2dt(jjulin):
     """
     Time representation & scale conversion
@@ -1466,7 +1492,6 @@ def dt2MJD(*args, **kwargs):
         stacklevel=2
     )
     return dt2mjd(*args, **kwargs)
-
 
 
 def dt2str(dtin, str_format="%Y-%m-%d %H:%M:%S"):
@@ -2473,7 +2498,7 @@ def find_leapsecond(dtin, leapsec_lis_inp=LEAP_SEC_LIS,
 #         __/ |                                                                                 | |
 #        |___/                                                                                  |_|                                                                           |_|
 
-### Python's Internal Representations  
+### Python's Internal Representations
 
 def date2dt(date_in):
     """
@@ -2592,8 +2617,6 @@ def numpy_dt2dt(numpy_dt_in):
     else:
         import pandas as pd
         return pd.Timestamp(numpy_dt_in).to_pydatetime()
-
-
 
 
 ##### Nota Bene
@@ -3130,5 +3153,3 @@ def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
 #     utc_time = [year, month, day, hour, minute, sec]
 #
 #     return utc_time
-
-

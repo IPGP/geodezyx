@@ -364,7 +364,7 @@ def ftp_objt_create(
     return ftp_main, ftp_obj_list_out
 
 
-def _ftp_downloader_core(ftp_obj, filename, localdir):
+def ftp_downld_core(ftp_obj, filename, localdir):
     """
     Performs the FTP download if we are already in the correct FTP folder.
     This is an internal function of ftp_downloader.
@@ -447,7 +447,7 @@ def ftp_downloader(ftp_obj, full_remote_path, localdir):
 
     ftp_obj.cwd(intermed_path)
 
-    return _ftp_downloader_core(ftp_obj, filename, localdir)
+    return ftp_downld_core(ftp_obj, filename, localdir)
 
 
 def ftp_downloader_wrap(intup):
@@ -468,7 +468,7 @@ def ftp_downloader_wrap(intup):
     return outtup
 
 
-def ftp_download_frontend(
+def ftp_download_front(
     urls,
     savedirs,
     parallel_download=1,
@@ -507,15 +507,10 @@ def ftp_download_frontend(
     """
 
     # Check if urls and savedirs are iterable, if not convert them to list
-    if not utils.is_iterable(urls):
-        urllist = [urls]
-    else:
-        urllist = urls
-
-    if not utils.is_iterable(savedirs):
-        savedirlist = [savedirs] * len(urllist)
-    else:
-        savedirlist = savedirs
+    urllist = urls if utils.is_iterable(urls) else [urls]
+    savedirlist = savedirs if utils.is_iterable(savedirs) else [savedirs] * len(urllist)
+    secure_ftp_use = secure_ftp[0] if utils.is_iterable(secure_ftp) else secure_ftp
+    ##### dirty to select secure_ftp 1st elt only....
 
     # Check if the length of urllist and savedirlist are the same
     if len(urllist) != len(savedirlist):
@@ -531,7 +526,7 @@ def ftp_download_frontend(
 
     # Create the FTP object
     ftpobj_main, ftpobj_lis = ftp_objt_create(
-        secure_ftp_inp=secure_ftp,
+        secure_ftp_inp=secure_ftp_use,
         host=host_use,
         parallel_download=parallel_download,
         user=user,
@@ -565,7 +560,7 @@ def ftp_downloader_wo_objects(tupin):
     ftp_obj_wk = FTP(arch_center_main)
     ftp_obj_wk.login()
     ftp_obj_wk.cwd(wwww_dir)
-    localpath, bool_dl = _ftp_downloader_core(ftp_obj_wk, filename, localdir)
+    localpath, bool_dl = ftp_downld_core(ftp_obj_wk, filename, localdir)
     ftp_obj_wk.close()
     return localpath, bool_dl
 
