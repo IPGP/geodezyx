@@ -51,74 +51,7 @@ log = logging.getLogger("geodezyx")
 #
 
 
-def vector_separator(abc):
-    """
-    Split a Nx3 Array/DataFrame in three separated 1-component vectors
-    To simplify the usage of the conversion functions
-    (which take single component vectors as input)
-
-    Parameters
-    ----------
-    abc : Array or DataFrame
-        Nx3 XYZ, ENU... array.
-
-    Returns
-    -------
-    a : Array
-        1st component.
-    b : Array
-        2nd component.
-    c : Array
-        3rd component.
-
-    """
-    abc = np.array(abc)
-    return abc[:, 0], abc[:, 1], abc[:, 2]
-
-
-def wnorm(phi, a=6378137.0, e2=0.00669438003):
-    """
-    Compute the Ellipsoid "Grande Normale"
-
-    References
-    ----------
-    ALG0021 in NTG_71 (IGN Lambert Projection Tech document)
-    Based on PYACS of J.-M. Nocquet
-    """
-    from numpy import sqrt, sin
-
-    # e=sqrt(e2)
-    wd = sqrt(1 - e2 * sin(phi) ** 2)
-    result = a / wd
-    return result
-
-
-def normal_vector(phi, llambda, angle="deg", normalized=True):
-    """
-    Compute the Ellipsoid "Normale"
-
-    References
-    ----------
-    P. Bosser (2012), Géométrie de l'Ellipsoïde, p27
-    """
-
-    if angle == "deg":
-        llambda = np.deg2rad(llambda)
-        phi = np.deg2rad(phi)
-
-    a = np.cos(llambda) * np.cos(phi)
-    b = np.sin(llambda) * np.cos(phi)
-    c = np.sin(phi)
-
-    n = np.array([a, b, c])
-
-    if normalized:
-        n = n / np.linalg.norm(n)
-
-    return n
-
-
-def geo2xyz(phi, llambda, he, angle="deg", a=6378137.0, e2=0.00669438003):
+def geo2xyz(lat, lon, h, angle="deg", a=6378137.0, e2=0.00669438003):
     """
     Coordinates conversion
 
@@ -127,7 +60,7 @@ def geo2xyz(phi, llambda, he, angle="deg", a=6378137.0, e2=0.00669438003):
     Parameters
     ----------
 
-    phi,llambda,he : numpy.array of floats
+    lat,lon,h : numpy.array of floats
         latitude (deg/rad), longitude (deg/rad), height (m)
 
     angle : string
@@ -148,16 +81,16 @@ def geo2xyz(phi, llambda, he, angle="deg", a=6378137.0, e2=0.00669438003):
     """
 
     if angle == "deg":
-        llambda = np.deg2rad(llambda)
-        phi = np.deg2rad(phi)
+        lon = np.deg2rad(lon)
+        lat = np.deg2rad(lat)
 
     # f=1.0 - sqrt(1-e2)
 
-    wn = wnorm(phi)
+    wn = wnorm(lat)
 
-    x = (wn + he) * np.cos(phi) * np.cos(llambda)
-    y = (wn + he) * np.cos(phi) * np.sin(llambda)
-    z = (wn * (1.0 - e2) + he) * np.sin(phi)
+    x = (wn + h) * np.cos(lat) * np.cos(lon)
+    y = (wn + h) * np.cos(lat) * np.sin(lon)
+    z = (wn * (1.0 - e2) + h) * np.sin(lat)
 
     return x, y, z
 
@@ -213,76 +146,6 @@ def xyz2geo(x, y, z, outdeg=True, a=6378137.0, e2=0.00669438003):
         rlbda = np.rad2deg(rlbda)
 
     return rphi, rlbda, rhe
-
-
-def xyz2enu_core(d_x, d_y, d_z, lat0, lon0):
-    """
-    Coordinates conversion
-
-    XYZ ECEF Geocentric => ENU Topocentic
-
-    **use xyz2enu in priority**
-
-    (xyz2enu_core is a core function for xyz2enu)
-
-    dXYZ = XYZrover - XYZref
-
-    Parameters
-    ----------
-    d_x,d_y,d_z : floats or numpy.array of floats
-        cartesian coordinates difference between the considered point(s)
-        and the reference point
-
-    lat0,lon0 : floats or numpy.array of floats
-        if they are iterable arrays (of the same size as d_x,dY,dZ)
-        a different x0,y0,z0 will be applied for each d_x,dY,dZ element
-
-    Returns
-    -------
-    E,N,U : numpy.array of floats
-        East North Up Component (m) w.r.t. x0,y0,z0
-
-    References
-    ----------
-    https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates
-
-    Note
-    ----
-    This recursive fuction should be improved
-    """
-
-    ## Case one ref point per dXYZ
-    if utils.is_iterable(lat0):
-        e, n, u = [], [], []
-        for dx_m, dy_m, dz_m, lat0_m, lon0_m in zip(d_x, d_y, d_z, lat0, lon0):
-            e_m, n_m, u_m = xyz2enu_core(dx_m, dy_m, dz_m, lat0_m, lon0_m)
-            e.append(e_m)
-            n.append(n_m)
-            u.append(u_m)
-
-        return np.squeeze(np.array(e)), np.squeeze(np.array(n)), np.squeeze(np.array(u))
-
-    # case onle ref point for all dXYZ
-    else:
-        f0 = np.deg2rad(lat0)
-        l0 = np.deg2rad(lon0)
-
-        r = np.array(
-            [
-                [-np.sin(l0), np.cos(l0), 0],
-                [-np.sin(f0) * np.cos(l0), -np.sin(f0) * np.sin(l0), np.cos(f0)],
-                [np.cos(f0) * np.cos(l0), np.cos(f0) * np.sin(l0), np.sin(f0)],
-            ]
-        )
-
-        enu = np.dot(r, np.vstack((d_x, d_y, d_z)))
-
-        e = enu[0, :]
-        n = enu[1, :]
-        u = enu[2, :]
-
-        return e, n, u
-
 
 def xyz2enu(x, y, z, x0, y0, z0):
     """
@@ -401,7 +264,7 @@ def enu2xyz(e, n, u, x0, y0, z0, velocity_mode=False):
             ]
         )
 
-        r3 = r.T
+        #r3 = r.T
         r3 = np.linalg.inv(r)
 
         enu = np.vstack((e, n, u))
@@ -420,55 +283,62 @@ def enu2xyz(e, n, u, x0, y0, z0, velocity_mode=False):
         return x, y, z
 
 
-def enu2xyz_legacy(e, n, u, x0, y0, z0):
+
+ # __      __       _              __          __
+ # \ \    / /      | |             \ \        / /
+ #  \ \  / /__  ___| |_ ___  _ __   \ \  /\  / / __ __ _ _ __  _ __   ___ _ __ ___
+ #   \ \/ / _ \/ __| __/ _ \| '__|   \ \/  \/ / '__/ _` | '_ \| '_ \ / _ \ '__/ __|
+ #    \  /  __/ (__| || (_) | |       \  /\  /| | | (_| | |_) | |_) |  __/ |  \__ \
+ #     \/ \___|\___|\__\___/|_|        \/  \/ |_|  \__,_| .__/| .__/ \___|_|  |___/
+ #                                                      | |   | |
+ #                                                      |_|   |_|
+
+
+def geo2xyz_vector(llh, angle="deg", a=6378137.0, e2=0.00669438003):
     """
-    KEPT FOR LEGACY REASONS, use enu2xyz
+    Convert an array of geographic coordinates (latitude, longitude, height) to ECEF Cartesian coordinates.
 
-    diffère de enu2xyz pour d'obscure raisons, à investiguer !!!
-    est laissé pour des scripts de conversion de GINS (170119)
+    Parameters
+    ----------
+    llh : array-like
+        Array of shape (N, 3) or (3, N) containing latitude, longitude, and height.
+    angle : str, optional
+        Specifies if input angles are in degrees ('deg') or radians ('rad'). Default is 'deg'.
+    a : float, optional
+        Semi-major axis of the ellipsoid in meters. Default is 6378137.0 (WGS84).
+    e2 : float, optional
+        Square of the first eccentricity of the ellipsoid. Default is 0.00669438003 (WGS84).
 
-    this fct compute the dXYZ and not the final XYZ
-
+    Returns
+    -------
+    xyz : numpy.ndarray
+        Array of shape (N, 3) with ECEF X, Y, Z coordinates.
     """
-
-    fr, lr, hr = xyz2geo(x0, y0, z0)
-    f0 = np.deg2rad(fr)
-    l0 = np.deg2rad(lr)
-
-    r = np.array(
-        [
-            [-np.sin(l0), np.cos(l0), 0],
-            [-np.sin(f0) * np.cos(l0), -np.sin(f0) * np.sin(l0), np.cos(f0)],
-            [np.cos(f0) * np.cos(l0), np.cos(f0) * np.sin(l0), np.sin(f0)],
-        ]
-    )
-
-    r3 = r.T
-
-    enu = np.vstack((e, n, u))
-
-    xyz = np.dot(r3, enu)  # + np.vstack(( x0, y0, z0))
-
-    d_x = float(xyz[0])
-    d_y = float(xyz[1])
-    d_z = float(xyz[2])
-
-    return d_x, d_y, d_z
-
-
-def geo2xyz_vector(flh, angle="deg", a=6378137.0, e2=0.00669438003):
-
     #### if Nx3 array => 3xN array
-    flh = utils.transpose_vector_array(flh)
+    llh = utils.transpose_vector_array(llh)
 
-    x, y, z = geo2xyz(flh[0], flh[1], flh[2], angle=angle, a=a, e2=e2)
+    x, y, z = geo2xyz(llh[0], llh[1], llh[2], angle=angle, a=a, e2=e2)
     xyz = np.column_stack((x, y, z))
 
     return xyz
 
 
 def xyz2enu_vector(xyz, xyz0):
+    """
+    Convert an array of ECEF Cartesian coordinates to ENU topocentric coordinates.
 
+    Parameters
+    ----------
+    xyz : array-like
+        Array of shape (N, 3) or (3, N) with ECEF X, Y, Z coordinates.
+    xyz0 : array-like
+        Reference point as array-like of length 3 (X0, Y0, Z0).
+
+    Returns
+    -------
+    enu : numpy.ndarray
+        Array of shape (N, 3) with East, North, Up coordinates.
+    """
     xyz = utils.transpose_vector_array(xyz)
 
     e, n, u = xyz2enu(xyz[0], xyz[1], xyz[2], xyz0[0], xyz0[1], xyz0[2])
@@ -478,7 +348,25 @@ def xyz2enu_vector(xyz, xyz0):
 
 
 def xyz2geo_vector(xyz, outdeg=True, a=6378137.0, e2=0.00669438003):
+    """
+    Convert an array of ECEF Cartesian coordinates to geographic coordinates (latitude, longitude, height).
 
+    Parameters
+    ----------
+    xyz : array-like
+        Array of shape (N, 3) or (3, N) with ECEF X, Y, Z coordinates.
+    outdeg : bool, optional
+        If True, output angles are in degrees. If False, in radians. Default is True.
+    a : float, optional
+        Semi-major axis of the ellipsoid in meters. Default is 6378137.0 (WGS84).
+    e2 : float, optional
+        Square of the first eccentricity of the ellipsoid. Default is 0.00669438003 (WGS84).
+
+    Returns
+    -------
+    flh : numpy.ndarray
+        Array of shape (N, 3) with latitude, longitude, and height.
+    """
     xyz = utils.transpose_vector_array(xyz)
 
     f, l, h = xyz2geo(xyz[0], xyz[1], xyz[2], outdeg=outdeg, a=a, e2=e2)
@@ -489,22 +377,84 @@ def xyz2geo_vector(xyz, outdeg=True, a=6378137.0, e2=0.00669438003):
 
 
 def enu2xyz_vector(enu, xyz_ref):
+    """
+    Convert an array of ENU topocentric coordinates to ECEF Cartesian coordinates.
 
+    Parameters
+    ----------
+    enu : array-like
+        Array of shape (N, 3) or (3, N) with East, North, Up coordinates.
+    xyz_ref : array-like
+        Reference point as array-like of length 3 (X0, Y0, Z0).
+
+    Returns
+    -------
+    xyz : numpy.ndarray
+        Array of shape (N, 3) with ECEF X, Y, Z coordinates.
+    """
     enu = utils.transpose_vector_array(enu)
 
-    X, Y, Z = enu2xyz(enu[0], enu[1], enu[2], xyz_ref[0], xyz_ref[1], xyz_ref[2])
+    x, y, z = enu2xyz(enu[0], enu[1], enu[2], xyz_ref[0], xyz_ref[1], xyz_ref[2])
 
-    xyz = np.column_stack((X, Y, Z))
+    xyz = np.column_stack((x, y, z))
 
     return xyz
 
+#      _                             __      _      _      _                                                _
+#     (_)                           / /     | |    | |    | |                                              (_)
+#  ___ _  __ _ _ __ ___   __ _     / /   ___| |_ __| |  __| | _____   __   ___ ___  _ ____   _____ _ __ ___ _  ___  _ __
+# / __| |/ _` | '_ ` _ \ / _` |   / /   / __| __/ _` | / _` |/ _ \ \ / /  / __/ _ \| '_ \ \ / / _ \ '__/ __| |/ _ \| '_ \
+# \__ \ | (_| | | | | | | (_| |  / /    \__ \ || (_| || (_| |  __/\ V /  | (_| (_) | | | \ V /  __/ |  \__ \ | (_) | | | |
+# |___/_|\__, |_| |_| |_|\__,_| /_/     |___/\__\__,_(_)__,_|\___| \_(_)  \___\___/|_| |_|\_/ \___|_|  |___/_|\___/|_| |_|
+#         __/ |
+#        |___/
 
-def sFLH2sXYZ(F, L, H, sF, sL, sH, ang="deg"):
+def sigma_xyz2enu(x, y, z, s_x, s_y, s_z, s_xy=0, s_yz=0, s_xz=0):
+    """
+    Convert standard deviation
+    Cartesian ECEF XYZ => Cartesian Topocentric ENU
+
+    Note
+    ----
+    Inputs values are now assumed correlated (241105)
+
+    References
+    ----------
+    Linear Algebra, Geodesy, and GPS p332
+    https://stackoverflow.com/questions/51162460/converting-ecef-xyz-covariance-matrix-to-enu-covariance-matrix
+    https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates
+    """
+
+    sigma_xyz = np.array(
+        [[s_x**2, s_xy, s_xz], [s_xy, s_y**2, s_yz], [s_xz, s_yz, s_z**2]]
+    )
+
+    f, l, h = xyz2geo(x, y, z)
+
+    # old and bad rotation matrix (bofore 20241104)
+    # C = rotmat.C_ecef2enu(F,L,angtype='deg')
+    # new and good rotation matrix (after 20241104)
+    c = rotmat.c_ecef2enu_sigma(f, l, angtype="deg")
+
+    sigma_enu = np.dot(np.dot(c, sigma_xyz), c.T)
+    sigma_enu2 = np.dot(c, np.dot(sigma_xyz, c.T))
+
+    # lon = np.deg2rad(L)
+    # lat = np.deg2rad(F)
+
+    s_e = np.sqrt(sigma_enu[0, 0])
+    s_n = np.sqrt(sigma_enu[1, 1])
+    s_u = np.sqrt(sigma_enu[2, 2])
+
+    return s_e, s_n, s_u
+
+
+def sigma_geo2xyz(lat, lon, h, s_f, s_l, s_h, ang="deg"):
     """
     Convert standard deviation
     Geographic FLH => Cartesian ECEF XYZ
 
-    WARNING
+    Warning
     -------
     Inputs values are assumed as uncorrelated, which is not accurate
     Must be improved
@@ -515,33 +465,25 @@ def sFLH2sXYZ(F, L, H, sF, sL, sH, ang="deg"):
     """
 
     log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
-    log.warning("Prefer sXYZ2sENU")
+    log.warning("Prefer sigma_xyz2enu")
 
     if ang == "deg":
-        F = np.deg2rad(F)
-        L = np.deg2rad(L)
-        sF = np.deg2rad(sF)
-        sL = np.deg2rad(sL)
-    X, Y, Z = geo2xyz(F, L, H)
-    X2, Y2, Z2 = geo2xyz(F + sF, L + sL, H + sH)
+        lat = np.deg2rad(lat)
+        lon = np.deg2rad(lon)
+        s_f = np.deg2rad(s_f)
+        s_l = np.deg2rad(s_l)
+    x, y, z = geo2xyz(lat, lon, h)
+    x2, y2, z2 = geo2xyz(lat + s_f, lon + s_l, h + s_h)
 
-    return np.abs(X - X2), np.abs(Y - Y2), np.abs(Z - Z2)
-
-
-# def sXYZ2sFLH(X,Y,Z,sX,sY,sZ):
-#    F,L,H    = xyz2geo(X,Y,Z)
-#    F2,L2,H2 = xyz2geo(X+sX,Y+sY,Z+sZ)
-#
-#    return np.abs(F-F2) , np.abs(L-L2) , np.abs(H-H2)
-#
+    return np.abs(x - x2), np.abs(y - y2), np.abs(z - z2)
 
 
-def sFLH2sENU(f, l, h, s_f, s_l, s_h, ang="deg"):
+def sigma_geo2enu(lat, lon, h, s_f, s_l, s_h, ang="deg"):
     """
     Convert standard deviation
     Geographic FLH => Cartesian Topocentric ENU
 
-    WARNING
+    Warning
     -------
     Inputs values are assumed as uncorrelated, which is not accurate
     Must be improved
@@ -554,11 +496,11 @@ def sFLH2sENU(f, l, h, s_f, s_l, s_h, ang="deg"):
     # Par conversion des angles en distance
 
     log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
-    log.warning("Prefer sXYZ2sENU")
+    log.warning("Prefer sigma_xyz2enu")
 
     if ang == "deg":
-        f = np.deg2rad(f)
-        l = np.deg2rad(l)
+        lat = np.deg2rad(lat)
+        lon = np.deg2rad(lon)
         s_f = np.deg2rad(s_f)
         s_l = np.deg2rad(s_l)
 
@@ -568,25 +510,25 @@ def sFLH2sENU(f, l, h, s_f, s_l, s_h, ang="deg"):
 
     # Je présume que Rpsi est le rayon du cercle tangent à l'ellipsoide à une
     # lattitude donnée (comm du 150710)
-    psi = np.arctan((1 - e2) * np.tan(f))
+    psi = np.arctan((1 - e2) * np.tan(lat))
     r_psi = a * np.sqrt(1 - e2) / np.sqrt(1 - e2 * np.cos(psi) ** 2)
 
     # r est le rayon d'un petit cercle (un parallèle)
     r = np.cos(psi) * (r_psi + h)
 
-    # On pourait simplifier par 2pi mais autant avoir toute la démarche
-    sE = (np.pi * 2 * r * s_l) / (2 * np.pi)
-    sN = (np.pi * 2 * r_psi * s_f) / (2 * np.pi)
-    sU = s_h
-    return sE, sN, sU
+    # On pourrait simplifier par 2pi mais autant avoir toute la démarche
+    s_e = (np.pi * 2 * r * s_l) / (2 * np.pi)
+    s_n = (np.pi * 2 * r_psi * s_f) / (2 * np.pi)
+    s_u = s_h
+    return s_e, s_n, s_u
 
 
-def sENU2sFLH(F, L, H, sE, sN, sU, ang="deg", A=6378137.0, E2=0.00669438003):
+def sigma_enu2geo(lat, lon, h, s_e, s_n, s_u, ang="deg", a=6378137.0, e2=0.00669438003):
     """
     Convert standard deviation
     Cartesian Topocentric ENU => Geographic FLH
 
-    WARNING
+    Warning
     -------
     Inputs values are assumed as uncorrelated, which is not accurate
     Must be improved
@@ -597,7 +539,7 @@ def sENU2sFLH(F, L, H, sE, sN, sU, ang="deg", A=6378137.0, E2=0.00669438003):
     """
 
     log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
-    log.warning("Prefer sXYZ2sENU")
+    log.warning("Prefer sigma_xyz2enu")
 
     # conversion batarde du sigma ENU => sigma FLH
     # Par conversion des angles en distance
@@ -606,70 +548,34 @@ def sENU2sFLH(F, L, H, sE, sN, sU, ang="deg", A=6378137.0, E2=0.00669438003):
 
     # Je présume que Rpsi est le rayon du cercle tangent à l'ellipsoide à une
     # lattitude donnée (comm du 150710)
-    Psi = np.arctan((1 - E2) * np.tan(F))
-    Rpsi = A * np.sqrt(1 - E2) / np.sqrt(1 - E2 * np.cos(Psi) ** 2)
+    psi = np.arctan((1 - e2) * np.tan(lat))
+    r_psi = a * np.sqrt(1 - e2) / np.sqrt(1 - e2 * np.cos(psi) ** 2)
 
     # r est le rayon d'un petit cercle (un parallèle)
-    r = np.cos(Psi) * (Rpsi + H)
+    r = np.cos(psi) * (r_psi + h)
 
     # On pourait simplifier par 2pi mais autant avoir toute la démarche
-    sL = sE * (2 * np.pi) / (np.pi * 2 * r)
-    sF = sN * (2 * np.pi) / (np.pi * 2 * Rpsi)
-    sH = sU
+    s_l = s_e * (2 * np.pi) / (np.pi * 2 * r)
+    s_f = s_n * (2 * np.pi) / (np.pi * 2 * r_psi)
+    s_h = s_u
 
     if ang == "deg":
-        sL = np.rad2deg(sL)
-        sF = np.rad2deg(sF)
-    return sF, sL, sH
+        s_l = np.rad2deg(s_l)
+        s_f = np.rad2deg(s_f)
+    return s_f, s_l, s_h
 
 
-def sXYZ2sENU(X, Y, Z, sX, sY, sZ, sXY=0, sYZ=0, sXZ=0):
-    """
-    Convert standard deviation
-    Cartesian ECEF XYZ => Cartesian Topocentric ENU
-
-    Note
-    ----
-    Inputs values are now assumed as correlated (241105)
-
-    References
-    ----------
-    Linear Algebra, Geodesy, and GPS p332
-    """
-
-    sigma_xyz = np.array([[sX**2, sXY, sXZ], [sXY, sY**2, sYZ], [sXZ, sYZ, sZ**2]])
-
-    F, L, H = xyz2geo(X, Y, Z)
-
-    # old and bad rotation matrix (bofore 20241104)
-    # C = rotmat.C_ecef2enu(F,L,angtype='deg')
-    # new and good rotation matrix (after 20241104)
-    C = rotmat.C_ecef2enu_sigma(F, L, angtype="deg")
-
-    sigma_enu = np.dot(np.dot(C, sigma_xyz), C.T)
-    sigma_enu2 = np.dot(C, np.dot(sigma_xyz, C.T))
-
-    lon = np.deg2rad(L)
-    lat = np.deg2rad(F)
-
-    s_e = np.sqrt(sigma_enu[0, 0])
-    s_n = np.sqrt(sigma_enu[1, 1])
-    s_u = np.sqrt(sigma_enu[2, 2])
-
-    return s_e, s_n, s_u
-
-
-def eci2rtn_or_rpy(P, V, C, out_rpy=False, rpy_theo_mode=False):
+def eci2rtn_or_rpy(p, v, c, out_rpy=False, rpy_theo_mode=False):
     """
     convert ECI coordinates in RTN (RIC) or RPY (Roll Pitch Yaw)
 
     Parameters
     ----------
-    P : numpy.array
+    p : numpy.array
         3D vector, position of the ref object in ECI frame
-    V : numpy.array
+    v : numpy.array
         3D vector, velocity of the ref object in ECI frame
-    C : numpy.array
+    c : numpy.array
         3D Vector, coordinates in ECF frame that will be transformed
     out_rpy : bool
         if True output in RPY frame, RTN instead
@@ -686,7 +592,7 @@ def eci2rtn_or_rpy(P, V, C, out_rpy=False, rpy_theo_mode=False):
     "Coordinate Systems", ASEN 3200 1/24/06 George H. Born
     """
 
-    c_eci2rtn_mat = rotmat.C_eci2rtn(P, V)
+    c_eci2rtn_mat = rotmat.c_eci2rtn(p, v)
 
     if not out_rpy:
         trans_mat = c_eci2rtn_mat
@@ -695,17 +601,17 @@ def eci2rtn_or_rpy(P, V, C, out_rpy=False, rpy_theo_mode=False):
         if not rpy_theo_mode:
             # Pour de très obscures raisons la composition est inversée
             # par rapport à l'ordre standard ... (241017)
-            trans_mat = np.dot(rotmat.C_rtn2rpy().T, c_eci2rtn_mat.T)
+            trans_mat = np.dot(rotmat.c_rtn2rpy().T, c_eci2rtn_mat.T)
         else:
             log.warning(
                 "using the theoretical mode for RPY conversion, UNSTABLE & WRONG !"
             )
-            trans_mat = np.dot(rotmat.C_rtn2rpy(), c_eci2rtn_mat)
+            trans_mat = np.dot(rotmat.c_rtn2rpy(), c_eci2rtn_mat)
 
         # Mais reste compatible avec Wikipedia
         # https://en.wikipedia.org/wiki/Permutation_matrix#Permutation_of_rows_and_columns
 
-    c_out = trans_mat.dot(C)
+    c_out = trans_mat.dot(c)
 
     # EXEMPLE POUR DEBUG
     #     AAAAAAAAAAAAA yawerr,aux,nomi
@@ -732,11 +638,11 @@ def eci2rtn_or_rpy(P, V, C, out_rpy=False, rpy_theo_mode=False):
     return c_out
 
 
-def eci2rtn(P, V, C):
+def eci2rtn(p,v,c):
     """
     legacy wrapper of eci2rtn_or_rpy
     """
-    return eci2rtn_or_rpy(P, V, C, out_rpy=False)
+    return eci2rtn_or_rpy(p,v,c, out_rpy=False)
 
 
 def ecef2eci(xyz, utc_times):
@@ -852,6 +758,187 @@ def eci2ecef(xyz, utc_times):
     return ecef
 
 
+#### Core & Legacy
+
+
+ #   _____                          _
+ #  / ____|                 ___    | |
+ # | |     ___  _ __ ___   ( _ )   | |     ___  __ _  __ _  ___ _   _
+ # | |    / _ \| '__/ _ \  / _ \/\ | |    / _ \/ _` |/ _` |/ __| | | |
+ # | |___| (_) | | |  __/ | (_>  < | |___|  __/ (_| | (_| | (__| |_| |
+ #  \_____\___/|_|  \___|  \___/\/ |______\___|\__, |\__,_|\___|\__, |
+ #                                              __/ |            __/ |
+ #                                             |___/            |___/
+
+def vector_separator(abc):
+    """
+    Split a Nx3 Array/DataFrame in three separated 1-component vectors
+    To simplify the usage of the conversion functions
+    (which take single component vectors as input)
+
+    Parameters
+    ----------
+    abc : Array or DataFrame
+        Nx3 XYZ, ENU... array.
+
+    Returns
+    -------
+    a : Array
+        1st component.
+    b : Array
+        2nd component.
+    c : Array
+        3rd component.
+
+    """
+    abc = np.array(abc)
+    return abc[:, 0], abc[:, 1], abc[:, 2]
+
+
+def wnorm(phi, a=6378137.0, e2=0.00669438003):
+    """
+    Compute the Ellipsoid "Grande Normale"
+
+    References
+    ----------
+    ALG0021 in NTG_71 (IGN Lambert Projection Tech document)
+    Based on PYACS of J.-M. Nocquet
+    """
+    from numpy import sqrt, sin
+
+    # e=sqrt(e2)
+    wd = sqrt(1 - e2 * sin(phi) ** 2)
+    result = a / wd
+    return result
+
+
+def normal_vector(phi, llambda, angle="deg", normalized=True):
+    """
+    Compute the Ellipsoid "Normale"
+
+    References
+    ----------
+    P. Bosser (2012), Géométrie de l'Ellipsoïde, p27
+    """
+
+    if angle == "deg":
+        llambda = np.deg2rad(llambda)
+        phi = np.deg2rad(phi)
+
+    a = np.cos(llambda) * np.cos(phi)
+    b = np.sin(llambda) * np.cos(phi)
+    c = np.sin(phi)
+
+    n = np.array([a, b, c])
+
+    if normalized:
+        n = n / np.linalg.norm(n)
+
+    return n
+
+def xyz2enu_core(d_x, d_y, d_z, lat0, lon0):
+    """
+    Coordinates conversion
+
+    XYZ ECEF Geocentric => ENU Topocentic
+
+    **use xyz2enu in priority**
+
+    (xyz2enu_core is a core function for xyz2enu)
+
+    dXYZ = XYZrover - XYZref
+
+    Parameters
+    ----------
+    d_x,d_y,d_z : floats or numpy.array of floats
+        cartesian coordinates difference between the considered point(s)
+        and the reference point
+
+    lat0,lon0 : floats or numpy.array of floats
+        if they are iterable arrays (of the same size as d_x,dY,dZ)
+        a different x0,y0,z0 will be applied for each d_x,dY,dZ element
+
+    Returns
+    -------
+    E,N,U : numpy.array of floats
+        East North Up Component (m) w.r.t. x0,y0,z0
+
+    References
+    ----------
+    https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates
+
+    Note
+    ----
+    This recursive fuction should be improved
+    """
+
+    ## Case one ref point per dXYZ
+    if utils.is_iterable(lat0):
+        e, n, u = [], [], []
+        for dx_m, dy_m, dz_m, lat0_m, lon0_m in zip(d_x, d_y, d_z, lat0, lon0):
+            e_m, n_m, u_m = xyz2enu_core(dx_m, dy_m, dz_m, lat0_m, lon0_m)
+            e.append(e_m)
+            n.append(n_m)
+            u.append(u_m)
+
+        return np.squeeze(np.array(e)), np.squeeze(np.array(n)), np.squeeze(np.array(u))
+
+    # case onle ref point for all dXYZ
+    else:
+        f0 = np.deg2rad(lat0)
+        l0 = np.deg2rad(lon0)
+
+        r = np.array(
+            [
+                [-np.sin(l0), np.cos(l0), 0],
+                [-np.sin(f0) * np.cos(l0), -np.sin(f0) * np.sin(l0), np.cos(f0)],
+                [np.cos(f0) * np.cos(l0), np.cos(f0) * np.sin(l0), np.sin(f0)],
+            ]
+        )
+
+        enu = np.dot(r, np.vstack((d_x, d_y, d_z)))
+
+        e = enu[0, :]
+        n = enu[1, :]
+        u = enu[2, :]
+
+        return e, n, u
+
+def enu2xyz_legacy(e, n, u, x0, y0, z0):
+    """
+    KEPT FOR LEGACY REASONS, use enu2xyz
+
+    diffère de enu2xyz pour d'obscure raisons, à investiguer !!!
+    est laissé pour des scripts de conversion de GINS (170119)
+
+    this fct compute the dXYZ and not the final XYZ
+
+    """
+
+    fr, lr, hr = xyz2geo(x0, y0, z0)
+    f0 = np.deg2rad(fr)
+    l0 = np.deg2rad(lr)
+
+    r = np.array(
+        [
+            [-np.sin(l0), np.cos(l0), 0],
+            [-np.sin(f0) * np.cos(l0), -np.sin(f0) * np.sin(l0), np.cos(f0)],
+            [np.cos(f0) * np.cos(l0), np.cos(f0) * np.sin(l0), np.sin(f0)],
+        ]
+    )
+
+    r3 = r.T
+
+    enu = np.vstack((e, n, u))
+
+    xyz = np.dot(r3, enu)  # + np.vstack(( x0, y0, z0))
+
+    d_x = float(xyz[0])
+    d_y = float(xyz[1])
+    d_z = float(xyz[2])
+
+    return d_x, d_y, d_z
+
 ############ deprecated aliases ############
 import warnings
 
@@ -896,3 +983,21 @@ def GEO2XYZ(*args, **kwargs):
 def XYZ2GEO(*args, **kwargs):
     deprec_warn("XYZ2GEO", "xyz2geo")
     return xyz2geo(*args, **kwargs)
+
+
+def sXYZ2sENU(*args, **kwargs):
+    deprec_warn("sXYZ2sENU", "sigma_xyz2enu")
+    return sigma_xyz2enu(*args, **kwargs)
+
+
+def sENU2sFLH(*args, **kwargs):
+    deprec_warn("sENU2sFLH", "sigma_enu2geo")
+    return sigma_enu2geo(*args, **kwargs)
+
+def sFLH2sENU(*args, **kwargs):
+    deprec_warn("sFLH2sENU", "sigma_geo2enu")
+    return sigma_geo2enu(*args, **kwargs)
+
+def sFLH2sXYZ(*args, **kwargs):
+    deprec_warn("sFLH2sXYZ", "sigma_geo2xyz")
+    return sigma_geo2xyz(*args, **kwargs)
