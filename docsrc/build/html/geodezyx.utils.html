@@ -19,6 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx.utils_xtra package" href="geodezyx.utils_xtra.html" />
     <link rel="prev" title="geodezyx.toolbox_meta package" href="geodezyx.toolbox_meta.html" /> 
 </head>
 
@@ -53,6 +54,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
@@ -64,12 +66,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.dict_utils">geodezyx.utils.dict_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.list_utils">geodezyx.utils.list_utils module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.pandas_utils">geodezyx.utils.pandas_utils module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.plot_utils">geodezyx.utils.plot_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.shell_like">geodezyx.utils.shell_like module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.utils_core">geodezyx.utils.utils_core module</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
 </ul>
 </li>
 </ul>
@@ -354,6 +355,23 @@ then returns the sublist, e.g. : [[a,b,c]] =&gt; [a,b,c]</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.list_utils.sort_basename">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">sort_basename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_paths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.sort_basename" title="Link to this definition"></a></dt>
+<dd><p>Sort a list of file paths by their basenames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_paths</strong> (<em>list</em>) – List of file paths to be sorted.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sorted list of file paths by their basenames.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.sort_binom_list">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">sort_binom_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">array_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.sort_binom_list" title="Link to this definition"></a></dt>
 <dd><p>sort Y according to X
@@ -440,232 +458,6 @@ source
 <dd><p>This one is faster
 <a class="reference external" href="https://stackoverflow.com/questions/5426908/find-unique-elements-of-floating-point-array-in-numpy-with-comparison-using-a-d">https://stackoverflow.com/questions/5426908/find-unique-elements-of-floating-point-array-in-numpy-with-comparison-using-a-d</a></p>
 </dd></dl>
-
-</section>
-<section id="module-geodezyx.utils.pandas_utils">
-<span id="geodezyx-utils-pandas-utils-module"></span><h2>geodezyx.utils.pandas_utils module<a class="headerlink" href="#module-geodezyx.utils.pandas_utils" title="Link to this heading"></a></h2>
-<p>&#64;author: psakic</p>
-<p>This sub-module of geodezyx.utils contains functions for operations
-related to Python’s Pandas object manipulations.</p>
-<p>it can be imported directly with:
-from geodezyx import utils</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
-<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
-GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.pandas_utils.diff_pandas">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">diff_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_np_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.pandas_utils.diff_pandas" title="Link to this definition"></a></dt>
-<dd><p>Differentiate a Pandas DataFrame, if index is time.</p>
-<p>This function calculates the difference between consecutive elements in a specified column of a DataFrame.
-The difference is divided by the difference in time (seconds) between the corresponding indices.
-This is essentially a derivative operation, assuming the index represents time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>DF</strong> (<em>pandas.DataFrame</em>) – The input DataFrame. The index should represent time.</p></li>
-<li><p><strong>col_name</strong> (<em>str</em>) – The name of the column in the DataFrame that you want to differentiate.</p></li>
-<li><p><strong>use_np_diff</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use Numpy’s diff.
-Default is False.
-This option has a (much) faster execution speed.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The differentiated column of the input DataFrame. The type of the return value depends on the
-‘return_array’ parameter. If ‘return_array’ is False (default), a DataFrame is returned. If
-‘return_array’ is True, a numpy array is returned.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pandas.DataFrame or numpy.array</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.pandas_utils.pandas_DF_2_tuple_serie">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_DF_2_tuple_serie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns_name_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_index_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.pandas_utils.pandas_DF_2_tuple_serie" title="Link to this definition"></a></dt>
-<dd><p>This function is made to solve the multiple columns selection
-problem
-the idea is :</p>
-<blockquote>
-<div><p>S1 = pandas_DF_2_tuple_serie(DF1 , columns_name_list)
-S2 = pandas_DF_2_tuple_serie(DF2 , columns_name_list)
-BOOL = S1.isin(S2)
-DF1[BOOL]</p>
-</div></blockquote>
-<dl class="simple">
-<dt>Source :</dt><dd><p><a class="reference external" href="https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns">https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.pandas_utils.pandas_DF_print">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_DF_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.pandas_utils.pandas_DF_print" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.pandas_utils.pandas_column_rename_dic">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_column_rename_dic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inpnames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.pandas_utils.pandas_column_rename_dic" title="Link to this definition"></a></dt>
-<dd><p>wrapper of renamedic_fast_4_pandas</p>
-<p>EXEMPLE :
-rnamedic = utils.renamedic_fast_4_pandas(<a href="#id1"><span class="problematic" id="id2">*</span></a>[“zmax”,”ang”,”zsmooth”,”smoothtype”,”xgrad”,”ygrad”,</p>
-<blockquote>
-<div><p>‘r_eiko’,’z_eiko’,’pt_eiko_x’,’pt_eiko_y’,”t_eiko”,
-‘r_sd’,  ‘z_sd’,  ‘pt_sd_x’  ,’pt_sd_y’  ,’t_sd’,
-‘diff_x’,’diff_y’,’diff’,’diff_t’])</p>
-</div></blockquote>
-<p>pda = pda.rename(columns = rnamedic)</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.pandas_utils.renamedic_fast_4_pandas">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">renamedic_fast_4_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inpnames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.pandas_utils.renamedic_fast_4_pandas" title="Link to this definition"></a></dt>
-<dd><p>EXEMPLE :
-rnamedic = utils.renamedic_fast_4_pandas(<a href="#id3"><span class="problematic" id="id4">*</span></a>[“zmax”,”ang”,”zsmooth”,”smoothtype”,”xgrad”,”ygrad”,</p>
-<blockquote>
-<div><p>‘r_eiko’,’z_eiko’,’pt_eiko_x’,’pt_eiko_y’,”t_eiko”,
-‘r_sd’,  ‘z_sd’,  ‘pt_sd_x’  ,’pt_sd_y’  ,’t_sd’,
-‘diff_x’,’diff_y’,’diff’,’diff_t’])</p>
-</div></blockquote>
-<p>pda = pda.rename(columns = rnamedic)</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.pandas_utils.weighted_average">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">weighted_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by_col</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.pandas_utils.weighted_average" title="Link to this definition"></a></dt>
-<dd><section id="source">
-<h3>Source<a class="headerlink" href="#source" title="Link to this heading"></a></h3>
-<blockquote>
-<div><p><a class="reference external" href="https://stackoverflow.com/questions/31521027/groupby-weighted-average-and-sum-in-pandas-dataframe">https://stackoverflow.com/questions/31521027/groupby-weighted-average-and-sum-in-pandas-dataframe</a></p>
-</div></blockquote>
-</section>
-</dd></dl>
-
-</section>
-<section id="module-geodezyx.utils.plot_utils">
-<span id="geodezyx-utils-plot-utils-module"></span><h2>geodezyx.utils.plot_utils module<a class="headerlink" href="#module-geodezyx.utils.plot_utils" title="Link to this heading"></a></h2>
-<p>&#64;author: psakic</p>
-<p>This sub-module of geodezyx.utils contains functions for operations
-related to Python’s plot operations.</p>
-<p>it can be imported directly with:
-from geodezyx import utils</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
-<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
-GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.plot_utils.axis_data_coords_sys_transform">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">axis_data_coords_sys_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis_obj_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.axis_data_coords_sys_transform" title="Link to this definition"></a></dt>
-<dd><p>inverse = False : Axis =&gt; Data
-= True  : Data =&gt; Axis</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.plot_utils.color_list">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">color_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jet'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.color_list" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.plot_utils.colors_from_colormap_getter">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">colors_from_colormap_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ncolors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.colors_from_colormap_getter" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.plot_utils.figure_saver">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">figure_saver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figobjt_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.png',</span> <span class="pre">'.pdf',</span> <span class="pre">'.figpik')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transparent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.figure_saver" title="Link to this definition"></a></dt>
-<dd><p>This function provides a front end to export pretty-print plots</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>figobjt_in</strong> (<em>matplotlib Figure object</em>) – input matplotlib Figure object. use for instance plt.gcf() to get it.</p></li>
-<li><p><strong>outdir</strong> (<em>str</em>) – the output directory.</p></li>
-<li><p><strong>outname</strong> (<em>str</em>) – output prefix filename.</p></li>
-<li><p><strong>outtype</strong> (<em>tuple</em><em>, </em><em>optional</em>) – the output formats. The default is (‘.png’,’.pdf’,’.figpik’).</p></li>
-<li><p><strong>formt</strong> (<em>2-tuple</em><em> or </em><em>string</em><em> , </em><em>optional</em>) – the format (size) of the plot.
-if string: a Ax format (A4, A3 etc…)
-if tuple: size of the plot  in inches.
-The default is None.</p></li>
-<li><p><strong>dpi</strong> (<em>int</em><em>, </em><em>optional</em>) – DPI of the figure. The default is 200.</p></li>
-<li><p><strong>transparent</strong> (<em>bool</em><em>, </em><em>optional</em>) – make the plot transparent. The default is False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>outpath_stk</strong> – output paths of the plots.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>string or list of string</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.plot_utils.gaussian_for_plot">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">gaussian_for_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.gaussian_for_plot" title="Link to this definition"></a></dt>
-<dd><p>generate a gaussian curve for histogram plot</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>D</strong> (<em>iterable</em>) – data vector.</p></li>
-<li><p><strong>density</strong> (<em>bool</em><em>, </em><em>optional</em>) – Adapted curve for desity mode. The default is False.</p></li>
-<li><p><strong>nbins</strong> (<em>int</em><em>, </em><em>optional</em>) – number of bins. The default is 500.</p></li>
-<li><p><strong>nsigma</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – n sigmas for the x axis. The default is 3.5.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>Xpdf</strong> (<em>array</em>) – gaussian curve x.</p></li>
-<li><p><strong>Ypdf_out</strong> (<em>TYPE</em>) – gaussian curve x.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.plot_utils.get_figure">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">get_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.get_figure" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.plot_utils.id2val">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">id2val</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.id2val" title="Link to this definition"></a></dt>
-<dd><p>from a value list and a id pointer list
-return the good val from the good id
-replace dico bc. set is not supproted as key</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.plot_utils.set_size_for_pub">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">set_size_for_pub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">418.25368</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.set_size_for_pub" title="Link to this definition"></a></dt>
-<dd><p>Set aesthetic figure dimensions to avoid scaling in latex.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>width</strong> (<em>float</em>) – Width in pts</p></li>
-<li><p><strong>fraction</strong> (<em>float</em>) – Fraction of the width which you wish the figure to occupy</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>fig_dim</strong> – Dimensions of figure in inches</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.plot_utils.symbols_list">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">symbols_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.symbols_list" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.plot_utils.ylim_easy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.plot_utils.</span></span><span class="sig-name descname"><span class="pre">ylim_easy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Lin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_null_if_neg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.plot_utils.ylim_easy" title="Link to this definition"></a></dt>
-<dd></dd></dl>
 
 </section>
 <section id="module-geodezyx.utils.shell_like">
@@ -846,6 +638,11 @@ it will be returned in a list anyway</p>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.shell_like.gzip_compress">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">gzip_compress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.gzip_compress" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.shell_like.head">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.head" title="Link to this definition"></a></dt>
 <dd><p>This one is fairly trivial to implement but it is here for completeness.</p>
@@ -943,10 +740,20 @@ to get better performance.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.shell_like.walk_dir">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">walk_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.walk_dir" title="Link to this definition"></a></dt>
-<dd><p>from a main parent_dir
-returns files_list &amp; dirs_list all the files and all the dirs in the
-parent_dir</p>
-<p><a class="reference external" href="https://www.tutorialspoint.com/python/os_walk.htm">https://www.tutorialspoint.com/python/os_walk.htm</a></p>
+<dd><p>From a main parent_dir, returns files_list &amp; dirs_list containing all the files and all the dirs in the parent_dir.
+Supports wildcards in the parent_dir path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parent_dir</strong> (<em>str</em>) – The parent directory path, which can include wildcards.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>files_list</strong> (<em>list</em>) – List of all file paths.</p></li>
+<li><p><strong>dirs_list</strong> (<em>list</em>) – List of all directory paths.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -980,8 +787,8 @@ GitHub repository :
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">Tee</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">files</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.Tee" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Internal class for Tee_frontend</p>
-<section id="id5">
-<h3>Source<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<section id="source">
+<h3>Source<a class="headerlink" href="#source" title="Link to this heading"></a></h3>
 <blockquote>
 <div><p>based on
 <a class="reference external" href="http://stackoverflow.com/questions/11325019/output-on-the-console-and-file-using-python">http://stackoverflow.com/questions/11325019/output-on-the-console-and-file-using-python</a>
@@ -1145,8 +952,8 @@ application.</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">docstring_generic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.docstring_generic" title="Link to this definition"></a></dt>
 <dd><p>prints and returns an prototype generic docstring. Based on Numpy docstring
 convention</p>
-<section id="id6">
-<h3>Source<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<section id="id1">
+<h3>Source<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p><a class="reference external" href="https://numpydoc.readthedocs.io/en/latest/format.html">https://numpydoc.readthedocs.io/en/latest/format.html</a></p>
 </section>
 </dd></dl>
@@ -1208,7 +1015,7 @@ can actually be a suffix</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.get_timestamp">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">get_timestamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outstring</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'T'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.get_timestamp" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">get_timestamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outstring</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'T'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.get_timestamp" title="Link to this definition"></a></dt>
 <dd><p>frontend to get easily a timestamp</p>
 </dd></dl>
 
@@ -1227,7 +1034,7 @@ for instance type(np.array(A)) doesn’t return a constructor</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.globals_filtered">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">globals_filtered</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.globals_filtered" title="Link to this definition"></a></dt>
-<dd><p>Filter globals() varirables with only compatible variables for pickle.</p>
+<dd><p>Filter globals() variables with only compatible variables for pickle.</p>
 <p><a class="reference external" href="https://stackoverflow.com/questions/2960864/how-to-save-all-the-variables-in-the-current-python-session">https://stackoverflow.com/questions/2960864/how-to-save-all-the-variables-in-the-current-python-session</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1248,6 +1055,14 @@ for instance type(np.array(A)) doesn’t return a constructor</p>
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.indice_printer">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">indice_printer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_every</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.indice_printer" title="Link to this definition"></a></dt>
 <dd><p>print an index every N iteration</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.utils_core.is_in_str">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">is_in_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">patterns</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.is_in_str" title="Link to this definition"></a></dt>
+<dd><p>recipe to the famous problem of pattern in string
+from
+<a class="reference external" href="http://stackoverflow.com/questions/3389574/check-if-multiple-strings-exist-in-another-string">http://stackoverflow.com/questions/3389574/check-if-multiple-strings-exist-in-another-string</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -1275,8 +1090,8 @@ This boolean will avoid True as return if you test a string</p></li>
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.is_lambda">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">is_lambda</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.is_lambda" title="Link to this definition"></a></dt>
 <dd><p>Check if v is lambda</p>
-<section id="id7">
-<h3>Source<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<section id="id2">
+<h3>Source<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p><a class="reference external" href="https://stackoverflow.com/questions/3655842/how-can-i-test-whether-a-variable-holds-a-lambda">https://stackoverflow.com/questions/3655842/how-can-i-test-whether-a-variable-holds-a-lambda</a></p>
 </section>
 </dd></dl>
@@ -1301,6 +1116,24 @@ This boolean will avoid True as return if you test a string</p></li>
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.line_in_file_checker">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">line_in_file_checker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.line_in_file_checker" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.utils_core.listify">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">listify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.listify" title="Link to this definition"></a></dt>
+<dd><p>Convert the input into a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inp</strong> (<em>any</em>) – The input to be converted into a list.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list containing the input elements if the input is iterable,
+otherwise a list with the input as its single element.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.mdot">
@@ -1352,14 +1185,6 @@ a string representing file content, bytes, a StringIO object, or a list of lines
 <dd class="field-even"><p><strong>FileNotFoundError</strong> – If the file specified by file_in does not exist.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.utils_core.patterns_in_string_checker">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">patterns_in_string_checker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">patterns</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.patterns_in_string_checker" title="Link to this definition"></a></dt>
-<dd><p>recipe to the famous problem of pattern in string
-from
-<a class="reference external" href="http://stackoverflow.com/questions/3389574/check-if-multiple-strings-exist-in-another-string">http://stackoverflow.com/questions/3389574/check-if-multiple-strings-exist-in-another-string</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -1544,6 +1369,7 @@ value if the timeout_duration is exceeded</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="geodezyx.toolbox_meta.html" class="btn btn-neutral float-left" title="geodezyx.toolbox_meta package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.utils_xtra.html" class="btn btn-neutral float-right" title="geodezyx.utils_xtra package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

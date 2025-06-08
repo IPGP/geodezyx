@@ -49,6 +49,14 @@ geodezyx.operational.gins\_runner.gins\_double\_diff module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.operational.gins\_runner.gins\_legacy module
+-----------------------------------------------------
+
+.. automodule:: geodezyx.operational.gins_runner.gins_legacy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.operational.gins\_runner.gins\_orbclk module
 -----------------------------------------------------
 
@@ -61,6 +69,14 @@ geodezyx.operational.gins\_runner.gins\_prairie module
 ------------------------------------------------------
 
 .. automodule:: geodezyx.operational.gins_runner.gins_prairie
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geodezyx.operational.gins\_runner.singugins\_run module
+-------------------------------------------------------
+
+.. automodule:: geodezyx.operational.gins_runner.singugins_run
    :members:
    :undoc-members:
    :show-inheritance:
