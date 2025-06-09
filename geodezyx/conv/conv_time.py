@@ -244,7 +244,7 @@ def dt_range(start_dt, end_dt,
         Datetimes
 
     day_step, sec_step : int, optional
-        
+
         
     Returns
     -------

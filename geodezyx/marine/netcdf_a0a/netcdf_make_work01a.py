@@ -18,7 +18,6 @@ ptxt = r"/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0110_R
 df = marine.read_rbr_txt_data(ptxt)
 df.reset_index(inplace=True)
 
-
 # Create sample data
 time = df["Time"].values
 num_obs = len(time)
@@ -26,7 +25,6 @@ num_obs = len(time)
 latitude_scal = 0.
 longitude_scal = 0.
 depth_scal = 3000.
-
 
 pres_1 = df['BPR pressure 1'].values
 temp_1 = df['BPR temperature 1'].values

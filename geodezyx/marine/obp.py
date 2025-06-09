@@ -32,6 +32,23 @@ import datetime as dt
 
 GRAVITY = 9.81
 
+
+def read_rbr_txt_data(file, t0 = None, t1 = None):
+
+    col = ['BPR temperature', 'BPR pressure', 'BPR temperature.1',
+           'BPR pressure.1', 'Temperature', 'Barometer temperature',
+           'Barometer pressure']
+
+    new_col = ['BPR temperature 1', 'BPR pressure 1', 'BPR temperature 2',
+           'BPR pressure 2', 'Temperature', 'Barometer temperature',
+           'Barometer pressure']
+
+    A0A = pd.read_csv(file, index_col = 0, parse_dates = True)
+    A0A = A0A[col]
+    A0A.columns = new_col
+    return A0A[t0:t1].dropna()
+
+
 def butter_highpass(cutoff, fs, order=5):
     """
     Designs a highpass Butterworth filter.
