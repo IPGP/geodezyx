@@ -242,6 +242,9 @@ def dt_range(start_dt, end_dt,
     ----------
     start_dt,end_dt : datetime.datetime
         Datetimes
+
+    day_step, sec_step : int, optional
+        
         
     Returns
     -------
@@ -791,10 +794,10 @@ def dt_utc2dt_ut1_smart(dtin, df_eop_in,
         dtmin = np.min(dtin)
         dtmax = np.max(dtin)
 
-        BOOL = ((df_eop.index > dtmin - dt.timedelta(days=2)) &
+        bool = ((df_eop.index > dtmin - dt.timedelta(days=2)) &
                 (df_eop.index < dtmax + dt.timedelta(days=2)))
 
-        df_eop = df_eop[BOOL]
+        df_eop = df_eop[bool]
 
         ### We also use the interpolator class
         if use_interp1d_obj:
