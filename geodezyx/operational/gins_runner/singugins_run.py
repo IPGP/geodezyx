@@ -71,14 +71,15 @@ def singugins_run(
     None
     """
 
-    start_epoch = min((start_epoch, end_epoch))
-    end_epoch = max((start_epoch, end_epoch))
+    import numpy as np
+    srt_epoch_ok = min([start_epoch, end_epoch])
+    end_epoch_ok = max([start_epoch, end_epoch])
 
     rnxs_lis = opera.rinex_finder(
         bdrnx_folder,
         specific_sites=specific_sites,
-        start_epoch=start_epoch,
-        end_epoch=end_epoch,
+        start_epoch=srt_epoch_ok,
+        end_epoch=end_epoch_ok,
         short_name=not no_rnx2,
         long_name=not no_rnx3,
     )
