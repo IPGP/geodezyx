@@ -169,9 +169,12 @@ download_gnss_rinex = "geodezyx.operational.bin_opera.download_gnss_rinex:main"
 # If there are data files included in your packages that need to be
 # installed, specify them here.
 # package-data = { "sample" = ["*.dat"] }
-where = ["."]
-packages = ["geodezyx*"]
 
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages (["."] by default)
+include = ["geodezyx*"] # package names should match these glob patterns (["*"] by default)
+#exclude = []  # exclude packages matching these glob patterns (empty by default)
+#namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [tool.bumpversion]
 current_version = "5.0.0-beta1"
