@@ -7,7 +7,7 @@ import logging.config # MUST remain logging.config for < v3.10
 import os
 from os import path
 
-__version__='5.0.0'  ## increase it with bump-my-version !!!
+__version__='5.0.0-beta1'  ## increase it with bump-my-version !!!
 
 #### IMPORT CONFIG FOR LOGGER
 log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'logconfig','loggzyx.py')
