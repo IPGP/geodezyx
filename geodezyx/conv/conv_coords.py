@@ -51,7 +51,7 @@ log = logging.getLogger("geodezyx")
 #
 
 
-def geo2xyz(lat, lon, h, angle="deg", a=6378137.0, e2=0.00669438003):
+def geo2xyz(lat, lon, h, angle="deg", e2=0.00669438003):
     """
     Coordinates conversion
 
@@ -66,7 +66,7 @@ def geo2xyz(lat, lon, h, angle="deg", a=6378137.0, e2=0.00669438003):
     angle : string
         describe the angle input type : 'deg' or 'rad'
 
-    a, e2 : floats
+    e2 : floats
         ellipsoid parameters (WGS84 per default)
 
 
