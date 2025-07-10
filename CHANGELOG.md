@@ -12,7 +12,10 @@
     Thus, `import geodezyx` will only load `conv` and `utils` modules.
   * NB: `from geodezyx import *` still load __all modules__. But its use is __highly discouraged__ (very slow).
   * PEP8 compliance: `conv` module functions are now PEP8 compliant, e.g. upper case function names are now lower case.
-    * exemples: `dt2MJD` > `dt2_mjd`, `MJD2dt` > `mjd2_dt`
+    * Exemples:
+      * `dt2MJD` > `dt2_mjd`, `MJD2dt` > `mjd2_dt`
+      * `XYZ2ENU` > `xyz2enu`, `GEO2XYZ` > `geo2xyz`
+    * Deprecated functions are still available with a warning, but will be removed in the future.
   
   * Lot of minor imporvements and bug corrections
 

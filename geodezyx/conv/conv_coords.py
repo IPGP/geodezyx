@@ -942,7 +942,6 @@ def enu2xyz_legacy(e, n, u, x0, y0, z0):
 ############ deprecated aliases ############
 import warnings
 
-
 def deprec_warn(old, new):
     """
     Helper function to issue deprecation warnings
@@ -956,48 +955,78 @@ def deprec_warn(old, new):
 
 
 def ECI2ECEF(*args, **kwargs):
+    """
+    Deprecated alias for eci2ecef
+    """
     deprec_warn("ECI2ECEF", "eci2ecef")
     return eci2ecef(*args, **kwargs)
 
 
 def ECEF2ECI(*args, **kwargs):
+    """
+    Deprecated alias for ecef2eci
+    """
     deprec_warn("ECEF2ECI", "ecef2eci")
     return ecef2eci(*args, **kwargs)
 
 
 def XYZ2ENU_2(*args, **kwargs):
+    """
+    Deprecated alias for xyz2enu
+    """
     deprec_warn("XYZ2ENU_2", "xyz2enu")
     return xyz2enu(*args, **kwargs)
 
 
 def ENU2XYZ(*args, **kwargs):
+    """
+    Deprecated alias for enu2xyz
+    """
     deprec_warn("ENU2XYZ", "enu2xyz")
     return enu2xyz(*args, **kwargs)
 
 
 def GEO2XYZ(*args, **kwargs):
+    """
+    Deprecated alias for geo2xyz
+    """
     deprec_warn("GEO2XYZ", "geo2xyz")
     return geo2xyz(*args, **kwargs)
 
 
 def XYZ2GEO(*args, **kwargs):
+    """
+    Deprecated alias for xyz2geo
+    """
     deprec_warn("XYZ2GEO", "xyz2geo")
     return xyz2geo(*args, **kwargs)
 
 
 def sXYZ2sENU(*args, **kwargs):
     deprec_warn("sXYZ2sENU", "sigma_xyz2enu")
+    """
+    Deprecated alias for sigma_xyz2enu
+    """
     return sigma_xyz2enu(*args, **kwargs)
 
 
 def sENU2sFLH(*args, **kwargs):
+    """
+    Deprecated alias for sigma_enu2geo
+    """
     deprec_warn("sENU2sFLH", "sigma_enu2geo")
     return sigma_enu2geo(*args, **kwargs)
 
 def sFLH2sENU(*args, **kwargs):
+    """
+    Deprecated alias for sigma_geo2enu
+    """
     deprec_warn("sFLH2sENU", "sigma_geo2enu")
     return sigma_geo2enu(*args, **kwargs)
 
 def sFLH2sXYZ(*args, **kwargs):
+    """
+    Deprecated alias for sigma_geo2xyz
+    """
     deprec_warn("sFLH2sXYZ", "sigma_geo2xyz")
     return sigma_geo2xyz(*args, **kwargs)

@@ -67,11 +67,12 @@ def pandas_DF_2_tuple_serie(DFin,columns_name_list,reset_index_first=False):
     This function is made to solve the multiple columns selection 
     problem
     the idea is :
-        S1 = pandas_DF_2_tuple_serie(DF1 , columns_name_list)
-        S2 = pandas_DF_2_tuple_serie(DF2 , columns_name_list)
-        BOOL = S1.isin(S2)
-        DF1[BOOL]
-        
+    ```
+    S1 = pandas_DF_2_tuple_serie(DF1 , columns_name_list)
+    S2 = pandas_DF_2_tuple_serie(DF2 , columns_name_list)
+    BOOL = S1.isin(S2)
+    DF1[BOOL]
+    ```
     Source :
         https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns
     """
@@ -88,7 +89,7 @@ def weighted_average(df,data_col,weight_col,by_col):
     """
     Source
     ------
-        https://stackoverflow.com/questions/31521027/groupby-weighted-average-and-sum-in-pandas-dataframe
+    https://stackoverflow.com/questions/31521027/groupby-weighted-average-and-sum-in-pandas-dataframe
     """
     df['_data_times_weight'] = df[data_col]*df[weight_col]
     df['_weight_where_notnull'] = df[weight_col]*pd.notnull(df[data_col])

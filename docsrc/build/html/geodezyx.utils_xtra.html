@@ -60,7 +60,6 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.utils_xtra package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
@@ -149,17 +148,17 @@ This option has a (much) faster execution speed.</p></li>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_DF_2_tuple_serie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns_name_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_index_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.pandas_DF_2_tuple_serie" title="Link to this definition"></a></dt>
 <dd><p>This function is made to solve the multiple columns selection
 problem
-the idea is :</p>
+the idea is :
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">S1</span> <span class="pre">=</span> <span class="pre">pandas_DF_2_tuple_serie(DF1</span> <span class="pre">,</span> <span class="pre">columns_name_list)</span>
+<span class="pre">S2</span> <span class="pre">=</span> <span class="pre">pandas_DF_2_tuple_serie(DF2</span> <span class="pre">,</span> <span class="pre">columns_name_list)</span>
+<span class="pre">BOOL</span> <span class="pre">=</span> <span class="pre">S1.isin(S2)</span>
+<span class="pre">DF1[BOOL]</span>
+<span class="pre">`</span></code>
+Source :</p>
 <blockquote>
-<div><p>S1 = pandas_DF_2_tuple_serie(DF1 , columns_name_list)
-S2 = pandas_DF_2_tuple_serie(DF2 , columns_name_list)
-BOOL = S1.isin(S2)
-DF1[BOOL]</p>
+<div><p><a class="reference external" href="https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns">https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns</a></p>
 </div></blockquote>
-<dl class="simple">
-<dt>Source :</dt><dd><p><a class="reference external" href="https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns">https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns</a></p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -199,9 +198,7 @@ rnamedic = utils.renamedic_fast_4_pandas(<a href="#id3"><span class="problematic
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">weighted_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by_col</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.weighted_average" title="Link to this definition"></a></dt>
 <dd><section id="source">
 <h3>Source<a class="headerlink" href="#source" title="Link to this heading"></a></h3>
-<blockquote>
-<div><p><a class="reference external" href="https://stackoverflow.com/questions/31521027/groupby-weighted-average-and-sum-in-pandas-dataframe">https://stackoverflow.com/questions/31521027/groupby-weighted-average-and-sum-in-pandas-dataframe</a></p>
-</div></blockquote>
+<p><a class="reference external" href="https://stackoverflow.com/questions/31521027/groupby-weighted-average-and-sum-in-pandas-dataframe">https://stackoverflow.com/questions/31521027/groupby-weighted-average-and-sum-in-pandas-dataframe</a></p>
 </section>
 </dd></dl>
 
@@ -342,7 +339,7 @@ replace dico bc. set is not supproted as key</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -24,6 +24,5 @@ Subpackages
    geodezyx.reffram
    geodezyx.stats
    geodezyx.time_series
-   geodezyx.toolbox_meta
    geodezyx.utils
    geodezyx.utils_xtra
