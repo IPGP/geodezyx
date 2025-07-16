@@ -10,6 +10,7 @@ import geodezyx.operational as opera
 import geodezyx.conv as conv
 import datetime as dt
 import argparse
+import os
 
 
 def singugins_run(
@@ -203,7 +204,7 @@ def main():
     spotgins_run_kwargs = json.loads(args.spotgins_run_kwargs)
 
     singugins_run(
-        results_folder=args.results_folder,
+        results_folder=os.path.abspath(args.results_folder),
         specific_sites=args.specific_sites,
         start_epoch=args.start_epoch,
         end_epoch=args.end_epoch,
