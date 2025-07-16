@@ -504,9 +504,8 @@ def gzip_compress(inp_path, out_dir=None, out_fname=None, rm_inp=False):
 
     return out_path
 
-
 def uncompress(pathin,dirout = '', opts='-f'):
-    log.warn("function discontinued, use files_rw.unzip_gz_Z() instead")
+    log.warning("function discontinued, use files_rw.unzip_gz_z() instead")
     if not os.path.isfile(pathin):
         log.error('uncompress : %s doesnt exist !!!', pathin)
         return None

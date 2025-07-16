@@ -212,7 +212,7 @@ def get_right_brdc(brdc_lis_inp, tmp_dir_inp):
     """
     if len(brdc_lis_inp) == 1:  ## normal case
         brdc_ori = brdc_lis_inp[0]
-        brdc_unzip = files_rw.unzip_gz_Z(brdc_ori, out_gzip_dir=tmp_dir_inp)
+        brdc_unzip = files_rw.unzip_gz_z(brdc_ori, out_gzip_dir=tmp_dir_inp)
     elif len(brdc_lis_inp) == 0:
         brdc_ori = None
         brdc_unzip = None
@@ -221,7 +221,7 @@ def get_right_brdc(brdc_lis_inp, tmp_dir_inp):
         log.warning("several brdc found, keep the last one")
         log.warning(brdc_lis_inp)
         brdc_ori = brdc_lis_inp[-1]
-        brdc_unzip = files_rw.unzip_gz_Z(brdc_ori, out_gzip_dir=tmp_dir_inp)
+        brdc_unzip = files_rw.unzip_gz_z(brdc_ori, out_gzip_dir=tmp_dir_inp)
     else:
         #### this should never happend
         brdc_ori = None
@@ -288,7 +288,7 @@ def get_right_prod(prod_lis_inp, tmp_dir_inp, prod_name, default_fallback):
     """
     if len(prod_lis_inp) == 1:  ## normal case
         prod_ori = prod_lis_inp[0]
-        prod_out = files_rw.unzip_gz_Z(prod_ori, out_gzip_dir=tmp_dir_inp)
+        prod_out = files_rw.unzip_gz_z(prod_ori, out_gzip_dir=tmp_dir_inp)
     elif len(prod_lis_inp) == 0 and default_fallback:
         log.warning("no prod. %s found, fallback to 'Default' in cfg file", prod_name)
         prod_out = "Default"
@@ -312,7 +312,7 @@ def get_right_prod(prod_lis_inp, tmp_dir_inp, prod_name, default_fallback):
             log.warning(prod_lis_bst)
             prod_ori = prod_lis_bst[-1]
 
-        prod_out = files_rw.unzip_gz_Z(prod_ori, out_gzip_dir=tmp_dir_inp)
+        prod_out = files_rw.unzip_gz_z(prod_ori, out_gzip_dir=tmp_dir_inp)
     else:
         #### this should never happend
         prod_out = None

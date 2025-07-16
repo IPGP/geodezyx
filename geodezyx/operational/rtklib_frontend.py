@@ -68,7 +68,8 @@ def rtklib_run_from_rinex(
     base_auto_conf=True,
     XYZbase=[0, 0, 0],
     outtype="auto",
-    calc_center="igs",
+    calc_center="IGS0OPSFIN",
+    exe_path = '/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'
 ):
     """
     auto_conf :
@@ -91,9 +92,19 @@ def rtklib_run_from_rinex(
         can manage the upper case XYZ or FLH
     """
 
+    import shutil
+
     # paths & files
     working_dir = utils.create_dir(working_dir)
     out_dir = utils.create_dir(os.path.join(working_dir, "OUTPUT"))
+
+    # paths & files
+    temp_dir = os.path.join(working_dir,'TEMP')
+    clean_temp_dir = False
+    if clean_temp_dir:
+       shutil.rmtree(temp_dir)
+       temp_dir = os.path.join(working_dir,'TEMP')
+    out_dir  = os.path.join(working_dir,'OUTPUT')
 
     # uncompressing rinex if compressed
     if operational.check_if_compressed_rinex(rnx_rover):
@@ -109,13 +120,6 @@ def rtklib_run_from_rinex(
     rov_name = os.path.basename(rnx_rover)[0:4]
     bas_name = os.path.basename(rnx_base)[0:4]
 
-    # paths & files
-    # temp_dir = os.path.join(working_dir,'TEMP')
-    # if clean_temp_dir:
-    #    shutil.rmtree(temp_dir)
-    #    temp_dir = os.path.join(working_dir,'TEMP')
-    # out_dir  = os.path.join(working_dir,'OUTPUT')
-
     srt_str = rov_srt.strftime("%Y_%j")
     exp_full_name = "_".join((experience_prefix, rov_name, bas_name, srt_str))
 
@@ -125,39 +129,39 @@ def rtklib_run_from_rinex(
     dicoconf = read_conf_file(generik_conf)
 
     if rover_auto_conf:
-        Antobj_rov, Recobj_rov, Siteobj_rov, Locobj_rov = (
+        antobj_rov, recobj_rov, siteobj_rov, locobj_rov = (
             files_rw.read_rinex_2_dataobjts(rnx_rover)
         )
         dicoconf["ant1-postype"] = "xyz"
-        dicoconf["ant1-anttype"] = Antobj_rov.Antenna_Type
-        dicoconf["ant1-pos1"] = Locobj_rov.X_coordinate_m
-        dicoconf["ant1-pos2"] = Locobj_rov.Y_coordinate_m
-        dicoconf["ant1-pos3"] = Locobj_rov.Z_coordinate_m
-        dicoconf["ant1-antdelu"] = Antobj_rov.Up_Ecc
-        dicoconf["ant1-antdeln"] = Antobj_rov.North_Ecc
-        dicoconf["ant1-antdele"] = Antobj_rov.East_Ecc
+        dicoconf["ant1-anttype"] = antobj_rov.Antenna_Type
+        dicoconf["ant1-pos1"] = locobj_rov.X_coordinate_m
+        dicoconf["ant1-pos2"] = locobj_rov.Y_coordinate_m
+        dicoconf["ant1-pos3"] = locobj_rov.Z_coordinate_m
+        dicoconf["ant1-antdelu"] = antobj_rov.Up_Ecc
+        dicoconf["ant1-antdeln"] = antobj_rov.North_Ecc
+        dicoconf["ant1-antdele"] = antobj_rov.East_Ecc
 
     if not outtype.lower() == "auto":
         dicoconf["out-solformat"] = outtype.lower()
         log.info("out-solformat", dicoconf["out-solformat"])
 
     if base_auto_conf:
-        Antobj_bas, Recobj_bas, Siteobj_bas, Locobj_bas = (
+        antobj_bas, recobj_bas, siteobj_bas, locobj_bas = (
             files_rw.read_rinex_2_dataobjts(rnx_base)
         )
         dicoconf["ant2-postype"] = "xyz"
-        dicoconf["ant2-anttype"] = Antobj_bas.Antenna_Type
+        dicoconf["ant2-anttype"] = antobj_bas.Antenna_Type
         if XYZbase[0] != 0:
             dicoconf["ant2-pos1"] = XYZbase[0]
             dicoconf["ant2-pos2"] = XYZbase[1]
             dicoconf["ant2-pos3"] = XYZbase[2]
         else:
-            dicoconf["ant2-pos1"] = Locobj_bas.X_coordinate_m
-            dicoconf["ant2-pos2"] = Locobj_bas.Y_coordinate_m
-            dicoconf["ant2-pos3"] = Locobj_bas.Z_coordinate_m
-        dicoconf["ant2-antdelu"] = Antobj_bas.Up_Ecc
-        dicoconf["ant2-antdeln"] = Antobj_bas.North_Ecc
-        dicoconf["ant2-antdele"] = Antobj_bas.East_Ecc
+            dicoconf["ant2-pos1"] = locobj_bas.X_coordinate_m
+            dicoconf["ant2-pos2"] = locobj_bas.Y_coordinate_m
+            dicoconf["ant2-pos3"] = locobj_bas.Z_coordinate_m
+        dicoconf["ant2-antdelu"] = antobj_bas.Up_Ecc
+        dicoconf["ant2-antdeln"] = antobj_bas.North_Ecc
+        dicoconf["ant2-antdele"] = antobj_bas.East_Ecc
 
     if not (bas_srt <= rov_srt <= rov_end <= bas_end):
         log.warning("not bas_srt <= rov_srt <= rov_end <= bas_end !!!")
@@ -170,21 +174,31 @@ def rtklib_run_from_rinex(
 
     # ORBITS
     # SP3
-    orblis = operational.multi_downloader_orbs_clks(
-        temp_dir, bas_srt, bas_end, archtype="/", calc_center=calc_center
+    orblis = operational.download_gnss_products(
+        archive_dir=temp_dir,
+        startdate=bas_srt,
+        enddate=bas_end,
+        archtype="/",
+        AC_names=(calc_center , )
     )
-    sp3Z = orblis[0]
-    sp3 = utils.uncompress(sp3Z)
+
+    sp3_z = orblis[0]
+    sp3 = files_rw.unzip_gz_z(sp3_z)
 
     # BRDC
     statdic = dict()
     statdic["nav"] = ["BRDC"]
     nav_srt = dt.datetime(bas_srt.year, bas_srt.month, bas_srt.day)
     orblis = operational.download_gnss_rinex(
-        statdic, temp_dir, nav_srt, bas_end, archtype="/", sorted_mode=False
+        statdic, temp_dir, nav_srt, bas_end, archtype="/"
     )
-    navZ = orblis[0]
-    nav = utils.uncompress(navZ)
+
+    if len(orblis) > 0 and orblis[0][1]:
+        nav_z = orblis[0][0]
+        nav = files_rw.unzip_gz_z(nav_z)
+    else:
+        log.error("No BRDC nav file found in the archive")
+        raise FileNotFoundError("No BRDC nav file found in the archive")
 
     # Command
     com_config = "-k " + out_conf_fil
@@ -194,9 +208,10 @@ def rtklib_run_from_rinex(
     com_resultfile = "-o " + out_result_fil
     # com_combinsol="-c"
 
-    exe_path = "rnx2rtkp"
+    #exe_path = "rnx2rtkp"
     #    exe_path = "/home/pierre/install_softs/RTKLIB/rnx2rtkp"
-    exe_path = "/home/psakicki/SOFTWARE/RTKLIB/RTKLIB/app/rnx2rtkp/gcc/rnx2rtkp"
+    #exe_path = "/home/psakicki/SOFTWARE/RTKLIB/RTKLIB/app/rnx2rtkp/gcc/rnx2rtkp"
+    #exe_path = ""
 
     bigcomand = " ".join(
         (

@@ -2374,7 +2374,7 @@ def read_rinex_nav(fn, writeh5=None, version=2):
     return nav
 
 
-def unzip_gz_Z(
+def unzip_gz_z(
     inp_gzip_file, out_gzip_file="", remove_inp=False, force=False, out_gzip_dir=None
 ):
     """

@@ -3,7 +3,7 @@
 """
 @author: psakic
 This sub-module of geodezyx.operational contains functions to download
-gnss data and products from distant IGS servers. 
+gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
 The GeodeZYX Toolbox is a software for simple but useful
@@ -14,6 +14,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 import ftplib
+
 #### Import the logger
 import logging
 import os
@@ -21,6 +22,7 @@ import pathlib
 import shutil
 import time
 import urllib
+
 ########## BEGIN IMPORT ##########
 #### External modules
 from ftplib import FTP, FTP_TLS
@@ -32,7 +34,9 @@ import pandas as pd
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
-log = logging.getLogger('geodezyx')
+from geodezyx.stats import outlier_mad
+
+log = logging.getLogger("geodezyx")
 
 
 ##########  END IMPORT  ##########
@@ -499,7 +503,11 @@ def ftp_download_front(
 
     Returns
     -------
-    None
+    out_tup_lis : List of tuples
+        Returns a list of tuples containing
+        the local path of the downloaded file and
+        a boolean indicating whether the download was successful.
+        e.g. [(local_path1, True), (local_path2, False), ...]
 
     Notes
     -----
@@ -546,8 +554,11 @@ def ftp_download_front(
     pool = ThreadPool(parallel_download)
 
     # Start the parallel downloads
-    _ = pool.map(ftp_downloader_wrap, list(zip(ftpobj_mp_lis, urllist, savedirlist)))
-    return
+    out_tup_lis = pool.map(
+        ftp_downloader_wrap, list(zip(ftpobj_mp_lis, urllist, savedirlist))
+    )
+
+    return out_tup_lis
 
 
 def ftp_downloader_wo_objects(tupin):

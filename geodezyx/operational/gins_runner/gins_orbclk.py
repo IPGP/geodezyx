@@ -228,7 +228,7 @@ def download_convert_2_gins_orb_clk(
     sp3lis = []
     for Zfil in sp3_zlis:
         if Zfil.endswith(".Z") or Zfil.endswith(".gz"):
-            uncomp_fil = files_rw.unzip_gz_Z(Zfil)
+            uncomp_fil = files_rw.unzip_gz_z(Zfil)
         else:
             uncomp_fil = Zfil
         # some SP3 haven't EOF at the end ...
@@ -244,7 +244,7 @@ def download_convert_2_gins_orb_clk(
     clklis = []
     for Zfil in clk_zlis:
         if Zfil.endswith(".Z") or Zfil.endswith(".gz"):
-            uncomp_fil = files_rw.unzip_gz_Z(Zfil)
+            uncomp_fil = files_rw.unzip_gz_z(Zfil)
         else:
             uncomp_fil = Zfil
         clklis.append(uncomp_fil)

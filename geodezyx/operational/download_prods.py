@@ -353,7 +353,7 @@ def download_gnss_products(
         ### Actual Download
         if ftp_download and parallel_download == 1:
             for tup in downld_tuples_list:
-                dlutils.ftp_downloader_core(*tup)
+                dlutils.ftp_downld_core(*tup)
         elif ftp_download and parallel_download > 1:
             _ = pool.map_async(dlutils.ftp_downloader_wo_objects, downld_tuples_list)
         elif not ftp_download and parallel_download == 1:
@@ -371,12 +371,12 @@ def download_gnss_products(
     else:
         pot_locfiles_list_use = []
         for localfile in potential_localfiles_list_all:
-            Pot_compress_name_list = [localfile]
-            Pot_compress_name_list.append(localfile.replace(".gz", ""))
-            Pot_compress_name_list.append(localfile.replace(".Z", ""))
-            Pot_compress_name_list = list(set(Pot_compress_name_list))
+            pot_compress_name_list = [localfile]
+            pot_compress_name_list.append(localfile.replace(".gz", ""))
+            pot_compress_name_list.append(localfile.replace(".Z", ""))
+            pot_compress_name_list = list(set(pot_compress_name_list))
 
-            pot_locfiles_list_use = pot_locfiles_list_use + Pot_compress_name_list
+            pot_locfiles_list_use = pot_locfiles_list_use + pot_compress_name_list
 
     for pot_localfile in pot_locfiles_list_use:
         if os.path.isfile(pot_localfile):

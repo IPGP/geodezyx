@@ -624,11 +624,11 @@ def download_gnss_rinex(
 
     Returns
     -------
-    url_list : list of str
-        list of URLs
-
-    savedir_list : list of str
-        list of downloaded products paths
+    out_tup_lis : List of tuples
+        Returns a list of tuples containing
+        the local path of the downloaded file and
+        a boolean indicating whether the download was successful.
+        e.g. [(local_path1, True), (local_path2, False), ...]
 
     Minimal exemple
     ---------------
@@ -675,7 +675,7 @@ def download_gnss_rinex(
         )
 
     if not quiet_mode and len(table_dl) > 0:
-        dlutils.ftp_download_front(
+        out_tup_lis = dlutils.ftp_download_front(
             table_dl["url_true"].values,
             table_dl["outdir"].values,
             parallel_download=parallel_download,
@@ -684,8 +684,11 @@ def download_gnss_rinex(
             passwd=passwd,
             force=force,
         )
+    else:
+        log.warning("quiet mode, no download was performed")
+        out_tup_lis = pd.Series([], dtype=str)
 
-    return None
+    return out_tup_lis
 
 
 def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3):
