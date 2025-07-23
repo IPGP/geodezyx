@@ -26,6 +26,7 @@ import datetime as dt
 import logging
 import os
 import subprocess
+import numpy as np
 
 #### geodeZYX modules
 from geodezyx import files_rw
@@ -202,7 +203,7 @@ def rtklib_run_from_rinex(
 
     # Command
     com_config = "-k " + out_conf_fil
-    com_interval = "-ti " + str(rov_itv)
+    com_interval = "-ti " + str(np.round(rov_itv,6))
     com_mode = ""
     # com_mode="-p 4"
     com_resultfile = "-o " + out_result_fil
