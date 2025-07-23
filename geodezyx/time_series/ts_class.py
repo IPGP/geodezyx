@@ -591,7 +591,7 @@ class TimeSeriePoint:
             sA,sB,sC = 'sF','sL','sH'
 
         elif coortype == 'ENU':
-            if self.boolENU == False:
+            if not self.boolENU:
                 log.warning("no ENU coord. for " + self.name)
                 return None
 
@@ -599,7 +599,7 @@ class TimeSeriePoint:
             sA,sB,sC = 'sE','sN','sU'
 
         elif coortype == 'UTM':
-            if self.boolUTM == False:
+            if not self.boolUTM:
                 log.warning("no UTM coord. for " + self.name)
                 return None
 
@@ -1493,7 +1493,7 @@ class TimeSerieObs(object):
         self.bool_interp_uptodate = False
 
     def aleaobs(self):
-        iobs = randrange(self.nbobs)
+        iobs = np.random.randint(0,self.nbobs)
         log.info("observation no " + str(iobs))
 
         log.info(self.obs[iobs])
