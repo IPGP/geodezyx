@@ -588,7 +588,7 @@ class TimeSeriePoint:
 
         elif coortype == 'FLH':
             A,B,C = 'F','L','H'
-            sA,sB,sC = 's_f','s_l','s_h'
+            sA,sB,sC = 'sF','sL','sH'
 
         elif coortype == 'ENU':
             if self.boolENU == False:
@@ -596,7 +596,7 @@ class TimeSeriePoint:
                 return None
 
             A,B,C = 'E','N','U'
-            sA,sB,sC = 'sE','sN','s_u'
+            sA,sB,sC = 'sE','sN','sU'
 
         elif coortype == 'UTM':
             if self.boolUTM == False:
