@@ -436,7 +436,11 @@ def crawl_ftp_files(
             pass
         elif rnxlocal and not force:
             log.info("%s already exists locally ;)", os.path.basename(rnxlocal))
-            table_use.loc[irow, "rnxnam"] = ""
+            table_use.loc[irow, "ok_loc"] = True
+            table_use.loc[irow, "ok_dwl"] = False
+            table_use.loc[irow, "rnxnam"] = os.path.basename(rnxlocal)
+
+
             continue
 
         count_loop = count_loop + 1  #### must be after local file check
@@ -479,7 +483,7 @@ def crawl_ftp_files(
                 log.warning("unable to chdir to %s, exception %s", row["dir"], e)
                 ftp_files_list = []
 
-            ftp_files_list = dlutils._ftp_dir_list_files(ftpobj)
+            ftp_files_list = dlutils.ftp_dir_list_files(ftpobj)
             ftp_files_series = pd.Series(ftp_files_list)
             ftp_files_series = (
                 os.path.join("ftp://", row["host"], row["dir"]) + "/" + ftp_files_series
@@ -493,17 +497,20 @@ def crawl_ftp_files(
 
         if rnx_return:
             table_use.loc[irow, "rnxnam"] = rnx_return
+            table_use.loc[irow, "ok_dwl"] = True
             log.info(rnx_return + " found on server :)")
         else:
             table_use.loc[irow, "rnxnam"] = ""
+            table_use.loc[irow, "ok_dwl"] = False
             log.warning(row["rnxrgx"] + " not found on server :(")
         table_use.loc[irow, "crawled"] = True
 
-    rnx_ok = table_use["rnxnam"].str.len().astype(bool)
+    ####### we save the URL if the file is available
+    rnx_ok_dwl = table_use["ok_dwl"] & ~ table_use["ok_loc"]
 
-    join_funal_url = lambda e: os.path.join("ftp://", e["host"], e["dir"], e["rnxnam"])
-    table_use.loc[rnx_ok, "url_true"] = table_use.loc[rnx_ok].apply(
-        join_funal_url, axis=1
+    join_url = lambda e: os.path.join("ftp://", e["host"], e["dir"], e["rnxnam"])
+    table_use.loc[rnx_ok_dwl, "url_true"] = table_use.loc[rnx_ok_dwl].apply(
+        join_url, axis=1
     )
 
     _save_crawled_files(table_use)
@@ -512,7 +519,17 @@ def crawl_ftp_files(
     if ftpobj:
         ftpobj.close()
 
-    return table_use, all_ftp_files
+    rnx_ok_loc = table_use["ok_loc"]
+    if rnx_ok_loc.sum() > 0:
+        join_loc = lambda e: os.path.join(e["outdir"], e["rnxnam"])
+        all_loc_files = pd.Series(table_use.loc[rnx_ok_loc].apply(
+            join_loc, axis=1
+        ))
+
+    else:
+        all_loc_files = pd.Series([])
+
+    return table_use, all_ftp_files, all_loc_files
 
 
 def download_gnss_rinex(
@@ -655,8 +672,10 @@ def download_gnss_rinex(
 
     if skip_crawl:
         table_crawl = table
+        files_all = pd.Series([], dtype=str)
+        files_loc = pd.Series([], dtype=str)
     else:
-        table_crawl, files_all = crawl_ftp_files(
+        table_crawl, files_all, files_loc = crawl_ftp_files(
             table,
             sftp='auto',
             user=user,
@@ -688,6 +707,11 @@ def download_gnss_rinex(
         log.warning("quiet mode, no download was performed")
         out_tup_lis = pd.Series([], dtype=str)
 
+    ### add the local paths to the output tuples
+    if len(files_loc) > 0:
+        loc_tup_lis = pd.Series([(f, True) for f in files_loc])
+        out_tup_lis = pd.concat((loc_tup_lis, out_tup_lis))
+
     return out_tup_lis
 
 
@@ -708,6 +732,8 @@ def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
         col = ["date", "site", "outdir", "ver", "url_theo", "sftp"]
         table = pd.DataFrame(table_proto, columns=col)
         table["crawled"] = False
+        table["ok_dwl"] = False
+        table["ok_loc"] = False
         table["url_true"] = None
         table["rnxnam"] = ""
 
@@ -717,5 +743,3 @@ def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
         table["dir"] = urlpathobj.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
     return table
-
-

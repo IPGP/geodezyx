@@ -257,7 +257,7 @@ class MyFTP_TLS(FTP_TLS):
         return conn, size
 
 
-def _ftp_dir_list_files(ftp_obj_in):
+def ftp_dir_list_files(ftp_obj_in):
     """
     Lists the files in the current directory of the FTP object.
 
@@ -644,7 +644,7 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
             except:  #### If not possible, then no file in the list
                 ftp_files_list = []
 
-            ftp_files_list = _ftp_dir_list_files(ftpobj)
+            ftp_files_list = ftp_dir_list_files(ftpobj)
             prev_row_cwd = row
 
             ####### we check if the files is avaiable

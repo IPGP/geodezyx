@@ -195,7 +195,7 @@ def download_gnss_products(
         ftp_download = False
         log.info("ACC experimental mgex combi. as data center, HTTP download forced")
 
-    Dates_list = conv.dt_range(startdate, enddate)
+    dates_list = conv.dt_range(startdate, enddate)
 
     wwww_dir_previous = None
     if parallel_download > 1:
@@ -208,7 +208,7 @@ def download_gnss_products(
 
     ### check if the pattern of the wished products are in the listed daily files
     for ipatt_tup, patt_tup in enumerate(
-        list(itertools.product(Dates_list, AC_names, prod_types))
+        list(itertools.product(dates_list, AC_names, prod_types))
     ):
         dt_cur, ac_cur, prod_cur = patt_tup
         wwww, dow = conv.dt2gpstime(dt_cur)

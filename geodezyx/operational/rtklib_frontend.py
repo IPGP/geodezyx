@@ -103,8 +103,8 @@ def rtklib_run_from_rinex(
     temp_dir = os.path.join(working_dir,'TEMP')
     clean_temp_dir = False
     if clean_temp_dir:
-       shutil.rmtree(temp_dir)
-       temp_dir = os.path.join(working_dir,'TEMP')
+        shutil.rmtree(temp_dir)
+        temp_dir = os.path.join(working_dir,'TEMP')
     out_dir  = os.path.join(working_dir,'OUTPUT')
 
     # uncompressing rinex if compressed
@@ -173,8 +173,8 @@ def rtklib_run_from_rinex(
         outconffilobj.write(lin)
     outconffilobj.close()
 
-    # ORBITS
-    # SP3
+    ###### ORBITS
+    ### SP3
     orblis = operational.download_gnss_products(
         archive_dir=temp_dir,
         startdate=bas_srt,
@@ -183,20 +183,23 @@ def rtklib_run_from_rinex(
         AC_names=(calc_center , )
     )
 
-    sp3_z = orblis[0]
-    sp3 = files_rw.unzip_gz_z(sp3_z)
+    unzip = lambda o: files_rw.unzip_gz_z(o) if o.endswith(".gz") or o.endswith(".Z") else o
 
-    # BRDC
+    sp3_z = orblis[0]
+    sp3 = unzip(sp3_z)
+
+    ### BRDC
     statdic = dict()
     statdic["nav"] = ["BRDC"]
     nav_srt = dt.datetime(bas_srt.year, bas_srt.month, bas_srt.day)
-    orblis = operational.download_gnss_rinex(
+    brdclis = operational.download_gnss_rinex(
         statdic, temp_dir, nav_srt, bas_end, archtype="/"
     )
 
-    if len(orblis) > 0 and orblis[0][1]:
-        nav_z = orblis[0][0]
-        nav = files_rw.unzip_gz_z(nav_z)
+    if len(brdclis) > 0 and brdclis[0][1]:
+        nav_z = brdclis[0][0]
+        nav = unzip(nav_z)
+
     else:
         log.error("No BRDC nav file found in the archive")
         raise FileNotFoundError("No BRDC nav file found in the archive")
@@ -209,10 +212,10 @@ def rtklib_run_from_rinex(
     com_resultfile = "-o " + out_result_fil
     # com_combinsol="-c"
 
-    #exe_path = "rnx2rtkp"
+    # exe_path = "rnx2rtkp"
     #    exe_path = "/home/pierre/install_softs/RTKLIB/rnx2rtkp"
-    #exe_path = "/home/psakicki/SOFTWARE/RTKLIB/RTKLIB/app/rnx2rtkp/gcc/rnx2rtkp"
-    #exe_path = ""
+    # exe_path = "/home/psakicki/SOFTWARE/RTKLIB/RTKLIB/app/rnx2rtkp/gcc/rnx2rtkp"
+    # exe_path = ""
 
     bigcomand = " ".join(
         (
