@@ -395,7 +395,7 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
             Paths to the concatenated orbit and clock files.
         """
         jjul_srt = str(conv.dt2jjul_cnes(date_inp - dt.timedelta(days=0)))
-        jjul_end = str(conv.dt2jjul_cnes(date_inp + dt.timedelta(days=1)))
+        jjul_end = str(conv.dt2jjul_cnes(date_inp + dt.timedelta(days=2)))
         gs_user = gynscmn.get_gin_path(extended=False)
         gins_data = gynscmn.get_gin_path(extended=True) + "/data"
 
