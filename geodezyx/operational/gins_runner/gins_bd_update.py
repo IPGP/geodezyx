@@ -160,6 +160,8 @@ def bdgins_update(
     list_misc.extend([f"macromod/gnss.xml"])
     list_misc.extend([f"lunisolaires/de440bdlf.ad"])
     list_misc.extend([f"maree_polaire/loading/nominal"])
+    list_misc.extend([f"constell"])
+
 
     ### time dependant files
     while date <= date_end:
@@ -190,7 +192,7 @@ def bdgins_update(
     ###### DESTINATION FOLDERS
     dest_subdir_dic = {
         ### misc files
-        ".": list_misc,  ## for misc files, destination is in the input path
+        ".": list_misc,  ## for misc files, destination is in the input path (.)
         ### time dependant files
         "tropo_vmf1": list_tropo,
         "ionosphere/igs": list_iono,
