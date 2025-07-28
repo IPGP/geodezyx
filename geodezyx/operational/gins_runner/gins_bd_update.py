@@ -140,8 +140,11 @@ def bdgins_update(
     date = date_srt
 
     ###### LIST INITIALISATION
-    ### misc files do not need initialisation
+    ### misc files
     list_misc = []
+
+    ### full folders
+    list_constell = []
 
     ### time dependant files
     list_tropo = []
@@ -160,7 +163,9 @@ def bdgins_update(
     list_misc.extend([f"macromod/gnss.xml"])
     list_misc.extend([f"lunisolaires/de440bdlf.ad"])
     list_misc.extend([f"maree_polaire/loading/nominal"])
-    list_misc.extend([f"constell"])
+
+    ### full folders
+    list_constell.extend([f"constell/*"])
 
 
     ### time dependant files
@@ -199,6 +204,7 @@ def bdgins_update(
         "mesures/gps/orbites/G20": list_orbite_g20,
         "mesures/gps/orbex/G20": list_orbex_g20,
         "mesures/gps/horloges30/G20": list_horl_g20,
+        "constell": list_constell,
         # 'orbites/SP3/re3': list_sp3_re3
     }
 
@@ -261,6 +267,7 @@ def main():
         "--date_srt",
         type=lambda s: conv.date_pattern_2_dt(s),
         required=False,
+        default=dt.datetime(2020, 5, 3),
         help=(
             "Start date for the update in various formats. "
             "Default is 2020-05-03 "
@@ -272,6 +279,7 @@ def main():
         "--date_end",
         type=lambda s: conv.date_pattern_2_dt(s),
         required=False,
+        default=None,
         help=(
             "End date for the update in various formats. "
             "Default is 15 days before the current date."
