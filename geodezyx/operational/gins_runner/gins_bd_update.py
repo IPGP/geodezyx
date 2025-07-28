@@ -165,8 +165,8 @@ def bdgins_update(
     list_misc.extend([f"maree_polaire/loading/nominal"])
 
     ### full folders
-    list_constell.extend([f"constell/*"])
-
+    # (folder's path is added in the rsync command, with subdir destination variable
+    list_constell.extend([f"/*"])
 
     ### time dependant files
     while date <= date_end:
