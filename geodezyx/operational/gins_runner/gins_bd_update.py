@@ -162,26 +162,21 @@ def bdgins_update(
     list_misc.extend([f"macromod/gnss.xml"])
     list_misc.extend([f"lunisolaires/de440bdlf.ad"])
     list_misc.extend([f"maree_polaire/loading/nominal"])
-
-    list_misc.extend(
-        [
-            "constell/" + f
-            for f in [
-                "constellation_gps.infos",
-                "histocom.infos",
-                "histogal.infos",
-                "historik_glonass",
-                "igs_satellite_metadata.snx",
-            ]
-        ]
-    )
+    l_fil_cons = [
+        "constellation_gps.infos",
+        "histocom.infos",
+        "histogal.infos",
+        "historik_glonass",
+        "igs_satellite_metadata.snx",
+    ]
+    list_misc.extend(["constell/" + f for f in l_fil_cons])
 
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
     # list_constell.extend([f"/*"])
 
     ### time dependant files
-    while date <= date_end:
+    while date <= date_end + dt.timedelta(days=2): # 2 days later is need for cat orb/clk
         day = str(date.day).zfill(2)
         month = str(date.month).zfill(2)
         year = date.year
