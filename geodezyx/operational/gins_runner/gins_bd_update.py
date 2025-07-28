@@ -124,7 +124,7 @@ def bdgins_update(
     """
     if not date_end:
         date_end = dt.datetime.now() - dt.timedelta(days=15)
-        date_end = conv.round_dt(date_end,'1D', mode="floor")
+        date_end = conv.round_dt(date_end, "1D", mode="floor")
 
     if not dir_bdgins:
         dir_bdgins = os.path.join(gynscmn.get_gin_path(True), "data")
@@ -144,7 +144,7 @@ def bdgins_update(
     list_misc = []
 
     ### full folders
-    list_constell = []
+    # list_constell = []
 
     ### time dependant files
     list_tropo = []
@@ -152,7 +152,6 @@ def bdgins_update(
     list_orbite_g20 = []
     list_orbex_g20 = []
     list_horl_g20 = []
-    list_sp3_re3 = []
 
     ###### LIST FILL
     ### misc files
@@ -164,9 +163,22 @@ def bdgins_update(
     list_misc.extend([f"lunisolaires/de440bdlf.ad"])
     list_misc.extend([f"maree_polaire/loading/nominal"])
 
+    list_misc.extend(
+        [
+            "constell/" + f
+            for f in [
+                "constellation_gps.infos",
+                "histocom.infos",
+                "histogal.infos",
+                "historik_glonass",
+                "igs_satellite_metadata.snx",
+            ]
+        ]
+    )
+
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
-    list_constell.extend([f"/*"])
+    # list_constell.extend([f"/*"])
 
     ### time dependant files
     while date <= date_end:
@@ -191,21 +203,20 @@ def bdgins_update(
         list_orbite_g20.append(f"G20{wk}{wkday}.gin")
         list_orbex_g20.append(f"G20{wk}{wkday}.obx.gz")
         list_horl_g20.append(f"hogps_g20{wk}{wkday}")
-        # list_sp3_re3.append(f"mg3{wk}{wkday}.sp3.Ci9PAU")
         date += dt.timedelta(days=1)
 
     ###### DESTINATION FOLDERS
     dest_subdir_dic = {
         ### misc files
         ".": list_misc,  ## for misc files, destination is in the input path (.)
+        ### full folders
+        # "constell": list_constell,
         ### time dependant files
         "tropo_vmf1": list_tropo,
         "ionosphere/igs": list_iono,
         "mesures/gps/orbites/G20": list_orbite_g20,
         "mesures/gps/orbex/G20": list_orbex_g20,
         "mesures/gps/horloges30/G20": list_horl_g20,
-        "constell": list_constell,
-        # 'orbites/SP3/re3': list_sp3_re3
     }
 
     create_dir(dir_bdgins, subdirs=dest_subdir_dic.keys())
@@ -333,6 +344,7 @@ def main():
         dir_bdgins=args.dir_bdgins,
         compress=args.compress,
     )
+
 
 if __name__ == "__main__":
     main()
