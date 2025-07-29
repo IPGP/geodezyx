@@ -118,7 +118,7 @@ def head(filename, count=1):
     """
     This one is fairly trivial to implement but it is here for completeness.
     """
-    with open(filename, 'r') as f:
+    with open(filename, 'r', errors='ignore') as f:
         lines = []
         for iline in range(1, count+1):
             try:

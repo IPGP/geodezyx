@@ -596,7 +596,7 @@ def rinex_start_end(
     )
 
     epochs_list = epochs_list_head + epochs_list_tail
-
+    
     if len(epochs_list) > 0:
         first_epoch = np.min(epochs_list)
         last_epoch = np.max(epochs_list)
