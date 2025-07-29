@@ -362,7 +362,7 @@ def write_antex(atx_dic_inp, dir_out, fname_out="out.atx", erase_header=False):
         nfreq = len(ant["FREQS"])
         if nfreq != ant["NFREQ"]:
             log.info(
-                f"# OF FREQUENCIES for {ant['TYPE']} will be updated! old:{ant["NFREQ"]} new:{nfreq}"
+                f"# OF FREQUENCIES for {ant['TYPE']} will be updated! old:{ant['NFREQ']} new:{nfreq}"
             )
             ant["NFREQ"] = nfreq
         val = f"{ant['NFREQ']:6}"
