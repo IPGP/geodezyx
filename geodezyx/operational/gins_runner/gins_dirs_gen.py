@@ -246,7 +246,7 @@ def gen_dirs_rnxs(
         except Exception:
             log.warning("Unable to read RINEX, fallback to filename to get its start/end")
             srt_epo = rnx_dt
-            end_epo = srt_epo + dt.timedelta(days=1)
+            end_epo = srt_epo + dt.timedelta(seconds=86360)  # 1 day
             freq_rnx = 30
 
         if not srt_epo and not end_epo and not freq_rnx:
@@ -272,6 +272,11 @@ def gen_dirs_rnxs(
         # date
         strt_day, strt_sec = conv.dt2jjul_cnes(srt_epo, False)
         end_day, end_sec = conv.dt2jjul_cnes(end_epo, False)
+
+        # SPOTGINS compatibility for the full day
+        # one more sec will be +/- below
+        strt_sec = 19
+        end_sec =  86389.0
 
         dir_dic["date"]["arc_start"][0] = strt_day
         dir_dic["date"]["arc_stop"][0] = end_day
