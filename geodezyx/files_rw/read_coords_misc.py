@@ -46,8 +46,20 @@ def read_spotgins_quick(p):
 
 
 def diff_spotgins_quick(df1,df2):
-    rndidx = lambda d : d.set_index(d.index.to_series().dt.round("1h").values)
-    dfout = (rndidx(df1) - rndidx(df2)).dropna()
+    def _rndidx(d):
+        duse = d.index.to_series().dt.round("1h").values
+        dout = d.set_index(duse)
+        return dout
+    
+    def _jjul(d):
+        d = _rndidx(d)
+        duse = d.index.to_series()
+        duse = conv.numpy_dt2dt(duse)
+        jjul = conv.dt2jjul_cnes(duse)
+        dout = d.set_index(duse[0] + jjul[1]/86400)
+        return dout        
+        
+    dfout = (_jjul(df1) - _jjul(df2)).dropna()
     #print(dfout.to_string())
     return dfout
 
