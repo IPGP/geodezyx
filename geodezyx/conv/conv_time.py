@@ -1343,7 +1343,7 @@ def jjul_cnes2dt(jjulin):
         typ = utils.get_type_smart(jjulin)
         return typ([jjul_cnes2dt(e) for e in jjulin])
     else:
-        return dt.datetime(1950, 0o1, 0o1, 00, 00, 00) + dt.timedelta(float(jjulin))
+        return dt.datetime(1950, 1, 1, 0, 0, 0) + dt.timedelta(float(jjulin))
 
 
 def dt2jjul_cnes(dtin, onlydays=True):
@@ -1371,12 +1371,16 @@ def dt2jjul_cnes(dtin, onlydays=True):
     
     https://www.aviso.altimetry.fr/fr/donnees/outils/jours-calendaires-ou-jours-juliens.html
     """
-    epok = (dtin - dt.datetime(1950, 0o1, 0o1, 00, 00, 00))
-    if onlydays:
-        return epok.days
+    if utils.is_iterable(dtin):
+        typ = utils.get_type_smart(dtin)
+        return typ([dt2jjul_cnes(e) for e in dtin])
     else:
-        epok = epok + dt.timedelta(seconds=19)
-        return epok.days, epok.seconds
+        epok = (dtin - dt.datetime(1950, 1, 1, 0, 0, 0))
+        if onlydays:
+            return epok.days
+        else:
+            epok = epok + dt.timedelta(seconds=19)
+            return epok.days, epok.seconds
 
 
 def mjd2dt(mjd_in, seconds=None, round_to='1s'):
