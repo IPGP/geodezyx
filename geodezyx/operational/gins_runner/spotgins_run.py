@@ -170,8 +170,8 @@ def spotgins_run(
         )
 
         ######## DIRECTORS RUN ###############
-        # const_use = const_adapt(const, dirr, verbose=verbose)
-        const_use = "GE" # ASG use always GE
+        const_use = const_adapt(const, dirr, verbose=verbose)
+        #const_use = "GE" # ASG use always GE
         opt_gins_90_use = "-const " + const_use
         try:
             gynsrun.run_directors(
