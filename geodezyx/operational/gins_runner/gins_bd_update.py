@@ -163,12 +163,12 @@ def bdgins_update(
     ###### LIST FILL
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
-    list_constell.extend(["/*"])
-    list_prairie.extend([""])
-    list_antex.extend([""])
-    list_exe_ppp.extend([""])
-    list_macromod.extend([""])
-    list_lunisolaires.extend([""])
+    list_constell.extend(["/"])
+    list_prairie.extend(["/"])
+    list_antex.extend(["/"])
+    list_exe_ppp.extend(["/"])
+    list_macromod.extend(["/"])
+    list_lunisolaires.extend(["/"])
     list_maree_polaire = ["loading"]
 
     ### misc files: the needed files are considered individually
