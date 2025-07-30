@@ -160,8 +160,6 @@ def bdgins_update(
     list_orbex_g20 = []
     list_horl_g20 = []
 
-
-
     ###### LIST FILL
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
