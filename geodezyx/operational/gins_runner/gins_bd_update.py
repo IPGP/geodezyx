@@ -164,15 +164,15 @@ def bdgins_update(
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
     list_constell.extend(["/"])
-    list_prairie.extend(["/"])
-    list_antex.extend(["/"])
-    list_exe_ppp.extend(["/"])
-    list_macromod.extend(["/"])
-    list_lunisolaires.extend(["/"])
-    list_maree_polaire = ["loading"]
+    #list_prairie.extend(["/"])
+    #list_antex.extend(["/"])
+    #list_exe_ppp.extend(["/"])
+    #list_macromod.extend(["/"])
+    #list_lunisolaires.extend(["/"])
+    #list_maree_polaire = ["loading"]
 
     ### misc files: the needed files are considered individually
-    # it is a redundancy since they must be downloaded in the full folders
+    # some of them  are a redundancy since they must be downloaded in the full folders
     list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
     list_misc.extend([f"pole/nominal_NRO"])
     list_misc.extend([f"ANTEX/igs20.atx"])
@@ -218,12 +218,12 @@ def bdgins_update(
     dest_subdir_dic = {
         ### full folders
         "constell": list_constell,
-        "prairie": list_prairie,
-        "ANTEX": list_antex,
-        "EXE_PPP": list_exe_ppp,
-        "macromod": list_macromod,
-        "lunisolaires": list_lunisolaires,
-        "maree_polaire": list_maree_polaire,
+        #"prairie": list_prairie,
+        #"ANTEX": list_antex,
+        #"EXE_PPP": list_exe_ppp,
+        #"macromod": list_macromod,
+        #"lunisolaires": list_lunisolaires,
+        #"maree_polaire": list_maree_polaire,
         ### misc files
         ".": list_misc,  ## for misc files, destination is in the input path (.)
         ### time dependant files
