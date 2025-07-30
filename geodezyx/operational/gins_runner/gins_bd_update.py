@@ -124,7 +124,8 @@ def bdgins_update(
     """
     if not date_end:
         date_end = dt.datetime.now() - dt.timedelta(days=15)
-        date_end = conv.round_dt(date_end, "1D", mode="floor")
+        date_end = conv.round_dt(date_end, "1D", mode="floor", python_dt_out=False)
+        date_end = conv.numpy_dt2dt(date_end)
 
     if not dir_bdgins:
         dir_bdgins = os.path.join(gynscmn.get_gin_path(True), "data")
@@ -144,7 +145,13 @@ def bdgins_update(
     list_misc = []
 
     ### full folders
-    # list_constell = []
+    list_constell = []
+    list_prairie = []
+    list_antex = []
+    list_exe_ppp = []
+    list_macromod = []
+    list_lunisolaires = []
+    list_maree_polaire = []
 
     ### time dependant files
     list_tropo = []
@@ -153,8 +160,21 @@ def bdgins_update(
     list_orbex_g20 = []
     list_horl_g20 = []
 
+
+
     ###### LIST FILL
-    ### misc files
+    ### full folders
+    # (folder's path is added in the rsync command, with subdir destination variable
+    list_constell.extend([""])
+    list_prairie.extend([""])
+    list_antex.extend([""])
+    list_exe_ppp.extend([""])
+    list_macromod.extend([""])
+    list_lunisolaires.extend([""])
+    list_maree_polaire = ["loading"]
+
+    ### misc files: needed files are considered individually
+    # it is a redundancy since it must be downloaded in the full folders
     list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
     list_misc.extend([f"pole/nominal_NRO"])
     list_misc.extend([f"ANTEX/igs20.atx"])
@@ -170,10 +190,6 @@ def bdgins_update(
         "igs_satellite_metadata.snx",
     ]
     list_misc.extend(["constell/" + f for f in l_fil_cons])
-
-    ### full folders
-    # (folder's path is added in the rsync command, with subdir destination variable
-    # list_constell.extend([f"/*"])
 
     ### time dependant files
     while date <= date_end + dt.timedelta(days=2): # 2 days later is need for cat orb/clk
@@ -202,10 +218,16 @@ def bdgins_update(
 
     ###### DESTINATION FOLDERS
     dest_subdir_dic = {
+        ### full folders
+        "constell": list_constell,
+        "prairie": list_prairie,
+        "ANTEX": list_antex,
+        "EXE_PPP": list_exe_ppp,
+        "macromod": list_macromod,
+        "lunisolaires": list_lunisolaires,
+        "maree_polaire": list_maree_polaire,
         ### misc files
         ".": list_misc,  ## for misc files, destination is in the input path (.)
-        ### full folders
-        # "constell": list_constell,
         ### time dependant files
         "tropo_vmf1": list_tropo,
         "ionosphere/igs": list_iono,
