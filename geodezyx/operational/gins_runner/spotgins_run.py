@@ -129,7 +129,9 @@ def spotgins_run(
             min(rnxs_dates) - dt.timedelta(days=1),
             max(rnxs_dates) + dt.timedelta(days=1),
         )
-
+    else:
+        date_min = dt.datetime(2000, 5, 3)
+        date_max = None
     ##### Update the database ################
     if not no_updatebd:
         gynsbdu.bdgins_update(
@@ -149,7 +151,7 @@ def spotgins_run(
             rnx_mono_path_inp, results_folder_inp, verbose=verbose
         ):
             log.info(f"Solution already archived for {rnx_mono_path_inp}, skip")
-            return
+            return None
 
         ######## DIRECTORS GENERATION ########
         dirr, tmp_folder = gynsgen.gen_dirs_rnxs(
@@ -168,7 +170,8 @@ def spotgins_run(
         )
 
         ######## DIRECTORS RUN ###############
-        const_use = const_adapt(const, dirr, verbose=verbose)
+        # const_use = const_adapt(const, dirr, verbose=verbose)
+        const_use = "GE" # ASG use always GE
         opt_gins_90_use = "-const " + const_use
         try:
             gynsrun.run_directors(
@@ -429,6 +432,7 @@ def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
 
     return None
 
+
 def rm_prov_listing(dir_inp):
     """
     Remove potential PROV folders and related files in the listing folder.
@@ -623,9 +627,8 @@ def const_adapt(const_inp, dir_inp, verbose=True):
     rnx_date = conv.jjul_cnes2dt(dir_dic["date"]["arc_start"][0])
     if "E" in const_inp and rnx_date < dt.datetime(2018, 10, 7):
         if verbose:
-            log.warning(
-                "Galileo not recommended before 2018-10-07, switch for GPS-only"
-            )
+            msg = "Galileo not recommended before 2018-10-07, switch for GPS-only"
+            log.warning(msg)
         return "G"
     else:
         return const_inp

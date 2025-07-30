@@ -55,6 +55,8 @@ def singugins_run(
         Flag to indicate whether to concatenate the orbit and
         clock files prior to the main processing
         Default is False.
+    verbose : bool, optional
+        Verbose mode. If True, additional information will be printed.
     force : bool, optional
         Flag to force the process to run even if the results already exist.
     spotgins_run_kwargs : dict, optional

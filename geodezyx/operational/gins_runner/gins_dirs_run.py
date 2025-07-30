@@ -125,11 +125,6 @@ def run_directors(
             log.error("mode not recognized !!!")
             return None
 
-        # l'argument OPERA est super important  !!!
-        # c'est lui qui resoult l'instabilité lors du lancement du subprocess !!!
-        # parce que indirectement exe_gins ne marche pas sans
-        # faire le test avec un exe_gins -v OPERA -fic <fic> et sans
-
         gins_path = gynscmn.get_gin_path()
         log_path = utils.create_dir(os.path.join(gins_path, "python_logs"))
         log_path = os.path.join(gins_path, "python_logs", dir_nam + ".log")
