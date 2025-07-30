@@ -171,8 +171,8 @@ def bdgins_update(
     list_lunisolaires.extend([""])
     list_maree_polaire = ["loading"]
 
-    ### misc files: needed files are considered individually
-    # it is a redundancy since it must be downloaded in the full folders
+    ### misc files: the needed files are considered individually
+    # it is a redundancy since they must be downloaded in the full folders
     list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
     list_misc.extend([f"pole/nominal_NRO"])
     list_misc.extend([f"ANTEX/igs20.atx"])
