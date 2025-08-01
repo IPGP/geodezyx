@@ -382,6 +382,7 @@ def pride_pppar_runner_mono(
     -------
     None
     """
+
     if not bin_dir:
         bin_dir = os.path.join(os.environ["HOME"], ".PRIDE_PPPAR_BIN")
 
@@ -677,6 +678,49 @@ def pride_pppar_runner(rnx_path_list,
                        default_fallback=False,
                        dl_prods_only=False,
                        clean_run_dir=True):
+
+    """
+    Runs the PRIDE PPPAR process for a single RINEX file.
+
+    Parameters
+    ----------
+    rnx_path : str
+        The path to the RINEX file.
+    cfg_template_path : str
+        The path to the configuration template file.
+    prod_ac_name : str
+        The name of the analysis center providing the products.
+    prod_parent_dir : str
+        The parent directory where the products are stored.
+    tmp_dir : str
+        The temporary directory for intermediate files.
+    cfg_dir : str
+        The directory for configuration files.
+    run_dir : str
+        The directory where the run results will be stored.
+    cfg_prefix : str, optional
+        The prefix for the configuration file name. Default is "pride_pppar_cfg_1a".
+    mode : str, optional
+        The mode for the PRIDE PPPAR process. Default is "K".
+    options_dic : dict, optional
+        Additional options for the PRIDE PPPAR process. Default is an empty dictionary.
+    bin_dir : str, optional
+        The directory where the PRIDE PPPAR binaries are located. Default is None.
+    force : bool, optional
+        If True, forces the process to run even if logs already exist. Default is False.
+    dl_prods : bool, optional
+        If True, downloads the necessary products. Default is False.
+    default_fallback : bool, optional
+        If True, uses default values if products are not found. Default is False.
+    dl_prods_only : bool, optional
+        If True, only downloads the products and exits. Default is False.
+    clean_run_dir : bool, optional
+        If True, removes temporary files inside the run directory. Default is True.
+
+    Returns
+    -------
+    None
+    """
 
     date_list = sorted(list(set([conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list])))
 
