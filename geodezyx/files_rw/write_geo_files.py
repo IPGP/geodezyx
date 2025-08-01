@@ -514,16 +514,16 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
         
 
         if new_name:
-            Lfile = softs_runner.find_IGS_products_files(dir_in,["sp3"],
-                                                                  ac_list,
-                                                                  first_date,
-                                                                  date_end=end_date,
-                                                                  severe=False,
-                                                                  recursive_search=True,
-                                                                  regex_old_naming = True,
-                                                                  regex_new_naming = True,
-                                                                  regex_igs_tfcc_naming = False,
-                                                                  compressed="incl") 
+            Lfile = softs_runner.find_igs_products_files(dir_in, ["sp3"],
+                                                         ac_list,
+                                                         first_date,
+                                                         date_end=end_date,
+                                                         severe=False,
+                                                         recursive_search=True,
+                                                         regex_old_naming = True,
+                                                         regex_new_naming = True,
+                                                         regex_igs_tfcc_naming = False,
+                                                         compressed="incl")
             
         else:
             #Extlist = ["sp3","SP3","sp3.gz","SP3.gz"]

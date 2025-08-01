@@ -501,7 +501,7 @@ def pride_pppar_runner_mono(
         else:
             delta_epoch_max = 1  # => [0]
 
-        find_prods = operational.find_IGS_products_files
+        find_prods = operational.find_igs_products_files
 
         prod_lis = []
 

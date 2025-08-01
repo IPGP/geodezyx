@@ -294,8 +294,8 @@ def read_gipsyx_tdp(filein):
 
 
     X,Y,Z = np.nan,np.nan,np.nan
-    Tx , Ty , Tz, T = np.nan,np.nan,np.nan,np.nan
-    sX,sY,sZ = np.nan,np.nan,np.nan
+    tx , ty , tz, T = np.nan,np.nan,np.nan,np.nan
+    s_x,s_y,s_z = np.nan,np.nan,np.nan
 
     tsout = time_series.TimeSeriePoint()
     
@@ -314,32 +314,32 @@ def read_gipsyx_tdp(filein):
 
         attribs = fields[-1].split(".") 
 
-        if attribs[1] == 'Station' and attribs[-1] == 'Z':
-            Tz = conv.tgipsy2dt(fields[0])
+        if attribs[1] == 'Station' and attribs[5] == 'Z':
+            tz = conv.tgipsy2dt(fields[0])
             Z  = (float(fields[2]))
-            sZ = (float(fields[3]))
+            s_z = (float(fields[3]))
 
-        if attribs[1] == 'Station' and attribs[-1] == 'Y':
-            Ty = conv.tgipsy2dt(fields[0])
+        if attribs[1] == 'Station' and attribs[5] == 'Y':
+            ty = conv.tgipsy2dt(fields[0])
             Y  = (float(fields[2]))
-            sY = (float(fields[3]))
+            s_y = (float(fields[3]))
 
-        if attribs[1] == 'Station' and attribs[-1] == 'X':
-            Tx = conv.tgipsy2dt(fields[0])
+        if attribs[1] == 'Station' and attribs[5] == 'X':
+            tx = conv.tgipsy2dt(fields[0])
             X  = (float(fields[2]))
-            sX = (float(fields[3]))
-            STAT = attribs[2]
+            s_x = (float(fields[3]))
+            stat = attribs[2]
 
-        if  Tx == Ty == Tz :
-            T = Tx
-            point = time_series.Point(X,Y,Z,T,'XYZ',sX,sY,sZ)
+        if  tx == ty == tz :
+            T = tx
+            point = time_series.Point(X,Y,Z,T,'XYZ',s_x,s_y,s_z)
             tsout.add_point(point)
 
-            Tx = np.nan
-            Ty = np.nan
-            Tz = np.nan
+            tx = np.nan
+            ty = np.nan
+            tz = np.nan
 
-    tsout.meta_set(filein,stat=STAT)
+    tsout.meta_set(filein,stat=stat)
     tsout.sort()
 
     return tsout
@@ -376,7 +376,7 @@ def read_gipsyx_tdp_list(filelistin):
 
 
 def read_gipsy_gdcov(filein):
-    
+
     X,Y,Z = np.nan,np.nan,np.nan
     Tx , Ty , Tz, T = np.nan,np.nan,np.nan,np.nan
     sX,sY,sZ = np.nan,np.nan,np.nan
@@ -428,6 +428,7 @@ def read_gipsy_gdcov(filein):
         
 
 def read_gipsy_gdcov_list(filelistin):
+
     tslist = []
     for fil in filelistin:
         ts = read_gipsy_gdcov(fil)
@@ -2652,6 +2653,11 @@ def read_webobs(filein,typein="txt",
     tsout.from_list(T,A,B,C,coortype='UTM')
     
     return tsout
+
+
+def read_spotgins_masterfile(master_inp):
+    return pd.read_fwf(master_inp, infer_nrows=11,skiprows=5, comment="#")
+
 
 
  #  ______                _   _                _____                                         _ 

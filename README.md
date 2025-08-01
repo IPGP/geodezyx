@@ -4,7 +4,6 @@
 
 **Version: 4.6.0**  
 **Date: 2025-02-04**  
-**README Revision:** 2025-02-10  
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany) 
 
@@ -27,7 +26,6 @@ V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.
 * Valérie Ballu (CNRS/La Rochelle University, France)
 
 ## Introduction
-
 The purpose of _geodezyx_ (pronounced *geode-**zeecks***), also known as _the GeodeZYX toolbox_, is to provide all the functions which
 can be useful for Geodesy and Geophysics. 
 
@@ -39,93 +37,21 @@ plots and visual selection functions ...
 It is designed for Python 3 on a LINUX Ubuntu-like system.
 Also tested with Anaconda
 
-## Documentation
+## Toolbox's highlights
+* read RINEX2 and RINEX3/4 as Pandas' DataFrame
+* read SINEX, SP3 & Clock RINEX as Pandas' DataFrame
+* convert most time representations and time scales used in geodesy to/from Python's `datetime`
+* convert coordinates in different frames (geographic, geocentric, topocentric)
+* perform easily Helmert's Transformation
+* And many more!
 
-See the following link:  
-[https://ipgp.github.io/geodezyx/](https://ipgp.github.io/geodezyx/)
-
-## Installation 
-
+## Installation
 See the following link:  
 [https://ipgp.github.io/geodezyx/getting_started.html#installation](https://ipgp.github.io/geodezyx/getting_started.html#installation)
 
-## Changelog
-
-### v4.6.0, 2025-02-04
-
-  * Faster RINEX3 reading (~ x5)
-  * Frontend `read_rinex_obs` fonction
-  * For `find_recursive` function: no more ambiguous  `case_sensitive` option, replaced with `regex`
-
-
-### v4.5.3, 2024-12-28
-  * First version using CI/CD with GitHub Actions
-  * Correct bug for mono-GNSS RINEX in `read_rnx2_obs` and `read_rnx3_obs`.
-  * Correct python 3.12's annoying regex's raw string SyntaxWarning.
-  * v4.5.2 is cancelled, because `requirements.txt` is too version-restrictive. 
-
-### v4.5.1, 2024-11-28
-  * Make `geodezyx` compatible with Python 3.12
-  * Improvement of PRIDE-related execution functions
-  * New leap second functions, to cope with new Ubuntu 24.04 LTS
-  * `seawater` and `gsw` modules are installed in `full` mode & imported on demand only
-  * Correct angle conversion functions
-  * New version of `conv.numpydt2dt` function
-  * Misc routine improvements
-  * v4.5.0 is cancelled, because `requirements.txt` is missing
-
-### v4.4.3, 2024-05-20
-  * Speed execution optimization for orbit/clock-related functions
-  * Misc routine improvements
-
-### v4.4.2, 2024-04-17
-  * The GitHub repository, and the project in general, has been renamed as ``geodezyx`` (in lower case)
-    to uniformize its multiple spellings and then avoid confusion.
-    * It must be transparent for your clones but updating them is recommended \
-      https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository
-  * misc routine improvements
-  * Refactoring of the GNSS data/products dowmload functions
-
-### v4.4.1, 2024-02-08
-  * The GitHub repository has now been moved under the IPGP organization.
-    * It must be transparent for your clones but updating them is recommended \
-      https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository  
-  * The version numbering goes without a starting zero from now on.  
-    Initially, this first zero was kept as a "perpetual beta" marker,  
-    but The GeodeZYX toolbox is a grown-up project now!
-  * Bugs corrected for `read_rnx2_obs` and `OrbDF` manipulation functions.
-
-### v0.4.4.0, 2023-11-24
-  * The toolbox turns to the _GNU Lesser General Public License version 3_
-  * Module docstring has been updated
-  * Angle conversion functions have been refactored
-  * sp3/clk DataFrame column names are renamed to better fit the data content:
-    * `sat` > `prn`, `const` > `sys`, `sv` > `prni`, `AC` > `ac`
-      
-### v0.4.3.6, 2023-06-30
-  * a routine version update (bug corrections...)
-  * colors in the logger
-  * NB: v0.4.3.5, v0.4.3.4 & v0.4.3.3 are cancelled releases
-
-### v0.4.3.2, 2023-03-08
-  * 1000th commit on GitHub 🥳
-  * GitHub repository is renamed for simplification 
-    * `GeodeZYX-Toolbox_v4` becomes `geodezyx-toolbox` (lowercase and without version)
-    * It must be transparent for your clones but updating them is recommended \
-      https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository  
-  * beta for GROOPS automatized run functions
-  * Dropbox download function
-  * UTM coordinates conversion function (IGN algorithm) 
-  * implementation of UTM coordinates in the TimeSeries class
-  * logger improvement (shorter timestamps & message ranks)
-
-### v0.4.3.1, 2022-12-09
-  * Routine update: multiple new features/functions and bug corrections
-
-### v0.4.3.0, 2022-02-10
-  * enhanced logger replaces basic prints.
-  * GeodeZYX is now "virtualenv-ready", i.e. stand-alone based on the ``setup.py`` required modules.
-  * a ``full`` version is set, for advanced installation.
+## Documentation
+See the following link:  
+[https://ipgp.github.io/geodezyx/](https://ipgp.github.io/geodezyx/)
 
 ## Credits
 `geodezyx` implements several methods, algorithms... initially developed by others authors.
@@ -137,7 +63,6 @@ GPS Solut 18, 153–162 (2014). https://doi.org/10.1007/s10291-013-0354-4
   * Jean-Mathieu Nocquet and its PYACS toolbox for the plate motion model functions. https://github.com/JMNocquet/pyacs36
 
 ## Licence
-
 GNU Lesser General Public License, Version 3, 29 June 2007
 
 Copyright © 2019 Helmholtz Centre Potsdam GFZ 
