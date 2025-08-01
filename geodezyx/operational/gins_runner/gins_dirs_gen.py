@@ -170,7 +170,7 @@ def gen_dirs_rnxs(
         rnx_name = os.path.basename(rnx_path_ori)
         rnx_dt = conv.rinexname2dt(rnx_name)
         sites_id9_series = pd.Series(sites_id9)
-        siteid9, siteid4_upp, siteid4_low = _dir_rnx_site_id(rnx_name, sites_id9_series)
+        siteid9, siteid4_up, siteid4_lo = _dir_rnx_site_id(rnx_name, sites_id9_series)
 
         coord_prefix = (
             f"_{out_coords.lower()}" if out_coords.upper() in ("FLH", "XYZ") else ""
@@ -317,11 +317,11 @@ def gen_dirs_rnxs(
             log.warning("auto_oceanload is off and no oceanload_file specified !!!")
 
         if auto_stations_file:
-            stations_file = _dir_auto_stfi(siteid4_low, rnx_dt, rnx_path, tmp_fld_use)
+            stations_file = _dir_auto_stfi(siteid4_lo, rnx_dt, rnx_path, tmp_fld_use)
 
         if auto_oceanload:
             oceanload_file = _dir_auto_oclo(
-                siteid4_low, rnx_dt, tmp_fld_use, stations_file
+                siteid4_lo, rnx_dt, tmp_fld_use, stations_file
             )
 
         if stations_file:
@@ -371,15 +371,15 @@ def gen_dirs_rnxs(
         oclo_path_gstyl = dir_dic["object"]["station"]["ocean_tide_loading"]
         oclo_path_full = str(os.path.join(gin_path, oclo_path_gstyl[6:]))
 
-        gynscmn.check_site_stfl(siteid4_upp, stfi_path_full)
+        gynscmn.check_site_stfl(siteid4_up, stfi_path_full)
 
-        domes = gynscmn.find_domes_in_stfl(siteid4_upp, stfi_path_full)
+        domes = gynscmn.find_domes_in_stfl(siteid4_up, stfi_path_full)
         if verbose:
             log.info("DOMES: %s", domes)
         gynscmn.chek_domes_oclo(domes[0], oclo_path_full)
 
         # ========= CUSTOM USER EXTENSION (tropo, high freq...) =============
-        dir_dic = _dir_userext(dir_dic, siteid4_upp, add_tropo_sol)
+        dir_dic = _dir_userext(dir_dic, siteid9, add_tropo_sol)
 
         # WRITING THE NEW DIRECTOR
         if verbose:
@@ -531,7 +531,7 @@ def _dir_rnx_site_id(rnx_name, sites_id9_series):
     return site_id9, site_id4_upper, site_id4_lower
 
 
-def _dir_userext(dir_dic, site_id4_upper, add_tropo_sol=True):
+def _dir_userext(dir_dic, site_id9, add_tropo_sol=True):
     """
     Customize the user_extension fields with the site_id4_upper
     """
@@ -549,7 +549,7 @@ def _dir_userext(dir_dic, site_id4_upper, add_tropo_sol=True):
             is_gpshf = ["GPS__HAUTE_FREQ" in e for e in dir_dic[uext][uadd]]
             if np.any(is_gpshf):
                 idx_gpshf = is_gpshf.index(True)
-                dir_dic[uext][uadd][idx_gpshf] = "GPS__HAUTE_FREQ " + site_id4_upper
+                dir_dic[uext][uadd][idx_gpshf] = "GPS__HAUTE_FREQ " + site_id9.upper()
 
     return dir_dic
 
