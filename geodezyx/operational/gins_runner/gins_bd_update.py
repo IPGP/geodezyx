@@ -156,6 +156,8 @@ def bdgins_update(
     ### time dependant files
     list_tropo = []
     list_iono = []
+    list_orbite_mg3 = []
+
     list_orbite_g20 = []
     list_orbex_g20 = []
     list_horl_g20 = []
@@ -164,12 +166,12 @@ def bdgins_update(
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
     list_constell.extend(["/"])
-    #list_prairie.extend(["/"])
-    #list_antex.extend(["/"])
-    #list_exe_ppp.extend(["/"])
-    #list_macromod.extend(["/"])
-    #list_lunisolaires.extend(["/"])
-    #list_maree_polaire = ["loading"]
+    # list_prairie.extend(["/"])
+    # list_antex.extend(["/"])
+    # list_exe_ppp.extend(["/"])
+    # list_macromod.extend(["/"])
+    # list_lunisolaires.extend(["/"])
+    # list_maree_polaire = ["loading"]
 
     ### misc files: the needed files are considered individually
     # some of them  are a redundancy since they must be downloaded in the full folders
@@ -189,6 +191,8 @@ def bdgins_update(
     ]
     list_misc.extend(["constell/" + f for f in l_fil_cons])
 
+    list_tropo.append(f"orography_ell")
+
     ### time dependant files
     while date <= date_end + dt.timedelta(days=2): # 2 days later is need for cat orb/clk
         day = str(date.day).zfill(2)
@@ -199,7 +203,6 @@ def bdgins_update(
         wk, wkday = conv.dt2gpstime(date)
         doy = str(conv.dt2doy(date)).zfill(3)
 
-        list_tropo.append(f"orography_ell")
         list_tropo.extend(
             [
                 f"{year}/VMFG_{year}{month}{day}.H00",
@@ -209,6 +212,7 @@ def bdgins_update(
             ]
         )
         list_iono.append(f"{year}/igsg{doy}0.{yy}i.Z")
+        list_orbite_mg3.append(f"mg3{wk}{wkday}.sp3.Ci9PAU")
         list_orbite_g20.append(f"G20{wk}{wkday}.gin")
         list_orbex_g20.append(f"G20{wk}{wkday}.obx.gz")
         list_horl_g20.append(f"hogps_g20{wk}{wkday}")
@@ -218,17 +222,18 @@ def bdgins_update(
     dest_subdir_dic = {
         ### full folders
         "constell": list_constell,
-        #"prairie": list_prairie,
-        #"ANTEX": list_antex,
-        #"EXE_PPP": list_exe_ppp,
-        #"macromod": list_macromod,
-        #"lunisolaires": list_lunisolaires,
-        #"maree_polaire": list_maree_polaire,
+        # "prairie": list_prairie,
+        # "ANTEX": list_antex,
+        # "EXE_PPP": list_exe_ppp,
+        # "macromod": list_macromod,
+        # "lunisolaires": list_lunisolaires,
+        # "maree_polaire": list_maree_polaire,
         ### misc files
         ".": list_misc,  ## for misc files, destination is in the input path (.)
         ### time dependant files
         "tropo_vmf1": list_tropo,
         "ionosphere/igs": list_iono,
+        "orbites/SP3/re3": list_orbite_mg3,
         "mesures/gps/orbites/G20": list_orbite_g20,
         "mesures/gps/orbex/G20": list_orbex_g20,
         "mesures/gps/horloges30/G20": list_horl_g20,
