@@ -52,7 +52,7 @@ def gen_dirs_rnxs(
         prairie_kwargs={"with_historik": 1, "with_wsb": 1},
         force=False,
         verbose=True,
-        sites_id9_series=None,
+        sites_id9=None,
         add_tropo_sol=True,
 ):
     """
@@ -118,6 +118,12 @@ def gen_dirs_rnxs(
         Defaults to False.
     verbose : bool
         verbose messages. Default is True.
+    sites_id9 : iterable, optional
+        A list, Pandas series... containing the site_id9 information.
+        This is used to extract the site_id9 if the RINEX name is ambiguous.
+    add_tropo_sol : bool, optional
+        Add tropospheric solution keys to the director and
+        then results in the listing and solution. Defaults to True.
 
     Returns
     -------
@@ -163,6 +169,7 @@ def gen_dirs_rnxs(
         log.info(" *** Generate directeur for: %s ", os.path.basename(rnx_path_ori))
         rnx_name = os.path.basename(rnx_path_ori)
         rnx_dt = conv.rinexname2dt(rnx_name)
+        sites_id9_series = pd.Series(sites_id9)
         siteid9, siteid4_upp, siteid4_low = _dir_rnx_site_id(rnx_name, sites_id9_series)
 
         coord_prefix = (
@@ -231,20 +238,22 @@ def gen_dirs_rnxs(
             out_director_folder = os.path.join(gin_path, "gin", "data", "directeur")
 
         # date
+
+        srt_epo, end_epo, freq_rnx = None, None, None
+
         try:
             srt_epo, end_epo, freq_rnx = operational.rinex_start_end(rnx_path, True, verbose=verbose)
-        except:
+        except Exception:
+            log.warning("Unable to read RINEX, fallback to filename to get its start/end")
+            srt_epo = rnx_dt
+            end_epo = srt_epo + dt.timedelta(seconds=86360)  # 1 day
+            freq_rnx = 30
+
+        if not srt_epo and not end_epo and not freq_rnx:
             srt_epo, end_epo, freq_rnx = None, None, None
             bool_cntu = _fail_rnx(rnx_path, rnx_dt, "get RINEX start/end failed")
             if bool_cntu:
                 continue
-
-        # freq_rnx_str = f"_{int(freq_rnx):02d}s" if auto_interval else ""
-        # ses = "_" + operational.rinex_session_id(srt_epo, end_epo, full_mode=True)
-
-        # Interval Initalisation
-        # interval_line = utils.grep(rnx_path,'INTERVAL',True)
-        #  float(interval_line.split()[0])
 
         dir_out_fname = dir_name + ".yml"
         dir_out_path = os.path.join(out_director_folder, dir_out_fname)
@@ -263,6 +272,11 @@ def gen_dirs_rnxs(
         # date
         strt_day, strt_sec = conv.dt2jjul_cnes(srt_epo, False)
         end_day, end_sec = conv.dt2jjul_cnes(end_epo, False)
+
+        # SPOTGINS compatibility for the full day
+        # one more sec will be +/- below
+        strt_sec = 19
+        end_sec =  86389.0
 
         dir_dic["date"]["arc_start"][0] = strt_day
         dir_dic["date"]["arc_stop"][0] = end_day
@@ -527,6 +541,7 @@ def _dir_userext(dir_dic, site_id4_upper, add_tropo_sol=True):
     if uext in dir_dic:
         if add_tropo_sol:
             dir_dic[uext][uadd].append("ADD_TROPO_IN_SOLUTION")
+            dir_dic[uext][uadd].append("GPS__AFF_SINEX")
 
         # GPS__HAUTE_FREQ STAT is not a key/value couple, but is considered a single string
         # we must search this string and concatenate it with the right site code

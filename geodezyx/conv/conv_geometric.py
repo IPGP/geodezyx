@@ -22,7 +22,6 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
-import scipy
 
 
 #### geodeZYX modules
@@ -89,7 +88,7 @@ def dist_diff(A,B):
     """
 
     dAB   = A-B
-    dist  = scipy.linalg.norm(dAB)
+    dist  = np.linalg.norm(dAB)
 
     diffA =   dAB / dist
     diffB = - dAB / dist

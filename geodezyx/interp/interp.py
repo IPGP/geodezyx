@@ -12,12 +12,10 @@ import logging
 
 import numpy as np
 import scipy
-from scipy.spatial.transform import Rotation
 
 from geodezyx import utils, conv
 
 log = logging.getLogger('geodezyx')
-
 
 
 #  _______ _                   _____           _             _____       _                        _       _   _             
@@ -29,7 +27,7 @@ log = logging.getLogger('geodezyx')
 #                                                                                    | |                                    
 #                                                                                    |_|                                    
 
-class interp1d_time(scipy.interpolate.interp1d):
+class Interp1dTime(scipy.interpolate.interp1d):
    """
    Interpolation with datetime as inputs
 
@@ -91,7 +89,7 @@ class interp1d_time(scipy.interpolate.interp1d):
    
 
   
-class Slerp_time(scipy.spatial.transform.Slerp):
+class SlerpTime(scipy.spatial.transform.Slerp):
    """
    Slerp interpolation (for quaterinons) with datetime as inputs
    
@@ -101,8 +99,9 @@ class Slerp_time(scipy.spatial.transform.Slerp):
    P. Sakic 2020-01
    """
    
-   def __init__(self, times, rotations,extrapolate=True):   
-       
+   def __init__(self, times, rotations,extrapolate=True):
+       from scipy.spatial.transform import Rotation
+
        ### time is converted as an array
        times = np.array(times)
        

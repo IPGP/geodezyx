@@ -3,6 +3,7 @@ from .cluster_gfz import *
 
 # from .gnss_downloader     import *
 from .gins_runner import *
+from .bin_opera import *
 from .download_cddis import *
 from .download_dropbox import *
 from .download_find_files import *

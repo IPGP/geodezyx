@@ -25,22 +25,6 @@ geodezyx.utils.list\_utils module
    :undoc-members:
    :show-inheritance:
 
-geodezyx.utils.pandas\_utils module
------------------------------------
-
-.. automodule:: geodezyx.utils.pandas_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-geodezyx.utils.plot\_utils module
----------------------------------
-
-.. automodule:: geodezyx.utils.plot_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 geodezyx.utils.shell\_like module
 ---------------------------------
 

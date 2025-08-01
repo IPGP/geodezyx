@@ -118,7 +118,7 @@ def head(filename, count=1):
     """
     This one is fairly trivial to implement but it is here for completeness.
     """
-    with open(filename, 'r') as f:
+    with open(filename, 'r', errors='ignore') as f:
         lines = []
         for iline in range(1, count+1):
             try:
@@ -504,9 +504,8 @@ def gzip_compress(inp_path, out_dir=None, out_fname=None, rm_inp=False):
 
     return out_path
 
-
 def uncompress(pathin,dirout = '', opts='-f'):
-    log.warn("function discontinued, use files_rw.unzip_gz_Z() instead")
+    log.warning("function discontinued, use files_rw.unzip_gz_z() instead")
     if not os.path.isfile(pathin):
         log.error('uncompress : %s doesnt exist !!!', pathin)
         return None
@@ -538,29 +537,36 @@ def remove_dir(directory):
 
 def walk_dir(parent_dir):
     """
-    from a main parent_dir
-    returns files_list & dirs_list all the files and all the dirs in the
-    parent_dir
+    From a main parent_dir, returns files_list & dirs_list containing all the files and all the dirs in the parent_dir.
+    Supports wildcards in the parent_dir path.
 
-    https://www.tutorialspoint.com/python/os_walk.htm
+    Parameters
+    ----------
+    parent_dir : str
+        The parent directory path, which can include wildcards.
+
+    Returns
+    -------
+    files_list : list
+        List of all file paths.
+    dirs_list : list
+        List of all directory paths.
     """
-    files_list , dirs_list = [] , []
-    for root, dirs, files in os.walk(parent_dir, topdown=False):
-        for name in files:
-            files_list.append(os.path.join(root, name))
-        for name in dirs:
-            dirs_list.append(os.path.join(root, name))
+    files_list, dirs_list = [], []
+    for dir_path in glob.glob(parent_dir):
+        for root, dirs, files in os.walk(dir_path, topdown=False):
+            for name in files:
+                files_list.append(os.path.join(root, name))
+            for name in dirs:
+                dirs_list.append(os.path.join(root, name))
 
-    return files_list , dirs_list
+    return files_list, dirs_list
 
 def fileprint(output,outfile):
     log.debug(output)
     with open(outfile, "a") as f:
         f.write("{}\n".format(output))
     return None
-
-
-
 
 def write_in_file(string_to_write,outdir_or_outpath,
                   outname="",ext='.txt',encoding='utf8',append=False):

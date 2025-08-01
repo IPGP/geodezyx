@@ -143,7 +143,7 @@
 <h4>Convert year/day of year to Modified Julian Day<a class="headerlink" href="#convert-year-day-of-year-to-modified-julian-day" title="Link to this heading"></a></h4>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">year</span><span class="p">,</span><span class="n">doy</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">169</span><span class="p">)</span>
 <span class="n">epoch</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">doy</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">doy</span><span class="p">)</span>
-<span class="n">mjd</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">dt2MJD</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
+<span class="n">mjd</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">dt2mjd</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
 
 <span class="n">mjd</span>
 <span class="n">Out</span><span class="p">:</span> <span class="mf">59383.0</span>
@@ -178,33 +178,33 @@
 <p>These functions are optimized for arrays (multiple inputs) but can also handle scalars.</p>
 <section id="coordinates-conversion-exemples">
 <h3>Coordinates conversion exemples<a class="headerlink" href="#coordinates-conversion-exemples" title="Link to this heading"></a></h3>
-<p>We consider as exemple the coordinates of the Helmertturm given in latitude, longitude, height from Wikipedia and the GNSS station POTS in Geocentric XYZ.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Helmertturm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">52.380278</span><span class="p">,</span> <span class="mf">13.065278</span><span class="p">,</span><span class="mf">147.983</span><span class="p">])</span>
-<span class="n">POTS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3800689.6341</span><span class="p">,</span><span class="mf">882077.3857</span><span class="p">,</span><span class="mf">5028791.3179</span> <span class="p">])</span>
+<p>We consider as exemple the coordinates of the Helmert Tower, potsdam, Germany given in latitude, longitude, height from Wikipedia and the GNSS station POTS00GER in Geocentric XYZ.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">helmertturm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">52.380278</span><span class="p">,</span> <span class="mf">13.065278</span><span class="p">,</span><span class="mf">147.983</span><span class="p">])</span>
+<span class="n">pots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3800689.6341</span><span class="p">,</span><span class="mf">882077.3857</span><span class="p">,</span><span class="mf">5028791.3179</span> <span class="p">])</span>
 </pre></div>
 </div>
-<p>We can bring POTS in Geographic and the Helmertturm in Geocentric coordinates</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POTS_geo</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">XYZ2GEO</span><span class="p">(</span><span class="n">POTS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">POTS</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">POTS</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-<span class="n">POTS_geo</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">XYZ2GEO</span><span class="p">(</span><span class="o">*</span><span class="n">POTS</span><span class="p">)</span>
+<p>We can bring pots in Geographic and the helmertturm in Geocentric coordinates</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pots_geo</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">xyz2geo</span><span class="p">(</span><span class="n">pots</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">pots</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">pots</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">pots_geo</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">xyz2geo</span><span class="p">(</span><span class="o">*</span><span class="n">pots</span><span class="p">)</span>
 
-<span class="n">POTS_geo</span>
+<span class="n">pots_geo</span>
 <span class="n">Out</span><span class="p">:</span> <span class="p">(</span><span class="mf">52.37929737808202</span><span class="p">,</span> <span class="mf">13.066091316954145</span><span class="p">,</span> <span class="mf">144.41769897658378</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Helmertturm_xyz</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">GEO2XYZ</span><span class="p">(</span><span class="n">Helmertturm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                               <span class="n">Helmertturm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                               <span class="n">Helmertturm</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">helmertturm_xyz</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">geo2xyz</span><span class="p">(</span><span class="n">helmertturm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                               <span class="n">helmertturm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                               <span class="n">helmertturm</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
-<span class="n">Helmertturm_xyz</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">GEO2XYZ</span><span class="p">(</span><span class="o">*</span><span class="n">Helmertturm</span><span class="p">)</span>
+<span class="n">helmertturm_xyz</span> <span class="o">=</span> <span class="n">conv</span><span class="o">.</span><span class="n">geo2xyz</span><span class="p">(</span><span class="o">*</span><span class="n">helmertturm</span><span class="p">)</span>
 
-<span class="n">Helmertturm_xyz</span>
+<span class="n">helmertturm_xyz</span>
 <span class="n">Out</span><span class="p">:</span> <span class="p">(</span><span class="mf">89.92804903383008</span><span class="p">,</span> <span class="mf">14.005569048843014</span><span class="p">,</span> <span class="o">-</span><span class="mf">6356604.297220887</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We can also get the vector between POTS and the Helmertturm
-(i.e. the Helmertturm in the Topocentric frame centered on POTS)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conv</span><span class="o">.</span><span class="n">XYZ2ENU_2</span><span class="p">(</span><span class="n">Helmertturm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Helmertturm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Helmertturm</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-               <span class="n">POTS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">POTS</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">POTS</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<p>We can also get the vector between pots and the helmertturm
+(i.e. the helmertturm in the Topocentric frame centered on pots)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conv</span><span class="o">.</span><span class="n">xyz2enu</span><span class="p">(</span><span class="n">helmertturm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">helmertturm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">helmertturm</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+               <span class="n">pots</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">pots</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">pots</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 <span class="n">Out</span><span class="p">:</span> <span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.88515353</span><span class="p">]),</span> <span class="n">array</span><span class="p">([</span><span class="mf">20735.55848087</span><span class="p">]),</span> <span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">6364723.46820732</span><span class="p">]))</span>
 </pre></div>
 </div>
@@ -282,20 +282,20 @@
 <h2>Point and Click to detect offsets manually<a class="headerlink" href="#point-and-click-to-detect-offsets-manually" title="Link to this heading"></a></h2>
 <p>The toolbox contains a tool to select manually the jumps in the Geodetic Time Series.</p>
 <p>Based on <cite>matplotlib</cite>, you can “point and click” the discontinuities you detected visually with your mouse.</p>
-<p>Plot first your data (in a theoretical DataFrame DF)</p>
+<p>Plot first your data (in a theoretical DataFrame df)</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,(</span><span class="n">axn</span><span class="p">,</span><span class="n">axe</span><span class="p">,</span><span class="n">axu</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">axn</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">],</span><span class="n">DF</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">])</span>
-<span class="n">axe</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">],</span><span class="n">DF</span><span class="p">[</span><span class="s2">&quot;e&quot;</span><span class="p">])</span>
-<span class="n">axu</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">],</span><span class="n">DF</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">])</span>
+<span class="n">axn</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">],</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">])</span>
+<span class="n">axe</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">],</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;e&quot;</span><span class="p">])</span>
+<span class="n">axu</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">],</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Then, create the Point and Click object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PnC</span> <span class="o">=</span> <span class="n">gcls</span><span class="o">.</span><span class="n">point_n_click_plot</span><span class="p">()</span>
-<span class="n">multi</span> <span class="p">,</span> <span class="n">cid</span> <span class="o">=</span> <span class="n">PnC</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pnc</span> <span class="o">=</span> <span class="n">gcls</span><span class="o">.</span><span class="n">point_n_click_plot</span><span class="p">()</span>
+<span class="n">multi</span> <span class="p">,</span> <span class="n">cid</span> <span class="o">=</span> <span class="n">pnc</span><span class="p">(</span><span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The selected jumps/offsets are stored in a list attribute of the Point and Click object</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PnC</span><span class="o">.</span><span class="n">selectedX</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pnc</span><span class="o">.</span><span class="n">selectedX</span>
 </pre></div>
 </div>
 <p>Read the dedicated script stored in  <code class="docutils literal notranslate"><span class="pre">&lt;...&gt;/geodezyx/000_exemples/logsheets_reader</span></code>.
@@ -318,7 +318,7 @@ More details in the class documentation : <a class="reference internal" href="ge
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

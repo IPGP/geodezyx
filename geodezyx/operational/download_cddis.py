@@ -17,24 +17,13 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 import logging
 ########## BEGIN IMPORT ##########
 #### External modules
-# import datetime as dt
-# import glob
-# import itertools
-# import multiprocessing as mp
 import os
-
 import pandas as pd
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
 
-# import re
-# import shutil
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########

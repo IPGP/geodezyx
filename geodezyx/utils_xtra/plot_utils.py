@@ -28,7 +28,6 @@ import os
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy
 
 #### geodeZYX modules
 from geodezyx import utils
@@ -264,6 +263,7 @@ def gaussian_for_plot(D,density=False,nbins=500,nsigma=3.5):
         gaussian curve x.
 
     """
+    import scipy
 
     mu = np.mean(D)
     sigma = np.std(D)

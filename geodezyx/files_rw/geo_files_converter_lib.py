@@ -17,12 +17,6 @@ GitHub repository :
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
-# from geodezyx import utils,dt,time,np,os,re,struct,math,string,pd,copy
-# from geodezyx import *
-# import dateutil
-
-# import geodezyx.megalib.geodetik as geok
-
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
@@ -37,8 +31,6 @@ import textwrap
 from io import BytesIO, StringIO
 
 import dateutil
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -759,7 +751,7 @@ def station_info_2_gins(
                 X = data["Ref_X"]
                 Y = data["Ref_Y"]
                 Z = data["Ref_Z"]
-                T = conv.MJD2dt(data["Ref_jday"])
+                T = conv.mjd2dt(data["Ref_jday"])
                 vX = data["dX/dt"]
                 vY = data["dY/dt"]
                 vZ = data["dZ/dt"]
@@ -817,7 +809,7 @@ def station_info_2_gins(
             idligne = idstat + "{:0>2d}".format(i + 1)
             outAnt = dicout["Ant"][i]
             outAntHt = dicout["AntHt"][i]
-            Xant, Yant, Zant = conv.ENU2XYZ_legacy(0, 0, outAntHt, X, Y, Z)
+            Xant, Yant, Zant = conv.enu2xyz_legacy(0, 0, outAntHt, X, Y, Z)
             lastEnd = outEnd
             outStart = dicout["Start"][i].strftime("%d%m%y")
             outEnd = dicout["End"][i].strftime("%d%m%y")
@@ -1193,7 +1185,7 @@ def write_station_file_gins_from_datalists(
             idligne = idstatA + str(j).zfill(2)
             outRec = receptor_gins_corrector(rec.Receiver_Type)
 
-            Xant, Yant, Zant = conv.ENU2XYZ_legacy(
+            Xant, Yant, Zant = conv.enu2xyz_legacy(
                 ant.East_Ecc, ant.North_Ecc, ant.Up_Ecc, X, Y, Z
             )
 
@@ -1424,13 +1416,13 @@ def read_nmea(
             Haut.append(float(f[field_h_alt]))
             Qual.append(qual)
 
-    X, Y, Z = conv.GEO2XYZ(Lat, Long, Haut)
+    X, Y, Z = conv.geo2xyz(Lat, Long, Haut)
     f, l, h = np.mean(Lat), np.mean(Long), np.mean(Haut)
-    x0, y0, z0 = conv.GEO2XYZ(f, l, h)
+    x0, y0, z0 = conv.geo2xyz(f, l, h)
 
     f, l, h = 43.4417981389, 7.83481522597, 6.59449264956
     x0, y0, z0 = 4595047.79934, 632288.017869, 4363273.52335
-    E, N, U = conv.XYZ2ENU_2(X, Y, Z, x0, y0, z0)
+    E, N, U = conv.xyz2enu(X, Y, Z, x0, y0, z0)
 
     if export_path != "":
         outf = open(export_path, "w+")
@@ -1484,6 +1476,10 @@ def read_nmea(
 
 def plot_nmea(T, E, N, U, Q):
     """a quick and dirty fct to plot the NMEA"""
+
+    import matplotlib
+    import matplotlib.pyplot as plt
+
     plt.close("all")
 
     y_formatter = matplotlib.ticker.ScalarFormatter(useOffset=1)
@@ -2378,7 +2374,7 @@ def read_rinex_nav(fn, writeh5=None, version=2):
     return nav
 
 
-def unzip_gz_Z(
+def unzip_gz_z(
     inp_gzip_file, out_gzip_file="", remove_inp=False, force=False, out_gzip_dir=None
 ):
     """

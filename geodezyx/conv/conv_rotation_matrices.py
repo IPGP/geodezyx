@@ -28,9 +28,6 @@ import numpy as np
 #### geodeZYX modules
 from geodezyx import utils
 
-# import scipy
-# from pyorbital import astronomy
-# import re
 log = logging.getLogger('geodezyx')
 
 
@@ -49,11 +46,11 @@ log = logging.getLogger('geodezyx')
 ### The rotation matrices conventions are described in details in 
 ### Sakic (2016, PhD manuscript) p126
 
-### It is based on the book of Grewal, M. S., Weill, L. R., & Andrews, A. P. (2007). 
+### It is based on the book of Grewal, M. S., Weill, L. R., & Andrews, A. P. (2007).
 ### Global Positioning Systems, Inertial Navigation, and Integration. 
 ### Hoboken, NJ, USA : John Wiley and Sons, Inc.
 
-def C_2D(theta, angtype='deg'):
+def c_2d(theta, angtype='deg'):
     if angtype == 'deg':
         theta = np.deg2rad(theta)
 
@@ -61,63 +58,63 @@ def C_2D(theta, angtype='deg'):
                      [np.sin(theta), np.cos(theta)]])
 
 
-def C_ned2enu():
+def c_ned2enu():
     return np.array([[0, 1, 0], [1, 0, 0], [0, 0, -1]])
 
 
-def C_enu2ned():
+def c_enu2ned():
     return np.array([[0, 1, 0], [1, 0, 0], [0, 0, -1]])
 
 
-def C_ned2ecef(phi, llambda, angtype='deg'):
+def c_ned2ecef(phi, llambda, angtype='deg'):
     if angtype == 'deg':
         phi = np.deg2rad(phi)
         llambda = np.deg2rad(llambda)
 
-    In_ned = np.array([1, 0, 0])
-    Ie_ned = np.array([0, 1, 0])
-    Id_ned = np.array([0, 0, 1])
+    in_ned = np.array([1, 0, 0])
+    ie_ned = np.array([0, 1, 0])
+    id_ned = np.array([0, 0, 1])
 
-    Ix_ned = np.array([-np.cos(llambda) * np.sin(phi), -np.sin(llambda), -np.cos(llambda) * np.cos(phi)])
-    Iy_ned = np.array([-np.sin(llambda) * np.sin(phi), np.cos(llambda), -np.sin(llambda) * np.cos(phi)])
-    Iz_ned = np.array([np.cos(phi), 0, -np.sin(phi)])
+    ix_ned = np.array([-np.cos(llambda) * np.sin(phi), -np.sin(llambda), -np.cos(llambda) * np.cos(phi)])
+    iy_ned = np.array([-np.sin(llambda) * np.sin(phi), np.cos(llambda), -np.sin(llambda) * np.cos(phi)])
+    iz_ned = np.array([np.cos(phi), 0, -np.sin(phi)])
 
-    C_ned2ecef_out = np.array([[np.dot(Ix_ned, In_ned), np.dot(Ix_ned, Ie_ned), np.dot(Ix_ned, Id_ned)],
-                               [np.dot(Iy_ned, In_ned), np.dot(Iy_ned, Ie_ned), np.dot(Iy_ned, Id_ned)],
-                               [np.dot(Iz_ned, In_ned), np.dot(Iz_ned, Ie_ned), np.dot(Iz_ned, Id_ned)]])
+    c_ned2ecef_out = np.array([[np.dot(ix_ned, in_ned), np.dot(ix_ned, ie_ned), np.dot(ix_ned, id_ned)],
+                               [np.dot(iy_ned, in_ned), np.dot(iy_ned, ie_ned), np.dot(iy_ned, id_ned)],
+                               [np.dot(iz_ned, in_ned), np.dot(iz_ned, ie_ned), np.dot(iz_ned, id_ned)]])
 
-    return C_ned2ecef_out
-
-
-def C_ecef2ned(phi, llambda, angtype='deg'):
-    return np.linalg.inv(C_ned2ecef(phi, llambda, angtype))
+    return c_ned2ecef_out
 
 
-def C_enu2ecef(phi, llambda, angtype='deg'):
+def c_ecef2ned(phi, llambda, angtype='deg'):
+    return np.linalg.inv(c_ned2ecef(phi, llambda, angtype))
+
+
+def c_enu2ecef(phi, llambda, angtype='deg'):
     if angtype == 'deg':
         phi = np.deg2rad(phi)
         llambda = np.deg2rad(llambda)
 
-    Ie_enu = np.array([1, 0, 0])
-    In_enu = np.array([0, 1, 0])
-    Iu_enu = np.array([0, 0, 1])
+    ie_enu = np.array([1, 0, 0])
+    in_enu = np.array([0, 1, 0])
+    iu_enu = np.array([0, 0, 1])
 
-    Ix_enu = np.array([-np.sin(llambda), -np.cos(llambda) * np.sin(phi), np.cos(llambda) * np.cos(phi)])
-    Iy_enu = np.array([np.cos(llambda), -np.sin(llambda) * np.sin(phi), np.sin(llambda) * np.cos(phi)])
-    Iz_enu = np.array([0, np.cos(phi), np.sin(phi)])
+    ix_enu = np.array([-np.sin(llambda), -np.cos(llambda) * np.sin(phi), np.cos(llambda) * np.cos(phi)])
+    iy_enu = np.array([np.cos(llambda), -np.sin(llambda) * np.sin(phi), np.sin(llambda) * np.cos(phi)])
+    iz_enu = np.array([0, np.cos(phi), np.sin(phi)])
 
-    C_enu2ecef_out = np.array([[np.dot(Ix_enu, Ie_enu), np.dot(Ix_enu, In_enu), np.dot(Ix_enu, Iu_enu)],
-                               [np.dot(Iy_enu, Ie_enu), np.dot(Iy_enu, In_enu), np.dot(Iy_enu, Iu_enu)],
-                               [np.dot(Iz_enu, Ie_enu), np.dot(Iz_enu, In_enu), np.dot(Iz_enu, Iu_enu)]])
+    c_enu2ecef_out = np.array([[np.dot(ix_enu, ie_enu), np.dot(ix_enu, in_enu), np.dot(ix_enu, iu_enu)],
+                               [np.dot(iy_enu, ie_enu), np.dot(iy_enu, in_enu), np.dot(iy_enu, iu_enu)],
+                               [np.dot(iz_enu, ie_enu), np.dot(iz_enu, in_enu), np.dot(iz_enu, iu_enu)]])
 
-    return C_enu2ecef_out
-
-
-def C_ecef2enu(phi, llambda, angtype='deg'):
-    return C_enu2ecef(phi, llambda, angtype).T
+    return c_enu2ecef_out
 
 
-def C_ecef2enu_sigma(phi, llambda, angtype='deg'):
+def c_ecef2enu(phi, llambda, angtype='deg'):
+    return c_enu2ecef(phi, llambda, angtype).T
+
+
+def c_ecef2enu_sigma(phi, llambda, angtype='deg'):
     """
     Gives the transformation matrix between ECEF and ENU (East North Up) 
     ref. frame for the sigmas (variance propagation)
@@ -132,30 +129,30 @@ def C_ecef2enu_sigma(phi, llambda, angtype='deg'):
         llambda = np.deg2rad(llambda)
 
 
-    C_ecef2enu_sigma_out = np.array([[- np.sin(llambda), np.cos(llambda), 0],
+    c_ecef2enu_sigma_out = np.array([[- np.sin(llambda), np.cos(llambda), 0],
                                      [-np.sin(phi) * np.cos(llambda), -np.sin(phi) * np.sin(llambda), np.cos(phi)],
                                      [np.cos(phi) * np.cos(llambda), np.cos(phi) * np.sin(llambda), np.sin(phi)]])
 
-    return C_ecef2enu_sigma_out
+    return c_ecef2enu_sigma_out
 
 
-def C_rpy2enu(roll, pitch, yaw, angtype='deg'):
+def c_rpy2enu(roll, pitch, yaw, angtype='deg'):
     if angtype == 'deg':
         roll = np.deg2rad(roll)
         pitch = np.deg2rad(pitch)
         yaw = np.deg2rad(yaw)
 
-    R = roll
-    P = pitch
-    Y = yaw
+    r = roll
+    p = pitch
+    y = yaw
 
-    Ir = np.array([np.sin(Y) * np.cos(P), np.cos(Y) * np.cos(P), np.sin(P)])
-    Ip = np.array([np.cos(R) * np.cos(Y) + np.sin(R) * np.sin(Y) * np.sin(P),
-                   -np.cos(R) * np.sin(Y) + np.sin(R) * np.cos(Y) * np.sin(P),
-                   -np.sin(R) * np.cos(P)])
-    Iy = np.array([-np.sin(R) * np.cos(Y) + np.cos(R) * np.sin(Y) * np.sin(P),
-                   np.sin(R) * np.sin(Y) + np.cos(R) * np.cos(Y) * np.sin(P),
-                   - np.cos(R) * np.cos(P)])
+    ir = np.array([np.sin(y) * np.cos(p), np.cos(y) * np.cos(p), np.sin(p)])
+    ip = np.array([np.cos(r) * np.cos(y) + np.sin(r) * np.sin(y) * np.sin(p),
+                   -np.cos(r) * np.sin(y) + np.sin(r) * np.cos(y) * np.sin(p),
+                   -np.sin(r) * np.cos(p)])
+    iy = np.array([-np.sin(r) * np.cos(y) + np.cos(r) * np.sin(y) * np.sin(p),
+                   np.sin(r) * np.sin(y) + np.cos(r) * np.cos(y) * np.sin(p),
+                   - np.cos(r) * np.cos(p)])
 
     #    Ie = np.array([ np.sin(Y) * np.cos(P) ,
     #    np.cos(R) * np.cos(Y) + np.sin(R) * np.sin(Y) * np.sin(P) ,
@@ -169,45 +166,45 @@ def C_rpy2enu(roll, pitch, yaw, angtype='deg'):
     #     -np.sin(R) * np.cos(P),
     #     -np.cos(R) * np.cos(P) ])
 
-    C_rpy2enu_out = np.hstack((Ir[np.newaxis].T, Ip[np.newaxis].T, Iy[np.newaxis].T))
+    c_rpy2enu_out = np.hstack((ir[np.newaxis].T, ip[np.newaxis].T, iy[np.newaxis].T))
 
-    return C_rpy2enu_out
+    return c_rpy2enu_out
 
 
-def C_rpy2enu2(roll, pitch, yaw, angtype='deg'):
+def c_rpy2enu2(roll, pitch, yaw, angtype='deg'):
     if angtype == 'deg':
         roll = np.deg2rad(roll)
         pitch = np.deg2rad(pitch)
         yaw = np.deg2rad(yaw)
 
-    R = roll
-    P = pitch
-    Y = yaw
+    r = roll
+    p = pitch
+    y = yaw
 
-    Sr = np.sin(R)
-    Cr = np.cos(R)
-    Sp = np.sin(P)
-    Cp = np.cos(P)
-    Sy = np.sin(Y)
-    Cy = np.cos(Y)
+    sr = np.sin(r)
+    cr = np.cos(r)
+    sp = np.sin(p)
+    cp = np.cos(p)
+    sy = np.sin(y)
+    cy = np.cos(y)
 
-    C_rpy2enu_out = np.array([[Sy * Cp, Cr * Cy + Sr * Sy * Sp, - Sr * Cy + Cr * Sy * Sp],
-                              [Cy * Cp, -Cr * Sy + Sr * Cy * Sp, Sr * Sy + Cr * Cy * Sp],
-                              [Sp, -Sr * Cp, -Cr * Cp]])
+    c_rpy2enu_out = np.array([[sy * cp, cr * cy + sr * sy * sp, - sr * cy + cr * sy * sp],
+                              [cy * cp, -cr * sy + sr * cy * sp, sr * sy + cr * cy * sp],
+                              [sp, -sr * cp, -cr * cp]])
 
-    return C_rpy2enu_out
+    return c_rpy2enu_out
 
 
-def C_eci2rtn(P, V):
+def c_eci2rtn(p, v):
     """
     gives the transformation matrix between ECI ref. frame and RTN (aka RIC or RSW)
 
     Parameters
     ----------
-    P : numpy.array
+    p : numpy.array
         3D vector, position of the object in ECI frame
 
-    V : numpy.array
+    v : numpy.array
         3D vector, velocity of the object in ECI frame
         
     Returns
@@ -221,25 +218,25 @@ def C_eci2rtn(P, V):
     https://www.colorado.edu/ASEN/asen3200/handouts/Coordinate%20System.pdf
     """
 
-    H = np.cross(P, V)
+    h = np.cross(p, v)
 
-    R = P / np.linalg.norm(P)
-    C = H / np.linalg.norm(H)
-    I = np.cross(C, R)
+    r = p / np.linalg.norm(p)
+    c = h / np.linalg.norm(h)
+    i = np.cross(c, r)
 
-    C_eci2rtn_out = np.column_stack((R, I, C))
+    c_eci2rtn_out = np.column_stack((r, i, c))
 
-    return C_eci2rtn_out
+    return c_eci2rtn_out
 
 
-def C_rtn2rpy():
-    C_rtn2rpy_out = np.array([[0., 0, -1.],
+def c_rtn2rpy():
+    c_rtn2rpy_out = np.array([[0., 0, -1.],
                               [1., 0., 0.],
                               [0, -1., 0.]])
-    return C_rtn2rpy_out
+    return c_rtn2rpy_out
 
 
-def C_cep2itrs(xpole, ypole):
+def c_cep2itrs(xpole, ypole):
     """
     xpole and ypole are given in mas, miliarcsecond 
     
@@ -253,14 +250,14 @@ def C_cep2itrs(xpole, ypole):
     xpole2 = np.deg2rad(xpole * (1. / 3600.) * (10 ** -3))
     ypole2 = np.deg2rad(ypole * (1. / 3600.) * (10 ** -3))
 
-    C_cep2itrs_out = np.array([[1., 0., xpole2],
+    c_cep2itrs_out = np.array([[1., 0., xpole2],
                                [0., 1., -ypole2],
                                [-xpole2, ypole2, 1.]])
 
-    return C_cep2itrs_out
+    return c_cep2itrs_out
 
 
-def C_euler(phi, theta, psi):
+def c_euler(phi, theta, psi):
     """
     Gives the matrix of an Euler rotation
         
@@ -268,21 +265,21 @@ def C_euler(phi, theta, psi):
     ----------
         https://fr.wikipedia.org/wiki/Angles_d%27Euler
     """
-    Cphi = np.cos(phi)
-    Ctheta = np.cos(theta)
-    Cpsi = np.cos(psi)
-    Sphi = np.sin(phi)
-    Stheta = np.sin(theta)
-    Spsi = np.sin(psi)
+    cphi = np.cos(phi)
+    ctheta = np.cos(theta)
+    cpsi = np.cos(psi)
+    sphi = np.sin(phi)
+    stheta = np.sin(theta)
+    spsi = np.sin(psi)
 
-    C_euler_out = np.array([[Cpsi * Cphi - Spsi * Ctheta * Sphi, -Cpsi * Sphi - Spsi * Ctheta * Cphi, Spsi * Stheta],
-                            [Spsi * Cphi + Cpsi * Ctheta * Sphi, -Spsi * Sphi + Cpsi * Ctheta * Cphi, -Cpsi * Stheta],
-                            [Stheta * Sphi, Stheta * Cphi, Ctheta]])
+    c_euler_out = np.array([[cpsi * cphi - spsi * ctheta * sphi, -cpsi * sphi - spsi * ctheta * cphi, spsi * stheta],
+                            [spsi * cphi + cpsi * ctheta * sphi, -spsi * sphi + cpsi * ctheta * cphi, -cpsi * stheta],
+                            [stheta * sphi, stheta * cphi, ctheta]])
 
-    return C_euler_out
+    return c_euler_out
 
 
-def C_x(theta):
+def c_x(theta):
     """
     Gives the rotation matrix along the X-axis
     
@@ -301,21 +298,21 @@ def C_x(theta):
     if not utils.is_iterable(theta):
         theta = np.array([theta])
 
-    C = np.cos(theta)
-    S = np.sin(theta)
-    Z = np.zeros(len(theta))
-    I = np.ones(len(theta))
+    c = np.cos(theta)
+    s = np.sin(theta)
+    z = np.zeros(len(theta))
+    i = np.ones(len(theta))
 
-    C_x_out = np.stack([[I, Z, Z],
-                        [Z, C, -S],
-                        [Z, S, C]])
+    c_x_out = np.stack([[i, z, z],
+                        [z, c, -s],
+                        [z, s, c]])
 
-    C_x_out = np.squeeze(C_x_out)
+    c_x_out = np.squeeze(c_x_out)
 
-    return C_x_out
+    return c_x_out
 
 
-def C_y(theta):
+def c_y(theta):
     """
     Gives the rotation matrix around the Y-axis
     
@@ -333,21 +330,21 @@ def C_y(theta):
     if not utils.is_iterable(theta):
         theta = np.array([theta])
 
-    C = np.cos(theta)
-    S = np.sin(theta)
-    Z = np.zeros(len(theta))
-    I = np.ones(len(theta))
+    c = np.cos(theta)
+    s = np.sin(theta)
+    z = np.zeros(len(theta))
+    i = np.ones(len(theta))
 
-    C_y_out = np.stack([[C, Z, S],
-                        [Z, I, Z],
-                        [-S, Z, C]])
+    c_y_out = np.stack([[c, z, s],
+                        [z, i, z],
+                        [-s, z, c]])
 
-    C_y_out = np.squeeze(C_y_out)
+    c_y_out = np.squeeze(c_y_out)
 
-    return C_y_out
+    return c_y_out
 
 
-def C_z(theta):
+def c_z(theta):
     """
     Gives the rotation matrix around the Z-axis
 
@@ -363,26 +360,26 @@ def C_z(theta):
     if not utils.is_iterable(theta):
         theta = np.array([theta])
 
-    C = np.cos(theta)
-    S = np.sin(theta)
-    Z = np.zeros(len(theta))
-    I = np.ones(len(theta))
+    c = np.cos(theta)
+    s = np.sin(theta)
+    z = np.zeros(len(theta))
+    i = np.ones(len(theta))
 
-    C_z_out = np.stack([[C, -S, Z],
-                        [S, C, Z],
-                        [Z, Z, I]])
+    c_z_out = np.stack([[c, -s, z],
+                        [s, c, z],
+                        [z, z, i]])
 
-    C_z_out = np.squeeze(C_z_out)
+    c_z_out = np.squeeze(c_z_out)
 
-    return C_z_out
+    return c_z_out
 
 
-def rot_quelconq(theta, Vx, Vy, Vz, angtype='deg'):
-    N = np.linalg.norm([Vx, Vy, Vz])
+def rot_quelconq(theta, vx, vy, vz, angtype='deg'):
+    n = np.linalg.norm([vx, vy, vz])
 
-    Vx = Vx / N
-    Vy = Vy / N
-    Vz = Vz / N
+    vx = vx / n
+    vy = vy / n
+    vz = vz / n
 
     if angtype == 'deg':
         theta = np.deg2rad(theta)
@@ -390,14 +387,14 @@ def rot_quelconq(theta, Vx, Vy, Vz, angtype='deg'):
     c = np.cos(theta)
     s = np.sin(theta)
 
-    R = np.array([[Vx ** 2 + (1 - Vx ** 2) * c, Vx * Vy * (1 - c) - Vz * s, Vx * Vz * (1 - c) + Vy * s],
-                  [Vx * Vy * (1 - c) + Vz * s, Vy ** 2 + (1 - Vy ** 2) * c, Vy * Vz * (1 - c) - Vx * s],
-                  [Vx * Vz * (1 - c) - Vy * s, Vy * Vz * (1 - c) + Vx * s, Vz ** 2 + (1 - Vz ** 2) * c]])
+    r = np.array([[vx ** 2 + (1 - vx ** 2) * c, vx * vy * (1 - c) - vz * s, vx * vz * (1 - c) + vy * s],
+                  [vx * vy * (1 - c) + vz * s, vy ** 2 + (1 - vy ** 2) * c, vy * vz * (1 - c) - vx * s],
+                  [vx * vz * (1 - c) - vy * s, vy * vz * (1 - c) + vx * s, vz ** 2 + (1 - vz ** 2) * c]])
 
-    return R
+    return r
 
 
-def vector_RPY(V, out_deg=True, ad_hoc_mode=False):
+def vector_rpy(V, out_deg=True, ad_hoc_mode=False):
     """
     Donne le "Roll Pitch Yaw" pour un Point/Vecteur
     (les coordonnées spheriques plus exactement, le roll sera tjrs nul)
@@ -432,7 +429,7 @@ def vector_RPY(V, out_deg=True, ad_hoc_mode=False):
     return roll, pitch, yaw
 
 
-def add_offset(Direction, Delta, Point=None,
+def add_offset(direction, delta, point=None,
                out_delta_enu=False):
     """
     Un mode adhoc a du être implémenté dans la fonction élémentaire
@@ -446,24 +443,24 @@ def add_offset(Direction, Delta, Point=None,
     et si Point est précisé : Point + Direction
     """
 
-    rpy = vector_RPY(Direction, ad_hoc_mode=True)
+    rpy = vector_rpy(direction, ad_hoc_mode=True)
 
-    Crpy2enu = C_rpy2enu(*rpy)
+    crpy2enu = c_rpy2enu(*rpy)
     # Cenu2rpy = np.linalg.inv(C_rpy2enu(*rpy))
 
-    Delta_enu = Crpy2enu.dot(C_enu2ned().dot(Delta))
+    delta_enu = crpy2enu.dot(c_enu2ned().dot(delta))
 
     if out_delta_enu:
         log.info(out_delta_enu)
 
-    if not np.isclose(np.linalg.norm(Delta), np.linalg.norm(Delta_enu)):
+    if not np.isclose(np.linalg.norm(delta), np.linalg.norm(delta_enu)):
         log.warning("np.linalg.norm(Delta) != np.linalg.norm(Delta_enu)")
-        log.warning(np.linalg.norm(Delta), np.linalg.norm(Delta_enu), \
-                    np.linalg.norm(Delta) - np.linalg.norm(Delta_enu))
+        log.warning(np.linalg.norm(delta), np.linalg.norm(delta_enu), \
+                    np.linalg.norm(delta) - np.linalg.norm(delta_enu))
 
-    if not type(Point) is None:
-        outpoint = Point + Delta_enu
+    if not type(point) is None:
+        outpoint = point + delta_enu
     else:
-        outpoint = Direction + Delta_enu
+        outpoint = direction + delta_enu
 
     return outpoint

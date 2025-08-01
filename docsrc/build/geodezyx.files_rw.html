@@ -55,6 +55,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.files_rw package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.geo_files_converter_lib">geodezyx.files_rw.geo_files_converter_lib module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_antex">geodezyx.files_rw.read_antex module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_athmo">geodezyx.files_rw.read_athmo module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_coords_misc">geodezyx.files_rw.read_coords_misc module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_coords_time_series">geodezyx.files_rw.read_coords_time_series module</a></li>
@@ -71,14 +72,15 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
 </ul>
 </li>
 </ul>
@@ -511,6 +513,141 @@ are produced by:</p>
 </dd></dl>
 
 </section>
+<section id="module-geodezyx.files_rw.read_antex">
+<span id="geodezyx-files-rw-read-antex-module"></span><h2>geodezyx.files_rw.read_antex module<a class="headerlink" href="#module-geodezyx.files_rw.read_antex" title="Link to this heading"></a></h2>
+<p>Created on Mon Apr 14 23:31:09 2025</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_antex.l_atx_cal">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_antex.</span></span><span class="sig-name descname"><span class="pre">l_atx_cal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noazi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_antex.l_atx_cal" title="Link to this definition"></a></dt>
+<dd><p>Format calibration data for ANTEX.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>val_inp</strong> (<em>list</em>) – Calibration values to be written.</p></li>
+<li><p><strong>noazi</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, format as NOAZI calibration. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Formatted calibration data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_antex.l_atx_std">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_antex.</span></span><span class="sig-name descname"><span class="pre">l_atx_std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_antex.l_atx_std" title="Link to this definition"></a></dt>
+<dd><p>Format a standard ANTEX line with a value and label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>val_inp</strong> (<em>str</em>) – The value to be written in the line.</p></li>
+<li><p><strong>label_inp</strong> (<em>str</em>) – The label to be written in the line.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Formatted ANTEX line.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_antex.read_antex">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_antex.</span></span><span class="sig-name descname"><span class="pre">read_antex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ant_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_antex.read_antex" title="Link to this definition"></a></dt>
+<dd><p>Parse an ANTEX file and extract antenna information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – Path to the ANTEX file to be read.</p></li>
+<li><p><strong>ant_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Specific antenna type to filter. If provided, only data for this antenna type will be included.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing parsed antenna data. The structure includes:
+- HEADER: List of header lines (if <cite>header_in_output</cite> is True).
+- Antenna type as keys, with corresponding metadata and frequency-specific data as values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <cite>&lt;Antenna Type&gt;</cite> key in the returned dictionary differs for satellite and non-satellite antennas:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Satellite Antennas</strong>: The key is <cite>SVN`_`VALID FROM`_`VALID UNTIL</cite>.</dt><dd><p>Example: <cite>“G042”</cite></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Receiver Antennas</strong>: The key is <cite>TYPE</cite>.</dt><dd><p>Example: <cite>“TPSPG_A1+GP     NONE”</cite></p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>If the <cite>&lt;Antenna Type&gt;</cite> key already exists, it is incremented with a <cite>_01</cite>…`_nn` suffix</p>
+</div>
+<p>Structure of the returned dictionary:</p>
+<p>dict  # Root dictionary
+├── HEADER (list of str)  # List of header lines from the ANTEX file.
+├── ANTS (dict)  # Dictionary containing antenna data.
+│   ├── &lt;Antenna Type&gt; (str)  # Key representing the antenna type (e.g., “AS-ANT3BCAL”).
+│   │   ├── TYPE (str)  # Antenna type (e.g., “AS-ANT3BCAL”).
+│   │   ├── SERIAL (str)  # Serial number of the antenna.
+│   │   ├── METH (str)  # Method information (e.g., calibration method).
+│   │   ├── DAZI (float)  # Azimuth increment in degrees.
+│   │   ├── ZEN (list of float)  # Zenith angle range and increment [ZEN1, ZEN2, DZEN].
+│   │   ├── NFREQ (int)  # Number of frequencies for the antenna.
+│   │   ├── SINEX CODE (str, optional)  # SINEX code for the antenna (optional).
+│   │   ├── COMMENT (list of str, optional)  # List of comments related to the antenna (optional).
+│   │   ├── VALID FROM (datetime, optional)  # Start of the validity period (optional).
+│   │   ├── VALID UNTIL (datetime, optional)  # End of the validity period (optional).
+│   │   ├── FREQS (dict)  # Dictionary containing frequency-specific data.
+│   │   │   ├── &lt;Frequency&gt; (str)  # Key representing the frequency (e.g., “G01”).
+│   │   │   │   ├── PCO (list of float)  # Phase center offset [NORTH, EAST, UP].
+│   │   │   │   ├── NOAZI (numpy array)  # Elevation-dependent phase center variations.
+│   │   │   │   ├── AZI (numpy array)  # Azimuth-dependent phase center variations.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_antex.write_antex">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_antex.</span></span><span class="sig-name descname"><span class="pre">write_antex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atx_dic_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'out.atx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erase_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_antex.write_antex" title="Link to this definition"></a></dt>
+<dd><p>Write antenna calibration information to an ANTEX file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atx_dic_inp</strong> (<em>dict</em>) – Dictionary containing antenna calibration
+data to be written to the ANTEX file.
+See <cite>read_antex</cite> for dictionnary structure</p></li>
+<li><p><strong>dir_out</strong> (<em>str</em>) – Directory where the output ANTEX file will be saved.</p></li>
+<li><p><strong>fname_out</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the output ANTEX file. Default is ‘out.atx’.</p></li>
+<li><p><strong>erase_header</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the header in the input dictionary will be replaced with a default header. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function formats the antenna data into the ANTEX file format and writes it to the specified directory.</p></li>
+<li><p>If <cite>erase_header</cite> is True, a default header is used instead of the one provided in the input dictionary.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path to the generated ANTEX file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-geodezyx.files_rw.read_athmo">
 <span id="geodezyx-files-rw-read-athmo-module"></span><h2>geodezyx.files_rw.read_athmo module<a class="headerlink" href="#module-geodezyx.files_rw.read_athmo" title="Link to this heading"></a></h2>
 <p>Created on Wed Jun 30 10:52:09 2021</p>
@@ -604,6 +741,16 @@ GNSS software</p>
 <span id="geodezyx-files-rw-read-coords-misc-module"></span><h2>geodezyx.files_rw.read_coords_misc module<a class="headerlink" href="#module-geodezyx.files_rw.read_coords_misc" title="Link to this heading"></a></h2>
 <p>Created on Wed Jun 23 11:00:45 2021</p>
 <p>&#64;author: psakicki</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_misc.diff_spotgins_quick">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_misc.</span></span><span class="sig-name descname"><span class="pre">diff_spotgins_quick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_misc.diff_spotgins_quick" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_misc.read_spotgins_quick">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_misc.</span></span><span class="sig-name descname"><span class="pre">read_spotgins_quick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_misc.read_spotgins_quick" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_misc.sinex_bench_antenna_df_2_disconts">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_misc.</span></span><span class="sig-name descname"><span class="pre">sinex_bench_antenna_df_2_disconts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_antenna_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_misc.sinex_bench_antenna_df_2_disconts" title="Link to this definition"></a></dt>
@@ -900,7 +1047,24 @@ static : retrun a point</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_gins_solution_multi">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_gins_solution_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_gins_solution_multi" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Read multiple GINS solution files and return a dictionary or list of time series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filein_list</strong> (<em>list</em>) – List of input file paths.</p></li>
+<li><p><strong>return_dict</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return a dictionary of time series.
+If False, return a list of time series. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary or list of TimeSeriePoint objects,
+depending on the value of return_dict.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict or list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_gins_wrapper">
@@ -2377,7 +2541,7 @@ And the observables for each system as values
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

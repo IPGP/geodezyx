@@ -157,7 +157,7 @@ def read_rtklib(filein):
             sA = (float(fields[7]))
             sB = (float(fields[8]))
             sC = (float(fields[9]))
-            sA, sB, sC = conv.sENU2sFLH(A, B, C, sA, sB, sC)
+            sA, sB, sC = conv.sigma_enu2geo(A, B, C, sA, sB, sC)
 
         point = time_series.Point(A, B, C, T, initype, sA, sB, sC)
         point.anex['sdAB'] = float(fields[10])
@@ -813,14 +813,20 @@ def read_gins_solution(filein, mode="cinematic"):
     pts_list_tmp = []
     namestat = "XXXX"
 
+    datexere = re.search(r"[0-9]{6}_[0-9]{6}", os.path.basename(filein))
+    if not datexere:
+        datexe = '991231_235959'
+    else:
+        datexe = datexere[0]
+
+    ginsvers = 'unknown'
+
     for l in F:
         f = l.split()
 
         if 'STATION_NAME' in l:
-            if len(f) > 1:
-                namestat = f[1]
-            else:
-                namestat = f[-1]
+            # get per default 4char name
+            namestat = f[1] if len(f) > 1 else f[-1]
 
             # try to catch the 9char name in the filename 
             filnam = os.path.basename(filein)
@@ -828,7 +834,9 @@ def read_gins_solution(filein, mode="cinematic"):
             if reout:
                 namestat = reout.group(0)
 
-        if l[0] == '#':
+        if "GINS_VERSION" in l:
+            ginsvers = f[1]
+        elif l[0] == '#':
             continue
 
         # Traw = float(f[2])
@@ -854,6 +862,9 @@ def read_gins_solution(filein, mode="cinematic"):
             point.anex['sdXZ'] = float(f[13])
             point.anex['sdYZ'] = float(f[14])
             point.anex['sol_path'] = filein
+            point.anex['dateofexe'] = datexe
+            point.anex['gins_version'] = ginsvers
+
 
         elif 'FLH_SOL' in l:
             coordstype = 'FLH'
@@ -1013,7 +1024,7 @@ def read_gins(filein, kineorstatic='kine', flh_in_rad=True,
             Yref = float(nextline[5])
             Zref = float(nextline[6])
 
-            Fref, Lref, Href = conv.XYZ2GEO(Xref, Yref, Zref)
+            Fref, Lref, Href = conv.xyz2geo(Xref, Yref, Zref)
 
         #        if 'angles en deg' in line:
         #            flh_in_rad = False
@@ -1633,7 +1644,7 @@ def read_epos_sta_kinematics(filein):
     columns = ("site", "site_num",
                "MJD_epo", "numobs",
                "x", "y", "z", "sx", "sy", "sz",
-               "N", "E", "U", "sN", "sE", "sU")
+               "N", "E", "U", "sN", "sE", "s_u")
 
     DFout = pd.DataFrame(Lines_4_DF_stk,
                          columns=columns)
@@ -1686,8 +1697,8 @@ def read_epos_sta_coords_mono(filein, return_df=True):
     else:  ### case 3 : already a list of lines
         F = open(filein)
 
-    Points_list_stk = []
-    Lines_4_DF_stk = []
+    points_list_stk = []
+    lines_4_df_stk = []
 
     for l in F:
         fields = l.split()
@@ -1701,7 +1712,7 @@ def read_epos_sta_coords_mono(filein, return_df=True):
             MJD_strt = int(fields[6])
             MJD_end = int(fields[7])
             MJD_mid = np.mean([MJD_strt, MJD_end])
-            T = conv.numpy_dt2dt(conv.MJD2dt(MJD_mid))
+            T = conv.numpy_dt2dt(conv.mjd2dt(MJD_mid))
 
         if "POS_VEL:XYZ" in fields[0]:
             X = float(fields[4])
@@ -1725,17 +1736,17 @@ def read_epos_sta_coords_mono(filein, return_df=True):
                 point.anex["Vx"] = sVx
                 point.anex["Vy"] = sVy
                 point.anex["Vz"] = sVz
-                Points_list_stk.append(point)
+                points_list_stk.append(point)
 
             #### And store for the DataFrame
             else:
                 tup_4_DF = (namestat, numstat, tecto_plate,
-                            conv.MJD2dt(MJD_strt),
+                            conv.mjd2dt(MJD_strt),
                             MJD_ref, MJD_strt, MJD_end,
                             X, Y, Z, sX, sY, sZ,
                             Vx, Vy, Vz, sVx, sVy, sVz)
 
-                Lines_4_DF_stk.append(tup_4_DF)
+                lines_4_df_stk.append(tup_4_DF)
 
     if return_df:
         columns = ("site", "site_num", "tecto_plate", "epoch",
@@ -1743,12 +1754,12 @@ def read_epos_sta_coords_mono(filein, return_df=True):
                    "x", "y", "z", "sx", "sy", "sz",
                    "Vx", "Vy", "Vz", "sVx", "sVy", "sVz")
 
-        DFout = pd.DataFrame(Lines_4_DF_stk,
+        DFout = pd.DataFrame(lines_4_df_stk,
                              columns=columns)
 
         return DFout
     else:
-        return Points_list_stk
+        return points_list_stk
 
 
 def read_epos_sta_coords_multi(filein_list, output_type="DataFrame"):
@@ -1849,7 +1860,7 @@ def read_epos_slv_times(p, convert_to_time=False):
         if "EPOCHE" in l:
             cur_epoc_line = l
             cur_epoc_f = cur_epoc_line.split()
-            cur_epoc = conv.MJD2dt(int(cur_epoc_f[1])) + dt.timedelta(seconds=int(86400 * float(cur_epoc_f[2])))
+            cur_epoc = conv.mjd2dt(int(cur_epoc_f[1])) + dt.timedelta(seconds=int(86400 * float(cur_epoc_f[2])))
 
         if re.match("^   [0-9]{4}.*", l):
             Lgood_stat.append([cur_epoc] + [float(e) for e in l.split()])
@@ -1985,7 +1996,7 @@ def read_IGS_coords(filein, initype='auto'):
             elif "xyz" in os.path.basename(filein):
                 initype = 'XYZ'
 
-        T = conv.MJD2dt(float(f[3]))
+        T = conv.mjd2dt(float(f[3]))
         A = float(f[6])
         B = float(f[7])
         C = float(f[8])
@@ -2312,7 +2323,7 @@ def read_nrcan_pos(filein):
             # sE = float(f[15])
             # sN = float(f[16])
             # sU = float(f[17])
-            # slat , slon , sh = conv.sENU2sFLH(lat,lon,h,sE,sN,sU)
+            # slat , slon , sh = conv.sigma_enu2geo(lat,lon,h,sE,sN,sU)
 
             slat, slon, sh = float(f[i_slat]), float(f[i_slon]), float(f[i_sh])
 
@@ -2329,7 +2340,7 @@ def read_qinsy(filein, yy, mm, dd):
     reader = pd.read_csv(open(filein))
     T = [dateutil.parser.parse(e).replace(year=yy, month=mm, day=dd) + dt.timedelta(seconds=dUTCGPS) for e in
          list(reader.icol(0))]
-    (X, Y, Z) = np.array(conv.GEO2XYZ(reader.icol(12), reader.icol(13), reader.icol(14)))
+    (X, Y, Z) = np.array(conv.geo2xyz(reader.icol(12), reader.icol(13), reader.icol(14)))
     # sX,sY,sZ = [] , [] , []
     initype = 'XYZ'
     tsout = time_series.TimeSeriePoint()
@@ -2505,7 +2516,7 @@ def read_groops_position(Filesin):
 
     for filein in Filesin:
         DF = pd.read_csv(filein, skiprows=6, header=None, sep=r'\s+')
-        T = conv.dt2posix(conv.MJD2dt(DF[0].values))
+        T = conv.dt2posix(conv.mjd2dt(DF[0].values))
         X, Y, Z = DF[1], DF[2], DF[3]
 
         for t, x, y, z in zip(T, X, Y, Z):
@@ -2549,7 +2560,7 @@ def read_pride_pppar_pos_mono(filein):
 
     df = df.squeeze()
 
-    T = conv.dt2posix(conv.MJD2dt(df['Mjd']))
+    T = conv.dt2posix(conv.mjd2dt(df['Mjd']))
 
     fuv = df['Sig0'] ** 2  # variance of unit weight
 
@@ -2596,7 +2607,7 @@ def read_pride_pppar_kin(filein):
                      engine='python',
                      header=None)
 
-    t_arr = conv.MJD2dt(df[0]) + df[1].apply(lambda x: dt.timedelta(seconds=x))
+    t_arr = conv.mjd2dt(df[0]) + df[1].apply(lambda x: dt.timedelta(seconds=x))
 
     tsout = time_series.TimeSeriePoint()
 

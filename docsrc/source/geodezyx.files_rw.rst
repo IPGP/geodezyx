@@ -17,6 +17,14 @@ geodezyx.files\_rw.geo\_files\_converter\_lib module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.files\_rw.read\_antex module
+-------------------------------------
+
+.. automodule:: geodezyx.files_rw.read_antex
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.files\_rw.read\_athmo module
 -------------------------------------
 

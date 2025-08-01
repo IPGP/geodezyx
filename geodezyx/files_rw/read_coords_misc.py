@@ -13,6 +13,7 @@ import datetime as dt
 import logging
 
 import numpy as np
+import pandas as pd
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -20,6 +21,35 @@ from geodezyx import utils
 
 log = logging.getLogger('geodezyx')
 
+
+# def read_spotgins_materfile(materfile_path):
+#     df = pd.read_csv(materfile_path, header=None, sep=r'\s+', comment='#',
+#                 names=['AC', 'NAME', 'ID', 'LATITUDE', 'LONGITUDE', 'HEIGHT', 'X_position',
+#                        'Y_position', 'Z_position', 'LOGFILE_NAME', 'DATA_SOURCE'])
+#     return df
+
+
+def read_spotgins_quick(p):
+    df = pd.read_csv(p , comment='#', header=None, sep=r'\s+')
+    
+
+    with open(p) as f:
+        header_line = [line for line in f if line.startswith('#')][-1]
+    df.columns = header_line.strip().split()
+    df = df[df.columns[:4]]
+    df.columns = ['mjd',"E","N","U"]
+    df['date'] = conv.mjd2dt(df['mjd'])    
+    df.set_index('date', inplace=True)
+    df = df.drop("mjd",axis=1)
+
+    return df
+
+
+def diff_spotgins_quick(df1,df2):
+    rndidx = lambda d : d.set_index(d.index.to_series().dt.round("1h").values)
+    dfout = (rndidx(df1) - rndidx(df2)).dropna()
+    #print(dfout.to_string())
+    return dfout
 
 def stations_in_epos_sta_coords_file_mono(coords_file_path):
     """
@@ -49,7 +79,7 @@ def stations_in_epos_sta_coords_file_mono(coords_file_path):
         mean_mjd_list.append(mean_mjd)
 
     mjd_final = utils.most_common(mean_mjd_list)
-    epoch = conv.MJD2dt(mjd_final)
+    epoch = conv.mjd2dt(mjd_final)
     return epoch , stats_list
 
 
@@ -146,7 +176,6 @@ def stations_in_coords_file_multi(files_path_list,files_type = "sinex"):
     return datadico
 
 
-
 def stations_in_sinex_multi(sinex_path_list):
     """
     Gives stations list in a SINEX
@@ -163,7 +192,6 @@ def stations_in_sinex_multi(sinex_path_list):
     return stations_in_coords_file_multi(sinex_path_list,"sinex")
 
 
-
 def sinex_bench_antenna_df_2_disconts(df_antenna_in, stat, return_full=False):
     df_antenna_work = df_antenna_in[df_antenna_in["Code"] == stat]
     start_list     = conv.datestr_sinex_2_dt(df_antenna_work["_Data_Start"])
@@ -174,5 +202,3 @@ def sinex_bench_antenna_df_2_disconts(df_antenna_in, stat, return_full=False):
         clean_list = sorted(list(set(start_list + end_list)))
         clean_list = [e for e in clean_list if e != dt.datetime(1970, 1, 1, 0, 0)]
         return clean_list
-    
-   

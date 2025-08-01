@@ -31,13 +31,13 @@ def read_credentials(file_path):
 
 
 def download_rsync(
-        file_list,
-        remote_user,
-        remote_host,
-        remote_path,
-        local_destination,
-        rsync_options=None,
-        password=None,
+    file_list,
+    remote_user,
+    remote_host,
+    remote_path,
+    local_destination,
+    rsync_options=None,
+    password=None,
 ):
     """
     Downloads a list of files using rsync.
@@ -48,6 +48,10 @@ def download_rsync(
             "--progress",
             "--relative",
             "--copy-links",
+            "--no-perms",
+            "--no-owner",
+            "--no-group",
+            "--omit-dir-times",
         ]  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
@@ -67,9 +71,9 @@ def download_rsync(
     # Construct the rsync command
     # /./ : https://askubuntu.com/questions/552120/preserve-directory-tree-while-copying-with-rsync
     rsync_cmd = (
-            rsync_base
-            + ["--files-from", tmp_rsync_file_lis]
-            + [f"{remote_source}/./", f"{local_destination}/"]
+        rsync_base
+        + ["--files-from", tmp_rsync_file_lis]
+        + [f"{remote_source}/./", f"{local_destination}/"]
     )
 
     # Run the rsync command
@@ -84,17 +88,26 @@ def download_rsync(
     return
 
 
-def update_bdgins(date_srt, date_end, dir_bdgins="",
-                  login="", password="", compress=True):
+def bdgins_update(
+    date_srt=dt.datetime(2020, 5, 3),
+    date_end=None,
+    dir_bdgins="",
+    login="",
+    password="",
+    compress=False,
+):
     """
-    Update the BDGINS repository with the necessary files for the given date range.
+    Update the BDGINS repository with the necessary files
+    for the given date range.
 
     Parameters
     ----------
     date_srt : datetime
         The start date for the update.
+        The default is 2020-05-03 (origin of G20 products, end of GPS's Selectable Avaiability).
     date_end : datetime
         The end date for the update.
+        If not provided, the default is the 15 days ago.
     dir_bdgins : str, optional
         The directory for BDGINS. Defaults to an empty string.
     login : str, optional
@@ -102,23 +115,43 @@ def update_bdgins(date_srt, date_end, dir_bdgins="",
     password : str, optional
         The password for the remote server. Defaults to an empty string.
     compress : bool, optional
-        Whether to compress the clock files. Defaults to True.
-
+        Whether to gzip-compress the clock files.
+        experimental, and not recommended
+        Defaults to False.
     Returns
     -------
     None
     """
+    if not date_end:
+        date_end = dt.datetime.now() - dt.timedelta(days=15)
+        date_end = conv.round_dt(date_end, "1D", mode="floor", python_dt_out=False)
+        date_end = conv.numpy_dt2dt(date_end)
+
     if not dir_bdgins:
-        dir_bdgins = os.path.join(gynscmn.get_gin_path(True), 'data')
+        dir_bdgins = os.path.join(gynscmn.get_gin_path(True), "data")
 
     if not login:
-        login = getpass.getuser()
+        home = os.path.expanduser("~")
+        ginspcrc = os.path.join(home, ".ginspc")
+        if os.path.isfile(ginspcrc):
+            login = open(ginspcrc, "r").read().split("=")[1].strip()
+        else:
+            login = getpass.getuser()
 
     date = date_srt
 
     ###### LIST INITIALISATION
-    ### misc files do not need initialisation
+    ### misc files
     list_misc = []
+
+    ### full folders
+    list_constell = []
+    list_prairie = []
+    list_antex = []
+    list_exe_ppp = []
+    list_macromod = []
+    list_lunisolaires = []
+    list_maree_polaire = []
 
     ### time dependant files
     list_tropo = []
@@ -126,10 +159,20 @@ def update_bdgins(date_srt, date_end, dir_bdgins="",
     list_orbite_g20 = []
     list_orbex_g20 = []
     list_horl_g20 = []
-    list_sp3_re3 = []
 
     ###### LIST FILL
-    ### misc files
+    ### full folders
+    # (folder's path is added in the rsync command, with subdir destination variable
+    list_constell.extend(["/"])
+    list_prairie.extend(["/"])
+    list_antex.extend(["/"])
+    list_exe_ppp.extend(["/"])
+    list_macromod.extend(["/"])
+    list_lunisolaires.extend(["/"])
+    list_maree_polaire = ["loading"]
+
+    ### misc files: the needed files are considered individually
+    # it is a redundancy since they must be downloaded in the full folders
     list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
     list_misc.extend([f"pole/nominal_NRO"])
     list_misc.extend([f"ANTEX/igs20.atx"])
@@ -137,9 +180,17 @@ def update_bdgins(date_srt, date_end, dir_bdgins="",
     list_misc.extend([f"macromod/gnss.xml"])
     list_misc.extend([f"lunisolaires/de440bdlf.ad"])
     list_misc.extend([f"maree_polaire/loading/nominal"])
+    l_fil_cons = [
+        "constellation_gps.infos",
+        "histocom.infos",
+        "histogal.infos",
+        "historik_glonass",
+        "igs_satellite_metadata.snx",
+    ]
+    list_misc.extend(["constell/" + f for f in l_fil_cons])
 
     ### time dependant files
-    while date <= date_end:
+    while date <= date_end + dt.timedelta(days=2): # 2 days later is need for cat orb/clk
         day = str(date.day).zfill(2)
         month = str(date.month).zfill(2)
         year = date.year
@@ -161,20 +212,26 @@ def update_bdgins(date_srt, date_end, dir_bdgins="",
         list_orbite_g20.append(f"G20{wk}{wkday}.gin")
         list_orbex_g20.append(f"G20{wk}{wkday}.obx.gz")
         list_horl_g20.append(f"hogps_g20{wk}{wkday}")
-        # list_sp3_re3.append(f"mg3{wk}{wkday}.sp3.Ci9PAU")
         date += dt.timedelta(days=1)
 
     ###### DESTINATION FOLDERS
     dest_subdir_dic = {
+        ### full folders
+        "constell": list_constell,
+        "prairie": list_prairie,
+        "ANTEX": list_antex,
+        "EXE_PPP": list_exe_ppp,
+        "macromod": list_macromod,
+        "lunisolaires": list_lunisolaires,
+        "maree_polaire": list_maree_polaire,
         ### misc files
-        ".": list_misc,  ## for misc files, destination is in the input path
+        ".": list_misc,  ## for misc files, destination is in the input path (.)
         ### time dependant files
         "tropo_vmf1": list_tropo,
         "ionosphere/igs": list_iono,
         "mesures/gps/orbites/G20": list_orbite_g20,
         "mesures/gps/orbex/G20": list_orbex_g20,
         "mesures/gps/horloges30/G20": list_horl_g20,
-        # 'orbites/SP3/re3': list_sp3_re3
     }
 
     create_dir(dir_bdgins, subdirs=dest_subdir_dic.keys())
@@ -196,7 +253,7 @@ def update_bdgins(date_srt, date_end, dir_bdgins="",
             password,
         )
 
-    # compress the clock files
+    # compress the clock files (experimental, and not recommended)
     if compress:
         for dirr in ["mesures/gps/horloges30/G20", "mesures/gps/orbites/G20"]:
             d = os.path.join(dir_bdgins, dirr)
@@ -235,39 +292,66 @@ def main():
         "-s",
         "--date_srt",
         type=lambda s: conv.date_pattern_2_dt(s),
-        required=True,
-        help="Start date in various format.",
+        required=False,
+        default=dt.datetime(2020, 5, 3),
+        help=(
+            "Start date for the update in various formats. "
+            "Default is 2020-05-03 "
+            "(origin of G20 products, end of GPS's Selective Availability)."
+        ),
     )
     parser.add_argument(
         "-e",
         "--date_end",
         type=lambda s: conv.date_pattern_2_dt(s),
-        required=True,
-        help="End date in various format.",
+        required=False,
+        default=None,
+        help=(
+            "End date for the update in various formats. "
+            "Default is 15 days before the current date."
+        ),
     )
     parser.add_argument(
-        "-d", "--dir_bdgins", help="Directory for BDGINS", required=False
+        "-d",
+        "--dir_bdgins",
+        help=(
+            "Directory for the BDGINS repository. "
+            "Defaults to a predefined path if not provided."
+        ),
+        required=False,
     )
     parser.add_argument(
-        "-l", "--login", help="Login for the remote server.", required=False
+        "-l",
+        "--login",
+        help=(
+            "Login for the remote server. "
+            "Defaults to the current user or a value from the `.ginspc` file."
+        ),
+        required=False,
     )
     parser.add_argument(
         "-p",
         "--password",
-        help="Password for the remote server.",
+        help=(
+            "Password for the remote server. "
+            "Defaults to an empty string if not provided."
+        ),
         required=False,
         default=None,
     )
     parser.add_argument(
         "-c",
         "--compress",
-        help="Compress the clock files.",
+        help=(
+            "Flag to enable gzip compression of clock files. "
+            "Defaults to `False` and is experimental."
+        ),
         action="store_true",
         default=False,
     )
     args = parser.parse_args()
 
-    update_bdgins(
+    bdgins_update(
         date_srt=args.date_srt,
         date_end=args.date_end,
         login=args.login,

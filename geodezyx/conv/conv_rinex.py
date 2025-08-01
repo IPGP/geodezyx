@@ -25,13 +25,9 @@ import logging
 ########## BEGIN IMPORT ##########
 #### External modules
 import os
-
-# import scipy
-# from scipy.spatial.transform import Rotation
 import re
 
 ### Imported in the corresponding function to avoid cyclic import
-### from geodezyx.conv import conv_interpolators
 ### https://stackoverflow.com/questions/1250103/attributeerror-module-object-has-no-attribute
 log = logging.getLogger('geodezyx')
 

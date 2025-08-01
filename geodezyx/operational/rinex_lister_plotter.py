@@ -384,7 +384,7 @@ def timeline_plotter(
 
         T, O = utils.sort_binom_list(T, O)
 
-        TMJD = conv.dt2MJD(T)
+        TMJD = conv.dt2mjd(T)
         TGrpAll = utils.consecutive_groupIt(
             TMJD, True
         )  # Tuples (start,end) of continue period
@@ -433,10 +433,10 @@ def timeline_plotter(
             )  # +1 because the end boundary day is not included
             # must stay there, in case of not colordico_for_main_datadico
             if not jul_date_plot:
-                tgrp = conv.MJD2dt(tgrp)
+                tgrp = conv.mjd2dt(tgrp)
                 if extra_archive:
                     Tgrp_plt = [
-                        (conv.MJD2dt(e[0]), conv.MJD2dt(e[1])) for e in Tgrp_plt
+                        (conv.mjd2dt(e[0]), conv.mjd2dt(e[1])) for e in Tgrp_plt
                     ]
 
             # PLOT part
@@ -459,7 +459,7 @@ def timeline_plotter(
                 T = sorted(T)
 
                 if jul_date_plot:
-                    T = conv.MJD2dt(T)
+                    T = conv.mjd2dt(T)
 
                 (pale_blue_dot,) = ax.plot(
                     T, i * np.ones(len(T)), "o", color="skyblue", label="final SNX"
@@ -675,7 +675,7 @@ def rinex_timeline_datadico_merge_not_very_smart(datadico_list, priority_list):
 #                 #old old with dots
 #                 ax.plot(T,i*np.ones(len(T)), '.')
 #             else:
-#                 TMJD=dt2MJD(T)
+#                 TMJD=dt2mjd(T)
 #                 TGrpAll = utils.consecutive_groupIt(TMJD,True)
 #
 #                 for tgrp in TGrpAll:
@@ -709,9 +709,9 @@ def rinex_timeline_datadico_merge_not_very_smart(datadico_list, priority_list):
 #                     tgrp = (tgrp[0] , tgrp[1] + 1) # +1 because the end boundary day is not included
 #
 #                     if not jul_date_plot:
-#                         tgrp = MJD2dt(tgrp)
+#                         tgrp = mjd2dt(tgrp)
 #                         if extra_archive:
-#                             Tgrp_plt = [ (MJD2dt(e[0]) , MJD2dt(e[1])) for e in Tgrp_plt ]
+#                             Tgrp_plt = [ (mjd2dt(e[0]) , mjd2dt(e[1])) for e in Tgrp_plt ]
 #
 #
 #                     #PLOT part
@@ -733,7 +733,7 @@ def rinex_timeline_datadico_merge_not_very_smart(datadico_list, priority_list):
 #                 T = sorted(T)
 #
 #                 if jul_date_plot:
-#                     T = MJD2dt(T)
+#                     T = mjd2dt(T)
 #
 #                 pale_blue_dot , = ax.plot(T,i*np.ones(len(T)), 'o', color='skyblue',label="final SNX")
 #                 legend_list = [pale_blue_dot]

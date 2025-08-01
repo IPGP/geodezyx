@@ -26,7 +26,6 @@ import logging
 import numpy as np
 import pandas as pd
 # from pytwobodyorbit import TwoBodyOrbit
-from pytwobodyorbit import TwoBodyOrbit
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -72,7 +71,7 @@ def ECI_2_kepler_elts(pos,vel,rad2deg=True,
     ----
     Be sure your input is in ECI (SP3 are in ECEF for instance).  
 
-    If neeeded, use ``conv.ECEF2ECI()`` (gross results) 
+    If neeeded, use ``conv.ecef2eci()`` (gross results)
     or ``reffram.OrbDF_crf2trf(inv_trf2crf=True)`` (precise results)
     
     You can get the velocity with ``reffram.DFOrb_velocity_calc()``
@@ -247,6 +246,7 @@ def ECI_2_kepler_elts_mono(P,V,rad2deg=True,
     return a,ecc,i,omega_periarg,omega_LAN,m
 
 def extrapolate_orbit_kepler(P,V,t,t0,mu=3.9860044188e14):
+    from pytwobodyorbit import TwoBodyOrbit
     orbit = TwoBodyOrbit("", mu=mu)   # create an instance
     orbit.setOrbCart(t0, P, V)        # define the orbit
     Pout, Vout = orbit.posvelatt(t)   # get position and velocity at t1
@@ -305,7 +305,7 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9,
         Tutc = conv.dt_gpstime2dt_utc(Tgps)
         Tsec = [e.total_seconds() for e in (Tutc-Tutc[0])]
         
-        P=conv.ECEF2ECI(XYZ,Tutc)
+        P=conv.ecef2eci(XYZ, Tutc)
         V=np.gradient(P,Tsec,axis=0)
         
         def extrapo_intern_fct(i_ref,coef,until):
@@ -318,6 +318,7 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9,
             ##
             ## CORRDS ARE GIVEN IN ECI HERE !!!
             ##
+            from pytwobodyorbit import TwoBodyOrbit
             orbit_back = TwoBodyOrbit("orbit", mu=3.9860044188e14)  # create an instance    
             orbit_back.setOrbCart(Tsec[i_ref], P[i_ref], V[i_ref])  # define the orbit
             
@@ -350,7 +351,7 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9,
     DFNewEpoch = pd.DataFrame(NewEpoch_stk)
     
     Tutc_NewEpoch = conv.dt_gpstime2dt_utc(conv.numpy_dt2dt(DFNewEpoch["epoch"].values))
-    DFNewEpoch[["x","y","z"]] = conv.ECI2ECEF(DFNewEpoch[["x","y","z"]].values,Tutc_NewEpoch)
+    DFNewEpoch[["x","y","z"]] = conv.eci2ecef(DFNewEpoch[["x", "y", "z"]].values, Tutc_NewEpoch)
     DFNewEpoch[["x","y","z"]] = DFNewEpoch[["x","y","z"]] * 10**-3
     
     if return_all:

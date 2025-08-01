@@ -121,7 +121,7 @@ def read_erp(file_path_in,ac=None):
                     XPO_std = float(Lines[i][69:80])*(10**-3)
                     XPO_stk.append(XPO)
                     XPO_std_stk.append(XPO_std)
-                    MJD_stk.append(conv.dt2MJD(Date))
+                    MJD_stk.append(conv.dt2mjd(Date))
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
                     
                 if utils.contains_word(Lines[i],'YPO') and marker:
@@ -135,7 +135,7 @@ def read_erp(file_path_in,ac=None):
                     YPO_std = float(Lines[i][69:80])*(10**-3)
                     YPO_stk.append(YPO)
                     YPO_std_stk.append(YPO_std)
-                    MJD_stk.append(conv.dt2MJD(Date))
+                    MJD_stk.append(conv.dt2mjd(Date))
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
 
                     
@@ -151,7 +151,7 @@ def read_erp(file_path_in,ac=None):
                     LOD_stk.append(LOD)
                     LOD_std_stk.append(LOD_std)
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
-                    MJD_stk.append(conv.dt2MJD(Date))
+                    MJD_stk.append(conv.dt2mjd(Date))
 
         MJD = list(sorted(set(MJD_stk)))
         if len(LOD_stk) == 0:
@@ -424,7 +424,7 @@ def read_eop_C04(file_path_in):
     
     DF.columns = cols
     
-    DF["epoch"] = conv.MJD2dt(DF.MJD)
+    DF["epoch"] = conv.mjd2dt(DF.MJD)
     
     return DF
 
@@ -546,7 +546,7 @@ def read_eop_finals(file_path_in,precnut_model = 2000,
     
     #### DF 2 is a simplified version, base on the C04 DF
     DF2 = pd.DataFrame()
-    DF2["epoch"] = conv.MJD2dt(DF["MJD"])
+    DF2["epoch"] = conv.mjd2dt(DF["MJD"])
     
     if simplified_EOP_DF == 'mixed':
         ### Create epoch and use B-values per default

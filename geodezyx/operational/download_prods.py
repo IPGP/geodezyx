@@ -15,29 +15,19 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 
 ########## BEGIN IMPORT ##########
 #### External modules
-# import glob
 import itertools
 #### Import the logger
 import logging
 import multiprocessing as mp
 import os
-# import pandas as pd
 import re
 import shutil
 
 import numpy as np
 
-import geodezyx.operational.download_utils as dlutils
 #### geodeZYX modules
-from geodezyx import conv
-from geodezyx import utils
-
-# import urllib
-# import ftplib
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+from geodezyx import conv, utils
+import geodezyx.operational.download_utils as dlutils
 log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
@@ -205,7 +195,7 @@ def download_gnss_products(
         ftp_download = False
         log.info("ACC experimental mgex combi. as data center, HTTP download forced")
 
-    Dates_list = conv.dt_range(startdate, enddate)
+    dates_list = conv.dt_range(startdate, enddate)
 
     wwww_dir_previous = None
     if parallel_download > 1:
@@ -218,7 +208,7 @@ def download_gnss_products(
 
     ### check if the pattern of the wished products are in the listed daily files
     for ipatt_tup, patt_tup in enumerate(
-        list(itertools.product(Dates_list, AC_names, prod_types))
+        list(itertools.product(dates_list, AC_names, prod_types))
     ):
         dt_cur, ac_cur, prod_cur = patt_tup
         wwww, dow = conv.dt2gpstime(dt_cur)
@@ -363,7 +353,7 @@ def download_gnss_products(
         ### Actual Download
         if ftp_download and parallel_download == 1:
             for tup in downld_tuples_list:
-                dlutils.ftp_downloader_core(*tup)
+                dlutils.ftp_downld_core(*tup)
         elif ftp_download and parallel_download > 1:
             _ = pool.map_async(dlutils.ftp_downloader_wo_objects, downld_tuples_list)
         elif not ftp_download and parallel_download == 1:
@@ -381,12 +371,12 @@ def download_gnss_products(
     else:
         pot_locfiles_list_use = []
         for localfile in potential_localfiles_list_all:
-            Pot_compress_name_list = [localfile]
-            Pot_compress_name_list.append(localfile.replace(".gz", ""))
-            Pot_compress_name_list.append(localfile.replace(".Z", ""))
-            Pot_compress_name_list = list(set(Pot_compress_name_list))
+            pot_compress_name_list = [localfile]
+            pot_compress_name_list.append(localfile.replace(".gz", ""))
+            pot_compress_name_list.append(localfile.replace(".Z", ""))
+            pot_compress_name_list = list(set(pot_compress_name_list))
 
-            pot_locfiles_list_use = pot_locfiles_list_use + Pot_compress_name_list
+            pot_locfiles_list_use = pot_locfiles_list_use + pot_compress_name_list
 
     for pot_localfile in pot_locfiles_list_use:
         if os.path.isfile(pot_localfile):
@@ -706,7 +696,7 @@ def multi_downloader_orbs_clks(
 #                 else:
 #                     log.error('ERR : Wrong archive_center name !!! :' + archive_center)
 #                 urllist.append(url)
-#                 savedir = dlutils.effective_save_dir_orbit(archive_dir,
+#                 savedir = dlutils.effective_save_dir_orbit(output_dir,
 #                                                            cc,
 #                                                            curdate,
 #                                                            archtype)

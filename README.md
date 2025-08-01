@@ -2,8 +2,8 @@
 
 # geodezyx (aka ___The GeodeZYX Toolbox___) 
 
-**Version: 4.6.0**  
-**Date: 2025-02-04**  
+**Version: 5.0.0-beta3**  
+**Date: 2025-07-29**  
 
 **Authors:** Pierre Sakic (IPGP, Paris, France) & Gustavo Mansur (GFZ, Potsdam, Germany) 
 
@@ -61,15 +61,12 @@ GPS Solut 18, 153–162 (2014). https://doi.org/10.1007/s10291-013-0354-4
   * Caroline Geisert, ENSTA Bretagne, for the plate motion model functions, based on Goudarzi et al.'s work.
   * Yann-Treden Tranchant, LIENSs La Rochelle, for the ocean circulation model and OBP processing functions.
   * Jean-Mathieu Nocquet and its PYACS toolbox for the plate motion model functions. https://github.com/JMNocquet/pyacs36
+  * Médéric Gravelle, CNRS/LIENSs La Rochelle, who initiate the SPOTGINS import/export functions, now grouped in `spytgins` module.
 
 ## Licence
 GNU Lesser General Public License, Version 3, 29 June 2007
 
-Copyright © 2019 Helmholtz Centre Potsdam GFZ 
-German Research Centre for Geosciences, Potsdam, Germany 
-(Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu)
-
-The geodeZYX toolbox is free software: you can redistribute it and/or modify it
+_geodezyx_ is free software: you can redistribute it and/or modify it
 under the terms of the GNU Lesser General Public License as published by the 
 Free Software Foundation, either version 3 of the License, or 
 (at your option) any later version. The geodeZYX toolbox is distributed 

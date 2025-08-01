@@ -114,7 +114,7 @@ def read_combi_sum_full(sum_full_file, RMS_lines_output=True, set_PRN_as_index=T
 
     ### Date management
     mjd = float(date_line.split("MJD:")[1].split()[0])
-    date_dt = conv.MJD2dt(mjd)
+    date_dt = conv.mjd2dt(mjd)
 
     DF.date_mjd = mjd
     DF.date_dt = date_dt

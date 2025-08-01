@@ -32,7 +32,6 @@ import matplotlib.pyplot as plt
 import natsort
 import numpy as np
 import pandas as pd
-import pyorbital.astronomy
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -288,8 +287,8 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
                 #D1sv_bkp = D1prni.copy()
                 #D2sv_bkp = D2prni.copy()
     
-                P1b = conv.ECEF2ECI(np.array(P1),conv.dt_gpstime2dt_utc(P1.index.to_pydatetime(),out_array=True))
-                P2b = conv.ECEF2ECI(np.array(P2),conv.dt_gpstime2dt_utc(P2.index.to_pydatetime(),out_array=True))
+                P1b = conv.ecef2eci(np.array(P1), conv.dt_gpstime2dt_utc(P1.index.to_pydatetime(), out_array=True))
+                P2b = conv.ecef2eci(np.array(P2), conv.dt_gpstime2dt_utc(P2.index.to_pydatetime(), out_array=True))
 
                 D1prni[['x','y','z']] = P1b
                 D2prni[['x','y','z']] = P2b
@@ -310,9 +309,10 @@ def compar_orbit(Data_inp_1,Data_inp_2,step_data = 900,
             else:
                 rnorm = np.linalg.norm(P1,axis=1)
 
-                Vx = utils.diff_pandas(D1prni,'x',use_np_diff=True)
-                Vy = utils.diff_pandas(D1prni,'y',use_np_diff=True)
-                Vz = utils.diff_pandas(D1prni,'z',use_np_diff=True)
+                from geodezyx.utils_xtra import pandas_utils
+                Vx = pandas_utils.diff_pandas(D1prni,'x',use_np_diff=True)
+                Vy = pandas_utils.diff_pandas(D1prni,'y',use_np_diff=True)
+                Vz = pandas_utils.diff_pandas(D1prni,'z',use_np_diff=True)
                 
                 V = pd.concat((Vx , Vy , Vz),axis=1)
                 V.columns = ['vx','vy','vz']
@@ -991,7 +991,7 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
     enu_stk = []
 
     for (_,l1) , (_,l2) in zip( D1Common.iterrows() , D2Common.iterrows() ):
-        enu   = conv.XYZ2ENU_2(l1["x"],l1["y"],l1["z"],l2["x"],l2["y"],l2["z"])
+        enu   = conv.xyz2enu(l1["x"], l1["y"], l1["z"], l2["x"], l2["y"], l2["z"])
         enu_stk.append(np.array(enu))
 
 
@@ -1011,8 +1011,8 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
     Ddiff = Ddiff.assign(d2D_enu=D2D)
     Ddiff = Ddiff.assign(d3D_enu=D3D)
 
-    #    E,N,U    = conv.XYZ2ENU_2((X,Y,Z,x0,y0,z0))
-    #    E,N,U    = conv.XYZ2ENU_2((X,Y,Z,x0,y0,z0))
+    #    E,N,U    = conv.xyz2enu((X,Y,Z,x0,y0,z0))
+    #    E,N,U    = conv.xyz2enu((X,Y,Z,x0,y0,z0))
 
     if out_dataframe:
         out_meta = True
@@ -1231,10 +1231,11 @@ def beta_angle_calc(DFOrb_in,
         intermediate values dataframe for debug.
         here, coordinates are in ECI frame
     """
-    
+    import pyorbital.astronomy
+
     #### convert in ECI
     df_eci = DFOrb_in.copy()
-    df_eci[['x','y','z']] = conv.ECEF2ECI(DFOrb_in[['x','y','z']].values,
+    df_eci[['x','y','z']] = conv.ecef2eci(DFOrb_in[['x', 'y', 'z']].values,
                                           DFOrb_in['epoch'].values)
     
     #### compute velocity
@@ -1430,10 +1431,10 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
                                       DForb['x'],DForb['y'],DForb['z']):
     
         MatCRF22TRF = sofa.iau_c2t06a(2400000.5,
-                                      conv.dt2MJD(tt),
+                                      conv.dt2mjd(tt),
                                       2400000.5,
-                                      conv.dt2MJD(ut1),
-                                      xeop,yeop)
+                                      conv.dt2mjd(ut1),
+                                      xeop, yeop)
         if inv_trf2crf:
             MatCRF22TRF = np.linalg.inv(MatCRF22TRF)
     
@@ -1962,32 +1963,35 @@ def eop_interpotate(DF_EOP,Epochs_intrp,eop_params = ["x","y"]):
 
     Returns
     -------
-    OUT : DataFrame or Series
+    out : DataFrame or Series
         Interpolated parameters.
         Series if onely one epoch is provided, DF_EOP elsewere
     """
+
+    from geodezyx import interp
+
     if not utils.is_iterable(Epochs_intrp):
         singleton = True
     else:
         singleton = False
     
-    I_eop   = dict()
-    Out_eop = dict()
-    Out_eop["epoch"] = Epochs_intrp    
+    i_eop   = dict()
+    out_eop = dict()
+    out_eop["epoch"] = Epochs_intrp
     
     for eoppar in eop_params:
-        I = conv.interp1d_time(DF_EOP.epoch,DF_EOP[eoppar])
-        I_eop[eoppar] = I
+        intrp = interp.Interp1dTime(DF_EOP.epoch, DF_EOP[eoppar])
+        i_eop[eoppar] = intrp
         try:
-            Out_eop[eoppar] = I(Epochs_intrp)
+            out_eop[eoppar] = intrp(Epochs_intrp)
         except ValueError as err:
             log.error("in EOP interpolation")
             log.error("param.: %s, epoch: %s",eoppar,Epochs_intrp)
             raise err
       
     if not singleton:
-        OUT = pd.DataFrame(Out_eop)
+        out = pd.DataFrame(out_eop)
     else:
-        OUT = pd.Series(Out_eop)
+        out = pd.Series(out_eop)
         
-    return OUT
+    return out

@@ -517,7 +517,7 @@ class Location(object):
         Y = self.Y_coordinate_m
         Z = self.Z_coordinate_m
 
-        lat , lon , h = conv.XYZ2GEO(X,Y,Z)
+        lat , lon , h = conv.xyz2geo(X, Y, Z)
         lat_deg , lat_min , lat_sec = conv.deg2deg_dec2dms(lat)
         lon_deg , lon_min , lon_sec = conv.deg2deg_dec2dms(lon)
 
