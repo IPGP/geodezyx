@@ -1373,7 +1373,7 @@ def dt2jjul_cnes(dtin, onlydays=True):
     """
     if utils.is_iterable(dtin):
         typ = utils.get_type_smart(dtin)
-        return typ([dt2jjul_cnes(e) for e in dtin])
+        return typ([dt2jjul_cnes(e, onlydays) for e in dtin])
     else:
         epok = (dtin - dt.datetime(1950, 1, 1, 0, 0, 0))
         if onlydays:

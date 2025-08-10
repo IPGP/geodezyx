@@ -55,11 +55,14 @@ def diff_spotgins_quick(df1,df2):
         d = _rndidx(d)
         duse = d.index.to_series()
         duse = conv.numpy_dt2dt(duse)
-        jjul = conv.dt2jjul_cnes(duse)
-        dout = d.set_index(duse[0] + jjul[1]/86400)
-        return dout        
-        
-    dfout = (_jjul(df1) - _jjul(df2)).dropna()
+        jjul = conv.dt2jjul_cnes(duse, True)
+                
+        dout = d.set_index(jjul) # + jjul[1]/86400)
+        return dout 
+
+    lbda = _rndidx
+            
+    dfout = (lbda(df1) - lbda(df2)).dropna()
     #print(dfout.to_string())
     return dfout
 

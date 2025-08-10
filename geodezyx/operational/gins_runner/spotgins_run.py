@@ -302,7 +302,7 @@ def get_spotgins_files(
     return dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use
 
 
-def concat_orb_clk(date_srt, date_end, nprocs, prod="G20", verbose=True):
+def concat_orb_clk(date_srt, date_end, nprocs=1, prod="G20", verbose=True):
     """
     Concatenate orbit and clock files for a given date range using multiprocessing.
 
