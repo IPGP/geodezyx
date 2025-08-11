@@ -52,6 +52,7 @@ def download_rsync(
             "--no-owner",
             "--no-group",
             "--omit-dir-times",
+            "--ignore-times", ## because tite might be unsyncronized regarding time
         ]  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
@@ -118,6 +119,7 @@ def bdgins_update(
         Whether to gzip-compress the clock files.
         experimental, and not recommended
         Defaults to False.
+    
     Returns
     -------
     None
