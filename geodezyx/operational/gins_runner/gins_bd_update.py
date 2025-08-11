@@ -44,7 +44,9 @@ def download_rsync(
     """
     if not rsync_options:
         rsync_options = [
-            "-avz",
+            #"--archive"
+            "--verbose",
+            "-rz",
             "--progress",
             "--relative",
             "--copy-links",
@@ -52,7 +54,7 @@ def download_rsync(
             "--no-owner",
             "--no-group",
             "--omit-dir-times",
-            "--ignore-times",
+            #"--ignore-times",
         ]  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
