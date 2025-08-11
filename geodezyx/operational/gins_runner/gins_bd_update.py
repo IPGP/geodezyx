@@ -145,17 +145,18 @@ def bdgins_update(
     list_misc = []
 
     ### full folders
-    list_constell = []
-    list_prairie = []
     list_antex = []
+    list_constell = []
     list_exe_ppp = []
-    list_macromod = []
     list_lunisolaires = []
+    list_macromod = []
     list_maree_polaire = []
+    list_pole = []
+    list_prairie = []
 
     ### time dependant files
-    list_tropo = []
-    list_iono = []
+    list_tropo_vmf1 = []
+    list_iono_igs = []
     list_orbite_mg3 = []
 
     list_orbite_g20 = []
@@ -165,16 +166,17 @@ def bdgins_update(
     ###### LIST FILL
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
+    list_antex.extend(["/"])
     list_constell.extend(["/"])
-    # list_prairie.extend(["/"])
-    # list_antex.extend(["/"])
-    # list_exe_ppp.extend(["/"])
-    # list_macromod.extend(["/"])
-    # list_lunisolaires.extend(["/"])
-    # list_maree_polaire = ["loading"]
+    list_exe_ppp.extend(["/"])
+    list_lunisolaires.extend(["/"])
+    list_macromod.extend(["/"])
+    list_maree_polaire.extend(["/"])
+    list_pole.extend(["/"])
+    list_prairie.extend(["/"])
 
     ### misc files: the needed files are considered individually
-    # some of them  are a redundancy since they must be downloaded in the full folders
+    # some of them are a redundancy since they must be downloaded in the full folders
     list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
     list_misc.extend([f"pole/nominal_NRO"])
     list_misc.extend([f"ANTEX/igs20.atx"])
@@ -191,9 +193,12 @@ def bdgins_update(
     ]
     list_misc.extend(["constell/" + f for f in l_fil_cons])
 
-    list_tropo.append(f"orography_ell")
+    # here is an hybrid tropo/misc file
+    list_tropo_vmf1.append(f"orography_ell")
+
 
     ### time dependant files
+
     while date <= date_end + dt.timedelta(days=2): # 2 days later is need for cat orb/clk
         day = str(date.day).zfill(2)
         month = str(date.month).zfill(2)
@@ -203,7 +208,7 @@ def bdgins_update(
         wk, wkday = conv.dt2gpstime(date)
         doy = str(conv.dt2doy(date)).zfill(3)
 
-        list_tropo.extend(
+        list_tropo_vmf1.extend(
             [
                 f"{year}/VMFG_{year}{month}{day}.H00",
                 f"{year}/VMFG_{year}{month}{day}.H06",
@@ -211,7 +216,7 @@ def bdgins_update(
                 f"{year}/VMFG_{year}{month}{day}.H18",
             ]
         )
-        list_iono.append(f"{year}/igsg{doy}0.{yy}i.Z")
+        list_iono_igs.append(f"{year}/igsg{doy}0.{yy}i.Z")
         list_orbite_mg3.append(f"mg3{wk}{wkday}.sp3.Ci9PAU")
         list_orbite_g20.append(f"G20{wk}{wkday}.gin")
         list_orbex_g20.append(f"G20{wk}{wkday}.obx.gz")
@@ -221,18 +226,18 @@ def bdgins_update(
     ###### DESTINATION FOLDERS
     dest_subdir_dic = {
         ### full folders
+        "ANTEX": list_antex,
         "constell": list_constell,
-        # "prairie": list_prairie,
-        # "ANTEX": list_antex,
-        # "EXE_PPP": list_exe_ppp,
-        # "macromod": list_macromod,
-        # "lunisolaires": list_lunisolaires,
-        # "maree_polaire": list_maree_polaire,
+        "EXE_PPP": list_exe_ppp,
+        "lunisolaires": list_lunisolaires,
+        "macromod": list_macromod,
+        "maree_polaire": list_maree_polaire,
+        "prairie": list_prairie,
         ### misc files
         ".": list_misc,  ## for misc files, destination is in the input path (.)
         ### time dependant files
-        "tropo_vmf1": list_tropo,
-        "ionosphere/igs": list_iono,
+        "tropo_vmf1": list_tropo_vmf1,
+        "ionosphere/igs": list_iono_igs,
         "orbites/SP3/re3": list_orbite_mg3,
         "mesures/gps/orbites/G20": list_orbite_g20,
         "mesures/gps/orbex/G20": list_orbex_g20,
