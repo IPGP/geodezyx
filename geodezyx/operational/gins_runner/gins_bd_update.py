@@ -47,7 +47,7 @@ def download_rsync(
             #"--archive"
             "--verbose",
             "--compress",
-            #"--recursive",
+            "--recursive",
             "--progress",
             "--relative",
             "--copy-links",
