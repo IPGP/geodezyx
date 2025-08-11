@@ -44,10 +44,10 @@ def download_rsync(
     """
     if not rsync_options:
         rsync_options = [
-            #"--archive"
+            "--archive"
             "--verbose",
             "--compress",
-            "--recursive",
+            #"--recursive",
             "--progress",
             "--relative",
             "--copy-links",
