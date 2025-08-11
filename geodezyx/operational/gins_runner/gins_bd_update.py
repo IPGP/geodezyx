@@ -47,7 +47,6 @@ def download_rsync(
             "--archive",
             "--verbose",
             "--compress",
-            #"--recursive",
             "--progress",
             "--relative",
             "--copy-links",
@@ -55,7 +54,6 @@ def download_rsync(
             "--no-owner",
             "--no-group",
             "--omit-dir-times",
-            #"--ignore-times",
         ]  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
@@ -173,10 +171,10 @@ def bdgins_update(
     ###### LIST FILL
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
-    list_antex.extend(["/"])
+    ## list_antex.extend(["/"]) ## temporary off because updated continuously
     list_constell.extend(["/"])
     list_exe_ppp.extend(["/"])
-    list_lunisolaires.extend(["/"])
+    ## list_lunisolaires.extend(["/"]) ## temporary off because updated continuously
     list_macromod.extend(["/"])
     list_maree_polaire.extend(["/"])
     list_pole.extend(["/"])
