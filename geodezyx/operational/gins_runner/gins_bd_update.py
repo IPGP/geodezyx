@@ -45,7 +45,7 @@ def download_rsync(
     if not rsync_options:
         rsync_options = [
             "-avz",
-            "--update",
+            #"--update",
             "--progress",
             "--relative",
             "--copy-links",
