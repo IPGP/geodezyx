@@ -46,7 +46,8 @@ def download_rsync(
         rsync_options = [
             #"--archive"
             "--verbose",
-            "-rz",
+            "--compress",
+            #"--recursive",
             "--progress",
             "--relative",
             "--copy-links",
