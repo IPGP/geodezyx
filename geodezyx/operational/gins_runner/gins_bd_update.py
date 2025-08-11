@@ -51,8 +51,7 @@ def download_rsync(
             "--no-perms",
             "--no-owner",
             "--no-group",
-            "--omit-dir-times",
-            "--ignore-times", ## because tite might be unsyncronized regarding time
+            "--omit-dir-times"
         ]  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
