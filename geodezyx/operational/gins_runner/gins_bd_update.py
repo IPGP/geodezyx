@@ -48,11 +48,11 @@ def download_rsync(
             "--progress",
             "--relative",
             "--copy-links",
-            "--checksum",  # Compare by content hash instead of timestamp
             "--no-perms",
             "--no-owner",
             "--no-group",
-            "--omit-dir-times"
+            "--omit-dir-times",
+            "--ignore-times",
         ]  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
