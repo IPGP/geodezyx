@@ -1933,6 +1933,15 @@ def dt_2_sinex_datestr(dtin, short_yy=True, year_sep=":"):
     Parameters
     ----------
     dtin : datetime.datetime or list/numpy.array of datetime.datetime
+
+    short_yy : bool
+        if True, use a 2-digit year (e.g. 00:123:45678)
+        if False, use a 4-digit year (e.g. 2000:123:45678)
+        default is True.
+
+    year_sep : str
+        separator between the year and the day of year.
+        default is ":".
     
     Returns
     -------

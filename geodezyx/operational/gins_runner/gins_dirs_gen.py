@@ -24,7 +24,7 @@ from geodezyx import utils
 #### Import geodezyx GINS submodules
 import geodezyx.operational.gins_runner.gins_common as gynscmn
 import geodezyx.operational.gins_runner.gins_prairie as gynspra
-import geodezyx.operational.gins_runner.gins_orbclk as gynsorb
+import geodezyx.operational.gins_runner.legacy.gins_orbclk_convert as gynsorbcvt
 
 #### Import the logger
 import logging
@@ -345,7 +345,7 @@ def gen_dirs_rnxs(
 
         # ============== ORBITS/CLOCKS ================
         if perso_orbclk:
-            orbpath, horpath = gynsorb.download_convert_2_gins_orb_clk(
+            orbpath, horpath = gynsorbcvt.download_convert_2_gins_orb_clk(
                 rnx_dt, tmp_fld_use, ac=ac, repro=repro
             )
         else:

@@ -12,6 +12,7 @@ import geodezyx.operational.gins_runner.gins_common as gynscmn
 import geodezyx.operational.gins_runner.gins_dirs_gen as gynsgen
 import geodezyx.operational.gins_runner.gins_dirs_run as gynsrun
 import geodezyx.operational.gins_runner.gins_bd_update as gynsbdu
+import geodezyx.operational.gins_runner.gins_orbclk_concat as gynsorbclkcat
 import datetime as dt
 
 from geodezyx import utils, operational
@@ -140,7 +141,7 @@ def spotgins_run(
 
     ##### concatenate hor/orb ################
     if not no_concat_orb_clk:
-        concat_orb_clk(date_min, date_max, nprocs=nprocs)
+        gynsorbclkcat.concat_orb_clk(date_min, date_max, nprocs=nprocs)
 
     ##### Multi-processing Wrapper ################
     global spotgins_wrap
@@ -171,7 +172,7 @@ def spotgins_run(
 
         ######## DIRECTORS RUN ###############
         const_use = const_adapt(const, dirr, verbose=verbose)
-        #const_use = "GE" # ASG use always GE
+        # const_use = "GE" # ASG use always GE
         opt_gins_90_use = "-const " + const_use
         try:
             gynsrun.run_directors(
@@ -300,137 +301,6 @@ def get_spotgins_files(
         siteid9_use = None
 
     return dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use
-
-
-def concat_orb_clk(date_srt, date_end, nprocs=1, prod="G20", verbose=True):
-    """
-    Concatenate orbit and clock files for a given date range using multiprocessing.
-
-    Parameters
-    ----------
-    date_srt : datetime
-        Start date for the concatenation process.
-    date_end : datetime
-        End date for the concatenation process.
-    nprocs : int
-        Number of processes to use for multiprocessing.
-    prod : str, optional
-        Product type (e.g., "G20"). Default is "G20".
-    verbose : bool, optional
-        If True, enable verbose logging. Default is True.
-
-    Returns
-    -------
-    None
-    """
-
-    def _chk_cat_orbclk(orbclk_out, silent=False):
-        """
-        Check if the concatenated orbit/clock file exists.
-
-        Parameters
-        ----------
-        orbclk_out : str
-            Path to the output orbit/clock file.
-        silent : bool, optional
-            If True, suppress logging. Default is False.
-
-        Returns
-        -------
-        bool
-            True if the file exists, False otherwise.
-        """
-        orbclk_out = orbclk_out + ".gz"
-        if os.path.isfile(orbclk_out):
-            log.info("%s here :)", orbclk_out)
-            return True
-        elif not silent:
-            log.error("%s not here :(", orbclk_out)
-            return False
-        else:
-            return False
-
-    def _run_cat_orbclk(cmd, out_fil):
-        """
-        Run the command to generate the concatenated orbit/clock file.
-
-        Parameters
-        ----------
-        cmd : str
-            Command to execute.
-        out_fil : str
-            Path to the output file.
-
-        Returns
-        -------
-        None
-        """
-        if _chk_cat_orbclk(out_fil, silent=True):
-            return None
-
-        if verbose:
-            log.info(cmd)
-        subprocess.run(
-            cmd,
-            executable="/bin/bash",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=True,
-        )
-        utils.gzip_compress(out_fil, rm_inp=True)
-        _chk_cat_orbclk(out_fil)
-        return None
-
-    global cat_orbclk_wrap
-
-    def cat_orbclk_wrap(date_inp):
-        """
-        Wrapper function to process a single date for orbit/clock concatenation.
-
-        Parameters
-        ----------
-        date_inp : datetime
-            Date to process.
-
-        Returns
-        -------
-        tuple
-            Paths to the concatenated orbit and clock files.
-        """
-        jjul_srt = str(conv.dt2jjul_cnes(date_inp - dt.timedelta(days=0)))
-        jjul_end = str(conv.dt2jjul_cnes(date_inp + dt.timedelta(days=2)))
-        gs_user = gynscmn.get_gin_path(extended=False)
-        gins_data = gynscmn.get_gin_path(extended=True) + "/data"
-
-        orb_out = os.path.join(
-            gs_user, "GPSDATA", "_".join((prod + "ORB", "AUTOM", jjul_srt, jjul_end))
-        )
-        cmd_orb = " ".join(
-            ["rapat_orb_gnss.sh", jjul_srt, jjul_end, "3", gins_data, orb_out, "0"]
-        )
-
-        clk_out = os.path.join(
-            gs_user, "GPSDATA", "_".join((prod, "AUTOM", jjul_srt, jjul_end))
-        )
-        cmd_clk = " ".join(["get_hor_hautes", jjul_srt, jjul_end, prod, clk_out])
-
-        for cmd, out_fil in [(cmd_orb, orb_out), (cmd_clk, clk_out)]:
-            _run_cat_orbclk(cmd, out_fil)
-
-        return orb_out, clk_out
-
-    # Generate a list of dates to process
-    date_lis = conv.dt_range(date_srt, date_end)
-
-    # Use multiprocessing to process the dates
-    pool = mp.Pool(processes=nprocs)
-    try:
-        _ = pool.map(cat_orbclk_wrap, date_lis, chunksize=1)
-    except Exception as e:
-        log.error("error in the pool.map : %s", e)
-    pool.close()
-
-    return None
 
 
 def rm_prov_listing(dir_inp):
