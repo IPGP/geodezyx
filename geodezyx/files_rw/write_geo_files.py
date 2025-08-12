@@ -187,7 +187,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
     header_line1 = "#cP" + conv.dt2sp3_timestamp(start_dt,False) + "     {:3}".format(len(EpochUsedList)) + "   u+U IGSXX FIT  XXX\n"
 
     delta_epoch = int(utils.most_common(np.diff(EpochUsedList) * 10**-9))
-    MJD  = conv.dt2MJD(start_dt)
+    MJD  = conv.dt2mjd(start_dt)
     MJD_int = int(np.floor(MJD))
     MJD_dec = MJD - MJD_int
     gps_wwww , gps_sec = conv.dt2gpstime(start_dt,False,"gps")
@@ -365,7 +365,7 @@ def ine_block_mono(sat,dt_in,extra_intrvl_strt=.1,extra_intrvl_end=.4,step=300):
     'orb___cr']
     
     
-    mjd = np.floor(conv.dt2MJD(dt_in))
+    mjd = np.floor(conv.dt2mjd(dt_in))
     mjd_strt = mjd - extra_intrvl_strt
     mjd_end  = mjd + extra_intrvl_end + 1
     
@@ -398,7 +398,7 @@ def write_ine_dummy_file(Sat_list,dt_in,extra_intrvl_strt=.1,
 
     Lines = []
     
-    mjd = np.floor(conv.dt2MJD(dt_in))
+    mjd = np.floor(conv.dt2mjd(dt_in))
     mjd_strt = mjd - extra_intrvl_strt
     mjd_end  = mjd + extra_intrvl_end + 1
     

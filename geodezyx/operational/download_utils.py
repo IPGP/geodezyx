@@ -3,7 +3,7 @@
 """
 @author: psakic
 This sub-module of geodezyx.operational contains functions to download
-gnss data and products from distant IGS servers. 
+gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
 The GeodeZYX Toolbox is a software for simple but useful
@@ -14,6 +14,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 import ftplib
+
 #### Import the logger
 import logging
 import os
@@ -21,6 +22,7 @@ import pathlib
 import shutil
 import time
 import urllib
+
 ########## BEGIN IMPORT ##########
 #### External modules
 from ftplib import FTP, FTP_TLS
@@ -32,7 +34,9 @@ import pandas as pd
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
-log = logging.getLogger('geodezyx')
+from geodezyx.stats import outlier_mad
+
+log = logging.getLogger("geodezyx")
 
 
 ##########  END IMPORT  ##########
@@ -253,7 +257,7 @@ class MyFTP_TLS(FTP_TLS):
         return conn, size
 
 
-def _ftp_dir_list_files(ftp_obj_in):
+def ftp_dir_list_files(ftp_obj_in):
     """
     Lists the files in the current directory of the FTP object.
 
@@ -364,7 +368,7 @@ def ftp_objt_create(
     return ftp_main, ftp_obj_list_out
 
 
-def _ftp_downloader_core(ftp_obj, filename, localdir):
+def ftp_downld_core(ftp_obj, filename, localdir):
     """
     Performs the FTP download if we are already in the correct FTP folder.
     This is an internal function of ftp_downloader.
@@ -447,7 +451,7 @@ def ftp_downloader(ftp_obj, full_remote_path, localdir):
 
     ftp_obj.cwd(intermed_path)
 
-    return _ftp_downloader_core(ftp_obj, filename, localdir)
+    return ftp_downld_core(ftp_obj, filename, localdir)
 
 
 def ftp_downloader_wrap(intup):
@@ -468,7 +472,7 @@ def ftp_downloader_wrap(intup):
     return outtup
 
 
-def ftp_download_frontend(
+def ftp_download_front(
     urls,
     savedirs,
     parallel_download=1,
@@ -499,7 +503,11 @@ def ftp_download_frontend(
 
     Returns
     -------
-    None
+    out_tup_lis : List of tuples
+        Returns a list of tuples containing
+        the local path of the downloaded file and
+        a boolean indicating whether the download was successful.
+        e.g. [(local_path1, True), (local_path2, False), ...]
 
     Notes
     -----
@@ -507,15 +515,10 @@ def ftp_download_frontend(
     """
 
     # Check if urls and savedirs are iterable, if not convert them to list
-    if not utils.is_iterable(urls):
-        urllist = [urls]
-    else:
-        urllist = urls
-
-    if not utils.is_iterable(savedirs):
-        savedirlist = [savedirs] * len(urllist)
-    else:
-        savedirlist = savedirs
+    urllist = urls if utils.is_iterable(urls) else [urls]
+    savedirlist = savedirs if utils.is_iterable(savedirs) else [savedirs] * len(urllist)
+    secure_ftp_use = secure_ftp[0] if utils.is_iterable(secure_ftp) else secure_ftp
+    ##### dirty to select secure_ftp 1st elt only....
 
     # Check if the length of urllist and savedirlist are the same
     if len(urllist) != len(savedirlist):
@@ -531,7 +534,7 @@ def ftp_download_frontend(
 
     # Create the FTP object
     ftpobj_main, ftpobj_lis = ftp_objt_create(
-        secure_ftp_inp=secure_ftp,
+        secure_ftp_inp=secure_ftp_use,
         host=host_use,
         parallel_download=parallel_download,
         user=user,
@@ -551,8 +554,11 @@ def ftp_download_frontend(
     pool = ThreadPool(parallel_download)
 
     # Start the parallel downloads
-    _ = pool.map(ftp_downloader_wrap, list(zip(ftpobj_mp_lis, urllist, savedirlist)))
-    return
+    out_tup_lis = pool.map(
+        ftp_downloader_wrap, list(zip(ftpobj_mp_lis, urllist, savedirlist))
+    )
+
+    return out_tup_lis
 
 
 def ftp_downloader_wo_objects(tupin):
@@ -565,7 +571,7 @@ def ftp_downloader_wo_objects(tupin):
     ftp_obj_wk = FTP(arch_center_main)
     ftp_obj_wk.login()
     ftp_obj_wk.cwd(wwww_dir)
-    localpath, bool_dl = _ftp_downloader_core(ftp_obj_wk, filename, localdir)
+    localpath, bool_dl = ftp_downld_core(ftp_obj_wk, filename, localdir)
     ftp_obj_wk.close()
     return localpath, bool_dl
 
@@ -602,11 +608,11 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
     #### Initialisation of the 1st variables for the loop
     prev_row_ftpobj = df.iloc[0]
     prev_row_cwd = df.iloc[0]
-    FTP_files_list = []
+    ftp_files_list = []
     count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
     #### Initialisation of the FTP object
 
-    FTPobj, _ = ftp_objt_create(
+    ftpobj, _ = ftp_objt_create(
         secure_ftp_inp=secure_ftp,
         host=prev_row_ftpobj.root,
         user=prev_row_ftpobj.user,
@@ -618,7 +624,7 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
 
         ####### we recreate a new FTP object if the root URL is not the same
         if row.root != prev_row_ftpobj.root or count_loop > 20:
-            FTPobj, _ = ftp_objt_create(
+            ftpobj, _ = ftp_objt_create(
                 secure_ftp_inp=secure_ftp,
                 host=prev_row_ftpobj.root,
                 user=prev_row_ftpobj.user,
@@ -631,34 +637,34 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
         ####### we recreate a new file list if the date path is not the same
         if (prev_row_cwd.dir != row.dir) or irow == 0:
             log.info("chdir " + row.dirname)
-            FTPobj.cwd("/")
+            ftpobj.cwd("/")
 
             try:  #### we try to change for the right folder
-                FTPobj.cwd(row.dir)
+                ftpobj.cwd(row.dir)
             except:  #### If not possible, then no file in the list
-                FTP_files_list = []
+                ftp_files_list = []
 
-            FTP_files_list = _ftp_dir_list_files(FTPobj)
+            ftp_files_list = ftp_dir_list_files(ftpobj)
             prev_row_cwd = row
 
             ####### we check if the files is avaiable
-        if row.basename in FTP_files_list:
+        if row.basename in ftp_files_list:
             df.loc[irow, "bool"] = True
             log.info(row.basename + " found on server :)")
         else:
             df.loc[irow, "bool"] = False
             log.warning(row.basename + " not found on server :(")
 
-    DFgood = df[df["bool"]].copy()
+    df_good = df[df["bool"]].copy()
 
-    DFgood["url"] = "ftp://" + DFgood["url"]
+    df_good["url"] = "ftp://" + df_good["url"]
 
     ### generate the outputs
     if loginftp:
-        urllist_out = list(zip(DFgood.url, DFgood.user, DFgood["pass"]))
+        urllist_out = list(zip(df_good.url, df_good.user, df_good["pass"]))
     else:
-        urllist_out = list(DFgood.url)
+        urllist_out = list(df_good.url)
 
-    savedirlist_out = list(DFgood.savedir)
+    savedirlist_out = list(df_good.savedir)
 
     return urllist_out, savedirlist_out

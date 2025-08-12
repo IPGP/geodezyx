@@ -1,29 +1,30 @@
-bs4
+# bs4 # USELESS
 chardet
-collection
 colorlog
 # gsw # full mode
-#ftplib
+# ftplib
 hatanaka
 #kepler.py # full mode
 natsort
 matplotlib
 #ncompress # full mode
 numpy
-#netCDF4 # full mode
-pybind11
-pyorbital
-pytwobodyorbit
+# netCDF4 # full mode
+# pybind11 # USELESS
+# pyorbital # full mode
+# pytwobodyorbit # full mode
 pyyaml
 pathvalidate
 pandas
-requests
+# requests # USELESS
 # seawater # full mode
 scipy
 sympy
 tabulate
-tk
+# tk # USELESS
 tqdm ##progressbars
 vincenty
 wheel
 xarray
+logging_tree
+mergedeep

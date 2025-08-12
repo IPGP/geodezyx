@@ -29,6 +29,61 @@ def prairie_manual(
     argsdict=dict(),
 ):
     """
+    Process RINEX files using the GINS prairie manual method.
+
+    This function processes one or more RINEX files through the GINS prairie
+    executable, handling file management, decompression, and command execution
+    automatically. It supports various prairie processing options and ensures
+    proper file placement within the GINS environment.
+
+    Parameters
+    ----------
+    rinex_paths_in : str or list of str
+        Path(s) to the RINEX file(s) to process. Can be a single string path
+        or a list of string paths for batch processing.
+    temp_data_folder : str, optional
+        Path to the temporary data folder where files will be processed.
+        If empty string (default), uses the default GINS TEMP_DATA folder.
+    force : bool, optional
+        If True, forces processing even if the output file already exists.
+        Default is True.
+    with_historik : bool, optional
+        If True, includes GLONASS historik processing using the default
+        historik file. Default is True.
+    with_wsb : bool, optional
+        If True, includes WSB (satellite clock bias) processing using the
+        default WSB reference file. Default is True.
+    argsdict : dict, optional
+        Additional arguments for the prairie command. Keys should be argument
+        names (e.g., '-options'), and values should be their corresponding
+        file paths or values. Arguments cc2noncc, wsb, options, and out are
+        automatically managed if not provided.
+
+    Returns
+    -------
+    str or list of str
+        Path(s) to the output prairie file(s). Returns a single string if
+        one file is processed, or a list of strings if multiple files are
+        processed.
+
+    Notes
+    -----
+    - Automatically copies RINEX files to the temporary data folder if needed
+    - Decompresses compressed RINEX files (.crx, .gz) automatically
+    - Manages default prairie command arguments for standard processing
+    - Executes the prairie command using subprocess in the temp data folder
+    - Validates output file creation and size before returning paths
+
+    Examples
+    --------
+    >>> # Process a single RINEX file
+    >>> output = prairie_manual('/path/to/rinex.obs')
+
+    >>> # Process multiple files with custom options
+    >>> files = ['/path/to/file1.obs', '/path/to/file2.obs']
+    >>> args = {'-options': '/custom/options.dat'}
+    >>> outputs = prairie_manual(files, argsdict=args)
+
     argsdict :
         a dictionnary so as argsdict[argument] = val
         e.g.
@@ -44,6 +99,9 @@ def prairie_manual(
     elif type(rinex_paths_in) is str:
         multimode = False
         rinex_path_lis = [rinex_paths_in]
+    else:
+        log.error("check the rinex_paths_in !!!")
+        return None
 
     # be sure there is a TEMP DATA folder
     if temp_data_folder == "":
@@ -117,7 +175,7 @@ def prairie_manual(
             if "-" == k[0]:
                 moins = ""
             else:
-                moins == "-"
+                moins = "-"
 
             command = command + " " + moins + k + " " + v
 

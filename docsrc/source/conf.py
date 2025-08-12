@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- Project information -----------------------------------------------------
 
 project = 'geodezyx'
-copyright = '2021, Pierre Sakic - Gustavo Mansur'
+copyright = '2025, Pierre Sakic - Gustavo Mansur'
 author = 'Pierre Sakic - Gustavo Mansur'
 
 # The full version, including alpha/beta/rc tags
@@ -32,7 +32,6 @@ release = '4.x'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-#extensions = ['sphinx.ext.autodoc']
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.coverage', 
               'sphinx.ext.napoleon',

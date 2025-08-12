@@ -22,7 +22,7 @@ Lmodul = utils.find_recursive(p,"*py")
 
 Lmodul_exclu = ["legacy_source","quaternions","__init__","legacy","ropeproject"]
 
-Lmodul_clean = [e for e in Lmodul if not utils.patterns_in_string_checker(e,*Lmodul_exclu)]
+Lmodul_clean = [e for e in Lmodul if not utils.is_in_str(e, *Lmodul_exclu)]
 
 FctDict = dict()
 
@@ -63,7 +63,7 @@ Lmodul_replac = utils.find_recursive(p,"*py")
 
 Lmodul_exclu_replac = ["legacy_source","quaternions","__init__","legacy","ropeproject"]
 
-Lmodul_clean_replac = [e for e in Lmodul_replac if not utils.patterns_in_string_checker(e,*Lmodul_exclu_replac)]    
+Lmodul_clean_replac = [e for e in Lmodul_replac if not utils.is_in_str(e, *Lmodul_exclu_replac)]
 
 #class ParseCall(ast.NodeVisitor):
 #    def __init__(self):
@@ -112,7 +112,7 @@ for fct,mod_good in FctDict.items():
             repl3="("+mod_good+"."+fct + "("
 
             
-            if utils.patterns_in_string_checker(l,*ExcludedLines):
+            if utils.is_in_str(l, *ExcludedLines):
                 continue
             
             elif re.search(pat2,l):

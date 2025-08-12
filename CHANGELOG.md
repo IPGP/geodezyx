@@ -1,7 +1,25 @@
 ## Changelog
 
-### v4.6.0, 2025-02-04
+### v5.0.0, 2025-07-10
+**Breaking changes**:
+  * (Much) faster import. The main `geodezyx` doesn't import all modules per default anymore. Thus, favor the following import methods:
+    * `from geodezyx import <module>`
+    * `import geodezyx.<module>`
+  * We recommend `gzyx_<module>` as import alias, e.g.:
+    * `from geodezyx import files_rw as gzyx_files_rw`
+    * `import geodezyx.files_rw as gzyx_files_rw`
+  * Two exceptions: widely-used `conv` and `utils` submodules remain loaded by the main `geodezyx` module.   
+    Thus, `import geodezyx` will only load `conv` and `utils` modules.
+  * NB: `from geodezyx import *` still load __all modules__. But its use is __highly discouraged__ (very slow).
+  * PEP8 compliance: `conv` module functions are now PEP8 compliant, e.g. upper case function names are now lower case.
+    * Exemples:
+      * `dt2MJD` > `dt2_mjd`, `MJD2dt` > `mjd2_dt`
+      * `XYZ2ENU` > `xyz2enu`, `GEO2XYZ` > `geo2xyz`
+    * Deprecated functions are still available with a warning, but will be removed in the future.
+  
+  * Lot of minor imporvements and bug corrections
 
+### v4.6.0, 2025-02-04
   * Faster RINEX3 reading (~ x5)
   * Frontend `read_rinex_obs` fonction
   * For `find_recursive` function: no more ambiguous  `case_sensitive` option, replaced with `regex`

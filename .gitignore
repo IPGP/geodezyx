@@ -4,3 +4,4 @@ dist/*
 venv/
 .idea/
 geodezyx.egg-info/
+geodezyx/marine/netcdf_a0a/output_netcdf/*

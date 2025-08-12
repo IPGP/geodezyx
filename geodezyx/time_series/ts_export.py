@@ -9,15 +9,18 @@ Created on Fri May 12 15:56:33 2023
 ########## BEGIN IMPORT ##########
 #### External modules
 import copy
+import datetime as dt
+import numpy as np
 #### Import the logger
 import logging
 import os
-
 import matplotlib.pyplot as plt
+
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import time_series
+from geodezyx import utils
 
 log = logging.getLogger('geodezyx')
 
@@ -389,7 +392,7 @@ def export_ts_as_pbo_pos(tsin, outdir, outprefix='' ,
         for pt in tsinin.pts:
             YYYYMMDD = int(conv.dt2str(pt.Tdt,"%Y%m%d"))
             HHMMSS = int(conv.dt2str(pt.Tdt,"%H%M%S"))
-            MJD = conv.dt2MJD(pt.Tdt)
+            MJD = conv.dt2mjd(pt.Tdt)
             X, Y, Z = pt.X, pt.Y, pt.Z
             Sx, Sy, Sz = pt.sX, pt.sY, pt.sZ  
             Rxy,Rxz,Ryz = 0.,0.,0.
@@ -472,4 +475,67 @@ def export_ts_as_pbo_pos(tsin, outdir, outprefix='' ,
     
     return
 
+
+def export_ts_as_spotgins(tsin, outdir, ac, data_src = "unknown"):
+    df = tsin.to_dataframe("ENU")
+    datexelis = [p.anex['dateofexe'] for p in tsin.pts]
+    ginsverslis = [p.anex['gins_version'] for p in tsin.pts]
+    name = tsin.stat
+    df["Tdt"] = df["Tdt"] + dt.timedelta(seconds=19)
+
+    fmtstr = " {:14.8f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f}  {:4s}{:2s}{:2s}{:2s}{:2s}{:2.0f}  {:12.7f}  {:5s}  {:s}   {:s}\n"
+    #fmtstr = " %14.8f %14.6f %14.6f %14.6f %14.6f %14.6f %14.6f  %4s%2s%2s%2s%2s%2.0f  %12.7f  %5s  %s   %s\n"
+    outfile = open(os.path.join(outdir,f"SPOTGINS_{name}.enu"),"w")
+
+    now_date = utils.get_timestamp(utc=True)
+
+    const_lbda = lambda x: "GE" if x >= dt.datetime(2018,10,7) else "G"
+    const = const_lbda(np.max(df["Tdt"]))
+    vers = ""
+
+    head = f"""# SPOTGINS SOLUTION [POSITION] v2
+# DATE             : {now_date}
+#------------------------------------
+# STATION          : {name}
+# OPERATOR         : {ac}
+# STRATEGY_SUMMARY : https://www.poleterresolide.fr/visualisation-gnss/#/solution/SPOTGINS
+# REF_FRAME        : IGS20
+# PRODUCTS         : G20/GRG
+# CONSTEL          : {const}
+# UNITS            : meters
+# ELLIPSOID        : GRS80
+# DATA_SOURCE      : {data_src}
+# ACKNOWLEDGMENTS  :
+#------------------------------------
+# X_pos            : {tsin.refENU.X:.6f}
+# Y_pos            : {tsin.refENU.Y:.6f}
+# Z_pos            : {tsin.refENU.Z:.6f}
+# Longitude        : {tsin.refENU.L:.6f}
+# Latitude         : {tsin.refENU.F:.6f}
+# Height           : {tsin.refENU.H:.6f}
+#------------------------------------
+#jjjjj.jjjjjjjj         _____E         _____N         _____U         ____dE         ____dN         ____dU  yyyymmddHHMMSS  yyyy.yyyyyyy  Const  Dateofexe       GinsVersion
+"""
+
+    outfile.write(head)
+    
+    for ir, r in df.iterrows():
+        t = r["Tdt"]
+        outstr = fmtstr.format(np.round(conv.dt2mjd(t), 7),
+                               r["E"], r["N"], r["U"],
+                               r["sE"], r["sN"], r["sU"],
+                               str(t.year),
+                               str(t.month).zfill(2),
+                               str(t.day).zfill(2),
+                               str(t.hour).zfill(2),
+                               str(t.minute).zfill(2),
+                               t.second,
+                               conv.dt2year_decimal(t),
+                               const_lbda(t),
+                               datexelis[ir],
+                               ginsverslis[ir])
+        outfile.write(outstr)
+        
+
+    outfile.close()
 

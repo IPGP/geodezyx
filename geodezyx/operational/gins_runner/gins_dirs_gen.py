@@ -24,7 +24,7 @@ from geodezyx import utils
 #### Import geodezyx GINS submodules
 import geodezyx.operational.gins_runner.gins_common as gynscmn
 import geodezyx.operational.gins_runner.gins_prairie as gynspra
-import geodezyx.operational.gins_runner.gins_orbclk as gynsorb
+import geodezyx.operational.gins_runner.legacy.gins_orbclk_convert as gynsorbcvt
 
 #### Import the logger
 import logging
@@ -33,26 +33,27 @@ log = logging.getLogger("geodezyx")
 
 
 def gen_dirs_rnxs(
-    rnx_paths_inp,
-    director_generik_path,
-    director_name_prefix,
-    out_director_folder=None,
-    temp_data_folder=None,
-    stations_file=None,
-    oceanload_file=None,
-    options_prairie_file=None,
-    auto_stations_file=False,
-    auto_oceanload=False,
-    perso_orbclk=False,
-    ac="igs",
-    repro=2,
-    auto_interval=True,
-    out_coords="NULL",
-    prairie=False,
-    prairie_kwargs={"with_historik": 1, "with_wsb": 1},
-    force=False,
-    sites_id9_series=None,
-    add_tropo_sol=True
+        rnx_paths_inp,
+        director_generik_path,
+        director_name_prefix,
+        out_director_folder=None,
+        temp_data_folder=None,
+        stations_file=None,
+        oceanload_file=None,
+        options_prairie_file=None,
+        auto_stations_file=False,
+        auto_oceanload=False,
+        perso_orbclk=False,
+        ac="igs",
+        repro=2,
+        auto_interval=True,
+        out_coords="NULL",
+        prairie=False,
+        prairie_kwargs={"with_historik": 1, "with_wsb": 1},
+        force=False,
+        verbose=True,
+        sites_id9=None,
+        add_tropo_sol=True,
 ):
     """
     Generate directors from RINEX files.
@@ -101,7 +102,8 @@ def gen_dirs_rnxs(
     repro : int, optional
         Reprocessing version for perso orbits/clocks. Defaults to 2.
     auto_interval : bool, optional
-        Automatically find the interval in RINEX and apply it to the director. Defaults to False.
+        Automatically find the interval in RINEX and apply it to the director.
+         Defaults to False.
     out_coords : str, optional
         Output coordinates type ('XYZ' or 'FLH'/'PLH'). Defaults to "NULL".
     prairie : bool, optional
@@ -109,9 +111,19 @@ def gen_dirs_rnxs(
         if True, prairie_kwargs control the arguments of the function
         prairie_manual (cf above)
     prairie_kwargs : dict, optional
-        Arguments for the prairie_manual function. Defaults to {"with_historik": 1, "with_wsb": 1}.
+        Arguments for the prairie_manual function.
+        Defaults to {"with_historik": 1, "with_wsb": 1}.
     force : bool, optional
-        Force the generation of the director even if a solution already exists. Defaults to False.
+        Force the generation of the director even if a solution already exists.
+        Defaults to False.
+    verbose : bool
+        verbose messages. Default is True.
+    sites_id9 : iterable, optional
+        A list, Pandas series... containing the site_id9 information.
+        This is used to extract the site_id9 if the RINEX name is ambiguous.
+    add_tropo_sol : bool, optional
+        Add tropospheric solution keys to the director and
+        then results in the listing and solution. Defaults to True.
 
     Returns
     -------
@@ -147,19 +159,18 @@ def gen_dirs_rnxs(
         bool_continue = False
         if multimode:
             bool_continue = True
-            return bool_continue
-        else:
-            raise Exception
+        return bool_continue
+        # else:
+        #    raise Exception
 
     for i, rnx_path_ori in enumerate(rnx_path_lis):
         if multimode:
-            log.info(" ======== %i / %i ======== ", i + 1, n_rnxs)
-        log.info(" === %s ", os.path.basename(rnx_path_ori))
+            log.info(f"======== {i + 1} / {n_rnxs} ======== ")
+        log.info(" *** Generate directeur for: %s ", os.path.basename(rnx_path_ori))
         rnx_name = os.path.basename(rnx_path_ori)
         rnx_dt = conv.rinexname2dt(rnx_name)
-        site_id9, site_id4_upper, site_id4_lower = _dir_rnx_site_id(
-            rnx_name, sites_id9_series
-        )
+        sites_id9_series = pd.Series(sites_id9)
+        siteid9, siteid4_up, siteid4_lo = _dir_rnx_site_id(rnx_name, sites_id9_series)
 
         coord_prefix = (
             f"_{out_coords.lower()}" if out_coords.upper() in ("FLH", "XYZ") else ""
@@ -170,7 +181,7 @@ def gen_dirs_rnxs(
         dir_name = utils.join_improved(
             "_",
             director_name_prefix,
-            site_id9,
+            siteid9,
             str(rnx_dt.year),
             conv.dt2doy(rnx_dt),
             str(conv.dt2jjul_cnes(rnx_dt)),
@@ -199,14 +210,12 @@ def gen_dirs_rnxs(
         os.makedirs(tmp_fld_use)
 
         # be sure the RINEX is in gins folder ...
-        rnx_path = gynscmn.bring_to_gin(rnx_path_ori, tmp_fld_use)
+        rnx_path = gynscmn.bring_to_gin(rnx_path_ori, tmp_fld_use, verbose=verbose)
 
-        # check if the RINEX is compressed ...
-        bool_comp_rnx = operational.check_if_compressed_rinex(rnx_path)
-        # ... if not crz2rnx !
-        if bool_comp_rnx:
+        # check if the RINEX is compressed ... if not crz2rnx !
+        if operational.check_if_compressed_rinex(rnx_path):
             crinex_path = rnx_path
-            rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use)
+            rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use, verbose=verbose)
             if not os.path.isfile(rnx_path):
                 bool_cntu = _fail_rnx(rnx_path, rnx_dt, "CRZ2RNX failed")
                 if bool_cntu:
@@ -229,20 +238,22 @@ def gen_dirs_rnxs(
             out_director_folder = os.path.join(gin_path, "gin", "data", "directeur")
 
         # date
+
+        srt_epo, end_epo, freq_rnx = None, None, None
+
         try:
-            srt_epo, end_epo, freq_rnx = operational.rinex_start_end(rnx_path, True)
-        except:
+            srt_epo, end_epo, freq_rnx = operational.rinex_start_end(rnx_path, True, verbose=verbose)
+        except Exception:
+            log.warning("Unable to read RINEX, fallback to filename to get its start/end")
+            srt_epo = rnx_dt
+            end_epo = srt_epo + dt.timedelta(seconds=86360)  # 1 day
+            freq_rnx = 30
+
+        if not srt_epo and not end_epo and not freq_rnx:
             srt_epo, end_epo, freq_rnx = None, None, None
             bool_cntu = _fail_rnx(rnx_path, rnx_dt, "get RINEX start/end failed")
             if bool_cntu:
                 continue
-
-        # freq_rnx_str = f"_{int(freq_rnx):02d}s" if auto_interval else ""
-        # ses = "_" + operational.rinex_session_id(srt_epo, end_epo, full_mode=True)
-
-        # Interval Initalisation
-        # interval_line = utils.grep(rnx_path,'INTERVAL',True)
-        #  float(interval_line.split()[0])
 
         dir_out_fname = dir_name + ".yml"
         dir_out_path = os.path.join(out_director_folder, dir_out_fname)
@@ -262,38 +273,29 @@ def gen_dirs_rnxs(
         strt_day, strt_sec = conv.dt2jjul_cnes(srt_epo, False)
         end_day, end_sec = conv.dt2jjul_cnes(end_epo, False)
 
+        # SPOTGINS compatibility for the full day
+        # one more sec will be +/- below
+        strt_sec = 19
+        end_sec =  86389.0
+
         dir_dic["date"]["arc_start"][0] = strt_day
         dir_dic["date"]["arc_stop"][0] = end_day
         if "initial_state_vector_date" in list(dir_dic["date"].keys()):
             dir_dic["date"]["initial_state_vector_date"][0] = strt_day
 
         dir_dic["date"]["arc_start"][1] = (
-            strt_sec - 1
+                strt_sec - 1
         )  # -1 to make it SPOTGINS compatible
         dir_dic["date"]["arc_stop"][1] = (
-            end_sec + 1
+                end_sec + 1
         )  # +1 to make it SPOTGINS compatible
         if "initial_state_vector_date" in list(dir_dic["date"].keys()):
             dir_dic["date"]["initial_state_vector_date"][1] = strt_sec
 
         # interval
         if auto_interval:  # dir is modified only if freq_rnx >= 0
-            dir_dic["observation"]["removal"]["simulation_stepsize"] = freq_rnx
-            # check if its not a static dir
-            if (
-                dir_dic["parameter"]["adjustment_parameters"]["stations"][
-                    "adjustment_frequency"
-                ][-1]
-                != 0
-            ):
-                dir_dic["parameter"]["adjustment_parameters"]["stations"][
-                    "adjustment_frequency"
-                ] = [0, 0, 0, freq_rnx]
-            log.info(
-                "INFO : auto_interval: %s, simulation_stepsize : %s",
-                auto_interval,
-                dir_dic["observation"]["removal"]["simulation_stepsize"],
-            )
+            dir_dic = _dir_auto_intrvl(dir_dic, freq_rnx)
+
         # output coords
         if out_coords.upper() in ("FLH", "PLH"):
             dir_dic["parameter"]["adjustment_parameters"]["stations"][
@@ -315,20 +317,20 @@ def gen_dirs_rnxs(
             log.warning("auto_oceanload is off and no oceanload_file specified !!!")
 
         if auto_stations_file:
-            stations_file = _dir_auto_stfi(
-                site_id4_lower, rnx_dt, rnx_path, tmp_fld_use
-            )
+            stations_file = _dir_auto_stfi(siteid4_lo, rnx_dt, rnx_path, tmp_fld_use)
 
         if auto_oceanload:
-            oceanload_file = _dir_auto_oclo(site_id4_lower, rnx_dt, tmp_fld_use)
+            oceanload_file = _dir_auto_oclo(
+                siteid4_lo, rnx_dt, tmp_fld_use, stations_file
+            )
 
         if stations_file:
-            stfi_ingin = gynscmn.bring_to_gin(stations_file, tmp_fld_use)
+            stfi_ingin = gynscmn.bring_to_gin(str(stations_file), tmp_fld_use, verbose=verbose)
             dir_dic["object"]["station"]["station_coordinates"] = (
                 gynscmn.make_path_ginsstyle(stfi_ingin)
             )
         if oceanload_file:
-            oclo_ingin = gynscmn.bring_to_gin(oceanload_file, tmp_fld_use)
+            oclo_ingin = gynscmn.bring_to_gin(str(oceanload_file), tmp_fld_use, verbose=verbose)
             dir_dic["object"]["station"]["ocean_tide_loading"] = (
                 gynscmn.make_path_ginsstyle(oclo_ingin)
             )
@@ -341,9 +343,9 @@ def gen_dirs_rnxs(
                 os.path.realpath(options_prairie_file)
             )
 
-        # =========   ORBITS/CLOCKS   =============
+        # ============== ORBITS/CLOCKS ================
         if perso_orbclk:
-            orbpath, horpath = gynsorb.download_convert_2_gins_orb_clk(
+            orbpath, horpath = gynsorbcvt.download_convert_2_gins_orb_clk(
                 rnx_dt, tmp_fld_use, ac=ac, repro=repro
             )
         else:
@@ -369,56 +371,19 @@ def gen_dirs_rnxs(
         oclo_path_gstyl = dir_dic["object"]["station"]["ocean_tide_loading"]
         oclo_path_full = str(os.path.join(gin_path, oclo_path_gstyl[6:]))
 
-        gynscmn.check_stat_in_statfile(site_id4_upper, stfi_path_full)
+        gynscmn.check_site_stfl(siteid4_up, stfi_path_full)
 
-        domes = gynscmn.find_domes_in_statfile(site_id4_upper, stfi_path_full)
-        log.info("INFO : DOMES : %s", domes)
-        gynscmn.check_domes_in_oclo(domes[0], oclo_path_full)
+        domes = gynscmn.find_domes_in_stfl(siteid4_up, stfi_path_full)
+        if verbose:
+            log.info("DOMES: %s", domes)
+        gynscmn.chek_domes_oclo(domes[0], oclo_path_full)
 
-        # =========   TROPO IN SOLUTION   =============
-        if add_tropo_sol and "user_extension" in dir_dic:
-            dir_dic["user_extension"]['userext_addition'].append("ADD_TROPO_IN_SOLUTION")
-
-        # Case of kinematic process : need to change keys in user extension
-        if "user_extension" in dir_dic:
-            log.info("INFO : kinematic process with 'user_extension' fields")
-            if "userext_gps__haute_freq" in dir_dic["user_extension"]:
-                dir_dic["user_extension"]["userext_gps__haute_freq"] = site_id4_upper
-            if "userext_gps__haute_freq".upper() in dir_dic["user_extension"]:
-                dir_dic["user_extension"][
-                    "userext_gps__haute_freq".upper()
-                ] = site_id4_upper
-
-            if "userext_addition" in dir_dic["user_extension"]:
-                if "gps__haute_freq" in dir_dic["user_extension"]["userext_addition"]:
-                    dir_dic["user_extension"]["userext_addition"][
-                        "gps__haute_freq"
-                    ] = site_id4_upper
-                if (
-                        "gps__haute_freq".upper()
-                        in dir_dic["user_extension"]["userext_addition"]
-                ):
-                    dir_dic["user_extension"]["userext_addition"][
-                        "gps__haute_freq".upper()
-                    ] = site_id4_upper
-        if "userext_addition" in dir_dic["user_extension"]:
-            if np.any(
-                    [
-                        "gps__haute_freq".upper() in e
-                        for e in dir_dic["user_extension"]["userext_addition"]
-                    ]
-            ):
-                log.info("INFO : kinematic process with 'userext_addition' fields")
-                index_gps_hf = [
-                    "gps__haute_freq".upper() in e
-                    for e in dir_dic["user_extension"]["userext_addition"]
-                ].index(True)
-                dir_dic["user_extension"]["userext_addition"][index_gps_hf] = (
-                        "gps__haute_freq ".upper() + site_id4_upper
-                )
+        # ========= CUSTOM USER EXTENSION (tropo, high freq...) =============
+        dir_dic = _dir_userext(dir_dic, siteid9, add_tropo_sol)
 
         # WRITING THE NEW DIRECTOR
-        log.info("writing : %s", dir_out_path)
+        if verbose:
+            log.info("writing: %s", dir_out_path)
         with open(dir_out_path, "w+") as outfile:
             outfile.write(yaml.dump(dir_dic, default_flow_style=False))
 
@@ -439,6 +404,9 @@ def gen_dirs_rnxs(
 
 
 def _dir_regular_orbclk(dt_rinex_inp):
+    """
+    Get the regular orbits and clocks path for a given date
+    """
 
     if dt_rinex_inp <= dt.datetime.now() - dt.timedelta(days=14):
         prod_id = "G20"
@@ -446,17 +414,6 @@ def _dir_regular_orbclk(dt_rinex_inp):
         prod_id = "G20"
 
     ### ALL THE OTHER ORBITS/CLOCKS ARE NOW OBSOLETE (2025)
-    # # GRG or GR2 for clock and orbits
-    # if dt.datetime(1998, 1, 4) <= dt_rinex_inp <= dt.datetime(2013, 12, 29):
-    #     prod_id = "GR2"
-    # #    elif dt_rinex < dt.datetime(1998,1,4):
-    # #        prod_id = 'GR1' # obsolete parce que GR1 intégralement inclu dans GR2
-    # elif dt_rinex_inp < dt.datetime(1998, 1, 4):
-    #     prod_id = "IG2"
-    #     log.info("no GRG/GR2 orbit available for day %s", dt_rinex_inp)
-    #     log.info("(day before 1998/1/4) => using IG2 orb. instead")
-    # else:
-    #     prod_id = "GRG"
 
     horpath = os.path.join("horloges", prod_id, "defaut")
     orbpath = os.path.join("orbites", prod_id, "defaut")
@@ -464,8 +421,34 @@ def _dir_regular_orbclk(dt_rinex_inp):
     return orbpath, horpath
 
 
+def _dir_auto_intrvl(dir_dic, freq_rnx):
+    """
+    Automatically set the interval in the director
+    """
+    dir_dic["observation"]["removal"]["simulation_stepsize"] = freq_rnx
+    # check if its not a static dir
+    if (
+            dir_dic["parameter"]["adjustment_parameters"]["stations"][
+                "adjustment_frequency"
+            ][-1]
+            != 0
+    ):
+        dir_dic["parameter"]["adjustment_parameters"]["stations"][
+            "adjustment_frequency"
+        ] = [0, 0, 0, freq_rnx]
+    log.info(
+        "auto_interval, simulation_stepsize : %s",
+        dir_dic["observation"]["removal"]["simulation_stepsize"],
+    )
+
+    return dir_dic
+
+
 def _dir_auto_stfi(stat_lower, dt_rinex, rinex_path, temp_data_folder):
-    log.info("* Automatic station file generation :")
+    """
+    Generate an ad hoc station file from a RINEX file
+    """
+    log.info("* Automatic station file generation")
     randid = "id" + str(np.random.randint(10000, 99999))
     stat_fname = utils.join_improved(
         "_",
@@ -486,8 +469,11 @@ def _dir_auto_stfi(stat_lower, dt_rinex, rinex_path, temp_data_folder):
     return stfi_path_out
 
 
-def _dir_auto_oclo(stat_lower, dt_rinex, temp_data_folder):
-    log.info("* Automatic stat and ocean loading file generation :")
+def _dir_auto_oclo(stat_lower, dt_rinex, temp_data_folder, stat_path_inp):
+    """
+    Generate an ad hoc ocean loading file from a station file
+    """
+    log.info("* Automatic stat and ocean loading file generation")
     randid = "id" + str(np.random.randint(10000, 99999))
 
     oclo_fname = utils.join_improved(
@@ -500,6 +486,8 @@ def _dir_auto_oclo(stat_lower, dt_rinex, temp_data_folder):
     )
 
     oclo_path_out = os.path.join(temp_data_folder, oclo_fname)
+    gynscmn.write_oclo_file(stat_path_inp, oclo_path_out)
+
     bool_oclofil = os.path.isfile(oclo_path_out)
     iwhile = 0
     while not bool_oclofil or iwhile < 10:
@@ -517,8 +505,12 @@ def _dir_auto_oclo(stat_lower, dt_rinex, temp_data_folder):
 
 
 def _dir_rnx_site_id(rnx_name, sites_id9_series):
+    """
+    Extract the site_id9 from a Series (from e.g. a SPOTGINS master file)
+    based on the RINEX name
+    """
     if conv.rinex_regex_search_tester(
-        rnx_name, short_name=False, long_name=True
+            rnx_name, short_name=False, long_name=True
     ):  ### RINEX3
         site_id9 = rnx_name[0:9].upper()
     else:  ### RINEX2
@@ -529,8 +521,8 @@ def _dir_rnx_site_id(rnx_name, sites_id9_series):
             if ser_bool.any():
                 site_id9 = sites_id9_series.loc[ser_bool].values[0]
             if ser_bool.sum() > 1:
-                log.warning("more than one site_id9 found for %s", site_id4)
-                log.warning("%s", sites_id9_series.loc[ser_bool].values)
+                log.warning("more than one site_id9 found for %s: %s", site_id4,
+                            sites_id9_series.loc[ser_bool].values)
                 log.warning("taking the first one : %s", site_id9)
 
     site_id4_upper = site_id9[0:4]
@@ -539,9 +531,32 @@ def _dir_rnx_site_id(rnx_name, sites_id9_series):
     return site_id9, site_id4_upper, site_id4_lower
 
 
+def _dir_userext(dir_dic, site_id9, add_tropo_sol=True):
+    """
+    Customize the user_extension fields with the site_id4_upper
+    """
+    uext = "user_extension"
+    uadd = "userext_addition"
+
+    if uext in dir_dic:
+        if add_tropo_sol:
+            dir_dic[uext][uadd].append("ADD_TROPO_IN_SOLUTION")
+            dir_dic[uext][uadd].append("GPS__AFF_SINEX")
+
+        # GPS__HAUTE_FREQ STAT is not a key/value couple, but is considered a single string
+        # we must search this string and concatenate it with the right site code
+        if uadd in dir_dic[uext]:
+            is_gpshf = ["GPS__HAUTE_FREQ" in e for e in dir_dic[uext][uadd]]
+            if np.any(is_gpshf):
+                idx_gpshf = is_gpshf.index(True)
+                dir_dic[uext][uadd][idx_gpshf] = "GPS__HAUTE_FREQ " + site_id9.upper()
+
+    return dir_dic
+
+
 def _dir_auto_staocl(stat_lower, dt_rinex, rinex_path, temp_data_folder):
     ##### DEPRECATED, NOW SEPARATED !!!
-    log.info("* Automatic stat and ocload files generation :")
+    log.info("* Automatic stat and ocload files generation")
     randid = "id" + str(np.random.randint(10000, 99999))
     stat_fname = utils.join_improved(
         "_",

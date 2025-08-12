@@ -25,18 +25,16 @@ import datetime as dt
 import logging
 import os
 import re
-# import scipy
-# from scipy.spatial.transform import Rotation
 import string
 import struct
 import subprocess
 import time
-#import warnings
+import warnings
 ## Finding day of year
 # from datetime import datetime, date
 
 import numpy as np
-import pandas as pd
+# import pandas as pd # >>> LAZY IMPORTED
 
 #### geodeZYX modules
 from geodezyx import utils, stats
@@ -155,7 +153,7 @@ def round_dt(dtin, round_to, python_dt_out=True, mode='round'):
     ----
     https://pandas.pydata.org/docs/user_guide/timeseries.html#timeseries-offset-aliases
     """
-
+    import pandas as pd
     ### Here we adopt a new scheme for the recursive approach
     ### because we switch per defaut to a Pandas Series (PSakic 2021-02-22)
     if not utils.is_iterable(dtin):
@@ -244,6 +242,9 @@ def dt_range(start_dt, end_dt,
     ----------
     start_dt,end_dt : datetime.datetime
         Datetimes
+
+    day_step, sec_step : int, optional
+
         
     Returns
     -------
@@ -422,10 +423,10 @@ def dt2ymdhms(dtin, with_microsec=True):
     """
     if not utils.is_iterable(dtin):
         if with_microsec:
-            return (dtin.year, dtin.month, dtin.day, dtin.hour, dtin.minute, dtin.second, dtin.microsecond)
+            return dtin.year, dtin.month, dtin.day, dtin.hour, dtin.minute, dtin.second, dtin.microsecond
         else:
-            dt2 = roundTime(dtin, 1)
-            return (dt2.year, dt2.month, dt2.day, dt2.hour, dt2.minute, dt2.second)
+            dt2 = round_dt(dtin, '1s')
+            return dt2.year, dt2.month, dt2.day, dt2.hour, dt2.minute, dt2.second
     else:
         typ = utils.get_type_smart(dtin)
         return typ([dt2ymdhms(e, with_microsec) for e in dtin])
@@ -765,12 +766,12 @@ def dt_utc2dt_ut1_smart(dtin, df_eop_in,
         EOP DataFrame for the UT1-UTC
         provided by files_rw.read_eop_C04
     use_interp1d_obj : TYPE, optional
-        Use an interp1d_time Interpolator object for the EOP determination 
+        Use an Interp1dTime Interpolator object for the EOP determination
         at the right epoch.
         Faster in recursive mode when dtin is a list/array
         The default is True.
-    eop_interpolator : interp1d_time object, optional
-        The interp1d_time Interpolator object for the EOP determination
+    eop_interpolator : Interp1dTime object, optional
+        The Interp1dTime Interpolator object for the EOP determination
         Will be determined automatically inside the function
         The default is None.
 
@@ -793,16 +794,16 @@ def dt_utc2dt_ut1_smart(dtin, df_eop_in,
         dtmin = np.min(dtin)
         dtmax = np.max(dtin)
 
-        BOOL = ((df_eop.index > dtmin - dt.timedelta(days=2)) &
+        bool = ((df_eop.index > dtmin - dt.timedelta(days=2)) &
                 (df_eop.index < dtmax + dt.timedelta(days=2)))
 
-        df_eop = df_eop[BOOL]
+        df_eop = df_eop[bool]
 
         ### We also use the interpolator class
         if use_interp1d_obj:
-            from geodezyx.conv import conv_interpolators
-            ieop = conv_interpolators.interp1d_time(df_eop.index.values,
-                                                    df_eop['UT1-UTC'])
+            from geodezyx import interp
+            ieop = interp.Interp1dTime(df_eop.index.values,
+                                       df_eop['UT1-UTC'])
         else:
             ieop = None
 
@@ -824,8 +825,8 @@ def dt_utc2dt_ut1_smart(dtin, df_eop_in,
                                              d_ut1aft['MJD'],
                                              d_ut1aft['UT1-UTC'])
 
-            d_ut1 = stats.linear_reg_getvalue(dt2MJD(dtin), a, b,
-                                             full=False)
+            d_ut1 = stats.linear_reg_getvalue(dt2mjd(dtin), a, b,
+                                              full=False)
 
         return dt_utc2dt_ut1(dtin, d_ut1)
 
@@ -1289,6 +1290,32 @@ def date_pattern_2_dt(date_str_inp):
         raise ValueError("Input string does not match any expected date format.")
     return date
 
+
+def minmax_pattern_dt(date1_inp, date2_inp):
+    """
+    Convert two date strings into datetime objects and return the minimum and maximum.
+
+    Parameters
+    ----------
+    date1_inp : str
+        The first date string to be converted.
+    date2_inp : str
+        The second date string to be converted.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the minimum and maximum datetime objects derived from the input strings.
+
+    Raises
+    ------
+    ValueError
+        If the input strings cannot be converted into valid datetime objects.
+    """
+    datetup = (date_pattern_2_dt(date1_inp), date_pattern_2_dt(date2_inp))
+    return min(datetup), max(datetup)
+
+
 def jjul_cnes2dt(jjulin):
     """
     Time representation & scale conversion
@@ -1316,7 +1343,7 @@ def jjul_cnes2dt(jjulin):
         typ = utils.get_type_smart(jjulin)
         return typ([jjul_cnes2dt(e) for e in jjulin])
     else:
-        return dt.datetime(1950, 0o1, 0o1, 00, 00, 00) + dt.timedelta(float(jjulin))
+        return dt.datetime(1950, 1, 1, 0, 0, 0) + dt.timedelta(float(jjulin))
 
 
 def dt2jjul_cnes(dtin, onlydays=True):
@@ -1344,15 +1371,19 @@ def dt2jjul_cnes(dtin, onlydays=True):
     
     https://www.aviso.altimetry.fr/fr/donnees/outils/jours-calendaires-ou-jours-juliens.html
     """
-    epok = (dtin - dt.datetime(1950, 0o1, 0o1, 00, 00, 00))
-    if onlydays:
-        return epok.days
+    if utils.is_iterable(dtin):
+        typ = utils.get_type_smart(dtin)
+        return typ([dt2jjul_cnes(e, onlydays) for e in dtin])
     else:
-        epok = epok + dt.timedelta(seconds=19)
-        return epok.days, epok.seconds
+        epok = (dtin - dt.datetime(1950, 1, 1, 0, 0, 0))
+        if onlydays:
+            return epok.days
+        else:
+            epok = epok + dt.timedelta(seconds=19)
+            return epok.days, epok.seconds
 
 
-def MJD2dt(mjd_in, seconds=None, round_to='1s'):
+def mjd2dt(mjd_in, seconds=None, round_to='1s'):
     """
     Time representation conversion
     
@@ -1410,8 +1441,21 @@ def MJD2dt(mjd_in, seconds=None, round_to='1s'):
             seconds = 0
         return rnd(dt.datetime(1858, 11, 17) + dt.timedelta(days=mjd_in, seconds=seconds))
 
+def MJD2dt(*args, **kwargs):
+    """
+    Alias for the mjd2dt function.
 
-def dt2MJD(dtin):
+    This function is deprecated and will be removed in future versions.
+    Use mjd2dt instead.
+    """
+    warnings.warn(
+        "MJD2dt is deprecated and will be removed in future versions. Use mjd2dt instead.",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    return mjd2dt(*args, **kwargs)
+
+def dt2mjd(dtin):
     """
     Time representation conversion
     
@@ -1436,10 +1480,25 @@ def dt2MJD(dtin):
     # cf http://en.wikipedia.org/wiki/Julian_day
     if utils.is_iterable(dtin):
         typ = utils.get_type_smart(dtin)
-        return typ([dt2MJD(t) for t in dtin])
+        return typ([dt2mjd(t) for t in dtin])
     else:
         delta = (dtin.replace(tzinfo=None) - dt.datetime(1858, 11, 17))
         return delta.days + (delta.seconds / 86400.) + (delta.microseconds / 864e8)
+
+
+def dt2MJD(*args, **kwargs):
+    """
+    Alias for the dt2mjd function.
+
+    This function is deprecated and will be removed in future versions.
+    Use dt2mjd instead.
+    """
+    warnings.warn(
+        "dt2MJD is deprecated and will be removed in future versions. Use dt2mjd instead.",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    return dt2mjd(*args, **kwargs)
 
 
 def dt2str(dtin, str_format="%Y-%m-%d %H:%M:%S"):
@@ -1874,6 +1933,15 @@ def dt_2_sinex_datestr(dtin, short_yy=True, year_sep=":"):
     Parameters
     ----------
     dtin : datetime.datetime or list/numpy.array of datetime.datetime
+
+    short_yy : bool
+        if True, use a 2-digit year (e.g. 00:123:45678)
+        if False, use a 4-digit year (e.g. 2000:123:45678)
+        default is True.
+
+    year_sep : str
+        separator between the year and the day of year.
+        default is ":".
     
     Returns
     -------
@@ -2354,7 +2422,7 @@ def extract_leapseconds_from_system():
         try:
             leapsec_lis = leapseconds_parse_pre2404(leapsec_fname_pre2404)
             success_parsing = True
-        except Exception:
+        except Exception as e:
             log.warning("Error while parsing leap seconds file %s", leapsec_fname_pre2404)
             pass
 
@@ -2446,7 +2514,7 @@ def find_leapsecond(dtin, leapsec_lis_inp=LEAP_SEC_LIS,
 #         __/ |                                                                                 | |
 #        |___/                                                                                  |_|                                                                           |_|
 
-### Python's Internal Representations  
+### Python's Internal Representations
 
 def date2dt(date_in):
     """
@@ -2510,6 +2578,9 @@ def pandas_timestamp2dt(timestamp_in):
     L : Datetime or list of Datetime
         Time as Datetime(s)  
     """
+
+    import pandas as pd
+
     if utils.is_iterable(timestamp_in):
         typ = utils.get_type_smart(timestamp_in)
         return typ([pandas_timestamp2dt(e) for e in timestamp_in])
@@ -2560,9 +2631,8 @@ def numpy_dt2dt(numpy_dt_in):
     ### better implementation because of the timezone bug (PS 241124)
 
     else:
+        import pandas as pd
         return pd.Timestamp(numpy_dt_in).to_pydatetime()
-
-
 
 
 ##### Nota Bene
@@ -2919,55 +2989,55 @@ def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
 #     return python_datetime
 
 
-def dt_round(dtin=None, roundTo=60):
-    """
-    Round a datetime object to any time laps in seconds
-
-    **This function is depreciated !!!**
-    **Use round_dt instead         !!!**
-
-
-    Parameters
-    ----------
-    dtin : datetime.datetime or list/numpy.array of datetime.datetime
-        Datetime you want to round, default now.
-        Can handle several datetimes in an iterable.
-
-    roundTo : int
-        Closest number of seconds to round to, default 1 minute.
-
-    Returns
-    -------
-    dtout : datetime.datetime or list/numpy.array of datetime.datetime
-        Rounded Datetime
-
-    Note
-    ----
-    Based on :
-    http://stackoverflow.com/questions/3463930/how-to-round-the-minute-of-a-datetime-object-python
-    """
-    import datetime as dtmod
-
-    if utils.is_iterable(dtin):
-        typ = utils.get_type_smart(dtin)
-        return typ([dt_round(e, roundTo=roundTo) for e in dtin])
-    else:
-        if not dtin:
-            dtin = dtmod.datetime.now()
-        seconds = (dtin - dtin.min).seconds
-        # // is a floor division, not a comment on following line:
-        rounding = (seconds + roundTo / 2) // roundTo * roundTo
-        return dtin + dtmod.timedelta(0, rounding - seconds, -dtin.microsecond)
-
-
-def roundTime(*args):
-    """
-    Wrapper of dt_round for legacy reasons
-
-    **This function is depreciated !!!**
-    **Use round_dt instead         !!!**
-    """
-    return dt_round(*args)
+# def dt_round(dtin=None, roundTo=60):
+#     """
+#     Round a datetime object to any time laps in seconds
+#
+#     **This function is depreciated !!!**
+#     **Use round_dt instead         !!!**
+#
+#
+#     Parameters
+#     ----------
+#     dtin : datetime.datetime or list/numpy.array of datetime.datetime
+#         Datetime you want to round, default now.
+#         Can handle several datetimes in an iterable.
+#
+#     roundTo : int
+#         Closest number of seconds to round to, default 1 minute.
+#
+#     Returns
+#     -------
+#     dtout : datetime.datetime or list/numpy.array of datetime.datetime
+#         Rounded Datetime
+#
+#     Note
+#     ----
+#     Based on :
+#     http://stackoverflow.com/questions/3463930/how-to-round-the-minute-of-a-datetime-object-python
+#     """
+#     import datetime as dtmod
+#
+#     if utils.is_iterable(dtin):
+#         typ = utils.get_type_smart(dtin)
+#         return typ([dt_round(e, roundTo=roundTo) for e in dtin])
+#     else:
+#         if not dtin:
+#             dtin = dtmod.datetime.now()
+#         seconds = (dtin - dtin.min).seconds
+#         # // is a floor division, not a comment on following line:
+#         rounding = (seconds + roundTo / 2) // roundTo * roundTo
+#         return dtin + dtmod.timedelta(0, rounding - seconds, -dtin.microsecond)
+#
+#
+# def roundTime(*args):
+#     """
+#     Wrapper of dt_round for legacy reasons
+#
+#     **This function is depreciated !!!**
+#     **Use round_dt instead         !!!**
+#     """
+#     return dt_round(*args)
 
 
 # def utc2gpstime_bad(year, month, day, hour, min, sec):
@@ -3099,5 +3169,3 @@ def roundTime(*args):
 #     utc_time = [year, month, day, hour, minute, sec]
 #
 #     return utc_time
-
-

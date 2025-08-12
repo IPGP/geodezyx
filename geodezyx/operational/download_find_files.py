@@ -21,73 +21,82 @@ import glob
 import logging
 import os
 import re
-
 import pandas as pd
 
 # geodeZYX modules
-from geodezyx import conv
-from geodezyx import utils
+from geodezyx import conv, utils
 
 log = logging.getLogger('geodezyx')
+
 
 ##########  END IMPORT  ##########
 
 def rinex_finder(
-    main_dir,
-    short_name=True,
-    long_name=True,
-    gfz_godc_name=True,
-    compressed=None,
-    specific_sites=[],
-    start_epoch=None,
-    end_epoch=None,
+        main_dir,
+        short_name=True,
+        long_name=True,
+        gfz_godc_name=True,
+        compressed=None,
+        specific_sites=[],
+        start_epoch=None,
+        end_epoch=None,
 ):
     """
+    Find RINEX files in a specified directory and filter them based on various criteria.
+
     Parameters
     ----------
     main_dir : str
-        main directory where the RINEXs are stored.
+        Main directory where the RINEX files are stored.
+        The directory can contain a wildcard '*', '?', etc...
+        The directory can contain date alias '%', like '%Y', '%j', etc.
+        If the main_dir contains a an date alias and both start_epoch and end_epoch are defined,
+        You can indicate a more precise directory.
+        (e.g. main_dir = "/path/to/data/*/%Y/%j/")
+        NB: The day level is the maximum resolution for the wildcard.
     short_name : bool, optional
-        check if the pattern matches a short name RINEX. The default is True.
+        Check if the pattern matches a short name RINEX. The default is True.
     long_name : bool, optional
-        check if the pattern matches a long name RINEX. The default is True.
-    gfz_godc_name: bool, optional
-        check if the pattern matches a GFZ's GODC (GNSS Operational Data Center)
-        internal long name RINEX. The default is True.
-    compressed : bool or None
-        check if the pattern matches a compressed RINEX (True) or not (False)
-        if None, does not matter (return both compressed or not)
+        Check if the pattern matches a long name RINEX. The default is True.
+    gfz_godc_name : bool, optional
+        Check if the pattern matches a GFZ's GODC
+        (GNSS Operational Data Center) internal long name RINEX.
+        The default is True.
+    compressed : bool or None, optional
+        Check if the pattern matches a compressed RINEX (True) or not (False).
+        If None, does not matter (return both compressed or not).
     specific_sites : list, optional
         Filter only those specific sites. The default is [].
     start_epoch : datetime, optional
+        Start date for filtering the RINEX files.
     end_epoch : datetime, optional
-        Filter the RINEXs between those two epochs (included)
-        Can be for instance
-        `start_epoch=dt.datetime(2021,1,1)` and
-        `end_epoch=dt.datetime(2021,12,31)`
-        The default is None.
+        End date for filtering the RINEX files.
 
     Returns
     -------
-    Files_rnx_lis : list
-        Found RINEXs list.
-
+    files_rnx_lis : list
+        List of found RINEX files.
 
     Notes
     -----
-
-    is very similar with geodetik.rinex_lister, gins_runner.get_rinex_list,
-    operational.multi_finder_rinex
-
-    But this one is the most recent and elaborated (July 2022),
-    must be used in priority !!!
-
+    This function is very similar to geodetik.rinex_lister, gins_runner.get_rinex_list, and operational.multi_finder_rinex.
+    However, this one is the most recent and elaborated (July 2022) and should be used in priority.
     """
 
-    files_raw_lis, _ = utils.walk_dir(main_dir)
+    # If main_dir contains a wildcard and both start_epoch and end_epoch are defined, search for files in the date range
+    if "%" in main_dir and start_epoch and end_epoch:
+        files_raw_lis = []
+        for epo in conv.dt_range(start_epoch, end_epoch, day_step=1):
+            main_dir_abs = os.path.abspath(epo.strftime(main_dir))
+            files_raw_lis_epo, _ = utils.walk_dir(main_dir_abs)
+            files_raw_lis.extend(files_raw_lis_epo)
+    else:
+        main_dir_abs = os.path.abspath(main_dir)
+        files_raw_lis, _ = utils.walk_dir(main_dir_abs)
 
     files_rnx_lis = []
 
+    # Filter files based on the provided naming patterns
     for f in files_raw_lis:
         fbase = os.path.basename(f)
         regex_match = conv.rinex_regex_search_tester(
@@ -100,17 +109,17 @@ def rinex_finder(
         if regex_match:
             files_rnx_lis.append(f)
 
-    # SECOND FILTERING IF specific_sites LIST IS DEFINED
+    # Second filtering if specific_sites list is defined
     if len(specific_sites) > 0:
         files_rnx_lis_tmp = []
         for site in specific_sites:
             for rnx in files_rnx_lis:
                 rnx_bn = os.path.basename(rnx)
-                if site[0:4].lower() in rnx_bn or site.upper() in rnx_bn:
+                if utils.is_in_str(rnx_bn, site.upper(), site[0:4].lower(), site[0:4].upper()):
                     files_rnx_lis_tmp.append(rnx)
         files_rnx_lis = files_rnx_lis_tmp
 
-    # THIRD FILTERING IF start or end epoch are defined
+    # Third filtering if start or end epoch are defined
     if start_epoch or end_epoch:
         if not start_epoch:
             start_epoch = dt.datetime(1980, 1, 1)
@@ -124,6 +133,7 @@ def rinex_finder(
                 files_rnx_lis_tmp.append(rnx)
         files_rnx_lis = files_rnx_lis_tmp
 
+    # Sort the final list of RINEX files
     files_rnx_lis = list(sorted(files_rnx_lis))
     log.info(str(len(files_rnx_lis)) + " RINEXs found")
 
@@ -182,19 +192,19 @@ def read_rinex_list_table(rnx_list_inp):
 
 
 def find_igs_products_files(
-    parent_dir,
-    file_type,
-    ACs,
-    date_start,
-    date_end=None,
-    recursive_search=True,
-    severe=True,
-    compressed="incl",
-    regex_old_naming=True,
-    regex_new_naming=True,
-    regex_igs_tfcc_naming=True,
-    add_weekly_file=False,
-    add_hourly_file=False,
+        parent_dir,
+        file_type,
+        ACs,
+        date_start,
+        date_end=None,
+        recursive_search=True,
+        severe=True,
+        compressed="incl",
+        regex_old_naming=True,
+        regex_new_naming=True,
+        regex_igs_tfcc_naming=True,
+        add_weekly_file=False,
+        add_hourly_file=False,
 ):
     """
     Find all product files in a parent folder which correspond to file type(s),
@@ -362,7 +372,7 @@ def find_igs_products_files(
         re_patt_date = join_regex_and(dates_wwwwd_list_4old)
         re_patt_filtyp = join_regex_and(file_type)
         re_patt_big_old_naming = (
-            re_patt_ac + re_patt_date + r"\." + re_patt_filtyp + re_patt_comp
+                re_patt_ac + re_patt_date + r"\." + re_patt_filtyp + re_patt_comp
         )
         re_patt_big_stk.append(re_patt_big_old_naming)
 
@@ -396,19 +406,19 @@ def find_igs_products_files(
         re_patt_filtyp = r"\." + join_regex_and(file_type)
 
         re_patt_big_igs_tfcc_naming = (
-            "igs"
-            + re_patt_year
-            + "P"
-            + re_patt_date
-            + ".*"
-            + re_patt_filtyp
-            + re_patt_comp
+                "igs"
+                + re_patt_year
+                + "P"
+                + re_patt_date
+                + ".*"
+                + re_patt_filtyp
+                + re_patt_comp
         )
         re_patt_big_stk.append(re_patt_big_igs_tfcc_naming)
 
     re_patt_big = join_regex_and(re_patt_big_stk)
 
-    #log.info("REGEX researched: %s",re_patt_big)
+    # log.info("REGEX researched: %s",re_patt_big)
 
     ###### Specific file search management ##############
     files_select_list = []
@@ -424,7 +434,6 @@ def find_igs_products_files(
     log.info("%i files found matching REGEX %s", len(files_select_list), re_patt_big)
 
     return files_select_list
-
 
 ##### FUNCTION GRAVEYARD #####
 

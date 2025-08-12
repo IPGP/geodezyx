@@ -21,7 +21,6 @@ import itertools
 import logging
 import multiprocessing as mp
 
-import matplotlib.pyplot as plt
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
@@ -521,6 +520,7 @@ def chi2_test_frontend(dist_inp,nbins=10,ddof=2,debug=0,mode2=False,aaa=1):
     if not debug:
         return chi2
     else:
+        import matplotlib.pyplot as plt
         plt.plot(bin_edges2,gauss,'+')
         plt.plot(bin_edges2,hist,'x')
         return bin_edges,bin_edges2,hist,gauss,chi2

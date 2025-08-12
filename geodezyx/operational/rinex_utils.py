@@ -4,7 +4,7 @@
 @author: psakic
 
 This sub-module of geodezyx.operational contains functions to manipulate
-RINEX files (version 2, quite obsolate). 
+RINEX files (version 2, quite obsolate).
 
 it can be imported directly with:
 from geodezyx import operational
@@ -21,6 +21,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 #### External modules
 import datetime as dt
 import glob
+
 #### Import the logger
 import logging
 import os
@@ -38,62 +39,175 @@ import pandas as pd
 from geodezyx import conv
 from geodezyx import utils
 
-log = logging.getLogger('geodezyx')
+log = logging.getLogger("geodezyx")
+
 
 ##########  END IMPORT  ##########
 
 
-def rinexs_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=True):
+def rinex_table_from_list(
+    rnxs_inp,
+    site9_col=False,
+    round_date=False,
+    path_col=True,
+    size_col=False,
+    sort=True,
+):
     """
-    From a simple RINEX list, summarize the data in an ad-hoc DataFrame
+    From a simple RINEX list, summarize the data in an ad-hoc DataFrame.
 
     Parameters
     ----------
     rnxs_inp : iterable or str
-        if iterable, a list of RINEX files
-        if str, path of an input RINEX list as text file.
+        If iterable, a list of RINEX files.
+        If str, path of an input RINEX list as text file.
+    site9_col : bool, optional
+        If True, include a 'site9' column in the DataFrame. Defaults to False.
+    round_date : bool, optional
+        If True, round the dates to the nearest day. Defaults to False.
+    path_col : bool, optional
+        If True, include the 'path' column in the DataFrame. Defaults to True.
+    size_col : bool, optional
+        If True, include a 'size' column in the DataFrame.
+        Corresponds to the size of the file in bytes.
+        It can slow down the process if the list is long.
+        Defaults to False.
+    sort : bool, optional
+        If True, sort the DataFrame by 'site4' or 'site9' (if site9_col is True) and 'date'.
+         Defaults to True.
 
     Returns
     -------
-    DF : Pandas DataFrame
+    df : pandas.DataFrame
         A DataFrame with the RINEX info in it.
     """
-
     if utils.is_iterable(rnxs_inp):
-        DF = pd.DataFrame(rnxs_inp, columns=["path"])
+        df = pd.DataFrame(rnxs_inp, columns=["path"])
     else:
-        DF = pd.read_csv(rnxs_inp, names=["path"])
+        df = pd.read_csv(rnxs_inp, names=["path"])
 
-    DF["name"] = DF["path"].apply(os.path.basename)
-    DF["site4"] = DF["name"].str[:4].str.lower()
+    df["name"] = df["path"].apply(os.path.basename)
+    df["site4"] = df["name"].str[:4].str.lower()
 
     if site9_col:
-        DF["site9"] = DF["name"].str[:9].str.lower()
-        #### set generic 9-char name if 4 char name file
-        BoolNewName = DF["name"].str.match(conv.rinex_regex_long_name())
-        BoolOldName = np.logical_not(BoolNewName)
-        Site9_generic = DF["site4"].str.upper() + "00XXX"
-        DF["site9"].loc[BoolOldName] = Site9_generic[BoolOldName]
+        df["site9"] = df["name"].str[:9].str.lower()
+        # Set generic 9-char name if 4 char name file
+        bool_new_name = df["name"].str.match(conv.rinex_regex_long_name())
+        bool_old_name = np.logical_not(bool_new_name)
+        site9_generic = df["site4"].str.upper() + "00XXX"
+        df.loc[bool_old_name, "site9"] = site9_generic[bool_old_name]
 
-    DF["date"] = DF["name"].apply(conv.rinexname2dt)
+    df["date"] = df["name"].apply(conv.rinexname2dt)
     if round_date:
-        DF["date"] = conv.round_dt(DF["date"].values, "1D", True, "floor")
-    DoyYear = DF["date"].apply(conv.dt2doy_year)
-    DF["doy"] = DoyYear.apply(lambda x: x[0])
-    DF["year"] = DoyYear.apply(lambda x: x[1])
+        df["date"] = conv.round_dt(df["date"].values, "1D", True, "floor")
+    doy_year = df["date"].apply(conv.dt2doy_year)
+    df["doy"] = doy_year.apply(lambda x: x[0])
+    df["year"] = doy_year.apply(lambda x: x[1])
 
-    cols = DF.columns.tolist()
+    if size_col:
+        size_path = lambda f: os.path.getsize(f) if os.path.isfile(f) else np.nan
+        df["size"] = df["path"].apply(size_path)
 
+    cols = df.columns.tolist()
     cols = cols[1:] + [cols[0]]
-
-    DF = DF[cols]
+    df = df[cols]
 
     if not path_col:
-        DF.drop("path", axis=1, inplace=True)
+        df.drop("path", axis=1, inplace=True)
 
     pd.options.display.max_info_columns = 150
 
-    return DF
+    if sort:
+        site_col = "site9" if site9_col else "site4"
+        df.sort_values(by=[site_col, "date"], inplace=True)
+        df.reset_index(drop=True, inplace=True)
+
+    return df
+
+
+def rinex_lists_diff(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col=False):
+    """
+    Compare two lists of RINEX files and identify differences.
+
+    Parameters
+    ----------
+    rnx_lis1 : list
+        First list of RINEX file paths.
+    rnx_lis2 : list
+        Second list of RINEX file paths.
+    out_dir : str, optional
+        Directory to save the output files. If None, no files are saved.
+    out_name : str, optional
+        Base name for the output files. Defaults to 'rnx_diff' if not provided.
+    site9_col : bool, optional
+        If True, use 'site9' as the column name for site identification. Defaults to False.
+
+    Returns
+    -------
+    diff1m2 : pandas.DataFrame
+        DataFrame containing entries in rnx_lis1 but not in rnx_lis2.
+    diff2m1 : pandas.DataFrame
+        DataFrame containing entries in rnx_lis2 but not in rnx_lis1.
+    intrsec : pandas.DataFrame
+        DataFrame containing entries common to both rnx_lis1 and rnx_lis2.
+    symdiff : pandas.DataFrame
+        DataFrame containing entries that are in either rnx_lis1 or rnx_lis2 but not in both.
+    """
+
+    site_col = "site9" if site9_col else "site4"
+
+    # Create DataFrames from the RINEX lists
+    d1 = rinex_table_from_list(
+        rnx_lis1, path_col=True, round_date=False, site9_col=site9_col
+    )
+    d2 = rinex_table_from_list(
+        rnx_lis2, path_col=True, round_date=False, site9_col=site9_col
+    )
+
+    # Set the index to the site and date columns
+    d1 = d1.set_index([site_col, "date"])
+    d2 = d2.set_index([site_col, "date"])
+
+    # Find the differences in the indices
+    idx_diff1m2 = d1.index.difference(d2.index)
+    idx_diff2m1 = d2.index.difference(d1.index)
+    idx_intrsec = d1.index.intersection(d2.index)
+    idx_symdiff = d1.index.symmetric_difference(d2.index)
+
+    # Locate the differences in the DataFrames
+    diff1m2 = d1.loc[idx_diff1m2]
+    diff2m1 = d2.loc[idx_diff2m1]
+    intrsec = d1.loc[idx_intrsec]
+    d12 = pd.concat([d1, d2], axis=0)
+    symdiff = d12.loc[idx_symdiff]
+
+    diff1m2.sort_index(inplace=True)
+    diff2m1.sort_index(inplace=True)
+    intrsec.sort_index(inplace=True)
+    symdiff.sort_index(inplace=True)
+
+    res_dic = dict()
+    res_dic["diff. 1-2"] = diff1m2
+    res_dic["diff. 2-1"] = diff2m1
+    res_dic["intersection"] = intrsec
+    res_dic["sym. diff."] = intrsec
+
+    # If an output directory is specified, save the differences to files
+    if out_dir:
+        if not out_name:
+            out_name = ""
+
+        # Save the paths of the differences to text files
+        # Save the full DataFrames of the differences to CSV files
+        for k, v in res_dic.items():
+            if len(v) > 0:
+                out_suffix = k.replace(".", "").replace("-", "_").replace(" ", "_")
+                out_path = os.path.join(out_dir, out_name + "_" + out_suffix)
+                log.info("Saving rinex %s to %s", k, out_path + ".txt/.csv")
+                v["path"].to_csv(out_path + ".txt", index=False, header=False)
+                v.to_csv(out_path + ".csv", index=False, header=True)
+
+    return diff1m2, diff2m1, intrsec, symdiff
 
 
 def rinex_sats_checker(p_rnx):
@@ -128,7 +242,7 @@ def rinex_sats_checker(p_rnx):
     iline_bloc = 0
     nlines_bloc = -1
 
-    Blocs_stack = []
+    blocs_stack = []
 
     ###### This loop read all lines
     for l in L:
@@ -143,13 +257,13 @@ def rinex_sats_checker(p_rnx):
             nsat = int(l[30:32])
             iline_bloc = 0
             nlines_bloc = int(np.ceil(nsat / 12))
-            LineBloc = []
+            line_bloc = []
             lineconcat = ""
             date = read_rnx_epoch_line(l, rnx2=True)
 
         ### we read the sat lines based on the number of sat
         if iline_bloc <= nlines_bloc:
-            LineBloc.append(l[32:].strip())
+            line_bloc.append(l[32:].strip())
             lineconcat = lineconcat + l[32:].strip()
             iline_bloc += 1
 
@@ -157,14 +271,14 @@ def rinex_sats_checker(p_rnx):
         if iline_bloc == nlines_bloc:
             in_epoch = False
             bloc_tuple = (date, nsat, lineconcat)
-            Blocs_stack.append(bloc_tuple)
+            blocs_stack.append(bloc_tuple)
 
     #### we do a DF with all the found line
-    DF = pd.DataFrame(Blocs_stack)
+    df = pd.DataFrame(blocs_stack)
 
-    DF[3] = None
+    df[3] = None
 
-    for irow, row in DF.iterrows():
+    for irow, row in df.iterrows():
         nsat = str(row[1])
         satstr = row[2]
         re_sat = "([A-Z][0-9][0-9]){" + nsat + "}"
@@ -172,11 +286,11 @@ def rinex_sats_checker(p_rnx):
 
         #### the the right number of sat is found True = Good
         if bool_sat:
-            DF.iloc[irow, 3] = True
+            df.iloc[irow, 3] = True
         else:
-            DF.iloc[irow, 3] = False
+            df.iloc[irow, 3] = False
 
-    if DF[3].sum() != len(DF):
+    if df[3].sum() != len(df):
         return rinex_sats_checker
     else:
         return None
@@ -249,7 +363,7 @@ def check_if_compressed_rinex(rinex_path):
     return boolout
 
 
-def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX"):
+def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX", verbose=True):
     """assuming that CRZ2RNX is in the system PATH per default"""
 
     if not os.path.isfile(rinex_path):
@@ -267,7 +381,7 @@ def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX"):
 
     out_rinex_name_splited = os.path.basename(rinex_path).split(".")
 
-    if conv.rinex_regex_search_tester(rinex_path,short_name=False, long_name=True):
+    if conv.rinex_regex_search_tester(rinex_path, short_name=False, long_name=True):
         out_rinex_name_splited = os.path.basename(rinex_path).split(".")
         out_rinex_name = out_rinex_name_splited[0]
         out_rinex_name = out_rinex_name + ".rnx"
@@ -279,7 +393,7 @@ def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX"):
         out_rinex_path = os.path.join(outdir, out_rinex_name)
 
     if os.path.isfile(out_rinex_path) and not force:
-        log.info(out_rinex_path + "already exists, skiping ...")
+        log.warning(out_rinex_path + "already exists, skiping ...")
     else:
         os.chdir(outdir)
         # stream = os.popen(command)
@@ -290,51 +404,13 @@ def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX"):
         status = proc.wait()
 
         if status != 0 or not os.path.isfile(out_rinex_path):
-            log.info(out_rinex_path + " not created ! :(")
+            log.error(out_rinex_path + " not created!")
+        elif verbose:
+            log.info(out_rinex_path + " created")
         else:
-            log.info(out_rinex_path + " created :)")
+            pass
         #    print stream.read()
         os.chdir(curdir)
-    return out_rinex_path
-
-
-def crz2rnx_bad(crinex_in_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX"):
-    """assuming that CRZ2RNX is in the system PATH per default"""
-
-    if not os.path.isfile(crinex_in_path):
-        raise Exception(crinex_in_path + " dont exists !")
-
-    if force:
-        forcearg = "-f"
-    else:
-        forcearg = ""
-
-    command = path_of_crz2rnx + " " + forcearg + " " + crinex_in_path
-    convert_dir = os.path.dirname(crinex_in_path)
-
-    if outdir == "":
-        outdir = convert_dir
-
-    out_rinex_name_splited = os.path.basename(crinex_in_path).split(".")
-    out_rinex_name = ".".join(out_rinex_name_splited[:-1])
-    out_rinex_name = out_rinex_name[:-1] + "o"
-
-    out_rinex_path = os.path.join(outdir, out_rinex_name)
-    temp_rinex_path = os.path.join(convert_dir, out_rinex_name)
-
-    if os.path.isfile(out_rinex_path) and not force:
-        log.info(out_rinex_path + "already exists, skiping ...")
-
-    else:
-        stream = os.popen(command)
-        log.info("output in " + outdir)
-        try:
-            shutil.move(temp_rinex_path, outdir)
-        except:
-            pass
-
-        #    print stream.read()
-    #    os.chdir(curdir)
     return out_rinex_path
 
 
@@ -355,8 +431,8 @@ def rnx2crz(rinex_path, outdir="", force=True, path_of_rnx2crz="RNX2CRZ"):
         outdir = os.path.dirname(rinex_path)
 
     out_rinex_name_o = os.path.basename(rinex_path)
-    out_rinex_name_d_Z = out_rinex_name_o[:-1] + "d.Z"
-    out_rinex_path = os.path.join(outdir, out_rinex_name_d_Z)
+    out_rinex_name_d_z = out_rinex_name_o[:-1] + "d.Z"
+    out_rinex_path = os.path.join(outdir, out_rinex_name_d_z)
 
     if os.path.isfile(out_rinex_path) and not force:
         log.info(out_rinex_path + "already exists, skiping ...")
@@ -367,30 +443,6 @@ def rnx2crz(rinex_path, outdir="", force=True, path_of_rnx2crz="RNX2CRZ"):
         #    print stream.read()
     os.chdir(curdir)
     return out_rinex_path
-
-
-# def rinex_regex(compressed=True,compiled=False):
-#     if compressed:
-#         regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(o)|(d))"
-#     else:
-#         regexstr = "....[0-9]{3}.\.[0-9]{2}o"
-
-#     if compiled:
-#         return re.compile(regexstr)
-#     else:
-#         return regexstr
-
-
-# def rinex_regex_new_name(compressed=True,compiled=False):
-#     if compressed:
-#         regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
-#     else:
-#         regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}"
-
-#     if compiled:
-#         return re.compile(regexstr)
-#     else:
-#         return regexstr
 
 
 def rinex_read_epoch(
@@ -441,10 +493,10 @@ def rinex_read_epoch(
     except:
         pass
 
-    RnxLines = utils.open_readlines_smart(input_rinex_path_or_string)
+    rnx_lines = utils.open_readlines_smart(input_rinex_path_or_string)
 
-    Index_list = []
-    for iline, line in enumerate(RnxLines):
+    index_list = []
+    for iline, line in enumerate(rnx_lines):
         epoch_rnx2 = re.search("^ {1,2}([0-9]{1,2} * ){5}", line)
         epoch_rnx3 = re.search("^>", line)
 
@@ -452,7 +504,7 @@ def rinex_read_epoch(
             try:
                 epochdt = read_rnx_epoch_line(line, rnx2=True)
                 epochs_list.append(epochdt)
-                Index_list.append(iline)
+                index_list.append(iline)
             except:
                 log.error(line)
 
@@ -460,7 +512,7 @@ def rinex_read_epoch(
             try:
                 epochdt = read_rnx_epoch_line(line, rnx2=False)
                 epochs_list.append(epochdt)
-                Index_list.append(iline)
+                index_list.append(iline)
             except:
                 log.error(line)
 
@@ -468,14 +520,14 @@ def rinex_read_epoch(
         epochs_list = [e.replace(tzinfo=dateutil.tz.tzutc()) for e in epochs_list]
 
     if out_index:
-        OUTPUT = [epochs_list, Index_list]
+        output = [epochs_list, index_list]
     else:
-        OUTPUT = epochs_list
+        output = epochs_list
 
     if out_array:
-        OUTPUT = np.array(OUTPUT).T
+        output = np.array(output).T
 
-    return OUTPUT
+    return output
 
 
 def same_day_rinex_check(rinex1, rinex2):
@@ -533,18 +585,18 @@ def rinex_start_end(
     # NBsuite : c'est fait au 161018 mais par contre c'est un dirty copier coller
 
     epochs_list = []
-    Head = utils.head(input_rinex_path, 1500)
+    head = utils.head(input_rinex_path, 1500)
     epochs_list_head = rinex_read_epoch(
-        Head, interval_out=interval_out, add_tzinfo=add_tzinfo, out_array=False
+        head, interval_out=interval_out, add_tzinfo=add_tzinfo, out_array=False
     )
 
-    Tail = utils.tail(input_rinex_path, 1500)
+    tail = utils.tail(input_rinex_path, 1500)
     epochs_list_tail = rinex_read_epoch(
-        Tail, interval_out=interval_out, add_tzinfo=add_tzinfo, out_array=False
+        tail, interval_out=interval_out, add_tzinfo=add_tzinfo, out_array=False
     )
 
     epochs_list = epochs_list_head + epochs_list_tail
-
+    
     if len(epochs_list) > 0:
         first_epoch = np.min(epochs_list)
         last_epoch = np.max(epochs_list)
@@ -877,7 +929,6 @@ def rinex_spliter_gfzrnx(
     output_name="::RX3::",
     custom_cmds="",
 ):
-
     interval_size_hour = interval_size / 3600.0
 
     if stat_out_name == "":
@@ -1050,7 +1101,6 @@ def teqc_qc(rinex_path, quick_mode=False, optional_args=""):
 
 
 def rinex_renamer(input_rinex_path, output_directory, stat_out_name="", remove=False):
-
     if stat_out_name == "":
         stat_out_name = os.path.basename(input_rinex_path)[0:4]
 

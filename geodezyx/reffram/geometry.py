@@ -600,7 +600,7 @@ def helmert_trans_estim(X1list, X2list, Weights=[]):
     N = (A.T).dot(W).dot(A)
     AtWB = (A.T).dot(W).dot(l)
 
-    HParam = scipy.linalg.inv(N).dot(AtWB)
+    HParam = np.linalg.inv(N).dot(AtWB)
 
     return HParam, A, l
 
@@ -936,7 +936,7 @@ def rotate_points(
         for a, b, g in zip(alphal, betal, gammal):
 
             R1 = rotmat3(a, b, g, angtype=angtype, xyzreftuple=xyzreftuple)
-            R2 = conv.C_rpy2enu(a, b, g, angtype=angtype)
+            R2 = conv.c_rpy2enu(a, b, g, angtype=angtype)
 
             if Rtype == "R1":
                 R = R1
@@ -1531,8 +1531,8 @@ def mat_poids(Sinp, Ninp, fuvinp=1):
     for i in range(len(Sinp)):
         Ktemp.append(np.eye(Ninp[i]) * Sinp[i] ** 2)
 
-    K = scipy.linalg.block_diag(*Ktemp)
+    K = np.linalg.block_diag(*Ktemp)
     Q = (1 / fuvinp) * K
-    P = scipy.linalg.inv(Q)
+    P = np.linalg.inv(Q)
 
     return K, Q, P

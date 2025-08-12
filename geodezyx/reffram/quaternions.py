@@ -21,7 +21,6 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
-from scipy.spatial.transform import Rotation
 
 #### geodeZYX modules
 from geodezyx import utils
@@ -37,7 +36,6 @@ from geodezyx import utils
 # | |__| | |_| | (_| | ||  __/ |  | | | | | (_) | | | \__ \
 #  \___\_\\__,_|\__,_|\__\___|_|  |_| |_|_|\___/|_| |_|___/
 #
-
 
 
 def quaternion(r,p,h,angtype='rad',euler_sequence="zyx"):
@@ -60,15 +58,14 @@ def quaternion(r,p,h,angtype='rad',euler_sequence="zyx"):
     """
     if angtype == 'deg':
         r,p,h = np.deg2rad(r),np.deg2rad(p),np.deg2rad(h)
-        
-        
-    #### Old style cgkit DISCONTINUED
-    #M = cgt.mat3().fromEulerZYX(r,p,h)
-    #q = cgt.quat().fromMat(M)
 
+    #### Old style cgkit DISCONTINUED
+    # M = cgt.mat3().fromEulerZYX(r,p,h)
+    # q = cgt.quat().fromMat(M)
+    from scipy.spatial.transform import Rotation
     R = Rotation.from_euler(euler_sequence,[r,p,h],degrees=False)    
     q = R.as_quat()
-        
+
     return q
 
 def quatern_multi(rlist,plist,hlist,angtype='rad'):

@@ -212,7 +212,7 @@ def get_right_brdc(brdc_lis_inp, tmp_dir_inp):
     """
     if len(brdc_lis_inp) == 1:  ## normal case
         brdc_ori = brdc_lis_inp[0]
-        brdc_unzip = files_rw.unzip_gz_Z(brdc_ori, out_gzip_dir=tmp_dir_inp)
+        brdc_unzip = files_rw.unzip_gz_z(brdc_ori, out_gzip_dir=tmp_dir_inp)
     elif len(brdc_lis_inp) == 0:
         brdc_ori = None
         brdc_unzip = None
@@ -221,7 +221,7 @@ def get_right_brdc(brdc_lis_inp, tmp_dir_inp):
         log.warning("several brdc found, keep the last one")
         log.warning(brdc_lis_inp)
         brdc_ori = brdc_lis_inp[-1]
-        brdc_unzip = files_rw.unzip_gz_Z(brdc_ori, out_gzip_dir=tmp_dir_inp)
+        brdc_unzip = files_rw.unzip_gz_z(brdc_ori, out_gzip_dir=tmp_dir_inp)
     else:
         #### this should never happend
         brdc_ori = None
@@ -288,7 +288,7 @@ def get_right_prod(prod_lis_inp, tmp_dir_inp, prod_name, default_fallback):
     """
     if len(prod_lis_inp) == 1:  ## normal case
         prod_ori = prod_lis_inp[0]
-        prod_out = files_rw.unzip_gz_Z(prod_ori, out_gzip_dir=tmp_dir_inp)
+        prod_out = files_rw.unzip_gz_z(prod_ori, out_gzip_dir=tmp_dir_inp)
     elif len(prod_lis_inp) == 0 and default_fallback:
         log.warning("no prod. %s found, fallback to 'Default' in cfg file", prod_name)
         prod_out = "Default"
@@ -312,7 +312,7 @@ def get_right_prod(prod_lis_inp, tmp_dir_inp, prod_name, default_fallback):
             log.warning(prod_lis_bst)
             prod_ori = prod_lis_bst[-1]
 
-        prod_out = files_rw.unzip_gz_Z(prod_ori, out_gzip_dir=tmp_dir_inp)
+        prod_out = files_rw.unzip_gz_z(prod_ori, out_gzip_dir=tmp_dir_inp)
     else:
         #### this should never happend
         prod_out = None
@@ -382,6 +382,7 @@ def pride_pppar_runner_mono(
     -------
     None
     """
+
     if not bin_dir:
         bin_dir = os.path.join(os.environ["HOME"], ".PRIDE_PPPAR_BIN")
 
@@ -677,6 +678,49 @@ def pride_pppar_runner(rnx_path_list,
                        default_fallback=False,
                        dl_prods_only=False,
                        clean_run_dir=True):
+
+    """
+    Runs the PRIDE PPPAR process for a single RINEX file.
+
+    Parameters
+    ----------
+    rnx_path : str
+        The path to the RINEX file.
+    cfg_template_path : str
+        The path to the configuration template file.
+    prod_ac_name : str
+        The name of the analysis center providing the products.
+    prod_parent_dir : str
+        The parent directory where the products are stored.
+    tmp_dir : str
+        The temporary directory for intermediate files.
+    cfg_dir : str
+        The directory for configuration files.
+    run_dir : str
+        The directory where the run results will be stored.
+    cfg_prefix : str, optional
+        The prefix for the configuration file name. Default is "pride_pppar_cfg_1a".
+    mode : str, optional
+        The mode for the PRIDE PPPAR process. Default is "K".
+    options_dic : dict, optional
+        Additional options for the PRIDE PPPAR process. Default is an empty dictionary.
+    bin_dir : str, optional
+        The directory where the PRIDE PPPAR binaries are located. Default is None.
+    force : bool, optional
+        If True, forces the process to run even if logs already exist. Default is False.
+    dl_prods : bool, optional
+        If True, downloads the necessary products. Default is False.
+    default_fallback : bool, optional
+        If True, uses default values if products are not found. Default is False.
+    dl_prods_only : bool, optional
+        If True, only downloads the products and exits. Default is False.
+    clean_run_dir : bool, optional
+        If True, removes temporary files inside the run directory. Default is True.
+
+    Returns
+    -------
+    None
+    """
 
     date_list = sorted(list(set([conv.rinexname2dt(rnx) - dt.timedelta(seconds=0) for rnx in rnx_path_list])))
 

@@ -54,6 +54,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
@@ -68,8 +69,8 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
 </ul>
 </li>
 </ul>
@@ -610,6 +611,40 @@ un nombre pour la longeur max</p>
 <p>d : profondeur de la faille
 retourne X , et Vdeform(X)</p>
 <p>X et d doivent être dans la même unité, Vs pas forcément</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.geometry.seasonal_geocenter_motion">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">seasonal_geocenter_motion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year_frac_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.seasonal_geocenter_motion" title="Link to this definition"></a></dt>
+<dd><p>Calculate the ITRF2020 seasonal geocenter motion along X, Y, and Z axes.</p>
+<p>The sign and phase conventions used are such that the seasonal
+motion of the Earth’s center of figure (CF) with respect to
+the Earth’s center of mass (CM).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year_frac_inp</strong> (<em>float</em>) – Time in fractional years.</p></li>
+<li><p><strong>reverse</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, reverse the phase of 180deg.
+and then describes the motion of the CM w.r.t. CF.
+Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>cf_x</strong> (<em>float</em>) – Seasonal geocenter motion in meters along the X axis.</p></li>
+<li><p><strong>cf_y</strong> (<em>float</em>) – Seasonal geocenter motion in meters along the Y axis.</p></li>
+<li><p><strong>cf_z</strong> (<em>float</em>) – Seasonal geocenter motion in meters along the Z axis.</p></li>
+<li><p><em>Source</em></p></li>
+<li><p><em>——</em></p></li>
+<li><p><strong>https</strong> (<em>//itrf.ign.fr/ftp/pub/itrf/itrf2020/ITRF2020-geocenter-motion.dat</em>)</p></li>
+<li><p><em>Altamimi, Z., Rebischung, P., Collilieux, X. et al. ITRF2020</em></p></li>
+<li><p><em>an augmented reference frame refining the modeling of nonlinear station motions.</em></p></li>
+<li><p><strong>J Geod 97, 47 (2023). https</strong> (<em>//doi.org/10.1007/s00190-023-01738-w</em>)</p></li>
+<li><p><strong>https</strong> (<em>//link.springer.com/article/10.1007/s00190-023-01738-w</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1198,7 +1233,7 @@ The default is [“x”,”y”].</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>OUT</strong> – Interpolated parameters.
+<dd class="field-even"><p><strong>out</strong> – Interpolated parameters.
 Series if onely one epoch is provided, DF_EOP elsewere</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -1340,7 +1375,7 @@ or a (N,3)-shaped numpy array</p></li>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Be sure your input is in ECI (SP3 are in ECEF for instance).</p>
-<p>If neeeded, use <code class="docutils literal notranslate"><span class="pre">conv.ECEF2ECI()</span></code> (gross results)
+<p>If neeeded, use <code class="docutils literal notranslate"><span class="pre">conv.ecef2eci()</span></code> (gross results)
 or <code class="docutils literal notranslate"><span class="pre">reffram.OrbDF_crf2trf(inv_trf2crf=True)</span></code> (precise results)</p>
 <p>You can get the velocity with <code class="docutils literal notranslate"><span class="pre">reffram.DFOrb_velocity_calc()</span></code></p>
 <p><a class="reference external" href="https://downloads.rene-schwarz.com/download/M002-Cartesian_State_Vectors_to_Keplerian_Orbit_Elements.pdf">https://downloads.rene-schwarz.com/download/M002-Cartesian_State_Vectors_to_Keplerian_Orbit_Elements.pdf</a></p>
@@ -1523,7 +1558,7 @@ use the old quaterinons toolbox</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

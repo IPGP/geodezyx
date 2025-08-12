@@ -17,8 +17,11 @@ import pandas as pd
 import xarray as xr
 # import gsw
 #from scipy.signal import butter, filtfilt
-import scipy.signal as signal
-import scipy.optimize as optimize
+#import scipy.signal as signal
+#import scipy.optimize as optimize
+import scipy
+
+
 import datetime as dt
 
 
@@ -28,6 +31,23 @@ import datetime as dt
 #from scipy.signal import butter
 
 GRAVITY = 9.81
+
+
+def read_rbr_txt_data(file, t0 = None, t1 = None):
+
+    col = ['BPR temperature', 'BPR pressure', 'BPR temperature.1',
+           'BPR pressure.1', 'Temperature', 'Barometer temperature',
+           'Barometer pressure']
+
+    new_col = ['BPR temperature 1', 'BPR pressure 1', 'BPR temperature 2',
+           'BPR pressure 2', 'Temperature', 'Barometer temperature',
+           'Barometer pressure']
+
+    A0A = pd.read_csv(file, index_col = 0, parse_dates = True)
+    A0A = A0A[col]
+    A0A.columns = new_col
+    return A0A[t0:t1].dropna()
+
 
 def butter_highpass(cutoff, fs, order=5):
     """
@@ -51,7 +71,7 @@ def butter_highpass(cutoff, fs, order=5):
     """
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
-    out_butter = signal.butter(order, normal_cutoff, btype='high', analog=False, output='ba')
+    out_butter = scipy.signal.butter(order, normal_cutoff, btype='high', analog=False, output='ba')
     b, a = out_butter[0], out_butter[1]
     return b, a
 
@@ -77,7 +97,7 @@ def butter_lowpass(cutoff, fs, order=5):
     """
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
-    out_butter = signal.butter(order, normal_cutoff, btype='low', analog=False, output='ba')
+    out_butter = scipy.signal.butter(order, normal_cutoff, btype='low', analog=False, output='ba')
     b, a = out_butter[0], out_butter[1]
 
     return b, a
@@ -103,7 +123,7 @@ def butter_highpass_filtfilt(data, cutoff, fs, order=4):
         The filtered data.
     """
     b, a = butter_highpass(cutoff, fs, order=order)
-    y = signal.filtfilt(b, a, data)
+    y = scipy.signal.filtfilt(b, a, data)
     return y
 
 def butter_lowpass_filtfilt(data, cutoff, fs, order=4):
@@ -127,7 +147,7 @@ def butter_lowpass_filtfilt(data, cutoff, fs, order=4):
         The filtered data.
     """
     b, a = butter_lowpass(cutoff, fs, order=order)
-    y = signal.filtfilt(b, a, data)
+    y = scipy.signal.filtfilt(b, a, data)
     return y
 
 def butter_bandpass(lowcut, highcut, fs, order=3):
@@ -152,7 +172,7 @@ def butter_bandpass(lowcut, highcut, fs, order=3):
     a : ndarray
         The denominator coefficient vector of the filter.
     """
-    return signal.butter(order, [lowcut, highcut], fs=fs, btype='band')
+    return scipy.signal.butter(order, [lowcut, highcut], fs=fs, btype='band')
 
 def butter_bandpass_filtfilt(data, lowcut, highcut, fs, order=4):
     """
@@ -177,7 +197,7 @@ def butter_bandpass_filtfilt(data, lowcut, highcut, fs, order=4):
         The filtered data.
     """
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = signal.filtfilt(b, a, data)
+    y = scipy.signal.filtfilt(b, a, data)
     return y
 
 def butterworth(df, t0=3*24*3600, t1=10*24*3600, kind='bandpass', order=4):

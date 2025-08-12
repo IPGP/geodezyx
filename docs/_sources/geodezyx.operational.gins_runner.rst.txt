@@ -9,6 +9,14 @@ geodezyx.operational.gins\_runner package
 Submodules
 ----------
 
+geodezyx.operational.gins\_runner.gins\_bd\_update module
+---------------------------------------------------------
+
+.. automodule:: geodezyx.operational.gins_runner.gins_bd_update
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.operational.gins\_runner.gins\_common module
 -----------------------------------------------------
 
@@ -41,6 +49,14 @@ geodezyx.operational.gins\_runner.gins\_double\_diff module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.operational.gins\_runner.gins\_legacy module
+-----------------------------------------------------
+
+.. automodule:: geodezyx.operational.gins_runner.gins_legacy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.operational.gins\_runner.gins\_orbclk module
 -----------------------------------------------------
 
@@ -53,6 +69,22 @@ geodezyx.operational.gins\_runner.gins\_prairie module
 ------------------------------------------------------
 
 .. automodule:: geodezyx.operational.gins_runner.gins_prairie
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geodezyx.operational.gins\_runner.singugins\_run module
+-------------------------------------------------------
+
+.. automodule:: geodezyx.operational.gins_runner.singugins_run
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geodezyx.operational.gins\_runner.spotgins\_run module
+------------------------------------------------------
+
+.. automodule:: geodezyx.operational.gins_runner.spotgins_run
    :members:
    :undoc-members:
    :show-inheritance:

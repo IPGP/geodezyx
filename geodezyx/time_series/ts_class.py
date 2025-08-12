@@ -68,7 +68,7 @@ class Point():
         Note
         ----
         
-        A dictionary called anex is also initialized to allow a 
+        A dictionary called anex is also initialized to allow a
         versatile storage of a variety of data
         
         Exemple of dictionary keys 
@@ -140,7 +140,7 @@ class Point():
         self.sZ = sZ
 
         self.initype = 'XYZ'
-        self.F,self.L,self.H = conv.XYZ2GEO(self.X,self.Y,self.Z)
+        self.F,self.L,self.H = conv.xyz2geo(self.X, self.Y, self.Z)
 
     def FLHset(self,F=0,L=0,H=0,sF=0,sL=0,sH=0):
         self.F = F
@@ -151,8 +151,8 @@ class Point():
         self.sH = sH
 
         self.initype = 'FLH'
-        self.X,self.Y,self.Z = conv.GEO2XYZ(self.F,self.L,self.H)
-        self.sX,self.sY,self.sZ = conv.sFLH2sXYZ(F,L,H,sF,sL,sH)
+        self.X,self.Y,self.Z = conv.geo2xyz(self.F, self.L, self.H)
+        self.sX,self.sY,self.sZ = conv.sigma_geo2xyz(F, L, H, sF, sL, sH)
         
 
     def ENUset(self,E=np.nan,N=np.nan,U=np.nan,
@@ -215,17 +215,30 @@ class Point():
         dY =  self.Y - refENU.Y
         dZ =  self.Z - refENU.Z
 
-        Etmp,Ntmp,Utmp = conv.XYZ2ENU(dX,dY,dZ,refENU.F,refENU.L)
+        Etmp,Ntmp,Utmp = conv.xyz2enu(self.X, self.Y, self.Z,
+                                      refENU.X, refENU.Y, refENU.Z)
+        
         self.E,self.N,self.U = Etmp[0],Ntmp[0],Utmp[0]
 
-        if self.initype == 'FLH' and hasattr(self,'sF'):
+        if self.initype == 'FLH' and hasattr(self,'s_f'):
             if not np.isnan(self.sF):
-                self.sE,self.sN,self.sU = conv.sFLH2sENU(self.F,self.L,self.H,
-                                                         self.sF,self.sL,self.sH)
+                self.sE,self.sN,self.sU = conv.sigma_geo2enu(self.F, self.L, self.H,
+                                                             self.sF, self.sL, self.sH)
         elif self.initype == 'XYZ' and hasattr(self,'sX'):
-            if not np.isnan(self.sX):
-                self.sE,self.sN,self.sU = conv.sXYZ2sENU(self.X,self.Y,self.Z,
-                                                         self.sX,self.sY,self.sZ)
+            if np.isnan(self.sX):
+                
+                return
+                
+            if 'sdXY' in self.anex.keys():
+                sXY = self.anex['sdXY']
+                sXZ = self.anex['sdXZ']
+                sYZ = self.anex['sdYZ']
+            else:
+                sXY, sXZ, sYZ = 0,0,0
+                
+            self.sE,self.sN,self.sU = conv.sigma_xyz2enu(self.X, self.Y, self.Z,
+                                                         self.sX, self.sY, self.sZ,
+                                                         s_xy=sXY, s_yz=sYZ, s_xz=sXZ)
 
 
     def UTMcalc_pt(self,ellips="wgs84"):
@@ -394,20 +407,20 @@ class TimeSeriePoint:
 
         self.interp_set()
 
-    def add_point(self,inPoint):
+    def add_point(self, point_inp):
         """
         Method to add a Point in the TimeSerie Object
 
         Parameters
         ----------
-        inPoint : Point Object
+        point_inp : Point Object
 
         Returns
         -------
         None.
 
         """
-        self.pts.append(inPoint)
+        self.pts.append(point_inp)
         # this line is discontiued, because now nbpts is a property
         #self.nbpts = len(self.pts)
 
@@ -578,7 +591,7 @@ class TimeSeriePoint:
             sA,sB,sC = 'sF','sL','sH'
 
         elif coortype == 'ENU':
-            if self.boolENU == False:
+            if not self.boolENU:
                 log.warning("no ENU coord. for " + self.name)
                 return None
 
@@ -586,7 +599,7 @@ class TimeSeriePoint:
             sA,sB,sC = 'sE','sN','sU'
 
         elif coortype == 'UTM':
-            if self.boolUTM == False:
+            if not self.boolUTM:
                 log.warning("no UTM coord. for " + self.name)
                 return None
 
@@ -1128,7 +1141,8 @@ class TimeSeriePoint:
             self.HfT = scipy.interpolate.interp1d(T,H,bounds_error=False,kind=interptype)
 
         if (not hasattr(self.pts[0],'Eutm')) or np.isnan(self.pts[0].Eutm) == True:
-            log.warning("no UTM for " + self.name)
+            #log.warning("no UTM for " + self.name)
+            pass
         else:
             Eutm,Nutm,Uutm,T,_,_,_ = self.to_list('UTM')
 
@@ -1332,19 +1346,29 @@ class TimeSeriePoint:
                     i_stk.append(i)
             return pts_stk  , i_stk
         
-    def remove_duplicate_pts(self,coortype="XYZ"):
-        T = self.to_dataframe(coortype)["T"] 
-        
+    def rm_duplicat_pts(self, coortype="XYZ"):
+        """
+        Remove duplicate points from the time series.
+
+        Parameters
+        ----------
+        coortype : str, optional
+            The coordinate type to consider for duplication check. The default is "XYZ".
+
+        Returns
+        -------
+        None
+        """
+        T = self.to_dataframe(coortype)["T"]
+
         dup_bool = T.duplicated()
-        
+
         if dup_bool.sum() > 0:
-            log.warn("%s duplicated point(s) removed for %s",
-                     dup_bool.sum(), self.name)
-            
+            log.warning("%s duplicated point(s) removed for %s",
+                        dup_bool.sum(), self.name)
+
         self.pts = list(pd.Series(self.pts)[np.logical_not(dup_bool)])
-    
-    
-    
+
 
 
  #  ______                      _                      _        _    _____ _                         
@@ -1469,7 +1493,7 @@ class TimeSerieObs(object):
         self.bool_interp_uptodate = False
 
     def aleaobs(self):
-        iobs = randrange(self.nbobs)
+        iobs = np.random.randint(0,self.nbobs)
         log.info("observation no " + str(iobs))
 
         log.info(self.obs[iobs])
