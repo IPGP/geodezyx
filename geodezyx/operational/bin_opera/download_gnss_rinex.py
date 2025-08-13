@@ -60,7 +60,9 @@ def parse_args():
         "-a", "--archtype",
         default="stat",
         help="Archive directory structure type. Options: 'stat' (station-based), "
-             "'year' (year-based), 'daily' (daily structure). Default: stat"
+             "'year' (year-based), 'daily' (daily structure). "
+             "Exemple: 'stat/year/doy'. "
+             "Default: 'stat'"
     )
     parser.add_argument(
         "-u", "--user",
@@ -75,7 +77,7 @@ def parse_args():
     parser.add_argument(
         "-nr2", "--no_rnx2",
         action="store_true",
-        help="Skip downloading RINEX2 format files (8.3 filename convention)"
+        help="Skip downloading RINEX2 format files (short filename convention)"
     )
     parser.add_argument(
         "-nr3", "--no_rnx3",

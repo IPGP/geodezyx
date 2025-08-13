@@ -599,45 +599,45 @@ def listing_gins_timeline(
 #                                                                       |___/
 
 
-def rinex_timeline_datadico_merge_not_very_smart(datadico_list, priority_list):
-    """
-    Merge different RINEXs datadico, produced by rinex_timeline_datadico
-    coming from different archives
-    Args :
-        rinex_timeline_datadico : list of RINEX datadico
-        priority_list : priority list of 'optional_info' (archive ID)
-                        it will erase optional_info of lower priority
-    Returns :
-        datadico_out : a merged datadico
-    """
+# def rinex_timeline_datadico_merge_not_very_smart(datadico_list, priority_list):
+#     """
+#     Merge different RINEXs datadico, produced by rinex_timeline_datadico
+#     coming from different archives
+#     Args :
+#         rinex_timeline_datadico : list of RINEX datadico
+#         priority_list : priority list of 'optional_info' (archive ID)
+#                         it will erase optional_info of lower priority
+#     Returns :
+#         datadico_out : a merged datadico
+#     """
 
-    datadico_out = dict()
+#     datadico_out = dict()
 
-    datadico_merged = utils.dicts_of_list_merge(*datadico_list)
+#     datadico_merged = utils.dicts_of_list_merge(*datadico_list)
 
-    for k, dataval in datadico_merged.items():
+#     for k, dataval in datadico_merged.items():
 
-        rnxname_list = [e[0] for e in dataval]
-        archive_list = [e[1] for e in dataval]
-        date_list = [e[-1] for e in dataval]
+#         rnxname_list = [e[0] for e in dataval]
+#         archive_list = [e[1] for e in dataval]
+#         date_list = [e[-1] for e in dataval]
 
-        out_date_list, out_all_list = [], []
-        for r, a, d in zip(rnxname_list, archive_list, date_list):
-            if d not in out_date_list:
-                out_date_list.append(d)
-                out_all_list.append((r, a, d))
-            else:
-                ind_existing = out_date_list.index(d)
-                archd_existing = out_all_list[ind_existing][1]
-                if priority_list.index(a) < priority_list.index(archd_existing):
-                    out_date_list.remove(d)
-                    out_all_list.remove(out_all_list[ind_existing])
-                    out_date_list.append(d)
-                    out_all_list.append((r, a, d))
+#         out_date_list, out_all_list = [], []
+#         for r, a, d in zip(rnxname_list, archive_list, date_list):
+#             if d not in out_date_list:
+#                 out_date_list.append(d)
+#                 out_all_list.append((r, a, d))
+#             else:
+#                 ind_existing = out_date_list.index(d)
+#                 archd_existing = out_all_list[ind_existing][1]
+#                 if priority_list.index(a) < priority_list.index(archd_existing):
+#                     out_date_list.remove(d)
+#                     out_all_list.remove(out_all_list[ind_existing])
+#                     out_date_list.append(d)
+#                     out_all_list.append((r, a, d))
 
-        datadico_out[k] = out_all_list
+#         datadico_out[k] = out_all_list
 
-    return datadico_out
+#     return datadico_out
 
 
 # def timeline_plotter_old_bkp(datadico,start = dt.datetime(1980,1,1) ,
