@@ -722,6 +722,7 @@ def download_gnss_rinex(
             passwd=passwd,
             force=force,
         )
+
     else:
         log.warning("quiet mode, no download was performed")
         out_tup_lis = pd.Series([], dtype=str)
