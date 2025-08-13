@@ -111,6 +111,23 @@ def igs_ign_ensg_server(stat, date):
     urldic = _generic_server(stat, date, urlserver)
     return urldic
 
+def igs_bkg_server(stat, date):
+    urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/obs/"
+    # ftp://igs-ftp.bkg.bund.de/IGS/obs/2024/082/IGS00WRD_R_20240820000_01D_MN.rnx.gz
+
+    urldic = _generic_server(stat, date, urlserver)
+
+    # ### generate regex
+    # rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
+    #
+    # ### generate urls
+    # urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
+    # rnx3url = os.path.join(urldir, rnx3rgx)
+    #
+    # urldic = dict()
+    # urldic[3] = rnx3url
+
+    return urldic
 
 def nav_rob_server(stat, date):
     urlserver = "ftp://epncb.oma.be/pub/obs/BRDC/"
@@ -300,6 +317,8 @@ def _server_select(datacenter, site, curdate):
         urldic = sonel_server(site, curdate)
     elif datacenter == "euref":
         urldic = euref_server(site, curdate)
+    elif datacenter == "igs_bkg":
+        urldic = igs_bkg_server(site, curdate)
     elif datacenter in ("nav", "brdc"):
         urldic = nav_rob_server(site, curdate)
     elif datacenter in ("nav_rt", "brdc_rt"):
