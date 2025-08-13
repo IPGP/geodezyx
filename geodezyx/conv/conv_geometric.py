@@ -24,13 +24,6 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 import numpy as np
 
 
-#### geodeZYX modules
-
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
 ##########  END IMPORT  ##########
 
 

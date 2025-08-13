@@ -33,11 +33,6 @@ from geodezyx.conv import conv_rotation_matrices as rotmat
 # import re
 log = logging.getLogger("geodezyx")
 
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
 ##########  END IMPORT  ##########
 #### Coordinates conversion
 
