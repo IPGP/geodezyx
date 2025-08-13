@@ -1295,6 +1295,8 @@ def minmax_pattern_dt(date1_inp, date2_inp):
     """
     Convert two date strings into datetime objects and return the minimum and maximum.
 
+    This is useful for a frontend CLI function.
+
     Parameters
     ----------
     date1_inp : str
