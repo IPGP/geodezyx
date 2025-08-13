@@ -577,20 +577,21 @@ def download_gnss_rinex(
         a statdico is a dictionary associating Archives Centers to list of stations
 
         Exemple:
-            >>> statdico['archive center 1'] = ['STA1','STA2','STA3', ...]
-            >>> statdico['archive center 2'] = ['STA2','STA1','STA4', ...]
+            >>> statdico['archive center 1'] = ['STA1','STA200XXX','STA3', ...]
+            >>> statdico['archive center 2'] = ['STA200XXX','STA1','STA4', ...]
 
         the supported archive center are (april 2024):
             * igs_cddis or igs (CDDIS data center)
             * igs_sopac (for the SOPAC/UCSD/SIO data center, but not very reliable)
             * igs_ign (IGN's data center, main server at St Mandé)
             * igs_ign_ensg (IGN's data center, secondary server at ENSG, Marne-la-Vallée)
+            * igs_bkg (BKG's IGS data center, for the IGS stations)
             * sonel
             * euref (EPN data center hosted at ROB)
             * nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
             * from the ROB server, using GOP files
             * nav_rt or brdc_rt as archive center allows to download *real time* nav files from the BKG server
-            * _not reimplemented yet_
+         _not reimplemented yet_:
             * rgp (IGN's RGP St Mandé center)
             * rgp_mlv (IGN's RGP Marne la Vallée center)
             * rgp_1Hz (IGN's RGP, all the 24 hourly rinex for the day will be downloaded)
@@ -599,7 +600,6 @@ def download_gnss_rinex(
             * unavco
             * geoaus (Geosciences Australia)
             * ens_fr
-            * _not reimplemented yet_
 
     output_dir : str
         the root directory on your local drive were to store the RINEXs
