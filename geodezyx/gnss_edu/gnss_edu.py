@@ -13,12 +13,11 @@ import seaborn as sns
 import statsmodels.api as sm
 from scipy import stats
 
-
 import plotly.graph_objects as go
 import plotly.io as pio
 
 # GeodeZYX Toolbox’s - [Sakic et al., 2019]
-import geodezyx
+import geodezyx.files_rw as files_rw  # Import the file reading module
 import geodezyx.conv as conv                  # Import the conversion module
 import datetime as dt
 
@@ -70,7 +69,7 @@ def load_and_clean_rinex(path):
              et contenant une colonne 'ind_ligne' indiquant le numéro de ligne.
     """
     # Chargement du fichier dans un DataFrame avec l'index ['epoch', 'prn']
-    df = geodezyx.files_rw.read_rinex_obs(path, set_index=['epoch', 'prn'])
+    df = files_rw.read_rinex_obs(path, set_index=['epoch', 'prn'])
     
     # Suppression des colonnes entièrement vides
     df = df.dropna(axis=1, how='all')
@@ -108,11 +107,11 @@ def enrich_df_with_sat_positions(df, mysp3):
     """
     
     # Listes pour stocker les résultats
-    X_sat  = []
-    Y_sat  = []
-    Z_sat  = []
+    x_sat  = []
+    y_sat  = []
+    z_sat  = []
     dte_sat = []
-    dRelat = []
+    d_relat = []
     
     # Création de l'objet temps (pour la conversion)
     t = gpst.gpsdatetime()
@@ -124,41 +123,41 @@ def enrich_df_with_sat_positions(df, mysp3):
         t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
         
         # Calcul du temps d'émission initial (mjd)
-        t_emission_mjd = t.mjd - df.loc[(time_i, prn_i), 'C1'] / gnss_const.c / 86400.0
+        t_emission_mjd = t.mjd - df.loc[(time_i, prn_i), 'C1'] / conv.SPEED_OF_LIGHT / 86400.0
         
         # Calcul initial de la position du satellite
-        (X_sat_v, Y_sat_v, Z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd)
+        (x_sat_v, y_sat_v, z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd)
         
         # Calcul de l'effet relativiste à partir d'une dérivée numérique
         delta_t = 1e-3  # écart de temps en secondes
-        (Xs1, Ys1, Zs1, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd - delta_t/86400.0)
-        (Xs2, Ys2, Zs2, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd + delta_t/86400.0)
+        (xs1, ys1, zs1, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd - delta_t/86400.0)
+        (xs2, ys2, zs2, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd + delta_t/86400.0)
         
         # Estimation de la vitesse par différence centrée
-        VX  = np.array([Xs2 - Xs1, Ys2 - Ys1, Zs2 - Zs1]) / (2.0 * delta_t)
-        VX0 = np.array([X_sat_v, Y_sat_v, Z_sat_v])
+        vx  = np.array([xs2 - xs1, ys2 - ys1, zs2 - zs1]) / (2.0 * delta_t)
+        vx0 = np.array([x_sat_v, y_sat_v, z_sat_v])
         
-        dRelat_v = -2.0 * VX0.T @ VX / (gnss_const.c ** 2)
+        d_relat_v = -2.0 * vx0.T @ vx / (conv.SPEED_OF_LIGHT ** 2)
         
         # Correction du temps d'émission tenant compte du retard d'horloge et de l'effet relativiste
-        t_emission_corr = t_emission_mjd - dte_sat_v / 86400.0 - dRelat_v / 86400.0
+        t_emission_corr = t_emission_mjd - dte_sat_v / 86400.0 - d_relat_v / 86400.0
         
         # Recalcul de la position au temps corrigé
-        (X_sat_v, Y_sat_v, Z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_corr)
+        (x_sat_v, y_sat_v, z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_corr)
         
         # Stockage des résultats
-        X_sat.append(X_sat_v)
-        Y_sat.append(Y_sat_v)
-        Z_sat.append(Z_sat_v)
+        x_sat.append(x_sat_v)
+        y_sat.append(y_sat_v)
+        z_sat.append(z_sat_v)
         dte_sat.append(dte_sat_v)
-        dRelat.append(dRelat_v)
+        d_relat.append(d_relat_v)
     
     # Ajout des nouvelles colonnes au DataFrame
-    df['X_sat']   = X_sat 
-    df['Y_sat']   = Y_sat 
-    df['Z_sat']   = Z_sat
+    df['X_sat']   = x_sat
+    df['Y_sat']   = y_sat
+    df['Z_sat']   = z_sat
     df['dte_sat'] = dte_sat
-    df['dRelat']  = dRelat
+    df['dRelat']  = d_relat
 
     return df
 
@@ -168,7 +167,7 @@ def Sagnac_rotate_around_z(row):
     Retourne un pd.Series avec les nouvelles colonnes X_sat_corr, Y_sat_corr, Z_sat_corr.
     """
     # Calcul de l'angle de rotation en radians
-    alpha_rad = row['C1'] / gnss_const.c * gnss_const.Omega_e
+    alpha_rad = row['C1'] / conv.SPEED_OF_LIGHT * gnss_const.Omega_e
     # Construction de la matrice de rotation autour de l'axe Z
     Rz = np.array([[np.cos(alpha_rad), -np.sin(alpha_rad), 0],
                    [np.sin(alpha_rad),  np.cos(alpha_rad), 0],
@@ -207,7 +206,7 @@ def add_az_el_iono_columns(df, P_rnx_header, mynav):
     t = gpst.gpsdatetime()
     
     # Conversion des coordonnées de la station en géographiques
-    lon, lat, h = tools.toolCartGeoGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2])
+    lon, lat, h = conv.xyz2geo(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2])
     rad2deg = 180 / np.pi
     lon_d = lon * rad2deg
     lat_d = lat * rad2deg
@@ -219,6 +218,8 @@ def add_az_el_iono_columns(df, P_rnx_header, mynav):
                                        df['X_sat'],
                                        df['Y_sat'],
                                        df['Z_sat'])
+
+
     # Conversion en degrés
     Az_deg = Az_rad * rad2deg
     Ele_deg = Ele_rad * rad2deg
@@ -374,7 +375,7 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
 def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
                            P_est=None, P_rnx_header=None, tools=None):
     """
-    Calcule les résidus (V_est = B - A @ dP_est) et trace une figure contenant :
+    Calcule les résidus (v_est = B - A @ dP_est) et trace une figure contenant :
       1. La série temporelle des résidus (affichée en points)
       2. L'histogramme des résidus (nombre d'observations par bin)
       3. Le Q-Q Plot des résidus
@@ -399,15 +400,15 @@ def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
     """
     
     # Calcul des résidus et des valeurs prédites
-    V_est = B - A @ dP_est
-    B_est = A @ dP_est
+    v_est = B - A @ dP_est
+    b_est = A @ dP_est
     
     # Calcul des statistiques sur les résidus
-    moyenne    = np.mean(V_est)
-    variance   = np.var(V_est)
-    ecart_type = np.std(V_est)
-    skewness   = stats.skew(V_est)
-    kurtosis   = stats.kurtosis(V_est)
+    moyenne    = np.mean(v_est)
+    variance   = np.var(v_est)
+    ecart_type = np.std(v_est)
+    skewness   = stats.skew(v_est)
+    kurtosis   = stats.kurtosis(v_est)
     
     # Création de la figure avec GridSpec.
     # On utilise 4 lignes et 2 colonnes :
@@ -423,26 +424,26 @@ def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
     
     # 1. Série temporelle des résidus (affichage uniquement des points) – Top gauche
     ax_time = fig.add_subplot(gs[0, 0])
-    ax_time.scatter(np.arange(len(V_est)), V_est, color='green')
+    ax_time.scatter(np.arange(len(v_est)), v_est, color='green')
     ax_time.set_title("Série temporelle des résidus")
     ax_time.set_xlabel("Temps / Index")
     ax_time.set_ylabel("Résidus")
     
     # 2. Histogramme des résidus (nombre brut d'observations) – Top droite
     ax_hist = fig.add_subplot(gs[0, 1])
-    sns.histplot(V_est, bins=30, stat="count", color='skyblue', edgecolor='black', ax=ax_hist)
+    sns.histplot(v_est, bins=30, stat="count", color='skyblue', edgecolor='black', ax=ax_hist)
     ax_hist.set_title("Histogramme des résidus")
     ax_hist.set_xlabel("Résidus")
     ax_hist.set_ylabel("Nombre d'observations")
     
     # 3. Q-Q Plot des résidus – Ligne 1, Colonne 0
     ax_qq = fig.add_subplot(gs[1, 0])
-    sm.qqplot(V_est, line='s', ax=ax_qq)
+    sm.qqplot(v_est, line='s', ax=ax_qq)
     ax_qq.set_title("Q-Q Plot des résidus")
     
     # 4. Graphique des résidus vs. valeurs prédites – Ligne 1, Colonne 1
     ax_scatter = fig.add_subplot(gs[1, 1])
-    ax_scatter.scatter(B_est, V_est, alpha=0.7, color='darkorange')
+    ax_scatter.scatter(b_est, v_est, alpha=0.7, color='darkorange')
     ax_scatter.axhline(0, color='red', linestyle='--')
     ax_scatter.set_xlabel("Valeurs prédites")
     ax_scatter.set_ylabel("Résidus")
