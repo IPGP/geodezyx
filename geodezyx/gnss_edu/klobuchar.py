@@ -26,47 +26,8 @@ Meysam Mahooti (2024). Klobuchar Ionospheric Delay Model (https://www.mathworks.
 
 #%%
 import numpy as np
-from datetime import datetime, timedelta
-import math
-
-# Fonction pour convertir le temps calendaire en temps GPS
-# Un classique dans le gestion du temps
-# On a besoin du tow : Time of Week (sec)
-def cal2gpstime_1(year, month, day, hour, minute, second):
-    dt = datetime(year, month, day, hour, minute, second)
-    gps_start = datetime(1980, 1, 6)  # Début de l'ère GPS
-    delta = dt - gps_start
-    week = delta.days // 7
-    tow = (delta.days % 7) * 86400 + hour * 3600 + minute * 60 + second
-    return week, tow
-
-def cal2gpstime(year, month, day, hour, minute, sec):
-    # Convertir l'année en format à quatre chiffres
-    if 80 <= year <= 99:
-        year += 1900
-    elif 0 <= year <= 79:
-        year += 2000
-
-    # Calculer le terme 'm' en fonction du mois
-    if month <= 2:
-        y = year - 1
-        m = month + 12
-    else:
-        y = year
-        m = month
-
-    # Calculer la date julienne
-    JD = (365.25 * y) + (30.6001 * (m + 1)) + day + ((hour + minute / 60 + sec / 3600) / 24) + 1720981.5
-
-    # Calculer la semaine GPS
-    gps_week = int((JD - 2444244.5) / 7)
-
-    # Calculer les secondes GPS
-    gps_seconds = round((((JD - 2444244.5) / 7) - gps_week) * 604800 / 0.5) * 0.5
-
-    return gps_week, gps_seconds
-
-
+from geodezyx import conv
+import datetime as dt
 
 
 def klobuchar(phi, lambda_, elev, azimuth, tow, alpha, beta):
@@ -104,7 +65,7 @@ def klobuchar(phi, lambda_, elev, azimuth, tow, alpha, beta):
                   representing the period of the model
                   (4 coefficients - 8 bits each)
     Output:
-        dIon1   : Ionospheric slant range correction for
+        d_ion1   : Ionospheric slant range correction for
                   the L1 frequency (metre)
     ==================================================================
     """
@@ -135,28 +96,28 @@ def klobuchar(phi, lambda_, elev, azimuth, tow, alpha, beta):
     t = t % 86400  # Seconds of day
 
     # Slant factor
-    sF = 1 + 16 * (0.53 - e) ** 3
+    s_f = 1 + 16 * (0.53 - e) ** 3
 
     # Period of model
-    PER = beta[0] + beta[1] * lat_m + beta[2] * lat_m ** 2 + beta[3] * lat_m ** 3
-    PER = max(PER, 72000)
+    per = beta[0] + beta[1] * lat_m + beta[2] * lat_m ** 2 + beta[3] * lat_m ** 3
+    per = max(per, 72000)
 
     # Phase of the model
-    x = 2 * np.pi * (t - 50400) / PER
+    x = 2 * np.pi * (t - 50400) / per
 
     # Amplitude of the model
-    AMP = alpha[0] + alpha[1] * lat_m + alpha[2] * lat_m ** 2 + alpha[3] * lat_m ** 3
-    AMP = max(AMP, 0)
+    amp = alpha[0] + alpha[1] * lat_m + alpha[2] * lat_m ** 2 + alpha[3] * lat_m ** 3
+    amp = max(amp, 0)
 
     # Ionospheric correction
     if np.abs(x) > 1.57:
-        dIon1 = sF * 5e-9
+        d_ion1 = s_f * 5e-9
     else:
-        dIon1 = sF * (5e-9 + AMP * (1 - x ** 2 / 2 + x ** 4 / 24))
+        d_ion1 = s_f * (5e-9 + amp * (1 - x ** 2 / 2 + x ** 4 / 24))
 
     # Ionospheric slant range correction
-    dIon1 = c * dIon1
-    return dIon1
+    d_ion1 = c * d_ion1
+    return d_ion1
 
 if __name__ == "__main__":
     
@@ -180,7 +141,8 @@ if __name__ == "__main__":
     
     # Calcul du TOW
     # Exemple d'utilisation
-    week, tow = cal2gpstime_1(year, month, day, hour, minute, second)
+    t = dt.datetime(year, month, day, hour, minute, second)
+    week, tow = conv.dt2gpstime(t,secinweek=True)
     print("GPS Week:", week)
     print("GPS Seconds:", tow)
  

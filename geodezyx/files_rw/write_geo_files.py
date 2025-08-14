@@ -190,7 +190,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
     MJD  = conv.dt2mjd(start_dt)
     MJD_int = int(np.floor(MJD))
     MJD_dec = MJD - MJD_int
-    gps_wwww , gps_sec = conv.dt2gpstime(start_dt,False,"gps")
+    gps_wwww , gps_sec = conv.dt2gpstime(start_dt,True,"gps")
 
     header_line2 = "## {:4} {:15.8f} {:14.8f} {:5} {:15.13f}\n".format(gps_wwww,gps_sec,delta_epoch,MJD_int,MJD_dec)
 

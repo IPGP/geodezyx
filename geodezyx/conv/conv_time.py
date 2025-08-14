@@ -831,7 +831,7 @@ def dt_utc2dt_ut1_smart(dtin, df_eop_in,
         return dt_utc2dt_ut1(dtin, d_ut1)
 
 
-def dt2gpstime(dtin, dayinweek=True, inp_ref="utc", outputtype=int):
+def dt2gpstime(dtin, secinweek=False, inp_ref="utc", outputtype=int):
     """
     Time scale conversion
     
@@ -847,7 +847,7 @@ def dt2gpstime(dtin, dayinweek=True, inp_ref="utc", outputtype=int):
         "gps" : no correction applied 
         "tai" : apply -19 sec correction
         
-    dayinweek : bool
+    secinweek : bool
         if True : returns  GPS week, day in GPS week
         
         if False : returns  GPS week, sec in GPS week
@@ -887,11 +887,11 @@ def dt2gpstime(dtin, dayinweek=True, inp_ref="utc", outputtype=int):
             log.error("check inp_ref value: 'utc', 'tai', 'gps'")
             raise Exception
 
-        if dayinweek:
+        if not secinweek: # day in week
             day = np.floor(np.divide(secs, 86400))
             output1 = outputtype(int(week))
             output2 = outputtype(int(day))
-        else:
+        else: # sec in week
             output1 = outputtype(int(week))
             output2 = outputtype(int(secs))
 
