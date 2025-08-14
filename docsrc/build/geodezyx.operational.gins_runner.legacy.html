@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>geodezyx.operational.gins_runner.legacy package &mdash; geodezyx 4.x documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx.reffram package" href="geodezyx.reffram.html" />
+    <link rel="prev" title="geodezyx.operational.gins_runner package" href="geodezyx.operational.gins_runner.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/geodezyx_toolbox_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to geodezyx’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="geodezyx.operational.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.anubis_frontend">geodezyx.operational.anubis_frontend module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.cluster_gfz">geodezyx.operational.cluster_gfz module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_cddis">geodezyx.operational.download_cddis module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_dropbox">geodezyx.operational.download_dropbox module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_find_files">geodezyx.operational.download_find_files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_prods">geodezyx.operational.download_prods module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_rinex">geodezyx.operational.download_rinex module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_rinex_legacy">geodezyx.operational.download_rinex_legacy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_utils">geodezyx.operational.download_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.groops_frontend">geodezyx.operational.groops_frontend module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.hector_frontend">geodezyx.operational.hector_frontend module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.midas_frontend">geodezyx.operational.midas_frontend module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.pride_pppar_frontend">geodezyx.operational.pride_pppar_frontend module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_lister_plotter">geodezyx.operational.rinex_lister_plotter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_utils">geodezyx.operational.rinex_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rtklib_frontend">geodezyx.operational.rtklib_frontend module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.track_frontend">geodezyx.operational.track_frontend module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.html">geodezyx package</a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.operational.html">geodezyx.operational package</a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.operational.gins_runner.html">geodezyx.operational.gins_runner package</a></li>
+      <li class="breadcrumb-item active">geodezyx.operational.gins_runner.legacy package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/geodezyx.operational.gins_runner.legacy.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-geodezyx.operational.gins_runner.legacy">
+<span id="geodezyx-operational-gins-runner-legacy-package"></span><h1>geodezyx.operational.gins_runner.legacy package<a class="headerlink" href="#module-geodezyx.operational.gins_runner.legacy" title="Link to this heading"></a></h1>
+<p>Created on 10/08/2025 11:44:01</p>
+<p>&#64;author: psakic</p>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-geodezyx.operational.gins_runner.legacy.gins_double_diff">
+<span id="geodezyx-operational-gins-runner-legacy-gins-double-diff-module"></span><h2>geodezyx.operational.gins_runner.legacy.gins_double_diff module<a class="headerlink" href="#module-geodezyx.operational.gins_runner.legacy.gins_double_diff" title="Link to this heading"></a></h2>
+<p>Created on 26/02/2025 11:03:05</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_double_diff.double90_runner">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_double_diff.</span></span><span class="sig-name descname"><span class="pre">double90_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_prarie_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_data_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_double_diff.double90_runner" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_double_diff.double_diff_binom">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_double_diff.</span></span><span class="sig-name descname"><span class="pre">double_diff_binom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path_A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rinex_path_B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_data_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_data_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_double_diff.double_diff_binom" title="Link to this definition"></a></dt>
+<dd><p>DISCONTINUED</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_double_diff.double_diff_multi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_double_diff.</span></span><span class="sig-name descname"><span class="pre">double_diff_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_data_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_data_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_glo_gal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_double_diff.double_diff_multi" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>rinex_path_list :</dt><dd><p>List of RINEXs paths</p>
+</dd>
+<dt>temp_data_folder &amp; final_data_folder :</dt><dd><p>if empty string (‘’), files are saved in pygins_runner “TEMP_DATA” folder
+and in the specified folder else</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_double_diff.gen_dirs_from_double_diff">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_double_diff.</span></span><span class="sig-name descname"><span class="pre">gen_dirs_from_double_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dd_files_paths_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">director_generik_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">director_name_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_director_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_data_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stations_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oceanload_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_staocl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perso_orbclk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gins_style_orb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GRG'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'igs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repro</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_coords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NULL'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_double_diff.gen_dirs_from_double_diff" title="Link to this definition"></a></dt>
+<dd><p>NEW FCT WHICH CAN MANAGE BOTH ONE RINEX OR A LIST OF RINEX</p>
+<p>produce a director from a rinex, and write it in the specific location</p>
+<dl class="simple">
+<dt>Input:</dt><dd><p>rinex_paths_in : can be a rinex path (a string) or a list of paths</p>
+</dd>
+<dt>Return :</dt><dd><p>the path of the produced director as a string</p>
+</dd>
+</dl>
+<p>If the rinex is not in a gins style folder, it will be copied in the
+<code class="docutils literal notranslate"><span class="pre">temp_data_folder</span></code></p>
+<p>If <code class="docutils literal notranslate"><span class="pre">temp_data_folder</span></code> is not specified ( == ‘’) rinex will be copied in
+a ad hoc folder <code class="docutils literal notranslate"><span class="pre">../gin/TEMP_DATA</span></code></p>
+<p>If <code class="docutils literal notranslate"><span class="pre">out_director_folder</span></code> is not specified ( == ‘’), output director will be
+created in the <code class="docutils literal notranslate"><span class="pre">../gin/data/directeur</span> <span class="pre">folder</span></code></p>
+<dl class="simple">
+<dt>auto_staocl<span class="classifier">True or False</span></dt><dd><p>create automatically a station file and a ocean loading file
+with the rinex header
+auto mode is prioritary upon the manu mode
+so, if a path for stat file or ocload file is specified and
+auto_staocl is on, it will be the automatic stat/ocload
+which will be used</p>
+</dd>
+<dt>perso_orbclk<span class="classifier">True or False</span></dt><dd><p>download and use specifics orbits
+according to ac &amp; repro args
+(they are useless if perso_orbclk aren’t activated)</p>
+</dd>
+<dt>auto_interval<span class="classifier">True or False</span></dt><dd><p>find the interval in RINEX and apply it to the director</p>
+</dd>
+<dt>out_coords<span class="classifier">‘XYZ’ or ‘FLH’/’PLH’</span></dt><dd><p>for geocentrical or geographical coords in output.
+any other string leaves the type of the generic director.</p>
+</dd>
+<dt>prairie<span class="classifier">True or False</span></dt><dd><p>run prairie externally
+if True, prairie_kwargs control the arguments of the function
+prairie_manual (cf above)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.gins_runner.legacy.gins_legacy">
+<span id="geodezyx-operational-gins-runner-legacy-gins-legacy-module"></span><h2>geodezyx.operational.gins_runner.legacy.gins_legacy module<a class="headerlink" href="#module-geodezyx.operational.gins_runner.legacy.gins_legacy" title="Link to this heading"></a></h2>
+<p>Created on 19/04/2025 17:32:02</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.check_gins_exe">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">check_gins_exe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">streamin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">director_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.check_gins_exe" title="Link to this definition"></a></dt>
+<dd><p>Check the execution status of a GINS director.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>streamin</strong> (<em>file-like object</em>) – The input stream to read the execution output from.</p></li>
+<li><p><strong>director_name</strong> (<em>str</em>) – The name of the director being checked.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the execution was successful, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.dirs_copy_generik_2_working">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">dirs_copy_generik_2_working</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">director_name_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">director_generik_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_data_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.dirs_copy_generik_2_working" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.export_results_gins_listing">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">export_results_gins_listing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listings_list_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static_or_kinematic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kine'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outprefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'FLH'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.export_results_gins_listing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.get_director_list">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">get_director_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wildcard_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.get_director_list" title="Link to this definition"></a></dt>
+<dd><p>with a wildcard (e.g. ‘GWADA_MK2*’) and return a list of corresponding
+directors found in gin/data/directeur folder</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.merge_yaml">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">merge_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaml2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaml_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.merge_yaml" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.run_director_list_wrap">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">run_director_list_wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tupinp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.run_director_list_wrap" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.run_dirs_kwwrap">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">run_dirs_kwwrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kwarg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.run_dirs_kwwrap" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.run_dirs_multi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">run_dirs_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_paths_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nprocs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opts_gins_pc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opts_gins_90</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'OPERA'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmd_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exe_gins_dir'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.run_dirs_multi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.run_dirs_multislots_custom">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">run_dirs_multislots_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">director_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slots_lis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['',</span> <span class="pre">'U',</span> <span class="pre">'L',</span> <span class="pre">'R']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opts_gins_pc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opts_gins_90</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'OPERA'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ginspc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.run_dirs_multislots_custom" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.smart_directors_to_run">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">smart_directors_to_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wildcard_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_path_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.smart_directors_to_run" title="Link to this definition"></a></dt>
+<dd><p>smart runner check directors who worked, and thus give a list of directors
+whitout those who worked</p>
+<p>listing and directeur folders are inspected automatically</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.smart_listing_archive">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">smart_listing_archive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wildcard_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gins_main_archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gins_anex_archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepars_archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">director_archive</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.smart_listing_archive" title="Link to this definition"></a></dt>
+<dd><p>for each listing corresponding to the wildcard :
+if it’s a prepars =&gt; go to the prepars_archive
+if it’s a gins without duplicate  =&gt; go to the gins_main_archive
+if it’s a gins with duplcates =&gt; one goes to gins_main_archive</p>
+<blockquote>
+<div><p>the others in gins_anex_archive</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.sort_by_stations">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">sort_by_stations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">archive_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wildcard</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.sort_by_stations" title="Link to this definition"></a></dt>
+<dd><p>i is the indice of the first character of the station name in
+eg : i = 18 for filename KARIB_MK3_FLH_v2__bara_22282_2011_003</p>
+<p>archive path is ABSOLUTE b.c. it can be outside of the gins folder</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.write_oclo_file">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">write_oclo_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">station_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oceanload_out_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fes_yyyy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2004</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.write_oclo_file" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.gins_runner.legacy.gins_orbclk_convert">
+<span id="geodezyx-operational-gins-runner-legacy-gins-orbclk-convert-module"></span><h2>geodezyx.operational.gins_runner.legacy.gins_orbclk_convert module<a class="headerlink" href="#module-geodezyx.operational.gins_runner.legacy.gins_orbclk_convert" title="Link to this heading"></a></h2>
+<p>Created on 26/02/2025 11:36:09</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.bad_sat_finder">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.</span></span><span class="sig-name descname"><span class="pre">bad_sat_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbfilein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egrep_ready</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.bad_sat_finder" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.clk_2_gins">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.</span></span><span class="sig-name descname"><span class="pre">clk_2_gins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_pathin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.clk_2_gins" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.download_convert_2_gins_orb_clk">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.</span></span><span class="sig-name descname"><span class="pre">download_convert_2_gins_orb_clk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">centraldate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jpl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repro</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_temp_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cddis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.download_convert_2_gins_orb_clk" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.orbit_cleaner">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.</span></span><span class="sig-name descname"><span class="pre">orbit_cleaner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbfilein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbfileout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.orbit_cleaner" title="Link to this definition"></a></dt>
+<dd><p>remove sat of a gins orbit file without a nominal number of epoch</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.sort_orbit_gins">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.</span></span><span class="sig-name descname"><span class="pre">sort_orbit_gins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pathout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.sort_orbit_gins" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.sp3_2_gins">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.</span></span><span class="sig-name descname"><span class="pre">sp3_2_gins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sp3_pathin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_orbclk_convert.sp3_2_gins" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="geodezyx.operational.gins_runner.html" class="btn btn-neutral float-left" title="geodezyx.operational.gins_runner package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.reffram.html" class="btn btn-neutral float-right" title="geodezyx.reffram package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
