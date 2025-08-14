@@ -178,7 +178,7 @@ def bdgins_update(
     ## list_macromod.extend(["/"])
     ## list_maree_polaire.extend(["/"])
     ## list_pole.extend(["/"])
-    ## list_prairie.extend(["/"])
+    list_prairie.extend(["/"])
 
     ### misc files: the needed files are considered individually
     # some of them are a redundancy since they must be downloaded in the full folders
