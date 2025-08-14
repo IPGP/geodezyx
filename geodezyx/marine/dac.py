@@ -55,10 +55,10 @@ def dac_get_aviso(date_srt_inp, date_end_inp, out_dir, user, passwd):
 
         p_stk.append(p)
 
-    operational.ftp_download_front(p_stk, out_dir,
-                                   user=user,
-                                   passwd=passwd,
-                                   secure_ftp=False)
+    operational.ftp_downld_front(p_stk, out_dir,
+                                 user=user,
+                                 passwd=passwd,
+                                 secure_ftp=False)
 
     return
 

@@ -368,10 +368,10 @@ def ftp_objt_create(
     return ftp_main, ftp_obj_list_out
 
 
-def ftp_downld_core(ftp_obj, filename, localdir):
+def ftp_downld_core(ftp_obj, filename, localdir, force=False):
     """
     Performs the FTP download if we are already in the correct FTP folder.
-    This is an internal function of ftp_downloader.
+    This is an internal function of ftp_downld.
 
     Parameters
     ----------
@@ -381,6 +381,9 @@ def ftp_downld_core(ftp_obj, filename, localdir):
         The name of the file to be downloaded.
     localdir : str
         The local directory where the downloaded file should be saved.
+    force : bool, optional
+        If True, forces the download even if the file already exists locally.
+        Default is False.
 
     Returns
     -------
@@ -401,10 +404,20 @@ def ftp_downld_core(ftp_obj, filename, localdir):
     if not os.path.isdir(localdir):
         utils.create_dir(localdir)
 
+    dl_go = True
+    # Check if the file already exists locally
+    bool_dl = False
     if not utils.empty_file_check(localpath):
-        log.info(filename + " already exists ;)")
-        bool_dl = True
-    else:
+        if not force:
+            log.info(filename + " already exists ;)")
+            bool_dl = True
+            dl_go = False
+        else:
+            log.info(filename + " already exists, but re-download forced")
+            bool_dl = False
+            dl_go = True
+
+    if dl_go:
         try:
             localfile = open(localpath, "wb")
             ftp_obj.retrbinary("RETR " + filename, localfile.write, 1024)
@@ -420,7 +433,7 @@ def ftp_downld_core(ftp_obj, filename, localdir):
     return localpath, bool_dl
 
 
-def ftp_downloader(ftp_obj, full_remote_path, localdir):
+def ftp_downld_mono(ftp_obj, full_remote_path, localdir, force=False):
     """
     Downloads a file through FTP protocol.
 
@@ -432,6 +445,9 @@ def ftp_downloader(ftp_obj, full_remote_path, localdir):
         The full path of the file on the FTP server.
     localdir : str
         The local directory where the downloaded file should be saved.
+    force : bool, optional
+        If True, forces the download even if the file already exists locally.
+        Default is False.
 
     Returns
     -------
@@ -451,28 +467,28 @@ def ftp_downloader(ftp_obj, full_remote_path, localdir):
 
     ftp_obj.cwd(intermed_path)
 
-    return ftp_downld_core(ftp_obj, filename, localdir)
+    return ftp_downld_core(ftp_obj, filename, localdir, force=force)
 
 
-def ftp_downloader_wrap(intup):
+def ftp_downld_wrap(intup):
     """
-    This function is a wrapper for the ftp_downloader function. It unpacks the input tuple and passes it to the ftp_downloader function.
+    This function is a wrapper for the ftp_downld function. It unpacks the input tuple and passes it to the ftp_downld function.
 
     Parameters
     ----------
     intup : tuple
-        A tuple containing the parameters to be passed to the ftp_downloader function.
+        A tuple containing the parameters to be passed to the ftp_downld function.
 
     Returns
     -------
     tuple
-        The output of the ftp_downloader function.
+        The output of the ftp_downld function.
     """
-    outtup = ftp_downloader(*intup)
+    outtup = ftp_downld_mono(*intup)
     return outtup
 
 
-def ftp_download_front(
+def ftp_downld_front(
     urls,
     savedirs,
     parallel_download=1,
@@ -543,6 +559,7 @@ def ftp_download_front(
 
     # Create a list of FTP objects for parallel downloads
     ftpobj_mp_lis = ftpobj_lis * int(np.ceil(len(urllist) / parallel_download))
+    force_lis = [force] * len(urllist)
 
     # Check if there are less FTP objects than URLs for parallel download
     if len(ftpobj_mp_lis) < len(urllist):
@@ -555,7 +572,7 @@ def ftp_download_front(
 
     # Start the parallel downloads
     out_tup_lis = pool.map(
-        ftp_downloader_wrap, list(zip(ftpobj_mp_lis, urllist, savedirlist))
+        ftp_downld_wrap, list(zip(ftpobj_mp_lis, urllist, savedirlist, force_lis))
     )
 
     return out_tup_lis
