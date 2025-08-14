@@ -22,6 +22,51 @@ log = logging.getLogger("geodezyx")
 
 
 def _rnx_obs_rgx(stat, date):
+    """
+    Generate RINEX observation file regex patterns for both RINEX2 and RINEX3 formats.
+
+    This internal function creates regex patterns to match RINEX observation files
+    for a given station and date, supporting both the legacy 8.3 filename convention
+    (RINEX2) and the long filename convention (RINEX3).
+
+    Parameters
+    ----------
+    stat : str
+        4-character GNSS station name (e.g., 'ZIMM', 'TLSE').
+        Will be converted to lowercase for RINEX2 pattern.
+    date : datetime.datetime
+        Date for which to generate the regex patterns.
+
+    Returns
+    -------
+    tuple of (str, str)
+        A tuple containing:
+        - rnx2rgx : str
+            Regex pattern for RINEX2 observation files (8.3 format)
+        - rnx3rgx : str
+            Regex pattern for RINEX3 observation files (long format)
+
+    Notes
+    -----
+    The RINEX2 pattern uses the station name in lowercase with a wildcard
+    for the file type extension. The RINEX3 pattern follows the standard
+    long filename convention with:
+    - Country code: wildcard ("...")
+    - Data source: wildcard (".")
+    - File period: 01D (daily)
+    - Data frequency: wildcard ("...")
+    - Data type: .O (observation)
+    - Format/compression: wildcard (".*")
+
+    Examples
+    --------
+    ```
+    >>> import datetime as dt
+    >>> rnx2_pattern, rnx3_pattern = _rnx_obs_rgx('ZIMM', dt.datetime(2020, 1, 1))
+    >>> # rnx2_pattern might be: 'zimm001a.20o.*'
+    >>> # rnx3_pattern might be: 'ZIMM...._R_20200010000_01D_....O.*'
+    ```
+    """
     rnx2rgx = conv.statname_dt2rinexname(stat.lower(), date, rnxtype=".*")
     rnx3rgx = conv.statname_dt2rinexname_long(
         stat,
@@ -37,6 +82,70 @@ def _rnx_obs_rgx(stat, date):
 
 
 def _rnx_nav_rgx(stat, date, sys=".", data_source="."):
+    """
+    Generate RINEX navigation file regex patterns for both RINEX2 and RINEX3 formats.
+
+    This internal function creates regex patterns to match RINEX navigation files
+    for a given station and date, supporting both the legacy 8.3 filename convention
+    (RINEX2) and the long filename convention (RINEX3). Navigation files contain
+    satellite ephemeris and clock correction data.
+
+    Parameters
+    ----------
+    stat : str
+        4-character GNSS station name (e.g., 'BRDC', 'ZIMM').
+        For broadcast navigation files, typically use 'BRDC'.
+    date : datetime.datetime
+        Date for which to generate the regex patterns.
+    sys : str, optional
+        GNSS system identifier for RINEX3 navigation files. Default is "." (wildcard).
+        Common values:
+        - "G" : GPS navigation data
+        - "R" : GLONASS navigation data
+        - "E" : Galileo navigation data
+        - "C" : BeiDou navigation data
+        - "M" : Mixed/Multi-GNSS navigation data
+        - "." : Wildcard for any system
+    data_source : str, optional
+        Data source identifier for RINEX3 long filenames. Default is "." (wildcard).
+        Common values:
+        - "R" : Real-time data
+        - "S" : Survey/static data
+        - "U" : Ultra-rapid data
+        - "." : Wildcard for any source
+
+    Returns
+    -------
+    tuple of (str, str)
+        A tuple containing:
+        - rnx2rgx : str
+            Regex pattern for RINEX2 navigation files (8.3 format)
+        - rnx3rgx : str
+            Regex pattern for RINEX3 navigation files (long format)
+
+    Notes
+    -----
+    The RINEX2 pattern uses the station name in lowercase with a wildcard
+    for the file type extension. The RINEX3 pattern follows the standard
+    long filename convention for navigation files with:
+    - Country code: wildcard ("...")
+    - Data source: configurable (default wildcard)
+    - File period: 01D (daily)
+    - Data frequency: empty ("") for navigation files
+    - Data type: sys + "N" (Navigation)
+    - Format/compression: wildcard (".*")
+
+    Examples
+    --------
+    >>> import datetime as dt
+    >>> rnx2_pattern, rnx3_pattern = _rnx_nav_rgx('BRDC', dt.datetime(2020, 1, 1))
+    >>> # rnx2_pattern might be: 'brdc001a.20n.*'
+    >>> # rnx3_pattern might be: 'BRDC...._._20200010000_01D_.N.*'
+
+    >>> # For GPS-specific navigation files
+    >>> rnx2_gps, rnx3_gps = _rnx_nav_rgx('BRDC', dt.datetime(2020, 1, 1), sys="G", data_source="R")
+    >>> # rnx3_gps might be: 'BRDC...._R_20200010000_01D_GN.*'
+    """
     rnx2rgx = conv.statname_dt2rinexname(stat.lower(), date, rnxtype=".*")
     rnx3rgx = conv.statname_dt2rinexname_long(
         stat,
@@ -53,6 +162,51 @@ def _rnx_nav_rgx(stat, date, sys=".", data_source="."):
 
 
 def _generic_server(stat, date, urlserver):
+    """
+    Generate RINEX file URLs for a generic FTP server structure.
+
+    This internal function creates download URLs for both RINEX2 and RINEX3 observation
+    files following a standard FTP server directory structure: server/year/doy/filename.
+    This is the most common layout used by many GNSS data centers.
+
+    Parameters
+    ----------
+    stat : str
+        4-character GNSS station name (e.g., 'ZIMM', 'TLSE').
+        Station name case will be handled appropriately for each RINEX format.
+    date : datetime.datetime
+        Date for which to generate the URLs.
+        Used to construct the year/doy directory path and filename patterns.
+    urlserver : str
+        Base FTP server URL (e.g., 'ftp://example.com/data/').
+        Should include the protocol and base path to the RINEX data directory.
+
+    Returns
+    -------
+    dict
+        Dictionary mapping RINEX version numbers to their respective URLs:
+        - urldic[2] : str - URL for RINEX2 observation file
+        - urldic[3] : str - URL for RINEX3 observation file
+
+    Notes
+    -----
+    The function follows the standard GNSS data center directory structure:
+    - urlserver/YYYY/DOY/filename
+    Where:
+    - YYYY is the 4-digit year
+    - DOY is the 3-digit day of year (001-366)
+    - filename follows RINEX2 or RINEX3 naming conventions
+
+    This generic structure is used by servers like IGS SOPAC, IGN, and others.
+    Some servers (like CDDIS) have custom structures and require specialized functions.
+
+    Examples
+    --------
+    >>> import datetime as dt
+    >>> urls = _generic_server('ZIMM', dt.datetime(2020, 1, 15), 'ftp://example.com/data/')
+    >>> # urls[2] might be: 'ftp://example.com/data/2020/015/zimm015a.20o.*'
+    >>> # urls[3] might be: 'ftp://example.com/data/2020/015/ZIMM...._R_20200150000_01D_....O.*'
+    """
     rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
     ### generate urls
     urldir = str(os.path.join(urlserver, str(date.year), conv.dt2doy(date)))
@@ -91,7 +245,7 @@ def igs_cddis_server(stat, date):
     rnx3url = os.path.join(urldir, rnx3rgx)
 
     ### generate output urldic, key 2 and 3 are for rinex version
-    urldic = {}
+    urldic = dict()
     urldic[2] = rnx2url
     urldic[3] = rnx3url
 
@@ -111,23 +265,14 @@ def igs_ign_ensg_server(stat, date):
     urldic = _generic_server(stat, date, urlserver)
     return urldic
 
+
 def igs_bkg_server(stat, date):
     urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/obs/"
     # ftp://igs-ftp.bkg.bund.de/IGS/obs/2024/082/IGS00WRD_R_20240820000_01D_MN.rnx.gz
 
     urldic = _generic_server(stat, date, urlserver)
-
-    # ### generate regex
-    # rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
-    #
-    # ### generate urls
-    # urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
-    # rnx3url = os.path.join(urldir, rnx3rgx)
-    #
-    # urldic = dict()
-    # urldic[3] = rnx3url
-
     return urldic
+
 
 def nav_rob_server(stat, date):
     urlserver = "ftp://epncb.oma.be/pub/obs/BRDC/"
@@ -382,17 +527,28 @@ def effective_save_dir(parent_archive_dir, stat, date, archtype="stat"):
 
 
 def rnx_regex_indir(rnx_regex, dir_files_list):
-    r = re.compile(rnx_regex)
-    l = list(filter(r.search, dir_files_list))
-    if len(l) == 0:
-        return None
-    else:
-        return l[0]
+    """
+    Match files in a directory against a given regex pattern.
+
+    Parameters
+    ----------
+    rnx_regex : str
+        Regex pattern to match filenames.
+    dir_files_list : list of str
+        List of filenames in the directory.
+
+    Returns
+    -------
+    str or None
+        The first matching filename, or None if no match is found.
+    """
+    matches = [file for file in dir_files_list if re.search(rnx_regex, file)]
+    return matches[0] if matches else None
 
 
 def crawl_ftp_files(
     table,
-    sftp='auto',
+    sftp="auto",
     user=None,
     passwd=None,
     path_ftp_crawled_files_save=None,
@@ -400,16 +556,92 @@ def crawl_ftp_files(
     force=False,
 ):
     """
-    filter the table with download_gnss_rinex with an
-    optimized FTP crawl
+    Crawl FTP servers to find available RINEX files and update download table.
+
+    This function performs an optimized FTP crawl by reusing connections and
+    minimizing directory changes. It checks for existing local files, connects
+    to FTP servers, lists remote files, and updates the table with availability
+    status and actual file URLs.
+
+    Parameters
+    ----------
+    table : pd.DataFrame
+        Input table containing RINEX download metadata with columns:
+        - 'host': FTP server hostname
+        - 'dir': Remote directory path
+        - 'outdir': Local output directory
+        - 'rnxrgx': RINEX filename regex pattern
+        - 'sftp': Boolean indicating if SFTP should be used
+        - 'crawled': Boolean indicating if already crawled
+    sftp : str or bool, optional
+        SFTP mode setting. Default is 'auto'.
+        - 'auto': Use the 'sftp' column value from each table row
+        - True/False: Force SFTP on/off for all connections
+    user : str, optional
+        FTP username. Default is None (anonymous).
+    passwd : str, optional
+        FTP password. Default is None (anonymous).
+    path_ftp_crawled_files_save : str, optional
+        Path to save the crawled files table as CSV.
+        If None, no file is saved.
+    path_all_ftp_files_save : str, optional
+        Path to save all discovered FTP files as CSV.
+        If None, no file is saved.
+    force : bool, optional
+        Force re-download even if files exist locally. Default is False.
+
+    Returns
+    -------
+    tuple of (pd.DataFrame, pd.Series, pd.Series)
+        - table_use : pd.DataFrame
+            Updated table with crawl results, including new columns:
+            - 'ok_dwl': Boolean indicating file is available for download
+            - 'ok_loc': Boolean indicating file exists locally
+            - 'rnxnam': Actual filename found on server
+            - 'url_true': Complete FTP URL for download
+        - all_ftp_files : pd.Series
+            All files discovered on FTP servers with full URLs
+        - all_loc_files : pd.Series
+            Local file paths for files that already exist
+
+    Notes
+    -----
+    The function implements several optimizations:
+    - Reuses FTP connections when possible (same host)
+    - Reconnects every 50 operations to avoid timeouts
+    - Caches local and remote directory listings
+    - Only changes directories when necessary
+    - Saves intermediate results for recovery
+
+    The crawling process:
+    1. Checks for existing local files first
+    2. Connects to FTP server when host changes
+    3. Lists remote directory contents when directory changes
+    4. Matches files using regex patterns
+    5. Updates table with availability status
+    6. Generates download URLs for available files
+
+    Examples
+    --------
+    >>> import pandas as pd
+    >>> table = pd.DataFrame({
+    ...     'host': ['ftp.example.com'],
+    ...     'dir': ['/data/2020/001'],
+    ...     'outdir': ['/local/data'],
+    ...     'rnxrgx': ['station001a.20o.*'],
+    ...     'sftp': [False],
+    ...     'crawled': [False]
+    ... })
+    >>> crawled_table, all_files, local_files = crawl_ftp_files(table)
     """
 
     def _save_crawled_files(table_inp):
+        """Save crawled files table to CSV if path is provided."""
         if path_ftp_crawled_files_save:
             table_inp.to_csv(path_ftp_crawled_files_save)
-        return None
 
     def _get_and_save_all_ftp_files(all_ftp_files_stk_inp):
+        """Concatenate and save all discovered FTP files."""
         if all_ftp_files_stk_inp:
             all_ftp_files_out = pd.concat(all_ftp_files_stk_inp)
             all_ftp_files_out.reset_index(drop=True, inplace=True)
@@ -421,99 +653,99 @@ def crawl_ftp_files(
 
         return all_ftp_files_out
 
-    ### rename the columns
-    if user or passwd:
-        loginftp = True
-    else:
-        loginftp = False
-
-    ### Do the correct split for the URLs
     table_use = table.copy()
 
-    #### Initialisation of the 1st variables for the loop
-    prev_row_ftpobj = table_use.iloc[0]
-    prev_row_cwd = table_use.iloc[0]
-    ftp_files_list = []
-    all_ftp_files_stk = []
-    local_files_lis = []
-    count_loop = 0  # restablish the connexion after count_nmax loops (avoid freezing)
-    count_nmax = 50
-    ftpobj = None
+    # Initialize loop variables
+    prev_host = ""  # Track previous host to reuse connections
+    prev_dir = ""  # Track previous directory to avoid unnecessary changes
+    ftp_files_list = []  # Cache of current directory file listing
+    all_ftp_files_stk = []  # Stack to collect all discovered files
+    local_files_lis = []  # Cache of current local directory listing
+    count_loop = 0  # Counter for connection refresh
+    count_nmax = 50  # Maximum operations before reconnecting
+    ftpobj = None  # Current FTP connection object
 
     for irow, row in table_use.iterrows():
-
+        # Skip rows already crawled
         if row["crawled"]:
             continue
 
-        #### do a local check
-        if (prev_row_cwd["outdir"] != row["outdir"]) or irow == 0:
+        # Check local files when directory changes
+        if prev_dir != row["outdir"] or irow == 0:
             local_files_lis = glob.glob(row["outdir"] + "/*")
+
+        # Check if file already exists locally
         rnxlocal = rnx_regex_indir(row["rnxrgx"], local_files_lis)
 
-        if rnxlocal and os.path.getsize(rnxlocal) == 0:
-            log.warning("file %s is empty, will be re-downloaded :/ ", rnxlocal)
-            pass
-        elif rnxlocal and not force:
-            log.info("%s already exists locally ;)", os.path.basename(rnxlocal))
-            table_use.loc[irow, "ok_loc"] = True
-            table_use.loc[irow, "ok_dwl"] = False
-            table_use.loc[irow, "rnxnam"] = os.path.basename(rnxlocal)
+        # Skip if file exists locally and not forcing download
+        if rnxlocal and os.path.getsize(rnxlocal) > 0:
+            rnxloc_bn = os.path.basename(rnxlocal)
+            if not force:
+                log.info("%s already exists locally ;)", rnxloc_bn)
+                table_use.loc[irow, "ok_loc"] = True
+                table_use.loc[irow, "ok_dwl"] = False
+                table_use.loc[irow, "rnxnam"] = os.path.basename(rnxlocal)
+                continue
+            else: # force mode
+                log.info(
+                    "%s already exists locally, but re-download forced",
+                    rnxloc_bn,
+                )
+                table_use.loc[irow, "ok_loc"] = False
+                table_use.loc[irow, "ok_dwl"] = True
+                table_use.loc[irow, "rnxnam"] = os.path.basename(rnxlocal)
 
+        count_loop += 1
 
-            continue
-
-        count_loop = count_loop + 1  #### must be after local file check
-        ####### we recreate a new FTP object if the host URL is not the same
-        if (
-            row["host"] != prev_row_ftpobj["host"]
-            or count_loop > count_nmax
-            or count_loop == 1
-        ):
-
-            if ftpobj:  ## close previous FTP object
+        # Create new FTP connection if needed
+        if row["host"] != prev_host or count_loop > count_nmax or count_loop == 1:
+            if ftpobj:
                 ftpobj.close()
 
-            if sftp == "auto":
-                sftp_use = bool(row["sftp"])
-            else:
-                sftp_use = sftp
-
+            # Determine SFTP mode: use row value if 'auto', otherwise use parameter
+            sftp_use = bool(row["sftp"]) if sftp == "auto" else sftp
             ftpobj, _ = dlutils.ftp_objt_create(
                 secure_ftp_inp=sftp_use,
-                # chdir='/',
-                host=prev_row_ftpobj["host"],
+                host=row["host"],
                 user=user,
                 passwd=passwd,
             )
-            prev_row_ftpobj = row
+            prev_host = row["host"]
+
+            # Save intermediate results and reset counter on reconnection
             if count_loop > count_nmax:
                 count_loop = 0
                 _save_crawled_files(table_use)
                 _get_and_save_all_ftp_files(all_ftp_files_stk)
 
-        ####### we recreate a new file list if the date path is not the same
-        if (prev_row_cwd["dir"] != row["dir"]) or irow == 0:
+        # Get file list when directory changes
+        if prev_dir != row["dir"] or irow == 0:
             log.info("chdir " + row["dir"])
-            ftpobj.cwd("/")
+            ftpobj.cwd("/")  # Reset to root directory first
 
-            try:  #### we try to change for the right folder
+            try:
                 ftpobj.cwd(row["dir"])
-            except Exception as e:  #### If not possible, then no file in the list
+                ftp_files_list = dlutils.ftp_dir_list_files(ftpobj)
+
+                # Save all FTP files for reporting with full URLs
+                ftp_files_series = pd.Series(ftp_files_list)
+                ftp_files_series = (
+                    os.path.join("ftp://", row["host"], row["dir"])
+                    + "/"
+                    + ftp_files_series
+                )
+                all_ftp_files_stk.append(ftp_files_series)
+
+            except Exception as e:
                 log.warning("unable to chdir to %s, exception %s", row["dir"], e)
                 ftp_files_list = []
 
-            ftp_files_list = dlutils.ftp_dir_list_files(ftpobj)
-            ftp_files_series = pd.Series(ftp_files_list)
-            ftp_files_series = (
-                os.path.join("ftp://", row["host"], row["dir"]) + "/" + ftp_files_series
-            )
-            all_ftp_files_stk.append(ftp_files_series)
+            prev_dir = row["dir"]
 
-            prev_row_cwd = row
-
-        ####### we check if the files is avaiable
+        # Check if file exists on server using regex pattern
         rnx_return = rnx_regex_indir(row["rnxrgx"], ftp_files_list)
 
+        # Update table based on file availability
         if rnx_return:
             table_use.loc[irow, "rnxnam"] = rnx_return
             table_use.loc[irow, "ok_dwl"] = True
@@ -522,29 +754,31 @@ def crawl_ftp_files(
             table_use.loc[irow, "rnxnam"] = ""
             table_use.loc[irow, "ok_dwl"] = False
             log.warning(row["rnxrgx"] + " not found on server :(")
+
         table_use.loc[irow, "crawled"] = True
 
-    ####### we save the URL if the file is available
-    rnx_ok_dwl = table_use["ok_dwl"] & ~ table_use["ok_loc"]
-
-    join_url = lambda e: os.path.join("ftp://", e["host"], e["dir"], e["rnxnam"])
+    # Generate URLs for downloadable files (available remotely but not locally)
+    rnx_ok_dwl = table_use["ok_dwl"] & ~table_use["ok_loc"]
     table_use.loc[rnx_ok_dwl, "url_true"] = table_use.loc[rnx_ok_dwl].apply(
-        join_url, axis=1
+        lambda x: os.path.join("ftp://", x["host"], x["dir"], x["rnxnam"]), axis=1
     )
 
+    # Save final results
     _save_crawled_files(table_use)
     all_ftp_files = _get_and_save_all_ftp_files(all_ftp_files_stk)
 
+    # Clean up FTP connection
     if ftpobj:
         ftpobj.close()
 
+    # Generate local file paths for files that exist locally
     rnx_ok_loc = table_use["ok_loc"]
     if rnx_ok_loc.sum() > 0:
-        join_loc = lambda e: os.path.join(e["outdir"], e["rnxnam"])
-        all_loc_files = pd.Series(table_use.loc[rnx_ok_loc].apply(
-            join_loc, axis=1
-        ))
-
+        all_loc_files = pd.Series(
+            table_use.loc[rnx_ok_loc].apply(
+                lambda e: os.path.join(e["outdir"], e["rnxnam"]), axis=1
+            )
+        )
     else:
         all_loc_files = pd.Series([])
 
@@ -683,7 +917,9 @@ def download_gnss_rinex(
     if path_ftp_crawled_files_load:
         table = pd.read_csv(path_ftp_crawled_files_load)
     else:
-        table = gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3)
+        table = gen_crawl_table(
+            statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
+        )
 
     if len(table) == 0:
         log.error("No RINEX files found for the given criteria.")
@@ -696,7 +932,7 @@ def download_gnss_rinex(
     else:
         table_crawl, files_all, files_loc = crawl_ftp_files(
             table,
-            sftp='auto',
+            sftp="auto",
             user=user,
             passwd=passwd,
             path_ftp_crawled_files_save=path_ftp_crawled_files_save,
@@ -707,13 +943,18 @@ def download_gnss_rinex(
     #### get only the valid (true) url
     table_dl = table_crawl.loc[table_crawl["url_true"].dropna().index]
 
+    # Initialize output list
+    out_tup_lis = []
+
+    # Only download if files are available and not in quiet mode
     if len(table_dl) == 0:
         log.error(
             "no valid RINEX URL found/selected on the FTP server, check your inputs"
         )
-
-    if not quiet_mode and len(table_dl) > 0:
-        out_tup_lis = dlutils.ftp_download_front(
+    elif quiet_mode:
+        log.warning("quiet mode, no download was performed")
+    else:
+        out_tup_lis = dlutils.ftp_downld_front(
             table_dl["url_true"].values,
             table_dl["outdir"].values,
             parallel_download=parallel_download,
@@ -723,43 +964,80 @@ def download_gnss_rinex(
             force=force,
         )
 
-    else:
-        log.warning("quiet mode, no download was performed")
-        out_tup_lis = pd.Series([], dtype=str)
-
     ### add the local paths to the output tuples
     if len(files_loc) > 0:
-        loc_tup_lis = pd.Series([(f, True) for f in files_loc])
-        out_tup_lis = pd.concat((loc_tup_lis, out_tup_lis))
+        loc_tup_lis = [(f, True) for f in files_loc]
+        out_tup_lis_fin = loc_tup_lis + out_tup_lis
+    else:
+        out_tup_lis_fin = out_tup_lis
+
+    log.info(
+        "RINEX files fetched: total: %d, downloaded: %d, already here: %d",
+        len(out_tup_lis_fin),
+        len(out_tup_lis),
+        len(files_loc),
+    )
 
     return out_tup_lis
 
 
 def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3):
+    """
+    Generate a crawl table for RINEX file downloads.
+
+    Parameters
+    ----------
+    statdico : dict
+        Dictionary mapping data centers to station lists.
+    date_range : list
+        List of datetime objects for the date range.
+    output_dir : str
+        Root output directory.
+    archtype : str
+        Archive directory structure type.
+    no_rnx2 : bool
+        Skip RINEX2 files if True.
+    no_rnx3 : bool
+        Skip RINEX3 files if True.
+
+    Returns
+    -------
+    pd.DataFrame
+        Table with download metadata for each RINEX file.
+    """
     table_proto = []
+
     for datacenter, site_lis in statdico.items():
         log.info("datacenter/stations: %s/%s", datacenter, " ".join(site_lis))
+
         for date, site in itertools.product(date_range, site_lis):
-            urldic, sftp, mode1hz = _server_select(datacenter, site, date)
+            urldic, sftp, _ = _server_select(datacenter, site, date)
             if not urldic:
                 continue
+
             outdir = effective_save_dir(output_dir, site, date, archtype)
+
             for rnxver, rnxurl in urldic.items():
                 if (rnxver == 2 and no_rnx2) or (rnxver == 3 and no_rnx3):
                     continue
                 table_proto.append((date, site, outdir, rnxver, rnxurl, sftp))
 
-        col = ["date", "site", "outdir", "ver", "url_theo", "sftp"]
-        table = pd.DataFrame(table_proto, columns=col)
-        table["crawled"] = False
-        table["ok_dwl"] = False
-        table["ok_loc"] = False
-        table["url_true"] = None
-        table["rnxnam"] = ""
+    # Create DataFrame with all collected data
+    table = pd.DataFrame(
+        table_proto, columns=["date", "site", "outdir", "ver", "url_theo", "sftp"]
+    )
 
-        urlpathobj = table["url_theo"].apply(pathlib.Path)
-        table["rnxrgx"] = urlpathobj.apply(lambda p: p.name)
-        table["host"] = urlpathobj.apply(lambda p: p.parts[1])
-        table["dir"] = urlpathobj.apply(lambda p: os.path.join(*p.parts[2:-1]))
+    # Add status columns
+    table["crawled"] = False
+    table["ok_dwl"] = False
+    table["ok_loc"] = False
+    table["url_true"] = None
+    table["rnxnam"] = ""
+
+    # Parse URL components
+    urlpaths = table["url_theo"].apply(pathlib.Path)
+    table["rnxrgx"] = urlpaths.apply(lambda p: p.name)
+    table["host"] = urlpaths.apply(lambda p: p.parts[1])
+    table["dir"] = urlpaths.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
     return table

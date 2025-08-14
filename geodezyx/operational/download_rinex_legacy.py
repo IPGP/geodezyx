@@ -498,7 +498,7 @@ def download_gnss_rinex_legacy(
             )
 
             for iurl, isavedir in zip(urllist, savedirlist):
-                localpath, bool_dl = dlutils.ftp_downloader(ftp_obj, iurl[0], isavedir)
+                localpath, bool_dl = dlutils.ftp_downld_mono(ftp_obj, iurl[0], isavedir)
 
     localfiles_lis = []
     skiped_url = 0
