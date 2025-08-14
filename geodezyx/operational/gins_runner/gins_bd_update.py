@@ -172,13 +172,13 @@ def bdgins_update(
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
     ## list_antex.extend(["/"]) ## temporary off because updated continuously
-    list_constell.extend(["/"])
-    list_exe_ppp.extend(["/"])
+    ## list_constell.extend(["/"])
+    ## list_exe_ppp.extend(["/"])
     ## list_lunisolaires.extend(["/"]) ## temporary off because updated continuously
-    list_macromod.extend(["/"])
-    list_maree_polaire.extend(["/"])
-    list_pole.extend(["/"])
-    list_prairie.extend(["/"])
+    ## list_macromod.extend(["/"])
+    ## list_maree_polaire.extend(["/"])
+    ## list_pole.extend(["/"])
+    ## list_prairie.extend(["/"])
 
     ### misc files: the needed files are considered individually
     # some of them are a redundancy since they must be downloaded in the full folders
@@ -201,9 +201,7 @@ def bdgins_update(
     # here is an hybrid tropo/misc file
     list_tropo_vmf1.append(f"orography_ell")
 
-
     ### time dependant files
-
     while date <= date_end + dt.timedelta(days=2): # 2 days later is need for cat orb/clk
         day = str(date.day).zfill(2)
         month = str(date.month).zfill(2)
@@ -231,13 +229,13 @@ def bdgins_update(
     ###### DESTINATION FOLDERS
     dest_subdir_dic = {
         ### full folders
-        "ANTEX": list_antex,
-        "constell": list_constell,
-        "EXE_PPP": list_exe_ppp,
-        "lunisolaires": list_lunisolaires,
-        "macromod": list_macromod,
-        "maree_polaire": list_maree_polaire,
-        "prairie": list_prairie,
+        #"ANTEX": list_antex,
+        #"constell": list_constell,
+        #"EXE_PPP": list_exe_ppp,
+        #"lunisolaires": list_lunisolaires,
+        #"macromod": list_macromod,
+        #"maree_polaire": list_maree_polaire,
+        #"prairie": list_prairie,
         ### misc files
         ".": list_misc,  ## for misc files, destination is in the input path (.)
         ### time dependant files
