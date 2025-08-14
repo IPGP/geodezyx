@@ -6,6 +6,14 @@ geodezyx.operational.gins\_runner package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   geodezyx.operational.gins_runner.legacy
+
 Submodules
 ----------
 
@@ -41,26 +49,10 @@ geodezyx.operational.gins\_runner.gins\_dirs\_run module
    :undoc-members:
    :show-inheritance:
 
-geodezyx.operational.gins\_runner.gins\_double\_diff module
------------------------------------------------------------
+geodezyx.operational.gins\_runner.gins\_orbclk\_concat module
+-------------------------------------------------------------
 
-.. automodule:: geodezyx.operational.gins_runner.gins_double_diff
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-geodezyx.operational.gins\_runner.gins\_legacy module
------------------------------------------------------
-
-.. automodule:: geodezyx.operational.gins_runner.gins_legacy
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-geodezyx.operational.gins\_runner.gins\_orbclk module
------------------------------------------------------
-
-.. automodule:: geodezyx.operational.gins_runner.gins_orbclk
+.. automodule:: geodezyx.operational.gins_runner.gins_orbclk_concat
    :members:
    :undoc-members:
    :show-inheritance:
