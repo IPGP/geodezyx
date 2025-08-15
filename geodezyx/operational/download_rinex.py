@@ -224,6 +224,7 @@ def _generic_server(stat, date, urlserver, urlsuffix=None):
 
     return urldic
 
+
 def igs_sopac_server(stat, date):
     # plante si trop de requete
     urlserver = "ftp://garner.ucsd.edu/pub/rinex/"
@@ -297,20 +298,24 @@ def nav_rob_server(stat, date):
 
     return urldic
 
+
 def sonel_server(stat, date):
     urlserver = "ftp://ftp.sonel.org/gps/data/"
     urldic = _generic_server(stat, date, urlserver)
     return urldic
 
+
 def rgp_server(stat, date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
-    urldic = _generic_server(stat, date, urlserver,"data_30")
+    urldic = _generic_server(stat, date, urlserver, "data_30")
     return urldic
+
 
 def rgp_ensg_server(stat, date):
     urlserver = "ftp://rgpdata.ensg.eu/pub/data/"
-    urldic = _generic_server(stat, date, urlserver,"data_30")
+    urldic = _generic_server(stat, date, urlserver, "data_30")
     return urldic
+
 
 def euref_server(stat, date):
     urlserver = "ftp://epncb.oma.be/pub/obs/"
@@ -360,6 +365,7 @@ def igs_cddis_nav_server_legacy(stat, date):
         urlserver, str(date.year), conv.dt2doy(date), date.strftime("%y") + "n", rnxname
     )
     return url
+
 
 def rgp_ign_smn_1_hz_server_legacy(stat, date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
@@ -686,7 +692,7 @@ def crawl_ftp_files(
                 table_use.loc[irow, "ok_dwl"] = False
                 table_use.loc[irow, "rnxnam"] = os.path.basename(rnxlocal)
                 continue
-            else: # force mode
+            else:  # force mode
                 log.info(
                     "%s already exists locally, but re-download forced",
                     rnxloc_bn,
