@@ -55,103 +55,102 @@ def get_approx_position(fichier):
         return np.array(valeurs, dtype=float)
     else:
         return None
-    
+
 
 def load_and_clean_rinex(path):
     """
     Charge et nettoie un fichier RINEX d'observation.
-    
+
     Paramètres :
       - path : chemin vers le fichier RINEX.
-    
+
     Retourne :
       - df : DataFrame nettoyé, indexé par ['epoch', 'prn'],
              et contenant une colonne 'ind_ligne' indiquant le numéro de ligne.
     """
     # Chargement du fichier dans un DataFrame avec l'index ['epoch', 'prn']
     df = files_rw.read_rinex_obs(path, set_index=['epoch', 'prn'])
-    
+
     # Suppression des colonnes entièrement vides
     df = df.dropna(axis=1, how='all')
-    
+
     # Suppression des lignes manquant des mesures essentielles
     df = df.dropna(subset=['C1', 'L1', 'L2'])
-    
+
     # Filtrage pour ne garder que les mesures des satellites GPS ('G')
     df = df[df['sys'].str.contains('G')]
-    
+
     # On refait un dropna au cas où après filtrage certaines colonnes seraient entièrement vides
     df = df.dropna(axis=1, how='all')
-    
+
     # Ajout d'une colonne d'indice de ligne basée sur la longueur du DataFrame
     df['ind_ligne'] = range(len(df))
-    
+
     return df
 
-    
 
 def enrich_df_with_sat_positions(df, mysp3):
     """
     Pour chaque ligne du DataFrame df (avec un index composé de (epoch, prn)),
-    calcule la position du satellite en prenant en compte le retard, l'effet 
+    calcule la position du satellite en prenant en compte le retard, l'effet
     relativiste et met à jour le DataFrame avec les colonnes X_sat, Y_sat, Z_sat,
     dte_sat et dRelat.
-    
+
     Parameters:
       - df : pandas DataFrame dont l'index est (epoch, prn) et qui contient la colonne 'C1'
       - mysp3 : instance de l'objet d'orbite contenant la méthode calcSatCoord
       - t : instance de gpst.gpsdatetime() utilisée pour la conversion des temps
-      
+
     Returns:
       - df enrichi avec les colonnes calculées.
     """
-    
+
     # Listes pour stocker les résultats
     x_sat  = []
     y_sat  = []
     z_sat  = []
     dte_sat = []
     d_relat = []
-    
+
     # Création de l'objet temps (pour la conversion)
     t = gpst.gpsdatetime()
-    
+
     # Pour chaque observation du DataFrame
     for (time_i, prn_i) in df.index:
         # Conversion du temps d'observation au format attendu
         # Par exemple, on formate time_i en chaîne de caractère
-        t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
-        
+        # t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
+
         # Calcul du temps d'émission initial (mjd)
         t_emission_mjd = t.mjd - df.loc[(time_i, prn_i), 'C1'] / conv.SPEED_OF_LIGHT / 86400.0
-        
+
         # Calcul initial de la position du satellite
         (x_sat_v, y_sat_v, z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd)
-        
+
         # Calcul de l'effet relativiste à partir d'une dérivée numérique
         delta_t = 1e-3  # écart de temps en secondes
         (xs1, ys1, zs1, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd - delta_t/86400.0)
         (xs2, ys2, zs2, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd + delta_t/86400.0)
-        
+
         # Estimation de la vitesse par différence centrée
         vx  = np.array([xs2 - xs1, ys2 - ys1, zs2 - zs1]) / (2.0 * delta_t)
         vx0 = np.array([x_sat_v, y_sat_v, z_sat_v])
-        
+
         d_relat_v = -2.0 * vx0.T @ vx / (conv.SPEED_OF_LIGHT ** 2)
-        
+
         # Correction du temps d'émission tenant compte du retard d'horloge et de l'effet relativiste
         t_emission_corr = t_emission_mjd - dte_sat_v / 86400.0 - d_relat_v / 86400.0
-        
+
         # Recalcul de la position au temps corrigé
         (x_sat_v, y_sat_v, z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_corr)
-        
+
         # Stockage des résultats
         x_sat.append(x_sat_v)
         y_sat.append(y_sat_v)
         z_sat.append(z_sat_v)
         dte_sat.append(dte_sat_v)
         d_relat.append(d_relat_v)
-    
+
     # Ajout des nouvelles colonnes au DataFrame
     df['X_sat']   = x_sat
     df['Y_sat']   = y_sat
@@ -187,8 +186,8 @@ def Sagnac_rotate_around_z(row):
 def add_az_el_iono_columns(df, P_rnx_header, mynav):
     """
     Ajoute dans le DataFrame les colonnes Az (azimut en degrés), Ele (élévation en degrés)
-    et dIon1 (correction ionosphérique selon le modèle de Klobuchar).
-    
+    et d_ion1 (correction ionosphérique selon le modèle de Klobuchar).
+
     Paramètres :
       - df : DataFrame contenant les colonnes 'X_sat', 'Y_sat', 'Z_sat' et 'ind_ligne'.
              L'index doit être un MultiIndex (time, prn).
@@ -197,14 +196,14 @@ def add_az_el_iono_columns(df, P_rnx_header, mynav):
       - t : objet gpsdatetime (issu de gpst.gpsdatetime) pour la gestion des temps.
       - tools : module (par ex. gnsstoolbox.gnsstools) fournissant les fonctions toolAzEle et toolCartGeoGRS80.
       - klobuchar : module contenant la fonction klobuchar pour le calcul de la correction iono.
-      
+
     Retourne :
-      - df : le DataFrame enrichi avec les colonnes 'Az', 'Ele' et 'dIon1'.
+      - df : le DataFrame enrichi avec les colonnes 'Az', 'Ele' et 'd_ion1'.
     """
-    
+
     # Création de l'objet temps (pour la conversion)
     t = gpst.gpsdatetime()
-    
+
     # Conversion des coordonnées de la station en géographiques
     lon, lat, h = conv.xyz2geo(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2])
     rad2deg = 180 / np.pi
@@ -212,43 +211,46 @@ def add_az_el_iono_columns(df, P_rnx_header, mynav):
     lat_d = lat * rad2deg
 
     # Calcul de l'azimut et de l'élévation en radians à partir des positions satellites
-    Az_rad, Ele_rad = tools.toolAzEle(P_rnx_header[0],
-                                       P_rnx_header[1],
-                                       P_rnx_header[2],
-                                       df['X_sat'],
-                                       df['Y_sat'],
-                                       df['Z_sat'])
+    # az_rad, ele_rad = tools.toolAzEle(P_rnx_header[0],
+    #                                    P_rnx_header[1],
+    #                                    P_rnx_header[2],
+    #                                    df['X_sat'],
+    #                                    df['Y_sat'],
+    #                                    df['Z_sat'])
 
+    az_rad , ele_rad = conv.xyz2azi_ele(df['X_sat'], df['Y_sat'], df['Z_sat'],
+                                        P_rnx_header[0], P_rnx_header[1], P_rnx_header[2])
 
     # Conversion en degrés
-    Az_deg = Az_rad * rad2deg
-    Ele_deg = Ele_rad * rad2deg
+    az_deg = az_rad * rad2deg
+    ele_deg = ele_rad * rad2deg
 
     # Récupération des coefficients ionosphériques depuis le fichier de navigation
     alpha = mynav.ion_alpha_gps
     beta  = mynav.ion_beta_gps
 
     # Calcul de la correction iono pour chaque observation
-    dIon1 = []
+    d_ion1 = []
     for (time_i, prn_i) in df.index:
         # Mise à jour de l'objet temps pour cette observation (conversion via rinex_t)
-        t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
-        wsec_v = t.wsec  # secondes dans la semaine GPS
-        
+        #t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
+        #wsec_v = t.wsec  # secondes dans la semaine GPS
+
+        _, wsec_v = conv.dt2gpstime(time_i, secinweek=True)
+
         # Récupération de l'indice de ligne correspondant (doit être un entier valide)
         i = df.loc[(time_i, prn_i), 'ind_ligne']
-        
-        # Calcul de la correction ionosphérique (la fonction klobuchar doit accepter ces paramètres)
-        dIon1_v = klobuchar.klobuchar(lat_d, lon_d, Ele_deg[i], Az_deg[i], wsec_v, alpha, beta)
-        dIon1.append(dIon1_v)
-    
-    # Ajout des nouvelles colonnes dans le DataFrame
-    df['Az']    = Az_deg
-    df['Ele']   = Ele_deg
-    df['dIon1'] = dIon1
-    
-    return df
 
+        # Calcul de la correction ionosphérique (la fonction klobuchar doit accepter ces paramètres)
+        d_ion1_v = klobuchar.klobuchar(lat_d, lon_d, ele_deg[i], az_deg[i], wsec_v, alpha, beta)
+        d_ion1.append(d_ion1_v)
+
+    # Ajout des nouvelles colonnes dans le DataFrame
+    df['Az']    = az_deg
+    df['Ele']   = ele_deg
+    df['d_ion1'] = d_ion1
+
+    return df
 
 
 def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, renderer="browser"):
@@ -257,7 +259,7 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
     Si col2 est fourni, affiche la série : coeff1 * col1 - coeff2 * col2.
     Sinon, affiche la série de la colonne col1 directement.
     La série est découpée en segments lorsqu'un "trou" (écart > seuil) est détecté.
-    
+
     Paramètres :
         df      : DataFrame avec un index multi-niveaux contenant au moins le niveau 'prn'
                   et les colonnes col1 (et éventuellement col2).
@@ -267,7 +269,7 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
         coeff2  : Coefficient multiplicateur pour la seconde colonne (défaut 1.0).
         seuil   : Seuil en secondes pour considérer un "trou" dans la série (défaut 3600).
         renderer: Renderer Plotly (ex : "browser" ou "iframe").
-    
+
     Retourne :
         fig     : Figure Plotly contenant les courbes tracées.
     """
@@ -276,13 +278,13 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
 
     # Extraction et tri de la liste des satellites (niveau 'prn')
     satellites = sorted(df.index.get_level_values('prn').unique())
-    
+
     fig = go.Figure()
-    
+
     for sat in satellites:
         # Sélection des données pour le satellite
         sub_df = df.xs(sat, level='prn')
-        
+
         # Calcul de la série
         if col2 is not None:
             ts = (sub_df[col1] * coeff1 - sub_df[col2] * coeff2).dropna()
@@ -290,19 +292,19 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
         else:
             ts = (sub_df[col1] * coeff1).dropna()
             y_label = f"{coeff1}*{col1}"
-        
+
         dates = ts.index
-        
+
         # Calcul des écarts entre dates successives (en secondes)
         ecarts = dates.to_series().diff().dt.total_seconds()
-        
+
         # Identification des positions où l'écart dépasse le seuil
         breaks = np.where(ecarts > seuil)[0]
-        
+
         # Découpage de la série en segments
         segments_dates = np.split(dates, breaks)
         segments_values = np.split(ts.values, breaks)
-        
+
         # Reconstitution de la série en insérant des valeurs None pour créer des "trous"
         combined_dates = []
         combined_values = []
@@ -317,16 +319,16 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
         if combined_dates and combined_dates[-1] is None:
             combined_dates = combined_dates[:-1]
             combined_values = combined_values[:-1]
-        
+
         # Ajout d'une trace unique par satellite
         fig.add_trace(go.Scatter(
-            x=combined_dates, 
+            x=combined_dates,
             y=combined_values,
             mode='lines',
             name=f"Sat {sat}",
             legendgroup=f"sat_{sat}"
         ))
-    
+
     # Boutons pour sélectionner/désélectionner les traces
     buttons = [
         dict(
@@ -340,7 +342,7 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
             args=[{"visible": ["legendonly"] * len(fig.data)}]
         )
     ]
-    
+
     # Mise à jour de la mise en page du graphique
     fig.update_layout(
         title=dict(
@@ -364,12 +366,9 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
         )],
         margin=dict(t=120)  # Augmentation de la marge supérieure pour que le titre et les boutons ne se chevauchent pas
     )
-    
+
     fig.show()
     return fig
-
-
-
 
 
 def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,

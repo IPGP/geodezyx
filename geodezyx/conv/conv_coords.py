@@ -279,6 +279,43 @@ def enu2xyz(e, n, u, x0, y0, z0, velocity_mode=False):
 
 
 
+def xyz2azi_ele(x, y, z, x0, y0, z0, outdeg=False):
+    """
+    Convert ECEF Cartesian coordinates to azimuth and elevation angles.
+
+    Parameters
+    ----------
+    x, y, z : numpy.array of floats
+        ECEF X, Y, Z coordinates in meters.
+    x0, y0, z0 : floats or numpy.array of floats
+        Reference point coordinates in ECEF frame.
+
+    Returns
+    -------
+    azi : numpy.array of floats
+        Azimuth angle in radians.
+    ele : numpy.array of floats
+        Elevation angle in radians.
+    d : numpy.array of floats
+        Distance from the reference point to the point (x, y, z) in meters.
+    outdeg : bool, optional
+        If True, output angles in degrees. If False, in radians. Default is False.
+    """
+    e, n, u = xyz2enu(x, y, z, x0, y0, z0)
+    d = np.sqrt(e**2 + n**2 + u**2)
+    azi = np.arctan2(e, n)
+    ele = np.arcsin(u/d)
+    #ele2 = np.arctan2(u, np.sqrt(e**2 + n**2))
+    if outdeg:
+        azi = np.rad2deg(azi)
+        ele = np.rad2deg(ele)
+    return azi, ele, d
+
+
+
+
+
+
  # __      __       _              __          __
  # \ \    / /      | |             \ \        / /
  #  \ \  / /__  ___| |_ ___  _ __   \ \  /\  / / __ __ _ _ __  _ __   ___ _ __ ___
