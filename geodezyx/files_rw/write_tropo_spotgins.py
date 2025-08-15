@@ -109,7 +109,7 @@ def generate_header(station_name: str, position: dict | None):
         position = {"X": 0.0, "Y": 0.0, "Z": 0.0, "Lon": 0.0, "Lat": 0.0, "H": 0.0}
         center_note = "SPOTGINS (position unavailable)"
     else:
-        center_note = "SPOTGINS"
+        center_note = "SPOTGINS - IPGP"
 
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d at %H:%M:%S (UTC)")
     return (
@@ -118,10 +118,12 @@ def generate_header(station_name: str, position: dict | None):
         "#--------------------------------------\n"
         f"# STATION          : {station_name}\n"
         f"# ANALYSIS_CENTRE  : {center_note}\n"
-        "# STRATEGY_SUMMARY : https://www.poleterresolide.fr/visualisation-gnss/#/solution/SPOTGINS\n"
+        "# HOW_TO_CITE      : Santamaría-Gómez et al. (2025) https://doi.org/10.5194/essd-2025-223, in review, 2025\n"
+        "# STRATEGY_SUMMARY : https://en.poleterresolide.fr/geodesy-plotter-en/#/solution/SPOTGINS\n"
+        "#--------------------------------------\n"
         "# REF_FRAME        : IGS20\n"
         "# PRODUCTS         : G20/GRG\n"
-        "# CONSTELLATION    : G\n"
+        "# CONSTELLATION    : GPS only until 2018-10, GPS+Galileo thereafter when available\n"
         "# UNITS            : meters\n"
         "# ELLIPSOID        : GRS80\n"
         "#--------------------------------------\n"
