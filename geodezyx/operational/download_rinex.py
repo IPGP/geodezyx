@@ -161,7 +161,7 @@ def _rnx_nav_rgx(stat, date, sys=".", data_source="."):
     return rnx2rgx, rnx3rgx
 
 
-def _generic_server(stat, date, urlserver):
+def _generic_server(stat, date, urlserver, urlsuffix=None):
     """
     Generate RINEX file URLs for a generic FTP server structure.
 
@@ -208,8 +208,12 @@ def _generic_server(stat, date, urlserver):
     >>> # urls[3] might be: 'ftp://example.com/data/2020/015/ZIMM...._R_20200150000_01D_....O.*'
     """
     rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
+
+    if not urlsuffix:
+        urlsuffix = ""
+
     ### generate urls
-    urldir = str(os.path.join(urlserver, str(date.year), conv.dt2doy(date)))
+    urldir = str(os.path.join(urlserver, str(date.year), conv.dt2doy(date), urlsuffix))
     rnx2url = os.path.join(urldir, rnx2rgx)
     rnx3url = os.path.join(urldir, rnx3rgx)
 
@@ -219,25 +223,6 @@ def _generic_server(stat, date, urlserver):
     urldic[3] = rnx3url
 
     return urldic
-
-def _generic_rgp_server(stat, date, urlserver):
-    ### generate regex
-    rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
-
-    ### generate urls
-    urldir = os.path.join(
-        urlserver, str(date.year), conv.dt2doy(date), 'data_30'
-    )
-    rnx2url = os.path.join(urldir, rnx2rgx)
-    rnx3url = os.path.join(urldir, rnx3rgx)
-
-    ### generate output urldic, key 2 and 3 are for rinex version
-    urldic = dict()
-    urldic[2] = rnx2url
-    urldic[3] = rnx3url
-
-    return urldic
-
 
 def igs_sopac_server(stat, date):
     # plante si trop de requete
@@ -312,7 +297,6 @@ def nav_rob_server(stat, date):
 
     return urldic
 
-
 def sonel_server(stat, date):
     urlserver = "ftp://ftp.sonel.org/gps/data/"
     urldic = _generic_server(stat, date, urlserver)
@@ -320,12 +304,12 @@ def sonel_server(stat, date):
 
 def rgp_server(stat, date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
-    urldic = _generic_rgp_server(stat, date, urlserver)
+    urldic = _generic_server(stat, date, urlserver,"data_30")
     return urldic
 
 def rgp_ensg_server(stat, date):
     urlserver = "ftp://rgpdata.ensg.eu/pub/data/"
-    urldic = _generic_rgp_server(stat, date, urlserver)
+    urldic = _generic_server(stat, date, urlserver,"data_30")
     return urldic
 
 def euref_server(stat, date):
