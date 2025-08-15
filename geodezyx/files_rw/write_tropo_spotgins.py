@@ -118,7 +118,7 @@ def generate_header(station_name: str, position: dict | None):
         "#--------------------------------------\n"
         f"# STATION          : {station_name}\n"
         f"# ANALYSIS_CENTRE  : {center_note}\n"
-        "# HOW_TO_CITE      : Santamaría-Gómez et al. (2025) https://doi.org/10.5194/essd-2025-223, in review, 2025\n"
+        "# HOW_TO_CITE      : Santamaría-Gómez et al. (2025) https://doi.org/10.5194/essd-2025-223\n"
         "# STRATEGY_SUMMARY : https://en.poleterresolide.fr/geodesy-plotter-en/#/solution/SPOTGINS\n"
         "#--------------------------------------\n"
         "# REF_FRAME        : IGS20\n"
