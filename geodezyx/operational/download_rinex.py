@@ -220,6 +220,24 @@ def _generic_server(stat, date, urlserver):
 
     return urldic
 
+def _generic_rgp_server(stat, date, urlserver):
+    ### generate regex
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
+
+    ### generate urls
+    urldir = os.path.join(
+        urlserver, str(date.year), conv.dt2doy(date), 'data_30'
+    )
+    rnx2url = os.path.join(urldir, rnx2rgx)
+    rnx3url = os.path.join(urldir, rnx3rgx)
+
+    ### generate output urldic, key 2 and 3 are for rinex version
+    urldic = dict()
+    urldic[2] = rnx2url
+    urldic[3] = rnx3url
+
+    return urldic
+
 
 def igs_sopac_server(stat, date):
     # plante si trop de requete
@@ -300,6 +318,15 @@ def sonel_server(stat, date):
     urldic = _generic_server(stat, date, urlserver)
     return urldic
 
+def rgp_server(stat, date):
+    urlserver = "ftp://rgpdata.ign.fr/pub/data/"
+    urldic = _generic_rgp_server(stat, date, urlserver)
+    return urldic
+
+def rgp_ensg_server(stat, date):
+    urlserver = "ftp://rgpdata.ensg.eu/pub/data/"
+    urldic = _generic_rgp_server(stat, date, urlserver)
+    return urldic
 
 def euref_server(stat, date):
     urlserver = "ftp://epncb.oma.be/pub/obs/"
@@ -349,21 +376,6 @@ def igs_cddis_nav_server_legacy(stat, date):
         urlserver, str(date.year), conv.dt2doy(date), date.strftime("%y") + "n", rnxname
     )
     return url
-
-
-def rgp_ign_smn_server_legacy(stat, date):
-    urlserver = "ftp://rgpdata.ign.fr/pub/data/"
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), "data_30", rnxname)
-    return url
-
-
-def rgp_ign_mlv_server_legacy(stat, date):
-    urlserver = "ftp://rgpdata.ensg.eu/pub/data/"
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), "data_30", rnxname)
-    return url
-
 
 def rgp_ign_smn_1_hz_server_legacy(stat, date):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
@@ -468,6 +480,10 @@ def _server_select(datacenter, site, curdate):
         urldic = nav_rob_server(site, curdate)
     elif datacenter in ("nav_rt", "brdc_rt"):
         urldic = nav_bkg_server(site, curdate)
+    elif datacenter == "rgp":
+        urldic = rgp_server(site, curdate)
+    elif datacenter == "rgp_ensg":
+        urldic = rgp_ensg_server(site, curdate)
     # elif datacenter == 'rgp':
     #     urldic = rgp_ign_smn_server_legacy(site, curdate)
     # elif datacenter == 'rgp_mlv':
@@ -825,9 +841,9 @@ def download_gnss_rinex(
             * nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
             * from the ROB server, using GOP files
             * nav_rt or brdc_rt as archive center allows to download *real time* nav files from the BKG server
+            * rgp (IGN's RGP main server at St Mandé)
+            * rgp_ensg (IGN's RGP, secondary server at ENSG, Marne-la-Vallée)
          _not reimplemented yet_:
-            * rgp (IGN's RGP St Mandé center)
-            * rgp_mlv (IGN's RGP Marne la Vallée center)
             * rgp_1Hz (IGN's RGP, all the 24 hourly rinex for the day will be downloaded)
             * renag
             * ovsg
