@@ -26,9 +26,7 @@ Dépendances: pandas, numpy, geodezyx, datetime
 # Installation
 # pip install git+https://github.com/GeodeZYX/geodezyx-toolbox
 # 
-import geodezyx
-import geodezyx.conv as conv                  # Import the conversion module
-import datetime as dt
+import geodezyx.files_rw
 
 import pandas as pd
 import numpy as np
