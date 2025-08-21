@@ -32,6 +32,7 @@ import matplotlib.pyplot as plt
 import natsort
 import numpy as np
 import pandas as pd
+import scipy.interpolate
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -728,16 +729,16 @@ def compar_clock(DFclk_inp_1,DFclk_inp_2,col_name = "name",bias_Col_name = "bias
     """
     DF1idx = DFclk_inp_1.set_index([col_name,"epoch"])
     DF1idx.sort_index(inplace=True)
-    
+
     DF2idx = DFclk_inp_2.set_index([col_name,"epoch"])
     DF2idx.sort_index(inplace=True)
-    
+
     I1 = DF1idx.index
     I2 = DF2idx.index
-    
+
     Iinter = I1.intersection(I2)
     Iinter = Iinter.sort_values()
-    
+
     DF_diff_bias = DF1idx.loc[Iinter][bias_Col_name] - DF2idx.loc[Iinter][bias_Col_name]
 
     DFclk_diff = DF1idx.loc[Iinter].copy()
@@ -747,22 +748,22 @@ def compar_clock(DFclk_inp_1,DFclk_inp_2,col_name = "name",bias_Col_name = "bias
     else:
         DFclk_diff.drop("AC",axis=1,inplace=True)
     DFclk_diff.rename({bias_Col_name:bias_Col_name+"_diff"},inplace=True,axis=1)
-    
-    
+
+
     # Name definitions
     if 'ac' in DFclk_inp_1.columns:
         DFclk_diff['name1'] = DFclk_inp_1.ac.values[0]
     if 'AC' in DFclk_inp_1.columns:
         DFclk_diff['name1'] = DFclk_inp_1.AC.values[0]
-    
+
     if 'ac' in DFclk_inp_1.columns:
         DFclk_diff['name2'] = DFclk_inp_2.ac.values[0]
     if 'AC' in DFclk_inp_1.columns:
         DFclk_diff['name2'] = DFclk_inp_2.AC.values[0]
 
-    
+
     return DFclk_diff
-    
+
 def compar_clock_table(DFclk_diff_in,col_name = "name",bias_Col_name = "bias_diff"):
     """
     Generate a table with statistical indicators for a clock comparison
@@ -779,18 +780,18 @@ def compar_clock_table(DFclk_diff_in,col_name = "name",bias_Col_name = "bias_dif
         Statistical results of the comparison.
 
     """
-    
+
     DF_diff_grp = DFclk_diff_in.groupby(col_name)[bias_Col_name]
-    
+
     Smin  = DF_diff_grp.min().rename("min",inplace=True)
     Smax  = DF_diff_grp.max().rename("max",inplace=True)
     Smean = DF_diff_grp.mean().rename("mean",inplace=True)
     Sstd  = DF_diff_grp.std().rename("std",inplace=True)
     Srms  = DF_diff_grp.apply(stats.rms_mean).rename("rms",inplace=True)
-    
+
     DFcompar_out = pd.concat([Smin,Smax,Smean,Sstd,Srms],axis=1)
     DFcompar_out.reset_index()
-    
+
     return DFcompar_out
 
 def compar_clk_plot(Diff_sat_all_df_in,
@@ -810,11 +811,11 @@ def compar_clk_plot(Diff_sat_all_df_in,
     ----------
     Diff_sat_all_df_in: DataFrame
         a DataFrame produced by compar_clk
-        
+
     yaxis_limit: 3-tuple iterable or 2-element tuple
-        force the y axis limits. must look like 
-        (ymin,ymax) to set all th axis at the same limits 
-    
+        force the y axis limits. must look like
+        (ymin,ymax) to set all th axis at the same limits
+
     col_name: Normally the name of the column with the sat names
     bias_Col_name: The column with the clk values
     Default: 'bias'
@@ -830,15 +831,15 @@ def compar_clk_plot(Diff_sat_all_df_in,
     Diff_sat_all_df_in = Diff_sat_all_df_in.reset_index()
     satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in[col_name])))
     # satdispo = natsort.natsorted(list(set(Diff_sat_all_df_in['sat'])))
-       
+
     SymbStk = []
-       
+
     cm = plt.get_cmap('viridis')
     NUM_COLORS = len(satdispo)
     Colors = [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)]
-       
-    
-    
+
+
+
     Date = conv.numpy_dt2dt(Diff_sat_all_df_in.epoch.values[0])
     Diff_sat_all_df_in.name = ' '.join(('Clock comparison  b/w',
                                   Diff_sat_all_df_in.name1.values[0] ,'(ref.) and',
@@ -853,69 +854,69 @@ def compar_clk_plot(Diff_sat_all_df_in,
         col_name0 = Diff_sat_all_df_in.columns[0]
         col_name1 = Diff_sat_all_df_in.columns[1]
         col_name2 = Diff_sat_all_df_in.columns[2]
-       
+
     for satuse,color in zip(satdispo,Colors):
         Diffuse = Diff_sat_all_df_in[Diff_sat_all_df_in[col_name] == satuse]
-       
+
         Time = Diffuse.epoch
         R    = Diffuse[bias_Col_name+'_diff']*10**12
-       
-       
+
+
         #fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
-       
+
         Symb = axr.plot(Time,R,label=satuse,c=color)
-       
-       
+
+
         SymbStk.append(Symb[0])
-       
+
         fig.autofmt_xdate()
-       
-       
+
+
     ylabuni = " (" + yaxis_label_unit + ")"
-    
-       
+
+
     axr.set_ylabel('Bias Diff.' + ylabuni)
-       
-       
-       
+
+
+
     y_formatter = matplotlib.ticker.ScalarFormatter(useOffset=False)
     axr.yaxis.set_major_formatter(y_formatter)
-       
-    
+
+
     if yaxis_limit and len(yaxis_limit) == 3: ### indep. axis limit
         axr.set_ylim(yaxis_limit[0])
-       
+
     elif yaxis_limit and len(yaxis_limit) == 2:
         axr.set_ylim(yaxis_limit)
-       
+
     else:
         pass
-        
-        
+
+
     import matplotlib.dates as mdates
     fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
-       
+
     lgd = fig.legend(tuple(SymbStk), satdispo , loc='lower center',ncol=8,
                      columnspacing=1)
-       
+
     fig.set_size_inches(8.27,11.69)
     plt.suptitle(Diff_sat_all_df_in.name)
     plt.tight_layout()
     plt.subplots_adjust(top=0.95)
     plt.subplots_adjust(bottom=0.15)
-       
+
     if save_plot:
         if save_plot_name == "auto":
             save_plot_name = Diff_sat_all_df_in.name1.values[0]+"_"+Diff_sat_all_df_in.name2.values[0]+"_"+Date.strftime("%Y-%m-%d")
-            
+
         if save_plot_name_suffix:
             save_plot_name = save_plot_name + '_' + save_plot_name_suffix
-       
+
         for ext in save_plot_ext:
             save_plot_path = os.path.join(save_plot_dir,save_plot_name)
             plt.savefig(save_plot_path + ext)
             return_val = save_plot_path
-            
+
     else:
         return_val = fig,(axr)
 
@@ -1058,15 +1059,15 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
             return output_DF
 
 
-#   ____       _     _ _     _____        _        ______                             
-#  / __ \     | |   (_) |   |  __ \      | |      |  ____|                            
-# | |  | |_ __| |__  _| |_  | |  | | __ _| |_ __ _| |__ _ __ __ _ _ __ ___   ___  ___ 
+#   ____       _     _ _     _____        _        ______
+#  / __ \     | |   (_) |   |  __ \      | |      |  ____|
+# | |  | |_ __| |__  _| |_  | |  | | __ _| |_ __ _| |__ _ __ __ _ _ __ ___   ___  ___
 # | |  | | '__| '_ \| | __| | |  | |/ _` | __/ _` |  __| '__/ _` | '_ ` _ \ / _ \/ __|
 # | |__| | |  | |_) | | |_  | |__| | (_| | || (_| | |  | | | (_| | | | | | |  __/\__ \
 #  \____/|_|  |_.__/|_|\__| |_____/ \__,_|\__\__,_|_|  |_|  \__,_|_| |_| |_|\___||___/
-#                                                                                     
-       
-### Orbit DataFrames   
+#
+
+### Orbit DataFrames
 
 
 def DFOrb_velocity_calc(DFOrb_in,
@@ -1080,7 +1081,7 @@ def DFOrb_velocity_calc(DFOrb_in,
     DFOrb_in : Pandas DataFrame
         an Orbit DataFrame.
     drop_nan : bool, optional
-        Remove the nan values 
+        Remove the nan values
         (the first ones, since it is a numerical differentiation).
         The default is False.
         It is recommended to keep the NaN values, thus the output will keep
@@ -1092,26 +1093,26 @@ def DFOrb_velocity_calc(DFOrb_in,
         an Orbit DataFrame with velocities (vx, vy ,vz columns).
 
     """
-    
+
     dfgrp = DFOrb_in.groupby('prn')
-    
+
     dfprn_stk = []
-    for prn,dfprn in dfgrp:    
+    for prn,dfprn in dfgrp:
         for coord in ['x','y','z']:
             dcoord = dfprn[coord].diff()
-            dtime = (np.float64(dfprn['epoch'].diff()) * 10**-9) 
+            dtime = (np.float64(dfprn['epoch'].diff()) * 10**-9)
             #timedelta in ns per defalut
-            dfprn['v' + coord] = dcoord / dtime 
+            dfprn['v' + coord] = dcoord / dtime
         dfprn_stk.append(dfprn)
-            
+
     df_vel = pd.concat(dfprn_stk)
-    
+
     df_vel.sort_index(inplace=True)
-    
+
     if drop_nan:
         df_vel.dropna(inplace=True)
-    
-    return df_vel 
+
+    return df_vel
 
 
 def beta_sun_ra_dec(sun_dec,sun_ra,sat_i,sat_o_lan):
@@ -1134,21 +1135,21 @@ def beta_sun_ra_dec(sun_dec,sun_ra,sat_i,sat_o_lan):
     -------
     beta : float
         beta angle (in radians).
-        
+
     Source
     ------
     `Satellites: de Kepler au GPS`, Michel Capderou (2012)
-    
+
     simpler formula here:
         https://www.fxsolver.com/browse/formulas/Beta+Angle
-        
-    
+
+
     Note
     ----
     you can use ``pyorbital.astronomy.sun_ra_dec()`` to compute ``sun_dec``
     and ``sun_ra``
-    
-    If so, Sun's right ascension and declination computation polynoms are 
+
+    If so, Sun's right ascension and declination computation polynoms are
     based on: `Astronomical algorithms`, Jean Meeus (1st edition, 1991)
     """
     beta = np.arcsin(np.cos(sun_dec)*np.sin(sat_i)*np.sin(sat_o_lan-sun_ra)+
@@ -1175,7 +1176,7 @@ def beta_sun_eclip_long(sun_ecl_long,sat_o_lan,sat_i,earth_i):
     -------
     beta : float
         beta angle (in radians).
-        
+
     Source
     ------
     `Calculation of the Eclipse Factor for Elliptical Satellite Orbits` NASA (1962)
@@ -1185,13 +1186,13 @@ def beta_sun_eclip_long(sun_ecl_long,sat_o_lan,sat_i,earth_i):
 
     Simpler formula:
         https://en.wikipedia.org/wiki/Beta_angle
-    
+
     Note
     ----
     you can use ``pyorbital.astronomy.sun_ecliptic_longitude()``
     to compute ``sun_ecl_long``
-    
-    If so, Sun's right ascension and declination computation polynoms are 
+
+    If so, Sun's right ascension and declination computation polynoms are
     based on: `Astronomical algorithms`, Jean Meeus (1st edition, 1991)
 
     """
@@ -1206,9 +1207,9 @@ def beta_angle_calc(DFOrb_in,
                     calc_beta_sun_eclip_long=True,
                     beta_rad2deg=True):
     """
-    Compute beta angle for GNSS satellite's orbits stored in an orbit 
+    Compute beta angle for GNSS satellite's orbits stored in an orbit
     DataFrame
-    
+
 
     Parameters
     ----------
@@ -1237,43 +1238,43 @@ def beta_angle_calc(DFOrb_in,
     df_eci = DFOrb_in.copy()
     df_eci[['x','y','z']] = conv.ecef2eci(DFOrb_in[['x', 'y', 'z']].values,
                                           DFOrb_in['epoch'].values)
-    
+
     #### compute velocity
     df_wrk = DFOrb_velocity_calc(df_eci,drop_nan=False)
     ##keep drop nan False, thus the DF will keep same size and index as input
-    
+
     #### compute Kepler's parameters
     p = df_wrk[['x','y','z']].values * 1000
     v = df_wrk[['vx','vy','vz']].values * 1000
-    
+
     kep_col = ['a','ecc','i','o_peri','o_lan','m']
     kep_params = kepler_gzyx.ECI_2_kepler_elts(p,v,rad2deg=False)
     df_wrk[kep_col] = np.column_stack(kep_params)
     ######### COMPUTE BETA
-    
+
     #### cosmetic changes
     if calc_beta_sun_ra_dec and calc_beta_sun_eclip_long:
         b1="1"
         b2="2"
     else:
         b1=""
-        b2=""    
-    
+        b2=""
+
     if beta_rad2deg:
         r2dfct = np.rad2deg
     else:
-        r2dfct = lambda x:x 
-    
+        r2dfct = lambda x:x
+
     ##### Beta computed based on sun declination / right ascension
     if calc_beta_sun_ra_dec:
         ##### sun_ra_dec output in RADIANS
         df_wrk[['sun_ra','sun_dec']] = np.column_stack(pyorbital.astronomy.sun_ra_dec(df_wrk['epoch']))
-        df_wrk['beta'+b1] = beta_sun_ra_dec(df_wrk['sun_dec'], 
+        df_wrk['beta'+b1] = beta_sun_ra_dec(df_wrk['sun_dec'],
                                             df_wrk['sun_ra'],
                                             df_wrk['i'],
                                             df_wrk['o_lan']).apply(r2dfct)
-        
-    ##### Beta computed based on Ecliptic longitude of the sun  
+
+    ##### Beta computed based on Ecliptic longitude of the sun
     if calc_beta_sun_eclip_long:
         ### sun_ecliptic_longitude output in RADIANS but NO MODULO !!!
         df_wrk['sun_ecl_long'] = np.mod(pyorbital.astronomy.sun_ecliptic_longitude(df_wrk['epoch']),np.pi*2)
@@ -1311,54 +1312,55 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
     -------
     DForb_out : DataFrame
         Interpolated orbits.
-        
+
     Tips
     ----
     Use conv.dt_range to generate the wished epochs range
 
     """
     DForb_stk = []
-    
+
     for sat,ac in itertools.product(DForb_in['prn'].unique(),DForb_in['ac'].unique()):
-        
+
         log.info("process",ac,sat)
-        
+
         DForb_use = DForb_in[(DForb_in['prn'] == sat) & (DForb_in['ac'] == ac)].copy()
-            
+
         Tdata = DForb_use.epoch.dt.to_pydatetime()
-        
-        Xitrp = stats.lagrange_interpolate(Tdata,DForb_use.x,Titrp,n=n)
-        Yitrp = stats.lagrange_interpolate(Tdata,DForb_use.y,Titrp,n=n)
-        Zitrp = stats.lagrange_interpolate(Tdata,DForb_use.z,Titrp,n=n)
-        
+
+        Xitrp = stats.lagrange_interpolate(Tdata,DForb_use['x'],Titrp,n=n)
+        Yitrp = stats.lagrange_interpolate(Tdata,DForb_use['y'],Titrp,n=n)
+        Zitrp = stats.lagrange_interpolate(Tdata,DForb_use['z'],Titrp,n=n)
+
+        Clkitrp = np.interp(np.array(Titrp), np.array(Tdata), DForb_use['clk'].values)
         ClkDummy = np.array([999999.999999] * len(Titrp))
-        
-        ARR = np.column_stack((Titrp,Xitrp,Yitrp,Zitrp,ClkDummy))
-        
+
+        ARR = np.column_stack((Titrp,Xitrp,Yitrp,Zitrp,Clkitrp))
+
         DForb_tmp = pd.DataFrame(ARR,columns=["epoch","x","y","z","clk"])
-        
+
         ### sometihng else must be tested o give the annex val directly in the col of DForb_tmp
         DFannex_vals = DForb_use.drop(["epoch","x","y","z","clk"],axis=1).drop_duplicates()
         DFannex_vals = pd.concat([DFannex_vals]*(len(Titrp)),ignore_index=True,axis=0)
-        
+
         DForb_tmp = pd.concat((DForb_tmp,DFannex_vals),axis=1)
         DForb_stk.append(DForb_tmp)
-        
+
         if plot:
             # plt.plot(Tdata,DForb_use.x,'o')
-            # plt.plot(Titrp,Xitrp,'.')  
+            # plt.plot(Titrp,Xitrp,'.')
             ## GUS mod 220322
             fig,axr = plt.subplots(1,1,sharex='all')
             Symb = axr.plot(Tdata,DForb_use.x,'o')
             Symb = axr.plot(Titrp,Xitrp,'.')
 
-        
-    
+
+
     DForb_out = pd.concat(DForb_stk)
-    
+
     if append_to_input_DF:
         DForb_out = pd.concat((DForb_in,DForb_out))
-        
+
     DForb_out.reset_index(drop=True)
     DForb_out[["x","y","z","clk"]] = DForb_out[["x","y","z","clk"]].astype(float)
     return DForb_out
@@ -1366,9 +1368,9 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
 def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
                   inv_trf2crf=False):
     """
-    Convert an Orbit DataFrame from Celetrial Reference Frame to 
+    Convert an Orbit DataFrame from Celetrial Reference Frame to
     Terrestrial Reference Frame.
-    
+
     Requires EOP to work. Cf. note below.
 
     Parameters
@@ -1389,7 +1391,7 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
     DForb_out : DataFrame
         Output Orbit DataFrame in Terrestrial Reference Frame.
         (or Celestrial if inv_trf2crf is True)
-        
+
     Note
     ----
     The EOP can be obtained from the IERS C04 products.
@@ -1398,11 +1400,11 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
     To get them as a Compatible DataFrame, use the function
     files_rw.read_eop_C04()
     """
-    
+
     DForb = DForb_inp.copy()
-    
+
     import geodezyx.reffram.sofa18 as sofa
-    
+
     ### bring everything to UTC
     if time_scale_inp.lower() == "gps":
         DForb["epoch_utc"] = conv.dt_gpstime2dt_utc(DForb["epoch"])
@@ -1411,25 +1413,25 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
     elif time_scale_inp.lower() == "utc":
         DForb["epoch_utc"] = DForb["epoch"]
     ### TT and UT1 are not implemented (quite unlikely to have them as input)
-    
+
     ### do the time scale's conversion
     DForb["epoch_tai"] = conv.dt_utc2dt_tai(DForb["epoch_utc"])
     DForb["epoch_tt"]  = conv.dt_tai2dt_tt(DForb["epoch_tai"])
     DForb["epoch_ut1"] = conv.dt_utc2dt_ut1_smart(DForb["epoch_utc"],DF_EOP_inp)
-        
-    ### Do the EOP interpolation 
+
+    ### Do the EOP interpolation
     DF_EOP_intrp = eop_interpotate(DF_EOP_inp, DForb["epoch_utc"])
     ### bring the EOP to radians
     Xeop = np.deg2rad(conv.arcsec2deg(DF_EOP_intrp['x']))
     Yeop = np.deg2rad(conv.arcsec2deg(DF_EOP_intrp['y']))
-    
+
     TRFstk = []
-    
+
     for tt,ut1,xeop,yeop,x,y,z in zip(DForb["epoch_tt"],
                                       DForb["epoch_ut1"],
                                       Xeop,Yeop,
                                       DForb['x'],DForb['y'],DForb['z']):
-    
+
         MatCRF22TRF = sofa.iau_c2t06a(2400000.5,
                                       conv.dt2mjd(tt),
                                       2400000.5,
@@ -1437,24 +1439,24 @@ def OrbDF_crf2trf(DForb_inp,DF_EOP_inp,time_scale_inp="gps",
                                       xeop, yeop)
         if inv_trf2crf:
             MatCRF22TRF = np.linalg.inv(MatCRF22TRF)
-    
+
         CRF = np.array([x,y,z])
         TRF = np.dot(MatCRF22TRF,CRF)
-    
+
         TRFstk.append(TRF)
-    
+
     ### Final stack and replacement
     TRFall = np.vstack(TRFstk)
     DForb_out = DForb_inp.copy()
     DForb_out[["x","y","z"]] = TRFall
-    
+
     return DForb_out
-                                                                     
+
 
 #### FCT DEF
 def OrbDF_reg_2_multidx(OrbDFin,index_order=["prn","epoch"]):
     """
-    From an regular Orbit DF generated by read_sp3(), set some columns 
+    From an regular Orbit DF generated by read_sp3(), set some columns
     (typically ["prn","epoch"]) as indexes
     The outputed DF is then a Multi-index DF
     """
@@ -1562,13 +1564,13 @@ def OrbDF_const_sv_columns_maker(OrbDFin,inplace=True):
         OrbDFout['prni']    = OrbDFout['prn'].apply(lambda x: int(x[1:]))
         return OrbDFout
 
- #   _____ _            _      _____        _        ______                              
- #  / ____| |          | |    |  __ \      | |      |  ____|                             
- # | |    | | ___   ___| | __ | |  | | __ _| |_ __ _| |__ _ __ __ _ _ __ ___   ___  ___  
- # | |    | |/ _ \ / __| |/ / | |  | |/ _` | __/ _` |  __| '__/ _` | '_ ` _ \ / _ \/ __| 
- # | |____| | (_) | (__|   <  | |__| | (_| | || (_| | |  | | | (_| | | | | | |  __/\__ \ 
- #  \_____|_|\___/ \___|_|\_\ |_____/ \__,_|\__\__,_|_|  |_|  \__,_|_| |_| |_|\___||___/ 
-                                                                                                                                                                        
+ #   _____ _            _      _____        _        ______
+ #  / ____| |          | |    |  __ \      | |      |  ____|
+ # | |    | | ___   ___| | __ | |  | | __ _| |_ __ _| |__ _ __ __ _ _ __ ___   ___  ___
+ # | |    | |/ _ \ / __| |/ / | |  | |/ _` | __/ _` |  __| '__/ _` | '_ ` _ \ / _ \/ __|
+ # | |____| | (_) | (__|   <  | |__| | (_| | || (_| | |  | | | (_| | | | | | |  __/\__ \
+ #  \_____|_|\___/ \___|_|\_\ |_____/ \__,_|\__\__,_|_|  |_|  \__,_|_| |_| |_|\___||___/
+
 ### Clock DataFrames
 
 def ClkDF_filter(ClkDF_in,
@@ -1584,7 +1586,7 @@ def ClkDF_filter(ClkDF_in,
     Parameters
     ----------
     ClkDF_in : DataFrame
-        Input Clock DataFrame 
+        Input Clock DataFrame
         (a concatenation of DF generated by files_rw.read_clk.
     typ : iterable of str, optional
         List of the types of clocks: AS (satellite) or AR (receiver).
@@ -1608,21 +1610,21 @@ def ClkDF_filter(ClkDF_in,
     -------
     Clock DataFrame
         Output Clock DataFrame.
-        
+
     Notes
     -----
     '^E[0-9]{2}': Galileo Satellites
     '^G[0-9]{2}': GPS Satellites
 
     """
-    
+
     if type(ClkDF_in) is str:
         ClkDF_wrk = utils.pickle_loader(ClkDF_in)
     else:
         ClkDF_wrk = ClkDF_in
-    
+
     BOOL = np.ones(len(ClkDF_wrk)).astype(bool)
-    
+
     if typ:
         BOOLtmp = ClkDF_wrk.type.isin(typ)
         BOOL    = BOOL & np.array(BOOLtmp)
@@ -1630,7 +1632,7 @@ def ClkDF_filter(ClkDF_in,
     if name:
         if not name_regex: ### full name mode
             BOOLtmp = ClkDF_wrk.name.isin(name)
-            BOOL    = BOOL & np.array(BOOLtmp)   
+            BOOL    = BOOL & np.array(BOOLtmp)
         else: ### REGEX mode
             BOOLtmp = np.zeros(len(ClkDF_wrk.name)).astype(bool)
             for rgx in name:
@@ -1638,15 +1640,15 @@ def ClkDF_filter(ClkDF_in,
                 BOOLtmp = BOOLtmp | np.array(NamSerie.str.contains(rgx))
 
             BOOL = BOOL & np.array(BOOLtmp)
-                 
+
     if ac:
         BOOLtmp = ClkDF_wrk.ac.isin(ac)
-        BOOL    = BOOL & np.array(BOOLtmp)    
-        
+        BOOL    = BOOL & np.array(BOOLtmp)
+
     ##epoch
     BOOLtmp = (epoch_strt <= ClkDF_wrk.epoch) & (ClkDF_wrk.epoch < epoch_end)
-    BOOL    = BOOL & np.array(BOOLtmp)    
-    
+    BOOL    = BOOL & np.array(BOOLtmp)
+
     return ClkDF_wrk[BOOL]
 
 def ClkDF_filter2(ClkDF_in,
@@ -1659,20 +1661,20 @@ def ClkDF_filter2(ClkDF_in,
     """
     attempt for a faster version of ClkDF_filter, but the original is faster
     """
-    
+
     if type(ClkDF_in) is str:
         ClkDF_wrk = utils.pickle_loader(ClkDF_in)
     else:
         ClkDF_wrk = ClkDF_in
-        
+
     clkdf_stk = []
-    
+
     for (ityp, iname, iac), clkdf_grp in ClkDF_wrk.groupby(["type","name","ac"]):
         if typ:
             bool_typ = True if ityp in typ else False
         else:
             bool_typ = True
-        
+
         if name:
             if not name_regex:
                 bool_name = True if iname in name else False
@@ -1680,13 +1682,13 @@ def ClkDF_filter2(ClkDF_in,
                 bool_name = any([re.search(n, iname) for n in name])
         else:
             bool_name = True
-            
+
         if ac:
             bool_ac = True if iac in ac else False
         else:
             bool_ac = True
-            
-        
+
+
         if not (bool_typ and bool_name and bool_ac):
             continue
         else:
@@ -1696,26 +1698,26 @@ def ClkDF_filter2(ClkDF_in,
             else:
                 clkdf_stk.append(clkdf_grp)
 
-                
-            
+
+
     clkdf_out = pd.concat(clkdf_stk)
-    
+
     return clkdf_out
-                
-            
+
+
 
 
 def ClkDF_reg_2_multidx(ClkDFin,index_order=["name","epoch"]):
     """
-    From an regular Clock DF generated by read_clk(), set some columns 
+    From an regular Clock DF generated by read_clk(), set some columns
     (typically ["name","epoch"]) as indexes
     The outputed DF is then a Multi-index DF
-    
+
     It an adapted version of OrbDF_reg_2_multidx
     """
-    
+
     return OrbDF_reg_2_multidx(ClkDFin,index_order)
-    
+
 
 def ClkDF_common_epoch_finder(ClkDFa_in,ClkDFb_in,return_index=False,
                               supplementary_sort=False,
@@ -1723,10 +1725,10 @@ def ClkDF_common_epoch_finder(ClkDFa_in,ClkDFb_in,return_index=False,
     """
     Find common sats/station and epochs in to Clock DF, and output the
     corresponding Clock DFs
-    
+
     Is an adapted version of OrbDF_common_epoch_finder
     """
-    
+
     return OrbDF_common_epoch_finder(ClkDFa_in,ClkDFb_in,
                                      return_index=return_index,
                                      supplementary_sort=supplementary_sort,
@@ -1738,46 +1740,46 @@ def ClkDF_common_epoch_finder_multi(ClkDF_list_in,
                                     return_index=False,
                                     supplementary_sort=False,
                                     order=["name","epoch"]):
-    
+
     """
     Find common sats/station and epochs in to Clock DF, and output the
     corresponding Clock DFs
-    
+
     Is is the multi version of ClkDF_common_epoch_finder
     """
-    
+
     ClkDFref = ClkDF_list_in[0]
-    
+
     #### First loop: we find the common epochs
     for ClkDF in ClkDF_list_in[1:]:
-        
+
         OUTTUP = OrbDF_common_epoch_finder(ClkDFref,ClkDF,
                                            return_index=True,
                                            supplementary_sort=supplementary_sort,
                                            order=order)
-        
+
         ClkDFref , _ , Iinter = OUTTUP
-        
-    #### second loop: we use the common epochs found for the outputed ClkDF  
+
+    #### second loop: we use the common epochs found for the outputed ClkDF
     ClkDF_list_out= []
     for ClkDF in ClkDF_list_in:
         ClkDFout = ClkDF.set_index(order).loc[Iinter]
         ClkDF_list_out.append(ClkDFout)
-    
+
     if not return_index:
         return ClkDF_list_out
     else:
         return ClkDF_list_out,Iinter
-        
 
 
- #   _____ _      _____   __      __   _ _     _       _   _             
- #  / ____| |    |  __ \  \ \    / /  | (_)   | |     | | (_)            
- # | (___ | |    | |__) |  \ \  / /_ _| |_  __| | __ _| |_ _  ___  _ __  
- #  \___ \| |    |  _  /    \ \/ / _` | | |/ _` |/ _` | __| |/ _ \| '_ \ 
+
+ #   _____ _      _____   __      __   _ _     _       _   _
+ #  / ____| |    |  __ \  \ \    / /  | (_)   | |     | | (_)
+ # | (___ | |    | |__) |  \ \  / /_ _| |_  __| | __ _| |_ _  ___  _ __
+ #  \___ \| |    |  _  /    \ \/ / _` | | |/ _` |/ _` | __| |/ _ \| '_ \
  #  ____) | |____| | \ \     \  / (_| | | | (_| | (_| | |_| | (_) | | | |
  # |_____/|______|_|  \_\     \/ \__,_|_|_|\__,_|\__,_|\__|_|\___/|_| |_|
-                                                                       
+
 
 
 def svn_prn_equiv_DF(path_meta_snx):
@@ -1797,13 +1799,13 @@ def svn_prn_equiv_DF(path_meta_snx):
         SVN <> PRN equivalent DataFrame.
 
     """
-    
+
     DFsvn  = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/IDENTIFIER",
-                                           header_line_idx=-2)    
+                                           header_line_idx=-2)
 
     DFprn  = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/PRN",
                                            header_line_idx=-2)
-    
+
     DFsvn.drop(columns='Comment__________________________________',inplace=True)
     DFprn.drop(columns='Comment_________________________________',inplace=True)
 
@@ -1811,29 +1813,29 @@ def svn_prn_equiv_DF(path_meta_snx):
     DFsvn["SVN_"] = DFsvn["SVN_"].apply(lambda x:x[0] + x[1:])
     DFprn.replace(dt.datetime(1970,1,1),dt.datetime(2099,1,1),inplace=True)
     DFprn["SVN_"] = DFprn["SVN_"].apply(lambda x:x[0] + x[1:])
-    
-    
+
+
     DFstk = []
-    
+
     for isat , sat in DFprn.iterrows():
         svn = sat["SVN_"]
-        
+
         sat["Block"] = DFsvn[DFsvn["SVN_"] == svn]["Block__________"].values[0]
         DFstk.append(sat)
-        
+
     DFfin = pd.concat(DFstk,axis=1).transpose()
-    
+
     DFfin.rename(columns={"SVN_":"SVN",
                           "Valid_From____":"start",
                           "Valid_To______":"end"},inplace=True)
-    
-    
+
+
     DFfin["const"]   = DFfin["SVN"].apply(lambda x:x[0])
     DFfin["SVN_int"] = DFfin["SVN"].apply(lambda x:int(x[1:]))
-    DFfin["PRN_int"] = DFfin["PRN"].apply(lambda x:int(x[1:]))    
-    
+    DFfin["PRN_int"] = DFfin["PRN"].apply(lambda x:int(x[1:]))
+
     return DFfin
-    
+
 
 def svn_prn_equiv(sat_in,date_in,
                   svn_prn_equiv_DF,
@@ -1841,7 +1843,7 @@ def svn_prn_equiv(sat_in,date_in,
                   full_output=False):
     """
     Get the equivalence SVN <> PRN for a given epoch
-    
+
     Parameters
     ----------
     sat_in : str
@@ -1862,26 +1864,26 @@ def svn_prn_equiv(sat_in,date_in,
     str or DataFrame
     """
 
-    svnorprn1 = mode[:3].upper()    
+    svnorprn1 = mode[:3].upper()
     svnorprn2 = mode[-3:].upper()
-    
+
     DFsat = svn_prn_equiv_DF[svn_prn_equiv_DF[svnorprn1] == sat_in]
     Bool_date = np.logical_and((DFsat.start <= date_in) , (date_in < DFsat.end))
     DFout = DFsat[Bool_date]
-    
+
     if len(DFout) != 1:
         log.warning("several or no %s entries !!! %s %s",mode,sat_in,date_in)
-        
+
     if full_output:
         return DFout
     else:
         return DFout[svnorprn2].values[0]
-    
-    
+
+
 def get_block_svn(sat_in,svn_prn_equiv_DF):
     """
     Get the equivalence SVN block type
-    
+
     Parameters
     ----------
     sat_in : str
@@ -1895,17 +1897,17 @@ def get_block_svn(sat_in,svn_prn_equiv_DF):
     DFsat = svn_prn_equiv_DF[svn_prn_equiv_DF['SVN'] == sat_in]
     # if DFsat.empty:
     #     print('SVN NOT FOUND')
-    # else:        
+    # else:
     block = DFsat.Block.values[0]
 
-    return block    
+    return block
 
 
 def stats_slr(DFin,grpby_keys = ['sat'],
               threshold = .5):
     """
     computes statistics for SLR Residuals
-    
+
     Parameters
     ----------
     DFin : Pandas DataFrame
@@ -1923,26 +1925,26 @@ def stats_slr(DFin,grpby_keys = ['sat'],
     DD : Output statistics DataFrame
         return the mean, the rms and the std.
     """
-    
+
     DD = DFin[np.abs(DFin["res"]) < threshold]
-    
+
     DD_grp  = DD.groupby(grpby_keys)
     DD_mean = DD_grp['res'].agg(np.mean).rename('mean') * 1000
     DD_rms  = DD_grp['res'].agg(stats.rms_mean).rename('rms')   * 1000
     DD_std  = DD_grp['res'].agg(np.std).rename('std')   * 1000
     DD = pd.concat([DD_mean,DD_std,DD_rms],axis=1)
     DD.reset_index(inplace = True)
-    
-    return DD    
+
+    return DD
 
 
- #  ______           _   _        ____       _            _        _   _               _____                               _                
- # |  ____|         | | | |      / __ \     (_)          | |      | | (_)             |  __ \                             | |               
- # | |__   __ _ _ __| |_| |__   | |  | |_ __ _  ___ _ __ | |_ __ _| |_ _  ___  _ __   | |__) |_ _ _ __ __ _ _ __ ___   ___| |_ ___ _ __ ___ 
+ #  ______           _   _        ____       _            _        _   _               _____                               _
+ # |  ____|         | | | |      / __ \     (_)          | |      | | (_)             |  __ \                             | |
+ # | |__   __ _ _ __| |_| |__   | |  | |_ __ _  ___ _ __ | |_ __ _| |_ _  ___  _ __   | |__) |_ _ _ __ __ _ _ __ ___   ___| |_ ___ _ __ ___
  # |  __| / _` | '__| __| '_ \  | |  | | '__| |/ _ \ '_ \| __/ _` | __| |/ _ \| '_ \  |  ___/ _` | '__/ _` | '_ ` _ \ / _ \ __/ _ \ '__/ __|
  # | |___| (_| | |  | |_| | | | | |__| | |  | |  __/ | | | || (_| | |_| | (_) | | | | | |  | (_| | | | (_| | | | | | |  __/ ||  __/ |  \__ \
  # |______\__,_|_|   \__|_| |_|  \____/|_|  |_|\___|_| |_|\__\__,_|\__|_|\___/|_| |_| |_|   \__,_|_|  \__,_|_| |_| |_|\___|\__\___|_|  |___/
-                                                                                                                                         
+
 
 ### EOP / Earth Oreintation Parameters
 
