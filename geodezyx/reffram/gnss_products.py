@@ -1322,17 +1322,22 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
 
     for sat,ac in itertools.product(DForb_in['prn'].unique(),DForb_in['ac'].unique()):
 
-        log.info("process",ac,sat)
+        log.info("process %s %s",ac,sat)
 
         DForb_use = DForb_in[(DForb_in['prn'] == sat) & (DForb_in['ac'] == ac)].copy()
 
-        Tdata = DForb_use.epoch.dt.to_pydatetime()
+        ### faster but anoying Future Waring
+        #Tdata = np.array(DForb_use.epoch.dt.to_pydatetime())
+        Tdata = conv.numpy_dt2dt(DForb_use.epoch.values)
 
         Xitrp = stats.lagrange_interpolate(Tdata,DForb_use['x'],Titrp,n=n)
         Yitrp = stats.lagrange_interpolate(Tdata,DForb_use['y'],Titrp,n=n)
         Zitrp = stats.lagrange_interpolate(Tdata,DForb_use['z'],Titrp,n=n)
 
-        Clkitrp = np.interp(np.array(Titrp), np.array(Tdata), DForb_use['clk'].values)
+        Clkitrp = np.interp(conv.dt2posix(np.array(Titrp)),
+                            conv.dt2posix(np.array(Tdata)),
+                            DForb_use['clk'].values)
+
         ClkDummy = np.array([999999.999999] * len(Titrp))
 
         ARR = np.column_stack((Titrp,Xitrp,Yitrp,Zitrp,Clkitrp))
@@ -1353,7 +1358,6 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
             fig,axr = plt.subplots(1,1,sharex='all')
             Symb = axr.plot(Tdata,DForb_use.x,'o')
             Symb = axr.plot(Titrp,Xitrp,'.')
-
 
 
     DForb_out = pd.concat(DForb_stk)
