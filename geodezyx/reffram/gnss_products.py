@@ -1338,11 +1338,10 @@ def OrbDF_lagrange_interpolate(DForb_in,Titrp,n=10,
                             conv.dt2posix(np.array(Tdata)),
                             DForb_use['clk'].values)
 
-        ClkDummy = np.array([999999.999999] * len(Titrp))
+        #ClkDummy = np.array([999999.999999] * len(Titrp))
 
-        ARR = np.column_stack((Titrp,Xitrp,Yitrp,Zitrp,Clkitrp))
-
-        DForb_tmp = pd.DataFrame(ARR,columns=["epoch","x","y","z","clk"])
+        d = {'epoch': Titrp, 'x': Xitrp, 'y': Yitrp, 'z': Zitrp, 'clk': Clkitrp}
+        DForb_tmp = pd.DataFrame(d)
 
         ### sometihng else must be tested o give the annex val directly in the col of DForb_tmp
         DFannex_vals = DForb_use.drop(["epoch","x","y","z","clk"],axis=1).drop_duplicates()

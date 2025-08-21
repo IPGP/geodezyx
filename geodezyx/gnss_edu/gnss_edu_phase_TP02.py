@@ -75,9 +75,11 @@ from gnss_edu import *
 fichier_rnx='./data/data-2019/mlvl1760.18d.Z'
 
 # Chargement des données RINEX d'observation dans un pandas dataframe via  GeodeZYX
-df_rnx, l_rnx_head = geodezyx.files_rw.read_rinex2_obs(fichier_rnx,
-                                           set_index=['epoch', 'prn'],
+df_rnx_flat, l_rnx_head = geodezyx.files_rw.read_rinex2_obs(fichier_rnx,
                                            return_header=True)
+
+df_rnx = df_rnx_flat.set_index(['epoch', 'prn'], drop=True)
+
 
 # Position approchée lue dans le header du fichier RINEX
 columns = [l for l in l_rnx_head if r"APPROX POSITION XYZ" in l]
@@ -155,6 +157,17 @@ Z_sat = []
 dte_sat = []
 dRelat = []
 
+
+epochs_rec = df_rnx_flat["epoch"].unique()
+
+from geodezyx import  reffram
+dforb_itrp = reffram.OrbDF_lagrange_interpolate(dforb, epochs)
+dforb_itrp_aft = reffram.OrbDF_lagrange_interpolate(dforb, epochs + dt.timedelta(milliseconds=1))
+dforb_itrp_bef = reffram.OrbDF_lagrange_interpolate(dforb, epochs - dt.timedelta(milliseconds=1))
+
+dforb_itrp_aft[["x","y","z"]] - dforb_itrp_bef[["x","y","z"]] / 2.0 / 1e3
+
+
 for (time_i,prn_i) in df_rnx.index:
 
     t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
@@ -162,7 +175,6 @@ for (time_i,prn_i) in df_rnx.index:
     t_emission_mjd  = t.mjd - df_rnx.loc[(time_i,prn_i), 'C1'] / gnss_const.c / 86400.0
 
     (X_sat_v,Y_sat_v,Z_sat_v,dte_sat_v)	 = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd)
-    reffram.OrbDF_lagrange_interpolate(dforb, time_i.to_pydatetime())
 
     # calcul de l'effet relativiste
     delta_t = 1e-3 # écart de temps en +/- pour calculer la dérivée 
