@@ -24,105 +24,8 @@ import sys
 import math
 import numpy as np
 from typing import Dict, Tuple, Union
-
-
-def calend1(njd: int) -> Tuple[int, int, int]:
-    """
-    Transform a CNES Julian day (njd) to calendar date (day, month, year).
-
-    Parameters:
-    -----------
-    njd : int
-        Date in CNES Julian days
-
-    Returns:
-    --------
-    tuple : (day, month, year)
-        Day in month, month, year
-    """
-    n = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-
-    njul = njd + 1
-    na = njul // 365
-    nj = njul - na * 365
-    nb = (na + 1) // 4
-    nj = nj - nb
-
-    if nj <= 0:
-        na = na + 1949
-        nm = 12
-        nd = nj + 31
-        return nd, nm, na
-
-    j = na - 2 - nb * 4
-    na = na + 1950
-
-    if j >= 0:
-        if 60 < nj:
-            nm1 = 60
-            m = 3
-        elif 60 == nj:
-            nm = 2
-            nd = 29
-            return nd, nm, na
-        else:
-            nm1 = 0
-            m = 1
-    else:
-        nm1 = 0
-        m = 1
-
-    while True:
-        ndj = nm1 + n[m-1]  # Convert to 0-based indexing
-        nj3 = nj - ndj
-        if nj3 <= 0:
-            break
-        m = m + 1
-        nm1 = ndj
-
-    nm = m
-    nd = nj - nm1
-
-    return nd, nm, na
-
-
-def jour_julien_ff(year: int, month: int, day: int, hour: int, min_val: int, sec: float) -> float:
-    """
-    Transform calendar date to CNES Julian day.
-
-    Parameters:
-    -----------
-    year, month, day : int
-        Calendar date
-    hour, min_val : int
-        Hour and minutes
-    sec : float
-        Seconds
-
-    Returns:
-    --------
-    float : CNES Julian day in seconds
-    """
-    yy = year
-    mm = month
-
-    if month == 1 or month == 2:
-        yy = year - 1
-        mm = month + 12
-
-    C = math.floor(yy / 100.0)  # Century
-    B = 2.0 - C + math.floor(C / 4.0)
-    T = hour / 24.0 + min_val / (24.0 * 60.0) + sec / (24.0 * 3600.0)  # Time fraction in days
-
-    jjul_sec = (math.floor(365.25 * (yy + 4716)) +
-                math.floor(30.6001 * (mm + 1.0)) +
-                day + T + B - 1524.5)
-
-    # Convert to CNES Julian from 01/01/1950
-    jjul_sec = jjul_sec - 2433282.5
-
-    return jjul_sec
-
+from geodezyx import conv
+import datetime as dt
 
 def get_orography(orography_file: str, lat: float, lon: float) -> np.ndarray:
     """
@@ -1946,8 +1849,10 @@ def compute_vmf1g_values(data_dir: str, year: int, month: int, day: int,
 
     sec_long = float(hh * 3600 + min_val * 60 + sec)
 
-    # Convert calendar date to CNES Julian days
-    jj_sec = jour_julien_ff(year, month, day, hh, min_val, sec)
+    # Convert calendar date to Julian days (CNES & regular
+    jj_sec_cnes = conv.dt2jjul_cnes(dt.datetime(year, month, day, hh, min_val, sec))
+    jj_sec = conv.dt2mjd(dt.datetime(year, month, day, hh, min_val, sec))
+
 
     # Get VMF1G values
     vmf_data = get_vmf1g_values(data_dir, year, month, day, sec_long, lat, lon)
@@ -2072,7 +1977,6 @@ def compute_vmf1g_values(data_dir: str, year: int, month: int, day: int,
         'slant_delay_w': zwdg_interp * vmf1w,
         'slant_delay_total': zhdg_interp * vmf1h + zwdg_interp * vmf1w
     }
-
 
 def main():
     """Main function to run VMF1G computation from command line or interactive input."""
