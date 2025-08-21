@@ -224,7 +224,6 @@ def _generic_server(stat, date, urlserver, urlsuffix=None):
 
     return urldic
 
-
 def igs_sopac_server(stat, date):
     # plante si trop de requete
     urlserver = "ftp://garner.ucsd.edu/pub/rinex/"
