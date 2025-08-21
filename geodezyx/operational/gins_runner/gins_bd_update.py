@@ -235,7 +235,7 @@ def bdgins_update(
         #"lunisolaires": list_lunisolaires,
         #"macromod": list_macromod,
         #"maree_polaire": list_maree_polaire,
-        #"prairie": list_prairie,
+        "prairie": list_prairie,
         ### misc files
         ".": list_misc,  ## for misc files, destination is in the input path (.)
         ### time dependant files
