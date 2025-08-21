@@ -39,6 +39,8 @@ import matplotlib.pyplot as plt
 fichier_base  ='/home/snahmani/Bureau/FRS/data/data/data-2019/mlvl176z.18o'
 fichier_mobile='/home/snahmani/Bureau/FRS/data/data/data-2019/smne176z.18o'
 
+fichier_base='/home/psakicki/aaa_FOURBI/mlvl1760.18o'
+fichier_mobile='/home/psakicki/aaa_FOURBI/smne1760.18o'
 
 #%% Préambule
 # chargement des pandas DataFrame et utilisation

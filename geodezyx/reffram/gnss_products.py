@@ -1069,7 +1069,7 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
 ### Orbit DataFrames   
 
 
-def DFOrb_velocity_calc(DFOrb_in,
+def OrbDF_velocity_calc(OrbDF_in,
                         drop_nan=False):
     """
     Compute the velocity of satellites from a DFOrb dataframe
@@ -1077,7 +1077,7 @@ def DFOrb_velocity_calc(DFOrb_in,
 
     Parameters
     ----------
-    DFOrb_in : Pandas DataFrame
+    OrbDF_in : Pandas DataFrame
         an Orbit DataFrame.
     drop_nan : bool, optional
         Remove the nan values 
@@ -1093,7 +1093,7 @@ def DFOrb_velocity_calc(DFOrb_in,
 
     """
     
-    dfgrp = DFOrb_in.groupby('prn')
+    dfgrp = OrbDF_in.groupby('prn')
     
     dfprn_stk = []
     for prn,dfprn in dfgrp:    
@@ -1226,7 +1226,7 @@ def beta_angle_calc(DFOrb_in,
     Returns
     -------
     df_out : Pandas DataFrame
-        DFOrb_in with a new 'beta' column.
+        OrbDF_in with a new 'beta' column.
     df_wrk : Pandas DataFrame
         intermediate values dataframe for debug.
         here, coordinates are in ECI frame
@@ -1239,7 +1239,7 @@ def beta_angle_calc(DFOrb_in,
                                           DFOrb_in['epoch'].values)
     
     #### compute velocity
-    df_wrk = DFOrb_velocity_calc(df_eci,drop_nan=False)
+    df_wrk = OrbDF_velocity_calc(df_eci, drop_nan=False)
     ##keep drop nan False, thus the DF will keep same size and index as input
     
     #### compute Kepler's parameters
