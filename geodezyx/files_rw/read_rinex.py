@@ -38,7 +38,7 @@ from geodezyx import operational, utils, conv
 log = logging.getLogger('geodezyx')
 
 
-def read_rinex_obs(rnx_in, set_index=None):
+def read_rinex_obs(rnx_in, set_index=None , return_header = False):
     """
     Frontend function to read a RINEX Observation, version 2 or 3
 
@@ -54,24 +54,29 @@ def read_rinex_obs(rnx_in, set_index=None):
         If None, the output DataFrame is "flat", with integer index
         ["epoch","prn"] for instance set the epoch and the prn as MultiIndex
         The default is None.
+    return_header : bool, optional
+        If True, the function returns a tuple (df_rnx_obs, header_lines),
+        where header_lines is a list of strings containing the header lines.
 
     Returns
     -------
     df_rnx_obs : Pandas DataFrame / GeodeZYX's RINEX format
+    header_lines : list of str, optional
+        If return_header is True, this contains the header lines of the RINEX file.
+        Otherwise, it is not returned.
     """
 
     if conv.rinex_regex_search_tester(rnx_in,short_name=True,long_name=False):
-        return read_rinex2_obs(rnx_in, set_index=set_index)
+        return read_rinex2_obs(rnx_in, set_index=set_index, return_header=return_header)
     elif conv.rinex_regex_search_tester(rnx_in,short_name=False,long_name=True):
-        return read_rinex3_obs(rnx_in, set_index=set_index)
+        return read_rinex3_obs(rnx_in, set_index=set_index, return_header=return_header)
     else:
         log.error("RINEX version not recognized: %s", rnx_in)
         log.error("use read_rinex2_obs or read_rinex3_obs functions manually")
         return None
 
 
-
-def read_rinex2_obs(rnx_in, set_index=None):
+def read_rinex2_obs(rnx_in, set_index=None, return_header = False):
     """
     Read a RINEX Observation, version 2
 
@@ -87,10 +92,16 @@ def read_rinex2_obs(rnx_in, set_index=None):
         If None, the output DataFrame is "flat", with integer index
         ["epoch","prn"] for instance set the epoch and the prn as MultiIndex
         The default is None.
+    return_header : bool, optional
+        If True, the function returns a tuple (df_rnx_obs, header_lines),
+        where header_lines is a list of strings containing the header lines.
 
     Returns
     -------
     df_rnx_obs : Pandas DataFrame / GeodeZYX's RINEX format
+    header_lines : list of str, optional
+        If return_header is True, this contains the header lines of the RINEX file.
+        Otherwise, it is not returned.
     """
 
     #### open rinex
@@ -141,7 +152,7 @@ def read_rinex2_obs(rnx_in, set_index=None):
         ### get the satellites for this epoch block
         sats_find_out = _sats_find(lines_epoc)
         flag, epoc, nsat, _, sats_split, iline_sats_end = sats_find_out        
-        
+
         if flag != 0: # skip the epoch (which is not an observable one)
             log.warning("epoch %s skipped, flag %i",epoc, flag)
             continue
@@ -159,17 +170,16 @@ def read_rinex2_obs(rnx_in, set_index=None):
         df_epoch.columns = obs_all_list
 
         # slow
-        #df_epoch["prn"] = sats_split
-        #df_epoch["epoch"] = epoch
+        # df_epoch["prn"] = sats_split
+        # df_epoch["epoch"] = epoch
         # faster
         col_epoch = pd.Series([epoch] * len(df_epoch), name="epoch")
         col_prn = pd.Series(sats_split, name="prn")
-        
+
         if np.any(col_prn.str.len() == 0):
             log.critical("bad epoch %s" , epoc)
             raise Exception()
-            
-        
+
         df_epoch = pd.concat([col_epoch, col_prn, df_epoch], axis=1)
 
         df_all_stk.append(df_epoch)
@@ -198,9 +208,12 @@ def read_rinex2_obs(rnx_in, set_index=None):
         df_rnx_obs.set_index(set_index, inplace=True)
         df_rnx_obs.sort_index(inplace=True)
 
-    return df_rnx_obs
+    if return_header:
+        return df_rnx_obs, l_head
+    else:
+        return df_rnx_obs
 
-def read_rinex3_obs(rnx_in, set_index=None):
+def read_rinex3_obs(rnx_in, set_index=None, return_header = False):
     """
 
     Read a RINEX Observation, version 3 or 4
@@ -217,10 +230,16 @@ def read_rinex3_obs(rnx_in, set_index=None):
         If None, the output DataFrame is "flat", with integer index
         ["epoch","prn"] for instance set the epoch and the prn as MultiIndex
         The default is None.
+    return_header : bool, optional
+        If True, the function returns a tuple (df_rnx_obs, header_lines),
+        where header_lines is a list of strings containing the header lines.
 
     Returns
     -------
-    df_rnxobs : Pandas DataFrame / GeodeZYX's RINEX format
+    df_rnx_obs : Pandas DataFrame / GeodeZYX's RINEX format
+    header_lines : list of str, optional
+        If return_header is True, this contains the header lines of the RINEX file.
+        Otherwise, it is not returned.
     """
 
     #### open rinex
@@ -342,7 +361,11 @@ def read_rinex3_obs(rnx_in, set_index=None):
         df_rnx_obs_ok.set_index(set_index, inplace=True)
         df_rnx_obs_ok.sort_index(inplace=True)
 
-    return df_rnx_obs_ok
+
+    if return_header:
+        return df_rnx_obs_ok, l_head
+    else:
+        return df_rnx_obs_ok
 
 
 ############ UTILITY FUNCTIONS
@@ -536,7 +559,6 @@ def _header_reader(lines_inp):
     return lines_inp[: i_end_header + 1]
 
 
-
 ### FUNCTION GRAVEYARD
 
 
@@ -693,8 +715,6 @@ def read_rinex3_obs_legacy(rnx_in, set_index=None):
     return df_rnx_obs
 
 
-
-
 if __name__ == "__main__" and False:
 
     # p3 = "/home/psakicki/aaa_FOURBI/RINEXexemple/ENOG00REU_R_20243030000_01D_30S_MO.rnx"
@@ -726,5 +746,3 @@ read_rinex2_obs(p)
     df32 = read_rinex3_obs_legacy(p3)
     print(df31)
     print(df32)
-
-

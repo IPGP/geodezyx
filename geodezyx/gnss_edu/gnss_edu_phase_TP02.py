@@ -47,6 +47,8 @@ import geodezyx.conv as conv                  # Import the conversion module
 import datetime as dt
 import geodezyx.files_rw as files_rw         # Import the file reading/writing module
 import geodezyx.reffram as reffram         # Import the operational module
+from geodezyx import utils
+
 
 import gpsdatetime as gpst
 
@@ -67,31 +69,30 @@ from gnss_edu import *
 
 # %%
 # Chargement des fichiers RINEX d'observation
-fichier_rnx='./data/data-2019/mlvl176z.18o'
+# fichier_rnx='./data/data-2019/mlvl176z.18o'
 # fichier_rnx='./data/data-2019/mlvl1760.18o'
 
-fichier_rnx='/home/psakicki/aaa_FOURBI/mlvl1760.18o'
+fichier_rnx='./data/data-2019/mlvl1760.18d.Z'
 
+# Chargement des données RINEX d'observation dans un pandas dataframe via  GeodeZYX
+df_rnx, l_rnx_head = geodezyx.files_rw.read_rinex2_obs(fichier_rnx,
+                                           set_index=['epoch', 'prn'],
+                                           return_header=True)
 
 # Position approchée lue dans le header du fichier RINEX
-columns =  grep_file(r"APPROX POSITION XYZ", fichier_rnx)
+columns = [l for l in l_rnx_head if r"APPROX POSITION XYZ" in l]
 if columns:
     # Séparer la ligne en supprimant le texte "APPROX POSITION XYZ"
     valeurs = columns[0].split()[:3]  # Récupérer uniquement les 3 premières valeurs
     P_rnx_header = np.array(valeurs, dtype=float)  # Convertir en numpy array
     print("Coordonnées XYZ :", P_rnx_header)
 else:
+    P_rnx_header = np.array([0,0,0])
     print("Aucune correspondance trouvée.")
-
-
 del columns, valeurs
-
-# Chargement des données RINEX d'observation dans un pandas dataframe via  GeodeZYX
-df_rnx = geodezyx.files_rw.read_rinex2_obs(fichier_rnx, set_index=['epoch', 'prn'])
 
 l1 = gnss_const.lambda1
 l2 = gnss_const.lambda2
-
 
 # il faut consulter la doc et vous constaterez que les unités de L1 et L2 sont en cycle
 df_rnx['L1'] = df_rnx['L1']*l1 
@@ -134,14 +135,13 @@ df_rnx['ind_ligne'] = range(len(df_rnx))
 
 # %%
 # Chargement des fichiers d'orbites
-fichier_sp3  = ['./data/data-2019/igs20071.sp3', './data/data-2019/igs20072.sp3']
+fichier_sp3  = ['./data/data-2019/igs20071.sp3.Z', './data/data-2019/igs20072.sp3.Z']
 fichier_brdc = './data/data-2019/mlvl176z.18n'
 
 mysp3 = orb.orbit()
 mysp3.loadSp3(fichier_sp3)
 
-
-dforb = files_rw.read_sp3()
+dforb = pd.concat([files_rw.read_sp3(f) for f in fichier_sp3])
 
 mynav = orb.orbit()
 mynav.loadRinexN('./data/data-2019/mlvl176z.18n')
