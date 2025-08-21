@@ -163,7 +163,7 @@ singugins_run = "geodezyx.operational.gins_runner.singugins_run:main"
 bdgins_update = "geodezyx.operational.gins_runner.gins_bd_update:main"
 orbclk_concat = "geodezyx.operational.gins_runner.gins_orbclk_concat:main"
 download_gnss_rinex = "geodezyx.operational.bin_opera.download_gnss_rinex:main"
-
+vmf1_compute = "geodezyx.athmo.vmf1_compute:main"
 
 # This is configuration specific to the `setuptools` build backend.
 # If you are using a different build backend, you will need to change this.
