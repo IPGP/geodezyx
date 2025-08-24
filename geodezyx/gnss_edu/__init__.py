@@ -6,4 +6,5 @@ Created on 12/08/2025 14:58:49
 @author: psakic
 """
 
-from . import *
+from .gnss_edu import *
+from .klobuchar import *

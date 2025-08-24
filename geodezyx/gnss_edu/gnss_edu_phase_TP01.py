@@ -36,18 +36,18 @@ import matplotlib.pyplot as plt
 
 #%%
 #
-fichier_base  ='/home/snahmani/Bureau/FRS/data/data/data-2019/mlvl176z.18o'
-fichier_mobile='/home/snahmani/Bureau/FRS/data/data/data-2019/smne176z.18o'
+dir_data = "/home/snahmani/Bureau/FRS/data/data/data-2019/"
+dir_data = "./data/data-2019/"
 
-fichier_base='/home/psakicki/aaa_FOURBI/mlvl1760.18o'
-fichier_mobile='/home/psakicki/aaa_FOURBI/smne1760.18o'
+fichier_base= dir_data + '/mlvl1760.18d.Z'
+fichier_mobile= dir_data + '/smne1760.18d.Z'
 
 #%% Préambule
 # chargement des pandas DataFrame et utilisation
 # Lecture des observations RINEX en deux formats de DataFrame différents
 
 df_flat = geodezyx.files_rw.read_rinex2_obs(fichier_base)
-df_index = geodezyx.files_rw.read_rinex2_obs(fichier_base, set_index=['epoch', 'prn'])
+df_index = df_flat.set_index(['epoch', 'prn'])
 # df_index['ind_ligne'] = range(len(df_index)) # à décommenter quand c'est compris
 
 #%%

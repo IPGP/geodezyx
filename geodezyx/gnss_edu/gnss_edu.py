@@ -26,7 +26,7 @@ import gnsstoolbox.orbits as orb
 import gpsdatetime as gpst
 import gnsstoolbox.gnss_const as gnss_const
 
-import klobuchar
+from .klobuchar import *
 import gnsstoolbox.gnsstools as tools
 
 # Pour chercher des chaînes de caractère dans des fichiers
