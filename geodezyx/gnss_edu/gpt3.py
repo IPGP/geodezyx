@@ -35,7 +35,7 @@ def gpt3_5_fast_readGrid(filename ='gpt3_5.grd'):
 
     
     file=open(filename)
-    C = pd.read_csv(file ,skiprows=[i for i in range(0,1)],sep='\s+',skipfooter =0, skip_blank_lines=True,header = None, index_col= False )
+    C = pd.read_csv(file ,skiprows=[i for i in range(0,1)],sep=r'\s+',skipfooter =0, skip_blank_lines=True,header = None, index_col= False )
     file.close()   
 
 

@@ -280,11 +280,11 @@ def compar_orbit(
                 )
                 log.info("      DF = DF[DF['AC'] == 'gbm']")
 
-                Dtmp1 = d1orig[d1orig["prni"] == prni]
-                Dtmp2 = d2orig[d2orig["prni"] == prni]
+                dtmp1 = d1orig[d1orig["prni"] == prni]
+                dtmp2 = d2orig[d2orig["prni"] == prni]
 
-                dupli1 = np.sum(Dtmp1.duplicated(["epoch", "prn"]))
-                dupli2 = np.sum(Dtmp2.duplicated(["epoch", "prn"]))
+                dupli1 = np.sum(dtmp1.duplicated(["epoch", "prn"]))
+                dupli2 = np.sum(dtmp2.duplicated(["epoch", "prn"]))
 
                 log.info(
                     "FWIW: duplicated epoch/sat in DF1 & DF2: %s %s", dupli1, dupli2
@@ -1472,7 +1472,7 @@ def orb_df_lagrange_interpolate(
     Use conv.dt_range to generate the wished epochs range
 
     """
-    DForb_stk = []
+    df_orb_stk = []
 
     for sat, ac in itertools.product(
         orb_df_inp["prn"].unique(), orb_df_inp["ac"].unique()
@@ -1512,7 +1512,7 @@ def orb_df_lagrange_interpolate(
         )
 
         DForb_tmp = pd.concat((DForb_tmp, DFannex_vals), axis=1)
-        DForb_stk.append(DForb_tmp)
+        df_orb_stk.append(DForb_tmp)
 
         if plot:
             # plt.plot(Tdata,DForb_use.x,'o')
@@ -1522,7 +1522,7 @@ def orb_df_lagrange_interpolate(
             Symb = axr.plot(Tdata, DForb_use.x, "o")
             Symb = axr.plot(titrp, Xitrp, ".")
 
-    DForb_out = pd.concat(DForb_stk)
+    DForb_out = pd.concat(df_orb_stk)
 
     if append_to_input_df:
         DForb_out = pd.concat((orb_df_inp, DForb_out))

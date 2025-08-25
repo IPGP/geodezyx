@@ -8,3 +8,4 @@ Created on 12/08/2025 14:58:49
 
 from .gnss_edu import *
 from .klobuchar import *
+from .gpt3 import *
