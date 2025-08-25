@@ -22,6 +22,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 #### External modules
 import datetime as dt
 import itertools
+
 #### Import the logger
 import logging
 import os
@@ -42,16 +43,25 @@ from geodezyx.reffram import kepler_gzyx
 
 ### disabled and imported directly in the needed fct
 ## import geodezyx.reffram.sofa18 as sofa
-log = logging.getLogger('geodezyx')
+log = logging.getLogger("geodezyx")
 
 ##########  END IMPORT  ##########
 
-def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
-                 sats_used_list = ['G'],
-                 name1='', name2='', use_name_1_2_for_table_name = False,
-                 rtn_output = True, convert_ecef_eci=True,
-                 clean_null_values = True,
-                 conv_coef=10**3, return_sat_null = False):
+
+def compar_orbit(
+    data_inp_1,
+    data_inp_2,
+    step_data=900,
+    sats_used_list=["G"],
+    name1="",
+    name2="",
+    use_name_1_2_for_table_name=False,
+    rtn_output=True,
+    convert_ecef_eci=True,
+    clean_null_values=True,
+    conv_coef=10**3,
+    return_sat_null=False,
+):
     """
     Compares 2 GNSS orbits files (SP3), and gives a summary plot and a
     statistics table
@@ -87,7 +97,7 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
         are null (0.000000)
         if "any", remove sat position if X or Y or Z is null
         if False, keep everything
-        
+
     conv_coef : int
         conversion coefficient, km to m 10**3, km to mm 10**6
 
@@ -119,11 +129,11 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
 
     # selection of both used Constellations AND satellites
     sys_used_list = []
-    prn_used_list  = []
+    prn_used_list = []
     for e in sats_used_list:
-        if len(e) == 1: ## it is a constellation
+        if len(e) == 1:  ## it is a constellation
             sys_used_list.append(e)
-        elif len(e) == 3: ## it is a satellite
+        elif len(e) == 3:  ## it is a satellite
             prn_used_list.append(e)
             if not e[0] in sys_used_list:
                 sys_used_list.append(e[0])
@@ -171,10 +181,10 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
     ####      BUT here, for legacy reasons, the index has to be datetime
 
     if isinstance(d1orig.index[0], (int, np.integer)):
-        d1orig.set_index("epoch",inplace=True)
+        d1orig.set_index("epoch", inplace=True)
 
     if isinstance(d2orig.index[0], (int, np.integer)):
-        d2orig.set_index("epoch",inplace=True)
+        d2orig.set_index("epoch", inplace=True)
 
     diff_sat_stk = []
 
@@ -187,21 +197,27 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
         else:
             all_or_any = np.all
 
-        xyz_lst = ['x','y','z']
+        xyz_lst = ["x", "y", "z"]
 
-        d1_null_bool = all_or_any(np.isclose(d1orig[xyz_lst],0.),axis=1)
-        d2_null_bool = all_or_any(np.isclose(d2orig[xyz_lst],0.),axis=1)
+        d1_null_bool = all_or_any(np.isclose(d1orig[xyz_lst], 0.0), axis=1)
+        d2_null_bool = all_or_any(np.isclose(d2orig[xyz_lst], 0.0), axis=1)
 
         d1 = d1orig[np.logical_not(d1_null_bool)]
         d2 = d2orig[np.logical_not(d2_null_bool)]
 
         if np.any(d1_null_bool) or np.any(d2_null_bool):
-            sat_nul = utils.join_improved(" " ,*list(set(d1orig[d1_null_bool]["prn"])))
+            sat_nul = utils.join_improved(" ", *list(set(d1orig[d1_null_bool]["prn"])))
             log.warning("Null values contained in SP3 files : ")
-            log.warning("f1: %s %s", np.sum(d1_null_bool),
-                        utils.join_improved(" ", *list(set(d1orig[d1_null_bool]["prn"]))))
-            log.warning("f2: %s %s", np.sum(d2_null_bool),
-                        utils.join_improved(" ", *list(set(d2orig[d2_null_bool]["prn"]))))
+            log.warning(
+                "f1: %s %s",
+                np.sum(d1_null_bool),
+                utils.join_improved(" ", *list(set(d1orig[d1_null_bool]["prn"]))),
+            )
+            log.warning(
+                "f2: %s %s",
+                np.sum(d2_null_bool),
+                utils.join_improved(" ", *list(set(d2orig[d2_null_bool]["prn"]))),
+            )
         else:
             sat_nul = []
 
@@ -213,18 +229,18 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
     d2sys_grp = d2.groupby("sys")
 
     for sysuse in sys_used_list:
-        d1sys = d1sys_grp.get_group(sysuse) # d1sys = d1[d1['sys'] == sysuse]
-        d2sys = d2sys_grp.get_group(sysuse) # d2sys = d2[d2['sys'] == sysuse]
+        d1sys = d1sys_grp.get_group(sysuse)  # d1sys = d1[d1['sys'] == sysuse]
+        d2sys = d2sys_grp.get_group(sysuse)  # d2sys = d2[d2['sys'] == sysuse]
 
         # checking if the data correspond to the step
-        bool_step1 = np.mod((d1sys.index - np.min(d1.index)).seconds,step_data) == 0
-        bool_step2 = np.mod((d2sys.index - np.min(d2.index)).seconds,step_data) == 0
+        bool_step1 = np.mod((d1sys.index - np.min(d1.index)).seconds, step_data) == 0
+        bool_step2 = np.mod((d2sys.index - np.min(d2.index)).seconds, step_data) == 0
 
         d1win = d1sys[bool_step1]
         d2win = d2sys[bool_step2]
-        
+
         # find common sats and common epochs
-        prni_set = sorted(list(set(d1win['prni']).intersection(set(d2win['prni']))))
+        prni_set = sorted(list(set(d1win["prni"]).intersection(set(d2win["prni"]))))
         epoc_set = sorted(list(set(d1win.index).intersection(set(d2win.index))))
 
         # if special selection of sats, then apply it
@@ -233,7 +249,9 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
             # first find the selected sats for the good constellation
             prni_used_select_list = [int(e[1:]) for e in prn_used_list if sysuse in e]
             # and apply it
-            prni_set = sorted(list(set(prni_set).intersection(set(prni_used_select_list))))
+            prni_set = sorted(
+                list(set(prni_set).intersection(set(prni_used_select_list)))
+            )
 
         d1win_prni_grp = d1win.groupby("prni")
         d2win_prni_grp = d2win.groupby("prni")
@@ -251,18 +269,26 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
                 # d2win[d2win['prni'] == prni].reindex(epoc_set)
             except Exception as exce:
                 log.info("ERR : Unable to re-index with an unique epoch")
-                log.info("      are you sure there is no multiple-defined epochs for the same sat ?")
-                log.info("      it happens e.g. when multiple ACs are in the same DataFrame ")
-                log.info("TIP : Filter the input Dataframe before calling this fct with")
+                log.info(
+                    "      are you sure there is no multiple-defined epochs for the same sat ?"
+                )
+                log.info(
+                    "      it happens e.g. when multiple ACs are in the same DataFrame "
+                )
+                log.info(
+                    "TIP : Filter the input Dataframe before calling this fct with"
+                )
                 log.info("      DF = DF[DF['AC'] == 'gbm']")
-                
-                Dtmp1 = d1orig[d1orig['prni'] == prni]
-                Dtmp2 = d2orig[d2orig['prni'] == prni]
-                
-                dupli1 = np.sum(Dtmp1.duplicated(["epoch","prn"]))
-                dupli2 = np.sum(Dtmp2.duplicated(["epoch","prn"]))
-                
-                log.info("FWIW: duplicated epoch/sat in DF1 & DF2: %s %s",dupli1,dupli2)
+
+                Dtmp1 = d1orig[d1orig["prni"] == prni]
+                Dtmp2 = d2orig[d2orig["prni"] == prni]
+
+                dupli1 = np.sum(Dtmp1.duplicated(["epoch", "prn"]))
+                dupli2 = np.sum(Dtmp2.duplicated(["epoch", "prn"]))
+
+                log.info(
+                    "FWIW: duplicated epoch/sat in DF1 & DF2: %s %s", dupli1, dupli2
+                )
 
                 raise exce
 
@@ -270,31 +296,44 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
             # This step is useless, because .reindex() will fill the DataFrame
             # with NaN
             if len(d1prni_orig) != len(d2prni_orig):
-                log.info("different epochs nbr for SV %s %s %s",prni, len(d1prni_orig), len(d2prni_orig))
-                epoc_prni_set = sorted(list(set(d1prni_orig.index).intersection(set(d2prni_orig.index))))
+                log.info(
+                    "different epochs nbr for SV %s %s %s",
+                    prni,
+                    len(d1prni_orig),
+                    len(d2prni_orig),
+                )
+                epoc_prni_set = sorted(
+                    list(set(d1prni_orig.index).intersection(set(d2prni_orig.index)))
+                )
                 d1prni = d1prni_orig.loc[epoc_prni_set]
                 d2prni = d2prni_orig.loc[epoc_prni_set]
             else:
                 d1prni = d1prni_orig
                 d2prni = d2prni_orig
 
-            p1 = d1prni[['x','y','z']]
-            p2 = d2prni[['x','y','z']]
+            p1 = d1prni[["x", "y", "z"]]
+            p2 = d2prni[["x", "y", "z"]]
 
             # Start ECEF => ECI
             if convert_ecef_eci:
                 # Backup because the columns xyz will be reaffected
-                #D1sv_bkp = d1prni.copy()
-                #D2sv_bkp = d2prni.copy()
-    
-                p1b = conv.ecef2eci(np.array(p1), conv.dt_gpstime2dt_utc(p1.index.to_pydatetime(), out_array=True))
-                p2b = conv.ecef2eci(np.array(p2), conv.dt_gpstime2dt_utc(p2.index.to_pydatetime(), out_array=True))
+                # D1sv_bkp = d1prni.copy()
+                # D2sv_bkp = d2prni.copy()
 
-                d1prni[['x','y','z']] = p1b
-                d2prni[['x','y','z']] = p2b
+                p1b = conv.ecef2eci(
+                    np.array(p1),
+                    conv.dt_gpstime2dt_utc(p1.index.to_pydatetime(), out_array=True),
+                )
+                p2b = conv.ecef2eci(
+                    np.array(p2),
+                    conv.dt_gpstime2dt_utc(p2.index.to_pydatetime(), out_array=True),
+                )
 
-                p1 = d1prni[['x','y','z']]
-                p2 = d2prni[['x','y','z']]
+                d1prni[["x", "y", "z"]] = p1b
+                d2prni[["x", "y", "z"]] = p2b
+
+                p1 = d1prni[["x", "y", "z"]]
+                p2 = d2prni[["x", "y", "z"]]
             # End ECEF => ECI
 
             if not rtn_output:
@@ -304,36 +343,37 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
                 delta_p = p1 - p2
 
                 diff_sat = delta_p.copy()
-                diff_sat.columns = ['dx','dy','dz']
+                diff_sat.columns = ["dx", "dy", "dz"]
 
             else:
-                rnorm = np.linalg.norm(p1,axis=1)
+                rnorm = np.linalg.norm(p1, axis=1)
 
                 from geodezyx.utils_xtra import pandas_utils
-                vx = pandas_utils.diff_pandas(d1prni,'x',use_np_diff=True)
-                vy = pandas_utils.diff_pandas(d1prni,'y',use_np_diff=True)
-                vz = pandas_utils.diff_pandas(d1prni,'z',use_np_diff=True)
-                
-                v = pd.concat((vx , vy , vz),axis=1)
-                v.columns = ['vx','vy','vz']
 
-                r = p1.divide(rnorm,axis=0)
-                r.columns = ['xnorm','ynorm','znorm']
+                vx = pandas_utils.diff_pandas(d1prni, "x", use_np_diff=True)
+                vy = pandas_utils.diff_pandas(d1prni, "y", use_np_diff=True)
+                vz = pandas_utils.diff_pandas(d1prni, "z", use_np_diff=True)
 
-                h = pd.DataFrame(np.cross(r,v),columns=['hx','hy','hz'])
-                hnorm = np.linalg.norm(h,axis=1)
+                v = pd.concat((vx, vy, vz), axis=1)
+                v.columns = ["vx", "vy", "vz"]
 
-                c = h.divide(hnorm,axis=0)
-                c.columns = ['hxnorm','hynorm','hznorm']
+                r = p1.divide(rnorm, axis=0)
+                r.columns = ["xnorm", "ynorm", "znorm"]
 
-                i = pd.DataFrame(np.cross(c,r),columns=['ix','iy','iz'])
+                h = pd.DataFrame(np.cross(r, v), columns=["hx", "hy", "hz"])
+                hnorm = np.linalg.norm(h, axis=1)
+
+                c = h.divide(hnorm, axis=0)
+                c.columns = ["hxnorm", "hynorm", "hznorm"]
+
+                i = pd.DataFrame(np.cross(c, r), columns=["ix", "iy", "iz"])
 
                 r_ar = np.array(r)
                 i_ar = np.array(i)
                 c_ar = np.array(c)
 
-                #r_ar[1]
-                beta = np.stack((r_ar,i_ar,c_ar),axis=1)
+                # r_ar[1]
+                beta = np.stack((r_ar, i_ar, c_ar), axis=1)
 
                 # Compatible with the documentation +
                 # empirically tested with OV software
@@ -344,18 +384,18 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
                 astk = []
 
                 for i in range(len(delta_p)):
-                    a = np.dot(beta[i,:,:],np.array(delta_p)[i])
+                    a = np.dot(beta[i, :, :], np.array(delta_p)[i])
                     astk.append(a)
 
-                diff_sat = pd.DataFrame(np.vstack(astk),
-                                        index = p1.index,
-                                        columns=['dr','dt','dn'])
+                diff_sat = pd.DataFrame(
+                    np.vstack(astk), index=p1.index, columns=["dr", "dt", "dn"]
+                )
 
-            diff_sat = diff_sat * conv_coef # metrer conversion
+            diff_sat = diff_sat * conv_coef  # metrer conversion
 
-            diff_sat['sys'] = [sysuse] * len(diff_sat.index)
-            diff_sat['prni'] = [prni] * len(diff_sat.index)
-            diff_sat['prn'] = [sysuse + str(prni).zfill(2)] * len(diff_sat.index)
+            diff_sat["sys"] = [sysuse] * len(diff_sat.index)
+            diff_sat["prni"] = [prni] * len(diff_sat.index)
+            diff_sat["prn"] = [sysuse + str(prni).zfill(2)] * len(diff_sat.index)
 
             diff_sat_stk.append(diff_sat)
 
@@ -364,25 +404,25 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
 
     # Attribute definition
     if rtn_output:
-        diff_sat_all.frame_type = 'RTN'
+        diff_sat_all.frame_type = "RTN"
 
         # Pandas donesn't manage well iterable as attribute
         # So, it is separated
-        diff_sat_all.frame_col_name1 = 'dr'
-        diff_sat_all.frame_col_name2 = 'dt'
-        diff_sat_all.frame_col_name3 = 'dn'
+        diff_sat_all.frame_col_name1 = "dr"
+        diff_sat_all.frame_col_name2 = "dt"
+        diff_sat_all.frame_col_name3 = "dn"
 
     else:
         # Pandas donesn't manage well iterable as attribute
         # So, it is separated
-        diff_sat_all.frame_col_name1 = 'dx'
-        diff_sat_all.frame_col_name2 = 'dy'
-        diff_sat_all.frame_col_name3 = 'dz'
+        diff_sat_all.frame_col_name1 = "dx"
+        diff_sat_all.frame_col_name2 = "dy"
+        diff_sat_all.frame_col_name3 = "dz"
 
         if convert_ecef_eci:
-            diff_sat_all.frame_type = 'ECI'
+            diff_sat_all.frame_type = "ECI"
         else:
-            diff_sat_all.frame_type = 'ECEF'
+            diff_sat_all.frame_type = "ECEF"
 
     # Name definitions
     if name1:
@@ -401,25 +441,35 @@ def compar_orbit(data_inp_1, data_inp_2, step_data = 900,
     diff_sat_all.path1 = d1orig.path
     diff_sat_all.path2 = d2orig.path
 
-    diff_sat_all.name = ' '.join(('Orbits comparison ('+diff_sat_all.frame_type +') b/w',
-                                  diff_sat_all.name1 ,'(ref.) and',
-                                  diff_sat_all.name2 ,',',date.strftime("%Y-%m-%d"),
-                                  ', doy', str(conv.dt2doy(date))))
-    
+    diff_sat_all.name = " ".join(
+        (
+            "Orbits comparison (" + diff_sat_all.frame_type + ") b/w",
+            diff_sat_all.name1,
+            "(ref.) and",
+            diff_sat_all.name2,
+            ",",
+            date.strftime("%Y-%m-%d"),
+            ", doy",
+            str(conv.dt2doy(date)),
+        )
+    )
+
     if return_sat_null:
         return diff_sat_all, sat_nul
     else:
         return diff_sat_all
 
 
-def compar_orbit_plot(diff_sat_all_df_in,
-                      save_plot=False,
-                      save_plot_dir="",
-                      save_plot_name="auto",
-                      save_plot_name_suffix=None,
-                      save_plot_ext=(".pdf",".png",".svg"),
-                      yaxis_limit=None,
-                      yaxis_label_unit="m"):
+def compar_orbit_plot(
+    diff_sat_all_df_in,
+    save_plot=False,
+    save_plot_dir="",
+    save_plot_name="auto",
+    save_plot_name_suffix=None,
+    save_plot_ext=(".pdf", ".png", ".svg"),
+    yaxis_limit=None,
+    yaxis_label_unit="m",
+):
     """
     General description
 
@@ -427,14 +477,14 @@ def compar_orbit_plot(diff_sat_all_df_in,
     ----------
     diff_sat_all_df_in : DataFrame
         a DataFrame produced by compar_orbit
-        
+
     yaxis_limit : 3-tuple iterable or 2-element tuple
-        force the y axis limits. must look like 
+        force the y axis limits. must look like
         [(ymin_r,ymax_r),(ymin_t,ymax_t),(ymin_n,ymax_n)]
         to control all the axis independely
         OR
         (ymin,ymax)
-        to set all th axis at the same limits 
+        to set all th axis at the same limits
 
     Returns
     -------
@@ -443,15 +493,15 @@ def compar_orbit_plot(diff_sat_all_df_in,
     but plot a plot anyway
     """
 
-    fig,[axr,axt,axn] = plt.subplots(3,1,sharex='all')
+    fig, [axr, axt, axn] = plt.subplots(3, 1, sharex="all")
 
-    satdispo = natsort.natsorted(list(set(diff_sat_all_df_in['prn'])))
+    satdispo = natsort.natsorted(list(set(diff_sat_all_df_in["prn"])))
 
     symb_stk = []
 
-    cm = plt.get_cmap('viridis')
+    cm = plt.get_cmap("viridis")
     num_colors = len(satdispo)
-    colors = [cm(1.*i/num_colors) for i in range(num_colors)]
+    colors = [cm(1.0 * i / num_colors) for i in range(num_colors)]
 
     # Pandas donesn't manage well iterable as attribute
     # So, it is separated
@@ -464,44 +514,42 @@ def compar_orbit_plot(diff_sat_all_df_in,
         col_name1 = diff_sat_all_df_in.columns[1]
         col_name2 = diff_sat_all_df_in.columns[2]
 
-    for satuse,color in zip(satdispo,colors):
-        diffuse = diff_sat_all_df_in[diff_sat_all_df_in['prn'] == satuse]
+    for satuse, color in zip(satdispo, colors):
+        diffuse = diff_sat_all_df_in[diff_sat_all_df_in["prn"] == satuse]
 
         time = diffuse.index
-        r    = diffuse[col_name0]
-        t    = diffuse[col_name1]
-        n    = diffuse[col_name2]
+        r = diffuse[col_name0]
+        t = diffuse[col_name1]
+        n = diffuse[col_name2]
 
-        #fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
+        # fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
 
-        symb = axr.plot(time,r,label=satuse,c=color)
-        axt.plot(time,t,label=satuse,c=color)
-        axn.plot(time,n,label=satuse,c=color)
+        symb = axr.plot(time, r, label=satuse, c=color)
+        axt.plot(time, t, label=satuse, c=color)
+        axn.plot(time, n, label=satuse, c=color)
 
         symb_stk.append(symb[0])
 
         fig.autofmt_xdate()
 
-
     ylabuni = " (" + yaxis_label_unit + ")"
-    
-    if diff_sat_all_df_in.frame_type == 'RTN':
-        axr.set_ylabel('Radial diff.'     + ylabuni)
-        axt.set_ylabel('Transverse diff.' + ylabuni)
-        axn.set_ylabel('Normal diff.'     + ylabuni)
+
+    if diff_sat_all_df_in.frame_type == "RTN":
+        axr.set_ylabel("Radial diff." + ylabuni)
+        axt.set_ylabel("Transverse diff." + ylabuni)
+        axn.set_ylabel("Normal diff." + ylabuni)
 
     else:
-        axr.set_ylabel(diff_sat_all_df_in.frame_type + ' X diff.' + ylabuni)
-        axt.set_ylabel(diff_sat_all_df_in.frame_type + ' Y diff.' + ylabuni)
-        axn.set_ylabel(diff_sat_all_df_in.frame_type + ' Z diff.' + ylabuni)
-
+        axr.set_ylabel(diff_sat_all_df_in.frame_type + " X diff." + ylabuni)
+        axt.set_ylabel(diff_sat_all_df_in.frame_type + " Y diff." + ylabuni)
+        axn.set_ylabel(diff_sat_all_df_in.frame_type + " Z diff." + ylabuni)
 
     y_formatter = matplotlib.ticker.ScalarFormatter(useOffset=False)
     axr.yaxis.set_major_formatter(y_formatter)
     axt.yaxis.set_major_formatter(y_formatter)
     axn.yaxis.set_major_formatter(y_formatter)
-    
-    if yaxis_limit and len(yaxis_limit) == 3: ### indep. axis limit
+
+    if yaxis_limit and len(yaxis_limit) == 3:  ### indep. axis limit
         axr.set_ylim(yaxis_limit[0])
         axt.set_ylim(yaxis_limit[1])
         axn.set_ylim(yaxis_limit[2])
@@ -511,15 +559,16 @@ def compar_orbit_plot(diff_sat_all_df_in,
         axn.set_ylim(yaxis_limit)
     else:
         pass
-        
-        
+
     import matplotlib.dates as mdates
-    fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
 
-    lgd = fig.legend(tuple(symb_stk), satdispo , loc='lower center',ncol=8,
-                     columnspacing=1)
+    fig.fmt_xdata = mdates.DateFormatter("%Y-%m-%d")
 
-    fig.set_size_inches(8.27,11.69)
+    lgd = fig.legend(
+        tuple(symb_stk), satdispo, loc="lower center", ncol=8, columnspacing=1
+    )
+
+    fig.set_size_inches(8.27, 11.69)
     plt.suptitle(diff_sat_all_df_in.name)
     plt.tight_layout()
     plt.subplots_adjust(top=0.95)
@@ -527,29 +576,33 @@ def compar_orbit_plot(diff_sat_all_df_in,
 
     if save_plot:
         if save_plot_name == "auto":
-            save_plot_name = "_".join((diff_sat_all_df_in.name1,
-                                       diff_sat_all_df_in.name2,
-                                       diff_sat_all_df_in.index.min().strftime("%Y-%m-%d")))
-            
+            save_plot_name = "_".join(
+                (
+                    diff_sat_all_df_in.name1,
+                    diff_sat_all_df_in.name2,
+                    diff_sat_all_df_in.index.min().strftime("%Y-%m-%d"),
+                )
+            )
+
         if save_plot_name_suffix:
-            save_plot_name = save_plot_name + '_' + save_plot_name_suffix
+            save_plot_name = save_plot_name + "_" + save_plot_name_suffix
 
         for ext in save_plot_ext:
-            save_plot_path = os.path.join(save_plot_dir,save_plot_name)
+            save_plot_path = os.path.join(save_plot_dir, save_plot_name)
             plt.savefig(save_plot_path + ext)
             return_val = save_plot_path
-            
+
     else:
-        return_val = fig,(axr,axt,axn)
+        return_val = fig, (axr, axt, axn)
 
     return return_val
 
-def compar_orbit_table(diff_sat_all_df_in, rms_style ='natural',
-                       light_tab  = False):
+
+def compar_orbit_table(diff_sat_all_df_in, rms_style="natural", light_tab=False):
     """
     Generate a table with statistical indicators for an orbit comparison
     (RMS mean, standard dev, ...)
-    
+
     Parameters
     ----------
     diff_sat_all_df_in : Pandas DataFrame
@@ -579,7 +632,7 @@ def compar_orbit_table(diff_sat_all_df_in, rms_style ='natural',
     >>> print(tabulate(compar_table,headers="keys",floatfmt=".4f"))
     """
 
-    sat_list = utils.uniq_and_sort(diff_sat_all_df_in['prn'])
+    sat_list = utils.uniq_and_sort(diff_sat_all_df_in["prn"])
 
     # Pandas donesn't manage well iterable as attribute
     # So, it is separated
@@ -595,7 +648,7 @@ def compar_orbit_table(diff_sat_all_df_in, rms_style ='natural',
     rms_stk = []
 
     for sat in sat_list:
-        diffwork = utils.df_sel_val_in_col(diff_sat_all_df_in, 'prn', sat)
+        diffwork = utils.df_sel_val_in_col(diff_sat_all_df_in, "prn", sat)
 
         if rms_style == "natural":
             rms_a = stats.rms_mean(diffwork[col_name0])
@@ -609,7 +662,7 @@ def compar_orbit_table(diff_sat_all_df_in, rms_style ='natural',
             rms_a = stats.rms_mean_kouba(diffwork[col_name0])
             rms_b = stats.rms_mean_kouba(diffwork[col_name1])
             rms_c = stats.rms_mean_kouba(diffwork[col_name2])
-            
+
         rms_3d = np.sqrt(rms_a**2 + rms_b**2 + rms_c**2)
 
         min_a = diffwork[col_name0].min()
@@ -625,32 +678,49 @@ def compar_orbit_table(diff_sat_all_df_in, rms_style ='natural',
         mean_c = diffwork[col_name2].mean()
 
         if light_tab:
-            rms_stk.append([rms_a,rms_b,rms_c,rms_3d])
+            rms_stk.append([rms_a, rms_b, rms_c, rms_3d])
         else:
-            rms_stk.append([rms_a,rms_b,rms_c,rms_3d,
-                            min_a,max_a,mean_a,
-                            min_b,max_b,mean_b,
-                            min_c,max_c,mean_c])
-
+            rms_stk.append(
+                [
+                    rms_a,
+                    rms_b,
+                    rms_c,
+                    rms_3d,
+                    min_a,
+                    max_a,
+                    mean_a,
+                    min_b,
+                    max_b,
+                    mean_b,
+                    min_c,
+                    max_c,
+                    mean_c,
+                ]
+            )
 
     #################################
-             # ALL SATS
+    # ALL SATS
     if rms_style == "natural":
         rms_a = stats.rms_mean(diff_sat_all_df_in[col_name0])
         rms_b = stats.rms_mean(diff_sat_all_df_in[col_name1])
         rms_c = stats.rms_mean(diff_sat_all_df_in[col_name2])
         rms_3d = np.sqrt(rms_a**2 + rms_b**2 + rms_c**2)
     elif rms_style == "GRGS":
-        rms_a = stats.rms_mean(diff_sat_all_df_in[col_name0] - diff_sat_all_df_in[col_name0].mean())
-        rms_b = stats.rms_mean(diff_sat_all_df_in[col_name1] - diff_sat_all_df_in[col_name1].mean())
-        rms_c = stats.rms_mean(diff_sat_all_df_in[col_name2] - diff_sat_all_df_in[col_name2].mean())
+        rms_a = stats.rms_mean(
+            diff_sat_all_df_in[col_name0] - diff_sat_all_df_in[col_name0].mean()
+        )
+        rms_b = stats.rms_mean(
+            diff_sat_all_df_in[col_name1] - diff_sat_all_df_in[col_name1].mean()
+        )
+        rms_c = stats.rms_mean(
+            diff_sat_all_df_in[col_name2] - diff_sat_all_df_in[col_name2].mean()
+        )
         rms_3d = np.sqrt(rms_a**2 + rms_b**2 + rms_c**2)
     elif rms_style == "kouba":
         rms_a = stats.rms_mean_kouba(diff_sat_all_df_in[col_name0])
         rms_b = stats.rms_mean_kouba(diff_sat_all_df_in[col_name1])
         rms_c = stats.rms_mean_kouba(diff_sat_all_df_in[col_name2])
         rms_3d = np.sqrt(rms_a**2 + rms_b**2 + rms_c**2)
-
 
     min_a = diff_sat_all_df_in[col_name0].min()
     min_b = diff_sat_all_df_in[col_name1].min()
@@ -665,52 +735,85 @@ def compar_orbit_table(diff_sat_all_df_in, rms_style ='natural',
     mean_c = diff_sat_all_df_in[col_name2].mean()
 
     if light_tab:
-        rms_stk.append([rms_a,rms_b,rms_c,rms_3d])
+        rms_stk.append([rms_a, rms_b, rms_c, rms_3d])
     else:
-        rms_stk.append([rms_a,rms_b,rms_c,rms_3d,
-                        min_a,max_a,mean_a,
-                        min_b,max_b,mean_b,
-                        min_c,max_c,mean_c])
+        rms_stk.append(
+            [
+                rms_a,
+                rms_b,
+                rms_c,
+                rms_3d,
+                min_a,
+                max_a,
+                mean_a,
+                min_b,
+                max_b,
+                mean_b,
+                min_c,
+                max_c,
+                mean_c,
+            ]
+        )
 
-             # ALL SATS
+        # ALL SATS
     #################################
 
-    if  diff_sat_all_df_in.frame_type == 'RTN':
+    if diff_sat_all_df_in.frame_type == "RTN":
         if light_tab:
-            cols_nam = ["rmsR","rmsT","rmsN","rms3D"]
+            cols_nam = ["rmsR", "rmsT", "rmsN", "rms3D"]
         else:
-            cols_nam = ["rmsR","rmsT","rmsN","rms3D",
-                        "minR","maxR","meanR",
-                        "minT","maxT","meanT",
-                        "minN","maxN","meanN"]
+            cols_nam = [
+                "rmsR",
+                "rmsT",
+                "rmsN",
+                "rms3D",
+                "minR",
+                "maxR",
+                "meanR",
+                "minT",
+                "maxT",
+                "meanT",
+                "minN",
+                "maxN",
+                "meanN",
+            ]
 
     else:
         if light_tab:
-            cols_nam = ["rmsX","rmsY","rmsZ","rms3D"]
+            cols_nam = ["rmsX", "rmsY", "rmsZ", "rms3D"]
         else:
-            cols_nam = ["rmsX","rmsY","rmsZ","rms3D",
-                        "minX","maxX","meanX",
-                        "minY","maxY","meanY",
-                        "minZ","maxZ","meanZ"]
+            cols_nam = [
+                "rmsX",
+                "rmsY",
+                "rmsZ",
+                "rms3D",
+                "minX",
+                "maxX",
+                "meanX",
+                "minY",
+                "maxY",
+                "meanY",
+                "minZ",
+                "maxZ",
+                "meanZ",
+            ]
 
-    compar_tab_out     = pd.DataFrame(rms_stk,index=sat_list + ['ALL'],
-                                      columns=cols_nam)
+    compar_tab_out = pd.DataFrame(rms_stk, index=sat_list + ["ALL"], columns=cols_nam)
 
     return compar_tab_out
 
 
-def compar_orbit_frontend(data_df1, data_df2, ac1, ac2, sats_used_list = ['G']):
-    K = compar_orbit(data_df1[data_df1["ac"] == ac1],
-                     data_df2[data_df2["ac"] == ac2],
-                     sats_used_list=sats_used_list)
+def compar_orbit_frontend(data_df1, data_df2, ac1, ac2, sats_used_list=["G"]):
+    K = compar_orbit(
+        data_df1[data_df1["ac"] == ac1],
+        data_df2[data_df2["ac"] == ac2],
+        sats_used_list=sats_used_list,
+    )
     compar_orbit_plot(K)
     return K
 
 
-
-
-
-def compar_clock(df_clk_inp_1, df_clk_inp_2, col_name ="name", bias_col_name ="bias"):
+def compar_clock(df_clk_inp_1, df_clk_inp_2, col_name="name", bias_col_name="bias"):
     """
     Compares 2 GNSS clock bias DataFrames (from .clk), to a
     statistics table (with compar_clock_table)
@@ -742,28 +845,27 @@ def compar_clock(df_clk_inp_1, df_clk_inp_2, col_name ="name", bias_col_name ="b
 
     df_clk_diff = df1idx.loc[iinter].copy()
     df_clk_diff[bias_col_name] = df_diff_bias
-    if "ac" in  df_clk_diff.columns:
-        df_clk_diff.drop("ac",axis=1,inplace=True)
+    if "ac" in df_clk_diff.columns:
+        df_clk_diff.drop("ac", axis=1, inplace=True)
     else:
-        df_clk_diff.drop("AC",axis=1,inplace=True)
+        df_clk_diff.drop("AC", axis=1, inplace=True)
     df_clk_diff.rename({bias_col_name: bias_col_name + "_diff"}, inplace=True, axis=1)
 
-
     # Name definitions
-    if 'ac' in df_clk_inp_1.columns:
-        df_clk_diff['name1'] = df_clk_inp_1.ac.values[0]
-    if 'AC' in df_clk_inp_1.columns:
-        df_clk_diff['name1'] = df_clk_inp_1.AC.values[0]
+    if "ac" in df_clk_inp_1.columns:
+        df_clk_diff["name1"] = df_clk_inp_1.ac.values[0]
+    if "AC" in df_clk_inp_1.columns:
+        df_clk_diff["name1"] = df_clk_inp_1.AC.values[0]
 
-    if 'ac' in df_clk_inp_1.columns:
-        df_clk_diff['name2'] = df_clk_inp_2.ac.values[0]
-    if 'AC' in df_clk_inp_1.columns:
-        df_clk_diff['name2'] = df_clk_inp_2.AC.values[0]
-
+    if "ac" in df_clk_inp_1.columns:
+        df_clk_diff["name2"] = df_clk_inp_2.ac.values[0]
+    if "AC" in df_clk_inp_1.columns:
+        df_clk_diff["name2"] = df_clk_inp_2.AC.values[0]
 
     return df_clk_diff
 
-def compar_clock_table(df_clk_diff_in, col_name ="name", bias_Col_name ="bias_diff"):
+
+def compar_clock_table(df_clk_diff_in, col_name="name", bias_Col_name="bias_diff"):
     """
     Generate a table with statistical indicators for a clock comparison
     (RMS mean, standard dev, ...)
@@ -782,27 +884,30 @@ def compar_clock_table(df_clk_diff_in, col_name ="name", bias_Col_name ="bias_di
 
     df_diff_grp = df_clk_diff_in.groupby(col_name)[bias_Col_name]
 
-    smin  = df_diff_grp.min().rename("min",inplace=True)
-    smax  = df_diff_grp.max().rename("max",inplace=True)
-    smean = df_diff_grp.mean().rename("mean",inplace=True)
-    sstd  = df_diff_grp.std().rename("std",inplace=True)
-    srms  = df_diff_grp.apply(stats.rms_mean).rename("rms",inplace=True)
+    smin = df_diff_grp.min().rename("min", inplace=True)
+    smax = df_diff_grp.max().rename("max", inplace=True)
+    smean = df_diff_grp.mean().rename("mean", inplace=True)
+    sstd = df_diff_grp.std().rename("std", inplace=True)
+    srms = df_diff_grp.apply(stats.rms_mean).rename("rms", inplace=True)
 
-    df_compar_out = pd.concat([smin,smax,smean,sstd,srms],axis=1)
+    df_compar_out = pd.concat([smin, smax, smean, sstd, srms], axis=1)
     df_compar_out.reset_index()
 
     return df_compar_out
 
-def compar_clk_plot(diff_sat_all_df_in,
-                    save_plot=False,
-                    save_plot_dir="",
-                    save_plot_name="auto",
-                    save_plot_name_suffix=None,
-                    save_plot_ext=(".pdf",".png",".svg"),
-                    yaxis_limit=None,
-                    yaxis_label_unit="psec",
-                    col_name = 'name',
-                    bias_Col_name = 'bias'):
+
+def compar_clk_plot(
+    diff_sat_all_df_in,
+    save_plot=False,
+    save_plot_dir="",
+    save_plot_name="auto",
+    save_plot_name_suffix=None,
+    save_plot_ext=(".pdf", ".png", ".svg"),
+    yaxis_limit=None,
+    yaxis_label_unit="psec",
+    col_name="name",
+    bias_Col_name="bias",
+):
     """
     General description
 
@@ -826,23 +931,28 @@ def compar_clk_plot(diff_sat_all_df_in,
     but plot a plot anyway
     """
 
-    fig,axr = plt.subplots(1,1,sharex='all')
+    fig, axr = plt.subplots(1, 1, sharex="all")
     diff_sat_all_df_in = diff_sat_all_df_in.reset_index()
     satdispo = natsort.natsorted(list(set(diff_sat_all_df_in[col_name])))
     # satdispo = natsort.natsorted(list(set(diff_sat_all_df_in['sat'])))
 
     symb_stk = []
 
-    cm = plt.get_cmap('viridis')
+    cm = plt.get_cmap("viridis")
     num_colors = len(satdispo)
-    colors = [cm(1.*i/num_colors) for i in range(num_colors)]
-
-
+    colors = [cm(1.0 * i / num_colors) for i in range(num_colors)]
 
     date = conv.numpy_dt2dt(diff_sat_all_df_in.epoch.values[0])
-    diff_sat_all_df_in.name = ' '.join(('Clock comparison  b/w',
-                                        diff_sat_all_df_in.name1.values[0] , '(ref.) and',
-                                        diff_sat_all_df_in.name2.values[0] , ',', date.strftime("%Y-%m-%d")))
+    diff_sat_all_df_in.name = " ".join(
+        (
+            "Clock comparison  b/w",
+            diff_sat_all_df_in.name1.values[0],
+            "(ref.) and",
+            diff_sat_all_df_in.name2.values[0],
+            ",",
+            date.strftime("%Y-%m-%d"),
+        )
+    )
     # Pandas donesn't manage well iterable as attribute
     # So, it is separated
     try:
@@ -854,35 +964,28 @@ def compar_clk_plot(diff_sat_all_df_in,
         col_name1 = diff_sat_all_df_in.columns[1]
         col_name2 = diff_sat_all_df_in.columns[2]
 
-    for satuse,color in zip(satdispo,colors):
+    for satuse, color in zip(satdispo, colors):
         diffuse = diff_sat_all_df_in[diff_sat_all_df_in[col_name] == satuse]
 
         time = diffuse.epoch
-        r    = diffuse[bias_Col_name+'_diff']*10**12
+        r = diffuse[bias_Col_name + "_diff"] * 10**12
 
+        # fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
 
-        #fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
-
-        Symb = axr.plot(time,r,label=satuse,c=color)
-
+        Symb = axr.plot(time, r, label=satuse, c=color)
 
         symb_stk.append(Symb[0])
 
         fig.autofmt_xdate()
 
-
     ylabuni = " (" + yaxis_label_unit + ")"
 
-
-    axr.set_ylabel('Bias Diff.' + ylabuni)
-
-
+    axr.set_ylabel("Bias Diff." + ylabuni)
 
     y_formatter = matplotlib.ticker.ScalarFormatter(useOffset=False)
     axr.yaxis.set_major_formatter(y_formatter)
 
-
-    if yaxis_limit and len(yaxis_limit) == 3: ### indep. axis limit
+    if yaxis_limit and len(yaxis_limit) == 3:  ### indep. axis limit
         axr.set_ylim(yaxis_limit[0])
 
     elif yaxis_limit and len(yaxis_limit) == 2:
@@ -891,14 +994,15 @@ def compar_clk_plot(diff_sat_all_df_in,
     else:
         pass
 
-
     import matplotlib.dates as mdates
-    fig.fmt_xdata = mdates.DateFormatter('%Y-%m-%d')
 
-    lgd = fig.legend(tuple(symb_stk), satdispo , loc='lower center',ncol=8,
-                     columnspacing=1)
+    fig.fmt_xdata = mdates.DateFormatter("%Y-%m-%d")
 
-    fig.set_size_inches(8.27,11.69)
+    lgd = fig.legend(
+        tuple(symb_stk), satdispo, loc="lower center", ncol=8, columnspacing=1
+    )
+
+    fig.set_size_inches(8.27, 11.69)
     plt.suptitle(diff_sat_all_df_in.name)
     plt.tight_layout()
     plt.subplots_adjust(top=0.95)
@@ -906,104 +1010,126 @@ def compar_clk_plot(diff_sat_all_df_in,
 
     if save_plot:
         if save_plot_name == "auto":
-            save_plot_name = diff_sat_all_df_in.name1.values[0] + "_" + diff_sat_all_df_in.name2.values[0] + "_" + date.strftime("%Y-%m-%d")
+            save_plot_name = (
+                diff_sat_all_df_in.name1.values[0]
+                + "_"
+                + diff_sat_all_df_in.name2.values[0]
+                + "_"
+                + date.strftime("%Y-%m-%d")
+            )
 
         if save_plot_name_suffix:
-            save_plot_name = save_plot_name + '_' + save_plot_name_suffix
+            save_plot_name = save_plot_name + "_" + save_plot_name_suffix
 
         for ext in save_plot_ext:
-            save_plot_path = os.path.join(save_plot_dir,save_plot_name)
+            save_plot_path = os.path.join(save_plot_dir, save_plot_name)
             plt.savefig(save_plot_path + ext)
             return_val = save_plot_path
 
     else:
-        return_val = fig,(axr)
+        return_val = fig, (axr)
 
     return return_val
 
 
-
-
-
-
-def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
-                 out_means_summary=True,out_meta=True,out_dataframe = True,
-                 manu_wwwwd=None):
+def compar_sinex(
+    snx1,
+    snx2,
+    stat_select=None,
+    invert_select=False,
+    out_means_summary=True,
+    out_meta=True,
+    out_dataframe=True,
+    manu_wwwwd=None,
+):
 
     if type(snx1) is str:
-        week1 = utils.split_improved(os.path.basename(snx1),"_",".")[:]
-        week2 = utils.split_improved(os.path.basename(snx2),"_",".")[:]
+        week1 = utils.split_improved(os.path.basename(snx1), "_", ".")[:]
+        week2 = utils.split_improved(os.path.basename(snx2), "_", ".")[:]
         if week1 != week2:
-            log.warning("Dates of 2 input files are differents !!! It might be very bad !!! %s %s",week1,week2)
+            log.warning(
+                "Dates of 2 input files are differents !!! It might be very bad !!! %s %s",
+                week1,
+                week2,
+            )
         else:
             wwwwd = week1
-        d1 = files_rw.read_sinex(snx1,True)
-        d2 = files_rw.read_sinex(snx2,True)
+        d1 = files_rw.read_sinex(snx1, True)
+        d2 = files_rw.read_sinex(snx2, True)
     else:
-        log.warning("WARN : you are giving the SINEX input as a DataFrame, wwwwd has to be given manually using manu_wwwwd")
+        log.warning(
+            "WARN : you are giving the SINEX input as a DataFrame, wwwwd has to be given manually using manu_wwwwd"
+        )
         d1 = snx1
         d2 = snx2
-
 
     if manu_wwwwd:
         wwwwd = manu_wwwwd
 
-
-    stat_common  = set(d1["STAT"]).intersection(set(d2["STAT"]))
+    stat_common = set(d1["STAT"]).intersection(set(d2["STAT"]))
 
     if stat_select:
 
         stat_common_init = list(stat_common)
 
         if invert_select:
-            select_fct = lambda x : not x
+            select_fct = lambda x: not x
         else:
-            select_fct = lambda x : x
+            select_fct = lambda x: x
 
         if type(stat_select) is str:
-            stat_common = [sta for sta in stat_common_init if select_fct(re.search(stat_select, sta)) ]
+            stat_common = [
+                sta
+                for sta in stat_common_init
+                if select_fct(re.search(stat_select, sta))
+            ]
         elif utils.is_iterable(stat_select):
-            stat_common = [sta for sta in stat_common_init if select_fct(sta in stat_select) ]
+            stat_common = [
+                sta for sta in stat_common_init if select_fct(sta in stat_select)
+            ]
         else:
             log.warning("WARN : check type of stat_select")
 
-    d1_common = d1[d1["STAT"].isin(stat_common)].sort_values("STAT").reset_index(drop=True)
-    d2_common = d2[d2["STAT"].isin(stat_common)].sort_values("STAT").reset_index(drop=True)
-
+    d1_common = (
+        d1[d1["STAT"].isin(stat_common)].sort_values("STAT").reset_index(drop=True)
+    )
+    d2_common = (
+        d2[d2["STAT"].isin(stat_common)].sort_values("STAT").reset_index(drop=True)
+    )
 
     ddiff = pd.DataFrame()
     ddiff = ddiff.assign(STAT=d1_common["STAT"])
 
     #### XYZ Part
-    for xyz in ("x","y","z"):
+    for xyz in ("x", "y", "z"):
 
         dif = pd.to_numeric((d2_common[xyz] - d1_common[xyz]))
 
         ddiff = ddiff.assign(xyz=dif)
         ddiff = ddiff.rename(columns={"xyz": xyz})
 
-    D3D = np.sqrt((ddiff["x"]**2 + ddiff["y"]**2 + ddiff["z"]**2 ).astype('float64'))
+    D3D = np.sqrt(
+        (ddiff["x"] ** 2 + ddiff["y"] ** 2 + ddiff["z"] ** 2).astype("float64")
+    )
 
     ddiff = ddiff.assign(d3D_xyz=D3D)
 
     ### ENU Part
-    E , N ,U = [] , [] , []
+    E, N, U = [], [], []
     enu_stk = []
 
-    for (_,l1) , (_,l2) in zip( d1_common.iterrows() , d2_common.iterrows() ):
-        enu   = conv.xyz2enu(l1["x"], l1["y"], l1["z"], l2["x"], l2["y"], l2["z"])
+    for (_, l1), (_, l2) in zip(d1_common.iterrows(), d2_common.iterrows()):
+        enu = conv.xyz2enu(l1["x"], l1["y"], l1["z"], l2["x"], l2["y"], l2["z"])
         enu_stk.append(np.array(enu))
 
-
     if len(enu_stk) == 0:
-        E,N,U = np.array([]) , np.array([]) , np.array([])
+        E, N, U = np.array([]), np.array([]), np.array([])
     else:
         ENU = np.hstack(enu_stk)
-        E,N,U = ENU[0,:] , ENU[1,:] , ENU[2,:]
+        E, N, U = ENU[0, :], ENU[1, :], ENU[2, :]
 
-
-    D2D = np.sqrt((E**2 + N**2).astype('float64'))
-    D3D = np.sqrt((E**2 + N**2 + U**2 ).astype('float64'))
+    D2D = np.sqrt((E**2 + N**2).astype("float64"))
+    D3D = np.sqrt((E**2 + N**2 + U**2).astype("float64"))
 
     ddiff = ddiff.assign(e=E)
     ddiff = ddiff.assign(n=N)
@@ -1017,15 +1143,13 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
     if out_dataframe:
         out_meta = True
 
-
     if not out_means_summary:
         log.info("INFO : this is not used operationally and it can be improved")
         return ddiff
     else:
         output = []
 
-        col_names = ("x","y","z","d3D_xyz",
-                     "e","n","u","d2D_enu","d3D_enu")
+        col_names = ("x", "y", "z", "d3D_xyz", "e", "n", "u", "d2D_enu", "d3D_enu")
 
         for xyz in col_names:
             output.append(stats.rms_mean(ddiff[xyz]))
@@ -1036,10 +1160,9 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
 
         if out_meta:
             nstat = len(stat_common)
-            week   = int(wwwwd[:4])
-            day    = int(wwwwd[4:])
-            output = [week , day ,nstat] + output
-
+            week = int(wwwwd[:4])
+            day = int(wwwwd[4:])
+            output = [week, day, nstat] + output
 
         if not out_dataframe:
             return tuple(output)
@@ -1047,13 +1170,38 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
 
             output_DF = pd.DataFrame(output).transpose()
 
-            output_DF.columns = ["week","dow","nbstat",
-             "x_rms","y_rms","z_rms","d3D_xyz_rms",
-             "e_rms","n_rms","u_rms","d2D_enu_rms","d3D_enu_rms",
-             "x_ari","y_ari","z_ari","d3D_xyz_ari",
-             "e_ari","n_ari","u_ari","d2D_enu_ari","d3D_enu_ari",
-             "x_ari","y_std","z_std","d3D_xyz_std",
-             "e_ari","n_std","u_std","d2D_enu_std","d3D_enu_std"]
+            output_DF.columns = [
+                "week",
+                "dow",
+                "nbstat",
+                "x_rms",
+                "y_rms",
+                "z_rms",
+                "d3D_xyz_rms",
+                "e_rms",
+                "n_rms",
+                "u_rms",
+                "d2D_enu_rms",
+                "d3D_enu_rms",
+                "x_ari",
+                "y_ari",
+                "z_ari",
+                "d3D_xyz_ari",
+                "e_ari",
+                "n_ari",
+                "u_ari",
+                "d2D_enu_ari",
+                "d3D_enu_ari",
+                "x_ari",
+                "y_std",
+                "z_std",
+                "d3D_xyz_std",
+                "e_ari",
+                "n_std",
+                "u_std",
+                "d2D_enu_std",
+                "d3D_enu_std",
+            ]
 
             return output_DF
 
@@ -1069,8 +1217,7 @@ def compar_sinex(snx1 , snx2 , stat_select = None, invert_select=False,
 ### Orbit DataFrames
 
 
-def orb_df_velocity_calc(df_orb_in,
-                         drop_nan=False):
+def orb_df_velocity_calc(df_orb_in, drop_nan=False):
     """
     Compute the velocity of satellites from a DFOrb dataframe
     (differentiate the position)
@@ -1093,15 +1240,15 @@ def orb_df_velocity_calc(df_orb_in,
 
     """
 
-    dfgrp = df_orb_in.groupby('prn')
+    dfgrp = df_orb_in.groupby("prn")
 
     dfprn_stk = []
-    for prn,dfprn in dfgrp:
-        for coord in ['x','y','z']:
+    for prn, dfprn in dfgrp:
+        for coord in ["x", "y", "z"]:
             dcoord = dfprn[coord].diff()
-            dtime = (np.float64(dfprn['epoch'].diff()) * 10**-9)
-            #timedelta in ns per defalut
-            dfprn['v' + coord] = dcoord / dtime
+            dtime = np.float64(dfprn["epoch"].diff()) * 10**-9
+            # timedelta in ns per defalut
+            dfprn["v" + coord] = dcoord / dtime
         dfprn_stk.append(dfprn)
 
     df_vel = pd.concat(dfprn_stk)
@@ -1114,7 +1261,7 @@ def orb_df_velocity_calc(df_orb_in,
     return df_vel
 
 
-def beta_sun_ra_dec(sun_dec,sun_ra,sat_i,sat_o_lan):
+def beta_sun_ra_dec(sun_dec, sun_ra, sat_i, sat_o_lan):
     """
     Compute beta angle based on Sun's right ascension and declination
     Angles are in radians
@@ -1151,11 +1298,14 @@ def beta_sun_ra_dec(sun_dec,sun_ra,sat_i,sat_o_lan):
     If so, Sun's right ascension and declination computation polynoms are
     based on: `Astronomical algorithms`, Jean Meeus (1st edition, 1991)
     """
-    beta = np.arcsin(np.cos(sun_dec)*np.sin(sat_i)*np.sin(sat_o_lan-sun_ra)+
-                     np.sin(sun_dec)*np.cos(sat_i))
+    beta = np.arcsin(
+        np.cos(sun_dec) * np.sin(sat_i) * np.sin(sat_o_lan - sun_ra)
+        + np.sin(sun_dec) * np.cos(sat_i)
+    )
     return beta
 
-def beta_sun_eclip_long(sun_ecl_long,sat_o_lan,sat_i,earth_i):
+
+def beta_sun_eclip_long(sun_ecl_long, sat_o_lan, sat_i, earth_i):
     """
     Compute beta angle based on Sun's Ecliptic longitude
     Angles are in radians
@@ -1195,16 +1345,19 @@ def beta_sun_eclip_long(sun_ecl_long,sat_o_lan,sat_i,earth_i):
     based on: `Astronomical algorithms`, Jean Meeus (1st edition, 1991)
 
     """
-    p1 = np.cos(sun_ecl_long)*np.sin(sat_o_lan)*np.sin(sat_i)
-    p2 = np.sin(sun_ecl_long)*np.cos(earth_i)*np.cos(sat_o_lan)*np.sin(sat_i)
-    p3 = np.sin(sun_ecl_long)*np.sin(earth_i)*np.cos(sat_i)
-    beta = np.arcsin(p1-p2+p3)
+    p1 = np.cos(sun_ecl_long) * np.sin(sat_o_lan) * np.sin(sat_i)
+    p2 = np.sin(sun_ecl_long) * np.cos(earth_i) * np.cos(sat_o_lan) * np.sin(sat_i)
+    p3 = np.sin(sun_ecl_long) * np.sin(earth_i) * np.cos(sat_i)
+    beta = np.arcsin(p1 - p2 + p3)
     return beta
 
-def beta_angle_calc(DFOrb_in,
-                    calc_beta_sun_ra_dec=True,
-                    calc_beta_sun_eclip_long=True,
-                    beta_rad2deg=True):
+
+def beta_angle_calc(
+    DFOrb_in,
+    calc_beta_sun_ra_dec=True,
+    calc_beta_sun_eclip_long=True,
+    beta_rad2deg=True,
+):
     """
     Compute beta angle for GNSS satellite's orbits stored in an orbit
     DataFrame
@@ -1235,62 +1388,64 @@ def beta_angle_calc(DFOrb_in,
 
     #### convert in ECI
     df_eci = DFOrb_in.copy()
-    df_eci[['x','y','z']] = conv.ecef2eci(DFOrb_in[['x', 'y', 'z']].values,
-                                          DFOrb_in['epoch'].values)
+    df_eci[["x", "y", "z"]] = conv.ecef2eci(
+        DFOrb_in[["x", "y", "z"]].values, DFOrb_in["epoch"].values
+    )
 
     #### compute velocity
     df_wrk = orb_df_velocity_calc(df_eci, drop_nan=False)
     ##keep drop nan False, thus the DF will keep same size and index as input
 
     #### compute Kepler's parameters
-    p = df_wrk[['x','y','z']].values * 1000
-    v = df_wrk[['vx','vy','vz']].values * 1000
+    p = df_wrk[["x", "y", "z"]].values * 1000
+    v = df_wrk[["vx", "vy", "vz"]].values * 1000
 
-    kep_col = ['a','ecc','i','o_peri','o_lan','m']
+    kep_col = ["a", "ecc", "i", "o_peri", "o_lan", "m"]
     kep_params = kepler_gzyx.eci_2_kepler_elts(p, v, rad2deg=False)
     df_wrk[kep_col] = np.column_stack(kep_params)
     ######### COMPUTE BETA
 
     #### cosmetic changes
     if calc_beta_sun_ra_dec and calc_beta_sun_eclip_long:
-        b1="1"
-        b2="2"
+        b1 = "1"
+        b2 = "2"
     else:
-        b1=""
-        b2=""
+        b1 = ""
+        b2 = ""
 
     if beta_rad2deg:
         r2dfct = np.rad2deg
     else:
-        r2dfct = lambda x:x
+        r2dfct = lambda x: x
 
     ##### Beta computed based on sun declination / right ascension
     if calc_beta_sun_ra_dec:
         ##### sun_ra_dec output in RADIANS
-        df_wrk[['sun_ra','sun_dec']] = np.column_stack(pyorbital.astronomy.sun_ra_dec(df_wrk['epoch']))
-        df_wrk['beta'+b1] = beta_sun_ra_dec(df_wrk['sun_dec'],
-                                            df_wrk['sun_ra'],
-                                            df_wrk['i'],
-                                            df_wrk['o_lan']).apply(r2dfct)
+        df_wrk[["sun_ra", "sun_dec"]] = np.column_stack(
+            pyorbital.astronomy.sun_ra_dec(df_wrk["epoch"])
+        )
+        df_wrk["beta" + b1] = beta_sun_ra_dec(
+            df_wrk["sun_dec"], df_wrk["sun_ra"], df_wrk["i"], df_wrk["o_lan"]
+        ).apply(r2dfct)
 
     ##### Beta computed based on Ecliptic longitude of the sun
     if calc_beta_sun_eclip_long:
         ### sun_ecliptic_longitude output in RADIANS but NO MODULO !!!
-        df_wrk['sun_ecl_long'] = np.mod(pyorbital.astronomy.sun_ecliptic_longitude(df_wrk['epoch']),np.pi*2)
-        df_wrk['beta'+b2] = beta_sun_eclip_long(df_wrk['sun_ecl_long'],
-                                                df_wrk['o_lan'],
-                                                df_wrk['i'],
-                                                np.deg2rad(23.45)).apply(r2dfct)
+        df_wrk["sun_ecl_long"] = np.mod(
+            pyorbital.astronomy.sun_ecliptic_longitude(df_wrk["epoch"]), np.pi * 2
+        )
+        df_wrk["beta" + b2] = beta_sun_eclip_long(
+            df_wrk["sun_ecl_long"], df_wrk["o_lan"], df_wrk["i"], np.deg2rad(23.45)
+        ).apply(r2dfct)
     df_out = DFOrb_in.copy()
-    df_out['beta'] = df_wrk['beta'+b1]
+    df_out["beta"] = df_wrk["beta" + b1]
 
     return df_out, df_wrk
 
 
-
-def orb_df_lagrange_interpolate(orb_df_inp, titrp, n=10,
-                                append_to_input_df = False,
-                                plot=False):
+def orb_df_lagrange_interpolate(
+    orb_df_inp, titrp, n=10, append_to_input_df=False, plot=False
+):
     """
     High level function to interpolate an orbit DataFrame
 
@@ -1319,44 +1474,53 @@ def orb_df_lagrange_interpolate(orb_df_inp, titrp, n=10,
     """
     DForb_stk = []
 
-    for sat,ac in itertools.product(orb_df_inp['prn'].unique(), orb_df_inp['ac'].unique()):
+    for sat, ac in itertools.product(
+        orb_df_inp["prn"].unique(), orb_df_inp["ac"].unique()
+    ):
 
-        log.info("process %s %s",ac,sat)
+        log.info("process %s %s", ac, sat)
 
-        DForb_use = orb_df_inp[(orb_df_inp['prn'] == sat) & (orb_df_inp['ac'] == ac)].copy()
+        DForb_use = orb_df_inp[
+            (orb_df_inp["prn"] == sat) & (orb_df_inp["ac"] == ac)
+        ].copy()
 
         ### faster but anoying Future Waring
-        #Tdata = np.array(DForb_use.epoch.dt.to_pydatetime())
+        # Tdata = np.array(DForb_use.epoch.dt.to_pydatetime())
         Tdata = conv.numpy_dt2dt(DForb_use.epoch.values)
 
-        Xitrp = stats.lagrange_interpolate(Tdata, DForb_use['x'], titrp, n=n)
-        Yitrp = stats.lagrange_interpolate(Tdata, DForb_use['y'], titrp, n=n)
-        Zitrp = stats.lagrange_interpolate(Tdata, DForb_use['z'], titrp, n=n)
+        Xitrp = stats.lagrange_interpolate(Tdata, DForb_use["x"], titrp, n=n)
+        Yitrp = stats.lagrange_interpolate(Tdata, DForb_use["y"], titrp, n=n)
+        Zitrp = stats.lagrange_interpolate(Tdata, DForb_use["z"], titrp, n=n)
 
-        Clkitrp = np.interp(conv.dt2posix(np.array(titrp)),
-                            conv.dt2posix(np.array(Tdata)),
-                            DForb_use['clk'].values)
+        Clkitrp = np.interp(
+            conv.dt2posix(np.array(titrp)),
+            conv.dt2posix(np.array(Tdata)),
+            DForb_use["clk"].values,
+        )
 
-        #ClkDummy = np.array([999999.999999] * len(titrp))
+        # ClkDummy = np.array([999999.999999] * len(titrp))
 
-        d = {'epoch': titrp, 'x': Xitrp, 'y': Yitrp, 'z': Zitrp, 'clk': Clkitrp}
+        d = {"epoch": titrp, "x": Xitrp, "y": Yitrp, "z": Zitrp, "clk": Clkitrp}
         DForb_tmp = pd.DataFrame(d)
 
         ### sometihng else must be tested o give the annex val directly in the col of DForb_tmp
-        DFannex_vals = DForb_use.drop(["epoch","x","y","z","clk"],axis=1).drop_duplicates()
-        DFannex_vals = pd.concat([DFannex_vals] * (len(titrp)), ignore_index=True, axis=0)
+        DFannex_vals = DForb_use.drop(
+            ["epoch", "x", "y", "z", "clk"], axis=1
+        ).drop_duplicates()
+        DFannex_vals = pd.concat(
+            [DFannex_vals] * (len(titrp)), ignore_index=True, axis=0
+        )
 
-        DForb_tmp = pd.concat((DForb_tmp,DFannex_vals),axis=1)
+        DForb_tmp = pd.concat((DForb_tmp, DFannex_vals), axis=1)
         DForb_stk.append(DForb_tmp)
 
         if plot:
             # plt.plot(Tdata,DForb_use.x,'o')
             # plt.plot(titrp,Xitrp,'.')
             ## GUS mod 220322
-            fig,axr = plt.subplots(1,1,sharex='all')
-            Symb = axr.plot(Tdata,DForb_use.x,'o')
-            Symb = axr.plot(titrp, Xitrp, '.')
-
+            fig, axr = plt.subplots(1, 1, sharex="all")
+            Symb = axr.plot(Tdata, DForb_use.x, "o")
+            Symb = axr.plot(titrp, Xitrp, ".")
 
     DForb_out = pd.concat(DForb_stk)
 
@@ -1364,11 +1528,11 @@ def orb_df_lagrange_interpolate(orb_df_inp, titrp, n=10,
         DForb_out = pd.concat((orb_df_inp, DForb_out))
 
     DForb_out.reset_index(drop=True)
-    DForb_out[["x","y","z","clk"]] = DForb_out[["x","y","z","clk"]].astype(float)
+    DForb_out[["x", "y", "z", "clk"]] = DForb_out[["x", "y", "z", "clk"]].astype(float)
     return DForb_out
 
-def orb_df_crf2trf(df_orb_inp, df_eop_inp, time_scale_inp="gps",
-                   inv_trf2crf=False):
+
+def orb_df_crf2trf(df_orb_inp, df_eop_inp, time_scale_inp="gps", inv_trf2crf=False):
     """
     Convert an Orbit DataFrame from Celetrial Reference Frame to
     Terrestrial Reference Frame.
@@ -1418,39 +1582,42 @@ def orb_df_crf2trf(df_orb_inp, df_eop_inp, time_scale_inp="gps",
 
     ### do the time scale's conversion
     df_orb["epoch_tai"] = conv.dt_utc2dt_tai(df_orb["epoch_utc"])
-    df_orb["epoch_tt"]  = conv.dt_tai2dt_tt(df_orb["epoch_tai"])
+    df_orb["epoch_tt"] = conv.dt_tai2dt_tt(df_orb["epoch_tai"])
     df_orb["epoch_ut1"] = conv.dt_utc2dt_ut1_smart(df_orb["epoch_utc"], df_eop_inp)
 
     ### Do the EOP interpolation
     df_eop_intrp = eop_interpotate(df_eop_inp, df_orb["epoch_utc"])
     ### bring the EOP to radians
-    Xeop = np.deg2rad(conv.arcsec2deg(df_eop_intrp['x']))
-    Yeop = np.deg2rad(conv.arcsec2deg(df_eop_intrp['y']))
+    Xeop = np.deg2rad(conv.arcsec2deg(df_eop_intrp["x"]))
+    Yeop = np.deg2rad(conv.arcsec2deg(df_eop_intrp["y"]))
 
     TRFstk = []
 
-    for tt,ut1,xeop,yeop,x,y,z in zip(df_orb["epoch_tt"],
-                                      df_orb["epoch_ut1"],
-                                      Xeop,Yeop,
-                                      df_orb['x'],df_orb['y'],df_orb['z']):
+    for tt, ut1, xeop, yeop, x, y, z in zip(
+        df_orb["epoch_tt"],
+        df_orb["epoch_ut1"],
+        Xeop,
+        Yeop,
+        df_orb["x"],
+        df_orb["y"],
+        df_orb["z"],
+    ):
 
-        MatCRF22TRF = sofa.iau_c2t06a(2400000.5,
-                                      conv.dt2mjd(tt),
-                                      2400000.5,
-                                      conv.dt2mjd(ut1),
-                                      xeop, yeop)
+        MatCRF22TRF = sofa.iau_c2t06a(
+            2400000.5, conv.dt2mjd(tt), 2400000.5, conv.dt2mjd(ut1), xeop, yeop
+        )
         if inv_trf2crf:
             MatCRF22TRF = np.linalg.inv(MatCRF22TRF)
 
-        CRF = np.array([x,y,z])
-        TRF = np.dot(MatCRF22TRF,CRF)
+        CRF = np.array([x, y, z])
+        TRF = np.dot(MatCRF22TRF, CRF)
 
         TRFstk.append(TRF)
 
     ### Final stack and replacement
     TRFall = np.vstack(TRFstk)
     DForb_out = df_orb_inp.copy()
-    DForb_out[["x","y","z"]] = TRFall
+    DForb_out[["x", "y", "z"]] = TRFall
 
     return DForb_out
 
@@ -1464,8 +1631,9 @@ def orb_df_reg_2_multidx(OrbDFin, index_order=["prn", "epoch"]):
     """
     OrbDFwrk = OrbDFin.reset_index()
     OrbDFwrk = OrbDFwrk.sort_values(index_order)
-    OrbDFwrk = OrbDFwrk.set_index(index_order,inplace=False)
+    OrbDFwrk = OrbDFwrk.set_index(index_order, inplace=False)
     return OrbDFwrk
+
 
 def orb_df_multidx_2_reg(OrbDFin, index_order=["prn", "epoch"]):
     """
@@ -1477,10 +1645,16 @@ def orb_df_multidx_2_reg(OrbDFin, index_order=["prn", "epoch"]):
     OrbDFwrk["prni"] = OrbDFwrk["prn"].apply(lambda x: int(x[1:]))
     return OrbDFwrk
 
-def orb_df_common_epoch_finder(OrbDFa_in, orb_df_b_in, return_index=False,
-                               supplementary_sort=False, order=["prn","epoch"],
-                               skip_reg2multidx_OrbDFa=False,
-                               skip_reg2multidx_OrbDFb=False):
+
+def orb_df_common_epoch_finder(
+    OrbDFa_in,
+    orb_df_b_in,
+    return_index=False,
+    supplementary_sort=False,
+    order=["prn", "epoch"],
+    skip_reg2multidx_OrbDFa=False,
+    skip_reg2multidx_OrbDFb=False,
+):
     """
     This function finds common satellites and epochs in two Orbit DataFrames and outputs the corresponding Orbit DataFrames.
 
@@ -1521,11 +1695,11 @@ def orb_df_common_epoch_finder(OrbDFa_in, orb_df_b_in, return_index=False,
     STAT and epoch as order parmeter
     """
     if not skip_reg2multidx_OrbDFa:
-        orb_df_a = orb_df_reg_2_multidx(OrbDFa_in, index_order = order)
+        orb_df_a = orb_df_reg_2_multidx(OrbDFa_in, index_order=order)
     else:
         orb_df_a = OrbDFa_in
     if not skip_reg2multidx_OrbDFb:
-        orb_df_b = orb_df_reg_2_multidx(orb_df_b_in, index_order = order)
+        orb_df_b = orb_df_reg_2_multidx(orb_df_b_in, index_order=order)
     else:
         orb_df_b = orb_df_b_in
 
@@ -1547,9 +1721,9 @@ def orb_df_common_epoch_finder(OrbDFa_in, orb_df_b_in, return_index=False,
         log.warning("TIPS : ClkDFa_in and/or ClkDFb_in might contain duplicates")
 
     if return_index:
-        return orb_df_a_out , orb_df_b_out , iinter
+        return orb_df_a_out, orb_df_b_out, iinter
     else:
-        return orb_df_a_out , orb_df_b_out
+        return orb_df_a_out, orb_df_b_out
 
 
 def orb_df_const_sv_columns_maker(orb_df_in, inplace=True):
@@ -1557,31 +1731,35 @@ def orb_df_const_sv_columns_maker(orb_df_in, inplace=True):
     (re)generate the const and sv columns from the sat one
     """
     if inplace:
-        orb_df_in['sys'] = orb_df_in['prn'].str[0]
-        orb_df_in['prni']    = orb_df_in['prn'].apply(lambda x: int(x[1:]))
+        orb_df_in["sys"] = orb_df_in["prn"].str[0]
+        orb_df_in["prni"] = orb_df_in["prn"].apply(lambda x: int(x[1:]))
         return None
     else:
         orb_df_out = orb_df_in.copy()
-        orb_df_out['sys'] = orb_df_out['prn'].str[0]
-        orb_df_out['prni']    = orb_df_out['prn'].apply(lambda x: int(x[1:]))
+        orb_df_out["sys"] = orb_df_out["prn"].str[0]
+        orb_df_out["prni"] = orb_df_out["prn"].apply(lambda x: int(x[1:]))
         return orb_df_out
 
- #   _____ _            _      _____        _        ______
- #  / ____| |          | |    |  __ \      | |      |  ____|
- # | |    | | ___   ___| | __ | |  | | __ _| |_ __ _| |__ _ __ __ _ _ __ ___   ___  ___
- # | |    | |/ _ \ / __| |/ / | |  | |/ _` | __/ _` |  __| '__/ _` | '_ ` _ \ / _ \/ __|
- # | |____| | (_) | (__|   <  | |__| | (_| | || (_| | |  | | | (_| | | | | | |  __/\__ \
- #  \_____|_|\___/ \___|_|\_\ |_____/ \__,_|\__\__,_|_|  |_|  \__,_|_| |_| |_|\___||___/
+
+#   _____ _            _      _____        _        ______
+#  / ____| |          | |    |  __ \      | |      |  ____|
+# | |    | | ___   ___| | __ | |  | | __ _| |_ __ _| |__ _ __ __ _ _ __ ___   ___  ___
+# | |    | |/ _ \ / __| |/ / | |  | |/ _` | __/ _` |  __| '__/ _` | '_ ` _ \ / _ \/ __|
+# | |____| | (_) | (__|   <  | |__| | (_| | || (_| | |  | | | (_| | | | | | |  __/\__ \
+#  \_____|_|\___/ \___|_|\_\ |_____/ \__,_|\__\__,_|_|  |_|  \__,_|_| |_| |_|\___||___/
 
 ### Clock DataFrames
 
-def clk_df_filter(clk_df_in,
-                  typ=("AS","AR"),
-                  name=None,
-                  ac=None,
-                  epoch_strt=dt.datetime(1980,1,1),
-                  epoch_end=dt.datetime(2099,1,1),
-                  name_regex=False):
+
+def clk_df_filter(
+    clk_df_in,
+    typ=("AS", "AR"),
+    name=None,
+    ac=None,
+    epoch_strt=dt.datetime(1980, 1, 1),
+    epoch_end=dt.datetime(2099, 1, 1),
+    name_regex=False,
+):
     """
     Filter the content of a Clock DataFrame
 
@@ -1629,13 +1807,13 @@ def clk_df_filter(clk_df_in,
 
     if typ:
         bool_tmp = clk_df_wrk.type.isin(typ)
-        bool    = bool & np.array(bool_tmp)
+        bool = bool & np.array(bool_tmp)
 
     if name:
-        if not name_regex: ### full name mode
+        if not name_regex:  ### full name mode
             bool_tmp = clk_df_wrk.name.isin(name)
-            bool    = bool & np.array(bool_tmp)
-        else: ### REGEX mode
+            bool = bool & np.array(bool_tmp)
+        else:  ### REGEX mode
             bool_tmp = np.zeros(len(clk_df_wrk.name)).astype(bool)
             for rgx in name:
                 nam_serie = clk_df_wrk.name
@@ -1645,21 +1823,24 @@ def clk_df_filter(clk_df_in,
 
     if ac:
         bool_tmp = clk_df_wrk.ac.isin(ac)
-        bool    = bool & np.array(bool_tmp)
+        bool = bool & np.array(bool_tmp)
 
     ##epoch
     bool_tmp = (epoch_strt <= clk_df_wrk.epoch) & (clk_df_wrk.epoch < epoch_end)
-    bool    = bool & np.array(bool_tmp)
+    bool = bool & np.array(bool_tmp)
 
     return clk_df_wrk[bool]
 
-def clk_df_filter2(clk_df_in,
-                   typ=("AS","AR"),
-                   name=None,
-                   ac=None,
-                   epoch_strt=dt.datetime(1980,1,1),
-                   epoch_end=dt.datetime(2099,1,1),
-                   name_regex=False):
+
+def clk_df_filter2(
+    clk_df_in,
+    typ=("AS", "AR"),
+    name=None,
+    ac=None,
+    epoch_strt=dt.datetime(1980, 1, 1),
+    epoch_end=dt.datetime(2099, 1, 1),
+    name_regex=False,
+):
     """
     attempt for a faster version of clk_df_filter, but the original is faster
     """
@@ -1671,7 +1852,7 @@ def clk_df_filter2(clk_df_in,
 
     clkdf_stk = []
 
-    for (ityp, iname, iac), clkdf_grp in clk_df_wrk.groupby(["type","name","ac"]):
+    for (ityp, iname, iac), clkdf_grp in clk_df_wrk.groupby(["type", "name", "ac"]):
         if typ:
             bool_typ = True if ityp in typ else False
         else:
@@ -1690,23 +1871,22 @@ def clk_df_filter2(clk_df_in,
         else:
             bool_ac = True
 
-
         if not (bool_typ and bool_name and bool_ac):
             continue
         else:
-            if epoch_strt > dt.datetime(1980,1,1) or epoch_end < dt.datetime(2099,1,1):
-                bool_epoc = (epoch_strt <= clkdf_grp["epoch"]) & (clkdf_grp["epoch"] < epoch_end)
+            if epoch_strt > dt.datetime(1980, 1, 1) or epoch_end < dt.datetime(
+                2099, 1, 1
+            ):
+                bool_epoc = (epoch_strt <= clkdf_grp["epoch"]) & (
+                    clkdf_grp["epoch"] < epoch_end
+                )
                 clkdf_stk.append(clkdf_grp[bool_epoc])
             else:
                 clkdf_stk.append(clkdf_grp)
 
-
-
     clkdf_out = pd.concat(clkdf_stk)
 
     return clkdf_out
-
-
 
 
 def clk_df_reg_2_multidx(clk_df_inp, index_order=["name", "epoch"]):
@@ -1721,9 +1901,13 @@ def clk_df_reg_2_multidx(clk_df_inp, index_order=["name", "epoch"]):
     return orb_df_reg_2_multidx(clk_df_inp, index_order)
 
 
-def clk_df_common_epoch_finder(ClkDFa_in, ClkDFb_in, return_index=False,
-                               supplementary_sort=False,
-                               order=["name","epoch"]):
+def clk_df_common_epoch_finder(
+    ClkDFa_in,
+    ClkDFb_in,
+    return_index=False,
+    supplementary_sort=False,
+    order=["name", "epoch"],
+):
     """
     Find common sats/station and epochs in to Clock DF, and output the
     corresponding Clock DFs
@@ -1731,18 +1915,21 @@ def clk_df_common_epoch_finder(ClkDFa_in, ClkDFb_in, return_index=False,
     Is an adapted version of orb_df_common_epoch_finder
     """
 
-    return orb_df_common_epoch_finder(ClkDFa_in, ClkDFb_in,
-                                      return_index=return_index,
-                                      supplementary_sort=supplementary_sort,
-                                      order=order)
+    return orb_df_common_epoch_finder(
+        ClkDFa_in,
+        ClkDFb_in,
+        return_index=return_index,
+        supplementary_sort=supplementary_sort,
+        order=order,
+    )
 
 
-
-def clk_df_common_epoch_finder_multi(clk_df_list_in,
-                                     return_index=False,
-                                     supplementary_sort=False,
-                                     order=["name","epoch"]):
-
+def clk_df_common_epoch_finder_multi(
+    clk_df_list_in,
+    return_index=False,
+    supplementary_sort=False,
+    order=["name", "epoch"],
+):
     """
     Find common sats/station and epochs in to Clock DF, and output the
     corresponding Clock DFs
@@ -1755,15 +1942,18 @@ def clk_df_common_epoch_finder_multi(clk_df_list_in,
     #### First loop: we find the common epochs
     for ClkDF in clk_df_list_in[1:]:
 
-        OUTTUP = orb_df_common_epoch_finder(clk_df_ref, ClkDF,
-                                            return_index=True,
-                                            supplementary_sort=supplementary_sort,
-                                            order=order)
+        OUTTUP = orb_df_common_epoch_finder(
+            clk_df_ref,
+            ClkDF,
+            return_index=True,
+            supplementary_sort=supplementary_sort,
+            order=order,
+        )
 
-        clk_df_ref , _ , Iinter = OUTTUP
+        clk_df_ref, _, Iinter = OUTTUP
 
     #### second loop: we use the common epochs found for the outputed ClkDF
-    clk_df_list_out= []
+    clk_df_list_out = []
     for ClkDF in clk_df_list_in:
         clk_df_out = ClkDF.set_index(order).loc[Iinter]
         clk_df_list_out.append(clk_df_out)
@@ -1771,17 +1961,15 @@ def clk_df_common_epoch_finder_multi(clk_df_list_in,
     if not return_index:
         return clk_df_list_out
     else:
-        return clk_df_list_out,Iinter
+        return clk_df_list_out, Iinter
 
 
-
- #   _____ _      _____   __      __   _ _     _       _   _
- #  / ____| |    |  __ \  \ \    / /  | (_)   | |     | | (_)
- # | (___ | |    | |__) |  \ \  / /_ _| |_  __| | __ _| |_ _  ___  _ __
- #  \___ \| |    |  _  /    \ \/ / _` | | |/ _` |/ _` | __| |/ _ \| '_ \
- #  ____) | |____| | \ \     \  / (_| | | | (_| | (_| | |_| | (_) | | | |
- # |_____/|______|_|  \_\     \/ \__,_|_|_|\__,_|\__,_|\__|_|\___/|_| |_|
-
+#   _____ _      _____   __      __   _ _     _       _   _
+#  / ____| |    |  __ \  \ \    / /  | (_)   | |     | | (_)
+# | (___ | |    | |__) |  \ \  / /_ _| |_  __| | __ _| |_ _  ___  _ __
+#  \___ \| |    |  _  /    \ \/ / _` | | |/ _` |/ _` | __| |/ _ \| '_ \
+#  ____) | |____| | \ \     \  / (_| | | | (_| | (_| | |_| | (_) | | | |
+# |_____/|______|_|  \_\     \/ \__,_|_|_|\__,_|\__,_|\__|_|\___/|_| |_|
 
 
 def svn_prn_equiv_df(path_meta_snx):
@@ -1802,47 +1990,45 @@ def svn_prn_equiv_df(path_meta_snx):
 
     """
 
-    df_svn  = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/IDENTIFIER",
-                                           header_line_idx=-2)
+    df_svn = files_rw.read_sinex_versatile(
+        path_meta_snx, "SATELLITE/IDENTIFIER", header_line_idx=-2
+    )
 
-    df_prn  = files_rw.read_sinex_versatile(path_meta_snx,"SATELLITE/PRN",
-                                           header_line_idx=-2)
+    df_prn = files_rw.read_sinex_versatile(
+        path_meta_snx, "SATELLITE/PRN", header_line_idx=-2
+    )
 
-    df_svn.drop(columns='Comment__________________________________',inplace=True)
-    df_prn.drop(columns='Comment_________________________________',inplace=True)
+    df_svn.drop(columns="Comment__________________________________", inplace=True)
+    df_prn.drop(columns="Comment_________________________________", inplace=True)
 
     ## the next lines 1 and 3 seems like they have became useless
-    df_svn["SVN_"] = df_svn["SVN_"].apply(lambda x:x[0] + x[1:])
-    df_prn.replace(dt.datetime(1970,1,1),dt.datetime(2099,1,1),inplace=True)
-    df_prn["SVN_"] = df_prn["SVN_"].apply(lambda x:x[0] + x[1:])
-
+    df_svn["SVN_"] = df_svn["SVN_"].apply(lambda x: x[0] + x[1:])
+    df_prn.replace(dt.datetime(1970, 1, 1), dt.datetime(2099, 1, 1), inplace=True)
+    df_prn["SVN_"] = df_prn["SVN_"].apply(lambda x: x[0] + x[1:])
 
     df_stk = []
 
-    for isat , sat in df_prn.iterrows():
+    for isat, sat in df_prn.iterrows():
         svn = sat["SVN_"]
 
         sat["Block"] = df_svn[df_svn["SVN_"] == svn]["Block__________"].values[0]
         df_stk.append(sat)
 
-    df_fin = pd.concat(df_stk,axis=1).transpose()
+    df_fin = pd.concat(df_stk, axis=1).transpose()
 
-    df_fin.rename(columns={"SVN_":"SVN",
-                          "Valid_From____":"start",
-                          "Valid_To______":"end"},inplace=True)
+    df_fin.rename(
+        columns={"SVN_": "SVN", "Valid_From____": "start", "Valid_To______": "end"},
+        inplace=True,
+    )
 
-
-    df_fin["const"]   = df_fin["SVN"].apply(lambda x:x[0])
-    df_fin["SVN_int"] = df_fin["SVN"].apply(lambda x:int(x[1:]))
-    df_fin["PRN_int"] = df_fin["PRN"].apply(lambda x:int(x[1:]))
+    df_fin["const"] = df_fin["SVN"].apply(lambda x: x[0])
+    df_fin["SVN_int"] = df_fin["SVN"].apply(lambda x: int(x[1:]))
+    df_fin["PRN_int"] = df_fin["PRN"].apply(lambda x: int(x[1:]))
 
     return df_fin
 
 
-def svn_prn_equiv(sat_in, date_in,
-                  svn_prn_equiv_df,
-                  mode="svn2prn",
-                  full_output=False):
+def svn_prn_equiv(sat_in, date_in, svn_prn_equiv_df, mode="svn2prn", full_output=False):
     """
     Get the equivalence SVN <> PRN for a given epoch
 
@@ -1870,11 +2056,11 @@ def svn_prn_equiv(sat_in, date_in,
     svnorprn2 = mode[-3:].upper()
 
     df_sat = svn_prn_equiv_df[svn_prn_equiv_df[svnorprn1] == sat_in]
-    bool_date = np.logical_and((df_sat.start <= date_in) , (date_in < df_sat.end))
+    bool_date = np.logical_and((df_sat.start <= date_in), (date_in < df_sat.end))
     df_out = df_sat[bool_date]
 
     if len(df_out) != 1:
-        log.warning("several or no %s entries !!! %s %s",mode,sat_in,date_in)
+        log.warning("several or no %s entries !!! %s %s", mode, sat_in, date_in)
 
     if full_output:
         return df_out
@@ -1896,7 +2082,7 @@ def get_block_svn(sat_in, svn_prn_equiv_df):
     -------
     str with the block name
     """
-    df_sat = svn_prn_equiv_df[svn_prn_equiv_df['SVN'] == sat_in]
+    df_sat = svn_prn_equiv_df[svn_prn_equiv_df["SVN"] == sat_in]
     # if df_sat.empty:
     #     print('SVN NOT FOUND')
     # else:
@@ -1905,8 +2091,7 @@ def get_block_svn(sat_in, svn_prn_equiv_df):
     return block
 
 
-def stats_slr(df_in, grpby_keys = ['sat'],
-              threshold = .5):
+def stats_slr(df_in, grpby_keys=["sat"], threshold=0.5):
     """
     computes statistics for SLR Residuals
 
@@ -1930,27 +2115,28 @@ def stats_slr(df_in, grpby_keys = ['sat'],
 
     dd = df_in[np.abs(df_in["res"]) < threshold]
 
-    dd_grp  = dd.groupby(grpby_keys)
-    dd_mean = dd_grp['res'].agg(np.mean).rename('mean') * 1000
-    dd_rms  = dd_grp['res'].agg(stats.rms_mean).rename('rms')   * 1000
-    dd_std  = dd_grp['res'].agg(np.std).rename('std')   * 1000
-    dd = pd.concat([dd_mean,dd_std,dd_rms],axis=1)
-    dd.reset_index(inplace = True)
+    dd_grp = dd.groupby(grpby_keys)
+    dd_mean = dd_grp["res"].agg(np.mean).rename("mean") * 1000
+    dd_rms = dd_grp["res"].agg(stats.rms_mean).rename("rms") * 1000
+    dd_std = dd_grp["res"].agg(np.std).rename("std") * 1000
+    dd = pd.concat([dd_mean, dd_std, dd_rms], axis=1)
+    dd.reset_index(inplace=True)
 
     return dd
 
 
- #  ______           _   _        ____       _            _        _   _               _____                               _
- # |  ____|         | | | |      / __ \     (_)          | |      | | (_)             |  __ \                             | |
- # | |__   __ _ _ __| |_| |__   | |  | |_ __ _  ___ _ __ | |_ __ _| |_ _  ___  _ __   | |__) |_ _ _ __ __ _ _ __ ___   ___| |_ ___ _ __ ___
- # |  __| / _` | '__| __| '_ \  | |  | | '__| |/ _ \ '_ \| __/ _` | __| |/ _ \| '_ \  |  ___/ _` | '__/ _` | '_ ` _ \ / _ \ __/ _ \ '__/ __|
- # | |___| (_| | |  | |_| | | | | |__| | |  | |  __/ | | | || (_| | |_| | (_) | | | | | |  | (_| | | | (_| | | | | | |  __/ ||  __/ |  \__ \
- # |______\__,_|_|   \__|_| |_|  \____/|_|  |_|\___|_| |_|\__\__,_|\__|_|\___/|_| |_| |_|   \__,_|_|  \__,_|_| |_| |_|\___|\__\___|_|  |___/
+#  ______           _   _        ____       _            _        _   _               _____                               _
+# |  ____|         | | | |      / __ \     (_)          | |      | | (_)             |  __ \                             | |
+# | |__   __ _ _ __| |_| |__   | |  | |_ __ _  ___ _ __ | |_ __ _| |_ _  ___  _ __   | |__) |_ _ _ __ __ _ _ __ ___   ___| |_ ___ _ __ ___
+# |  __| / _` | '__| __| '_ \  | |  | | '__| |/ _ \ '_ \| __/ _` | __| |/ _ \| '_ \  |  ___/ _` | '__/ _` | '_ ` _ \ / _ \ __/ _ \ '__/ __|
+# | |___| (_| | |  | |_| | | | | |__| | |  | |  __/ | | | || (_| | |_| | (_) | | | | | |  | (_| | | | (_| | | | | | |  __/ ||  __/ |  \__ \
+# |______\__,_|_|   \__|_| |_|  \____/|_|  |_|\___|_| |_|\__\__,_|\__|_|\___/|_| |_| |_|   \__,_|_|  \__,_|_| |_| |_|\___|\__\___|_|  |___/
 
 
 ### EOP / Earth Oreintation Parameters
 
-def eop_interpotate(df_eop, epochs_intrp, eop_params = ["x", "y"]):
+
+def eop_interpotate(df_eop, epochs_intrp, eop_params=["x", "y"]):
     """
     Interopolate the EOP provided in a C04-like DataFrame
 
@@ -1978,11 +2164,11 @@ def eop_interpotate(df_eop, epochs_intrp, eop_params = ["x", "y"]):
         singleton = True
     else:
         singleton = False
-    
-    i_eop   = dict()
+
+    i_eop = dict()
     out_eop = dict()
     out_eop["epoch"] = epochs_intrp
-    
+
     for eoppar in eop_params:
         intrp = interp.Interp1dTime(df_eop.epoch, df_eop[eoppar])
         i_eop[eoppar] = intrp
@@ -1992,10 +2178,10 @@ def eop_interpotate(df_eop, epochs_intrp, eop_params = ["x", "y"]):
             log.error("in EOP interpolation")
             log.error("param.: %s, epoch: %s", eoppar, epochs_intrp)
             raise err
-      
+
     if not singleton:
         out = pd.DataFrame(out_eop)
     else:
         out = pd.Series(out_eop)
-        
+
     return out
