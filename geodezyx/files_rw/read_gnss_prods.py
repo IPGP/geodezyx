@@ -300,9 +300,9 @@ def read_sp3(file_path_in,returns_pandas = True, name = '',
     SP3 coordinates are usually given in ITRF, i.e. an ECEF system
     
     If the SP3 contains velocity records, this option adds a 'pv' column
-    containing 'P' for position or 'V' for velocity.
+    containing 'p' for position or 'v' for velocity.
     
-    Warning: velocity 'V' records are in dm/s per default, and the 
+    Warning: velocity 'v' records are in dm/s per default, and the
     same km_conv_coef coefficient as the position records will be applied!
 
     """

@@ -182,7 +182,7 @@ include = ["geodezyx*"] # package names should match these glob patterns (["*"] 
 current_version = "5.0.0-beta3"
 
 ##### SIMPLE CYCLE - MAJOR.MINOR.PATCH #####
-#parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+#parse = "(?p<major>\\d+)\\.(?p<minor>\\d+)\\.(?p<patch>\\d+)"
 #serialize = ["{major}.{minor}.{patch}"]
 
 ##### MORE COMPLEX CYCLE - MAJOR.MINOR.PATCH-PRERELEASE #####
@@ -227,14 +227,14 @@ optional_value = "final" # optional value for pre-release label ('final' wont ap
 
 [[tool.bumpversion.files]]
 filename = "geodezyx/__init__.py"
-#parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+#parse = "(?p<major>\\d+)\\.(?p<minor>\\d+)\\.(?p<patch>\\d+)"
 #serialize = ["{major}.{minor}.{patch}"]
 search = "{current_version}"
 replace = "{new_version}"
 
 [[tool.bumpversion.files]]
 filename = "README.md"
-#parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+#parse = "(?p<major>\\d+)\\.(?p<minor>\\d+)\\.(?p<patch>\\d+)"
 #serialize = ["{major}.{minor}.{patch}"]
 search = "Version: {current_version}"
 replace = "Version: {new_version}"
@@ -252,7 +252,7 @@ replace = 'version = "{new_version}"'
 
 #[[tool.bumpversion.files]]
 #filename = "setup.py"
-#parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+#parse = "(?p<major>\\d+)\\.(?p<minor>\\d+)\\.(?p<patch>\\d+)"
 #serialize = ["{major}.{minor}.{patch}"]
 #search = "version='{current_version}'"
 #replace = "version='{new_version}'"

@@ -529,7 +529,7 @@ def read_gipsyx_xfile_list(filelistin):
 
 def read_gipsy_bosser(filein):
     """
-    Read P. Bosser (@ENSTA Brest) File (GIPSY)
+    Read p. Bosser (@ENSTA Brest) File (GIPSY)
 
     Parameters
     ----------
@@ -1099,7 +1099,7 @@ def read_gins(filein, kineorstatic='kine', flh_in_rad=True,
                 else:
                     Ttemp = (dt.datetime(yy, mm, jour, h, m, s) + dt.timedelta(seconds=-19))
 
-                if line[105] == 'X' or line[105] == 'P':
+                if line[105] == 'X' or line[105] == 'p':
                     Ta = Ttemp
                     A = (float(fields[3]))
                     sA = (float(fields[4]))
@@ -1456,9 +1456,9 @@ def read_gins_multi_extracted(filelistin, flh_in_rad=True):
         ia = coortypelist.index('X')
         ib = coortypelist.index('Y')
         ic = coortypelist.index('Z')
-    elif 'P' in coortypelist:
+    elif 'p' in coortypelist:
         initype = 'FLH'
-        ia = coortypelist.index('P')
+        ia = coortypelist.index('p')
         ib = coortypelist.index('L')
         ic = coortypelist.index('H')
 
@@ -2149,7 +2149,7 @@ def read_renag_synthetic(filein, discont_file_in=None):
 
 def read_jump_file(filein, returned_events=('S', 'E', 'D')):
     """
-    From a "Jump" File (P. Sakic internal file)
+    From a "Jump" File (p. Sakic internal file)
     Return a dictionnairy with events
 
     Parameters
@@ -2670,7 +2670,7 @@ def read_spotgins_masterfile(master_inp):
 # |  ____|              | | (_)              / ____|                                       | |
 # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
 # |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | | |_ | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
-# | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+# | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ v /  __/ |_| | (_| | | | (_| |
 # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
 #                                                                        __/ |
 #                                                                       |___/

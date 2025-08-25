@@ -20,7 +20,7 @@ Dépendances: pandas, numpy, geodezyx, datetime, gpsdatetime, gnsstoolbox
 # GeodeZYX Toolbox’s
 # [Sakic et al., 2019]
 # Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
-# The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes. V. 4.0.
+# The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes. v. 4.0.
 # GFZ Data Services. http://doi.org/10.5880/GFZ.1.1.2019.002
 #
 # Documentation

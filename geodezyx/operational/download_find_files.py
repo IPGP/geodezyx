@@ -408,7 +408,7 @@ def find_igs_products_files(
         re_patt_big_igs_tfcc_naming = (
                 "igs"
                 + re_patt_year
-                + "P"
+                + "p"
                 + re_patt_date
                 + ".*"
                 + re_patt_filtyp

@@ -59,7 +59,7 @@ def symbols_list(L=None):
     "8",
     "s",
     "p",
-    "P",
+    "p",
     "*",
     "h",
     "H",

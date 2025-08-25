@@ -151,7 +151,7 @@ def euler_pole_vector_to_latlongrate(w):
     
     Should remains in rad/yr
     
-    Written by P. Sakic based on C. Geisert's work
+    Written by p. Sakic based on C. Geisert's work
     """
     wx=w[0]  #[rad/ yr]  
     wy=w[1]  #[rad/ yr] 

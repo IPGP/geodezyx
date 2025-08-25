@@ -46,7 +46,7 @@ log = logging.getLogger('geodezyx')
 ### The rotation matrices conventions are described in details in 
 ### Sakic (2016, PhD manuscript) p126
 
-### It is based on the book of Grewal, M. S., Weill, L. R., & Andrews, A. P. (2007).
+### It is based on the book of Grewal, M. S., Weill, L. R., & Andrews, A. p. (2007).
 ### Global Positioning Systems, Inertial Navigation, and Integration. 
 ### Hoboken, NJ, USA : John Wiley and Sons, Inc.
 
@@ -154,17 +154,17 @@ def c_rpy2enu(roll, pitch, yaw, angtype='deg'):
                    np.sin(r) * np.sin(y) + np.cos(r) * np.cos(y) * np.sin(p),
                    - np.cos(r) * np.cos(p)])
 
-    #    Ie = np.array([ np.sin(Y) * np.cos(P) ,
-    #    np.cos(R) * np.cos(Y) + np.sin(R) * np.sin(Y) * np.sin(P) ,
-    #    -np.sin(R) * np.cos(Y) + np.cos(R) * np.sin(Y) * np.sin(P) ])
+    #    Ie = np.array([ np.sin(Y) * np.cos(p) ,
+    #    np.cos(R) * np.cos(Y) + np.sin(R) * np.sin(Y) * np.sin(p) ,
+    #    -np.sin(R) * np.cos(Y) + np.cos(R) * np.sin(Y) * np.sin(p) ])
     #
-    #    In = np.array([ np.cos(Y) * np.cos(P),
-    #     -np.cos(R) * np.sin(Y) + np.sin(R) * np.cos(Y) * np.sin(P),
-    #     np.sin(R) * np.sin(Y) + np.cos(R) * np.cos(Y) * np.sin(P) ])
+    #    In = np.array([ np.cos(Y) * np.cos(p),
+    #     -np.cos(R) * np.sin(Y) + np.sin(R) * np.cos(Y) * np.sin(p),
+    #     np.sin(R) * np.sin(Y) + np.cos(R) * np.cos(Y) * np.sin(p) ])
     #
-    #    Iu = np.array([ np.sin(P),
-    #     -np.sin(R) * np.cos(P),
-    #     -np.cos(R) * np.cos(P) ])
+    #    Iu = np.array([ np.sin(p),
+    #     -np.sin(R) * np.cos(p),
+    #     -np.cos(R) * np.cos(p) ])
 
     c_rpy2enu_out = np.hstack((ir[np.newaxis].T, ip[np.newaxis].T, iy[np.newaxis].T))
 

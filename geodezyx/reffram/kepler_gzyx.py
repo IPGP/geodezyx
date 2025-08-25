@@ -35,7 +35,7 @@ log = logging.getLogger('geodezyx')
 ##########  END IMPORT  ##########
 
 
-def ECI_2_kepler_elts(pos,vel,rad2deg=True,
+def eci_2_kepler_elts(pos, vel, rad2deg=True,
                       mu=3.9860044188e14):
     """
     Convert ECI coordinates > Kepler's elements
@@ -165,18 +165,18 @@ def ECI_2_kepler_elts(pos,vel,rad2deg=True,
     #### o_peri and m seems to be inverted, must be investigated!!!
     return a,ecc,i,o_peri,o_lan,m
 
-def ECI_2_kepler_elts_mono(P,V,rad2deg=True,
+def eci_2_kepler_elts_mono(p, v, rad2deg=True,
                            mu=3.9860044188e14):
     """
-    **Kept for debug purposes, use** ``ECI_2_kepler_elts(pos, vel)`` **instead**
+    **Kept for debug purposes, use** ``eci_2_kepler_elts(pos, vel)`` **instead**
     
     Convert ECI coordinates > Kepler's elements
 
     Parameters
     ----------
-    P : array
+    p : array
         Position.
-    V : array
+    v : array
         Velocity.
     rad2deg : bool, optional
         canvert Keplerian's angles (anomalies) to deg. The default is True.
@@ -185,89 +185,89 @@ def ECI_2_kepler_elts_mono(P,V,rad2deg=True,
 
     Returns
     -------
-    a,ecc,i,omega_periarg,omega_LAN,m : floats
+    a,ecc,i,omega_periarg,omega_lan,m : floats
         Kepler's elements.
     """
-    log.warning('use this function for debug purposes only, use ECI_2_kepler_elts instead')
-    Pnorm = np.linalg.norm(P)
-    Vnorm = np.linalg.norm(V)
+    log.warning('use this function for debug purposes only, use eci_2_kepler_elts instead')
+    pnorm = np.linalg.norm(p)
+    vnorm = np.linalg.norm(v)
     
-    ### orbital momentum vector H
-    H = np.cross(P,V)
-    Hnorm = np.linalg.norm(H)
+    ### orbital momentum vector h
+    h = np.cross(p, v)
+    hnorm = np.linalg.norm(h)
     
-    ### eccentricity vector Ecc
-    Ecc = (np.cross(V,H)/mu) - (P/Pnorm)
-    Ecc_norm = np.linalg.norm(Ecc)
+    ### eccentricity vector ecc
+    ecc = (np.cross(v, h) / mu) - (p / pnorm)
+    ecc_norm = np.linalg.norm(ecc)
     
     ### true anomaly ν (nu)
-    N = np.cross(np.array([0,0,1]),H)
-    Nnorm = np.linalg.norm(N)
-    if np.dot(P,V) >= 0:
-        nu = np.arccos(np.dot(Ecc,P)/(Ecc_norm*Pnorm))
+    n = np.cross(np.array([0,0,1]),h)
+    nnorm = np.linalg.norm(n)
+    if np.dot(p, v) >= 0:
+        nu = np.arccos(np.dot(ecc, p) / (ecc_norm * pnorm))
     else:
-        nu = 2*np.pi - np.arccos(np.dot(Ecc,P)/(Ecc_norm*Pnorm))        
+        nu = 2*np.pi - np.arccos(np.dot(ecc, p) / (ecc_norm * pnorm))
     
     ### orbit inclination i
-    i = np.arccos(H[2]/Hnorm)
+    i = np.arccos(h[2]/hnorm)
     
     ### orbit eccentricity ecc
-    ecc = np.linalg.norm(Ecc)
+    ecc = np.linalg.norm(ecc)
     
     ### eccentric anomaly E (called e here)
     #e1 = 2*np.arctan(np.tan(nu/2)/np.sqrt((1+ecc)/(1-ecc)))
     e2 = 2*np.arctan2(np.tan(nu/2),np.sqrt((1+ecc)/(1-ecc)))
     e=e2
     
-    ### longitude of the ascending node Ω (omega_LAN)
-    if N[1] >= 0:
-        omega_LAN = np.arccos(N[0]/Nnorm)
+    ### longitude of the ascending node Ω (omega_lan)
+    if n[1] >= 0:
+        omega_lan = np.arccos(n[0]/nnorm)
     else:
-        omega_LAN = 2*np.pi - np.arccos(N[0]/Nnorm)
+        omega_lan = 2*np.pi - np.arccos(n[0]/nnorm)
     
     ### argument of periapsis ω (omega_periarg)
-    if Ecc[2] >= 0:
-        omega_periarg = np.arccos((np.dot(N,Ecc))/(Nnorm * Ecc_norm))
+    if ecc[2] >= 0:
+        omega_periarg = np.arccos((np.dot(n,ecc))/(nnorm * ecc_norm))
     else:
-        omega_periarg = 2*np.pi - np.arccos((np.dot(N,Ecc))/(Nnorm * Ecc_norm))
+        omega_periarg = 2*np.pi - np.arccos((np.dot(n,ecc))/(nnorm * ecc_norm))
     
     ### mean anomaly m, (Kepler’s Equation)
     m = e - ecc*np.sin(e)
     
     ### semi-major axis a
-    a = ((2/Pnorm) - (Vnorm**2 / mu))**-1
+    a = ((2/pnorm) - (vnorm**2 / mu))**-1
 
     if rad2deg:
         i=np.rad2deg(i)
         omega_periarg=np.rad2deg(omega_periarg)
-        omega_LAN=np.rad2deg(omega_LAN)
+        omega_lan=np.rad2deg(omega_lan)
         m=np.rad2deg(m)
 
-    return a,ecc,i,omega_periarg,omega_LAN,m
+    return a,ecc,i,omega_periarg,omega_lan,m
 
-def extrapolate_orbit_kepler(P,V,t,t0,mu=3.9860044188e14):
+def extrapolate_orbit_kepler(p, v, t, t0, mu=3.9860044188e14):
     from pytwobodyorbit import TwoBodyOrbit
     orbit = TwoBodyOrbit("", mu=mu)   # create an instance
-    orbit.setOrbCart(t0, P, V)        # define the orbit
-    Pout, Vout = orbit.posvelatt(t)   # get position and velocity at t1
+    orbit.setOrbCart(t0, p, v)        # define the orbit
+    pout, vout = orbit.posvelatt(t)   # get position and velocity at t1
     kepl = orbit.elmKepl()            # get classical orbital elements
     
-    return Pout,Vout,kepl
+    return pout,vout,kepl
 
 
 
-def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9,
-                              backward=True,forward=True,
-                              until_backward=None,
-                              until_forward=None,
-                              return_all=True):
+def extrapolate_sp3_data_frame(df_sp3, step=900, n_step=9,
+                               backward=True, forward=True,
+                               until_backward=None,
+                               until_forward=None,
+                               return_all=True):
     """
     Extrapolate the positions in a SP3 based on the first/last
     epochs' position
 
     Parameters
     ----------
-    DFsp3 : DataFrame
+    df_sp3 : DataFrame
         Input Orbit DataFrame (i.e. generated by files_rw.read_sp3).
     step : int, optional
         step between two epochs. The default is 900.
@@ -285,28 +285,28 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9,
         
     Returns
     -------
-    DForb_out : DataFrame
+    df_orb_out : DataFrame
         Orbit DataFrame with extrapolated values
         (see return_all).
 
     """
-    NewEpoch_stk = []
+    new_epoch_stk = []
     
-    for sat in DFsp3["sat"].unique():
+    for sat in df_sp3["sat"].unique():
         log.info("extrapolate: %s",sat)
-        DFsat = DFsp3[(DFsp3["sat"] == sat) & (DFsp3["type"] == "P")].copy()
-        DFsat.sort_values("epoch",inplace=True)
+        df_sat = df_sp3[(df_sp3["sat"] == sat) & (df_sp3["type"] == "p")].copy()
+        df_sat.sort_values("epoch",inplace=True)
         
-        DFline_dummy = DFsat.iloc[0].copy()
-        DFline_dummy["clk"] = 999999.999999
+        df_line_dummy = df_sat.iloc[0].copy()
+        df_line_dummy["clk"] = 999999.999999
         
-        XYZ   = DFsat[["x","y","z"]].values *1000
-        Tgps = conv.numpy_dt2dt(DFsat["epoch"].values)
-        Tutc = conv.dt_gpstime2dt_utc(Tgps)
-        Tsec = [e.total_seconds() for e in (Tutc-Tutc[0])]
+        xyz   = df_sat[["x","y","z"]].values *1000
+        tgps = conv.numpy_dt2dt(df_sat["epoch"].values)
+        tutc = conv.dt_gpstime2dt_utc(tgps)
+        tsec = [e.total_seconds() for e in (tutc-tutc[0])]
         
-        P=conv.ecef2eci(XYZ, Tutc)
-        V=np.gradient(P,Tsec,axis=0)
+        p=conv.ecef2eci(xyz, tutc)
+        v=np.gradient(p,tsec,axis=0)
         
         def extrapo_intern_fct(i_ref,coef,until):
             ##
@@ -320,25 +320,25 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9,
             ##
             from pytwobodyorbit import TwoBodyOrbit
             orbit_back = TwoBodyOrbit("orbit", mu=3.9860044188e14)  # create an instance    
-            orbit_back.setOrbCart(Tsec[i_ref], P[i_ref], V[i_ref])  # define the orbit
+            orbit_back.setOrbCart(tsec[i_ref], p[i_ref], v[i_ref])  # define the orbit
             
             if until:
-                t_rang_strt,t_rang_end = list(sorted([Tutc[i_ref],until]))
-                Range = conv.dt_range(t_rang_strt,t_rang_end,0,step)
-                n_step_intern = len(Range) - 1 
+                t_rang_strt,t_rang_end = list(sorted([tutc[i_ref],until]))
+                range = conv.dt_range(t_rang_strt,t_rang_end,0,step)
+                n_step_intern = len(range) - 1
             else:
                 n_step_intern = n_step
             
             for t in np.arange(step,n_step_intern*step +1,step):
-                Pout, Vout = orbit_back.posvelatt(coef * t)
-                epoc = Tgps[i_ref] + coef * dt.timedelta(seconds=int(t))
-                DFline_new = DFline_dummy.copy()
-                DFline_new[["x","y","z"]] = Pout
-                DFline_new["epoch"] = pd.Timestamp(epoc)
+                pout, vout = orbit_back.posvelatt(coef * t)
+                epoc = tgps[i_ref] + coef * dt.timedelta(seconds=int(t))
+                df_line_new = df_line_dummy.copy()
+                df_line_new[["x","y","z"]] = pout
+                df_line_new["epoch"] = pd.Timestamp(epoc)
         
-                NewEpoch_stk.append(DFline_new)
+                new_epoch_stk.append(df_line_new)
                 
-            return Pout, Vout
+            return pout, vout
     
         ### backward
         if backward:
@@ -348,21 +348,21 @@ def extrapolate_sp3_DataFrame(DFsp3,step=900,n_step=9,
         if forward:
             extrapo_intern_fct(-1,1,until_forward)
         
-    DFNewEpoch = pd.DataFrame(NewEpoch_stk)
+    df_new_epoch = pd.DataFrame(new_epoch_stk)
     
-    Tutc_NewEpoch = conv.dt_gpstime2dt_utc(conv.numpy_dt2dt(DFNewEpoch["epoch"].values))
-    DFNewEpoch[["x","y","z"]] = conv.eci2ecef(DFNewEpoch[["x", "y", "z"]].values, Tutc_NewEpoch)
-    DFNewEpoch[["x","y","z"]] = DFNewEpoch[["x","y","z"]] * 10**-3
+    tutc_new_epoch = conv.dt_gpstime2dt_utc(conv.numpy_dt2dt(df_new_epoch["epoch"].values))
+    df_new_epoch[["x","y","z"]] = conv.eci2ecef(df_new_epoch[["x", "y", "z"]].values, tutc_new_epoch)
+    df_new_epoch[["x","y","z"]] = df_new_epoch[["x","y","z"]] * 10**-3
     
     if return_all:
-        DForb_out = pd.concat((DFsp3,DFNewEpoch))
+        df_orb_out = pd.concat((df_sp3, df_new_epoch))
     else:
-        DForb_out = DFNewEpoch
+        df_orb_out = df_new_epoch
     
-    DForb_out.reset_index(drop=True,inplace=True)
-    DForb_out.sort_values(["sat","epoch"],inplace=True)
-    DForb_out.reset_index(drop=True,inplace=True)
+    df_orb_out.reset_index(drop=True,inplace=True)
+    df_orb_out.sort_values(["sat","epoch"],inplace=True)
+    df_orb_out.reset_index(drop=True,inplace=True)
     
-    return DForb_out
+    return df_orb_out
 
 

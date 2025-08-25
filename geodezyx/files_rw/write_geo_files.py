@@ -117,7 +117,7 @@ def write_sp3(SP3_DF_in,outpath,outname=None,prefix='orb',
         SP3epoc.sort_values("prn",inplace=True,ascending=True)
         timestamp = conv.dt2sp3_timestamp(conv.numpy_dt2dt(epoc)) + "\n"
 
-        linefmt = "P{:}{:14.6f}{:14.6f}{:14.6f}{:14.6f}\n"
+        linefmt = "p{:}{:14.6f}{:14.6f}{:14.6f}{:14.6f}\n"
 
         LinesStkEpoch = []
         sum_val_epoch = 0
@@ -659,10 +659,10 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                 SP3_bef = files_rw.read_sp3(p_bef)
                 SP3_aft = files_rw.read_sp3(p_aft)
                 
-                ### Filtering to keep P only
-                SP3 = SP3[SP3.type == "P"]
-                SP3_bef = SP3_bef[SP3_bef.type == "P"]
-                SP3_aft = SP3_aft[SP3_aft.type == "P"]
+                ### Filtering to keep p only
+                SP3 = SP3[SP3.type == "p"]
+                SP3_bef = SP3_bef[SP3_bef.type == "p"]
+                SP3_aft = SP3_aft[SP3_aft.type == "p"]
                 
                 if sys:
                     SP3     = SP3[SP3.sys == sys ]
@@ -755,14 +755,14 @@ def sp3_overlap_creator(ac_list,dir_in,dir_out,
                         
                         #print("SP3extrapo_in",SP3extrapo_in)
                         
-                        SP3extrapo = reffram.extrapolate_sp3_DataFrame(SP3extrapo_in,
-                                                                       step=step,
-                                                                       n_step=int(overlap_size/step),
-                                                                       backward=backward,
-                                                                       forward=forward,
-                                                                       until_backward=dat_filter_bef,
-                                                                       until_forward=dat_filter_aft,
-                                                                       return_all=False)
+                        SP3extrapo = reffram.extrapolate_sp3_data_frame(SP3extrapo_in,
+                                                                        step=step,
+                                                                        n_step=int(overlap_size/step),
+                                                                        backward=backward,
+                                                                        forward=forward,
+                                                                        until_backward=dat_filter_bef,
+                                                                        until_forward=dat_filter_aft,
+                                                                        return_all=False)
                         
                         SP3concat = pd.concat((SP3concat,SP3extrapo))
                         log.info(SP3extrapo)

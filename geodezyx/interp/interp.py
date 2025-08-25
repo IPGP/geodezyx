@@ -96,7 +96,7 @@ class SlerpTime(scipy.spatial.transform.Slerp):
    This class inherites from scipy.spatial.transform.Slerp
    and can take as input datetime as X
    
-   P. Sakic 2020-01
+   p. Sakic 2020-01
    """
    
    def __init__(self, times, rotations,extrapolate=True):

@@ -41,7 +41,7 @@ log = logging.getLogger('geodezyx')
  # |  ____|              | | (_)              / ____|                                       | |
  # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
  # |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | | |_ | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
- # | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+ # | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ v /  __/ |_| | (_| | | | (_| |
  # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
  #                                                                        __/ |                
  #                                                                       |___/       
@@ -254,7 +254,7 @@ def read_erp_bad(path,return_array=False):
              # j +=1
          # l +=1
 
-        # Erp_end = pd.DataFrame(ERP, columns=['MJD','X-P', 'Y-P', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
+        # Erp_end = pd.DataFrame(ERP, columns=['MJD','X-p', 'Y-p', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
                                              # 'X-RT','Y-RT','S-XR','S-YR'])
     # #    Erp_end.set_index('MJD',inplace=True)
         # return Erp_end
@@ -283,7 +283,7 @@ def read_erp_bad(path,return_array=False):
              # j +=1
          # n +=1
 
-        # Erp_end = pd.DataFrame(ERP, columns=['MJD','X-P', 'Y-P', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
+        # Erp_end = pd.DataFrame(ERP, columns=['MJD','X-p', 'Y-p', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
                                              # 'X-RT','Y-RT','S-XR','S-YR'])
     # #    Erp_end.set_index('MJD',inplace=True)
         # return Erp_end
@@ -312,7 +312,7 @@ def read_erp_bad(path,return_array=False):
              # j +=1
          # g +=1
 
-        # Erp_end = pd.DataFrame(ERP, columns=['MJD','X-P', 'Y-P', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
+        # Erp_end = pd.DataFrame(ERP, columns=['MJD','X-p', 'Y-p', 'UT1UTC','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
                                              # 'X-RT','Y-RT','S-XR','S-YR'])
     # #    Erp_end.set_index('MJD',inplace=True)
         # return Erp_end
@@ -459,7 +459,7 @@ def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=T
 # def read_erp(caminho_arq,ac):
     # """
     # General description
-    # Units: ('MJD','X-P (arcsec)', 'Y-P (arcsec)', 'UT1UTC (E-7S)','LOD (E-7S/D)','S-X (E-6" arcsec)','S-Y (E-6" arcsec)',
+    # Units: ('MJD','X-p (arcsec)', 'Y-p (arcsec)', 'UT1UTC (E-7S)','LOD (E-7S/D)','S-X (E-6" arcsec)','S-Y (E-6" arcsec)',
     # 'S-UT (E-7S)','S-LD (E-7S/D)','NR (E-6" arcsec)', 'NF (E-6" arcsec)', 'NT (E-6" arcsec)',
     # 'X-RT (arcsec/D)','Y-RT (arcsec/D)','S-XR (E-6" arcsec/D)','S-YR (E-6" arcsec/D)', 'C-XY', 'C-XT',
     # 'C-YT', 'DPSI', 'DEPS','S-DP','S-DE')
@@ -654,7 +654,7 @@ def read_clk_old(file_path_in, returns_pandas = True, interval=None,old_naming=T
 
                 # ERP.append(ERP_data)
 
-    # Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD',
+    # Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-p', 'Y-p', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD',
                                          # 'NR', 'NF', 'NT',
                                          # 'X-RT','Y-RT','S-XR','S-YR',
                                          # 'Delivered_date'])

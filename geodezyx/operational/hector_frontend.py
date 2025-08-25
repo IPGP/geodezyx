@@ -385,7 +385,7 @@ def velfile_from_a_list_of_statVsV_tuple(
     if style == "globk":
         outfile = open(out_dir + "/" + out_prefix + ".vel", "w+")
         outfile.write(
-            "* Velocity field created with Hector Runner / P. Sakic - La Rochelle Univ. (FRA) \n"
+            "* Velocity field created with Hector Runner / p. Sakic - La Rochelle Univ. (FRA) \n"
         )
         outfile.write(
             "*  Long         Lat        Evel    Nvel    dEv     dNv    E +-    N +-    Rne      Hvel     dHv    H +-  Site\n"
@@ -506,14 +506,14 @@ def velfile_from_a_list_of_statVsV_tuple(
 #    """ make a dirty velocity file compatible with EPC """
 #    outfile = open(out_dir +'/' + out_prefix + '.vel.neu','w+')
 #    for tup in listoftup:
-#        stat , V , sV = tup
+#        stat , v , sV = tup
 #        try:
 #            neufile = utils.regex2filelist(raw_neu_dir,stat)[0]
 #            lat , lon , hau = get_FLH_from_NEUfile(neufile)
 #        except:
 #            lat , lon , hau = 0,0,0
 #
-#        line = '{} {} {} {} {} {} {} {}\n'.format(stat,lat,refframe.wrapTo180(lon),V['N'],V['E'],sV['N'],sV['E'],0)
+#        line = '{} {} {} {} {} {} {} {}\n'.format(stat,lat,refframe.wrapTo180(lon),v['N'],v['E'],sV['N'],sV['E'],0)
 #        outfile.write(line)
 #    return None
 

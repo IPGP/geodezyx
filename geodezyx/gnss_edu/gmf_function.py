@@ -33,7 +33,7 @@ def gmf(dmjd=None, dlat=None, dlon=None, dhgt=None, zd=None):
 
     References
     ----------
-    Boehm, J., A.E. Niell, P. Tregoning, H. Schuh (2006),
+    Boehm, J., A.E. Niell, p. Tregoning, H. Schuh (2006),
     Global Mapping Functions (GMF): A new empirical mapping function based on
     numerical weather model data, Geoph. Res. Letters, Vol. 33, L07304,
     doi:10.1029/2005GL025545.

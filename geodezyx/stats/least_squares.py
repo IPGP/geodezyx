@@ -256,7 +256,7 @@ def weight_mat(Sinp,Ninp=[],fuvinp=1,sparsediag=False):
     Returns :
         K : matrice de var-covar
         Q : matrice des cofacteurs
-        P : matrice des poids inv(Q)
+        p : matrice des poids inv(Q)
     """
 
     if Ninp == []:
@@ -291,11 +291,11 @@ def weight_mat(Sinp,Ninp=[],fuvinp=1,sparsediag=False):
 
     #    #K = scipy.linalg.block_diag(*Ktemp)
     #    Q = (1/fuvinp) * K
-    #    # normalement P = scipy.linalg.inv(Q)
+    #    # normalement p = scipy.linalg.inv(Q)
     #    # mais pour que ce soit + rapide
     #    Qdiag = np.diagonal(Q)
     #    Pdiag = 1/Qdiag
-    #    P = scipy.linalg.block_diag(*Pdiag)
+    #    p = scipy.linalg.block_diag(*Pdiag)
 
     return K , Q , P
 
@@ -315,7 +315,7 @@ def weight_mat_simple(Pinp,Ninp=[],sparsediag=False,
         fuvinp = 1 : facteur unitaire de variance
 
     Returns :
-        P : weigth matrix
+        p : weigth matrix
     """
 
     if Ninp == []:
@@ -346,11 +346,11 @@ def weight_mat_simple(Pinp,Ninp=[],sparsediag=False,
 def fuv_calc(V,A,P=1,normafuv=1):
     """
     Args :
-        V : residuals vector
+        v : residuals vector
 
         A : Jacobian matrix
 
-        P : weight matrix
+        p : weight matrix
 
         Can manage both standard arrays and sparse array
 
@@ -375,7 +375,7 @@ def fuv_calc(V,A,P=1,normafuv=1):
     elif scipy.sparse.issparse(P):
         P = P.diagonal()
     else:
-        log.warning("DEPRECIATION : modification done in fuv_calc, P should be given as Matrix-shaped now")
+        log.warning("DEPRECIATION : modification done in fuv_calc, p should be given as Matrix-shaped now")
         P = P.diagonal()
 
     P = P * (1 / normafuv)
@@ -383,9 +383,9 @@ def fuv_calc(V,A,P=1,normafuv=1):
     VPV = np.column_stack((V,P,V))
     numera = np.sum(np.product(VPV,1))
 
-    # nummera is just an adaptation of VT * P * V
+    # nummera is just an adaptation of VT * p * v
     # EDIT 1806 : Je veux bien ... mais c'est une adaptation pourrie !
-    # ou alors il faut bien s'assurer que l'on a extrait la diagonale de P
+    # ou alors il faut bien s'assurer que l'on a extrait la diagonale de p
     
     
     if A.ndim == 1:
@@ -531,19 +531,19 @@ def chi2_test_lsq(V , A ,  P = None , fuvin = None , risk = 0.05,
                   koefP = 1):
 
     """
-    P est uniquement la diagonale de la matrice des poids
+    p est uniquement la diagonale de la matrice des poids
 
     les cleaning sont des astuces pour se rapprocher de 1 (en nettoyant les plus mauvaises valeurs)
     cleaning_normalized est à privilégier (et override cleaning_std)
 
-    koefP est coefficient qu'on donne a P pour trouver une solution viable
+    koefP est coefficient qu'on donne a p pour trouver une solution viable
 
-    si koefP != 1, le nouveau P est donné en avant dernier argument
+    si koefP != 1, le nouveau p est donné en avant dernier argument
 
     """
 
     if fuvin is None and P is None:
-        log.error("fuvin == None and P == None")
+        log.error("fuvin == None and p == None")
         return None
 
     ddl = (np.max(A.shape) - np.min(A.shape))
@@ -700,7 +700,7 @@ def error_ellipse_parameters_2(sigx,sigy,sigxy,out_deg=True):
     V,D   = np.linalg.eig(cov)
     V2,D2 = np.linalg.eig(np.linalg.inv(cov))
 
-    #Dsqrt = np.sqrt(V)
+    #Dsqrt = np.sqrt(v)
 
     l1 = 0.5 * (sigx2 + sigy2 + np.sqrt((sigx2 + sigy2)**2 - 4*(sigx2 * sigy2 - sigxy2)))
     l2 = 0.5 * (sigx2 + sigy2 - np.sqrt((sigx2 + sigy2)**2 - 4*(sigx2 * sigy2 - sigxy2)))
@@ -878,12 +878,12 @@ def clean_nan(A,L):
     if Aout.shape[0] != Lout.shape[0]:
         raise Exception("ERREUR : A_out et L_out ont des longeurs differentes")
 
-    log.info("%i NaN dans le V",nbnanL)
-    log.info("%i NaN dans la M vert., APRES suppr. des NaN du V", nbnanA2)
-    log.info("%i lignes supprimées dans le V et la M (en théorie)", nbnanA2 + nbnanL)
+    log.info("%i NaN dans le v",nbnanL)
+    log.info("%i NaN dans la M vert., APRES suppr. des NaN du v", nbnanA2)
+    log.info("%i lignes supprimées dans le v et la M (en théorie)", nbnanA2 + nbnanL)
     log.info("")
     log.info("pour info :")
-    log.info("%i NaN dans la M vert., AVANT suppr. des NaN du V", nbnanA)
+    log.info("%i NaN dans la M vert., AVANT suppr. des NaN du v", nbnanA)
     log.info("%i NaN dans la M AU TOTAL (vert. et horiz.)", nbnanAtot)
 
     return Aout , Lout
@@ -916,7 +916,7 @@ def fuv_calc_OLD2(V,A,P=None):
 #        retourne :
 #        K : matrice de var-covar
 #        Q : matrice des cofacteurs
-#        P : matrice des poids inv(Q)
+#        p : matrice des poids inv(Q)
 #    """
 #
 #    if len(Sinp) != len(Ninp):
@@ -931,13 +931,13 @@ def fuv_calc_OLD2(V,A,P=None):
 #            print "weight_mat : Are you sure you don't invert Sinp <> Ninp ?"
 #    K = scipy.linalg.block_diag(*Ktemp)
 #    Q = (1/fuvinp) * K
-#    # normalement P = scipy.linalg.inv(Q)
+#    # normalement p = scipy.linalg.inv(Q)
 #    # mais pour que ce soit + rapide
 #    Qdiag = np.diagonal(Q)
 #    Pdiag = 1/Qdiag
-#    P = scipy.linalg.block_diag(*Pdiag)
+#    p = scipy.linalg.block_diag(*Pdiag)
 #
-#    return K , Q , P
+#    return K , Q , p
 
 
 def partial_derive_old(f,var_in,var_out=0,kwargs_f={},args_f=[],h=0):

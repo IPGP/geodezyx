@@ -32,7 +32,7 @@ import numpy as np
 # | |                   | |              | |                                                
 # | |     _____      __ | | _____   _____| |                                                
 # | |    / _ \ \ /\ / / | |/ _ \ \ / / _ \ |                                                
-# | |___| (_) \ V  V /  | |  __/\ V /  __/ |                                                
+# | |___| (_) \ v  v /  | |  __/\ v /  __/ |
 # |______\___/ \_/\_/   |_|\___| \_/ \___|_|_         __                  _   _             
 #                                 | |      (_)       / _|                | | (_)            
 #   __ _  ___  ___  _ __ ___   ___| |_ _ __ _  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  
@@ -256,7 +256,7 @@ def vincenty_full(point1, point2, miles=False,full=True,azimuth_in_deg=True):
     
 def orthogonal_projection(Xa,Xb,Xv):
     """
-    Project a point A on a line defined with a vector V and a point B
+    Project a point A on a line defined with a vector v and a point B
     
     Parameters
     ----------
