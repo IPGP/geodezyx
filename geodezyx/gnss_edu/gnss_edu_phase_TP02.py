@@ -161,9 +161,9 @@ dRelat = []
 epochs_rec = df_rnx_flat["epoch"].unique()
 
 from geodezyx import  reffram
-dforb_itrp = reffram.OrbDF_lagrange_interpolate(dforb, epochs)
-dforb_itrp_aft = reffram.OrbDF_lagrange_interpolate(dforb, epochs + dt.timedelta(milliseconds=1))
-dforb_itrp_bef = reffram.OrbDF_lagrange_interpolate(dforb, epochs - dt.timedelta(milliseconds=1))
+dforb_itrp = reffram.orb_df_lagrange_interpolate(dforb, epochs)
+dforb_itrp_aft = reffram.orb_df_lagrange_interpolate(dforb, epochs + dt.timedelta(milliseconds=1))
+dforb_itrp_bef = reffram.orb_df_lagrange_interpolate(dforb, epochs - dt.timedelta(milliseconds=1))
 
 dforb_itrp_aft[["x","y","z"]] - dforb_itrp_bef[["x","y","z"]] / 2.0 / 1e3
 

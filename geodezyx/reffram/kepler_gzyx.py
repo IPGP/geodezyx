@@ -72,9 +72,9 @@ def ECI_2_kepler_elts(pos,vel,rad2deg=True,
     Be sure your input is in ECI (SP3 are in ECEF for instance).  
 
     If neeeded, use ``conv.ecef2eci()`` (gross results)
-    or ``reffram.OrbDF_crf2trf(inv_trf2crf=True)`` (precise results)
+    or ``reffram.orb_df_crf2trf(inv_trf2crf=True)`` (precise results)
     
-    You can get the velocity with ``reffram.DFOrb_velocity_calc()``
+    You can get the velocity with ``reffram.orb_df_velocity_calc()``
     
     Source
     ------

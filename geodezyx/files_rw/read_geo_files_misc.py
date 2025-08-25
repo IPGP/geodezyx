@@ -703,7 +703,7 @@ def AC_equiv_vals(AC1,AC2):
 
     Note
     ----
-    Redundant with reffram.OrbDF_common_epoch_finder
+    Redundant with reffram.orb_df_common_epoch_finder
     this function should not be used anymore
     
     Parameters
@@ -723,7 +723,7 @@ def AC_equiv_vals(AC1,AC2):
         Merged orbit DataFrame.
     """
     
-    log.warning("This function is redundant with reffram.OrbDF_common_epoch_finder, use the latter one")
+    log.warning("This function is redundant with reffram.orb_df_common_epoch_finder, use the latter one")
     
     ### 1) Merge the 2 DF to find common lines
     ACmerged = pd.merge(AC1 , AC2 , how='inner', on=['epoch', 'sat'])

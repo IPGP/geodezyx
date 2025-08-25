@@ -176,17 +176,17 @@ def read_rinex_list_table(rnx_list_inp):
     return df
 
 
-# def date_filter(DFin,strt,end):
-#     return DFin[(DFin.date >= strt) & (DFin.date < end)].copy()
+# def date_filter(df_in,strt,end):
+#     return df_in[(df_in.date >= strt) & (df_in.date < end)].copy()
 
-# def clean_w_year_path(DFin):
+# def clean_w_year_path(df_in):
 
-#     DF = DFin.copy()
+#     DF = df_in.copy()
 #     DF["yr_path"] = DF.path.str.extract("([0-9]{4})").astype(int)
 #     BOOL = DF["yr_path"] == DF["date"].dt.year
 #     DF = DF[BOOL]
 
-#     print("before/after clean_w_year_path",len(DFin),len(DF))
+#     print("before/after clean_w_year_path",len(df_in),len(DF))
 
 #     return DF
 
