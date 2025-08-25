@@ -64,7 +64,7 @@ def parse_args():
         help="Archive directory structure type. Options: 'stat' (station-based), "
              "'year' (year-based), 'daily' (daily structure). "
              "Exemple: 'stat/year/doy'. "
-             "Default: 'stat'"
+             "Default: 'year/doy'"
     )
     parser.add_argument(
         "-u", "--user",

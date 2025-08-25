@@ -795,7 +795,7 @@ def download_gnss_rinex(
     output_dir,
     startdate,
     enddate,
-    archtype="stat",
+    archtype='year/doy',
     parallel_download=4,
     user="anonymous",
     passwd="anonymous@isp.com",
