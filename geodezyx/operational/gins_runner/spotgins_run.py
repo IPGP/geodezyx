@@ -34,11 +34,15 @@ import logging
 log = logging.getLogger("geodezyx")
 
 
+LAST_VERSION_VALIDE = "VALIDE_25_1"
+#DIR_SPOTGINS_DEFAULT = ""DIR_SPOTGINS_G20_GE.yml""
+DIR_SPOTGINS_DEFAULT = "DIR_SPOTGINS_G20_GE_VALIDE_25_1.yml"
+
 def spotgins_run(
     rnxs_path_inp,
     results_folder_inp,
     nprocs=8,
-    version="VALIDE_24_2",
+    version=LAST_VERSION_VALIDE,
     const="GE",
     director_generik_path_inp=None,
     director_name_prefix_inp="",
@@ -266,7 +270,7 @@ def get_spotgins_files(
         dirgen_use = director_generik_path_inp
     else:
         dirgen_use = os.path.join(
-            sptgns_path, "metadata", "directeur", "DIR_SPOTGINS_G20_GE.yml"
+            sptgns_path, "metadata", "directeur", DIR_SPOTGINS_DEFAULT
         )
 
     if stations_file_inp:
