@@ -68,7 +68,7 @@ def compar_orbit(
 
     Parameters
     ----------
-    data_inp_1 & data_inp_2 : str or Pandas DataFrame
+    data_inp_1, data_inp_2 : str or Pandas DataFrame
         contains the orbits or path (string) to the sp3
 
     step_data : int
@@ -86,7 +86,7 @@ def compar_orbit(
         convert sp3 ECEF => ECI (Terrestrial => Celestrial)
         must be True in operational to avoid artifacts.
 
-    name1 & name2 : str (optionals)
+    name1, name2 : str (optionals)
         optional custom names for the 2 orbits
 
     use_name_1_2_for_table_name : bool
