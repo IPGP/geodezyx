@@ -70,7 +70,8 @@ def spotgins_run(
     nprocs : int, optional
         Number of processes to use for multiprocessing. Default is 8.
     version : str, optional
-        Version of the GINS software to use. Default is "VALIDE_23_2".
+        Version of the GINS software to use.
+         Default is the global variable LAST_VERSION_VALIDE.
     const : str, optional
         GNSS constellation to use. Default is "G".
     director_generik_path_inp : str, optional

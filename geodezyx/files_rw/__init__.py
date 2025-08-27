@@ -12,6 +12,8 @@ from .read_gnss_qc import *
 from .read_igs_combi import *
 from .read_logsheets import *
 from .read_rinex import *
+from .read_rinex_nav import *
+from .read_sinex import *
 from .read_slr import *
 from .write_geo_files import *
 from .write_rinex import *
