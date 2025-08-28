@@ -162,9 +162,11 @@ def bdgins_update(
     ### time dependant files
     list_tropo_vmf1 = []
     list_iono_igs = []
-    list_orbite_mg3 = []
 
-    list_orbite_g20 = []
+    #list_orbite_sp3_mg3 = [] # not needed after v25_1
+    list_orbite_sp3_g20 = []
+    list_orbite_gin_g20 = []
+
     list_orbex_g20 = []
     list_horl_g20 = []
 
@@ -220,11 +222,14 @@ def bdgins_update(
             ]
         )
         list_iono_igs.append(f"{year}/igsg{doy}0.{yy}i.Z")
-        list_orbite_mg3.append(f"mg3{wk}{wkday}.sp3.Ci9PAU")
-        list_orbite_g20.append(f"G20{wk}{wkday}.gin")
+        #list_orbite_sp3_mg3.append(f"mg3{wk}{wkday}.sp3.Ci9PAU") # not needed after v25_1
+        list_orbite_sp3_g20.append(f"g20{wk}{wkday}.sp3.Ci3G20.gz")
+        list_orbite_gin_g20.append(f"G20{wk}{wkday}.gin")
         list_orbex_g20.append(f"G20{wk}{wkday}.obx.gz")
         list_horl_g20.append(f"hogps_g20{wk}{wkday}")
         date += dt.timedelta(days=1)
+
+    list_orbit_g20 = list_orbite_gin_g20 + list_orbite_sp3_g20
 
     ###### DESTINATION FOLDERS
     dest_subdir_dic = {
@@ -241,7 +246,7 @@ def bdgins_update(
         ### time dependant files
         "tropo_vmf1": list_tropo_vmf1,
         "ionosphere/igs": list_iono_igs,
-        "orbites/SP3/re3": list_orbite_mg3,
+        #"orbites/SP3/re3": list_orbite_sp3_mg3, not needed after v25_1
         "mesures/gps/orbites/G20": list_orbite_g20,
         "mesures/gps/orbex/G20": list_orbex_g20,
         "mesures/gps/horloges30/G20": list_horl_g20,
