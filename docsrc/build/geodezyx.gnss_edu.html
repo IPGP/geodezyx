@@ -1,0 +1,538 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>geodezyx.gnss_edu package &mdash; geodezyx 4.x documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx.interp package" href="geodezyx.interp.html" />
+    <link rel="prev" title="geodezyx.geodyn package" href="geodezyx.geodyn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/geodezyx_toolbox_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to geodezyx’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.gnss_edu package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#geodezyx-gnss-edu-compute-vmf1-values-module">geodezyx.gnss_edu.compute_vmf1_values module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#geodezyx-gnss-edu-download-vmf-module">geodezyx.gnss_edu.download_VMF module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.gmf_function">geodezyx.gnss_edu.gmf_function module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.gnss_edu">geodezyx.gnss_edu.gnss_edu module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#geodezyx-gnss-edu-gnss-edu-test-skyplot-module">geodezyx.gnss_edu.gnss_edu_test_skyplot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.gpt3">geodezyx.gnss_edu.gpt3 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.klobuchar">geodezyx.gnss_edu.klobuchar module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.read_vmf1_grid">geodezyx.gnss_edu.read_vmf1_grid module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.vmf1_ht">geodezyx.gnss_edu.vmf1_ht module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.html">geodezyx package</a></li>
+      <li class="breadcrumb-item active">geodezyx.gnss_edu package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/geodezyx.gnss_edu.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-geodezyx.gnss_edu">
+<span id="geodezyx-gnss-edu-package"></span><h1>geodezyx.gnss_edu package<a class="headerlink" href="#module-geodezyx.gnss_edu" title="Link to this heading"></a></h1>
+<p>Created on 12/08/2025 14:58:49</p>
+<p>&#64;author: psakic</p>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="geodezyx-gnss-edu-compute-vmf1-values-module">
+<h2>geodezyx.gnss_edu.compute_vmf1_values module<a class="headerlink" href="#geodezyx-gnss-edu-compute-vmf1-values-module" title="Link to this heading"></a></h2>
+</section>
+<section id="geodezyx-gnss-edu-download-vmf-module">
+<h2>geodezyx.gnss_edu.download_VMF module<a class="headerlink" href="#geodezyx-gnss-edu-download-vmf-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-geodezyx.gnss_edu.gmf_function">
+<span id="geodezyx-gnss-edu-gmf-function-module"></span><h2>geodezyx.gnss_edu.gmf_function module<a class="headerlink" href="#module-geodezyx.gnss_edu.gmf_function" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gmf_function.gmf">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gmf_function.</span></span><span class="sig-name descname"><span class="pre">gmf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dmjd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dhgt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gmf_function.gmf" title="Link to this definition"></a></dt>
+<dd><p>Determine the Global Mapping Functions (GMF) for hydrostatic and wet components.</p>
+<p>This function calculates mapping functions used in atmospheric delay modeling
+for satellite geodesy applications. The GMF is based on numerical weather model
+data and provides improved accuracy over earlier mapping functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dmjd</strong> (<em>float</em>) – Modified Julian Date.</p></li>
+<li><p><strong>dlat</strong> (<em>float</em>) – Ellipsoidal latitude in radians.</p></li>
+<li><p><strong>dlon</strong> (<em>float</em>) – Longitude in radians.</p></li>
+<li><p><strong>dhgt</strong> (<em>float</em>) – Height above sea level in meters.</p></li>
+<li><p><strong>zd</strong> (<em>float</em>) – Zenith distance in radians.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>gmfh</strong> (<em>float</em>) – Hydrostatic mapping function value.</p></li>
+<li><p><strong>gmfw</strong> (<em>float</em>) – Wet mapping function value.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Boehm, J., A.E. Niell, p. Tregoning, H. Schuh (2006),
+Global Mapping Functions (GMF): A new empirical mapping function based on
+numerical weather model data, Geoph. Res. Letters, Vol. 33, L07304,
+doi:10.1029/2005GL025545.</p>
+<p class="rubric">Notes</p>
+<p>Original implementation by Johannes Boehm, 2005 August 30.
+Recursions for Legendre polynomials updated 2006 Aug. 14 (O. Montenbruck).
+Latitude changed to ellipsoidal latitude 2011 Jul. 21 (J. Boehm).
+Converted to Python by Zohreh Adavi (<a class="reference external" href="mailto:zohreh&#46;adavi&#37;&#52;&#48;tuwien&#46;ac&#46;at">zohreh<span>&#46;</span>adavi<span>&#64;</span>tuwien<span>&#46;</span>ac<span>&#46;</span>at</a>), 2023-02-20.</p>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.gnss_edu.gnss_edu">
+<span id="geodezyx-gnss-edu-gnss-edu-module"></span><h2>geodezyx.gnss_edu.gnss_edu module<a class="headerlink" href="#module-geodezyx.gnss_edu.gnss_edu" title="Link to this heading"></a></h2>
+<p>Created on Tue Feb 11 16:39:34 2025</p>
+<p>&#64;author: snahmani</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.Sagnac_rotate_around_z">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">Sagnac_rotate_around_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.Sagnac_rotate_around_z" title="Link to this definition"></a></dt>
+<dd><p>Calcule la correction Sagnac pour les coordonnées satellites.
+Retourne un pd.Series avec les nouvelles colonnes X_sat_corr, Y_sat_corr, Z_sat_corr.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.add_az_el_iono_columns">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">add_az_el_iono_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_rnx_header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mynav</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.add_az_el_iono_columns" title="Link to this definition"></a></dt>
+<dd><p>Ajoute dans le DataFrame les colonnes Az (azimut en degrés), Ele (élévation en degrés)
+et d_ion1 (correction ionosphérique selon le modèle de Klobuchar).</p>
+<dl class="simple">
+<dt>Paramètres :</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>df<span class="classifier">DataFrame contenant les colonnes ‘X_sat’, ‘Y_sat’, ‘Z_sat’ et ‘ind_ligne’.</span></dt><dd><p>L’index doit être un MultiIndex (time, prn).</p>
+</dd>
+</dl>
+</li>
+<li><p>P_rnx_header : tableau ou liste contenant les coordonnées de la station (X, Y, Z)</p></li>
+<li><p>mynav : objet de navigation contenant les attributs ion_alpha_gps et ion_beta_gps.</p></li>
+<li><p>t : objet gpsdatetime (issu de gpst.gpsdatetime) pour la gestion des temps.</p></li>
+<li><p>tools : module (par ex. gnsstoolbox.gnsstools) fournissant les fonctions toolAzEle et toolCartGeoGRS80.</p></li>
+<li><p>klobuchar : module contenant la fonction klobuchar pour le calcul de la correction iono.</p></li>
+</ul>
+</dd>
+<dt>Retourne :</dt><dd><ul class="simple">
+<li><p>df : le DataFrame enrichi avec les colonnes ‘Az’, ‘Ele’ et ‘d_ion1’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.enrich_df_with_sat_positions">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">enrich_df_with_sat_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mysp3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.enrich_df_with_sat_positions" title="Link to this definition"></a></dt>
+<dd><p>Pour chaque ligne du DataFrame df (avec un index composé de (epoch, prn)),
+calcule la position du satellite en prenant en compte le retard, l’effet
+relativiste et met à jour le DataFrame avec les colonnes X_sat, Y_sat, Z_sat,
+dte_sat et dRelat.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>-</em>) – pandas DataFrame dont l’index est (epoch, prn) et qui contient la colonne ‘C1’</p></li>
+<li><p><strong>mysp3</strong> (<em>-</em>) – instance de l’objet d’orbite contenant la méthode calcSatCoord</p></li>
+<li><p><strong>t</strong> (<em>-</em>) – instance de gpst.gpsdatetime() utilisée pour la conversion des temps</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>df enrichi avec les colonnes calculées.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.get_approx_position">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">get_approx_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fichier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.get_approx_position" title="Link to this definition"></a></dt>
+<dd><p>Recherche la ligne contenant ‘APPROX POSITION XYZ’ dans le fichier
+et retourne les trois premières valeurs sous forme de numpy.array.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.grep_file">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">grep_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.grep_file" title="Link to this definition"></a></dt>
+<dd><p>Recherche un motif dans un fichier et retourne les lignes correspondantes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.load_and_clean_rinex">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">load_and_clean_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.load_and_clean_rinex" title="Link to this definition"></a></dt>
+<dd><p>Charge et nettoie un fichier RINEX d’observation.</p>
+<dl class="simple">
+<dt>Paramètres :</dt><dd><ul class="simple">
+<li><p>path : chemin vers le fichier RINEX.</p></li>
+</ul>
+</dd>
+<dt>Retourne :</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>df<span class="classifier">DataFrame nettoyé, indexé par [‘epoch’, ‘prn’],</span></dt><dd><p>et contenant une colonne ‘ind_ligne’ indiquant le numéro de ligne.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.plot_residual_analysis">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_residual_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dP_est</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_est</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_rnx_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tools</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_residual_analysis" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Calcule les résidus (v_est = B - A &#64; dP_est) et trace une figure contenant :</dt><dd><ol class="arabic simple">
+<li><p>La série temporelle des résidus (affichée en points)</p></li>
+<li><p>L’histogramme des résidus (nombre d’observations par bin)</p></li>
+<li><p>Le Q-Q Plot des résidus</p></li>
+<li><p>Un scatter plot des résidus en fonction des valeurs prédites</p></li>
+<li><p>Un encadré affichant quelques statistiques (moyenne, variance, écart-type, skewness, kurtosis)</p></li>
+<li><p>(Optionnel) Un encadré avec des informations supplémentaires sur la position :
+- Distance entre la position estimée et la position initiale du header RINEX
+- Coordonnées ENU locales calculées via tools.toolCartLocGRS80</p></li>
+</ol>
+</dd>
+<dt>Paramètres :</dt><dd><ul class="simple">
+<li><p>A : array-like, matrice des variables explicatives.</p></li>
+<li><p>B : array-like, vecteur des observations.</p></li>
+<li><p>dP_est : array-like, vecteur des paramètres estimés.</p></li>
+<li><p>figure_title (optionnel) : str, titre global de la figure.</p></li>
+<li><p>save_path (optionnel) : str, chemin complet (nom + extension) pour sauvegarder la figure.</p></li>
+<li><p>P_est (optionnel) : array-like, position estimée (pour le calcul des informations supplémentaires).</p></li>
+<li><p>P_rnx_header (optionnel) : array-like, position initiale extraite du header RINEX.</p></li>
+<li><p>tools (optionnel) : module ou objet possédant la fonction toolCartLocGRS80.</p></li>
+</ul>
+</dd>
+<dt>Renvoie :</dt><dd><ul class="simple">
+<li><p>fig : l’objet Figure de matplotlib contenant l’ensemble des graphiques.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.plot_series">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeff1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeff2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seuil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'browser'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_series" title="Link to this definition"></a></dt>
+<dd><p>Affiche les séries temporelles pour chaque satellite.
+Si col2 est fourni, affiche la série : coeff1 * col1 - coeff2 * col2.
+Sinon, affiche la série de la colonne col1 directement.
+La série est découpée en segments lorsqu’un “trou” (écart &gt; seuil) est détecté.</p>
+<dl>
+<dt>Paramètres :</dt><dd><dl class="simple">
+<dt>df<span class="classifier">DataFrame avec un index multi-niveaux contenant au moins le niveau ‘prn’</span></dt><dd><p>et les colonnes col1 (et éventuellement col2).</p>
+</dd>
+</dl>
+<p>col1    : Nom de la première colonne.
+col2    : Nom de la seconde colonne (optionnel). Si None, on affiche col1.
+coeff1  : Coefficient multiplicateur pour la première colonne (défaut 1.0).
+coeff2  : Coefficient multiplicateur pour la seconde colonne (défaut 1.0).
+seuil   : Seuil en secondes pour considérer un “trou” dans la série (défaut 3600).
+renderer: Renderer Plotly (ex : “browser” ou “iframe”).</p>
+</dd>
+<dt>Retourne :</dt><dd><p>fig     : Figure Plotly contenant les courbes tracées.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="geodezyx-gnss-edu-gnss-edu-test-skyplot-module">
+<h2>geodezyx.gnss_edu.gnss_edu_test_skyplot module<a class="headerlink" href="#geodezyx-gnss-edu-gnss-edu-test-skyplot-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-geodezyx.gnss_edu.gpt3">
+<span id="geodezyx-gnss-edu-gpt3-module"></span><h2>geodezyx.gnss_edu.gpt3 module<a class="headerlink" href="#module-geodezyx.gnss_edu.gpt3" title="Link to this heading"></a></h2>
+<p>Created on Fri Feb  9 07:43:47 2024</p>
+<p>&#64;author: snahmani</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gpt3.gpt3_5_fast">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gpt3.</span></span><span class="sig-name descname"><span class="pre">gpt3_5_fast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_ell</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">it</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gpt3.gpt3_5_fast" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gpt3.gpt3_5_fast_readGrid">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gpt3.</span></span><span class="sig-name descname"><span class="pre">gpt3_5_fast_readGrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gpt3_5.grd'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gpt3.gpt3_5_fast_readGrid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-geodezyx.gnss_edu.klobuchar">
+<span id="geodezyx-gnss-edu-klobuchar-module"></span><h2>geodezyx.gnss_edu.klobuchar module<a class="headerlink" href="#module-geodezyx.gnss_edu.klobuchar" title="Link to this heading"></a></h2>
+<p>Created on Tue Feb  6 10:30:57 2024</p>
+<p>Filière ING3 - PPMD - Traitement de la mesure de phase</p>
+<p>&#64;author: Samuel Nahmani (1,2)
+<a class="reference external" href="https://www.ipgp.fr/annuaire/nahmani/">https://www.ipgp.fr/annuaire/nahmani/</a>)
+contact : <a class="reference external" href="mailto:nahmani&#37;&#52;&#48;ipgp&#46;fr">nahmani<span>&#64;</span>ipgp<span>&#46;</span>fr</a> ou <a class="reference external" href="mailto:samuel&#46;nahmani&#37;&#52;&#48;ign&#46;fr">samuel<span>&#46;</span>nahmani<span>&#64;</span>ign<span>&#46;</span>fr</a>
+(1) Université Paris Cité, Institut de physique du globe de Paris, CNRS, IGN, F-75005 Paris, France.
+(2) Univ Gustave Eiffel, ENSG, IGN, F-77455 Marne-la-Vallée, France.</p>
+<p>Version: 1.0
+Dépendances: numpy, geodezyx, datetime</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.klobuchar.klobuchar">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.klobuchar.</span></span><span class="sig-name descname"><span class="pre">klobuchar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimuth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.klobuchar.klobuchar" title="Link to this definition"></a></dt>
+<dd><p>Compute ionospheric range correction for GPS L1 frequency using Klobuchar model.</p>
+<p>Translation to Python of Meysam Mahooti (2024). Klobuchar Ionospheric Delay Model
+<a class="reference external" href="https://www.mathworks.com/matlabcentral/fileexchange/59530-klobuchar-ionospheric-delay-model">https://www.mathworks.com/matlabcentral/fileexchange/59530-klobuchar-ionospheric-delay-model</a>
+MATLAB Central File Exchange. Retrieved February 7, 2024.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phi</strong> (<em>float</em>) – Geodetic latitude of receiver (degrees).</p></li>
+<li><p><strong>lambda</strong> (<em>float</em>) – Geodetic longitude of receiver (degrees).</p></li>
+<li><p><strong>elev</strong> (<em>float</em>) – Elevation angle of satellite (degrees).</p></li>
+<li><p><strong>azimuth</strong> (<em>float</em>) – Geodetic azimuth of satellite (degrees).</p></li>
+<li><p><strong>tow</strong> (<em>float</em>) – Time of Week (seconds).</p></li>
+<li><p><strong>alpha</strong> (<em>array_like</em>) – The coefficients of a cubic equation representing the amplitude
+of the vertical delay (4 coefficients - 8 bits each).</p></li>
+<li><p><strong>beta</strong> (<em>array_like</em>) – The coefficients of a cubic equation representing the period
+of the model (4 coefficients - 8 bits each).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>d_ion1</strong> – Ionospheric slant range correction for the L1 frequency (metres).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Klobuchar, J.A., (1996) “Ionospheric Effects on GPS”, in
+Parkinson, Spilker (ed), “Global Positioning System Theory and
+Applications, pp.513-514.</p>
+<p>ICD-GPS-200, Rev. C, (1997), pp. 125-128</p>
+<p>NATO, (1991), “Technical Characteristics of the NAVSTAR GPS”,
+pp. A-6-31   -   A-6-33</p>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.gnss_edu.read_vmf1_grid">
+<span id="geodezyx-gnss-edu-read-vmf1-grid-module"></span><h2>geodezyx.gnss_edu.read_vmf1_grid module<a class="headerlink" href="#module-geodezyx.gnss_edu.read_vmf1_grid" title="Link to this heading"></a></h2>
+<p>read_vmf1_grid.py — autonome (sans jdutil)
+Lecture + interpolation des coefficients VMF1 (ah, aw) aux coordonnées station
+et à des dates MJD arbitraires, à partir des fichiers VMFG_YYYYMMDD.HHH.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Interpolation spatiale:</dt><dd><ul>
+<li><p>tente scipy.interpolate.griddata (linear)</p></li>
+<li><p>sinon repli nearest neighbor (NumPy) si SciPy indisponible</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Interpolation temporelle: linéaire entre pas 6h</p></li>
+<li><p>Chemins: ./Mapping_Fcn/vmf1/VMFG_YYYYMMDD.HHH</p></li>
+</ul>
+<dl class="simple">
+<dt>Format attendu des fichiers (après les lignes commençant par ‘!’):</dt><dd><p>lat lon ah aw zhd zwd   (au minimum: lat, lon, ah, aw)</p>
+</dd>
+</dl>
+<p>Auteur: adapté pour être autonome (remplacement de jdutil)</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.VMFPoint">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.read_vmf1_grid.</span></span><span class="sig-name descname"><span class="pre">VMFPoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'float'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'float'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ah</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'float'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'float'</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.VMFPoint" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.VMFPoint.ah">
+<span class="sig-name descname"><span class="pre">ah</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.VMFPoint.ah" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.VMFPoint.aw">
+<span class="sig-name descname"><span class="pre">aw</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.VMFPoint.aw" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.VMFPoint.lat">
+<span class="sig-name descname"><span class="pre">lat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.VMFPoint.lat" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.VMFPoint.lon">
+<span class="sig-name descname"><span class="pre">lon</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.VMFPoint.lon" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.add_hours">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.read_vmf1_grid.</span></span><span class="sig-name descname"><span class="pre">add_hours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hours</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.add_hours" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.datetime_to_mjd">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.read_vmf1_grid.</span></span><span class="sig-name descname"><span class="pre">datetime_to_mjd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.datetime_to_mjd" title="Link to this definition"></a></dt>
+<dd><p>Convertit un datetime UTC naïf/aware en MJD (UTC).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.floor_to_6h">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.read_vmf1_grid.</span></span><span class="sig-name descname"><span class="pre">floor_to_6h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.floor_to_6h" title="Link to this definition"></a></dt>
+<dd><p>Ramène dt à l’heure multiple de 6h immédiatement inférieure (UTC).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.jd_to_calendar">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.read_vmf1_grid.</span></span><span class="sig-name descname"><span class="pre">jd_to_calendar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.jd_to_calendar" title="Link to this definition"></a></dt>
+<dd><p>Convertit un Julian Day (float) en (year, month, day, hour_float).
+Implémentation autonome (remplace jdutil.jd_to_date).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.mjd_to_datetime">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.read_vmf1_grid.</span></span><span class="sig-name descname"><span class="pre">mjd_to_datetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.mjd_to_datetime" title="Link to this definition"></a></dt>
+<dd><p>Conversion MJD -&gt; datetime UTC naïf (sans tzinfo).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.mjd_to_jd">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.read_vmf1_grid.</span></span><span class="sig-name descname"><span class="pre">mjd_to_jd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.mjd_to_jd" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.read_vmf1_grid">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.read_vmf1_grid.</span></span><span class="sig-name descname"><span class="pre">read_vmf1_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.read_vmf1_grid" title="Link to this definition"></a></dt>
+<dd><p>Retourne (ah_vec, aw_vec) pour chaque MJD donné et une station ell=[lat_deg, lon_deg, h_m].</p>
+<section id="parametres">
+<h3>Paramètres<a class="headerlink" href="#parametres" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>mjd<span class="classifier">Iterable[float]</span></dt><dd><p>Liste/array de dates en Modified Julian Day (UTC).</p>
+</dd>
+<dt>ell<span class="classifier">[lat_deg, lon_deg, h_m]</span></dt><dd><p>Latitude (deg), Longitude (deg), Hauteur ellipsoïdale (m). (La hauteur n’est
+pas utilisée ici pour ah/aw, mais on garde la signature d’interface.)</p>
+</dd>
+</dl>
+</section>
+<section id="renvoie">
+<h3>Renvoie<a class="headerlink" href="#renvoie" title="Link to this heading"></a></h3>
+<p>ah_vec : np.ndarray shape (N,)
+aw_vec : np.ndarray shape (N,)</p>
+<p class="rubric">Notes</p>
+<ul>
+<li><dl class="simple">
+<dt>Les fichiers requis sont:</dt><dd><p>./Mapping_Fcn/vmf1/VMFG_YYYYMMDD.H{00,06,12,18}</p>
+</dd>
+</dl>
+<p>pour les 6h entourant chaque MJD.</p>
+</li>
+<li><p>Interpolation temporelle: linéaire entre t0=⌊MJD⌋_6h et t1=t0+6h.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.gnss_edu.vmf1_ht">
+<span id="geodezyx-gnss-edu-vmf1-ht-module"></span><h2>geodezyx.gnss_edu.vmf1_ht module<a class="headerlink" href="#module-geodezyx.gnss_edu.vmf1_ht" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.vmf1_ht.vmf1_ht">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.vmf1_ht.</span></span><span class="sig-name descname"><span class="pre">vmf1_ht</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ah</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmjd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ht</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.vmf1_ht.vmf1_ht" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="geodezyx.geodyn.html" class="btn btn-neutral float-left" title="geodezyx.geodyn package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.interp.html" class="btn btn-neutral float-right" title="geodezyx.interp package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
