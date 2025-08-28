@@ -229,7 +229,7 @@ def bdgins_update(
         list_horl_g20.append(f"hogps_g20{wk}{wkday}")
         date += dt.timedelta(days=1)
 
-    list_orbit_g20 = list_orbite_gin_g20 + list_orbite_sp3_g20
+    list_orbite_g20 = list_orbite_gin_g20 + list_orbite_sp3_g20
 
     ###### DESTINATION FOLDERS
     dest_subdir_dic = {
