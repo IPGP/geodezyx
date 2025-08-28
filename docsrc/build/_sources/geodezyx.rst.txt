@@ -17,6 +17,7 @@ Subpackages
    geodezyx.externlib
    geodezyx.files_rw
    geodezyx.geodyn
+   geodezyx.gnss_edu
    geodezyx.interp
    geodezyx.logconfig
    geodezyx.marine

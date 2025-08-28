@@ -66,12 +66,16 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_igs_combi">geodezyx.files_rw.read_igs_combi module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_logsheets">geodezyx.files_rw.read_logsheets module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_rinex">geodezyx.files_rw.read_rinex module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_rinex_nav">geodezyx.files_rw.read_rinex_nav module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_sinex">geodezyx.files_rw.read_sinex module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.read_slr">geodezyx.files_rw.read_slr module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.write_geo_files">geodezyx.files_rw.write_geo_files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.write_rinex">geodezyx.files_rw.write_rinex module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.write_tropo_spotgins">geodezyx.files_rw.write_tropo_spotgins module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
@@ -129,11 +133,6 @@ functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
 <a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.Tropsinex_DataFrame">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">Tropsinex_DataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_sinex_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.Tropsinex_DataFrame" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.convert_statinfo2eqfile">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">convert_statinfo2eqfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statinfoin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eqfileout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.convert_statinfo2eqfile" title="Link to this definition"></a></dt>
@@ -216,90 +215,9 @@ where the keywords of the pbo .vel can be used directly</p>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.read_rinex_nav">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">read_rinex_nav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writeh5</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.read_rinex_nav" title="Link to this definition"></a></dt>
-<dd><p>Based on Michael Hirsch readRinexNav function
-Manage RINEX3
-<a class="reference external" href="http://gage14.upc.es/gLAB/HTML/GPS_Navigation_Rinex_v2.11.html">http://gage14.upc.es/gLAB/HTML/GPS_Navigation_Rinex_v2.11.html</a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.read_sinex">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">read_sinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sinex_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_sites_as_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.read_sinex" title="Link to this definition"></a></dt>
-<dd><p>Read a <em>coordinate</em> SINEX file as DataFrame</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sinex_path_in</strong> (<em>str</em>) – path of the SINEX.</p></li>
-<li><p><strong>keep_sites_as_index</strong> (<em>Bool</em><em>, </em><em>optional</em>) – use the site names as index. The default is False.</p></li>
-<li><p><strong>drop_nan</strong> (<em>bool</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – remove the NaN in the DataFrame.
-False: do not remove them
-‘all’: remove the row if all values are NaN
-‘any’:  remove the row if at least one value is NaN (dangerous)
-The default is False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DFout</strong> – SINEX DataFrame.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.read_sinex_bench_antenna">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">read_sinex_bench_antenna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sinex_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.read_sinex_bench_antenna" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.read_sinex_discontinuity_solo">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">read_sinex_discontinuity_solo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snxfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PorV</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'P'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.read_sinex_discontinuity_solo" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">read_sinex_discontinuity_solo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snxfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PorV</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'p'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.read_sinex_discontinuity_solo" title="Link to this definition"></a></dt>
 <dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.read_sinex_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">read_sinex_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snxfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.read_sinex_legacy" title="Link to this definition"></a></dt>
-<dd><p>This function is depreciated !!!!</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.read_sinex_versatile">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">read_sinex_versatile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sinex_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_date_2_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_line_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">improved_header_detection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.read_sinex_versatile" title="Link to this definition"></a></dt>
-<dd><p>Read a block from a SINEX and return the data as a DataFrame</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sinex_path_in</strong> (<em>str</em>) – Description param1</p></li>
-<li><p><strong>id_block</strong> (<em>str</em>) – Name of the block (without “+” or “-“)</p></li>
-<li><p><strong>convert_date_2_dt</strong> (<em>bool</em>) – Try to convert a SINEX formated date as a python datetime</p></li>
-<li><p><strong>header_line_idx</strong> (<em>int</em><em> or </em><em>None</em>) – If the block header contains several lines, use this line index
-Per default, the last (-1)
-For the first line, use 0
-If no header is properly defined, use None</p></li>
-<li><p><strong>improved_header_detection</strong> (<em>bool</em>) – Improved header detection.
-Works for most cases but sometime the simple version works better.
-(advenced usage)
-Default is True</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – print the header and its field size
-Default is True</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DF</strong> – Returned DataFrame</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Pandas DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.read_snx_trop">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">read_snx_trop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snxfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.read_snx_trop" title="Link to this definition"></a></dt>
-<dd><p>Read troposphere solutions from Troposphere SINEX</p>
-</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.read_station_info_solo">
@@ -326,11 +244,6 @@ SORTIE : 2 x liste de dt</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.receptor_gins_corrector">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">receptor_gins_corrector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inRec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.receptor_gins_corrector" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.sinex_DataFrame">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">sinex_DataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_sinex_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.sinex_DataFrame" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -1098,7 +1011,7 @@ sont automatiquement exclus</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_gipsy_bosser">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_gipsy_bosser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_gipsy_bosser" title="Link to this definition"></a></dt>
-<dd><p>Read P. Bosser (&#64;ENSTA Brest) File (GIPSY)</p>
+<dd><p>Read p. Bosser (&#64;ENSTA Brest) File (GIPSY)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filein</strong> (<em>str</em>) – input file path.</p>
@@ -1248,7 +1161,7 @@ Can handle gz compressed files</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.read_jump_file">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">read_jump_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returned_events</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('S',</span> <span class="pre">'E',</span> <span class="pre">'D')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.read_jump_file" title="Link to this definition"></a></dt>
-<dd><p>From a “Jump” File (P. Sakic internal file)
+<dd><p>From a “Jump” File (p. Sakic internal file)
 Return a dictionnairy with events</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1521,7 +1434,7 @@ If not precised, will be the first 3 letters of the input name</p></li>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Columns name</p>
-<p>(‘MJD’,’X-P (arcsec)’, ‘Y-P (arcsec)’, ‘UT1UTC (E-7S)’,’LOD (E-7S/D)’,’S-X (E-6” arcsec)’,’S-Y (E-6” arcsec)’,
+<p>(‘MJD’,’X-p (arcsec)’, ‘Y-p (arcsec)’, ‘UT1UTC (E-7S)’,’LOD (E-7S/D)’,’S-X (E-6” arcsec)’,’S-Y (E-6” arcsec)’,
 ‘S-UT (E-7S)’,’S-LD (E-7S/D)’,’NR (E-6” arcsec)’, ‘NF (E-6” arcsec)’, ‘NT (E-6” arcsec)’,
 ‘X-RT (arcsec/D)’,’Y-RT (arcsec/D)’,’S-XR (E-6” arcsec/D)’,’S-YR (E-6” arcsec/D)’, ‘C-XY’, ‘C-XT’,
 ‘C-YT’, ‘DPSI’, ‘DEPS’,’S-DP’,’S-DE’)</p>
@@ -1765,8 +1678,8 @@ Default is False</p></li>
 <p class="admonition-title">Note</p>
 <p>SP3 coordinates are usually given in ITRF, i.e. an ECEF system</p>
 <p>If the SP3 contains velocity records, this option adds a ‘pv’ column
-containing ‘P’ for position or ‘V’ for velocity.</p>
-<p>Warning: velocity ‘V’ records are in dm/s per default, and the
+containing ‘p’ for position or ‘v’ for velocity.</p>
+<p>Warning: velocity ‘v’ records are in dm/s per default, and the
 same km_conv_coef coefficient as the position records will be applied!</p>
 </div>
 </dd></dl>
@@ -2157,7 +2070,7 @@ And the observalbes for each system as values</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.read_rinex2_obs">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">read_rinex2_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.read_rinex2_obs" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">read_rinex2_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.read_rinex2_obs" title="Link to this definition"></a></dt>
 <dd><p>Read a RINEX Observation, version 2</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2170,20 +2083,24 @@ list of lines</p></li>
 If None, the output DataFrame is “flat”, with integer index
 [“epoch”,”prn”] for instance set the epoch and the prn as MultiIndex
 The default is None.</p></li>
+<li><p><strong>return_header</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the function returns a tuple (df_rnx_obs, header_lines),
+where header_lines is a list of strings containing the header lines.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>df_rnx_obs</strong></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df_rnx_obs</strong> (<em>Pandas DataFrame / GeodeZYX’s RINEX format</em>)</p></li>
+<li><p><strong>header_lines</strong> (<em>list of str, optional</em>) – If return_header is True, this contains the header lines of the RINEX file.
+Otherwise, it is not returned.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.read_rinex3_obs">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">read_rinex3_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.read_rinex3_obs" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">read_rinex3_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.read_rinex3_obs" title="Link to this definition"></a></dt>
 <dd><p>Read a RINEX Observation, version 3 or 4</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2196,13 +2113,17 @@ list of lines</p></li>
 If None, the output DataFrame is “flat”, with integer index
 [“epoch”,”prn”] for instance set the epoch and the prn as MultiIndex
 The default is None.</p></li>
+<li><p><strong>return_header</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the function returns a tuple (df_rnx_obs, header_lines),
+where header_lines is a list of strings containing the header lines.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>df_rnxobs</strong></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df_rnx_obs</strong> (<em>Pandas DataFrame / GeodeZYX’s RINEX format</em>)</p></li>
+<li><p><strong>header_lines</strong> (<em>list of str, optional</em>) – If return_header is True, this contains the header lines of the RINEX file.
+Otherwise, it is not returned.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2236,7 +2157,7 @@ The default is None.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.read_rinex_obs">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">read_rinex_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.read_rinex_obs" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">read_rinex_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.read_rinex_obs" title="Link to this definition"></a></dt>
 <dd><p>Frontend function to read a RINEX Observation, version 2 or 3</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2249,16 +2170,121 @@ list of lines</p></li>
 If None, the output DataFrame is “flat”, with integer index
 [“epoch”,”prn”] for instance set the epoch and the prn as MultiIndex
 The default is None.</p></li>
+<li><p><strong>return_header</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the function returns a tuple (df_rnx_obs, header_lines),
+where header_lines is a list of strings containing the header lines.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>df_rnx_obs</strong></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df_rnx_obs</strong> (<em>Pandas DataFrame / GeodeZYX’s RINEX format</em>)</p></li>
+<li><p><strong>header_lines</strong> (<em>list of str, optional</em>) – If return_header is True, this contains the header lines of the RINEX file.
+Otherwise, it is not returned.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
+
+</section>
+<section id="module-geodezyx.files_rw.read_rinex_nav">
+<span id="geodezyx-files-rw-read-rinex-nav-module"></span><h2>geodezyx.files_rw.read_rinex_nav module<a class="headerlink" href="#module-geodezyx.files_rw.read_rinex_nav" title="Link to this heading"></a></h2>
+<p>Created on 27/08/2025 22:34:53</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex_nav.read_rinex_nav">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex_nav.</span></span><span class="sig-name descname"><span class="pre">read_rinex_nav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writeh5</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex_nav.read_rinex_nav" title="Link to this definition"></a></dt>
+<dd><p>Based on Michael Hirsch readRinexNav function
+Manage RINEX3
+<a class="reference external" href="http://gage14.upc.es/gLAB/HTML/GPS_Navigation_Rinex_v2.11.html">http://gage14.upc.es/gLAB/HTML/GPS_Navigation_Rinex_v2.11.html</a></p>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.files_rw.read_sinex">
+<span id="geodezyx-files-rw-read-sinex-module"></span><h2>geodezyx.files_rw.read_sinex module<a class="headerlink" href="#module-geodezyx.files_rw.read_sinex" title="Link to this heading"></a></h2>
+<p>Created on 27/08/2025 22:26:15</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_sinex.read_sinex">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_sinex.</span></span><span class="sig-name descname"><span class="pre">read_sinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sinex_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_sites_as_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_sinex.read_sinex" title="Link to this definition"></a></dt>
+<dd><p>Read a <em>coordinate</em> SINEX file as DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sinex_path_in</strong> (<em>str</em>) – path of the SINEX.</p></li>
+<li><p><strong>keep_sites_as_index</strong> (<em>Bool</em><em>, </em><em>optional</em>) – use the site names as index. The default is False.</p></li>
+<li><p><strong>drop_nan</strong> (<em>bool</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – remove the NaN in the DataFrame.
+False: do not remove them
+‘all’: remove the row if all values are NaN
+‘any’:  remove the row if at least one value is NaN (dangerous)
+The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>DFout</strong> – SINEX DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_sinex.read_sinex_bench_antenna">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_sinex.</span></span><span class="sig-name descname"><span class="pre">read_sinex_bench_antenna</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sinex_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_sinex.read_sinex_bench_antenna" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_sinex.read_sinex_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_sinex.</span></span><span class="sig-name descname"><span class="pre">read_sinex_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snxfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_sinex.read_sinex_legacy" title="Link to this definition"></a></dt>
+<dd><p>This function is depreciated !!!!</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_sinex.read_sinex_versatile">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_sinex.</span></span><span class="sig-name descname"><span class="pre">read_sinex_versatile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sinex_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_date_2_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_line_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">improved_header_detection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_sinex.read_sinex_versatile" title="Link to this definition"></a></dt>
+<dd><p>Read a block from a SINEX and return the data as a DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sinex_path_in</strong> (<em>str</em>) – Description param1</p></li>
+<li><p><strong>id_block</strong> (<em>str</em>) – Name of the block (without “+” or “-“)</p></li>
+<li><p><strong>convert_date_2_dt</strong> (<em>bool</em>) – Try to convert a SINEX formated date as a python datetime</p></li>
+<li><p><strong>header_line_idx</strong> (<em>int</em><em> or </em><em>None</em>) – If the block header contains several lines, use this line index
+Per default, the last (-1)
+For the first line, use 0
+If no header is properly defined, use None</p></li>
+<li><p><strong>improved_header_detection</strong> (<em>bool</em>) – Improved header detection.
+Works for most cases but sometime the simple version works better.
+(advenced usage)
+Default is True</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – print the header and its field size
+Default is True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df</strong> – Returned DataFrame</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_sinex.read_snx_trop">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_sinex.</span></span><span class="sig-name descname"><span class="pre">read_snx_trop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snxfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataframe_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_sinex.read_snx_trop" title="Link to this definition"></a></dt>
+<dd><p>Read troposphere solutions from Troposphere SINEX</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_sinex.sinex_data_frame">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_sinex.</span></span><span class="sig-name descname"><span class="pre">sinex_data_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_sinex_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_sinex.sinex_data_frame" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_sinex.tropsinex_data_frame">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_sinex.</span></span><span class="sig-name descname"><span class="pre">tropsinex_data_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_sinex_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_sinex.tropsinex_data_frame" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-geodezyx.files_rw.read_slr">
@@ -2371,12 +2397,12 @@ not implemented for new names</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.write_geo_files.write_clk">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_clk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFclk_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'orb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_std_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.write_clk" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_clk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_clk_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'orb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_std_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.write_clk" title="Link to this definition"></a></dt>
 <dd><p>Write a SP3 Clock file from an Clock DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>DFclk_in</strong> (<em>DataFrame</em>) – Input Clock DataFrame.</p></li>
+<li><p><strong>df_clk_in</strong> (<em>DataFrame</em>) – Input Clock DataFrame.</p></li>
 <li><p><strong>outpath</strong> (<em>str</em>) – The output path of the file (see also outname).</p></li>
 <li><p><strong>outname</strong> (<em>None</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – None = outpath is the full path (directory + filename) of the output.
 A string = a manual name for the file.
@@ -2396,12 +2422,12 @@ The default is None.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.write_geo_files.write_epos_sta_coords">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_epos_sta_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DF_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_wrt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'site'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_time_limit_for_first_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_time_limit_for_last_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soln_in_DF</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TRF_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xTRFnn'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.write_epos_sta_coords" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_epos_sta_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_wrt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'site'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_time_limit_for_first_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_time_limit_for_last_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soln_in_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trf_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xTRFnn'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.write_epos_sta_coords" title="Link to this definition"></a></dt>
 <dd><p>Write an EPOS coordinate file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>DF_in</strong> (<em>DataFrame</em>) – Input Orbit DataFrame.</p></li>
+<li><p><strong>df_inp</strong> (<em>DataFrame</em>) – Input Orbit DataFrame.</p></li>
 <li><p><strong>file_out</strong> (<em>str</em>) – The output path of the file.</p></li>
 <li><p><strong>sort_wrt</strong> (<em>bool</em><em>, </em><em>optional</em>) – Sort the values with respect to a DF column.
 The default is “site”.</p></li>
@@ -2409,7 +2435,7 @@ The default is “site”.</p></li>
 The default is True.</p></li>
 <li><p><strong>no_time_limit_for_last_period</strong> (<em>bool</em><em>, </em><em>optional</em>) – No time limit for the last period.
 The default is True.</p></li>
-<li><p><strong>soln_in_DF</strong> (<em>bool</em><em>, </em><em>optional</em>) – Soln in DF.
+<li><p><strong>soln_in_df</strong> (<em>bool</em><em>, </em><em>optional</em>) – Soln in DF.
 The default is True.</p></li>
 </ul>
 </dd>
@@ -2426,19 +2452,13 @@ The default is True.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.files_rw.write_geo_files.write_sndy_light_dat">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_sndy_light_dat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outprefix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.write_sndy_light_dat" title="Link to this definition"></a></dt>
-<dd><p>Not properly implemented</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.write_geo_files.write_sp3">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_sp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SP3_DF_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'orb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_null_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_format_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.write_sp3" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_sp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'orb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_null_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_format_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.write_sp3" title="Link to this definition"></a></dt>
 <dd><p>Write a SP3 file from an Orbit DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>SP3_DF_in</strong> (<em>DataFrame</em>) – Input Orbit DataFrame.</p></li>
+<li><p><strong>orb_df_in</strong> (<em>DataFrame</em>) – Input Orbit DataFrame.</p></li>
 <li><p><strong>outpath</strong> (<em>str</em>) – The output path of the file (see also outname).</p></li>
 <li><p><strong>outname</strong> (<em>None</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – None = outpath is the full path (directory + filename) of the output.
 A string = a manual name for the file.
@@ -2525,6 +2545,38 @@ And the observables for each system as values
 </p>
 </dd>
 </dl>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.files_rw.write_tropo_spotgins">
+<span id="geodezyx-files-rw-write-tropo-spotgins-module"></span><h2>geodezyx.files_rw.write_tropo_spotgins module<a class="headerlink" href="#module-geodezyx.files_rw.write_tropo_spotgins" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write_tropo_spotgins.extract_data_from_gz">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_tropo_spotgins.</span></span><span class="sig-name descname"><span class="pre">extract_data_from_gz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gz_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_tropo_spotgins.extract_data_from_gz" title="Link to this definition"></a></dt>
+<dd><p>Lit le .gz à l’envers, ne garde que la dernière estimation par horodatage.
+Retourne une liste triée: [iso_date, ZTD, ZTD_STD, ZHD, ZWD, TGN, STD_TGN, TGE, STD_TGE].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write_tropo_spotgins.generate_header">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_tropo_spotgins.</span></span><span class="sig-name descname"><span class="pre">generate_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">station_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_tropo_spotgins.generate_header" title="Link to this definition"></a></dt>
+<dd><p>Construit l’entête SPOTGINS. Si position est None, utilise des 0.0.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write_tropo_spotgins.main">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_tropo_spotgins.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_tropo_spotgins.main" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write_tropo_spotgins.parse_args">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_tropo_spotgins.</span></span><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_tropo_spotgins.parse_args" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write_tropo_spotgins.read_master_file">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_tropo_spotgins.</span></span><span class="sig-name descname"><span class="pre">read_master_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">station_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">master_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_tropo_spotgins.read_master_file" title="Link to this definition"></a></dt>
+<dd><p>Retourne un dict avec X,Y,Z,Lon,Lat,H ou None si fichier absent / station non trouvée.</p>
 </dd></dl>
 
 </section>

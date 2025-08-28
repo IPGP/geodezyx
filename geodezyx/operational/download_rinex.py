@@ -315,6 +315,10 @@ def rgp_ensg_server(stat, date):
     urldic = _generic_server(stat, date, urlserver, "data_30")
     return urldic
 
+def spotgins_eost_server(stat, date):
+    urlserver = "http://loading.u-strasbg.fr/SPOTGINS/TEST/rinex/"
+    urldic = _generic_server(stat, date, urlserver)
+    return urldic
 
 def euref_server(stat, date):
     urlserver = "ftp://epncb.oma.be/pub/obs/"
@@ -473,6 +477,8 @@ def _server_select(datacenter, site, curdate):
         urldic = rgp_server(site, curdate)
     elif datacenter == "rgp_ensg":
         urldic = rgp_ensg_server(site, curdate)
+    elif datacenter == "spotgins_eost":
+        urldic = spotgins_eost_server(site, curdate)
     # elif datacenter == 'rgp':
     #     urldic = rgp_ign_smn_server_legacy(site, curdate)
     # elif datacenter == 'rgp_mlv':
@@ -499,7 +505,6 @@ def _server_select(datacenter, site, curdate):
         return None, None, None
 
     return urldic, secure_ftp, mode1hz
-
 
 def effective_save_dir(parent_archive_dir, stat, date, archtype="stat"):
     """
@@ -832,7 +837,7 @@ def download_gnss_rinex(
             * nav_rt or brdc_rt as archive center allows to download *real time* nav files from the BKG server
             * rgp (IGN's RGP main server at St Mandé)
             * rgp_ensg (IGN's RGP, secondary server at ENSG, Marne-la-Vallée)
-         _not reimplemented yet_:
+        _ not reimplemented yet _:
             * rgp_1Hz (IGN's RGP, all the 24 hourly rinex for the day will be downloaded)
             * renag
             * ovsg

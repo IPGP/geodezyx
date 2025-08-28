@@ -54,6 +54,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
@@ -576,34 +577,34 @@ Implemented only for the new naming format</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>main_dir</strong> (<em>str</em>) – Main directory where the RINEX files are stored.
-The directory can contain a wildcard ‘*’, ‘?’, etc…
-The directory can contain date alias ‘%’, like ‘%Y’, ‘%j’, etc.
-If the main_dir contains a an date alias and both start_epoch and end_epoch are defined,
-You can indicate a more precise directory.
-(e.g. main_dir = “/path/to/data/<a href="#id1"><span class="problematic" id="id2">*</span></a>/%Y/%j/”)
-NB: The day level is the maximum resolution for the wildcard.</p></li>
-<li><p><strong>short_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – Check if the pattern matches a short name RINEX. The default is True.</p></li>
-<li><p><strong>long_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – Check if the pattern matches a long name RINEX. The default is True.</p></li>
-<li><p><strong>gfz_godc_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – Check if the pattern matches a GFZ’s GODC
-(GNSS Operational Data Center) internal long name RINEX.
-The default is True.</p></li>
+The directory can contain wildcards (‘*’, ‘?’, etc.) and date aliases
+(‘%Y’, ‘%j’, etc.). If the main_dir contains date aliases and both
+start_epoch and end_epoch are defined, you can indicate a more precise
+directory (e.g., main_dir = “/path/to/data/<a href="#id1"><span class="problematic" id="id2">*</span></a>/%Y/%j/”).
+Note: The day level is the maximum resolution for the wildcard.</p></li>
+<li><p><strong>short_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – Check if the pattern matches a short name RINEX. Default is True.</p></li>
+<li><p><strong>long_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – Check if the pattern matches a long name RINEX. Default is True.</p></li>
+<li><p><strong>gfz_godc_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – Check if the pattern matches a GFZ’s GODC (GNSS Operational Data Center)
+internal long name RINEX. Default is True.</p></li>
 <li><p><strong>compressed</strong> (<em>bool</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Check if the pattern matches a compressed RINEX (True) or not (False).
-If None, does not matter (return both compressed or not).</p></li>
-<li><p><strong>specific_sites</strong> (<em>list</em><em>, </em><em>optional</em>) – Filter only those specific sites. The default is [].</p></li>
-<li><p><strong>start_epoch</strong> (<em>datetime</em><em>, </em><em>optional</em>) – Start date for filtering the RINEX files.</p></li>
-<li><p><strong>end_epoch</strong> (<em>datetime</em><em>, </em><em>optional</em>) – End date for filtering the RINEX files.</p></li>
+If None, does not matter (returns both compressed and uncompressed).
+Default is None.</p></li>
+<li><p><strong>specific_sites</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Filter only those specific sites. Default is [].</p></li>
+<li><p><strong>start_epoch</strong> (<em>datetime</em><em>, </em><em>optional</em>) – Start date for filtering the RINEX files. Default is None.</p></li>
+<li><p><strong>end_epoch</strong> (<em>datetime</em><em>, </em><em>optional</em>) – End date for filtering the RINEX files. Default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>files_rnx_lis</strong> – List of found RINEX files.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list</p>
+<dd class="field-odd"><p>list of str</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>This function is very similar to geodetik.rinex_lister, gins_runner.get_rinex_list, and operational.multi_finder_rinex.
-However, this one is the most recent and elaborated (July 2022) and should be used in priority.</p>
+<p>This function is very similar to geodetik.rinex_lister, gins_runner.get_rinex_list,
+and operational.multi_finder_rinex. However, this one is the most recent and
+elaborated (July 2022) and should be used in priority.</p>
 </dd></dl>
 
 </section>
@@ -679,68 +680,52 @@ simply add it completly in the AC name e.g. IGS0OPSRAP</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_prods.multi_downloader_orbs_clks">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_prods.</span></span><span class="sig-name descname"><span class="pre">multi_downloader_orbs_clks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">archive_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'igs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sp3clk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sp3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'year/doy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ign'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repro</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorted_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_weekly_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_also_uncompressed_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_prods.multi_downloader_orbs_clks" title="Link to this definition"></a></dt>
-<dd><p>Download IGS products. Can manage MGEX products too
-(see archive_center argument)</p>
+<dd><p>Download IGS products. Can manage MGEX products too.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>archive_dir</strong> (<em>str</em>) – Parent archive directory where files will be stored</p></li>
-<li><p><strong>enddate</strong> (<em>startdate &amp;</em>) – Start and End of the wished period</p></li>
-<li><p><strong>calc_center</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – calc_center can be a string or a list, describing the calc center
-e.g. ‘igs’,’grg’,’cod’,’jpl’ …</p></li>
-<li><p><strong>sp3clk</strong> (<em>str</em>) – <p>Product type, can handle :</p>
-<blockquote>
-<div><p>’clk’</p>
-<p>’clk_30s’</p>
-<p>’sp3’</p>
-<p>’snx’</p>
-<p>’sum’</p>
-<p>’erp’</p>
-<p>’bia’</p>
-</div></blockquote>
-</p></li>
-<li><p><strong>archive_center</strong> (<em>str</em>) – <p>server of download, “regular” IGS or MGEX, can handle :</p>
-<blockquote>
-<div><p>’cddis’</p>
-<p>’cddis_mgex’</p>
-<p>’cddis_mgex_longname’</p>
-<p>’ign’</p>
-<p>’ign_mgex’</p>
-<p>’ign_mgex_longname’</p>
-<p>’gfz_local’</p>
-</div></blockquote>
-</p></li>
-<li><p><strong>archtype</strong> (<em>str</em>) – <p>string describing how the archive directory is structured, e.g :</p>
-<blockquote>
-<div><p>stat</p>
-<p>stat/year</p>
-<p>stat/year/doy</p>
-<p>year/doy</p>
-<p>year/stat</p>
-<p>week/dow/stat</p>
-<p>… etc …</p>
-</div></blockquote>
-</p></li>
-<li><p><strong>repro</strong> (<em>int</em>) – number of the IGS reprocessing (0 = routine processing)</p></li>
-<li><p><strong>sorted_mode</strong> (<em>bool</em>) – <dl class="simple">
-<dt>if False:</dt><dd><p>using the map multiprocess fct so the download order will
-be scrambled</p>
-</dd>
-<dt>if True:</dt><dd><p>using the apply multiprocess fct so the download order will be
-in the chrono. order</p>
-</dd>
-</dl>
-<p>The scrambled (False) is better, bc. it doesn’t create zombies processes</p>
-</p></li>
+<li><p><strong>archive_dir</strong> (<em>str</em>) – Parent archive directory where files will be stored.</p></li>
+<li><p><strong>startdate</strong> (<em>datetime</em>) – Start of the wished period.</p></li>
+<li><p><strong>enddate</strong> (<em>datetime</em>) – End of the wished period.</p></li>
+<li><p><strong>calc_center</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – Calc center can be a string or a list, describing the calc center.
+Examples: ‘igs’, ‘grg’, ‘cod’, ‘jpl’, etc. Default is “igs”.</p></li>
+<li><p><strong>sp3clk</strong> (<em>str</em><em>, </em><em>optional</em>) – Product type. Can handle: ‘clk’, ‘clk_30s’, ‘sp3’, ‘snx’, ‘sum’,
+‘erp’, ‘bia’. Default is “sp3”.</p></li>
+<li><p><strong>archtype</strong> (<em>str</em><em>, </em><em>optional</em>) – String describing how the archive directory is structured.
+Examples: ‘stat’, ‘stat/year’, ‘stat/year/doy’, ‘year/doy’,
+‘year/stat’, ‘week/dow/stat’, etc. Default is “year/doy”.</p></li>
+<li><p><strong>parallel_download</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of parallel downloads. Default is 4.</p></li>
+<li><p><strong>archive_center</strong> (<em>str</em><em>, </em><em>optional</em>) – Server of download, “regular” IGS or MGEX. Can handle: ‘cddis’,
+‘cddis_mgex’, ‘cddis_mgex_longname’, ‘ign’, ‘ign_mgex’,
+‘ign_mgex_longname’, ‘gfz_local’. Default is “ign”.</p></li>
+<li><p><strong>repro</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of the IGS reprocessing (0 = routine processing). Default is 0.</p></li>
+<li><p><strong>sorted_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, uses the map multiprocess function so the download order
+will be scrambled. If True, uses the apply multiprocess function so
+the download order will be in chronological order. The scrambled
+(False) is better because it doesn’t create zombie processes.
+Default is False.</p></li>
+<li><p><strong>force_weekly_file</strong> (<em>bool</em><em>, </em><em>optional</em>) – Force download of weekly files. Default is False.</p></li>
+<li><p><strong>return_also_uncompressed_files</strong> (<em>bool</em><em>, </em><em>optional</em>) – Include already downloaded and uncompressed files in the final list
+output. Default is True.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>localfiles_lis</strong> – list of downloaded products paths</p>
+<dd class="field-even"><p><strong>localfiles_lis</strong> – List of downloaded products paths.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of str</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#geodezyx.operational.download_prods.download_gnss_products" title="geodezyx.operational.download_prods.download_gnss_products"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_gnss_products</span></code></a></dt><dd><p>Newer implementation of this function.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>This function can manage MGEX products by setting the appropriate
+archive_center</p>
 </dd></dl>
 
 <dl class="py function">
@@ -884,7 +869,7 @@ If None, no file is saved.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_rinex.download_gnss_rinex">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">download_gnss_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statdico</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous&#64;isp.com'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_crawl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_all_ftp_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_archive_for_sup_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_rnx2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_rnx3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.download_gnss_rinex" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">download_gnss_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statdico</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'year/doy'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous&#64;isp.com'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_crawl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_all_ftp_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_archive_for_sup_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_rnx2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_rnx3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.download_gnss_rinex" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -895,8 +880,7 @@ If None, no file is saved.</p></li>
 </pre></div>
 </div>
 </dd>
-<dt>the supported archive center are (april 2024):</dt><dd><blockquote>
-<div><ul>
+<dt>the supported archive center are (april 2024):</dt><dd><ul>
 <li><p>igs_cddis or igs (CDDIS data center)</p></li>
 <li><p>igs_sopac (for the SOPAC/UCSD/SIO data center, but not very reliable)</p></li>
 <li><p>igs_ign (IGN’s data center, main server at St Mandé)</p></li>
@@ -907,12 +891,11 @@ If None, no file is saved.</p></li>
 <li><p>nav or brdc as archive center allows to download nav files (using ‘BRDC’ as station name)</p></li>
 <li><p>from the ROB server, using GOP files</p></li>
 <li><p>nav_rt or brdc_rt as archive center allows to download <em>real time</em> nav files from the BKG server</p></li>
+<li><p>rgp (IGN’s RGP main server at St Mandé)</p></li>
+<li><p>rgp_ensg (IGN’s RGP, secondary server at ENSG, Marne-la-Vallée)</p></li>
 </ul>
-</div></blockquote>
-<dl class="simple">
-<dt>_not reimplemented <a href="#id3"><span class="problematic" id="id4">yet_</span></a>:</dt><dd><ul>
-<li><p>rgp (IGN’s RGP St Mandé center)</p></li>
-<li><p>rgp_mlv (IGN’s RGP Marne la Vallée center)</p></li>
+</dd>
+<dt>_ not reimplemented yet _:</dt><dd><ul>
 <li><p>rgp_1Hz (IGN’s RGP, all the 24 hourly rinex for the day will be downloaded)</p></li>
 <li><p>renag</p></li>
 <li><p>ovsg</p></li>
@@ -920,8 +903,6 @@ If None, no file is saved.</p></li>
 <li><p>geoaus (Geosciences Australia)</p></li>
 <li><p>ens_fr</p></li>
 </ul>
-</dd>
-</dl>
 </dd>
 </dl>
 </p></li>
@@ -1100,8 +1081,8 @@ ex : <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gn
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_ign_mlv_server_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ign_mlv_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_ign_mlv_server_legacy" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_ensg_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ensg_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_ensg_server" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -1110,8 +1091,8 @@ ex : <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gn
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_ign_smn_server_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ign_smn_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_ign_smn_server_legacy" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_server" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -1140,6 +1121,11 @@ ex : <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gn
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.spotgins_eost_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">spotgins_eost_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.spotgins_eost_server" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_rinex.unavco_server_legacy">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">unavco_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.unavco_server_legacy" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -1165,100 +1151,77 @@ GitHub repository :
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_rinex_legacy.download_gnss_rinex_legacy">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex_legacy.</span></span><span class="sig-name descname"><span class="pre">download_gnss_rinex_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statdico</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorted_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_ftp_crawler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_archive_for_sup_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex_legacy.download_gnss_rinex_legacy" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>statdico</strong> (<em>dict</em>) – <p>a statdico is a dictionary associating Archives Centers to list of stations</p>
-<dl>
-<dt>Exemple:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">statdico</span><span class="p">[</span><span class="s1">&#39;archive center 1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;STA1&#39;</span><span class="p">,</span><span class="s1">&#39;STA2&#39;</span><span class="p">,</span><span class="s1">&#39;STA3&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">statdico</span><span class="p">[</span><span class="s1">&#39;archive center 2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;STA2&#39;</span><span class="p">,</span><span class="s1">&#39;STA1&#39;</span><span class="p">,</span><span class="s1">&#39;STA4&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-</pre></div>
-</div>
-</dd>
-<dt>the supported archive center are (july 2015):</dt><dd><p>igs_cddis or igs (cddis center)</p>
-<p>igs_sopac (for the sopac/ucsd/sio center, but not very reliable)</p>
-<p>rgp (IGN’s RGP St Mandé center)</p>
-<p>rgp_mlv (IGN’s RGP Marne la Vallée center)</p>
-<p>rgp_1Hz (IGN’s RGP, all the 24 hourly rinex for the day will be downloaded)</p>
-<p>renag</p>
-<p>ovsg</p>
-<p>unavco</p>
-<p>sonel</p>
-<p>geoaus (Geosciences Australia)</p>
-<p>ens_fr</p>
-<p>nav or brdc as archive center allows to download nav files (using ‘BRDC’ as station name)
-from the ROB server, using GOP files</p>
-<p>nav_rt or brdc_rt as archive center allows to download <em>real time</em> nav files
-from the BKG server</p>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-<dl>
-<dt>archtype<span class="classifier">str</span></dt><dd><p>string describing how the archive directory is structured, e.g :</p>
-<blockquote>
-<div><p>stat</p>
-<p>stat/year</p>
-<p>stat/year/doy</p>
-<p>year/doy</p>
-<p>year/stat</p>
-<p>week/dow/stat</p>
-<p>… etc …</p>
-</div></blockquote>
-</dd>
-<dt>sorted_mode<span class="classifier">bool</span></dt><dd><dl class="simple">
-<dt>if False:</dt><dd><p>using the map multiprocess fct so the download order will
-be scrambled</p>
-</dd>
-<dt>if True:</dt><dd><p>using the apply multiprocess fct so the download order will be
-in the chrono. order</p>
-</dd>
-</dl>
-<p>The scrambled (False) is better, bc. it doesn’t create zombies processes</p>
-</dd>
-<dt>user &amp; passwd<span class="classifier">str</span></dt><dd><p>user &amp; password for a locked server</p>
-</dd>
-<dt>filter_ftp_crawler<span class="classifier">bool</span></dt><dd><p>use an improved FTP crawler to find which files actually exist
-to accelerate the download. If path_ftp_crawled_files_load is given,
-use this loaded list.</p>
-</dd>
-<dt>path_ftp_crawled_files_save<span class="classifier">str</span></dt><dd><p>will save at the given path (directory+filname) in a pickle containing
-the list of the existing RINEXs found on the server by the FTP crawler.
-It allows to use this list directly if one face a timeout during
-the download part.
-NB for advanced users: the pickle is a tuple (urllist,savedirlist)</p>
-</dd>
-<dt>path_ftp_crawled_files_load<span class="classifier">str</span></dt><dd><p>load and use the list of the existing RINEXs found on the FTP server,
-generated by a previous run of the FTP crawler (called by
-download_gnss_rinex or directly by crawl_ftp_files).
-overrides an internal call of crawl_ftp_files.</p>
-</dd>
-<dt>quiet_mode<span class="classifier">bool</span></dt><dd><p>List the available RINEXs without downloading them.
-Useful only if path_ftp_crawled_files_save is given</p>
-</dd>
-<dt>final_archive_for_sup_check<span class="classifier">str</span></dt><dd><p>The final archive path or a file containing the archived RINEXs in
-their final destination.
-useful if the final archive is different from output_dir</p>
-</dd>
-<dt>force<span class="classifier">bool</span></dt><dd><p>Force the download even if the file already exists locally</p>
-</dd>
-</dl>
+<dd><p>Download GNSS RINEX files from various archive centers.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p><strong>url_list</strong> (<em>list of str</em>) – list of URLs</p></li>
-<li><p><strong>savedir_list</strong> (<em>list of str</em>) – list of downloaded products paths</p></li>
-<li><p><em>Minimal exemple</em></p></li>
-<li><p><em>—————</em> – &gt;&gt;&gt; statdic = dict()
-&gt;&gt;&gt; statdic[‘igs_cddis’] = [‘ZIMM’]
-&gt;&gt;&gt; output_dir = ‘/home/USER/test_dl_rnx’
-&gt;&gt;&gt; startdate = dt.datetime(2000,1,1)
-&gt;&gt;&gt; enddate = dt.datetime(2000,1,31)
-&gt;&gt;&gt; geodezyx.operational.download_gnss_rinex_legacy(statdic, output_dir, startdate, enddate)</p></li>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statdico</strong> (<em>dict</em>) – <p>Dictionary associating archive centers to list of stations.
+Format: statdico[‘archive_center’] = [‘STA1’, ‘STA2’, …]</p>
+<p>Supported archive centers:
+- ‘igs_cddis’ or ‘igs’ : CDDIS center
+- ‘igs_sopac’ : SOPAC/UCSD/SIO center (not very reliable)
+- ‘rgp’ : IGN’s RGP St Mandé center
+- ‘rgp_mlv’ : IGN’s RGP Marne la Vallée center
+- ‘rgp_1Hz’ : IGN’s RGP, downloads all 24 hourly RINEX for the day
+- ‘renag’ : RENAG network
+- ‘ovsg’ : OVSG network
+- ‘unavco’ : UNAVCO center
+- ‘sonel’ : SONEL network
+- ‘geoaus’ : Geosciences Australia
+- ‘ens_fr’ : ENS France
+- ‘nav’ or ‘brdc’ : Navigation files from ROB server using GOP files
+- ‘nav_rt’ or ‘brdc_rt’ : Real-time navigation files from BKG server</p>
+</p></li>
+<li><p><strong>archive_dir</strong> (<em>str</em>) – Parent archive directory where files will be stored.</p></li>
+<li><p><strong>startdate</strong> (<em>datetime</em>) – Start date of the wished period.</p></li>
+<li><p><strong>enddate</strong> (<em>datetime</em>) – End date of the wished period.</p></li>
+<li><p><strong>archtype</strong> (<em>str</em><em>, </em><em>optional</em>) – String describing how the archive directory is structured.
+Examples: ‘stat’, ‘stat/year’, ‘stat/year/doy’, ‘year/doy’,
+‘year/stat’, ‘week/dow/stat’, etc. Default is “stat”.</p></li>
+<li><p><strong>parallel_download</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of parallel downloads. Default is 4.</p></li>
+<li><p><strong>sorted_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, uses the map multiprocess function so the download order
+will be scrambled. If True, uses the apply multiprocess function so
+the download order will be in chronological order. The scrambled
+(False) is better because it doesn’t create zombie processes.
+Default is False.</p></li>
+<li><p><strong>user</strong> (<em>str</em><em>, </em><em>optional</em>) – Username for locked servers. Default is “”.</p></li>
+<li><p><strong>passwd</strong> (<em>str</em><em>, </em><em>optional</em>) – Password for locked servers. Default is “”.</p></li>
+<li><p><strong>filter_ftp_crawler</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use an improved FTP crawler to find which files actually exist
+to accelerate the download. If path_ftp_crawled_files_load is given,
+use this loaded list. Default is True.</p></li>
+<li><p><strong>path_ftp_crawled_files_save</strong> (<em>str</em><em>, </em><em>optional</em>) – Path (directory + filename) to save a pickle containing the list of
+existing RINEXs found on the server by the FTP crawler. Allows using
+this list directly if facing a timeout during the download part.
+Default is None.</p></li>
+<li><p><strong>path_ftp_crawled_files_load</strong> (<em>str</em><em>, </em><em>optional</em>) – Load and use the list of existing RINEXs found on the FTP server,
+generated by a previous run of the FTP crawler. Overrides an internal
+call of crawl_ftp_files. Default is None.</p></li>
+<li><p><strong>quiet_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – List the available RINEXs without downloading them. Useful only if
+path_ftp_crawled_files_save is given. Default is False.</p></li>
+<li><p><strong>final_archive_for_sup_check</strong> (<em>str</em><em>, </em><em>optional</em>) – The final archive path or a file containing the archived RINEXs in
+their final destination. Useful if the final archive is different
+from archive_dir. Default is None.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – Force the download even if the file already exists locally.
+Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>url_list</strong> (<em>list of str</em>) – List of URLs.</p></li>
+<li><p><strong>savedir_list</strong> (<em>list of str</em>) – List of downloaded products paths.</p></li>
 </ul>
 </p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">statdic</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">statdic</span><span class="p">[</span><span class="s1">&#39;igs_cddis&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ZIMM&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output_dir</span> <span class="o">=</span> <span class="s1">&#39;/home/USER/test_dl_rnx&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">startdate</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">enddate</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">geodezyx</span><span class="o">.</span><span class="n">operational</span><span class="o">.</span><span class="n">download_gnss_rinex_legacy</span><span class="p">(</span><span class="n">statdic</span><span class="p">,</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -1308,20 +1271,29 @@ ex : <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gn
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_rinex_legacy.multi_archiver_rinex">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex_legacy.</span></span><span class="sig-name descname"><span class="pre">multi_archiver_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_archive_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">move</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_mv_or_cp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex_legacy.multi_archiver_rinex" title="Link to this definition"></a></dt>
-<dd><p>from rinex_lis, a list of rinex (generated by the function
-multi_finder_rinex)</p>
-<p>move (if move=True) of copy (if move=False) those rinexs in the
-parent_archive_dir according to the archtype,
-string describing how the archive directory is structured, e.g :</p>
-<blockquote>
-<div><p>stat</p>
-<p>stat/year</p>
-<p>stat/year/doy</p>
-<p>year/doy</p>
-<p>year/stat</p>
-<p>week/dow/stat</p>
-<p>… etc …</p>
-</div></blockquote>
+<dd><p>Move or copy RINEX files to an archive directory structure.</p>
+<p>Takes a list of RINEX files and organizes them in the parent_archive_dir
+according to the specified archive type structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rinex_lis</strong> (<em>list</em><em> of </em><em>str</em>) – List of RINEX file paths (typically generated by multi_finder_rinex).</p></li>
+<li><p><strong>parent_archive_dir</strong> (<em>str</em>) – Parent directory where files will be archived.</p></li>
+<li><p><strong>archtype</strong> (<em>str</em><em>, </em><em>optional</em>) – String describing how the archive directory is structured.
+Examples: ‘stat’, ‘stat/year’, ‘stat/year/doy’, ‘year/doy’,
+‘year/stat’, ‘week/dow/stat’, etc. Default is “stat”.</p></li>
+<li><p><strong>move</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, move the files. If False, copy the files. Default is True.</p></li>
+<li><p><strong>force_mv_or_cp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, force move/copy even if the file already exists in the
+destination. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function logs the number of files processed, skipped, and moved/copied.
+Directory structure is created automatically</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1860,10 +1832,8 @@ make a dirty velocity file compatible with EPC</p>
 <dd><p>this fct search for every sum file in a folder
 a stat dico contains no data
 only the paths to the E,N,U sum files
-statdico[stat] = [path/E.sum,path/N.sum,path/U.sum ]</p>
-<blockquote>
-<div><p>for each stat getting the 3 ENU sum files</p>
-</div></blockquote>
+statdico[stat] = [path/E.sum,path/N.sum,path/U.sum ]
+for each stat getting the 3 ENU sum files</p>
 <p>Thoses lists will be send in sumfiles_trend_extract</p>
 </dd></dl>
 

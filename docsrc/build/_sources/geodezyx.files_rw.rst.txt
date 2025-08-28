@@ -105,6 +105,22 @@ geodezyx.files\_rw.read\_rinex module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.files\_rw.read\_rinex\_nav module
+------------------------------------------
+
+.. automodule:: geodezyx.files_rw.read_rinex_nav
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geodezyx.files\_rw.read\_sinex module
+-------------------------------------
+
+.. automodule:: geodezyx.files_rw.read_sinex
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.files\_rw.read\_slr module
 -----------------------------------
 
@@ -125,6 +141,14 @@ geodezyx.files\_rw.write\_rinex module
 --------------------------------------
 
 .. automodule:: geodezyx.files_rw.write_rinex
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+geodezyx.files\_rw.write\_tropo\_spotgins module
+------------------------------------------------
+
+.. automodule:: geodezyx.files_rw.write_tropo_spotgins
    :members:
    :undoc-members:
    :show-inheritance:

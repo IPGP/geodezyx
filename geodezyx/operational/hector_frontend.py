@@ -315,11 +315,12 @@ def multi_momfile_trend_processing(
 
 
 def sumfiles_to_statdico(inpdir, specific_stats=(), invert_specific=False):
-    """this fct search for every sum file in a folder
+    """
+    this fct search for every sum file in a folder
     a stat dico contains no data
     only the paths to the E,N,U sum files
     statdico[stat] = [path/E.sum,path/N.sum,path/U.sum ]
-     for each stat getting the 3 ENU sum files
+    for each stat getting the 3 ENU sum files
 
     Thoses lists will be send in sumfiles_trend_extract
     """

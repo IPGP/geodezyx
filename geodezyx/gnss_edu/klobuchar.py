@@ -32,42 +32,46 @@ import datetime as dt
 
 def klobuchar(phi, lambda_, elev, azimuth, tow, alpha, beta):
     """
-    Traduction en Python de 
+    Compute ionospheric range correction for GPS L1 frequency using Klobuchar model.
     
-    Meysam Mahooti (2024). Klobuchar Ionospheric Delay Model 
+    Translation to Python of Meysam Mahooti (2024). Klobuchar Ionospheric Delay Model 
     https://www.mathworks.com/matlabcentral/fileexchange/59530-klobuchar-ionospheric-delay-model
-    MATLAB Central File Exchange. Retrieved February 7, 2024. 
+    MATLAB Central File Exchange. Retrieved February 7, 2024.
     
+    Parameters
+    ----------
+    phi : float
+        Geodetic latitude of receiver (degrees).
+    lambda_ : float
+        Geodetic longitude of receiver (degrees).
+    elev : float
+        Elevation angle of satellite (degrees).
+    azimuth : float
+        Geodetic azimuth of satellite (degrees).
+    tow : float
+        Time of Week (seconds).
+    alpha : array_like
+        The coefficients of a cubic equation representing the amplitude 
+        of the vertical delay (4 coefficients - 8 bits each).
+    beta : array_like
+        The coefficients of a cubic equation representing the period 
+        of the model (4 coefficients - 8 bits each).
     
-    ==================================================================
-    function for computing an Ionospheric range correction for the
-    GPS L1 frequency from the parameters broadcasted in the GPS
-    Navigation Message.
-    ==================================================================
-    References:
+    Returns
+    -------
+    d_ion1 : float
+        Ionospheric slant range correction for the L1 frequency (metres).
+    
+    References
+    ----------
     Klobuchar, J.A., (1996) "Ionospheric Effects on GPS", in
     Parkinson, Spilker (ed), "Global Positioning System Theory and
     Applications, pp.513-514.
+    
     ICD-GPS-200, Rev. C, (1997), pp. 125-128
+    
     NATO, (1991), "Technical Characteristics of the NAVSTAR GPS",
     pp. A-6-31   -   A-6-33
-    ==================================================================
-    Inputs:
-        phi      : Geodetic latitude of receiver (deg)
-        lambda_ : Geodetic longitude of receiver (deg)
-        elev    : Elevation angle of satellite (deg)
-        azimuth : Geodetic azimuth of satellite (deg)
-        tow     : Time of Week (sec)
-        alpha    : The coefficients of a cubic equation
-                  representing the amplitude of the vertical
-                  delay (4 coefficients - 8 bits each)
-        beta    : The coefficients of a cubic equation
-                  representing the period of the model
-                  (4 coefficients - 8 bits each)
-    Output:
-        d_ion1   : Ionospheric slant range correction for
-                  the L1 frequency (metre)
-    ==================================================================
     """
 
     # Constants
@@ -150,4 +154,3 @@ if __name__ == "__main__":
     # Correction ionosphérique L1
     dIon1 = klobuchar(phi, lambda_, elev, azimuth, tow, alpha, beta)
     print("Ionospheric L1 Correction: ", dIon1)
-    

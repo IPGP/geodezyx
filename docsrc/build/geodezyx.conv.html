@@ -53,6 +53,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.conv package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_angle">geodezyx.conv.conv_angle module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_constant">geodezyx.conv.conv_constant module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_coords">geodezyx.conv.conv_coords module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_geometric">geodezyx.conv.conv_geometric module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_proj_lambert">geodezyx.conv.conv_proj_lambert module</a></li>
@@ -65,6 +66,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
@@ -328,6 +330,11 @@ If only degrees and minutes are provided, the format will be “DD°MM’”.</p
 </dd></dl>
 
 </section>
+<section id="module-geodezyx.conv.conv_constant">
+<span id="geodezyx-conv-conv-constant-module"></span><h2>geodezyx.conv.conv_constant module<a class="headerlink" href="#module-geodezyx.conv.conv_constant" title="Link to this heading"></a></h2>
+<p>Created on 12/08/2025 16:16:33</p>
+<p>&#64;author: psakic</p>
+</section>
 <section id="module-geodezyx.conv.conv_coords">
 <span id="geodezyx-conv-conv-coords-module"></span><h2>geodezyx.conv.conv_coords module<a class="headerlink" href="#module-geodezyx.conv.conv_coords" title="Link to this heading"></a></h2>
 <p>Created on Thu Aug 13 15:11:12 2020</p>
@@ -483,7 +490,7 @@ ans. empirically, only for debug !!</p></li>
 <dd class="field-even"><p><strong>c_out</strong></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>conversion of P in RTN or RPY ref. frame</p>
+<dd class="field-odd"><p>conversion of p in RTN or RPY ref. frame</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
@@ -608,7 +615,7 @@ est laissé pour des scripts de conversion de GINS (170119)</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">normal_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llambda</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.normal_vector" title="Link to this definition"></a></dt>
 <dd><p>Compute the Ellipsoid “Normale”</p>
 <p class="rubric">References</p>
-<ol class="upperalpha simple" start="16">
+<ol class="loweralpha simple" start="16">
 <li><p>Bosser (2012), Géométrie de l’Ellipsoïde, p27</p></li>
 </ol>
 </dd></dl>
@@ -721,6 +728,33 @@ To simplify the usage of the conversion functions
 <p class="rubric">References</p>
 <p>ALG0021 in NTG_71 (IGN Lambert Projection Tech document)
 Based on PYACS of J.-M. Nocquet</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_coords.xyz2azi_ele">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">xyz2azi_ele</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdeg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.xyz2azi_ele" title="Link to this definition"></a></dt>
+<dd><p>Convert ECEF Cartesian coordinates to azimuth and elevation angles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – ECEF X, Y, Z coordinates in meters.</p></li>
+<li><p><strong>y</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – ECEF X, Y, Z coordinates in meters.</p></li>
+<li><p><strong>z</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – ECEF X, Y, Z coordinates in meters.</p></li>
+<li><p><strong>x0</strong> (<em>floats</em><em> or </em><em>numpy.array</em><em> of </em><em>floats</em>) – Reference point coordinates in ECEF frame.</p></li>
+<li><p><strong>y0</strong> (<em>floats</em><em> or </em><em>numpy.array</em><em> of </em><em>floats</em>) – Reference point coordinates in ECEF frame.</p></li>
+<li><p><strong>z0</strong> (<em>floats</em><em> or </em><em>numpy.array</em><em> of </em><em>floats</em>) – Reference point coordinates in ECEF frame.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>azi</strong> (<em>numpy.array of floats</em>) – Azimuth angle in radians.</p></li>
+<li><p><strong>ele</strong> (<em>numpy.array of floats</em>) – Elevation angle in radians.</p></li>
+<li><p><strong>d</strong> (<em>numpy.array of floats</em>) – Distance from the reference point to the point (x, y, z) in meters.</p></li>
+<li><p><strong>outdeg</strong> (<em>bool, optional</em>) – If True, output angles in degrees. If False, in radians. Default is False.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -977,7 +1011,7 @@ GitHub repository :
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_geometric.orthogonal_projection">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_geometric.</span></span><span class="sig-name descname"><span class="pre">orthogonal_projection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xv</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_geometric.orthogonal_projection" title="Link to this definition"></a></dt>
-<dd><p>Project a point A on a line defined with a vector V and a point B</p>
+<dd><p>Project a point A on a line defined with a vector v and a point B</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1885,7 +1919,7 @@ Is a list of int if the input is an iterable</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.dt2gpstime">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">dt2gpstime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dayinweek=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp_ref='utc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputtype=&lt;class</span> <span class="pre">'int'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.dt2gpstime" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">dt2gpstime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secinweek=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp_ref='utc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputtype=&lt;class</span> <span class="pre">'int'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.dt2gpstime" title="Link to this definition"></a></dt>
 <dd><p>Time scale conversion</p>
 <p>Python’s datetime (UTC,TAI or GPS time scale) =&gt; GPS time</p>
 <dl class="field-list simple">
@@ -1895,7 +1929,7 @@ Is a list of int if the input is an iterable</p>
 <li><p><strong>inp_ref</strong> (<em>str</em>) – “utc” : apply the 19 sec &amp; leap second correction at the epoch
 “gps” : no correction applied
 “tai” : apply -19 sec correction</p></li>
-<li><p><strong>dayinweek</strong> (<em>bool</em>) – <p>if True : returns  GPS week, day in GPS week</p>
+<li><p><strong>secinweek</strong> (<em>bool</em>) – <p>if True : returns  GPS week, day in GPS week</p>
 <p>if False : returns  GPS week, sec in GPS week</p>
 </p></li>
 <li><p><strong>outputtype</strong> (<em>type</em>) – the type of the output</p></li>

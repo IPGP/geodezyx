@@ -16,3 +16,11 @@ geodezyx.athmo.athmo module
    :members:
    :undoc-members:
    :show-inheritance:
+
+geodezyx.athmo.vmf1\_compute module
+-----------------------------------
+
+.. automodule:: geodezyx.athmo.vmf1_compute
+   :members:
+   :undoc-members:
+   :show-inheritance:

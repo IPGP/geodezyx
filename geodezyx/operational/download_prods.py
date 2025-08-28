@@ -544,88 +544,59 @@ def multi_downloader_orbs_clks(
     return_also_uncompressed_files=True,
 ):
     """
-    Download IGS products. Can manage MGEX products too
-    (see archive_center argument)
+    Download IGS products. Can manage MGEX products too.
 
     Parameters
     ----------
     archive_dir : str
-        Parent archive directory where files will be stored
-
-    startdate & enddate : datetime
-        Start and End of the wished period
-
-    calc_center : str or list of str
-        calc_center can be a string or a list, describing the calc center
-        e.g. 'igs','grg','cod','jpl' ...
-
-    sp3clk : str
-        Product type, can handle :
-
-            'clk'
-
-            'clk_30s'
-
-            'sp3'
-
-            'snx'
-
-            'sum'
-
-            'erp'
-
-            'bia'
-
-    archive_center : str
-        server of download, "regular" IGS or MGEX, can handle :
-
-            'cddis'
-
-            'cddis_mgex'
-
-            'cddis_mgex_longname'
-
-            'ign'
-
-            'ign_mgex'
-
-            'ign_mgex_longname'
-
-            'gfz_local'
-
-    archtype: str
-        string describing how the archive directory is structured, e.g :
-
-            stat
-
-            stat/year
-
-            stat/year/doy
-
-            year/doy
-
-            year/stat
-
-            week/dow/stat
-
-            ... etc ...
-
-    repro : int
-        number of the IGS reprocessing (0 = routine processing)
-
-    sorted_mode : bool
-        if False:
-            using the map multiprocess fct so the download order will
-            be scrambled
-        if True:
-            using the apply multiprocess fct so the download order will be
-            in the chrono. order
-        The scrambled (False) is better, bc. it doesn't create zombies processes
+        Parent archive directory where files will be stored.
+    startdate : datetime
+        Start of the wished period.
+    enddate : datetime
+        End of the wished period.
+    calc_center : str or list of str, optional
+        Calc center can be a string or a list, describing the calc center.
+        Examples: 'igs', 'grg', 'cod', 'jpl', etc. Default is "igs".
+    sp3clk : str, optional
+        Product type. Can handle: 'clk', 'clk_30s', 'sp3', 'snx', 'sum', 
+        'erp', 'bia'. Default is "sp3".
+    archtype : str, optional
+        String describing how the archive directory is structured.
+        Examples: 'stat', 'stat/year', 'stat/year/doy', 'year/doy', 
+        'year/stat', 'week/dow/stat', etc. Default is "year/doy".
+    parallel_download : int, optional
+        Number of parallel downloads. Default is 4.
+    archive_center : str, optional
+        Server of download, "regular" IGS or MGEX. Can handle: 'cddis', 
+        'cddis_mgex', 'cddis_mgex_longname', 'ign', 'ign_mgex', 
+        'ign_mgex_longname', 'gfz_local'. Default is "ign".
+    repro : int, optional
+        Number of the IGS reprocessing (0 = routine processing). Default is 0.
+    sorted_mode : bool, optional
+        If False, uses the map multiprocess function so the download order 
+        will be scrambled. If True, uses the apply multiprocess function so 
+        the download order will be in chronological order. The scrambled 
+        (False) is better because it doesn't create zombie processes. 
+        Default is False.
+    force_weekly_file : bool, optional
+        Force download of weekly files. Default is False.
+    return_also_uncompressed_files : bool, optional
+        Include already downloaded and uncompressed files in the final list 
+        output. Default is True.
 
     Returns
     -------
     localfiles_lis : list of str
-        list of downloaded products paths
+        List of downloaded products paths.
+
+    See Also
+    --------
+    download_gnss_products : Newer implementation of this function.
+
+    Notes
+    -----
+    This function can manage MGEX products by setting the appropriate 
+    archive_center
     """
 
     log.error(

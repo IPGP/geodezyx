@@ -17,6 +17,14 @@ geodezyx.conv.conv\_angle module
    :undoc-members:
    :show-inheritance:
 
+geodezyx.conv.conv\_constant module
+-----------------------------------
+
+.. automodule:: geodezyx.conv.conv_constant
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 geodezyx.conv.conv\_coords module
 ---------------------------------
 

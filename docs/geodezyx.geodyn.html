@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="geodezyx.interp package" href="geodezyx.interp.html" />
+    <link rel="next" title="geodezyx.gnss_edu package" href="geodezyx.gnss_edu.html" />
     <link rel="prev" title="geodezyx.files_rw package" href="geodezyx.files_rw.html" /> 
 </head>
 
@@ -61,6 +61,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.geodyn.volcano_mogi">geodezyx.geodyn.volcano_mogi module</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
@@ -353,7 +354,7 @@ if pretty_output == False : [rad/yr,rad,rad]</p></li>
 <p class="rubric">Notes</p>
 <p>w is the common element for all Euler pole functions</p>
 <p>Should remains in rad/yr</p>
-<p>Written by P. Sakic based on C. Geisert’s work</p>
+<p>Written by p. Sakic based on C. Geisert’s work</p>
 </dd></dl>
 
 <dl class="py function">
@@ -469,25 +470,28 @@ GitHub repository :
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.geodyn.volcano_mogi.forward">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.geodyn.volcano_mogi.</span></span><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xcen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dV</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.geodyn.volcano_mogi.forward" title="Link to this definition"></a></dt>
-<dd><p>Calculates surface deformation based on point source</p>
-<p>References: Mogi 1958, Segall 2010 p.203</p>
-<section id="args">
-<h3>Args:<a class="headerlink" href="#args" title="Link to this heading"></a></h3>
-<p>x: x-coordinate grid (m)
-y: y-coordinate grid (m)</p>
-</section>
-<section id="kwargs">
-<h3>Kwargs:<a class="headerlink" href="#kwargs" title="Link to this heading"></a></h3>
-<p>xcen: y-offset of point source epicenter (m)
-ycen: y-offset of point source epicenter (m)
-d: depth to point (m)
-dV: change in volume (m^3)
-nu: poisson’s ratio for medium</p>
-</section>
-<section id="returns">
-<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
-<p>(ux, uy, uz)</p>
-</section>
+<dd><p>Calculates surface deformation based on point source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array_like</em>) – x-coordinate grid (m)</p></li>
+<li><p><strong>y</strong> (<em>array_like</em>) – y-coordinate grid (m)</p></li>
+<li><p><strong>xcen</strong> (<em>float</em><em>, </em><em>optional</em>) – x-offset of point source epicenter (m), default 0</p></li>
+<li><p><strong>ycen</strong> (<em>float</em><em>, </em><em>optional</em>) – y-offset of point source epicenter (m), default 0</p></li>
+<li><p><strong>d</strong> (<em>float</em><em>, </em><em>optional</em>) – depth to point (m), default 3e3</p></li>
+<li><p><strong>dV</strong> (<em>float</em><em>, </em><em>optional</em>) – change in volume (m^3), default 1e6</p></li>
+<li><p><strong>nu</strong> (<em>float</em><em>, </em><em>optional</em>) – poisson’s ratio for medium, default 0.25</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(ux, uy, uz) displacement components in x, y, and z directions (m)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of ndarray</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Mogi 1958, Segall 2010 p.203</p>
 </dd></dl>
 
 <dl class="py function">
@@ -530,7 +534,7 @@ with scipy.omptimize.curvefit. Assumes UTM input for X and Y</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="geodezyx.files_rw.html" class="btn btn-neutral float-left" title="geodezyx.files_rw package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="geodezyx.interp.html" class="btn btn-neutral float-right" title="geodezyx.interp package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="geodezyx.gnss_edu.html" class="btn btn-neutral float-right" title="geodezyx.gnss_edu package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

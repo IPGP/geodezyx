@@ -18,11 +18,6 @@ GitHub repository :
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
-
-
-"""
-
-"""
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -50,26 +45,34 @@ def invert(xargs,xcen,ycen,depth,dV):
 # =====================
 def forward(x,y,xcen=0,ycen=0,d=3e3,dV=1e6,nu=0.25):
     """
-    Calculates surface deformation based on point source
+    Calculates surface deformation based on point source.
 
-    References: Mogi 1958, Segall 2010 p.203
+    Parameters
+    ----------
+    x : array_like
+        x-coordinate grid (m)
+    y : array_like
+        y-coordinate grid (m)
+    xcen : float, optional
+        x-offset of point source epicenter (m), default 0
+    ycen : float, optional
+        y-offset of point source epicenter (m), default 0
+    d : float, optional
+        depth to point (m), default 3e3
+    dV : float, optional
+        change in volume (m^3), default 1e6
+    nu : float, optional
+        poisson's ratio for medium, default 0.25
 
-    Args:
-    ------------------
-    x: x-coordinate grid (m)
-    y: y-coordinate grid (m)
-
-    Kwargs:
-    -----------------
-    xcen: y-offset of point source epicenter (m)
-    ycen: y-offset of point source epicenter (m)
-    d: depth to point (m)
-    dV: change in volume (m^3)
-    nu: poisson's ratio for medium
-
-    Returns:
+    Returns
     -------
-    (ux, uy, uz)
+    tuple of ndarray
+        (ux, uy, uz) displacement components in x, y, and z directions (m)
+
+    References
+    ----------
+    Mogi 1958, Segall 2010 p.203
+
     """
     # Center coordinate grid on point source
     x = x - xcen

@@ -52,12 +52,14 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.athmo package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.athmo.athmo">geodezyx.athmo.athmo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.athmo.vmf1_compute">geodezyx.athmo.vmf1_compute module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
@@ -497,6 +499,235 @@ pp. 1593-1607, 1985.</p></li>
 <p class="rubric">Notes</p>
 <p>Written by Johannes Boehm, 2005 October 2</p>
 <p>Translated to python by Chaiyaporn Kitpracha</p>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.athmo.vmf1_compute">
+<span id="geodezyx-athmo-vmf1-compute-module"></span><h2>geodezyx.athmo.vmf1_compute module<a class="headerlink" href="#module-geodezyx.athmo.vmf1_compute" title="Link to this heading"></a></h2>
+<p>Python translation of the VMF1G computation Fortran modules.</p>
+<p>This module provides atmospheric delay computation functions for geodetic applications
+using Vienna Mapping Function 1 Gridded (VMF1G) data.</p>
+<p>Translated from Fortran modules:
+- get_vmf1g_values.f90
+- compute_vmf1g_values.f90
+- get_orography.f90
+- sd_vmf1_grid_elevation.f90
+- sd_gmf.f90
+- sd_gpt.f90
+- jour_julien_ff.f90
+- calend1.f90</p>
+<p>Author: Translated to Python
+Original Fortran authors: FF, FR, Johannes Boehm</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.vmf1_compute.compute_vmf1g_values">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.vmf1_compute.</span></span><span class="sig-name descname"><span class="pre">compute_vmf1g_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">el</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#geodezyx.athmo.vmf1_compute.compute_vmf1g_values" title="Link to this definition"></a></dt>
+<dd><p>Main function to compute VMF1G atmospheric delay values.</p>
+<section id="id7">
+<h3>Parameters:<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data_dir<span class="classifier">str</span></dt><dd><p>Directory containing VMF1G data files</p>
+</dd>
+<dt>year, month, day<span class="classifier">int</span></dt><dd><p>Calendar date</p>
+</dd>
+<dt>hh, min_val, sec<span class="classifier">int</span></dt><dd><p>Time (hour, minute, second)</p>
+</dd>
+<dt>lat, lon<span class="classifier">float</span></dt><dd><p>Latitude and longitude in degrees</p>
+</dd>
+<dt>h<span class="classifier">float</span></dt><dd><p>Ellipsoidal height in meters</p>
+</dd>
+<dt>el<span class="classifier">float</span></dt><dd><p>Elevation angle in degrees</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h3>Returns:<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<p>dict : Dictionary containing computed atmospheric delay values</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.vmf1_compute.get_orography">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.vmf1_compute.</span></span><span class="sig-name descname"><span class="pre">get_orography</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orography_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#geodezyx.athmo.vmf1_compute.get_orography" title="Link to this definition"></a></dt>
+<dd><p>Get orographic heights for the 4 grid nodes surrounding a location.</p>
+<section id="id9">
+<h3>Parameters:<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>orography_file<span class="classifier">str</span></dt><dd><p>File containing orography data</p>
+</dd>
+<dt>lat, lon<span class="classifier">float</span></dt><dd><p>Latitude and longitude in degrees</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h3>Returns:<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<p>np.ndarray : Orographic heights for 4 grid nodes</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.vmf1_compute.get_vmf1g_values">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.vmf1_compute.</span></span><span class="sig-name descname"><span class="pre">get_vmf1g_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#geodezyx.athmo.vmf1_compute.get_vmf1g_values" title="Link to this definition"></a></dt>
+<dd><p>Get VMF1G values for a given location and time.</p>
+<section id="id11">
+<h3>Parameters:<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data_dir<span class="classifier">str</span></dt><dd><p>Directory containing VMF1G data files</p>
+</dd>
+<dt>year, month, day<span class="classifier">int</span></dt><dd><p>Calendar date</p>
+</dd>
+<dt>sec<span class="classifier">float</span></dt><dd><p>Seconds since midnight</p>
+</dd>
+<dt>lat, lon<span class="classifier">float</span></dt><dd><p>Latitude and longitude in degrees</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h3>Returns:<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<p>dict : Dictionary containing VMF1G grid data and interpolation parameters</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.vmf1_compute.main">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.vmf1_compute.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.vmf1_compute.main" title="Link to this definition"></a></dt>
+<dd><p>Main function to run VMF1G computation from command line or interactive input.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.vmf1_compute.sd_gmf">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.vmf1_compute.</span></span><span class="sig-name descname"><span class="pre">sd_gmf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dmjd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dhgt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.vmf1_compute.sd_gmf" title="Link to this definition"></a></dt>
+<dd><p>Python translation of sd_gmf subroutine
+Determines Global Mapping Functions GMF</p>
+<section id="id13">
+<h3>Parameters:<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dmjd<span class="classifier">float</span></dt><dd><p>modified julian date</p>
+</dd>
+<dt>dlat<span class="classifier">float</span></dt><dd><p>latitude in radians</p>
+</dd>
+<dt>dlon<span class="classifier">float</span></dt><dd><p>longitude in radians</p>
+</dd>
+<dt>dhgt<span class="classifier">float</span></dt><dd><p>height in m</p>
+</dd>
+<dt>zd<span class="classifier">float</span></dt><dd><p>zenith distance in radians</p>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h3>Returns:<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>gmfh<span class="classifier">float</span></dt><dd><p>hydrostatic mapping function</p>
+</dd>
+<dt>gmfw<span class="classifier">float</span></dt><dd><p>wet mapping function</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.vmf1_compute.sd_gmf_simple">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.vmf1_compute.</span></span><span class="sig-name descname"><span class="pre">sd_gmf_simple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dmjd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dhgt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#geodezyx.athmo.vmf1_compute.sd_gmf_simple" title="Link to this definition"></a></dt>
+<dd><p>Determine Global Mapping Functions (GMF).</p>
+<section id="id15">
+<h3>Parameters:<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dmjd<span class="classifier">float</span></dt><dd><p>Modified Julian date</p>
+</dd>
+<dt>dlat<span class="classifier">float</span></dt><dd><p>Latitude in radians</p>
+</dd>
+<dt>dlon<span class="classifier">float</span></dt><dd><p>Longitude in radians</p>
+</dd>
+<dt>dhgt<span class="classifier">float</span></dt><dd><p>Height in m</p>
+</dd>
+<dt>zd<span class="classifier">float</span></dt><dd><p>Zenith distance in radians</p>
+</dd>
+</dl>
+</section>
+<section id="id16">
+<h3>Returns:<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<p>tuple : (gmfh, gmfw) - hydrostatic and wet mapping functions</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.vmf1_compute.sd_gpt">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.vmf1_compute.</span></span><span class="sig-name descname"><span class="pre">sd_gpt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dmjd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dhgt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.athmo.vmf1_compute.sd_gpt" title="Link to this definition"></a></dt>
+<dd><p>Python translation of sd_gpt subroutine
+Determines Global Pressure and Temperature</p>
+<section id="id17">
+<h3>Parameters:<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dmjd<span class="classifier">float</span></dt><dd><p>modified julian date</p>
+</dd>
+<dt>dlat<span class="classifier">float</span></dt><dd><p>latitude in radians</p>
+</dd>
+<dt>dlon<span class="classifier">float</span></dt><dd><p>longitude in radians</p>
+</dd>
+<dt>dhgt<span class="classifier">float</span></dt><dd><p>ellipsoidal height in m</p>
+</dd>
+</dl>
+</section>
+<section id="id18">
+<h3>Returns:<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>pres<span class="classifier">float</span></dt><dd><p>pressure in hPa</p>
+</dd>
+<dt>temp<span class="classifier">float</span></dt><dd><p>temperature in Celsius</p>
+</dd>
+<dt>undu<span class="classifier">float</span></dt><dd><p>Geoid undulation in m</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.vmf1_compute.sd_gpt_simple">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.vmf1_compute.</span></span><span class="sig-name descname"><span class="pre">sd_gpt_simple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dmjd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dhgt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#geodezyx.athmo.vmf1_compute.sd_gpt_simple" title="Link to this definition"></a></dt>
+<dd><p>Determine Global Pressure and Temperature based on Spherical Harmonics.</p>
+<section id="id19">
+<h3>Parameters:<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dmjd<span class="classifier">float</span></dt><dd><p>Modified Julian date</p>
+</dd>
+<dt>dlat<span class="classifier">float</span></dt><dd><p>Latitude in radians</p>
+</dd>
+<dt>dlon<span class="classifier">float</span></dt><dd><p>Longitude in radians</p>
+</dd>
+<dt>dhgt<span class="classifier">float</span></dt><dd><p>Ellipsoidal height in m</p>
+</dd>
+</dl>
+</section>
+<section id="id20">
+<h3>Returns:<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<p>tuple : (pressure in hPa, temperature in Celsius, geoid undulation in m)</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.athmo.vmf1_compute.sd_vmf1_grid_elevation">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.athmo.vmf1_compute.</span></span><span class="sig-name descname"><span class="pre">sd_vmf1_grid_elevation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ah</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmjd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ht</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#geodezyx.athmo.vmf1_compute.sd_vmf1_grid_elevation" title="Link to this definition"></a></dt>
+<dd><p>Determine VMF1 (Vienna Mapping Functions 1) with height correction.</p>
+<section id="id21">
+<h3>Parameters:<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ah<span class="classifier">float</span></dt><dd><p>Hydrostatic coefficient a</p>
+</dd>
+<dt>aw<span class="classifier">float</span></dt><dd><p>Wet coefficient a</p>
+</dd>
+<dt>dmjd<span class="classifier">float</span></dt><dd><p>Modified Julian date</p>
+</dd>
+<dt>dlat<span class="classifier">float</span></dt><dd><p>Latitude in radians</p>
+</dd>
+<dt>ht<span class="classifier">float</span></dt><dd><p>Ellipsoidal height in meters</p>
+</dd>
+<dt>zd<span class="classifier">float</span></dt><dd><p>Zenith distance in radians</p>
+</dd>
+</dl>
+</section>
+<section id="id22">
+<h3>Returns:<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<p>tuple : (vmf1h, vmf1w) - hydrostatic and wet mapping functions</p>
+</section>
 </dd></dl>
 
 </section>
