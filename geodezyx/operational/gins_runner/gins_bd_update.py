@@ -32,10 +32,10 @@ def read_credentials(file_path):
 
 def download_rsync(
     file_list,
-    remote_user,
-    remote_host,
-    remote_path,
+    source_path,
     local_destination,
+    remote_user=None,
+    remote_host=None,
     rsync_options=None,
     password=None,
 ):
@@ -57,7 +57,10 @@ def download_rsync(
         ]  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
-    remote_source = f"{remote_user}@{remote_host}:{remote_path}"
+    if remote_user and remote_host:
+        remote_source = f"{remote_user}@{remote_host}:{source_path}"
+    else:
+        remote_source = f"{source_path}"
 
     if password:
         rsync_base = ["sshpass", "-p", password, "rsync"] + rsync_options
@@ -163,7 +166,7 @@ def bdgins_update(
     list_tropo_vmf1 = []
     list_iono_igs = []
 
-    #list_orbite_sp3_mg3 = [] # not needed after v25_1
+    # list_orbite_sp3_mg3 = [] # not needed after v25_1
     list_orbite_sp3_grg = []
     list_orbite_sp3_g20 = []
     list_orbite_gin_g20 = []
@@ -224,7 +227,7 @@ def bdgins_update(
         )
         list_iono_igs.append(f"{year}/igsg{doy}0.{yy}i.Z")
         #### Needed for the PRAIRIE pre-processing
-        #list_orbite_sp3_mg3.append(f"mg3{wk}{wkday}.sp3.Ci9PAU") # not needed after v25_1
+        # list_orbite_sp3_mg3.append(f"mg3{wk}{wkday}.sp3.Ci9PAU") # not needed after v25_1
         if wk < 2245:
             list_orbite_sp3_g20.append(f"g20{wk}{wkday}.sp3.Ci3G20") # for the past, no more g20 after wk2245
         list_orbite_sp3_grg.append(f"grg{wk}{wkday}.sp3") # for the routine
@@ -270,12 +273,25 @@ def bdgins_update(
 
         download_rsync(
             files_list,
-            login,
-            "tite.get.obs-mip.fr",
             remote_subdir_fullpath,
             local_subdir_fullpath,
+            login,
+            "tite.get.obs-mip.fr",
             password,
         )
+
+    # quick and dirty move for the PRAIRIE SP3 (VALIDE_25_1
+    log.info("Moving PRAIRIE SP3 files to their final destination")
+
+    dir_gin_data = os.path.join(gynscmn.get_gin_path(True), "data")
+    dir_gin_sp3_g20 = os.path.join(dir_bdgins, "mesures/gps/orbites/G20")
+    dir_gin_sp3_grg = os.path.join(dir_bdgins, "orbites/SP3/igs")
+    dir_prairie_sp3_final = os.path.join(dir_gin_data, "orbites/SP3/gin/batch/orbite/G20/")
+
+    utils.create_dir(dir_prairie_sp3_final)
+    for dir_gin_sp3 in [dir_gin_sp3_g20, dir_gin_sp3_grg]:
+        files_list = utils.find_recursive(dir_gin_sp3, "*.sp3*")
+        download_rsync(files_list, dir_gin_sp3_g20, dir_prairie_sp3_final)
 
     # compress the clock files (experimental, and not recommended)
     if compress:

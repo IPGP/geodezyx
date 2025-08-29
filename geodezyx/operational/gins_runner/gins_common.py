@@ -66,7 +66,7 @@ def get_gin_path(extended=False):
     if not extended:
         return gs_user
     else:
-        return os.path.join(os.environ["GS_USER"], "gin")
+        return os.path.join(gs_user, "gin")
 
 
 def get_spotgins_path():
