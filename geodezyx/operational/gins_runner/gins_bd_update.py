@@ -294,7 +294,7 @@ def bdgins_update(
         log.info("Processing directory: %s > %s", dir_gin_sp3, dir_prairie_sp3_final)
         files_list = utils.find_recursive(dir_gin_sp3, "*.sp3*")
         files_list = [os.path.basename(e) for e in files_list]
-        download_rsync(files_list, dir_gin_sp3_g20, dir_prairie_sp3_final)
+        download_rsync(files_list, dir_gin_sp3, dir_prairie_sp3_final)
 
     # compress the clock files (experimental, and not recommended)
     if compress:
