@@ -164,6 +164,7 @@ def bdgins_update(
     list_iono_igs = []
 
     #list_orbite_sp3_mg3 = [] # not needed after v25_1
+    list_orbite_sp3_grg = []
     list_orbite_sp3_g20 = []
     list_orbite_gin_g20 = []
 
@@ -222,8 +223,11 @@ def bdgins_update(
             ]
         )
         list_iono_igs.append(f"{year}/igsg{doy}0.{yy}i.Z")
+        #### Needed for the PRAIRIE pre-processing
         #list_orbite_sp3_mg3.append(f"mg3{wk}{wkday}.sp3.Ci9PAU") # not needed after v25_1
-        list_orbite_sp3_g20.append(f"g20{wk}{wkday}.sp3.Ci3G20.gz")
+        list_orbite_sp3_grg.append(f"grg{wk}{wkday}.sp3") # for the routin
+        list_orbite_sp3_g20.append(f"g20{wk}{wkday}.sp3.Ci3G20.gz") # for the past
+        #### Needed for the main GINS calculation
         list_orbite_gin_g20.append(f"G20{wk}{wkday}.gin")
         list_orbex_g20.append(f"G20{wk}{wkday}.obx.gz")
         list_horl_g20.append(f"hogps_g20{wk}{wkday}")
@@ -247,6 +251,7 @@ def bdgins_update(
         "tropo_vmf1": list_tropo_vmf1,
         "ionosphere/igs": list_iono_igs,
         #"orbites/SP3/re3": list_orbite_sp3_mg3, not needed after v25_1
+        "orbites/SP3/igs": list_orbite_sp3_grg,
         "mesures/gps/orbites/G20": list_orbite_g20,
         "mesures/gps/orbex/G20": list_orbex_g20,
         "mesures/gps/horloges30/G20": list_horl_g20,
