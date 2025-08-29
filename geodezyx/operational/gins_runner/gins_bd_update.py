@@ -291,6 +291,7 @@ def bdgins_update(
 
     utils.create_dir(dir_prairie_sp3_final)
     for dir_gin_sp3 in [dir_gin_sp3_g20, dir_gin_sp3_grg]:
+        log.info("Processing directory: %s > %s", dir_gin_sp3, dir_prairie_sp3_final)
         files_list = utils.find_recursive(dir_gin_sp3, "*.sp3*")
         files_list = [os.path.basename(e) for e in files_list]
         download_rsync(files_list, dir_gin_sp3_g20, dir_prairie_sp3_final)
