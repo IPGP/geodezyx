@@ -225,8 +225,9 @@ def bdgins_update(
         list_iono_igs.append(f"{year}/igsg{doy}0.{yy}i.Z")
         #### Needed for the PRAIRIE pre-processing
         #list_orbite_sp3_mg3.append(f"mg3{wk}{wkday}.sp3.Ci9PAU") # not needed after v25_1
-        list_orbite_sp3_grg.append(f"grg{wk}{wkday}.sp3") # for the routin
-        list_orbite_sp3_g20.append(f"g20{wk}{wkday}.sp3.Ci3G20") # for the past
+        if wk < 2245:
+            list_orbite_sp3_g20.append(f"g20{wk}{wkday}.sp3.Ci3G20") # for the past, no more g20 after wk2245
+        list_orbite_sp3_grg.append(f"grg{wk}{wkday}.sp3") # for the routine
         #### Needed for the main GINS calculation
         list_orbite_gin_g20.append(f"G20{wk}{wkday}.gin")
         list_orbex_g20.append(f"G20{wk}{wkday}.obx.gz")
