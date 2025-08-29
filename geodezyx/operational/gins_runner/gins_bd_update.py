@@ -93,7 +93,7 @@ def download_rsync(
 
 
 def bdgins_update(
-    date_srt=dt.datetime(2020, 5, 3),
+    date_srt=dt.datetime(2000, 5, 3),
     date_end=None,
     dir_bdgins="",
     login="",
@@ -317,10 +317,10 @@ def main():
         "--date_srt",
         type=lambda s: conv.date_pattern_2_dt(s),
         required=False,
-        default=dt.datetime(2020, 5, 3),
+        default=dt.datetime(2000, 5, 3),
         help=(
             "Start date for the update in various formats. "
-            "Default is 2020-05-03 "
+            "Default is 2000-05-03 "
             "(origin of G20 products, end of GPS's Selective Availability)."
         ),
     )
