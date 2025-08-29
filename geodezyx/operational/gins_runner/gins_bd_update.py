@@ -282,8 +282,6 @@ def bdgins_update(
         )
 
     # quick and dirty move for the PRAIRIE SP3 (VALIDE_25_1
-    log.info("Moving PRAIRIE SP3 files to their final destination")
-
     dir_gin_data = os.path.join(gynscmn.get_gin_path(True), "data")
     dir_gin_sp3_g20 = os.path.join(dir_bdgins, "mesures/gps/orbites/G20")
     dir_gin_sp3_grg = os.path.join(dir_bdgins, "orbites/SP3/igs")
@@ -291,7 +289,7 @@ def bdgins_update(
 
     utils.create_dir(dir_prairie_sp3_final)
     for dir_gin_sp3 in [dir_gin_sp3_g20, dir_gin_sp3_grg]:
-        log.info("Processing directory: %s > %s", dir_gin_sp3, dir_prairie_sp3_final)
+        log.info("Moving PRAIRIE's SP3 to their final destination: %s > %s", dir_gin_sp3, dir_prairie_sp3_final)
         files_list = utils.find_recursive(dir_gin_sp3, "*.sp3*")
         files_list = [os.path.basename(e) for e in files_list]
         download_rsync(files_list, dir_gin_sp3, dir_prairie_sp3_final)
