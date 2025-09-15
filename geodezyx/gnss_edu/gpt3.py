@@ -16,7 +16,7 @@ import pandas as pd
 import geodezyx.gnss_edu as gnss_edu
 
 
-def gpt3_5_fast_readGrid(filename ='gpt3_5.grd'):
+def gpt3_5_fast_readGrid(filename ='./gpt3_5.grd'):
 # =============================================================================  
 #     gpt3_5_fast_readGrid.py
 #     This routine reads the grid 'gpt3_5.grd' and overgives the respective
