@@ -35,7 +35,6 @@ def rinex_check(rnx_path_inp):
     else:
         bool_srt_end = False
 
-
     bool_final = bool_srt_end
 
     return bool_final
