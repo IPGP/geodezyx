@@ -5,3 +5,5 @@ venv/
 .idea/
 geodezyx.egg-info/
 geodezyx/marine/netcdf_a0a/output_netcdf/*
+exemples/gnss_edu_tp/*png
+exemples/gnss_edu_tp/*pdf
