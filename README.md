@@ -38,12 +38,16 @@ It is designed for Python 3 on a LINUX Ubuntu-like system.
 Also tested with Anaconda
 
 ## Toolbox's highlights
-* read RINEX2 and RINEX3/4 as Pandas' DataFrame
-* read SINEX, SP3 & Clock RINEX as Pandas' DataFrame
 * convert most time representations and time scales used in geodesy to/from Python's `datetime`
 * convert coordinates in different frames (geographic, geocentric, topocentric)
+* read RINEX2 and RINEX3/4 as Pandas' DataFrame
+* read SINEX, SP3 & Clock RINEX as Pandas' DataFrame
+* Read many coordinates time series formats as `TimeSeries` object, perform basic operations 
+(ENU calc., outlier cleaning)
+* export them (plots, DataFrame...)
 * perform easily Helmert's Transformation
-* And many more!
+* determine Euler's pole and compute plate rotation.
+* and many more!
 
 ## Installation
 See the following link:  

@@ -2377,19 +2377,21 @@ def read_pbo_pos(filein):
             t = dt.datetime(int(f[0][0:4]), int(f[0][4:6]), int(f[0][6:]), int(f[1][0:2]), int(f[1][2:4]),
                             int(f[1][4:]))
             pt = time_series.Point(f2[3], f2[4], f2[5], t, 'XYZ', f2[6], f2[7], f2[8])
-            pt.FLHset(f2[12], f2[13], f2[14])
-            pt.ENUset(f2[16], f2[15], f2[17], f2[19], f2[18], f2[20])
-            pt.anex['Rxy'] = f2[9]
-            pt.anex['Rxz'] = f2[10]
-            pt.anex['Ryz'] = f2[11]
-            pt.anex['Rne'] = f2[-4]
-            pt.anex['Rnu'] = f2[-3]
-            pt.anex['Reu'] = f2[-2]
+            #pt.FLHset(f2[12], f2[13], f2[14]) # useless (251018)
+            pt.ENUset(f2[16], f2[15], f2[17], f2[19], f2[18], f2[20]) # useless? (251018)
+            pt.anex['sdXY'] = f2[9]
+            pt.anex['sdXZ'] = f2[10]
+            pt.anex['sdYZ'] = f2[11]
+            pt.anex['sdEN'] = f2[-4]
+            pt.anex['sdNU'] = f2[-3]
+            pt.anex['sdEU'] = f2[-2]
             tsout.add_point(pt)
         if line[0] == '*':
             header = False
     tsout.boolENU = True
     tsout.meta_set(filein)
+    tsout.anex["refXYZ"] = (0,0,0)
+    
     tsout.stat = os.path.basename(filein)[0:4]
     return tsout
 

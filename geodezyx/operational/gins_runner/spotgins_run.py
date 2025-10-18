@@ -6,7 +6,6 @@ Created on 28/02/2025 18:52:44
 @author: psakic
 """
 import re
-import subprocess
 
 import geodezyx.operational.gins_runner.gins_common as gynscmn
 import geodezyx.operational.gins_runner.gins_dirs_gen as gynsgen

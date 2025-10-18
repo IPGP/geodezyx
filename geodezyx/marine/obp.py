@@ -43,10 +43,10 @@ def read_rbr_txt_data(file, t0 = None, t1 = None):
            'BPR pressure 2', 'Temperature', 'Barometer temperature',
            'Barometer pressure']
 
-    A0A = pd.read_csv(file, index_col = 0, parse_dates = True)
-    A0A = A0A[col]
-    A0A.columns = new_col
-    return A0A[t0:t1].dropna()
+    a0a = pd.read_csv(file, index_col = 0, parse_dates = True)
+    a0a = a0a[col]
+    a0a.columns = new_col
+    return a0a[t0:t1].dropna()
 
 
 def butter_highpass(cutoff, fs, order=5):
