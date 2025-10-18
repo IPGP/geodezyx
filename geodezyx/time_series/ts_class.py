@@ -673,7 +673,7 @@ class TimeSeriePoint:
             if icoty == 0:
                 tdt = conv.posix2dt(T)
                 col_stk = col_stk + (tdt, T, A, B, C, sA, sB, sC)
-                col_name_stk = ["tdt", "T"] + [e for e in cotycolnam] + ["s" + e for e in cotycolnam]
+                col_name_stk = ["Tdt", "T"] + [e for e in cotycolnam] + ["s" + e for e in cotycolnam]
             else:
                 col_stk = col_stk + (A, B, C, sA, sB, sC)
                 col_name_stk = [e for e in coty] + ["s" + e for e in coty]
