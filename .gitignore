@@ -7,3 +7,4 @@ geodezyx.egg-info/
 geodezyx/marine/netcdf_a0a/output_netcdf/*
 exemples/gnss_edu_tp/*png
 exemples/gnss_edu_tp/*pdf
+exemples/gnss_edu_tp/data/data-2019/BRDC00GOP_R_20181760000_01D_MN.rnx
