@@ -395,11 +395,11 @@ def export_ts_as_pbo_pos(tsin, outdir, outprefix='' ,
             MJD = conv.dt2mjd(pt.Tdt)
             X, Y, Z = pt.X, pt.Y, pt.Z
             Sx, Sy, Sz = pt.sX, pt.sY, pt.sZ  
-            Rxy,Rxz,Ryz = 0.,0.,0.
+            Rxy,Rxz,Ryz = pt.anex.get('sdXY', 0.0),pt.anex.get('sdXZ', 0.0),pt.anex.get('sdYZ', 0.0)
             Elong,NLat,Height = pt.F,pt.L,pt.H
-            dN,dE,dU = pt.E,pt.N,pt.U
-            Sn,Se,Su = pt.sE,pt.sN,pt.sU
-            Rne,Rnu,Reu = 0.,0.,0.
+            dN,dE,dU = pt.N,pt.E,pt.U
+            Sn,Se,Su = pt.sN,pt.sE,pt.sU
+            Rne,Rnu,Reu = pt.anex.get('sdEN', 0.0),pt.anex.get('sdNU', 0.0),pt.anex.get('sdEU', 0.0)
             Soln = "XXXXXXXXXXXXXX"
             
             l = [YYYYMMDD,HHMMSS,MJD,X,Y,Z,Sx,Sy,Sz,Rxy,Rxz,Ryz,Elong,NLat,
@@ -564,9 +564,9 @@ def export_ts_as_spotgins(tsin, outdir, ac, data_src="unknown", version=2):
         qflaglis = [p.anex.get('quality_flag', 'NA') for p in tsin.pts]
 
         # Calculate correlation coefficients (placeholder - adjust based on actual data structure)
-        corr_en = [p.anex.get('corr_EN', 0.0) for p in tsin.pts]
-        corr_eu = [p.anex.get('corr_EU', 0.0) for p in tsin.pts]
-        corr_nu = [p.anex.get('corr_NU', 0.0) for p in tsin.pts]
+        corr_en = [p.anex.get('sdEN', 0.0) for p in tsin.pts]
+        corr_eu = [p.anex.get('sdEU', 0.0) for p in tsin.pts]
+        corr_nu = [p.anex.get('sdNU', 0.0) for p in tsin.pts]
 
         fmtstr3 = " {:6.1f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:10.6f} {:10.6f} {:10.6f}  {:4s}-{:2s}-{:2s}T12:00:00  {:11.6f}  {:5s}  {:4s}  {:13s}  {:11s}  {:3s}\n"
 
@@ -625,3 +625,4 @@ def export_ts_as_spotgins(tsin, outdir, ac, data_src="unknown", version=2):
     log.info('SPOTGINS v%s time series exported to %s', version, outfile_path)
     outfile.close()
     return outfile_path
+
