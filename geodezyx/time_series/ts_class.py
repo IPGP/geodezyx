@@ -200,7 +200,6 @@ class Point():
         if type(T) == dt.datetime:
             self.Tdt = T
             self.T = conv.dt2posix(T)
-
         else:
             self.T = float(T)
             self.Tdt = conv.posix2dt(float(T))
