@@ -103,11 +103,34 @@ def export_ts_plot(tsin,export_path,coortype='ENU',export_type=("pdf","png"),
     return None
 
 
-def export_ts(ts,outdir,coordtype = 'ENU',outprefix='',write_header=False):
+def export_ts(ts, outdir, coordtype='ENU', outprefix='', write_header=False):
     """
-    export the timeserie
+    Export a time series to a custom `.ts.dat` format.
 
-    write_header not well implemented !!!
+    Parameters
+    ----------
+    ts : TimeSeries
+        Input time series object containing geodetic data.
+    outdir : str
+        Directory where the output file will be saved.
+    coordtype : str, optional
+        Coordinate type to use for the export (e.g., 'ENU'), by default 'ENU'.
+    outprefix : str, optional
+        Prefix to add to the output file name, by default an empty string.
+    write_header : bool, optional
+        If True, writes a header to the output file, by default False.
+
+    Notes
+    -----
+    - The function writes a `.ts.dat` file containing the time series data.
+    - The file includes geodetic coordinates (East, North, Up or other types) and their uncertainties.
+    - The header, if enabled, describes the columns in the file.
+
+    Returns
+    -------
+    None
+        The function writes the output file to the specified directory and does not return any value.
+        write_header not well implemented !!!
     """
 
     proto_str = '{:23} ' * 14
@@ -150,14 +173,32 @@ def export_ts(ts,outdir,coordtype = 'ENU',outprefix='',write_header=False):
     return None
 
 
-def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
+def export_ts_as_neu(tsin, outdir, outprefix, coordtype='ENU'):
     """
-    export to a HECTOR .neu compatible format
+    Export a time series to a HECTOR .neu compatible format.
 
-    outfile will be writed in
-    /outdir/outprefixSTAT.neu
-    
-    NB: The XYZ mode is quite dirty (191001)
+    Parameters
+    ----------
+    tsin : TimeSeries
+        Input time series object containing geodetic data.
+    outdir : str
+        Directory where the output .neu file will be saved.
+    outprefix : str
+        Prefix to add to the output file name.
+    coordtype : str, optional
+        Coordinate type to use for the export, by default 'ENU'.
+
+    Notes
+    -----
+    - The function writes a .neu file containing the time series data in HECTOR format.
+    - The header includes metadata such as the reference epoch, reference position, and field descriptions.
+    - The data section includes geodetic displacements (North, East, Up) relative to the first point.
+    - If the time series lacks XYZ attributes, default values are used for the reference position.
+
+    Returns
+    -------
+    None
+        The function writes the output file to the specified directory and does not return any value.
     """
     if not hasattr(tsin[0],'X'):
         log.warning('no XYZ in ts')
@@ -241,17 +282,33 @@ def export_ts_as_hector_enu(tsin,outdir,outprefix,coordtype = 'ENU'):
 
     return None
 
-def export_ts_as_midas_tenu(tsin,outdir,outprefix,coordtype = 'ENU',
-                            export_step=True):
+def export_ts_as_midas_tenu(tsin, outdir, outprefix, coordtype='ENU', export_step=True):
     """
-    export to a MIDAS .tneu compatible format
+    Export a time series to a MIDAS .tneu compatible format.
 
-    outfile will be writed in
-    /outdir/outprefixSTAT.tneu
+    Parameters
+    ----------
+    tsin : TimeSeries
+        Input time series object containing geodetic data.
+    outdir : str
+        Directory where the output .tneu file will be saved.
+    outprefix : str
+        Prefix to add to the output file name.
+    coordtype : str, optional
+        Coordinate type to use for the export, by default 'ENU'.
+    export_step : bool, optional
+        If True, exports a step file containing discontinuities, by default True.
 
-    if export_step == True:
-    export a step file as
-    /outdir/outprefixSTAT.step
+    Notes
+    -----
+    - The function writes a .tneu file containing the time series data in MIDAS format.
+    - If `export_step` is True and the time series contains discontinuities, a separate step file is created.
+    - The .tneu file includes geodetic displacements (East, North, Up) relative to the first point.
+
+    Returns
+    -------
+    None
+        The function writes the output file(s) to the specified directory and does not return any value.
     """
     if not hasattr(tsin[0],'X'):
         log.warning('no XYZ in ts')
@@ -298,23 +355,38 @@ def export_ts_as_midas_tenu(tsin,outdir,outprefix,coordtype = 'ENU',
     return None
 
 
-###################################################################
 def export_ts_as_pbo_pos(tsin, outdir, outprefix='' ,
                          force=None, force_1st_pt_as_ref=True,
                          verbose=False):
-###################################################################
     """
-    Write a time series in GAMIT/GLOBK PBO pos format
+    Export a time series to the GAMIT/GLOBK PBO position (.pos) format.
 
-    :param idir: output directory
-    :param outprefix: if not blank then the output pos file will be CODE_add_key.pos, CODE.pos otherwise.
-    :param force: set force to 'data' or 'data_xyz' to force pos to be written from .data or .data_xyz
+    Parameters
+    ----------
+    tsin : TimeSeries
+        Input time series object containing geodetic data.
+    outdir : str
+        Directory where the output .pos file will be saved.
+    outprefix : str, optional
+        Prefix to add to the output file name, by default an empty string.
+    force : str, optional
+        Determines the data source to use for the export. Can be 'data' or 'data_xyz'.
+        If None, the function decides based on the available attributes, by default None.
+    force_1st_pt_as_ref : bool, optional
+        If True, forces the first point of the time series to be used as the reference position, by default True.
+    verbose : bool, optional
+        If True, enables verbose logging for debugging purposes, by default False.
 
-    :note1:default behaviour (force = None)
-        if data and data_xyz are not None, then print them independently
-        if there are data only, then uses X0,Y0,Z0 to write data_xyz
-        if there are data_xyz only, recreate data and write it
-    
+    Notes
+    -----
+    - The function writes a .pos file containing the time series data in the PBO format.
+    - The header includes metadata such as the reference epoch, reference position, and field descriptions.
+    - The data section includes geodetic coordinates (X, Y, Z) and their uncertainties, along with other metadata.
+
+    Returns
+    -------
+    None
+        The function writes the output file to the specified directory and does not return any value.
     """
 
     # force option
@@ -622,7 +694,7 @@ def export_ts_as_spotgins(tsin, outdir, ac, data_src="unknown", version=2):
                 )
                 outfile.write(outstr)
 
-    log.info('SPOTGINS v%s time series exported to %s', version, outfile_path)
+    #log.info('SPOTGINS v%s time series exported to %s', version, outfile_path)
     outfile.close()
     return outfile_path
 
