@@ -158,7 +158,7 @@ def round_dt(dtin, round_to, python_dt_out=True, mode='round'):
     ### because we switch per defaut to a Pandas Series (PSakic 2021-02-22)
     if not utils.is_iterable(dtin):
         singleton = True
-        typ = None
+        typ = list
         dtin_use = pd.Series([dtin])
     else:
         singleton = False
@@ -176,8 +176,12 @@ def round_dt(dtin, round_to, python_dt_out=True, mode='round'):
         raise Exception
 
     if python_dt_out:
-        #dtin_out = np.array(dtin_out.dt.to_pydatetime())
-        dtin_out = np.array(pd.to_datetime(dtin_out))
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore",
+                category=FutureWarning,
+                message=".*DatetimeProperties.to_pydatetime.*")
+            dtin_out = np.array(dtin_out.dt.to_pydatetime())
     else:
         dtin_out = np.array(dtin_out)
 
@@ -185,6 +189,9 @@ def round_dt(dtin, round_to, python_dt_out=True, mode='round'):
         return dtin_out[0]
     else:
         return typ(dtin_out)
+
+l = [dt.datetime(2025,1,10,12,34,56), dt.datetime(2025,1,10,12,35,56)]
+round_dt(l,'1h',python_dt_out=False)
 
 
 ##### Nota Bene
