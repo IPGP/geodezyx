@@ -178,7 +178,12 @@ def bdgins_update(
     list_orbite_gin_grr = []
     list_orbex_grr = []
     list_horl_grr = []
-
+    list_bias_grr = []
+    list_erp_grr = []
+    list_prob_grr = []
+    list_nar_grr = []
+    list_sum_grr = []
+    list_gin_grr = []
 
     ###### LIST FILL
     ### full folders
@@ -247,6 +252,12 @@ def bdgins_update(
             list_orbite_gin_grr.append(f"grr{wk}{wkday}.gin.gz")
             list_orbex_grr.append(f"grr{wk}{wkday}.obx.gz")
             list_horl_grr.append(f"hogps_grr{wk}{wkday}.gz")
+            list_bias_grr.append(f"grr{wk}{wkday}.bia.gz")
+            list_erp_grr.append(f"grr{wk}{wkday}.erp.gz")
+            list_prob_grr.append(f"grr{wk}{wkday}.problemes.gz")
+            list_nar_grr.append(f"grr{wk}{wkday}.nar.gz")
+            list_sum_grr.append(f"grr{wk}{wkday}.sum.gz")
+            list_gin_grr.append(f"grr{wk}{wkday}.gin.gz")
 
         date += dt.timedelta(days=1)
 
@@ -277,8 +288,14 @@ def bdgins_update(
 
     if rapid:
         dest_subdir_dic["mesures/gps/orbites/GRR"] = list_orbite_gin_grr
-        dest_subdir_dic["mesures/gps/orbex/GRR"] = list_orbex_grr
-        dest_subdir_dic["mesures/gps/horloges30/GRR"] = list_horl_grr
+        dest_subdir_dic["mesures/gps/orbites/GRR"] = list_orbex_grr
+        dest_subdir_dic["mesures/gps/orbites/GRR"] = list_horl_grr
+        dest_subdir_dic["mesures/gps/orbites/GRR"] = list_bias_grr
+        dest_subdir_dic["mesures/gps/orbites/GRR"] = list_erp_grr
+        dest_subdir_dic["mesures/gps/orbites/GRR"] = list_prob_grr
+        dest_subdir_dic["mesures/gps/orbites/GRR"] = list_nar_grr
+        dest_subdir_dic["mesures/gps/orbites/GRR"] = list_sum_grr
+        dest_subdir_dic["mesures/gps/orbites/GRR"] = list_gin_grr
 
     create_dir(dir_bdgins, subdirs=dest_subdir_dic.keys())
     os.chdir(dir_bdgins)
