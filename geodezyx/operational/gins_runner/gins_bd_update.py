@@ -179,6 +179,7 @@ def bdgins_update(
     list_orbite_gin_grr = []
     list_orbex_grr = []
     list_horl_grr = []
+    list_clk_grr = []
     list_bias_grr = []
     list_erp_grr = []
     list_prob_grr = []
@@ -256,6 +257,8 @@ def bdgins_update(
             list_all_grr.extend(list_orbex_grr)
             list_horl_grr.append(f"hogps_grr{wk}{wkday}.gz")
             list_all_grr.extend(list_horl_grr)
+            list_clk_grr.append(f"grr{wk}{wkday}.clk.gz")
+            list_all_grr.extend(list_clk_grr)
             list_bias_grr.append(f"grr{wk}{wkday}.bia.gz")
             list_all_grr.extend(list_bias_grr)
             list_erp_grr.append(f"grr{wk}{wkday}.erp.gz")
