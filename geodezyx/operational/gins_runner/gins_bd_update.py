@@ -340,6 +340,8 @@ def bdgins_update(
 
     if rapid:
         dest_subdir_dic["mesures/gps/orbites/GRR"] = list_all_grr
+    if ultra:
+        dest_subdir_dic["mesures/gps/orbites/GRU"] = list_all_gru
 
     create_dir(dir_bdgins, subdirs=dest_subdir_dic.keys())
     os.chdir(dir_bdgins)
