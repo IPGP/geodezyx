@@ -409,7 +409,7 @@ def _dir_regular_orbclk(dt_rinex_inp):
     """
 
     if dt_rinex_inp <= dt.datetime.now() - dt.timedelta(days=14):
-        prod_id = "G20"
+        prod_id = "G20R"
     else:
         prod_id = "G20"
 
