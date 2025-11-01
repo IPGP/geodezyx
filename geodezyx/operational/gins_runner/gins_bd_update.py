@@ -238,7 +238,13 @@ def bdgins_update(
     list_tropo_vmf1.append(f"orography_ell")
 
     ### time dependant files
-    while date <= date_end + dt.timedelta(days=2): # 2 days later is need for cat orb/clk
+    if rapid or ultra:
+        extra_days = dt.timedelta(days=0)
+    else:
+        extra_days = dt.timedelta(days=2)  # 2 days later is need for cat orb/clk
+
+
+    while date <= date_end + extra_days:
         day = str(date.day).zfill(2)
         month = str(date.month).zfill(2)
         year = date.year
