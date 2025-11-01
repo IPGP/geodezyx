@@ -103,6 +103,11 @@ def spotgins_run(
     updatebd_login : str
         The login to connect to the remote `tite` GINS server to update the database.
         We assume that SSH keys have been exchanged to automatize the connexion
+    quick_mode : bool, optional
+        If True, quick mode will be enabled.
+        Quick mode allows for faster latency processing, using RAPID/ULTRA products.
+        but it is not a SPOTGINS official mode anymore.
+        Default is False.
     Returns
     -------
     None

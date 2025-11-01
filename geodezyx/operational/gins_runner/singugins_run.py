@@ -69,6 +69,11 @@ def singugins_run(
     no_rnx3 : bool, optional
         If True, RINEX3 files will not be processed.
         Default is False (RINEX3 files will be processed).
+    quick_mode : bool, optional
+        If True, quick mode will be enabled.
+        Quick mode allows for faster latency processing, using RAPID/ULTRA products.
+        but it is not a SPOTGINS official mode anymore.
+        Default is True.
 
     Returns
     -------
@@ -200,6 +205,15 @@ def main():
         help="If True, RINEX3 files will not be processed.",
     )
 
+    parser.add_argument(
+        "-q",
+        "--quick",
+        action="store_true",
+        help="If True, quick mode will be enabled."
+        "Quick mode allows for faster latency processing, using RAPID/ULTRA products."
+        "but it is not a SPOTGINS official mode anymore."
+    )
+
     args = parser.parse_args()
 
     # Convert spotgins_run_kwargs from JSON string to dictionary
@@ -221,6 +235,7 @@ def main():
         force=args.force,
         no_rnx2=args.no_rnx2,
         no_rnx3=args.no_rnx3,
+        quick_mode=args.quick,
     )
 
 
