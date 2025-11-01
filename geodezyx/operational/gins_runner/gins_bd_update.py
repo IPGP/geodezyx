@@ -244,9 +244,9 @@ def bdgins_update(
         list_horl_g20.append(f"hogps_g20{wk}{wkday}")
         #### Needed for the main GINS calculation - RAPID
         if rapid:
-            list_orbite_gin_grr.append(f"GRR{wk}{wkday}.gin")
-            list_orbex_grr.append(f"GRR{wk}{wkday}.obx.gz")
-            list_horl_grr.append(f"hogps_grr{wk}{wkday}")
+            list_orbite_gin_grr.append(f"grr{wk}{wkday}.gin.gz")
+            list_orbex_grr.append(f"grr{wk}{wkday}.obx.gz")
+            list_horl_grr.append(f"hogps_grr{wk}{wkday}.gz")
 
         date += dt.timedelta(days=1)
 
