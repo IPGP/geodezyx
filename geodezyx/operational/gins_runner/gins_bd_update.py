@@ -102,7 +102,7 @@ def bdgins_update(
     login="",
     password="",
     compress=False,
-    rapid=False,
+    rapid=True,
 ):
     """
     Update the BDGINS repository with the necessary files
