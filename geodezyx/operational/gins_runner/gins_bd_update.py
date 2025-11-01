@@ -102,8 +102,8 @@ def bdgins_update(
     login="",
     password="",
     compress=False,
-    rapid=True,
-    ultra=True,
+    rapid=False,
+    ultra=False,
 ):
     """
     Update the BDGINS repository with the necessary files
@@ -127,6 +127,10 @@ def bdgins_update(
         Whether to gzip-compress the clock files.
         experimental, and not recommended
         Defaults to False.
+    rapid : bool, optional
+        download RAPID products. Defaults to False.
+    ultra : bool, optional
+        download ULTRA products. Defaults to False.
     
     Returns
     -------
@@ -462,12 +466,31 @@ def main():
         "-c",
         "--compress",
         help=(
-            "Flag to enable gzip compression of clock files. "
+            "Enable gzip compression of clock files. "
             "Defaults to `False` and is experimental."
         ),
         action="store_true",
         default=False,
     )
+
+    parser.add_argument(
+        "-r",
+        "--rapid",
+        help="Enable downloading RAPID products.",
+        action="store_true",
+        dest="rapid",
+        default=False,
+    )
+
+    parser.add_argument(
+        "-u",
+        "--ultra",
+        help="Enable downloading ULTRA products.",
+        action="store_true",
+        dest="ultra",
+        default=False,
+    )
+
     args = parser.parse_args()
 
     bdgins_update(
@@ -477,6 +500,8 @@ def main():
         password=args.password,
         dir_bdgins=args.dir_bdgins,
         compress=args.compress,
+        rapid=args.rapid,
+        ultra=args.ultra,
     )
 
 
