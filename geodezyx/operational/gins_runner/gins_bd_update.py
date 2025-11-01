@@ -103,6 +103,7 @@ def bdgins_update(
     password="",
     compress=False,
     rapid=True,
+    ultra=True,
 ):
     """
     Update the BDGINS repository with the necessary files
@@ -186,6 +187,21 @@ def bdgins_update(
     list_nar_grr = []
     list_sum_grr = []
     list_gin_grr = []
+
+    list_all_gru = []
+    list_orbite_gin_gru = []
+    list_orbex_gru = []
+    list_horl_gru = []
+    list_clk_gru = []
+    list_bias_gru = []
+    list_erp_gru = []
+    list_prob_gru = []
+    list_nar_gru = []
+    list_sum_gru = []
+    list_gin_gru = []
+
+
+
 
     ###### LIST FILL
     ### full folders
@@ -271,6 +287,29 @@ def bdgins_update(
             list_all_grr.extend(list_sum_grr)
             list_gin_grr.append(f"grr{wk}{wkday}.gin.gz")
             list_all_grr.extend(list_gin_grr)
+
+        if ultra:
+            for hh in ["00", "06", "12", "18"]:
+                list_orbite_gin_gru.append(f"gru{wk}{wkday}_{hh}.gin.gz")
+                list_all_gru.extend(list_orbite_gin_gru)
+                list_orbex_gru.append(f"gru{wk}{wkday}_{hh}.obx.gz")
+                list_all_gru.extend(list_orbex_gru)
+                list_horl_gru.append(f"hogps_gru{wk}{wkday}_{hh}.gz")
+                list_all_gru.extend(list_horl_gru)
+                list_clk_gru.append(f"gru{wk}{wkday}_{hh}.clk.gz")
+                list_all_gru.extend(list_clk_gru)
+                list_bias_gru.append(f"gru{wk}{wkday}_{hh}.bia.gz")
+                list_all_gru.extend(list_bias_gru)
+                list_erp_gru.append(f"gru{wk}{wkday}_{hh}.erp.gz")
+                list_all_gru.extend(list_erp_gru)
+                list_prob_gru.append(f"gru{wk}{wkday}_{hh}.problemes.gz")
+                list_all_gru.extend(list_prob_gru)
+                list_nar_gru.append(f"gru{wk}{wkday}_{hh}.nar.gz")
+                list_all_gru.extend(list_nar_gru)
+                list_sum_gru.append(f"gru{wk}{wkday}_{hh}.sum.gz")
+                list_all_gru.extend(list_sum_gru)
+                list_gin_gru.append(f"gru{wk}{wkday}_{hh}.gin.gz")
+                list_all_gru.extend(list_gin_gru)
 
         date += dt.timedelta(days=1)
 
