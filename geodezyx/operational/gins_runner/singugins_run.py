@@ -27,6 +27,7 @@ def singugins_run(
     spotgins_run_kwargs={},
     no_rnx2=False,
     no_rnx3=False,
+    quick_mode=True,
 ):
     """
     Run the SPOTGINS process within a SINGUGINS container.
@@ -95,6 +96,7 @@ def singugins_run(
         no_concat_orb_clk=no_concat_orb_clk,
         verbose=verbose,
         force=force,
+        quick_mode=quick_mode,
         **spotgins_run_kwargs,
     )
 
