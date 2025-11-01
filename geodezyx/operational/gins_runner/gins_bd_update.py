@@ -102,6 +102,7 @@ def bdgins_update(
     login="",
     password="",
     compress=False,
+    rapid=False,
 ):
     """
     Update the BDGINS repository with the necessary files
@@ -169,10 +170,15 @@ def bdgins_update(
     # list_orbite_sp3_mg3 = [] # not needed after v25_1
     list_orbite_sp3_grg = []
     list_orbite_sp3_g20 = []
-    list_orbite_gin_g20 = []
 
+    list_orbite_gin_g20 = []
     list_orbex_g20 = []
     list_horl_g20 = []
+
+    list_orbite_gin_grr = []
+    list_orbex_grr = []
+    list_horl_grr = []
+
 
     ###### LIST FILL
     ### full folders
@@ -236,6 +242,12 @@ def bdgins_update(
         list_orbite_gin_g20.append(f"G20{wk}{wkday}.gin")
         list_orbex_g20.append(f"G20{wk}{wkday}.obx.gz")
         list_horl_g20.append(f"hogps_g20{wk}{wkday}")
+        #### Needed for the main GINS calculation - RAPID
+        if rapid:
+            list_orbite_gin_grr.append(f"GRR{wk}{wkday}.gin")
+            list_orbex_grr.append(f"GRR{wk}{wkday}.obx.gz")
+            list_horl_grr.append(f"hogps_grr{wk}{wkday}")
+
         date += dt.timedelta(days=1)
 
     list_orbite_g20 = list_orbite_gin_g20 + list_orbite_sp3_g20
@@ -260,7 +272,13 @@ def bdgins_update(
         "mesures/gps/orbites/G20": list_orbite_g20,
         "mesures/gps/orbex/G20": list_orbex_g20,
         "mesures/gps/horloges30/G20": list_horl_g20,
+        ### RAPID
     }
+
+    if rapid:
+        dest_subdir_dic["mesures/gps/orbites/GRR"] = list_orbite_gin_grr
+        dest_subdir_dic["mesures/gps/orbex/GRR"] = list_orbex_grr
+        dest_subdir_dic["mesures/gps/horloges30/GRR"] = list_horl_grr
 
     create_dir(dir_bdgins, subdirs=dest_subdir_dic.keys())
     os.chdir(dir_bdgins)
@@ -281,7 +299,7 @@ def bdgins_update(
             password,
         )
 
-    # quick and dirty move for the PRAIRIE SP3 (VALIDE_25_1
+    # quick and dirty move for the PRAIRIE SP3 (VALIDE_25_1)
     dir_gin_data = os.path.join(gynscmn.get_gin_path(True), "data")
     dir_gin_sp3_g20 = os.path.join(dir_bdgins, "mesures/gps/orbites/G20")
     dir_gin_sp3_grg = os.path.join(dir_bdgins, "orbites/SP3/igs")
