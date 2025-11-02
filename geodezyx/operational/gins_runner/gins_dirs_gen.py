@@ -352,8 +352,6 @@ def gen_dirs_rnxs(
         else:
             orbpath, horpath, idprod = _dir_regular_orbclk(rnx_dt)
 
-        print("AAAAAAAA", rnx_dt, idprod)
-
         if not perso_orbclk and idprod != "G20":
             dir_dic["model"]["environment"]["ionex_files"] = "unused"
 
@@ -417,8 +415,8 @@ def _dir_regular_orbclk(dt_rinex_inp):
     import datetime as dt
     if dt.datetime.now() - dt_rinex_inp >= dt.timedelta(days=14):
         prod_id = "G20"
-    elif dt.datetime.now() - dt_rinex_inp <= dt.timedelta(days=4):
-        prod_id = "GRU"
+    #elif dt.datetime.now() - dt_rinex_inp <= dt.timedelta(days=4):
+    #    prod_id = "GRU"
     else:
         prod_id = "G20R"
 
