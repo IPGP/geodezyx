@@ -408,8 +408,11 @@ def _dir_regular_orbclk(dt_rinex_inp):
     Get the regular orbits and clocks path for a given date
     """
 
-    if dt_rinex_inp <= dt.datetime.now() - dt.timedelta(days=14):
+    import datetime as dt
+    if dt.datetime.now() - dt_rinex_inp >= dt.timedelta(days=14):
         prod_id = "G20"
+    elif dt.datetime.now() - dt_rinex_inp <= dt.timedelta(days=2):
+        prod_id = "GRU"
     else:
         prod_id = "G20R"
 
