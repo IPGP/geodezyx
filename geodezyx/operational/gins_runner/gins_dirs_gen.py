@@ -350,6 +350,7 @@ def gen_dirs_rnxs(
             )
             idprod = ""
         else:
+            print("AAAAAAAA", rnx_dt, idprod)
             orbpath, horpath, idprod = _dir_regular_orbclk(rnx_dt)
 
         if not perso_orbclk and idprod != "G20":
