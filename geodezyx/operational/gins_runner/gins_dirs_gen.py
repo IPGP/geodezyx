@@ -350,8 +350,9 @@ def gen_dirs_rnxs(
             )
             idprod = ""
         else:
-            print("AAAAAAAA", rnx_dt, idprod)
             orbpath, horpath, idprod = _dir_regular_orbclk(rnx_dt)
+
+        print("AAAAAAAA", rnx_dt, idprod)
 
         if not perso_orbclk and idprod != "G20":
             dir_dic["model"]["environment"]["ionex_files"] = "unused"
