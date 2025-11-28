@@ -29,6 +29,7 @@ import re
 import shutil
 import string
 import subprocess
+import io
 
 import dateutil
 import hatanaka
@@ -44,6 +45,28 @@ log = logging.getLogger("geodezyx")
 
 ##########  END IMPORT  ##########
 
+
+def rinex_open(rnx_path_inp):
+    """
+    Open RINEX content and return a text in-memory file (`io.StringIO`).
+
+    Parameters
+    ----------
+    rnx_path_inp : str or pathlib.Path
+        Path to the RINEX file. Can be a compressed RINEX file
+        (detected by `conv.rinex_regex_search_tester`).
+
+    Returns
+    -------
+    io.StringIO
+        An in-memory text file (UTF-8 decoded) ready for reading.
+    """
+    if conv.rinex_regex_search_tester(rnx_path_inp, compressed=True):
+        rnx_use = io.StringIO(hatanaka.decompress(rnx_path_inp).decode("utf-8"))
+    else:
+        rnx_use = io.StringIO(open(rnx_path_inp, 'r', encoding="utf-8").read())
+
+    return rnx_use
 
 def read_rnx_epoch_line(line, rnx2=True):
     """
@@ -318,6 +341,13 @@ def rinex_session_id(first_epoch, last_epoch, full_mode=False):
             )
 
     return rnx_interval_ext
+
+def check_if_compressed_rinex(rinex_path):
+    """
+    Obsolete function, use conv.rinex_regex_search_tester instead
+    """
+    boolout = bool(re.search(r".*((d|o)\.(Z)|(gz))$", rinex_path))
+    return boolout
 
 
 def rinex_spliter_gfzrnx(

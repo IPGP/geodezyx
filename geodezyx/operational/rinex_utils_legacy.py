@@ -376,10 +376,6 @@ def rinex_renamer(input_rinex_path, output_directory, stat_out_name="", remove=F
     return output_rinex_path
 
 
-def check_if_compressed_rinex(rinex_path):
-    boolout = bool(re.search(r".*((d|o)\.(Z)|(gz))$", rinex_path))
-    return boolout
-
 
 def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX", verbose=True):
     """assuming that CRZ2RNX is in the system PATH per default"""
