@@ -48,13 +48,13 @@ def download_rsync(
             "--verbose",
             "--compress",
             "--progress",
-            # "--relative",
+            "--relative",
             "--copy-links",
             "--no-perms",
             "--no-owner",
             "--no-group",
             "--omit-dir-times",
-            "--keep-dirlinks",
+            #"--keep-dirlinks",
         ]  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
@@ -208,7 +208,7 @@ def bdgins_update(
     ###### LIST FILL
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
-    ## list_antex.extend(["/"]) ## temporary off because updated continuously
+    list_antex.extend(["igs20.atx"]) ## temporary off because updated continuously
     ## list_constell.extend(["/"])
     ## list_exe_ppp.extend(["/"])
     ## list_lunisolaires.extend(["/"]) ## temporary off because updated continuously
@@ -221,7 +221,7 @@ def bdgins_update(
     # some of them are a redundancy since they must be downloaded in the full folders
     list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
     list_misc.extend([f"pole/nominal_NRO"])
-    list_misc.extend([f"ANTEX/igs20.atx"])
+    #list_misc.extend([f"ANTEX/igs20.atx"])
     list_misc.extend([f"EXE_PPP/valap_static"])
     list_misc.extend([f"macromod/gnss.xml"])
     list_misc.extend([f"lunisolaires/de440bdlf.ad"])
@@ -326,7 +326,7 @@ def bdgins_update(
     ###### DESTINATION FOLDERS
     dest_subdir_dic = {
         ### full folders
-        #"ANTEX": list_antex,
+        "ANTEX": list_antex,
         #"constell": list_constell,
         #"EXE_PPP": list_exe_ppp,
         #"lunisolaires": list_lunisolaires,
