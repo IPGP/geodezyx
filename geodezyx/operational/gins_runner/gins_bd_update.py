@@ -48,7 +48,7 @@ def download_rsync(
             "--verbose",
             "--compress",
             "--progress",
-            "--relative",
+            #"--relative",
             "--copy-links",
             "--no-perms",
             "--no-owner",
