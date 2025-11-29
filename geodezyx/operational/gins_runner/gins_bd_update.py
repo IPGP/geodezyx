@@ -209,23 +209,6 @@ def bdgins_update(
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
     list_antex.extend(["igs20.atx"]) ## temporary off because updated continuously
-    ## list_constell.extend(["/"])
-    ## list_exe_ppp.extend(["/"])
-    ## list_lunisolaires.extend(["/"]) ## temporary off because updated continuously
-    ## list_macromod.extend(["/"])
-    ## list_maree_polaire.extend(["/"])
-    ## list_pole.extend(["/"])
-    list_prairie.extend(["/"])
-
-    ### misc files: the needed files are considered individually
-    # some of them are a redundancy since they must be downloaded in the full folders
-    list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
-    list_misc.extend([f"pole/nominal_NRO"])
-    #list_misc.extend([f"ANTEX/igs20.atx"])
-    list_misc.extend([f"EXE_PPP/valap_static"])
-    list_misc.extend([f"macromod/gnss.xml"])
-    list_misc.extend([f"lunisolaires/de440bdlf.ad"])
-    list_misc.extend([f"maree_polaire/loading/nominal"])
     l_fil_cons = [
         "constellation_gps.infos",
         "histocom.infos",
@@ -233,7 +216,24 @@ def bdgins_update(
         "historik_glonass",
         "igs_satellite_metadata.snx",
     ]
-    list_misc.extend(["constell/" + f for f in l_fil_cons])
+    list_constell.extend(l_fil_cons)
+    list_exe_ppp.extend(["valap_static"])
+    list_lunisolaires.extend(["de440bdlf.ad"]) ## temporary off because updated continuously
+    list_macromod.extend(["gnss.xml"])
+    list_maree_polaire.extend(["nominal"])
+    list_pole.extend(["nominal_NRO"])
+    list_prairie.extend(["igs_satellite_metadata.snx"])
+
+    ### misc files: the needed files are considered individually
+    # some of them are a redundancy since they must be downloaded in the full folders
+    #list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
+    #list_misc.extend([f"pole/nominal_NRO"])
+    #list_misc.extend([f"ANTEX/igs20.atx"])
+    #list_misc.extend([f"EXE_PPP/valap_static"])
+    # list_misc.extend([f"macromod/gnss.xml"])
+    # list_misc.extend([f"lunisolaires/de440bdlf.ad"])
+    #list_misc.extend([f"maree_polaire/loading/nominal"])
+    #list_misc.extend(["constell/" + f for f in l_fil_cons])
 
     # here is an hybrid tropo/misc file
     list_tropo_vmf1.append(f"orography_ell")
@@ -327,11 +327,11 @@ def bdgins_update(
     dest_subdir_dic = {
         ### full folders
         "ANTEX": list_antex,
-        #"constell": list_constell,
-        #"EXE_PPP": list_exe_ppp,
-        #"lunisolaires": list_lunisolaires,
-        #"macromod": list_macromod,
-        #"maree_polaire": list_maree_polaire,
+        "constell": list_constell,
+        "EXE_PPP": list_exe_ppp,
+        "lunisolaires": list_lunisolaires,
+        "macromod": list_macromod,
+        "maree_polaire/loading": list_maree_polaire,
         "prairie": list_prairie,
         ### misc files
         ".": list_misc,  ## for misc files, destination is in the input path (.)
