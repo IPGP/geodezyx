@@ -81,8 +81,8 @@ def download_rsync(
         + ["--files-from", tmp_rsync_file_lis]
         + [f"{remote_source}/./", f"{local_destination}/"]
     )
-
-    log.info("Rsync command: %s", " ".join(rsync_cmd))
+    if False:
+        log.info("Rsync command: %s", " ".join(rsync_cmd))
 
     # Run the rsync command
     process = subprocess.run(rsync_cmd, stderr=sys.stderr, stdout=sys.stdout, text=True)
