@@ -412,7 +412,7 @@ def create_dir(parent_dir, subdirs):
 
     for subdir in subdirs:
         subdir_fullpath = os.path.join(parent_dir, subdir)
-        if not os.path.exists(subdir_fullpath):
+        if not os.path.exists(subdir_fullpath) and not os.path.islink(subdir_fullpath):
             os.makedirs(subdir_fullpath)
 
 
