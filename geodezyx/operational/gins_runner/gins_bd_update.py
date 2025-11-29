@@ -221,12 +221,11 @@ def bdgins_update(
     list_lunisolaires.extend(["de440bdlf.ad"]) ## temporary off because updated continuously
     list_macromod.extend(["gnss.xml"])
     list_maree_polaire.extend(["nominal"])
-    list_pole.extend(["nominal_NRO"])
-    list_prairie.extend(["igs_satellite_metadata.snx"])
+    list_pole.extend(["nominal_NRO", "liste_sauts_tucs_1s.dat"])
+    #list_prairie.extend(["igs_satellite_metadata.snx"])
 
     ### misc files: the needed files are considered individually
     # some of them are a redundancy since they must be downloaded in the full folders
-    #list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
     #list_misc.extend([f"pole/nominal_NRO"])
     #list_misc.extend([f"ANTEX/igs20.atx"])
     #list_misc.extend([f"EXE_PPP/valap_static"])
@@ -234,6 +233,7 @@ def bdgins_update(
     # list_misc.extend([f"lunisolaires/de440bdlf.ad"])
     #list_misc.extend([f"maree_polaire/loading/nominal"])
     #list_misc.extend(["constell/" + f for f in l_fil_cons])
+    list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
 
     # here is an hybrid tropo/misc file
     list_tropo_vmf1.append(f"orography_ell")
@@ -332,7 +332,7 @@ def bdgins_update(
         "lunisolaires": list_lunisolaires,
         "macromod": list_macromod,
         "maree_polaire/loading": list_maree_polaire,
-        "prairie": list_prairie,
+        #"prairie": list_prairie,
         ### misc files
         ".": list_misc,  ## for misc files, destination is in the input path (.)
         ### time dependant files
