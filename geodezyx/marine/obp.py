@@ -102,6 +102,10 @@ def butter_lowpass(cutoff, fs, order=5):
 
     return b, a
 
+def padlen(data_inp):
+    #return len(data_inp) - 1
+    return None
+
 def butter_highpass_filtfilt(data, cutoff, fs, order=4):
     """
     Applies a highpass Butterworth filter to the data using forward and backward filtering.
@@ -123,7 +127,7 @@ def butter_highpass_filtfilt(data, cutoff, fs, order=4):
         The filtered data.
     """
     b, a = butter_highpass(cutoff, fs, order=order)
-    y = scipy.signal.filtfilt(b, a, data)
+    y = scipy.signal.filtfilt(b, a, data, padlen=padlen(data), padtype=None)
     return y
 
 def butter_lowpass_filtfilt(data, cutoff, fs, order=4):
@@ -147,7 +151,7 @@ def butter_lowpass_filtfilt(data, cutoff, fs, order=4):
         The filtered data.
     """
     b, a = butter_lowpass(cutoff, fs, order=order)
-    y = scipy.signal.filtfilt(b, a, data)
+    y = scipy.signal.filtfilt(b, a, data, padlen=padlen(data))
     return y
 
 def butter_bandpass(lowcut, highcut, fs, order=3):
@@ -233,17 +237,19 @@ def butterworth(df, t0=3*24*3600, t1=10*24*3600, kind='bandpass', order=4):
         return
     else:
         fs = 1/(float(difftime[0])/1e9)
+        
+    vals = df.values.squeeze()
 
     if kind == 'highpass':
         cut = 1/t0
-        y = butter_highpass_filtfilt(df.values, cut, fs, order=order)
+        y = butter_highpass_filtfilt(vals, cut, fs, order=order)
     elif kind == 'lowpass':
         cut = 1/t0
-        y = butter_lowpass_filtfilt(df.values, cut, fs, order=order)
+        y = butter_lowpass_filtfilt(vals, cut, fs, order=order)
     elif kind == 'bandpass':
         lowcut = 1/t1
         highcut = 1/t0
-        y = butter_bandpass_filtfilt(df.values, lowcut, highcut, fs, order=order)
+        y = butter_bandpass_filtfilt(vals, lowcut, highcut, fs, order=order)
     else:
         print(f'Invalid filter type : {kind}. Must be highpass, lowpass, or bandpass.')
         return
@@ -583,7 +589,9 @@ def compute_spectrogram(df, max_period=45, nchunks=3600*6):
     """
     from scipy.signal import spectrogram
 
-    f, t, sxx = spectrogram(df.values, nperseg=nchunks, scaling='density')
+    vals = df.values.squeeze()
+
+    f, t, sxx = spectrogram(vals, nperseg=nchunks, scaling='density')
     p = (1/f[1:])
     sxx = sxx[1:]
     i = np.argmin(np.abs(p - max_period))
