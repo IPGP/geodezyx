@@ -6,9 +6,6 @@ Created on 23/09/2025 12:24:23
 @author: psakic
 """
 
-import hatanaka
-
-
 import geodezyx.operational as opera
 import geodezyx.conv as conv
 import datetime as dt
@@ -46,8 +43,8 @@ def rinex_check(rnx_path_inp):
 
     return bool_final
 
-p = "/home/psakicki/aaa_FOURBI/ZIM3/ZIM300CHE_R_20243660000_01D_30S_MO.crx.gz"
-p = "/home/psakicki/aaa_FOURBI/ZIM3/ZIM300CHE_R_20243660000_01D_30S_MO.crx.gz"
-p = "/home/psakicki/aaa_FOURBI/ZIM3/ZIM300CHE_R_20243660000_01D_30S_MO.rnx"
-
-rinex_check(p)
+# p = "/home/psakicki/aaa_FOURBI/ZIM3/ZIM300CHE_R_20243660000_01D_30S_MO.crx.gz"
+# p = "/home/psakicki/aaa_FOURBI/ZIM3/ZIM300CHE_R_20243660000_01D_30S_MO.crx.gz"
+# p = "/home/psakicki/aaa_FOURBI/ZIM3/ZIM300CHE_R_20243660000_01D_30S_MO.rnx"
+#
+# rinex_check(p)
