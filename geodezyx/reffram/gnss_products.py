@@ -1569,7 +1569,7 @@ def orb_df_crf2trf(df_orb_inp, df_eop_inp, time_scale_inp="gps", inv_trf2crf=Fal
 
     df_orb = df_orb_inp.copy()
 
-    import geodezyx.reffram.sofa18 as sofa
+    import geodezyx.reffram.sofa as sofa
 
     ### bring everything to UTC
     if time_scale_inp.lower() == "gps":
