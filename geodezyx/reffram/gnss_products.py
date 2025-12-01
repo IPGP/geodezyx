@@ -1588,38 +1588,40 @@ def orb_df_crf2trf(df_orb_inp, df_eop_inp, time_scale_inp="gps", inv_trf2crf=Fal
     ### Do the EOP interpolation
     df_eop_intrp = eop_interpotate(df_eop_inp, df_orb["epoch_utc"])
     ### bring the EOP to radians
-    Xeop = np.deg2rad(conv.arcsec2deg(df_eop_intrp["x"]))
-    Yeop = np.deg2rad(conv.arcsec2deg(df_eop_intrp["y"]))
+    xeop = np.deg2rad(conv.arcsec2deg(df_eop_intrp["x"]))
+    yeop = np.deg2rad(conv.arcsec2deg(df_eop_intrp["y"]))
 
-    TRFstk = []
+    trf_stk = []
 
     for tt, ut1, xeop, yeop, x, y, z in zip(
         df_orb["epoch_tt"],
         df_orb["epoch_ut1"],
-        Xeop,
-        Yeop,
+        xeop,
+        yeop,
         df_orb["x"],
         df_orb["y"],
         df_orb["z"],
     ):
 
-        MatCRF22TRF = sofa.iau_c2t06a(
+        mat_crf2trf = sofa.iau_c2t06a(
             2400000.5, conv.dt2mjd(tt), 2400000.5, conv.dt2mjd(ut1), xeop, yeop
         )
         if inv_trf2crf:
-            MatCRF22TRF = np.linalg.inv(MatCRF22TRF)
+            mat_use = np.linalg.inv(mat_crf2trf)
+        else: # regular case
+            mat_use = mat_crf2trf
 
-        CRF = np.array([x, y, z])
-        TRF = np.dot(MatCRF22TRF, CRF)
+        crf = np.array([x, y, z])
+        trf = np.dot(mat_use, crf)
 
-        TRFstk.append(TRF)
+        trf_stk.append(trf)
 
     ### Final stack and replacement
-    TRFall = np.vstack(TRFstk)
-    DForb_out = df_orb_inp.copy()
-    DForb_out[["x", "y", "z"]] = TRFall
+    trf_all = np.vstack(trf_stk)
+    df_orb_out = df_orb_inp.copy()
+    df_orb_out[["x", "y", "z"]] = trf_all
 
-    return DForb_out
+    return df_orb_out
 
 
 #### FCT DEF
