@@ -5,7 +5,10 @@
 **Version: 5.0.0**  
 **Date: 2025-08-28**  
 
-**Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur (GFZ, Potsdam, Germany), Samuel Nahmani (IPGP/IGN, Paris, France), 
+**Authors:** 
+* Pierre Sakic (IPGP, Paris, France)
+* Gustavo Mansur (GFZ, Potsdam, Germany)
+* Samuel Nahmani (IPGP/IGN, Paris, France) 
 
 **Documentation:** [https://ipgp.github.io/geodezyx](https://ipgp.github.io/geodezyx/)
 
