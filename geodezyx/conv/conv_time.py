@@ -621,6 +621,7 @@ def tup_or_lis2dt(lisin):
     lisin : iterable (tuple/list/numpy.array) of string.
         list of Date-looking strings
         like : ["2018","12","31","12","30","00"]
+
     Returns
     -------
     L : list of datetime
