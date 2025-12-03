@@ -165,7 +165,8 @@ def main():
         "--nprocs",
         type=int,
         default=8,
-        help="Number of processes to use.",
+        help="Number of processes to use. "
+        "Default is 8.",
     )
     parser.add_argument(
         "-nu",
