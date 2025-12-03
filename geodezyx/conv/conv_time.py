@@ -297,7 +297,10 @@ def dt2posix(dtin, out_array=False):
 
     else:
         typ = utils.get_type_smart(dtin)
-        lis = typ([dt2posix(e) for e in dtin])
+        #lis = typ([dt2posix(e) for e in dtin])
+        import pandas as pd
+        lis = typ((pd.Series(dtin) - dt.datetime(1970,1,1,0,0,0)).dt.total_seconds())
+        
         if out_array:
             return np.array(lis)
         else:
