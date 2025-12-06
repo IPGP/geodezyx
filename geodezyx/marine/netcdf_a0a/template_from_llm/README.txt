@@ -1,2 +1,0 @@
-osi = OceanSITES
-cop = Copernicus
