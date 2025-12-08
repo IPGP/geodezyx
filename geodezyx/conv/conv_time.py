@@ -2637,6 +2637,88 @@ def numpy_dt2dt(numpy_dt_in):
         import pandas as pd
         return pd.Timestamp(numpy_dt_in).to_pydatetime()
 
+def time_obj_tester(delta=False, out_iterable=list, start=None):
+    """
+    Generate test time objects in different formats
+    (datetime, numpy.datetime64, pandas.Timestamp).
+
+    Parameters
+    ----------
+    delta : bool, optional
+        If True, return time deltas relative to the `start` time.
+        Default is False.
+    out_iterable : callable, optional
+        A callable that determines the type of iterable to return (e.g., list, tuple).
+        Default is list.
+    start : datetime.datetime, optional
+        The starting datetime for the generated time objects.
+        If None, defaults to January 1, 2020, 00:00:00.
+
+    Returns
+    -------
+    tuple
+        A tuple containing three iterables:
+        - times_datetime: Iterable of datetime.datetime objects.
+        - times_datetime_numpy: Iterable of numpy.datetime64 objects.
+        - times_pandas_timestamp: Iterable of pandas.Timestamp objects.
+
+    Notes
+    -----
+    - The function generates 10 time objects, each separated by 60 seconds.
+    - If `delta` is True, the returned values are time deltas relative to the `start` time.
+    - The `out_iterable` parameter allows customization of the output container type (e.g., list, tuple).
+
+    Examples
+    --------
+    >>> time_obj_tester()
+    ([datetime.datetime(2020, 1, 1, 0, 0),
+      datetime.datetime(2020, 1, 1, 0, 1),
+      ...],
+     [numpy.datetime64('2020-01-01T00:00:00'),
+      numpy.datetime64('2020-01-01T00:01:00'),
+      ...],
+     [Timestamp('2020-01-01 00:00:00'),
+      Timestamp('2020-01-01 00:01:00'),
+      ...])
+
+    >>> time_obj_tester(delta=True, out_iterable=tuple)
+    ((datetime.timedelta(0),
+      datetime.timedelta(seconds=60),
+      ...),
+     (numpy.timedelta64(0,'s'),
+      numpy.timedelta64(60,'s'),
+      ...),
+     (Timedelta('0 days 00:00:00'),
+      Timedelta('0 days 00:01:00'),
+      ...))
+    """
+
+    import pandas as pd
+
+    if start is None:
+        start = dt.datetime(2020, 1, 1, 0, 0, 0)
+
+    # Generate a list of datetime objects, each separated by 60 seconds
+    times_datetime = []
+    for i in range(10):
+        times_datetime.append(start + dt.timedelta(seconds=i * 60))
+
+    # Convert the list of datetime objects to the specified iterable type
+    times_datetime = out_iterable(times_datetime)
+
+    # Convert the datetime objects to numpy.datetime64 and pandas.Timestamp formats
+    times_datetime_numpy = out_iterable([np.datetime64(t) for t in times_datetime])
+    times_pandas_timestamp = out_iterable([pd.Timestamp(t) for t in times_datetime])
+
+    # If delta is True, calculate time deltas relative to the start time
+    if delta:
+        times_datetime = out_iterable([t - start for t in times_datetime])
+        times_datetime_numpy = out_iterable([t - np.datetime64(start) for t in times_datetime_numpy])
+        times_pandas_timestamp = out_iterable([t - pd.Timestamp(start) for t in times_pandas_timestamp])
+
+    # Return the generated time objects in the specified formats
+    return times_datetime, times_datetime_numpy, times_pandas_timestamp
+
 
 ##### Nota Bene
 ##### numpy_datetime2dt & datetime64_numpy2dt have been moved
