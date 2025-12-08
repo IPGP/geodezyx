@@ -132,18 +132,18 @@ def export_obp_to_netcdf(
     colnam_temp_baro = column_mapping.get("temperature_barometer")
 
     # Prepare data arrays
-    val_pres = df_obp[colnam_pres].values * conversion_factors["pressure"]
-    val_temp_sens = df_obp[colnam_temp_sens].values * conversion_factors["temperature_sensor"]
-    val_temp_seaw = df_obp[colnam_temp_seaw].values * conversion_factors["temperature_seawater"]
+    val_pres = df_obp[colnam_pres].values * conversion_factors.get("pressure", 1)
+    val_temp_sens = df_obp[colnam_temp_sens].values * conversion_factors.get("temperature_sensor", 1)
+    val_temp_seaw = df_obp[colnam_temp_seaw].values * conversion_factors.get("temperature_seawater", 1)
 
     # Barometer data (optional)
     if colnam_pres_baro is not None and len(colnam_pres_baro) > 0:
-        val_pres_baro = df_obp[colnam_pres_baro].values * conversion_factors.get("pressure_barometer", 0.01)
+        val_pres_baro = df_obp[colnam_pres_baro].values * conversion_factors.get("pressure_barometer", 1)
     else:
         val_pres_baro = None
 
     if colnam_temp_baro is not None and len(colnam_temp_baro) > 0:
-        val_temp_baro = df_obp[colnam_temp_baro].values
+        val_temp_baro = df_obp[colnam_temp_baro].values * conversion_factors.get("temperature_barometer", 1)
     else:
         val_temp_baro = None
 
