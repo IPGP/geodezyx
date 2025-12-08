@@ -14,15 +14,15 @@ import pandas as pd
 # =============================================================================
 
 # Choose which example to run
-run_halios = False
-run_a0a_rbr = True
+run_halios = True
+run_a0a_rbr = False
 
 # =========================================================================
 # Example 1: HALIOS (IPGP)
 # =========================================================================
 if run_halios:
     # Define file paths
-    step = "100"  # "1","10","100"
+    step = "1"  # "1","10","100"
     p_pres = f"/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/paros_p_{step}s_cat.pkl"
     p_temp_sns = "/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/paros_p_temp_cat.pkl"
     p_temp_sea = "/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/paros_p2t_1s_cat.pkl"
@@ -82,7 +82,7 @@ if run_halios:
 # =========================================================================
 if run_a0a_rbr:
     # Define file path
-    p_a0a = "/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0100_from_Treden/RawData/transfer_3167556_files_8a99b7f8/204657_20210409_1130_data_head.txt"
+    p_a0a = "/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0100_from_Treden/RawData/transfer_3167556_files_8a99b7f8/204657_20210409_1130_data.txt"
     df_a0a = pd.read_csv(p_a0a, sep=",")
     df_a0a["Time"] = pd.to_datetime(df_a0a["Time"])
 
@@ -133,5 +133,4 @@ if run_a0a_rbr:
         output_dir=output_dir,
         station_config=station_config,
         conversion_factors=conversion_factors,
-        keep_sensor_dimension=True
     )

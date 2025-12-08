@@ -147,7 +147,10 @@ def export_obp_to_netcdf(
     else:
         val_temp_baro = None
 
-    num_sensors = len(colnam_pres)
+    if utils.is_iterable(colnam_pres):
+        num_sensors = len(colnam_pres)
+    else:
+        num_sensors = 1
 
     # Quality flags (0 = good, 1 = questionable, 2 = bad)
     if quality_flags is None:
@@ -375,9 +378,9 @@ def read_halios_first_deploy(
     # Create column mapping
     column_mapping_out = {
         "time": time_col,
-        "pressure_seafloor": [pressure_col],
-        "temperature_sensor": [temp_sensor_col],
-        "temperature_seawater": [temp_seawater_col],
+        "pressure_seafloor": pressure_col,
+        "temperature_sensor": temp_sensor_col,
+        "temperature_seawater": temp_seawater_col,
         "pressure_barometer": None,
         "temperature_barometer": None
     }
