@@ -56,12 +56,9 @@ Go to the folder where you cloned the repository:
 
 * ``cd geodezyx``
 
-And then install the toolbox you downloaded. Three solutions are possible:
+And then install the toolbox you downloaded:
 
 1. ``pip install -e .`` (`editable mode <https://setuptools.pypa.io/en/latest/userguide/development_mode.html>`_, recommended if you want to edit the source code)
-2. ``python setup.py install`` (standard mode)
-3. Add the ``geodezyx`` folder in your ``PYTHONPATH``, for experimented (and old-fashoned) users
-
 
 To push your changes to the repository, don't forget to set your `GitHub token first <https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_.
 
