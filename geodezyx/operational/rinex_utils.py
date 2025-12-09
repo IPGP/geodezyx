@@ -130,6 +130,106 @@ def read_rnx_epoch_line(line, rnx2=True):
 #                                          |_|
 
 
+def check_if_compressed_rinex(rinex_path):
+    """
+    Check if a RINEX file is compressed (CRZ or O.Z / D.Z)
+
+    Parameters
+    ----------
+    rinex_path : string
+        path of the RINEX file.
+
+    Returns
+    -------
+    bool
+        True if compressed RINEX, False else.
+    """
+    boolout = bool(re.search(r".*((d|o)\.(Z)|(gz))$", rinex_path))
+    return boolout
+
+
+def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX", verbose=True):
+    """assuming that CRZ2RNX is in the system PATH per default"""
+
+    if not os.path.isfile(rinex_path):
+        raise Exception(rinex_path + " dont exists !")
+
+    if force:
+        forcearg = "-f"
+    else:
+        forcearg = ""
+
+    curdir = os.getcwd()
+    command = path_of_crz2rnx + " -c " + forcearg + " " + rinex_path
+    if outdir == "":
+        outdir = os.path.dirname(rinex_path)
+
+    out_rinex_name_splited = os.path.basename(rinex_path).split(".")
+
+    if conv.rinex_regex_search_tester(rinex_path, short_name=False, long_name=True):
+        out_rinex_name_splited = os.path.basename(rinex_path).split(".")
+        out_rinex_name = out_rinex_name_splited[0]
+        out_rinex_name = out_rinex_name + ".rnx"
+        out_rinex_path = os.path.join(outdir, out_rinex_name)
+    else:
+        out_rinex_name_splited = os.path.basename(rinex_path).split(".")
+        out_rinex_name = ".".join(out_rinex_name_splited[:-1])
+        out_rinex_name = out_rinex_name[:-1] + "o"
+        out_rinex_path = os.path.join(outdir, out_rinex_name)
+
+    if os.path.isfile(out_rinex_path) and not force:
+        log.warning(out_rinex_path + "already exists, skiping ...")
+    else:
+        os.chdir(outdir)
+        # stream = os.popen(command)
+
+        proc = subprocess.Popen(
+            command, shell=True, stdout=subprocess.PIPE, executable="/bin/bash"
+        )
+        status = proc.wait()
+
+        if status != 0 or not os.path.isfile(out_rinex_path):
+            log.error(out_rinex_path + " not created!")
+        elif verbose:
+            log.info(out_rinex_path + " created")
+        else:
+            pass
+        #    print stream.read()
+        os.chdir(curdir)
+    return out_rinex_path
+
+
+def rnx2crz(rinex_path, outdir="", force=True, path_of_rnx2crz="RNX2CRZ"):
+    """assuming that RNX2CRZ is in the system PATH per default"""
+
+    if not os.path.isfile(rinex_path):
+        raise Exception(rinex_path + " dont exists !")
+
+    if force:
+        forcearg = "-f"
+    else:
+        forcearg = ""
+
+    curdir = os.curdir
+    command = path_of_rnx2crz + " " + forcearg + " " + rinex_path
+    if outdir == "":
+        outdir = os.path.dirname(rinex_path)
+
+    out_rinex_name_o = os.path.basename(rinex_path)
+    out_rinex_name_d_z = out_rinex_name_o[:-1] + "d.Z"
+    out_rinex_path = os.path.join(outdir, out_rinex_name_d_z)
+
+    if os.path.isfile(out_rinex_path) and not force:
+        log.info(out_rinex_path + "already exists, skiping ...")
+    else:
+        os.chdir(outdir)
+        stream = os.popen(command)
+        log.info(command + " output in " + outdir)
+        #    print stream.read()
+    os.chdir(curdir)
+    return out_rinex_path
+
+
 def rinex_read_epoch(
     input_rinex_path_or_string,
     interval_out=False,

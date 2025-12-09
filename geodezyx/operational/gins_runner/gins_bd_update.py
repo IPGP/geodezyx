@@ -54,6 +54,7 @@ def download_rsync(
             "--no-owner",
             "--no-group",
             "--omit-dir-times",
+            #"--keep-dirlinks",
         ]  # Default options: archive mode, verbose, and compression
 
     # Construct the remote source path
@@ -80,8 +81,8 @@ def download_rsync(
         + ["--files-from", tmp_rsync_file_lis]
         + [f"{remote_source}/./", f"{local_destination}/"]
     )
-
-    log.debug("Rsync command: %s", " ".join(rsync_cmd))
+    if False:
+        log.info("Rsync command: %s", " ".join(rsync_cmd))
 
     # Run the rsync command
     process = subprocess.run(rsync_cmd, stderr=sys.stderr, stdout=sys.stdout, text=True)
@@ -102,6 +103,8 @@ def bdgins_update(
     login="",
     password="",
     compress=False,
+    rapid=False,
+    ultra=False,
 ):
     """
     Update the BDGINS repository with the necessary files
@@ -125,6 +128,10 @@ def bdgins_update(
         Whether to gzip-compress the clock files.
         experimental, and not recommended
         Defaults to False.
+    rapid : bool, optional
+        download RAPID products. Defaults to False.
+    ultra : bool, optional
+        download ULTRA products. Defaults to False.
     
     Returns
     -------
@@ -169,32 +176,39 @@ def bdgins_update(
     # list_orbite_sp3_mg3 = [] # not needed after v25_1
     list_orbite_sp3_grg = []
     list_orbite_sp3_g20 = []
-    list_orbite_gin_g20 = []
 
+    list_orbite_gin_g20 = []
     list_orbex_g20 = []
     list_horl_g20 = []
+
+    list_all_grr = []
+    list_orbite_gin_grr = []
+    list_orbex_grr = []
+    list_horl_grr = []
+    list_clk_grr = []
+    list_bias_grr = []
+    list_erp_grr = []
+    list_prob_grr = []
+    list_nar_grr = []
+    list_sum_grr = []
+    list_gin_grr = []
+
+    list_all_gru = []
+    list_orbite_gin_gru = []
+    list_orbex_gru = []
+    list_horl_gru = []
+    list_clk_gru = []
+    list_bias_gru = []
+    list_erp_gru = []
+    list_prob_gru = []
+    list_nar_gru = []
+    list_sum_gru = []
+    list_gin_gru = []
 
     ###### LIST FILL
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
-    ## list_antex.extend(["/"]) ## temporary off because updated continuously
-    ## list_constell.extend(["/"])
-    ## list_exe_ppp.extend(["/"])
-    ## list_lunisolaires.extend(["/"]) ## temporary off because updated continuously
-    ## list_macromod.extend(["/"])
-    ## list_maree_polaire.extend(["/"])
-    ## list_pole.extend(["/"])
-    list_prairie.extend(["/"])
-
-    ### misc files: the needed files are considered individually
-    # some of them are a redundancy since they must be downloaded in the full folders
-    list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
-    list_misc.extend([f"pole/nominal_NRO"])
-    list_misc.extend([f"ANTEX/igs20.atx"])
-    list_misc.extend([f"EXE_PPP/valap_static"])
-    list_misc.extend([f"macromod/gnss.xml"])
-    list_misc.extend([f"lunisolaires/de440bdlf.ad"])
-    list_misc.extend([f"maree_polaire/loading/nominal"])
+    list_antex.extend(["igs20.atx"]) ## temporary off because updated continuously
     l_fil_cons = [
         "constellation_gps.infos",
         "histocom.infos",
@@ -202,13 +216,36 @@ def bdgins_update(
         "historik_glonass",
         "igs_satellite_metadata.snx",
     ]
-    list_misc.extend(["constell/" + f for f in l_fil_cons])
+    list_constell.extend(l_fil_cons)
+    list_exe_ppp.extend(["valap_static"])
+    list_lunisolaires.extend(["de440bdlf.ad"]) ## temporary off because updated continuously
+    list_macromod.extend(["gnss.xml"])
+    list_maree_polaire.extend(["nominal"])
+    list_pole.extend(["nominal_NRO", "liste_sauts_tucs_1s.dat"])
+    #list_prairie.extend(["igs_satellite_metadata.snx"])
+
+    ### misc files: the needed files are considered individually
+    # some of them are a redundancy since they must be downloaded in the full folders
+    #list_misc.extend([f"pole/nominal_NRO"])
+    #list_misc.extend([f"ANTEX/igs20.atx"])
+    #list_misc.extend([f"EXE_PPP/valap_static"])
+    # list_misc.extend([f"macromod/gnss.xml"])
+    # list_misc.extend([f"lunisolaires/de440bdlf.ad"])
+    #list_misc.extend([f"maree_polaire/loading/nominal"])
+    #list_misc.extend(["constell/" + f for f in l_fil_cons])
+    list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
 
     # here is an hybrid tropo/misc file
     list_tropo_vmf1.append(f"orography_ell")
 
     ### time dependant files
-    while date <= date_end + dt.timedelta(days=2): # 2 days later is need for cat orb/clk
+    if rapid or ultra:
+        extra_days = dt.timedelta(days=0)
+    else:
+        extra_days = dt.timedelta(days=2)  # 2 days later is need for cat orb/clk
+
+
+    while date <= date_end + extra_days:
         day = str(date.day).zfill(2)
         month = str(date.month).zfill(2)
         year = date.year
@@ -236,6 +273,52 @@ def bdgins_update(
         list_orbite_gin_g20.append(f"G20{wk}{wkday}.gin")
         list_orbex_g20.append(f"G20{wk}{wkday}.obx.gz")
         list_horl_g20.append(f"hogps_g20{wk}{wkday}")
+        #### Needed for the main GINS calculation - RAPID
+        if rapid:
+            list_orbite_gin_grr.append(f"grr{wk}{wkday}.gin.gz")
+            list_all_grr.extend(list_orbite_gin_grr)
+            list_orbex_grr.append(f"grr{wk}{wkday}.obx.gz")
+            list_all_grr.extend(list_orbex_grr)
+            list_horl_grr.append(f"hogps_grr{wk}{wkday}.gz")
+            list_all_grr.extend(list_horl_grr)
+            list_clk_grr.append(f"grr{wk}{wkday}.clk.gz")
+            list_all_grr.extend(list_clk_grr)
+            list_bias_grr.append(f"grr{wk}{wkday}.bia.gz")
+            list_all_grr.extend(list_bias_grr)
+            list_erp_grr.append(f"grr{wk}{wkday}.erp.gz")
+            list_all_grr.extend(list_erp_grr)
+            list_prob_grr.append(f"grr{wk}{wkday}.problemes.gz")
+            list_all_grr.extend(list_prob_grr)
+            list_nar_grr.append(f"grr{wk}{wkday}.nar.gz")
+            list_all_grr.extend(list_nar_grr)
+            list_sum_grr.append(f"grr{wk}{wkday}.sum.gz")
+            list_all_grr.extend(list_sum_grr)
+            list_gin_grr.append(f"grr{wk}{wkday}.gin.gz")
+            list_all_grr.extend(list_gin_grr)
+
+        if ultra:
+            for hh in ["00", "06", "12", "18"]:
+                list_orbite_gin_gru.append(f"gru{wk}{wkday}_{hh}.gin.gz")
+                list_orbex_gru.append(f"gru{wk}{wkday}_{hh}.obx.gz")
+                list_horl_gru.append(f"hogps_gru{wk}{wkday}_{hh}.gz")
+                list_clk_gru.append(f"gru{wk}{wkday}_{hh}.clk.gz")
+                list_bias_gru.append(f"gru{wk}{wkday}_{hh}.bia.gz")
+                list_erp_gru.append(f"gru{wk}{wkday}_{hh}.erp.gz")
+                list_prob_gru.append(f"gru{wk}{wkday}_{hh}.problemes.gz")
+                list_nar_gru.append(f"gru{wk}{wkday}_{hh}.nar.gz")
+                list_sum_gru.append(f"gru{wk}{wkday}_{hh}.sum.gz")
+                list_gin_gru.append(f"gru{wk}{wkday}_{hh}.gin.gz")
+            list_all_gru.extend(list_orbite_gin_gru)
+            list_all_gru.extend(list_orbex_gru)
+            list_all_gru.extend(list_horl_gru)
+            list_all_gru.extend(list_clk_gru)
+            list_all_gru.extend(list_bias_gru)
+            list_all_gru.extend(list_erp_gru)
+            list_all_gru.extend(list_prob_gru)
+            list_all_gru.extend(list_nar_gru)
+            list_all_gru.extend(list_sum_gru)
+            list_all_gru.extend(list_gin_gru)
+
         date += dt.timedelta(days=1)
 
     list_orbite_g20 = list_orbite_gin_g20 + list_orbite_sp3_g20
@@ -243,13 +326,14 @@ def bdgins_update(
     ###### DESTINATION FOLDERS
     dest_subdir_dic = {
         ### full folders
-        #"ANTEX": list_antex,
-        #"constell": list_constell,
-        #"EXE_PPP": list_exe_ppp,
-        #"lunisolaires": list_lunisolaires,
-        #"macromod": list_macromod,
-        #"maree_polaire": list_maree_polaire,
-        "prairie": list_prairie,
+        "ANTEX": list_antex,
+        "constell": list_constell,
+        "EXE_PPP": list_exe_ppp,
+        "lunisolaires": list_lunisolaires,
+        "macromod": list_macromod,
+        "maree_polaire/loading": list_maree_polaire,
+        "pole": list_pole,
+        #"prairie": list_prairie,
         ### misc files
         ".": list_misc,  ## for misc files, destination is in the input path (.)
         ### time dependant files
@@ -260,7 +344,13 @@ def bdgins_update(
         "mesures/gps/orbites/G20": list_orbite_g20,
         "mesures/gps/orbex/G20": list_orbex_g20,
         "mesures/gps/horloges30/G20": list_horl_g20,
+        ### RAPID
     }
+
+    if rapid:
+        dest_subdir_dic["mesures/gps/orbites/GRR"] = list_all_grr
+    if ultra:
+        dest_subdir_dic["mesures/gps/orbites/GRU"] = list_all_gru
 
     create_dir(dir_bdgins, subdirs=dest_subdir_dic.keys())
     os.chdir(dir_bdgins)
@@ -281,7 +371,7 @@ def bdgins_update(
             password,
         )
 
-    # quick and dirty move for the PRAIRIE SP3 (VALIDE_25_1
+    # quick and dirty move for the PRAIRIE SP3 (VALIDE_25_1)
     dir_gin_data = os.path.join(gynscmn.get_gin_path(True), "data")
     dir_gin_sp3_g20 = os.path.join(dir_bdgins, "mesures/gps/orbites/G20")
     dir_gin_sp3_grg = os.path.join(dir_bdgins, "orbites/SP3/igs")
@@ -323,7 +413,7 @@ def create_dir(parent_dir, subdirs):
 
     for subdir in subdirs:
         subdir_fullpath = os.path.join(parent_dir, subdir)
-        if not os.path.exists(subdir_fullpath):
+        if not os.path.exists(subdir_fullpath) and not os.path.islink(subdir_fullpath):
             os.makedirs(subdir_fullpath)
 
 
@@ -384,12 +474,31 @@ def main():
         "-c",
         "--compress",
         help=(
-            "Flag to enable gzip compression of clock files. "
+            "Enable gzip compression of clock files. "
             "Defaults to `False` and is experimental."
         ),
         action="store_true",
         default=False,
     )
+
+    parser.add_argument(
+        "-r",
+        "--rapid",
+        help="Enable downloading RAPID products.",
+        action="store_true",
+        dest="rapid",
+        default=False,
+    )
+
+    parser.add_argument(
+        "-u",
+        "--ultra",
+        help="Enable downloading ULTRA products.",
+        action="store_true",
+        dest="ultra",
+        default=False,
+    )
+
     args = parser.parse_args()
 
     bdgins_update(
@@ -399,6 +508,8 @@ def main():
         password=args.password,
         dir_bdgins=args.dir_bdgins,
         compress=args.compress,
+        rapid=args.rapid,
+        ultra=args.ultra,
     )
 
 
