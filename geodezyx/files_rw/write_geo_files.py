@@ -128,7 +128,7 @@ def write_sp3(
 
         linefmt = "p{:}{:14.6f}{:14.6f}{:14.6f}{:14.6f}\n"
 
-        LinesStkEpoch = []
+        lines_stk_epoch = []
         sum_val_epoch = 0
         for ilin, lin in sp3epoc.iterrows():
             if not "clk" in lin.index:  # manage case if no clk in columns
@@ -139,12 +139,12 @@ def write_sp3(
 
             sum_val_epoch += lin["x"] + lin["y"] + lin["z"]
 
-            LinesStkEpoch.append(line_out)
+            lines_stk_epoch.append(line_out)
 
         ### if skip_null_epoch activated, print only if valid epoch
         if not (np.isclose(sum_val_epoch, 0) and skip_null_epoch):
             lines_stk.append(timestamp)  # stack the timestamp
-            lines_stk = lines_stk + LinesStkEpoch  # stack the values
+            lines_stk = lines_stk + lines_stk_epoch  # stack the values
             epoch_used_list.append(epoc)  # stack the epoc as dt
 
     ################## HEADER
@@ -153,32 +153,15 @@ def write_sp3(
     satline_stk = []
     sigmaline_stk = []
 
-    if force_format_c:
-        nlines = 5
-    else:
-        div, mod = np.divmod(len(sat_list), 17)
-
-        if div < 5:
-            nlines = 5
-        else:
-            nlines = div
-
-            if mod != 0:
-                nlines += 1
+    div, mod = divmod(len(sat_list), 17)
+    nlines = 5 if force_format_c or div < 5 else div + (1 if mod else 0)
 
     for i in range(nlines):
         sat_line = sat_list[17 * i : 17 * (i + 1)]
         sat_line_sigma = len(sat_line) * " 01"
 
-        if len(sat_line) < 17:
-            complem = " 00" * (17 - len(sat_line))
-        else:
-            complem = ""
-
-        if i == 0:
-            nbsat4line = len(sat_list)
-        else:
-            nbsat4line = ""
+        complem = " 00" * (17 - len(sat_line)) if len(sat_line) < 17 else ""
+        nbsat4line = len(sat_list) if i == 0 else ""
 
         satline = "+  {:3}   ".format(nbsat4line) + "".join(sat_line) + complem + "\n"
         sigmaline = "++         0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0\n"
@@ -197,7 +180,7 @@ def write_sp3(
         + "   u+U IGSXX FIT  XXX\n"
     )
 
-    delta_epoch = int(utils.most_common(np.diff(epoch_used_list) * 10**-9))
+    delta_epoch = int(utils.most_common(np.diff(epoch_used_list)).total_seconds())
     mjd = conv.dt2mjd(start_dt)
     mjd_int = int(np.floor(mjd))
     mjd_dec = mjd - mjd_int
@@ -222,10 +205,7 @@ def write_sp3(
 
     ################## FINAL STACK
 
-    final_lines_stk = []
-
-    final_lines_stk.append(header_line1)
-    final_lines_stk.append(header_line2)
+    final_lines_stk = [header_line1, header_line2]
     final_lines_stk = final_lines_stk + satline_stk + sigmaline_stk
     final_lines_stk.append(header_bottom)
     final_lines_stk = final_lines_stk + lines_stk + ["EOF"]

@@ -84,6 +84,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#read-and-import-gnss-sitelogs">Read and import GNSS Sitelogs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#point-and-click-to-detect-offsets-manually">Point and Click to detect offsets manually</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#statistics-and-plots-for-orbit-and-clock-comparisons">Statistics and plots for orbit and clock comparisons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#complie-fortran-sofa-library-for-earth-orientation-parameters">Complie FORTRAN SOFA library for Earth Orientation Parameters</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="geodezyx.html">geodezyx package</a></li>
@@ -304,6 +305,17 @@ More details in the class documentation : <a class="reference internal" href="ge
 <section id="statistics-and-plots-for-orbit-and-clock-comparisons">
 <h2>Statistics and plots for orbit and clock comparisons<a class="headerlink" href="#statistics-and-plots-for-orbit-and-clock-comparisons" title="Link to this heading"></a></h2>
 <p>TBC</p>
+</section>
+<section id="complie-fortran-sofa-library-for-earth-orientation-parameters">
+<h2>Complie FORTRAN SOFA library for Earth Orientation Parameters<a class="headerlink" href="#complie-fortran-sofa-library-for-earth-orientation-parameters" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Download the FORTRAN SOFA library from the IAU SOFA website: <a class="reference external" href="https://www.iausofa.org/current-software">https://www.iausofa.org/current-software</a></p></li>
+<li><p>Unzip the downloaded file and open a terminal and go to the unzipped folder <code class="docutils literal notranslate"><span class="pre">src</span></code></p></li>
+<li><p>be sure you have <code class="docutils literal notranslate"><span class="pre">numpy</span></code> and <code class="docutils literal notranslate"><span class="pre">f2py</span></code> installed in your Python environment <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">numpy</span></code></p></li>
+<li><p>Be sure you have _meson_ and _ninja_ build systems installed <code class="docutils literal notranslate"><span class="pre">meson</span> <span class="pre">ninja-build</span></code></p></li>
+<li><p>Compile the library with the following command: <code class="docutils literal notranslate"><span class="pre">f2py</span> <span class="pre">-c</span> <span class="pre">*for</span> <span class="pre">-m</span> <span class="pre">sofa</span></code></p></li>
+<li><p>Move the generated <code class="docutils literal notranslate"><span class="pre">sofa.cpython-&lt;...&gt;.so</span></code> file to the <code class="docutils literal notranslate"><span class="pre">geodezyx/reffram</span></code> module</p></li>
+</ol>
 </section>
 </section>
 

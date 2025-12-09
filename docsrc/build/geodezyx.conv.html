@@ -3129,6 +3129,65 @@ but only counted starting from 1st January 2000 at Noon</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_time.time_obj_tester">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">time_obj_tester</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_iterable=&lt;class</span> <span class="pre">'list'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.time_obj_tester" title="Link to this definition"></a></dt>
+<dd><p>Generate test time objects in different formats
+(datetime, numpy.datetime64, pandas.Timestamp).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delta</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return time deltas relative to the <cite>start</cite> time.
+Default is False.</p></li>
+<li><p><strong>out_iterable</strong> (<em>callable</em><em>, </em><em>optional</em>) – A callable that determines the type of iterable to return (e.g., list, tuple).
+Default is list.</p></li>
+<li><p><strong>start</strong> (<em>datetime.datetime</em><em>, </em><em>optional</em>) – The starting datetime for the generated time objects.
+If None, defaults to January 1, 2020, 00:00:00.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing three iterables:
+- times_datetime: Iterable of datetime.datetime objects.
+- times_datetime_numpy: Iterable of numpy.datetime64 objects.
+- times_pandas_timestamp: Iterable of pandas.Timestamp objects.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function generates 10 time objects, each separated by 60 seconds.</p></li>
+<li><p>If <cite>delta</cite> is True, the returned values are time deltas relative to the <cite>start</cite> time.</p></li>
+<li><p>The <cite>out_iterable</cite> parameter allows customization of the output container type (e.g., list, tuple).</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">time_obj_tester</span><span class="p">()</span>
+<span class="go">([datetime.datetime(2020, 1, 1, 0, 0),</span>
+<span class="go">  datetime.datetime(2020, 1, 1, 0, 1),</span>
+<span class="go">  ...],</span>
+<span class="go"> [numpy.datetime64(&#39;2020-01-01T00:00:00&#39;),</span>
+<span class="go">  numpy.datetime64(&#39;2020-01-01T00:01:00&#39;),</span>
+<span class="go">  ...],</span>
+<span class="go"> [Timestamp(&#39;2020-01-01 00:00:00&#39;),</span>
+<span class="go">  Timestamp(&#39;2020-01-01 00:01:00&#39;),</span>
+<span class="go">  ...])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">time_obj_tester</span><span class="p">(</span><span class="n">delta</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">out_iterable</span><span class="o">=</span><span class="nb">tuple</span><span class="p">)</span>
+<span class="go">((datetime.timedelta(0),</span>
+<span class="go">  datetime.timedelta(seconds=60),</span>
+<span class="go">  ...),</span>
+<span class="go"> (numpy.timedelta64(0,&#39;s&#39;),</span>
+<span class="go">  numpy.timedelta64(60,&#39;s&#39;),</span>
+<span class="go">  ...),</span>
+<span class="go"> (Timedelta(&#39;0 days 00:00:00&#39;),</span>
+<span class="go">  Timedelta(&#39;0 days 00:01:00&#39;),</span>
+<span class="go">  ...))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.trimble_file2dt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">trimble_file2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trmfile_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.trimble_file2dt" title="Link to this definition"></a></dt>
 <dd><p>Time representation conversion</p>

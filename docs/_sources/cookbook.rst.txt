@@ -245,7 +245,16 @@ Statistics and plots for orbit and clock comparisons
 
 TBC
 
+-------------------------------------------------------------
+Complie FORTRAN SOFA library for Earth Orientation Parameters
+-------------------------------------------------------------
 
+1. Download the FORTRAN SOFA library from the IAU SOFA website: https://www.iausofa.org/current-software
+2. Unzip the downloaded file and open a terminal and go to the unzipped folder ``src``
+3. be sure you have ``numpy`` and ``f2py`` installed in your Python environment ``pip install numpy``
+4. Be sure you have _meson_ and _ninja_ build systems installed ``meson ninja-build``
+5. Compile the library with the following command: ``f2py -c *for -m sofa``
+6. Move the generated ``sofa.cpython-<...>.so`` file to the ``geodezyx/reffram`` module
 
 
 

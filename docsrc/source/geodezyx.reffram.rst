@@ -41,10 +41,10 @@ geodezyx.reffram.quaternions module
    :show-inheritance:
    :undoc-members:
 
-geodezyx.reffram.sofa18 module
-------------------------------
+geodezyx.reffram.sofa module
+----------------------------
 
-.. automodule:: geodezyx.reffram.sofa18
+.. automodule:: geodezyx.reffram.sofa
    :members:
    :show-inheritance:
    :undoc-members:

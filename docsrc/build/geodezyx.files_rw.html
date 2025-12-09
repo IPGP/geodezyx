@@ -1560,12 +1560,12 @@ Slow and complex, use read_clk instead</p>
 <p>&#64;author: psakic</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_prods.clk_decimate">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">clk_decimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.clk_decimate" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">clk_decimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.clk_decimate" title="Link to this definition"></a></dt>
 <dd><p>Decimate a .clk file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_in</strong> (<em>str</em>) – path of the input clk file.</p></li>
+<li><p><strong>file_inp</strong> (<em>str</em>) – path of the input clk file.</p></li>
 <li><p><strong>file_out</strong> (<em>str</em>) – path of the output clk file.</p></li>
 <li><p><strong>step</strong> (<em>int</em><em>, </em><em>optional</em>) – decimation step in sec. The default is 300.</p></li>
 </ul>
@@ -1586,8 +1586,8 @@ Slow and complex, use read_clk instead</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_1</strong> (<em>str</em>) – file 1 path.</p></li>
-<li><p><strong>file_2</strong> (<em>str</em>) – file 2 path.</p></li>
+<li><p><strong>file_1</strong> (<em>str</em><em> or </em><em>pandas DataFrame</em>) – file 1 path.</p></li>
+<li><p><strong>file_2</strong> (<em>str</em><em> or </em><em>pandas DataFrame</em>) – file 2 path.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1601,19 +1601,19 @@ Slow and complex, use read_clk instead</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_prods.read_clk">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">read_clk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names_4char</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.read_clk" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">read_clk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names_4char</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.read_clk" title="Link to this definition"></a></dt>
 <dd><p>Read an IGS clk file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path_in</strong> (<em>str</em>) – Path of the file in the local machine.
+<li><p><strong>file_path_inp</strong> (<em>str</em>) – Path of the file in the local machine.
 can handle gzip-compressed file (with .gz/.GZ extension)</p></li>
 <li><p><strong>names_4char</strong> (<em>bool</em>) – Force the station names to have 4 charaters
 (new naming convention is longer)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DFclk</strong> – Returns a panda table format with the data extracted from the file.</p>
+<dd class="field-even"><p><strong>clk_df</strong> – Returns a panda table format with the data extracted from the file.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pandas DataFrame</p>
@@ -1627,15 +1627,15 @@ can handle gzip-compressed file (with .gz/.GZ extension)</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_prods.read_clk_from_sp3">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">read_clk_from_sp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_or_DForb_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.read_clk_from_sp3" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">read_clk_from_sp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_or_orb_df_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.read_clk_from_sp3" title="Link to this definition"></a></dt>
 <dd><p>Get the clock values from a SP3 file of an Orbit DataFrame,
 formated as a Clock DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>file_path_or_DForb_in</strong> (<em>str</em><em> or </em><em>DataFrame</em>) – the input SP3 file path or an Orbit DataFrame.</p>
+<dd class="field-odd"><p><strong>file_path_or_orb_df_inp</strong> (<em>str</em><em> or </em><em>DataFrame</em>) – the input SP3 file path or an Orbit DataFrame.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DFclk_sp3</strong> – Clock DataFrame.</p>
+<dd class="field-even"><p><strong>clk_df_sp3</strong> – Clock DataFrame.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>DataFrame</p>
@@ -1645,13 +1645,13 @@ formated as a Clock DataFrame</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_prods.read_sp3">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">read_sp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returns_pandas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_as_pd_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">km_conv_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_null_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_col_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_vel_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.read_sp3" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">read_sp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returns_pandas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_as_pd_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">km_conv_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_null_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_col_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_vel_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.read_sp3" title="Link to this definition"></a></dt>
 <dd><p>Read a SP3 file (GNSS Orbits standard file) and return X,Y,Z coordinates
 for each satellite and for each epoch</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path_in</strong> (<em>str</em>) – path of the SP3 file
+<li><p><strong>file_path_inp</strong> (<em>str</em>) – path of the SP3 file
 can handle gzip-compressed file (with .gz/.GZ or .Z extension)</p></li>
 <li><p><strong>returns_pandas</strong> (<em>bool</em>) – if True, return a Pandas DataFrame.
 if False, return separated lists.</p></li>
@@ -1686,23 +1686,23 @@ same km_conv_coef coefficient as the position records will be applied!</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_prods.read_sp3_header">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">read_sp3_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sp3_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac_name_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.read_sp3_header" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">read_sp3_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sp3_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac_name_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.read_sp3_header" title="Link to this definition"></a></dt>
 <dd><p>Read a SP3 file header and return a Pandas DataFrame
 with sat. PRNs and sigmas contained in the header</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sp3_in</strong> (<em>str</em><em> or </em><em>list</em>) – <p>path of the SP3 file
+<li><p><strong>sp3_inp</strong> (<em>str</em><em> or </em><em>list</em>) – <p>path of the SP3 file
 can handle gzip-compressed file (with .gz/.GZ extension)</p>
 <p>can also handle the sp3 content as a list of strings
 (useful when read_sp3_header is used as a subfunction of read_sp3)</p>
 </p></li>
-<li><p><strong>ac_name_in</strong> (<em>str</em>) – force the AC name
+<li><p><strong>ac_name_inp</strong> (<em>str</em>) – force the AC name
 (necessary when read_sp3_header is used as a subfunction of read_sp3)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Header_DF</strong> – 2 columns “sat”, “sigma”</p>
+<dd class="field-even"><p><strong>header_df</strong> – 2 columns “sat”, “sigma”</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Pandas DataFrame</p>
@@ -1717,14 +1717,14 @@ can handle gzip-compressed file (with .gz/.GZ extension)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_prods.sp3_data_frame_zero_epoch_filter">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">sp3_data_frame_zero_epoch_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFsp3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.sp3_data_frame_zero_epoch_filter" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">sp3_data_frame_zero_epoch_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.sp3_data_frame_zero_epoch_filter" title="Link to this definition"></a></dt>
 <dd><p>Filter an Orbit DataFrame (from a SP3) by removing the null epochs</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>DFsp3</strong> (<em>DataFrame</em>) – Orbit DataFrame (from a SP3).</p>
+<dd class="field-odd"><p><strong>orb_df_inp</strong> (<em>DataFrame</em>) – Orbit DataFrame (from a SP3).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DFsp3_out</strong> – Filtered Orbit DataFrame.</p>
+<dd class="field-even"><p><strong>orb_df_out</strong> – Filtered Orbit DataFrame.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>DataFrame</p>
@@ -1734,12 +1734,12 @@ can handle gzip-compressed file (with .gz/.GZ extension)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_prods.sp3_decimate">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">sp3_decimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.sp3_decimate" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_prods.</span></span><span class="sig-name descname"><span class="pre">sp3_decimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_prods.sp3_decimate" title="Link to this definition"></a></dt>
 <dd><p>Decimate a SP3 file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_in</strong> (<em>str</em>) – path of the input SP3 file.</p></li>
+<li><p><strong>file_inp</strong> (<em>str</em>) – path of the input SP3 file.</p></li>
 <li><p><strong>file_out</strong> (<em>str</em>) – path of the output SP3 file.</p></li>
 <li><p><strong>step</strong> (<em>int</em><em>, </em><em>optional</em>) – decimation step in minutes. The default is 15.</p></li>
 </ul>
@@ -1761,7 +1761,23 @@ can handle gzip-compressed file (with .gz/.GZ extension)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_qc.read_anubis_xtr_sum">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_qc.</span></span><span class="sig-name descname"><span class="pre">read_anubis_xtr_sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xtr_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_qc.read_anubis_xtr_sum" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Read ANUBIS XTR summary information</p>
+<section id="input">
+<h3>Input<a class="headerlink" href="#input" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>xtr_in<span class="classifier">str</span></dt><dd><p>Path to the XTR file</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_totsum</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the TOTSUM information</p></li>
+<li><p><strong>df_gnssum</strong> (<em>pandas.DataFrame</em>) – DataFrame containing the GNSSUM information</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_qc.read_ringo_qc">
@@ -1771,7 +1787,23 @@ can handle gzip-compressed file (with .gz/.GZ extension)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_gnss_qc.read_ringo_systems">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_gnss_qc.</span></span><span class="sig-name descname"><span class="pre">read_ringo_systems</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_gnss_qc.read_ringo_systems" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Read RINGO satellite systems summary tables</p>
+<section id="id1">
+<h3>Input<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>file_in<span class="classifier">str</span></dt><dd><p>Path to the RINGO QC file</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tables</strong> – Dictionary containing DataFrames for each satellite system</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
 
 </section>
 <section id="module-geodezyx.files_rw.read_igs_combi">
@@ -1936,7 +1968,7 @@ Useful only for such write_&lt;…&gt; functions.</p></li>
 If str: path of the directory containing the Logsheets.</p></li>
 <li><p><strong>wildcardin</strong> (<em>str</em><em>, </em><em>optional</em>) – a wildcard describing the logsheet pattern.
 used only for pathin in a string path.
-The default is ‘<a href="#id1"><span class="problematic" id="id2">*</span></a>log’.</p></li>
+The default is ‘<a href="#id2"><span class="problematic" id="id3">*</span></a>log’.</p></li>
 <li><p><strong>return_dico</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, returns period_lis_lis , stat_lis , loc_lis
 the False mode is useful for station.info generation
 with write_station_info_from_datalists
