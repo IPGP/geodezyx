@@ -672,7 +672,7 @@ def doy2dt(year, days, hours=0, minutes=0, seconds=0):
 def dt2doy(dtin, outputtype=str):
     """
     Time representation conversion
-
+    
     Python's Datetime => Day of Year string
 
     Parameters
