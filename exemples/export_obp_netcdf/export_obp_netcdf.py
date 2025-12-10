@@ -14,8 +14,8 @@ import pandas as pd
 # =============================================================================
 
 # Choose which example to run
-run_halios = True
-run_a0a_rbr = False
+run_halios = False
+run_a0a_rbr = True
 
 # =========================================================================
 # Example 1: HALIOS (IPGP)
@@ -82,7 +82,7 @@ if run_halios:
 # =========================================================================
 if run_a0a_rbr:
     # Define file path
-    p_a0a = "/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0100_from_Treden/RawData/transfer_3167556_files_8a99b7f8/204657_20210409_1130_data.txt"
+    p_a0a = "/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0100_from_Treden/RawData/transfer_3167556_files_8a99b7f8/204657_20210409_1130_data_head.txt"
     df_a0a = pd.read_csv(p_a0a, sep=",")
     df_a0a["Time"] = pd.to_datetime(df_a0a["Time"])
 
@@ -134,3 +134,14 @@ if run_a0a_rbr:
         station_config=station_config,
         conversion_factors=conversion_factors,
     )
+
+
+netcdf_path = "/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/netcdf_cf/A0Ax_20201011160000to20201011160008_1s.nc"
+
+
+
+import xarray as xr
+netcdf = xr.open_dataset(netcdf_path)
+df_netcdf = netcdf.to_dataframe()
+
+print(df_netcdf.to_string())

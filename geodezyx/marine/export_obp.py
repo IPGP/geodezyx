@@ -194,7 +194,7 @@ def export_obp_to_netcdf(
     var_pres[...] = val_pres.astype(np.float32)
 
     # Seawater Temperature
-    var_temp_seaw = nc.createVariable('temperature_seawater', 'f4', dim_sens_tup, fill_value=-9999.0)
+    var_temp_seaw = nc.createVariable('temperature_seawater', 'f4', ('time',), fill_value=-9999.0)
     var_temp_seaw.units = 'degrees_Celsius'
     var_temp_seaw.long_name = 'Seawater Temperature'
     var_temp_seaw.standard_name = 'sea_water_temperature'
