@@ -39,7 +39,7 @@ if run_halios:
     )
 
     # Define station configuration
-    station_config = {
+    metadata_dict = {
         'station_id': 'OCFC',
         'station_name': 'HALIOS OBP Station "Fer à Cheval" OCFC',
         'latitude': -12.83448,
@@ -72,7 +72,7 @@ if run_halios:
         df_obp=df,
         column_mapping=column_mapping,
         output_dir=output_dir,
-        station_config=station_config,
+        metadata_dict=metadata_dict,
         conversion_factors=conversion_factors,
         keep_sensor_dimension=True
     )
@@ -82,7 +82,7 @@ if run_halios:
 # =========================================================================
 if run_a0a_rbr:
     # Define file path
-    p_a0a = "/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0100_from_Treden/RawData/transfer_3167556_files_8a99b7f8/204657_20210409_1130_data_head.txt"
+    p_a0a = "/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0100_from_Treden/RawData/transfer_3167556_files_8a99b7f8/204657_20210409_1130_data.txt"
     df_a0a = pd.read_csv(p_a0a, sep=",")
     df_a0a["Time"] = pd.to_datetime(df_a0a["Time"])
 
@@ -97,7 +97,7 @@ if run_a0a_rbr:
     }
 
     # Define station configuration
-    station_config = {
+    metadata_dict = {
         'station_id': 'A0Ax',
         'station_name': 'Ocean Bottom Pressure Station A0Ax',
         'latitude': 0.000,
@@ -131,17 +131,17 @@ if run_a0a_rbr:
         df_obp=df_a0a,
         column_mapping=column_mapping,
         output_dir=output_dir,
-        station_config=station_config,
+        metadata_dict=metadata_dict,
         conversion_factors=conversion_factors,
     )
 
+# Load and print the exported NetCDF file for verification
 
-netcdf_path = "/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/netcdf_cf/A0Ax_20201011160000to20201011160008_1s.nc"
+test_netcdf = False
 
+if test_netcdf:
+    import xarray as xr
+    netcdf = xr.open_dataset(output_path)
+    df_netcdf = netcdf.to_dataframe()
 
-
-import xarray as xr
-netcdf = xr.open_dataset(netcdf_path)
-df_netcdf = netcdf.to_dataframe()
-
-print(df_netcdf.to_string())
+    print(df_netcdf.to_string())

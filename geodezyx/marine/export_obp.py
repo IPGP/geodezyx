@@ -29,6 +29,7 @@ from netCDF4 import Dataset
 from datetime import datetime, timezone
 import pandas as pd
 from typing import Dict, Optional, List, Tuple
+import warnings
 
 from geodezyx import conv, utils
 
@@ -40,7 +41,7 @@ def export_obp_to_netcdf(
         df_obp: pd.DataFrame,
         column_mapping: Dict[str, Optional[List[str]]],
         output_dir: str,
-        station_config: Dict,
+        metadata_dict: Dict,
         conversion_factors: Optional[Dict[str, float]] = None,
         keep_sensor_dimension: bool = True,
         quality_flags: Optional[np.ndarray] = None
@@ -62,23 +63,24 @@ def export_obp_to_netcdf(
         - "temperature_barometer": barometer temperature column name(s) (str or list of str , optional)
     output_dir : str
         Output directory path
-    station_config : dict
+    metadata_dict : dict
         Station metadata configuration containing:
-        - station_id: str
-        - latitude: float
-        - longitude: float
-        - depth: float (meters)
-        - institution: str
-        - source: str
-        - references: str
-        - station_name: str
-        - comment: str
-        - project: str
-        - creator_name: str
-        - creator_email: str
-        - creator_url: str
-        - processing_level: str
-        - summary: str
+        - station_id: str (MANDATORY)
+        - latitude: float (MANDATORY)
+        - longitude: float (MANDATORY)
+        - depth: float (MANDATORY, meters)
+        - institution: str (MANDATORY)
+        - source: str (MANDATORY)
+        - references: str (MANDATORY)
+        - station_name: str (MANDATORY)
+        - comment: str (MANDATORY)
+        - project: str (MANDATORY)
+        - creator_name: str (MANDATORY)
+        - creator_email: str (MANDATORY)
+        - creator_url: str (MANDATORY)
+        - processing_level: str (MANDATORY)
+        - summary: str (MANDATORY)
+        - title: str (optional)
     conversion_factors : dict, optional
         Conversion factors for each variable type:
         - "pressure": pressure conversion factor (e.g., 0.01 for hPa to dbar)
@@ -94,6 +96,7 @@ def export_obp_to_netcdf(
     output_path : str
         Path to the created NetCDF file
     """
+
     # Set default conversion factors
     if conversion_factors is None:
         conversion_factors = {
@@ -159,7 +162,7 @@ def export_obp_to_netcdf(
     # Create NetCDF file
     srt_str = conv.dt2str(start_date, "%Y%m%d%H%M%S")
     end_str = conv.dt2str(end_date, "%Y%m%d%H%M%S")
-    output_file = f"{station_config['station_id']}_{srt_str}to{end_str}_{sampling_interval_seconds}s.nc"
+    output_file = f"{metadata_dict['station_id']}_{srt_str}to{end_str}_{sampling_interval_seconds}s.nc"
     output_path = output_dir + "/" + output_file
     nc = Dataset(output_path, 'w', format='NETCDF4')
 
@@ -246,34 +249,47 @@ def export_obp_to_netcdf(
 
     # Add global attributes
     nc.Conventions = 'CF-1.6'
-    nc.title = station_config.get('title', f'Ocean Bottom Pressure Data - Station {station_config["station_id"]}')
-    nc.institution = station_config['institution']
-    nc.source = station_config['source']
+    nc.title = metadata_dict.get('title', f'Ocean Bottom Pressure Data - Station {metadata_dict["station_id"]}')
     nc.history = f'{datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")} - Created using Python netCDF4'
-    nc.references = station_config['references']
-    nc.station_id = station_config['station_id']
-    nc.station_name = station_config['station_name']
-    nc.comment = station_config['comment']
-    nc.geospatial_lat_min = station_config['latitude']
-    nc.geospatial_lat_max = station_config['latitude']
-    nc.geospatial_lon_min = station_config['longitude']
-    nc.geospatial_lon_max = station_config['longitude']
-    nc.geospatial_vertical_min = station_config['depth']
-    nc.geospatial_vertical_max = station_config['depth']
-    nc.geospatial_vertical_units = 'm'
-    nc.geospatial_vertical_positive = 'down'
+    nc.keywords = 'bottom pressure, ocean pressure, BPR, OBP, temperature'
+    nc.date_created = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    # Add time coverage attributes
     nc.time_coverage_start = start_date.strftime('%Y-%m-%dT%H:%M:%SZ')
     nc.time_coverage_end = end_date.strftime('%Y-%m-%dT%H:%M:%SZ')
     nc.time_coverage_duration = f'P{num_days}D'
     nc.time_coverage_resolution = f'PT{sampling_interval_seconds}S'
-    nc.creator_name = station_config['creator_name']
-    nc.creator_email = station_config['creator_email']
-    nc.creator_url = station_config['creator_url']
-    nc.project = station_config['project']
-    nc.processing_level = station_config['processing_level']
-    nc.keywords = 'bottom pressure, ocean pressure, BPR, OBP, temperature'
-    nc.summary = station_config['summary']
-    nc.date_created = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    # Add geospatial attributes
+    nc.geospatial_lat_min = metadata_dict.get('latitude', -9999.0)
+    nc.geospatial_lat_max = metadata_dict.get('latitude', -9999.0)
+    nc.geospatial_lon_min = metadata_dict.get('longitude', -9999.0)
+    nc.geospatial_lon_max = metadata_dict.get('longitude', -9999.0)
+    nc.geospatial_vertical_min = metadata_dict.get('depth', -9999.0)
+    nc.geospatial_vertical_max = metadata_dict.get('depth', -9999.0)
+    nc.geospatial_vertical_units = 'm'
+    nc.geospatial_vertical_positive = 'down'
+
+    # Add custom attributes from metadata_dict using a loop
+    # Define mandatory attributes
+    mandatory_attrs = [
+        'station_id', 'latitude', 'longitude', 'depth',
+        'institution', 'source', 'references', 'station_name',
+        'comment', 'project', 'creator_name', 'creator_email',
+        'creator_url', 'processing_level', 'summary'
+    ]
+
+    # Check for missing mandatory attributes
+    for attr in mandatory_attrs:
+        if attr not in metadata_dict.keys():
+            metadata_dict[attr] = 'NOT_PROVIDED'
+            warnings.warn(
+                f"Missing mandatory attributes in metadata_dict: {attr}. ",
+                UserWarning
+            )
+
+    for config_key, attr_val in metadata_dict.items():
+        nc.setncattr(config_key, attr_val)
 
     # Add station location variables
     var_lat = nc.createVariable('latitude', 'f8')
@@ -282,7 +298,7 @@ def export_obp_to_netcdf(
     var_lat.standard_name = 'latitude'
     var_lat.valid_min = -90.0
     var_lat.valid_max = 90.0
-    var_lat[:] = station_config['latitude']
+    var_lat[:] = metadata_dict.get('latitude', -9999.0)
 
     var_lon = nc.createVariable('longitude', 'f8')
     var_lon.units = 'degrees_east'
@@ -290,14 +306,14 @@ def export_obp_to_netcdf(
     var_lon.standard_name = 'longitude'
     var_lon.valid_min = -180.0
     var_lon.valid_max = 180.0
-    var_lon[:] = station_config['longitude']
+    var_lon[:] = metadata_dict.get('longitude', -9999.0)
 
     var_depth = nc.createVariable('depth', 'f8')
     var_depth.units = 'm'
     var_depth.long_name = 'Station Depth'
     var_depth.standard_name = 'depth'
     var_depth.positive = 'down'
-    var_depth[:] = station_config['depth']
+    var_depth[:] = metadata_dict.get('depth', -9999.0)
 
     # Close the file
     nc.close()
@@ -307,7 +323,7 @@ def export_obp_to_netcdf(
     print(f"Time range: {start_date} to {end_date}")
     print(f"Sampling interval: {sampling_interval_seconds} seconds")
     print(
-        f"Station location: {station_config['latitude']}°N, {station_config['longitude']}°E at {station_config['depth']}m depth")
+        f"Station location: {metadata_dict.get('latitude', 'N/A')}°N, {metadata_dict.get('longitude', 'N/A')}°E at {metadata_dict.get('depth', 'N/A')}m depth")
 
     return output_path
 
