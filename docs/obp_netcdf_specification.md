@@ -1,7 +1,7 @@
 # NetCDF File Specification for Ocean Bottom Pressure Data
 
-**Version:** 1.0  
-**Date:** December 2025  
+**Version:** 0.1  
+**Date:** 12 December 2025  
 **Conventions:** CF-1.6
 
 ---
