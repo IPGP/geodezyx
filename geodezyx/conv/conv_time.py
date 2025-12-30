@@ -162,7 +162,7 @@ def _output_to_datetime_type(dt_output, target_type):
         return dt_output
 
 
-def vectorized_time_converter(func):
+def vector_datetime_conv(func):
     """
     Decorator to vectorize time conversion functions.
 
@@ -214,11 +214,11 @@ def vectorized_time_converter(func):
     return wrapper
 
 
-def numeric_vectorized_converter(func):
+def vector_numeric_conv(func):
     """
     Decorator for numeric time conversion functions.
 
-    Similar to vectorized_time_converter but for functions that work with
+    Similar to vector_datetime_conv but for functions that work with
     numeric inputs (floats, ints) and return datetime objects.
 
     Parameters
@@ -254,6 +254,45 @@ def numeric_vectorized_converter(func):
     return wrapper
 
 
+def vector_string_conv(func):
+    """
+    Decorator for string time conversion functions.
+
+    Similar to vector_numeric_conv but for functions that work with
+    string inputs and return datetime objects.
+
+    Parameters
+    ----------
+    func : callable
+        Function that works on single string values
+
+    Returns
+    -------
+    callable
+        Vectorized version of the function
+    """
+
+    @wraps(func)
+    def wrapper(string_input, *args, **kwargs):
+        # Check if input is iterable (but not a single string)
+        is_iter = utils.is_iterable(string_input) and not isinstance(string_input, str)
+
+        if not is_iter:
+            # Single element case
+            return func(string_input, *args, **kwargs)
+        else:
+            # Iterable case - use numpy for efficiency
+            input_type = utils.get_type_smart(string_input)
+            string_array = np.asarray(string_input)
+
+            # Vectorized operation
+            vectorized_func = np.vectorize(lambda x: func(x, *args, **kwargs))
+            result_array = vectorized_func(string_array)
+
+            return input_type(result_array)
+
+    return wrapper
+
 #  _______ _                   _____                              _
 # |__   __(_)                 / ____|                            (_)
 #    | |   _ _ __ ___   ___  | |     ___  _ ____   _____ _ __ ___ _  ___  _ __
@@ -264,7 +303,7 @@ def numeric_vectorized_converter(func):
 ### Time conversion functions
 
 
-@numeric_vectorized_converter
+@vector_numeric_conv
 def tgipsy2dt(tin):
     """
     Time representation conversion
@@ -290,7 +329,7 @@ def tgipsy2dt(tin):
     return j2000 + dt.timedelta(seconds=float(tin))
 
 
-@numeric_vectorized_converter
+@vector_numeric_conv
 def matlab_time2dt(matlab_datenum):
     """
     Time representation conversion
@@ -395,7 +434,7 @@ def round_dt(dtin, round_to, python_dt_out=True, mode="round"):
             return list(dtin_out)
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt_ceil(dtin):
     """
     Round a datetime object to the beginning of the day
@@ -413,7 +452,7 @@ def dt_ceil(dtin):
     return dt.datetime.combine(dtin.date(), dt.time(0, 0, 0))
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt_in_local_timezone2posix(dtin):
     """
     Convert datetime in local timezone to POSIX timestamp.
@@ -431,7 +470,7 @@ def dt_in_local_timezone2posix(dtin):
     return time.mktime(dtin.timetuple()) + dtin.microsecond * 0.000001
 
 
-@numeric_vectorized_converter
+@vector_numeric_conv
 def posix2dt_in_local_timezone(posixin):
     """
     Convert POSIX timestamp to datetime in local timezone.
@@ -477,7 +516,7 @@ def dt_range(start_dt, end_dt, day_step=1, sec_step=0):
     return out_range
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2posix(dtin):
     """
     Time representation conversion
@@ -505,7 +544,7 @@ def dt2posix(dtin):
     return np.round(dout, 6)
 
 
-@numeric_vectorized_converter
+@vector_numeric_conv
 def posix2dt(posixin):
     """
     Time representation conversion
@@ -525,7 +564,7 @@ def posix2dt(posixin):
     return dt.datetime(1970, 1, 1) + dt.timedelta(seconds=float(posixin))
 
 
-@numeric_vectorized_converter
+@vector_numeric_conv
 def ntp2dt(ntp_timestamp_inp):
     """
     Time representation conversion
@@ -577,7 +616,7 @@ def datetime_improved(*args):
     return dt.datetime(*args)
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2ymdhms(dtin, with_microsec=True):
     """
     Time representation conversion
@@ -607,7 +646,7 @@ def dt2ymdhms(dtin, with_microsec=True):
             dtin.microsecond,
         )
     else:
-        return (dtin.year, dtin.month, dtin.day, dtin.hour, dtin.minute, dtin.second)
+        return dtin.year, dtin.month, dtin.day, dtin.hour, dtin.minute, dtin.second
 
 
 def ymdhms_vectors2dt(yrlis, mlis, dlis, hlis, minlis, slis):
@@ -700,7 +739,7 @@ def doy2dt(year, days, hours=0, minutes=0, seconds=0):
         return base_dt + delta
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2doy(dtin, outputtype=str):
     """
     Time representation conversion
@@ -726,7 +765,7 @@ def dt2doy(dtin, outputtype=str):
         return outputtype(doy)
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2doy_year(dtin, outputtype=str):
     """
     Time representation conversion
@@ -749,12 +788,12 @@ def dt2doy_year(dtin, outputtype=str):
     doy = dtin.timetuple().tm_yday
 
     if outputtype == str:
-        return (str(year), str(doy).zfill(3))
+        return str(year), str(doy).zfill(3)
     else:
-        return (outputtype(year), outputtype(doy))
+        return outputtype(year), outputtype(doy)
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2fracday(dtin):
     """
     Time representation conversion
@@ -777,7 +816,7 @@ def dt2fracday(dtin):
     return seconds_in_day / 86400.0
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2secinday(dtin):
     """
     Time representation conversion
@@ -797,7 +836,7 @@ def dt2secinday(dtin):
     return dtin.hour * 3600 + dtin.minute * 60 + dtin.second + dtin.microsecond * 1e-6
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2tuple(dtin):
     """
     Time representation conversion
@@ -849,7 +888,7 @@ def tup_or_lis2dt(lisin):
 ### Time scale conversions
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt_utc2dt_tai(dtin):
     """
     Time scale conversion
@@ -873,7 +912,7 @@ def dt_utc2dt_tai(dtin):
     return dtin + dt.timedelta(seconds=leapsec.find_leapsecond(dtin))
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt_tai2dt_utc(dtin):
     """
     Time scale conversion
@@ -897,7 +936,7 @@ def dt_tai2dt_utc(dtin):
     return dtin + dt.timedelta(seconds=-leapsec.find_leapsecond(dtin))
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt_tai2dt_tt(dtin):
     """
     Time scale conversion
@@ -925,7 +964,7 @@ def dt_tai2dt_tt(dtin):
     return dtin + dt.timedelta(seconds=32.184)
 
 
-def dt_utc2dt_ut1(dtin, dUT1):
+def dt_utc2dt_ut1(dtin, d_ut1):
     """
     Time scale conversion
 
@@ -935,7 +974,7 @@ def dt_utc2dt_ut1(dtin, dUT1):
     ----------
     dtin : datetime or iterable of datetime
         Datetime(s) in UTC. Can handle iterable of datetimes.
-    dUT1 : float
+    d_ut1 : float
         UT1-UTC in seconds.
 
     Returns
@@ -947,11 +986,11 @@ def dt_utc2dt_ut1(dtin, dUT1):
 
     if not is_iter:
         normalized = _normalize_datetime_input(dtin)
-        return normalized + dt.timedelta(seconds=dUT1)
+        return normalized + dt.timedelta(seconds=d_ut1)
     else:
         input_type = utils.get_type_smart(dtin)
         results = [
-            _normalize_datetime_input(d) + dt.timedelta(seconds=dUT1) for d in dtin
+            _normalize_datetime_input(d) + dt.timedelta(seconds=d_ut1) for d in dtin
         ]
         return input_type(results)
 
@@ -1048,13 +1087,14 @@ def dt_utc2dt_ut1_smart(dtin, df_eop_in, use_interp1d_obj=True, eop_interpolator
 
 
 # GPS Time conversions
-def utc2gpstime(year, month, day, hour, minute, second):
+@vector_datetime_conv
+def utc2gpstime(dtin_utc):
     """
     Convert UTC Time to GPS Time
 
     Parameters
     ----------
-    year,month,day,hour,minute,second : int
+    dtin_utc : datetime
         input UTC time.
 
     Returns
@@ -1063,13 +1103,11 @@ def utc2gpstime(year, month, day, hour, minute, second):
         Converted epoch in GPS time, i.e. GPS Week and GPS seconds in week.
 
     """
-    date_utc = dt.datetime(year, month, day, hour, minute, second)
-
-    utc_offset = leapsec.find_leapsecond(date_utc)
+    utc_offset = leapsec.find_leapsecond(dtin_utc)
 
     start_gps_time = dt.datetime(1980, 1, 6)
     date_diff = (
-        date_utc
+        dtin_utc
         - start_gps_time
         + dt.timedelta(seconds=utc_offset)
         - dt.timedelta(seconds=19)
@@ -1083,7 +1121,7 @@ def utc2gpstime(year, month, day, hour, minute, second):
     return int(gpsweek), int(gpssecs)
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2gpstime(dtin, secinweek=False, inp_ref="utc", outputtype=int):
     """
     Time scale conversion
@@ -1112,15 +1150,13 @@ def dt2gpstime(dtin, secinweek=False, inp_ref="utc", outputtype=int):
 
     Note
     ----
-    Returns tuple as single object, allowing @vectorized_time_converter to work.
+    Returns tuple as single object, allowing @vector_datetime_conv to work.
     The decorator treats each tuple as a single return value.
     """
     # Decorator handles normalization, so dtin is always native datetime here
 
     # Get raw GPS time
-    week_raw, secs_raw = utc2gpstime(
-        dtin.year, dtin.month, dtin.day, dtin.hour, dtin.minute, dtin.second
-    )
+    week_raw, secs_raw = utc2gpstime(dtin)
 
     # Apply time scale corrections
     if inp_ref == "utc":
@@ -1152,7 +1188,7 @@ def dt2gpstime(dtin, secinweek=False, inp_ref="utc", outputtype=int):
     return outtup
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2gpsweek_decimal(dtin, return_middle_of_day=True):
     """
     Time representation conversion
@@ -1176,7 +1212,7 @@ def dt2gpsweek_decimal(dtin, return_middle_of_day=True):
     return float(week) + (float(day + mod) / 7)
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2list(dtin, return_useful_values=True):
     """
     Time representation conversion
@@ -1273,7 +1309,7 @@ def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True, output_time_scale="ut
     return final_time
 
 
-@numeric_vectorized_converter
+@vector_numeric_conv
 def gpsweek_decimal2dt(gpsweekdec_in, output_time_scale="utc"):
     """
     Time representation conversion
@@ -1303,7 +1339,7 @@ def gpsweek_decimal2dt(gpsweekdec_in, output_time_scale="utc"):
     )
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt_gpstime2dt_utc(dtgpsin):
     """
     Time scale conversion
@@ -1325,7 +1361,7 @@ def dt_gpstime2dt_utc(dtgpsin):
     return dtgpsin + dt.timedelta(seconds=19 - utc_leapsec)
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt_gpstime2dt_tai(dtgpsin):
     """
     Time scale conversion
@@ -1346,7 +1382,7 @@ def dt_gpstime2dt_tai(dtgpsin):
     return dtgpsin + dt.timedelta(seconds=19)
 
 
-@numeric_vectorized_converter
+@vector_numeric_conv
 def year_decimal2dt(yearin):
     """
     Time representation conversion
@@ -1371,7 +1407,7 @@ def year_decimal2dt(yearin):
     return d + day_one
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2year_decimal(dtin):
     """
     Time representation conversion
@@ -1443,7 +1479,7 @@ strdate2dt = date_string_2_dt
 # (MJD, CNES Julian Day, etc.)
 
 
-@numeric_vectorized_converter
+@vector_numeric_conv
 def jjul_cnes2dt(jjulin):
     """
     Time representation & scale conversion
@@ -1467,6 +1503,7 @@ def jjul_cnes2dt(jjulin):
     return dt.datetime(1950, 1, 1, 0, 0, 0) + dt.timedelta(float(jjulin))
 
 
+@vector_datetime_conv
 def dt2jjul_cnes(dtin, onlydays=True):
     """
     Time representation & scale conversion
@@ -1485,13 +1522,7 @@ def dt2jjul_cnes(dtin, onlydays=True):
     int/tuple or iterable of int/tuple
         Julian Day CNES[, seconds in the Day]
     """
-    is_iter = utils.is_iterable(dtin)
-
-    if is_iter:
-        input_type = utils.get_type_smart(dtin)
-        return input_type([dt2jjul_cnes(e, onlydays) for e in dtin])
-
-    dtin = _normalize_datetime_input(dtin)
+    # At this point dtin is a native Python datetime (decorator normalizes/input-vectorizes)
     epok = dtin - dt.datetime(1950, 1, 1, 0, 0, 0)
 
     if onlydays:
@@ -1567,7 +1598,7 @@ def MJD2dt(*args, **kwargs):
     return mjd2dt(*args, **kwargs)
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2mjd(dtin):
     """
     Time representation conversion
@@ -1600,7 +1631,7 @@ def dt2MJD(*args, **kwargs):
     return dt2mjd(*args, **kwargs)
 
 
-@vectorized_time_converter
+@vector_datetime_conv
 def dt2str(dtin, str_format="%Y-%m-%d %H:%M:%S"):
     """
     Time representation conversion
@@ -1620,6 +1651,7 @@ def dt2str(dtin, str_format="%Y-%m-%d %H:%M:%S"):
         Time as string(s). If input is iterable, returns same type.
     """
     return dtin.strftime(str_format)
+
 
 def date2dt(date_in):
     """
