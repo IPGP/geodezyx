@@ -293,6 +293,7 @@ def vector_string_conv(func):
 
     return wrapper
 
+
 #  _______ _                   _____                              _
 # |__   __(_)                 / ____|                            (_)
 #    | |   _ _ __ ___   ___  | |     ___  _ ____   _____ _ __ ___ _  ___  _ __
@@ -995,7 +996,9 @@ def dt_utc2dt_ut1(dtin, d_ut1):
         return input_type(results)
 
 
-def dt_utc2dt_ut1_smart(dtin, df_eop_in, use_interp1d_obj=True, eop_interpolator=None):
+def dt_utc2dt_ut1_smart(
+    dtin, df_eop_in=None, use_interp1d_obj=True, eop_interpolator=None
+):
     """
     Time scale conversion
 
@@ -1025,6 +1028,11 @@ def dt_utc2dt_ut1_smart(dtin, df_eop_in, use_interp1d_obj=True, eop_interpolator
         DESCRIPTION.
 
     """
+
+    if not df_eop_in:
+        log.error("You must provide an EOP DataFrame")
+        raise ValueError("EOP DataFrame is required")
+
     #### internally we work with "epoch" as index
     if df_eop_in.index.name != "epoch":
         df_eop = df_eop_in.set_index("epoch")
@@ -1038,11 +1046,11 @@ def dt_utc2dt_ut1_smart(dtin, df_eop_in, use_interp1d_obj=True, eop_interpolator
         dtmin = np.min(dtin)
         dtmax = np.max(dtin)
 
-        bool = (df_eop.index > dtmin - dt.timedelta(days=2)) & (
+        boolt = (df_eop.index > dtmin - dt.timedelta(days=2)) & (
             df_eop.index < dtmax + dt.timedelta(days=2)
         )
 
-        df_eop = df_eop[bool]
+        df_eop = df_eop[boolt]
 
         ### We also use the interpolator class
         if use_interp1d_obj:
@@ -1440,6 +1448,7 @@ def dt2year_decimal(dtin):
     return dtin.year + fraction
 
 
+@vector_string_conv
 def date_string_2_dt(strin):
     """
     Time representation conversion
@@ -1460,13 +1469,7 @@ def date_string_2_dt(strin):
     """
     import dateutil.parser
 
-    is_iter = utils.is_iterable(strin)
-
-    if is_iter:
-        input_type = utils.get_type_smart(strin)
-        return input_type([dateutil.parser.parse(s) for s in strin])
-    else:
-        return dateutil.parser.parse(strin)
+    return dateutil.parser.parse(strin)
 
 
 # Aliases
@@ -1680,7 +1683,7 @@ def date2dt(date_in):
 # to avoid duplicating complex regex parsing logic
 # (These can be refactored later if needed)
 
-
+@vector_string_conv
 def rinexname2dt(rinexpath):
     """
     Time representation conversion
@@ -1756,7 +1759,7 @@ def rinexname2dt(rinexpath):
         log.error("RINEX name is not well formated: %s", rinexname)
         return None
 
-
+@vector_string_conv
 def sp3name2dt(sp3path):
     """
     Time representation conversion
@@ -1783,7 +1786,7 @@ def sp3name2dt(sp3path):
     else:
         return sp3name_v3_2dt(sp3path)
 
-
+@vector_string_conv
 def sp3name_leg_2dt(sp3path):
     """
     Time representation conversion
@@ -1809,7 +1812,7 @@ def sp3name_leg_2dt(sp3path):
     dow = int(sp3name[7])
     return gpstime2dt(week, dow)
 
-
+@vector_string_conv
 def sp3name_v3_2dt(sp3path):
     """
     Time representation conversion
@@ -2302,9 +2305,3 @@ def dt2epoch_rnx3(dt_in, epoch_flag=0, nsats=0, rec_clk_offset=0):
         )
 
         return epoch_out
-
-
-# NOTE: This is a refactored version with improved performance.
-# Complex functions like rinexname2dt, sp3name2dt, and dt_utc2dt_ut1_smart
-# should be imported from the original module or refactored separately
-# as they involve domain-specific parsing that doesn't benefit much from vectorization.
