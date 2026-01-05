@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.reffram package &mdash; geodezyx 4.x documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
@@ -65,7 +65,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.gnss_products">geodezyx.reffram.gnss_products module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.kepler_gzyx">geodezyx.reffram.kepler_gzyx module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.quaternions">geodezyx.reffram.quaternions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#geodezyx-reffram-sofa18-module">geodezyx.reffram.sofa18 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.sofa">geodezyx.reffram.sofa module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
@@ -330,7 +330,7 @@ params = (t1,t2,t3,dab,r1,r2,r3)</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="geodezyx.reffram.geometry.interp1d_ang">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">interp1d_ang</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.interp1d_ang" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.geometry.</span></span><span class="sig-name descname"><span class="pre">interp1d_ang</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.geometry.interp1d_ang" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
@@ -727,13 +727,13 @@ GitHub repository :
 <a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.beta_angle_calc">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">beta_angle_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFOrb_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_beta_sun_ra_dec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_beta_sun_eclip_long</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_rad2deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.beta_angle_calc" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">beta_angle_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_beta_sun_ra_dec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_beta_sun_eclip_long</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta_rad2deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.beta_angle_calc" title="Link to this definition"></a></dt>
 <dd><p>Compute beta angle for GNSS satellite’s orbits stored in an orbit
 DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>DFOrb_in</strong> (<em>Pandas DataFrame</em>) – an Orbit DataFrame (ECEF frame).</p></li>
+<li><p><strong>orb_df_inp</strong> (<em>Pandas DataFrame</em>) – an Orbit DataFrame (ECEF frame).</p></li>
 <li><p><strong>calc_beta_sun_ra_dec</strong> (<em>bool</em><em>, </em><em>optional</em>) – compute beta angle with Sun’s right ascension and declination.
 The default is True.</p></li>
 <li><p><strong>calc_beta_sun_eclip_long</strong> (<em>bool</em><em>, </em><em>optional</em>) – compute beta angle with Sun’s Ecliptic longitude.
@@ -743,7 +743,7 @@ The default is True.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>df_out</strong> (<em>Pandas DataFrame</em>) – df_orb_in with a new ‘beta’ column.</p></li>
+<li><p><strong>df_out</strong> (<em>Pandas DataFrame</em>) – df_orb_inp with a new ‘beta’ column.</p></li>
 <li><p><strong>df_wrk</strong> (<em>Pandas DataFrame</em>) – intermediate values dataframe for debug.
 here, coordinates are in ECI frame</p></li>
 </ul>
@@ -797,15 +797,15 @@ Angles are in radians</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sun_dec</strong> (<em>float</em>) – Sun’s declination.</p></li>
-<li><p><strong>sun_ra</strong> (<em>float</em>) – Sun’s right ascension.</p></li>
-<li><p><strong>sat_i</strong> (<em>float</em>) – Satellite’s inclination.</p></li>
+<li><p><strong>sun_dec</strong> (<em>float</em><em> or </em><em>pandas Series</em>) – Sun’s declination.</p></li>
+<li><p><strong>sun_ra</strong> (<em>float</em><em> or </em><em>pandas Series</em>) – Sun’s right ascension.</p></li>
+<li><p><strong>sat_i</strong> (<em>float</em><em> or </em><em>pandas Series</em>) – Satellite’s inclination.</p></li>
 <li><p><strong>sat_o_lan</strong> (<em>float</em>) – Satellite’s Longitude of the ascending node.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>beta</strong> (<em>float</em>) – beta angle (in radians).</p></li>
+<li><p><strong>beta</strong> (<em>float or pandas Series</em>) – beta angle (in radians).</p></li>
 <li><p><em>Source</em></p></li>
 <li><p><em>——</em></p></li>
 <li><p><strong>`Satellites</strong> (de Kepler au GPS`, Michel Capderou (2012))</p></li>
@@ -825,7 +825,7 @@ based on: <cite>Astronomical algorithms</cite>, Jean Meeus (1st edition, 1991)</
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.clk_df_common_epoch_finder">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">clk_df_common_epoch_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ClkDFa_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ClkDFb_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['name',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.clk_df_common_epoch_finder" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">clk_df_common_epoch_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_a_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clk_df_b_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['name',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.clk_df_common_epoch_finder" title="Link to this definition"></a></dt>
 <dd><p>Find common sats/station and epochs in to Clock DF, and output the
 corresponding Clock DFs</p>
 <p>Is an adapted version of orb_df_common_epoch_finder</p>
@@ -833,7 +833,7 @@ corresponding Clock DFs</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.clk_df_common_epoch_finder_multi">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">clk_df_common_epoch_finder_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_list_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['name',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.clk_df_common_epoch_finder_multi" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">clk_df_common_epoch_finder_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_list_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['name',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.clk_df_common_epoch_finder_multi" title="Link to this definition"></a></dt>
 <dd><p>Find common sats/station and epochs in to Clock DF, and output the
 corresponding Clock DFs</p>
 <p>Is is the multi version of clk_df_common_epoch_finder</p>
@@ -841,12 +841,12 @@ corresponding Clock DFs</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.clk_df_filter">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">clk_df_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('AS',</span> <span class="pre">'AR')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_strt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.clk_df_filter" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">clk_df_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('AS',</span> <span class="pre">'AR')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_strt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.clk_df_filter" title="Link to this definition"></a></dt>
 <dd><p>Filter the content of a Clock DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>clk_df_in</strong> (<em>DataFrame</em>) – Input Clock DataFrame
+<li><p><strong>clk_df_inp</strong> (<em>DataFrame</em>) – Input Clock DataFrame
 (a concatenation of DF generated by files_rw.read_clk.</p></li>
 <li><p><strong>typ</strong> (<em>iterable</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – List of the types of clocks: AS (satellite) or AR (receiver).
 The default is (“AS”,”AR”).</p></li>
@@ -875,7 +875,7 @@ The default is False</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.clk_df_filter2">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">clk_df_filter2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('AS',</span> <span class="pre">'AR')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_strt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.clk_df_filter2" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">clk_df_filter2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('AS',</span> <span class="pre">'AR')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_strt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.clk_df_filter2" title="Link to this definition"></a></dt>
 <dd><p>attempt for a faster version of clk_df_filter, but the original is faster</p>
 </dd></dl>
 
@@ -890,12 +890,12 @@ The outputed DF is then a Multi-index DF</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_clk_plot">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_clk_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.pdf',</span> <span class="pre">'.png',</span> <span class="pre">'.svg')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_label_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'psec'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_Col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_clk_plot" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_clk_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.pdf',</span> <span class="pre">'.png',</span> <span class="pre">'.svg')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_label_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'psec'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_Col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_clk_plot" title="Link to this definition"></a></dt>
 <dd><p>General description</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>diff_sat_all_df_in</strong> (<em>DataFrame</em>) – a DataFrame produced by compar_clk</p></li>
+<li><p><strong>diff_sat_all_df_inp</strong> (<em>DataFrame</em>) – a DataFrame produced by compar_clk</p></li>
 <li><p><strong>yaxis_limit</strong> (<em>3-tuple iterable</em><em> or </em><em>2-element tuple</em>) – force the y axis limits. must look like
 (ymin,ymax) to set all th axis at the same limits</p></li>
 <li><p><strong>col_name</strong> (<em>Normally the name</em><em> of </em><em>the column with the sat names</em>)</p></li>
@@ -916,12 +916,12 @@ The outputed DF is then a Multi-index DF</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_clock">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_clock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_clk_inp_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_clk_inp_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_clock" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_clock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_inp_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clk_df_inp_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_clock" title="Link to this definition"></a></dt>
 <dd><p>Compares 2 GNSS clock bias DataFrames (from .clk), to a
 statistics table (with compar_clock_table)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>df_clk_inp_2</strong> (<em>df_clk_inp_1 &amp;</em>) – Clock DataFrame provided by files_rw.read_clk()</p>
+<dd class="field-odd"><p><strong>clk_df_inp_2</strong> (<em>clk_df_inp_1 &amp;</em>) – Clock DataFrame provided by files_rw.read_clk()</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>df_clk_diff</strong> – Clock bias difference DataFrame</p>
@@ -934,15 +934,19 @@ statistics table (with compar_clock_table)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_clock_table">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_clock_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_clk_diff_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_Col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias_diff'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_clock_table" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_clock_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_clk_diff_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias_diff'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_clock_table" title="Link to this definition"></a></dt>
 <dd><p>Generate a table with statistical indicators for a clock comparison
 (RMS mean, standard dev, …)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>df_clk_diff_in</strong> (<em>DataFrame</em>) – Clock bias difference DataFrame (from compar_clock)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_clk_diff_inp</strong> (<em>DataFrame</em>) – Clock bias difference DataFrame (from compar_clock)</p></li>
+<li><p><strong>col_name</strong> (<em>str</em>) – the column with the sat names</p></li>
+<li><p><strong>bias_col_name</strong> (<em>str</em>) – The column with the clk difference values</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DFcompar_out</strong> – Statistical results of the comparison.</p>
+<dd class="field-even"><p><strong>compar_df_out</strong> – Statistical results of the comparison.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>DataFrame</p>
@@ -1013,40 +1017,51 @@ This Note is in fact usefull if you want to see bad positions on a plot
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_orbit_plot">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.pdf',</span> <span class="pre">'.png',</span> <span class="pre">'.svg')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_label_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'m'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit_plot" title="Link to this definition"></a></dt>
-<dd><p>General description</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.pdf',</span> <span class="pre">'.png',</span> <span class="pre">'.svg')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_label_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'m'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit_plot" title="Link to this definition"></a></dt>
+<dd><p>Generates a plot for orbit comparison data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>diff_sat_all_df_in</strong> (<em>DataFrame</em>) – a DataFrame produced by compar_orbit</p></li>
-<li><p><strong>yaxis_limit</strong> (<em>3-tuple iterable</em><em> or </em><em>2-element tuple</em>) – force the y axis limits. must look like
-[(ymin_r,ymax_r),(ymin_t,ymax_t),(ymin_n,ymax_n)]
-to control all the axis independely
-OR
-(ymin,ymax)
-to set all th axis at the same limits</p></li>
+<li><p><strong>diff_sat_all_df_inp</strong> (<em>DataFrame</em>) – A DataFrame produced by the <cite>compar_orbit</cite> function, containing orbit comparison data.</p></li>
+<li><p><strong>save_plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, saves the plot to a file instead of returning the Figure and Axes. Default is False.</p></li>
+<li><p><strong>save_plot_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory where the plot will be saved. Default is an empty string.</p></li>
+<li><p><strong>save_plot_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the saved plot file. If “auto”, the name is generated automatically. Default is “auto”.</p></li>
+<li><p><strong>save_plot_name_suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – Suffix to append to the saved plot name. Default is None.</p></li>
+<li><p><strong>save_plot_ext</strong> (<em>tuple</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – File extensions for the saved plot. Default is (“.pdf”, “.png”, “.svg”).</p></li>
+<li><p><strong>yaxis_limit</strong> (<em>tuple</em><em> or </em><em>list</em><em>, </em><em>optional</em>) – Limits for the y-axis. Can be a 3-tuple for independent axis limits or a 2-tuple for uniform limits. Default is None.</p></li>
+<li><p><strong>yaxis_label_unit</strong> (<em>str</em><em>, </em><em>optional</em>) – Unit label for the y-axis. Default is “m”.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>the Figure and the 3 Axes if no save is asked</em></p></li>
-<li><p><em>export path (str) if save is asked</em></p></li>
-<li><p><em>but plot a plot anyway</em></p></li>
-</ul>
-</p>
+<dd class="field-even"><p>If <cite>save_plot</cite> is False, returns the Figure and Axes as a tuple. If <cite>save_plot</cite> is True, returns the path of the saved plot file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple or str</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function creates three subplots for Radial, Transverse, and Normal differences (RTN) or X, Y, Z differences.</p></li>
+<li><p>The y-axis limits can be customized for each subplot or applied uniformly.</p></li>
+<li><p>If <cite>save_plot</cite> is True, the plot is saved in the specified directory with the specified name and extensions.</p></li>
+<li><p>The function uses the <cite>viridis</cite> colormap for distinguishing satellites.</p></li>
+</ul>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">compar_orbit_plot</span><span class="p">(</span><span class="n">diff_sat_all_df_inp</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_orbit_table">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rms_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'natural'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_tab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit_table" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rms_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'natural'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_tab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit_table" title="Link to this definition"></a></dt>
 <dd><p>Generate a table with statistical indicators for an orbit comparison
 (RMS mean, standard dev, …)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>diff_sat_all_df_in</strong> (<em>Pandas DataFrame</em>) – a DataFrame produced by compar_orbit</p></li>
+<li><p><strong>diff_sat_all_df_inp</strong> (<em>Pandas DataFrame</em>) – a DataFrame produced by compar_orbit</p></li>
 <li><p><strong>rms_style</strong> (<em>str</em>) – ‘natural’: use the natural definition of the RMS
 ‘GRGS’: RMS calc based on the GRGS definition of the RMS (OV help)
 is actually the standard deviation
@@ -1066,8 +1081,8 @@ using the degree of freedom (3*Nobs - 7)</p></li>
 <p class="admonition-title">Note</p>
 <p>you can pretty print the output DataFrame using tabular module
 here is a template:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">compar_table</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span><span class="n">floatfmt</span><span class="o">=</span><span class="s2">&quot;.4f&quot;</span><span class="p">))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">tabulate</span><span class="w"> </span><span class="kn">import</span> <span class="n">tabulate</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">compar_table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span> <span class="n">floatfmt</span><span class="o">=</span><span class="s2">&quot;.4f&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1076,7 +1091,26 @@ here is a template:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_sinex">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_sinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snx1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snx2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_means_summary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_meta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dataframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manu_wwwwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_sinex" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Compare 2 SINEX files and provide statistics on station position differences</p>
+<section id="inputs">
+<h3>Inputs<a class="headerlink" href="#inputs" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>snx1, snx2<span class="classifier">str or DataFrame</span></dt><dd><p>Paths to the SINEX files to compare or DataFrames containing SINEX data</p>
+</dd>
+<dt>stat_select<span class="classifier">str or list, optional</span></dt><dd><p>Regular expression or list of station codes to filter the comparison</p>
+</dd>
+<dt>invert_select<span class="classifier">bool, optional</span></dt><dd><p>If True, invert the selection criteria for stations</p>
+</dd>
+<dt>out_means_summary<span class="classifier">bool, optional</span></dt><dd><p>If True, return a summary of means; otherwise, return the full DataFrame</p>
+</dd>
+<dt>out_meta<span class="classifier">bool, optional</span></dt><dd><p>If True, include metadata (week, day, number of stations) in the output</p>
+</dd>
+<dt>out_dataframe<span class="classifier">bool, optional</span></dt><dd><p>If True, return the output as a DataFrame; otherwise, return as a tuple</p>
+</dd>
+</dl>
+<p>manu_wwwwd : str, optional</p>
+</section>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.eop_interpotate">
@@ -1104,13 +1138,13 @@ Series if onely one epoch is provided, df_eop elsewere</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.get_block_svn">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">get_block_svn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sat_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svn_prn_equiv_df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.get_block_svn" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">get_block_svn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sat_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svn_prn_equiv_df_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.get_block_svn" title="Link to this definition"></a></dt>
 <dd><p>Get the equivalence SVN block type</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sat_in</strong> (<em>str</em>) – Satellite SVN.</p></li>
-<li><p><strong>svn_prn_equiv_df</strong> (<em>DataFrame</em>) – Equivalence table generated by svn_prn_equiv_df.</p></li>
+<li><p><strong>sat_inp</strong> (<em>str</em>) – Satellite SVN.</p></li>
+<li><p><strong>svn_prn_equiv_df_inp</strong> (<em>DataFrame</em>) – Equivalence table generated by svn_prn_equiv_df.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1121,20 +1155,20 @@ Series if onely one epoch is provided, df_eop elsewere</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.orb_df_common_epoch_finder">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_common_epoch_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">OrbDFa_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orb_df_b_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['prn',</span> <span class="pre">'epoch']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_reg2multidx_OrbDFa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_reg2multidx_OrbDFb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_common_epoch_finder" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_common_epoch_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_a_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orb_df_b_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['prn',</span> <span class="pre">'epoch']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_reg2multidx_orb_df_a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_reg2multidx_orb_df_b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_common_epoch_finder" title="Link to this definition"></a></dt>
 <dd><p>This function finds common satellites and epochs in two Orbit DataFrames and outputs the corresponding Orbit DataFrames.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>OrbDFa_in</strong> (<em>DataFrame</em>) – The first input Orbit DataFrame.</p></li>
-<li><p><strong>orb_df_b_in</strong> (<em>DataFrame</em>) – The second input Orbit DataFrame.</p></li>
+<li><p><strong>orb_df_a_inp</strong> (<em>DataFrame</em>) – The first input Orbit DataFrame.</p></li>
+<li><p><strong>orb_df_b_inp</strong> (<em>DataFrame</em>) – The second input Orbit DataFrame.</p></li>
 <li><p><strong>return_index</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the function also returns the common index. Default is False.</p></li>
 <li><p><strong>supplementary_sort</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, an additional sort is performed. This is useful for multi GNSS where the output DataFrame may not be well sorted. Default is False.</p></li>
 <li><p><strong>order</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – The order of the index for the multi-index DataFrame. Default is [“prn”,”epoch”].</p></li>
-<li><p><strong>skip_reg2multidx_OrbDFa</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, skips the conversion of the first input DataFrame to a multi-index DataFrame. Default is False.
+<li><p><strong>skip_reg2multidx_orb_df_a</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, skips the conversion of the first input DataFrame to a multi-index DataFrame. Default is False.
 The inputs are assumed to be already in multi-index format to optimize execution speed.
 (For advanced use only)</p></li>
-<li><p><strong>skip_reg2multidx_OrbDFb</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, skips the conversion of the second input DataFrame to a multi-index DataFrame. Default is False.
+<li><p><strong>skip_reg2multidx_orb_df_b</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, skips the conversion of the second input DataFrame to a multi-index DataFrame. Default is False.
 The inputs are assumed to be already in multi-index format to optimize execution speed.
 (For advanced use only)</p></li>
 </ul>
@@ -1143,7 +1177,7 @@ The inputs are assumed to be already in multi-index format to optimize execution
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>orb_df_a_out</strong> (<em>DataFrame</em>) – The first output Orbit DataFrame with common satellites and epochs.</p></li>
 <li><p><strong>orb_df_b_out</strong> (<em>DataFrame</em>) – The second output Orbit DataFrame with common satellites and epochs.</p></li>
-<li><p><strong>Iinter</strong> (<em>Index, optional</em>) – The common index. Only returned if return_index is True.</p></li>
+<li><p><strong>iinter</strong> (<em>Index, optional</em>) – The common index. Only returned if return_index is True.</p></li>
 </ul>
 </p>
 </dd>
@@ -1158,21 +1192,21 @@ STAT and epoch as order parmeter</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.orb_df_const_sv_columns_maker">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_const_sv_columns_maker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_const_sv_columns_maker" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_const_sv_columns_maker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_const_sv_columns_maker" title="Link to this definition"></a></dt>
 <dd><p>(re)generate the const and sv columns from the sat one</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.orb_df_crf2trf">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_crf2trf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_orb_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_eop_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_scale_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gps'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inv_trf2crf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_crf2trf" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_crf2trf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eop_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_scale_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gps'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inv_trf2crf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_crf2trf" title="Link to this definition"></a></dt>
 <dd><p>Convert an Orbit DataFrame from Celetrial Reference Frame to
 Terrestrial Reference Frame.</p>
 <p>Requires EOP to work. Cf. note below.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_orb_inp</strong> (<em>DataFrame</em>) – Input Orbit DataFrame in Celetrial Reference Frame.</p></li>
-<li><p><strong>df_eop_inp</strong> (<em>DataFrame</em>) – EOP DataFrame  (C04 format).</p></li>
+<li><p><strong>orb_df_inp</strong> (<em>DataFrame</em>) – Input Orbit DataFrame in Celetrial Reference Frame.</p></li>
+<li><p><strong>eop_df_inp</strong> (<em>DataFrame</em>) – EOP DataFrame  (C04 format).</p></li>
 <li><p><strong>time_scale_inp</strong> (<em>str</em><em>, </em><em>optional</em>) – The time scale used in. manage ‘utc’, ‘tai’ and ‘gps’.
 The default is “gps”.</p></li>
 <li><p><strong>inv_trf2crf</strong> (<em>bool</em><em>, </em><em>optional</em>) – Provide the inverse transformation TRF =&gt; CRF.
@@ -1180,7 +1214,7 @@ The default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DForb_out</strong> – Output Orbit DataFrame in Terrestrial Reference Frame.
+<dd class="field-even"><p><strong>orb_df_out</strong> – Output Orbit DataFrame in Terrestrial Reference Frame.
 (or Celestrial if inv_trf2crf is True)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -1213,7 +1247,7 @@ files_rw.read_eop_C04()</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>DForb_out</strong> (<em>DataFrame</em>) – Interpolated orbits.</p></li>
+<li><p><strong>orb_df_out</strong> (<em>DataFrame</em>) – Interpolated orbits.</p></li>
 <li><p><em>Tips</em></p></li>
 <li><p><em>—-</em></p></li>
 <li><p><em>Use conv.dt_range to generate the wished epochs range</em></p></li>
@@ -1225,13 +1259,13 @@ files_rw.read_eop_C04()</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.orb_df_multidx_2_reg">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_multidx_2_reg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">OrbDFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['prn',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_multidx_2_reg" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_multidx_2_reg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['prn',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_multidx_2_reg" title="Link to this definition"></a></dt>
 <dd><p>Convert a Multi-index formatted OrbitDF to his original form</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.orb_df_reg_2_multidx">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_reg_2_multidx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">OrbDFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['prn',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_reg_2_multidx" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_reg_2_multidx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['prn',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_reg_2_multidx" title="Link to this definition"></a></dt>
 <dd><p>From an regular Orbit DF generated by read_sp3(), set some columns
 (typically [“prn”,”epoch”]) as indexes
 The outputed DF is then a Multi-index DF</p>
@@ -1239,13 +1273,13 @@ The outputed DF is then a Multi-index DF</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.orb_df_velocity_calc">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_velocity_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_orb_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_velocity_calc" title="Link to this definition"></a></dt>
-<dd><p>Compute the velocity of satellites from a DFOrb dataframe
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_velocity_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_velocity_calc" title="Link to this definition"></a></dt>
+<dd><p>Compute the velocity of satellites from an orbit dataframe
 (differentiate the position)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_orb_in</strong> (<em>Pandas DataFrame</em>) – an Orbit DataFrame.</p></li>
+<li><p><strong>orb_df_inp</strong> (<em>Pandas DataFrame</em>) – an Orbit DataFrame.</p></li>
 <li><p><strong>drop_nan</strong> (<em>bool</em><em>, </em><em>optional</em>) – Remove the nan values
 (the first ones, since it is a numerical differentiation).
 The default is False.
@@ -1264,12 +1298,12 @@ same size and index as input</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.stats_slr">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">stats_slr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grpby_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['sat']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.stats_slr" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">stats_slr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grpby_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['sat']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.stats_slr" title="Link to this definition"></a></dt>
 <dd><p>computes statistics for SLR Residuals</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_in</strong> (<em>Pandas DataFrame</em>) – Input residual Dataframe from read_pdm_res_slr.</p></li>
+<li><p><strong>df_inp</strong> (<em>Pandas DataFrame</em>) – Input residual Dataframe from read_pdm_res_slr.</p></li>
 <li><p><strong>grpby_keys</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – The default is [‘sat’].
 per day, per solution, per satellite: [‘day’,’sol’,’sat’]
 per day, per solution, per station: [‘day’,’sol’,’sta’]
@@ -1288,14 +1322,14 @@ per day, per solution, per satellite, per station: [‘day’,’sol’,’sta�
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.svn_prn_equiv">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">svn_prn_equiv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sat_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svn_prn_equiv_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'svn2prn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.svn_prn_equiv" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">svn_prn_equiv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sat_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">svn_prn_equiv_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'svn2prn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.svn_prn_equiv" title="Link to this definition"></a></dt>
 <dd><p>Get the equivalence SVN &lt;&gt; PRN for a given epoch</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sat_in</strong> (<em>str</em>) – Satellite “ID”, SVN or PRN.</p></li>
 <li><p><strong>date_in</strong> (<em>datetime</em>) – wished epoch.</p></li>
-<li><p><strong>svn_prn_equiv_df</strong> (<em>DataFrame</em>) – Equivalence table generated by svn_prn_equiv_df.</p></li>
+<li><p><strong>svn_prn_equiv_df_inp</strong> (<em>DataFrame</em>) – Equivalence table generated by svn_prn_equiv_df.</p></li>
 <li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – prn2svn: PRN &gt; SVN
 svn2prn: SVN &gt; PRN.
 The default is “svn2prn”.</p></li>
@@ -1545,8 +1579,511 @@ use the old quaterinons toolbox</p>
 </dd></dl>
 
 </section>
-<section id="geodezyx-reffram-sofa18-module">
-<h2>geodezyx.reffram.sofa18 module<a class="headerlink" href="#geodezyx-reffram-sofa18-module" title="Link to this heading"></a></h2>
+<section id="module-geodezyx.reffram.sofa">
+<span id="geodezyx-reffram-sofa-module"></span><h2>geodezyx.reffram.sofa module<a class="headerlink" href="#module-geodezyx.reffram.sofa" title="Link to this heading"></a></h2>
+<p>This module ‘sofa’ is auto-generated with f2py (version:2.3.4).
+Functions:</p>
+<blockquote>
+<div><p>iau_a2af(ndp,angle,sign,idmsf)
+iau_a2tf(ndp,angle,sign,ihmsf)
+iau_ab(pnat,v,s,bm1,ppr)
+iau_ae2hd(az,el,phi,ha,dec)
+iau_af2a(s,ideg,iamin,asec,rad,j)
+iau_anp = iau_anp(a)
+iau_anpm = iau_anpm(a)
+iau_apcg13(date1,date2,astrom)
+iau_apcg(date1,date2,ebpv,ehp,astrom)
+iau_apci13(date1,date2,astrom,eo)
+iau_apci(date1,date2,ebpv,ehp,x,y,s,astrom)
+iau_apco13(utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,astrom,eo,j)
+iau_apco(date1,date2,ebpv,ehp,x,y,s,theta,elong,phi,hm,xp,yp,sp,refa,refb,astrom)
+iau_apcs13(date1,date2,pv,astrom)
+iau_apcs(date1,date2,pv,ebpv,ehp,astrom)
+iau_aper13(ut11,ut12,astrom)
+iau_aper(theta,astrom)
+iau_apio13(utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,astrom,j)
+iau_apio(sp,theta,elong,phi,hm,xp,yp,refa,refb,astrom)
+iau_atcc13(rc,dc,pr,pd,px,rv,date1,date2,ra,da)
+iau_atccq(rc,dc,pr,pd,px,rv,astrom,ra,da)
+iau_atci13(rc,dc,pr,pd,px,rv,date1,date2,ri,di,eo)
+iau_atciq(rc,dc,pr,pd,px,rv,astrom,ri,di)
+iau_atciqn(rc,dc,pr,pd,px,rv,astrom,b,ri,di,n=shape(b, 1))
+iau_atciqz(rc,dc,astrom,ri,di)
+iau_atco13(rc,dc,pr,pd,px,rv,utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,aob,zob,hob,dob,rob,eo,j)
+iau_atic13(ri,di,date1,date2,rc,dc,eo)
+iau_aticq(ri,di,astrom,rc,dc)
+iau_aticqn(ri,di,astrom,b,rc,dc,n=shape(b, 1))
+iau_atio13(ri,di,utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,aob,zob,hob,dob,rob,j)
+iau_atioq(ri,di,astrom,aob,zob,hob,dob,rob)
+iau_atoc13(type_bn,ob1,ob2,utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,rc,dc,j)
+iau_atoi13(type_bn,ob1,ob2,utc1,utc2,dut1,elong,phi,hm,xp,yp,phpa,tc,rh,wl,ri,di,j)
+iau_atoiq(type_bn,ob1,ob2,astrom,ri,di)
+iau_bi00(dpsibi,depsbi,dra)
+iau_bp00(date1,date2,rb,rp,rbp)
+iau_bp06(date1,date2,rb,rp,rbp)
+iau_bpn2xy(rbpn,x,y)
+iau_c2i00a(date1,date2,rc2i)
+iau_c2i00b(date1,date2,rc2i)
+iau_c2i06a(date1,date2,rc2i)
+iau_c2ibpn(date1,date2,rbpn,rc2i)
+iau_c2ixy(date1,date2,x,y,rc2i)
+iau_c2ixys(x,y,s,rc2i)
+iau_c2s(p,theta,phi)
+iau_c2t00a(tta,ttb,uta,utb,xp,yp,rc2t)
+iau_c2t00b(tta,ttb,uta,utb,xp,yp,rc2t)
+iau_c2t06a(tta,ttb,uta,utb,xp,yp,rc2t)
+iau_c2tceo(rc2i,era,rpom,rc2t)
+iau_c2tcio(rc2i,era,rpom,rc2t)
+iau_c2teqx(rbpn,gst,rpom,rc2t)
+iau_c2tpe(tta,ttb,uta,utb,dpsi,deps,xp,yp,rc2t)
+iau_c2txy(tta,ttb,uta,utb,x,y,xp,yp,rc2t)
+iau_cal2jd(iy,im,id,djm0,djm,j)
+iau_cp(p,c)
+iau_cpv(pv,c)
+iau_cr(r,c)
+iau_d2dtf(scale,ndp,d1,d2,iy,im,id,ihmsf,j)
+iau_d2tf(ndp,days,sign,ihmsf)
+iau_dat(iy,im,id,fd,deltat,j)
+iau_dtdb = iau_dtdb(date1,date2,ut,elong,u,v)
+iau_dtf2d(scale,iy,im,id,ihr,imn,sec,d1,d2,j)
+iau_eceq06(date1,date2,dl,db,dr,dd)
+iau_ecm06(date1,date2,rm)
+iau_ee00a = iau_ee00a(date1,date2)
+iau_ee00b = iau_ee00b(date1,date2)
+iau_ee00 = iau_ee00(date1,date2,epsa,dpsi)
+iau_ee06a = iau_ee06a(date1,date2)
+iau_eect00 = iau_eect00(date1,date2)
+iau_eform(n,a,f,j)
+iau_eo06a = iau_eo06a(date1,date2)
+iau_eors = iau_eors(rnpb,s)
+iau_epb2jd(epb,djm0,djm)
+iau_epb = iau_epb(dj1,dj2)
+iau_epj2jd(epj,djm0,djm)
+iau_epj = iau_epj(dj1,dj2)
+iau_epv00(date1,date2,pvh,pvb,jstat)
+iau_eqec06(date1,date2,dr,dd,dl,db)
+iau_eqeq94 = iau_eqeq94(date1,date2)
+iau_era00 = iau_era00(dj1,dj2)
+iau_fad03 = iau_fad03(t)
+iau_fae03 = iau_fae03(t)
+iau_faf03 = iau_faf03(t)
+iau_faju03 = iau_faju03(t)
+iau_fal03 = iau_fal03(t)
+iau_falp03 = iau_falp03(t)
+iau_fama03 = iau_fama03(t)
+iau_fame03 = iau_fame03(t)
+iau_fane03 = iau_fane03(t)
+iau_faom03 = iau_faom03(t)
+iau_fapa03 = iau_fapa03(t)
+iau_fasa03 = iau_fasa03(t)
+iau_faur03 = iau_faur03(t)
+iau_fave03 = iau_fave03(t)
+iau_fk425(r1950,d1950,dr1950,dd1950,p1950,v1950,r2000,d2000,dr2000,dd2000,p2000,v2000)
+iau_fk45z(r1950,d1950,bepoch,r2000,d2000)
+iau_fk524(r2000,d2000,dr2000,dd2000,p2000,v2000,r1950,d1950,dr1950,dd1950,p1950,v1950)
+iau_fk52h(r5,d5,dr5,dd5,px5,rv5,rh,dh,drh,ddh,pxh,rvh)
+iau_fk54z(r2000,d2000,bepoch,r1950,d1950,dr1950,dd1950)
+iau_fk5hip(r5h,s5h)
+iau_fk5hz(r5,d5,date1,date2,rh,dh)
+iau_fw2m(gamb,phib,psi,eps,r)
+iau_fw2xy(gamb,phib,psi,eps,x,y)
+iau_g2icrs(dl,db,dr,dd)
+iau_gc2gde(a,f,xyz,elong,phi,height,j)
+iau_gc2gd(n,xyz,elong,phi,height,j)
+iau_gd2gce(a,f,elong,phi,height,xyz,j)
+iau_gd2gc(n,elong,phi,height,xyz,j)
+iau_gmst00 = iau_gmst00(uta,utb,tta,ttb)
+iau_gmst06 = iau_gmst06(uta,utb,tta,ttb)
+iau_gmst82 = iau_gmst82(dj1,dj2)
+iau_gst00a = iau_gst00a(uta,utb,tta,ttb)
+iau_gst00b = iau_gst00b(uta,utb)
+iau_gst06a = iau_gst06a(uta,utb,tta,ttb)
+iau_gst06 = iau_gst06(uta,utb,tta,ttb,rnpb)
+iau_gst94 = iau_gst94(uta,utb)
+iau_h2fk5(rh,dh,drh,ddh,pxh,rvh,r5,d5,dr5,dd5,px5,rv5)
+iau_hd2ae(ha,dec,phi,az,el)
+iau_hd2pa = iau_hd2pa(ha,dec,phi)
+iau_hfk5z(rh,dh,date1,date2,r5,d5,dr5,dd5)
+iau_icrs2g(dr,dd,dl,db)
+iau_ir(r)
+iau_jd2cal(dj1,dj2,iy,im,id,fd,j)
+iau_jdcalf(ndp,dj1,dj2,iymdf,j)
+iau_ld(bm,p,q,e,em,dlim,p1)
+iau_ldn(b,ob,sc,sn,n=shape(b, 1))
+iau_ldsun(p,e,em,p1)
+iau_lteceq(epj,dl,db,dr,dd)
+iau_ltecm(epj,rm)
+iau_lteqec(epj,dr,dd,dl,db)
+iau_ltpb(epj,rpb)
+iau_ltpecl(epj,vec)
+iau_ltpequ(epj,veq)
+iau_ltp(epj,rp)
+iau_moon98(date1,date2,pv)
+iau_num00a(date1,date2,rmatn)
+iau_num00b(date1,date2,rmatn)
+iau_num06a(date1,date2,rmatn)
+iau_numat(epsa,dpsi,deps,rmatn)
+iau_nut00a(date1,date2,dpsi,deps)
+iau_nut00b(date1,date2,dpsi,deps)
+iau_nut06a(date1,date2,dpsi,deps)
+iau_nut80(date1,date2,dpsi,deps)
+iau_nutm80(date1,date2,rmatn)
+iau_obl06 = iau_obl06(date1,date2)
+iau_obl80 = iau_obl80(date1,date2)
+iau_p06e(date1,date2,eps0,psia,oma,bpa,bqa,pia,bpia,epsa,chia,za,zetaa,thetaa,pa,gam,phi,psi)
+iau_p2pv(p,pv)
+iau_p2s(p,theta,phi,r)
+iau_pap(a,b,theta)
+iau_pas(al,ap,bl,bp,theta)
+iau_pb06(date1,date2,bzeta,bz,btheta)
+iau_pdp(a,b,adb)
+iau_pfw06(date1,date2,gamb,phib,psib,epsa)
+iau_plan94(date1,date2,np,pv,j)
+iau_pmat00(date1,date2,rbp)
+iau_pmat06(date1,date2,rbp)
+iau_pmat76(date1,date2,rmatp)
+iau_pm(p,r)
+iau_pmp(a,b,amb)
+iau_pmpx(rc,dc,pr,pd,px,rv,pmt,pob,pco)
+iau_pmsafe(ra1,dec1,pmr1,pmd1,px1,rv1,ep1a,ep1b,ep2a,ep2b,ra2,dec2,pmr2,pmd2,px2,rv2,j)
+iau_pn00a(date1,date2,dpsi,deps,epsa,rb,rp,rbp,rn,rbpn)
+iau_pn00b(date1,date2,dpsi,deps,epsa,rb,rp,rbp,rn,rbpn)
+iau_pn00(date1,date2,dpsi,deps,epsa,rb,rp,rbp,rn,rbpn)
+iau_pn06a(date1,date2,dpsi,deps,epsa,rb,rp,rbp,rn,rbpn)
+iau_pn06(date1,date2,dpsi,deps,epsa,rb,rp,rbp,rn,rbpn)
+iau_pn(p,r,u)
+iau_pnm00a(date1,date2,rbpn)
+iau_pnm00b(date1,date2,rbpn)
+iau_pnm06a(date1,date2,rbpn)
+iau_pnm80(date1,date2,rmatpn)
+iau_pom00(xp,yp,sp,rpom)
+iau_ppp(a,b,apb)
+iau_ppsp(a,s,b,apsb)
+iau_pr00(date1,date2,dpsipr,depspr)
+iau_prec76(date01,date02,date11,date12,zeta,z,theta)
+iau_pv2p(pv,p)
+iau_pv2s(pv,theta,phi,r,td,pd,rd)
+iau_pvdpv(a,b,adb)
+iau_pvm(pv,r,s)
+iau_pvmpv(a,b,amb)
+iau_pvppv(a,b,apb)
+iau_pvstar(pv,ra,dec,pmr,pmd,px,rv,j)
+iau_pvtob(elong,phi,hm,xp,yp,sp,theta,pv)
+iau_pvu(dt,pv,upv)
+iau_pvup(dt,pv,p)
+iau_pvxpv(a,b,axb)
+iau_pxp(a,b,axb)
+iau_refco(phpa,tc,rh,wl,refa,refb)
+iau_rm2v(r,w)
+iau_rv2m(w,r)
+iau_rx(phi,r)
+iau_rxp(r,p,rp)
+iau_rxpv(r,pv,rpv)
+iau_rxr(a,b,atb)
+iau_ry(theta,r)
+iau_rz(psi,r)
+iau_s00a = iau_s00a(date1,date2)
+iau_s00b = iau_s00b(date1,date2)
+iau_s00 = iau_s00(date1,date2,x,y)
+iau_s06a = iau_s06a(date1,date2)
+iau_s06 = iau_s06(date1,date2,x,y)
+iau_s2c(theta,phi,c)
+iau_s2p(theta,phi,r,p)
+iau_s2pv(theta,phi,r,td,pd,rd,pv)
+iau_s2xpv(s1,s2,pv,spv)
+iau_sepp(a,b,s)
+iau_seps(al,ap,bl,bp,s)
+iau_sp00 = iau_sp00(date1,date2)
+iau_starpm(ra1,dec1,pmr1,pmd1,px1,rv1,ep1a,ep1b,ep2a,ep2b,ra2,dec2,pmr2,pmd2,px2,rv2,j)
+iau_starpv(ra,dec,pmr,pmd,px,rv,pv,j)
+iau_sxp(s,p,sp)
+iau_sxpv(s,pv,spv)
+iau_taitt(tai1,tai2,tt1,tt2,j)
+iau_taiut1(tai1,tai2,dta,ut11,ut12,j)
+iau_taiutc(tai1,tai2,utc1,utc2,j)
+iau_tcbtdb(tcb1,tcb2,tdb1,tdb2,j)
+iau_tcgtt(tcg1,tcg2,tt1,tt2,j)
+iau_tdbtcb(tdb1,tdb2,tcb1,tcb2,j)
+iau_tdbtt(tdb1,tdb2,dtr,tt1,tt2,j)
+iau_tf2a(s,ihour,imin,sec,rad,j)
+iau_tf2d(s,ihour,imin,sec,days,j)
+iau_tpors(xi,eta,a,b,a01,b01,a02,b02,n)
+iau_tporv(xi,eta,v,v01,v02,n)
+iau_tpsts(xi,eta,a0,b0,a,b)
+iau_tpstv(xi,eta,v0,v)
+iau_tpxes(a,b,a0,b0,xi,eta,j)
+iau_tpxev(v,v0,xi,eta,j)
+iau_tr(r,rt)
+iau_trxp(r,p,trp)
+iau_trxpv(r,pv,trpv)
+viv(ival,ivalok,func,test,status)
+vvd(val,valok,dval,func,test,status)
+err(func,test,status)
+t_iau_a2af(status)
+t_iau_a2tf(status)
+t_iau_ab(status)
+t_iau_ae2hd(status)
+t_iau_af2a(status)
+t_iau_anp(status)
+t_iau_anpm(status)
+t_iau_apcg(status)
+t_iau_apcg13(status)
+t_iau_apci(status)
+t_iau_apci13(status)
+t_iau_apco(status)
+t_iau_apco13(status)
+t_iau_apcs(status)
+t_iau_apcs13(status)
+t_iau_aper(status)
+t_iau_aper13(status)
+t_iau_apio(status)
+t_iau_apio13(status)
+t_iau_atcc13(status)
+t_iau_atccq(status)
+t_iau_atci13(status)
+t_iau_atciq(status)
+t_iau_atciqn(status)
+t_iau_atciqz(status)
+t_iau_atco13(status)
+t_iau_atic13(status)
+t_iau_aticq(status)
+t_iau_aticqn(status)
+t_iau_atio13(status)
+t_iau_atioq(status)
+t_iau_atoc13(status)
+t_iau_atoi13(status)
+t_iau_atoiq(status)
+t_iau_bi00(status)
+t_iau_bp00(status)
+t_iau_bp06(status)
+t_iau_bpn2xy(status)
+t_iau_c2i00a(status)
+t_iau_c2i00b(status)
+t_iau_c2i06a(status)
+t_iau_c2ibpn(status)
+t_iau_c2ixy(status)
+t_iau_c2ixys(status)
+t_iau_c2s(status)
+t_iau_c2t00a(status)
+t_iau_c2t00b(status)
+t_iau_c2t06a(status)
+t_iau_c2tcio(status)
+t_iau_c2teqx(status)
+t_iau_c2tpe(status)
+t_iau_c2txy(status)
+t_iau_cal2jd(status)
+t_iau_cp(status)
+t_iau_cpv(status)
+t_iau_cr(status)
+t_iau_d2dtf(status)
+t_iau_d2tf(status)
+t_iau_dat(status)
+t_iau_dtdb(status)
+t_iau_dtf2d(status)
+t_iau_eceq06(status)
+t_iau_ecm06(status)
+t_iau_ee00(status)
+t_iau_ee00a(status)
+t_iau_ee00b(status)
+t_iau_ee06a(status)
+t_iau_eect00(status)
+t_iau_eform(status)
+t_iau_eo06a(status)
+t_iau_eors(status)
+t_iau_epb(status)
+t_iau_epb2jd(status)
+t_iau_epj(status)
+t_iau_epj2jd(status)
+t_iau_epv00(status)
+t_iau_eqec06(status)
+t_iau_eqeq94(status)
+t_iau_era00(status)
+t_iau_fad03(status)
+t_iau_fae03(status)
+t_iau_faf03(status)
+t_iau_faju03(status)
+t_iau_fal03(status)
+t_iau_falp03(status)
+t_iau_fama03(status)
+t_iau_fame03(status)
+t_iau_fane03(status)
+t_iau_faom03(status)
+t_iau_fapa03(status)
+t_iau_fasa03(status)
+t_iau_faur03(status)
+t_iau_fave03(status)
+t_iau_fk425(status)
+t_iau_fk45z(status)
+t_iau_fk524(status)
+t_iau_fk52h(status)
+t_iau_fk54z(status)
+t_iau_fk5hip(status)
+t_iau_fk5hz(status)
+t_iau_fw2m(status)
+t_iau_fw2xy(status)
+t_iau_g2icrs(status)
+t_iau_gc2gd(status)
+t_iau_gc2gde(status)
+t_iau_gd2gc(status)
+t_iau_gd2gce(status)
+t_iau_gmst00(status)
+t_iau_gmst06(status)
+t_iau_gmst82(status)
+t_iau_gst00a(status)
+t_iau_gst00b(status)
+t_iau_gst06(status)
+t_iau_gst06a(status)
+t_iau_gst94(status)
+t_iau_h2fk5(status)
+t_iau_hd2ae(status)
+t_iau_hd2pa(status)
+t_iau_hfk5z(status)
+t_iau_icrs2g(status)
+t_iau_ir(status)
+t_iau_jd2cal(status)
+t_iau_jdcalf(status)
+t_iau_ld(status)
+t_iau_ldn(status)
+t_iau_ldsun(status)
+t_iau_lteceq(status)
+t_iau_ltecm(status)
+t_iau_lteqec(status)
+t_iau_ltp(status)
+t_iau_ltpb(status)
+t_iau_ltpecl(status)
+t_iau_ltpequ(status)
+t_iau_moon98(status)
+t_iau_num00a(status)
+t_iau_num00b(status)
+t_iau_num06a(status)
+t_iau_numat(status)
+t_iau_nut00a(status)
+t_iau_nut00b(status)
+t_iau_nut06a(status)
+t_iau_nut80(status)
+t_iau_nutm80(status)
+t_iau_obl06(status)
+t_iau_obl80(status)
+t_iau_p06e(status)
+t_iau_p2pv(status)
+t_iau_p2s(status)
+t_iau_pap(status)
+t_iau_pas(status)
+t_iau_pb06(status)
+t_iau_pdp(status)
+t_iau_pfw06(status)
+t_iau_plan94(status)
+t_iau_pmat00(status)
+t_iau_pmat06(status)
+t_iau_pmat76(status)
+t_iau_pm(status)
+t_iau_pmp(status)
+t_iau_pmpx(status)
+t_iau_pmsafe(status)
+t_iau_pn(status)
+t_iau_pn00(status)
+t_iau_pn00a(status)
+t_iau_pn00b(status)
+t_iau_pn06a(status)
+t_iau_pn06(status)
+t_iau_pnm00a(status)
+t_iau_pnm00b(status)
+t_iau_pnm06a(status)
+t_iau_pnm80(status)
+t_iau_pom00(status)
+t_iau_ppp(status)
+t_iau_ppsp(status)
+t_iau_pr00(status)
+t_iau_prec76(status)
+t_iau_pv2p(status)
+t_iau_pv2s(status)
+t_iau_pvdpv(status)
+t_iau_pvm(status)
+t_iau_pvmpv(status)
+t_iau_pvppv(status)
+t_iau_pvstar(status)
+t_iau_pvtob(status)
+t_iau_pvu(status)
+t_iau_pvup(status)
+t_iau_pvxpv(status)
+t_iau_pxp(status)
+t_iau_refco(status)
+t_iau_rm2v(status)
+t_iau_rv2m(status)
+t_iau_rx(status)
+t_iau_rxp(status)
+t_iau_rxpv(status)
+t_iau_rxr(status)
+t_iau_ry(status)
+t_iau_rz(status)
+t_iau_s00a(status)
+t_iau_s00b(status)
+t_iau_s00(status)
+t_iau_s06a(status)
+t_iau_s06(status)
+t_iau_s2c(status)
+t_iau_s2p(status)
+t_iau_s2pv(status)
+t_iau_s2xpv(status)
+t_iau_sepp(status)
+t_iau_seps(status)
+t_iau_sp00(status)
+t_iau_starpm(status)
+t_iau_starpv(status)
+t_iau_sxp(status)
+t_iau_sxpv(status)
+t_iau_taitt(status)
+t_iau_taiut1(status)
+t_iau_taiutc(status)
+t_iau_tcbtdb(status)
+t_iau_tcgtt(status)
+t_iau_tdbtcb(status)
+t_iau_tdbtt(status)
+t_iau_tf2a(status)
+t_iau_tf2d(status)
+t_iau_tpors(status)
+t_iau_tporv(status)
+t_iau_tpsts(status)
+t_iau_tpstv(status)
+t_iau_tpxes(status)
+t_iau_tpxev(status)
+t_iau_tr(status)
+t_iau_trxp(status)
+t_iau_trxpv(status)
+t_iau_tttai(status)
+t_iau_tttcg(status)
+t_iau_tttdb(status)
+t_iau_ttut1(status)
+t_iau_ut1tai(status)
+t_iau_ut1tt(status)
+t_iau_ut1utc(status)
+t_iau_utctai(status)
+t_iau_utcut1(status)
+t_iau_xy06(status)
+t_iau_xys00a(status)
+t_iau_xys00b(status)
+t_iau_xys06a(status)
+t_iau_zp(status)
+t_iau_zpv(status)
+t_iau_zr(status)
+iau_tttai(tt1,tt2,tai1,tai2,j)
+iau_tttcg(tt1,tt2,tcg1,tcg2,j)
+iau_tttdb(tt1,tt2,dtr,tdb1,tdb2,j)
+iau_ttut1(tt1,tt2,dt,ut11,ut12,j)
+iau_ut1tai(ut11,ut12,dta,tai1,tai2,j)
+iau_ut1tt(ut11,ut12,dt,tt1,tt2,j)
+iau_ut1utc(ut11,ut12,dut1,utc1,utc2,j)
+iau_utctai(utc1,utc2,tai1,tai2,j)
+iau_utcut1(utc1,utc2,dut1,ut11,ut12,j)
+iau_xy06(date1,date2,x,y)
+iau_xys00a(date1,date2,x,y,s)
+iau_xys00b(date1,date2,x,y,s)
+iau_xys06a(date1,date2,x,y,s)
+iau_zp(p)
+iau_zpv(pv)
+iau_zr(r)</p>
+</div></blockquote>
+<p>.</p>
 </section>
 </section>
 

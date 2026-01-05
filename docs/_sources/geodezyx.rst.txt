@@ -3,8 +3,8 @@ GeodeZYX's complete reference package
 
 .. automodule:: geodezyx
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Subpackages
 -----------

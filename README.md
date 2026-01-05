@@ -2,10 +2,13 @@
 
 # geodezyx (aka ___The GeodeZYX Toolbox___) 
 
-**Version: 5.0.0**  
-**Date: 2025-08-28**  
+**Version: 5.0.1**  
+**Date: 2025-12-09**  
 
-**Authors:** Pierre Sakic (IPGP, Paris, France), Gustavo Mansur (GFZ, Potsdam, Germany), Samuel Nahmani (IPGP/IGN, Paris, France), 
+**Authors:** 
+* Pierre Sakic (IPGP, Paris, France)
+* Gustavo Mansur (GFZ, Potsdam, Germany)
+* Samuel Nahmani (IPGP/IGN, Paris, France) 
 
 **Documentation:** [https://ipgp.github.io/geodezyx](https://ipgp.github.io/geodezyx/)
 
