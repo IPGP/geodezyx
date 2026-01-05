@@ -358,6 +358,14 @@ def nav_bkg_server(stat, date):
 
     return urldic
 
+def renag_server_crtk(stat, date):
+    urlserver = "ftp://renag.unice.fr/centipede_30s/"
+    urldic = _generic_server(stat, date, urlserver)
+    if len(stat) != 4:
+        urldic.pop(2, None)
+
+    return urldic
+
 
 ############ not adapted yet after april 2024 mods
 def igs_cddis_nav_server_legacy(stat, date):
@@ -479,6 +487,8 @@ def _server_select(datacenter, site, curdate):
         urldic = rgp_ensg_server(site, curdate)
     elif datacenter == "spotgins_eost":
         urldic = spotgins_eost_server(site, curdate)
+    elif datacenter == "renag_crtk":
+        urldic = renag_server_crtk(site, curdate)
     # elif datacenter == 'rgp':
     #     urldic = rgp_ign_smn_server_legacy(site, curdate)
     # elif datacenter == 'rgp_mlv':
