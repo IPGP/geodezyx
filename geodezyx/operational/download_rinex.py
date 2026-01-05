@@ -386,97 +386,208 @@ def apref_server(stat,date):
     urldic = _generic_server(stat, date, urlserver)
     return urldic
 
-############ not adapted yet after april 2024 mods
-def igs_cddis_nav_server_legacy(stat, date):
-    # table_proto privilegier
-    urlserver = "ftp://cddis.gsfc.nasa.gov/gps/data/daily/"
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date, "n.Z")
-    url = os.path.join(
-        urlserver, str(date.year), conv.dt2doy(date), date.strftime("%y") + "n", rnxname
-    )
-    return url
 
 
-def rgp_ign_smn_1_hz_server_legacy(stat, date):
-    urlserver = "ftp://rgpdata.ign.fr/pub/data/"
+def renag_server_crtk(stat, date):
+    urlserver = "ftp://renag.unice.fr/centipede_30s/"
+    urldic = _generic_server(stat, date, urlserver)
+    if len(stat) != 4:
+        urldic.pop(2, None)
 
-    urls = []
-
-    for h in range(24):
-        date_session = date
-        date_session = date_session.replace(hour=h)
-
-        log.info("%s session %s", date_session, h)
-        rnxname = conv.statname_dt2rinexname(
-            stat.lower(), date_session, session_a_instead_of_daily_session=True
-        )
-        url = os.path.join(
-            urlserver, str(date.year), conv.dt2doy(date), "data_1", rnxname
-        )
-
-        urls.append(url)
-
-    return urls
+    return urldic
 
 
-def unavco_server_legacy(stat, date):
-    urlserver = "ftp://data-out.unavco.org/pub/rinex"
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, "obs", str(date.year), conv.dt2doy(date), rnxname)
-    return url
+def unavco_server(stat, date):
+    """
+    UNAVCO server for RINEX observation files.
+
+    Adapted from legacy function to standard format.
+    """
+    urlserver = "ftp://data-out.unavco.org/pub/rinex/obs/"
+    urldic = _generic_server(stat, date, urlserver)
+    return urldic
 
 
-def renag_server_legacy(stat, date):
+def renag_server(stat, date):
+    """
+    RENAG server for RINEX observation files.
+
+    Adapted from legacy function to standard format.
+    """
     urlserver = "ftp://renag.unice.fr/data/"
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
-    return url
+    urldic = _generic_server(stat, date, urlserver)
+    return urldic
 
 
-def uwiseismic_server_legacy(stat, date, user="", passwd=""):
-    urlserver = "ftp://www2.uwiseismic.com/"
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, "rinex", str(date.year), conv.dt2doy(date), rnxname)
-    return url, user, passwd
+def uwiseismic_server(stat, date):
+    """
+    UWISeismic server for RINEX observation files.
+
+    Adapted from legacy function to standard format.
+    Note: Authentication may be required, use user/passwd parameters in download_gnss_rinex.
+    """
+    urlserver = "ftp://www2.uwiseismic.com/rinex/"
+    urldic = _generic_server(stat, date, urlserver)
+    return urldic
 
 
-def orpheon_server_legacy(stat, date, user="", passwd=""):
+def orpheon_server(stat, date):
+    """
+    Orpheon server for RINEX observation files (RENAG hosted).
+
+    Adapted from legacy function to standard format.
+    Note: Authentication may be required, use user/passwd parameters in download_gnss_rinex.
+    """
     urlserver = "ftp://renag.unice.fr/"
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
-    return url, user, passwd
+    urldic = _generic_server(stat, date, urlserver)
+    return urldic
 
 
-def ovsg_server_legacy(stat, date, user="", passwd=""):
+def ovsg_server(stat, date):
+    """
+    OVSG (Observatoire Volcanologique et Sismologique de Guadeloupe) server.
+
+    Adapted from legacy function to standard format.
+    Note: Uses HTTP, authentication may be required.
+    """
     if dt.datetime(2009, 1, 1) <= date <= dt.datetime(2014, 2, 10):
-        urlserver = (
-            "http://webobs.ovsg.univ-ag.fr/rawdata/GPS-GPSDATA.backtemp_20140210/"
-        )
+        urlserver = "http://webobs.ovsg.univ-ag.fr/rawdata/GPS-GPSDATA.backtemp_20140210/"
     else:
         urlserver = "http://webobs.ovsg.univ-ag.fr/rawdata/GPS/GPSDATA/"
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), "rinex", rnxname)
-    return url, user, passwd
+
+    ### generate regex
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
+
+    ### generate urls (with rinex subdirectory specific to OVSG)
+    urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date), "rinex")
+    rnx2url = os.path.join(urldir, rnx2rgx)
+    rnx3url = os.path.join(urldir, rnx3rgx)
+
+    ### generate output urldic
+    urldic = dict()
+    urldic[2] = rnx2url
+    urldic[3] = rnx3url
+
+    return urldic
 
 
-def geoaus_server_legacy(stat, date):
-    """Geosciences Australia
-    ex : ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/"""
+def geoaus_server(stat, date):
+    """
+    Geosciences Australia GNSS server.
+
+    Adapted from legacy function to standard format.
+    Example: ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/
+    """
     urlserver = "ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/"
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(
-        urlserver, str(date.year), date.strftime("%y") + conv.dt2doy(date), rnxname
-    )
-    return url
+
+    ### generate regex
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date)
+
+    ### generate urls (with specific year+doy format)
+    urldir = os.path.join(urlserver, str(date.year), date.strftime("%y") + conv.dt2doy(date))
+    rnx2url = os.path.join(urldir, rnx2rgx)
+    rnx3url = os.path.join(urldir, rnx3rgx)
+
+    ### generate output urldic
+    urldic = dict()
+    urldic[2] = rnx2url
+    urldic[3] = rnx3url
+
+    return urldic
 
 
-def ens_fr_legacy(stat, date):
+def ens_fr_server(stat, date):
+    """
+    ENS (École Normale Supérieure) France GNSS server.
+
+    Adapted from legacy function to standard format.
+    """
     urlserver = "ftp://gnss.ens.fr/pub/public/crl/GPS/rinex/"
-    rnxname = conv.statname_dt2rinexname(stat.lower(), date)
-    url = os.path.join(urlserver, str(date.year), conv.dt2doy(date), rnxname)
-    return url
+    urldic = _generic_server(stat, date, urlserver)
+    return urldic
 
 
+def rgp_ign_smn_1_hz_server(stat, date):
+    """
+    RGP IGN 1Hz data server (hourly RINEX files).
+
+    Adapted from legacy function to standard format.
+    Returns URLs for all 24 hourly sessions.
+
+    Note
+    ----
+    This function returns a list of urldic instead of a single urldic,
+    one for each hourly session of the day.
+    """
+    urlserver = "ftp://rgpdata.ign.fr/pub/data/"
+
+    urls_list = []
+
+    for h in range(24):
+        date_session = date.replace(hour=h)
+
+        log.info("%s session %s", date_session, h)
+
+        ### generate regex
+        rnx2rgx, rnx3rgx = _rnx_obs_rgx(stat, date_session)
+
+        ### For 1Hz data, use session_a format for RINEX2
+        rnx2name = conv.statname_dt2rinexname(
+            stat.lower(), date_session, session_a_instead_of_daily_session=True
+        )
+        rnx2rgx = rnx2name  # Override with specific session name
+
+        ### generate urls
+        urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date), "data_1")
+        rnx2url = os.path.join(urldir, rnx2rgx)
+        rnx3url = os.path.join(urldir, rnx3rgx)
+
+        ### generate output urldic
+        urldic = dict()
+        urldic[2] = rnx2url
+        urldic[3] = rnx3url
+
+        urls_list.append(urldic)
+
+    return urls_list
+
+
+def igs_cddis_nav_server(stat, date):
+    """
+    IGS CDDIS navigation file server.
+
+    Adapted from legacy function to standard format.
+    """
+    urlserver = "ftp://gdc.cddis.eosdis.nasa.gov/gps/data/daily/"
+
+    ### generate regex
+    rnx2rgx, rnx3rgx = _rnx_nav_rgx(stat, date)
+
+    ### generate urls (with specific subdirectory structure)
+    urldir = os.path.join(
+        urlserver, str(date.year), conv.dt2doy(date), date.strftime("%y") + "n"
+    )
+    rnx2url = os.path.join(urldir, rnx2rgx)
+    rnx3url = os.path.join(urldir, rnx3rgx)
+
+    ### generate output urldic
+    urldic = dict()
+    urldic[2] = rnx2url
+    urldic[3] = rnx3url
+
+    return urldic
+
+
+# Remove legacy function definitions
+# def igs_cddis_nav_server_legacy(stat, date):
+# def rgp_ign_smn_1_hz_server_legacy(stat, date):
+# def unavco_server_legacy(stat, date):
+# def renag_server_legacy(stat, date):
+# def uwiseismic_server_legacy(stat, date, user="", passwd=""):
+# def orpheon_server_legacy(stat, date, user="", passwd=""):
+# def ovsg_server_legacy(stat, date, user="", passwd=""):
+# def geoaus_server_legacy(stat, date):
+# def ens_fr_legacy(stat, date):
 
 def _server_select(datacenter, site, curdate):
     mode1hz = False
@@ -501,34 +612,33 @@ def _server_select(datacenter, site, curdate):
         urldic = nav_rob_server(site, curdate)
     elif datacenter in ("nav_rt", "brdc_rt"):
         urldic = nav_bkg_server(site, curdate)
+    elif datacenter == "nav_cddis":
+        urldic = igs_cddis_nav_server(site, curdate)
     elif datacenter == "rgp":
         urldic = rgp_server(site, curdate)
     elif datacenter == "rgp_ensg":
         urldic = rgp_ensg_server(site, curdate)
     elif datacenter == "spotgins_eost":
         urldic = spotgins_eost_server(site, curdate)
-    # elif datacenter == 'rgp':
-    #     urldic = rgp_ign_smn_server_legacy(site, curdate)
-    # elif datacenter == 'rgp_mlv':
-    #     urldic = rgp_ign_mlv_server(site, curdate)
-    # elif datacenter == 'rgp_1Hz':
-    #     urls = rgp_ign_smn_1_hz_server_legacy(site, curdate)
-    #     mode1hz = True
-    # elif datacenter == 'renag':
-    #     urldic = renag_server(site, curdate)
-    # elif datacenter == 'orpheon':
-    #     urldic = orpheon_server_legacy(site, curdate)
-    # elif datacenter == 'uwiseismic':
-    #     urldic = uwiseismic_server(site, curdate)
-    # elif datacenter == 'ovsg':
-    #     urldic = ovsg_server_legacy(site, curdate)
-    # elif datacenter == 'unavco':
-    #     urldic = unavco_server_legacy(site, curdate)
-    # elif datacenter == 'geoaus':
-    #     urldic = geoaus_server_legacy(site, curdate)
-    # elif datacenter == 'ens_fr':
-    #     urldic = ens_fr_legacy(site, curdate)
-
+    elif datacenter == "renag_crtk":
+        urldic = renag_server_crtk(site, curdate)
+    elif datacenter == "rgp_1Hz":
+        urldic = rgp_ign_smn_1_hz_server(site, curdate)
+        mode1hz = True
+    elif datacenter == "renag":
+        urldic = renag_server(site, curdate)
+    elif datacenter == "orpheon":
+        urldic = orpheon_server(site, curdate)
+    elif datacenter == "uwiseismic":
+        urldic = uwiseismic_server(site, curdate)
+    elif datacenter == "ovsg":
+        urldic = ovsg_server(site, curdate)
+    elif datacenter == "unavco":
+        urldic = unavco_server(site, curdate)
+    elif datacenter == "geoaus":
+        urldic = geoaus_server(site, curdate)
+    elif datacenter == "ens_fr":
+        urldic = ens_fr_server(site, curdate)
     ## Rajout Matthieu
 
     elif datacenter == "ucsd":
@@ -815,8 +925,8 @@ def crawl_ftp_files(
 
         table_use.loc[irow, "crawled"] = True
 
-    # Generate URLs for downloadable files (available remotely or locally)
-    rnx_ok_dwl = table_use["ok_dwl"] | table_use["ok_loc"]
+    # Generate URLs for downloadable files (available remotely but not locally)
+    rnx_ok_dwl = table_use["ok_dwl"] & ~table_use["ok_loc"]
     table_use.loc[rnx_ok_dwl, "url_true"] = table_use.loc[rnx_ok_dwl].apply(
         lambda x: os.path.join("ftp://", x["host"], x["dir"], x["rnxnam"]), axis=1
     )
@@ -1017,7 +1127,7 @@ def download_gnss_rinex(
     if len(table) == 0:
         log.error("No RINEX files found for the given criteria.")
         return None
-    
+
 
     if http_download:
 
@@ -1208,6 +1318,7 @@ def download_gnss_rinex(
 
     # Initialize output list
     out_tup_lis = []
+
     # Only download if files are available and not in quiet mode
     if len(table_dl) == 0:
         log.error(

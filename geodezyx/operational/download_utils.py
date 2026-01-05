@@ -24,6 +24,7 @@ import pathlib
 import shutil
 import time
 import urllib
+import urllib.request
 
 ########## BEGIN IMPORT ##########
 #### External modules

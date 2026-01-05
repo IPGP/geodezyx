@@ -103,11 +103,34 @@ def export_ts_plot(tsin,export_path,coortype='ENU',export_type=("pdf","png"),
     return None
 
 
-def export_ts(ts,outdir,coordtype = 'ENU',outprefix='',write_header=False):
+def export_ts(ts, outdir, coordtype='ENU', outprefix='', write_header=False):
     """
-    export the timeserie
+    Export a time series to a custom `.ts.dat` format.
 
-    write_header not well implemented !!!
+    Parameters
+    ----------
+    ts : TimeSeries
+        Input time series object containing geodetic data.
+    outdir : str
+        Directory where the output file will be saved.
+    coordtype : str, optional
+        Coordinate type to use for the export (e.g., 'ENU'), by default 'ENU'.
+    outprefix : str, optional
+        Prefix to add to the output file name, by default an empty string.
+    write_header : bool, optional
+        If True, writes a header to the output file, by default False.
+
+    Notes
+    -----
+    - The function writes a `.ts.dat` file containing the time series data.
+    - The file includes geodetic coordinates (East, North, Up or other types) and their uncertainties.
+    - The header, if enabled, describes the columns in the file.
+
+    Returns
+    -------
+    None
+        The function writes the output file to the specified directory and does not return any value.
+        write_header not well implemented !!!
     """
 
     proto_str = '{:23} ' * 14
@@ -150,14 +173,32 @@ def export_ts(ts,outdir,coordtype = 'ENU',outprefix='',write_header=False):
     return None
 
 
-def export_ts_as_neu(tsin,outdir,outprefix,coordtype = 'ENU'):
+def export_ts_as_neu(tsin, outdir, outprefix, coordtype='ENU'):
     """
-    export to a HECTOR .neu compatible format
+    Export a time series to a HECTOR .neu compatible format.
 
-    outfile will be writed in
-    /outdir/outprefixSTAT.neu
-    
-    NB: The XYZ mode is quite dirty (191001)
+    Parameters
+    ----------
+    tsin : TimeSeries
+        Input time series object containing geodetic data.
+    outdir : str
+        Directory where the output .neu file will be saved.
+    outprefix : str
+        Prefix to add to the output file name.
+    coordtype : str, optional
+        Coordinate type to use for the export, by default 'ENU'.
+
+    Notes
+    -----
+    - The function writes a .neu file containing the time series data in HECTOR format.
+    - The header includes metadata such as the reference epoch, reference position, and field descriptions.
+    - The data section includes geodetic displacements (North, East, Up) relative to the first point.
+    - If the time series lacks XYZ attributes, default values are used for the reference position.
+
+    Returns
+    -------
+    None
+        The function writes the output file to the specified directory and does not return any value.
     """
     if not hasattr(tsin[0],'X'):
         log.warning('no XYZ in ts')
@@ -241,17 +282,33 @@ def export_ts_as_hector_enu(tsin,outdir,outprefix,coordtype = 'ENU'):
 
     return None
 
-def export_ts_as_midas_tenu(tsin,outdir,outprefix,coordtype = 'ENU',
-                            export_step=True):
+def export_ts_as_midas_tenu(tsin, outdir, outprefix, coordtype='ENU', export_step=True):
     """
-    export to a MIDAS .tneu compatible format
+    Export a time series to a MIDAS .tneu compatible format.
 
-    outfile will be writed in
-    /outdir/outprefixSTAT.tneu
+    Parameters
+    ----------
+    tsin : TimeSeries
+        Input time series object containing geodetic data.
+    outdir : str
+        Directory where the output .tneu file will be saved.
+    outprefix : str
+        Prefix to add to the output file name.
+    coordtype : str, optional
+        Coordinate type to use for the export, by default 'ENU'.
+    export_step : bool, optional
+        If True, exports a step file containing discontinuities, by default True.
 
-    if export_step == True:
-    export a step file as
-    /outdir/outprefixSTAT.step
+    Notes
+    -----
+    - The function writes a .tneu file containing the time series data in MIDAS format.
+    - If `export_step` is True and the time series contains discontinuities, a separate step file is created.
+    - The .tneu file includes geodetic displacements (East, North, Up) relative to the first point.
+
+    Returns
+    -------
+    None
+        The function writes the output file(s) to the specified directory and does not return any value.
     """
     if not hasattr(tsin[0],'X'):
         log.warning('no XYZ in ts')
@@ -298,23 +355,38 @@ def export_ts_as_midas_tenu(tsin,outdir,outprefix,coordtype = 'ENU',
     return None
 
 
-###################################################################
 def export_ts_as_pbo_pos(tsin, outdir, outprefix='' ,
                          force=None, force_1st_pt_as_ref=True,
                          verbose=False):
-###################################################################
     """
-    Write a time series in GAMIT/GLOBK PBO pos format
+    Export a time series to the GAMIT/GLOBK PBO position (.pos) format.
 
-    :param idir: output directory
-    :param outprefix: if not blank then the output pos file will be CODE_add_key.pos, CODE.pos otherwise.
-    :param force: set force to 'data' or 'data_xyz' to force pos to be written from .data or .data_xyz
+    Parameters
+    ----------
+    tsin : TimeSeries
+        Input time series object containing geodetic data.
+    outdir : str
+        Directory where the output .pos file will be saved.
+    outprefix : str, optional
+        Prefix to add to the output file name, by default an empty string.
+    force : str, optional
+        Determines the data source to use for the export. Can be 'data' or 'data_xyz'.
+        If None, the function decides based on the available attributes, by default None.
+    force_1st_pt_as_ref : bool, optional
+        If True, forces the first point of the time series to be used as the reference position, by default True.
+    verbose : bool, optional
+        If True, enables verbose logging for debugging purposes, by default False.
 
-    :note1:default behaviour (force = None)
-        if data and data_xyz are not None, then print them independently
-        if there are data only, then uses X0,Y0,Z0 to write data_xyz
-        if there are data_xyz only, recreate data and write it
-    
+    Notes
+    -----
+    - The function writes a .pos file containing the time series data in the PBO format.
+    - The header includes metadata such as the reference epoch, reference position, and field descriptions.
+    - The data section includes geodetic coordinates (X, Y, Z) and their uncertainties, along with other metadata.
+
+    Returns
+    -------
+    None
+        The function writes the output file to the specified directory and does not return any value.
     """
 
     # force option
@@ -395,11 +467,11 @@ def export_ts_as_pbo_pos(tsin, outdir, outprefix='' ,
             MJD = conv.dt2mjd(pt.Tdt)
             X, Y, Z = pt.X, pt.Y, pt.Z
             Sx, Sy, Sz = pt.sX, pt.sY, pt.sZ  
-            Rxy,Rxz,Ryz = 0.,0.,0.
+            Rxy,Rxz,Ryz = pt.anex.get('sdXY', 0.0),pt.anex.get('sdXZ', 0.0),pt.anex.get('sdYZ', 0.0)
             Elong,NLat,Height = pt.F,pt.L,pt.H
-            dN,dE,dU = pt.E,pt.N,pt.U
-            Sn,Se,Su = pt.sE,pt.sN,pt.sU
-            Rne,Rnu,Reu = 0.,0.,0.
+            dN,dE,dU = pt.N,pt.E,pt.U
+            Sn,Se,Su = pt.sN,pt.sE,pt.sU
+            Rne,Rnu,Reu = pt.anex.get('sdEN', 0.0),pt.anex.get('sdNU', 0.0),pt.anex.get('sdEU', 0.0)
             Soln = "XXXXXXXXXXXXXX"
             
             l = [YYYYMMDD,HHMMSS,MJD,X,Y,Z,Sx,Sy,Sz,Rxy,Rxz,Ryz,Elong,NLat,
@@ -476,24 +548,43 @@ def export_ts_as_pbo_pos(tsin, outdir, outprefix='' ,
     return
 
 
-def export_ts_as_spotgins(tsin, outdir, ac, data_src = "unknown"):
-    df = tsin.to_dataframe("ENU")
-    datexelis = [p.anex['dateofexe'] for p in tsin.pts]
-    ginsverslis = [p.anex['gins_version'] for p in tsin.pts]
-    name = tsin.stat
-    df["Tdt"] = df["Tdt"] + dt.timedelta(seconds=19)
+def export_ts_as_spotgins(tsin, outdir, ac, data_src="unknown", version=2):
+    """
+    Export time series to SPOTGINS format.
 
-    fmtstr = " {:14.8f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f}  {:4s}{:2s}{:2s}{:2s}{:2s}{:2.0f}  {:12.7f}  {:5s}  {:s}   {:s}\n"
-    #fmtstr = " %14.8f %14.6f %14.6f %14.6f %14.6f %14.6f %14.6f  %4s%2s%2s%2s%2s%2.0f  %12.7f  %5s  %s   %s\n"
-    outfile = open(os.path.join(outdir,f"SPOTGINS_{name}.enu"),"w")
+    Parameters
+    ----------
+    tsin : TimeSeries
+        Input time series object
+    outdir : str
+        Output directory path
+    ac : str
+        Analysis Center acronym (3-4 characters)
+    data_src : str, optional
+        Data source identifier, by default "unknown"
+    version : int, optional
+        SPOTGINS format version (2 or 3), by default 2
 
+    Returns
+    -------
+    outfile_path : str
+        Path to the exported SPOTGINS file
+    """
     now_date = utils.get_timestamp(utc=True)
+    df = tsin.to_dataframe("ENU")
+    df["Tdt"] = df["Tdt"] + dt.timedelta(seconds=19)
+    name = tsin.stat
+    outfile_path = os.path.join(outdir, f"SPOTGINS_{name}.enu")
 
-    const_lbda = lambda x: "GE" if x >= dt.datetime(2018,10,7) else "G"
+    datexelis = [p.anex.get('dateofexe', 'NA') for p in tsin.pts]
+    ginsverslis = [p.anex.get('gins_version', 'NA') for p in tsin.pts]
+
+    const_lbda = lambda x: "GE" if x >= dt.datetime(2018, 10, 7) else "G"
     const = const_lbda(np.max(df["Tdt"]))
-    vers = ""
 
-    head = f"""# SPOTGINS SOLUTION [POSITION] v2
+    if version == 2:
+        fmtstr2 = " {:14.8f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f}  {:4s}{:2s}{:2s}{:2s}{:2s}{:2.0f}  {:12.7f}  {:5s}  {:s}   {:s}\n"
+        head2 = f"""# SPOTGINS SOLUTION [POSITION] v2
 # DATE             : {now_date}
 #------------------------------------
 # STATION          : {name}
@@ -517,25 +608,93 @@ def export_ts_as_spotgins(tsin, outdir, ac, data_src = "unknown"):
 #jjjjj.jjjjjjjj         _____E         _____N         _____U         ____dE         ____dN         ____dU  yyyymmddHHMMSS  yyyy.yyyyyyy  Const  Dateofexe       GinsVersion
 """
 
-    outfile.write(head)
-    
-    for ir, r in df.iterrows():
-        t = r["Tdt"]
-        outstr = fmtstr.format(np.round(conv.dt2mjd(t), 7),
-                               r["E"], r["N"], r["U"],
-                               r["sE"], r["sN"], r["sU"],
-                               str(t.year),
-                               str(t.month).zfill(2),
-                               str(t.day).zfill(2),
-                               str(t.hour).zfill(2),
-                               str(t.minute).zfill(2),
-                               t.second,
-                               conv.dt2year_decimal(t),
-                               const_lbda(t),
-                               datexelis[ir],
-                               ginsverslis[ir])
-        outfile.write(outstr)
-        
+        with open(outfile_path, "w") as outfile:
+            outfile.write(head2)
 
+            for ir, r in df.iterrows():
+                t = r["Tdt"]
+                outstr = fmtstr2.format(
+                    np.round(conv.dt2mjd(t), 7),
+                    r["E"], r["N"], r["U"],
+                    r["sE"], r["sN"], r["sU"],
+                    str(t.year),
+                    str(t.month).zfill(2),
+                    str(t.day).zfill(2),
+                    str(t.hour).zfill(2),
+                    str(t.minute).zfill(2),
+                    t.second,
+                    conv.dt2year_decimal(t),
+                    const_lbda(t),
+                    datexelis[ir],
+                    ginsverslis[ir]
+                )
+                outfile.write(outstr)
+
+    elif version == 3:
+        # Extract correlation coefficients from point data
+        prairieverslis = [p.anex.get('prairie_version', 'NA') for p in tsin.pts]
+        qflaglis = [p.anex.get('quality_flag', 'NA') for p in tsin.pts]
+
+        # Calculate correlation coefficients (placeholder - adjust based on actual data structure)
+        corr_en = [p.anex.get('sdEN', 0.0) for p in tsin.pts]
+        corr_eu = [p.anex.get('sdEU', 0.0) for p in tsin.pts]
+        corr_nu = [p.anex.get('sdNU', 0.0) for p in tsin.pts]
+
+        fmtstr3 = " {:6.1f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:14.6f} {:10.6f} {:10.6f} {:10.6f}  {:4s}-{:2s}-{:2s}T12:00:00  {:11.6f}  {:5s}  {:4s}  {:13s}  {:11s}  {:3s}\n"
+
+        head3 = f"""# SPOTGINS SOLUTION [POSITION] v3
+# Creation {now_date}
+#----------------------------------------------------------
+# STATION          : {name}
+# ANALYSIS_CENTRE  : {ac}
+# STRATEGY_SUMMARY : https://www.poleterresolide.fr/geodesy-plotter/#/solution/SPOTGINS
+# REF_FRAME        : IGS20
+# PRODUCTS         : G20/GRG
+# CONSTELLATION    : {const}
+# UNITS            : meters
+# ELLIPSOID        : GRS80
+# DATA_SOURCE      : {data_src}
+# FLAG             : 0 = Full quality
+# FLAG             : 1 = Antenna/radome not calibrated
+# FLAG             : 2 = Less than 12 h of observations
+# FLAG             : 4 = Less than 80% of fixed ambiguities
+# ACKNOWLEDGMENTS  :
+#----------------------------------------------------------
+# X_pos            : {tsin.refENU.X:15.6f}
+# Y_pos            : {tsin.refENU.Y:15.6f}
+# Z_pos            : {tsin.refENU.Z:15.6f}
+# Longitude        : {tsin.refENU.L:11.6f}
+# Latitude         : {tsin.refENU.F:11.6f}
+# Height           : {tsin.refENU.H:11.6f}
+#----------------------------------------------------------
+#MJD           DispEast      DispNorth         DispUp      SigmaEast     SigmaNorth        SigmaUp     CorrEN     CorrEU     CorrNU  yyyy-mm-ddTHH:MM:SS  DecimalYear  Const  Flag  DateOfExe      GinsVersion  PrairieVersion
+"""
+
+        with open(outfile_path, "w") as outfile:
+            outfile.write(head3)
+
+            for ir, r in df.iterrows():
+                t = r["Tdt"]
+                mjd = conv.dt2mjd(t) + 33282.5  # Convert to MJD (Modified Julian Date)
+
+                outstr = fmtstr3.format(
+                    mjd,
+                    r["E"], r["N"], r["U"],
+                    r["sE"], r["sN"], r["sU"],
+                    corr_en[ir], corr_eu[ir], corr_nu[ir],
+                    str(t.year),
+                    str(t.month).zfill(2),
+                    str(t.day).zfill(2),
+                    conv.dt2year_decimal(t),
+                    const_lbda(t),
+                    str(qflaglis[ir]),
+                    datexelis[ir],
+                    ginsverslis[ir],
+                    str(prairieverslis[ir])
+                )
+                outfile.write(outstr)
+
+    #log.info('SPOTGINS v%s time series exported to %s', version, outfile_path)
     outfile.close()
+    return outfile_path
 

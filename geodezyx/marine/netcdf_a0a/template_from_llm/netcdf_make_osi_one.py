@@ -9,7 +9,7 @@ def create_oceansites_netcdf(output_file):
     Create an OceanSITES-compliant NetCDF file
     
     Parameters:
-    output_file (str): Path to the output NetCDF file
+    output_path (str): Path to the output NetCDF file
     """
     
     # Create the NetCDF file

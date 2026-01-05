@@ -5,7 +5,7 @@ Created on Tue Jun  3 22:07:01 2025
 
 @author: psakic
 """
-
+import os.path
 
 # https://chat.deepseek.com/a/chat/s/b979bb2d-15d3-41e7-880c-736e686e6161
 
@@ -14,7 +14,7 @@ import netCDF4
 import numpy as np
 import datetime as dt
 
-ptxt = r"/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0110_RawData/010_A0A_RBR/204657_20210919_1458textexport/204657_20210919_1458textexport\204657_20210919_1458textexport_data.txt"
+ptxt = r"/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0110_RawData/010_A0A_RBR/204657_20210919_1458textexport/204657_20210919_1458textexport\204657_20210919_1458textexport_data.txt_head"
 df = marine.read_rbr_txt_data(ptxt)
 df.reset_index(inplace=True)
 
@@ -44,8 +44,10 @@ nsensor = len(pres_tup)
 
 # ***************************************************************************
 # Create the NetCDF file
-output_file = "./output_netcdf/out.nc"
-ncdfobj = netCDF4.Dataset(output_file, 'w', format='NETCDF4')
+output_name = "out.nc"
+output_dir = "./output_netcdf/"
+output_path = os.path.join(output_dir, output_name)
+ncdfobj = netCDF4.Dataset(output_path, 'w', format='NETCDF4')
 
 now = dt.datetime.now(dt.UTC)
 
@@ -104,8 +106,8 @@ ncdfobj.update_interval = "void"
 # ======================
 time_dim = ncdfobj.createDimension('TIME', len(time))
 depth_dim = ncdfobj.createDimension('DEPTH', len(depth))
-time_dim = ncdfobj.createDimension('LATITUDE', len(latitude))
-depth_dim = ncdfobj.createDimension('LONGITUDE', len(longitude))
+lat_dim = ncdfobj.createDimension('LATITUDE', len(latitude))
+lon_dim = ncdfobj.createDimension('LONGITUDE', len(longitude))
 sensor_dim = ncdfobj.createDimension('SENSOR', nsensor)
 
 # ======================
