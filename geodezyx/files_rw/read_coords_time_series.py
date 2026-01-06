@@ -163,6 +163,7 @@ def read_rtklib(filein):
         point.anex['sdAB'] = float(fields[10])
         point.anex['sdBC'] = float(fields[11])
         point.anex['sdAC'] = float(fields[12])
+        point.anex["Q"] =  float(fields[5])
 
         tsout.add_point(point)
 
