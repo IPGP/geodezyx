@@ -55,6 +55,3 @@ def get_rnx_eost(outdir, year_start=None, year_end=None):
         out_tup = dlutils.download_http(url, outdir_day)
     return None
 
-outdir = "/home/psakicki/aaa_FOURBI/eost"
-get_rnx_eost(outdir)
-
