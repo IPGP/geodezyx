@@ -62,13 +62,13 @@ class Point():
             sigma of C component. The default is 0.
         name : str, optional
             Flexible name for the Point identification. The default is 'noname'.
-        anex : dict, optional
+        anex_key_list : dict, optional
             Additional data. The default is None. See Note
         
         Note
         ----
         
-        A dictionary called anex is also initialized to allow a
+        A dictionary called anex_key_list is also initialized to allow a
         versatile storage of a variety of data
         
         Exemple of dictionary keys 
@@ -86,7 +86,7 @@ class Point():
         else:
             self.anex = anex
 
-        # le dico "anex" permet de stocker de manière polyvalente des données diverses
+        # le dico "anex_key_list" permet de stocker de manière polyvalente des données diverses
         # On trouvera (LISTE SE DEVANT ETRE LA PLUS EXHAUSTIVE POSSIBLE )
         #
         # RMS : moyenne RMS (pour les gipsy bosser)
@@ -644,7 +644,7 @@ class TimeSeriePoint:
             log.info("use an int as index instead")
             return outtup
         
-    def to_dataframe(self,coortype ='XYZ'):
+    def to_dataframe(self,coortype ='XYZ',anex_key_list=None):
         """
         Export the TimeSerie Object as DataFrame
         
@@ -655,18 +655,20 @@ class TimeSeriePoint:
             'XYZ', 'FLH', 'ENU', 'NED'
             can be also an iterable like ('XYZ','FLH')
             The default is 'XYZ'.
-
+        anex_key_list : list of str, optional
+            list of point's 'anex' keys to be added as columns in the DataFrame.
+            The default is None.
         Returns
         -------
-        DF : DataFrame
+        df : DataFrame
             output DataFrame.
         """
         
         if not utils.is_iterable(coortype):
             coortype = (coortype,)
         
-        ColStk = tuple()
-        ColNameStk = []
+        col_stk = tuple()
+        col_name_stk = []
         
         for icoty , coty in enumerate(coortype):
             A,B,C,T,sA,sB,sC = self.to_list(coty)
@@ -678,18 +680,24 @@ class TimeSeriePoint:
                 
             if icoty == 0:
                 Tdt = conv.posix2dt(T)
-                ColStk = ColStk + (Tdt,T,A,B,C,sA,sB,sC)  
-                ColNameStk = ["Tdt","T"] + [e for e in cotycolnam] + ["s" + e for e in cotycolnam]
+                col_stk = col_stk + (Tdt,T,A,B,C,sA,sB,sC)
+                col_name_stk = ["Tdt","T"] + [e for e in cotycolnam] + ["s" + e for e in cotycolnam]
             else:
-                ColStk = ColStk + (A,B,C,sA,sB,sC)
-                ColNameStk = [e for e in coty] + ["s" + e for e in coty]
+                col_stk = col_stk + (A,B,C,sA,sB,sC)
+                col_name_stk = [e for e in coty] + ["s" + e for e in coty]
                 
-        BIG = np.column_stack(ColStk)
-        DF = pd.DataFrame(BIG)
-        DF.columns = ColNameStk
-        DF = DF.infer_objects()
+            if anex_key_list:
+                for key in anex_key_list:
+                    val_list = [pt.anex[key] if key in pt.anex.keys() else np.nan for pt in self.pts]
+                    col_stk = col_stk + (val_list,)
+                    col_name_stk = col_name_stk + [key]
+                
+        big = np.column_stack(col_stk)
+        df = pd.DataFrame(big)
+        df.columns = col_name_stk
+        df = df.infer_objects()
         
-        return DF
+        return df
 
     def sort(self):
         """
