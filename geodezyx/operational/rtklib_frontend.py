@@ -67,32 +67,88 @@ def rtklib_run_from_rinex(
     experience_prefix="",
     rover_auto_conf=False,
     base_auto_conf=True,
-    XYZbase=[0, 0, 0],
+    xyz_base=[0, 0, 0],
     outtype="auto",
     calc_center="IGS0OPSFIN",
     exe_path = '/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'
 ):
     """
-    auto_conf :
-        read the header of the rinex and write the conf. file according to it
-        if the mode is disabled, the antenna/rec part of the
-        conf. file will be the same as the generic one
+    Run RTKLIB \`rnx2rtkp\` from rover/base RINEX observations using a generic RTKLIB
+    configuration file, optionally overriding antenna/receiver metadata from RINEX
+    headers and downloading required GNSS products (SP3 precise orbits and BRDC nav).
 
-        NB : RTKLIB "core" have it's own reading header option.
-        Thus, my advice is to disable the auto mode for the rover and leave
-        ``ant1-postype=rinexhead`` in the generic conf file
-        and enable it for the base with a XYZbase vector initialized or
-        the good XYZ in header on the rinex (the XYZbase vector is prioritary
-        over the base RINEX header)
+    The function:
+    \- creates a working directory structure (notably \`OUTPUT\` and \`TEMP\`)
+    \- uncompresses compressed RINEX inputs if needed
+    \- reads start/end times and sampling interval from the rover/base RINEX
+    \- builds a run\-specific RTKLIB config file from \`generik_conf\`
+    \- optionally fills rover/base antenna positions and eccentricities from RINEX headers
+    \- downloads required products into \`TEMP\`:
+      \- SP3 precise orbit from \`calc_center\`
+      \- BRDC navigation RINEX
+    \- calls the external executable \`rnx2rtkp\` with assembled arguments
+    \- writes outputs to the \`OUTPUT\` directory
 
-        (but in anycase, prepars good rinex's headers ;) )
+    Parameters
+    ----------
+    rnx_rover : str | os.PathLike
+        Path to rover observation RINEX. May be compressed (e.g. \`.gz\`, \`.Z\` and
+        other formats supported by \`geodezyx.operational.check_if_compressed_rinex\`).
+    rnx_base : str | os.PathLike
+        Path to base observation RINEX. May be compressed.
+    generik_conf : str | os.PathLike
+        Path to a generic RTKLIB configuration file (key=value format). This file is
+        parsed by \`read_conf_file\` and then overridden according to function options.
+    working_dir : str | os.PathLike
+        Directory used for temporary files and outputs. Subdirectories created:
+        \`TEMP\` for downloads/uncompressed files and \`OUTPUT\` for results.
+    experience_prefix : str, default=""
+        Prefix added to the output file stem used to name the generated \`.conf\`
+        and \`.out\` files.
+    rover_auto_conf : bool, default=False
+        If True, reads rover RINEX header and injects rover antenna type, XYZ position,
+        and antenna eccentricities into the produced config (keys \`ant1\-\*\`).
+        If False, rover settings remain those defined in \`generik_conf\`.
+    base_auto_conf : bool, default=True
+        If True, reads base RINEX header and injects base antenna type, XYZ position,
+        and antenna eccentricities into the produced config (keys \`ant2\-\*\`).
+    xyz_base : list[float], default=[0, 0, 0]
+        Base station ECEF XYZ coordinates in meters \([X, Y, Z]\). If \`xyz_base[0] != 0\`,
+        these coordinates override the base RINEX header coordinates; otherwise the base
+        header coordinates are used.
+        Note: this is a simple sentinel check; a real X coordinate of 0 would be treated
+        as "not provided".
+    outtype : str, default="auto"
+        Output solution format. If not \`"auto"\`, sets RTKLIB \`out\-solformat\` to one of:
+        \`"dms"\`, \`"deg"\`, \`"xyz"\`, \`"enu"\` (case\-insensitive).
+        If \`"auto"\`, uses whatever is defined in \`generik_conf\`.
+    calc_center : str, default="IGS0OPSFIN"
+        Analysis center/product identifier used when downloading GNSS precise products
+        via \`geodezyx.operational.download_gnss_products\`. Must match what that
+        downloader expects.
+    exe_path : str, default=...
+        Filesystem path to the RTKLIB \`rnx2rtkp\` executable.
 
-    outtype :
-        'auto' (as defined in the generic config file) or
-        'dms' 'deg' 'xyz' 'enu'
-        can manage the upper case XYZ or FLH
+    Returns
+    -------
+    None
+        The function writes output artifacts to disk and logs progress.
+
+    Raises
+    ------
+    FileNotFoundError
+        If no SP3 orbit file or no BRDC navigation file can be found locally or downloaded.
+
+    Notes
+    -----
+    \- The generated config file is written to \`working_dir/OUTPUT\` and named using:
+      \`<experience_prefix>\_<rover4>\_<base4>\_<YYYY\_DOY>.conf\`.
+    \- The RTKLIB command is executed via \`subprocess.call(..., shell=True)\` using
+      \`/bin/bash\`, with a single concatenated command string.
+    \- A warning is emitted if the base RINEX time span does not fully cover the rover span.
     """
-
+    import shutil
+    # \(... implementation continues ...\)
     import shutil
 
     # paths & files
@@ -101,6 +157,8 @@ def rtklib_run_from_rinex(
 
     # paths & files
     temp_dir = os.path.join(working_dir,'TEMP')
+    if not os.path.isdir(temp_dir):
+        os.makedirs(temp_dir)
     clean_temp_dir = False
     if clean_temp_dir:
         shutil.rmtree(temp_dir)
@@ -129,6 +187,10 @@ def rtklib_run_from_rinex(
 
     dicoconf = read_conf_file(generik_conf)
 
+    if not outtype.lower() == "auto":
+        dicoconf["out-solformat"] = outtype.lower()
+        log.info(f"out-solformat {dicoconf['out-solformat']}")
+
     if rover_auto_conf:
         antobj_rov, recobj_rov, siteobj_rov, locobj_rov = (
             files_rw.read_rinex_2_dataobjts(rnx_rover)
@@ -142,20 +204,16 @@ def rtklib_run_from_rinex(
         dicoconf["ant1-antdeln"] = antobj_rov.North_Ecc
         dicoconf["ant1-antdele"] = antobj_rov.East_Ecc
 
-    if not outtype.lower() == "auto":
-        dicoconf["out-solformat"] = outtype.lower()
-        log.info("out-solformat", dicoconf["out-solformat"])
-
     if base_auto_conf:
         antobj_bas, recobj_bas, siteobj_bas, locobj_bas = (
             files_rw.read_rinex_2_dataobjts(rnx_base)
         )
         dicoconf["ant2-postype"] = "xyz"
         dicoconf["ant2-anttype"] = antobj_bas.Antenna_Type
-        if XYZbase[0] != 0:
-            dicoconf["ant2-pos1"] = XYZbase[0]
-            dicoconf["ant2-pos2"] = XYZbase[1]
-            dicoconf["ant2-pos3"] = XYZbase[2]
+        if xyz_base[0] != 0:
+            dicoconf["ant2-pos1"] = xyz_base[0]
+            dicoconf["ant2-pos2"] = xyz_base[1]
+            dicoconf["ant2-pos3"] = xyz_base[2]
         else:
             dicoconf["ant2-pos1"] = locobj_bas.X_coordinate_m
             dicoconf["ant2-pos2"] = locobj_bas.Y_coordinate_m
@@ -185,8 +243,13 @@ def rtklib_run_from_rinex(
 
     unzip = lambda o: files_rw.unzip_gz_z(o) if o.endswith(".gz") or o.endswith(".Z") else o
 
-    sp3_z = orblis[0]
-    sp3 = unzip(sp3_z)
+    if not orblis or not orblis[0]:
+        log.error("No SP3 orbit file found remotely nor locally")
+        log.error(f"Is analysis center/latency correct?: {calc_center}")
+        raise FileNotFoundError("No SP3 orbit file found remotely nor locally")
+    else:
+        sp3_z = orblis[0]
+        sp3 = unzip(sp3_z)
 
     ### BRDC
     statdic = dict()
@@ -199,10 +262,9 @@ def rtklib_run_from_rinex(
     if len(brdclis) > 0 and brdclis[0][1]:
         nav_z = brdclis[0][0]
         nav = unzip(nav_z)
-
     else:
-        log.error("No BRDC nav file found in the archive")
-        raise FileNotFoundError("No BRDC nav file found in the archive")
+        log.error("No BRDC nav file found remotely nor locally")
+        raise FileNotFoundError("No BRDC nav file found remotely nor locally")
 
     # Command
     com_config = "-k " + out_conf_fil
@@ -212,10 +274,6 @@ def rtklib_run_from_rinex(
     com_resultfile = "-o " + out_result_fil
     # com_combinsol="-c"
 
-    # exe_path = "rnx2rtkp"
-    #    exe_path = "/home/pierre/install_softs/RTKLIB/rnx2rtkp"
-    # exe_path = "/home/psakicki/SOFTWARE/RTKLIB/RTKLIB/app/rnx2rtkp/gcc/rnx2rtkp"
-    # exe_path = ""
 
     bigcomand = " ".join(
         (
