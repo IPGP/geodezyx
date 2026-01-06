@@ -72,7 +72,7 @@ def rtklib_run_from_rinex(
     calc_center="IGS0OPSFIN",
     exe_path = '/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'
 ):
-    """
+    r"""
     Run RTKLIB \`rnx2rtkp\` from rover/base RINEX observations using a generic RTKLIB
     configuration file, optionally overriding antenna/receiver metadata from RINEX
     headers and downloading required GNSS products (SP3 precise orbits and BRDC nav).
