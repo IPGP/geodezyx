@@ -68,6 +68,7 @@ def rtklib_run_from_rinex(
     experience_prefix="",
     rover_auto_conf=False,
     base_auto_conf=True,
+    xyz_rover = [0, 0, 0],
     xyz_base=[0, 0, 0],
     outtype="auto",
     calc_center="IGS0OPSFIN",
@@ -196,36 +197,27 @@ def rtklib_run_from_rinex(
         dicoconf["out-solformat"] = outtype.lower()
         log.info(f"out-solformat {dicoconf['out-solformat']}")
 
-    if rover_auto_conf:
-        antobj_rov, recobj_rov, siteobj_rov, locobj_rov = (
-            files_rw.read_rinex_2_dataobjts(rnx_rover)
+    def _edit_dicoconf(rnx_inp, xyz_inp, ant_n=1):
+        antobj, recobj, siteobj, locobj = (
+            files_rw.read_rinex_2_dataobjts(rnx_inp)
         )
-        dicoconf["ant1-postype"] = "xyz"
-        dicoconf["ant1-anttype"] = antobj_rov.Antenna_Type
-        dicoconf["ant1-pos1"] = locobj_rov.X_coordinate_m
-        dicoconf["ant1-pos2"] = locobj_rov.Y_coordinate_m
-        dicoconf["ant1-pos3"] = locobj_rov.Z_coordinate_m
-        dicoconf["ant1-antdelu"] = antobj_rov.Up_Ecc
-        dicoconf["ant1-antdeln"] = antobj_rov.North_Ecc
-        dicoconf["ant1-antdele"] = antobj_rov.East_Ecc
-
-    if base_auto_conf:
-        antobj_bas, recobj_bas, siteobj_bas, locobj_bas = (
-            files_rw.read_rinex_2_dataobjts(rnx_base)
-        )
-        dicoconf["ant2-postype"] = "xyz"
-        dicoconf["ant2-anttype"] = antobj_bas.Antenna_Type
-        if xyz_base[0] != 0:
-            dicoconf["ant2-pos1"] = xyz_base[0]
-            dicoconf["ant2-pos2"] = xyz_base[1]
-            dicoconf["ant2-pos3"] = xyz_base[2]
+        n = str(ant_n)
+        dicoconf[f"ant{n}-postype"] = "xyz"
+        dicoconf[f"ant{n}-anttype"] = antobj.Antenna_Type
+        if xyz_inp[0] != 0:
+            dicoconf[f"ant{n}-pos1"] = xyz_inp[0]
+            dicoconf[f"ant{n}-pos2"] = xyz_inp[1]
+            dicoconf[f"ant{n}-pos3"] = xyz_inp[2]
         else:
-            dicoconf["ant2-pos1"] = locobj_bas.X_coordinate_m
-            dicoconf["ant2-pos2"] = locobj_bas.Y_coordinate_m
-            dicoconf["ant2-pos3"] = locobj_bas.Z_coordinate_m
-        dicoconf["ant2-antdelu"] = antobj_bas.Up_Ecc
-        dicoconf["ant2-antdeln"] = antobj_bas.North_Ecc
-        dicoconf["ant2-antdele"] = antobj_bas.East_Ecc
+            dicoconf[f"ant{n}-pos1"] = locobj.X_coordinate_m
+            dicoconf[f"ant{n}-pos2"] = locobj.Y_coordinate_m
+            dicoconf[f"ant{n}-pos3"] = locobj.Z_coordinate_m
+        dicoconf[f"ant{n}-antdelu"] = antobj.Up_Ecc
+        dicoconf[f"ant{n}-antdeln"] = antobj.North_Ecc
+        dicoconf[f"ant{n}-antdele"] = antobj.East_Ecc
+
+    _edit_dicoconf(rnx_rover, xyz_rover, ant_n=1)
+    _edit_dicoconf(rnx_base, xyz_base, ant_n=2)
 
     if not (bas_srt <= rov_srt <= rov_end <= bas_end):
         log.warning("rover/base epoch inconsistency: not bas_srt <= rov_srt <= rov_end <= bas_end !!!")
