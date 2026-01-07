@@ -236,25 +236,20 @@ def rtklib_run_from_rinex(
         outconffilobj.write(lin)
     outconffilobj.close()
 
-    ###### ORBITS
-    ### SP3
-    # if "FIN" in calc_center:
-    #     orb_srt = conv.round_dt(bas_srt,"1D", mode="floor")
-    #     orb_end = conv.round_dt(bas_end,"1D", mode="ceil")
-    # elif "RAP" in calc_center:
-    #     orb_srt = conv.round_dt(bas_srt,"1D", mode="floor")
-    #     orb_end = conv.round_dt(bas_end,"1D", mode="floor")
-    # elif "ULT" in calc_center:
-    #     orb_srt = conv.round_dt(bas_srt,"6H", mode="floor")
-    #     orb_end = conv.round_dt(bas_end,"6H", mode="floor")
-    # else:
-    #     orb_srt = bas_srt
-    #     orb_end = bas_end
-
-    orb_srt = bas_srt
-    orb_end = bas_end
-
-    print(type(orb_srt), type(orb_end))
+    ##### ORBITS
+    ## SP3
+    if "FIN" in calc_center:
+        orb_srt = conv.round_dt(bas_srt,"1D", mode="floor")
+        orb_end = conv.round_dt(bas_end,"1D", mode="ceil")
+    elif "RAP" in calc_center:
+        orb_srt = conv.round_dt(bas_srt,"1D", mode="floor")
+        orb_end = conv.round_dt(bas_end,"1D", mode="floor")
+    elif "ULT" in calc_center:
+        orb_srt = conv.round_dt(bas_srt,"6H", mode="floor")
+        orb_end = conv.round_dt(bas_end,"6H", mode="floor")
+    else:
+        orb_srt = bas_srt
+        orb_end = bas_end
 
     orblis = operational.download_gnss_products(
         archive_dir=temp_dir,
