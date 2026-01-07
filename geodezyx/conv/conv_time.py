@@ -432,8 +432,6 @@ def round_dt(dtin, round_to, python_dt_out=True, mode="round"):
     else:
         dt_out = list(dt_use)
 
-    print("AAAAAAAAAAA", dt_out)
-
     # Return based on input type
     if is_singleton:
         return dt_out[0]
@@ -776,7 +774,7 @@ def dt2doy(dtin, outputtype=str):
 
 
 @vector_datetime_conv
-def dt2doy_year(dtin, outputtype=str):
+def dt2doy_year(dtin, outputtype=str, reverse_order=False):
     """
     Time representation conversion
 
@@ -788,19 +786,26 @@ def dt2doy_year(dtin, outputtype=str):
         Datetime(s). Can handle iterable of datetimes.
     outputtype : type
         Output type (str or int)
+    reverse_order : bool
+        If True, returns (Year, Day of Year) instead of (Day of Year, Year)
 
     Returns
     -------
     tuple or iterable of tuples
-        (Year, Day of Year). If input is iterable, returns same type.
+        (Day of Year, Year). If input is iterable, returns same type.
     """
     year = dtin.year
     doy = dtin.timetuple().tm_yday
 
     if outputtype == str:
-        return str(year), str(doy).zfill(3)
+        outtup = (str(doy).zfill(3), str(year))
     else:
-        return outputtype(year), outputtype(doy)
+        outtup = (outputtype(doy), outputtype(year))
+
+    if reverse_order:
+        return outtup[::-1]
+    else:
+        return outtup
 
 
 @vector_datetime_conv
