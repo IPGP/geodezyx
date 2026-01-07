@@ -32,6 +32,7 @@ import numpy as np
 from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import utils
+from geodezyx import conv
 
 log = logging.getLogger('geodezyx')
 
@@ -70,6 +71,7 @@ def rtklib_run_from_rinex(
     xyz_base=[0, 0, 0],
     outtype="auto",
     calc_center="IGS0OPSFIN",
+    force=False,
     exe_path = '/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'
 ):
     r"""
@@ -131,8 +133,8 @@ def rtklib_run_from_rinex(
 
     Returns
     -------
-    None
-        The function writes output artifacts to disk and logs progress.
+    out_result_fil : str
+        Path to the RTKLIB output solution file (\`.out\`).
 
     Raises
     ------
@@ -157,8 +159,7 @@ def rtklib_run_from_rinex(
 
     # paths & files
     temp_dir = os.path.join(working_dir,'TEMP')
-    if not os.path.isdir(temp_dir):
-        os.makedirs(temp_dir)
+    utils.create_dir(temp_dir)
     clean_temp_dir = False
     if clean_temp_dir:
         shutil.rmtree(temp_dir)
@@ -179,11 +180,15 @@ def rtklib_run_from_rinex(
     rov_name = os.path.basename(rnx_rover)[0:4]
     bas_name = os.path.basename(rnx_base)[0:4]
 
-    srt_str = rov_srt.strftime("%Y_%j")
+    srt_str = rov_srt.strftime("%Y_%j_%H%M")
     exp_full_name = "_".join((experience_prefix, rov_name, bas_name, srt_str))
 
     out_conf_fil = os.path.join(out_dir, exp_full_name + ".conf")
     out_result_fil = os.path.join(out_dir, exp_full_name + ".out")
+
+    if os.path.isfile(out_result_fil) and not force:
+        log.info(f"RTKLIB output file {out_result_fil} already exists. Skipping...")
+        return out_result_fil
 
     dicoconf = read_conf_file(generik_conf)
 
@@ -233,10 +238,25 @@ def rtklib_run_from_rinex(
 
     ###### ORBITS
     ### SP3
+    if "FIN" in calc_center:
+        orb_srt = conv.round_dt(bas_srt,"1D", mode="floor")
+        orb_end = conv.round_dt(bas_end,"1D", mode="ceil")
+    elif "RAP" in calc_center:
+        orb_srt = conv.round_dt(bas_srt,"1D", mode="floor")
+        orb_end = conv.round_dt(bas_end,"1D", mode="floor")
+    elif "ULT" in calc_center:
+        orb_srt = conv.round_dt(bas_srt,"6H", mode="floor")
+        orb_end = conv.round_dt(bas_end,"6H", mode="floor")
+    else:
+        orb_srt = bas_srt
+        orb_end = bas_end
+
+    print(type(orb_srt), type(orb_end))
+
     orblis = operational.download_gnss_products(
         archive_dir=temp_dir,
-        startdate=bas_srt,
-        enddate=bas_end,
+        startdate=orb_srt,
+        enddate=orb_end,
         archtype="/",
         AC_names=(calc_center , )
     )
@@ -294,4 +314,4 @@ def rtklib_run_from_rinex(
     subprocess.call([bigcomand], executable="/bin/bash", shell=True)
     log.info("RTKLIB RUN FINISHED")
 
-    return None
+    return out_result_fil

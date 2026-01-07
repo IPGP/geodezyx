@@ -110,12 +110,13 @@ def rinex_regex(compressed=None, compiled=False):
     out : string or python's regex
         a regex
     """
+    # ([0 - 9]{2})? is for subhourly files (260107)
     if compressed is None:
-        regexstr = r"^....[0-9]{3}.\.[0-9]{2}((d\.(Z|z|gz))|o|d)$"
+        regexstr = r"^....[0-9]{3}.([0-9]{2})?\.[0-9]{2}((d\.(Z|z|gz))|o|d)$"
     elif not compressed:
-        regexstr = r"^....[0-9]{3}.\.[0-9]{2}o$"
+        regexstr = r"^....[0-9]{3}.([0-9]{2})?\.[0-9]{2}o$"
     else:
-        regexstr = r"^....[0-9]{3}.\.[0-9]{2}((d\.(Z|z|gz))|d)$"
+        regexstr = r"^....[0-9]{3}.([0-9]{2})?\.[0-9]{2}((d\.(Z|z|gz))|d)$"
 
     if compiled:
         return re.compile(regexstr)

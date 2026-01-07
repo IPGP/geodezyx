@@ -1588,9 +1588,15 @@ def rinexname2dt(rinexpath):
         ##### SHORT rinex name
     elif re.search(conv_rinex.rinex_regex(), rinexname.lower()):  ##EUREF are upper case...
         alphabet = list(string.ascii_lowercase)
-
         doy = int(rinexname[4:7])
-        yy = int(rinexname[9:11])
+        # sub hourly case
+        if re.match(r"^....[0-9]{3}.[0-9]{2}\.[0-9]{2}",rinexname.lower()):
+            yy = int(rinexname[11:13])
+            minn = int(rinexname[8:10])
+        # regular case
+        else:
+            yy = int(rinexname[9:11])
+            minn = 0
 
         if yy > 80:
             year = yy + 1900
@@ -1602,7 +1608,7 @@ def rinexname2dt(rinexpath):
         else:
             h = 0
 
-        return dt.datetime(year, 1, 1) + dt.timedelta(days=doy - 1, seconds=h * 3600)
+        return dt.datetime(year, 1, 1) + dt.timedelta(days=doy - 1, seconds=h * 3600 + minn * 60)
 
     else:
         log.error('RINEX name is not well formated: %s', rinexname)
