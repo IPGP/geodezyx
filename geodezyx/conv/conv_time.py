@@ -421,9 +421,9 @@ def round_dt(dtin, round_to, python_dt_out=True, mode="round"):
 
     # Convert output
     if python_dt_out:
-        dtin_out = np.array(pd.to_datetime(dtin_out))
+        dtin_out = list(pd.to_datetime(dtin_out))
     else:
-        dtin_out = np.array(dtin_out)
+        dtin_out = list(dtin_out)
 
     # Return based on input type
     if is_singleton:
