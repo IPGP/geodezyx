@@ -228,7 +228,7 @@ def rtklib_run_from_rinex(
         dicoconf["ant2-antdele"] = antobj_bas.East_Ecc
 
     if not (bas_srt <= rov_srt <= rov_end <= bas_end):
-        log.warning("not bas_srt <= rov_srt <= rov_end <= bas_end !!!")
+        log.warning("rover/base epoch inconsistency: not bas_srt <= rov_srt <= rov_end <= bas_end !!!")
 
     outconffilobj = open(out_conf_fil, "w+")
     for k, v in dicoconf.items():
@@ -285,21 +285,21 @@ def rtklib_run_from_rinex(
         raise FileNotFoundError("No BRDC nav file found remotely nor locally")
 
     # Command
-    com_config = "-k " + out_conf_fil
-    com_interval = "-ti " + str(np.round(rov_itv,6))
-    com_mode = ""
-    # com_mode="-p 4"
-    com_resultfile = "-o " + out_result_fil
+    arg_config = "-k " + out_conf_fil
+    arg_interval = "-ti " + str(np.round(rov_itv,6))
+    arg_mode = ""
+    # arg_mode="-p 4"
+    arg_resultfile = "-o " + out_result_fil
     # com_combinsol="-c"
 
 
     bigcomand = " ".join(
         (
             exe_path,
-            com_config,
-            com_interval,
-            com_mode,
-            com_resultfile,
+            arg_config,
+            arg_interval,
+            arg_mode,
+            arg_resultfile,
             rnx_rover,
             rnx_base,
             nav,
