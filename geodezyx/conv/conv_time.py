@@ -162,6 +162,52 @@ def _output_to_datetime_type(dt_output, target_type):
         return dt_output
 
 
+def _vectorize_single_arg(func, input_val, *args, preprocessor=None, **kwargs):
+    """
+    Helper function to vectorize a function with a single vectorizable argument.
+
+    Parameters
+    ----------
+    func : callable
+        Function to vectorize
+    input_val : scalar or iterable
+        Input value(s) to process
+    *args : tuple
+        Additional positional arguments to pass to func
+    preprocessor : callable, optional
+        Function to preprocess each element before passing to func
+    **kwargs : dict
+        Additional keyword arguments to pass to func
+
+    Returns
+    -------
+    scalar or iterable
+        Result(s) in the same type as input
+    """
+    is_iter = utils.is_iterable(input_val)
+
+    if not is_iter:
+        # Single element case
+        if preprocessor:
+            input_val = preprocessor(input_val)
+        return func(input_val, *args, **kwargs)
+    else:
+        # Iterable case - vectorize
+        input_type = utils.get_type_smart(input_val)
+        input_array = np.asarray(input_val)
+
+        # Create vectorized function
+        if preprocessor:
+            vectorized_func = np.vectorize(
+                lambda x: func(preprocessor(x), *args, **kwargs)
+            )
+        else:
+            vectorized_func = np.vectorize(lambda x: func(x, *args, **kwargs))
+
+        result_array = vectorized_func(input_array)
+        return input_type(result_array)
+
+
 def vector_datetime_conv(func):
     """
     Decorator to vectorize time conversion functions.
@@ -187,29 +233,9 @@ def vector_datetime_conv(func):
 
     @wraps(func)
     def wrapper(time_input, *args, **kwargs):
-        # Check if input is iterable
-        is_iter = utils.is_iterable(time_input)
-
-        if not is_iter:
-            # Single element case
-            normalized = _normalize_datetime_input(time_input)
-            result = func(normalized, *args, **kwargs)
-            return result
-        else:
-            # Iterable case - vectorize
-            input_type = utils.get_type_smart(time_input)
-
-            # Convert to numpy array for vectorization
-            time_array = np.asarray(time_input)
-
-            # Vectorized conversion using numpy's vectorize (more efficient than list comprehension)
-            vectorized_func = np.vectorize(
-                lambda x: func(_normalize_datetime_input(x), *args, **kwargs)
-            )
-            result_array = vectorized_func(time_array)
-
-            # Convert back to original type
-            return input_type(result_array)
+        return _vectorize_single_arg(
+            func, time_input, *args, preprocessor=_normalize_datetime_input, **kwargs
+        )
 
     return wrapper
 
@@ -234,22 +260,7 @@ def vector_numeric_conv(func):
 
     @wraps(func)
     def wrapper(numeric_input, *args, **kwargs):
-        # Check if input is iterable
-        is_iter = utils.is_iterable(numeric_input)
-
-        if not is_iter:
-            # Single element case
-            return func(numeric_input, *args, **kwargs)
-        else:
-            # Iterable case - use numpy for efficiency
-            input_type = utils.get_type_smart(numeric_input)
-            numeric_array = np.asarray(numeric_input)
-
-            # Vectorized operation
-            vectorized_func = np.vectorize(lambda x: func(x, *args, **kwargs))
-            result_array = vectorized_func(numeric_array)
-
-            return input_type(result_array)
+        return _vectorize_single_arg(func, numeric_input, *args, **kwargs)
 
     return wrapper
 
@@ -288,52 +299,52 @@ def vector_numeric_conv_2args(func):
         if not is_arg1_iter and not is_arg2_iter:
             # Single element case for both args
             return func(arg1, arg2, *args, **kwargs)
+
+        # At least one argument is iterable
+        # Determine output type from the first iterable argument
+        if is_arg1_iter:
+            input_type = utils.get_type_smart(arg1)
+            arg1_array = np.atleast_1d(arg1)
         else:
-            # At least one argument is iterable
-            # Determine output type from the first iterable argument
-            if is_arg1_iter:
-                input_type = utils.get_type_smart(arg1)
-                arg1_array = np.atleast_1d(arg1)
-            else:
-                arg1_array = None
+            arg1_array = None
 
-            if is_arg2_iter:
-                if not is_arg1_iter:
-                    # Only arg2 is iterable, use its type for output
-                    input_type = utils.get_type_smart(arg2)
-                arg2_array = np.atleast_1d(arg2)
-            else:
-                # arg2 is not iterable (single value or None)
-                arg2_array = None
+        if is_arg2_iter:
+            if not is_arg1_iter:
+                # Only arg2 is iterable, use its type for output
+                input_type = utils.get_type_smart(arg2)
+            arg2_array = np.atleast_1d(arg2)
+        else:
+            # arg2 is not iterable (single value or None)
+            arg2_array = None
 
-            # Determine the iteration pairs
-            if is_arg1_iter and is_arg2_iter:
-                # Both are iterable - check length compatibility
-                if len(arg1_array) != len(arg2_array):
-                    raise ValueError(
-                        f"Length mismatch: arg1 has {len(arg1_array)} elements, "
-                        f"arg2 has {len(arg2_array)} elements"
-                    )
-                pairs = zip(arg1_array, arg2_array)
-            elif is_arg1_iter:
-                # Only arg1 is iterable, broadcast arg2
-                pairs = [(a1, arg2) for a1 in arg1_array]
-            else:
-                # Only arg2 is iterable, broadcast arg1
-                pairs = [(arg1, a2) for a2 in arg2_array]
+        # Determine the iteration pairs
+        if is_arg1_iter and is_arg2_iter:
+            # Both are iterable - check length compatibility
+            if len(arg1_array) != len(arg2_array):
+                raise ValueError(
+                    f"Length mismatch: arg1 has {len(arg1_array)} elements, "
+                    f"arg2 has {len(arg2_array)} elements"
+                )
+            pairs = zip(arg1_array, arg2_array)
+        elif is_arg1_iter:
+            # Only arg1 is iterable, broadcast arg2
+            pairs = [(a1, arg2) for a1 in arg1_array]
+        else:
+            # Only arg2 is iterable, broadcast arg1
+            pairs = [(arg1, a2) for a2 in arg2_array]
 
-            # Vectorized operation - convert numpy types to Python types
-            results = []
-            for a1, a2 in pairs:
-                # Convert numpy types to Python types
-                if hasattr(a1, 'item'):
-                    a1 = a1.item()
-                if a2 is not None and hasattr(a2, 'item'):
-                    a2 = a2.item()
-                result = func(a1, a2, *args, **kwargs)
-                results.append(result)
+        # Vectorized operation - convert numpy types to Python types
+        results = []
+        for a1, a2 in pairs:
+            # Convert numpy types to Python types
+            if hasattr(a1, 'item'):
+                a1 = a1.item()
+            if a2 is not None and hasattr(a2, 'item'):
+                a2 = a2.item()
+            result = func(a1, a2, *args, **kwargs)
+            results.append(result)
 
-            return input_type(results)
+        return input_type(results)
 
     return wrapper
 
@@ -358,14 +369,14 @@ def vector_string_conv(func):
 
     @wraps(func)
     def wrapper(string_input, *args, **kwargs):
-        # Check if input is iterable (but not a single string)
+        # Special handling for strings: single string is NOT iterable for our purposes
         is_iter = utils.is_iterable(string_input) and not isinstance(string_input, str)
 
         if not is_iter:
             # Single element case
             return func(string_input, *args, **kwargs)
         else:
-            # Iterable case - use numpy for efficiency
+            # Iterable case - vectorize
             input_type = utils.get_type_smart(string_input)
             string_array = np.asarray(string_input)
 
