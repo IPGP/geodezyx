@@ -190,9 +190,8 @@ class Point():
         self.initype = 'UTM'
         
 
-    def add_offset(self,dA,dB,dC):
-        log.warning("add_offset as method are hazardous ...")
-        temp = time_series.add_offset_point(self,dA,dB,dC)
+    def add_offset(self,dA,dB,dC,coortype="ENU"):
+        temp = time_series.add_offset_point(self,dA,dB,dC, coortype=coortype)
         self.__dict__ = temp.__dict__
 
     def Tset(self,T=0):
@@ -1276,14 +1275,12 @@ class TimeSeriePoint:
 
         return out
 
-    def add_offset(self,dA,dB,dC):
+    def add_offset(self,dA,dB,dC,coortype='ENU'):
         """
-        NOTE 160415 : add_offset as method are hazardous ...
-        use fct add_offset_ts instead
+        Method to add an offset to all points in the TimeSerie
         """
-        log.warning("add_offset as method are hazardous ...")
         for pt in self.pts:
-            pt.add_offset(dA,dB,dC)
+            pt.add_offset(dA,dB,dC,coortype='ENU')
 
     def decimate(self,dec):
         """
