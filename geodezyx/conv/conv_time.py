@@ -2305,3 +2305,268 @@ def dt2epoch_rnx3(dt_in, epoch_flag=0, nsats=0, rec_clk_offset=0):
         )
 
         return epoch_out
+
+
+
+
+#  _____       _   _                 _       _____       _                        _   _____                                     _        _   _
+# |  __ \     | | | |               ( )     |_   _|     | |                      | | |  __ \                                   | |      | | (_)
+# | |__) |   _| |_| |__   ___  _ __ |/ ___    | |  _ __ | |_ ___ _ __ _ __   __ _| | | |__) |___ _ __  _ __ ___  ___  ___ _ __ | |_ __ _| |_ _  ___  _ __  ___
+# |  ___/ | | | __| '_ \ / _ \| '_ \  / __|   | | | '_ \| __/ _ \ '__| '_ \ / _` | | |  _  // _ \ '_ \| '__/ _ \/ __|/ _ \ '_ \| __/ _` | __| |/ _ \| '_ \/ __|
+# | |   | |_| | |_| | | | (_) | | | | \__ \  _| |_| | | | ||  __/ |  | | | | (_| | | | | \ \  __/ |_) | | |  __/\__ \  __/ | | | || (_| | |_| | (_) | | | \__ \
+# |_|    \__, |\__|_| |_|\___/|_| |_| |___/ |_____|_| |_|\__\___|_|  |_| |_|\__,_|_| |_|  \_\___| .__/|_|  \___||___/\___|_| |_|\__\__,_|\__|_|\___/|_| |_|___/
+#         __/ |                                                                                 | |
+#        |___/                                                                                  |_|                                                                           |_|
+
+### Python's Internal Representations
+
+def date2dt(date_in):
+    """
+    Time Python type conversion
+
+    Python's Date => Python's Datetime
+
+    Parameters
+    ----------
+    date_in : date or list/numpy.array of date.
+        Date(s).  Can handle several dates in an iterable.
+
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)
+    """
+    if utils.is_iterable(date_in):
+        typ = utils.get_type_smart(date_in)
+        return typ([date2dt(e) for e in date_in])
+    else:
+        return dt.datetime(*tuple(date_in.timetuple())[:3])
+
+
+def dt2date(dt_in):
+    """
+    Time Python type conversion
+
+    Python's Datetime => Python's Date
+
+    Parameters
+    ----------
+    dt_in : datetime.datetime or list/numpy.array of datetime.datetime.
+        Datetime(s).  Can handle several datetimes in an iterable.
+
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)
+    """
+    if utils.is_iterable(dt_in):
+        typ = utils.get_type_smart(dt_in)
+        return typ([dt2date(e) for e in dt_in])
+    else:
+        return dt_in.date()
+
+
+def pandas_timestamp2dt(timestamp_in):
+    """
+    Time Python type conversion
+
+    Pandas's Timestamp => Python's Datetime
+
+    Parameters
+    ----------
+    timestamp_in : Timestamp or list/numpy.array of Timestamp.
+        Pandas's Timestamp(s).  Can handle several datetimes in an iterable.
+
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)
+    """
+
+    import pandas as pd
+
+    if utils.is_iterable(timestamp_in):
+        typ = utils.get_type_smart(timestamp_in)
+        return typ([pandas_timestamp2dt(e) for e in timestamp_in])
+    else:
+        if isinstance(timestamp_in, pd.Timedelta):
+            return timestamp_in.to_pytimedelta()
+        else:
+            return timestamp_in.to_pydatetime()
+
+
+def numpy_dt2dt(numpy_dt_in):
+    """
+    Time representation conversion
+
+    Numpy datetime64 object => Python's Datetime
+
+    Parameters
+    ----------
+    numpy_dt_in : numpy datetime64 object
+        numpy datetime64 object
+
+    Returns
+    -------
+    dt : datetime.datetime or list/numpy.array of datetime.datetime
+        Converted Datetime(s)
+        If the input is a Pandas Series, the output is forced as an array
+
+    Source
+    ------
+    https://gist.github.com/blaylockbk/1677b446bc741ee2db3e943ab7e4cabd
+    """
+
+    if utils.is_iterable(numpy_dt_in):
+        typ = utils.get_type_smart(numpy_dt_in)
+
+        ### If the type is a pd.core.series.Series or a
+        ### pd.core.indexes.datetimes.DatetimeIndex,
+        ### it has to be forced as an array
+        ### Otherwise, datetime will be converted as numpy_dt again
+        if not typ in (list, tuple, np.array):
+            typ = np.array
+        return typ([numpy_dt2dt(e) for e in numpy_dt_in])
+
+    #timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
+    #             / np.timedelta64(1, 's'))
+    # return dt.datetime.fromtimestamp(timestamp)
+
+    ### better implementation because of the timezone bug (PS 241124)
+
+    else:
+        import pandas as pd
+        return pd.Timestamp(numpy_dt_in).to_pydatetime()
+
+def time_obj_tester(delta=False, out_iterable=list, start=None):
+    """
+    Generate test time objects in different formats
+    (datetime, numpy.datetime64, pandas.Timestamp).
+
+    Parameters
+    ----------
+    delta : bool, optional
+        If True, return time deltas relative to the `start` time.
+        Default is False.
+    out_iterable : callable, optional
+        A callable that determines the type of iterable to return (e.g., list, tuple).
+        Default is list.
+    start : datetime.datetime, optional
+        The starting datetime for the generated time objects.
+        If None, defaults to January 1, 2020, 00:00:00.
+
+    Returns
+    -------
+    tuple
+        A tuple containing three iterables:
+        - times_datetime: Iterable of datetime.datetime objects.
+        - times_datetime_numpy: Iterable of numpy.datetime64 objects.
+        - times_pandas_timestamp: Iterable of pandas.Timestamp objects.
+
+    Notes
+    -----
+    - The function generates 10 time objects, each separated by 60 seconds.
+    - If `delta` is True, the returned values are time deltas relative to the `start` time.
+    - The `out_iterable` parameter allows customization of the output container type (e.g., list, tuple).
+
+    Examples
+    --------
+    >>> time_obj_tester()
+    ([datetime.datetime(2020, 1, 1, 0, 0),
+      datetime.datetime(2020, 1, 1, 0, 1),
+      ...],
+     [numpy.datetime64('2020-01-01T00:00:00'),
+      numpy.datetime64('2020-01-01T00:01:00'),
+      ...],
+     [Timestamp('2020-01-01 00:00:00'),
+      Timestamp('2020-01-01 00:01:00'),
+      ...])
+
+    >>> time_obj_tester(delta=True, out_iterable=tuple)
+    ((datetime.timedelta(0),
+      datetime.timedelta(seconds=60),
+      ...),
+     (numpy.timedelta64(0,'s'),
+      numpy.timedelta64(60,'s'),
+      ...),
+     (Timedelta('0 days 00:00:00'),
+      Timedelta('0 days 00:01:00'),
+      ...))
+    """
+
+    import pandas as pd
+
+    if start is None:
+        start = dt.datetime(2020, 1, 1, 0, 0, 0)
+
+    # Generate a list of datetime objects, each separated by 60 seconds
+    times_datetime = []
+    for i in range(10):
+        times_datetime.append(start + dt.timedelta(seconds=i * 60))
+
+    # Convert the list of datetime objects to the specified iterable type
+    times_datetime = out_iterable(times_datetime)
+
+    # Convert the datetime objects to numpy.datetime64 and pandas.Timestamp formats
+    times_datetime_numpy = out_iterable([np.datetime64(t) for t in times_datetime])
+    times_pandas_timestamp = out_iterable([pd.Timestamp(t) for t in times_datetime])
+
+    # If delta is True, calculate time deltas relative to the start time
+    if delta:
+        times_datetime = out_iterable([t - start for t in times_datetime])
+        times_datetime_numpy = out_iterable([t - np.datetime64(start) for t in times_datetime_numpy])
+        times_pandas_timestamp = out_iterable([t - pd.Timestamp(start) for t in times_pandas_timestamp])
+
+    # Return the generated time objects in the specified formats
+    return times_datetime, times_datetime_numpy, times_pandas_timestamp
+
+
+##### Nota Bene
+##### numpy_datetime2dt & datetime64_numpy2dt have been moved
+##### to the funtion graveyard (PSakic 2021-02-22)
+
+def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
+    """
+    Frontend for the GFZ EPOS epo converter
+
+
+    Parameters
+    ----------
+    inp : string or int
+        the input day, like 58773 2019290 20754 ...
+
+    inp_type : str
+        An output format managed by epo command :
+        wwwwd,yyddd,yyyyddd,yyyymmdd
+
+    out_type : str
+        An output format managed by epo command :
+        mjd,yyyy,yy,ddd,mon,dmon,hour,min,sec,wwww,wd
+
+    verbose : bool
+        verbose mode
+
+    Returns
+    -------
+    year : int
+        Year as integer. Years preceding 1 A.D. should be 0 or negative.
+        The year before 1 A.D. is 0, 10 B.C. is year -9.
+    """
+
+    epo_cmd = "-epo " + str(inp)
+    inp_cmd = "-type " + str(inp_type)
+    out_cmd = "-o " + str(out_type)
+
+    cmd = " ".join(("perl $EPOS8_BIN_TOOLS/SCRIPTS/get_epoch.pl", epo_cmd, inp_cmd, out_cmd))
+
+    if verbose:
+        log.debug(cmd)
+
+    result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, executable='/bin/bash')
+
+    out = int(result.stdout.decode('utf-8'))
+
+    if verbose:
+        log.debug(out)
+
+    return out
