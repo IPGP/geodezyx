@@ -254,6 +254,90 @@ def vector_numeric_conv(func):
     return wrapper
 
 
+def vector_numeric_conv_2args(func):
+    """
+    Decorator for numeric time conversion functions with 2 vectorizable arguments.
+
+    This decorator allows both the first and second arguments to be vectorized.
+    If either or both arguments are iterable, the function is applied element-wise.
+    The second argument can be None (optional).
+
+    Parameters
+    ----------
+    func : callable
+        Function that works on single numeric values for first 2 args
+
+    Returns
+    -------
+    callable
+        Vectorized version of the function
+
+    Examples
+    --------
+    Typical use cases:
+    - gpstime2dt(gpsweek, gpsdow_or_seconds, ...)
+    - mjd2dt(mjd_in, seconds=None, ...)
+    """
+
+    @wraps(func)
+    def wrapper(arg1, arg2=None, *args, **kwargs):
+        # Check if arguments are iterable
+        is_arg1_iter = utils.is_iterable(arg1)
+        is_arg2_iter = arg2 is not None and utils.is_iterable(arg2)
+
+        if not is_arg1_iter and not is_arg2_iter:
+            # Single element case for both args
+            return func(arg1, arg2, *args, **kwargs)
+        else:
+            # At least one argument is iterable
+            # Determine output type from the first iterable argument
+            if is_arg1_iter:
+                input_type = utils.get_type_smart(arg1)
+                arg1_array = np.atleast_1d(arg1)
+            else:
+                arg1_array = None
+
+            if is_arg2_iter:
+                if not is_arg1_iter:
+                    # Only arg2 is iterable, use its type for output
+                    input_type = utils.get_type_smart(arg2)
+                arg2_array = np.atleast_1d(arg2)
+            else:
+                # arg2 is not iterable (single value or None)
+                arg2_array = None
+
+            # Determine the iteration pairs
+            if is_arg1_iter and is_arg2_iter:
+                # Both are iterable - check length compatibility
+                if len(arg1_array) != len(arg2_array):
+                    raise ValueError(
+                        f"Length mismatch: arg1 has {len(arg1_array)} elements, "
+                        f"arg2 has {len(arg2_array)} elements"
+                    )
+                pairs = zip(arg1_array, arg2_array)
+            elif is_arg1_iter:
+                # Only arg1 is iterable, broadcast arg2
+                pairs = [(a1, arg2) for a1 in arg1_array]
+            else:
+                # Only arg2 is iterable, broadcast arg1
+                pairs = [(arg1, a2) for a2 in arg2_array]
+
+            # Vectorized operation - convert numpy types to Python types
+            results = []
+            for a1, a2 in pairs:
+                # Convert numpy types to Python types
+                if hasattr(a1, 'item'):
+                    a1 = a1.item()
+                if a2 is not None and hasattr(a2, 'item'):
+                    a2 = a2.item()
+                result = func(a1, a2, *args, **kwargs)
+                results.append(result)
+
+            return input_type(results)
+
+    return wrapper
+
+
 def vector_string_conv(func):
     """
     Decorator for string time conversion functions.
@@ -400,13 +484,13 @@ def round_dt(dtin, round_to, python_dt_out=True, mode="round"):
     is_singleton = not utils.is_iterable(dtin)
 
     if is_singleton:
-        input_type = None
         dtin_series = pd.Series([_normalize_datetime_input(dtin)])
+        input_type = None
     else:
         input_type = utils.get_type_smart(dtin)
         # Normalize all datetime inputs
-        dtin_normalized = [_normalize_datetime_input(d) for d in dtin]
-        dtin_series = pd.Series(dtin_normalized)
+        dtin_norma = [_normalize_datetime_input(d) for d in dtin]
+        dtin_series = pd.Series(dtin_norma)
 
     # Apply rounding based on mode
     if mode == "round":
@@ -421,25 +505,21 @@ def round_dt(dtin, round_to, python_dt_out=True, mode="round"):
 
     # Convert output
     if python_dt_out:
-        #### to silent a deprecation warning from pandas
-        with warnings.catch_warnings():
-            warnings.filterwarnings(
-                "ignore",
-                category=FutureWarning,
-                message=r".*DatetimeProperties\.to_pydatetime.*",
-            )
-            dt_out = dt_use.dt.to_pydatetime().tolist()
+        # Convert to Python datetime objects
+        # Use list comprehension to ensure native datetime, not Timestamp
+        dt_out = [x.to_pydatetime() for x in dt_use]
     else:
+        # Keep as Pandas Timestamps
         dt_out = list(dt_use)
 
     # Return based on input type
     if is_singleton:
         return dt_out[0]
     else:
-        if input_type:
+        if input_type is not None:
             return input_type(dt_out)
         else:
-            return list(dt_out)
+            return dt_out
 
 
 @vector_datetime_conv
@@ -774,7 +854,7 @@ def dt2doy(dtin, outputtype=str):
 
 
 @vector_datetime_conv
-def dt2doy_year(dtin, outputtype=str, reverse_order=False):
+def dt2doy_year(dtin, outputtype=str):
     """
     Time representation conversion
 
@@ -786,26 +866,19 @@ def dt2doy_year(dtin, outputtype=str, reverse_order=False):
         Datetime(s). Can handle iterable of datetimes.
     outputtype : type
         Output type (str or int)
-    reverse_order : bool
-        If True, returns (Year, Day of Year) instead of (Day of Year, Year)
 
     Returns
     -------
     tuple or iterable of tuples
-        (Day of Year, Year). If input is iterable, returns same type.
+        (Year, Day of Year). If input is iterable, returns same type.
     """
     year = dtin.year
     doy = dtin.timetuple().tm_yday
 
     if outputtype == str:
-        outtup = (str(doy).zfill(3), str(year))
+        return str(year), str(doy).zfill(3)
     else:
-        outtup = (outputtype(doy), outputtype(year))
-
-    if reverse_order:
-        return outtup[::-1]
-    else:
-        return outtup
+        return outputtype(year), outputtype(doy)
 
 
 @vector_datetime_conv
@@ -1258,7 +1331,7 @@ def dt2list(dtin, return_useful_values=True):
     else:
         return list(dtin.timetuple())
 
-
+@vector_numeric_conv_2args
 def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True, output_time_scale="utc"):
     """
     Time scale & representation conversion
@@ -1286,16 +1359,7 @@ def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True, output_time_scale="ut
     The leapsecond is found after a first calc without leapsecond.
     There can be side effects when input time is close to a leap second jump.
     """
-    is_week_iter = utils.is_iterable(gpsweek)
-    is_dow_iter = utils.is_iterable(gpsdow_or_seconds)
-
-    if is_week_iter or is_dow_iter:
-        return [
-            gpstime2dt(w, ds, dow_input, output_time_scale)
-            for w, ds in zip(np.atleast_1d(gpsweek), np.atleast_1d(gpsdow_or_seconds))
-        ]
-
-    # Single value case
+    # Single value case (decorator handles vectorization)
     if dow_input:
         gpsseconds = gpsdow_or_seconds * 86400.0 + 86400.0 * 0.5  # noon
     else:
@@ -1548,6 +1612,7 @@ def dt2jjul_cnes(dtin, onlydays=True):
         return epok.days, epok.seconds
 
 
+@vector_numeric_conv_2args
 def mjd2dt(mjd_in, seconds=None, round_to="1s"):
     """
     Time representation conversion
@@ -1572,39 +1637,19 @@ def mjd2dt(mjd_in, seconds=None, round_to="1s"):
     ----
     Modified Julian Day starts at 0h Nov 17, 1858 (JD − 2400000.5)
     """
-    # Define rounding function
+    # Single value case (decorator handles vectorization)
+    if seconds is None:
+        seconds = 0
+
+    dtout = dt.datetime(1858, 11, 17) + dt.timedelta(
+        days=float(mjd_in), seconds=float(seconds)
+    )
+
+    # Apply rounding if requested
     if round_to:
-        rnd = lambda x: round_dt(x, round_to)
+        return round_dt(dtout, round_to)
     else:
-        rnd = lambda x: x
-
-    is_iter = utils.is_iterable(mjd_in)
-
-    if is_iter:
-        input_type = utils.get_type_smart(mjd_in)
-
-        if seconds is not None:
-            if len(seconds) != len(mjd_in):
-                log.error("len(seconds) != len(mjd_in)!!")
-                raise ValueError("Length mismatch between mjd_in and seconds")
-        else:
-            seconds = np.zeros(len(mjd_in))
-
-        results = []
-        for m, sec in zip(mjd_in, seconds):
-            dtout = dt.datetime(1858, 11, 17) + dt.timedelta(
-                days=float(m), seconds=float(sec)
-            )
-            results.append(dtout)
-
-        return input_type(rnd(results))
-    else:
-        if seconds is None:
-            seconds = 0
-        return rnd(
-            dt.datetime(1858, 11, 17)
-            + dt.timedelta(days=float(mjd_in), seconds=float(seconds))
-        )
+        return dtout
 
 
 def MJD2dt(*args, **kwargs):
@@ -1753,15 +1798,9 @@ def rinexname2dt(rinexpath):
         conv_rinex.rinex_regex(), rinexname.lower()
     ):  ##EUREF are upper case...
         alphabet = list(string.ascii_lowercase)
+
         doy = int(rinexname[4:7])
-        # sub hourly case
-        if re.match(r"^....[0-9]{3}.[0-9]{2}\.[0-9]{2}",rinexname.lower()):
-            yy = int(rinexname[11:13])
-            minn = int(rinexname[8:10])
-        # regular case
-        else:
-            yy = int(rinexname[9:11])
-            minn = 0
+        yy = int(rinexname[9:11])
 
         if yy > 80:
             year = yy + 1900
@@ -1773,7 +1812,7 @@ def rinexname2dt(rinexpath):
         else:
             h = 0
 
-        return dt.datetime(year, 1, 1) + dt.timedelta(days=doy - 1, seconds=h * 3600 + minn * 60)
+        return dt.datetime(year, 1, 1) + dt.timedelta(days=doy - 1, seconds=h * 3600)
 
     else:
         log.error("RINEX name is not well formated: %s", rinexname)
@@ -2325,3 +2364,268 @@ def dt2epoch_rnx3(dt_in, epoch_flag=0, nsats=0, rec_clk_offset=0):
         )
 
         return epoch_out
+
+
+
+
+#  _____       _   _                 _       _____       _                        _   _____                                     _        _   _
+# |  __ \     | | | |               ( )     |_   _|     | |                      | | |  __ \                                   | |      | | (_)
+# | |__) |   _| |_| |__   ___  _ __ |/ ___    | |  _ __ | |_ ___ _ __ _ __   __ _| | | |__) |___ _ __  _ __ ___  ___  ___ _ __ | |_ __ _| |_ _  ___  _ __  ___
+# |  ___/ | | | __| '_ \ / _ \| '_ \  / __|   | | | '_ \| __/ _ \ '__| '_ \ / _` | | |  _  // _ \ '_ \| '__/ _ \/ __|/ _ \ '_ \| __/ _` | __| |/ _ \| '_ \/ __|
+# | |   | |_| | |_| | | | (_) | | | | \__ \  _| |_| | | | ||  __/ |  | | | | (_| | | | | \ \  __/ |_) | | |  __/\__ \  __/ | | | || (_| | |_| | (_) | | | \__ \
+# |_|    \__, |\__|_| |_|\___/|_| |_| |___/ |_____|_| |_|\__\___|_|  |_| |_|\__,_|_| |_|  \_\___| .__/|_|  \___||___/\___|_| |_|\__\__,_|\__|_|\___/|_| |_|___/
+#         __/ |                                                                                 | |
+#        |___/                                                                                  |_|                                                                           |_|
+
+### Python's Internal Representations
+
+def date2dt(date_in):
+    """
+    Time Python type conversion
+
+    Python's Date => Python's Datetime
+
+    Parameters
+    ----------
+    date_in : date or list/numpy.array of date.
+        Date(s).  Can handle several dates in an iterable.
+
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)
+    """
+    if utils.is_iterable(date_in):
+        typ = utils.get_type_smart(date_in)
+        return typ([date2dt(e) for e in date_in])
+    else:
+        return dt.datetime(*tuple(date_in.timetuple())[:3])
+
+
+def dt2date(dt_in):
+    """
+    Time Python type conversion
+
+    Python's Datetime => Python's Date
+
+    Parameters
+    ----------
+    dt_in : datetime.datetime or list/numpy.array of datetime.datetime.
+        Datetime(s).  Can handle several datetimes in an iterable.
+
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)
+    """
+    if utils.is_iterable(dt_in):
+        typ = utils.get_type_smart(dt_in)
+        return typ([dt2date(e) for e in dt_in])
+    else:
+        return dt_in.date()
+
+
+def pandas_timestamp2dt(timestamp_in):
+    """
+    Time Python type conversion
+
+    Pandas's Timestamp => Python's Datetime
+
+    Parameters
+    ----------
+    timestamp_in : Timestamp or list/numpy.array of Timestamp.
+        Pandas's Timestamp(s).  Can handle several datetimes in an iterable.
+
+    Returns
+    -------
+    L : Datetime or list of Datetime
+        Time as Datetime(s)
+    """
+
+    import pandas as pd
+
+    if utils.is_iterable(timestamp_in):
+        typ = utils.get_type_smart(timestamp_in)
+        return typ([pandas_timestamp2dt(e) for e in timestamp_in])
+    else:
+        if isinstance(timestamp_in, pd.Timedelta):
+            return timestamp_in.to_pytimedelta()
+        else:
+            return timestamp_in.to_pydatetime()
+
+
+def numpy_dt2dt(numpy_dt_in):
+    """
+    Time representation conversion
+
+    Numpy datetime64 object => Python's Datetime
+
+    Parameters
+    ----------
+    numpy_dt_in : numpy datetime64 object
+        numpy datetime64 object
+
+    Returns
+    -------
+    dt : datetime.datetime or list/numpy.array of datetime.datetime
+        Converted Datetime(s)
+        If the input is a Pandas Series, the output is forced as an array
+
+    Source
+    ------
+    https://gist.github.com/blaylockbk/1677b446bc741ee2db3e943ab7e4cabd
+    """
+
+    if utils.is_iterable(numpy_dt_in):
+        typ = utils.get_type_smart(numpy_dt_in)
+
+        ### If the type is a pd.core.series.Series or a
+        ### pd.core.indexes.datetimes.DatetimeIndex,
+        ### it has to be forced as an array
+        ### Otherwise, datetime will be converted as numpy_dt again
+        if not typ in (list, tuple, np.array):
+            typ = np.array
+        return typ([numpy_dt2dt(e) for e in numpy_dt_in])
+
+    #timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
+    #             / np.timedelta64(1, 's'))
+    # return dt.datetime.fromtimestamp(timestamp)
+
+    ### better implementation because of the timezone bug (PS 241124)
+
+    else:
+        import pandas as pd
+        return pd.Timestamp(numpy_dt_in).to_pydatetime()
+
+def time_obj_tester(delta=False, out_iterable=list, start=None):
+    """
+    Generate test time objects in different formats
+    (datetime, numpy.datetime64, pandas.Timestamp).
+
+    Parameters
+    ----------
+    delta : bool, optional
+        If True, return time deltas relative to the `start` time.
+        Default is False.
+    out_iterable : callable, optional
+        A callable that determines the type of iterable to return (e.g., list, tuple).
+        Default is list.
+    start : datetime.datetime, optional
+        The starting datetime for the generated time objects.
+        If None, defaults to January 1, 2020, 00:00:00.
+
+    Returns
+    -------
+    tuple
+        A tuple containing three iterables:
+        - times_datetime: Iterable of datetime.datetime objects.
+        - times_datetime_numpy: Iterable of numpy.datetime64 objects.
+        - times_pandas_timestamp: Iterable of pandas.Timestamp objects.
+
+    Notes
+    -----
+    - The function generates 10 time objects, each separated by 60 seconds.
+    - If `delta` is True, the returned values are time deltas relative to the `start` time.
+    - The `out_iterable` parameter allows customization of the output container type (e.g., list, tuple).
+
+    Examples
+    --------
+    >>> time_obj_tester()
+    ([datetime.datetime(2020, 1, 1, 0, 0),
+      datetime.datetime(2020, 1, 1, 0, 1),
+      ...],
+     [numpy.datetime64('2020-01-01T00:00:00'),
+      numpy.datetime64('2020-01-01T00:01:00'),
+      ...],
+     [Timestamp('2020-01-01 00:00:00'),
+      Timestamp('2020-01-01 00:01:00'),
+      ...])
+
+    >>> time_obj_tester(delta=True, out_iterable=tuple)
+    ((datetime.timedelta(0),
+      datetime.timedelta(seconds=60),
+      ...),
+     (numpy.timedelta64(0,'s'),
+      numpy.timedelta64(60,'s'),
+      ...),
+     (Timedelta('0 days 00:00:00'),
+      Timedelta('0 days 00:01:00'),
+      ...))
+    """
+
+    import pandas as pd
+
+    if start is None:
+        start = dt.datetime(2020, 1, 1, 0, 0, 0)
+
+    # Generate a list of datetime objects, each separated by 60 seconds
+    times_datetime = []
+    for i in range(10):
+        times_datetime.append(start + dt.timedelta(seconds=i * 60))
+
+    # Convert the list of datetime objects to the specified iterable type
+    times_datetime = out_iterable(times_datetime)
+
+    # Convert the datetime objects to numpy.datetime64 and pandas.Timestamp formats
+    times_datetime_numpy = out_iterable([np.datetime64(t) for t in times_datetime])
+    times_pandas_timestamp = out_iterable([pd.Timestamp(t) for t in times_datetime])
+
+    # If delta is True, calculate time deltas relative to the start time
+    if delta:
+        times_datetime = out_iterable([t - start for t in times_datetime])
+        times_datetime_numpy = out_iterable([t - np.datetime64(start) for t in times_datetime_numpy])
+        times_pandas_timestamp = out_iterable([t - pd.Timestamp(start) for t in times_pandas_timestamp])
+
+    # Return the generated time objects in the specified formats
+    return times_datetime, times_datetime_numpy, times_pandas_timestamp
+
+
+##### Nota Bene
+##### numpy_datetime2dt & datetime64_numpy2dt have been moved
+##### to the funtion graveyard (PSakic 2021-02-22)
+
+def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
+    """
+    Frontend for the GFZ EPOS epo converter
+
+
+    Parameters
+    ----------
+    inp : string or int
+        the input day, like 58773 2019290 20754 ...
+
+    inp_type : str
+        An output format managed by epo command :
+        wwwwd,yyddd,yyyyddd,yyyymmdd
+
+    out_type : str
+        An output format managed by epo command :
+        mjd,yyyy,yy,ddd,mon,dmon,hour,min,sec,wwww,wd
+
+    verbose : bool
+        verbose mode
+
+    Returns
+    -------
+    year : int
+        Year as integer. Years preceding 1 A.D. should be 0 or negative.
+        The year before 1 A.D. is 0, 10 B.C. is year -9.
+    """
+
+    epo_cmd = "-epo " + str(inp)
+    inp_cmd = "-type " + str(inp_type)
+    out_cmd = "-o " + str(out_type)
+
+    cmd = " ".join(("perl $EPOS8_BIN_TOOLS/SCRIPTS/get_epoch.pl", epo_cmd, inp_cmd, out_cmd))
+
+    if verbose:
+        log.debug(cmd)
+
+    result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, executable='/bin/bash')
+
+    out = int(result.stdout.decode('utf-8'))
+
+    if verbose:
+        log.debug(out)
+
+    return out
