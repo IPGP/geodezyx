@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.stats package &mdash; geodezyx 4.x documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
@@ -54,6 +54,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
@@ -137,11 +138,11 @@ par bete copiage) …</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.least_squares.chi2_test_lsq">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.least_squares.</span></span><span class="sig-name descname"><span class="pre">chi2_test_lsq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuvin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">risk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleaning_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleaning_normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">koefP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.least_squares.chi2_test_lsq" title="Link to this definition"></a></dt>
-<dd><p>P est uniquement la diagonale de la matrice des poids</p>
+<dd><p>p est uniquement la diagonale de la matrice des poids</p>
 <p>les cleaning sont des astuces pour se rapprocher de 1 (en nettoyant les plus mauvaises valeurs)
 cleaning_normalized est à privilégier (et override cleaning_std)</p>
-<p>koefP est coefficient qu’on donne a P pour trouver une solution viable</p>
-<p>si koefP != 1, le nouveau P est donné en avant dernier argument</p>
+<p>koefP est coefficient qu’on donne a p pour trouver une solution viable</p>
+<p>si koefP != 1, le nouveau p est donné en avant dernier argument</p>
 </dd></dl>
 
 <dl class="py function">
@@ -292,9 +293,9 @@ sigx,sigy,sigxy must be normalized with the fuv</p>
 <dt class="sig sig-object py" id="geodezyx.stats.least_squares.fuv_calc">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.least_squares.</span></span><span class="sig-name descname"><span class="pre">fuv_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normafuv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.least_squares.fuv_calc" title="Link to this definition"></a></dt>
 <dd><dl>
-<dt>Args :</dt><dd><p>V : residuals vector</p>
+<dt>Args :</dt><dd><p>v : residuals vector</p>
 <p>A : Jacobian matrix</p>
-<p>P : weight matrix</p>
+<p>p : weight matrix</p>
 <p>Can manage both standard arrays and sparse array</p>
 </dd>
 <dt>Returns :</dt><dd><p>fuv : Facteur unitaire de variance (unitary variance factor)</p>
@@ -459,7 +460,7 @@ inspiré de mat_poids , fct écrite dans la lib resolution de GPShApy</p>
 </dd>
 <dt>Returns :</dt><dd><p>K : matrice de var-covar
 Q : matrice des cofacteurs
-P : matrice des poids inv(Q)</p>
+p : matrice des poids inv(Q)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -475,7 +476,7 @@ and the size for each weigths blocks (Ninp)</p>
 Ninp : list of the size of each block (obs number)
 fuvinp = 1 : facteur unitaire de variance</p>
 </dd>
-<dt>Returns :</dt><dd><p>P : weigth matrix</p>
+<dt>Returns :</dt><dd><p>p : weigth matrix</p>
 </dd>
 </dl>
 </dd></dl>
@@ -639,7 +640,7 @@ The default is 7.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>P</strong> (<em>function</em>) – function representing the polynom.</p></li>
+<li><p><strong>p</strong> (<em>function</em>) – function representing the polynom.</p></li>
 <li><p><em>Source</em></p></li>
 <li><p><em>——</em></p></li>
 <li><p><strong>from</strong> (<em>https://gist.github.com/melpomene/2482930</em>)</p></li>
@@ -661,7 +662,7 @@ The default is 7.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>P</strong> (<em>function</em>) – function representing the polynom.</p></li>
+<li><p><strong>p</strong> (<em>function</em>) – function representing the polynom.</p></li>
 <li><p><em>Source</em></p></li>
 <li><p><em>——</em></p></li>
 <li><p><strong>from</strong> (<em>https://gist.github.com/melpomene/2482930</em>)</p></li>
