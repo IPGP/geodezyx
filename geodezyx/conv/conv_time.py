@@ -254,6 +254,90 @@ def vector_numeric_conv(func):
     return wrapper
 
 
+def vector_numeric_conv_2args(func):
+    """
+    Decorator for numeric time conversion functions with 2 vectorizable arguments.
+
+    This decorator allows both the first and second arguments to be vectorized.
+    If either or both arguments are iterable, the function is applied element-wise.
+    The second argument can be None (optional).
+
+    Parameters
+    ----------
+    func : callable
+        Function that works on single numeric values for first 2 args
+
+    Returns
+    -------
+    callable
+        Vectorized version of the function
+
+    Examples
+    --------
+    Typical use cases:
+    - gpstime2dt(gpsweek, gpsdow_or_seconds, ...)
+    - mjd2dt(mjd_in, seconds=None, ...)
+    """
+
+    @wraps(func)
+    def wrapper(arg1, arg2=None, *args, **kwargs):
+        # Check if arguments are iterable
+        is_arg1_iter = utils.is_iterable(arg1)
+        is_arg2_iter = arg2 is not None and utils.is_iterable(arg2)
+
+        if not is_arg1_iter and not is_arg2_iter:
+            # Single element case for both args
+            return func(arg1, arg2, *args, **kwargs)
+        else:
+            # At least one argument is iterable
+            # Determine output type from the first iterable argument
+            if is_arg1_iter:
+                input_type = utils.get_type_smart(arg1)
+                arg1_array = np.atleast_1d(arg1)
+            else:
+                arg1_array = None
+
+            if is_arg2_iter:
+                if not is_arg1_iter:
+                    # Only arg2 is iterable, use its type for output
+                    input_type = utils.get_type_smart(arg2)
+                arg2_array = np.atleast_1d(arg2)
+            else:
+                # arg2 is not iterable (single value or None)
+                arg2_array = None
+
+            # Determine the iteration pairs
+            if is_arg1_iter and is_arg2_iter:
+                # Both are iterable - check length compatibility
+                if len(arg1_array) != len(arg2_array):
+                    raise ValueError(
+                        f"Length mismatch: arg1 has {len(arg1_array)} elements, "
+                        f"arg2 has {len(arg2_array)} elements"
+                    )
+                pairs = zip(arg1_array, arg2_array)
+            elif is_arg1_iter:
+                # Only arg1 is iterable, broadcast arg2
+                pairs = [(a1, arg2) for a1 in arg1_array]
+            else:
+                # Only arg2 is iterable, broadcast arg1
+                pairs = [(arg1, a2) for a2 in arg2_array]
+
+            # Vectorized operation - convert numpy types to Python types
+            results = []
+            for a1, a2 in pairs:
+                # Convert numpy types to Python types
+                if hasattr(a1, 'item'):
+                    a1 = a1.item()
+                if a2 is not None and hasattr(a2, 'item'):
+                    a2 = a2.item()
+                result = func(a1, a2, *args, **kwargs)
+                results.append(result)
+
+            return input_type(results)
+
+    return wrapper
+
+
 def vector_string_conv(func):
     """
     Decorator for string time conversion functions.
@@ -421,18 +505,21 @@ def round_dt(dtin, round_to, python_dt_out=True, mode="round"):
 
     # Convert output
     if python_dt_out:
-        dtin_out = np.array(pd.to_datetime(dtin_out))
+        # Convert to Python datetime objects
+        # Use list comprehension to ensure native datetime, not Timestamp
+        dtin_out_list = [x.to_pydatetime() for x in dtin_out]
     else:
-        dtin_out = np.array(dtin_out)
+        # Keep as Pandas Timestamps
+        dtin_out_list = list(dtin_out)
 
     # Return based on input type
     if is_singleton:
-        return dtin_out[0]
+        return dtin_out_list[0]
     else:
         if input_type is not None:
-            return input_type(dtin_out)
+            return input_type(dtin_out_list)
         else:
-            return list(dtin_out)
+            return dtin_out_list
 
 
 @vector_datetime_conv
@@ -1244,7 +1331,7 @@ def dt2list(dtin, return_useful_values=True):
     else:
         return list(dtin.timetuple())
 
-
+@vector_numeric_conv_2args
 def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True, output_time_scale="utc"):
     """
     Time scale & representation conversion
@@ -1272,16 +1359,7 @@ def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True, output_time_scale="ut
     The leapsecond is found after a first calc without leapsecond.
     There can be side effects when input time is close to a leap second jump.
     """
-    is_week_iter = utils.is_iterable(gpsweek)
-    is_dow_iter = utils.is_iterable(gpsdow_or_seconds)
-
-    if is_week_iter or is_dow_iter:
-        return [
-            gpstime2dt(w, ds, dow_input, output_time_scale)
-            for w, ds in zip(np.atleast_1d(gpsweek), np.atleast_1d(gpsdow_or_seconds))
-        ]
-
-    # Single value case
+    # Single value case (decorator handles vectorization)
     if dow_input:
         gpsseconds = gpsdow_or_seconds * 86400.0 + 86400.0 * 0.5  # noon
     else:
@@ -1534,6 +1612,7 @@ def dt2jjul_cnes(dtin, onlydays=True):
         return epok.days, epok.seconds
 
 
+@vector_numeric_conv_2args
 def mjd2dt(mjd_in, seconds=None, round_to="1s"):
     """
     Time representation conversion
@@ -1558,39 +1637,19 @@ def mjd2dt(mjd_in, seconds=None, round_to="1s"):
     ----
     Modified Julian Day starts at 0h Nov 17, 1858 (JD − 2400000.5)
     """
-    # Define rounding function
+    # Single value case (decorator handles vectorization)
+    if seconds is None:
+        seconds = 0
+
+    dtout = dt.datetime(1858, 11, 17) + dt.timedelta(
+        days=float(mjd_in), seconds=float(seconds)
+    )
+
+    # Apply rounding if requested
     if round_to:
-        rnd = lambda x: round_dt(x, round_to)
+        return round_dt(dtout, round_to)
     else:
-        rnd = lambda x: x
-
-    is_iter = utils.is_iterable(mjd_in)
-
-    if is_iter:
-        input_type = utils.get_type_smart(mjd_in)
-
-        if seconds is not None:
-            if len(seconds) != len(mjd_in):
-                log.error("len(seconds) != len(mjd_in)!!")
-                raise ValueError("Length mismatch between mjd_in and seconds")
-        else:
-            seconds = np.zeros(len(mjd_in))
-
-        results = []
-        for m, sec in zip(mjd_in, seconds):
-            dtout = dt.datetime(1858, 11, 17) + dt.timedelta(
-                days=float(m), seconds=float(sec)
-            )
-            results.append(dtout)
-
-        return input_type(rnd(results))
-    else:
-        if seconds is None:
-            seconds = 0
-        return rnd(
-            dt.datetime(1858, 11, 17)
-            + dt.timedelta(days=float(mjd_in), seconds=float(seconds))
-        )
+        return dtout
 
 
 def MJD2dt(*args, **kwargs):
