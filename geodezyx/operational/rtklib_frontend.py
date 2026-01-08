@@ -17,7 +17,6 @@ GitHub repository :
 https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
-
 import collections
 ########## BEGIN IMPORT ##########
 #### External modules
@@ -232,10 +231,7 @@ def rtklib_run_from_rinex(
     unzip = lambda o: files_rw.unzip_gz_z(o) if o.endswith(".gz") or o.endswith(".Z") else o
 
     ## SP3
-    if "FIN" in calc_center:
-        orb_srt = conv.round_dt(bas_srt,"1D", mode="floor")
-        orb_end = conv.round_dt(bas_end,"1D", mode="ceil")
-    elif "RAP" in calc_center:
+    if "FIN" in calc_center or "RAP" in calc_center:
         orb_srt = conv.round_dt(bas_srt,"1D", mode="floor")
         orb_end = conv.round_dt(bas_end,"1D", mode="floor")
     elif "ULT" in calc_center:
