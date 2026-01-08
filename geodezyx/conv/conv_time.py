@@ -162,7 +162,7 @@ def _output_to_datetime_type(dt_output, target_type):
         return dt_output
 
 
-def _vectorize_single_arg(func, input_val, *args, preprocessor=None, **kwargs):
+def _vectorize_1arg_core(func, input_val, *args, preprocessor=None, **kwargs):
     """
     Helper function to vectorize a function with a single vectorizable argument.
 
@@ -233,7 +233,7 @@ def vector_datetime_conv(func):
 
     @wraps(func)
     def wrapper(time_input, *args, **kwargs):
-        return _vectorize_single_arg(
+        return _vectorize_1arg_core(
             func, time_input, *args, preprocessor=_normalize_datetime_input, **kwargs
         )
 
@@ -260,12 +260,38 @@ def vector_numeric_conv(func):
 
     @wraps(func)
     def wrapper(numeric_input, *args, **kwargs):
-        return _vectorize_single_arg(func, numeric_input, *args, **kwargs)
+        return _vectorize_1arg_core(func, numeric_input, *args, **kwargs)
 
     return wrapper
 
+def vector_string_conv(func):
+    """
+    Decorator for string time conversion functions.
 
-def _vector_2args_core(func, arg1, arg2, preprocessor_arg1=None, preprocessor_arg2=None, *args, **kwargs):
+    Similar to vector_numeric_conv but for functions that work with
+    string inputs and return datetime objects.
+
+    Note: utils.is_iterable() treats strings as non-iterable by default,
+    so we can use the common _vectorize_1arg_core helper.
+
+    Parameters
+    ----------
+    func : callable
+        Function that works on single string values
+
+    Returns
+    -------
+    callable
+        Vectorized version of the function
+    """
+
+    @wraps(func)
+    def wrapper(string_input, *args, **kwargs):
+        return _vectorize_1arg_core(func, string_input, *args, **kwargs)
+
+    return wrapper
+
+def _vectorize_2args_core(func, arg1, arg2, preprocessor_arg1=None, preprocessor_arg2=None, *args, **kwargs):
     """
     Core logic for vectorizing functions with 2 arguments.
 
@@ -289,6 +315,7 @@ def _vector_2args_core(func, arg1, arg2, preprocessor_arg1=None, preprocessor_ar
     scalar or iterable
         Result(s) in the same type as input
     """
+    input_type = lambda x: x  # Default passthrough
     # Check if arguments are iterable
     is_arg1_iter = utils.is_iterable(arg1)
     is_arg2_iter = arg2 is not None and utils.is_iterable(arg2)
@@ -356,7 +383,7 @@ def _vector_2args_core(func, arg1, arg2, preprocessor_arg1=None, preprocessor_ar
     return input_type(results)
 
 
-def vector_numeric_conv_2args(func):
+def vector_2args_numeric_conv(func):
     """
     Decorator for numeric time conversion functions with 2 vectorizable arguments.
 
@@ -383,12 +410,12 @@ def vector_numeric_conv_2args(func):
 
     @wraps(func)
     def wrapper(arg1, arg2=None, *args, **kwargs):
-        return _vector_2args_core(func, arg1, arg2, *args, **kwargs)
+        return _vectorize_2args_core(func, arg1, arg2, *args, **kwargs)
 
     return wrapper
 
 
-def vector_datetime_numeric_conv(func):
+def vector_2args_datetime_numeric_conv(func):
     """
     Decorator for time conversion functions with datetime first arg and numeric second arg.
 
@@ -415,51 +442,11 @@ def vector_datetime_numeric_conv(func):
 
     @wraps(func)
     def wrapper(arg1, arg2=None, *args, **kwargs):
-        return _vector_2args_core(
+        return _vectorize_2args_core(
             func, arg1, arg2,
             preprocessor_arg1=_normalize_datetime_input,
             *args, **kwargs
         )
-
-    return wrapper
-
-
-def vector_string_conv(func):
-    """
-    Decorator for string time conversion functions.
-
-    Similar to vector_numeric_conv but for functions that work with
-    string inputs and return datetime objects.
-
-    Parameters
-    ----------
-    func : callable
-        Function that works on single string values
-
-    Returns
-    -------
-    callable
-        Vectorized version of the function
-    """
-
-    @wraps(func)
-    def wrapper(string_input, *args, **kwargs):
-        # Special handling for strings: single string is NOT iterable for our purposes
-        is_iter = utils.is_iterable(string_input) and not isinstance(string_input, str)
-
-        if not is_iter:
-            # Single element case
-            return func(string_input, *args, **kwargs)
-        else:
-            # Iterable case - vectorize
-            input_type = utils.get_type_smart(string_input)
-            string_array = np.asarray(string_input)
-
-            # Vectorized operation
-            vectorized_func = np.vectorize(lambda x: func(x, *args, **kwargs))
-            result_array = vectorized_func(string_array)
-
-            return input_type(result_array)
 
     return wrapper
 
@@ -1138,7 +1125,7 @@ def dt_tai2dt_tt(dtin):
     return dtin + dt.timedelta(seconds=32.184)
 
 
-@vector_datetime_numeric_conv
+@vector_2args_datetime_numeric_conv
 def dt_utc2dt_ut1(dtin, d_ut1):
     """
     Time scale conversion
@@ -1408,7 +1395,7 @@ def dt2list(dtin, return_useful_values=True):
     else:
         return list(dtin.timetuple())
 
-@vector_numeric_conv_2args
+@vector_2args_numeric_conv
 def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True, output_time_scale="utc"):
     """
     Time scale & representation conversion
@@ -1689,7 +1676,7 @@ def dt2jjul_cnes(dtin, onlydays=True):
         return epok.days, epok.seconds
 
 
-@vector_numeric_conv_2args
+@vector_2args_numeric_conv
 def mjd2dt(mjd_in, seconds=None, round_to="1s"):
     """
     Time representation conversion
