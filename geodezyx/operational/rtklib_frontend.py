@@ -229,6 +229,8 @@ def rtklib_run_from_rinex(
     outconffilobj.close()
 
     ##### ORBITS
+    unzip = lambda o: files_rw.unzip_gz_z(o) if o.endswith(".gz") or o.endswith(".Z") else o
+
     ## SP3
     if "FIN" in calc_center:
         orb_srt = conv.round_dt(bas_srt,"1D", mode="floor")
@@ -251,15 +253,13 @@ def rtklib_run_from_rinex(
         AC_names=(calc_center , )
     )
 
-    unzip = lambda o: files_rw.unzip_gz_z(o) if o.endswith(".gz") or o.endswith(".Z") else o
-
     if not orblis or not orblis[0]:
         log.error("No SP3 orbit file found remotely nor locally")
         log.error(f"Is analysis center/latency correct?: {calc_center}")
         raise FileNotFoundError("No SP3 orbit file found remotely nor locally")
     else:
-        sp3_z = orblis[0]
-        sp3 = unzip(sp3_z)
+        sp3lis = [unzip(orb) for orb in orblis]
+
 
     ### BRDC
     statdic = dict()
@@ -269,12 +269,12 @@ def rtklib_run_from_rinex(
         statdic, temp_dir, nav_srt, bas_end, archtype="/"
     )
 
-    if len(brdclis) > 0 and brdclis[0][1]:
-        nav_z = brdclis[0][0]
-        nav = unzip(nav_z)
-    else:
+    brdc_path_lis , brdc_bool_lis = zip(*brdclis)
+    if len(brdc_path_lis) == 0 or sum(brdc_bool_lis) == 0:
         log.error("No BRDC nav file found remotely nor locally")
         raise FileNotFoundError("No BRDC nav file found remotely nor locally")
+    else:
+        navlis = [unzip(n) for n,b in brdclis if b]
 
     # Command
     arg_config = "-k " + out_conf_fil
@@ -283,7 +283,6 @@ def rtklib_run_from_rinex(
     # arg_mode="-p 4"
     arg_resultfile = "-o " + out_result_fil
     # com_combinsol="-c"
-
 
     bigcomand = " ".join(
         (
@@ -294,8 +293,8 @@ def rtklib_run_from_rinex(
             arg_resultfile,
             rnx_rover,
             rnx_base,
-            nav,
-            sp3,
+            " ".join(navlis),
+            " ".join(sp3lis),
         )
     )
 
