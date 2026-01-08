@@ -260,9 +260,10 @@ def rtklib_run_from_rinex(
     ### BRDC
     statdic = dict()
     statdic["nav"] = ["BRDC"]
-    nav_srt = dt.datetime(bas_srt.year, bas_srt.month, bas_srt.day)
+    nav_srt = conv.round_dt(bas_srt, "1D", mode="floor")
+    nav_end = conv.round_dt(bas_end, "1D", mode="floor")
     brdclis = operational.download_gnss_rinex(
-        statdic, temp_dir, nav_srt, bas_end, archtype="/"
+        statdic, temp_dir, nav_srt, nav_end, archtype="/"
     )
 
     brdc_path_lis , brdc_bool_lis = zip(*brdclis)
