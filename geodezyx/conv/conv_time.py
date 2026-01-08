@@ -489,16 +489,16 @@ def round_dt(dtin, round_to, python_dt_out=True, mode="round"):
     else:
         input_type = utils.get_type_smart(dtin)
         # Normalize all datetime inputs
-        dtin_normalized = [_normalize_datetime_input(d) for d in dtin]
-        dtin_series = pd.Series(dtin_normalized)
+        dtin_norma = [_normalize_datetime_input(d) for d in dtin]
+        dtin_series = pd.Series(dtin_norma)
 
     # Apply rounding based on mode
     if mode == "round":
-        dtin_out = dtin_series.dt.round(round_to)
+        dt_use = dtin_series.dt.round(round_to)
     elif mode == "ceil":
-        dtin_out = dtin_series.dt.ceil(round_to)
+        dt_use = dtin_series.dt.ceil(round_to)
     elif mode == "floor":
-        dtin_out = dtin_series.dt.floor(round_to)
+        dt_use = dtin_series.dt.floor(round_to)
     else:
         log.error("check mode value: 'round', 'floor', 'ceil'")
         raise ValueError("Invalid mode. Must be 'round', 'floor', or 'ceil'")
@@ -507,19 +507,19 @@ def round_dt(dtin, round_to, python_dt_out=True, mode="round"):
     if python_dt_out:
         # Convert to Python datetime objects
         # Use list comprehension to ensure native datetime, not Timestamp
-        dtin_out_list = [x.to_pydatetime() for x in dtin_out]
+        dt_out = [x.to_pydatetime() for x in dt_use]
     else:
         # Keep as Pandas Timestamps
-        dtin_out_list = list(dtin_out)
+        dt_out = list(dt_use)
 
     # Return based on input type
     if is_singleton:
-        return dtin_out_list[0]
+        return dt_out[0]
     else:
         if input_type is not None:
-            return input_type(dtin_out_list)
+            return input_type(dt_out)
         else:
-            return dtin_out_list
+            return dt_out
 
 
 @vector_datetime_conv
