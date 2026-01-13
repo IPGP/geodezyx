@@ -150,7 +150,7 @@ def download_rsync(
         tmp_rsync_file_lis = None
         # Download everything from source_path
         rsync_cmd = rsync_base + [f"{remote_source}/*", f"{local_destination}/"]
-        print("AAAAAAAAA", rsync_cmd)
+        print("AAAAAAAAA", " ".join(rsync_cmd))
 
     if False:
         log.info("Rsync command: %s", " ".join(rsync_cmd))
