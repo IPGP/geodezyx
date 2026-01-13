@@ -194,7 +194,7 @@ def spotgins_run(
         ######## DIRECTORS RUN ###############
         const_use = const_adapt(const, dirr, verbose=verbose)
         # const_use = "GE" # ASG use always GE
-        opt_gins_90_use = "-const " + const_use
+        opt_gins_90_use = "-const " + const_use + " -nocheck_gnss_products"
         try:
             gynsrun.run_directors(
                 dirr,
