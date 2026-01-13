@@ -162,6 +162,52 @@ def _output_to_datetime_type(dt_output, target_type):
         return dt_output
 
 
+def _vectorize_1arg_core(func, input_val, *args, preprocessor=None, **kwargs):
+    """
+    Helper function to vectorize a function with a single vectorizable argument.
+
+    Parameters
+    ----------
+    func : callable
+        Function to vectorize
+    input_val : scalar or iterable
+        Input value(s) to process
+    *args : tuple
+        Additional positional arguments to pass to func
+    preprocessor : callable, optional
+        Function to preprocess each element before passing to func
+    **kwargs : dict
+        Additional keyword arguments to pass to func
+
+    Returns
+    -------
+    scalar or iterable
+        Result(s) in the same type as input
+    """
+    is_iter = utils.is_iterable(input_val)
+
+    if not is_iter:
+        # Single element case
+        if preprocessor:
+            input_val = preprocessor(input_val)
+        return func(input_val, *args, **kwargs)
+    else:
+        # Iterable case - vectorize
+        input_type = utils.get_type_smart(input_val)
+        input_array = np.asarray(input_val)
+
+        # Create vectorized function
+        if preprocessor:
+            vectorized_func = np.vectorize(
+                lambda x: func(preprocessor(x), *args, **kwargs)
+            )
+        else:
+            vectorized_func = np.vectorize(lambda x: func(x, *args, **kwargs))
+
+        result_array = vectorized_func(input_array)
+        return input_type(result_array)
+
+
 def vector_datetime_conv(func):
     """
     Decorator to vectorize time conversion functions.
@@ -187,29 +233,9 @@ def vector_datetime_conv(func):
 
     @wraps(func)
     def wrapper(time_input, *args, **kwargs):
-        # Check if input is iterable
-        is_iter = utils.is_iterable(time_input)
-
-        if not is_iter:
-            # Single element case
-            normalized = _normalize_datetime_input(time_input)
-            result = func(normalized, *args, **kwargs)
-            return result
-        else:
-            # Iterable case - vectorize
-            input_type = utils.get_type_smart(time_input)
-
-            # Convert to numpy array for vectorization
-            time_array = np.asarray(time_input)
-
-            # Vectorized conversion using numpy's vectorize (more efficient than list comprehension)
-            vectorized_func = np.vectorize(
-                lambda x: func(_normalize_datetime_input(x), *args, **kwargs)
-            )
-            result_array = vectorized_func(time_array)
-
-            # Convert back to original type
-            return input_type(result_array)
+        return _vectorize_1arg_core(
+            func, time_input, *args, preprocessor=_normalize_datetime_input, **kwargs
+        )
 
     return wrapper
 
@@ -234,27 +260,130 @@ def vector_numeric_conv(func):
 
     @wraps(func)
     def wrapper(numeric_input, *args, **kwargs):
-        # Check if input is iterable
-        is_iter = utils.is_iterable(numeric_input)
-
-        if not is_iter:
-            # Single element case
-            return func(numeric_input, *args, **kwargs)
-        else:
-            # Iterable case - use numpy for efficiency
-            input_type = utils.get_type_smart(numeric_input)
-            numeric_array = np.asarray(numeric_input)
-
-            # Vectorized operation
-            vectorized_func = np.vectorize(lambda x: func(x, *args, **kwargs))
-            result_array = vectorized_func(numeric_array)
-
-            return input_type(result_array)
+        return _vectorize_1arg_core(func, numeric_input, *args, **kwargs)
 
     return wrapper
 
+def vector_string_conv(func):
+    """
+    Decorator for string time conversion functions.
 
-def vector_numeric_conv_2args(func):
+    Similar to vector_numeric_conv but for functions that work with
+    string inputs and return datetime objects.
+
+    Note: utils.is_iterable() treats strings as non-iterable by default,
+    so we can use the common _vectorize_1arg_core helper.
+
+    Parameters
+    ----------
+    func : callable
+        Function that works on single string values
+
+    Returns
+    -------
+    callable
+        Vectorized version of the function
+    """
+
+    @wraps(func)
+    def wrapper(string_input, *args, **kwargs):
+        return _vectorize_1arg_core(func, string_input, *args, **kwargs)
+
+    return wrapper
+
+def _vectorize_2args_core(func, arg1, arg2, preprocessor_arg1=None, preprocessor_arg2=None, *args, **kwargs):
+    """
+    Core logic for vectorizing functions with 2 arguments.
+
+    Parameters
+    ----------
+    func : callable
+        Function to vectorize
+    arg1 : scalar or iterable
+        First argument
+    arg2 : scalar or iterable or None
+        Second argument (can be None)
+    preprocessor_arg1 : callable, optional
+        Preprocessor for first argument elements
+    preprocessor_arg2 : callable, optional
+        Preprocessor for second argument elements
+    *args, **kwargs
+        Additional arguments to pass to func
+
+    Returns
+    -------
+    scalar or iterable
+        Result(s) in the same type as input
+    """
+    input_type = lambda x: x  # Default passthrough
+    # Check if arguments are iterable
+    is_arg1_iter = utils.is_iterable(arg1)
+    is_arg2_iter = arg2 is not None and utils.is_iterable(arg2)
+
+    if not is_arg1_iter and not is_arg2_iter:
+        # Single element case for both args
+        if preprocessor_arg1:
+            arg1 = preprocessor_arg1(arg1)
+        if preprocessor_arg2 and arg2 is not None:
+            arg2 = preprocessor_arg2(arg2)
+        return func(arg1, arg2, *args, **kwargs)
+
+    # At least one argument is iterable
+    # Determine output type from the first iterable argument
+    if is_arg1_iter:
+        input_type = utils.get_type_smart(arg1)
+        arg1_array = np.atleast_1d(arg1)
+    else:
+        arg1_array = None
+
+    if is_arg2_iter:
+        if not is_arg1_iter:
+            # Only arg2 is iterable, use its type for output
+            input_type = utils.get_type_smart(arg2)
+        arg2_array = np.atleast_1d(arg2)
+    else:
+        # arg2 is not iterable (single value or None)
+        arg2_array = None
+
+    # Determine the iteration pairs
+    if is_arg1_iter and is_arg2_iter:
+        # Both are iterable - check length compatibility
+        if len(arg1_array) != len(arg2_array):
+            raise ValueError(
+                f"Length mismatch: arg1 has {len(arg1_array)} elements, "
+                f"arg2 has {len(arg2_array)} elements"
+            )
+        pairs = zip(arg1_array, arg2_array)
+    elif is_arg1_iter:
+        # Only arg1 is iterable, broadcast arg2
+        pairs = [(a1, arg2) for a1 in arg1_array]
+    else:
+        # Only arg2 is iterable, broadcast arg1
+        pairs = [(arg1, a2) for a2 in arg2_array]
+
+    # Vectorized operation
+    results = []
+    for a1, a2 in pairs:
+        # Apply preprocessors
+        if preprocessor_arg1:
+            a1 = preprocessor_arg1(a1)
+        elif hasattr(a1, 'item'):
+            # Convert numpy types to Python types
+            a1 = a1.item()
+
+        if preprocessor_arg2 and a2 is not None:
+            a2 = preprocessor_arg2(a2)
+        elif a2 is not None and hasattr(a2, 'item'):
+            # Convert numpy types to Python types
+            a2 = a2.item()
+
+        result = func(a1, a2, *args, **kwargs)
+        results.append(result)
+
+    return input_type(results)
+
+
+def vector_2args_numeric_conv(func):
     """
     Decorator for numeric time conversion functions with 2 vectorizable arguments.
 
@@ -281,99 +410,43 @@ def vector_numeric_conv_2args(func):
 
     @wraps(func)
     def wrapper(arg1, arg2=None, *args, **kwargs):
-        # Check if arguments are iterable
-        is_arg1_iter = utils.is_iterable(arg1)
-        is_arg2_iter = arg2 is not None and utils.is_iterable(arg2)
-
-        if not is_arg1_iter and not is_arg2_iter:
-            # Single element case for both args
-            return func(arg1, arg2, *args, **kwargs)
-        else:
-            # At least one argument is iterable
-            # Determine output type from the first iterable argument
-            if is_arg1_iter:
-                input_type = utils.get_type_smart(arg1)
-                arg1_array = np.atleast_1d(arg1)
-            else:
-                arg1_array = None
-
-            if is_arg2_iter:
-                if not is_arg1_iter:
-                    # Only arg2 is iterable, use its type for output
-                    input_type = utils.get_type_smart(arg2)
-                arg2_array = np.atleast_1d(arg2)
-            else:
-                # arg2 is not iterable (single value or None)
-                arg2_array = None
-
-            # Determine the iteration pairs
-            if is_arg1_iter and is_arg2_iter:
-                # Both are iterable - check length compatibility
-                if len(arg1_array) != len(arg2_array):
-                    raise ValueError(
-                        f"Length mismatch: arg1 has {len(arg1_array)} elements, "
-                        f"arg2 has {len(arg2_array)} elements"
-                    )
-                pairs = zip(arg1_array, arg2_array)
-            elif is_arg1_iter:
-                # Only arg1 is iterable, broadcast arg2
-                pairs = [(a1, arg2) for a1 in arg1_array]
-            else:
-                # Only arg2 is iterable, broadcast arg1
-                pairs = [(arg1, a2) for a2 in arg2_array]
-
-            # Vectorized operation - convert numpy types to Python types
-            results = []
-            for a1, a2 in pairs:
-                # Convert numpy types to Python types
-                if hasattr(a1, 'item'):
-                    a1 = a1.item()
-                if a2 is not None and hasattr(a2, 'item'):
-                    a2 = a2.item()
-                result = func(a1, a2, *args, **kwargs)
-                results.append(result)
-
-            return input_type(results)
+        return _vectorize_2args_core(func, arg1, arg2, *args, **kwargs)
 
     return wrapper
 
 
-def vector_string_conv(func):
+def vector_2args_datetime_numeric_conv(func):
     """
-    Decorator for string time conversion functions.
+    Decorator for time conversion functions with datetime first arg and numeric second arg.
 
-    Similar to vector_numeric_conv but for functions that work with
-    string inputs and return datetime objects.
+    This decorator allows both the first (datetime) and second (numeric) arguments
+    to be vectorized. If either or both arguments are iterable, the function is
+    applied element-wise.
 
     Parameters
     ----------
     func : callable
-        Function that works on single string values
+        Function that works on single datetime and numeric values
 
     Returns
     -------
     callable
         Vectorized version of the function
+
+    Examples
+    --------
+    Typical use cases:
+    - dt_utc2dt_ut1(dtin, d_ut1)
+    - Functions with datetime + offset pattern
     """
 
     @wraps(func)
-    def wrapper(string_input, *args, **kwargs):
-        # Check if input is iterable (but not a single string)
-        is_iter = utils.is_iterable(string_input) and not isinstance(string_input, str)
-
-        if not is_iter:
-            # Single element case
-            return func(string_input, *args, **kwargs)
-        else:
-            # Iterable case - use numpy for efficiency
-            input_type = utils.get_type_smart(string_input)
-            string_array = np.asarray(string_input)
-
-            # Vectorized operation
-            vectorized_func = np.vectorize(lambda x: func(x, *args, **kwargs))
-            result_array = vectorized_func(string_array)
-
-            return input_type(result_array)
+    def wrapper(arg1, arg2=None, *args, **kwargs):
+        return _vectorize_2args_core(
+            func, arg1, arg2,
+            preprocessor_arg1=_normalize_datetime_input,
+            *args, **kwargs
+        )
 
     return wrapper
 
@@ -483,9 +556,9 @@ def round_dt(dtin, round_to, python_dt_out=True, mode="round"):
     # Determine if input is singleton
     is_singleton = not utils.is_iterable(dtin)
 
+    input_type = lambda x: x
     if is_singleton:
         dtin_series = pd.Series([_normalize_datetime_input(dtin)])
-        input_type = None
     else:
         input_type = utils.get_type_smart(dtin)
         # Normalize all datetime inputs
@@ -1052,6 +1125,7 @@ def dt_tai2dt_tt(dtin):
     return dtin + dt.timedelta(seconds=32.184)
 
 
+@vector_2args_datetime_numeric_conv
 def dt_utc2dt_ut1(dtin, d_ut1):
     """
     Time scale conversion
@@ -1062,25 +1136,15 @@ def dt_utc2dt_ut1(dtin, d_ut1):
     ----------
     dtin : datetime or iterable of datetime
         Datetime(s) in UTC. Can handle iterable of datetimes.
-    d_ut1 : float
-        UT1-UTC in seconds.
+    d_ut1 : float or iterable of float
+        UT1-UTC in seconds. Can be iterable to match dtin.
 
     Returns
     -------
     datetime or iterable of datetime
         Datetime(s) in UT1. If input is iterable, returns same type.
     """
-    is_iter = utils.is_iterable(dtin)
-
-    if not is_iter:
-        normalized = _normalize_datetime_input(dtin)
-        return normalized + dt.timedelta(seconds=d_ut1)
-    else:
-        input_type = utils.get_type_smart(dtin)
-        results = [
-            _normalize_datetime_input(d) + dt.timedelta(seconds=d_ut1) for d in dtin
-        ]
-        return input_type(results)
+    return dtin + dt.timedelta(seconds=d_ut1)
 
 
 def dt_utc2dt_ut1_smart(
@@ -1331,7 +1395,7 @@ def dt2list(dtin, return_useful_values=True):
     else:
         return list(dtin.timetuple())
 
-@vector_numeric_conv_2args
+@vector_2args_numeric_conv
 def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True, output_time_scale="utc"):
     """
     Time scale & representation conversion
@@ -1612,7 +1676,7 @@ def dt2jjul_cnes(dtin, onlydays=True):
         return epok.days, epok.seconds
 
 
-@vector_numeric_conv_2args
+@vector_2args_numeric_conv
 def mjd2dt(mjd_in, seconds=None, round_to="1s"):
     """
     Time representation conversion
@@ -2620,7 +2684,8 @@ def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
 
     if verbose:
         log.debug(cmd)
-
+    
+    import subprocess
     result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, executable='/bin/bash')
 
     out = int(result.stdout.decode('utf-8'))
