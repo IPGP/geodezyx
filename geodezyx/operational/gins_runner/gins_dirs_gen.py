@@ -14,6 +14,7 @@ import time
 import numpy as np
 import pandas as pd
 import yaml
+import hatanaka
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -215,7 +216,10 @@ def gen_dirs_rnxs(
         # check if the RINEX is compressed ... if not crz2rnx !
         if operational.check_if_compressed_rinex(rnx_path):
             crinex_path = rnx_path
-            rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use, verbose=verbose)
+            #rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use, verbose=verbose)
+            rnx_path = operational.uncomp_rnxpath(crinex_path, tmp_fld_use)
+            rnx_content = str(hatanaka.decompress(p))
+            utils.write_in_file(rnx_content, rnx_path)
             if not os.path.isfile(rnx_path):
                 bool_cntu = _fail_rnx(rnx_path, rnx_dt, "CRZ2RNX failed")
                 if bool_cntu:

@@ -125,6 +125,45 @@ def check_if_compressed_rinex(rinex_path):
     return boolout
 
 
+def uncomp_rnxpath(rinex_path, outdir=""):
+    """
+    Generate the output path for an uncompressed RINEX file.
+
+    This function determines the appropriate output file name and path for an uncompressed
+    RINEX file based on its input path. It handles both short and long RINEX file names.
+
+    Parameters
+    ----------
+    rinex_path : str
+        The path of the input RINEX file (compressed or uncompressed).
+    outdir : str, optional
+        The directory where the uncompressed RINEX file will be saved. If not provided,
+        the output file will be saved in the same directory as the input file.
+
+    Returns
+    -------
+    str
+        The full path of the uncompressed RINEX file.
+    """
+    # Check if the RINEX file matches the long name format
+    if conv.rinex_regex_search_tester(rinex_path, short_name=False, long_name=True):
+        # Extract the base name of the file and split it by "."
+        out_rinex_name_splited = os.path.basename(rinex_path).split(".")
+        # Construct the output file name with ".rnx" extension
+        out_rinex_name = out_rinex_name_splited[0] + ".rnx"
+        # Combine the output directory and file name to get the full path
+        out_rinex_path = os.path.join(outdir, out_rinex_name)
+    else:
+        # Handle short name format
+        out_rinex_name_splited = os.path.basename(rinex_path).split(".")
+        # Remove the last part of the name and replace the extension with "o"
+        out_rinex_name = ".".join(out_rinex_name_splited[:-1])
+        out_rinex_name = out_rinex_name[:-1] + "o"
+        # Combine the output directory and file name to get the full path
+        out_rinex_path = os.path.join(outdir, out_rinex_name)
+
+    return out_rinex_path
+
 def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX", verbose=True):
     """assuming that CRZ2RNX is in the system PATH per default"""
 
@@ -141,18 +180,7 @@ def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX", verbos
     if outdir == "":
         outdir = os.path.dirname(rinex_path)
 
-    out_rinex_name_splited = os.path.basename(rinex_path).split(".")
-
-    if conv.rinex_regex_search_tester(rinex_path, short_name=False, long_name=True):
-        out_rinex_name_splited = os.path.basename(rinex_path).split(".")
-        out_rinex_name = out_rinex_name_splited[0]
-        out_rinex_name = out_rinex_name + ".rnx"
-        out_rinex_path = os.path.join(outdir, out_rinex_name)
-    else:
-        out_rinex_name_splited = os.path.basename(rinex_path).split(".")
-        out_rinex_name = ".".join(out_rinex_name_splited[:-1])
-        out_rinex_name = out_rinex_name[:-1] + "o"
-        out_rinex_path = os.path.join(outdir, out_rinex_name)
+    out_rinex_path = uncomp_rnxpath(rinex_path, outdir)
 
     if os.path.isfile(out_rinex_path) and not force:
         log.warning(out_rinex_path + "already exists, skiping ...")
