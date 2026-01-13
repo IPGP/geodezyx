@@ -2684,7 +2684,8 @@ def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
 
     if verbose:
         log.debug(cmd)
-
+    
+    import subprocess
     result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, executable='/bin/bash')
 
     out = int(result.stdout.decode('utf-8'))
