@@ -64,6 +64,7 @@ def run_testgins(results_folder=None, rnxs_folder=None, no_download_rnxs=False):
     singugins_run(
         results_folder=results_folder,
         bdrnx_folder=rnxs_folder,
+        quick_mode=False
     )
 
     # The function does not return any value
