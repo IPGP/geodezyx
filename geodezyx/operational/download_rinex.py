@@ -1097,7 +1097,7 @@ def download_gnss_rinex(
         len(files_loc),
     )
 
-    return out_tup_lis
+    return out_tup_lis_fin
 
 
 def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3):

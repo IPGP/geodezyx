@@ -504,8 +504,7 @@ def sigma_geo2xyz(lat, lon, h, s_f, s_l, s_h, ang="deg"):
     Linear Algebra, Geodesy, and GPS p332
     """
 
-    log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
-    log.warning("Prefer sigma_xyz2enu")
+    log.warning("Inputs values are assumed as uncorrelated, which is not accurate. Prefer sigma_xyz2enu.")
 
     if ang == "deg":
         lat = np.deg2rad(lat)
@@ -534,9 +533,6 @@ def sigma_geo2enu(lat, lon, h, s_f, s_l, s_h, ang="deg"):
     """
     # conversion batarde du sigma FLH => sigma ENU
     # Par conversion des angles en distance
-
-    log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
-    log.warning("Prefer sigma_xyz2enu")
 
     if ang == "deg":
         lat = np.deg2rad(lat)
@@ -577,9 +573,6 @@ def sigma_enu2geo(lat, lon, h, s_e, s_n, s_u, ang="deg", a=6378137.0, e2=0.00669
     ----------
     Linear Algebra, Geodesy, and GPS p332
     """
-
-    log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
-    log.warning("Prefer sigma_xyz2enu")
 
     # conversion batarde du sigma ENU => sigma FLH
     # Par conversion des angles en distance

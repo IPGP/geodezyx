@@ -7,9 +7,11 @@ Created on Fri Aug  2 13:55:33 2019
 
 import copy
 import datetime as dt
+
 #### Import the logger
 import logging
 import os
+
 ########## BEGIN IMPORT ##########
 #### External modules
 from collections import Counter
@@ -29,16 +31,27 @@ from geodezyx import stats
 from geodezyx import time_series
 from geodezyx import utils
 
-log = logging.getLogger('geodezyx')
+log = logging.getLogger("geodezyx")
 log.setLevel(logging.INFO)
-
 
 ##########  END IMPORT  ##########
 
-class Point():
 
-    def __init__(self, A=0., B=0., C=0., T=0., initype='XYZ',
-                 sA=0., sB=0., sC=0., name='noname', anex=None):
+class Point:
+
+    def __init__(
+        self,
+        A=0.0,
+        B=0.0,
+        C=0.0,
+        T=0.0,
+        initype="XYZ",
+        sA=0.0,
+        sB=0.0,
+        sC=0.0,
+        name="noname",
+        anex=None,
+    ):
         """
         Initialize a Point Object by importing the coordinate component
 
@@ -63,16 +76,16 @@ class Point():
             sigma of C component. The default is 0.
         name : str, optional
             Flexible name for the Point identification. The default is 'noname'.
-        anex : dict, optional
+        anex_key_list : dict, optional
             Additional data. The default is None. See Note
-        
+
         Note
         ----
-        
-        A dictionary called anex is also initialized to allow a
+
+        A dictionary called anex_key_list is also initialized to allow a
         versatile storage of a variety of data
-        
-        Exemple of dictionary keys 
+
+        Exemple of dictionary keys
         RMS: average RMS (for gipsy)
         sdAB , sdBC , sdAC : the variances between A,B,C (for rtklib)
         sdXY , sdXZ , sdYZ : the variances between XYZ (pbo.pos)
@@ -87,7 +100,7 @@ class Point():
         else:
             self.anex = anex
 
-        # le dico "anex" permet de stocker de manière polyvalente des données diverses
+        # le dico "anex_key_list" permet de stocker de manière polyvalente des données diverses
         # On trouvera (LISTE SE DEVANT ETRE LA PLUS EXHAUSTIVE POSSIBLE )
         #
         # RMS : moyenne RMS (pour les gipsy bosser)
@@ -95,39 +108,39 @@ class Point():
         # sdXY , sdXZ , sdYZ : les variances entre XYZ (pbo.pos)
         # Vx , Vy , Vz , sVx , sVy , sVz : velocity of the point (EPOS coordinates)
 
-        if initype == 'XYZ':
+        if initype == "XYZ":
             self.XYZset(A, B, C, sA, sB, sC)
-        elif initype == 'FLH':  # On travaille en degres decimaux
+        elif initype == "FLH":  # On travaille en degres decimaux
             self.FLHset(A, B, C, sA, sB, sC)
 
-        elif initype == 'ENU':
+        elif initype == "ENU":
             self.ENUset(A, B, C, sA, sB, sC)
 
-        elif initype == 'NED':
+        elif initype == "NED":
             self.NEDset(A, B, C, sA, sB, sC)
 
-        elif initype == 'UTM':
+        elif initype == "UTM":
             self.UTMset(A, B, C, sA, sB, sC)
         else:
             log.error("wrong initype")
 
     def __call__(self):
 
-        if self.initype == 'XYZ':
+        if self.initype == "XYZ":
             return self.X, self.Y, self.Z, self.Tdt, self.T
-        elif self.initype == 'FLH':
+        elif self.initype == "FLH":
             return self.F, self.L, self.H, self.Tdt, self.T
-        elif self.initype == 'ENU':
+        elif self.initype == "ENU":
             return self.E, self.N, self.U, self.Tdt, self.T
-        elif self.initype == 'NED':
+        elif self.initype == "NED":
             return self.N, self.E, self.D, self.Tdt, self.T
-        elif self.initype == 'UTM':
+        elif self.initype == "UTM":
             return self.Eutm, self.Nutm, self.Uutm, self.Tdt, self.T
         else:
             log.error("wrong initype")
 
     def __repr__(self):
-        if (not hasattr(self, 'X')):
+        if not hasattr(self, "X"):
             return "{},{},{},{},{}".format(self.E, self.N, self.U, self.Tdt, self.T)
         else:
             return "{},{},{},{},{}".format(self.X, self.Y, self.Z, self.Tdt, self.T)
@@ -140,7 +153,7 @@ class Point():
         self.sY = sY
         self.sZ = sZ
 
-        self.initype = 'XYZ'
+        self.initype = "XYZ"
         self.F, self.L, self.H = conv.xyz2geo(self.X, self.Y, self.Z)
 
     def FLHset(self, F=0, L=0, H=0, sF=0, sL=0, sH=0):
@@ -151,12 +164,11 @@ class Point():
         self.sL = sL
         self.sH = sH
 
-        self.initype = 'FLH'
+        self.initype = "FLH"
         self.X, self.Y, self.Z = conv.geo2xyz(self.F, self.L, self.H)
         self.sX, self.sY, self.sZ = conv.sigma_geo2xyz(F, L, H, sF, sL, sH)
 
-    def ENUset(self, E=np.nan, N=np.nan, U=np.nan,
-               sE=np.nan, sN=np.nan, sU=np.nan):
+    def ENUset(self, E=np.nan, N=np.nan, U=np.nan, sE=np.nan, sN=np.nan, sU=np.nan):
         self.E = E
         self.N = N
         self.U = U
@@ -164,10 +176,9 @@ class Point():
         self.sN = sN
         self.sU = sU
 
-        self.initype = 'ENU'
+        self.initype = "ENU"
 
-    def NEDset(self, N=np.nan, E=np.nan, D=np.nan,
-               sN=np.nan, sE=np.nan, sD=np.nan):
+    def NEDset(self, N=np.nan, E=np.nan, D=np.nan, sN=np.nan, sE=np.nan, sD=np.nan):
         self.N = N
         self.E = E
         self.D = D
@@ -175,10 +186,17 @@ class Point():
         self.sE = sE
         self.sD = sD
 
-        self.initype = 'NED'
+        self.initype = "NED"
 
-    def UTMset(self, Eutm=np.nan, Nutm=np.nan, Uutm=np.nan,
-               sEutm=np.nan, sNutm=np.nan, sUutm=np.nan):
+    def UTMset(
+        self,
+        Eutm=np.nan,
+        Nutm=np.nan,
+        Uutm=np.nan,
+        sEutm=np.nan,
+        sNutm=np.nan,
+        sUutm=np.nan,
+    ):
         self.Eutm = Eutm
         self.Nutm = Nutm
         self.Uutm = Uutm
@@ -186,11 +204,10 @@ class Point():
         self.sNutm = sNutm
         self.sUutm = sUutm
 
-        self.initype = 'UTM'
+        self.initype = "UTM"
 
-    def add_offset(self, dA, dB, dC):
-        log.warning("add_offset as method are hazardous ...")
-        temp = time_series.add_offset_point(self, dA, dB, dC)
+    def add_offset(self, dA, dB, dC, coortype="ENU"):
+        temp = time_series.add_offset_point(self, dA, dB, dC, coortype=coortype)
         self.__dict__ = temp.__dict__
 
     def Tset(self, T=0):
@@ -200,6 +217,7 @@ class Point():
         if type(T) == dt.datetime:
             self.Tdt = T
             self.T = conv.dt2posix(T)
+
         else:
             self.T = float(T)
             self.Tdt = conv.posix2dt(float(T))
@@ -212,34 +230,40 @@ class Point():
         dY = self.Y - refENU.Y
         dZ = self.Z - refENU.Z
 
-        Etmp, Ntmp, Utmp = conv.xyz2enu(self.X, self.Y, self.Z,
-                                        refENU.X, refENU.Y, refENU.Z)
+        Etmp, Ntmp, Utmp = conv.xyz2enu(
+            self.X, self.Y, self.Z, refENU.X, refENU.Y, refENU.Z
+        )
 
         self.E, self.N, self.U = Etmp[0], Ntmp[0], Utmp[0]
 
-        if self.initype == 'FLH' and hasattr(self, 'sF'):
+        if self.initype == "FLH" and hasattr(self, "s_f"):
             if not np.isnan(self.sF):
-                self.sE, self.sN, self.sU = conv.sigma_geo2enu(self.F, self.L, self.H,
-                                                               self.sF, self.sL, self.sH)
-        elif self.initype == 'XYZ' and hasattr(self, 'sX'):
+                self.sE, self.sN, self.sU = conv.sigma_geo2enu(
+                    self.F, self.L, self.H, self.sF, self.sL, self.sH
+                )
+        elif self.initype == "XYZ" and hasattr(self, "sX"):
             if np.isnan(self.sX):
+
                 return
 
-            if 'sdXY' in self.anex.keys():
-                sXY = self.anex['sdXY']
-                sXZ = self.anex['sdXZ']
-                sYZ = self.anex['sdYZ']
+            if "sdXY" in self.anex.keys():
+                sXY = self.anex["sdXY"]
+                sXZ = self.anex["sdXZ"]
+                sYZ = self.anex["sdYZ"]
             else:
                 sXY, sXZ, sYZ = 0, 0, 0
 
-            self.sE, self.sN, self.sU, c_en, c_eu, c_nu = conv.sigma_xyz2enu(self.X, self.Y, self.Z,
-                                                                             self.sX, self.sY, self.sZ,
-                                                                             s_xy=sXY, s_yz=sYZ, s_xz=sXZ,
-                                                                             return_corr=True)
-
-            self.anex['sdEN'] = c_en
-            self.anex['sdEU'] = c_eu
-            self.anex['sdNU'] = c_nu
+            self.sE, self.sN, self.sU = conv.sigma_xyz2enu(
+                self.X,
+                self.Y,
+                self.Z,
+                self.sX,
+                self.sY,
+                self.sZ,
+                s_xy=sXY,
+                s_yz=sYZ,
+                s_xz=sXZ,
+            )
 
     def UTMcalc_pt(self, ellips="wgs84"):
         self.Eutm, self.Nutm, _ = conv.utm_geo2xy(self.F, self.L)
@@ -248,38 +272,39 @@ class Point():
     def keysanex(self):
         return list(self.anex.keys())
 
-    def helmert_trans(self, params='itrf2008_2_etrf2000', invert=False):
+    def helmert_trans(self, params="itrf2008_2_etrf2000", invert=False):
         Xb = reffram.helmert_trans(np.array([self.X, self.Y, self.Z]), params, invert)
         self.XYZset(*Xb)
         return None
 
-    def velocity_trans(self, vx, vy, vz, epoc_init='auto', epoc_end='auto'):
+    def velocity_trans(self, vx, vy, vz, epoc_init="auto", epoc_end="auto"):
         """
         auto == epoc of the measures
         """
 
-        if epoc_init == 'auto' and epoc_end == 'auto':
-            log.error('epoc_init == auto and epoc_end == auto')
+        if epoc_init == "auto" and epoc_end == "auto":
+            log.error("epoc_init == auto and epoc_end == auto")
             return None
 
         tdt = conv.posix2dt(self.T)
         yeardec = conv.dt2year_decimal(tdt)
 
-        if epoc_init == 'auto':
+        if epoc_init == "auto":
             epoc_init = yeardec
 
         if epoc_end == "auto":
             epoc_end = yeardec
 
-        Xb = reffram.itrf_speed_calc(self.X, self.Y, self.Z, epoc_init,
-                                     vx, vy, vz, epoc_end)
+        Xb = reffram.itrf_speed_calc(
+            self.X, self.Y, self.Z, epoc_init, vx, vy, vz, epoc_end
+        )
         self.XYZset(*Xb)
         return None
 
 
 class TimeSeriePoint:
 
-    def __init__(self, stat='STAT'):
+    def __init__(self, stat="STAT"):
         """
         Initialize a TimeSeriePoint object
 
@@ -309,16 +334,17 @@ class TimeSeriePoint:
         Representation of a TimeSeriePoint object
         """
         if self.pts == []:
-            raise Exception('ERR: TimeSeriePoint is empty ...')
+            raise Exception("ERR: TimeSeriePoint is empty ...")
 
         start = self.startdate()
         end = self.enddate()
-        nbday = int((end - start).days + 1.)
+        nbday = int((end - start).days + 1.0)
 
-        ratio = self.nbpts * 100. / nbday
+        ratio = self.nbpts * 100.0 / nbday
 
-        return '{} {} {} {} {} {} {} {:5.2f}{}'.format(self.stat, self.nbpts, 'points',
-                                                       start, end, nbday, "nb days", ratio, "%")
+        return "{} {} {} {} {} {} {} {:5.2f}{}".format(
+            self.stat, self.nbpts, "points", start, end, nbday, "nb days", ratio, "%"
+        )
 
     def __getitem__(self, i):
         return self.pts[i]
@@ -336,7 +362,7 @@ class TimeSeriePoint:
         """
         return len(self.pts)
 
-    def meta_set(self, path='', stat='STAT', name=''):
+    def meta_set(self, path="", stat="STAT", name=""):
         """
         Set meta data about the TimeSerie
 
@@ -347,7 +373,7 @@ class TimeSeriePoint:
         stat : str, optional
             station 4-char. code. The default is 'STAT'.
         name : str, optional
-            free name of for the TS, 
+            free name of for the TS,
             like the experience, the periode , the software ...
             The default is ''.
 
@@ -362,8 +388,8 @@ class TimeSeriePoint:
         bn = os.path.basename(path)
         dn = os.path.dirname(path)
 
-        if name == '':
-            if bn == 'tdp_final':
+        if name == "":
+            if bn == "tdp_final":
                 self.name = os.path.basename(dn)
             else:
                 self.name = bn
@@ -467,7 +493,7 @@ class TimeSeriePoint:
 
         Returns
         -------
-        timedelta or 
+        timedelta or
         """
         delta = self.enddate() - self.startdate()
 
@@ -495,7 +521,7 @@ class TimeSeriePoint:
 
         return self.i_nomi
 
-    def from_list(self, T, A, B, C, coortype='XYZ', sA=[], sB=[], sC=[]):
+    def from_list(self, T, A, B, C, coortype="XYZ", sA=[], sB=[], sC=[]):
         """
         Method to load data from lists to the TimeSerie
 
@@ -546,8 +572,7 @@ class TimeSeriePoint:
 
         return None
 
-    def to_list(self, coortype='XYZ', specific_output=None,
-                time_as_datetime=False):
+    def to_list(self, coortype="XYZ", specific_output=None, time_as_datetime=False):
         """
         Export the TimeSerie Object as Lists (Numpy Arrays)
 
@@ -575,29 +600,29 @@ class TimeSeriePoint:
             sC = sigma of C component
         """
 
-        if coortype == 'XYZ':
-            A, B, C = 'X', 'Y', 'Z'
-            sA, sB, sC = 'sX', 'sY', 'sZ'
+        if coortype == "XYZ":
+            A, B, C = "X", "Y", "Z"
+            sA, sB, sC = "sX", "sY", "sZ"
 
-        elif coortype == 'FLH':
-            A, B, C = 'F', 'L', 'H'
-            sA, sB, sC = 'sF', 'sL', 'sH'
+        elif coortype == "FLH":
+            A, B, C = "F", "L", "H"
+            sA, sB, sC = "sF", "sL", "sH"
 
-        elif coortype == 'ENU':
+        elif coortype == "ENU":
             if not self.boolENU:
                 log.warning("no ENU coord. for " + self.name)
                 return None
 
-            A, B, C = 'E', 'N', 'U'
-            sA, sB, sC = 'sE', 'sN', 'sU'
+            A, B, C = "E", "N", "U"
+            sA, sB, sC = "sE", "sN", "sU"
 
-        elif coortype == 'UTM':
+        elif coortype == "UTM":
             if not self.boolUTM:
                 log.warning("no UTM coord. for " + self.name)
                 return None
 
-            A, B, C = 'Eutm', 'Nutm', 'Uutm'
-            sA, sB, sC = 'sEutm', 'sNutm', 'sUutm'
+            A, B, C = "Eutm", "Nutm", "Uutm"
+            sA, sB, sC = "sEutm", "sNutm", "sUutm"
 
         else:
             log.error("coortype does not exist")
@@ -637,10 +662,10 @@ class TimeSeriePoint:
             log.info("use an int as index instead")
             return outtup
 
-    def to_dataframe(self, coortype='XYZ'):
+    def to_dataframe(self, coortype="XYZ", anex_key_list=None):
         """
         Export the TimeSerie Object as DataFrame
-        
+
         Parameters
         ----------
         coortype : str or iterable of str.
@@ -648,10 +673,12 @@ class TimeSeriePoint:
             'XYZ', 'FLH', 'ENU', 'NED'
             can be also an iterable like ('XYZ','FLH')
             The default is 'XYZ'.
-
+        anex_key_list : list of str, optional
+            list of point's 'anex' keys to be added as columns in the DataFrame.
+            The default is None.
         Returns
         -------
-        DF : DataFrame
+        df : DataFrame
             output DataFrame.
         """
 
@@ -670,19 +697,32 @@ class TimeSeriePoint:
                 cotycolnam = coty
 
             if icoty == 0:
-                tdt = conv.posix2dt(T)
-                col_stk = col_stk + (tdt, T, A, B, C, sA, sB, sC)
-                col_name_stk = ["Tdt", "T"] + [e for e in cotycolnam] + ["s" + e for e in cotycolnam]
+                Tdt = conv.posix2dt(T)
+                col_stk = col_stk + (Tdt, T, A, B, C, sA, sB, sC)
+                col_name_stk = (
+                    ["Tdt", "T"]
+                    + [e for e in cotycolnam]
+                    + ["s" + e for e in cotycolnam]
+                )
             else:
                 col_stk = col_stk + (A, B, C, sA, sB, sC)
                 col_name_stk = [e for e in coty] + ["s" + e for e in coty]
 
-        BIG = np.column_stack(col_stk)
-        DF = pd.DataFrame(BIG)
-        DF.columns = col_name_stk
-        DF = DF.infer_objects()
+            if anex_key_list:
+                for key in anex_key_list:
+                    val_list = [
+                        pt.anex[key] if key in pt.anex.keys() else np.nan
+                        for pt in self.pts
+                    ]
+                    col_stk = col_stk + (val_list,)
+                    col_name_stk = col_name_stk + [key]
 
-        return DF
+        big = np.column_stack(col_stk)
+        df = pd.DataFrame(big)
+        df.columns = col_name_stk
+        df = df.infer_objects()
+
+        return df
 
     def sort(self):
         """
@@ -695,15 +735,18 @@ class TimeSeriePoint:
         """
         self.pts.sort(key=lambda x: x.T)
 
-    def plot(self, coortype='ENU',
-             diapt=2,
-             alpha=0.8,
-             fig=1,
-             errbar=True,
-             new_style=True,
-             symbol='.',
-             errbar_width=1,
-             ylim=None):
+    def plot(
+        self,
+        coortype="ENU",
+        diapt=2,
+        alpha=0.8,
+        fig=1,
+        errbar=True,
+        new_style=True,
+        symbol=".",
+        errbar_width=1,
+        ylim=None,
+    ):
         """
         Plot data in a TimeSerie Object
 
@@ -745,54 +788,53 @@ class TimeSeriePoint:
             styleint = 220
 
         try:
-            a, b, c, t, s_a, s_b, s_c = self.to_list(coortype=coortype)
+            A, B, C, T, sA, sB, sC = self.to_list(coortype=coortype)
         except TypeError as tyer:
             log.error("unable to get coordinates")
             log.info("TRICK : check if the given coortype is in the timeserie")
             raise tyer
 
-        if coortype == 'ENU':
-            atitle = 'East'
-            btitle = 'North'
-            ctitle = 'Up'
-            a_btitle = 'East North'
-            yylabel = 'displacement (m)'
+        if coortype == "ENU":
+            Atitle = "East"
+            Btitle = "North"
+            Ctitle = "Up"
+            ABtitle = "East North"
+            yylabel = "displacement (m)"
 
-        elif coortype == 'XYZ':
-            atitle = 'X'
-            btitle = 'Y'
-            ctitle = 'Z'
-            yylabel = 'displacement (m)'
-            a_btitle = 'X Y (sans signification)'
+        elif coortype == "XYZ":
+            Atitle = "X"
+            Btitle = "Y"
+            Ctitle = "Z"
+            yylabel = "displacement (m)"
+            ABtitle = "X Y (sans signification)"
 
-        elif coortype == 'FLH':
-            atitle = 'Phi'
-            btitle = 'Lambda'
-            ctitle = 'Haut'
-            yylabel = 'displacement (m)'
-            a_btitle = 'Phi Lambda (sans signification)'
+        elif coortype == "FLH":
+            Atitle = "Phi"
+            Btitle = "Lambda"
+            Ctitle = "Haut"
+            yylabel = "displacement (m)"
+            ABtitle = "Phi Lambda (sans signification)"
 
-
-        elif coortype == 'UTM':
-            atitle = 'East (UTM)'
-            btitle = 'North (UTM)'
-            ctitle = 'Up'
-            yylabel = 'displacement (m)'
-            a_btitle = 'East North (UTM)'
+        elif coortype == "UTM":
+            Atitle = "East (UTM)"
+            Btitle = "North (UTM)"
+            Ctitle = "Up"
+            yylabel = "displacement (m)"
+            ABtitle = "East North (UTM)"
 
         else:
-            atitle = 'a'
-            btitle = 'b'
-            ctitle = 'c'
-            yylabel = 'displacement (??)'
-            a_btitle = 'a & b'
+            Atitle = "A"
+            Btitle = "B"
+            Ctitle = "C"
+            yylabel = "displacement (??)"
+            ABtitle = "A & B"
 
         log.info("plot : %s, pts : %s", self.nbpts, self.stat)
 
         namest = 0
         namend = 10
 
-        Tdt = conv.posix2dt(t)
+        Tdt = conv.posix2dt(T)
 
         if type(fig) is int:
             figobj = plt.figure(fig)
@@ -809,20 +851,27 @@ class TimeSeriePoint:
         plt.subplot(styleint + 1)
 
         if errbar:
-            plt.errorbar(Tdt, a, s_a, fmt=symbol, label=name4plot,
-                         markersize=diapt, alpha=alpha, ecolor='xkcd:light grey',
-                         elinewidth=errbar_width)
+            plt.errorbar(
+                Tdt,
+                A,
+                sA,
+                fmt=symbol,
+                label=name4plot,
+                markersize=diapt,
+                alpha=alpha,
+                ecolor="xkcd:light grey",
+                elinewidth=errbar_width,
+            )
         else:
-            plt.plot(Tdt, a, symbol, label=name4plot,
-                     markersize=diapt, alpha=alpha)
+            plt.plot(Tdt, A, symbol, label=name4plot, markersize=diapt, alpha=alpha)
         try:
             plt.legend()
         except:
             pass
         # plt.xlabel('Date')
         plt.ylabel(yylabel)
-        plt.title(btitle)
-        plt.title(atitle)
+        plt.title(Btitle)
+        plt.title(Atitle)
 
         #        ax = plt.gca()
 
@@ -832,28 +881,42 @@ class TimeSeriePoint:
         ##                                                          self.refENU.Z)
         plt.subplot(styleint + 2)
         if errbar:
-            plt.errorbar(Tdt, b, s_b, fmt=symbol, label=name4plot,
-                         markersize=diapt, alpha=alpha, ecolor='xkcd:light grey',
-                         elinewidth=errbar_width)
+            plt.errorbar(
+                Tdt,
+                B,
+                sB,
+                fmt=symbol,
+                label=name4plot,
+                markersize=diapt,
+                alpha=alpha,
+                ecolor="xkcd:light grey",
+                elinewidth=errbar_width,
+            )
         else:
-            plt.plot(Tdt, b, symbol, label=name4plot,
-                     markersize=diapt, alpha=alpha)
+            plt.plot(Tdt, B, symbol, label=name4plot, markersize=diapt, alpha=alpha)
         try:
             plt.legend()
         except:
             pass
         # plt.xlabel('Date')
         plt.ylabel(yylabel)
-        plt.title(btitle)
+        plt.title(Btitle)
 
         plt.subplot(styleint + 3)
         if errbar:
-            plt.errorbar(Tdt, c, s_c, fmt=symbol, label=name4plot,
-                         markersize=diapt, alpha=alpha, ecolor='xkcd:light grey',
-                         elinewidth=errbar_width)
+            plt.errorbar(
+                Tdt,
+                C,
+                sC,
+                fmt=symbol,
+                label=name4plot,
+                markersize=diapt,
+                alpha=alpha,
+                ecolor="xkcd:light grey",
+                elinewidth=errbar_width,
+            )
         else:
-            plt.plot(Tdt, c, symbol, label=name4plot,
-                     markersize=diapt, alpha=alpha)
+            plt.plot(Tdt, C, symbol, label=name4plot, markersize=diapt, alpha=alpha)
         try:
             plt.legend()
         except:
@@ -862,9 +925,9 @@ class TimeSeriePoint:
         if ylim:
             [a.set_ylim(ylim) for a in figobj.axes]
 
-        plt.xlabel('Date')
+        plt.xlabel("Date")
         plt.ylabel(yylabel)
-        plt.title(ctitle)
+        plt.title(Ctitle)
         figobj.autofmt_xdate()
         figobj.set_size_inches(8.27, 11.69)
         figobj.tight_layout()
@@ -872,16 +935,15 @@ class TimeSeriePoint:
 
         if not new_style:
             plt.subplot(styleint + 4)
-            plt.axis('equal')
+            plt.axis("equal")
             try:
                 plt.legend()
             except:
                 pass
-            plt.plot(a, b, '.', label=name4plot,
-                     markersize=diapt, alpha=alpha)
-            plt.xlabel(atitle + ' ' + yylabel)
-            plt.ylabel(btitle + ' ' + yylabel)
-            plt.title(a_btitle)
+            plt.plot(A, B, ".", label=name4plot, markersize=diapt, alpha=alpha)
+            plt.xlabel(Atitle + " " + yylabel)
+            plt.ylabel(Btitle + " " + yylabel)
+            plt.title(ABtitle)
 
         return figobj
 
@@ -956,7 +1018,10 @@ class TimeSeriePoint:
         log.info("press SPACE to record a manual discontinuity")
 
         def onclick_discont(event):
-            ix, iy = matplotlib.dates.num2date(event.xdata).replace(tzinfo=None), event.ydata
+            ix, iy = (
+                matplotlib.dates.num2date(event.xdata).replace(tzinfo=None),
+                event.ydata,
+            )
 
             log.info("discontinuity recorded : %s", ix)
             for ax in figobj.axes:
@@ -977,8 +1042,8 @@ class TimeSeriePoint:
 
             return None
 
-        multi = MultiCursor(figobj.canvas, figobj.axes, color='k', lw=1)
-        cid = figobj.canvas.mpl_connect('key_press_event', onclick_discont)
+        multi = MultiCursor(figobj.canvas, figobj.axes, color="k", lw=1)
+        cid = figobj.canvas.mpl_connect("key_press_event", onclick_discont)
 
         return multi, cid
 
@@ -1000,20 +1065,27 @@ class TimeSeriePoint:
         None.
 
         """
-        if refENU.__class__.__name__ == 'Point':
+        if refENU.__class__.__name__ == "Point":
             self.refENU = refENU
             [pt.ENUcalc_pt(refENU) for pt in self.pts]
             self.boolENU = True
             self.bool_interp_uptodate = False
             self.interp_set()
-        elif refENU.__class__.__name__ == 'TimeSeriePoint':
+        elif refENU.__class__.__name__ == "TimeSeriePoint":
             self.refENU = refENU.mean_posi()
             refENU.interp_set()
-            [pt.ENUcalc_pt(Point(A=refENU.XfT(pt.T),
-                                 B=refENU.YfT(pt.T),
-                                 C=refENU.ZfT(pt.T),
-                                 initype='XYZ',
-                                 T=pt.T)) for pt in self.pts]
+            [
+                pt.ENUcalc_pt(
+                    Point(
+                        A=refENU.XfT(pt.T),
+                        B=refENU.YfT(pt.T),
+                        C=refENU.ZfT(pt.T),
+                        initype="XYZ",
+                        T=pt.T,
+                    )
+                )
+                for pt in self.pts
+            ]
 
             self.boolENU = True
             self.bool_interp_uptodate = False
@@ -1021,7 +1093,7 @@ class TimeSeriePoint:
 
     def ENUcalc_from_mean_posi(self, mean_type="median"):
         """
-        Method to determine the ENU components based directly 
+        Method to determine the ENU components based directly
         on the mean/median position
 
         Returns
@@ -1079,11 +1151,11 @@ class TimeSeriePoint:
         self.boolUTM = True
         [pt.UTMcalc_pt() for pt in self.pts]
 
-    def time_win(self, windows, mode='keep'):
-        '''IL EST TRES DANGEREUX DE L'APPLIQUER UN FENETRAGE A SOI MEME'''
+    def time_win(self, windows, mode="keep"):
+        """IL EST TRES DANGEREUX DE L'APPLIQUER UN FENETRAGE A SOI MEME"""
         self.__dict__ = time_series.time_win(self, windows, mode).__dict__
 
-    def interp_set(self, interptype='slinear'):
+    def interp_set(self, interptype="slinear"):
         """
         Method to set the coordinate interpolators
 
@@ -1097,46 +1169,70 @@ class TimeSeriePoint:
         None.
 
         """
-        if (not hasattr(self.pts[0], 'E')) or np.isnan(self.pts[0].E) == True:
+        if (not hasattr(self.pts[0], "E")) or np.isnan(self.pts[0].E) == True:
             log.warning("no ENU for " + self.name)
         else:
-            E, N, U, T, _, _, _ = self.to_list('ENU')
-            self.EfT = scipy.interpolate.interp1d(T, E, bounds_error=False, kind=interptype)
-            self.NfT = scipy.interpolate.interp1d(T, N, bounds_error=False, kind=interptype)
-            self.UfT = scipy.interpolate.interp1d(T, U, bounds_error=False, kind=interptype)
+            E, N, U, T, _, _, _ = self.to_list("ENU")
+            self.EfT = scipy.interpolate.interp1d(
+                T, E, bounds_error=False, kind=interptype
+            )
+            self.NfT = scipy.interpolate.interp1d(
+                T, N, bounds_error=False, kind=interptype
+            )
+            self.UfT = scipy.interpolate.interp1d(
+                T, U, bounds_error=False, kind=interptype
+            )
 
-        if (not hasattr(self.pts[0], 'X')) or np.isnan(self.pts[0].X) == True:
+        if (not hasattr(self.pts[0], "X")) or np.isnan(self.pts[0].X) == True:
             log.warning("no XYZ for " + self.name)
         else:
 
-            X, Y, Z, T, _, _, _ = self.to_list('XYZ')
+            X, Y, Z, T, _, _, _ = self.to_list("XYZ")
 
-            self.XfT = scipy.interpolate.interp1d(T, X, bounds_error=False, kind=interptype)
-            self.YfT = scipy.interpolate.interp1d(T, Y, bounds_error=False, kind=interptype)
-            self.ZfT = scipy.interpolate.interp1d(T, Z, bounds_error=False, kind=interptype)
+            self.XfT = scipy.interpolate.interp1d(
+                T, X, bounds_error=False, kind=interptype
+            )
+            self.YfT = scipy.interpolate.interp1d(
+                T, Y, bounds_error=False, kind=interptype
+            )
+            self.ZfT = scipy.interpolate.interp1d(
+                T, Z, bounds_error=False, kind=interptype
+            )
 
-        if (not hasattr(self.pts[0], 'F')) or np.isnan(self.pts[0].L) == True:
+        if (not hasattr(self.pts[0], "F")) or np.isnan(self.pts[0].L) == True:
             log.warning("no FLH for " + self.name)
         else:
-            F, L, H, T, _, _, _ = self.to_list('FLH')
+            F, L, H, T, _, _, _ = self.to_list("FLH")
 
-            self.FfT = scipy.interpolate.interp1d(T, F, bounds_error=False, kind=interptype)
-            self.LfT = scipy.interpolate.interp1d(T, L, bounds_error=False, kind=interptype)
-            self.HfT = scipy.interpolate.interp1d(T, H, bounds_error=False, kind=interptype)
+            self.FfT = scipy.interpolate.interp1d(
+                T, F, bounds_error=False, kind=interptype
+            )
+            self.LfT = scipy.interpolate.interp1d(
+                T, L, bounds_error=False, kind=interptype
+            )
+            self.HfT = scipy.interpolate.interp1d(
+                T, H, bounds_error=False, kind=interptype
+            )
 
-        if (not hasattr(self.pts[0], 'Eutm')) or np.isnan(self.pts[0].Eutm) == True:
+        if (not hasattr(self.pts[0], "Eutm")) or np.isnan(self.pts[0].Eutm) == True:
             # log.warning("no UTM for " + self.name)
             pass
         else:
-            Eutm, Nutm, Uutm, T, _, _, _ = self.to_list('UTM')
+            Eutm, Nutm, Uutm, T, _, _, _ = self.to_list("UTM")
 
-            self.EutmfT = scipy.interpolate.interp1d(T, Eutm, bounds_error=False, kind=interptype)
-            self.NutmfT = scipy.interpolate.interp1d(T, Nutm, bounds_error=False, kind=interptype)
-            self.UutmfT = scipy.interpolate.interp1d(T, Uutm, bounds_error=False, kind=interptype)
+            self.EutmfT = scipy.interpolate.interp1d(
+                T, Eutm, bounds_error=False, kind=interptype
+            )
+            self.NutmfT = scipy.interpolate.interp1d(
+                T, Nutm, bounds_error=False, kind=interptype
+            )
+            self.UutmfT = scipy.interpolate.interp1d(
+                T, Uutm, bounds_error=False, kind=interptype
+            )
 
         self.bool_interp_uptodate = True
 
-    def interp_get(self, T, coortype='ENU'):
+    def interp_get(self, T, coortype="ENU"):
         """
         Method to get the coordinate interpolators
 
@@ -1149,7 +1245,7 @@ class TimeSeriePoint:
 
         Returns
         -------
-        tsout : 
+        tsout :
             DESCRIPTION.
 
         """
@@ -1164,22 +1260,22 @@ class TimeSeriePoint:
         if not utils.is_iterable(T):
             T = np.array([T])
 
-        if coortype == 'ENU':
+        if coortype == "ENU":
             A = self.EfT(T)
             B = self.NfT(T)
             C = self.UfT(T)
 
-        if coortype == 'XYZ':
+        if coortype == "XYZ":
             A = self.XfT(T)
             B = self.YfT(T)
             C = self.ZfT(T)
 
-        if coortype == 'FLH':
+        if coortype == "FLH":
             A = self.FfT(T)
             B = self.LfT(T)
             C = self.HfT(T)
 
-        if coortype == 'UTM':
+        if coortype == "UTM":
             A = self.EutmfT(T)
             B = self.NutmfT(T)
             C = self.UutmfT(T)
@@ -1206,7 +1302,7 @@ class TimeSeriePoint:
         self.discont = indiscont
         self.bool_discont = True
 
-    def mean_posi(self, coortype='XYZ', outtype='point', mean_type='median'):
+    def mean_posi(self, coortype="XYZ", outtype="point", mean_type="median"):
         """
         Method to determine the mean position of the TimeSerie
 
@@ -1231,11 +1327,11 @@ class TimeSeriePoint:
 
         A, B, C, T, sA, sB, sC = self.to_list(coortype=coortype)
 
-        if mean_type == 'mean':
+        if mean_type == "mean":
             Aout = np.nanmean(A)
             Bout = np.nanmean(B)
             Cout = np.nanmean(C)
-        elif mean_type == 'median':
+        elif mean_type == "median":
             Aout = np.nanmedian(A)
             Bout = np.nanmedian(B)
             Cout = np.nanmedian(C)
@@ -1251,14 +1347,12 @@ class TimeSeriePoint:
 
         return out
 
-    def add_offset(self, dA, dB, dC):
+    def add_offset(self, dA, dB, dC, coortype="ENU"):
         """
-        NOTE 160415 : add_offset as method are hazardous ...
-        use fct add_offset_ts instead
+        Method to add an offset to all points in the TimeSerie
         """
-        log.warning("add_offset as method are hazardous ...")
         for pt in self.pts:
-            pt.add_offset(dA, dB, dC)
+            pt.add_offset(dA, dB, dC, coortype="ENU")
 
     def decimate(self, dec):
         """
@@ -1347,8 +1441,9 @@ class TimeSeriePoint:
         dup_bool = T.duplicated()
 
         if dup_bool.sum() > 0:
-            log.warning("%s duplicated point(s) removed for %s",
-                        dup_bool.sum(), self.name)
+            log.warning(
+                "%s duplicated point(s) removed for %s", dup_bool.sum(), self.name
+            )
 
         self.pts = list(pd.Series(self.pts)[np.logical_not(dup_bool)])
 
@@ -1364,17 +1459,19 @@ class TimeSeriePoint:
 
 
 class Attitude:
-    def __init__(self, R=0, P=0, Y=0, T=0, sR=0, sP=0, sY=0, devID='NULL', angtype='deg'):
+    def __init__(
+        self, R=0, P=0, Y=0, T=0, sR=0, sP=0, sY=0, devID="NULL", angtype="deg"
+    ):
 
         self.Tset(T)
         self.devID = devID
 
-        if angtype == 'deg':
+        if angtype == "deg":
             self.R = R
             self.P = P
             self.Y = Y
 
-        elif angtype == 'rad':
+        elif angtype == "rad":
             self.R = np.rad2deg(R)
             self.P = np.rad2deg(P)
             self.Y = np.rad2deg(Y)
@@ -1413,20 +1510,20 @@ class Attitude:
         self.sY = sY
 
     def Qcalc(self):
-        self.Q = conv.quaternion(self.R, self.P, self.Y, 'deg')
+        self.Q = conv.quaternion(self.R, self.P, self.Y, "deg")
         return None
 
 
 class TimeSerieObs(object):
-    ''' LES DIFFERENCES AVEC TSPOINT
-        * Les objets ne contiennent qu'un type de données sous une seul forme
-        (a la difference d'un point qui peut exister sous plusieurs formes)
-        * Dans un fichier en input, il peut y avoir plusieurs "devices"
-          => les fonctions de lectures produisent donc obligatoirement des listes
-          de TS (le cas échéant une liste à 1 élt)
-          => la methode readfile() nécessite donc l'indice de la device'''
+    """LES DIFFERENCES AVEC TSPOINT
+    * Les objets ne contiennent qu'un type de données sous une seul forme
+    (a la difference d'un point qui peut exister sous plusieurs formes)
+    * Dans un fichier en input, il peut y avoir plusieurs "devices"
+      => les fonctions de lectures produisent donc obligatoirement des listes
+      de TS (le cas échéant une liste à 1 élt)
+      => la methode readfile() nécessite donc l'indice de la device"""
 
-    def __init__(self, typeobs='NULL', filepath=''):
+    def __init__(self, typeobs="NULL", filepath=""):
 
         self.obs = []
         self.nbobs = 0
@@ -1437,15 +1534,15 @@ class TimeSerieObs(object):
 
         self.meta_set(filepath)
 
-    def meta_set(self, path='', devID='NULL', name=''):
+    def meta_set(self, path="", devID="NULL", name=""):
         self.path = path
         self.devID = devID
 
         bn = os.path.basename(path)
         dn = os.path.dirname(path)
 
-        if name == '':
-            if bn == 'tdp_final':
+        if name == "":
+            if bn == "tdp_final":
                 self.name = os.path.basename(dn)
             else:
                 self.name = bn
@@ -1486,8 +1583,8 @@ class TimeSerieObs(object):
 
         return self.i_nomi
 
-    def timewin(self, windows, mode='keep'):
-        '''IL EST TRES DANGEREUX DE L'APPLIQUER UN FENETRAGE A SOI MEME'''
+    def timewin(self, windows, mode="keep"):
+        """IL EST TRES DANGEREUX DE L'APPLIQUER UN FENETRAGE A SOI MEME"""
         self.__dict__ = time_series.time_win(self, windows, mode).__dict__
 
     def startdate(self):
@@ -1497,13 +1594,13 @@ class TimeSerieObs(object):
         return self.obs[-1].T
 
     def to_list(self):
-        if self.typeobs == 'NULL':
+        if self.typeobs == "NULL":
             log.error("pas de typeobs defini (NULL)")
             return 0
 
-        if self.typeobs == 'RPY':
-            A, B, C = 'R', 'p', 'Y'
-            sA, sB, sC = 'sR', 'sP', 'sY'
+        if self.typeobs == "RPY":
+            A, B, C = "R", "p", "Y"
+            sA, sB, sC = "sR", "sP", "sY"
 
         A = np.asarray([getattr(o, A) for o in self.obs])
         B = np.asarray([getattr(o, B) for o in self.obs])
@@ -1522,18 +1619,25 @@ class TimeSerieObs(object):
 
         return A, B, C, T, sA, sB, sC
 
-    def interp_set(self, interptype='slinear'):
+    def interp_set(self, interptype="slinear"):
 
-        if self.typeobs == 'NULL':
+        if self.typeobs == "NULL":
             log.error("no typeobs defined (NULL)")
             return 0
 
-        if self.typeobs == 'RPY':
+        if self.typeobs == "RPY":
+
             R, P, Y, T, _, _, _ = self.to_list()
 
-            self.RfT = scipy.interpolate.interp1d(T, R, bounds_error=False, kind=interptype)
-            self.PfT = scipy.interpolate.interp1d(T, P, bounds_error=False, kind=interptype)
-            self.YfT = scipy.interpolate.interp1d_ang(T, Y, bounds_error=False, kind=interptype)
+            self.RfT = scipy.interpolate.interp1d(
+                T, R, bounds_error=False, kind=interptype
+            )
+            self.PfT = scipy.interpolate.interp1d(
+                T, P, bounds_error=False, kind=interptype
+            )
+            self.YfT = scipy.interpolate.interp1d_ang(
+                T, Y, bounds_error=False, kind=interptype
+            )
 
         self.bool_interp_uptodate = True
 
@@ -1549,11 +1653,11 @@ class TimeSerieObs(object):
         if not utils.is_iterable(T):
             T = np.array([T])
 
-        if self.typeobs == 'NULL':
+        if self.typeobs == "NULL":
             log.error("no typeobs defined (NULL)")
             return 0
 
-        if self.typeobs == 'RPY':
+        if self.typeobs == "RPY":
             A = self.RfT(T)
             B = self.PfT(T)
             C = self.YfT(T)
@@ -1569,10 +1673,10 @@ class TimeSerieObs(object):
 
         log.info("plot : %s, pts : %s", self.nbpts, self.stat)
 
-        if self.typeobs == 'RPY':
-            listtitle = ['', 'Roll', 'Pitch', 'Yaw']
+        if self.typeobs == "RPY":
+            listtitle = ["", "Roll", "Pitch", "Yaw"]
         else:
-            listtitle = ['', '', '', '']
+            listtitle = ["", "", "", ""]
 
         namest = 0
         namend = 10
@@ -1585,23 +1689,51 @@ class TimeSerieObs(object):
 
         plt.figure(fig)
         plt.subplot(styleint + 1)
-        plt.axis('equal')
-        plt.plot(A, B, '.', label=str(self.devID)[namest:namend], markersize=diapt, alpha=alpha)
+        plt.axis("equal")
+        plt.plot(
+            A,
+            B,
+            ".",
+            label=str(self.devID)[namest:namend],
+            markersize=diapt,
+            alpha=alpha,
+        )
         plt.legend()
         plt.title(listtitle[0])
 
         plt.subplot(styleint + 2)
-        plt.plot(Tdt, A, '.', label=str(self.devID)[namest:namend], markersize=diapt, alpha=alpha)
+        plt.plot(
+            Tdt,
+            A,
+            ".",
+            label=str(self.devID)[namest:namend],
+            markersize=diapt,
+            alpha=alpha,
+        )
         plt.legend()
         plt.title(listtitle[1])
 
         plt.subplot(styleint + 3)
-        plt.plot(Tdt, B, '.', label=str(self.devID)[namest:namend], markersize=diapt, alpha=alpha)
+        plt.plot(
+            Tdt,
+            B,
+            ".",
+            label=str(self.devID)[namest:namend],
+            markersize=diapt,
+            alpha=alpha,
+        )
         plt.legend()
         plt.title(listtitle[2])
 
         plt.subplot(styleint + 4)
-        plt.plot(Tdt, C, '.', label=str(self.devID)[namest:namend], markersize=diapt, alpha=alpha)
+        plt.plot(
+            Tdt,
+            C,
+            ".",
+            label=str(self.devID)[namest:namend],
+            markersize=diapt,
+            alpha=alpha,
+        )
         plt.legend()
         plt.title(listtitle[3])
 
@@ -1644,39 +1776,39 @@ class TimeSerieObs(object):
     """
 
 
-class point_n_click_plot():
+class point_n_click_plot:
     """
-    This method allow to do "point and click" on a plot, to localize offsets 
+    This method allow to do "point and click" on a plot, to localize offsets
     for instance
-    
+
     Usage
     -----
     Data have to be ploted already in a figure
-    
+
     .. code-block:: python
-    
+
         PnC = point_n_click_plot()
         multi , cid = PnC(fig=1,Xdata_are_time=True)
         PnC.selectedX
 
     i.e.
-    
+
     Create an object point_n_click_plot (here it is PnC in the exemple below) \n
     Call the object like a function with as 1st argument the id of the plot figure or the plot figure itself \n
     Make your selection using the SPACE key \n
-    Get your results in a list called PnC.selectedX   
-    
+    Get your results in a list called PnC.selectedX
+
     Important
     ---------
-    
+
     cursor objects (i.e. multi & cid)
     must be stored as global variables when you call the method
     like this :
 
     .. code-block:: python
-    
+
         multi , cid = PnC(fig=1)
-    
+
     """
 
     def __init__(self):
@@ -1696,21 +1828,27 @@ class point_n_click_plot():
         elif type(fig) is matplotlib.figure.Figure:
             figobj = fig
 
-        log.info("press SPACE to record a X-value, \n       press R to Remove the previously recorded one")
+        log.info(
+            "press SPACE to record a X-value, \n       press R to Remove the previously recorded one"
+        )
 
         def onclick_discont(event):
 
-            if event.key == ' ':
+            if event.key == " ":
                 if Xdata_are_time:
-                    ix, iy = matplotlib.dates.num2date(event.xdata).replace(tzinfo=None), event.ydata
+                    ix, iy = (
+                        matplotlib.dates.num2date(event.xdata).replace(tzinfo=None),
+                        event.ydata,
+                    )
                 else:
                     ix, iy = event.xdata, event.ydata
 
                 log.info("X value recorded : ", ix)
 
                 for ax in figobj.axes:
-                    out_bar_list = stats.plot_vertical_bar_ax([ix], ax, "b",
-                                                              linewidth=1)
+                    out_bar_list = stats.plot_vertical_bar_ax(
+                        [ix], ax, "b", linewidth=1
+                    )
 
                     self.ver_bar_stk.append(out_bar_list[0])
 
@@ -1718,12 +1856,12 @@ class point_n_click_plot():
 
                 plt.draw()
 
-            elif event.key in ('r', 'R') and len(self.selectedX) > 0:
+            elif event.key in ("r", "R") and len(self.selectedX) > 0:
                 last = self.selectedX[-1]
 
                 self.selectedX.remove(last)
 
-                last_bars = self.ver_bar_stk[-len(figobj.axes):]
+                last_bars = self.ver_bar_stk[-len(figobj.axes) :]
 
                 for bar in last_bars:
                     self.ver_bar_stk.remove(bar)
@@ -1735,7 +1873,7 @@ class point_n_click_plot():
 
             return None
 
-        multi = MultiCursor(figobj.canvas, figobj.axes, color='k', lw=1)
-        cid = figobj.canvas.mpl_connect('key_press_event', onclick_discont)
+        multi = MultiCursor(figobj.canvas, figobj.axes, color="k", lw=1)
+        cid = figobj.canvas.mpl_connect("key_press_event", onclick_discont)
 
         return multi, cid

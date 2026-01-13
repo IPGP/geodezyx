@@ -122,6 +122,9 @@ def read_rtklib(filein):
 
     tsout = time_series.TimeSeriePoint()
 
+    initype = "FLH"
+    d_utcgps = 0
+
     for line in open(filein):
 
         if re.compile('e-baseline').search(line):
@@ -130,12 +133,11 @@ def read_rtklib(filein):
             initype = 'XYZ'
         elif 'latitude(deg)' in line:
             initype = 'FLH'
-
         if re.compile('%  UTC').search(line):
-            dUTCGPS = 16
-            log.warning('MAYBE A WRONG LEAP SECOND !!!!')
+            d_utcgps = 16
+            log.warning('HARDCODED (MAYBE?) WRONG LEAP SECOND!!!!')
         elif re.compile('%  GPST').search(line):
-            dUTCGPS = 0
+            d_utcgps = 0
 
         if line[0] == '%':
             continue
@@ -144,25 +146,27 @@ def read_rtklib(filein):
         date1 = re.findall(r"[\w']+", fields[0] + ':' + fields[1])
         date2 = tuple([int(d) for d in date1[:-1]] + [int(date1[-1][:6])])
 
-        T = (dt.datetime(date2[0], date2[1], date2[2], date2[3], date2[4], date2[5], date2[6]) + dt.timedelta(
-            seconds=dUTCGPS))
-        A = (float(fields[2]))
-        B = (float(fields[3]))
-        C = (float(fields[4]))
+        t = (dt.datetime(date2[0], date2[1], date2[2],
+                         date2[3], date2[4], date2[5],
+                         date2[6]) + dt.timedelta(seconds=d_utcgps))
+        a = (float(fields[2]))
+        b = (float(fields[3]))
+        c = (float(fields[4]))
         if initype == 'XYZ':
-            sA = (float(fields[7]))
-            sB = (float(fields[8]))
-            sC = (float(fields[9]))
+            s_a = (float(fields[7]))
+            s_b = (float(fields[8]))
+            s_c = (float(fields[9]))
         elif initype == 'FLH':
-            sA = (float(fields[7]))
-            sB = (float(fields[8]))
-            sC = (float(fields[9]))
-            sA, sB, sC = conv.sigma_enu2geo(A, B, C, sA, sB, sC)
+            s_a = (float(fields[7]))
+            s_b = (float(fields[8]))
+            s_c = (float(fields[9]))
+            s_a, s_b, s_c = conv.sigma_enu2geo(a, b, c, s_a, s_b, s_c)
 
-        point = time_series.Point(A, B, C, T, initype, sA, sB, sC)
+        point = time_series.Point(a, b, c, t, initype, s_a, s_b, s_c)
         point.anex['sdAB'] = float(fields[10])
         point.anex['sdBC'] = float(fields[11])
         point.anex['sdAC'] = float(fields[12])
+        point.anex["Q"] =  float(fields[5])
 
         tsout.add_point(point)
 
