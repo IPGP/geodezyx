@@ -12,7 +12,6 @@ import datetime as dt
 import argparse
 import os
 
-
 def singugins_run(
     results_folder,
     specific_sites=[],

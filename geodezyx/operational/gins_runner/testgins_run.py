@@ -36,7 +36,7 @@ def run_testgins(results_folder=None, rnxs_folder=None, no_download_rnxs=False):
         results_folder = "/root/030_RESULTS/testGINS_" + timstp
 
     # Run the GINS process with the specified directories
-    singugins_run(
+    singugins_run.singugins_run(
         results_folder=results_folder,
         bdrnx_folder=rnxs_folder,
     )
