@@ -132,7 +132,7 @@ def spotgins_run(
         updatebd_rapid = False
         director_generik_path_mod = director_generik_path_inp
 
-    print("AAAAAAAAAAAAAAAAAAAAA", updatebd_rapid)
+    print("AAAAAAAAAAAAAAAAAAAAA", quick_mode, updatebd_rapid)
 
     dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use = get_spotgins_files(
         director_generik_path_mod,
