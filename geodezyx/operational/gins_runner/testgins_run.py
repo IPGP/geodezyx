@@ -14,15 +14,39 @@ def run_testgins(results_folder=None, rnxs_folder=None, no_download_rnxs=False):
     """
     Executes the test GINS workflow by downloading RINEX files and running the GINS process.
 
-    Parameters:
-    results_folder (str, optional): Path to the directory where the results will be stored.
-        If not provided, a timestamped folder under '/root/030_RESULTS/' will be created.
-    rnxs_folder (str, optional): Path to the directory where input RINEX files will be
-        downloaded or read. Defaults to '/root/020_BDRNX/rnxs_testGINS_from_EOST' if not provided.
+    Parameters
+    ----------
+    results_folder : str, optional
+        Path to the directory where the results will be stored.
+        If None, a timestamped folder under '/root/030_RESULTS/' will be created.
+        Default is None.
+    rnxs_folder : str, optional
+        Path to the directory where input RINEX files will be downloaded or read.
+        If None, defaults to '/root/020_BDRNX/rnxs_testGINS_from_EOST'.
+        Default is None.
+    no_download_rnxs : bool, optional
+        If True, the script will not download RINEX files from EOST server
+        and will use existing files in the specified rnxs_folder.
+        Default is False.
 
-    Returns:
+    Returns
+    -------
     None
+
+    See Also
+    --------
+    get_rnx_eost : Downloads RINEX files from the EOS Strasbourg server.
+    singugins_run : Runs the GINS processing workflow.
+
+    Examples
+    --------
+    >>> run_testgins()
+
+    >>> run_testgins(results_folder="/custom/results", rnxs_folder="/custom/rnxs")
+
+    >>> run_testgins(no_download_rnxs=True, rnxs_folder="/existing/rnxs")
     """
+    
     # If no directory for RINEX files is provided, use the default path
     if not rnxs_folder:
         rnxs_folder = "/root/020_BDRNX/rnxs_testGINS_from_EOST"
