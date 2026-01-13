@@ -78,7 +78,7 @@ def _rnx_obs_rgx(stat, date):
         data_type=".O",
         format_compression=".*",
     )
-    return rnx2rgx, rnx3rgx
+    return str(rnx2rgx), str(rnx3rgx)
 
 
 def _rnx_nav_rgx(stat, date, sys=".", data_source="."):
@@ -158,7 +158,7 @@ def _rnx_nav_rgx(stat, date, sys=".", data_source="."):
         format_compression=".*",
     )
 
-    return rnx2rgx, rnx3rgx
+    return str(rnx2rgx), str(rnx3rgx)
 
 
 def _generic_server(stat, date, urlserver, urlsuffix=None):

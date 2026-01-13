@@ -9,7 +9,7 @@ Created on 05/01/2026 19:12:11
 from geodezyx.operational.gins_runner import get_rnx_eost, singugins_run
 from geodezyx import utils
 
-def run_testgins(results_folder=None, rnxs_folder=None):
+def run_testgins(results_folder=None, rnxs_folder=None, no_download_rnxs=False):
     """
     Executes the test GINS workflow by downloading RINEX files and running the GINS process.
 
@@ -27,7 +27,8 @@ def run_testgins(results_folder=None, rnxs_folder=None):
         rnxs_folder = "/root/020_BDRNX/rnxs_testGINS_from_EOST"
 
     # Download or read RINEX files for the specified years
-    get_rnx_eost(rnxs_folder, year_start=2022, year_end=2023)
+    if not no_download_rnxs:
+        get_rnx_eost(rnxs_folder, year_start=None, year_end=None)
 
     # If no results directory is provided, create a timestamped folder
     if not results_folder:
@@ -70,10 +71,21 @@ def main(argv=None):
         ),
     )
 
+    parser.add_argument(
+        "-n",
+        "--no_download_rnxs",
+        action="store_true",
+        help=(
+            "If set, the script will not download RINEX files from EOST server"
+            "and will use existing files in the specified rnxs_folder."
+        ),
+    )
+
     args = parser.parse_args(argv)
     run_testgins(
         results_folder=args.results_folder,
         rnxs_folder=args.rnxs_folder,
+        no_download_rnxs=args.no_download_rnxs,
     )
 
 if __name__ == "__main__":
