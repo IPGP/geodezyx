@@ -116,7 +116,6 @@ def download_rsync(
             "--verbose",
             "--compress",
             "--progress",
-            "--relative",
             "--copy-links",
             "--no-perms",
             "--no-owner",
@@ -137,6 +136,7 @@ def download_rsync(
 
     # Construct the rsync command based on whether file_list is provided
     if file_list is not None:
+        rsync_options.append("--relative")
         # Download specific files from the list
         tmp_rsync_file_lis = f"/tmp/" + utils.get_timestamp() + "_tmp_rsync_file_list.lst"
         utils.write_in_file("\n".join(file_list), tmp_rsync_file_lis)
@@ -150,9 +150,8 @@ def download_rsync(
         tmp_rsync_file_lis = None
         # Download everything from source_path
         rsync_cmd = rsync_base + [f"{remote_source}/*", f"{local_destination}/"]
-        print("AAAAAAAAA", " ".join(rsync_cmd))
 
-    if False:
+    if True:
         log.info("Rsync command: %s", " ".join(rsync_cmd))
 
     # Run the rsync command
