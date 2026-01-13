@@ -7,7 +7,7 @@ Created on 05/01/2026 19:12:11
 """
 
 from geodezyx.operational.gins_runner import get_rnx_eost
-from geodezyx.operational,singugins_run import singugins_run
+from geodezyx.operational.singugins_run import singugins_run
 from geodezyx import utils
 
 def run_testgins(results_folder=None, rnxs_folder=None, no_download_rnxs=False):
