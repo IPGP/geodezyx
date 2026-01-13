@@ -215,7 +215,7 @@ def bdgins_update(
                        "igsR3.atx",
                        "igs20.atx",
                        "igsR3_2107.atx",
-                       "igsR3_2233.atx"]
+                       "igsR3_2233.atx",
                        ]) ## temporary off because updated continuously
     l_fil_cons = [
         "constellation_gps.infos",
