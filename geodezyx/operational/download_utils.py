@@ -14,6 +14,8 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 import ftplib
+import requests
+import tqdm
 
 #### Import the logger
 import logging
@@ -22,6 +24,7 @@ import pathlib
 import shutil
 import time
 import urllib
+import urllib.request
 
 ########## BEGIN IMPORT ##########
 #### External modules
