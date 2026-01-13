@@ -12,17 +12,11 @@ import logging
 import os
 import pathlib
 import re
-import requests
 
 import pandas as pd
 
 import geodezyx.operational.download_utils as dlutils
 from geodezyx import conv
-
-logging.basicConfig(
-    level=logging.DEBUG,                     # Affiche tous les messages
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
 
 log = logging.getLogger("geodezyx")
 
@@ -364,30 +358,6 @@ def nav_bkg_server(stat, date):
 
     return urldic
 
-## Rajout Matthieu
-
-def ucsd_server(stat, date):
-    urlserver = "ftp://garner.ucsd.edu/archive/garner/rinex/"
-    urldic = _generic_server(stat, date, urlserver)
-    return urldic
-
-def ngs_server(stat, date):
-    urlserver = "https://geodesy.noaa.gov/corsdata/rinex/"
-    urldic = _generic_server(stat, date, urlserver)
-    # Rajouter l'url du fichier liste des fichiers présents dans le serveur http format : rinex/year/doy/yyyy.doy.files.list
-
-    url_list_files = os.path.join(urlserver, f"{date.year}/{conv.dt2doy(date)}/{date.year}.{conv.dt2doy(date)}.files.list")
-
-    urldic['list_files'] = url_list_files
-    return urldic
-
-def apref_server(stat,date):
-    urlserver = "sftp://sftp.data.gnss.ga.gov.au/rinex/daily/"
-    urldic = _generic_server(stat, date, urlserver)
-    return urldic
-
-
-
 def renag_server_crtk(stat, date):
     urlserver = "ftp://renag.unice.fr/centipede_30s/"
     urldic = _generic_server(stat, date, urlserver)
@@ -591,11 +561,11 @@ def igs_cddis_nav_server(stat, date):
 
 def _server_select(datacenter, site, curdate):
     mode1hz = False
-    protocol = "ftp"
+    secure_ftp = False
     urldic = dict()
     if datacenter in ("igs_cddis", "igs"):
         urldic = igs_cddis_server(site, curdate)
-        protocol = "secure_ftp"
+        secure_ftp = True
     elif datacenter == "igs_sopac":
         urldic = igs_sopac_server(site, curdate)
     elif datacenter == "igs_ign":
@@ -639,24 +609,11 @@ def _server_select(datacenter, site, curdate):
         urldic = geoaus_server(site, curdate)
     elif datacenter == "ens_fr":
         urldic = ens_fr_server(site, curdate)
-    ## Rajout Matthieu
-
-    elif datacenter == "ucsd":
-        urldic = ucsd_server(site, curdate)
-
-    elif datacenter == "ngs":
-        urldic = ngs_server(site, curdate)
-        protocol = "http"
-    
-    elif datacenter == "apref":
-        urldic = apref_server(site, curdate)
-        protocol = "sftp"
-
     else:
         log.warning("unkwn server dic in the dico, skip ...")
         return None, None, None
 
-    return urldic, protocol, mode1hz
+    return urldic, secure_ftp, mode1hz
 
 def effective_save_dir(parent_archive_dir, stat, date, archtype="stat"):
     """
@@ -716,7 +673,6 @@ def crawl_ftp_files(
     path_ftp_crawled_files_save=None,
     path_all_ftp_files_save=None,
     force=False,
-    n_download=None
 ):
     """
     Crawl FTP servers to find available RINEX files and update download table.
@@ -798,7 +754,6 @@ def crawl_ftp_files(
     >>> crawled_table, all_files, local_files = crawl_ftp_files(table)
     """
 
-
     def _save_crawled_files(table_inp):
         """Save crawled files table to CSV if path is provided."""
         if path_ftp_crawled_files_save:
@@ -818,7 +773,6 @@ def crawl_ftp_files(
         return all_ftp_files_out
 
     table_use = table.copy()
-
 
     # Initialize loop variables
     prev_host = ""  # Track previous host to reuse connections
@@ -867,11 +821,10 @@ def crawl_ftp_files(
             if ftpobj:
                 ftpobj.close()
 
-            # Determine protocol mode: use row value if 'auto', otherwise use parameter
-            protocol = row["protocol"] if sftp == "auto" else sftp
-            print(f"Connecting to {row['host']}")
+            # Determine SFTP mode: use row value if 'auto', otherwise use parameter
+            sftp_use = bool(row["sftp"]) if sftp == "auto" else sftp
             ftpobj, _ = dlutils.ftp_objt_create(
-                protocol=protocol,
+                secure_ftp_inp=sftp_use,
                 host=row["host"],
                 user=user,
                 passwd=passwd,
@@ -892,7 +845,6 @@ def crawl_ftp_files(
             try:
                 ftpobj.cwd(row["dir"])
                 ftp_files_list = dlutils.ftp_dir_list_files(ftpobj)
-                
 
                 # Save all FTP files for reporting with full URLs
                 ftp_files_series = pd.Series(ftp_files_list)
@@ -912,7 +864,6 @@ def crawl_ftp_files(
         # Check if file exists on server using regex pattern
         rnx_return = rnx_regex_indir(row["rnxrgx"], ftp_files_list)
 
-
         # Update table based on file availability
         if rnx_return:
             table_use.loc[irow, "rnxnam"] = rnx_return
@@ -931,32 +882,6 @@ def crawl_ftp_files(
         lambda x: os.path.join("ftp://", x["host"], x["dir"], x["rnxnam"]), axis=1
     )
 
-
-    if n_download is not None:
-
-        # Compter les nombres de jours disponibles 
-
-        n_days_available = table_use.groupby(by=["site"])["date"].nunique()
-
-        # Enlever les lignes pour lequelles rnxnam est vide (non trouvées sur le serveur)
-        table_use = table_use[table_use["rnxnam"] != ""]
-
-
-        # Voir si n_days_available est >= n_download  conserver dans table_use ces stations uniquement et les n_download premier jours (attention il peut y avoir des répétitions de dates si plusieurs fichiers par jour)
-
-        for site, n_days in n_days_available.items():
-            if n_days >= n_download:
-                # obtenir la date des n_download premiers jours
-                days_unique = table_use[table_use["site"]==site]["date"].drop_duplicates().nsmallest(n_download)
-                end_date = days_unique.iloc[-1]
-                print(f"site {site} : keep days until {end_date}")
-                table_use = table_use[~((table_use["site"]==site) & (table_use["date"] > end_date))]
-            else : 
-                print(f"site {site} has only {n_days} days available, remove it from the table")
-                table_use = table_use[~table_use["site"]==site]
-
-    
-        
     # Save final results
     _save_crawled_files(table_use)
     all_ftp_files = _get_and_save_all_ftp_files(all_ftp_files_stk)
@@ -997,11 +922,7 @@ def download_gnss_rinex(
     force=False,
     no_rnx2=False,
     no_rnx3=False,
-    http_download=False,
-    n_download=None
 ):
-    
-
     """
     Parameters
     ----------
@@ -1108,194 +1029,20 @@ def download_gnss_rinex(
         >>> geodezyx.operational.download_gnss_rinex(statdic, output_dir, startdate, enddate)
     """
 
-
-
     date_range = conv.dt_range(startdate, enddate)
 
     log.info("dates: %s to %s", startdate, enddate)
 
-
     if path_ftp_crawled_files_load:
         table = pd.read_csv(path_ftp_crawled_files_load)
-
     else:
         table = gen_crawl_table(
             statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
         )
 
-
     if len(table) == 0:
         log.error("No RINEX files found for the given criteria.")
         return None
-
-
-    if http_download:
-
-        out_tup_list = []
-
-        def dic_rinex_files(base_url):
-            """
-            Liste les fichiers RINEX disponibles sur un serveur HTTP à partir d'une page de type 'directory listing'.
-
-            Parameters
-            ----------
-            base_url : str
-                URL de la page contenant la liste des fichiers (fichier texte ou index HTTP).
-
-            Returns
-            -------
-            dict
-                Dictionnaire {nom_fichier: url_complète}.
-            """
-            # Récupération du contenu
-            response = requests.get(base_url)
-            response.raise_for_status()
-            text = response.text
-
-            file_dict = {}
-
-            # On parcourt chaque ligne et on garde celles contenant un chemin "rinex/"
-            for line in text.splitlines():
-                if "rinex/" in line:
-                    parts = line.split()
-                    if len(parts) >= 1:
-                        path = parts[0].strip()
-                        if path.startswith("rinex/") and not path.endswith("/"):
-                            filename = path.split("/")[-1]
-                            # Filtrage des fichiers inutiles (.S ou autres)
-                            if filename.lower().endswith("s"):
-                                continue
-                            file_url = f"{base_url.rstrip('/')}/{path}"
-                            file_dict[filename] = file_url
-
-            return file_dict
-        
-        # Chercher les fichiers disponibles sur le serveur HTTP connaissant le début de l'URL avec rnxrgx
-
-        def find_rinex_files_on_http_server(table):
-            """
-            Pour chaque ligne de la table, liste les fichiers RINEX disponibles sur le serveur HTTP
-            et cherche ceux correspondant au motif rnxrgx. 
-            Retourne une liste de tuples (outdir, [urls_trouvées]).
-            """
-            results = []
-
-            for _, row in table.iterrows():
-                #1️ Construction de l’URL de base pour la liste des fichiers RINEX
-                base_url = row["url_list_files"]
-
-                #2️ Liste des fichiers disponibles
-                try:
-                    available_files = dic_rinex_files(base_url)
-                except Exception as e:
-                    print(f" Erreur lors de la lecture de {base_url}: {e}")
-                    continue
-
-                # 3️ Extraction du motif de recherche
-                # Exemple : rnxrgx = "ab170250.25.*" → prefix = "ab170250.25"
-                rnx_pattern = str(row["rnxrgx"]).replace("*", "")
-                prefix = rnx_pattern.split(".")[0] if "." in rnx_pattern else rnx_pattern
-
-                # 4️ Recherche des fichiers correspondants (hors .S)
-                matched_urls = [
-                url for fname, url in available_files.items()
-                if fname.lower().startswith(prefix.lower())
-                and not fname.lower().endswith("s")]
-
-                # 5️ Sauvegarde du résultat
-                results.append({
-                    "site": row["site"],
-                    "date": row["date"],
-                    "outdir": row["outdir"],
-                    "rnxrgx": row["rnxrgx"],
-                    "url_list_files": base_url,
-                    "matched_files": matched_urls
-                })
-
-
-            # Convertion en DataFrame pour une meilleure lisibilité
-            results = pd.DataFrame(results)
-
-            # Si matched_files est une liste non vide créer une ligne par url
-
-            if not results.empty:
-                results = results.explode("matched_files").reset_index(drop=True)
-
-            return results
-
-        match_rinex = find_rinex_files_on_http_server(table)
-
-        # Télécharger les fichiers disponibles avec l'url fournit par le file_dict
-
-        for i, row in match_rinex.iterrows():
-
-            if pd.isna(row["matched_files"]):
-                log.warning(f"No RINEX files found for rinex name {row['rnxrgx']} on HTTP server. :(")
-                match_rinex.loc[i,"ok_dwl"] = False  
-                match_rinex.loc[i,"rnxname"] = None
-
-            else:
-                match_rinex.loc[i,"ok_dwl"] = True
-                match_rinex.loc[i,"rnxname"] = row["matched_files"].split("/")[-1]
-                log.info(f"Found RINEX files {row["matched_files"].split("/")[-1]} for rinex name {row['rnxrgx']} on HTTP server. :)")
-
-
-        table_use = match_rinex[match_rinex["ok_dwl"]]
-
-        if n_download is not None:
-            
-            # Compter les nombres de jours disponibles 
-
-            n_days_available = table_use.groupby(by=["site"])["date"].nunique()
-
-
-            # Voir si n_days_available est >= n_download  conserver dans table_use ces stations uniquement et les n_download premier jours (attention il peut y avoir des répétitions de dates si plusieurs fichiers par jour)
-
-            for site, n_days in n_days_available.items():
-                if n_days >= n_download:
-                    # obtenir la date des n_download premiers jours
-                    days_unique = table_use[table_use["site"]==site]["date"].drop_duplicates().nsmallest(n_download)
-                    end_date = days_unique.iloc[-1]
-                    print(f"site {site} : keep days until {end_date}")
-                    table_use = table_use[~((table_use["site"]==site) & (table_use["date"] > end_date))]
-                    
-                else : 
-                    print(f"site {site} has only {n_days} days available, remove it from the table")
-                    table_use = table_use[~(table_use["site"]==site)]
-
-
-        if len(table_use) == 0:
-            log.error(
-                "no valid number of RINEX URL found on the HTTP server, change date"
-            )
-            return []
-        
-        else:
-
-            for i,row in table_use.iterrows():
-
-                outdir = row["outdir"]
-                url = row["matched_files"]
-
-                # Only download if files are available and not in quiet mode
-                if quiet_mode:
-                    log.warning("quiet mode, no download was performed")
-                    out_tup = (os.path.join(outdir,url.split("/")[-1]), False)
-                    
-
-                else:
-                    log.info(f"Downloading from HTTP: {url}")
-                    out_tup = dlutils.download_http(
-                        url,
-                        outdir,
-                        )
-
-            
-                out_tup_list.append(out_tup)
-
-        return out_tup_list
-
-
 
     if skip_crawl:
         table_crawl = table
@@ -1310,7 +1057,6 @@ def download_gnss_rinex(
             path_ftp_crawled_files_save=path_ftp_crawled_files_save,
             path_all_ftp_files_save=path_all_ftp_files_save,
             force=force,
-            n_download=n_download
         )
 
     #### get only the valid (true) url
@@ -1324,29 +1070,18 @@ def download_gnss_rinex(
         log.error(
             "no valid RINEX URL found/selected on the FTP server, check your inputs"
         )
-        return out_tup_lis
-
     elif quiet_mode:
         log.warning("quiet mode, no download was performed")
-        out_tup_lis = [
-            (os.path.join(row["outdir"], row["rnxnam"]), False)
-            for _, row in table_dl.iterrows()
-        ]
-        return(out_tup_lis)
-
-
     else:
         out_tup_lis = dlutils.ftp_downld_front(
             table_dl["url_true"].values,
             table_dl["outdir"].values,
             parallel_download=parallel_download,
-            protocol=table_dl["protocol"].values,
+            secure_ftp=table_dl["sftp"].values,
             user=user,
             passwd=passwd,
             force=force,
         )
-
-    print(f"out_tup_lis: {out_tup_lis}")
 
     ### add the local paths to the output tuples
     if len(files_loc) > 0:
@@ -1395,29 +1130,20 @@ def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
         log.info("datacenter/stations: %s/%s", datacenter, " ".join(site_lis))
 
         for date, site in itertools.product(date_range, site_lis):
-
-            urldic, protocol, _ = _server_select(datacenter, site, date)
-
+            urldic, sftp, _ = _server_select(datacenter, site, date)
             if not urldic:
                 continue
-
-            url_list_files = urldic.get('list_files', None)
 
             outdir = effective_save_dir(output_dir, site, date, archtype)
 
             for rnxver, rnxurl in urldic.items():
                 if (rnxver == 2 and no_rnx2) or (rnxver == 3 and no_rnx3):
                     continue
-                elif (rnxver not in (2, 3)):
-                    # Sûrement list_files pour http serveur
-                    continue
-
-                table_proto.append((date, site, outdir, rnxver, rnxurl, protocol, url_list_files))
-
+                table_proto.append((date, site, outdir, rnxver, rnxurl, sftp))
 
     # Create DataFrame with all collected data
     table = pd.DataFrame(
-        table_proto, columns=["date", "site", "outdir", "ver", "url_theo", "protocol", "url_list_files"]
+        table_proto, columns=["date", "site", "outdir", "ver", "url_theo", "sftp"]
     )
 
     # Add status columns
@@ -1434,4 +1160,3 @@ def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
     table["dir"] = urlpaths.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
     return table
-
