@@ -132,6 +132,8 @@ def spotgins_run(
         updatebd_rapid = False
         director_generik_path_mod = director_generik_path_inp
 
+    print("AAAAAAAAAAAAAAAAAAAAA", updatebd_rapid)
+
     dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use = get_spotgins_files(
         director_generik_path_mod,
         stations_file_inp,
@@ -154,7 +156,8 @@ def spotgins_run(
     ##### Update the database ################
     if not no_updatebd:
         gynsbdu.bdgins_update(
-            date_srt=date_min, date_end=date_max, dir_bdgins="", login=updatebd_login,
+            date_srt=date_min, date_end=date_max,
+            dir_bdgins="", login=updatebd_login,
             rapid=updatebd_rapid,
         )
 
