@@ -15,8 +15,36 @@ import re
 import logging
 log = logging.getLogger("geodezyx")
 
-
 def list_rnx_eost(year_start=None, year_end=None):
+    """
+    Lists the paths of RINEX files available on the EOS Strasbourg server within a specified year range.
+
+    Parameters
+    ----------
+    year_start : int, optional
+        The starting year for filtering RINEX files. If None, no lower bound is applied.
+        Default is None.
+    year_end : int, optional
+        The ending year for filtering RINEX files. If None, no upper bound is applied.
+        Default is None.
+
+    Returns
+    -------
+    list of str
+        A list of URLs pointing to the RINEX files that match the specified year criteria.
+
+    Notes
+    -----
+    - The function fetches directory listings recursively from the server.
+    - Only directories matching the pattern of a 4-digit year are considered.
+    - Logs the number of RINEX files found for each day.
+
+    Examples
+    --------
+    >>> rnx_files = list_rnx_eost(year_start=2020, year_end=2021)
+    >>> len(rnx_files) > 0
+    True
+    """
     url_main = "http://loading.u-strasbg.fr/SPOTGINS/TEST/rinex/"
     cwd, listing = htmllistparse.fetch_listing(url_main, timeout=30)
     rnx_path_lst = []
@@ -46,12 +74,41 @@ def list_rnx_eost(year_start=None, year_end=None):
     return rnx_path_lst
 
 def get_rnx_eost(outdir, year_start=None, year_end=None):
+    """
+    Downloads RINEX files from the EOS Strasbourg server to a local directory.
+
+    Parameters
+    ----------
+    outdir : str
+        The output directory where RINEX files will be saved. Subdirectories
+        will be created following the year/day structure from the server.
+    year_start : int, optional
+        The starting year for filtering RINEX files. If None, no lower bound is applied.
+        Default is None.
+    year_end : int, optional
+        The ending year for filtering RINEX files. If None, no upper bound is applied.
+        Default is None.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    - Creates subdirectories in the output directory matching the year/day structure.
+    - Uses `list_rnx_eost` to retrieve the list of RINEX files.
+    - Downloads files using HTTP protocol via `dlutils.download_http`.
+
+    Examples
+    --------
+    >>> get_rnx_eost("/path/to/output", year_start=2020, year_end=2021)
+    """
     lst_rnx = list_rnx_eost(year_start, year_end)
     for url in lst_rnx:
         day_suffix = "/".join(url.split("/")[-3:-1])
         outdir_day = os.path.join(outdir, day_suffix)
         if not os.path.isdir(outdir_day):
             os.makedirs(outdir_day)
-        out_tup = dlutils.download_http(url, outdir_day)
+        _ = dlutils.download_http(url, outdir_day)
     return None
 
