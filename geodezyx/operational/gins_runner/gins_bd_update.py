@@ -30,17 +30,85 @@ def read_credentials(file_path):
     return login, password
 
 
+# def download_rsync(
+#     file_list,
+#     source_path,
+#     local_destination,
+#     remote_user=None,
+#     remote_host=None,
+#     rsync_options=None,
+#     password=None,
+# ):
+#     """
+#     Downloads a list of files using rsync.
+#     """
+#     if not rsync_options:
+#         rsync_options = [
+#             "--archive",
+#             "--verbose",
+#             "--compress",
+#             "--progress",
+#             "--relative",
+#             "--copy-links",
+#             "--no-perms",
+#             "--no-owner",
+#             "--no-group",
+#             "--omit-dir-times",
+#             #"--keep-dirlinks",
+#         ]  # Default options: archive mode, verbose, and compression
+#
+#     # Construct the remote source path
+#     if remote_user and remote_host:
+#         remote_source = f"{remote_user}@{remote_host}:{source_path}"
+#     else:
+#         remote_source = f"{source_path}"
+#
+#     if password:
+#         rsync_base = ["sshpass", "-p", password, "rsync"] + rsync_options
+#     else:
+#         rsync_base = ["rsync"] + rsync_options
+#
+#     # if exclude_compress:
+#     #   '--ignore-existing' '--exclude-from=<(echo "$(find /destination -name '*.gz' | sed 's/\.gz$//')"')'
+#
+#     tmp_rsync_file_lis = f"/tmp/" + utils.get_timestamp() + "_tmp_rsync_file_list.lst"
+#     utils.write_in_file("\n".join(file_list), tmp_rsync_file_lis)
+#
+#     # Construct the rsync command
+#     # /./ : https://askubuntu.com/questions/552120/preserve-directory-tree-while-copying-with-rsync
+#     rsync_cmd = (
+#         rsync_base
+#         + ["--files-from", tmp_rsync_file_lis]
+#         + [f"{remote_source}/./", f"{local_destination}/"]
+#     )
+#     if False:
+#         log.info("Rsync command: %s", " ".join(rsync_cmd))
+#
+#     # Run the rsync command
+#     process = subprocess.run(rsync_cmd, stderr=sys.stderr, stdout=sys.stdout, text=True)
+#
+#     if process.returncode != 0:
+#         log.error("Rsync failed with return code :( %d", process.returncode)
+#     else:
+#         log.info("Rsync completed successfully :)")
+#
+#     os.remove(tmp_rsync_file_lis)
+#     return
+
+
 def download_rsync(
-    file_list,
-    source_path,
-    local_destination,
+    file_list=None,
+    source_path="",
+    local_destination="",
     remote_user=None,
     remote_host=None,
     rsync_options=None,
     password=None,
 ):
     """
-    Downloads a list of files using rsync.
+    Downloads files using rsync.
+    If file_list is provided, downloads only those files.
+    If file_list is None, downloads all files and subfolders from source_path.
     """
     if not rsync_options:
         rsync_options = [
@@ -54,8 +122,7 @@ def download_rsync(
             "--no-owner",
             "--no-group",
             "--omit-dir-times",
-            #"--keep-dirlinks",
-        ]  # Default options: archive mode, verbose, and compression
+        ]
 
     # Construct the remote source path
     if remote_user and remote_host:
@@ -68,19 +135,22 @@ def download_rsync(
     else:
         rsync_base = ["rsync"] + rsync_options
 
-    # if exclude_compress:
-    #   '--ignore-existing' '--exclude-from=<(echo "$(find /destination -name '*.gz' | sed 's/\.gz$//')"')'
+    # Construct the rsync command based on whether file_list is provided
+    if file_list is not None:
+        # Download specific files from the list
+        tmp_rsync_file_lis = f"/tmp/" + utils.get_timestamp() + "_tmp_rsync_file_list.lst"
+        utils.write_in_file("\n".join(file_list), tmp_rsync_file_lis)
 
-    tmp_rsync_file_lis = f"/tmp/" + utils.get_timestamp() + "_tmp_rsync_file_list.lst"
-    utils.write_in_file("\n".join(file_list), tmp_rsync_file_lis)
+        rsync_cmd = (
+            rsync_base
+            + ["--files-from", tmp_rsync_file_lis]
+            + [f"{remote_source}/./", f"{local_destination}/"]
+        )
+    else:
+        tmp_rsync_file_lis = None
+        # Download everything from source_path
+        rsync_cmd = rsync_base + [f"{remote_source}/", f"{local_destination}/"]
 
-    # Construct the rsync command
-    # /./ : https://askubuntu.com/questions/552120/preserve-directory-tree-while-copying-with-rsync
-    rsync_cmd = (
-        rsync_base
-        + ["--files-from", tmp_rsync_file_lis]
-        + [f"{remote_source}/./", f"{local_destination}/"]
-    )
     if False:
         log.info("Rsync command: %s", " ".join(rsync_cmd))
 
@@ -92,9 +162,11 @@ def download_rsync(
     else:
         log.info("Rsync completed successfully :)")
 
-    os.remove(tmp_rsync_file_lis)
-    return
+    # Clean up temp file if it was created
+    if file_list is not None:
+        os.remove(tmp_rsync_file_lis)
 
+    return
 
 def bdgins_update(
     date_srt=dt.datetime(2000, 5, 3),
@@ -208,15 +280,18 @@ def bdgins_update(
     ###### LIST FILL
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
-    list_antex.extend(["igs20.atx",
-                       "igs05.atx",
-                       "igsR3_2077.atx",
-                       "igsR3_2194.atx",
-                       "igsR3.atx",
-                       "igs20.atx",
-                       "igsR3_2107.atx",
-                       "igsR3_2233.atx",
-                       ]) ## temporary off because updated continuously
+    # list_antex.extend(["igs20.atx",
+    #                    "igs05.atx",
+    #                    "igsR3_2077.atx",
+    #                    "igsR3_2194.atx",
+    #                    "igsR3.atx",
+    #                    "igs20.atx",
+    #                    "igsR3_2107.atx",
+    #                    "igsR3_2233.atx",
+    #                    ]) ## temporary off because updated continuously
+
+    list_antex = None
+
     l_fil_cons = [
         "constellation_gps.infos",
         "histocom.infos",
@@ -230,17 +305,17 @@ def bdgins_update(
     list_macromod.extend(["gnss.xml"])
     list_maree_polaire.extend(["nominal"])
     list_pole.extend(["nominal_NRO", "liste_sauts_tucs_1s.dat"])
-    #list_prairie.extend(["igs_satellite_metadata.snx"])
+    # list_prairie.extend(["igs_satellite_metadata.snx"])
 
     ### misc files: the needed files are considered individually
     # some of them are a redundancy since they must be downloaded in the full folders
-    #list_misc.extend([f"pole/nominal_NRO"])
-    #list_misc.extend([f"ANTEX/igs20.atx"])
-    #list_misc.extend([f"EXE_PPP/valap_static"])
+    # list_misc.extend([f"pole/nominal_NRO"])
+    # list_misc.extend([f"ANTEX/igs20.atx"])
+    # list_misc.extend([f"EXE_PPP/valap_static"])
     # list_misc.extend([f"macromod/gnss.xml"])
     # list_misc.extend([f"lunisolaires/de440bdlf.ad"])
-    #list_misc.extend([f"maree_polaire/loading/nominal"])
-    #list_misc.extend(["constell/" + f for f in l_fil_cons])
+    # list_misc.extend([f"maree_polaire/loading/nominal"])
+    # list_misc.extend(["constell/" + f for f in l_fil_cons])
     list_misc.extend([f"prairie/igs_satellite_metadata.snx"])
 
     # here is an hybrid tropo/misc file
@@ -251,7 +326,6 @@ def bdgins_update(
         extra_days = dt.timedelta(days=0)
     else:
         extra_days = dt.timedelta(days=2)  # 2 days later is need for cat orb/clk
-
 
     while date <= date_end + extra_days:
         day = str(date.day).zfill(2)
