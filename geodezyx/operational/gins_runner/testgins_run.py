@@ -46,7 +46,7 @@ def run_testgins(results_folder=None, rnxs_folder=None, no_download_rnxs=False):
 
     >>> run_testgins(no_download_rnxs=True, rnxs_folder="/existing/rnxs")
     """
-    
+
     # If no directory for RINEX files is provided, use the default path
     if not rnxs_folder:
         rnxs_folder = "/root/020_BDRNX/rnxs_testGINS_from_EOST"
