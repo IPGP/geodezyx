@@ -208,7 +208,15 @@ def bdgins_update(
     ###### LIST FILL
     ### full folders
     # (folder's path is added in the rsync command, with subdir destination variable
-    list_antex.extend(["igs20.atx"]) ## temporary off because updated continuously
+    list_antex.extend(["igs20.atx",
+                       "igs05.atx",
+                       "igsR3_2077.atx",
+                       "igsR3_2194.atx",
+                       "igsR3.atx",
+                       "igs20.atx",
+                       "igsR3_2107.atx",
+                       "igsR3_2233.atx"]
+                       ]) ## temporary off because updated continuously
     l_fil_cons = [
         "constellation_gps.infos",
         "histocom.infos",
