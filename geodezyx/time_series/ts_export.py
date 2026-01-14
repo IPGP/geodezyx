@@ -385,8 +385,8 @@ def export_ts_as_pbo_pos(tsin, outdir, outprefix='' ,
 
     Returns
     -------
-    None
-        The function writes the output file to the specified directory and does not return any value.
+    outfile_path : str
+        Path to the exported PBO file
     """
 
     # force option
@@ -545,10 +545,10 @@ def export_ts_as_pbo_pos(tsin, outdir, outprefix='' ,
     
     f_pos.close()
     
-    return
+    return outpath
 
 
-def export_ts_as_spotgins(tsin, outdir, ac, data_src="unknown", version=2):
+def export_ts_as_spotgins(tsin, outdir, ac, data_src="unknown", version=3):
     """
     Export time series to SPOTGINS format.
 
@@ -675,7 +675,7 @@ def export_ts_as_spotgins(tsin, outdir, ac, data_src="unknown", version=2):
 
             for ir, r in df.iterrows():
                 t = r["Tdt"]
-                mjd = conv.dt2mjd(t) # Convert to MJD (Modified Julian Date)
+                mjd = np.round(conv.dt2mjd(t), 7) # Convert to MJD (Modified Julian Date)
 
                 outstr = fmtstr3.format(
                     mjd,
