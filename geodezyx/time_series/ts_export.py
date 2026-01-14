@@ -675,7 +675,7 @@ def export_ts_as_spotgins(tsin, outdir, ac, data_src="unknown", version=2):
 
             for ir, r in df.iterrows():
                 t = r["Tdt"]
-                mjd = conv.dt2mjd(t) + 33282.5  # Convert to MJD (Modified Julian Date)
+                mjd = conv.dt2mjd(t) # Convert to MJD (Modified Julian Date)
 
                 outstr = fmtstr3.format(
                     mjd,
