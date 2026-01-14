@@ -73,7 +73,7 @@ def list_rnx_eost(year_start=None, year_end=None, excl_rnx2_post2022=True):
             day = subitem.name.strip("/")
             cwd, listing = htmllistparse.fetch_listing(url_day, timeout=30)
             for file in listing:
-                isrnx2 = conv.rinex_regex_search_tester(file.name, short_name=True)
+                isrnx2 = conv.rinex_regex_search_tester(file.name, short_name=True, long_name=False)
                 if excl_rnx2_post2022 and year >= 2022 and isrnx2:
                     log.info(f"Exclude RNX2 {file.name} (>= 2022, RNX3 is available).")
                     continue
