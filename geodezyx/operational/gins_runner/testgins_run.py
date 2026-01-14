@@ -9,8 +9,11 @@ Created on 05/01/2026 19:12:11
 from geodezyx.operational.gins_runner import get_rnx_eost
 from geodezyx.operational.gins_runner.singugins_run import singugins_run
 from geodezyx import utils
+import datetime as dt
 
-def run_testgins(results_folder=None, rnxs_folder=None, download_rnxs=True, gins_run=True):
+def run_testgins(results_folder=None, rnxs_folder=None,
+                 year_start=None, year_end=None,
+                 download_rnxs=True, gins_run=True):
     """
     Executes the test GINS workflow by downloading RINEX files and running the GINS process.
 
@@ -23,6 +26,12 @@ def run_testgins(results_folder=None, rnxs_folder=None, download_rnxs=True, gins
     rnxs_folder : str, optional
         Path to the directory where input RINEX files will be downloaded or read.
         If None, defaults to '/root/020_BDRNX/rnxs_testGINS_from_EOST'.
+        Default is None.
+    year_start : int, optional
+        The starting year for downloading RINEX files. If None, no lower bound is applied
+        Default is None.
+    year_end : int, optional
+        The ending year for downloading RINEX files. If None, no upper bound is applied
         Default is None.
     download_rnxs : bool, optional
         If True, the script will not download RINEX files from EOST server
@@ -56,7 +65,7 @@ def run_testgins(results_folder=None, rnxs_folder=None, download_rnxs=True, gins
 
     # Download or read RINEX files for the specified years
     if download_rnxs:
-        get_rnx_eost(rnxs_folder, year_start=None, year_end=None)
+        get_rnx_eost(rnxs_folder, year_start=year_start, year_end=year_end)
 
     # If no results directory is provided, create a timestamped folder
     if not results_folder:
@@ -65,10 +74,16 @@ def run_testgins(results_folder=None, rnxs_folder=None, download_rnxs=True, gins
 
     # Run the GINS process with the specified directories
     if gins_run:
+
+        year_start_use = year_start if year_start is not None else 2000
+        year_end_use = year_end if year_end is not None else 2099
+
         singugins_run(
             results_folder=results_folder,
             bdrnx_folder=rnxs_folder,
-            quick_mode=False
+            quick_mode=False,
+            start_epoch=dt.datetime(year_start_use, 1, 1),
+            end_epoch=dt.datetime(year_end_use, 12, 31),
         )
 
     # The function does not return any value
@@ -102,6 +117,26 @@ def main(argv=None):
     )
 
     parser.add_argument(
+        "-ys",
+        "--year_start",
+        type=int,
+        default=None,
+        help=(
+            "Starting year for downloading RINEX files. If omitted, no lower bound is applied. (optional)"
+        ),
+    )
+
+    parser.add_argument(
+        "-ye",
+        "--year_end",
+        type=int,
+        default=None,
+        help=(
+            "Ending year for downloading RINEX files. If omitted, no upper bound is applied. (optional)"
+        ),
+    )
+
+    parser.add_argument(
         "-nd",
         "--no_download_rnxs",
         action="store_true",
@@ -124,6 +159,8 @@ def main(argv=None):
     run_testgins(
         results_folder=args.results_folder,
         rnxs_folder=args.rnxs_folder,
+        year_start=args.year_start,
+        year_end=args.year_end,
         download_rnxs=not args.no_download_rnxs,
         gins_run=not args.no_gins_run,
     )

@@ -30,6 +30,9 @@ def list_rnx_eost(year_start=None, year_end=None, excl_rnx2_post2022=True):
     year_end : int, optional
         The ending year for filtering RINEX files. If None, no upper bound is applied.
         Default is None.
+    excl_rnx2_post2022 : bool, optional
+        If True, excludes RINEX version 2 files for years 2022 and later
+        (as RINEX version 3 is available). Default is True.
 
     Returns
     -------
