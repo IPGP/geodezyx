@@ -216,10 +216,13 @@ def gen_dirs_rnxs(
         # check if the RINEX is compressed ... if not crz2rnx !
         if operational.check_if_compressed_rinex(rnx_path):
             crinex_path = rnx_path
-            #rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use, verbose=verbose)
-            rnx_path = operational.uncomp_rnxpath(crinex_path, tmp_fld_use)
-            rnx_content = hatanaka.decompress(crinex_path)
-            utils.write_in_file(rnx_content, rnx_path)
+            crz2rnx_classic = True
+            if crz2rnx_classic:
+                rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use, verbose=verbose)
+            else: # with Valgur's hatanaka
+                rnx_path = operational.uncomp_rnxpath(crinex_path, tmp_fld_use)
+                rnx_content = hatanaka.decompress(crinex_path)
+                utils.write_in_file(rnx_content, rnx_path)
             if not os.path.isfile(rnx_path):
                 bool_cntu = _fail_rnx(rnx_path, rnx_dt, "CRZ2RNX failed")
                 if bool_cntu:
