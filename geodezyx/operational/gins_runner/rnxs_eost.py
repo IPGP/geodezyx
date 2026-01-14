@@ -9,13 +9,16 @@ Created on 05/01/2026 19:09:20
 import os
 import htmllistparse
 import geodezyx.operational.download_utils as dlutils
+import geodezyx.conv as conv
 import re
 
 #### Import the logger
 import logging
+
 log = logging.getLogger("geodezyx")
 
-def list_rnx_eost(year_start=None, year_end=None):
+
+def list_rnx_eost(year_start=None, year_end=None, excl_rnx2_post2022=True):
     """
     Lists the paths of RINEX files available on the EOS Strasbourg server within a specified year range.
 
@@ -49,9 +52,9 @@ def list_rnx_eost(year_start=None, year_end=None):
     cwd, listing = htmllistparse.fetch_listing(url_main, timeout=30)
     rnx_path_lst = []
     for item in listing:
-        url_year = os.path.join(url_main,item.name)
-        year = item.name.strip('/')
-        if not re.match(r'^\d{4}/$', item.name):
+        url_year = os.path.join(url_main, item.name)
+        year = item.name.strip("/")
+        if not re.match(r"^\d{4}/$", item.name):
             continue
         else:
             year = int(year)
@@ -63,15 +66,20 @@ def list_rnx_eost(year_start=None, year_end=None):
                 continue
         cwd, listing = htmllistparse.fetch_listing(url_year, timeout=30)
         for subitem in listing:
-            url_day = os.path.join(url_year,subitem.name)
-            day = subitem.name.strip('/')
+            url_day = os.path.join(url_year, subitem.name)
+            day = subitem.name.strip("/")
             cwd, listing = htmllistparse.fetch_listing(url_day, timeout=30)
             for file in listing:
-                rnx_path = os.path.join(url_day,file.name)
+                isrnx2 = conv.rinex_regex_search_tester(file.name, short_name=True)
+                if excl_rnx2_post2022 and year >= 2022 and isrnx2:
+                    log.info(f"Exclude RNX2 {file.name} (>= 2022, RNX3 is available).")
+                    continue
+                rnx_path = os.path.join(url_day, file.name)
                 rnx_path_lst.append(rnx_path)
             log.info(f"{len(listing)} RINEXs found for day {year}-{day}")
 
     return rnx_path_lst
+
 
 def get_rnx_eost(outdir, year_start=None, year_end=None):
     """
@@ -111,4 +119,3 @@ def get_rnx_eost(outdir, year_start=None, year_end=None):
             os.makedirs(outdir_day)
         _ = dlutils.download_http(url, outdir_day)
     return None
-

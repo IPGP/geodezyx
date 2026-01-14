@@ -633,7 +633,7 @@ def export_ts_as_spotgins(tsin, outdir, ac, data_src="unknown", version=3):
     elif version == 3:
         # Extract correlation coefficients from point data
         prairieverslis = [p.anex.get('prairie_version', 'NA') for p in tsin.pts]
-        qflaglis = [p.anex.get('quality_flag', 'NA') for p in tsin.pts]
+        qflaglis = [p.anex.get('quality_flag', '0') for p in tsin.pts]
 
         # Calculate correlation coefficients (placeholder - adjust based on actual data structure)
         corr_en = [p.anex.get('sdEN', 0.0) for p in tsin.pts]
