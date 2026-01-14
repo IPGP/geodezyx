@@ -10,7 +10,7 @@ from geodezyx.operational.gins_runner import get_rnx_eost
 from geodezyx.operational.gins_runner.singugins_run import singugins_run
 from geodezyx import utils
 
-def run_testgins(results_folder=None, rnxs_folder=None, no_download_rnxs=False):
+def run_testgins(results_folder=None, rnxs_folder=None, download_rnxs=True, gins_run=True):
     """
     Executes the test GINS workflow by downloading RINEX files and running the GINS process.
 
@@ -24,10 +24,13 @@ def run_testgins(results_folder=None, rnxs_folder=None, no_download_rnxs=False):
         Path to the directory where input RINEX files will be downloaded or read.
         If None, defaults to '/root/020_BDRNX/rnxs_testGINS_from_EOST'.
         Default is None.
-    no_download_rnxs : bool, optional
+    download_rnxs : bool, optional
         If True, the script will not download RINEX files from EOST server
         and will use existing files in the specified rnxs_folder.
-        Default is False.
+        Default is True.
+    gins_run : bool, optional
+        If True, the GINS processing workflow will be executed.
+        Default is True.
 
     Returns
     -------
@@ -52,7 +55,7 @@ def run_testgins(results_folder=None, rnxs_folder=None, no_download_rnxs=False):
         rnxs_folder = "/root/020_BDRNX/rnxs_testGINS_from_EOST"
 
     # Download or read RINEX files for the specified years
-    if not no_download_rnxs:
+    if download_rnxs:
         get_rnx_eost(rnxs_folder, year_start=None, year_end=None)
 
     # If no results directory is provided, create a timestamped folder
@@ -61,11 +64,12 @@ def run_testgins(results_folder=None, rnxs_folder=None, no_download_rnxs=False):
         results_folder = "/root/030_RESULTS/testGINS_" + timstp
 
     # Run the GINS process with the specified directories
-    singugins_run(
-        results_folder=results_folder,
-        bdrnx_folder=rnxs_folder,
-        quick_mode=False
-    )
+    if gins_run:
+        singugins_run(
+            results_folder=results_folder,
+            bdrnx_folder=rnxs_folder,
+            quick_mode=False
+        )
 
     # The function does not return any value
     return None
@@ -98,7 +102,7 @@ def main(argv=None):
     )
 
     parser.add_argument(
-        "-n",
+        "-nd",
         "--no_download_rnxs",
         action="store_true",
         help=(
@@ -107,11 +111,21 @@ def main(argv=None):
         ),
     )
 
+    parser.add_argument(
+        "-ng",
+        "--no_gins_run",
+        action="store_true",
+        help=(
+            "If set, the GINS processing workflow will not be executed."
+        ),
+    )
+
     args = parser.parse_args(argv)
     run_testgins(
         results_folder=args.results_folder,
         rnxs_folder=args.rnxs_folder,
-        no_download_rnxs=args.no_download_rnxs,
+        download_rnxs=not args.no_download_rnxs,
+        gins_run=not args.no_gins_run,
     )
 
 if __name__ == "__main__":
