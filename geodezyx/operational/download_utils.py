@@ -238,7 +238,7 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
     """
 
     # Get file size
-    log.info("RINEX: {}", url)
+    log.info("RINEX: %s", url)
     response = requests.head(url, timeout=timeout)
     file_size = int(response.headers.get("content-length", 0))
 
