@@ -1882,6 +1882,8 @@ def rinexname2dt(rinexpath):
         log.error("RINEX name is not well formated: %s", rinexname)
         return None
 
+
+
 @vector_string_conv
 def sp3name2dt(sp3path):
     """
