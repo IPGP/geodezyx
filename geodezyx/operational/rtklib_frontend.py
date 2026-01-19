@@ -26,6 +26,7 @@ import logging
 import os
 import subprocess
 import numpy as np
+import shutil as shutils
 
 #### geodeZYX modules
 from geodezyx import files_rw
@@ -58,12 +59,34 @@ def read_conf_file(filein):
         outdic[key.strip()] = val.strip()
     return outdic
 
+def write_conf_file(dicoconf, fpath_out):
+    f = open(fpath_out, "w+")
+    for k, v in dicoconf.items():
+        lin = k.ljust(20) + "=" + str(v) + "\n"
+        f.write(lin)
+    f.close()
+
+
+def prods2tmp(fpath_inp, dir_out):
+    """
+    Decompresses a file into the temporary directory if compressed,
+    or copies it to the temporary directory if not already there.
+    """
+    if fpath_inp.endswith((".gz", ".Z")):
+        # Decompress into dir_out
+        fpath_out = files_rw.unzip_gz_z(fpath_inp, out_gzip_dir=dir_out)
+    else:
+        # Copy to dir_out if not already there
+        fpath_out = os.path.join(dir_out, os.path.basename(fpath_inp))
+        if not os.path.exists(fpath_out):
+            shutils.copy2(fpath_inp, fpath_out)
+    return fpath_out
 
 def rtklib_run_from_rinex(
     rnx_rover,
     rnx_base,
     generik_conf,
-    working_dir,
+    out_dir,
     experience_prefix="",
     rover_auto_conf=False,
     base_auto_conf=True,
@@ -72,6 +95,9 @@ def rtklib_run_from_rinex(
     outtype="auto",
     calc_center="IGS0OPSFIN",
     force=False,
+    tmp_dir=None,
+    prod_dir=None,
+    clean_tmp=False,
     exe_path = '/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'
 ):
     r"""
@@ -80,16 +106,16 @@ def rtklib_run_from_rinex(
     headers and downloading required GNSS products (SP3 precise orbits and BRDC nav).
 
     The function:
-    \- creates a working directory structure (notably \`OUTPUT\` and \`TEMP\`)
+    \- creates output and temporary directory structure
     \- uncompresses compressed RINEX inputs if needed
     \- reads start/end times and sampling interval from the rover/base RINEX
     \- builds a run\-specific RTKLIB config file from \`generik_conf\`
     \- optionally fills rover/base antenna positions and eccentricities from RINEX headers
-    \- downloads required products into \`TEMP\`:
+    \- downloads required products into \`prod_dir\`:
       \- SP3 precise orbit from \`calc_center\`
       \- BRDC navigation RINEX
     \- calls the external executable \`rnx2rtkp\` with assembled arguments
-    \- writes outputs to the \`OUTPUT\` directory
+    \- writes outputs to the \`out_dir\` directory
 
     Parameters
     ----------
@@ -101,9 +127,8 @@ def rtklib_run_from_rinex(
     generik_conf : str | os.PathLike
         Path to a generic RTKLIB configuration file (key=value format). This file is
         parsed by \`read_conf_file\` and then overridden according to function options.
-    working_dir : str | os.PathLike
-        Directory used for temporary files and outputs. Subdirectories created:
-        \`TEMP\` for downloads/uncompressed files and \`OUTPUT\` for results.
+    out_dir : str | os.PathLike
+        Directory where results are saved. This parameter is mandatory.
     experience_prefix : str, default=""
         Prefix added to the output file stem used to name the generated \`.conf\`
         and \`.out\` files.
@@ -114,6 +139,10 @@ def rtklib_run_from_rinex(
     base_auto_conf : bool, default=True
         If True, reads base RINEX header and injects base antenna type, XYZ position,
         and antenna eccentricities into the produced config (keys \`ant2\-\*\`).
+    xyz_rover : list[float], default=[0, 0, 0]
+        Rover station ECEF XYZ coordinates in meters \([X, Y, Z]\). If \`xyz_rover[0] != 0\`,
+        these coordinates override the rover RINEX header coordinates; otherwise the rover
+        header coordinates are used.
     xyz_base : list[float], default=[0, 0, 0]
         Base station ECEF XYZ coordinates in meters \([X, Y, Z]\). If \`xyz_base[0] != 0\`,
         these coordinates override the base RINEX header coordinates; otherwise the base
@@ -128,6 +157,17 @@ def rtklib_run_from_rinex(
         Analysis center/product identifier used when downloading GNSS precise products
         via \`geodezyx.operational.download_gnss_products\`. Must match what that
         downloader expects.
+    force : bool, default=False
+        If True, forces reprocessing even if output file already exists.
+    tmp_dir : str | os.PathLike | None, default=None
+        Temporary directory for intermediate files. Optional. If not provided,
+        defaults to \`out_dir/TMP\`.
+    prod_dir : str | os.PathLike | None, default=None
+        Directory where to search for orbits, clocks, and BRDC files. Optional.
+        If not provided, defaults to \`tmp_dir\`.
+    clean_tmp : bool, default=False
+        If True, deletes all contents of \`tmp_dir\` at the beginning of the
+        function execution.
     exe_path : str, default=...
         Filesystem path to the RTKLIB \`rnx2rtkp\` executable.
 
@@ -143,34 +183,36 @@ def rtklib_run_from_rinex(
 
     Notes
     -----
-    \- The generated config file is written to \`working_dir/OUTPUT\` and named using:
+    \- The generated config file is written to \`out_dir\` and named using:
       \`<experience_prefix>\_<rover4>\_<base4>\_<YYYY\_DOY>.conf\`.
     \- The RTKLIB command is executed via \`subprocess.call(..., shell=True)\` using
       \`/bin/bash\`, with a single concatenated command string.
     \- A warning is emitted if the base RINEX time span does not fully cover the rover span.
     """
-    import shutil
-    # \(... implementation continues ...\)
-    import shutil
+    # Directory structure setup
+    # out_dir: mandatory, where results are saved
+    out_dir = utils.create_dir(out_dir)
 
-    # paths & files
-    working_dir = utils.create_dir(working_dir)
-    out_dir = utils.create_dir(os.path.join(working_dir, "OUTPUT"))
+    # tmp_dir: optional, defaults to out_dir/TMP if not provided
+    if tmp_dir is None:
+        tmp_dir = os.path.join(out_dir, 'TMP')
+    tmp_dir = utils.create_dir(tmp_dir)
 
-    # paths & files
-    temp_dir = os.path.join(working_dir,'TEMP')
-    utils.create_dir(temp_dir)
-    clean_temp_dir = False
-    if clean_temp_dir:
-        shutil.rmtree(temp_dir)
-        temp_dir = os.path.join(working_dir,'TEMP')
-    out_dir  = os.path.join(working_dir,'OUTPUT')
+    if clean_tmp:
+        shutils.rmtree(tmp_dir + "/*")
+
+    # prod_dir: optional, defaults to tmp_dir if not provided
+    # This is where we search for orbits/clocks/BRDC files
+    if prod_dir is None:
+        prod_dir = tmp_dir
+    else:
+        prod_dir = utils.create_dir(prod_dir)
 
     # uncompressing rinex if compressed
     if operational.check_if_compressed_rinex(rnx_rover):
-        rnx_rover = operational.crz2rnx(rnx_rover, temp_dir)
+        rnx_rover = operational.crz2rnx(rnx_rover, tmp_dir)
     if operational.check_if_compressed_rinex(rnx_base):
-        rnx_base = operational.crz2rnx(rnx_base, temp_dir)
+        rnx_base = operational.crz2rnx(rnx_base, tmp_dir)
 
     # RINEX START & END
     rov_srt, rov_end, rov_itv = operational.rinex_start_end(rnx_rover, 1)
@@ -215,21 +257,18 @@ def rtklib_run_from_rinex(
         dicoconf[f"ant{n}-antdeln"] = antobj.North_Ecc
         dicoconf[f"ant{n}-antdele"] = antobj.East_Ecc
 
+    # Edit conf file dic
     _edit_dicoconf(rnx_rover, xyz_rover, ant_n=1)
     _edit_dicoconf(rnx_base, xyz_base, ant_n=2)
 
     if not (bas_srt <= rov_srt <= rov_end <= bas_end):
         log.warning("rover/base epoch inconsistency: not bas_srt <= rov_srt <= rov_end <= bas_end !!!")
 
-    outconffilobj = open(out_conf_fil, "w+")
-    for k, v in dicoconf.items():
-        lin = k.ljust(20) + "=" + str(v) + "\n"
-        outconffilobj.write(lin)
-    outconffilobj.close()
+    # write conf file
+    write_conf_file(dicoconf, out_conf_fil)
 
     ##### ORBITS
-    unzip = lambda o: files_rw.unzip_gz_z(o) if o.endswith(".gz") or o.endswith(".Z") else o
-
+    # Function to decompress files into tmp_dir
     ## SP3
     if "FIN" in calc_center or "RAP" in calc_center:
         orb_srt = conv.round_dt(bas_srt,"1D", mode="floor")
@@ -242,11 +281,12 @@ def rtklib_run_from_rinex(
         orb_end = bas_end
 
     orblis = operational.download_gnss_products(
-        archive_dir=temp_dir,
+        archive_dir=prod_dir,
         startdate=orb_srt,
         enddate=orb_end,
         archtype="/",
-        AC_names=(calc_center , )
+        AC_names=(calc_center , ),
+        archive_center="ign"
     )
 
     if not orblis or not orblis[0]:
@@ -254,7 +294,7 @@ def rtklib_run_from_rinex(
         log.error(f"Is analysis center/latency correct?: {calc_center}")
         raise FileNotFoundError("No SP3 orbit file found remotely nor locally")
     else:
-        sp3lis = [unzip(orb) for orb in orblis]
+        sp3lis = [prods2tmp(orb,tmp_dir) for orb in orblis]
 
 
     ### BRDC
@@ -263,7 +303,7 @@ def rtklib_run_from_rinex(
     nav_srt = conv.round_dt(bas_srt, "1D", mode="floor")
     nav_end = conv.round_dt(bas_end, "1D", mode="floor")
     brdclis = operational.download_gnss_rinex(
-        statdic, temp_dir, nav_srt, nav_end, archtype="/"
+        statdic, prod_dir, nav_srt, nav_end, archtype="year/doy"
     )
 
     brdc_path_lis , brdc_bool_lis = zip(*brdclis)
@@ -271,7 +311,7 @@ def rtklib_run_from_rinex(
         log.error("No BRDC nav file found remotely nor locally")
         raise FileNotFoundError("No BRDC nav file found remotely nor locally")
     else:
-        navlis = [unzip(n) for n,b in brdclis if b]
+        navlis = [prods2tmp(n,tmp_dir) for n,b in brdclis if b]
 
     # Command
     arg_config = "-k " + out_conf_fil
