@@ -943,15 +943,15 @@ def dt2doy_year(dtin, outputtype=str):
     Returns
     -------
     tuple or iterable of tuples
-        (Year, Day of Year). If input is iterable, returns same type.
+        (Day of Year, Year). If input is iterable, returns same type.
     """
     year = dtin.year
     doy = dtin.timetuple().tm_yday
 
     if outputtype == str:
-        return str(year), str(doy).zfill(3)
+        return str(doy).zfill(3), str(year)
     else:
-        return outputtype(year), outputtype(doy)
+        return outputtype(doy), outputtype(year)
 
 
 @vector_datetime_conv
