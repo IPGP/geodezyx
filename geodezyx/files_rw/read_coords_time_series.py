@@ -125,50 +125,169 @@ def read_rtklib(filein):
     initype = "FLH"
     d_utcgps = 0
 
-    for line in open(filein):
+    # PASS 1: Parse header to extract metadata (initype, d_utcgps)
+    # This is necessary because these affect how we interpret the data
+    re_e_baseline = re.compile('e-baseline')
+    re_x_ecef = re.compile('x-ecef')
+    re_utc = re.compile('%  UTC')
+    re_gpst = re.compile('%  GPST')
 
-        if re.compile('e-baseline').search(line):
-            initype = 'ENU'
-        elif re.compile('x-ecef').search(line):
-            initype = 'XYZ'
-        elif 'latitude(deg)' in line:
-            initype = 'FLH'
-        if re.compile('%  UTC').search(line):
-            d_utcgps = 16
-            log.warning('HARDCODED (MAYBE?) WRONG LEAP SECOND!!!!')
-        elif re.compile('%  GPST').search(line):
-            d_utcgps = 0
+    with open(filein) as f:
+        for line in f:
+            if line[0] != '%':
+                # Stop at first data line
+                break
 
-        if line[0] == '%':
-            continue
+            # Check header patterns to determine coordinate type
+            if re_e_baseline.search(line):
+                initype = 'ENU'
+            elif re_x_ecef.search(line):
+                initype = 'XYZ'
+            elif 'latitude(deg)' in line:
+                initype = 'FLH'
 
-        fields = line.split()
-        date1 = re.findall(r"[\w']+", fields[0] + ':' + fields[1])
-        date2 = tuple([int(d) for d in date1[:-1]] + [int(date1[-1][:6])])
+            if re_utc.search(line):
+                d_utcgps = 16
+                log.warning('HARDCODED (MAYBE?) WRONG LEAP SECOND!!!!')
+            elif re_gpst.search(line):
+                d_utcgps = 0
 
-        t = (dt.datetime(date2[0], date2[1], date2[2],
-                         date2[3], date2[4], date2[5],
-                         date2[6]) + dt.timedelta(seconds=d_utcgps))
-        a = (float(fields[2]))
-        b = (float(fields[3]))
-        c = (float(fields[4]))
-        if initype == 'XYZ':
-            s_a = (float(fields[7]))
-            s_b = (float(fields[8]))
-            s_c = (float(fields[9]))
-        elif initype == 'FLH':
-            s_a = (float(fields[7]))
-            s_b = (float(fields[8]))
-            s_c = (float(fields[9]))
-            s_a, s_b, s_c = conv.sigma_enu2geo(a, b, c, s_a, s_b, s_c)
+    # PASS 2: Use numpy for fast bulk data loading
+    # Read numeric data columns, skipping comment lines
+    try:
+        # Use numpy.loadtxt for fast reading (faster than pandas for pure numeric data)
+        # dtype=str to handle date/time columns, then convert manually
+        data = np.genfromtxt(filein,
+                            comments='%',
+                            dtype=str,
+                            encoding=None)
 
-        point = time_series.Point(a, b, c, t, initype, s_a, s_b, s_c)
-        point.anex['sdAB'] = float(fields[10])
-        point.anex['sdBC'] = float(fields[11])
-        point.anex['sdAC'] = float(fields[12])
-        point.anex["Q"] =  float(fields[5])
+        # Pre-compile regex for date parsing
+        re_date = re.compile(r"[\w']+")
 
-        tsout.add_point(point)
+        # Process each row - using regular iteration is faster than iterrows()
+        for row in data:
+            # Parse date/time from first two columns
+            date_str = row[0] + ':' + row[1]
+            date1 = re_date.findall(date_str)
+            date_parts = [int(d) for d in date1[:-1]]
+            date_parts.append(int(date1[-1][:6]))
+
+            t = dt.datetime(date_parts[0], date_parts[1], date_parts[2],
+                           date_parts[3], date_parts[4], date_parts[5],
+                           date_parts[6]) + dt.timedelta(seconds=d_utcgps)
+
+            # Parse coordinates (columns 2, 3, 4)
+            a = float(row[2])
+            b = float(row[3])
+            c = float(row[4])
+
+            # Parse standard deviations (columns 7, 8, 9)
+            s_a = float(row[7])
+            s_b = float(row[8])
+            s_c = float(row[9])
+
+            if initype == 'FLH':
+                s_a, s_b, s_c = conv.sigma_enu2geo(a, b, c, s_a, s_b, s_c)
+
+            point = time_series.Point(a, b, c, t, initype, s_a, s_b, s_c)
+            point.anex['sdAB'] = float(row[10])
+            point.anex['sdBC'] = float(row[11])
+            point.anex['sdAC'] = float(row[12])
+            point.anex["Q"] = float(row[5])
+
+            tsout.add_point(point)
+
+    except Exception as e:
+        log.error(f"Error reading RTKLIB file with numpy: {e}")
+        log.info("Falling back to line-by-line parsing")
+        # Fallback to original method if numpy fails
+        return _read_rtklib_legacy(filein)
+
+    tsout.meta_set(filein)
+
+    if initype == 'ENU':
+        tsout.boolENU = True
+
+    try:
+        inpfilis = utils.grep(filein, 'inp file')
+        tsout.anex['rover'] = os.path.basename(inpfilis[0].split()[-1])[0:4].upper()
+        tsout.anex['base'] = os.path.basename(inpfilis[1].split()[-1])[0:4].upper()
+    except:
+        pass
+
+    return tsout
+
+
+def _read_rtklib_legacy(filein):
+    """
+    Legacy line-by-line implementation of read_rtklib.
+    Used as fallback if pandas parsing fails.
+    """
+    tsout = time_series.TimeSeriePoint()
+
+    initype = "FLH"
+    d_utcgps = 0
+
+    # Precompile regex patterns outside the loop for better performance
+    re_e_baseline = re.compile('e-baseline')
+    re_x_ecef = re.compile('x-ecef')
+    re_utc = re.compile('%  UTC')
+    re_gpst = re.compile('%  GPST')
+    re_date = re.compile(r"[\w']+")
+
+    with open(filein) as f:
+        for line in f:
+            # Check header patterns to determine coordinate type
+            if re_e_baseline.search(line):
+                initype = 'ENU'
+            elif re_x_ecef.search(line):
+                initype = 'XYZ'
+            elif 'latitude(deg)' in line:
+                initype = 'FLH'
+
+            if re_utc.search(line):
+                d_utcgps = 16
+                log.warning('HARDCODED (MAYBE?) WRONG LEAP SECOND!!!!')
+            elif re_gpst.search(line):
+                d_utcgps = 0
+
+            # Skip comment lines
+            if line[0] == '%':
+                continue
+
+            fields = line.split()
+
+            # Optimized date parsing - avoid repeated string concatenation
+            date_str = fields[0] + ':' + fields[1]
+            date1 = re_date.findall(date_str)
+            date_parts = [int(d) for d in date1[:-1]]
+            date_parts.append(int(date1[-1][:6]))
+
+            t = dt.datetime(date_parts[0], date_parts[1], date_parts[2],
+                           date_parts[3], date_parts[4], date_parts[5],
+                           date_parts[6]) + dt.timedelta(seconds=d_utcgps)
+
+            # Parse coordinates
+            a = float(fields[2])
+            b = float(fields[3])
+            c = float(fields[4])
+
+            # Parse standard deviations - same fields for both XYZ and FLH
+            s_a = float(fields[7])
+            s_b = float(fields[8])
+            s_c = float(fields[9])
+
+            if initype == 'FLH':
+                s_a, s_b, s_c = conv.sigma_enu2geo(a, b, c, s_a, s_b, s_c)
+
+            point = time_series.Point(a, b, c, t, initype, s_a, s_b, s_c)
+            point.anex['sdAB'] = float(fields[10])
+            point.anex['sdBC'] = float(fields[11])
+            point.anex['sdAC'] = float(fields[12])
+            point.anex["Q"] = float(fields[5])
+
+            tsout.add_point(point)
 
     tsout.meta_set(filein)
 
