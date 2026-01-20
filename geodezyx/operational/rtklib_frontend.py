@@ -269,7 +269,6 @@ def rtklib_run_from_rinex(
         dicoconf[f"ant{n}-antdeln"] = antobj.North_Ecc
         dicoconf[f"ant{n}-antdele"] = antobj.East_Ecc
 
-    log.info("AAAAAAA4444444")
 
     # Edit conf file dic
     if rover_auto_conf:
@@ -280,12 +279,8 @@ def rtklib_run_from_rinex(
     if not (bas_srt <= rov_srt <= rov_end <= bas_end):
         log.warning("rover/base epoch inconsistency: not bas_srt <= rov_srt <= rov_end <= bas_end !!!")
 
-    log.info("AAAAAAA33333333")
-
     # write conf file
     write_conf_file(dicoconf, out_conf_fil)
-
-    log.info("AAAAAAA2222222")
 
     ##### ORBITS
     # Function to decompress files into tmp_dir
