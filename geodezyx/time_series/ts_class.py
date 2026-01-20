@@ -177,6 +177,7 @@ class Point:
         self.sU = sU
 
         self.initype = "ENU"
+        self._flh_computed = False
 
     def NEDset(self, N=np.nan, E=np.nan, D=np.nan, sN=np.nan, sE=np.nan, sD=np.nan):
         self.N = N
@@ -187,6 +188,7 @@ class Point:
         self.sD = sD
 
         self.initype = "NED"
+        self._flh_computed = False
 
     def UTMset(
         self,
@@ -205,6 +207,7 @@ class Point:
         self.sUutm = sUutm
 
         self.initype = "UTM"
+        self._flh_computed = False
 
     def add_offset(self, dA, dB, dC, coortype="ENU"):
         temp = time_series.add_offset_point(self, dA, dB, dC, coortype=coortype)
@@ -813,8 +816,18 @@ class TimeSeriePoint:
         # Label for the plot
         name4plot = self.name[:10] if self.name else self.stat
 
-        # Create subplots with shared x-axis
-        figobj, axes = plt.subplots(3, 1, num=fig_num, sharex=True)
+        # Check if figure already exists, reuse axes if yes, create it if no
+        if plt.fignum_exists(fig_num):
+            figobj = plt.figure(fig_num)
+            # Reuse existing axes if the figure has 3 axes
+            if len(figobj.axes) == 3:
+                axes = figobj.axes
+            else:
+                # Clear and create new axes if wrong number of axes
+                figobj.clear()
+                axes = figobj.subplots(3, 1, sharex=True)
+        else:
+            figobj, axes = plt.subplots(3, 1, num=fig_num, sharex=True)
         figobj.suptitle(self.stat)
 
         # Component data and titles
