@@ -208,25 +208,16 @@ def rtklib_run_from_rinex(
     else:
         prod_dir = utils.create_dir(prod_dir)
 
-    # uncompressing rinex if compressed
-    if operational.check_if_compressed_rinex(rnx_rover):
-        rnx_rover = operational.crz2rnx(rnx_rover, tmp_dir)
-    if operational.check_if_compressed_rinex(rnx_base):
-        rnx_base = operational.crz2rnx(rnx_base, tmp_dir)
-
-    # RINEX START & END
-    rov_srt, rov_end, rov_itv = operational.rinex_start_end(rnx_rover, 1)
-    bas_srt, bas_end, bas_itv = operational.rinex_start_end(rnx_base, 1)
+    # RINEX START & END - FAST
+    rov_srt_fast = conv.rinexname2dt(rnx_rover)
+    bas_srt_fast = conv.rinexname2dt(rnx_base)
 
     # RINEX NAMES
     rov_name = os.path.basename(rnx_rover)[0:4]
     bas_name = os.path.basename(rnx_base)[0:4]
 
-    log.info("Rover: {} | Base: {} | Start: {} | End: {} | Interval: {} s".format(
-        rov_name, bas_name, rov_srt, rov_end, rov_itv)
-    )
-
-    srt_str = rov_srt.strftime("%Y_%j_%H%M")
+    # EXPERIENCE / OUTPUT NAMES
+    srt_str = rov_srt_fast.strftime("%Y_%j_%H%M")
     exp_full_name = "_".join((experience_prefix, rov_name, bas_name, srt_str))
 
     out_conf_fil = os.path.join(out_dir, exp_full_name + ".conf")
@@ -236,11 +227,28 @@ def rtklib_run_from_rinex(
         log.info(f"RTKLIB output file {out_result_fil} already exists. Skipping...")
         return out_result_fil
 
+    #### START HEAVY PROCESSING ####
+    log.info("Starting RTKLIB RUN for {}".format(exp_full_name))
+    # uncompressing rinex if compressed
+    if operational.check_if_compressed_rinex(rnx_rover):
+        rnx_rover = operational.crz2rnx(rnx_rover, tmp_dir)
+    if operational.check_if_compressed_rinex(rnx_base):
+        rnx_base = operational.crz2rnx(rnx_base, tmp_dir)
+
+    # RINEX START & END - PRECISE
+    rov_srt, rov_end, rov_itv = operational.rinex_start_end(rnx_rover, True)
+    bas_srt, bas_end, bas_itv = operational.rinex_start_end(rnx_base, True)
+
+    log.info("Rover: {} | Base: {} | Start: {} | End: {} | Interval: {} s".format(
+        rov_name, bas_name, rov_srt, rov_end, rov_itv)
+    )
+
+    # READ GENERIC CONF FILE
     dicoconf = read_conf_file(generik_conf)
 
     if not outtype.lower() == "auto":
         dicoconf["out-solformat"] = outtype.lower()
-        log.info(f"out-solformat {dicoconf['out-solformat']}")
+        log.info(f"out-solformat was 'auto', set to: {dicoconf['out-solformat']}")
 
     def _edit_dicoconf(rnx_inp, xyz_inp, ant_n=1):
         antobj, recobj, siteobj, locobj = (
@@ -261,6 +269,8 @@ def rtklib_run_from_rinex(
         dicoconf[f"ant{n}-antdeln"] = antobj.North_Ecc
         dicoconf[f"ant{n}-antdele"] = antobj.East_Ecc
 
+    log.info("AAAAAAA4444444")
+
     # Edit conf file dic
     if rover_auto_conf:
         _edit_dicoconf(rnx_rover, xyz_rover, ant_n=1)
@@ -270,8 +280,12 @@ def rtklib_run_from_rinex(
     if not (bas_srt <= rov_srt <= rov_end <= bas_end):
         log.warning("rover/base epoch inconsistency: not bas_srt <= rov_srt <= rov_end <= bas_end !!!")
 
+    log.info("AAAAAAA33333333")
+
     # write conf file
     write_conf_file(dicoconf, out_conf_fil)
+
+    log.info("AAAAAAA2222222")
 
     ##### ORBITS
     # Function to decompress files into tmp_dir
