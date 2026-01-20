@@ -348,8 +348,12 @@ def gen_dirs_rnxs(
             orbpath, horpath = gynsorbcvt.download_convert_2_gins_orb_clk(
                 rnx_dt, tmp_fld_use, ac=ac, repro=repro
             )
+            idprod = ""
         else:
-            orbpath, horpath = _dir_regular_orbclk(rnx_dt)
+            orbpath, horpath, idprod = _dir_regular_orbclk(rnx_dt)
+
+        if not perso_orbclk and idprod != "G20":
+            dir_dic["model"]["environment"]["ionex_files"] = "unused"
 
         # Exception case where no sp3/clk was found
         if orbpath is None or horpath is None:
@@ -408,17 +412,20 @@ def _dir_regular_orbclk(dt_rinex_inp):
     Get the regular orbits and clocks path for a given date
     """
 
-    if dt_rinex_inp <= dt.datetime.now() - dt.timedelta(days=14):
+    import datetime as dt
+    if dt.datetime.now() - dt_rinex_inp >= dt.timedelta(days=14):
         prod_id = "G20"
+    #elif dt.datetime.now() - dt_rinex_inp <= dt.timedelta(days=4):
+    #    prod_id = "GRU"
     else:
-        prod_id = "G20"
+        prod_id = "G20R"
 
     ### ALL THE OTHER ORBITS/CLOCKS ARE NOW OBSOLETE (2025)
 
     horpath = os.path.join("horloges", prod_id, "defaut")
     orbpath = os.path.join("orbites", prod_id, "defaut")
 
-    return orbpath, horpath
+    return orbpath, horpath, prod_id
 
 
 def _dir_auto_intrvl(dir_dic, freq_rnx):

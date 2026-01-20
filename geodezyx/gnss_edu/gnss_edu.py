@@ -242,7 +242,7 @@ def add_az_el_iono_columns(df, P_rnx_header, mynav):
         i = df.loc[(time_i, prn_i), 'ind_ligne']
 
         # Calcul de la correction ionosphérique (la fonction klobuchar doit accepter ces paramètres)
-        d_ion1_v = klobuchar.klobuchar(lat_d, lon_d, ele_deg[i], az_deg[i], wsec_v, alpha, beta)
+        d_ion1_v = klobuchar(lat_d, lon_d, ele_deg[i], az_deg[i], wsec_v, alpha, beta)
         d_ion1.append(d_ion1_v)
 
     # Ajout des nouvelles colonnes dans le DataFrame
@@ -374,128 +374,128 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
 def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
                            P_est=None, P_rnx_header=None, tools=None):
     """
-    Calcule les résidus (v_est = B - A @ dP_est) et trace une figure contenant :
-      1. La série temporelle des résidus (affichée en points)
-      2. L'histogramme des résidus (nombre d'observations par bin)
-      3. Le Q-Q Plot des résidus
-      4. Un scatter plot des résidus en fonction des valeurs prédites
-      5. Un encadré affichant quelques statistiques (moyenne, variance, écart-type, skewness, kurtosis)
-      6. (Optionnel) Un encadré avec des informations supplémentaires sur la position :
-         - Distance entre la position estimée et la position initiale du header RINEX
-         - Coordonnées ENU locales calculées via tools.toolCartLocGRS80
-         
-    Paramètres :
-      - A : array-like, matrice des variables explicatives.
-      - B : array-like, vecteur des observations.
-      - dP_est : array-like, vecteur des paramètres estimés.
-      - figure_title (optionnel) : str, titre global de la figure.
-      - save_path (optionnel) : str, chemin complet (nom + extension) pour sauvegarder la figure.
-      - P_est (optionnel) : array-like, position estimée (pour le calcul des informations supplémentaires).
-      - P_rnx_header (optionnel) : array-like, position initiale extraite du header RINEX.
-      - tools (optionnel) : module ou objet possédant la fonction toolCartLocGRS80.
-      
-    Renvoie :
-      - fig : l'objet Figure de matplotlib contenant l'ensemble des graphiques.
+    Computes residuals (v_est = B - A @ dP_est) and creates a figure containing:
+      1. Time series of residuals (displayed as points)
+      2. Histogram of residuals (number of observations per bin)
+      3. Q-Q Plot of residuals
+      4. Scatter plot of residuals vs predicted values
+      5. Text box displaying statistics (mean, variance, std dev, skewness, kurtosis)
+      6. (Optional) Text box with additional position information:
+         - Distance between estimated position and initial RINEX header position
+         - Local ENU coordinates computed via tools.toolCartLocGRS80
+
+    Parameters:
+      - A : array-like, design matrix.
+      - B : array-like, observation vector.
+      - dP_est : array-like, estimated parameter vector.
+      - figure_title (optional) : str, overall figure title.
+      - save_path (optional) : str, full path (name + extension) to save the figure.
+      - P_est (optional) : array-like, estimated position (for additional info computation).
+      - P_rnx_header (optional) : array-like, initial position from RINEX header.
+      - tools (optional) : module or object with toolCartLocGRS80 function.
+
+    Returns:
+      - fig : matplotlib Figure object containing all subplots.
     """
-    
-    # Calcul des résidus et des valeurs prédites
+
+    # Compute residuals and predicted values
     v_est = B - A @ dP_est
     b_est = A @ dP_est
-    
-    # Calcul des statistiques sur les résidus
-    moyenne    = np.mean(v_est)
+
+    # Compute residual statistics
+    mean_val   = np.mean(v_est)
     variance   = np.var(v_est)
-    ecart_type = np.std(v_est)
+    std_dev    = np.std(v_est)
     skewness   = stats.skew(v_est)
     kurtosis   = stats.kurtosis(v_est)
-    
-    # Création de la figure avec GridSpec.
-    # On utilise 4 lignes et 2 colonnes :
-    # - Ligne 0 : Série temporelle (col 0) et Histogramme (col 1)
-    # - Ligne 1 : Q-Q Plot (col 0) et Résidus vs. Valeurs prédites (col 1)
-    # - Ligne 2 : Encadré des statistiques (s'étendant sur 2 colonnes)
-    # - Ligne 3 : (Optionnel) Encadré des informations de position (s'étendant sur 2 colonnes)
+
+    # Create figure with GridSpec
+    # Using 4 rows and 2 columns:
+    # - Row 0: Time series (col 0) and Histogram (col 1)
+    # - Row 1: Q-Q Plot (col 0) and Residuals vs. Predicted values (col 1)
+    # - Row 2: Statistics text box (spanning 2 columns)
+    # - Row 3: (Optional) Position information text box (spanning 2 columns)
     nrows = 4 if (P_est is not None and P_rnx_header is not None and tools is not None) else 3
     height_ratios = [1, 1, 0.5, 0.5] if nrows == 4 else [1, 1, 0.5]
-    
+
     fig = plt.figure(figsize=(15, 15))
     gs = fig.add_gridspec(nrows, 2, height_ratios=height_ratios)
-    
-    # 1. Série temporelle des résidus (affichage uniquement des points) – Top gauche
+
+    # 1. Time series of residuals (points only) – Top left
     ax_time = fig.add_subplot(gs[0, 0])
     ax_time.scatter(np.arange(len(v_est)), v_est, color='green')
-    ax_time.set_title("Série temporelle des résidus")
-    ax_time.set_xlabel("Temps / Index")
-    ax_time.set_ylabel("Résidus")
-    
-    # 2. Histogramme des résidus (nombre brut d'observations) – Top droite
+    ax_time.set_title("Time Series of Residuals")
+    ax_time.set_xlabel("Time / Index")
+    ax_time.set_ylabel("Residuals (m)")
+
+    # 2. Histogram of residuals (raw observation count) – Top right
     ax_hist = fig.add_subplot(gs[0, 1])
     sns.histplot(v_est, bins=30, stat="count", color='skyblue', edgecolor='black', ax=ax_hist)
-    ax_hist.set_title("Histogramme des résidus")
-    ax_hist.set_xlabel("Résidus")
-    ax_hist.set_ylabel("Nombre d'observations")
-    
-    # 3. Q-Q Plot des résidus – Ligne 1, Colonne 0
+    ax_hist.set_title("Histogram of Residuals")
+    ax_hist.set_xlabel("Residuals")
+    ax_hist.set_ylabel("Number of Observations")
+
+    # 3. Q-Q Plot of residuals – Row 1, Column 0
     ax_qq = fig.add_subplot(gs[1, 0])
     sm.qqplot(v_est, line='s', ax=ax_qq)
-    ax_qq.set_title("Q-Q Plot des résidus")
-    
-    # 4. Graphique des résidus vs. valeurs prédites – Ligne 1, Colonne 1
+    ax_qq.set_title("Q-Q Plot of Residuals")
+
+    # 4. Residuals vs. predicted values plot – Row 1, Column 1
     ax_scatter = fig.add_subplot(gs[1, 1])
     ax_scatter.scatter(b_est, v_est, alpha=0.7, color='darkorange')
     ax_scatter.axhline(0, color='red', linestyle='--')
-    ax_scatter.set_xlabel("Valeurs prédites")
-    ax_scatter.set_ylabel("Résidus")
-    ax_scatter.set_title("Résidus vs. Valeurs prédites")
-    
-    # 5. Encadré avec les statistiques – Ligne suivante (s'étend sur 2 colonnes)
+    ax_scatter.set_xlabel("Predicted Values")
+    ax_scatter.set_ylabel("Residuals (m)")
+    ax_scatter.set_title("Residuals vs. Predicted Values")
+
+    # 5. Statistics text box – Next row (spans 2 columns)
     ax_stats = fig.add_subplot(gs[2, :])
-    ax_stats.axis('off')  # Masquer les axes
-    texte_stats = (
-        f"Moyenne    : {moyenne:.4f}\n"
+    ax_stats.axis('off')  # Hide axes
+    stats_text = (
+        f"Mean       : {mean_val:.4f}\n"
         f"Variance   : {variance:.4f}\n"
-        f"Écart-type : {ecart_type:.4f}\n"
+        f"Std Dev    : {std_dev:.4f}\n"
         f"Skewness   : {skewness:.4f}\n"
         f"Kurtosis   : {kurtosis:.4f}"
     )
-    ax_stats.text(0.5, 0.5, texte_stats, transform=ax_stats.transAxes,
+    ax_stats.text(0.5, 0.5, stats_text, transform=ax_stats.transAxes,
                   fontsize=14, verticalalignment='center', horizontalalignment='center',
                   bbox=dict(facecolor='wheat', edgecolor='black', boxstyle='round,pad=1'))
-    ax_stats.set_title("Statistiques des résidus", fontsize=16)
-    
-    # 6. Encadré avec les informations de position – (optionnel)
+    ax_stats.set_title("Residual Statistics", fontsize=16)
+
+    # 6. Position information text box – (optional)
     if nrows == 4:
-        # Calcul de la distance entre la position estimée et la position du header RINEX
+        # Compute distance between estimated position and RINEX header position
         dist = np.sqrt(np.sum((P_est - P_rnx_header)**2))
-        # Calcul des coordonnées ENU locales via la fonction toolCartLocGRS80
+        # Compute local ENU coordinates via toolCartLocGRS80 function
         E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],
                                           P_est[0], P_est[1], P_est[2])
-        texte_extra = (
-            f"Distance entre la position estimée et la position initiale du header RINEX : {dist:.4f}\n"
-            f"Coordonnées ENU locales :\n"
-            f"  Est (E) : {E:.4f}\n"
-            f"  Nord (N): {N:.4f}\n"
-            f"  Haut (U) : {U:.4f}"
+        extra_text = (
+            f"Distance between estimated position and initial RINEX header position: {dist:.4f}\n"
+            f"Local ENU coordinates:\n"
+            f"  East (E)  : {E:.4f}"
+            f"  North (N) : {N:.4f}"
+            f"  Up (U)    : {U:.4f}"
         )
         ax_extra = fig.add_subplot(gs[3, :])
         ax_extra.axis('off')
-        ax_extra.text(0.5, 0.5, texte_extra, transform=ax_extra.transAxes,
+        ax_extra.text(0.5, 0.5, extra_text, transform=ax_extra.transAxes,
                       fontsize=14, verticalalignment='center', horizontalalignment='center',
                       bbox=dict(facecolor='lightcyan', edgecolor='black', boxstyle='round,pad=1'))
-        ax_extra.set_title("Informations de position", fontsize=16)
-    
-    # Titre global de la figure si fourni
+        ax_extra.set_title("Position Information", fontsize=16)
+
+    # Overall figure title if provided
     if figure_title is not None:
         fig.suptitle(figure_title, fontsize=20)
         plt.subplots_adjust(top=0.92)
-    
-    # Ajuster la mise en page
+
+    # Adjust layout
     plt.tight_layout(rect=[0, 0, 1, 0.95])
-    
-    # Sauvegarder la figure si un chemin est fourni
+
+    # Save figure if path is provided
     if save_path is not None:
         fig.savefig(save_path)
-        print(f"Figure sauvegardée dans : {save_path}")
-    
+        print(f"Figure saved to: {save_path}")
+
     plt.show()
     return fig

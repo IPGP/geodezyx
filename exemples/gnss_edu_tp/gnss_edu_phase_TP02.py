@@ -44,6 +44,7 @@ Dépendances: pandas, numpy, geodezyx, datetime, gpsdatetime, gnsstoolbox
 # GeodeZYX Toolbox’s - [Sakic et al., 2019]
 import geodezyx
 import geodezyx.conv as conv                  # Import the conversion module
+import geodezyx.utils_xtra as utils_xtra
 import datetime as dt
 
 #
@@ -69,7 +70,7 @@ import geodezyx.gnss_edu as gnss_edu
 # fichier_rnx='./data/data-2019/mlvl176z.18o'
 # fichier_rnx='./data/data-2019/mlvl1760.18o'
 
-fichier_rnx='/home/psakicki/CODES/geodezyx/geodezyx/gnss_edu/data/data-2019/mlvl1760.18d.Z'
+fichier_rnx='./data/data-2019/mlvl1760.18d.Z'
 
 # Chargement des données RINEX d'observation dans un pandas dataframe via  GeodeZYX
 df_rnx_flat, l_rnx_head = geodezyx.files_rw.read_rinex2_obs(fichier_rnx,
@@ -140,15 +141,15 @@ df_rnx['ind_ligne'] = range(len(df_rnx))
 
 #%%
 # Chargement des fichiers d'orbites
-fichier_sp3  = ['/home/psakicki/CODES/geodezyx/geodezyx/gnss_edu/data/data-2019/igs20071.sp3',
-                '/home/psakicki/CODES/geodezyx/geodezyx/gnss_edu/data/data-2019/igs20072.sp3']
+fichier_sp3  = ['./data/data-2019/igs20071.sp3',
+                './data/data-2019/igs20072.sp3']
 fichier_brdc = './data/data-2019/mlvl176z.18n'
 
 mysp3 = orb.orbit()
 mysp3.loadSp3(fichier_sp3)
 
-#mynav = orb.orbit()
-#mynav.loadRinexN('./data/data-2019/mlvl176z.18n')
+mynav = orb.orbit()
+mynav.loadRinexN('./data/data-2019/BRDC00GOP_R_20181760000_01D_MN.rnx')
 
 # Il faut calculer la position de chaque satellite GNSS à chaque temps d'émission
 t = gpst.gpsdatetime()
@@ -258,7 +259,8 @@ while np.linalg.norm(dP_est)>1:
 
 
 
-fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul Trivial", save_path="./trivial_bis.png",
+fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial calcul.", 
+                                      save_path="./trivial_bis.pdf",
                            P_est=P_est, P_rnx_header=P_rnx_header, tools=tools);
 
 
@@ -315,7 +317,7 @@ print("Haut (U):", U)
 print("\n")
 
 
-gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Prise en compte des horloges satellites", save_path="./sat_clocks_only.png",
+gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Satellite clocks correction", save_path="./sat_clocks_only.png",
                            P_est=P_est, P_rnx_header=P_rnx_header, tools=tools)
 
 

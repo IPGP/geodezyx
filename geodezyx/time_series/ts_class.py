@@ -76,13 +76,13 @@ class Point:
             sigma of C component. The default is 0.
         name : str, optional
             Flexible name for the Point identification. The default is 'noname'.
-        anex_key_list : dict, optional
+        anex : dict, optional
             Additional data. The default is None. See Note
 
         Note
         ----
 
-        A dictionary called anex_key_list is also initialized to allow a
+        A dictionary called anex is also initialized to allow a
         versatile storage of a variety of data
 
         Exemple of dictionary keys
@@ -100,7 +100,7 @@ class Point:
         else:
             self.anex = anex
 
-        # le dico "anex_key_list" permet de stocker de manière polyvalente des données diverses
+        # le dico "anex" permet de stocker de manière polyvalente des données diverses
         # On trouvera (LISTE SE DEVANT ETRE LA PLUS EXHAUSTIVE POSSIBLE )
         #
         # RMS : moyenne RMS (pour les gipsy bosser)

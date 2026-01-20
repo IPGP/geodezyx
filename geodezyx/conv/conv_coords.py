@@ -441,7 +441,7 @@ def enu2xyz_vector(enu, xyz_ref):
 #         __/ |
 #        |___/
 
-def sigma_xyz2enu(x, y, z, s_x, s_y, s_z, s_xy=0, s_yz=0, s_xz=0):
+def sigma_xyz2enu(x, y, z, s_x, s_y, s_z, s_xy=0, s_yz=0, s_xz=0, return_corr=False):
     """
     Convert standard deviation
     Cartesian ECEF XYZ => Cartesian Topocentric ENU
@@ -478,7 +478,15 @@ def sigma_xyz2enu(x, y, z, s_x, s_y, s_z, s_xy=0, s_yz=0, s_xz=0):
     s_n = np.sqrt(sigma_enu[1, 1])
     s_u = np.sqrt(sigma_enu[2, 2])
 
-    return s_e, s_n, s_u
+
+    if not return_corr:
+        return s_e, s_n, s_u
+    else:
+        # correlation coefficients
+        c_en = sigma_enu[0, 1] / (s_e * s_n)
+        c_eu = sigma_enu[0, 2] / (s_e * s_u)
+        c_nu = sigma_enu[1, 2] / (s_n * s_u)
+        return s_e, s_n, s_u, c_en, c_eu, c_nu
 
 
 def sigma_geo2xyz(lat, lon, h, s_f, s_l, s_h, ang="deg"):

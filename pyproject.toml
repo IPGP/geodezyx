@@ -159,6 +159,7 @@ edu = ["gnsstoolbox", "gpsdatetime", "seaborn", "plotly"]
 [project.scripts]
 # sample = "sample:main"
 singugins_run = "geodezyx.operational.gins_runner.singugins_run:main"
+testgins_run = "geodezyx.operational.gins_runner.testgins_run:main"
 bdgins_update = "geodezyx.operational.gins_runner.gins_bd_update:main"
 orbclk_concat = "geodezyx.operational.gins_runner.gins_orbclk_concat:main"
 download_gnss_rinex = "geodezyx.operational.bin_opera.download_gnss_rinex:main"

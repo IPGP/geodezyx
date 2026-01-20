@@ -150,7 +150,9 @@ def dms2degdec_num(deg, minn=0, sec=0):
     return deg + sig * minn * (1.0 / 60.0) + sig * sec * (1.0 / 3600.0)
 
 
-def dms2degdec_str(dms_str, only_dm=False):
+def dms2degdec_str(dms_str, only_dm=False,
+                   decimal_separator=".",
+                   return_dms_tuple=False):
     """
     Angle representation conversion
 
@@ -194,7 +196,7 @@ def dms2degdec_str(dms_str, only_dm=False):
     # former regex
     lis = re.findall(r"\d+|\D+", dms_str)
 
-    ipt = lis.index(".")
+    ipt = lis.index(decimal_separator)
     decimal = lis[ipt - 1] + lis[ipt] + lis[ipt + 1]
     lis[ipt - 1] = decimal
     lis = lis[:ipt]
@@ -217,9 +219,12 @@ def dms2degdec_str(dms_str, only_dm=False):
         except IndexError:
             log.error("did you forgot to activate the DM only mode ? ;) ?")
             return None
-
+    
     dd_float = sign * (deg + minu / 60.0 + sec / 3600.0)
-    return dd_float
+    if return_dms_tuple:
+        return dd_float, (deg, minu, sec)
+    else:
+        return dd_float
 
 
 ###### arcsec
