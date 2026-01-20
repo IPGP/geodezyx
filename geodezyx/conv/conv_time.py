@@ -828,7 +828,7 @@ def ymdhms_vectors2dt(yrlis, mlis, dlis, hlis, minlis, slis):
     """
     # Vectorized datetime creation using list comprehension (still efficient for this use case)
     return [
-        dt.datetime(y, mo, d, h, mi, int(s))
+        dt.datetime(int(y), int(mo), int(d), int(h), int(mi), int(s))
         for y, mo, d, h, mi, s in zip(yrlis, mlis, dlis, hlis, minlis, slis)
     ]
 
