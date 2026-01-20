@@ -1242,21 +1242,14 @@ def read_rinex_2_dataobjts(rinex_path):
 
         return None, None, None, None
 
-    rnxsio = StringIO(open(rinex_path, 'r').read())
-    ant_raw = utils.grep(rnxsio, "ANT #", True)
-    rnxsio.seek(0)
-    rec_raw = utils.grep(rnxsio, "REC #", True)
-    rnxsio.seek(0)
-    xyz_raw = utils.grep(rnxsio, "APPROX POSITION XYZ", True).split()
-    rnxsio.seek(0)
-    stat_raw = utils.grep(rnxsio, "MARKER NAME", True).split()
-    rnxsio.seek(0)
-    domes_raw = utils.grep(rnxsio, "MARKER NUMBER", True).split()
-    rnxsio.seek(0)
-    d_hen_raw = utils.grep(rnxsio, "ANTENNA: DELTA H/E/N", True).split()
-    rnxsio.seek(0)
-    t_raw = utils.grep(rnxsio, "TIME OF FIRST OBS", True).split()
-    rnxsio.close()
+    #rnxsio = StringIO(open(rinex_path, 'r').read())
+    ant_raw = utils.grep(rinex_path, "ANT #", True)
+    rec_raw = utils.grep(rinex_path, "REC #", True)
+    xyz_raw = utils.grep(rinex_path, "APPROX POSITION XYZ", True).split()
+    stat_raw = utils.grep(rinex_path, "MARKER NAME", True).split()
+    domes_raw = utils.grep(rinex_path, "MARKER NUMBER", True).split()
+    d_hen_raw = utils.grep(rinex_path, "ANTENNA: DELTA H/E/N", True).split()
+    t_raw = utils.grep(rinex_path, "TIME OF FIRST OBS", True).split()
 
     Antobj, Recobj, Siteobj, Locobj = (
         read_logsheets.Antenna(),
