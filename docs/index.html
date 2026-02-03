@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Welcome to geodezyx’s documentation! &mdash; geodezyx 4.x documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -321,9 +321,9 @@ can be useful for Geodesy and Geophysics.</p>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.conv.html#module-geodezyx.conv.conv_time">geodezyx.conv.conv_time module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#refactoring-notes">REFACTORING NOTES:</a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.MJD2dt"><code class="docutils literal notranslate"><span class="pre">MJD2dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.date2dt"><code class="docutils literal notranslate"><span class="pre">date2dt()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.date_pattern_2_dt"><code class="docutils literal notranslate"><span class="pre">date_pattern_2_dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.date_string_2_dt"><code class="docutils literal notranslate"><span class="pre">date_string_2_dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.datestr_gins_filename_2_dt"><code class="docutils literal notranslate"><span class="pre">datestr_gins_filename_2_dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.datestr_sinex_2_dt"><code class="docutils literal notranslate"><span class="pre">datestr_sinex_2_dt()</span></code></a></li>
@@ -352,7 +352,6 @@ can be useful for Geodesy and Geophysics.</p>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.dt_ceil"><code class="docutils literal notranslate"><span class="pre">dt_ceil()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.dt_gpstime2dt_tai"><code class="docutils literal notranslate"><span class="pre">dt_gpstime2dt_tai()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.dt_gpstime2dt_utc"><code class="docutils literal notranslate"><span class="pre">dt_gpstime2dt_utc()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.dt_improved"><code class="docutils literal notranslate"><span class="pre">dt_improved()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.dt_in_local_timezone2posix"><code class="docutils literal notranslate"><span class="pre">dt_in_local_timezone2posix()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.dt_range"><code class="docutils literal notranslate"><span class="pre">dt_range()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.dt_tai2dt_tt"><code class="docutils literal notranslate"><span class="pre">dt_tai2dt_tt()</span></code></a></li>
@@ -361,16 +360,10 @@ can be useful for Geodesy and Geophysics.</p>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.dt_utc2dt_ut1"><code class="docutils literal notranslate"><span class="pre">dt_utc2dt_ut1()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.dt_utc2dt_ut1_smart"><code class="docutils literal notranslate"><span class="pre">dt_utc2dt_ut1_smart()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.epo_epos_converter"><code class="docutils literal notranslate"><span class="pre">epo_epos_converter()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.extract_leapseconds_from_system"><code class="docutils literal notranslate"><span class="pre">extract_leapseconds_from_system()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.find_leapsecond"><code class="docutils literal notranslate"><span class="pre">find_leapsecond()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.gpstime2dt"><code class="docutils literal notranslate"><span class="pre">gpstime2dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.gpsweek_decimal2dt"><code class="docutils literal notranslate"><span class="pre">gpsweek_decimal2dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.jjul_cnes2dt"><code class="docutils literal notranslate"><span class="pre">jjul_cnes2dt()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.leapseconds_harcoded_list"><code class="docutils literal notranslate"><span class="pre">leapseconds_harcoded_list()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.leapseconds_parse_post2404"><code class="docutils literal notranslate"><span class="pre">leapseconds_parse_post2404()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.leapseconds_parse_pre2404"><code class="docutils literal notranslate"><span class="pre">leapseconds_parse_pre2404()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.matlab_time2dt"><code class="docutils literal notranslate"><span class="pre">matlab_time2dt()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.minmax_pattern_dt"><code class="docutils literal notranslate"><span class="pre">minmax_pattern_dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.mjd2dt"><code class="docutils literal notranslate"><span class="pre">mjd2dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.ntp2dt"><code class="docutils literal notranslate"><span class="pre">ntp2dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.numpy_dt2dt"><code class="docutils literal notranslate"><span class="pre">numpy_dt2dt()</span></code></a></li>
@@ -392,9 +385,99 @@ can be useful for Geodesy and Geophysics.</p>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.trimble_file2dt"><code class="docutils literal notranslate"><span class="pre">trimble_file2dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.tup_or_lis2dt"><code class="docutils literal notranslate"><span class="pre">tup_or_lis2dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.utc2gpstime"><code class="docutils literal notranslate"><span class="pre">utc2gpstime()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.vector_2args_datetime_numeric_conv"><code class="docutils literal notranslate"><span class="pre">vector_2args_datetime_numeric_conv()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.vector_2args_numeric_conv"><code class="docutils literal notranslate"><span class="pre">vector_2args_numeric_conv()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.vector_datetime_conv"><code class="docutils literal notranslate"><span class="pre">vector_datetime_conv()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.vector_numeric_conv"><code class="docutils literal notranslate"><span class="pre">vector_numeric_conv()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.vector_string_conv"><code class="docutils literal notranslate"><span class="pre">vector_string_conv()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.year_decimal2dt"><code class="docutils literal notranslate"><span class="pre">year_decimal2dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.ymdhms2dt"><code class="docutils literal notranslate"><span class="pre">ymdhms2dt()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time.ymdhms_vectors2dt"><code class="docutils literal notranslate"><span class="pre">ymdhms_vectors2dt()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.conv.html#module-geodezyx.conv.conv_time_leap_sec">geodezyx.conv.conv_time_leap_sec module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_leap_sec.extract_leapseconds_from_system"><code class="docutils literal notranslate"><span class="pre">extract_leapseconds_from_system()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_leap_sec.find_leapsecond"><code class="docutils literal notranslate"><span class="pre">find_leapsecond()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_leap_sec.leapseconds_harcoded_list"><code class="docutils literal notranslate"><span class="pre">leapseconds_harcoded_list()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_leap_sec.leapseconds_parse_post2404"><code class="docutils literal notranslate"><span class="pre">leapseconds_parse_post2404()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_leap_sec.leapseconds_parse_pre2404"><code class="docutils literal notranslate"><span class="pre">leapseconds_parse_pre2404()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.conv.html#module-geodezyx.conv.conv_time_orig">geodezyx.conv.conv_time_orig module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.MJD2dt"><code class="docutils literal notranslate"><span class="pre">MJD2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.date2dt"><code class="docutils literal notranslate"><span class="pre">date2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.date_pattern_2_dt"><code class="docutils literal notranslate"><span class="pre">date_pattern_2_dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.date_string_2_dt"><code class="docutils literal notranslate"><span class="pre">date_string_2_dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.datestr_gins_filename_2_dt"><code class="docutils literal notranslate"><span class="pre">datestr_gins_filename_2_dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.datestr_sinex_2_dt"><code class="docutils literal notranslate"><span class="pre">datestr_sinex_2_dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.datetime_improved"><code class="docutils literal notranslate"><span class="pre">datetime_improved()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.doy2dt"><code class="docutils literal notranslate"><span class="pre">doy2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2MJD"><code class="docutils literal notranslate"><span class="pre">dt2MJD()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2date"><code class="docutils literal notranslate"><span class="pre">dt2date()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2doy"><code class="docutils literal notranslate"><span class="pre">dt2doy()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2doy_year"><code class="docutils literal notranslate"><span class="pre">dt2doy_year()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2epoch_rnx3"><code class="docutils literal notranslate"><span class="pre">dt2epoch_rnx3()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2fracday"><code class="docutils literal notranslate"><span class="pre">dt2fracday()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2gpstime"><code class="docutils literal notranslate"><span class="pre">dt2gpstime()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2gpsweek_decimal"><code class="docutils literal notranslate"><span class="pre">dt2gpsweek_decimal()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2jjul_cnes"><code class="docutils literal notranslate"><span class="pre">dt2jjul_cnes()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2list"><code class="docutils literal notranslate"><span class="pre">dt2list()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2mjd"><code class="docutils literal notranslate"><span class="pre">dt2mjd()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2posix"><code class="docutils literal notranslate"><span class="pre">dt2posix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2secinday"><code class="docutils literal notranslate"><span class="pre">dt2secinday()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2sp3_timestamp"><code class="docutils literal notranslate"><span class="pre">dt2sp3_timestamp()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2str"><code class="docutils literal notranslate"><span class="pre">dt2str()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2tuple"><code class="docutils literal notranslate"><span class="pre">dt2tuple()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2year_decimal"><code class="docutils literal notranslate"><span class="pre">dt2year_decimal()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt2ymdhms"><code class="docutils literal notranslate"><span class="pre">dt2ymdhms()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_2_sinex_datestr"><code class="docutils literal notranslate"><span class="pre">dt_2_sinex_datestr()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_2_sp3_datestr"><code class="docutils literal notranslate"><span class="pre">dt_2_sp3_datestr()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_ceil"><code class="docutils literal notranslate"><span class="pre">dt_ceil()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_gpstime2dt_tai"><code class="docutils literal notranslate"><span class="pre">dt_gpstime2dt_tai()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_gpstime2dt_utc"><code class="docutils literal notranslate"><span class="pre">dt_gpstime2dt_utc()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_improved"><code class="docutils literal notranslate"><span class="pre">dt_improved()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_in_local_timezone2posix"><code class="docutils literal notranslate"><span class="pre">dt_in_local_timezone2posix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_range"><code class="docutils literal notranslate"><span class="pre">dt_range()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_tai2dt_tt"><code class="docutils literal notranslate"><span class="pre">dt_tai2dt_tt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_tai2dt_utc"><code class="docutils literal notranslate"><span class="pre">dt_tai2dt_utc()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_utc2dt_tai"><code class="docutils literal notranslate"><span class="pre">dt_utc2dt_tai()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_utc2dt_ut1"><code class="docutils literal notranslate"><span class="pre">dt_utc2dt_ut1()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.dt_utc2dt_ut1_smart"><code class="docutils literal notranslate"><span class="pre">dt_utc2dt_ut1_smart()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.epo_epos_converter"><code class="docutils literal notranslate"><span class="pre">epo_epos_converter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.extract_leapseconds_from_system"><code class="docutils literal notranslate"><span class="pre">extract_leapseconds_from_system()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.find_leapsecond"><code class="docutils literal notranslate"><span class="pre">find_leapsecond()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.gpstime2dt"><code class="docutils literal notranslate"><span class="pre">gpstime2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.gpsweek_decimal2dt"><code class="docutils literal notranslate"><span class="pre">gpsweek_decimal2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.jjul_cnes2dt"><code class="docutils literal notranslate"><span class="pre">jjul_cnes2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.leapseconds_harcoded_list"><code class="docutils literal notranslate"><span class="pre">leapseconds_harcoded_list()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.leapseconds_parse_post2404"><code class="docutils literal notranslate"><span class="pre">leapseconds_parse_post2404()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.leapseconds_parse_pre2404"><code class="docutils literal notranslate"><span class="pre">leapseconds_parse_pre2404()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.matlab_time2dt"><code class="docutils literal notranslate"><span class="pre">matlab_time2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.minmax_pattern_dt"><code class="docutils literal notranslate"><span class="pre">minmax_pattern_dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.mjd2dt"><code class="docutils literal notranslate"><span class="pre">mjd2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.ntp2dt"><code class="docutils literal notranslate"><span class="pre">ntp2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.numpy_dt2dt"><code class="docutils literal notranslate"><span class="pre">numpy_dt2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.pandas_timestamp2dt"><code class="docutils literal notranslate"><span class="pre">pandas_timestamp2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.posix2dt"><code class="docutils literal notranslate"><span class="pre">posix2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.posix2dt_in_local_timezone"><code class="docutils literal notranslate"><span class="pre">posix2dt_in_local_timezone()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.rinexname2dt"><code class="docutils literal notranslate"><span class="pre">rinexname2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.round_dt"><code class="docutils literal notranslate"><span class="pre">round_dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.sp3name2dt"><code class="docutils literal notranslate"><span class="pre">sp3name2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.sp3name_leg_2dt"><code class="docutils literal notranslate"><span class="pre">sp3name_leg_2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.sp3name_v3_2dt"><code class="docutils literal notranslate"><span class="pre">sp3name_v3_2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.statname_dt2rinexname"><code class="docutils literal notranslate"><span class="pre">statname_dt2rinexname()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.statname_dt2rinexname_long"><code class="docutils literal notranslate"><span class="pre">statname_dt2rinexname_long()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.str_date2dt"><code class="docutils literal notranslate"><span class="pre">str_date2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.strdate2dt"><code class="docutils literal notranslate"><span class="pre">strdate2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.string_date2dt"><code class="docutils literal notranslate"><span class="pre">string_date2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.tgipsy2dt"><code class="docutils literal notranslate"><span class="pre">tgipsy2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.time_obj_tester"><code class="docutils literal notranslate"><span class="pre">time_obj_tester()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.trimble_file2dt"><code class="docutils literal notranslate"><span class="pre">trimble_file2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.tup_or_lis2dt"><code class="docutils literal notranslate"><span class="pre">tup_or_lis2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.utc2gpstime"><code class="docutils literal notranslate"><span class="pre">utc2gpstime()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.year_decimal2dt"><code class="docutils literal notranslate"><span class="pre">year_decimal2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.ymdhms2dt"><code class="docutils literal notranslate"><span class="pre">ymdhms2dt()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.conv.html#geodezyx.conv.conv_time_orig.ymdhms_vectors2dt"><code class="docutils literal notranslate"><span class="pre">ymdhms_vectors2dt()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -650,7 +733,7 @@ can be useful for Geodesy and Geophysics.</p>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.covarvec2wtmat"><code class="docutils literal notranslate"><span class="pre">covarvec2wtmat()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.euler_pole_calc"><code class="docutils literal notranslate"><span class="pre">euler_pole_calc()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.euler_pole_quality"><code class="docutils literal notranslate"><span class="pre">euler_pole_quality()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlongrate"><code class="docutils literal notranslate"><span class="pre">euler_pole_vector_from_latlongrate()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.euler_pole_vector_from_latlonrate"><code class="docutils literal notranslate"><span class="pre">euler_pole_vector_from_latlonrate()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.euler_pole_vector_to_latlongrate"><code class="docutils literal notranslate"><span class="pre">euler_pole_vector_to_latlongrate()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.euler_vels_relative_to_ref"><code class="docutils literal notranslate"><span class="pre">euler_vels_relative_to_ref()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.geodyn.html#geodezyx.geodyn.euler_pole_calc.topo2dm"><code class="docutils literal notranslate"><span class="pre">topo2dm()</span></code></a></li>
@@ -683,13 +766,46 @@ can be useful for Geodesy and Geophysics.</p>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx-gnss-edu-compute-vmf1-values-module">geodezyx.gnss_edu.compute_vmf1_values module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx-gnss-edu-download-vmf-module">geodezyx.gnss_edu.download_VMF module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx-gnss-edu-gmf-function-module">geodezyx.gnss_edu.gmf_function module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx-gnss-edu-gnss-edu-module">geodezyx.gnss_edu.gnss_edu module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#module-geodezyx.gnss_edu.gmf_function">geodezyx.gnss_edu.gmf_function module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.gmf_function.gmf"><code class="docutils literal notranslate"><span class="pre">gmf()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#module-geodezyx.gnss_edu.gnss_edu">geodezyx.gnss_edu.gnss_edu module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.gnss_edu.Sagnac_rotate_around_z"><code class="docutils literal notranslate"><span class="pre">Sagnac_rotate_around_z()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.gnss_edu.add_az_el_iono_columns"><code class="docutils literal notranslate"><span class="pre">add_az_el_iono_columns()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.gnss_edu.enrich_df_with_sat_positions"><code class="docutils literal notranslate"><span class="pre">enrich_df_with_sat_positions()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.gnss_edu.get_approx_position"><code class="docutils literal notranslate"><span class="pre">get_approx_position()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.gnss_edu.grep_file"><code class="docutils literal notranslate"><span class="pre">grep_file()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.gnss_edu.load_and_clean_rinex"><code class="docutils literal notranslate"><span class="pre">load_and_clean_rinex()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.gnss_edu.plot_residual_analysis"><code class="docutils literal notranslate"><span class="pre">plot_residual_analysis()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.gnss_edu.plot_series"><code class="docutils literal notranslate"><span class="pre">plot_series()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx-gnss-edu-gnss-edu-test-skyplot-module">geodezyx.gnss_edu.gnss_edu_test_skyplot module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx-gnss-edu-gpt3-module">geodezyx.gnss_edu.gpt3 module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx-gnss-edu-klobuchar-module">geodezyx.gnss_edu.klobuchar module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx-gnss-edu-read-vmf1-grid-module">geodezyx.gnss_edu.read_vmf1_grid module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx-gnss-edu-vmf1-ht-module">geodezyx.gnss_edu.vmf1_ht module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#module-geodezyx.gnss_edu.gpt3">geodezyx.gnss_edu.gpt3 module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.gpt3.gpt3_5_fast"><code class="docutils literal notranslate"><span class="pre">gpt3_5_fast()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.gpt3.gpt3_5_fast_readGrid"><code class="docutils literal notranslate"><span class="pre">gpt3_5_fast_readGrid()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#module-geodezyx.gnss_edu.klobuchar">geodezyx.gnss_edu.klobuchar module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.klobuchar.klobuchar"><code class="docutils literal notranslate"><span class="pre">klobuchar()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#module-geodezyx.gnss_edu.read_vmf1_grid">geodezyx.gnss_edu.read_vmf1_grid module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.read_vmf1_grid.VMFPoint"><code class="docutils literal notranslate"><span class="pre">VMFPoint</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.read_vmf1_grid.add_hours"><code class="docutils literal notranslate"><span class="pre">add_hours()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.read_vmf1_grid.datetime_to_mjd"><code class="docutils literal notranslate"><span class="pre">datetime_to_mjd()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.read_vmf1_grid.floor_to_6h"><code class="docutils literal notranslate"><span class="pre">floor_to_6h()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.read_vmf1_grid.jd_to_calendar"><code class="docutils literal notranslate"><span class="pre">jd_to_calendar()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.read_vmf1_grid.mjd_to_datetime"><code class="docutils literal notranslate"><span class="pre">mjd_to_datetime()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.read_vmf1_grid.mjd_to_jd"><code class="docutils literal notranslate"><span class="pre">mjd_to_jd()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.read_vmf1_grid.read_vmf1_grid"><code class="docutils literal notranslate"><span class="pre">read_vmf1_grid()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.gnss_edu.html#module-geodezyx.gnss_edu.vmf1_ht">geodezyx.gnss_edu.vmf1_ht module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.gnss_edu.html#geodezyx.gnss_edu.vmf1_ht.vmf1_ht"><code class="docutils literal notranslate"><span class="pre">vmf1_ht()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a><ul>
@@ -711,6 +827,11 @@ can be useful for Geodesy and Geophysics.</p>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.marine.html#module-geodezyx.marine.dac">geodezyx.marine.dac module</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.marine.html#geodezyx.marine.dac.dac_extract"><code class="docutils literal notranslate"><span class="pre">dac_extract()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.marine.html#geodezyx.marine.dac.dac_get_aviso"><code class="docutils literal notranslate"><span class="pre">dac_get_aviso()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.marine.html#module-geodezyx.marine.export_obp">geodezyx.marine.export_obp module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.marine.html#geodezyx.marine.export_obp.export_obp_to_netcdf"><code class="docutils literal notranslate"><span class="pre">export_obp_to_netcdf()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.marine.html#geodezyx.marine.export_obp.read_halios_first_deploy"><code class="docutils literal notranslate"><span class="pre">read_halios_first_deploy()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.marine.html#module-geodezyx.marine.marine">geodezyx.marine.marine module</a><ul>
@@ -743,6 +864,7 @@ can be useful for Geodesy and Geophysics.</p>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.marine.html#geodezyx.marine.obp.linear"><code class="docutils literal notranslate"><span class="pre">linear()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.marine.html#geodezyx.marine.obp.log"><code class="docutils literal notranslate"><span class="pre">log()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.marine.html#geodezyx.marine.obp.log_linear"><code class="docutils literal notranslate"><span class="pre">log_linear()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.marine.html#geodezyx.marine.obp.padlen"><code class="docutils literal notranslate"><span class="pre">padlen()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.marine.html#geodezyx.marine.obp.polynomial_3"><code class="docutils literal notranslate"><span class="pre">polynomial_3()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.marine.html#geodezyx.marine.obp.read_duacs"><code class="docutils literal notranslate"><span class="pre">read_duacs()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.marine.html#geodezyx.marine.obp.read_ecco2"><code class="docutils literal notranslate"><span class="pre">read_ecco2()</span></code></a></li>
@@ -818,29 +940,30 @@ can be useful for Geodesy and Geophysics.</p>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.crawl_ftp_files"><code class="docutils literal notranslate"><span class="pre">crawl_ftp_files()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.download_gnss_rinex"><code class="docutils literal notranslate"><span class="pre">download_gnss_rinex()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.effective_save_dir"><code class="docutils literal notranslate"><span class="pre">effective_save_dir()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.ens_fr_legacy"><code class="docutils literal notranslate"><span class="pre">ens_fr_legacy()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.ens_fr_server"><code class="docutils literal notranslate"><span class="pre">ens_fr_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.euref_server"><code class="docutils literal notranslate"><span class="pre">euref_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.gen_crawl_table"><code class="docutils literal notranslate"><span class="pre">gen_crawl_table()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.geoaus_server_legacy"><code class="docutils literal notranslate"><span class="pre">geoaus_server_legacy()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.geoaus_server"><code class="docutils literal notranslate"><span class="pre">geoaus_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.igs_bkg_server"><code class="docutils literal notranslate"><span class="pre">igs_bkg_server()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.igs_cddis_nav_server_legacy"><code class="docutils literal notranslate"><span class="pre">igs_cddis_nav_server_legacy()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.igs_cddis_nav_server"><code class="docutils literal notranslate"><span class="pre">igs_cddis_nav_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.igs_cddis_server"><code class="docutils literal notranslate"><span class="pre">igs_cddis_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.igs_ign_ensg_server"><code class="docutils literal notranslate"><span class="pre">igs_ign_ensg_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.igs_ign_server"><code class="docutils literal notranslate"><span class="pre">igs_ign_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.igs_sopac_server"><code class="docutils literal notranslate"><span class="pre">igs_sopac_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.nav_bkg_server"><code class="docutils literal notranslate"><span class="pre">nav_bkg_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.nav_rob_server"><code class="docutils literal notranslate"><span class="pre">nav_rob_server()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.orpheon_server_legacy"><code class="docutils literal notranslate"><span class="pre">orpheon_server_legacy()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.ovsg_server_legacy"><code class="docutils literal notranslate"><span class="pre">ovsg_server_legacy()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.renag_server_legacy"><code class="docutils literal notranslate"><span class="pre">renag_server_legacy()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.orpheon_server"><code class="docutils literal notranslate"><span class="pre">orpheon_server()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.ovsg_server"><code class="docutils literal notranslate"><span class="pre">ovsg_server()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.renag_server"><code class="docutils literal notranslate"><span class="pre">renag_server()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.renag_server_crtk"><code class="docutils literal notranslate"><span class="pre">renag_server_crtk()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.rgp_ensg_server"><code class="docutils literal notranslate"><span class="pre">rgp_ensg_server()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.rgp_ign_smn_1_hz_server_legacy"><code class="docutils literal notranslate"><span class="pre">rgp_ign_smn_1_hz_server_legacy()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.rgp_ign_smn_1_hz_server"><code class="docutils literal notranslate"><span class="pre">rgp_ign_smn_1_hz_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.rgp_server"><code class="docutils literal notranslate"><span class="pre">rgp_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.rnx_regex_indir"><code class="docutils literal notranslate"><span class="pre">rnx_regex_indir()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.sonel_server"><code class="docutils literal notranslate"><span class="pre">sonel_server()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.spotgins_eost_server"><code class="docutils literal notranslate"><span class="pre">spotgins_eost_server()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.unavco_server_legacy"><code class="docutils literal notranslate"><span class="pre">unavco_server_legacy()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.uwiseismic_server_legacy"><code class="docutils literal notranslate"><span class="pre">uwiseismic_server_legacy()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.unavco_server"><code class="docutils literal notranslate"><span class="pre">unavco_server()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_rinex.uwiseismic_server"><code class="docutils literal notranslate"><span class="pre">uwiseismic_server()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_rinex_legacy">geodezyx.operational.download_rinex_legacy module</a><ul>
@@ -869,6 +992,7 @@ can be useful for Geodesy and Geophysics.</p>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_utils">geodezyx.operational.download_utils module</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_utils.MyFTP_TLS"><code class="docutils literal notranslate"><span class="pre">MyFTP_TLS</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_utils.download_http"><code class="docutils literal notranslate"><span class="pre">download_http()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_utils.downloader"><code class="docutils literal notranslate"><span class="pre">downloader()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_utils.downloader_wrap"><code class="docutils literal notranslate"><span class="pre">downloader_wrap()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.download_utils.effective_save_dir_orbit"><code class="docutils literal notranslate"><span class="pre">effective_save_dir_orbit()</span></code></a></li>
@@ -924,10 +1048,16 @@ can be useful for Geodesy and Geophysics.</p>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.pride_pppar_frontend.run_command"><code class="docutils literal notranslate"><span class="pre">run_command()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_check">geodezyx.operational.rinex_check module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_check.rinex_check"><code class="docutils literal notranslate"><span class="pre">rinex_check()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_lister_plotter">geodezyx.operational.rinex_lister_plotter module</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_lister_plotter.listing_gins_timeline"><code class="docutils literal notranslate"><span class="pre">listing_gins_timeline()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_lister_plotter.rinex_check_epochs_availability"><code class="docutils literal notranslate"><span class="pre">rinex_check_epochs_availability()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_lister_plotter.rinex_lister"><code class="docutils literal notranslate"><span class="pre">rinex_lister()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_lister_plotter.rinex_lists_diff"><code class="docutils literal notranslate"><span class="pre">rinex_lists_diff()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_lister_plotter.rinex_table_from_list"><code class="docutils literal notranslate"><span class="pre">rinex_table_from_list()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_lister_plotter.rinex_timeline"><code class="docutils literal notranslate"><span class="pre">rinex_timeline()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_lister_plotter.rinex_timeline_datadico"><code class="docutils literal notranslate"><span class="pre">rinex_timeline_datadico()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_lister_plotter.rinex_timeline_datadico_merge"><code class="docutils literal notranslate"><span class="pre">rinex_timeline_datadico_merge()</span></code></a></li>
@@ -938,23 +1068,30 @@ can be useful for Geodesy and Geophysics.</p>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.check_if_compressed_rinex"><code class="docutils literal notranslate"><span class="pre">check_if_compressed_rinex()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.crz2rnx"><code class="docutils literal notranslate"><span class="pre">crz2rnx()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.read_rnx_epoch_line"><code class="docutils literal notranslate"><span class="pre">read_rnx_epoch_line()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.rinex_lists_diff"><code class="docutils literal notranslate"><span class="pre">rinex_lists_diff()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.rinex_open"><code class="docutils literal notranslate"><span class="pre">rinex_open()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.rinex_read_epoch"><code class="docutils literal notranslate"><span class="pre">rinex_read_epoch()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.rinex_renamer"><code class="docutils literal notranslate"><span class="pre">rinex_renamer()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.rinex_sats_checker"><code class="docutils literal notranslate"><span class="pre">rinex_sats_checker()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.rinex_session_id"><code class="docutils literal notranslate"><span class="pre">rinex_session_id()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.rinex_spliter"><code class="docutils literal notranslate"><span class="pre">rinex_spliter()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.rinex_spliter_gfzrnx"><code class="docutils literal notranslate"><span class="pre">rinex_spliter_gfzrnx()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.rinex_start_end"><code class="docutils literal notranslate"><span class="pre">rinex_start_end()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.rinex_table_from_list"><code class="docutils literal notranslate"><span class="pre">rinex_table_from_list()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.rnx2crz"><code class="docutils literal notranslate"><span class="pre">rnx2crz()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.same_day_rinex_check"><code class="docutils literal notranslate"><span class="pre">same_day_rinex_check()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.teqc_qc"><code class="docutils literal notranslate"><span class="pre">teqc_qc()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils.uncomp_rnxpath"><code class="docutils literal notranslate"><span class="pre">uncomp_rnxpath()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_utils_legacy">geodezyx.operational.rinex_utils_legacy module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils_legacy.crz2rnx"><code class="docutils literal notranslate"><span class="pre">crz2rnx()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils_legacy.rinex_renamer"><code class="docutils literal notranslate"><span class="pre">rinex_renamer()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils_legacy.rinex_sats_checker"><code class="docutils literal notranslate"><span class="pre">rinex_sats_checker()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils_legacy.rinex_spliter"><code class="docutils literal notranslate"><span class="pre">rinex_spliter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils_legacy.rnx2crz"><code class="docutils literal notranslate"><span class="pre">rnx2crz()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rinex_utils_legacy.teqc_qc"><code class="docutils literal notranslate"><span class="pre">teqc_qc()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rtklib_frontend">geodezyx.operational.rtklib_frontend module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rtklib_frontend.prods2tmp"><code class="docutils literal notranslate"><span class="pre">prods2tmp()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rtklib_frontend.read_conf_file"><code class="docutils literal notranslate"><span class="pre">read_conf_file()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rtklib_frontend.rtklib_run_from_rinex"><code class="docutils literal notranslate"><span class="pre">rtklib_run_from_rinex()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.operational.html#geodezyx.operational.rtklib_frontend.write_conf_file"><code class="docutils literal notranslate"><span class="pre">write_conf_file()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.track_frontend">geodezyx.operational.track_frontend module</a><ul>
@@ -1275,7 +1412,7 @@ can be useful for Geodesy and Geophysics.</p>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.utils.html#geodezyx.utils.shell_like.insert_str_in_file_if_line_contains"><code class="docutils literal notranslate"><span class="pre">insert_str_in_file_if_line_contains()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.utils.html#geodezyx.utils.shell_like.is_exe"><code class="docutils literal notranslate"><span class="pre">is_exe()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.utils.html#geodezyx.utils.shell_like.regex2filelist"><code class="docutils literal notranslate"><span class="pre">regex2filelist()</span></code></a></li>
-<li class="toctree-l5"><a class="reference internal" href="geodezyx.utils.html#geodezyx.utils.shell_like.regex_OR_from_list"><code class="docutils literal notranslate"><span class="pre">regex_OR_from_list()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="geodezyx.utils.html#geodezyx.utils.shell_like.regex_or_from_list"><code class="docutils literal notranslate"><span class="pre">regex_or_from_list()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.utils.html#geodezyx.utils.shell_like.remove_dir"><code class="docutils literal notranslate"><span class="pre">remove_dir()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.utils.html#geodezyx.utils.shell_like.replace"><code class="docutils literal notranslate"><span class="pre">replace()</span></code></a></li>
 <li class="toctree-l5"><a class="reference internal" href="geodezyx.utils.html#geodezyx.utils.shell_like.subprocess_frontend"><code class="docutils literal notranslate"><span class="pre">subprocess_frontend()</span></code></a></li>

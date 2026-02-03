@@ -14,6 +14,8 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 import ftplib
+import requests
+import tqdm
 
 #### Import the logger
 import logging
@@ -22,6 +24,7 @@ import pathlib
 import shutil
 import time
 import urllib
+import urllib.request
 
 ########## BEGIN IMPORT ##########
 #### External modules
@@ -204,6 +207,79 @@ def downloader(
 def downloader_wrap(intup):
     downloader(*intup)
     return None
+
+
+def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
+    """
+    Download a file from an HTTP server with retry logic and progress bar.
+
+    Parameters
+    ----------
+    url : str
+        The URL of the file to download.
+    output_dir : str
+        The directory where the downloaded file will be saved.
+    timeout : int, optional
+        The timeout for the HTTP connection in seconds. Default is 120 seconds.
+    max_try : int, optional
+        The maximum number of retry attempts in case of failure. Default is 4.
+    sleep_time : int, optional
+        The sleep time between retry attempts in seconds. Default is 5 seconds.
+
+    Returns
+    -------
+    str
+        The path to the downloaded file, or an empty string if the download failed.
+
+    Raises
+    ------
+    AutorinoDownloadError
+        If the download fails after the maximum number of retry attempts.
+    """
+
+    # Get file size
+    log.info("Download file: %s", url)
+    response = requests.head(url, timeout=timeout)
+    file_size = int(response.headers.get("content-length", 0))
+
+    # Construct output path
+    filename = url.split("/")[-1]
+    output_path = os.path.join(output_dir, filename)
+
+    # Ensure output directory exists
+    os.makedirs(output_dir, exist_ok=True)
+
+    dwl = False
+
+    # Check if file already exists
+    if os.path.isfile(output_path):
+        log.info(f"{filename} already exists locally ;)")
+        return (output_path, dwl)
+
+    # Download file with progress bar
+    try_count = 0
+    while True:
+        try:
+            response = requests.get(url, stream=True, timeout=timeout)
+            with open(output_path, "wb") as f:
+                with tqdm.tqdm(
+                    total=file_size, unit="B", unit_scale=True, desc=filename
+                ) as pbar:
+                    for data in response.iter_content(chunk_size=1024):
+                        f.write(data)
+                        pbar.update(len(data))
+            break
+        except requests.exceptions.RequestException as e:
+            try_count += 1
+            if try_count > max_try:
+                log.error("download failed after %i attempts", max_try)
+                return (url, dwl)
+
+            log.warning("download failed (%s), try %i/%i", str(e), try_count, max_try)
+            time.sleep(sleep_time)
+
+    dwl = True
+    return (output_path, dwl)
 
 
 #  ______ _______ _____    _____                      _                 _

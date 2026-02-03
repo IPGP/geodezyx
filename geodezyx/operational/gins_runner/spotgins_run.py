@@ -6,7 +6,6 @@ Created on 28/02/2025 18:52:44
 @author: psakic
 """
 import re
-import subprocess
 
 import geodezyx.operational.gins_runner.gins_common as gynscmn
 import geodezyx.operational.gins_runner.gins_dirs_gen as gynsgen
@@ -34,9 +33,11 @@ import logging
 log = logging.getLogger("geodezyx")
 
 
-LAST_VERSION_VALIDE = "VALIDE_25_1"
-#DIR_SPOTGINS_DEFAULT = ""DIR_SPOTGINS_G20_GE.yml""
-DIR_SPOTGINS_DEFAULT = "DIR_SPOTGINS_G20_GE_VALIDE_25_1.yml"
+LAST_VERSION_VALIDE = "VALIDE_25_2"
+# DIR_SPOTGINS_DEFAULT = ""DIR_SPOTGINS_G20_GE.yml""
+#DIR_SPOTGINS_DEFAULT = "DIR_SPOTGINS_G20_GE_VALIDE_25_1.yml"
+DIR_SPOTGINS_DEFAULT = "DIR_SPOTGINS_G20_GE_VALIDE_25_2.yml"
+DIR_SPOTGINS_RAPID = "DIR_RAPIDE_G20R_GE.yml"
 
 def spotgins_run(
     rnxs_path_inp,
@@ -57,6 +58,7 @@ def spotgins_run(
     no_concat_orb_clk=False,
     verbose=False,
     updatebd_login="",
+    quick_mode=False,
 ):
     """
     Run the SPOTGINS process on the provided RINEX paths using multiprocessing.
@@ -102,6 +104,11 @@ def spotgins_run(
     updatebd_login : str
         The login to connect to the remote `tite` GINS server to update the database.
         We assume that SSH keys have been exchanged to automatize the connexion
+    quick_mode : bool, optional
+        If True, quick mode will be enabled.
+        Quick mode allows for faster latency processing, using RAPID/ULTRA products.
+        but it is not a SPOTGINS official mode anymore.
+        Default is False.
     Returns
     -------
     None
@@ -119,8 +126,15 @@ def spotgins_run(
         return
 
     ##### get the paths of the files needed for SPOTGINS
+    if quick_mode:
+        updatebd_rapid =  True
+        director_generik_path_mod = "rapid"
+    else:
+        updatebd_rapid = False
+        director_generik_path_mod = director_generik_path_inp
+
     dirgen_use, stfi_use, oclo_use, opra_use, siteid9_use = get_spotgins_files(
-        director_generik_path_inp,
+        director_generik_path_mod,
         stations_file_inp,
         oceanload_file_inp,
         options_prairie_file_inp,
@@ -141,7 +155,9 @@ def spotgins_run(
     ##### Update the database ################
     if not no_updatebd:
         gynsbdu.bdgins_update(
-            date_srt=date_min, date_end=date_max, dir_bdgins="", login=updatebd_login
+            date_srt=date_min, date_end=date_max,
+            dir_bdgins="", login=updatebd_login,
+            rapid=updatebd_rapid,
         )
 
     ##### concatenate hor/orb ################
@@ -178,7 +194,7 @@ def spotgins_run(
         ######## DIRECTORS RUN ###############
         const_use = const_adapt(const, dirr, verbose=verbose)
         # const_use = "GE" # ASG use always GE
-        opt_gins_90_use = "-const " + const_use
+        opt_gins_90_use = "-const " + const_use + " -nocheck_gnss_products"
         try:
             gynsrun.run_directors(
                 dirr,
@@ -267,12 +283,17 @@ def get_spotgins_files(
     else:
         sptgns_path = gynscmn.get_spotgins_path()
 
-    if director_generik_path_inp:
-        dirgen_use = director_generik_path_inp
-    else:
+    if not director_generik_path_inp:
         dirgen_use = os.path.join(
             sptgns_path, "metadata", "directeur", DIR_SPOTGINS_DEFAULT
         )
+    elif director_generik_path_inp == "rapid":
+        dirgen_use = os.path.join(
+            sptgns_path, "metadata", "directeur", DIR_SPOTGINS_RAPID
+        )
+    else:
+        dirgen_use = director_generik_path_inp
+
 
     if stations_file_inp:
         stfi_use = stations_file_inp

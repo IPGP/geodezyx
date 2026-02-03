@@ -121,6 +121,14 @@ geodezyx.operational.pride\_pppar\_frontend module
    :show-inheritance:
    :undoc-members:
 
+geodezyx.operational.rinex\_check module
+----------------------------------------
+
+.. automodule:: geodezyx.operational.rinex_check
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 geodezyx.operational.rinex\_lister\_plotter module
 --------------------------------------------------
 
@@ -133,6 +141,14 @@ geodezyx.operational.rinex\_utils module
 ----------------------------------------
 
 .. automodule:: geodezyx.operational.rinex_utils
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+geodezyx.operational.rinex\_utils\_legacy module
+------------------------------------------------
+
+.. automodule:: geodezyx.operational.rinex_utils_legacy
    :members:
    :show-inheritance:
    :undoc-members:

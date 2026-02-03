@@ -80,3 +80,19 @@ geodezyx.conv.conv\_time module
    :members:
    :show-inheritance:
    :undoc-members:
+
+geodezyx.conv.conv\_time\_leap\_sec module
+------------------------------------------
+
+.. automodule:: geodezyx.conv.conv_time_leap_sec
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+geodezyx.conv.conv\_time\_orig module
+-------------------------------------
+
+.. automodule:: geodezyx.conv.conv_time_orig
+   :members:
+   :show-inheritance:
+   :undoc-members:

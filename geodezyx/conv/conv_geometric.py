@@ -277,8 +277,8 @@ def orthogonal_projection(Xa,Xb,Xv):
     D : float
         Distance between A and H
         
-    Note
-    ----
+    Notes
+    -----
     Misc. Notes
 
     Source

@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.operational package &mdash; geodezyx 4.x documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -74,8 +74,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.hector_frontend">geodezyx.operational.hector_frontend module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.midas_frontend">geodezyx.operational.midas_frontend module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.pride_pppar_frontend">geodezyx.operational.pride_pppar_frontend module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.rinex_check">geodezyx.operational.rinex_check module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.rinex_lister_plotter">geodezyx.operational.rinex_lister_plotter module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.rinex_utils">geodezyx.operational.rinex_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.rinex_utils_legacy">geodezyx.operational.rinex_utils_legacy module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.rtklib_frontend">geodezyx.operational.rtklib_frontend module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.operational.track_frontend">geodezyx.operational.track_frontend module</a></li>
 </ul>
@@ -175,6 +177,11 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.gins_runner.html#geodezyx.operational.gins_runner.gins_prairie.prairie_manual"><code class="docutils literal notranslate"><span class="pre">prairie_manual()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="geodezyx.operational.gins_runner.html#module-geodezyx.operational.gins_runner.rnxs_eost">geodezyx.operational.gins_runner.rnxs_eost module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.gins_runner.html#geodezyx.operational.gins_runner.rnxs_eost.get_rnx_eost"><code class="docutils literal notranslate"><span class="pre">get_rnx_eost()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.gins_runner.html#geodezyx.operational.gins_runner.rnxs_eost.list_rnx_eost"><code class="docutils literal notranslate"><span class="pre">list_rnx_eost()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="geodezyx.operational.gins_runner.html#module-geodezyx.operational.gins_runner.singugins_run">geodezyx.operational.gins_runner.singugins_run module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.gins_runner.html#geodezyx.operational.gins_runner.singugins_run.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.gins_runner.html#geodezyx.operational.gins_runner.singugins_run.singugins_run"><code class="docutils literal notranslate"><span class="pre">singugins_run()</span></code></a></li>
@@ -187,6 +194,11 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.gins_runner.html#geodezyx.operational.gins_runner.spotgins_run.get_spotgins_files"><code class="docutils literal notranslate"><span class="pre">get_spotgins_files()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.gins_runner.html#geodezyx.operational.gins_runner.spotgins_run.rm_prov_listing"><code class="docutils literal notranslate"><span class="pre">rm_prov_listing()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.gins_runner.html#geodezyx.operational.gins_runner.spotgins_run.spotgins_run"><code class="docutils literal notranslate"><span class="pre">spotgins_run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="geodezyx.operational.gins_runner.html#module-geodezyx.operational.gins_runner.testgins_run">geodezyx.operational.gins_runner.testgins_run module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.gins_runner.html#geodezyx.operational.gins_runner.testgins_run.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.gins_runner.html#geodezyx.operational.gins_runner.testgins_run.run_testgins"><code class="docutils literal notranslate"><span class="pre">run_testgins()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -985,9 +997,11 @@ OR only ‘/’ for a dirty saving in the parent folder
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.ens_fr_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">ens_fr_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.ens_fr_legacy" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.ens_fr_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">ens_fr_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.ens_fr_server" title="Link to this definition"></a></dt>
+<dd><p>ENS (École Normale Supérieure) France GNSS server.</p>
+<p>Adapted from legacy function to standard format.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_rinex.euref_server">
@@ -1019,10 +1033,11 @@ OR only ‘/’ for a dirty saving in the parent folder
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.geoaus_server_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">geoaus_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.geoaus_server_legacy" title="Link to this definition"></a></dt>
-<dd><p>Geosciences Australia
-ex : <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/">ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/</a></p>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.geoaus_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">geoaus_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.geoaus_server" title="Link to this definition"></a></dt>
+<dd><p>Geosciences Australia GNSS server.</p>
+<p>Adapted from legacy function to standard format.
+Example: <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/">ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/2010/10063/</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -1031,9 +1046,11 @@ ex : <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gn
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.igs_cddis_nav_server_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">igs_cddis_nav_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.igs_cddis_nav_server_legacy" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.igs_cddis_nav_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">igs_cddis_nav_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.igs_cddis_nav_server" title="Link to this definition"></a></dt>
+<dd><p>IGS CDDIS navigation file server.</p>
+<p>Adapted from legacy function to standard format.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_rinex.igs_cddis_server">
@@ -1066,18 +1083,31 @@ ex : <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gn
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.orpheon_server_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">orpheon_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.orpheon_server_legacy" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.orpheon_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">orpheon_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.orpheon_server" title="Link to this definition"></a></dt>
+<dd><p>Orpheon server for RINEX observation files (RENAG hosted).</p>
+<p>Adapted from legacy function to standard format.
+Note: Authentication may be required, use user/passwd parameters in download_gnss_rinex.</p>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.ovsg_server_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">ovsg_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.ovsg_server_legacy" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.ovsg_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">ovsg_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.ovsg_server" title="Link to this definition"></a></dt>
+<dd><p>OVSG (Observatoire Volcanologique et Sismologique de Guadeloupe) server.</p>
+<p>Adapted from legacy function to standard format.
+Note: Uses HTTP, authentication may be required.</p>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.renag_server_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">renag_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.renag_server_legacy" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.renag_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">renag_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.renag_server" title="Link to this definition"></a></dt>
+<dd><p>RENAG server for RINEX observation files.</p>
+<p>Adapted from legacy function to standard format.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.renag_server_crtk">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">renag_server_crtk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.renag_server_crtk" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -1086,9 +1116,17 @@ ex : <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gn
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_ign_smn_1_hz_server_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ign_smn_1_hz_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_ign_smn_1_hz_server_legacy" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_ign_smn_1_hz_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ign_smn_1_hz_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.rgp_ign_smn_1_hz_server" title="Link to this definition"></a></dt>
+<dd><p>RGP IGN 1Hz data server (hourly RINEX files).</p>
+<p>Adapted from legacy function to standard format.
+Returns URLs for all 24 hourly sessions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function returns a list of urldic instead of a single urldic,
+one for each hourly session of the day.</p>
+</div>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_rinex.rgp_server">
@@ -1126,14 +1164,19 @@ ex : <a class="reference external" href="ftp://ftp.ga.gov.au/geodesy-outgoing/gn
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.unavco_server_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">unavco_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.unavco_server_legacy" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.unavco_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">unavco_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.unavco_server" title="Link to this definition"></a></dt>
+<dd><p>UNAVCO server for RINEX observation files.</p>
+<p>Adapted from legacy function to standard format.</p>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.uwiseismic_server_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">uwiseismic_server_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.uwiseismic_server_legacy" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="geodezyx.operational.download_rinex.uwiseismic_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex.</span></span><span class="sig-name descname"><span class="pre">uwiseismic_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex.uwiseismic_server" title="Link to this definition"></a></dt>
+<dd><p>UWISeismic server for RINEX observation files.</p>
+<p>Adapted from legacy function to standard format.
+Note: Authentication may be required, use user/passwd parameters in download_gnss_rinex.</p>
+</dd></dl>
 
 </section>
 <section id="module-geodezyx.operational.download_rinex_legacy">
@@ -1378,7 +1421,7 @@ GitHub repository :
 <a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geodezyx.operational.download_utils.MyFTP_TLS">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">MyFTP_TLS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acct=''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout=&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_address=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding='utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.MyFTP_TLS" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">MyFTP_TLS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.MyFTP_TLS" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FTP_TLS</span></code></p>
 <p>This class is a subclass of FTP_TLS from the ftplib module. It is used to create an FTPS client that shares the TLS session.
 This is to avoid the error: ssl.SSLEOFError: EOF occurred in violation of protocol (_ssl.c:2396)
@@ -1411,6 +1454,32 @@ Source: <a class="reference external" href="https://stackoverflow.com/questions/
 <p>If the protection level is set to private (i.e., _prot_p is True), the connection is wrapped in an SSL/TLS layer.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_utils.download_http">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">download_http</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_try</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.download_http" title="Link to this definition"></a></dt>
+<dd><p>Download a file from an HTTP server with retry logic and progress bar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – The URL of the file to download.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – The directory where the downloaded file will be saved.</p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – The timeout for the HTTP connection in seconds. Default is 120 seconds.</p></li>
+<li><p><strong>max_try</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of retry attempts in case of failure. Default is 4.</p></li>
+<li><p><strong>sleep_time</strong> (<em>int</em><em>, </em><em>optional</em>) – The sleep time between retry attempts in seconds. Default is 5 seconds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The path to the downloaded file, or an empty string if the download failed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AutorinoDownloadError</strong> – If the download fails after the maximum number of retry attempts.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -2105,6 +2174,28 @@ The function prints the return code of the process once it completes.</p>
 </dd></dl>
 
 </section>
+<section id="module-geodezyx.operational.rinex_check">
+<span id="geodezyx-operational-rinex-check-module"></span><h2>geodezyx.operational.rinex_check module<a class="headerlink" href="#module-geodezyx.operational.rinex_check" title="Link to this heading"></a></h2>
+<p>Created on 23/09/2025 12:24:23</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.rinex_check.rinex_check">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_check.</span></span><span class="sig-name descname"><span class="pre">rinex_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_path_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_check.rinex_check" title="Link to this definition"></a></dt>
+<dd><p>Check the validity of a RINEX file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rnx_path_inp</strong> (<em>str</em>) – Path to the RINEX file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the RINEX file is valid, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-geodezyx.operational.rinex_lister_plotter">
 <span id="geodezyx-operational-rinex-lister-plotter-module"></span><h2>geodezyx.operational.rinex_lister_plotter module<a class="headerlink" href="#module-geodezyx.operational.rinex_lister_plotter" title="Link to this heading"></a></h2>
 <p>&#64;author: psakic</p>
@@ -2165,6 +2256,64 @@ gins_runner.get_rinex_list and operational.rinex_finder</p>
 </dl>
 <p class="rubric">Notes</p>
 <p>operational.rinex_finder must be used in priority !!! (July 2022)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.rinex_lists_diff">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">rinex_lists_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_lis1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_lis2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site9_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.rinex_lists_diff" title="Link to this definition"></a></dt>
+<dd><p>Compare two lists of RINEX files and identify differences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rnx_lis1</strong> (<em>list</em>) – First list of RINEX file paths.</p></li>
+<li><p><strong>rnx_lis2</strong> (<em>list</em>) – Second list of RINEX file paths.</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory to save the output files. If None, no files are saved.</p></li>
+<li><p><strong>out_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Base name for the output files. Defaults to ‘rnx_diff’ if not provided.</p></li>
+<li><p><strong>site9_col</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use ‘site9’ as the column name for site identification. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>diff1m2</strong> (<em>pandas.DataFrame</em>) – DataFrame containing entries in rnx_lis1 but not in rnx_lis2.</p></li>
+<li><p><strong>diff2m1</strong> (<em>pandas.DataFrame</em>) – DataFrame containing entries in rnx_lis2 but not in rnx_lis1.</p></li>
+<li><p><strong>intrsec</strong> (<em>pandas.DataFrame</em>) – DataFrame containing entries common to both rnx_lis1 and rnx_lis2.</p></li>
+<li><p><strong>symdiff</strong> (<em>pandas.DataFrame</em>) – DataFrame containing entries that are in either rnx_lis1 or rnx_lis2 but not in both.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.rinex_table_from_list">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">rinex_table_from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnxs_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site9_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.rinex_table_from_list" title="Link to this definition"></a></dt>
+<dd><p>From a simple RINEX list, summarize the data in an ad-hoc DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rnxs_inp</strong> (<em>iterable</em><em> or </em><em>str</em>) – If iterable, a list of RINEX files.
+If str, path of an input RINEX list as text file.</p></li>
+<li><p><strong>site9_col</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, include a ‘site9’ column in the DataFrame. Defaults to False.</p></li>
+<li><p><strong>round_date</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, round the dates to the nearest day. Defaults to False.</p></li>
+<li><p><strong>path_col</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, include the ‘path’ column in the DataFrame. Defaults to True.</p></li>
+<li><p><strong>size_col</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, include a ‘size’ column in the DataFrame.
+Corresponds to the size of the file in bytes.
+It can slow down the process if the list is long.
+Defaults to False.</p></li>
+<li><p><strong>sort</strong> (<em>bool</em><em>, </em><em>optional</em>) – <dl class="simple">
+<dt>If True, sort the DataFrame by ‘site4’ or ‘site9’ (if site9_col is True) and ‘date’.</dt><dd><p>Defaults to True.</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df</strong> – A DataFrame with the RINEX info in it.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -2302,7 +2451,8 @@ GitHub repository :
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.check_if_compressed_rinex">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">check_if_compressed_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.check_if_compressed_rinex" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Obsolete function, use conv.rinex_regex_search_tester instead</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.crz2rnx">
@@ -2333,27 +2483,19 @@ The default is True.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.rinex_lists_diff">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_lists_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_lis1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_lis2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site9_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_lists_diff" title="Link to this definition"></a></dt>
-<dd><p>Compare two lists of RINEX files and identify differences.</p>
+<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.rinex_open">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_path_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_open" title="Link to this definition"></a></dt>
+<dd><p>Open RINEX content and return a text in-memory file (<cite>io.StringIO</cite>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rnx_lis1</strong> (<em>list</em>) – First list of RINEX file paths.</p></li>
-<li><p><strong>rnx_lis2</strong> (<em>list</em>) – Second list of RINEX file paths.</p></li>
-<li><p><strong>out_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory to save the output files. If None, no files are saved.</p></li>
-<li><p><strong>out_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Base name for the output files. Defaults to ‘rnx_diff’ if not provided.</p></li>
-<li><p><strong>site9_col</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use ‘site9’ as the column name for site identification. Defaults to False.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>rnx_path_inp</strong> (<em>str</em><em> or </em><em>pathlib.Path</em>) – Path to the RINEX file. Can be a compressed RINEX file
+(detected by <cite>conv.rinex_regex_search_tester</cite>).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>diff1m2</strong> (<em>pandas.DataFrame</em>) – DataFrame containing entries in rnx_lis1 but not in rnx_lis2.</p></li>
-<li><p><strong>diff2m1</strong> (<em>pandas.DataFrame</em>) – DataFrame containing entries in rnx_lis2 but not in rnx_lis1.</p></li>
-<li><p><strong>intrsec</strong> (<em>pandas.DataFrame</em>) – DataFrame containing entries common to both rnx_lis1 and rnx_lis2.</p></li>
-<li><p><strong>symdiff</strong> (<em>pandas.DataFrame</em>) – DataFrame containing entries that are in either rnx_lis1 or rnx_lis2 but not in both.</p></li>
-</ul>
-</p>
+<dd class="field-even"><p>An in-memory text file (UTF-8 decoded) ready for reading.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>io.StringIO</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2388,27 +2530,6 @@ The default is False.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.rinex_renamer">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_renamer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_out_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_renamer" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.rinex_sats_checker">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_sats_checker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_rnx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_sats_checker" title="Link to this definition"></a></dt>
-<dd><p>Check the consistency of a RINEX’s sat list for each epoch</p>
-<p>Designed for checking the consistency of IPGP-OVPF corrupted RINEXs
-RINEX-2 only</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>p_rnx</strong> (<em>str</em>) – input RINEX path.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>bad RINEX path or None.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.rinex_session_id">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_session_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_session_id" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
@@ -2419,24 +2540,13 @@ of the session</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.rinex_spliter">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_spliter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_out_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">24</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inclusive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teqc_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'teqc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_spliter" title="Link to this definition"></a></dt>
-<dd><p>if shift != 0:
-the start/end of a session is shifted of shift minutes</p>
-<p>inclusive:
-delta of exaclty interval_size =&gt; add the 1st epoch of the next sess
-not inclusive:
-delta of interval_size - 1s</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.rinex_spliter_gfzrnx">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_spliter_gfzrnx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_out_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">86400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inclusive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gfzrnx_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GFZRNX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'::RX3::'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_cmds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_spliter_gfzrnx" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.rinex_start_end">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_start_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_tzinfo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">safety_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_start_end" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_start_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_tzinfo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">safety_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_start_end" title="Link to this definition"></a></dt>
 <dd><p>Return the first and the last epoch of a RINEX file
 (based on the actual content of the file, not the header)</p>
 <p>Can handle RINEX 2 and 3</p>
@@ -2450,48 +2560,19 @@ the RINEX content as a string</p></li>
 <li><p><strong>add_tzinfo</strong> (<em>bool</em><em>, </em><em>optional</em>) – add timezone information in the datetime’s Epoches.
 The default is False.</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose mode. The default is True.</p></li>
-<li><p><strong>safety_mode</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – if the epoch reading fails (e.g. in case of a compressed RINEX)
+<li><p><strong>safety_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – if the epoch reading fails (e.g. in case of a compressed RINEX)
 activate a reading of the header and the file name as backup.
 The default is True.</p></li>
+<li><p><strong>line_count</strong> (<em>int</em><em>, </em><em>optional</em>) – number of lines to read at the beginning and the end of the file
+to find the first and last epochs.
+The default is 750.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>First, las epoches and interval if asked.</p>
+<dd class="field-even"><p>First, last epochs and interval if asked.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>first_epoch , last_epoch , [interval]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.rinex_table_from_list">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">rinex_table_from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnxs_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site9_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.rinex_table_from_list" title="Link to this definition"></a></dt>
-<dd><p>From a simple RINEX list, summarize the data in an ad-hoc DataFrame.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rnxs_inp</strong> (<em>iterable</em><em> or </em><em>str</em>) – If iterable, a list of RINEX files.
-If str, path of an input RINEX list as text file.</p></li>
-<li><p><strong>site9_col</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, include a ‘site9’ column in the DataFrame. Defaults to False.</p></li>
-<li><p><strong>round_date</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, round the dates to the nearest day. Defaults to False.</p></li>
-<li><p><strong>path_col</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, include the ‘path’ column in the DataFrame. Defaults to True.</p></li>
-<li><p><strong>size_col</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, include a ‘size’ column in the DataFrame.
-Corresponds to the size of the file in bytes.
-It can slow down the process if the list is long.
-Defaults to False.</p></li>
-<li><p><strong>sort</strong> (<em>bool</em><em>, </em><em>optional</em>) – <dl class="simple">
-<dt>If True, sort the DataFrame by ‘site4’ or ‘site9’ (if site9_col is True) and ‘date’.</dt><dd><p>Defaults to True.</p>
-</dd>
-</dl>
-</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>df</strong> – A DataFrame with the RINEX info in it.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2508,8 +2589,82 @@ Defaults to False.</p></li>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.teqc_qc">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">teqc_qc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quick_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.teqc_qc" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.uncomp_rnxpath">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">uncomp_rnxpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.uncomp_rnxpath" title="Link to this definition"></a></dt>
+<dd><p>Generate the output path for an uncompressed RINEX file.</p>
+<p>This function determines the appropriate output file name and path for an uncompressed
+RINEX file based on its input path. It handles both short and long RINEX file names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rinex_path</strong> (<em>str</em>) – The path of the input RINEX file (compressed or uncompressed).</p></li>
+<li><p><strong>outdir</strong> (<em>str</em><em>, </em><em>optional</em>) – The directory where the uncompressed RINEX file will be saved. If not provided,
+the output file will be saved in the same directory as the input file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The full path of the uncompressed RINEX file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.rinex_utils_legacy">
+<span id="geodezyx-operational-rinex-utils-legacy-module"></span><h2>geodezyx.operational.rinex_utils_legacy module<a class="headerlink" href="#module-geodezyx.operational.rinex_utils_legacy" title="Link to this heading"></a></h2>
+<p>Created on 23/09/2025 12:17:54</p>
+<p>&#64;author: psakic</p>
+<p>This module contains some utilities to handle RINEX files
+in legacy mode i.e. RINEX2 using teqc, crz2rnx, rnx2crz</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils_legacy.crz2rnx">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils_legacy.</span></span><span class="sig-name descname"><span class="pre">crz2rnx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_of_crz2rnx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CRZ2RNX'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils_legacy.crz2rnx" title="Link to this definition"></a></dt>
+<dd><p>assuming that CRZ2RNX is in the system PATH per default</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils_legacy.rinex_renamer">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils_legacy.</span></span><span class="sig-name descname"><span class="pre">rinex_renamer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_out_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils_legacy.rinex_renamer" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils_legacy.rinex_sats_checker">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils_legacy.</span></span><span class="sig-name descname"><span class="pre">rinex_sats_checker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_rnx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils_legacy.rinex_sats_checker" title="Link to this definition"></a></dt>
+<dd><p>Check the consistency of a RINEX’s sat list for each epoch</p>
+<p>Designed for checking the consistency of IPGP-OVPF corrupted RINEXs
+RINEX-2 only</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p_rnx</strong> (<em>str</em>) – input RINEX path.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bad RINEX path or None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils_legacy.rinex_spliter">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils_legacy.</span></span><span class="sig-name descname"><span class="pre">rinex_spliter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_out_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">24</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inclusive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teqc_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'teqc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils_legacy.rinex_spliter" title="Link to this definition"></a></dt>
+<dd><p>if shift != 0:
+the start/end of a session is shifted of shift minutes</p>
+<p>inclusive:
+delta of exaclty interval_size =&gt; add the 1st epoch of the next sess
+not inclusive:
+delta of interval_size - 1s</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils_legacy.rnx2crz">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils_legacy.</span></span><span class="sig-name descname"><span class="pre">rnx2crz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_of_rnx2crz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RNX2CRZ'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils_legacy.rnx2crz" title="Link to this definition"></a></dt>
+<dd><p>assuming that RNX2CRZ is in the system PATH per default</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.rinex_utils_legacy.teqc_qc">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils_legacy.</span></span><span class="sig-name descname"><span class="pre">teqc_qc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quick_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils_legacy.teqc_qc" title="Link to this definition"></a></dt>
 <dd><p>quick mode : reduced qc and no summary file written</p>
 </dd></dl>
 
@@ -2527,31 +2682,100 @@ functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 GitHub repository :
 <a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.rtklib_frontend.prods2tmp">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">prods2tmp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_out</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rtklib_frontend.prods2tmp" title="Link to this definition"></a></dt>
+<dd><p>Decompresses a file into the temporary directory if compressed,
+or copies it to the temporary directory if not already there.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rtklib_frontend.read_conf_file">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">read_conf_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rtklib_frontend.read_conf_file" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rtklib_frontend.rtklib_run_from_rinex">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">rtklib_run_from_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_rover</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generik_conf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">working_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experience_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rover_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XYZbase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IGS0OPSFIN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exe_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rtklib_frontend.rtklib_run_from_rinex" title="Link to this definition"></a></dt>
-<dd><dl>
-<dt>auto_conf :</dt><dd><p>read the header of the rinex and write the conf. file according to it
-if the mode is disabled, the antenna/rec part of the
-conf. file will be the same as the generic one</p>
-<p>NB : RTKLIB “core” have it’s own reading header option.
-Thus, my advice is to disable the auto mode for the rover and leave
-<code class="docutils literal notranslate"><span class="pre">ant1-postype=rinexhead</span></code> in the generic conf file
-and enable it for the base with a XYZbase vector initialized or
-the good XYZ in header on the rinex (the XYZbase vector is prioritary
-over the base RINEX header)</p>
-<p>(but in anycase, prepars good rinex’s headers ;) )</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">rtklib_run_from_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_rover</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generik_conf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experience_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rover_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_rover</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IGS0OPSFIN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_tmp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exe_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rtklib_frontend.rtklib_run_from_rinex" title="Link to this definition"></a></dt>
+<dd><p>Run RTKLIB `rnx2rtkp` from rover/base RINEX observations using a generic RTKLIB
+configuration file, optionally overriding antenna/receiver metadata from RINEX
+headers and downloading required GNSS products (SP3 precise orbits and BRDC nav).</p>
+<p>The function:
+- creates output and temporary directory structure
+- uncompresses compressed RINEX inputs if needed
+- reads start/end times and sampling interval from the rover/base RINEX
+- builds a run-specific RTKLIB config file from `generik_conf`
+- optionally fills rover/base antenna positions and eccentricities from RINEX headers
+- downloads required products into `prod_dir`:</p>
+<blockquote>
+<div><p>- SP3 precise orbit from `calc_center`
+- BRDC navigation RINEX</p>
+</div></blockquote>
+<p>- calls the external executable `rnx2rtkp` with assembled arguments
+- writes outputs to the `out_dir` directory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rnx_rover</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to rover observation RINEX. May be compressed (e.g. `.gz`, `.Z` and
+other formats supported by `geodezyx.operational.check_if_compressed_rinex`).</p></li>
+<li><p><strong>rnx_base</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to base observation RINEX. May be compressed.</p></li>
+<li><p><strong>generik_conf</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to a generic RTKLIB configuration file (key=value format). This file is
+parsed by `read_conf_file` and then overridden according to function options.</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Directory where results are saved. This parameter is mandatory.</p></li>
+<li><p><strong>tmp_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em><em> | </em><em>None</em><em>, </em><em>default=None</em>) – Temporary directory for intermediate files. Optional. If not provided,
+defaults to `out_dir/TMP`.</p></li>
+<li><p><strong>prod_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em><em> | </em><em>None</em><em>, </em><em>default=None</em>) – Directory where to search for orbits, clocks, and BRDC files. Optional.
+If not provided, defaults to `tmp_dir`.</p></li>
+<li><p><strong>experience_prefix</strong> (<em>str</em><em>, </em><em>default=&quot;&quot;</em>) – Prefix added to the output file stem used to name the generated `.conf`
+and `.out` files.</p></li>
+<li><p><strong>rover_auto_conf</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, reads rover RINEX header and injects rover antenna type, XYZ position,
+and antenna eccentricities into the produced config (keys `ant1-*`).
+If False, rover settings remain those defined in `generik_conf`.</p></li>
+<li><p><strong>base_auto_conf</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, reads base RINEX header and injects base antenna type, XYZ position,
+and antenna eccentricities into the produced config (keys `ant2-*`).</p></li>
+<li><p><strong>xyz_rover</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Rover station ECEF XYZ coordinates in meters ([X, Y, Z]). If `xyz_rover[0] != 0`,
+these coordinates override the rover RINEX header coordinates; otherwise the rover
+header coordinates are used.</p></li>
+<li><p><strong>xyz_base</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Base station ECEF XYZ coordinates in meters ([X, Y, Z]). If `xyz_base[0] != 0`,
+these coordinates override the base RINEX header coordinates; otherwise the base
+header coordinates are used.
+Note: this is a simple sentinel check; a real X coordinate of 0 would be treated
+as “not provided”.</p></li>
+<li><p><strong>outtype</strong> (<em>str</em><em>, </em><em>default=&quot;auto&quot;</em>) – Output solution format. If not `”auto”`, sets RTKLIB `out-solformat` to one of:
+`”dms”`, `”deg”`, `”xyz”`, `”enu”` (case-insensitive).
+If `”auto”`, uses whatever is defined in `generik_conf`.</p></li>
+<li><p><strong>calc_center</strong> (<em>str</em><em>, </em><em>default=&quot;IGS0OPSFIN&quot;</em>) – Analysis center/product identifier used when downloading GNSS precise products
+via `geodezyx.operational.download_gnss_products`. Must match what that
+downloader expects.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, forces reprocessing even if output file already exists.</p></li>
+<li><p><strong>clean_tmp</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, deletes all contents of `tmp_dir` at the beginning of the
+function execution.</p></li>
+<li><p><strong>exe_path</strong> (<em>str</em><em>, </em><em>default=</em><em>...</em>) – Filesystem path to the RTKLIB `rnx2rtkp` executable.</p></li>
+</ul>
 </dd>
-<dt>outtype :</dt><dd><p>‘auto’ (as defined in the generic config file) or
-‘dms’ ‘deg’ ‘xyz’ ‘enu’
-can manage the upper case XYZ or FLH</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out_result_fil</strong> – Path to the RTKLIB output solution file (`.out`).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> – If no SP3 orbit file or no BRDC navigation file can be found locally or downloaded.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>- The generated config file is written to `out_dir` and named using:</dt><dd><p>`&lt;experience_prefix&gt;_&lt;rover4&gt;_&lt;base4&gt;_&lt;YYYY_DOY&gt;.conf`.</p>
+</dd>
+<dt>- The RTKLIB command is executed via `subprocess.call(…, shell=True)` using</dt><dd><p>`/bin/bash`, with a single concatenated command string.</p>
+</dd>
+</dl>
+<p>- A warning is emitted if the base RINEX time span does not fully cover the rover span.</p>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.rtklib_frontend.write_conf_file">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">write_conf_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dicoconf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fpath_out</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rtklib_frontend.write_conf_file" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-geodezyx.operational.track_frontend">

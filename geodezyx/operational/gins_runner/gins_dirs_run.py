@@ -21,7 +21,6 @@ from geodezyx import utils
 
 #### Import the logger
 import logging
-
 log = logging.getLogger("geodezyx")
 
 

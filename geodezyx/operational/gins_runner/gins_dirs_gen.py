@@ -14,6 +14,7 @@ import time
 import numpy as np
 import pandas as pd
 import yaml
+import hatanaka
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -215,7 +216,13 @@ def gen_dirs_rnxs(
         # check if the RINEX is compressed ... if not crz2rnx !
         if operational.check_if_compressed_rinex(rnx_path):
             crinex_path = rnx_path
-            rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use, verbose=verbose)
+            crz2rnx_classic = True
+            if crz2rnx_classic:
+                rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use, verbose=verbose)
+            else: # with Valgur's hatanaka
+                rnx_path = operational.uncomp_rnxpath(crinex_path, tmp_fld_use)
+                rnx_content = hatanaka.decompress(crinex_path)
+                utils.write_in_file(rnx_content, rnx_path)
             if not os.path.isfile(rnx_path):
                 bool_cntu = _fail_rnx(rnx_path, rnx_dt, "CRZ2RNX failed")
                 if bool_cntu:
@@ -348,8 +355,12 @@ def gen_dirs_rnxs(
             orbpath, horpath = gynsorbcvt.download_convert_2_gins_orb_clk(
                 rnx_dt, tmp_fld_use, ac=ac, repro=repro
             )
+            idprod = ""
         else:
-            orbpath, horpath = _dir_regular_orbclk(rnx_dt)
+            orbpath, horpath, idprod = _dir_regular_orbclk(rnx_dt)
+
+        if not perso_orbclk and idprod != "G20":
+            dir_dic["model"]["environment"]["ionex_files"] = "unused"
 
         # Exception case where no sp3/clk was found
         if orbpath is None or horpath is None:
@@ -408,17 +419,20 @@ def _dir_regular_orbclk(dt_rinex_inp):
     Get the regular orbits and clocks path for a given date
     """
 
-    if dt_rinex_inp <= dt.datetime.now() - dt.timedelta(days=14):
+    import datetime as dt
+    if dt.datetime.now() - dt_rinex_inp >= dt.timedelta(days=14):
         prod_id = "G20"
+    #elif dt.datetime.now() - dt_rinex_inp <= dt.timedelta(days=4):
+    #    prod_id = "GRU"
     else:
-        prod_id = "G20"
+        prod_id = "G20R"
 
     ### ALL THE OTHER ORBITS/CLOCKS ARE NOW OBSOLETE (2025)
 
     horpath = os.path.join("horloges", prod_id, "defaut")
     orbpath = os.path.join("orbites", prod_id, "defaut")
 
-    return orbpath, horpath
+    return orbpath, horpath, prod_id
 
 
 def _dir_auto_intrvl(dir_dic, freq_rnx):

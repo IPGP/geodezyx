@@ -50,21 +50,22 @@ def utm_geo2xy(lat,lon,ellips="wgs84",zone=None):
         Longitude (in degrees).
     ellips : str or 2-tuple, optional
         uses specific ellipsoid for conversion. ellipsoid can be one
-    	of the following strings
-		'wgs84': World Geodetic System 1984 (default)
-		'nad27': North American ellips 1927
-		'clk66': Clarke 1866
-		'nad83': North American ellips 1983
-		'grs80': Geodetic Reference System 1980
-		'int24': International 1924 / Hayford 1909
-        OR
-        can be a 2-element tuple [A,F] where A is semimajor axis (in meters)
-        F is flattening of the user-defined ellipsoid.
+        of the following strings:
+
+        - 'wgs84': World Geodetic System 1984 (default)
+        - 'nad27': North American ellips 1927
+        - 'clk66': Clarke 1866
+        - 'nad83': North American ellips 1983
+        - 'grs80': Geodetic Reference System 1980
+        - 'int24': International 1924 / Hayford 1909
+
+        Alternatively, can be a 2-element tuple [A,F] where A is semimajor axis (in meters)
+        and F is flattening of the user-defined ellipsoid.
         The default is "wgs84".
     zone : int, optional
         forces the UTM ZONE (scalar integer or same size as
         LAT and LON) instead of automatic set. 
-        Positive for the nothern hemisphere.
+        Positive for the northern hemisphere.
         Negative for the southern hemisphere.
         The default is None.
 
@@ -90,8 +91,8 @@ def utm_geo2xy(lat,lon,ellips="wgs84",zone=None):
     Adapted from WebObs source code, François Beauducel et al. 
     https://github.com/IPGP/webobs/blob/master/CODE/matlab/ll2utm.m
     
-	I.G.N., Projection cartographique Mercator Transverse: Algorithmes,
-    Notes Techniques NT/G 76, janvier 1995.    
+    I.G.N., Projection cartographique Mercator Transverse: Algorithmes,
+    Notes Techniques NT/G 76, janvier 1995.
     https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_76.pdf
     
     """
@@ -257,17 +258,20 @@ def ellipsoid_params(ellips):
 def utm_coef(e=None, m=0):
     """
     Projection coefficients
-	returns a vector of 5 coefficients based on the input parameters
+
+    Returns a vector of 5 coefficients based on the input parameters
 
     Parameters
     ----------
     e : TYPE, optional
         first ellipsoid excentricity. The default is None.
     m : int, optional
-        Describes the expected coefficients.
-		M = 0 for transverse mercator
-		M = 1 for transverse mercator reverse coefficients
-		M = 2 for merdian arc
+        Describes the expected coefficients:
+
+        - M = 0 for transverse mercator
+        - M = 1 for transverse mercator reverse coefficients
+        - M = 2 for merdian arc
+
         The default is 0.
 
     Notes

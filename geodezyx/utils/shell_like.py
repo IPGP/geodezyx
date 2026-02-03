@@ -18,7 +18,6 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 
-
 ########## BEGIN IMPORT ##########
 #### External modules
 import fnmatch
@@ -39,11 +38,9 @@ log = logging.getLogger('geodezyx')
 ##########  END IMPORT  ##########
 
 
-
 #################
 ### SHELL LIKE FCTS
 #################
-
 
 
 def subprocess_frontend(cmd_in,
@@ -86,63 +83,89 @@ def subprocess_frontend(cmd_in,
     return process1,process1_stdout,process1_stderr
 
 
-
 def tail(filename, count=1, offset=1024):
     """
     A more efficent way of getting the last few lines of a file.
     Depending on the length of your lines, you will want to modify offset
     to get better performance.
     """
-    
-    f_size = os.stat(filename).st_size
-    if f_size == 0:
-        return []
-    with open(filename, 'r',errors='ignore') as f:
-        if f_size <= offset:
-            offset = int(f_size / 2)
-        while True:
-            seek_to = min(f_size - offset, 0)
-            f.seek(seek_to)
-            lines = f.readlines()
-            # Empty file
-            if seek_to <= 0 and len(lines) == 0:
-                return []
-            # count is larger than lines in file
-            if seek_to == 0 and len(lines) < count:
-                return lines
-            # Standard case
-            if len(lines) >= (count + 1):
-                return lines[count * -1:]
+
+    # file-like object handling (StringIO, BytesIO, open file, etc.)
+    if hasattr(filename, "read"):
+        f = filename
+        close_when_done = False
+        f_size = 1000000000  # arbitrary large number
+    else:
+        # normalize bytes / PathLike to str path
+        f_size = os.stat(filename).st_size
+        if f_size == 0:
+            return []
+
+        if isinstance(filename, bytes):
+            filename = os.fsdecode(filename)
+        filename = os.fspath(filename)
+        f = open(filename, "r", errors="ignore")
+        close_when_done = True
+
+    if f_size <= offset:
+        offset = int(f_size / 2)
+    while True:
+        seek_to = min(f_size - offset, 0)
+        f.seek(seek_to)
+        lines = f.readlines()
+        # Empty file
+        if seek_to <= 0 and len(lines) == 0:
+            return []
+        # count is larger than lines in file
+        if seek_to == 0 and len(lines) < count:
+            return lines
+        # Standard case
+        if len(lines) >= (count + 1):
+            return lines[count * -1:]
 
 def head(filename, count=1):
     """
     This one is fairly trivial to implement but it is here for completeness.
     """
-    with open(filename, 'r', errors='ignore') as f:
-        lines = []
-        for iline in range(1, count+1):
-            try:
-                lines.append(f.readline())
-            except Exception as e:
-                log.warn(e)
-                continue
-        return list(filter(len, lines))
+
+    # file-like object handling (StringIO, BytesIO, open file, etc.)
+    if hasattr(filename, "read"):
+        f = filename
+        close_when_done = False
+    else:
+        # normalize bytes / PathLike to str path
+        if isinstance(filename, bytes):
+            filename = os.fsdecode(filename)
+        filename = os.fspath(filename)
+        f = open(filename, "r", errors="ignore")
+        close_when_done = True
+
+    lines = []
+    for iline in range(1, count+1):
+        try:
+            lines.append(f.readline())
+        except Exception as e:
+            log.warning(e)
+            continue
+
+    if close_when_done:
+        f.close()
+
+    return list(filter(len, lines))
 
 
-
-def grep(file_in,search_string,only_first_occur=False,
-         invert=False,regex=False,line_number=False,col=(None,None),
+def grep(file_in, search_string, only_first_occur=False,
+         invert=False, regex=False, line_number=False, col=(None, None),
          force_list_output=False):
     """
     if nothing is found returns a empty string : ""
     (and NOT a singleton list with an empty string inside)
-    
+
     Args :
-        col : Define the columns where the grep is executed 
+        col : Define the columns where the grep is executed
               (Not delimited columns , one character = a new column)
               from 1st col. / until last col. : use None as index
-              
-              force_list_output : if the output is an unique element, 
+              force_list_output : if the output is an unique element,
               it will be returned in a list anyway
 
     search_string can be a list (150721 change)
@@ -151,39 +174,45 @@ def grep(file_in,search_string,only_first_occur=False,
         search_string = [search_string]
 
     matching_line_list = []
-    line_number_list   = []
-    trigger = False
-    
-    
-    if file_in[-2:] in ("gz","GZ"): ### cand handle gziped files 
-        File = gzip.open(file_in, "r+")
-        Lines = [e.decode('utf-8') for e in File]
-        File.close()
+    line_number_list = []
+
+    # Handle file-like objects (StringIO, BytesIO, open file, etc.)
+    if hasattr(file_in, "read"):
+        file = file_in
+        close_when_done = False
     else:
-        File = open(file_in,encoding = "ISO-8859-1")
-        Lines = File.readlines()
-        File.close()
-        
-    for iline , line in enumerate(Lines):
-        trigger = False
-        for seastr in search_string:
-            if regex:
-                if re.search(seastr,line[col[0]:col[1]]):
-                    trigger = True
-            else:
-                if seastr in line[col[0]:col[1]]:
-                    trigger = True
-        if invert:
-            trigger = not trigger
-        if trigger:
-            matching_line_list.append(line)
-            line_number_list.append(iline)
-            if only_first_occur:
-                break
-    if  line_number and len(line_number_list) == 1:
-        return line_number_list[0] , matching_line_list[0]
+        # Handle file paths
+        if file_in[-2:] in ("gz", "GZ"):
+            file = gzip.open(file_in, "rt", encoding="utf-8")
+        else:
+            file = open(file_in, encoding="ISO-8859-1")
+        close_when_done = True
+
+    try:
+        for iline, line in enumerate(file):
+            trigger = False
+            for seastr in search_string:
+                if regex:
+                    if re.search(seastr, line[col[0]:col[1]]):
+                        trigger = True
+                else:
+                    if seastr in line[col[0]:col[1]]:
+                        trigger = True
+            if invert:
+                trigger = not trigger
+            if trigger:
+                matching_line_list.append(line)
+                line_number_list.append(iline)
+                if only_first_occur:
+                    break
+    finally:
+        if close_when_done:
+            file.close()
+
+    if line_number and len(line_number_list) == 1:
+        return line_number_list[0], matching_line_list[0]
     elif line_number:
-        return line_number_list    , matching_line_list
+        return line_number_list, matching_line_list
     elif len(matching_line_list) == 1 and not force_list_output:
         return matching_line_list[0]
     elif len(matching_line_list) == 1 and force_list_output:
@@ -194,14 +223,14 @@ def grep(file_in,search_string,only_first_occur=False,
         return matching_line_list[0]
     else:
         return matching_line_list
-    
-    
+
 
 def egrep_big_string(regex,bigstring,only_first_occur=False):
     """
     perform a regex grep on a big string sepatated with \n
-
     NB : must be improved with regular pattern matching, wo regex
+
+    OBSOLETE: grep can manage it (260121)
     """
 
     matching_line_list = []
@@ -230,7 +259,7 @@ def grep_boolean(file_in,search_string):
             return True
     return False
 
-def regex_OR_from_list(listin):
+def regex_or_from_list(listin):
     return "(" + utils.join_improved("|" , *listin) +  ")"
 
 def cat(outfilename, *infilenames):
@@ -521,8 +550,6 @@ def uncompress(pathin,dirout = '', opts='-f'):
     return pathout
 
 
-
-
 def create_dir(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -568,28 +595,36 @@ def fileprint(output,outfile):
         f.write("{}\n".format(output))
     return None
 
-def write_in_file(string_to_write,outdir_or_outpath,
-                  outname="",ext='.txt',encoding='utf8',append=False):
+def write_in_file(string_to_write, outdir_or_outpath,
+                  outname="", ext='.txt', encoding='utf8', append=False):
     """
     encoding : utf8, latin_1
     https://docs.python.org/3/library/codecs.html#standard-encodings
-    
+
     check the following commented old version if troubles
     """
-    
+
     if outname:
-        outpath = os.path.join(outdir_or_outpath,outname + ext)
+        outpath = os.path.join(outdir_or_outpath, outname + ext)
     else:
         outpath = outdir_or_outpath
-        
+
+    # Determine if input is bytes or string
+    is_bytes = isinstance(string_to_write, bytes)
+
     if append:
-        aw = "a+"
-        newline = "\n"
+        mode = "ab+" if is_bytes else "a+"
+        newline = b"\n" if is_bytes else "\n"
     else:
-        aw = "w+"
-        newline = ""
-        
-    F = open(outpath,aw,encoding=encoding)
+        mode = "wb+" if is_bytes else "w+"
+        newline = b"" if is_bytes else ""
+
+    # Open file in binary mode for bytes, text mode for strings
+    if is_bytes:
+        F = open(outpath, mode)
+    else:
+        F = open(outpath, mode, encoding=encoding)
+
     F.write(string_to_write + newline)
     F.close()
     return outpath
@@ -602,7 +637,7 @@ def write_in_file(string_to_write,outdir_or_outpath,
 #     """
 #     outpath = os.path.join(outdir,outname + ext)
 #     F = open(outpath,'w+', encoding=encoding)
-#     try:    
+#     try:
 #         F.write(string_to_write.encode(encode))
 #         # astuce de http://stackoverflow.com/questions/6048085/writing-unicode-text-to-a-text-file
 #     except UnicodeEncodeError as e:
@@ -612,7 +647,7 @@ def write_in_file(string_to_write,outdir_or_outpath,
 #         print(e)
 #         print("INFO : write_in_file : alternative write following a TypeError")
 #         F.write(string_to_write)
-        
+
 #     F.close()
 #     return outpath
 
@@ -654,8 +689,8 @@ def replace(file_path, pattern, subst):
     os.remove(file_path)
     #Move new file
     shutil.move(abs_path, file_path)
-    
-    
+
+
 def regex2filelist(dossier,regex,outtype='file'):
 
     ''' a partir d'un chemin de dossier et d'une regex, donne les éléments
@@ -694,7 +729,6 @@ def check_regex(filein,regex):
             break
 
     return outbool
-
 
 
 def is_exe(fpath):

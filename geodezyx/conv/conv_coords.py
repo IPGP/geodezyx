@@ -441,7 +441,7 @@ def enu2xyz_vector(enu, xyz_ref):
 #         __/ |
 #        |___/
 
-def sigma_xyz2enu(x, y, z, s_x, s_y, s_z, s_xy=0, s_yz=0, s_xz=0):
+def sigma_xyz2enu(x, y, z, s_x, s_y, s_z, s_xy=0, s_yz=0, s_xz=0, return_corr=False):
     """
     Convert standard deviation
     Cartesian ECEF XYZ => Cartesian Topocentric ENU
@@ -478,7 +478,15 @@ def sigma_xyz2enu(x, y, z, s_x, s_y, s_z, s_xy=0, s_yz=0, s_xz=0):
     s_n = np.sqrt(sigma_enu[1, 1])
     s_u = np.sqrt(sigma_enu[2, 2])
 
-    return s_e, s_n, s_u
+
+    if not return_corr:
+        return s_e, s_n, s_u
+    else:
+        # correlation coefficients
+        c_en = sigma_enu[0, 1] / (s_e * s_n)
+        c_eu = sigma_enu[0, 2] / (s_e * s_u)
+        c_nu = sigma_enu[1, 2] / (s_n * s_u)
+        return s_e, s_n, s_u, c_en, c_eu, c_nu
 
 
 def sigma_geo2xyz(lat, lon, h, s_f, s_l, s_h, ang="deg"):
@@ -496,8 +504,7 @@ def sigma_geo2xyz(lat, lon, h, s_f, s_l, s_h, ang="deg"):
     Linear Algebra, Geodesy, and GPS p332
     """
 
-    log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
-    log.warning("Prefer sigma_xyz2enu")
+    log.warning("Inputs values are assumed as uncorrelated, which is not accurate. Prefer sigma_xyz2enu.")
 
     if ang == "deg":
         lat = np.deg2rad(lat)
@@ -526,9 +533,6 @@ def sigma_geo2enu(lat, lon, h, s_f, s_l, s_h, ang="deg"):
     """
     # conversion batarde du sigma FLH => sigma ENU
     # Par conversion des angles en distance
-
-    log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
-    log.warning("Prefer sigma_xyz2enu")
 
     if ang == "deg":
         lat = np.deg2rad(lat)
@@ -569,9 +573,6 @@ def sigma_enu2geo(lat, lon, h, s_e, s_n, s_u, ang="deg", a=6378137.0, e2=0.00669
     ----------
     Linear Algebra, Geodesy, and GPS p332
     """
-
-    log.warning("Inputs values are assumed as uncorrelated, which is not accurate")
-    log.warning("Prefer sigma_xyz2enu")
 
     # conversion batarde du sigma ENU => sigma FLH
     # Par conversion des angles en distance
