@@ -589,28 +589,36 @@ def fileprint(output,outfile):
         f.write("{}\n".format(output))
     return None
 
-def write_in_file(string_to_write,outdir_or_outpath,
-                  outname="",ext='.txt',encoding='utf8',append=False):
+def write_in_file(string_to_write, outdir_or_outpath,
+                  outname="", ext='.txt', encoding='utf8', append=False):
     """
     encoding : utf8, latin_1
     https://docs.python.org/3/library/codecs.html#standard-encodings
-    
+
     check the following commented old version if troubles
     """
-    
+
     if outname:
-        outpath = os.path.join(outdir_or_outpath,outname + ext)
+        outpath = os.path.join(outdir_or_outpath, outname + ext)
     else:
         outpath = outdir_or_outpath
-        
+
+    # Determine if input is bytes or string
+    is_bytes = isinstance(string_to_write, bytes)
+
     if append:
-        aw = "a+"
-        newline = "\n"
+        mode = "ab+" if is_bytes else "a+"
+        newline = b"\n" if is_bytes else "\n"
     else:
-        aw = "w+"
-        newline = ""
-        
-    F = open(outpath,aw,encoding=encoding)
+        mode = "wb+" if is_bytes else "w+"
+        newline = b"" if is_bytes else ""
+
+    # Open file in binary mode for bytes, text mode for strings
+    if is_bytes:
+        F = open(outpath, mode)
+    else:
+        F = open(outpath, mode, encoding=encoding)
+
     F.write(string_to_write + newline)
     F.close()
     return outpath

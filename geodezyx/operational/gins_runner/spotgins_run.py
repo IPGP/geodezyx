@@ -33,9 +33,10 @@ import logging
 log = logging.getLogger("geodezyx")
 
 
-LAST_VERSION_VALIDE = "VALIDE_25_1"
+LAST_VERSION_VALIDE = "VALIDE_25_2"
 # DIR_SPOTGINS_DEFAULT = ""DIR_SPOTGINS_G20_GE.yml""
-DIR_SPOTGINS_DEFAULT = "DIR_SPOTGINS_G20_GE_VALIDE_25_1.yml"
+#DIR_SPOTGINS_DEFAULT = "DIR_SPOTGINS_G20_GE_VALIDE_25_1.yml"
+DIR_SPOTGINS_DEFAULT = "DIR_SPOTGINS_G20_GE_VALIDE_25_2.yml"
 DIR_SPOTGINS_RAPID = "DIR_RAPIDE_G20R_GE.yml"
 
 def spotgins_run(
@@ -154,7 +155,8 @@ def spotgins_run(
     ##### Update the database ################
     if not no_updatebd:
         gynsbdu.bdgins_update(
-            date_srt=date_min, date_end=date_max, dir_bdgins="", login=updatebd_login,
+            date_srt=date_min, date_end=date_max,
+            dir_bdgins="", login=updatebd_login,
             rapid=updatebd_rapid,
         )
 
@@ -192,7 +194,7 @@ def spotgins_run(
         ######## DIRECTORS RUN ###############
         const_use = const_adapt(const, dirr, verbose=verbose)
         # const_use = "GE" # ASG use always GE
-        opt_gins_90_use = "-const " + const_use
+        opt_gins_90_use = "-const " + const_use + " -nocheck_gnss_products"
         try:
             gynsrun.run_directors(
                 dirr,

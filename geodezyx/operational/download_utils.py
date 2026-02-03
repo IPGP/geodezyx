@@ -14,6 +14,8 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 import ftplib
+import requests
+import tqdm
 
 #### Import the logger
 import logging
@@ -22,6 +24,7 @@ import pathlib
 import shutil
 import time
 import urllib
+import urllib.request
 
 ########## BEGIN IMPORT ##########
 #### External modules
@@ -235,7 +238,7 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
     """
 
     # Get file size
-    print(url)
+    log.info("Download file: %s", url)
     response = requests.head(url, timeout=timeout)
     file_size = int(response.headers.get("content-length", 0))
 
