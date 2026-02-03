@@ -290,10 +290,9 @@ def angle2equivalent_earth_parallel(
 
     Useful to determine metric varaitions in longitude
     (but the latitude is also necessary to determine
-     the radius of the parallel)
+    the radius of the parallel)
 
     angle can be : "deg", "rad", "mas"
-
     """
 
     if angtype == "deg":

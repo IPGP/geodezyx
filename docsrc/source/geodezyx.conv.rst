@@ -89,14 +89,6 @@ geodezyx.conv.conv\_time\_leap\_sec module
    :show-inheritance:
    :undoc-members:
 
-geodezyx.conv.conv\_time\_new\_test module
-------------------------------------------
-
-.. automodule:: geodezyx.conv.conv_time_new_test
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 geodezyx.conv.conv\_time\_orig module
 -------------------------------------
 
