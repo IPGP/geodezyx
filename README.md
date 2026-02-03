@@ -2,7 +2,7 @@
 
 # geodezyx (aka ___The GeodeZYX Toolbox___) 
 
-**Version: 5.1.0-beta0**  
+**Version: 5.1.0**  
 **Date: 2026-02-03**  
 
 **Authors:** 
