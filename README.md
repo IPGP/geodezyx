@@ -2,8 +2,8 @@
 
 # geodezyx (aka ___The GeodeZYX Toolbox___) 
 
-**Version: 5.0.1**  
-**Date: 2025-12-09**  
+**Version: 5.1.0-beta0**  
+**Date: 2026-02-03**  
 
 **Authors:** 
 * Pierre Sakic (IPGP, Paris, France)
