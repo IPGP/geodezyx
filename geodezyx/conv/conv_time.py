@@ -2408,9 +2408,11 @@ def dt2epoch_rnx3(dt_in, epoch_flag=0, nsats=0, rec_clk_offset=0):
         Datetime(s).
     epoch_flag : int, optional
         Epoch flag:
-            0 : OK
-            1 : power failure between previous and current epoch
-            >1 : Special event (see RINEX documentation).
+
+        - 0 : OK
+        - 1 : power failure between previous and current epoch
+        - >1 : Special event (see RINEX documentation).
+
         The default is 0.
     nsats : int, optional
         Number of satellites observed in current epoch. The default is 0.

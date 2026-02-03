@@ -176,8 +176,8 @@ def leapseconds_parse_pre2404(leapsec_file_path='/usr/share/zoneinfo/right/UTC')
         - datetime: The date and time when a leap second was added.
         - int: The total number of leap seconds added up to that date.
 
-    Note
-    ----
+    Notes
+    -----
     The list is hardcoded and may be outdated if the IERS's bulletin C has been updated.
     The last known update is included in the warning message.
 

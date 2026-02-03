@@ -986,8 +986,8 @@ def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True,
     L : datetime.datetime or list/numpy.array of datetime.datetime.
         DateTime  
 
-    Note
-    ----
+    Notes
+    -----
     Only reliable at the day level for the moment
 
     the leapsecond is found only after a first calc without leapsecond
@@ -2112,9 +2112,11 @@ def dt2epoch_rnx3(dt_in, epoch_flag=0, nsats=0, rec_clk_offset=0):
         Datetime(s).
     epoch_flag : int, optional
         Epoch flag:
-            0 : OK
-            1 : power failure between previous and current epoch
-            >1 : Special event (see RINEX documentation). 
+
+        - 0 : OK
+        - 1 : power failure between previous and current epoch
+        - >1 : Special event (see RINEX documentation).
+
         The default is 0.
     nsats : int, optional
         Number of satellites observed in current epoch. The default is 0.
@@ -2335,8 +2337,8 @@ def leapseconds_parse_pre2404(leapsec_file_path='/usr/share/zoneinfo/right/UTC')
         - datetime: The date and time when a leap second was added.
         - int: The total number of leap seconds added up to that date.
 
-    Note
-    ----
+    Notes
+    -----
     The list is hardcoded and may be outdated if the IERS's bulletin C has been updated.
     The last known update is included in the warning message.
 
