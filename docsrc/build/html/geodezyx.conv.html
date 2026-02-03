@@ -1028,11 +1028,12 @@ GitHub repository :
 </p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<p class="rubric">Notes</p>
 <p>Misc. Notes</p>
+<section id="source">
+<h3>Source<a class="headerlink" href="#source" title="Link to this heading"></a></h3>
 <p><a class="reference external" href="https://fr.wikipedia.org/wiki/Projection_orthogonale">https://fr.wikipedia.org/wiki/Projection_orthogonale</a></p>
-</div>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -1172,20 +1173,18 @@ GitHub repository :
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_proj_utm.utm_coef">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_proj_utm.</span></span><span class="sig-name descname"><span class="pre">utm_coef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_proj_utm.utm_coef" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Projection coefficients</dt><dd><p>returns a vector of 5 coefficients based on the input parameters</p>
-</dd>
-</dl>
+<dd><p>Projection coefficients</p>
+<p>Returns a vector of 5 coefficients based on the input parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>e</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – first ellipsoid excentricity. The default is None.</p></li>
-<li><p><strong>m</strong> (<em>int</em><em>, </em><em>optional</em>) – <dl class="simple">
-<dt>Describes the expected coefficients.</dt><dd><p>M = 0 for transverse mercator
-M = 1 for transverse mercator reverse coefficients
-M = 2 for merdian arc</p>
-</dd>
-</dl>
+<li><p><strong>m</strong> (<em>int</em><em>, </em><em>optional</em>) – <p>Describes the expected coefficients:</p>
+<ul>
+<li><p>M = 0 for transverse mercator</p></li>
+<li><p>M = 1 for transverse mercator reverse coefficients</p></li>
+<li><p>M = 2 for merdian arc</p></li>
+</ul>
 <p>The default is 0.</p>
 </p></li>
 </ul>
@@ -1221,23 +1220,22 @@ to UTM X and Y (in meters).</p>
 <li><p><strong>lat</strong> (<em>float</em><em> or </em><em>numpy array</em>) – Latitude (in degrees).</p></li>
 <li><p><strong>lon</strong> (<em>float</em><em> or </em><em>numpy array</em>) – Longitude (in degrees).</p></li>
 <li><p><strong>ellips</strong> (<em>str</em><em> or </em><em>2-tuple</em><em>, </em><em>optional</em>) – <p>uses specific ellipsoid for conversion. ellipsoid can be one
-of the following strings</p>
-<blockquote>
-<div><p>’wgs84’: World Geodetic System 1984 (default)
-‘nad27’: North American ellips 1927
-‘clk66’: Clarke 1866
-‘nad83’: North American ellips 1983
-‘grs80’: Geodetic Reference System 1980
-‘int24’: International 1924 / Hayford 1909</p>
-</div></blockquote>
-<p>OR
-can be a 2-element tuple [A,F] where A is semimajor axis (in meters)
-F is flattening of the user-defined ellipsoid.
+of the following strings:</p>
+<ul>
+<li><p>’wgs84’: World Geodetic System 1984 (default)</p></li>
+<li><p>’nad27’: North American ellips 1927</p></li>
+<li><p>’clk66’: Clarke 1866</p></li>
+<li><p>’nad83’: North American ellips 1983</p></li>
+<li><p>’grs80’: Geodetic Reference System 1980</p></li>
+<li><p>’int24’: International 1924 / Hayford 1909</p></li>
+</ul>
+<p>Alternatively, can be a 2-element tuple [A,F] where A is semimajor axis (in meters)
+and F is flattening of the user-defined ellipsoid.
 The default is “wgs84”.</p>
 </p></li>
 <li><p><strong>zone</strong> (<em>int</em><em>, </em><em>optional</em>) – forces the UTM ZONE (scalar integer or same size as
 LAT and LON) instead of automatic set.
-Positive for the nothern hemisphere.
+Positive for the northern hemisphere.
 Negative for the southern hemisphere.
 The default is None.</p></li>
 </ul>
@@ -1257,14 +1255,12 @@ Precision is near a millimeter.</p>
 <p>This function implements the IGN algorithm.
 This one is <em>more accurate</em> than <cite>pyproj</cite> or <cite>utm</cite> python lib
 because it implements more coefficients.</p>
-<section id="source">
-<h3>Source<a class="headerlink" href="#source" title="Link to this heading"></a></h3>
+<section id="id1">
+<h3>Source<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>Adapted from WebObs source code, François Beauducel et al.
 <a class="reference external" href="https://github.com/IPGP/webobs/blob/master/CODE/matlab/ll2utm.m">https://github.com/IPGP/webobs/blob/master/CODE/matlab/ll2utm.m</a></p>
-<blockquote>
-<div><p>I.G.N., Projection cartographique Mercator Transverse: Algorithmes,</p>
-</div></blockquote>
-<p>Notes Techniques NT/G 76, janvier 1995.
+<p>I.G.N., Projection cartographique Mercator Transverse: Algorithmes,
+Notes Techniques NT/G 76, janvier 1995.
 <a class="reference external" href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_76.pdf">https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_76.pdf</a></p>
 </section>
 </dd></dl>
@@ -1535,8 +1531,8 @@ Xu - Orbits - p15</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_rotation_matrices.</span></span><span class="sig-name descname"><span class="pre">c_ecef2enu_sigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llambda</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_rotation_matrices.c_ecef2enu_sigma" title="Link to this definition"></a></dt>
 <dd><p>Gives the transformation matrix between ECEF and ENU (East North Up)
 ref. frame for the sigmas (variance propagation)</p>
-<section id="id1">
-<h3>Source<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<section id="id2">
+<h3>Source<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <p><a class="reference external" href="https://stackoverflow.com/questions/51162460/converting-ecef-xyz-covariance-matrix-to-enu-covariance-matrix">https://stackoverflow.com/questions/51162460/converting-ecef-xyz-covariance-matrix-to-enu-covariance-matrix</a></p>
 </section>
 </dd></dl>
@@ -1879,12 +1875,12 @@ e.g.
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt_in</strong> (<em>datetime.datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime.datetime.</em>) – Datetime(s).</p></li>
-<li><p><strong>epoch_flag</strong> (<em>int</em><em>, </em><em>optional</em>) – <dl class="simple">
-<dt>Epoch flag:</dt><dd><p>0 : OK
-1 : power failure between previous and current epoch
-&gt;1 : Special event (see RINEX documentation).</p>
-</dd>
-</dl>
+<li><p><strong>epoch_flag</strong> (<em>int</em><em>, </em><em>optional</em>) – <p>Epoch flag:</p>
+<ul>
+<li><p>0 : OK</p></li>
+<li><p>1 : power failure between previous and current epoch</p></li>
+<li><p>&gt;1 : Special event (see RINEX documentation).</p></li>
+</ul>
 <p>The default is 0.</p>
 </p></li>
 <li><p><strong>nsats</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of satellites observed in current epoch. The default is 0.</p></li>
@@ -3396,8 +3392,7 @@ The default is ‘/usr/share/zoneinfo/right/UTC’.</p>
 <dd class="field-odd"><p>list of tuple</p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<p class="rubric">Notes</p>
 <p>The list is hardcoded and may be outdated if the IERS’s bulletin C has been updated.
 The last known update is included in the warning message.</p>
 <p>Universal Time (UT1) and International Atomic Time (TAI) were defined as equal
@@ -3405,8 +3400,10 @@ in 1958. When UTC was introduced in 1972, UT1 had shifted by around 10 seconds
 in relation to TAI.
 We therefore chose an initial offset of 10 seconds between UTC and TAI.</p>
 <p>the initial 10 sec are added by default in frontend find_leapsecond()</p>
+<section id="id3">
+<h3>Source<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <p><a class="reference external" href="http://stackoverflow.com/questions/19332902/extract-historic-leap-seconds-from-tzdata">http://stackoverflow.com/questions/19332902/extract-historic-leap-seconds-from-tzdata</a></p>
-</div>
+</section>
 </dd></dl>
 
 </section>
@@ -3624,12 +3621,12 @@ e.g.
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dt_in</strong> (<em>datetime.datetime</em><em> or </em><em>list/numpy.array</em><em> of </em><em>datetime.datetime.</em>) – Datetime(s).</p></li>
-<li><p><strong>epoch_flag</strong> (<em>int</em><em>, </em><em>optional</em>) – <dl class="simple">
-<dt>Epoch flag:</dt><dd><p>0 : OK
-1 : power failure between previous and current epoch
-&gt;1 : Special event (see RINEX documentation).</p>
-</dd>
-</dl>
+<li><p><strong>epoch_flag</strong> (<em>int</em><em>, </em><em>optional</em>) – <p>Epoch flag:</p>
+<ul>
+<li><p>0 : OK</p></li>
+<li><p>1 : power failure between previous and current epoch</p></li>
+<li><p>&gt;1 : Special event (see RINEX documentation).</p></li>
+</ul>
 <p>The default is 0.</p>
 </p></li>
 <li><p><strong>nsats</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of satellites observed in current epoch. The default is 0.</p></li>
@@ -4267,14 +4264,15 @@ the total number of leap seconds that have been applied to UTC
 <dd class="field-odd"><p>datetime.datetime or list/numpy.array of datetime.datetime.</p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<p class="rubric">Notes</p>
 <p>Only reliable at the day level for the moment</p>
 <p>the leapsecond is found only after a first calc without leapsecond
 it can be some side effects when the input time is close to
 a leap second jump</p>
+<section id="id4">
+<h3>Source<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <p><a class="reference external" href="https://gist.github.com/jeremiahajohnson/eca97484db88bcf6b124">https://gist.github.com/jeremiahajohnson/eca97484db88bcf6b124</a></p>
-</div>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -4406,8 +4404,7 @@ The default is ‘/usr/share/zoneinfo/right/UTC’.</p>
 <dd class="field-odd"><p>list of tuple</p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<p class="rubric">Notes</p>
 <p>The list is hardcoded and may be outdated if the IERS’s bulletin C has been updated.
 The last known update is included in the warning message.</p>
 <p>Universal Time (UT1) and International Atomic Time (TAI) were defined as equal
@@ -4415,8 +4412,10 @@ in 1958. When UTC was introduced in 1972, UT1 had shifted by around 10 seconds
 in relation to TAI.
 We therefore chose an initial offset of 10 seconds between UTC and TAI.</p>
 <p>the initial 10 sec are added by default in frontend find_leapsecond()</p>
+<section id="id5">
+<h3>Source<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <p><a class="reference external" href="http://stackoverflow.com/questions/19332902/extract-historic-leap-seconds-from-tzdata">http://stackoverflow.com/questions/19332902/extract-historic-leap-seconds-from-tzdata</a></p>
-</div>
+</section>
 </dd></dl>
 
 <dl class="py function">
