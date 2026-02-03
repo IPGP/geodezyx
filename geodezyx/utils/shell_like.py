@@ -154,19 +154,18 @@ def head(filename, count=1):
     return list(filter(len, lines))
 
 
-def grep(file_in,search_string,only_first_occur=False,
-         invert=False,regex=False,line_number=False,col=(None,None),
+def grep(file_in, search_string, only_first_occur=False,
+         invert=False, regex=False, line_number=False, col=(None, None),
          force_list_output=False):
     """
     if nothing is found returns a empty string : ""
     (and NOT a singleton list with an empty string inside)
-    
+
     Args :
-        col : Define the columns where the grep is executed 
+        col : Define the columns where the grep is executed
               (Not delimited columns , one character = a new column)
               from 1st col. / until last col. : use None as index
-              
-              force_list_output : if the output is an unique element, 
+              force_list_output : if the output is an unique element,
               it will be returned in a list anyway
 
     search_string can be a list (150721 change)
@@ -175,39 +174,45 @@ def grep(file_in,search_string,only_first_occur=False,
         search_string = [search_string]
 
     matching_line_list = []
-    line_number_list   = []
-    trigger = False
-    
-    
-    if file_in[-2:] in ("gz","GZ"): ### cand handle gziped files 
-        file = gzip.open(file_in, "r+")
-        lines = [e.decode('utf-8') for e in file]
-        file.close()
+    line_number_list = []
+
+    # Handle file-like objects (StringIO, BytesIO, open file, etc.)
+    if hasattr(file_in, "read"):
+        file = file_in
+        close_when_done = False
     else:
-        file = open(file_in,encoding = "ISO-8859-1")
-        lines = file.readlines()
-        file.close()
-        
-    for iline , line in enumerate(lines):
-        trigger = False
-        for seastr in search_string:
-            if regex:
-                if re.search(seastr,line[col[0]:col[1]]):
-                    trigger = True
-            else:
-                if seastr in line[col[0]:col[1]]:
-                    trigger = True
-        if invert:
-            trigger = not trigger
-        if trigger:
-            matching_line_list.append(line)
-            line_number_list.append(iline)
-            if only_first_occur:
-                break
-    if  line_number and len(line_number_list) == 1:
-        return line_number_list[0] , matching_line_list[0]
+        # Handle file paths
+        if file_in[-2:] in ("gz", "GZ"):
+            file = gzip.open(file_in, "rt", encoding="utf-8")
+        else:
+            file = open(file_in, encoding="ISO-8859-1")
+        close_when_done = True
+
+    try:
+        for iline, line in enumerate(file):
+            trigger = False
+            for seastr in search_string:
+                if regex:
+                    if re.search(seastr, line[col[0]:col[1]]):
+                        trigger = True
+                else:
+                    if seastr in line[col[0]:col[1]]:
+                        trigger = True
+            if invert:
+                trigger = not trigger
+            if trigger:
+                matching_line_list.append(line)
+                line_number_list.append(iline)
+                if only_first_occur:
+                    break
+    finally:
+        if close_when_done:
+            file.close()
+
+    if line_number and len(line_number_list) == 1:
+        return line_number_list[0], matching_line_list[0]
     elif line_number:
-        return line_number_list    , matching_line_list
+        return line_number_list, matching_line_list
     elif len(matching_line_list) == 1 and not force_list_output:
         return matching_line_list[0]
     elif len(matching_line_list) == 1 and force_list_output:
@@ -223,8 +228,9 @@ def grep(file_in,search_string,only_first_occur=False,
 def egrep_big_string(regex,bigstring,only_first_occur=False):
     """
     perform a regex grep on a big string sepatated with \n
-
     NB : must be improved with regular pattern matching, wo regex
+
+    OBSOLETE: grep can manage it (260121)
     """
 
     matching_line_list = []

@@ -1242,6 +1242,7 @@ def read_rinex_2_dataobjts(rinex_path):
 
         return None, None, None, None
 
+    #rnxsio = StringIO(open(rinex_path, 'r').read())
     ant_raw = utils.grep(rinex_path, "ANT #", True)
     rec_raw = utils.grep(rinex_path, "REC #", True)
     xyz_raw = utils.grep(rinex_path, "APPROX POSITION XYZ", True).split()

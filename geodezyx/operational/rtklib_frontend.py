@@ -87,6 +87,8 @@ def rtklib_run_from_rinex(
     rnx_base,
     generik_conf,
     out_dir,
+    tmp_dir=None,
+    prod_dir=None,
     experience_prefix="",
     rover_auto_conf=False,
     base_auto_conf=True,
@@ -95,8 +97,6 @@ def rtklib_run_from_rinex(
     outtype="auto",
     calc_center="IGS0OPSFIN",
     force=False,
-    tmp_dir=None,
-    prod_dir=None,
     clean_tmp=False,
     exe_path = '/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'
 ):
@@ -129,6 +129,12 @@ def rtklib_run_from_rinex(
         parsed by \`read_conf_file\` and then overridden according to function options.
     out_dir : str | os.PathLike
         Directory where results are saved. This parameter is mandatory.
+    tmp_dir : str | os.PathLike | None, default=None
+        Temporary directory for intermediate files. Optional. If not provided,
+        defaults to \`out_dir/TMP\`.
+    prod_dir : str | os.PathLike | None, default=None
+        Directory where to search for orbits, clocks, and BRDC files. Optional.
+        If not provided, defaults to \`tmp_dir\`.
     experience_prefix : str, default=""
         Prefix added to the output file stem used to name the generated \`.conf\`
         and \`.out\` files.
@@ -159,12 +165,6 @@ def rtklib_run_from_rinex(
         downloader expects.
     force : bool, default=False
         If True, forces reprocessing even if output file already exists.
-    tmp_dir : str | os.PathLike | None, default=None
-        Temporary directory for intermediate files. Optional. If not provided,
-        defaults to \`out_dir/TMP\`.
-    prod_dir : str | os.PathLike | None, default=None
-        Directory where to search for orbits, clocks, and BRDC files. Optional.
-        If not provided, defaults to \`tmp_dir\`.
     clean_tmp : bool, default=False
         If True, deletes all contents of \`tmp_dir\` at the beginning of the
         function execution.
@@ -208,21 +208,16 @@ def rtklib_run_from_rinex(
     else:
         prod_dir = utils.create_dir(prod_dir)
 
-    # uncompressing rinex if compressed
-    if operational.check_if_compressed_rinex(rnx_rover):
-        rnx_rover = operational.crz2rnx(rnx_rover, tmp_dir)
-    if operational.check_if_compressed_rinex(rnx_base):
-        rnx_base = operational.crz2rnx(rnx_base, tmp_dir)
-
-    # RINEX START & END
-    rov_srt, rov_end, rov_itv = operational.rinex_start_end(rnx_rover, 1)
-    bas_srt, bas_end, bas_itv = operational.rinex_start_end(rnx_base, 1)
+    # RINEX START & END - FAST
+    rov_srt_fast = conv.rinexname2dt(rnx_rover)
+    bas_srt_fast = conv.rinexname2dt(rnx_base)
 
     # RINEX NAMES
     rov_name = os.path.basename(rnx_rover)[0:4]
     bas_name = os.path.basename(rnx_base)[0:4]
 
-    srt_str = rov_srt.strftime("%Y_%j_%H%M")
+    # EXPERIENCE / OUTPUT NAMES
+    srt_str = rov_srt_fast.strftime("%Y_%j_%H%M")
     exp_full_name = "_".join((experience_prefix, rov_name, bas_name, srt_str))
 
     out_conf_fil = os.path.join(out_dir, exp_full_name + ".conf")
@@ -232,11 +227,28 @@ def rtklib_run_from_rinex(
         log.info(f"RTKLIB output file {out_result_fil} already exists. Skipping...")
         return out_result_fil
 
+    #### START HEAVY PROCESSING ####
+    log.info("Starting RTKLIB RUN for {}".format(exp_full_name))
+    # uncompressing rinex if compressed
+    if operational.check_if_compressed_rinex(rnx_rover):
+        rnx_rover = operational.crz2rnx(rnx_rover, tmp_dir)
+    if operational.check_if_compressed_rinex(rnx_base):
+        rnx_base = operational.crz2rnx(rnx_base, tmp_dir)
+
+    # RINEX START & END - PRECISE
+    rov_srt, rov_end, rov_itv = operational.rinex_start_end(rnx_rover, True)
+    bas_srt, bas_end, bas_itv = operational.rinex_start_end(rnx_base, True)
+
+    log.info("Rover: {} | Base: {} | Start: {} | End: {} | Interval: {} s".format(
+        rov_name, bas_name, rov_srt, rov_end, rov_itv)
+    )
+
+    # READ GENERIC CONF FILE
     dicoconf = read_conf_file(generik_conf)
 
     if not outtype.lower() == "auto":
         dicoconf["out-solformat"] = outtype.lower()
-        log.info(f"out-solformat {dicoconf['out-solformat']}")
+        log.info(f"out-solformat was 'auto', set to: {dicoconf['out-solformat']}")
 
     def _edit_dicoconf(rnx_inp, xyz_inp, ant_n=1):
         antobj, recobj, siteobj, locobj = (
@@ -257,9 +269,12 @@ def rtklib_run_from_rinex(
         dicoconf[f"ant{n}-antdeln"] = antobj.North_Ecc
         dicoconf[f"ant{n}-antdele"] = antobj.East_Ecc
 
+
     # Edit conf file dic
-    _edit_dicoconf(rnx_rover, xyz_rover, ant_n=1)
-    _edit_dicoconf(rnx_base, xyz_base, ant_n=2)
+    if rover_auto_conf:
+        _edit_dicoconf(rnx_rover, xyz_rover, ant_n=1)
+    if base_auto_conf:
+        _edit_dicoconf(rnx_base, xyz_base, ant_n=2)
 
     if not (bas_srt <= rov_srt <= rov_end <= bas_end):
         log.warning("rover/base epoch inconsistency: not bas_srt <= rov_srt <= rov_end <= bas_end !!!")
@@ -284,7 +299,7 @@ def rtklib_run_from_rinex(
         archive_dir=prod_dir,
         startdate=orb_srt,
         enddate=orb_end,
-        archtype="/",
+        archtype="year/doy",
         AC_names=(calc_center , ),
         archive_center="ign"
     )
@@ -292,7 +307,8 @@ def rtklib_run_from_rinex(
     if not orblis or not orblis[0]:
         log.error("No SP3 orbit file found remotely nor locally")
         log.error(f"Is analysis center/latency correct?: {calc_center}")
-        raise FileNotFoundError("No SP3 orbit file found remotely nor locally")
+        log.warning(f"We continue without precise orbits/only with broadcast ones")
+        sp3lis = []
     else:
         sp3lis = [prods2tmp(orb,tmp_dir) for orb in orblis]
 
@@ -338,6 +354,6 @@ def rtklib_run_from_rinex(
     log.info(bigcomand)
 
     subprocess.call([bigcomand], executable="/bin/bash", shell=True)
-    log.info("RTKLIB RUN FINISHED")
+    log.info("RTKLIB RUN FINISHED for {}".format(exp_full_name))
 
     return out_result_fil

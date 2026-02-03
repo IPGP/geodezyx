@@ -356,6 +356,7 @@ def rinex_start_end(
     add_tzinfo=False,
     verbose=True,
     safety_mode=True,
+    line_count=1000,
 ):
     """
     Return the first and the last epoch of a RINEX file
@@ -380,10 +381,15 @@ def rinex_start_end(
     verbose : bool, optional
         verbose mode. The default is True.
 
-    safety_mode : TYPE, optional
+    safety_mode : bool, optional
         if the epoch reading fails (e.g. in case of a compressed RINEX)
         activate a reading of the header and the file name as backup.
         The default is True.
+
+    line_count : int, optional
+        number of lines to read at the beginning and the end of the file
+        to find the first and last epochs.
+        The default is 750.
 
     Returns
     -------
@@ -398,12 +404,12 @@ def rinex_start_end(
     # NBsuite : c'est fait au 161018 mais par contre c'est un dirty copier coller
 
     epochs_list = []
-    head = utils.head(input_rinex_path, 1500)
+    head = utils.head(input_rinex_path, line_count)
     epochs_list_head = rinex_read_epoch(
         head, interval_out=interval_out, add_tzinfo=add_tzinfo, out_array=False
     )
 
-    tail = utils.tail(input_rinex_path, 1500)
+    tail = utils.tail(input_rinex_path, line_count)
     epochs_list_tail = rinex_read_epoch(
         tail, interval_out=interval_out, add_tzinfo=add_tzinfo, out_array=False
     )

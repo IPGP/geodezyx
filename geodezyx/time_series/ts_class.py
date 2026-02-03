@@ -177,6 +177,7 @@ class Point:
         self.sU = sU
 
         self.initype = "ENU"
+        self._flh_computed = False
 
     def NEDset(self, N=np.nan, E=np.nan, D=np.nan, sN=np.nan, sE=np.nan, sD=np.nan):
         self.N = N
@@ -187,6 +188,7 @@ class Point:
         self.sD = sD
 
         self.initype = "NED"
+        self._flh_computed = False
 
     def UTMset(
         self,
@@ -205,6 +207,7 @@ class Point:
         self.sUutm = sUutm
 
         self.initype = "UTM"
+        self._flh_computed = False
 
     def add_offset(self, dA, dB, dC, coortype="ENU"):
         temp = time_series.add_offset_point(self, dA, dB, dC, coortype=coortype)
@@ -742,7 +745,6 @@ class TimeSeriePoint:
         alpha=0.8,
         fig=1,
         errbar=True,
-        new_style=True,
         symbol=".",
         errbar_width=1,
         ylim=None,
@@ -755,7 +757,7 @@ class TimeSeriePoint:
         coortype : str, optional
             The coordinates type. The default is 'ENU'.
         diapt : float, optional
-            Point diamaeter. The default is 2.
+            Point diameter. The default is 2.
         alpha : float, optional
             Alpha (transparency) of points. The default is 0.8.
         fig : int or Figure object, optional
@@ -765,14 +767,12 @@ class TimeSeriePoint:
             The default is 1.
         errbar : bool, optional
             Plot the error bars. The default is True.
-        new_style : bool, optional
-            Plot in a new style.
-            The old style is only kept for legacy
-            The default is True.
         symbol : str, optional
             symbol. The default is '.'.
-        errbar_width : TYPE, optional
+        errbar_width : float, optional
             coefficient for the error bar size. The default is 1.
+        ylim : tuple, optional
+            Y-axis limits. The default is None.
 
         Returns
         -------
@@ -782,11 +782,6 @@ class TimeSeriePoint:
 
         log.setLevel(logging.INFO)
 
-        if new_style:
-            styleint = 310
-        else:
-            styleint = 220
-
         try:
             A, B, C, T, sA, sB, sC = self.to_list(coortype=coortype)
         except TypeError as tyer:
@@ -794,156 +789,87 @@ class TimeSeriePoint:
             log.info("TRICK : check if the given coortype is in the timeserie")
             raise tyer
 
-        if coortype == "ENU":
-            Atitle = "East"
-            Btitle = "North"
-            Ctitle = "Up"
-            ABtitle = "East North"
-            yylabel = "displacement (m)"
+        # Define titles and labels based on coordinate type
+        coord_config = {
+            "ENU": ("East", "North", "Up", "displacement (m)"),
+            "XYZ": ("X", "Y", "Z", "displacement (m)"),
+            "FLH": ("Phi", "Lambda", "Haut", "displacement (m)"),
+            "UTM": ("East (UTM)", "North (UTM)", "Up", "displacement (m)"),
+        }
 
-        elif coortype == "XYZ":
-            Atitle = "X"
-            Btitle = "Y"
-            Ctitle = "Z"
-            yylabel = "displacement (m)"
-            ABtitle = "X Y (sans signification)"
-
-        elif coortype == "FLH":
-            Atitle = "Phi"
-            Btitle = "Lambda"
-            Ctitle = "Haut"
-            yylabel = "displacement (m)"
-            ABtitle = "Phi Lambda (sans signification)"
-
-        elif coortype == "UTM":
-            Atitle = "East (UTM)"
-            Btitle = "North (UTM)"
-            Ctitle = "Up"
-            yylabel = "displacement (m)"
-            ABtitle = "East North (UTM)"
-
-        else:
-            Atitle = "A"
-            Btitle = "B"
-            Ctitle = "C"
-            yylabel = "displacement (??)"
-            ABtitle = "A & B"
+        Atitle, Btitle, Ctitle, yylabel = coord_config.get(
+            coortype, ("A", "B", "C", "displacement (??)")
+        )
 
         log.info("plot : %s, pts : %s", self.nbpts, self.stat)
 
-        namest = 0
-        namend = 10
-
         Tdt = conv.posix2dt(T)
 
-        if type(fig) is int:
-            figobj = plt.figure(fig)
-        elif type(fig) is plt.Figure:
-            figobj = fig
+        # Get figure number
+        if isinstance(fig, int):
+            fig_num = fig
+        elif isinstance(fig, plt.Figure):
+            fig_num = fig.number
+        else:
+            fig_num = 1
 
+        # Label for the plot
+        name4plot = self.name[:10] if self.name else self.stat
+
+        # Check if figure already exists, reuse axes if yes, create it if no
+        if plt.fignum_exists(fig_num):
+            figobj = plt.figure(fig_num)
+            # Reuse existing axes if the figure has 3 axes
+            if len(figobj.axes) == 3:
+                axes = figobj.axes
+            else:
+                # Clear and create new axes if wrong number of axes
+                figobj.clear()
+                axes = figobj.subplots(3, 1, sharex=True)
+        else:
+            figobj, axes = plt.subplots(3, 1, num=fig_num, sharex=True)
         figobj.suptitle(self.stat)
 
-        if self.name:
-            name4plot = self.name[namest:namend]
-        else:
-            name4plot = self.stat
+        # Component data and titles
+        components = [
+            (A, sA, Atitle),
+            (B, sB, Btitle),
+            (C, sC, Ctitle),
+        ]
 
-        plt.subplot(styleint + 1)
+        # Common plot parameters
+        plot_kwargs = {
+            'label': name4plot,
+            'markersize': diapt,
+            'alpha': alpha,
+        }
 
-        if errbar:
-            plt.errorbar(
-                Tdt,
-                A,
-                sA,
-                fmt=symbol,
-                label=name4plot,
-                markersize=diapt,
-                alpha=alpha,
-                ecolor="xkcd:light grey",
-                elinewidth=errbar_width,
-            )
-        else:
-            plt.plot(Tdt, A, symbol, label=name4plot, markersize=diapt, alpha=alpha)
-        try:
-            plt.legend()
-        except:
-            pass
-        # plt.xlabel('Date')
-        plt.ylabel(yylabel)
-        plt.title(Btitle)
-        plt.title(Atitle)
+        errbar_kwargs = {
+            **plot_kwargs,
+            'fmt': symbol,
+            'ecolor': 'xkcd:light grey',
+            'elinewidth': errbar_width,
+        }
 
-        #        ax = plt.gca()
+        # Loop through components and plot
+        for ax, (data, sigma, title) in zip(axes, components):
+            if errbar:
+                ax.errorbar(Tdt, data, sigma, **errbar_kwargs)
+            else:
+                ax.plot(Tdt, data, symbol, **plot_kwargs)
+            ax.set_ylabel(yylabel)
+            ax.set_title(title)
+            ax.legend()
+            if ylim:
+                ax.set_ylim(ylim)
 
-        #        if coortype == 'ENU':
-        ##            refstr = 'ref XYZ = ' + utils.join_improved(',',self.refENU.X ,
-        ##                                                          self.refENU.Y ,
-        ##                                                          self.refENU.Z)
-        plt.subplot(styleint + 2)
-        if errbar:
-            plt.errorbar(
-                Tdt,
-                B,
-                sB,
-                fmt=symbol,
-                label=name4plot,
-                markersize=diapt,
-                alpha=alpha,
-                ecolor="xkcd:light grey",
-                elinewidth=errbar_width,
-            )
-        else:
-            plt.plot(Tdt, B, symbol, label=name4plot, markersize=diapt, alpha=alpha)
-        try:
-            plt.legend()
-        except:
-            pass
-        # plt.xlabel('Date')
-        plt.ylabel(yylabel)
-        plt.title(Btitle)
+        # Set x-label only on bottom subplot
+        axes[-1].set_xlabel("Date")
 
-        plt.subplot(styleint + 3)
-        if errbar:
-            plt.errorbar(
-                Tdt,
-                C,
-                sC,
-                fmt=symbol,
-                label=name4plot,
-                markersize=diapt,
-                alpha=alpha,
-                ecolor="xkcd:light grey",
-                elinewidth=errbar_width,
-            )
-        else:
-            plt.plot(Tdt, C, symbol, label=name4plot, markersize=diapt, alpha=alpha)
-        try:
-            plt.legend()
-        except:
-            pass
-
-        if ylim:
-            [a.set_ylim(ylim) for a in figobj.axes]
-
-        plt.xlabel("Date")
-        plt.ylabel(yylabel)
-        plt.title(Ctitle)
         figobj.autofmt_xdate()
         figobj.set_size_inches(8.27, 11.69)
         figobj.tight_layout()
         plt.subplots_adjust(top=0.93)
-
-        if not new_style:
-            plt.subplot(styleint + 4)
-            plt.axis("equal")
-            try:
-                plt.legend()
-            except:
-                pass
-            plt.plot(A, B, ".", label=name4plot, markersize=diapt, alpha=alpha)
-            plt.xlabel(Atitle + " " + yylabel)
-            plt.ylabel(Btitle + " " + yylabel)
-            plt.title(ABtitle)
 
         return figobj
 
