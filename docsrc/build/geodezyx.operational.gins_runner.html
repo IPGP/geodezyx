@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>geodezyx.operational.gins_runner package &mdash; geodezyx 4.x documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -175,7 +175,7 @@
 <p>&#64;author: psakic</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.gins_runner.gins_bd_update.bdgins_update">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.gins_bd_update.</span></span><span class="sig-name descname"><span class="pre">bdgins_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_srt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2000,</span> <span class="pre">5,</span> <span class="pre">3,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_bdgins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">login</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.gins_bd_update.bdgins_update" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.gins_bd_update.</span></span><span class="sig-name descname"><span class="pre">bdgins_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_srt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2000,</span> <span class="pre">5,</span> <span class="pre">3,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_bdgins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">login</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rapid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ultra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.gins_bd_update.bdgins_update" title="Link to this definition"></a></dt>
 <dd><p>Update the BDGINS repository with the necessary files
 for the given date range.</p>
 <dl class="field-list simple">
@@ -191,6 +191,8 @@ If not provided, the default is the 15 days ago.</p></li>
 <li><p><strong>compress</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to gzip-compress the clock files.
 experimental, and not recommended
 Defaults to False.</p></li>
+<li><p><strong>rapid</strong> (<em>bool</em><em>, </em><em>optional</em>) – download RAPID products. Defaults to False.</p></li>
+<li><p><strong>ultra</strong> (<em>bool</em><em>, </em><em>optional</em>) – download ULTRA products. Defaults to False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -206,8 +208,10 @@ Defaults to False.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.gins_runner.gins_bd_update.download_rsync">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.gins_bd_update.</span></span><span class="sig-name descname"><span class="pre">download_rsync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsync_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.gins_bd_update.download_rsync" title="Link to this definition"></a></dt>
-<dd><p>Downloads a list of files using rsync.</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.gins_bd_update.</span></span><span class="sig-name descname"><span class="pre">download_rsync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_destination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rsync_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.gins_bd_update.download_rsync" title="Link to this definition"></a></dt>
+<dd><p>Downloads files using rsync.
+If file_list is provided, downloads only those files.
+If file_list is None, downloads all files and subfolders from source_path.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -624,6 +628,78 @@ argsdict[‘-wsb’]     = “/home/psakicki/THESE/SOFTWARES/GINSv2B/gin/data/pr
 </dd></dl>
 
 </section>
+<section id="module-geodezyx.operational.gins_runner.rnxs_eost">
+<span id="geodezyx-operational-gins-runner-rnxs-eost-module"></span><h2>geodezyx.operational.gins_runner.rnxs_eost module<a class="headerlink" href="#module-geodezyx.operational.gins_runner.rnxs_eost" title="Link to this heading"></a></h2>
+<p>Created on 05/01/2026 19:09:20</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.rnxs_eost.get_rnx_eost">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.rnxs_eost.</span></span><span class="sig-name descname"><span class="pre">get_rnx_eost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.rnxs_eost.get_rnx_eost" title="Link to this definition"></a></dt>
+<dd><p>Downloads RINEX files from the EOS Strasbourg server to a local directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outdir</strong> (<em>str</em>) – The output directory where RINEX files will be saved. Subdirectories
+will be created following the year/day structure from the server.</p></li>
+<li><p><strong>year_start</strong> (<em>int</em><em>, </em><em>optional</em>) – The starting year for filtering RINEX files. If None, no lower bound is applied.
+Default is None.</p></li>
+<li><p><strong>year_end</strong> (<em>int</em><em>, </em><em>optional</em>) – The ending year for filtering RINEX files. If None, no upper bound is applied.
+Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Creates subdirectories in the output directory matching the year/day structure.</p></li>
+<li><p>Uses <cite>list_rnx_eost</cite> to retrieve the list of RINEX files.</p></li>
+<li><p>Downloads files using HTTP protocol via <cite>dlutils.download_http</cite>.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_rnx_eost</span><span class="p">(</span><span class="s2">&quot;/path/to/output&quot;</span><span class="p">,</span> <span class="n">year_start</span><span class="o">=</span><span class="mi">2020</span><span class="p">,</span> <span class="n">year_end</span><span class="o">=</span><span class="mi">2021</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.rnxs_eost.list_rnx_eost">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.rnxs_eost.</span></span><span class="sig-name descname"><span class="pre">list_rnx_eost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excl_rnx2_post2022</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.rnxs_eost.list_rnx_eost" title="Link to this definition"></a></dt>
+<dd><p>Lists the paths of RINEX files available on the EOS Strasbourg server within a specified year range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year_start</strong> (<em>int</em><em>, </em><em>optional</em>) – The starting year for filtering RINEX files. If None, no lower bound is applied.
+Default is None.</p></li>
+<li><p><strong>year_end</strong> (<em>int</em><em>, </em><em>optional</em>) – The ending year for filtering RINEX files. If None, no upper bound is applied.
+Default is None.</p></li>
+<li><p><strong>excl_rnx2_post2022</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, excludes RINEX version 2 files for years 2022 and later
+(as RINEX version 3 is available). Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of URLs pointing to the RINEX files that match the specified year criteria.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function fetches directory listings recursively from the server.</p></li>
+<li><p>Only directories matching the pattern of a 4-digit year are considered.</p></li>
+<li><p>Logs the number of RINEX files found for each day.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rnx_files</span> <span class="o">=</span> <span class="n">list_rnx_eost</span><span class="p">(</span><span class="n">year_start</span><span class="o">=</span><span class="mi">2020</span><span class="p">,</span> <span class="n">year_end</span><span class="o">=</span><span class="mi">2021</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">rnx_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 <section id="module-geodezyx.operational.gins_runner.singugins_run">
 <span id="geodezyx-operational-gins-runner-singugins-run-module"></span><h2>geodezyx.operational.gins_runner.singugins_run module<a class="headerlink" href="#module-geodezyx.operational.gins_runner.singugins_run" title="Link to this heading"></a></h2>
 <p>Created on 21/03/2025 21:57:04</p>
@@ -635,7 +711,7 @@ argsdict[‘-wsb’]     = “/home/psakicki/THESE/SOFTWARES/GINSv2B/gin/data/pr
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.gins_runner.singugins_run.singugins_run">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.singugins_run.</span></span><span class="sig-name descname"><span class="pre">singugins_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2000,</span> <span class="pre">5,</span> <span class="pre">3,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">12,</span> <span class="pre">31,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bdrnx_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/root/020_BDRNX/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nprocs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_updatebd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_concat_orb_clk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spotgins_run_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_rnx2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_rnx3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.singugins_run.singugins_run" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.singugins_run.</span></span><span class="sig-name descname"><span class="pre">singugins_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2000,</span> <span class="pre">5,</span> <span class="pre">3,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">12,</span> <span class="pre">31,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bdrnx_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/root/020_BDRNX/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nprocs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_updatebd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_concat_orb_clk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spotgins_run_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_rnx2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_rnx3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quick_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_clean_tmp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.singugins_run.singugins_run" title="Link to this definition"></a></dt>
 <dd><p>Run the SPOTGINS process within a SINGUGINS container.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -662,6 +738,12 @@ Default is an empty dictionary.</p></li>
 Default is False (RINEX2 files will be processed).</p></li>
 <li><p><strong>no_rnx3</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, RINEX3 files will not be processed.
 Default is False (RINEX3 files will be processed).</p></li>
+<li><p><strong>quick_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, quick mode will be enabled.
+Quick mode allows for faster latency processing, using RAPID/ULTRA products.
+but it is not a SPOTGINS official mode anymore.
+Default is True.</p></li>
+<li><p><strong>no_clean_tmp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, temporary files will not be deleted after processing.
+Default is False (temporary files will be deleted).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -775,7 +857,7 @@ need to be removed.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.gins_runner.spotgins_run.spotgins_run">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.spotgins_run.</span></span><span class="sig-name descname"><span class="pre">spotgins_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnxs_path_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results_folder_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nprocs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'VALIDE_25_1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">director_generik_path_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">director_name_prefix_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stations_file_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oceanload_file_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options_prairie_file_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stations_master_file_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_archive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_clean_tmp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_updatebd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_concat_orb_clk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updatebd_login</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.spotgins_run.spotgins_run" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.spotgins_run.</span></span><span class="sig-name descname"><span class="pre">spotgins_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnxs_path_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results_folder_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nprocs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'VALIDE_25_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">director_generik_path_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">director_name_prefix_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stations_file_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oceanload_file_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options_prairie_file_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stations_master_file_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_archive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_clean_tmp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_updatebd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_concat_orb_clk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updatebd_login</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quick_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.spotgins_run.spotgins_run" title="Link to this definition"></a></dt>
 <dd><p>Run the SPOTGINS process on the provided RINEX paths using multiprocessing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -807,12 +889,75 @@ need to be removed.</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, enable verbose logging. Default is False.</p></li>
 <li><p><strong>updatebd_login</strong> (<em>str</em>) – The login to connect to the remote <cite>tite</cite> GINS server to update the database.
 We assume that SSH keys have been exchanged to automatize the connexion</p></li>
+<li><p><strong>quick_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, quick mode will be enabled.
+Quick mode allows for faster latency processing, using RAPID/ULTRA products.
+but it is not a SPOTGINS official mode anymore.
+Default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.gins_runner.testgins_run">
+<span id="geodezyx-operational-gins-runner-testgins-run-module"></span><h2>geodezyx.operational.gins_runner.testgins_run module<a class="headerlink" href="#module-geodezyx.operational.gins_runner.testgins_run" title="Link to this heading"></a></h2>
+<p>Created on 05/01/2026 19:12:11</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.testgins_run.main">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.testgins_run.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.testgins_run.main" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.gins_runner.testgins_run.run_testgins">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.testgins_run.</span></span><span class="sig-name descname"><span class="pre">run_testgins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnxs_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_rnxs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gins_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.testgins_run.run_testgins" title="Link to this definition"></a></dt>
+<dd><p>Executes the test GINS workflow by downloading RINEX files and running the GINS process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>results_folder</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the directory where the results will be stored.
+If None, a timestamped folder under ‘/root/030_RESULTS/’ will be created.
+Default is None.</p></li>
+<li><p><strong>rnxs_folder</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the directory where input RINEX files will be downloaded or read.
+If None, defaults to ‘/root/020_BDRNX/rnxs_testGINS_from_EOST’.
+Default is None.</p></li>
+<li><p><strong>year_start</strong> (<em>int</em><em>, </em><em>optional</em>) – The starting year for downloading RINEX files. If None, no lower bound is applied
+Default is None.</p></li>
+<li><p><strong>year_end</strong> (<em>int</em><em>, </em><em>optional</em>) – The ending year for downloading RINEX files. If None, no upper bound is applied
+Default is None.</p></li>
+<li><p><strong>download_rnxs</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the script will not download RINEX files from EOST server
+and will use existing files in the specified rnxs_folder.
+Default is True.</p></li>
+<li><p><strong>gins_run</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the GINS processing workflow will be executed.
+Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_rnx_eost</span></code></dt><dd><p>Downloads RINEX files from the EOS Strasbourg server.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">singugins_run</span></code></dt><dd><p>Runs the GINS processing workflow.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">run_testgins</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">run_testgins</span><span class="p">(</span><span class="n">results_folder</span><span class="o">=</span><span class="s2">&quot;/custom/results&quot;</span><span class="p">,</span> <span class="n">rnxs_folder</span><span class="o">=</span><span class="s2">&quot;/custom/rnxs&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">run_testgins</span><span class="p">(</span><span class="n">no_download_rnxs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rnxs_folder</span><span class="o">=</span><span class="s2">&quot;/existing/rnxs&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>

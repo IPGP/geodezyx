@@ -65,6 +65,14 @@ geodezyx.operational.gins\_runner.gins\_prairie module
    :show-inheritance:
    :undoc-members:
 
+geodezyx.operational.gins\_runner.rnxs\_eost module
+---------------------------------------------------
+
+.. automodule:: geodezyx.operational.gins_runner.rnxs_eost
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 geodezyx.operational.gins\_runner.singugins\_run module
 -------------------------------------------------------
 
@@ -77,6 +85,14 @@ geodezyx.operational.gins\_runner.spotgins\_run module
 ------------------------------------------------------
 
 .. automodule:: geodezyx.operational.gins_runner.spotgins_run
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+geodezyx.operational.gins\_runner.testgins\_run module
+------------------------------------------------------
+
+.. automodule:: geodezyx.operational.gins_runner.testgins_run
    :members:
    :show-inheritance:
    :undoc-members:

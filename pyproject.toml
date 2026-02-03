@@ -135,7 +135,7 @@ dependencies = {file = ["requirements.txt"]}
 #dev = ["check-manifest"]
 #test = ["coverage"]
 full = ["netCDF4", "kepler.py", "ncompress", "seawater", "gsw", "pyorbital", "pytwobodyorbit"]
-edu = ["gnsstoolbox", "gpsdatetime", "seaborn", "plotly"]
+edu = ["gnsstoolbox", "gpsdatetime", "seaborn", "plotly", "statsmodel"]
 
 # List URLs that are relevant to your project
 #
