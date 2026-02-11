@@ -66,7 +66,7 @@ from gnss_edu import *
 
 #%%
 # Chargement des fichiers RINEX d'observation
-fichier_rnx='mlvl176z.18o'
+fichier_rnx='./data/data-2019/mlvl176z.18o'
 #fichier_rnx='./data/data-2019/mlvl1760.18o'
 
 # Position approchée lue dans le header du fichier RINEX
@@ -134,14 +134,14 @@ df_rnx['ind_ligne'] = range(len(df_rnx))
 
 #%%
 # Chargement des fichiers d'orbites
-fichier_sp3  = ['igs20071.sp3', 'igs20072.sp3']
-fichier_brdc = 'mlvl176z.18n'
+fichier_sp3  = ['./data/data-2019/igs20071.sp3', './data/data-2019/igs20072.sp3']
+fichier_brdc = './data/data-2019/mlvl176z.18n'
 
 mysp3 = orb.orbit()
 mysp3.loadSp3(fichier_sp3)
 
 mynav = orb.orbit()
-mynav.loadRinexN('mlvl176z.18n')
+mynav.loadRinexN('./data/data-2019/mlvl176z.18n')
 
 # Il faut calculer la position de chaque satellite GNSS à chaque temps d'émission
 t = gpst.gpsdatetime()
@@ -315,36 +315,18 @@ plot_residual_analysis(A, B, dP_est, figure_title="Prise en compte des horloges 
 #del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
 
 #%%
-
-print('*****  Prise en compte des erreurs d''horloge satellites et récepteur *****')
-#
 # Traitement classique sur le code pour la position d'un récepteur GNSS
 # corrections des erreurs d'horloges satellites
 # -> elles sont connues -> correction directe du vecteur B
-# estimation des erreurs d'horloges récepteur
-# -> elles sont inconnues et doivent être estimées à chaque époque
 
-
-
-# Obtention des époques uniques
-epoch_uniques = df_rnx.index.get_level_values('epoch').unique()
-nb_epochs = len(epoch_uniques)
-# Squelette du bloc à concaténer à la matrice modèle A
-block_dt_r = np.zeros((len(df_rnx), nb_epochs))
-# Remplissage du bloc correspondant à l'estimation des erreurs d'horloge recepteur
-
-for i, epoch in enumerate(epoch_uniques):
-    block_dt_r[df_rnx.loc[epoch, 'ind_ligne'],i]=1
-    
+print('*****  Prise en compte des erreurs d''horloge satellites et récepteur *****')
 
 # Initialisation des coordonnées approximatives du récepteur
 P_app = np.array([0, 0, 0])
-
-dP_est=np.array([100, 100, 100])
+dP_est=100
 i=1
 # Itération pour l'affinement de la position du récepteur
-while np.linalg.norm(dP_est[0:3])>1:
-    
+while np.linalg.norm(dP_est)>1:
     # Calcul des distances approximatives satellite-récepteur
     distances = np.sqrt((df_rnx['X_sat'].values - P_app[0])**2 +
                         (df_rnx['Y_sat'].values - P_app[1])**2 +
@@ -357,28 +339,21 @@ while np.linalg.norm(dP_est[0:3])>1:
     df_dX = (P_app[0] - df_rnx['X_sat'].values) / distances
     df_dY = (P_app[1] - df_rnx['Y_sat'].values) / distances
     df_dZ = (P_app[2] - df_rnx['Z_sat'].values) / distances
-    A = np.column_stack((df_dX, df_dY, df_dZ, block_dt_r))
+    A = np.column_stack((df_dX, df_dY, df_dZ))
 
     # Résolution par moindres carrés pour estimer le déplacement
-    dP_est = np.linalg.inv(A.T@A)@A.T@B     
+    dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
     
     # Mise à jour de la position estimée
-    # Attention : on a estimé nb_epochs paramètres d'horloge récepteur
-    P_est = np.zeros(len(dP_est))
-    
-    P_est[0:3] = P_app[0:3]+dP_est[0:3]
-    P_est[3:]  = dP_est[3:]
-    
+    P_est = P_app + dP_est
     
     # Affichage de la position estimée à chaque itération
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
     i+=1
-    
-    
 
 # Calcul de la distance finale entre la position estimée et la position initiale du header RINEX
-dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est[:3] - P_rnx_header)**2))
+dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est - P_rnx_header)**2))
 print("\n")
 print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
 
@@ -389,16 +364,12 @@ print("Nord (N):", N)
 print("Haut (U):", U)
 print("\n")
 
-plot_residual_analysis(A, B, dP_est, figure_title="Calcul correction horloges Sat et Rec", save_path="./corr_sat_clock_sagnac.png",
-                           P_est=P_est[:3], P_rnx_header=P_rnx_header, tools=tools)
+
+plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat", save_path="./corr_sat_clock.png",
+                           P_est=P_est, P_rnx_header=P_rnx_header, tools=tools)
 
 
-del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distances, i, epoch, epoch_uniques, nb_epochs
-
-# introduire une visualisation du résultat avec folium
-
-
-
+del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
 
 
 #%%
