@@ -63,7 +63,30 @@ def run_command(command):
             break
 
 
-def dl_brdc(prod_parent_dir, date_list):
+def _get_dates(date_lis, prod_ac_name="", out_range=False):
+
+    date_lis_srt = min(date_lis)
+    date_lis_end = max(date_lis)
+
+    if "FIN" in prod_ac_name or "RAP" in prod_ac_name:
+        date_out_srt = conv.round_dt(date_lis_srt, "1D", mode="floor")
+        date_out_end = conv.round_dt(date_lis_end, "1D", mode="floor")
+    elif "ULT" in prod_ac_name:
+        date_out_srt = conv.round_dt(date_lis_srt, "6H", mode="floor")
+        date_out_end = conv.round_dt(date_lis_end, "6H", mode="floor")
+    elif "BRDC" in prod_ac_name:
+        date_out_srt = conv.round_dt(date_lis_srt, "1D", mode="floor")
+        date_out_end = conv.round_dt(date_lis_end, "1D", mode="floor")
+    else:
+        date_out_srt = date_lis_srt
+        date_out_end = date_lis_end
+
+    if out_range:
+        return conv.dt_range(date_out_srt, date_out_end)
+    else:
+        return date_out_srt, date_out_end
+
+def dl_brdc(prod_parent_dir, date_lis):
     """
     Downloads BRDC (Broadcast Ephemeris) files for PRIDE PPPAR from a given directory and date list.
 
@@ -71,12 +94,13 @@ def dl_brdc(prod_parent_dir, date_list):
     ----------
     prod_parent_dir : str
         The parent directory where the products are stored.
-    date_list : iterable of datetime
-        The list of dates for which the BRDC files are to be downloaded.
+    date_lis : iterable of datetime
+        If list, the list of dates for which the BRDC files are to be downloaded.
+        If tuple, the start and end dates for which the BRDC files are to be downloaded.
 
     Returns
     -------
-    list
+    brdc_path_lis : list
         A list of downloaded BRDC files.
 
     Notes
@@ -85,27 +109,30 @@ def dl_brdc(prod_parent_dir, date_list):
     It then downloads the BRDC files for each unique date using the operational.download_gnss_rinex function.
     The downloaded files are appended to a list which is returned at the end.
     """
-    brdc_lis = []
+    brdc_lis_out = []
     ######### BROADCAST
-    date_list_uniq = [conv.round_dt(d, "1D", "floor") for d in date_list]
-    date_list_uniq = sorted(list(set(date_list_uniq)))
+    date_srt, date_end = _get_dates(date_lis, prod_ac_name="BRDC", out_range=False)
 
-    for date in date_list_uniq:
-        brdc = operational.download_gnss_rinex(
-            {"nav_rt": ["BRDC"]},
-            prod_parent_dir,
-            date,
-            date,
-            archtype="year/doy",
-            parallel_download=1,
-            force=False,
-        )
-        brdc_lis.append(brdc)
-
-    return brdc_lis
+    brdc_tmp = operational.download_gnss_rinex(
+    {"nav_rt": ["BRDC"]},
+    prod_parent_dir,
+    date_srt,
+    date_end,
+    archtype="year/doy",
+    parallel_download=1,
+    force=False)
 
 
-def dl_prods(prod_parent_dir, date_list, prod_ac_name):
+    # manage the weird output of download_gnss_rinex,
+    # which is a list of tuples (path, bool)
+    brdc_path_lis, brdc_bool_lis = zip(*brdc_tmp)
+
+    return brdc_path_lis
+
+
+def dl_prods(prod_parent_dir, date_lis, prod_ac_name,
+             prod_types=("sp3", "clk", "bia", "obx", "erp"),
+             data_centers=("ign", "whu")):
     """
     Downloads GNSS products for PRIDE PPPAR from a given directory and date list.
 
@@ -113,10 +140,18 @@ def dl_prods(prod_parent_dir, date_list, prod_ac_name):
     ----------
     prod_parent_dir : str
         The parent directory where the products are stored.
-    date_list : iterable of datetime
-        The list of dates for which the GNSS products are to be downloaded.
+    date_lis : iterable of datetime
+        If list, the list of dates for which the products are to be downloaded.
+        If tuple, the start and end dates for which the products are to be downloaded.
     prod_ac_name : str
         The name of the analysis center providing the products.
+    prod_types : tuple of str, optional
+        The types of GNSS products to be downloaded
+        (e.g., "sp3", "clk", "bia", "obx", "erp").
+        Defaults to ("sp3", "clk", "bia", "obx", "erp").
+    data_centers : tuple of str, optional
+        The data centers from which to download the products 
+        (e.g., "ign", "whu").
 
     Returns
     -------
@@ -130,26 +165,28 @@ def dl_prods(prod_parent_dir, date_list, prod_ac_name):
     If at least 5 products are found, the function stops further downloads.
     """
 
+    prod_srt, prod_end = _get_dates(date_lis, prod_ac_name=prod_ac_name)
+
     dl_prods_fct = operational.download_gnss_products
 
-    ######### ORBITS CLOCKS ETC...
-    for data_center in ("ign", "whu"):  ##'whu'
-        if "MGX" in prod_ac_name:
-            mgex = True
-        else:
-            mgex = False
+    if type(data_centers) is not tuple:
+        data_centers = (data_centers,)
 
+    prods = []
+    ######### ORBITS CLOCKS ETC...
+    for data_centers in data_centers:
+        mgex = True if "MGX" in prod_ac_name else False
         prods = dl_prods_fct(
             prod_parent_dir,
-            min(date_list),
-            max(date_list),
+            prod_srt,
+            prod_end,
             AC_names=(prod_ac_name,),
-            prod_types=("sp3", "clk", "bia", "obx", "erp"),
+            prod_types=prod_types,
             remove_patterns=("ULA",),
             archtype="year/doy",
             new_name_conv=True,
             parallel_download=1,
-            archive_center=data_center,
+            archive_center=data_centers,
             mgex=mgex,
             repro=0,
             sorted_mode=False,

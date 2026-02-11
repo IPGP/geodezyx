@@ -1018,6 +1018,8 @@ def download_gnss_rinex(
         the local path of the downloaded file and
         a boolean indicating whether the download was successful.
         e.g. [(local_path1, True), (local_path2, False), ...]
+        NB: files that already exist locally are marked
+        as (local_path, True)
 
     Minimal exemple
     ---------------
