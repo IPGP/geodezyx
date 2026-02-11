@@ -7,7 +7,7 @@ Filière ING3 - PPMD - Traitement de la mesure de phase
 https://www.ipgp.fr/annuaire/nahmani/)
 contact : nahmani@ipgp.fr ou samuel.nahmani@ign.fr
 (1) Université Paris Cité, Institut de physique du globe de Paris, CNRS, IGN, F-75005 Paris, France.
-(2) Univ Gustave Eiffel, Géodata Paris, IGN, F-75238 Paris, France. 
+(2) Univ Gustave Eiffel, ENSG, IGN, F-77455 Marne-la-Vallée, France. 
 
 Version: 1.0
 Dépendances: pandas, numpy, geodezyx, datetime
@@ -38,8 +38,8 @@ import matplotlib.pyplot as plt
 
 #%%
 #
-fichier_base  ='mlvl176z.18o'
-fichier_mobile='smne176z.18o'
+fichier_base  ='/home/snahmani/Bureau/FRS/data/data/data-2019/mlvl176z.18o'
+fichier_mobile='/home/snahmani/Bureau/FRS/data/data/data-2019/smne176z.18o'
 
 
 #%% Préambule
@@ -167,8 +167,4 @@ df_index = df_index.dropna(subset=['L1', 'L2'])
 #%%
 # Reste à s'occuper des satellites et obtenir leurs positions et corrections aux 
 # dates d'intérêt
-
-
-
-
 

@@ -3,32 +3,32 @@
 
 """
 read_vmf1_grid.py — autonome (sans jdutil)
-Lecture + interpolation des coefficients/grilles VMF1 aux coordonnées station
-et à des dates MJD arbitraires, à partir des fichiers VMFG_YYYYMMDD.HH.
+Lecture + interpolation des coefficients VMF1 (ah, aw) aux coordonnées station
+et à des dates MJD arbitraires, à partir des fichiers VMFG_YYYYMMDD.HHH.
 
 - Interpolation spatiale:
     * tente scipy.interpolate.griddata (linear)
     * sinon repli nearest neighbor (NumPy) si SciPy indisponible
-- Interpolation temporelle: linéaire entre pas 6h (t0, t1=t0+6h)
-- Chemins: ./Mapping_Fcn/vmf1/VMFG_YYYYMMDD.HH
+- Interpolation temporelle: linéaire entre pas 6h
+- Chemins: ./Mapping_Fcn/vmf1/VMFG_YYYYMMDD.HHH
 
-Format attendu (après lignes commençant par '!'):
-    lat lon ah aw [zhd zwd]    ← zhd/zwd optionnels
+Format attendu des fichiers (après les lignes commençant par '!'):
+    lat lon ah aw zhd zwd   (au minimum: lat, lon, ah, aw)
+
+Auteur: adapté pour être autonome (remplacement de jdutil)
 """
 
 from __future__ import annotations
-from dataclasses import dataclass
-from typing import Iterable, List, Tuple
 import os
-import math
+from math import floor
+from dataclasses import dataclass
+from typing import Iterable, Tuple, List
+import numpy as np
 
-# SciPy optionnelle
-try:
-    import numpy as np
-    _HAS_NUMPY = True
-except Exception:
-    _HAS_NUMPY = False
-
+# ---------------------------------------------------------------------
+# Optionnel: SciPy pour une interpolation spatiale "propre".
+# Sinon on bascule en nearest neighbor.
+# ---------------------------------------------------------------------
 try:
     from scipy.interpolate import griddata  # type: ignore
     _HAS_SCIPY = True
@@ -36,25 +36,24 @@ except Exception:
     _HAS_SCIPY = False
 
 
-# ----------- Conversions de dates (autonomes) -----------
-
-def calendar_to_jd(year: int, month: int, day: int, hour: float = 0.0) -> float:
-    """Calendrier → Julian Day (double)."""
-    Y, M = int(year), int(month)
-    D = float(day)
-    frac_day = float(hour) / 24.0
+# =======================
+#  UTILITAIRES TEMPS
+# =======================
+def datetime_to_mjd(dt) -> float:
+    """Convertit un datetime UTC naïf/aware en MJD (UTC)."""
+    from datetime import timezone
+    if dt.tzinfo is not None:
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+    Y, M, D = dt.year, dt.month, dt.day
+    frac_day = (dt.hour + dt.minute/60 + dt.second/3600 + dt.microsecond/3.6e9)/24.0
     if M <= 2:
         Yp, Mp = Y - 1, M + 12
     else:
         Yp, Mp = Y, M
-    A = math.floor(Yp / 100)
-    B = 2 - A + math.floor(A / 4)
-    JD = math.floor(365.25 * (Yp + 4716)) + math.floor(30.6001 * (Mp + 1)) + (D + frac_day) + B - 1524.5
-    return float(JD)
-
-
-def jd_to_mjd(jd: float) -> float:
-    return float(jd) - 2400000.5
+    A = floor(Yp/100)
+    B = 2 - A + floor(A/4)
+    JD = floor(365.25*(Yp+4716)) + floor(30.6001*(Mp+1)) + (D + frac_day) + B - 1524.5
+    return JD - 2400000.5
 
 
 def mjd_to_jd(mjd: float) -> float:
@@ -62,80 +61,79 @@ def mjd_to_jd(mjd: float) -> float:
 
 
 def jd_to_calendar(jd: float) -> Tuple[int, int, int, float]:
-    """Julian Day → (year, month, day, hour_float)."""
+    """
+    Convertit un Julian Day (float) en (year, month, day, hour_float).
+    Implémentation autonome (remplace jdutil.jd_to_date).
+    """
     jd = float(jd)
     Z = int(jd + 0.5)
     F = (jd + 0.5) - Z
     if Z < 2299161:
         A = Z
     else:
-        alpha = int((Z - 1867216.25) / 36524.25)
-        A = Z + 1 + alpha - int(alpha / 4)
+        alpha = int((Z - 1867216.25)/36524.25)
+        A = Z + 1 + alpha - int(alpha/4)
     B = A + 1524
-    C = int((B - 122.1) / 365.25)
+    C = int((B - 122.1)/365.25)
     D = int(365.25 * C)
-    E = int((B - D) / 30.6001)
-
+    E = int((B - D)/30.6001)
     day = B - D - int(30.6001 * E) + F
-    month = E - 1 if E < 14 else E - 13
-    year = C - 4716 if month > 2 else C - 4715
-
+    if E < 14:
+        month = E - 1
+    else:
+        month = E - 13
+    if month > 2:
+        year = C - 4716
+    else:
+        year = C - 4715
+    # heure fractionnaire (0–24)
+    hour = (day % 1.0) * 24.0
     day_int = int(day)
-    frac = day - day_int
-    hour = frac * 24.0
-    return int(year), int(month), int(day_int), float(hour)
-
-
-def datetime_to_mjd(dt) -> float:
-    """datetime naïf (UTC) → MJD."""
-    y, m, d = dt.year, dt.month, dt.day
-    h = dt.hour + dt.minute / 60.0 + (dt.second + dt.microsecond / 1e6) / 3600.0
-    return jd_to_mjd(calendar_to_jd(y, m, d, h))
+    return year, month, day_int, hour
 
 
 def mjd_to_datetime(mjd: float):
-    """MJD → datetime naïf (UTC)."""
+    """Conversion MJD -> datetime UTC naïf (sans tzinfo)."""
     from datetime import datetime
-    y, m, d, h = jd_to_calendar(mjd_to_jd(mjd))
-    hour = int(h)
-    minute = int((h - hour) * 60.0)
-    sec = int(round((((h - hour) * 60.0) - minute) * 60.0))
-    if sec == 60:
-        sec = 59
-    return datetime(int(y), int(m), int(d), hour, minute, sec)
+    y, m, d, hour = jd_to_calendar(mjd_to_jd(mjd))
+    hh = int(hour)
+    mmf = (hour - hh) * 60.0
+    mm = int(mmf)
+    ss = (mmf - mm) * 60.0
+    sec = int(ss)
+    usec = int(round((ss - sec) * 1e6))
+    return datetime(y, m, d, hh, mm, sec, usec)
 
 
 def floor_to_6h(dt):
-    """Aligne un datetime à l'heure 0/6/12/18 la plus proche ≤ dt."""
+    """Ramène dt à l'heure multiple de 6h immédiatement inférieure (UTC)."""
     from datetime import datetime
-    h = (dt.hour // 6) * 6
-    return datetime(dt.year, dt.month, dt.day, h, 0, 0)
+    return dt.replace(minute=0, second=0, microsecond=0, hour=(dt.hour // 6) * 6)
 
 
-def add_hours(dt, hrs):
+def add_hours(dt, hours: int):
     from datetime import timedelta
-    return dt + timedelta(hours=int(hrs))
+    return dt + timedelta(hours=hours)
 
 
-# ----------- Lecture grilles VMF -----------
-
+# =======================
+#  DONNÉES & FICHIERS
+# =======================
 @dataclass
 class VMFPoint:
     lat: float
     lon: float
     ah: float
     aw: float
-    zhd: float | None = None
-    zwd: float | None = None
 
 
 def _vmf_dir() -> str:
-    """Répertoire où se trouvent les VMFG_YYYYMMDD.HH."""
+    """Répertoire où se trouvent les VMFG_YYYYMMDD.HHH."""
     return os.path.join(".", "Mapping_Fcn", "vmf1")
 
 
 def _vmf_filename(dt_6h) -> str:
-    """Nom de fichier VMFG_YYYYMMDD.HH pour un datetime aligné 6h."""
+    """Nom de fichier VMFG_YYYYMMDD.HHH pour un datetime aligné 6h."""
     y = dt_6h.year
     m = f"{dt_6h.month:02d}"
     d = f"{dt_6h.day:02d}"
@@ -144,7 +142,11 @@ def _vmf_filename(dt_6h) -> str:
 
 
 def _read_vmf_file(filepath: str) -> List[VMFPoint]:
-    """Lit un VMFG_* et retourne une liste de VMFPoint (ah, aw, zhd?, zwd?)."""
+    """
+    Lit un fichier VMFG_* et retourne une liste de VMFPoint.
+    Ignore les lignes commençant par '!'.
+    Attend au minimum: lat lon ah aw ...
+    """
     pts: List[VMFPoint] = []
     if not os.path.exists(filepath):
         raise FileNotFoundError(f"VMF grid file not found: {filepath}")
@@ -158,157 +160,156 @@ def _read_vmf_file(filepath: str) -> List[VMFPoint]:
             if len(parts) < 4:
                 continue
             try:
-                lat = float(parts[0]); lon = float(parts[1])
-                ah  = float(parts[2]); aw  = float(parts[3])
-                zhd = float(parts[4]) if len(parts) >= 5 else float("nan")
-                zwd = float(parts[5]) if len(parts) >= 6 else float("nan")
-                pts.append(VMFPoint(lat=lat, lon=lon, ah=ah, aw=aw, zhd=zhd, zwd=zwd))
+                lat = float(parts[0])
+                lon = float(parts[1])
+                ah = float(parts[2])
+                aw = float(parts[3])
+                pts.append(VMFPoint(lat=lat, lon=lon, ah=ah, aw=aw))
             except Exception:
+                # ligne malformée -> ignorer
                 continue
     if not pts:
         raise ValueError(f"No valid data rows in {os.path.basename(filepath)}")
     return pts
 
 
-def _interp_spatial(points: List[VMFPoint], lat0: float, lon0: float) -> tuple[float, float, float, float]:
-    """Interpolation spatiale (ah, aw, zhd, zwd) aux coordonnées demandées."""
-    if not _HAS_NUMPY:
-        raise RuntimeError("NumPy requis pour l'interpolation.")
-
-    import numpy as np
+def _interp_spatial(points: List[VMFPoint], lat0: float, lon0: float) -> Tuple[float, float]:
+    """
+    Interpolation spatiale (ah, aw) au point (lat0, lon0).
+    - Si SciPy dispo: griddata 'linear' sur les points (lat,lon).
+    - Sinon: nearest neighbor (NumPy pur).
+    """
     lats = np.array([p.lat for p in points], dtype=float)
     lons = np.array([p.lon for p in points], dtype=float)
-    ahs  = np.array([p.ah  for p in points], dtype=float)
-    aws  = np.array([p.aw  for p in points], dtype=float)
-    zhds = np.array([p.zhd for p in points], dtype=float)
-    zwds = np.array([p.zwd for p in points], dtype=float)
+    ahs = np.array([p.ah for p in points], dtype=float)
+    aws = np.array([p.aw for p in points], dtype=float)
 
-    def interp(arr):
-        if _HAS_SCIPY:
-            pts = np.column_stack([lats, lons])
-            val = griddata(pts, arr, (lat0, lon0), method="linear")  # type: ignore
-            if (val is None) or np.isnan(val):
-                val = griddata(pts, arr, (lat0, lon0), method="nearest")  # type: ignore
-            return float(val)
-        # repli: plus proche voisin
+    if _HAS_SCIPY:
+        pts = np.column_stack([lats, lons])
+        ah_i = griddata(pts, ahs, (lat0, lon0), method="linear")
+        aw_i = griddata(pts, aws, (lat0, lon0), method="linear")
+        # Si en dehors de la convex hull -> fallback nearest
+        if (ah_i is None) or np.isnan(ah_i):
+            ah_i = griddata(pts, ahs, (lat0, lon0), method="nearest")
+        if (aw_i is None) or np.isnan(aw_i):
+            aw_i = griddata(pts, aws, (lat0, lon0), method="nearest")
+        return float(ah_i), float(aw_i)
+    else:
+        # Fallback: nearest neighbor simple
         d2 = (lats - lat0)**2 + (lons - lon0)**2
-        return float(arr[int(np.argmin(d2))])
-
-    ah_i  = interp(ahs)
-    aw_i  = interp(aws)
-    zhd_i = interp(zhds) if np.isfinite(zhds).any() else float("nan")
-    zwd_i = interp(zwds) if np.isfinite(zwds).any() else float("nan")
-    return ah_i, aw_i, zhd_i, zwd_i
+        idx = int(np.argmin(d2))
+        return float(ahs[idx]), float(aws[idx])
 
 
-def _coeffs_from_file_for_station(dt_6h, lat_deg: float, lon_deg: float) -> tuple[float, float, float, float]:
-    """Charge le VMFG de t=dt_6h et interpole (ah, aw, zhd, zwd) à (lat, lon)."""
+def _coeffs_from_file_for_station(dt_6h, lat_deg: float, lon_deg: float) -> Tuple[float, float]:
+    """
+    Lit le fichier VMFG correspondant à dt_6h et interpole à (lat, lon).
+    """
     path = os.path.join(_vmf_dir(), _vmf_filename(dt_6h))
     points = _read_vmf_file(path)
     return _interp_spatial(points, lat_deg, lon_deg)
 
 
-# ----------- API publique -----------
-
-def read_vmf1_grid_ex(mjd: Iterable[float], ell: Iterable[float]):
+# =======================
+#  API PRINCIPALE
+# =======================
+def read_vmf1_grid(mjd: Iterable[float], ell: Iterable[float]) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Version étendue: renvoie (ah, aw, zhd, zwd), interpolés en temps et espace.
-    - ell = (lat_deg, lon_deg, h_m)  # h_m non utilisé ici
-    - Interpolation temporelle: linéaire entre t0=floor_6h(dt), t1=t0+6h
-    """
-    if not _HAS_NUMPY:
-        raise RuntimeError("NumPy requis (installé automatiquement avec SciPy).")
+    Retourne (ah_vec, aw_vec) pour chaque MJD donné et une station ell=[lat_deg, lon_deg, h_m].
 
-    import numpy as np
+    Paramètres
+    ----------
+    mjd : Iterable[float]
+        Liste/array de dates en Modified Julian Day (UTC).
+    ell : [lat_deg, lon_deg, h_m]
+        Latitude (deg), Longitude (deg), Hauteur ellipsoïdale (m). (La hauteur n'est
+        pas utilisée ici pour ah/aw, mais on garde la signature d’interface.)
+
+    Renvoie
+    -------
+    ah_vec : np.ndarray shape (N,)
+    aw_vec : np.ndarray shape (N,)
+
+    Notes
+    -----
+    - Les fichiers requis sont:
+        ./Mapping_Fcn/vmf1/VMFG_YYYYMMDD.H{00,06,12,18}
+      pour les 6h entourant chaque MJD.
+    - Interpolation temporelle: linéaire entre t0=⌊MJD⌋_6h et t1=t0+6h.
+    """
     mjd_arr = np.atleast_1d(np.array(list(mjd), dtype=float))
     lat_deg, lon_deg, _h_m = float(ell[0]), float(ell[1]), float(ell[2])
 
-    # Recenser les pas 6h nécessaires
+    # Pré-chargement des fichiers nécessaires (évite relecture multiple)
+    # On boucle d’abord pour recenser tous les pas 6h requis.
     from datetime import datetime
     needed_slots = set()
     dt_by_slot = {}
+
     for m in mjd_arr:
         dt = mjd_to_datetime(m)
         t0 = floor_to_6h(dt)
         t1 = add_hours(t0, 6)
-        for t in (t0, t1):
-            key = (t.year, t.month, t.day, t.hour)
-            needed_slots.add(key)
-            dt_by_slot[key] = t
+        needed_slots.add((t0.year, t0.month, t0.day, t0.hour))
+        needed_slots.add((t1.year, t1.month, t1.day, t1.hour))
+        dt_by_slot[(t0.year, t0.month, t0.day, t0.hour)] = t0
+        dt_by_slot[(t1.year, t1.month, t1.day, t1.hour)] = t1
 
-    # Cache pas 6h → (ah, aw, zhd, zwd)
-    slot_cache: dict[tuple[int,int,int,int], tuple[float,float,float,float]] = {}
+    # Cache des (ah,aw) spatialisés aux pas 6h
+    slot_cache = {}
 
-    def get_slot(y, mo, d, h):
+    def get_slot_ahaw(y, mo, d, h):
         key = (y, mo, d, h)
-        if key not in slot_cache:
-            slot_cache[key] = _coeffs_from_file_for_station(dt_by_slot[key], lat_deg, lon_deg)
-        return slot_cache[key]
+        if key in slot_cache:
+            return slot_cache[key]
+        dt6 = dt_by_slot[key]
+        ah, aw = _coeffs_from_file_for_station(dt6, lat_deg, lon_deg)
+        slot_cache[key] = (ah, aw)
+        return ah, aw
 
-    ah_out = np.empty_like(mjd_arr)
-    aw_out = np.empty_like(mjd_arr)
-    zhd_out = np.empty_like(mjd_arr)
-    zwd_out = np.empty_like(mjd_arr)
+    # Interpolation temporelle
+    ah_out = np.empty_like(mjd_arr, dtype=float)
+    aw_out = np.empty_like(mjd_arr, dtype=float)
 
     for i, m in enumerate(mjd_arr):
         dt = mjd_to_datetime(m)
         t0 = floor_to_6h(dt)
         t1 = add_hours(t0, 6)
-        m0 = datetime_to_mjd(t0); m1 = datetime_to_mjd(t1)
+        m0 = datetime_to_mjd(t0)
+        m1 = datetime_to_mjd(t1)
 
-        ah0, aw0, zhd0, zwd0 = get_slot(t0.year, t0.month, t0.day, t0.hour)
-        ah1, aw1, zhd1, zwd1 = get_slot(t1.year, t1.month, t1.day, t1.hour)
+        ah0, aw0 = get_slot_ahaw(t0.year, t0.month, t0.day, t0.hour)
+        ah1, aw1 = get_slot_ahaw(t1.year, t1.month, t1.day, t1.hour)
 
-        w = 0.0 if m1 == m0 else min(1.0, max(0.0, (m - m0) / (m1 - m0)))
-
-        ah_out[i]  = (1 - w) * ah0  + w * ah1
-        aw_out[i]  = (1 - w) * aw0  + w * aw1
-
-        # zhd/zwd: si une des extrémités est NaN on renvoie NaN
-        if _np_all_finite([zhd0, zhd1]):
-            zhd_out[i] = (1 - w) * zhd0 + w * zhd1
+        # coefficient d'interpolation (linéaire)
+        if m1 == m0:
+            w = 0.0
         else:
-            zhd_out[i] = float("nan")
+            w = (m - m0) / (m1 - m0)
+            if w < 0.0: w = 0.0
+            if w > 1.0: w = 1.0
 
-        if _np_all_finite([zwd0, zwd1]):
-            zwd_out[i] = (1 - w) * zwd0 + w * zwd1
-        else:
-            zwd_out[i] = float("nan")
+        ah_out[i] = (1.0 - w) * ah0 + w * ah1
+        aw_out[i] = (1.0 - w) * aw0 + w * aw1
 
-    return ah_out, aw_out, zhd_out, zwd_out
-
-
-def read_vmf1_grid(mjd: Iterable[float], ell: Iterable[float]):
-    """
-    API historique: renvoie uniquement (ah, aw).
-    Reste 100% compatible avec l’existant.
-    """
-    ah, aw, _zhd, _zwd = read_vmf1_grid_ex(mjd, ell)
-    return ah, aw
+    return ah_out, aw_out
 
 
-# ----------- utilitaires internes -----------
-
-def _np_all_finite(x) -> bool:
-    if not _HAS_NUMPY:
-        return all((not (isinstance(v, float) and (math.isnan(v) or math.isinf(v)))) for v in x)
-    import numpy as np
-    return np.isfinite(np.array(x, dtype=float)).all()
-
-
-# ----------- test manuel -----------
-
+# =======================
+#  TEST RAPIDE (optionnel)
+# =======================
 if __name__ == "__main__":
-    # Petit test (nécessite que les fichiers VMF soient présents):
-    # Station: COCO (approx.)
-    ell = [-12.192, 96.834, 10.0]
+    # Petit test sur une date fictive (nécessite fichiers présents)
+    # Station: Paris (approx.)
+    ell = [48.85, 2.35, 100.0]
+    # Exemple MJD: 2021-07-10T01:00:18
+    # ->  Converti ici via nos utilitaires pour test
     from datetime import datetime, timezone
-    dt = datetime(2020, 9, 24, 12, 0, tzinfo=timezone.utc).replace(tzinfo=None)
+    dt = datetime(2021, 7, 10, 1, 0, 18, tzinfo=timezone.utc).replace(tzinfo=None)
     mjd_val = datetime_to_mjd(dt)
     try:
-        ah, aw, zhd, zwd = read_vmf1_grid_ex([mjd_val], ell)
-        print("ah =", ah, "\naw =", aw, "\nzhd =", zhd, "\nzwd =", zwd)
-        # Exemple de slant delay si élévation e connue: SD ≈ ah*zhd + aw*zwd
+        ah, aw = read_vmf1_grid([mjd_val], ell)
+        print("ah =", ah, "aw =", aw)
     except Exception as e:
-        print("Test échoué (fichiers manquants ?):", e)
+        print("Test lecture échoué (fichiers manquants ?):", e)
 
