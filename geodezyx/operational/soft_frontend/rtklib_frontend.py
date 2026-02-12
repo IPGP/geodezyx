@@ -266,7 +266,7 @@ def rtklib_run_mono(
     write_conf_file(dicoconf, out_conf_fil)
 
     # Copy shared products to worker tmp directory
-    if not prodlis_shr or not brdclis_shr:
+    if False and (not prodlis_shr or not brdclis_shr):
         ts = [(bas_srt, bas_end)]
         prodlis_use, brdclis_use = dl_prods_shared(prod_dir, ts, calc_center)
     else:
@@ -456,6 +456,7 @@ def rtklib_run_pair(
                 tmp_dir=tmp_dir,
                 prodlis_shr=prodlis_shared,
                 brdclis_shr=brdclis_shared,
+                calc_center=calc_center,
                 experience_prefix=experience_prefix,
                 rover_auto_conf=rover_auto_conf,
                 base_auto_conf=base_auto_conf,

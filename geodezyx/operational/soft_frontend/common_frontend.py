@@ -71,13 +71,19 @@ def _get_dates(date_lis, prod_ac_name="", out_range=False):
 
     date_lis_srt = min(date_lis)
     date_lis_end = max(date_lis)
+    now = dt.datetime.now()
+
+    ult_rt_delta = dt.timedelta(hours=24+6)
 
     if "FIN" in prod_ac_name or "RAP" in prod_ac_name:
         date_out_srt = conv.round_dt(date_lis_srt, "1d", mode="floor")
         date_out_end = conv.round_dt(date_lis_end, "1d", mode="floor")
-    elif "ULT" in prod_ac_name:
+    elif "ULT" in prod_ac_name and now - date_lis_srt >= ult_rt_delta:
         date_out_srt = conv.round_dt(date_lis_srt, "6h", mode="floor")
         date_out_end = conv.round_dt(date_lis_end, "6h", mode="floor")
+    elif "ULT" in prod_ac_name and now - date_lis_srt < ult_rt_delta:
+        date_out_srt = conv.round_dt(date_lis_srt, "6h", mode="floor") - ult_rt_delta
+        date_out_end = conv.round_dt(date_lis_end, "6h", mode="floor") - ult_rt_delta
     elif "BRDC" in prod_ac_name:
         date_out_srt = conv.round_dt(date_lis_srt, "1d", mode="floor")
         date_out_end = conv.round_dt(date_lis_end, "1d", mode="floor")
