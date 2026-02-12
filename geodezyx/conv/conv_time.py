@@ -1814,7 +1814,107 @@ def date2dt(date_in):
 # (These can be refactored later if needed)
 
 @vector_string_conv
-def rinexname2dt(rinexpath):
+def rnxperiod2tdlta(peri_inp):
+    peri_val = int(peri_inp[0:2])
+    peri_unit = str(peri_inp[2])
+
+    if peri_unit == "S":
+        unit_sec = 1
+    elif peri_unit == "M":
+        unit_sec = 60
+    elif peri_unit == "H":
+        unit_sec = 3600
+    elif peri_unit == "D":
+        unit_sec = 86400
+    else:
+        log.warning("odd RINEX period: %s, assume it as 01D", peri_inp)
+        unit_sec = 86400
+
+    td_out = dt.timedelta(seconds=peri_val * unit_sec)
+
+    return td_out
+
+def _rnxname2dt_long(rinexname, out_per_smp=False):
+    """Parse RINEX long name convention to datetime."""
+    date_str = rinexname[12:23]
+    per_str = rinexname[24:27]
+    smp_str = rinexname.split("_")[4]
+
+    yyyy = int(date_str[:4])
+    doy = int(date_str[4:7])
+    hh = int(date_str[7:9])
+    mm = int(date_str[9:11])
+    dt_out = doy2dt(yyyy, doy) + dt.timedelta(seconds=hh * 3600 + mm * 60)
+
+    per = rnxperiod2tdlta(per_str)
+    smp = rnxperiod2tdlta(smp_str)
+
+    if out_per_smp:
+        return dt_out, per, smp
+    else:
+        return dt_out
+
+def _rnxname2dt_long_gfz(rinexname, out_per_smp=False):
+    """Parse RINEX long name GFZ GODC internal convention to datetime."""
+    date_str = rinexname.split("_")[5]
+    time_str = rinexname.split("_")[6]
+    per_str = rinexname.split("_")[7]
+    smp_str = rinexname.split("_")[8]
+
+    yyyy = int(date_str[:4])
+    mo = int(date_str[4:6])
+    dd = int(date_str[6:8])
+    hh = int(time_str[0:2])
+    mm = int(time_str[2:4])
+    ss = int(time_str[4:6])
+    dt_out = dt.datetime(yyyy, mo, dd, hh, mm, ss)
+
+    per = rnxperiod2tdlta(per_str)
+    smp = rnxperiod2tdlta(smp_str)
+
+    if out_per_smp:
+        return dt_out, per, smp
+    else:
+        return dt_out
+
+def _rnxname2dt_short(rinexname, out_per_smp=False):
+    """Parse RINEX short name convention to datetime."""
+    alphabet = list(string.ascii_lowercase)
+    doy = int(rinexname[4:7])
+
+    # sub hourly case
+    if re.match(r"^....[0-9]{3}.[0-9]{2}\.[0-9]{2}", rinexname.lower()):
+        yy = int(rinexname[11:13])
+        minn = int(rinexname[8:10])
+    else:
+        yy = int(rinexname[9:11])
+        minn = 0
+
+    year = yy + 1900 if yy > 80 else yy + 2000
+    h = alphabet.index(rinexname[7]) if rinexname[7] in alphabet else 0
+
+    dt_out = dt.datetime(year, 1, 1) + dt.timedelta(days=doy - 1, seconds=h * 3600 + minn * 60)
+
+    if h > 0:
+        if minn > 0:
+            per = dt.timedelta(minutes=15)
+        else:
+            per = dt.timedelta(hours=1)
+    else:
+        per = dt.timedelta(days=1)
+
+
+    # this info is not avaiable in RNX2 short naming convention
+    smp = None
+
+    if out_per_smp:
+        return dt_out, per, smp
+    else:
+        return dt_out
+
+
+@vector_string_conv
+def rinexname2dt(rinexpath, out_per_smp=False):
     """
     Time representation conversion
 
@@ -1827,69 +1927,30 @@ def rinexname2dt(rinexpath):
     rinexpath : string
         RINEX path. The RINEX basename will be extracted automatically.
 
+    out_per_smp : bool
+        if True, also returns the period and sample as timedelta objects.
+
     Returns
     -------
     dt : datetime
         Datetime
+    per : timedelta,
+        optional Period of the RINEX file (if out_per_smp is True)
+    smp : timedelta,
+        optional Sample interval of the RINEX file (if out_per_smp is True)
     """
-
     rinexname = os.path.basename(rinexpath)
-    # rinexname = rinexpath
 
-    ##### LONG rinex name
     if re.search(conv_rinex.rinex_regex_long_name(), rinexname) or re.search(
         conv_rinex.rinex_regex_long_name_brdc(), rinexname
     ):
-        date_str = rinexname.split("_")[2]
-        yyyy = int(date_str[:4])
-        doy = int(date_str[4:7])
-        hh = int(date_str[7:9])
-        mm = int(date_str[9:11])
-        dt_out = doy2dt(yyyy, doy) + dt.timedelta(seconds=hh * 3600 + mm * 60)
-        return dt_out
+        return _rnxname2dt_long(rinexname, out_per_smp=out_per_smp)
 
-        ##### LONG rinex name -- GFZ's GODC internal name
     elif re.search(conv_rinex.rinex_regex_long_name_gfz_godc(), rinexname):
-        date_str = rinexname.split("_")[5]
-        time_str = rinexname.split("_")[6]
-        yyyy = int(date_str[:4])
-        mo = int(date_str[4:6])
-        dd = int(date_str[6:8])
+        return _rnxname2dt_long_gfz(rinexname, out_per_smp=out_per_smp)
 
-        hh = int(time_str[0:2])
-        mm = int(time_str[2:4])
-        ss = int(time_str[4:6])
-
-        dt_out = dt.datetime(yyyy, mo, dd, hh, mm, ss)
-
-        return dt_out
-
-        ##### SHORT rinex name
-    elif re.search(
-        conv_rinex.rinex_regex(), rinexname.lower()
-    ):  ##EUREF are upper case...
-        alphabet = list(string.ascii_lowercase)
-        doy = int(rinexname[4:7])
-        # sub hourly case
-        if re.match(r"^....[0-9]{3}.[0-9]{2}\.[0-9]{2}",rinexname.lower()):
-            yy = int(rinexname[11:13])
-            minn = int(rinexname[8:10])
-        # regular case
-        else:
-            yy = int(rinexname[9:11])
-            minn = 0
-
-        if yy > 80:
-            year = yy + 1900
-        else:
-            year = yy + 2000
-
-        if rinexname[7] in alphabet:
-            h = alphabet.index(rinexname[7])
-        else:
-            h = 0
-
-        return dt.datetime(year, 1, 1) + dt.timedelta(days=doy - 1, seconds=h * 3600 + minn * 60)
+    elif re.search(conv_rinex.rinex_regex(), rinexname.lower()):
+        return _rnxname2dt_short(rinexname, out_per_smp=out_per_smp)
 
     else:
         log.error("RINEX name is not well formated: %s", rinexname)
@@ -1897,7 +1958,7 @@ def rinexname2dt(rinexpath):
 
 
 @vector_string_conv
-def sp3name2dt(sp3path):
+def sp3name2dt(sp3path, out_per_smp=False):
     """
     Time representation conversion
 
@@ -1910,21 +1971,28 @@ def sp3name2dt(sp3path):
     sp3path : string
         Orbit SP3 path. The basename will be extracted automatically.
 
+    out_per_smp : bool
+        if True, also returns the period and sample as timedelta objects.
+        Default is False.
     Returns
     -------
     dt : datetime
         Datetime
+    per : timedelta,
+        optional Period of the SP3 file (if out_per_smp is True)
+    smp : timedelta,
+        optional Sample interval of the SP3 file (if out_per_smp is True)
     """
 
     sp3name = os.path.basename(sp3path)
 
     if len(sp3name) < 17:  ###### A REGEX WOULD BE MUCH BETTER !!!! (PSakic 2021-06)
-        return sp3name_leg_2dt(sp3path)
+        return sp3name_leg_2dt(sp3path,out_per_smp=out_per_smp)
     else:
-        return sp3name_v3_2dt(sp3path)
+        return sp3name_v3_2dt(sp3path,out_per_smp=out_per_smp)
 
 @vector_string_conv
-def sp3name_leg_2dt(sp3path):
+def sp3name_leg_2dt(sp3path, out_per_smp=False):
     """
     Time representation conversion
 
@@ -1936,21 +2004,35 @@ def sp3name_leg_2dt(sp3path):
     ----------
     sp3path : string
         Orbit SP3 path. The basename will be extracted automatically.
-
+    out_per_smp : bool
+        if True, also returns the period and sample as timedelta objects.
+        Default is False.
     Returns
     -------
     dt : datetime
         Datetime
+    per : timedelta,
+        optional Period of the SP3 file (if out_per_smp is True)
+    smp : timedelta,
+        optional Sample interval of the SP3 file (if out_per_smp is True)
     """
 
     sp3name = os.path.basename(sp3path)
 
     week = int(sp3name[3:7])
     dow = int(sp3name[7])
-    return gpstime2dt(week, dow)
+    dt_out = gpstime2dt(week, dow)
+
+    per = dt.timedelta(days=1)
+    smp = dt.timedelta(seconds=900)
+
+    if out_per_smp:
+        return dt_out, per, smp
+    else:
+        return dt_out
 
 @vector_string_conv
-def sp3name_v3_2dt(sp3path):
+def sp3name_v3_2dt(sp3path, out_per_smp=False):
     """
     Time representation conversion
 
@@ -1962,15 +2044,24 @@ def sp3name_v3_2dt(sp3path):
     ----------
     sp3path : string
         Orbit SP3 path. The basename will be extracted automatically.
+    out_per_smp : bool
+        if True, also returns the period and sample as timedelta objects.
+        Default is False.
 
     Returns
     -------
     dt : datetime
         Datetime
+    per : timedelta,
+        optional Period of the SP3 file (if out_per_smp is True)
+    smp : timedelta,
+        optional Sample interval of the SP3 file (if out_per_smp is True)
     """
     sp3name = os.path.basename(sp3path)
-    datestr = sp3name.split("_")
-    datestr = datestr[1]
+    datestr0 = sp3name.split("_")
+    datestr = datestr0[1]
+    perstr = datestr0[2]
+    smpstr = datestr0[3]
 
     yyyy = int(datestr[0:4])
     doy = int(datestr[4:7])
@@ -1979,7 +2070,12 @@ def sp3name_v3_2dt(sp3path):
 
     dt_out = doy2dt(yyyy, doy) + dt.timedelta(hh * 3600 + mm * 60)
 
-    return dt_out
+    per = rnxperiod2tdlta(perstr)
+    smp = rnxperiod2tdlta(smpstr)
+    if out_per_smp:
+        return dt_out, per, smp
+    else:
+        return dt_out
 
 
 def statname_dt2rinexname(

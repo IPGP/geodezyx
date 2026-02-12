@@ -7,10 +7,12 @@ Created on Wed Feb 11 18:47:44 2026
 """
 
 import datetime as dt
+from geodezyx import utils
 
 #### Import the logger
 import logging
 import subprocess
+import os
 
 import hatanaka
 
@@ -18,9 +20,11 @@ from geodezyx import conv
 from geodezyx import files_rw
 from geodezyx import operational
 
-log = logging.getLogger('geodezyx')
+log = logging.getLogger("geodezyx")
 
 import re
+
+
 def run_command(command):
     """
     Runs a shell command and captures both stdout and stderr.
@@ -69,14 +73,14 @@ def _get_dates(date_lis, prod_ac_name="", out_range=False):
     date_lis_end = max(date_lis)
 
     if "FIN" in prod_ac_name or "RAP" in prod_ac_name:
-        date_out_srt = conv.round_dt(date_lis_srt, "1D", mode="floor")
-        date_out_end = conv.round_dt(date_lis_end, "1D", mode="floor")
+        date_out_srt = conv.round_dt(date_lis_srt, "1d", mode="floor")
+        date_out_end = conv.round_dt(date_lis_end, "1d", mode="floor")
     elif "ULT" in prod_ac_name:
-        date_out_srt = conv.round_dt(date_lis_srt, "6H", mode="floor")
-        date_out_end = conv.round_dt(date_lis_end, "6H", mode="floor")
+        date_out_srt = conv.round_dt(date_lis_srt, "6h", mode="floor")
+        date_out_end = conv.round_dt(date_lis_end, "6h", mode="floor")
     elif "BRDC" in prod_ac_name:
-        date_out_srt = conv.round_dt(date_lis_srt, "1D", mode="floor")
-        date_out_end = conv.round_dt(date_lis_end, "1D", mode="floor")
+        date_out_srt = conv.round_dt(date_lis_srt, "1d", mode="floor")
+        date_out_end = conv.round_dt(date_lis_end, "1d", mode="floor")
     else:
         date_out_srt = date_lis_srt
         date_out_end = date_lis_end
@@ -86,7 +90,8 @@ def _get_dates(date_lis, prod_ac_name="", out_range=False):
     else:
         return date_out_srt, date_out_end
 
-def dl_brdc(prod_parent_dir, date_lis):
+
+def dl_brdc(prod_parent_dir, date_lis, redwld_delta=4):
     """
     Downloads BRDC (Broadcast Ephemeris) files for PRIDE PPPAR from a given directory and date list.
 
@@ -110,29 +115,70 @@ def dl_brdc(prod_parent_dir, date_lis):
     The downloaded files are appended to a list which is returned at the end.
     """
     brdc_lis_out = []
+
+    def _force_redwld(date_inp):
+        date_floor = conv.round_dt(date_inp, "1d", mode="floor")
+        now = dt.datetime.now()
+
+        ## We go for GOP non-real time BRDC
+        if now - date_floor >= dt.timedelta(hours=2500):
+            return False, "nav"
+
+        ## We go for BKG real time BRDC
+        fct = conv.statname_dt2rinexname_long
+        brdc_fname = fct(
+            "BRDC",
+            date_floor,
+            country="WRD",
+            data_source="S",
+            data_type="MN",
+            format_compression="rnx.gz",
+        )
+
+        prod_dir_doy = os.path.join(prod_parent_dir, *conv.dt2doy_year(date_floor,reverse_order=True))
+        brdc_fnd = utils.find_recursive(prod_dir_doy, brdc_fname)
+
+        if len(brdc_fnd) > 0 and brdc_fnd[0] < now.timestamp() - redwld_delta * 3600:
+            log.info(
+                "BRDC %s found but older than %sh, re-downloading...",
+                brdc_fnd[0],
+                redwld_delta,
+            )
+            return True, "nav_rt"
+        else:
+            return False, "nav_rt"
+
+
     ######### BROADCAST
-    date_srt, date_end = _get_dates(date_lis, prod_ac_name="BRDC", out_range=False)
-
-    brdc_tmp = operational.download_gnss_rinex(
-    {"nav_rt": ["BRDC"]},
-    prod_parent_dir,
-    date_srt,
-    date_end,
-    archtype="year/doy",
-    parallel_download=1,
-    force=False)
-
-
+    date_lis = _get_dates(date_lis, prod_ac_name="BRDC", out_range=True)
+    brdc_tmp_stk = []
+    for date in date_lis:
+        force, nav_type = _force_redwld(date)
+        date_floor = conv.round_dt(date, "1d", mode="floor")
+        brdc_tmp = operational.download_gnss_rinex(
+            {nav_type: ["BRDC"]},
+            prod_parent_dir,
+            date_floor,
+            date_floor,
+            archtype="year/doy",
+            parallel_download=1,
+            force=force,
+        )
+        brdc_tmp_stk.extend(brdc_tmp)
     # manage the weird output of download_gnss_rinex,
     # which is a list of tuples (path, bool)
-    brdc_path_lis, brdc_bool_lis = zip(*brdc_tmp)
+    brdc_path_lis, brdc_bool_lis = zip(*brdc_tmp_stk)
 
     return brdc_path_lis
 
 
-def dl_prods(prod_parent_dir, date_lis, prod_ac_name,
-             prod_types=("sp3", "clk", "bia", "obx", "erp"),
-             data_centers=("ign", "whu")):
+def dl_prods(
+    prod_parent_dir,
+    date_lis,
+    prod_ac_name,
+    prod_types=("sp3", "clk", "bia", "obx", "erp"),
+    data_centers=("ign", "whu"),
+):
     """
     Downloads GNSS products for PRIDE PPPAR from a given directory and date list.
 
@@ -150,7 +196,7 @@ def dl_prods(prod_parent_dir, date_lis, prod_ac_name,
         (e.g., "sp3", "clk", "bia", "obx", "erp").
         Defaults to ("sp3", "clk", "bia", "obx", "erp").
     data_centers : tuple of str, optional
-        The data centers from which to download the products 
+        The data centers from which to download the products
         (e.g., "ign", "whu").
 
     Returns
@@ -304,7 +350,7 @@ def get_right_prod(prod_lis_inp, tmp_dir_inp, prod_name, default_fallback):
     elif len(prod_lis_inp) == 0 and not default_fallback:
         log.warning(
             "no prod. %s found, no fallback to Default set (default_fallback option), aborting...",
-            prod_name
+            prod_name,
         )
         prod_out = None
         prod_ori = None

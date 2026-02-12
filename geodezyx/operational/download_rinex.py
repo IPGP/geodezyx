@@ -39,12 +39,10 @@ def _rnx_obs_rgx(stat, date):
 
     Returns
     -------
-    tuple of (str, str)
-        A tuple containing:
-        - rnx2rgx : str
-            Regex pattern for RINEX2 observation files (8.3 format)
-        - rnx3rgx : str
-            Regex pattern for RINEX3 observation files (long format)
+    rnx2rgx : str
+        Regex pattern for RINEX2 observation files (8.3 format)
+    rnx3rgx : str
+        Regex pattern for RINEX3 observation files (long format)
 
     Notes
     -----
@@ -116,12 +114,10 @@ def _rnx_nav_rgx(stat, date, sys=".", data_source="."):
 
     Returns
     -------
-    tuple of (str, str)
-        A tuple containing:
-        - rnx2rgx : str
-            Regex pattern for RINEX2 navigation files (8.3 format)
-        - rnx3rgx : str
-            Regex pattern for RINEX3 navigation files (long format)
+    rnx2rgx : str
+        Regex pattern for RINEX2 navigation files (8.3 format)
+    rnx3rgx : str
+        Regex pattern for RINEX3 navigation files (long format)
 
     Notes
     -----
@@ -283,7 +279,7 @@ def nav_rob_server(stat, date):
     # can not use _generic_server here because of the specific server path structure / file name
 
     ### generate regex
-    rnx2rgx, rnx3rgx = _rnx_nav_rgx(stat, date)  ### NAV RNX HERE !!!
+    rnx2rgx, rnx3rgx = _rnx_nav_rgx(stat, date, sys="M", data_source="R")  ### NAV RNX HERE !!!
 
     ### generate urls
     urldir = os.path.join(urlserver, str(date.year))  ## NO DOY FOR THIS ONE !!!
@@ -291,9 +287,7 @@ def nav_rob_server(stat, date):
     rnx3url = os.path.join(urldir, rnx3rgx)
 
     ### generate output urldic, key 2 and 3 are for rinex version
-    urldic = {}
-    urldic[2] = rnx2url
-    urldic[3] = rnx3url
+    urldic = {2: rnx2url, 3: rnx3url}
 
     return urldic
 
@@ -1023,12 +1017,14 @@ def download_gnss_rinex(
 
     Minimal exemple
     ---------------
-        >>> statdic = dict()
-        >>> statdic['igs_cddis'] = ['ZIMM','tlse']
-        >>> archive_dir = '/home/USER/test_dl_rnx'
-        >>> startdate = dt.datetime(2020,1,1)
-        >>> enddate = dt.datetime(2020,1,31)
-        >>> geodezyx.operational.download_gnss_rinex(statdic, output_dir, startdate, enddate)
+    ```
+    >>> statdic = dict()
+    >>> statdic['igs_cddis'] = ['ZIMM','tlse']
+    >>> archive_dir = '/home/USER/test_dl_rnx'
+    >>> startdate = dt.datetime(2020,1,1)
+    >>> enddate = dt.datetime(2020,1,31)
+    >>> geodezyx.operational.download_gnss_rinex(statdic, output_dir, startdate, enddate)
+    ```
     """
 
     date_range = conv.dt_range(startdate, enddate)
