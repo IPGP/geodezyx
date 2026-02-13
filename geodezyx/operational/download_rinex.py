@@ -553,56 +553,56 @@ def igs_cddis_nav_server(date, site):
 # def geoaus_server_legacy(stat, date):
 # def ens_fr_legacy(stat, date):
 
-def _server_select(datacenter, site, curdate):
+def _server_select(datacenter, date, site):
     mode1hz = False
     secure_ftp = False
     urldic = dict()
     if datacenter in ("igs_cddis", "igs"):
-        urldic = igs_cddis_server(curdate, site)
+        urldic = igs_cddis_server(date, site)
         secure_ftp = True
     elif datacenter == "igs_sopac":
-        urldic = igs_sopac_server(curdate, site)
+        urldic = igs_sopac_server(date, site)
     elif datacenter == "igs_ign":
-        urldic = igs_ign_server(curdate, site)
+        urldic = igs_ign_server(date, site)
     elif datacenter == "igs_ign_ensg":
-        urldic = igs_ign_ensg_server(curdate, site)
+        urldic = igs_ign_ensg_server(date, site)
     elif datacenter == "sonel":
-        urldic = sonel_server(curdate, site)
+        urldic = sonel_server(date, site)
     elif datacenter == "euref":
-        urldic = euref_server(curdate, site)
+        urldic = euref_server(date, site)
     elif datacenter == "igs_bkg":
-        urldic = igs_bkg_server(curdate, site)
+        urldic = igs_bkg_server(date, site)
     elif datacenter in ("nav", "brdc"):
-        urldic = nav_rob_server(curdate, site)
+        urldic = nav_rob_server(date, site)
     elif datacenter in ("nav_rt", "brdc_rt"):
-        urldic = nav_bkg_server(curdate, site)
+        urldic = nav_bkg_server(date, site)
     elif datacenter == "nav_cddis":
-        urldic = igs_cddis_nav_server(curdate, site)
+        urldic = igs_cddis_nav_server(date, site)
     elif datacenter == "rgp":
-        urldic = rgp_server(curdate, site)
+        urldic = rgp_server(date, site)
     elif datacenter == "rgp_ensg":
-        urldic = rgp_ensg_server(curdate, site)
+        urldic = rgp_ensg_server(date, site)
     elif datacenter == "spotgins_eost":
-        urldic = spotgins_eost_server(curdate, site)
+        urldic = spotgins_eost_server(date, site)
     elif datacenter == "renag_crtk":
-        urldic = renag_server_crtk(curdate, site)
+        urldic = renag_server_crtk(date, site)
     elif datacenter == "rgp_1Hz":
-        urldic = rgp_ign_smn_1_hz_server(curdate, site)
+        urldic = rgp_ign_smn_1_hz_server(date, site)
         mode1hz = True
     elif datacenter == "renag":
-        urldic = renag_server(curdate, site)
+        urldic = renag_server(date, site)
     elif datacenter == "orpheon":
-        urldic = orpheon_server(curdate, site)
+        urldic = orpheon_server(date, site)
     elif datacenter == "uwiseismic":
-        urldic = uwiseismic_server(curdate, site)
+        urldic = uwiseismic_server(date, site)
     elif datacenter == "ovsg":
-        urldic = ovsg_server(curdate, site)
+        urldic = ovsg_server(date, site)
     elif datacenter == "unavco":
-        urldic = unavco_server(curdate, site)
+        urldic = unavco_server(date, site)
     elif datacenter == "geoaus":
-        urldic = geoaus_server(curdate, site)
+        urldic = geoaus_server(date, site)
     elif datacenter == "ens_fr":
-        urldic = ens_fr_server(curdate, site)
+        urldic = ens_fr_server(date, site)
     else:
         log.warning("unkwn server dic in the dico, skip ...")
         return None, None, None
@@ -1128,7 +1128,7 @@ def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
         log.info("datacenter/stations: %s/%s", datacenter, " ".join(site_lis))
 
         for date, site in itertools.product(date_range, site_lis):
-            urldic, sftp, _ = _server_select(datacenter, site, date)
+            urldic, sftp, _ = _server_select(datacenter, date, site)
             if not urldic:
                 continue
 
