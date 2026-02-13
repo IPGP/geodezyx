@@ -31,6 +31,7 @@ import dateutil
 import numpy as np
 import pandas as pd
 import scipy
+import warnings
 
 #### geodeZYX modules
 from geodezyx import conv
@@ -157,10 +158,13 @@ def read_rtklib(filein):
     try:
         # Use numpy.loadtxt for fast reading (faster than pandas for pure numeric data)
         # dtype=str to handle date/time columns, then convert manually
-        data = np.genfromtxt(filein,
-                            comments='%',
-                            dtype=str,
-                            encoding=None)
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore", category=UserWarning, message=".*Empty input file.*"
+            )
+            data = np.genfromtxt(filein, comments="%", dtype=str, encoding=None)
+            if len(data) == 0:
+                log.warning("File %s is empty", os.path.basename(filein))
 
         # Pre-compile regex for date parsing
         re_date = re.compile(r"[\w']+")
