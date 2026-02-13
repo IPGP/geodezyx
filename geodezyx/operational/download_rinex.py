@@ -21,7 +21,7 @@ from geodezyx import conv
 log = logging.getLogger("geodezyx")
 
 
-def _rnx_obs_rgx(date, site):
+def _rnx_obs_rgx(date, site=None):
     """
     Generate RINEX observation file regex patterns for both RINEX2 and RINEX3 formats.
 
@@ -33,9 +33,10 @@ def _rnx_obs_rgx(date, site):
     ----------
     date : datetime.datetime
         Date for which to generate the regex patterns.
-    site : str
+    site : str, optional
         4-character GNSS station name (e.g., 'ZIMM', 'TLSE').
         Will be converted to lowercase for RINEX2 pattern.
+        If None or empty string, will match all stations.
 
     Returns
     -------
@@ -63,23 +64,46 @@ def _rnx_obs_rgx(date, site):
     >>> rnx2_pattern, rnx3_pattern = _rnx_obs_rgx(dt.datetime(2020, 1, 1), 'ZIMM')
     >>> # rnx2_pattern might be: 'zimm001a.20o.*'
     >>> # rnx3_pattern might be: 'ZIMM...._R_20200010000_01D_....O.*'
+    >>> # Match all stations:
+    >>> rnx2_all, rnx3_all = _rnx_obs_rgx(dt.datetime(2020, 1, 1), None)
+    >>> # rnx2_all might be: '.*001a.20o.*'
+    >>> # rnx3_all might be: '...._._20200010000_01D_....O.*'
     ```
     """
-    rnx2rgx = conv.statname_dt2rinexname(site.lower(), date, rnxtype=".*")
-    rnx3rgx = conv.statname_dt2rinexname_long(
-        site,
-        date,
-        country="...",
-        data_source=".",
-        file_period="01D",
-        data_freq="...",
-        data_type=".O",
-        format_compression=".*",
-    )
+    # If site is None or empty, use wildcards to match all stations
+    if not site:
+        # For RINEX2: .*doy0.yyo.* (matches any station name)
+        doy = conv.dt2doy(date)
+        year_short = date.strftime("%y")
+        rnx2rgx = f".*{doy}0.{year_short}o.*"
+
+        # For RINEX3: ....____20200010000_01D_....O.* (4 wildcards for station)
+        rnx3rgx = conv.statname_dt2rinexname_long(
+            "....",  # 4-char wildcard for station
+            date,
+            country="...",
+            data_source=".",
+            file_period="01D",
+            data_freq="...",
+            data_type=".O",
+            format_compression=".*",
+        )
+    else:
+        rnx2rgx = conv.statname_dt2rinexname(site.lower(), date, rnxtype=".*")
+        rnx3rgx = conv.statname_dt2rinexname_long(
+            site,
+            date,
+            country="...",
+            data_source=".",
+            file_period="01D",
+            data_freq="...",
+            data_type=".O",
+            format_compression=".*",
+        )
     return str(rnx2rgx), str(rnx3rgx)
 
 
-def _rnx_nav_rgx(date, site, sys=".", data_source="."):
+def _rnx_nav_rgx(date, site=None, sys=".", data_source="."):
     """
     Generate RINEX navigation file regex patterns for both RINEX2 and RINEX3 formats.
 
@@ -92,9 +116,10 @@ def _rnx_nav_rgx(date, site, sys=".", data_source="."):
     ----------
     date : datetime.datetime
         Date for which to generate the regex patterns.
-    site : str
+    site : str, optional
         4-character GNSS station name (e.g., 'BRDC', 'ZIMM').
         For broadcast navigation files, typically use 'BRDC'.
+        If None or empty string, will match all stations.
     sys : str, optional
         GNSS system identifier for RINEX3 navigation files. Default is "." (wildcard).
         Common values:
@@ -142,22 +167,41 @@ def _rnx_nav_rgx(date, site, sys=".", data_source="."):
     >>> rnx2_gps, rnx3_gps = _rnx_nav_rgx(dt.datetime(2020, 1, 1), 'BRDC', sys="G", data_source="R")
     >>> # rnx3_gps might be: 'BRDC...._R_20200010000_01D_GN.*'
     """
-    rnx2rgx = conv.statname_dt2rinexname(site.lower(), date, rnxtype=".*")
-    rnx3rgx = conv.statname_dt2rinexname_long(
-        site,
-        date,
-        country="...",
-        data_source=data_source,
-        file_period="01D",
-        data_freq="",
-        data_type=sys + "N",
-        format_compression=".*",
-    )
+    # If site is None or empty, use wildcards to match all stations
+    if not site:
+        # For RINEX2: .*doy[a-x].yyn.* (matches any station name)
+        doy = conv.dt2doy(date)
+        year_short = date.strftime("%y")
+        rnx2rgx = f".*{doy}[a-x].{year_short}n.*"
+
+        # For RINEX3: ....____20200010000_01D_[MGR]N.* (4 wildcards for station)
+        rnx3rgx = conv.statname_dt2rinexname_long(
+            "....",  # 4-char wildcard for station
+            date,
+            country="...",
+            data_source=data_source,
+            file_period="01D",
+            data_freq="",
+            data_type=sys + "N",
+            format_compression=".*",
+        )
+    else:
+        rnx2rgx = conv.statname_dt2rinexname(site.lower(), date, rnxtype=".*")
+        rnx3rgx = conv.statname_dt2rinexname_long(
+            site,
+            date,
+            country="...",
+            data_source=data_source,
+            file_period="01D",
+            data_freq="",
+            data_type=sys + "N",
+            format_compression=".*",
+        )
 
     return str(rnx2rgx), str(rnx3rgx)
 
 
-def _generic_server(date, site, urlserver, urlsuffix=None):
+def _generic_server(date, site=None, urlserver=None, urlsuffix=None):
     """
     Generate RINEX file URLs for a generic FTP server structure.
 
@@ -170,9 +214,10 @@ def _generic_server(date, site, urlserver, urlsuffix=None):
     date : datetime.datetime
         Date for which to generate the URLs.
         Used to construct the year/doy directory path and filename patterns.
-    site : str
+    site : str, optional
         4-character GNSS station name (e.g., 'ZIMM', 'TLSE').
         Station name case will be handled appropriately for each RINEX format.
+        If None or empty string, will match all stations in the directory.
     urlserver : str
         Base FTP server URL (e.g., 'ftp://example.com/data/').
         Should include the protocol and base path to the RINEX data directory.
@@ -220,14 +265,14 @@ def _generic_server(date, site, urlserver, urlsuffix=None):
 
     return urldic
 
-def igs_sopac_server(date, site):
+def igs_sopac_server(date, site=None):
     # plante si trop de requete
     urlserver = "ftp://garner.ucsd.edu/pub/rinex/"
     urldic = _generic_server(date, site, urlserver)
     return urldic
 
 
-def igs_cddis_server(date, site):
+def igs_cddis_server(date, site=None):
     # plante si trop de requete
     urlserver = "ftp://gdc.cddis.eosdis.nasa.gov/gps/data/daily/"
 
@@ -251,21 +296,21 @@ def igs_cddis_server(date, site):
     return urldic
 
 
-def igs_ign_server(date, site):
+def igs_ign_server(date, site=None):
     # plante si trop de requete
     urlserver = "ftp://igs.ign.fr/pub/igs/data/"
     urldic = _generic_server(date, site, urlserver)
     return urldic
 
 
-def igs_ign_ensg_server(date, site):
+def igs_ign_ensg_server(date, site=None):
     # plante si trop de requete
     urlserver = "ftp://igs.ensg.eu/pub/igs/data/"
     urldic = _generic_server(date, site, urlserver)
     return urldic
 
 
-def igs_bkg_server(date, site):
+def igs_bkg_server(date, site=None):
     urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/obs/"
     # ftp://igs-ftp.bkg.bund.de/IGS/obs/2024/082/IGS00WRD_R_20240820000_01D_MN.rnx.gz
 
@@ -273,7 +318,7 @@ def igs_bkg_server(date, site):
     return urldic
 
 
-def nav_rob_server(date, site):
+def nav_rob_server(date, site=None):
     urlserver = "ftp://epncb.oma.be/pub/obs/BRDC/"
 
     # can not use _generic_server here because of the specific server path structure / file name
@@ -292,29 +337,29 @@ def nav_rob_server(date, site):
     return urldic
 
 
-def sonel_server(date, site):
+def sonel_server(date, site=None):
     urlserver = "ftp://ftp.sonel.org/gps/data/"
     urldic = _generic_server(date, site, urlserver)
     return urldic
 
 
-def rgp_server(date, site):
+def rgp_server(date, site=None):
     urlserver = "ftp://rgpdata.ign.fr/pub/data/"
     urldic = _generic_server(date, site, urlserver, "data_30")
     return urldic
 
 
-def rgp_ensg_server(date, site):
+def rgp_ensg_server(date, site=None):
     urlserver = "ftp://rgpdata.ensg.eu/pub/data/"
     urldic = _generic_server(date, site, urlserver, "data_30")
     return urldic
 
-def spotgins_eost_server(date, site):
+def spotgins_eost_server(date, site=None):
     urlserver = "http://loading.u-strasbg.fr/SPOTGINS/TEST/rinex/"
     urldic = _generic_server(date, site, urlserver)
     return urldic
 
-def euref_server(date, site):
+def euref_server(date, site=None):
     urlserver = "ftp://epncb.oma.be/pub/obs/"
 
     # can not use _generic_server here because of upper case RINEX 2 names
@@ -334,7 +379,7 @@ def euref_server(date, site):
     return urldic
 
 
-def nav_bkg_server(date, site):
+def nav_bkg_server(date, site=None):
     urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/BRDC/"
     # ftp://igs-ftp.bkg.bund.de/IGS/BRDC/2024/082/BRDC00WRD_S_20240820000_01D_MN.rnx.gz
 
@@ -352,7 +397,7 @@ def nav_bkg_server(date, site):
 
     return urldic
 
-def renag_server_crtk(date, site):
+def renag_server_crtk(date, site=None):
     urlserver = "ftp://renag.unice.fr/centipede_30s/"
     urldic = _generic_server(date, site, urlserver)
     if len(site) != 4:
@@ -361,7 +406,7 @@ def renag_server_crtk(date, site):
     return urldic
 
 
-def unavco_server(date, site):
+def unavco_server(date, site=None):
     """
     UNAVCO server for RINEX observation files.
 
@@ -372,7 +417,7 @@ def unavco_server(date, site):
     return urldic
 
 
-def renag_server(date, site):
+def renag_server(date, site=None):
     """
     RENAG server for RINEX observation files.
 
@@ -383,7 +428,7 @@ def renag_server(date, site):
     return urldic
 
 
-def uwiseismic_server(date, site):
+def uwiseismic_server(date, site=None):
     """
     UWISeismic server for RINEX observation files.
 
@@ -395,7 +440,7 @@ def uwiseismic_server(date, site):
     return urldic
 
 
-def orpheon_server(date, site):
+def orpheon_server(date, site=None):
     """
     Orpheon server for RINEX observation files (RENAG hosted).
 
@@ -407,7 +452,7 @@ def orpheon_server(date, site):
     return urldic
 
 
-def ovsg_server(date, site):
+def ovsg_server(date, site=None):
     """
     OVSG (Observatoire Volcanologique et Sismologique de Guadeloupe) server.
 
@@ -435,7 +480,7 @@ def ovsg_server(date, site):
     return urldic
 
 
-def geoaus_server(date, site):
+def geoaus_server(date, site=None):
     """
     Geosciences Australia GNSS server.
 
@@ -460,7 +505,7 @@ def geoaus_server(date, site):
     return urldic
 
 
-def ens_fr_server(date, site):
+def ens_fr_server(date, site=None):
     """
     ENS (École Normale Supérieure) France GNSS server.
 
@@ -471,7 +516,7 @@ def ens_fr_server(date, site):
     return urldic
 
 
-def rgp_ign_smn_1_hz_server(date, site):
+def rgp_ign_smn_1_hz_server(date, site=None):
     """
     RGP IGN 1Hz data server (hourly RINEX files).
 
@@ -496,10 +541,12 @@ def rgp_ign_smn_1_hz_server(date, site):
         rnx2rgx, rnx3rgx = _rnx_obs_rgx(date_session, site)
 
         ### For 1Hz data, use session_a format for RINEX2
-        rnx2name = conv.statname_dt2rinexname(
-            site.lower(), date_session, session_a_instead_of_daily_session=True
-        )
-        rnx2rgx = rnx2name  # Override with specific session name
+        if site:
+            rnx2name = conv.statname_dt2rinexname(
+                site.lower(), date_session, session_a_instead_of_daily_session=True
+            )
+            rnx2rgx = rnx2name  # Override with specific session name
+        # else keep the wildcard pattern
 
         ### generate urls
         urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date), "data_1")
@@ -516,7 +563,7 @@ def rgp_ign_smn_1_hz_server(date, site):
     return urls_list
 
 
-def igs_cddis_nav_server(date, site):
+def igs_cddis_nav_server(date, site=None):
     """
     IGS CDDIS navigation file server.
 
@@ -553,7 +600,7 @@ def igs_cddis_nav_server(date, site):
 # def geoaus_server_legacy(stat, date):
 # def ens_fr_legacy(stat, date):
 
-def _server_select(datacenter, date, site):
+def _server_select(datacenter, date, site=None):
     mode1hz = False
     protocol = "ftp"
     urldic = dict()
@@ -621,7 +668,10 @@ def effective_save_dir(parent_archive_dir, site, date, archtype="stat"):
         year/site
         week/dow
         OR only '/' for a dirty saving in the parent folder
-        ... etc ..."""
+        ... etc ...
+
+    If site is None or empty, it will be replaced with "ALL_STATIONS" in the path.
+    """
     if archtype == "/":
         return parent_archive_dir
 
@@ -634,6 +684,11 @@ def effective_save_dir(parent_archive_dir, site, date, archtype="stat"):
     doy = conv.dt2doy(date)
     _, _ = year, doy  ## simply to remove the unused linter warning...
     week, dow = conv.dt2gpstime(date)
+
+    # If site is None or empty, replace with a placeholder
+    if not site:
+        site = "ALL_STATIONS"
+
     for f in fff:
         out_save_dir = os.path.join(out_save_dir, eval(f))
     return out_save_dir
@@ -1128,8 +1183,11 @@ def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
     table_proto = []
 
     for datacenter, site_lis in statdico.items():
-        log.info("datacenter/stations: %s/%s", datacenter, " ".join(site_lis))
-
+        if site_lis is None:
+            site_lis = [None]
+            log.info("datacenter/stations: %s/all", datacenter)
+        else:
+            log.info("datacenter/stations: %s/%s", datacenter, " ".join(site_lis))
         for date, site in itertools.product(date_range, site_lis):
             urldic, protocol, _ = _server_select(datacenter, date, site)
             if not urldic:
@@ -1161,3 +1219,12 @@ def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
     table["dir"] = urlpaths.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
     return table
+#
+# date_range = conv.dt_range(dt.datetime(2020,1,1),
+#                     dt.datetime(2020,12,31))
+# t = gen_crawl_table({"igs_ign":None},
+#                     date_range,
+#                     "~/aaa_FOURBI","/",
+#                 False, False)
+#
+# c = crawl_ftp_files(t)
