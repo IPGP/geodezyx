@@ -555,11 +555,11 @@ def igs_cddis_nav_server(date, site):
 
 def _server_select(datacenter, date, site):
     mode1hz = False
-    secure_ftp = False
+    protocol = "ftp"
     urldic = dict()
     if datacenter in ("igs_cddis", "igs"):
         urldic = igs_cddis_server(date, site)
-        secure_ftp = True
+        protocol = "sftp"
     elif datacenter == "igs_sopac":
         urldic = igs_sopac_server(date, site)
     elif datacenter == "igs_ign":
@@ -607,7 +607,7 @@ def _server_select(datacenter, date, site):
         log.warning("unkwn server dic in the dico, skip ...")
         return None, None, None
 
-    return urldic, secure_ftp, mode1hz
+    return urldic, protocol, mode1hz
 
 def effective_save_dir(parent_archive_dir, site, date, archtype="stat"):
     """
@@ -684,11 +684,11 @@ def crawl_ftp_files(
         - 'dir': Remote directory path
         - 'outdir': Local output directory
         - 'rnxrgx': RINEX filename regex pattern
-        - 'sftp': Boolean indicating if SFTP should be used
+        - 'protocol': String indicating protocol ("ftp" or "sftp")
         - 'crawled': Boolean indicating if already crawled
     sftp : str or bool, optional
         SFTP mode setting. Default is 'auto'.
-        - 'auto': Use the 'sftp' column value from each table row
+        - 'auto': Use the 'protocol' column value from each table row
         - True/False: Force SFTP on/off for all connections
     user : str, optional
         FTP username. Default is None (anonymous).
@@ -742,7 +742,7 @@ def crawl_ftp_files(
     ...     'dir': ['/data/2020/001'],
     ...     'outdir': ['/local/data'],
     ...     'rnxrgx': ['station001a.20o.*'],
-    ...     'sftp': [False],
+    ...     'protocol': ['ftp'],
     ...     'crawled': [False]
     ... })
     >>> crawled_table, all_files, local_files = crawl_ftp_files(table)
@@ -816,7 +816,10 @@ def crawl_ftp_files(
                 ftpobj.close()
 
             # Determine SFTP mode: use row value if 'auto', otherwise use parameter
-            sftp_use = bool(row["sftp"]) if sftp == "auto" else sftp
+            if sftp == "auto":
+                sftp_use = (row["protocol"] == "sftp")
+            else:
+                sftp_use = bool(sftp)
             ftpobj, _ = dlutils.ftp_objt_create(
                 secure_ftp_inp=sftp_use,
                 host=row["host"],
@@ -1075,7 +1078,7 @@ def download_gnss_rinex(
             table_dl["url_true"].values,
             table_dl["outdir"].values,
             parallel_download=parallel_download,
-            secure_ftp=table_dl["sftp"].values,
+            secure_ftp=(table_dl["protocol"] == "sftp").values,
             user=user,
             passwd=passwd,
             force=force,
@@ -1128,7 +1131,7 @@ def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
         log.info("datacenter/stations: %s/%s", datacenter, " ".join(site_lis))
 
         for date, site in itertools.product(date_range, site_lis):
-            urldic, sftp, _ = _server_select(datacenter, date, site)
+            urldic, protocol, _ = _server_select(datacenter, date, site)
             if not urldic:
                 continue
 
@@ -1137,11 +1140,11 @@ def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
             for rnxver, rnxurl in urldic.items():
                 if (rnxver == 2 and no_rnx2) or (rnxver == 3 and no_rnx3):
                     continue
-                table_proto.append((date, site, outdir, rnxver, rnxurl, sftp))
+                table_proto.append((date, site, outdir, rnxver, rnxurl, protocol))
 
     # Create DataFrame with all collected data
     table = pd.DataFrame(
-        table_proto, columns=["date", "site", "outdir", "ver", "url_theo", "sftp"]
+        table_proto, columns=["date", "site", "outdir", "ver", "url_theo", "protocol"]
     )
 
     # Add status columns
