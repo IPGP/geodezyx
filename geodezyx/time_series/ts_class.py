@@ -741,13 +741,15 @@ class TimeSeriePoint:
     def plot(
         self,
         coortype="ENU",
-        diapt=2,
+        diapt=1.5,
         alpha=0.8,
         fig=1,
         errbar=True,
         symbol=".",
         errbar_width=1,
         ylim=None,
+        legend_loc="best",
+        legend_ncol=1
     ):
         """
         Plot data in a TimeSerie Object
@@ -757,9 +759,10 @@ class TimeSeriePoint:
         coortype : str, optional
             The coordinates type. The default is 'ENU'.
         diapt : float, optional
-            Point diameter. The default is 2.
+            Point diameter. The default is 1.
         alpha : float, optional
-            Alpha (transparency) of points. The default is 0.8.
+            Alpha (transparency) of points.
+            The default is 0.8.
         fig : int or Figure object, optional
             Figure ID where the data will be plotted
             can accept a int (id of a Figure)
@@ -773,10 +776,17 @@ class TimeSeriePoint:
             coefficient for the error bar size. The default is 1.
         ylim : tuple, optional
             Y-axis limits. The default is None.
+        legend_loc : str, optional
+            Location of the legend. The default is 'best'.
+        legend_ncol : int, optional
+            Number of columns in the legend. The default is 1.
 
         Returns
         -------
-        The matplotlib Figure object.
+        figobj : Figure object
+            figure object of the plot.
+        axes : array of Axes objects
+            array of the 3 axes objects of the plot.
 
         """
 
@@ -825,9 +835,12 @@ class TimeSeriePoint:
             else:
                 # Clear and create new axes if wrong number of axes
                 figobj.clear()
-                axes = figobj.subplots(3, 1, sharex=True)
+                axes = figobj.subplots(3, 1,
+                                       sharex=True)
         else:
-            figobj, axes = plt.subplots(3, 1, num=fig_num, sharex=True)
+            figobj, axes = plt.subplots(3, 1, num=fig_num,
+                                        sharex=True, constrained_layout=True)
+
         figobj.suptitle(self.stat)
 
         # Component data and titles
@@ -859,19 +872,20 @@ class TimeSeriePoint:
                 ax.plot(Tdt, data, symbol, **plot_kwargs)
             ax.set_ylabel(yylabel)
             ax.set_title(title)
-            ax.legend()
+            ax.legend(loc=legend_loc, ncol=legend_ncol)
             if ylim:
                 ax.set_ylim(ylim)
 
         # Set x-label only on bottom subplot
-        axes[-1].set_xlabel("Date")
+        #axes[-1].set_xlabel("Date")
 
         figobj.autofmt_xdate()
+        axes[-1].tick_params(axis="x", labelrotation=10)
         figobj.set_size_inches(8.27, 11.69)
-        figobj.tight_layout()
-        plt.subplots_adjust(top=0.93)
+        # plt.subplots_adjust(top=0.93)
+        # figobj.tight_layout()
 
-        return figobj
+        return figobj, axes
 
     def plot_discont(self, fig=1):
         """
