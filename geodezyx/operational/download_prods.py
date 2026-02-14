@@ -49,7 +49,7 @@ log = logging.getLogger('geodezyx')
 def download_gnss_products(
     archive_dir,
     startdate,
-    enddate,
+    enddate=None,
     AC_names=("wum", "cod"),
     prod_types=("sp3", "clk"),
     remove_patterns=("ULA",),
@@ -71,10 +71,11 @@ def download_gnss_products(
     ----------
     archive_dir : str
         the parent directory where the products will be stored.
-    startdate : datetime
+    startdate : datetime or list of datetime
         the start date in regular calendar date.
-    enddate : datetime
-        the end date in regular calendar date..
+    enddate : datetime or None
+        the end date in regular calendar date.
+        If None, only the startdate is be considered as a date list.
     AC_names : tuple, optional
         the names of the wished analysis centers.
         It also control the product's lattency with the new naming convention:
@@ -195,7 +196,12 @@ def download_gnss_products(
         ftp_download = False
         log.info("ACC experimental mgex combi. as data center, HTTP download forced")
 
-    dates_list = conv.dt_range(startdate, enddate)
+    if enddate:
+        dates_list = conv.dt_range(startdate, enddate)
+    elif utils.is_iterable(startdate):
+        dates_list = startdate
+    else:
+        dates_list = [startdate]
 
     wwww_dir_previous = None
     if parallel_download > 1:

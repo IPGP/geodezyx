@@ -18,7 +18,7 @@ from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import utils
 from geodezyx import conv
-from geodezyx.operational.soft_frontend.rtklib_frontend import prods2tmp, read_conf_file, write_conf_file
+from geodezyx.operational.soft_frontend.rtklib_frontend import _prods2tmp, _read_cfg, _write_cfg
 
 log = logging.getLogger("geodezyx")
 ##########  END IMPORT  ##########
@@ -192,7 +192,7 @@ def rtklib_run_from_rinex(
     )
 
     # READ GENERIC CONF FILE
-    dicoconf = read_conf_file(generik_conf)
+    dicoconf = _read_cfg(generik_conf)
 
     if not outtype.lower() == "auto":
         dicoconf["out-solformat"] = outtype.lower()
@@ -227,7 +227,7 @@ def rtklib_run_from_rinex(
         )
 
     # write conf file
-    write_conf_file(dicoconf, out_conf_fil)
+    _write_cfg(dicoconf, out_conf_fil)
 
     ##### ORBITS
     # Function to decompress files into tmp_dir
@@ -251,7 +251,7 @@ def rtklib_run_from_rinex(
     #     archive_center="ign"
     # )
 
-    prodlis = operational.dl_prods(
+    prodlis = operational.dl_orbclk(
         prod_dir,
         (bas_srt, bas_end),
         calc_center,
@@ -265,7 +265,7 @@ def rtklib_run_from_rinex(
         log.warning(f"We continue without precise orbits/only with broadcast ones")
         prodlis_ok = []
     else:
-        prodlis_ok = [prods2tmp(orb, tmp_dir) for orb in prodlis]
+        prodlis_ok = [_prods2tmp(orb, tmp_dir) for orb in prodlis]
 
     ### BRDC
     # statdic = dict()
@@ -284,7 +284,7 @@ def rtklib_run_from_rinex(
         raise FileNotFoundError("No BRDC nav file found remotely nor locally")
     else:
         # brdclis_ok = [prods2tmp(n,tmp_dir) for n,b in brdclis if b]
-        brdclis_ok = [prods2tmp(n, tmp_dir) for n in brdclis]
+        brdclis_ok = [_prods2tmp(n, tmp_dir) for n in brdclis]
 
     # Command
     arg_config = "-k " + out_conf_fil

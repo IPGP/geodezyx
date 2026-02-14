@@ -146,7 +146,7 @@ def pride_pppar_runner_mono(
 
     ########### DOWNLOAD PRODUCTS + BROADCASTS
     if dl_prods:
-        _ = common_frontend.dl_prods(prod_parent_dir, [srt], prod_ac_name)
+        _ = common_frontend.dl_orbclk(prod_parent_dir, [srt], prod_ac_name)
         _ = common_frontend.dl_brdc(prod_parent_dir, [srt])
 
     if dl_prods_only:
@@ -454,7 +454,7 @@ def pride_pppar_runner(rnx_path_list,
     if dl_prods or dl_prods_only:
         if dl_prods_only and not dl_prods_only:
             log.warning("dl_prods_only is activated, but not dl_prods. Products download is forced anyway.")
-        _ = common_frontend.dl_prods(prod_parent_dir, date_list, prod_ac_name)
+        _ = common_frontend.dl_orbclk(prod_parent_dir, date_list, prod_ac_name)
         _ = common_frontend.dl_brdc(prod_parent_dir, date_list)
         if dl_prods_only:
             log.info("products downloaded, exiting (dl_prods_only is activated.)")

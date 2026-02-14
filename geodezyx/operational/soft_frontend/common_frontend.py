@@ -67,37 +67,61 @@ def run_command(command):
             break
 
 
-def _get_dates(date_lis, prod_ac_name="", out_range=False):
+def _get_prod_date(date_inp, prod_ac_name=""):
 
-    date_lis_srt = min(date_lis)
-    date_lis_end = max(date_lis)
     now = dt.datetime.now()
 
-    ult_rt_delta = dt.timedelta(hours=24+6)
+    ult_delta = dt.timedelta(hours=24)
 
-    if "FIN" in prod_ac_name or "RAP" in prod_ac_name:
-        date_out_srt = conv.round_dt(date_lis_srt, "1d", mode="floor")
-        date_out_end = conv.round_dt(date_lis_end, "1d", mode="floor")
-    elif "ULT" in prod_ac_name and now - date_lis_srt >= ult_rt_delta:
-        date_out_srt = conv.round_dt(date_lis_srt, "6h", mode="floor")
-        date_out_end = conv.round_dt(date_lis_end, "6h", mode="floor")
-    elif "ULT" in prod_ac_name and now - date_lis_srt < ult_rt_delta:
-        date_out_srt = conv.round_dt(date_lis_srt, "6h", mode="floor") - ult_rt_delta
-        date_out_end = conv.round_dt(date_lis_end, "6h", mode="floor") - ult_rt_delta
+    #### the latency is because the data center does not provide the products before a certain time after the epoch of the products
+    latency_dt = dt.timedelta(hours=24)
+    is_during_latency = now - date_inp < latency_dt
+
+    if "ULT" in prod_ac_name:
+        if is_during_latency:
+            before_delta = dt.timedelta(hours=12)
+        else:
+            before_delta = dt.timedelta(hours=0)
+        date_out_srt = conv.round_dt(date_inp - ult_delta - before_delta, "6h", mode="floor")
+    elif "NRT" in prod_ac_name:
+        if is_during_latency:
+            before_delta = dt.timedelta(hours=1)
+        else:
+            before_delta = dt.timedelta(hours=0)
+        date_out_srt = conv.round_dt(date_inp - ult_delta - before_delta, "1h", mode="floor")
+    elif "FIN" in prod_ac_name or "RAP" in prod_ac_name:
+        date_out_srt = conv.round_dt(date_inp, "1d", mode="floor")
     elif "BRDC" in prod_ac_name:
-        date_out_srt = conv.round_dt(date_lis_srt, "1d", mode="floor")
-        date_out_end = conv.round_dt(date_lis_end, "1d", mode="floor")
+        date_out_srt = conv.round_dt(date_inp, "1d", mode="floor")
     else:
-        date_out_srt = date_lis_srt
-        date_out_end = date_lis_end
+        date_out_srt = date_inp
 
-    if out_range:
-        return conv.dt_range(date_out_srt, date_out_end)
+    return date_out_srt
+
+
+def _get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
+    if type(dates_inp) is tuple:
+        date_srt, date_end = dates_inp
+        dates_lis = conv.dt_range(date_srt, date_end, dt.timedelta(days=1))
+    elif type(dates_inp) is list:
+        dates_lis = dates_inp
+    elif not utils.is_iterable(dates_inp):
+        dates_lis = [dates_inp]
     else:
-        return date_out_srt, date_out_end
+        log.error(
+            "dates_lis should be a list, a tuple, or a single datetime, but got %s",
+            type(dates_inp),
+        )
+        raise Exception
+
+    if prod_date:
+        dates_lis = [_get_prod_date(date, prod_ac_name) for date in dates_lis]
+        dates_lis = list(sorted(list(set(dates_lis))))  # remove duplicates
+
+    return dates_lis
 
 
-def dl_brdc(prod_parent_dir, date_lis, redwld_delta=4):
+def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
     """
     Downloads BRDC (Broadcast Ephemeris) files for PRIDE PPPAR from a given directory and date list.
 
@@ -105,7 +129,7 @@ def dl_brdc(prod_parent_dir, date_lis, redwld_delta=4):
     ----------
     prod_parent_dir : str
         The parent directory where the products are stored.
-    date_lis : iterable of datetime
+    dates_inp : iterable of datetime
         If list, the list of dates for which the BRDC files are to be downloaded.
         If tuple, the start and end dates for which the BRDC files are to be downloaded.
 
@@ -123,25 +147,27 @@ def dl_brdc(prod_parent_dir, date_lis, redwld_delta=4):
     brdc_lis_out = []
 
     def _force_redwld(date_inp):
-        date_floor = conv.round_dt(date_inp, "1d", mode="floor")
+        date_floor_re = conv.round_dt(date_inp, "1d", mode="floor")
         now = dt.datetime.now()
 
         ## We go for GOP non-real time BRDC
-        if now - date_floor >= dt.timedelta(hours=2500):
+        if now - date_floor_re >= dt.timedelta(hours=25):
             return False, "nav"
 
         ## We go for BKG real time BRDC
         fct = conv.statname_dt2rinexname_long
         brdc_fname = fct(
             "BRDC",
-            date_floor,
+            date_floor_re,
             country="WRD",
             data_source="S",
             data_type="MN",
             format_compression="rnx.gz",
         )
 
-        prod_dir_doy = os.path.join(prod_parent_dir, *conv.dt2doy_year(date_floor,reverse_order=True))
+        prod_dir_doy = os.path.join(
+            prod_parent_dir, *conv.dt2doy_year(date_floor_re, reverse_order=True)
+        )
         brdc_fnd = utils.find_recursive(prod_dir_doy, brdc_fname)
 
         if len(brdc_fnd) > 0 and brdc_fnd[0] < now.timestamp() - redwld_delta * 3600:
@@ -154,14 +180,16 @@ def dl_brdc(prod_parent_dir, date_lis, redwld_delta=4):
         else:
             return False, "nav_rt"
 
-
     ######### BROADCAST
-    date_lis = _get_dates(date_lis, prod_ac_name="BRDC", out_range=True)
+    dates_inp = _get_dates_fmt(dates_inp, prod_date=True, prod_ac_name="BRDC")
+    dates_inp = list(set(dates_inp))  # remove duplicates
     brdc_tmp_stk = []
-    for date in date_lis:
+    for date in dates_inp:
         force, nav_type = _force_redwld(date)
         date_floor = conv.round_dt(date, "1d", mode="floor")
         brdc_tmp = operational.download_gnss_rinex(
+            # nav_type steers the download to either "nav" or "nav_rt" (real-time),
+            # depending on the age of the existing file
             {nav_type: ["BRDC"]},
             prod_parent_dir,
             date_floor,
@@ -178,9 +206,9 @@ def dl_brdc(prod_parent_dir, date_lis, redwld_delta=4):
     return brdc_path_lis
 
 
-def dl_prods(
+def dl_orbclk(
     prod_parent_dir,
-    date_lis,
+    dates_inp,
     prod_ac_name,
     prod_types=("sp3", "clk", "bia", "obx", "erp"),
     data_centers=("ign", "whu"),
@@ -192,7 +220,7 @@ def dl_prods(
     ----------
     prod_parent_dir : str
         The parent directory where the products are stored.
-    date_lis : iterable of datetime
+    dates_inp : iterable of datetime
         If list, the list of dates for which the products are to be downloaded.
         If tuple, the start and end dates for which the products are to be downloaded.
     prod_ac_name : str
@@ -217,7 +245,8 @@ def dl_prods(
     If at least 5 products are found, the function stops further downloads.
     """
 
-    prod_srt, prod_end = _get_dates(date_lis, prod_ac_name=prod_ac_name)
+    dates_lis = _get_dates_fmt(dates_inp, prod_ac_name=prod_ac_name)
+    dates_lis = list(set(dates_lis))  # remove duplicates
 
     dl_prods_fct = operational.download_gnss_products
 
@@ -230,8 +259,8 @@ def dl_prods(
         mgex = True if "MGX" in prod_ac_name else False
         prods = dl_prods_fct(
             prod_parent_dir,
-            prod_srt,
-            prod_end,
+            dates_lis,
+            None,
             AC_names=(prod_ac_name,),
             prod_types=prod_types,
             remove_patterns=("ULA",),
@@ -252,6 +281,75 @@ def dl_prods(
             break
 
     return prods
+
+
+def dl_prods(prod_dir, dates_inp, calc_center, download_lock=None):
+    """
+    Download shared products (SP3/CLK and BRDC) once for all parallel runs.
+
+    Parameters
+    ----------
+    prod_dir : str
+        Directory where products will be downloaded.
+    dates_inp : iterable of datetime
+        If list, the list of dates for which the products are to be downloaded.
+        If tuple, the start and end dates for which the products are to be downloaded.
+    calc_center : str
+        Analysis center identifier.
+    download_lock : threading.Lock, optional
+        Lock to protect concurrent downloads (if needed).
+
+    Returns
+    -------
+    tuple
+        A tuple containing two lists: (orbclklis_out, brdclis_out)
+        - orbclklis_out: List of downloaded SP3/CLK product files.
+        - brdclis_out: List of downloaded BRDC files.
+    """
+
+    ######### Download SP3/CLK products
+    if download_lock:
+        download_lock.acquire()
+    try:
+        prodlis = operational.dl_orbclk(
+            prod_dir,
+            dates_inp,
+            calc_center,
+            prod_types=("sp3", "clk"),
+            data_centers=("ign",),
+        )
+    finally:
+        if download_lock:
+            download_lock.release()
+
+    if not prodlis or not prodlis[0]:
+        log.warning("No SP3/CLK product files found remotely nor locally")
+        orbclklis_out = []
+    else:
+        orbclklis_out = prodlis
+
+    ######### Download BRDC files
+    if download_lock:
+        download_lock.acquire()
+    try:
+        brdclis = operational.dl_brdc(prod_dir, dates_inp)
+    finally:
+        if download_lock:
+            download_lock.release()
+
+    if len(brdclis) == 0:
+        log.error("No BRDC nav file found remotely nor locally")
+        raise FileNotFoundError("No BRDC nav file found remotely nor locally")
+
+    brdclis_out = brdclis
+
+    log.info(
+        f"Products downloaded: {len(orbclklis_out)} SP3/CLK, {len(brdclis_out)} BRDC"
+    )
+
+    return orbclklis_out, brdclis_out
+
+##### bellow are the function for PRIDE PPPAR only
 
 
 def get_right_brdc(brdc_lis_inp, tmp_dir_inp):

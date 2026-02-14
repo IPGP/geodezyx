@@ -625,6 +625,7 @@ def ftp_downld_front(
     host_use = urlpathobj.apply(lambda p: p.parts[1]).unique()[0]
 
     # Create the FTP object
+    print("AAAAAAAAAA", urllist, secure_ftp_use, host_use, parallel_download, user, passwd)
     ftpobj_main, ftpobj_lis = ftp_objt_create(
         secure_ftp_inp=secure_ftp_use,
         host=host_use,

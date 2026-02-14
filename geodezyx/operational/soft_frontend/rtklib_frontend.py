@@ -36,14 +36,14 @@ from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import utils
 from geodezyx import conv
+from geodezyx.operational.soft_frontend.common_frontend import dl_prods
 
 log = logging.getLogger("geodezyx")
 
 
 ##########  END IMPORT  ##########
 
-
-def read_conf_file(filein):
+def _read_cfg(filein):
     outdic = collections.OrderedDict()
     with open(filein) as f:
         for line in f:
@@ -53,16 +53,14 @@ def read_conf_file(filein):
             outdic[key.strip()] = val[0].split("#")[0].strip() if val else ""
     return outdic
 
-
-def write_conf_file(dicoconf, fpath_out):
+def _write_cfg(dicoconf, fpath_out):
     f = open(fpath_out, "w+")
     for k, v in dicoconf.items():
         lin = k.ljust(20) + "=" + str(v) + "\n"
         f.write(lin)
     f.close()
 
-
-def prods2tmp(fpath_inp, dir_out):
+def _prods2tmp(fpath_inp, dir_out):
     """
     Decompresses a file into the temporary directory if compressed,
     or copies it to the temporary directory if not already there.
@@ -79,78 +77,6 @@ def prods2tmp(fpath_inp, dir_out):
             shutils.copy2(fpath_inp, fpath_out)
     return fpath_out
 
-
-def dl_prods_shared(prod_dir, time_span_list, calc_center, download_lock=None):
-    """
-    Download shared products (SP3/CLK and BRDC) once for all parallel runs.
-
-    Parameters
-    ----------
-    prod_dir : str
-        Directory where products will be downloaded.
-    time_span_list : list of 2-tuples
-        List of (start_time, end_time) 2-tuples for all runs.
-    calc_center : str
-        Analysis center identifier.
-    download_lock : threading.Lock, optional
-        Lock to protect concurrent downloads (if needed).
-
-    Returns
-    -------
-    tuple
-        (prodlis_out, brdclis_out) - lists of product and broadcast file paths
-    """
-    # Find the overall time span covering all runs
-    all_starts = [span[0] for span in time_span_list]
-    all_ends = [span[1] for span in time_span_list]
-    global_start = min(all_starts)
-    global_end = max(all_ends)
-
-    log.info(f"Downloading shared products for period {global_start} to {global_end}")
-
-    ######### Download SP3/CLK products
-    if download_lock:
-        download_lock.acquire()
-    try:
-        prodlis = operational.dl_prods(
-            prod_dir,
-            (global_start, global_end),
-            calc_center,
-            prod_types=("sp3", "clk"),
-            data_centers=("ign",),
-        )
-    finally:
-        if download_lock:
-            download_lock.release()
-
-    if not prodlis or not prodlis[0]:
-        log.warning("No SP3/CLK product files found remotely nor locally")
-        prodlis_out = []
-    else:
-        prodlis_out = prodlis
-
-    ######### Download BRDC files
-    if download_lock:
-        download_lock.acquire()
-    try:
-        brdclis = operational.dl_brdc(prod_dir, (global_start, global_end))
-    finally:
-        if download_lock:
-            download_lock.release()
-
-    if len(brdclis) == 0:
-        log.error("No BRDC nav file found remotely nor locally")
-        raise FileNotFoundError("No BRDC nav file found remotely nor locally")
-
-    brdclis_out = brdclis
-
-    log.info(
-        f"Products downloaded: {len(prodlis_out)} SP3/CLK, {len(brdclis_out)} BRDC"
-    )
-
-    return prodlis_out, brdclis_out
-
-
 def rtklib_run_mono(
     rnx_rover,
     rnx_base,
@@ -159,8 +85,9 @@ def rtklib_run_mono(
     tmp_dir,
     prod_dir=None,
     calc_center="IGS0OPSFIN",
-    prodlis_shr=None,
-    brdclis_shr=None,
+    download_prods=True,
+    orbclklis_inp = [],
+    brdclis_inp = [],
     experience_prefix="",
     rover_auto_conf=False,
     base_auto_conf=True,
@@ -177,10 +104,10 @@ def rtklib_run_mono(
 
     This is the function that gets parallelized.
     """
-    if not prod_dir and (prodlis_shr is None or brdclis_shr is None):
-        errmsg = "No prod_dir provided for mono run, and no shared products given. Cannot proceed."
-        log.error(errmsg)
-        raise FileNotFoundError(errmsg)
+
+    if not download_prods and (not orbclklis_inp or not brdclis_inp):
+        log.error("download_prods is False but orbclklis_inp or brdclis_inp is empty!")
+        raise ValueError("Must provide orbclklis_inp and brdclis_inp if not downloading products.")
 
     # RINEX START & END - FAST
     rov_srt_fast = conv.rinexname2dt(rnx_rover)
@@ -229,7 +156,7 @@ def rtklib_run_mono(
     )
 
     # READ GENERIC CONF FILE
-    dicoconf = read_conf_file(generik_conf)
+    dicoconf = _read_cfg(generik_conf)
 
     if not outtype.lower() == "auto":
         dicoconf["out-solformat"] = outtype.lower()
@@ -263,17 +190,17 @@ def rtklib_run_mono(
         )
 
     # write conf file
-    write_conf_file(dicoconf, out_conf_fil)
+    _write_cfg(dicoconf, out_conf_fil)
 
     # Copy shared products to worker tmp directory
-    if False and (not prodlis_shr or not brdclis_shr):
-        ts = [(bas_srt, bas_end)]
-        prodlis_use, brdclis_use = dl_prods_shared(prod_dir, ts, calc_center)
+    if download_prods:
+        orbclklis_use, brdclis_use = dl_prods(prod_dir, bas_srt, calc_center)
     else:
-        prodlis_use, brdclis_use = prodlis_shr, brdclis_shr
+        orbclklis_use = orbclklis_inp
+        brdclis_use = brdclis_inp
 
-    prodlis_ok = [prods2tmp(orb, tmp_dir_wrk) for orb in prodlis_use]
-    brdclis_ok = [prods2tmp(n, tmp_dir_wrk) for n in brdclis_use]
+    orbclklis_ok = [_prods2tmp(orb, tmp_dir_wrk) for orb in orbclklis_use]
+    brdclis_ok = [_prods2tmp(n, tmp_dir_wrk) for n in brdclis_use]
 
     # Command
     arg_config = "-k " + out_conf_fil
@@ -291,7 +218,7 @@ def rtklib_run_mono(
             rnx_rover,
             rnx_base,
             " ".join(brdclis_ok),
-            " ".join(prodlis_ok),
+            " ".join(orbclklis_ok),
         )
     )
 
@@ -311,7 +238,6 @@ def rtklib_run_mono(
         shutils.rmtree(tmp_dir_wrk, ignore_errors=True)
 
     return out_res_fil
-
 
 def rtklib_run_pair(
     rinex_pairs,
@@ -420,20 +346,19 @@ def rtklib_run_pair(
 
     # STEP 1: Preliminary - determine time spans and download products once
     log.info("STEP 1: Determining time spans for all RINEX pairs...")
-    time_spans = []
+    dates_srt_stk = []
     for rnx_rover, rnx_base in rinex_pairs:
         # Use fast method to get approximate time range
         rov_srt, rov_per, rov_smp = conv.rinexname2dt(rnx_rover, out_per_smp=True)
         bas_srt, bas_per, bas_smp = conv.rinexname2dt(rnx_base, out_per_smp=True)
-        # Assume 24h sessions - adjust if needed
         rov_end = rov_srt + rov_per
         bas_end = bas_srt + bas_per
-        time_spans.append((min(rov_srt, bas_srt), max(rov_end, bas_end)))
+        dates_srt_stk.append(bas_end)
 
     log.info("STEP 2: Downloading shared products (SP3/CLK and BRDC)...")
     try:
-        prodlis_shared, brdclis_shared = dl_prods_shared(
-            prod_dir, time_spans, calc_center
+        orbclklis_shared, brdclis_shared = dl_prods(
+            prod_dir, dates_srt_stk, calc_center
         )
     except Exception as e:
         log.error(f"Failed to download shared products: {e}")
@@ -454,8 +379,9 @@ def rtklib_run_pair(
                 generik_conf=generik_conf,
                 out_dir=out_dir,
                 tmp_dir=tmp_dir,
-                prodlis_shr=prodlis_shared,
-                brdclis_shr=brdclis_shared,
+                download_prods=False,  # Products already downloaded in STEP 2
+                orbclklis_inp = orbclklis_shared,
+                brdclis_inp = brdclis_shared,
                 calc_center=calc_center,
                 experience_prefix=experience_prefix,
                 rover_auto_conf=rover_auto_conf,
