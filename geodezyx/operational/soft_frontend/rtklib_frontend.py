@@ -43,6 +43,7 @@ log = logging.getLogger("geodezyx")
 
 ##########  END IMPORT  ##########
 
+
 def _read_cfg(filein):
     outdic = collections.OrderedDict()
     with open(filein) as f:
@@ -53,12 +54,14 @@ def _read_cfg(filein):
             outdic[key.strip()] = val[0].split("#")[0].strip() if val else ""
     return outdic
 
+
 def _write_cfg(dicoconf, fpath_out):
     f = open(fpath_out, "w+")
     for k, v in dicoconf.items():
         lin = k.ljust(20) + "=" + str(v) + "\n"
         f.write(lin)
     f.close()
+
 
 def _prods2tmp(fpath_inp, dir_out):
     """
@@ -77,6 +80,7 @@ def _prods2tmp(fpath_inp, dir_out):
             shutils.copy2(fpath_inp, fpath_out)
     return fpath_out
 
+
 def rtklib_run_mono(
     rnx_rover,
     rnx_base,
@@ -84,16 +88,16 @@ def rtklib_run_mono(
     out_dir,
     tmp_dir,
     prod_dir=None,
-    calc_center="IGS0OPSFIN",
+    igs_prods="IGS0OPSFIN",
     download_prods=True,
-    orbclklis_inp = [],
-    brdclis_inp = [],
-    experience_prefix="",
+    orbclklis_inp=[],
+    brdclis_inp=[],
+    exp_prefix="",
     rover_auto_conf=False,
     base_auto_conf=True,
     xyz_rover=[0, 0, 0],
     xyz_base=[0, 0, 0],
-    outtype="auto",
+    outtype=None,
     force=False,
     clean_tmp=True,
     exe_path="/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp",
@@ -107,7 +111,9 @@ def rtklib_run_mono(
 
     if not download_prods and (not orbclklis_inp or not brdclis_inp):
         log.error("download_prods is False but orbclklis_inp or brdclis_inp is empty!")
-        raise ValueError("Must provide orbclklis_inp and brdclis_inp if not downloading products.")
+        raise ValueError(
+            "Must provide orbclklis_inp and brdclis_inp if not downloading products."
+        )
 
     # RINEX START & END - FAST
     rov_srt_fast = conv.rinexname2dt(rnx_rover)
@@ -119,10 +125,14 @@ def rtklib_run_mono(
 
     # EXPERIENCE / OUTPUT NAMES
     srt_str = rov_srt_fast.strftime("%Y_%j_%H%M")
-    exp_full_name = "_".join((experience_prefix, rov_name, bas_name, srt_str))
+    exp_full_name = "_".join((exp_prefix, rov_name, bas_name, srt_str))
 
-    out_conf_fil = os.path.join(out_dir, exp_full_name + ".conf")
-    out_res_fil = os.path.join(out_dir, exp_full_name + ".out")
+    year_doy_str = rov_srt_fast.strftime("%Y/%j")
+    out_dir_year_doy = str(os.path.join(out_dir, year_doy_str))
+    utils.create_dir(out_dir_year_doy)
+
+    out_conf_fil = os.path.join(out_dir_year_doy, exp_full_name + ".conf")
+    out_res_fil = os.path.join(out_dir_year_doy, exp_full_name + ".out")
 
     if (
         not force
@@ -155,34 +165,34 @@ def rtklib_run_mono(
         )
     )
 
-    # READ GENERIC CONF FILE
-    dicoconf = _read_cfg(generik_conf)
+    # READ GENERIC CONF FILE & MODIFY IT
+    cfgdic = _read_cfg(generik_conf)
 
-    if not outtype.lower() == "auto":
-        dicoconf["out-solformat"] = outtype.lower()
+    if outtype:
+        cfgdic["out-solformat"] = outtype.lower()
 
-    def _edit_dicoconf(rnx_inp, xyz_inp, ant_n=1):
+    def _edit_cfgdic_posi(rnx_inp, xyz_inp, ant_n=1):
         antobj, recobj, siteobj, locobj = files_rw.read_rinex_2_dataobjts(rnx_inp)
         n = str(ant_n)
-        dicoconf[f"ant{n}-postype"] = "xyz"
-        dicoconf[f"ant{n}-anttype"] = antobj.Antenna_Type
+        cfgdic[f"ant{n}-postype"] = "xyz"
+        cfgdic[f"ant{n}-anttype"] = antobj.Antenna_Type
         if xyz_inp[0] != 0:
-            dicoconf[f"ant{n}-pos1"] = xyz_inp[0]
-            dicoconf[f"ant{n}-pos2"] = xyz_inp[1]
-            dicoconf[f"ant{n}-pos3"] = xyz_inp[2]
+            cfgdic[f"ant{n}-pos1"] = xyz_inp[0]
+            cfgdic[f"ant{n}-pos2"] = xyz_inp[1]
+            cfgdic[f"ant{n}-pos3"] = xyz_inp[2]
         else:
-            dicoconf[f"ant{n}-pos1"] = locobj.X_coordinate_m
-            dicoconf[f"ant{n}-pos2"] = locobj.Y_coordinate_m
-            dicoconf[f"ant{n}-pos3"] = locobj.Z_coordinate_m
-        dicoconf[f"ant{n}-antdelu"] = antobj.Up_Ecc
-        dicoconf[f"ant{n}-antdeln"] = antobj.North_Ecc
-        dicoconf[f"ant{n}-antdele"] = antobj.East_Ecc
+            cfgdic[f"ant{n}-pos1"] = locobj.X_coordinate_m
+            cfgdic[f"ant{n}-pos2"] = locobj.Y_coordinate_m
+            cfgdic[f"ant{n}-pos3"] = locobj.Z_coordinate_m
+        cfgdic[f"ant{n}-antdelu"] = antobj.Up_Ecc
+        cfgdic[f"ant{n}-antdeln"] = antobj.North_Ecc
+        cfgdic[f"ant{n}-antdele"] = antobj.East_Ecc
 
     # Edit conf file dic
     if rover_auto_conf:
-        _edit_dicoconf(rnx_rover, xyz_rover, ant_n=1)
+        _edit_cfgdic_posi(rnx_rover, xyz_rover, ant_n=1)
     if base_auto_conf:
-        _edit_dicoconf(rnx_base, xyz_base, ant_n=2)
+        _edit_cfgdic_posi(rnx_base, xyz_base, ant_n=2)
 
     if not (bas_srt <= rov_srt <= rov_end <= bas_end):
         log.warning(
@@ -190,11 +200,11 @@ def rtklib_run_mono(
         )
 
     # write conf file
-    _write_cfg(dicoconf, out_conf_fil)
+    _write_cfg(cfgdic, out_conf_fil)
 
     # Copy shared products to worker tmp directory
     if download_prods:
-        orbclklis_use, brdclis_use = dl_prods(prod_dir, bas_srt, calc_center)
+        orbclklis_use, brdclis_use = dl_prods(prod_dir, bas_srt, igs_prods)
     else:
         orbclklis_use = orbclklis_inp
         brdclis_use = brdclis_inp
@@ -203,6 +213,8 @@ def rtklib_run_mono(
     brdclis_ok = [_prods2tmp(n, tmp_dir_wrk) for n in brdclis_use]
 
     # Command
+    ### INTERNAL CHOICE: customs args are passed through moddified conf file
+    ### her are mandatory args only
     arg_config = "-k " + out_conf_fil
     arg_interval = "-ti " + str(np.round(rov_itv, 6))
     arg_mode = ""
@@ -239,20 +251,21 @@ def rtklib_run_mono(
 
     return out_res_fil
 
+
 def rtklib_run_pair(
     rinex_pairs,
     generik_conf,
     out_dir,
     tmp_dir=None,
     prod_dir=None,
-    calc_center="IGS0OPSFIN",
-    max_workers=4,
-    experience_prefix="",
+    igs_prods="IGS0OPSFIN",
+    procs=4,
+    exp_prefix="",
     rover_auto_conf=False,
     base_auto_conf=True,
     xyz_rovers=None,
     xyz_bases=None,
-    outtype="auto",
+    outtype=None,
     force=False,
     clean_tmp=True,
     exe_path="/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp",
@@ -279,11 +292,11 @@ def rtklib_run_pair(
         Temporary directory for intermediate files.
     prod_dir : str | os.PathLike | None, default=None
         Directory where to search for orbits, clocks, and BRDC files.
-    calc_center : str, default="IGS0OPSFIN"
+    igs_prods : str, default="IGS0OPSFIN"
         Analysis center/product identifier.
-    max_workers : int, default=4
+    procs : int, default=4
         Maximum number of parallel workers.
-    experience_prefix : str, default=""
+    exp_prefix : str, default=""
         Prefix added to output file stems.
     rover_auto_conf : bool, default=False
         If True, reads rover RINEX header for antenna configuration.
@@ -295,7 +308,7 @@ def rtklib_run_pair(
     xyz_bases : list of lists, optional
         List of [X, Y, Z] coordinates for each base station.
         If None, uses [0, 0, 0] for all.
-    outtype : str, default="auto"
+    outtype : str, default=None
         Output solution format.
     force : bool, default=False
         If True, forces reprocessing even if output exists.
@@ -319,7 +332,7 @@ def rtklib_run_pair(
     ...     pairs,
     ...     '/path/to/config.conf',
     ...     '/path/to/output',
-    ...     max_workers=4
+    ...     procs=4
     ... )
     """
     # Directory structure setup
@@ -341,7 +354,7 @@ def rtklib_run_pair(
         xyz_bases = [[0, 0, 0]] * len(rinex_pairs)
 
     log.info(
-        f"Starting parallel RTKLIB processing for {len(rinex_pairs)} pairs with {max_workers} workers"
+        f"Starting parallel RTKLIB processing for {len(rinex_pairs)} pairs with {procs} workers"
     )
 
     # STEP 1: Preliminary - determine time spans and download products once
@@ -357,9 +370,7 @@ def rtklib_run_pair(
 
     log.info("STEP 2: Downloading shared products (SP3/CLK and BRDC)...")
     try:
-        orbclklis_shared, brdclis_shared = dl_prods(
-            prod_dir, dates_srt_stk, calc_center
-        )
+        orbclklis_shared, brdclis_shared = dl_prods(prod_dir, dates_srt_stk, igs_prods)
     except Exception as e:
         log.error(f"Failed to download shared products: {e}")
         raise
@@ -368,7 +379,7 @@ def rtklib_run_pair(
     log.info(f"STEP 3: Running {len(rinex_pairs)} RTKLIB processes in parallel...")
     results = []
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=procs) as executor:
         # Submit all tasks
         future_to_pair = {}
         for i, (rnx_rover, rnx_base) in enumerate(rinex_pairs):
@@ -380,10 +391,10 @@ def rtklib_run_pair(
                 out_dir=out_dir,
                 tmp_dir=tmp_dir,
                 download_prods=False,  # Products already downloaded in STEP 2
-                orbclklis_inp = orbclklis_shared,
-                brdclis_inp = brdclis_shared,
-                calc_center=calc_center,
-                experience_prefix=experience_prefix,
+                orbclklis_inp=orbclklis_shared,
+                brdclis_inp=brdclis_shared,
+                igs_prods=igs_prods,
+                exp_prefix=exp_prefix,
                 rover_auto_conf=rover_auto_conf,
                 base_auto_conf=base_auto_conf,
                 xyz_rover=xyz_rovers[i],

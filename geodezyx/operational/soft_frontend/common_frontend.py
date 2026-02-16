@@ -7,6 +7,8 @@ Created on Wed Feb 11 18:47:44 2026
 """
 
 import datetime as dt
+import shutil
+
 from geodezyx import utils
 
 #### Import the logger
@@ -68,27 +70,33 @@ def run_command(command):
 
 
 def _get_prod_date(date_inp, prod_ac_name=""):
-
-    now = dt.datetime.now()
-
+    """
+    Determines the appropriate product date based on the input date and the analysis center name.
+    """
+    now = dt.datetime.now(dt.timezone.utc)
+    date_inp_utc = date_inp.replace(tzinfo=dt.timezone.utc)
     ult_delta = dt.timedelta(hours=24)
 
     #### the latency is because the data center does not provide the products before a certain time after the epoch of the products
-    latency_dt = dt.timedelta(hours=24)
-    is_during_latency = now - date_inp < latency_dt
+    latency_dt = dt.timedelta(hours=4)
+    is_during_latency = now - date_inp_utc < latency_dt
 
     if "ULT" in prod_ac_name:
         if is_during_latency:
-            before_delta = dt.timedelta(hours=12)
+            before_delta = dt.timedelta(hours=6)
         else:
             before_delta = dt.timedelta(hours=0)
-        date_out_srt = conv.round_dt(date_inp - ult_delta - before_delta, "6h", mode="floor")
+        date_out_srt = conv.round_dt(
+            date_inp - ult_delta - before_delta, "6h", mode="floor"
+        )
     elif "NRT" in prod_ac_name:
         if is_during_latency:
             before_delta = dt.timedelta(hours=1)
         else:
             before_delta = dt.timedelta(hours=0)
-        date_out_srt = conv.round_dt(date_inp - ult_delta - before_delta, "1h", mode="floor")
+        date_out_srt = conv.round_dt(
+            date_inp - ult_delta - before_delta, "1h", mode="floor"
+        )
     elif "FIN" in prod_ac_name or "RAP" in prod_ac_name:
         date_out_srt = conv.round_dt(date_inp, "1d", mode="floor")
     elif "BRDC" in prod_ac_name:
@@ -100,6 +108,9 @@ def _get_prod_date(date_inp, prod_ac_name=""):
 
 
 def _get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
+    """
+    Formats the input dates for product downloading based on the specified analysis center and product date requirements.
+    """
     if type(dates_inp) is tuple:
         date_srt, date_end = dates_inp
         dates_lis = conv.dt_range(date_srt, date_end, dt.timedelta(days=1))
@@ -132,6 +143,9 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
     dates_inp : iterable of datetime
         If list, the list of dates for which the BRDC files are to be downloaded.
         If tuple, the start and end dates for which the BRDC files are to be downloaded.
+    redwld_delta : int, optional
+        The age threshold in hours for re-downloading BRDC files. If a found BRDC
+        file is older than this threshold, it will be re-downloaded. Defaults to 4 hours.
 
     Returns
     -------
@@ -148,10 +162,11 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
 
     def _force_redwld(date_inp):
         date_floor_re = conv.round_dt(date_inp, "1d", mode="floor")
-        now = dt.datetime.now()
+        now = dt.datetime.now(dt.timezone.utc)
+        date_floor_re_utc = date_floor_re.replace(tzinfo=dt.timezone.utc)
 
         ## We go for GOP non-real time BRDC
-        if now - date_floor_re >= dt.timedelta(hours=25):
+        if now - date_floor_re_utc >= dt.timedelta(hours=25):
             return False, "nav"
 
         ## We go for BKG real time BRDC
@@ -211,7 +226,7 @@ def dl_orbclk(
     dates_inp,
     prod_ac_name,
     prod_types=("sp3", "clk", "bia", "obx", "erp"),
-    data_centers=("ign", "whu"),
+    data_centers=("esa", "ign", "whu"),
 ):
     """
     Downloads GNSS products for PRIDE PPPAR from a given directory and date list.
@@ -283,7 +298,75 @@ def dl_orbclk(
     return prods
 
 
-def dl_prods(prod_dir, dates_inp, calc_center, download_lock=None):
+def dl_orbclk_tite(
+    prod_parent_dir, dates_inp, prod_ac_name, login="sakic", password=""
+):
+    """
+    Downloads GRG SP3 and CLK products from CNES's TITE server.
+    """
+
+    import geodezyx.operational.gins_runner.gins_bd_update as gins_bd_update
+
+    dates_lis = _get_dates_fmt(dates_inp, prod_ac_name=prod_ac_name)
+    dates_lis = list(set(dates_lis))  # remove duplicates
+
+    files_list = []
+    remote_prod_subdir = ""
+
+    for date in dates_lis:
+        year = str(date.year)
+        doy = str(conv.dt2doy(date)).zfill(3)
+        hour = str(date.hour).zfill(2)
+
+        if "ULT" in prod_ac_name:
+            remote_prod_subdir = "GRU"
+            file_orb = f"{prod_ac_name}_{year}{doy}{hour}00_02D_05M_ORB.SP3.gz"
+            file_clk = f"{prod_ac_name}_{year}{doy}{hour}00_02D_05M_CLK.CLK.gz"
+        elif "RAP" in prod_ac_name:
+            remote_prod_subdir = "GRR"
+            file_orb = f"{prod_ac_name}_{year}{doy}0000_01D_01M_ORB.SP3.gz"
+            file_clk = f"{prod_ac_name}_{year}{doy}0000_01D_01M_CLK.CLK.gz"
+        elif "FIN" in prod_ac_name:
+            remote_prod_subdir = "GRG"
+            file_orb = f"{prod_ac_name}_{year}{doy}0000_01D_01M_ORB.SP3.gz"
+            file_clk = f"{prod_ac_name}_{year}{doy}0000_01D_01M_CLK.CLK.gz"
+        else:
+            log.warning("Unknown AC name '%s'", prod_ac_name)
+            continue
+
+        files_list.append(file_orb)
+        files_list.append(file_clk)
+
+    remote_prod_fulldir = os.path.join(
+        "/home/gins/MIROIR_STAF/mesures/gps/orbites/", remote_prod_subdir
+    )
+    gins_bd_update.download_rsync(
+        files_list,
+        remote_prod_fulldir,
+        prod_parent_dir,
+        login,
+        "tite.get.obs-mip.fr",
+        password,
+    )
+
+    loc_files_out = []
+    for file in files_list:
+        tmp_loc_file = str(os.path.join(prod_parent_dir, file))
+        if os.path.isfile(tmp_loc_file):
+            date = conv.sp3name_v3_2dt(file)
+            year, doy = conv.dt2doy_year(date, reverse_order=True)
+            year_doy_dir = str(os.path.join(prod_parent_dir, year, doy))
+            utils.create_dir(year_doy_dir)
+            final_loc_file = os.path.join(year_doy_dir, file)
+            shutil.move(tmp_loc_file, final_loc_file)
+            loc_files_out.append(final_loc_file)
+        else:
+            log.warning("File '%s' not found after download attempt.", file)
+
+    return loc_files_out
+
+
+def dl_prods(prod_dir, dates_inp, calc_center, download_lock=None, use_tite=False):
     """
     Download shared products (SP3/CLK and BRDC) once for all parallel runs.
 
@@ -308,25 +391,43 @@ def dl_prods(prod_dir, dates_inp, calc_center, download_lock=None):
     """
 
     ######### Download SP3/CLK products
-    if download_lock:
-        download_lock.acquire()
-    try:
-        prodlis = operational.dl_orbclk(
-            prod_dir,
-            dates_inp,
-            calc_center,
-            prod_types=("sp3", "clk"),
-            data_centers=("ign",),
-        )
-    finally:
+    if not use_tite:
         if download_lock:
-            download_lock.release()
+            download_lock.acquire()
+        try:
+            prodlis = operational.dl_orbclk(
+                prod_dir,
+                dates_inp,
+                calc_center,
+                prod_types=("sp3", "clk"),
+                data_centers=("esa",),
+            )
+        finally:
+            if download_lock:
+                download_lock.release()
 
-    if not prodlis or not prodlis[0]:
-        log.warning("No SP3/CLK product files found remotely nor locally")
-        orbclklis_out = []
-    else:
-        orbclklis_out = prodlis
+        if not prodlis or not prodlis[0]:
+            log.warning("No SP3/CLK product files found remotely nor locally")
+            orbclklis_out = []
+        else:
+            orbclklis_out = prodlis
+
+    ######### Download SP3/CLK products from TITE
+    if use_tite:
+        log.info("Trying to download SP3/CLK products from CNES's TITE server...")
+        try:
+            orbclklis_out = dl_orbclk_tite(
+                prod_dir, dates_inp, prod_ac_name=calc_center
+            )
+            if orbclklis_out:
+                log.info("SP3/CLK products successfully downloaded from TITE.")
+            else:
+                log.warning(
+                    "No SP3/CLK product files found on TITE after download attempt."
+                )
+        except Exception as e:
+            log.error(f"Error while downloading SP3/CLK products from TITE: {e}")
+            orbclklis_out = []
 
     ######### Download BRDC files
     if download_lock:
@@ -349,6 +450,8 @@ def dl_prods(prod_dir, dates_inp, calc_center, download_lock=None):
 
     return orbclklis_out, brdclis_out
 
+
+##############################################################################################
 ##### bellow are the function for PRIDE PPPAR only
 
 

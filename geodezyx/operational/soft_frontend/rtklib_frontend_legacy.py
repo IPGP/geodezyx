@@ -256,7 +256,7 @@ def rtklib_run_from_rinex(
         (bas_srt, bas_end),
         calc_center,
         prod_types=("sp3", "clk"),
-        data_centers=("ign",),
+        data_centers=("igs",),
     )
 
     if not prodlis or not prodlis[0]:

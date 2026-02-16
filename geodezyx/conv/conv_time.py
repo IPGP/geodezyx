@@ -264,6 +264,7 @@ def vector_numeric_conv(func):
 
     return wrapper
 
+
 def vector_string_conv(func):
     """
     Decorator for string time conversion functions.
@@ -291,7 +292,10 @@ def vector_string_conv(func):
 
     return wrapper
 
-def _vectorize_2args_core(func, arg1, arg2, preprocessor_arg1=None, preprocessor_arg2=None, *args, **kwargs):
+
+def _vectorize_2args_core(
+    func, arg1, arg2, preprocessor_arg1=None, preprocessor_arg2=None, *args, **kwargs
+):
     """
     Core logic for vectorizing functions with 2 arguments.
 
@@ -367,13 +371,13 @@ def _vectorize_2args_core(func, arg1, arg2, preprocessor_arg1=None, preprocessor
         # Apply preprocessors
         if preprocessor_arg1:
             a1 = preprocessor_arg1(a1)
-        elif hasattr(a1, 'item'):
+        elif hasattr(a1, "item"):
             # Convert numpy types to Python types
             a1 = a1.item()
 
         if preprocessor_arg2 and a2 is not None:
             a2 = preprocessor_arg2(a2)
-        elif a2 is not None and hasattr(a2, 'item'):
+        elif a2 is not None and hasattr(a2, "item"):
             # Convert numpy types to Python types
             a2 = a2.item()
 
@@ -443,9 +447,12 @@ def vector_2args_datetime_numeric_conv(func):
     @wraps(func)
     def wrapper(arg1, arg2=None, *args, **kwargs):
         return _vectorize_2args_core(
-            func, arg1, arg2,
+            func,
+            arg1,
+            arg2,
             preprocessor_arg1=_normalize_datetime_input,
-            *args, **kwargs
+            *args,
+            **kwargs,
         )
 
     return wrapper
@@ -1402,6 +1409,7 @@ def dt2list(dtin, return_useful_values=True):
     else:
         return list(dtin.timetuple())
 
+
 @vector_2args_numeric_conv
 def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True, output_time_scale="utc"):
     """
@@ -1813,6 +1821,7 @@ def date2dt(date_in):
 # to avoid duplicating complex regex parsing logic
 # (These can be refactored later if needed)
 
+
 @vector_string_conv
 def rnxperiod2tdlta(peri_inp):
     peri_val = int(peri_inp[0:2])
@@ -1834,6 +1843,7 @@ def rnxperiod2tdlta(peri_inp):
 
     return td_out
 
+
 def _rnxname2dt_long(rinexname, out_per_smp=False):
     """Parse RINEX long name convention to datetime."""
     date_str = rinexname[12:23]
@@ -1853,6 +1863,7 @@ def _rnxname2dt_long(rinexname, out_per_smp=False):
         return dt_out, per, smp
     else:
         return dt_out
+
 
 def _rnxname2dt_long_gfz(rinexname, out_per_smp=False):
     """Parse RINEX long name GFZ GODC internal convention to datetime."""
@@ -1877,6 +1888,7 @@ def _rnxname2dt_long_gfz(rinexname, out_per_smp=False):
     else:
         return dt_out
 
+
 def _rnxname2dt_short(rinexname, out_per_smp=False):
     """Parse RINEX short name convention to datetime."""
     alphabet = list(string.ascii_lowercase)
@@ -1893,7 +1905,9 @@ def _rnxname2dt_short(rinexname, out_per_smp=False):
     year = yy + 1900 if yy > 80 else yy + 2000
     h = alphabet.index(rinexname[7]) if rinexname[7] in alphabet else 0
 
-    dt_out = dt.datetime(year, 1, 1) + dt.timedelta(days=doy - 1, seconds=h * 3600 + minn * 60)
+    dt_out = dt.datetime(year, 1, 1) + dt.timedelta(
+        days=doy - 1, seconds=h * 3600 + minn * 60
+    )
 
     if h > 0:
         if minn > 0:
@@ -1902,7 +1916,6 @@ def _rnxname2dt_short(rinexname, out_per_smp=False):
             per = dt.timedelta(hours=1)
     else:
         per = dt.timedelta(days=1)
-
 
     # this info is not avaiable in RNX2 short naming convention
     smp = None
@@ -1987,9 +2000,10 @@ def sp3name2dt(sp3path, out_per_smp=False):
     sp3name = os.path.basename(sp3path)
 
     if len(sp3name) < 17:  ###### A REGEX WOULD BE MUCH BETTER !!!! (PSakic 2021-06)
-        return sp3name_leg_2dt(sp3path,out_per_smp=out_per_smp)
+        return sp3name_leg_2dt(sp3path, out_per_smp=out_per_smp)
     else:
-        return sp3name_v3_2dt(sp3path,out_per_smp=out_per_smp)
+        return sp3name_v3_2dt(sp3path, out_per_smp=out_per_smp)
+
 
 @vector_string_conv
 def sp3name_leg_2dt(sp3path, out_per_smp=False):
@@ -2031,6 +2045,7 @@ def sp3name_leg_2dt(sp3path, out_per_smp=False):
     else:
         return dt_out
 
+
 @vector_string_conv
 def sp3name_v3_2dt(sp3path, out_per_smp=False):
     """
@@ -2068,7 +2083,7 @@ def sp3name_v3_2dt(sp3path, out_per_smp=False):
     hh = int(datestr[7:9])
     mm = int(datestr[9:11])
 
-    dt_out = doy2dt(yyyy, doy) + dt.timedelta(hh * 3600 + mm * 60)
+    dt_out = doy2dt(yyyy, doy, hh, mm)
 
     per = rnxperiod2tdlta(perstr)
     smp = rnxperiod2tdlta(smpstr)
@@ -2542,8 +2557,6 @@ def dt2epoch_rnx3(dt_in, epoch_flag=0, nsats=0, rec_clk_offset=0):
         return epoch_out
 
 
-
-
 #  _____       _   _                 _       _____       _                        _   _____                                     _        _   _
 # |  __ \     | | | |               ( )     |_   _|     | |                      | | |  __ \                                   | |      | | (_)
 # | |__) |   _| |_| |__   ___  _ __ |/ ___    | |  _ __ | |_ ___ _ __ _ __   __ _| | | |__) |___ _ __  _ __ ___  ___  ___ _ __ | |_ __ _| |_ _  ___  _ __  ___
@@ -2554,6 +2567,7 @@ def dt2epoch_rnx3(dt_in, epoch_flag=0, nsats=0, rec_clk_offset=0):
 #        |___/                                                                                  |_|                                                                           |_|
 
 ### Python's Internal Representations
+
 
 def date2dt(date_in):
     """
@@ -2663,7 +2677,7 @@ def numpy_dt2dt(numpy_dt_in):
             typ = np.array
         return typ([numpy_dt2dt(e) for e in numpy_dt_in])
 
-    #timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
+    # timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
     #             / np.timedelta64(1, 's'))
     # return dt.datetime.fromtimestamp(timestamp)
 
@@ -2671,7 +2685,9 @@ def numpy_dt2dt(numpy_dt_in):
 
     else:
         import pandas as pd
+
         return pd.Timestamp(numpy_dt_in).to_pydatetime()
+
 
 def time_obj_tester(delta=False, out_iterable=list, start=None):
     """
@@ -2749,8 +2765,12 @@ def time_obj_tester(delta=False, out_iterable=list, start=None):
     # If delta is True, calculate time deltas relative to the start time
     if delta:
         times_datetime = out_iterable([t - start for t in times_datetime])
-        times_datetime_numpy = out_iterable([t - np.datetime64(start) for t in times_datetime_numpy])
-        times_pandas_timestamp = out_iterable([t - pd.Timestamp(start) for t in times_pandas_timestamp])
+        times_datetime_numpy = out_iterable(
+            [t - np.datetime64(start) for t in times_datetime_numpy]
+        )
+        times_pandas_timestamp = out_iterable(
+            [t - pd.Timestamp(start) for t in times_pandas_timestamp]
+        )
 
     # Return the generated time objects in the specified formats
     return times_datetime, times_datetime_numpy, times_pandas_timestamp
@@ -2759,6 +2779,7 @@ def time_obj_tester(delta=False, out_iterable=list, start=None):
 ##### Nota Bene
 ##### numpy_datetime2dt & datetime64_numpy2dt have been moved
 ##### to the funtion graveyard (PSakic 2021-02-22)
+
 
 def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
     """
@@ -2792,15 +2813,20 @@ def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
     inp_cmd = "-type " + str(inp_type)
     out_cmd = "-o " + str(out_type)
 
-    cmd = " ".join(("perl $EPOS8_BIN_TOOLS/SCRIPTS/get_epoch.pl", epo_cmd, inp_cmd, out_cmd))
+    cmd = " ".join(
+        ("perl $EPOS8_BIN_TOOLS/SCRIPTS/get_epoch.pl", epo_cmd, inp_cmd, out_cmd)
+    )
 
     if verbose:
         log.debug(cmd)
-    
-    import subprocess
-    result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, executable='/bin/bash')
 
-    out = int(result.stdout.decode('utf-8'))
+    import subprocess
+
+    result = subprocess.run(
+        cmd, shell=True, stdout=subprocess.PIPE, executable="/bin/bash"
+    )
+
+    out = int(result.stdout.decode("utf-8"))
 
     if verbose:
         log.debug(out)
