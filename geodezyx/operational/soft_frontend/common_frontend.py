@@ -107,6 +107,44 @@ def _get_prod_date(date_inp, prod_ac_name=""):
     return date_out_srt
 
 
+def get_best_orbclk(prod_list_inp, date_inp, prod_ac_name=""):
+
+    date_right = _get_prod_date(date_inp, prod_ac_name=prod_ac_name)
+    best_prod_out = []
+
+    for prod in prod_list_inp:
+        date_prod = conv.sp3name_v3_2dt(prod)
+        if date_prod == date_right:
+            best_prod_out.append(prod)
+
+    if len(best_prod_out) == 0:
+        best_prod_out = prod_list_inp
+
+    return best_prod_out
+
+def get_best_brdc(prod_list_inp, date_inp, prod_ac_name="BRDC"):
+    date_right = _get_prod_date(date_inp, prod_ac_name=prod_ac_name)
+    best_prod_out = []
+
+    for prod in prod_list_inp:
+        date_prod = conv.rinexname2dt(prod)
+        if date_prod == date_right:
+            best_prod_out.append(prod)
+
+    if len(best_prod_out) == 0:
+        best_prod_out = prod_list_inp
+    elif len(best_prod_out) == 2:
+        best_prod_out = [e for e in best_prod_out if "GOP"][0]
+    else:
+        pass
+
+    return best_prod_out
+
+
+
+
+
+
 def _get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
     """
     Formats the input dates for product downloading based on the specified analysis center and product date requirements.
@@ -449,135 +487,3 @@ def dl_prods(prod_dir, dates_inp, calc_center, download_lock=None, use_tite=Fals
     )
 
     return orbclklis_out, brdclis_out
-
-
-##############################################################################################
-##### bellow are the function for PRIDE PPPAR only
-
-
-def get_right_brdc(brdc_lis_inp, tmp_dir_inp):
-    """
-    Selects the appropriate BRDC (Broadcast Ephemeris) file from a list and unzips it.
-
-    Parameters
-    ----------
-    brdc_lis_inp : list
-        A list of BRDC file paths.
-    tmp_dir_inp : str
-        The directory where the unzipped BRDC file will be stored.
-
-    Returns
-    -------
-    tuple
-        A tuple containing the original BRDC file path and the unzipped BRDC file path.
-    """
-    if len(brdc_lis_inp) == 1:  ## normal case
-        brdc_ori = brdc_lis_inp[0]
-        brdc_unzip = files_rw.unzip_gz_z(brdc_ori, out_gzip_dir=tmp_dir_inp)
-    elif len(brdc_lis_inp) == 0:
-        brdc_ori = None
-        brdc_unzip = None
-        log.warning("no brdc. found")
-    elif len(brdc_lis_inp) > 1:
-        log.warning("several brdc found, keep the last one")
-        log.warning(brdc_lis_inp)
-        brdc_ori = brdc_lis_inp[-1]
-        brdc_unzip = files_rw.unzip_gz_z(brdc_ori, out_gzip_dir=tmp_dir_inp)
-    else:
-        #### this should never happend
-        brdc_ori = None
-        brdc_unzip = None
-        pass
-
-    return brdc_ori, brdc_unzip
-
-
-def get_best_latency(prod_lis_inp):
-    """
-    Selects the best latency from a list of product files.
-
-    Internal function for get_right_prod.
-
-    Parameters
-    ----------
-    prod_lis_inp : list
-        A list of product file paths.
-
-    Returns
-    -------
-    list
-        The best latency found in the list.
-        But can be several if the latency is the same for several products.
-
-    """
-    latency_priority_lis = ["FIN", "RAP", "ULT", "NRT"]
-
-    out_prods_lis = []
-
-    for lat in latency_priority_lis:
-        for prod in prod_lis_inp:
-            if lat in prod:
-                out_prods_lis.append(prod)
-                break
-
-    if len(out_prods_lis) == 0:
-        log.warning("no prod. found with a known latency")
-        out_prods_lis = prod_lis_inp
-
-    return out_prods_lis
-
-
-def get_right_prod(prod_lis_inp, tmp_dir_inp, prod_name, default_fallback):
-    """
-    Selects the appropriate product file from a list and unzips it if necessary.
-
-    Parameters
-    ----------
-    prod_lis_inp : list
-        A list of product file paths.
-    tmp_dir_inp : str
-        The directory where the unzipped product file will be stored.
-    prod_name : str
-        The name of the product.
-    default_fallback : bool
-        If True, uses default values if products are not found.
-
-    Returns
-    -------
-    tuple
-        A tuple containing the unzipped product file path and the original product file path.
-    """
-    if len(prod_lis_inp) == 1:  ## normal case
-        prod_ori = prod_lis_inp[0]
-        prod_out = files_rw.unzip_gz_z(prod_ori, out_gzip_dir=tmp_dir_inp)
-    elif len(prod_lis_inp) == 0 and default_fallback:
-        log.warning("no prod. %s found, fallback to 'Default' in cfg file", prod_name)
-        prod_out = "Default"
-        prod_ori = "Default"
-    elif len(prod_lis_inp) == 0 and not default_fallback:
-        log.warning(
-            "no prod. %s found, no fallback to Default set (default_fallback option), aborting...",
-            prod_name,
-        )
-        prod_out = None
-        prod_ori = None
-    elif len(prod_lis_inp) > 1:
-        log.warning("several prod found, search for the best latency")
-        log.warning(prod_lis_inp)
-        prod_lis_bst = get_best_latency(prod_lis_inp)
-
-        if len(prod_lis_bst) == 1:
-            prod_ori = prod_lis_bst[0]
-        else:
-            log.warning("several prod. found with the same latency, keep the last one")
-            log.warning(prod_lis_bst)
-            prod_ori = prod_lis_bst[-1]
-
-        prod_out = files_rw.unzip_gz_z(prod_ori, out_gzip_dir=tmp_dir_inp)
-    else:
-        #### this should never happend
-        prod_out = None
-        prod_ori = None
-        pass
-
-    return prod_out, prod_ori

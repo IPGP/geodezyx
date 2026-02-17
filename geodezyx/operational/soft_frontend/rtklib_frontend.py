@@ -36,7 +36,7 @@ from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import utils
 from geodezyx import conv
-from geodezyx.operational.soft_frontend.common_frontend import dl_prods
+from geodezyx.operational.soft_frontend.common_frontend import dl_prods, get_best_orbclk, get_best_brdc
 
 log = logging.getLogger("geodezyx")
 
@@ -97,7 +97,9 @@ def rtklib_run_mono(
     base_auto_conf=True,
     xyz_rover=[0, 0, 0],
     xyz_base=[0, 0, 0],
-    outtype=None,
+    posmode=None,
+    solformat=None,
+    sateph=None,
     force=False,
     clean_tmp=True,
     exe_path="/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp",
@@ -168,8 +170,14 @@ def rtklib_run_mono(
     # READ GENERIC CONF FILE & MODIFY IT
     cfgdic = _read_cfg(generik_conf)
 
-    if outtype:
-        cfgdic["out-solformat"] = outtype.lower()
+    if solformat:
+        cfgdic["out-solformat"] = solformat.lower()
+
+    if sateph:
+        cfgdic["pos1-sateph"] = sateph.lower()
+
+    if posmode:
+        cfgdic["pos1-posmode"] = str(posmode).lower()
 
     def _edit_cfgdic_posi(rnx_inp, xyz_inp, ant_n=1):
         antobj, recobj, siteobj, locobj = files_rw.read_rinex_2_dataobjts(rnx_inp)
@@ -188,7 +196,7 @@ def rtklib_run_mono(
         cfgdic[f"ant{n}-antdeln"] = antobj.North_Ecc
         cfgdic[f"ant{n}-antdele"] = antobj.East_Ecc
 
-    # Edit conf file dic
+    # Edit position in config
     if rover_auto_conf:
         _edit_cfgdic_posi(rnx_rover, xyz_rover, ant_n=1)
     if base_auto_conf:
@@ -202,13 +210,16 @@ def rtklib_run_mono(
     # write conf file
     _write_cfg(cfgdic, out_conf_fil)
 
-    # Copy shared products to worker tmp directory
-    if download_prods:
+    #### PRODUCTS - DOWNLOAD OR SELECT BEST FROM INPUT LISTS (MULTIPROCESSING) ####
+    if download_prods: ## direct download: best method when no multiprocessing
         orbclklis_use, brdclis_use = dl_prods(prod_dir, bas_srt, igs_prods)
-    else:
-        orbclklis_use = orbclklis_inp
-        brdclis_use = brdclis_inp
+    else: ### use input lists and find best products: best method when
+        # multiprocessing to avoid download concurrency issues
+        orbclklis_use = get_best_orbclk(orbclklis_inp, bas_srt, igs_prods)
+        brdclis_use = get_best_brdc(brdclis_inp, bas_srt, "BRDC")
+        #brdclis_use = brdclis_inp
 
+    # Copy best products to tmp directory
     orbclklis_ok = [_prods2tmp(orb, tmp_dir_wrk) for orb in orbclklis_use]
     brdclis_ok = [_prods2tmp(n, tmp_dir_wrk) for n in brdclis_use]
 
@@ -230,7 +241,7 @@ def rtklib_run_mono(
             rnx_rover,
             rnx_base,
             " ".join(brdclis_ok),
-            " ".join(orbclklis_ok),
+            #" ".join(orbclklis_ok),
         )
     )
 
@@ -265,7 +276,9 @@ def rtklib_run_pair(
     base_auto_conf=True,
     xyz_rovers=None,
     xyz_bases=None,
-    outtype=None,
+    posmode=None,
+    solformat=None,
+    sateph=None,
     force=False,
     clean_tmp=True,
     exe_path="/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp",
@@ -308,7 +321,7 @@ def rtklib_run_pair(
     xyz_bases : list of lists, optional
         List of [X, Y, Z] coordinates for each base station.
         If None, uses [0, 0, 0] for all.
-    outtype : str, default=None
+    solformat : str, default=None
         Output solution format.
     force : bool, default=False
         If True, forces reprocessing even if output exists.
@@ -399,7 +412,9 @@ def rtklib_run_pair(
                 base_auto_conf=base_auto_conf,
                 xyz_rover=xyz_rovers[i],
                 xyz_base=xyz_bases[i],
-                outtype=outtype,
+                posmode=posmode,
+                solformat=solformat,
+                sateph=sateph,
                 force=force,
                 clean_tmp=clean_tmp,
                 exe_path=exe_path,
@@ -412,7 +427,7 @@ def rtklib_run_pair(
             try:
                 result = future.result()
                 results.append(result)
-                log.info(f"Completed: {pair[0]} + {pair[1]} -> {result}")
+                log.info(f"Completed: {os.path.basename(pair[0])} + {os.path.basename(pair[1])} -> {os.path.basename(result)}")
             except Exception as exc:
                 log.error(f"Failed processing {pair}: {exc}")
                 results.append(None)

@@ -1847,8 +1847,6 @@ def rnxperiod2tdlta(peri_inp):
 def _rnxname2dt_long(rinexname, out_per_smp=False):
     """Parse RINEX long name convention to datetime."""
     date_str = rinexname[12:23]
-    per_str = rinexname[24:27]
-    smp_str = rinexname.split("_")[4]
 
     yyyy = int(date_str[:4])
     doy = int(date_str[4:7])
@@ -1856,10 +1854,11 @@ def _rnxname2dt_long(rinexname, out_per_smp=False):
     mm = int(date_str[9:11])
     dt_out = doy2dt(yyyy, doy) + dt.timedelta(seconds=hh * 3600 + mm * 60)
 
-    per = rnxperiod2tdlta(per_str)
-    smp = rnxperiod2tdlta(smp_str)
-
     if out_per_smp:
+        per_str = rinexname[24:27]
+        smp_str = rinexname.split("_")[4]
+        per = rnxperiod2tdlta(per_str)
+        smp = rnxperiod2tdlta(smp_str)
         return dt_out, per, smp
     else:
         return dt_out
@@ -1869,8 +1868,6 @@ def _rnxname2dt_long_gfz(rinexname, out_per_smp=False):
     """Parse RINEX long name GFZ GODC internal convention to datetime."""
     date_str = rinexname.split("_")[5]
     time_str = rinexname.split("_")[6]
-    per_str = rinexname.split("_")[7]
-    smp_str = rinexname.split("_")[8]
 
     yyyy = int(date_str[:4])
     mo = int(date_str[4:6])
@@ -1880,10 +1877,11 @@ def _rnxname2dt_long_gfz(rinexname, out_per_smp=False):
     ss = int(time_str[4:6])
     dt_out = dt.datetime(yyyy, mo, dd, hh, mm, ss)
 
-    per = rnxperiod2tdlta(per_str)
-    smp = rnxperiod2tdlta(smp_str)
-
     if out_per_smp:
+        per_str = rinexname.split("_")[7]
+        smp_str = rinexname.split("_")[8]
+        per = rnxperiod2tdlta(per_str)
+        smp = rnxperiod2tdlta(smp_str)
         return dt_out, per, smp
     else:
         return dt_out
