@@ -29,7 +29,7 @@ V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.
 * Valérie Ballu (CNRS/La Rochelle University, France)
 
 ## Introduction
-The purpose of _geodezyx_ (pronounced *geode-**zeecks***), also known as _the GeodeZYX toolbox_, is to provide all the functions which
+The purpose of _geodezyx_ (pronounced *geode-**zeecks***), formerly known as _the GeodeZYX toolbox_, is to provide all the functions which
 can be useful for Geodesy and Geophysics. 
 
 It includes low-level functions, file management functions,

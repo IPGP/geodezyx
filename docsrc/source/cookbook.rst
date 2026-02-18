@@ -8,7 +8,7 @@
 Convert time
 ------------
 
-The `geodezyx` toolbox can handle a lot of time **scales** and time **representations**. 
+`geodezyx` can handle a lot of time **scales** and time **representations**. 
 
 What we call `scale` is a physical definition: UTC, GPS Time, TAI...
 
@@ -74,7 +74,7 @@ All the module's functionalites can be found here:
 Convert coordinates 
 -------------------
 
-The `geodezyx` toolbox can easily handle coordinate conversion in Geocentric (X,Y,Z), Geographic (latitude, longitude, height) and topocentric (East, North, Up). 
+`geodezyx` can easily handle coordinate conversion in Geocentric (X,Y,Z), Geographic (latitude, longitude, height) and topocentric (East, North, Up). 
 
 **Warning**: This is considered as the "low-level" coordinate conversions. It does not deal with the different Reference Frame and their realisations (ITRFxx, ETRFxx...). This is managed by "high-level" functions in the ``reffram`` module.
 
@@ -149,7 +149,7 @@ All the module's functionalites can be found here:
 Euler pole determination
 ------------------------
 
-The toolbox proposes tools to manipulate Euler rotation poles:
+`geodezyx` proposes tools to manipulate Euler rotation poles:
 
 - to determine the tectonic plate's Euler pole based on some GNSS absolute velocities (:py:func:`geodezyx.geodyn.euler_pole_calc.euler_pole_calc`).
 - to analyze the quality of the Euler Pole estimation (:py:func:`geodezyx.geodyn.euler_pole_calc.euler_pole_quality`).
@@ -170,7 +170,7 @@ Read and import geodetic products
 Main import functionalities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The toolbox mainly handles:
+`geodezyx` mainly handles:
 
 - The GNSS products such as clock offsets (.clk files) and orbits (.sp3 files): :py:mod:`geodezyx.files_rw.read_gnss_prods`
 - The Earth orientation parameters: :py:mod:`geodezyx.files_rw.read_gnss_prods`
@@ -186,7 +186,7 @@ All the module's functionalites can be found here:
 Read and import geodetic time series
 ------------------------------------
 
-The toolbox is designed to import and pre-process a wide range of geodetic GNSS Time Series.
+`geodezyx` is designed to import and pre-process a wide range of geodetic GNSS Time Series.
 
 Read the dedicated Jupyter notebook stored in  ``<...>/geodezyx/000_exemples/timeseries_reader``
 
@@ -208,7 +208,7 @@ Read the dedicated Jupyter notebook stored in  ``<...>/geodezyx/000_exemples/log
 Point and Click to detect offsets manually
 ------------------------------------------
 
-The toolbox contains a tool to select manually the jumps in the Geodetic Time Series.
+`geodezyx` contains a tool to select manually the jumps in the Geodetic Time Series.
 
 Based on `matplotlib`, you can "point and click" the discontinuities you detected visually with your mouse.
 
