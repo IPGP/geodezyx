@@ -65,6 +65,7 @@ GPS Solut 18, 153–162 (2014). https://doi.org/10.1007/s10291-013-0354-4
   * Yann-Treden Tranchant, LIENSs La Rochelle, for the ocean circulation model and OBP processing functions.
   * Jean-Mathieu Nocquet and its PYACS toolbox for the plate motion model functions. https://github.com/JMNocquet/pyacs36
   * Médéric Gravelle, CNRS/LIENSs La Rochelle, who initiate the SPOTGINS import/export functions, now grouped in `spytgins` module.
+  * Homonym logo font by Nick Curtis (https://www.nicksfonts.com/)
 
 ## Licence
 GNU Lesser General Public License, Version 3, 29 June 2007
