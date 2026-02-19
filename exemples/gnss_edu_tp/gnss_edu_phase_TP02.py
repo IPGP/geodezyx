@@ -131,17 +131,13 @@ else:
 del columns, valeurs
 
 
-l1 = gnss_const.lambda1
-l2 = gnss_const.lambda2
-
-
 # il faut consulter la doc et vous constaterez que les unités de L1 et L2 sont en cycle
-df_rnx['L1'] = df_rnx['L1']*l1 
-df_rnx['L2'] = df_rnx['L2']*l2
+# on multiplie les valeurs de L1 et L2 par les longueurs d'onde correspondantes pour avoir
+# des distances (ambigues mais en mètre).
 
-# attention : on se rend compte que les mesures L1 et L2 sont en cycle alors que l'on
-# a besoin d'une mesure de distance (ambigue mais distance quand même)
-
+df_rnx['L1'] = df_rnx['L1']*conv.L1_WAVELENGTH
+df_rnx['L2'] = df_rnx['L2']*conv.L2_WAVELENGTH
+df_rnx['L5'] = df_rnx['L5']*conv.L5_WAVELENGTH
 
 
 # nettoyage cf fin du TP01
@@ -164,21 +160,10 @@ df_rnx = df_rnx.dropna(axis=1, how='all')
 df_rnx['ind_ligne'] = range(len(df_rnx)) 
 
 
-# # Chargement des données RINEX d'observation via  GnssToolbox
-# # Trop de lourdeur pour pas grand chose ... autant passer par un équivalent de grep
-# import gnsstoolbox.rinex_o as rx
-# my_rnx =  rx.rinex_o()
-# my_rnx.loadRinexO(fichier_rnx) 
-
-# # Position initiale du récepteur (à partir du header RINEX)
-# P_rnx_header = np.array([my_rnx.headers[0].X, my_rnx.headers[0].Y, my_rnx.headers[0].Z])
-# del my_rnx
-
-
-
-
-
 #%%
+print(dwl_output_satellite[0])
+df_sp3 = files_rw.read_sp3(dwl_output_satellite[0])
+
 
 
 

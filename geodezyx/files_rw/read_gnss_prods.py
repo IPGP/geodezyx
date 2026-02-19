@@ -322,7 +322,6 @@ def read_sp3(file_path_inp,returns_pandas = True, name = '',
         f = open(file_path_inp,'r')
         lines = f.readlines()
 
-    header = True
 
     #### List/DF initialization
     epoch_stk = []
@@ -346,15 +345,16 @@ def read_sp3(file_path_inp,returns_pandas = True, name = '',
                    'rec','x','y','z','clk','ac']
 
     #### read the Header as a 1st check
-    header = read_sp3_header(lines,ac_name)
-    if header.empty:
+    header_df = read_sp3_header(lines,ac_name)
+    if header_df.empty:
         log.warning("The SP3 looks empty: ",file_path_inp)
         if returns_pandas:
             df = pd.DataFrame([], columns=col_names)
             return df
         else:
             return  epoch_stk ,  xstk , ystk , zstk , clkstk , ac_name_stk
-
+    
+    header = True
     for l in lines:
         if l[0] == '*':
             header = False
