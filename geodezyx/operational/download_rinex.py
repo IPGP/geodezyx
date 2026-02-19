@@ -948,27 +948,21 @@ def _update_table_row_with_match(table, irow, rnx_match, all_files_mode=False):
     None
         Modifies table in place.
     """
-    if all_files_mode:
-        # In all_files_mode, rnx_match is a list
-        if rnx_match:
+    if rnx_match:
+        table.loc[irow, "ok_dwl"] = True
+        if all_files_mode:
+            # In all_files_mode, rnx_match is a list
             # Join all filenames with semicolon separator
             table.loc[irow, "rnxnam"] = ";".join(rnx_match)
-            table.loc[irow, "ok_dwl"] = True
             log.info(f"{len(rnx_match)} file(s) found on server :)")
         else:
-            table.loc[irow, "rnxnam"] = ""
-            table.loc[irow, "ok_dwl"] = False
-            log.warning(f"No files found on server :(")
-    else:
-        # In single file mode, rnx_match is a string or None
-        if rnx_match:
+            # In single file mode, rnx_match is a string or None
             table.loc[irow, "rnxnam"] = rnx_match
-            table.loc[irow, "ok_dwl"] = True
             log.info(rnx_match + " found on server :)")
-        else:
-            table.loc[irow, "rnxnam"] = ""
-            table.loc[irow, "ok_dwl"] = False
-            log.warning("File not found on server :(")
+    else:
+        table.loc[irow, "ok_dwl"] = False
+        table.loc[irow, "rnxnam"] = ""
+        log.warning(f"No file(s) found on server :(")
 
     table.loc[irow, "crawled"] = True
 
