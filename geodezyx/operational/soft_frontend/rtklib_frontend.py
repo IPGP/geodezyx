@@ -461,7 +461,7 @@ def rtklib_run_pair(
 
     return results
 
-def rtklib_front(
+def rtklib_run(
     rnx_dir,
     cfgfile_generik,
     sites_rovers,
@@ -538,3 +538,4 @@ def rtklib_front(
         procs=procs,
         exe_path=exe_path,
     )
+
