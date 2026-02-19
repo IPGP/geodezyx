@@ -36,7 +36,11 @@ from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import utils
 from geodezyx import conv
-from geodezyx.operational.soft_frontend.common_frontend import dl_prods, get_best_orbclk, get_best_brdc
+from geodezyx.operational.soft_frontend.common_frontend import (
+    dl_prods,
+    get_best_orbclk,
+    get_best_brdc,
+)
 
 log = logging.getLogger("geodezyx")
 
@@ -45,6 +49,9 @@ log = logging.getLogger("geodezyx")
 
 
 def _read_cfg(filein):
+    """
+    Reads a RTKLIB configuration file into an ordered dictionary.
+    """
     outdic = collections.OrderedDict()
     with open(filein) as f:
         for line in f:
@@ -56,6 +63,9 @@ def _read_cfg(filein):
 
 
 def _write_cfg(dicoconf, fpath_out):
+    """
+    Writes a RTKLIB configuration file from an ordered dictionary.
+    """
     f = open(fpath_out, "w+")
     for k, v in dicoconf.items():
         lin = k.ljust(20) + "=" + str(v) + "\n"
@@ -84,7 +94,7 @@ def _prods2tmp(fpath_inp, dir_out):
 def rtklib_run_mono(
     rnx_rover,
     rnx_base,
-    generik_conf,
+    cfgfile_generik,
     out_dir,
     tmp_dir,
     prod_dir=None,
@@ -93,7 +103,7 @@ def rtklib_run_mono(
     orbclklis_inp=[],
     brdclis_inp=[],
     exp_prefix="",
-    rover_auto_conf=False,
+    rover_auto_conf=True,
     base_auto_conf=True,
     xyz_rover=[0, 0, 0],
     xyz_base=[0, 0, 0],
@@ -168,7 +178,7 @@ def rtklib_run_mono(
     )
 
     # READ GENERIC CONF FILE & MODIFY IT
-    cfgdic = _read_cfg(generik_conf)
+    cfgdic = _read_cfg(cfgfile_generik)
 
     if solformat:
         cfgdic["out-solformat"] = solformat.lower()
@@ -211,13 +221,13 @@ def rtklib_run_mono(
     _write_cfg(cfgdic, out_conf_fil)
 
     #### PRODUCTS - DOWNLOAD OR SELECT BEST FROM INPUT LISTS (MULTIPROCESSING) ####
-    if download_prods: ## direct download: best method when no multiprocessing
+    if download_prods:  ## direct download: best method when no multiprocessing
         orbclklis_use, brdclis_use = dl_prods(prod_dir, bas_srt, igs_prods)
-    else: ### use input lists and find best products: best method when
+    else:  ### use input lists and find best products: best method when
         # multiprocessing to avoid download concurrency issues
         orbclklis_use = get_best_orbclk(orbclklis_inp, bas_srt, igs_prods)
         brdclis_use = get_best_brdc(brdclis_inp, bas_srt, "BRDC")
-        #brdclis_use = brdclis_inp
+        # brdclis_use = brdclis_inp
 
     # Copy best products to tmp directory
     orbclklis_ok = [_prods2tmp(orb, tmp_dir_wrk) for orb in orbclklis_use]
@@ -241,7 +251,7 @@ def rtklib_run_mono(
             rnx_rover,
             rnx_base,
             " ".join(brdclis_ok),
-            #" ".join(orbclklis_ok),
+            # " ".join(orbclklis_ok),
         )
     )
 
@@ -254,33 +264,32 @@ def rtklib_run_mono(
 
     # THIS IS THE PART THAT GETS PARALLELIZED
     subprocess.call([bigcomand], executable="/bin/bash", shell=True)
-
-    log.info("RTKLIB RUN FINISHED for {}".format(exp_full_name))
+    if not os.path.isfile(out_res_fil) or os.path.getsize(out_res_fil) < 2000:
+        log.error(f"RTKLIB failed for {exp_full_name} :(")
+    else:
+        log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
+        utils.gzip_compress(out_res_fil + ".stat")
 
     if clean_tmp:
         shutils.rmtree(tmp_dir_wrk, ignore_errors=True)
 
     return out_res_fil
 
-
 def rtklib_run_pair(
     rinex_pairs,
-    generik_conf,
+    cfgfile_generik,
     out_dir,
     tmp_dir=None,
     prod_dir=None,
     igs_prods="IGS0OPSFIN",
-    procs=4,
     exp_prefix="",
-    rover_auto_conf=False,
-    base_auto_conf=True,
-    xyz_rovers=None,
-    xyz_bases=None,
+    xyz_dic=None,
     posmode=None,
     solformat=None,
     sateph=None,
     force=False,
     clean_tmp=True,
+    procs=4,
     exe_path="/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp",
 ):
     """
@@ -296,8 +305,8 @@ def rtklib_run_pair(
     Parameters
     ----------
     rinex_pairs : list of tuples
-        List of (rnx_rover, rnx_base) file path tuples to process.
-    generik_conf : str | os.PathLike
+        List of (rnx_rov, rnx_bas) file path tuples to process.
+    cfgfile_generik : str | os.PathLike
         Path to generic RTKLIB configuration file.
     out_dir : str | os.PathLike
         Directory where results are saved.
@@ -315,11 +324,8 @@ def rtklib_run_pair(
         If True, reads rover RINEX header for antenna configuration.
     base_auto_conf : bool, default=True
         If True, reads base RINEX header for antenna configuration.
-    xyz_rovers : list of lists, optional
-        List of [X, Y, Z] coordinates for each rover station.
-        If None, uses [0, 0, 0] for all.
-    xyz_bases : list of lists, optional
-        List of [X, Y, Z] coordinates for each base station.
+    xyz_dic : dict, optional
+        [X, Y, Z] coordinates (dict value) for each station (dict key).
         If None, uses [0, 0, 0] for all.
     solformat : str, default=None
         Output solution format.
@@ -360,30 +366,40 @@ def rtklib_run_pair(
     else:
         prod_dir = utils.create_dir(prod_dir)
 
-    # Prepare coordinate lists
-    if xyz_rovers is None:
-        xyz_rovers = [[0, 0, 0]] * len(rinex_pairs)
-    if xyz_bases is None:
-        xyz_bases = [[0, 0, 0]] * len(rinex_pairs)
-
     log.info(
         f"Starting parallel RTKLIB processing for {len(rinex_pairs)} pairs with {procs} workers"
     )
 
+    if len(rinex_pairs) == 0:
+        log.error("No RINEX pairs provided. Exiting.")
+        return []
+
+    xyz_rovers = []
+    xyz_bases = []
+
     # STEP 1: Preliminary - determine time spans and download products once
     log.info("STEP 1: Determining time spans for all RINEX pairs...")
     dates_srt_stk = []
-    for rnx_rover, rnx_base in rinex_pairs:
+    for rnx_rov, rnx_bas in rinex_pairs:
         # Use fast method to get approximate time range
-        rov_srt, rov_per, rov_smp = conv.rinexname2dt(rnx_rover, out_per_smp=True)
-        bas_srt, bas_per, bas_smp = conv.rinexname2dt(rnx_base, out_per_smp=True)
+        rov_srt, rov_per, rov_smp = conv.rinexname2dt(rnx_rov, out_per_smp=True)
+        bas_srt, bas_per, bas_smp = conv.rinexname2dt(rnx_bas, out_per_smp=True)
         rov_end = rov_srt + rov_per
         bas_end = bas_srt + bas_per
-        dates_srt_stk.append(bas_end)
+        dates_srt_stk.append(bas_srt)
+
+        # Prepare coordinate lists
+        site_rov = os.path.basename(rnx_rov)[0:9]
+        site_bas = os.path.basename(rnx_bas)[0:9]
+
+        xyz_rov = xyz_dic[site_rov] if site_rov in xyz_dic.keys() else [0, 0, 0]
+        xyz_bas = xyz_dic[site_bas] if site_bas in xyz_dic.keys() else [0, 0, 0]
+        xyz_rovers.append(xyz_rov)
+        xyz_bases.append(xyz_bas)
 
     log.info("STEP 2: Downloading shared products (SP3/CLK and BRDC)...")
     try:
-        orbclklis_shared, brdclis_shared = dl_prods(prod_dir, dates_srt_stk, igs_prods)
+        orbclklis_shr, brdclis_shr = dl_prods(prod_dir, dates_srt_stk, igs_prods)
     except Exception as e:
         log.error(f"Failed to download shared products: {e}")
         raise
@@ -395,21 +411,21 @@ def rtklib_run_pair(
     with concurrent.futures.ThreadPoolExecutor(max_workers=procs) as executor:
         # Submit all tasks
         future_to_pair = {}
-        for i, (rnx_rover, rnx_base) in enumerate(rinex_pairs):
+        for i, (rnx_rov, rnx_bas) in enumerate(rinex_pairs):
             future = executor.submit(
                 rtklib_run_mono,
-                rnx_rover=rnx_rover,
-                rnx_base=rnx_base,
-                generik_conf=generik_conf,
+                rnx_rover=rnx_rov,
+                rnx_base=rnx_bas,
+                cfgfile_generik=cfgfile_generik,
                 out_dir=out_dir,
                 tmp_dir=tmp_dir,
                 download_prods=False,  # Products already downloaded in STEP 2
-                orbclklis_inp=orbclklis_shared,
-                brdclis_inp=brdclis_shared,
+                orbclklis_inp=orbclklis_shr,
+                brdclis_inp=brdclis_shr,
                 igs_prods=igs_prods,
                 exp_prefix=exp_prefix,
-                rover_auto_conf=rover_auto_conf,
-                base_auto_conf=base_auto_conf,
+                rover_auto_conf=True,
+                base_auto_conf=True,
                 xyz_rover=xyz_rovers[i],
                 xyz_base=xyz_bases[i],
                 posmode=posmode,
@@ -419,7 +435,7 @@ def rtklib_run_pair(
                 clean_tmp=clean_tmp,
                 exe_path=exe_path,
             )
-            future_to_pair[future] = (rnx_rover, rnx_base)
+            future_to_pair[future] = (rnx_rov, rnx_bas)
 
         # Collect results as they complete
         for future in concurrent.futures.as_completed(future_to_pair):
@@ -427,9 +443,11 @@ def rtklib_run_pair(
             try:
                 result = future.result()
                 results.append(result)
-                log.info(f"Completed: {os.path.basename(pair[0])} + {os.path.basename(pair[1])} -> {os.path.basename(result)}")
+                log.info(
+                    f"Pair OK :): {os.path.basename(pair[0])} + {os.path.basename(pair[1])} -> {os.path.basename(result)}"
+                )
             except Exception as exc:
-                log.error(f"Failed processing {pair}: {exc}")
+                log.error(f"Failed {pair}: {exc}")
                 results.append(None)
 
     log.info(
@@ -440,3 +458,76 @@ def rtklib_run_pair(
         shutils.rmtree(tmp_dir + "/*", ignore_errors=True)
 
     return results
+
+def rtklib_front(
+    rnx_dir,
+    cfgfile_generik,
+    sites_rovers,
+    site_base,
+    out_dir,
+    tmp_dir=None,
+    prod_dir=None,
+    igs_prods="GRG0OPSULT",
+    exp_prefix="",
+    date_srt=None,
+    date_end=None,
+    xyz_dic=None,
+    posmode=None,
+    solformat=None,
+    sateph=None,
+    force=False,
+    clean_tmp=False,
+    procs=8,
+    exe_path="/home/sakic/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp",
+):
+
+    rnxs_pairs = []
+
+    rnxs_all = operational.rinex_finder(
+        rnx_dir,
+        specific_sites=sites_rovers + [site_base],
+        start_epoch=date_srt,
+        end_epoch=date_end,
+    )
+
+    df_all = operational.rinex_table_from_list(rnxs_all, site9_col=True)
+    df_all["date_end"] = df_all["date"] + df_all["per"]
+    df_rov = df_all[df_all["site9"].isin(sites_rovers)]
+    df_bse = df_all[df_all["site9"] == site_base]
+
+    for irow, rovrow in df_rov.iterrows():
+        site = rovrow["site9"]
+        rov_srt = rovrow["date"]
+        rov_end = rovrow["date_end"]
+
+        sel = (df_bse["date"] <= rov_srt) & (df_bse["date_end"] >= rov_end)
+        df_bse_sel = df_bse[sel]
+        if len(df_bse_sel) == 0:
+            log.warning(f"no base for {site} at {rov_srt}")
+            continue
+        elif len(df_bse_sel) > 1:
+            base1st = df_bse_sel.iloc[0]
+            log.warning(f"multi. bases for {site} at {rov_srt}, get 1st: {base1st}")
+
+        row_bse = df_bse_sel.iloc[0]
+
+        rnxs_pair = (rovrow["path"], row_bse["path"])
+        rnxs_pairs.append(rnxs_pair)
+
+    return operational.rtklib_run_pair(
+        rnxs_pairs,
+        cfgfile_generik,
+        out_dir=out_dir,
+        tmp_dir=tmp_dir,
+        prod_dir=prod_dir,
+        igs_prods=igs_prods,
+        exp_prefix=exp_prefix,
+        xyz_dic=xyz_dic,
+        posmode=posmode,
+        solformat=solformat,
+        sateph=sateph,
+        force=force,
+        clean_tmp=clean_tmp,
+        procs=procs,
+        exe_path=exe_path,
+    )

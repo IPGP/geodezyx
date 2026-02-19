@@ -140,40 +140,40 @@ def rinex_finder(
     return files_rnx_lis
 
 
-def read_rinex_list_table(rnx_list_inp):
-    """
-    Generate a Table from a RINEX list
-
-    Parameters
-    ----------
-    rnx_list_inp : str, list or iterable
-        RINEX list. Can be a Python iterable (a list) or a path to a list file
-        (a string)
-
-    Returns
-    -------
-    df : DataFrame
-        a RINEX Table.
-
-    Note
-    ----
-    From script
-    .../geodezyx_toolbox_PS_perso_scripts/IPGP_OVS/rinex_lister/rinex_list_2019_2022_mk01.py
-
-    """
-
-    if utils.is_iterable(rnx_list_inp):
-        df = pd.DataFrame(rnx_list_inp)
-    else:
-        df = pd.read_csv(rnx_list_inp, header=None)
-
-    df.columns = ["path"]
-    df["name"] = df["path"].apply(os.path.basename)
-    df["site"] = df["name"].str[:4]
-    df["date"] = df["name"].apply(conv.rinexname2dt)
-    df["sd"] = list(zip(*(df["site"], df["date"])))
-
-    return df
+# def read_rinex_list_table(rnx_list_inp):
+#     """
+#     Generate a Table from a RINEX list
+#
+#     Parameters
+#     ----------
+#     rnx_list_inp : str, list or iterable
+#         RINEX list. Can be a Python iterable (a list) or a path to a list file
+#         (a string)
+#
+#     Returns
+#     -------
+#     df : DataFrame
+#         a RINEX Table.
+#
+#     Note
+#     ----
+#     From script
+#     .../geodezyx_toolbox_PS_perso_scripts/IPGP_OVS/rinex_lister/rinex_list_2019_2022_mk01.py
+#
+#     """
+#
+#     if utils.is_iterable(rnx_list_inp):
+#         df = pd.DataFrame(rnx_list_inp)
+#     else:
+#         df = pd.read_csv(rnx_list_inp, header=None)
+#
+#     df.columns = ["path"]
+#     df["name"] = df["path"].apply(os.path.basename)
+#     df["site"] = df["name"].str[:4]
+#     df["date"] = df["name"].apply(conv.rinexname2dt)
+#     df["sd"] = list(zip(*(df["site"], df["date"])))
+#
+#     return df
 
 
 # def date_filter(df_inp,strt,end):

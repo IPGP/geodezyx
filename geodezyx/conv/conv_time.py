@@ -1267,13 +1267,14 @@ def utc2gpstime(dtin_utc):
 
     Parameters
     ----------
-    dtin_utc : datetime
-        input UTC time.
+    dtin_utc : datetime or iterable of datetime
+        input UTC time(s). Can handle iterable of datetimes.
 
     Returns
     -------
-    gpsweek,gpssecs
-        Converted epoch in GPS time, i.e. GPS Week and GPS seconds in week.
+    (gpsweek, gpssecs) : tuple or iterable of tuples
+        Converted epoch(s) in GPS time, i.e. (GPS Week, GPS seconds in week).
+        If input is iterable, returns same type.
 
     """
     utc_offset = leapsec.find_leapsecond(dtin_utc)
@@ -1935,19 +1936,20 @@ def rinexname2dt(rinexpath, out_per_smp=False):
 
     Parameters
     ----------
-    rinexpath : string
-        RINEX path. The RINEX basename will be extracted automatically.
+    rinexpath : string or iterable of string
+        RINEX path(s). The RINEX basename will be extracted automatically.
+        Can handle iterable of strings.
 
     out_per_smp : bool
         if True, also returns the period and sample as timedelta objects.
 
     Returns
     -------
-    dt : datetime
-        Datetime
-    per : timedelta,
+    dt : datetime or iterable of datetime
+        Datetime(s). If input is iterable, returns same type.
+    per : timedelta or iterable of timedelta,
         optional Period of the RINEX file (if out_per_smp is True)
-    smp : timedelta,
+    smp : timedelta or iterable of timedelta,
         optional Sample interval of the RINEX file (if out_per_smp is True)
     """
     rinexname = os.path.basename(rinexpath)
@@ -1979,19 +1981,20 @@ def sp3name2dt(sp3path, out_per_smp=False):
 
     Parameters
     ----------
-    sp3path : string
-        Orbit SP3 path. The basename will be extracted automatically.
+    sp3path : string or iterable of string
+        Orbit SP3 path(s). The basename will be extracted automatically.
+        Can handle iterable of strings.
 
     out_per_smp : bool
         if True, also returns the period and sample as timedelta objects.
         Default is False.
     Returns
     -------
-    dt : datetime
-        Datetime
-    per : timedelta,
+    dt : datetime or iterable of datetime
+        Datetime(s). If input is iterable, returns same type.
+    per : timedelta or iterable of timedelta,
         optional Period of the SP3 file (if out_per_smp is True)
-    smp : timedelta,
+    smp : timedelta or iterable of timedelta,
         optional Sample interval of the SP3 file (if out_per_smp is True)
     """
 
@@ -2014,18 +2017,19 @@ def sp3name_leg_2dt(sp3path, out_per_smp=False):
 
     Parameters
     ----------
-    sp3path : string
-        Orbit SP3 path. The basename will be extracted automatically.
+    sp3path : string or iterable of string
+        Orbit SP3 path(s). The basename will be extracted automatically.
+        Can handle iterable of strings.
     out_per_smp : bool
         if True, also returns the period and sample as timedelta objects.
         Default is False.
     Returns
     -------
-    dt : datetime
-        Datetime
-    per : timedelta,
+    dt : datetime or iterable of datetime
+        Datetime(s). If input is iterable, returns same type.
+    per : timedelta or iterable of timedelta,
         optional Period of the SP3 file (if out_per_smp is True)
-    smp : timedelta,
+    smp : timedelta or iterable of timedelta,
         optional Sample interval of the SP3 file (if out_per_smp is True)
     """
 
@@ -2055,19 +2059,20 @@ def sp3name_v3_2dt(sp3path, out_per_smp=False):
 
     Parameters
     ----------
-    sp3path : string
-        Orbit SP3 path. The basename will be extracted automatically.
+    sp3path : string or iterable of string
+        Orbit SP3 path(s). The basename will be extracted automatically.
+        Can handle iterable of strings.
     out_per_smp : bool
         if True, also returns the period and sample as timedelta objects.
         Default is False.
 
     Returns
     -------
-    dt : datetime
-        Datetime
-    per : timedelta,
+    dt : datetime or iterable of datetime
+        Datetime(s). If input is iterable, returns same type.
+    per : timedelta or iterable of timedelta,
         optional Period of the SP3 file (if out_per_smp is True)
-    smp : timedelta,
+    smp : timedelta or iterable of timedelta,
         optional Sample interval of the SP3 file (if out_per_smp is True)
     """
     sp3name = os.path.basename(sp3path)
