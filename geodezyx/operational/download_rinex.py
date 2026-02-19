@@ -1254,6 +1254,7 @@ def download_gnss_rinex(
     force=False,
     no_rnx2=False,
     no_rnx3=False,
+    intuitive_output = False,
 ):
     """
     Parameters
@@ -1433,7 +1434,10 @@ def download_gnss_rinex(
         len(files_loc),
     )
 
-    return out_tup_lis_fin
+    if not intuitive_output:
+        return out_tup_lis_fin
+    else:
+        return zip(*out_tup_lis_fin)
 
 
 def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3):
