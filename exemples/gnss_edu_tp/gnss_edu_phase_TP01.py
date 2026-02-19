@@ -263,6 +263,7 @@ ax.legend(title="PRN")
 plt.show()
 
 
+
 #%%
 # Il n'est pas nécessaire de garder dans le dataframe des colonnes inutilisées:
 # Supprimer les colonnes où toutes les valeurs sont NaN
