@@ -38,8 +38,7 @@ from geodezyx import utils
 from geodezyx import conv
 from geodezyx.operational.soft_frontend.common_frontend import (
     dl_prods,
-    get_best_orbclk,
-    get_best_brdc,
+    get_best_prods,
 )
 
 log = logging.getLogger("geodezyx")
@@ -225,8 +224,8 @@ def rtklib_run_mono(
         orbclklis_use, brdclis_use = dl_prods(prod_dir, bas_srt, igs_prods)
     else:  ### use input lists and find best products: best method when
         # multiprocessing to avoid download concurrency issues
-        orbclklis_use = get_best_orbclk(orbclklis_inp, bas_srt, igs_prods)
-        brdclis_use = get_best_brdc(brdclis_inp, bas_srt, "BRDC")
+        orbclklis_use = get_best_prods(orbclklis_inp, bas_srt, igs_prods)
+        brdclis_use = get_best_prods(brdclis_inp, bas_srt, "BRDC", brdc_mode=True)
         # brdclis_use = brdclis_inp
 
     # Copy best products to tmp directory
@@ -251,7 +250,7 @@ def rtklib_run_mono(
             rnx_rover,
             rnx_base,
             " ".join(brdclis_ok),
-            # " ".join(orbclklis_ok),
+            " ".join(orbclklis_ok),
         )
     )
 
@@ -268,7 +267,7 @@ def rtklib_run_mono(
         log.error(f"RTKLIB failed for {exp_full_name} :(")
     else:
         log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
-        utils.gzip_compress(out_res_fil + ".stat")
+        utils.gzip_compress(out_res_fil + ".stat", rm_inp=True)
 
     if clean_tmp:
         shutils.rmtree(tmp_dir_wrk, ignore_errors=True)
@@ -392,6 +391,8 @@ def rtklib_run_pair(
         site_rov = os.path.basename(rnx_rov)[0:9]
         site_bas = os.path.basename(rnx_bas)[0:9]
 
+        if not xyz_dic:
+            xyz_dic = {} # create dummy dict if None provided
         xyz_rov = xyz_dic[site_rov] if site_rov in xyz_dic.keys() else [0, 0, 0]
         xyz_bas = xyz_dic[site_bas] if site_bas in xyz_dic.keys() else [0, 0, 0]
         xyz_rovers.append(xyz_rov)
@@ -444,7 +445,7 @@ def rtklib_run_pair(
                 result = future.result()
                 results.append(result)
                 log.info(
-                    f"Pair OK :): {os.path.basename(pair[0])} + {os.path.basename(pair[1])} -> {os.path.basename(result)}"
+                    f"Pair done: {os.path.basename(pair[0])} + {os.path.basename(pair[1])} -> {os.path.basename(result)}"
                 )
             except Exception as exc:
                 log.error(f"Failed {pair}: {exc}")
@@ -495,12 +496,17 @@ def rtklib_front(
     df_rov = df_all[df_all["site9"].isin(sites_rovers)]
     df_bse = df_all[df_all["site9"] == site_base]
 
+    if len(df_bse) == 0:
+        log.error(f"No base RINEX files found for site: {site_base}")
+        log.error(f"All sites found: {str(list(df_all["site9"].unique()))}")
+        return []
+
     for irow, rovrow in df_rov.iterrows():
         site = rovrow["site9"]
         rov_srt = rovrow["date"]
         rov_end = rovrow["date_end"]
 
-        sel = (df_bse["date"] <= rov_srt) & (df_bse["date_end"] >= rov_end)
+        sel = (df_bse["date"] <= rov_srt) & (rov_end <= df_bse["date_end"])
         df_bse_sel = df_bse[sel]
         if len(df_bse_sel) == 0:
             log.warning(f"no base for {site} at {rov_srt}")

@@ -46,13 +46,14 @@ def rinex_finder(
 
     Parameters
     ----------
-    main_dir : str
+    main_dir : str or iterable of str
         Main directory where the RINEX files are stored.
         The directory can contain wildcards ('*', '?', etc.) and date aliases 
         ('%Y', '%j', etc.). If the main_dir contains date aliases and both 
         start_epoch and end_epoch are defined, you can indicate a more precise 
         directory (e.g., main_dir = "/path/to/data/*/%Y/%j/").
         Note: The day level is the maximum resolution for the wildcard.
+        Can be a list of several directories.
     short_name : bool, optional
         Check if the pattern matches a short name RINEX. Default is True.
     long_name : bool, optional
@@ -84,15 +85,24 @@ def rinex_finder(
     """
 
     # If main_dir contains a wildcard and both start_epoch and end_epoch are defined, search for files in the date range
-    if "%" in main_dir and start_epoch and end_epoch:
+    def _mono_dir_search(main_dir_inp):
+        if "%" in main_dir_inp and start_epoch and end_epoch:
+            files_raw_lis_out = []
+            for epo in conv.dt_range(start_epoch, end_epoch, day_step=1):
+                main_dir_abs = os.path.abspath(epo.strftime(main_dir_inp))
+                files_raw_lis_epo, _ = utils.walk_dir(main_dir_abs)
+                files_raw_lis_out.extend(files_raw_lis_epo)
+        else:
+            main_dir_abs = os.path.abspath(main_dir_inp)
+            files_raw_lis_out, _ = utils.walk_dir(main_dir_abs)
+        return list(sorted(files_raw_lis_out))
+
+    if utils.is_iterable(main_dir):
         files_raw_lis = []
-        for epo in conv.dt_range(start_epoch, end_epoch, day_step=1):
-            main_dir_abs = os.path.abspath(epo.strftime(main_dir))
-            files_raw_lis_epo, _ = utils.walk_dir(main_dir_abs)
-            files_raw_lis.extend(files_raw_lis_epo)
+        for d in main_dir:
+            files_raw_lis.extend(_mono_dir_search(d))
     else:
-        main_dir_abs = os.path.abspath(main_dir)
-        files_raw_lis, _ = utils.walk_dir(main_dir_abs)
+        files_raw_lis = _mono_dir_search(main_dir)
 
     files_rnx_lis = []
 

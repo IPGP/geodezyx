@@ -69,7 +69,7 @@ def run_command(command):
             break
 
 
-def _get_prod_date(date_inp, prod_ac_name=""):
+def _get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
     """
     Determines the appropriate product date based on the input date and the analysis center name.
     """
@@ -78,71 +78,82 @@ def _get_prod_date(date_inp, prod_ac_name=""):
     ult_delta = dt.timedelta(hours=24)
 
     #### the latency is because the data center does not provide the products before a certain time after the epoch of the products
-    latency_dt = dt.timedelta(hours=4)
-    is_during_latency = now - date_inp_utc < latency_dt
+    laten_ult = dt.timedelta(hours=4)
+    is_during_latency = now - date_inp_utc < laten_ult
+    if is_during_latency:
+        latency_stepback += 1
 
     if "ULT" in prod_ac_name:
-        if is_during_latency:
-            before_delta = dt.timedelta(hours=6)
-        else:
-            before_delta = dt.timedelta(hours=0)
-        date_out_srt = conv.round_dt(
-            date_inp - ult_delta - before_delta, "6h", mode="floor"
-        )
+        rnd_def = (6,"h")
     elif "NRT" in prod_ac_name:
-        if is_during_latency:
-            before_delta = dt.timedelta(hours=1)
-        else:
-            before_delta = dt.timedelta(hours=0)
-        date_out_srt = conv.round_dt(
-            date_inp - ult_delta - before_delta, "1h", mode="floor"
-        )
+        rnd_def = (1,"h")
     elif "FIN" in prod_ac_name or "RAP" in prod_ac_name:
-        date_out_srt = conv.round_dt(date_inp, "1d", mode="floor")
+        rnd_def = (1,"d")
     elif "BRDC" in prod_ac_name:
-        date_out_srt = conv.round_dt(date_inp, "1d", mode="floor")
+        rnd_def = (1,"d")
     else:
-        date_out_srt = date_inp
+        log.warning("Unknown prods. '%s', unable to find the right date", prod_ac_name)
+        return date_inp
 
+    rnd_use = str(rnd_def[0] * (1 + latency_stepback)) + rnd_def[1]
+    date_out_srt = conv.round_dt(date_inp, rnd_use, mode="floor")
     return date_out_srt
+#
+#
+# def get_best_orbclk(prod_list_inp, date_inp, prod_ac_name=""):
+#     date_right = _get_prod_date(date_inp, prod_ac_name=prod_ac_name)
+#     best_prod_out = []
+#
+#     for prod in prod_list_inp:
+#         date_prod = conv.sp3name_v3_2dt(prod)
+#         if date_prod == date_right:
+#             best_prod_out.append(prod)
+#
+#     if len(best_prod_out) == 0:
+#         best_prod_out = prod_list_inp
+#
+#     return best_prod_out
+#
+# def get_best_brdc(prod_list_inp, date_inp, prod_ac_name="BRDC"):
+#     date_right = _get_prod_date(date_inp, prod_ac_name=prod_ac_name)
+#     best_prod_out = []
+#
+#     for prod in prod_list_inp:
+#         date_prod = conv.rinexname2dt(prod)
+#         if date_prod == date_right:
+#             best_prod_out.append(prod)
+#
+#     if len(best_prod_out) == 0:
+#         best_prod_out = prod_list_inp
+#     elif len(best_prod_out) == 2:
+#         best_prod_out = [e for e in best_prod_out if "GOP"][0]
+#     else:
+#         pass
+#
+#     return best_prod_out
 
+def get_best_prods(prod_list_inp, date_inp, prod_ac_name="", brdc_mode=False, latency_stepback_max=0):
+    if brdc_mode:
+        prod_ac_name = "BRDC"
 
-def get_best_orbclk(prod_list_inp, date_inp, prod_ac_name=""):
-
-    date_right = _get_prod_date(date_inp, prod_ac_name=prod_ac_name)
     best_prod_out = []
-
-    for prod in prod_list_inp:
-        date_prod = conv.sp3name_v3_2dt(prod)
-        if date_prod == date_right:
-            best_prod_out.append(prod)
+    latstpbak = 0
+    while len(best_prod_out) == 0 and latstpbak <= latency_stepback_max:
+        date_right = _get_prod_date(date_inp, prod_ac_name=prod_ac_name, latency_stepback=latstpbak)
+        for prod in prod_list_inp:
+            date_prod = conv.rinexname2dt(prod) if brdc_mode else conv.sp3name_v3_2dt(prod)
+            if date_prod == date_right:
+                best_prod_out.append(prod)
+        latstpbak += 1
 
     if len(best_prod_out) == 0:
         best_prod_out = prod_list_inp
-
-    return best_prod_out
-
-def get_best_brdc(prod_list_inp, date_inp, prod_ac_name="BRDC"):
-    date_right = _get_prod_date(date_inp, prod_ac_name=prod_ac_name)
-    best_prod_out = []
-
-    for prod in prod_list_inp:
-        date_prod = conv.rinexname2dt(prod)
-        if date_prod == date_right:
-            best_prod_out.append(prod)
-
-    if len(best_prod_out) == 0:
-        best_prod_out = prod_list_inp
-    elif len(best_prod_out) == 2:
+    elif brdc_mode and len(best_prod_out) >= 2:
         best_prod_out = [e for e in best_prod_out if "GOP"][0]
     else:
         pass
 
     return best_prod_out
-
-
-
-
 
 
 def _get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):

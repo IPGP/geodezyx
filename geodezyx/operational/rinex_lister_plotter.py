@@ -42,7 +42,7 @@ log = logging.getLogger("geodezyx")
 
 def rinex_table_from_list(
     rnxs_inp,
-    site9_col=False,
+    site9_col=True,
     round_date=False,
     path_col=True,
     size_col=False,
