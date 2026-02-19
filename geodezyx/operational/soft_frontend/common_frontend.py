@@ -16,16 +16,10 @@ import logging
 import subprocess
 import os
 
-import hatanaka
-
 from geodezyx import conv
-from geodezyx import files_rw
 from geodezyx import operational
 
 log = logging.getLogger("geodezyx")
-
-import re
-
 
 def run_command(command):
     """
@@ -69,9 +63,46 @@ def run_command(command):
             break
 
 
-def _get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
+def get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
     """
-    Determines the appropriate product date based on the input date and the analysis center name.
+    Adjusts product dates based on data center latency and product type.
+
+    Accounts for the delay before data centers provide products after the epoch time.
+    Automatically increments latency stepback if the current time is within the latency
+    window, then rounds the date according to the product type's cadence.
+
+    Parameters
+    ----------
+    date_inp : datetime.datetime
+        The input date to be adjusted.
+    prod_ac_name : str, optional
+        The product analysis center name. Determines rounding interval:
+        - "ULT": Ultra-rapid (6-hour intervals)
+        - "NRT": Near Real-Time (1-hour intervals)
+        - "FIN" or "RAP": Final or Rapid (1-day intervals)
+        - "BRDC": Broadcast ephemeris (1-day intervals)
+        Default is empty string.
+    latency_stepback : int, optional
+        Number of periods to step back from the current time. Incremented internally
+        if within the latency window. Defaults to 0.
+
+    Returns
+    -------
+    datetime.datetime
+        The adjusted and floored date according to the product cadence.
+
+    Notes
+    -----
+    - The latency window is fixed at 4 hours for all product types.
+    - Dates are floored (rounded down) to the nearest interval boundary.
+    - If `prod_ac_name` is unrecognized, the original date is returned with a warning.
+
+    Examples
+    --------
+    >>> get_prod_date(datetime(2026, 2, 15, 10, 30), "ULT")
+    datetime(2026, 2, 15, 6, 0)
+    >>> get_prod_date(datetime(2026, 2, 15, 10, 30), "FIN")
+    datetime(2026, 2, 15, 0, 0)
     """
     now = dt.datetime.now(dt.timezone.utc)
     date_inp_utc = date_inp.replace(tzinfo=dt.timezone.utc)
@@ -98,67 +129,46 @@ def _get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
     rnd_use = str(rnd_def[0] * (1 + latency_stepback)) + rnd_def[1]
     date_out_srt = conv.round_dt(date_inp, rnd_use, mode="floor")
     return date_out_srt
-#
-#
-# def get_best_orbclk(prod_list_inp, date_inp, prod_ac_name=""):
-#     date_right = _get_prod_date(date_inp, prod_ac_name=prod_ac_name)
-#     best_prod_out = []
-#
-#     for prod in prod_list_inp:
-#         date_prod = conv.sp3name_v3_2dt(prod)
-#         if date_prod == date_right:
-#             best_prod_out.append(prod)
-#
-#     if len(best_prod_out) == 0:
-#         best_prod_out = prod_list_inp
-#
-#     return best_prod_out
-#
-# def get_best_brdc(prod_list_inp, date_inp, prod_ac_name="BRDC"):
-#     date_right = _get_prod_date(date_inp, prod_ac_name=prod_ac_name)
-#     best_prod_out = []
-#
-#     for prod in prod_list_inp:
-#         date_prod = conv.rinexname2dt(prod)
-#         if date_prod == date_right:
-#             best_prod_out.append(prod)
-#
-#     if len(best_prod_out) == 0:
-#         best_prod_out = prod_list_inp
-#     elif len(best_prod_out) == 2:
-#         best_prod_out = [e for e in best_prod_out if "GOP"][0]
-#     else:
-#         pass
-#
-#     return best_prod_out
 
-def get_best_prods(prod_list_inp, date_inp, prod_ac_name="", brdc_mode=False, latency_stepback_max=0):
-    if brdc_mode:
-        prod_ac_name = "BRDC"
-
-    best_prod_out = []
-    latstpbak = 0
-    while len(best_prod_out) == 0 and latstpbak <= latency_stepback_max:
-        date_right = _get_prod_date(date_inp, prod_ac_name=prod_ac_name, latency_stepback=latstpbak)
-        for prod in prod_list_inp:
-            date_prod = conv.rinexname2dt(prod) if brdc_mode else conv.sp3name_v3_2dt(prod)
-            if date_prod == date_right:
-                best_prod_out.append(prod)
-        latstpbak += 1
-
-    if len(best_prod_out) == 0:
-        best_prod_out = prod_list_inp
-    elif brdc_mode and len(best_prod_out) >= 2:
-        best_prod_out = [e for e in best_prod_out if "GOP"][0]
-    else:
-        pass
-
-    return best_prod_out
-
-
-def _get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
+def get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
     """
-    Formats the input dates for product downloading based on the specified analysis center and product date requirements.
+    Normalizes and formats input dates for GNSS product downloading.
+
+    Converts various date input formats to a standardized sorted list. Optionally applies
+    product-specific date adjustments to account for data center latency.
+
+    Parameters
+    ----------
+    dates_inp : datetime, list of datetime, or tuple of datetime
+        Input dates in one of three formats:
+        - Single datetime: converted to a single-element list
+        - List of datetime: used as-is
+        - Tuple of (start_date, end_date): generates daily range from start to end
+    prod_date : bool, optional
+        If True, applies `get_prod_date` to adjust dates for product latency.
+        Defaults to True.
+    prod_ac_name : str, optional
+        Analysis center name passed to `get_prod_date` for latency adjustments.
+        Defaults to empty string.
+
+    Returns
+    -------
+    list of datetime
+        Sorted list of unique datetime objects with duplicates removed.
+
+    Raises
+    ------
+    Exception
+        If `dates_inp` is neither a datetime, list, tuple, nor iterable.
+
+    Examples
+    --------
+    >>> get_dates_fmt(datetime(2026, 2, 15))
+    [datetime(2026, 2, 15, 0, 0)]
+    >>> get_dates_fmt([datetime(2026, 2, 15), datetime(2026, 2, 15)])
+    [datetime(2026, 2, 15, 0, 0)]
+    >>> get_dates_fmt((datetime(2026, 2, 15), datetime(2026, 2, 17)))
+    [datetime(2026, 2, 15, 0, 0), datetime(2026, 2, 16, 0, 0), datetime(2026, 2, 17, 0, 0)]
     """
     if type(dates_inp) is tuple:
         date_srt, date_end = dates_inp
@@ -175,12 +185,86 @@ def _get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
         raise Exception
 
     if prod_date:
-        dates_lis = [_get_prod_date(date, prod_ac_name) for date in dates_lis]
+        dates_lis = [get_prod_date(date, prod_ac_name) for date in dates_lis]
         dates_lis = list(sorted(list(set(dates_lis))))  # remove duplicates
 
     return dates_lis
 
+def get_best_prods(prod_list_inp, date_inp, prod_ac_name="", brdc_mode=False, latency_stepback_max=None):
+    """
+    Finds the best matching product file(s) for a given date with progressive latency tolerance.
 
+    Searches through available product files to match the requested date, progressively
+    increasing latency tolerance if no exact match is found. Falls back to returning all
+    products if no match is found after maximum latency attempts.
+
+    Parameters
+    ----------
+    prod_list_inp : list of str
+        List of available product file names.
+    date_inp : datetime.datetime
+        The target date to match.
+    prod_ac_name : str, optional
+        Analysis center name (e.g., "ULT", "NRT", "FIN"). Determines maximum latency steps
+        if not explicitly provided. Defaults to empty string.
+    brdc_mode : bool, optional
+        If True, treats files as BRDC (Broadcast) files and uses `rinexname2dt` for parsing.
+        If False, uses `sp3name_v3_2dt`. Defaults to False.
+    latency_stepback_max : int, optional
+        Maximum number of latency steps to attempt. If None, defaults are:
+        - "ULT": 3 steps
+        - "NRT": 23 steps
+        - Others: 0 steps
+        Defaults to None.
+
+    Returns
+    -------
+    list of str
+        List of matching product file names. If no matches found, returns the entire input list.
+        For BRDC mode with 2+ matches, attempts to filter for "GOP" products.
+
+    Notes
+    -----
+    - Performs iterative search: starts with exact date match, then incrementally steps back
+      through latency periods to find products.
+    - File naming convention interpretation varies by `brdc_mode` setting.
+    - Contains potential bug in BRDC filtering logic: `[e for e in best_prod_out if "GOP"][0]`
+      may raise IndexError if no products contain "GOP" substring.
+
+    Examples
+    --------
+    >>> get_best_prods(["GRG21001a.SP3"], datetime(2026, 1, 1), "FIN")
+    ["GRG21001a.SP3"]
+    """
+    if brdc_mode:
+        prod_ac_name = "BRDC"
+
+    if latency_stepback_max is None:
+        if "ULT" in prod_ac_name:
+            latency_stepback_max = 3
+        elif "NRT" in prod_ac_name:
+            latency_stepback_max = 23
+        else:
+            latency_stepback_max = 0
+
+    best_prod_out = []
+    latstpbak = 0
+    while len(best_prod_out) == 0 and latstpbak <= latency_stepback_max:
+        date_right = get_prod_date(date_inp, prod_ac_name=prod_ac_name, latency_stepback=latstpbak)
+        for prod in prod_list_inp:
+            date_prod = conv.rinexname2dt(prod) if brdc_mode else conv.sp3name_v3_2dt(prod)
+            if date_prod == date_right:
+                best_prod_out.append(prod)
+        latstpbak += 1
+
+    if len(best_prod_out) == 0:
+        best_prod_out = prod_list_inp
+    elif brdc_mode and len(best_prod_out) >= 2:
+        best_prod_out = [e for e in best_prod_out if "GOP"][0]
+    else:
+        pass
+
+    return best_prod_out
 def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
     """
     Downloads BRDC (Broadcast Ephemeris) files for PRIDE PPPAR from a given directory and date list.
@@ -245,7 +329,7 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
             return False, "nav_rt"
 
     ######### BROADCAST
-    dates_inp = _get_dates_fmt(dates_inp, prod_date=True, prod_ac_name="BRDC")
+    dates_inp = get_dates_fmt(dates_inp, prod_date=True, prod_ac_name="BRDC")
     dates_inp = list(set(dates_inp))  # remove duplicates
     brdc_tmp_stk = []
     for date in dates_inp:
@@ -275,7 +359,7 @@ def dl_orbclk(
     dates_inp,
     prod_ac_name,
     prod_types=("sp3", "clk", "bia", "obx", "erp"),
-    data_centers=("esa", "ign", "whu"),
+    data_centers=("cddis", "esa", "ign", "whu"),
 ):
     """
     Downloads GNSS products for PRIDE PPPAR from a given directory and date list.
@@ -309,7 +393,7 @@ def dl_orbclk(
     If at least 5 products are found, the function stops further downloads.
     """
 
-    dates_lis = _get_dates_fmt(dates_inp, prod_ac_name=prod_ac_name)
+    dates_lis = get_dates_fmt(dates_inp, prod_ac_name=prod_ac_name)
     dates_lis = list(set(dates_lis))  # remove duplicates
 
     dl_prods_fct = operational.download_gnss_products
@@ -356,7 +440,7 @@ def dl_orbclk_tite(
 
     import geodezyx.operational.gins_runner.gins_bd_update as gins_bd_update
 
-    dates_lis = _get_dates_fmt(dates_inp, prod_ac_name=prod_ac_name)
+    dates_lis = get_dates_fmt(dates_inp, prod_ac_name=prod_ac_name)
     dates_lis = list(set(dates_lis))  # remove duplicates
 
     files_list = []
@@ -415,7 +499,7 @@ def dl_orbclk_tite(
     return loc_files_out
 
 
-def dl_prods(prod_dir, dates_inp, calc_center, download_lock=None, use_tite=False):
+def dl_prods(prod_dir, dates_inp, prod_ac_name, download_lock=None, use_tite=False):
     """
     Download shared products (SP3/CLK and BRDC) once for all parallel runs.
 
@@ -426,7 +510,7 @@ def dl_prods(prod_dir, dates_inp, calc_center, download_lock=None, use_tite=Fals
     dates_inp : iterable of datetime
         If list, the list of dates for which the products are to be downloaded.
         If tuple, the start and end dates for which the products are to be downloaded.
-    calc_center : str
+    prod_ac_name : str
         Analysis center identifier.
     download_lock : threading.Lock, optional
         Lock to protect concurrent downloads (if needed).
@@ -447,9 +531,7 @@ def dl_prods(prod_dir, dates_inp, calc_center, download_lock=None, use_tite=Fals
             prodlis = operational.dl_orbclk(
                 prod_dir,
                 dates_inp,
-                calc_center,
-                prod_types=("sp3", "clk"),
-                data_centers=("esa",),
+                prod_ac_name,
             )
         finally:
             if download_lock:
@@ -466,7 +548,7 @@ def dl_prods(prod_dir, dates_inp, calc_center, download_lock=None, use_tite=Fals
         log.info("Trying to download SP3/CLK products from CNES's TITE server...")
         try:
             orbclklis_out = dl_orbclk_tite(
-                prod_dir, dates_inp, prod_ac_name=calc_center
+                prod_dir, dates_inp, prod_ac_name=prod_ac_name
             )
             if orbclklis_out:
                 log.info("SP3/CLK products successfully downloaded from TITE.")
