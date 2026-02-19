@@ -26,31 +26,55 @@ Dépendances: pandas, numpy, geodezyx, datetime
 # Installation
 # pip install git+https://github.com/GeodeZYX/geodezyx-toolbox
 # 
-import geodezyx
-import geodezyx.files_rw
-import geodezyx.conv as conv                  # Import the conversion module
-import datetime as dt
+from geodezyx import files_rw     # Import the read/write module
+from geodezyx import conv         # Import the conversion module
+from geodezyx import operational  # Import the download rinex module
 
+                
+import datetime as dt
 import pandas as pd
 import numpy as np
 
 # pour visualiser les données
 import matplotlib.pyplot as plt
 
+from pathlib import Path
+import os
+
+#%%
+# création du dossier gnss_edu_data qui va contenir les données et les résultats du TP
+my_directory = os.environ["HOME"] + "/gnss_edu_data/"
+
+# Chemin avec expansion du ~ vers le home
+folder = Path(my_directory).expanduser()
+
+# Création du dossier s'il n'existe pas
+folder.mkdir(parents=True, exist_ok=True)
+
+
+#%%
+dwl_output = operational.download_gnss_rinex(statdico={"rgp" : ["SMNE","MLVL"]},
+                                output_dir=my_directory,
+                                startdate=conv.doy2dt(2019,176),
+                                enddate=conv.doy2dt(2019,176),
+                                parallel_download = 1) 
+
 #%%
 #
-fichier_base  ='/home/snahmani/Bureau/FRS/data/data/data-2019/mlvl176z.18o'
-fichier_mobile='/home/snahmani/Bureau/FRS/data/data/data-2019/smne176z.18o'
+fichier_base     =   dwl_output[0][0]
+fichier_mobile   =   dwl_output[1][0]
 
-fichier_base='/home/psakicki/aaa_FOURBI/mlvl1760.18o'
-fichier_mobile='/home/psakicki/aaa_FOURBI/smne1760.18o'
 
 #%% Préambule
 # chargement des pandas DataFrame et utilisation
 # Lecture des observations RINEX en deux formats de DataFrame différents
 
-df_flat = geodezyx.files_rw.read_rinex2_obs(fichier_base)
-df_index = geodezyx.files_rw.read_rinex2_obs(fichier_base, set_index=['epoch', 'prn'])
+df_flat = files_rw.read_rinex_obs(fichier_base)
+
+df_index = files_rw.read_rinex_obs(fichier_base, set_index=['epoch', 'prn'])
+
+# Quelles différences observez-vous entre les deux dataframes df_flat et df_index ?
+
 # df_index['ind_ligne'] = range(len(df_index)) # à décommenter quand c'est compris
 
 #%%
