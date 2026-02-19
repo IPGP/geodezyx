@@ -150,7 +150,7 @@ def rtklib_run_mono(
         and os.path.isfile(out_res_fil)
         and os.path.getsize(out_res_fil) > 2000
     ):
-        log.info(f"RTKLIB output file {out_res_fil} already exists. Skipping...")
+        log.info(f"Output file already exists, skipping: {out_res_fil}")
         return out_res_fil
 
     #### START HEAVY PROCESSING ####
@@ -271,6 +271,7 @@ def rtklib_run_mono(
 
     if clean_tmp:
         shutils.rmtree(tmp_dir_wrk, ignore_errors=True)
+        os.remove(out_res_fil.replace(".out", "") + "_events.pos")
 
     return out_res_fil
 

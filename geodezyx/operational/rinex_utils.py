@@ -188,7 +188,7 @@ def uncomp_rnxpath(rinex_path, outdir=""):
     return out_rinex_path
 
 def crz2rnx(rinex_path, outdir="", mode="python",
-            force=True, path_of_crz2rnx="CRZ2RNX", verbose=True):
+            force=True, path_of_crz2rnx="CRZ2RNX", verbose=False):
     """
     Frontend function to uncompress a RINEX file.
     It can use either Python's `hantanaka` module (mode="python")
