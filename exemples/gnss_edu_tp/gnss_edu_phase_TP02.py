@@ -42,9 +42,13 @@ Dépendances: pandas, numpy, geodezyx, datetime, gpsdatetime, gnsstoolbox
 
 #%%
 # GeodeZYX Toolbox’s - [Sakic et al., 2019]
-import geodezyx
-import geodezyx.conv as conv                  # Import the conversion module
-import geodezyx.utils_xtra as utils_xtra
+from geodezyx import files_rw     # Import the read/write module
+from geodezyx import conv         # Import the conversion module
+from geodezyx import operational  # Import the download rinex module
+
+from geodezyx import gnss_edu     # Import the learning module
+
+
 import datetime as dt
 
 #
@@ -62,18 +66,53 @@ import numpy as np
 # pour visualiser les données
 import matplotlib.pyplot as plt
 
-# mon module
-import geodezyx.gnss_edu as gnss_edu
+from pathlib import Path
+import os
+
+
+#%%
+# création du dossier gnss_edu_data qui va contenir les données et les résultats du TP
+# see gnss_edu_phase_TP01.py
+
+my_directory = os.environ["HOME"] + "/gnss_edu_data/"
+
+# Chemin avec expansion du ~ vers le home
+folder = Path(my_directory).expanduser()
+
+# Création du dossier s'il n'existe pas
+folder.mkdir(parents=True, exist_ok=True)
+
+#%%
+# Téléchargement automatique des données RINEX des stations de SMNE et MLVL distance d'une
+# dizaine de kilomètres dans la région de Paris, France sur le serveur IGN (France)
+# données pour 1 jour (2019-176) à 30s
+# see gnss_edu_phase_TP01.py
+
+# Création d'un datetime pour gérer le jour de traitement et ne pas à avoir à gérer les doy, les jjul etc !
+my_date_to_process = dt.datetime(2019,6,25)
+
+dwl_output_station = operational.download_gnss_rinex(statdico={"rgp" : ["SMNE","MLVL"]},
+                                output_dir=my_directory,
+                                startdate= my_date_to_process ,
+                                enddate= my_date_to_process ,
+                                parallel_download = 1) 
+
+dwl_output_satellite = operational.download_gnss_products(archive_dir= my_directory,
+                                   startdate= my_date_to_process,
+                                   enddate= my_date_to_process,
+                                   AC_names=("IGS",),
+                                   repro=0,
+                                   archive_center="ign",
+                                   parallel_download = 1,
+                                   ) 
 
 # %%
 # Chargement des fichiers RINEX d'observation
-# fichier_rnx='./data/data-2019/mlvl176z.18o'
-# fichier_rnx='./data/data-2019/mlvl1760.18o'
 
-fichier_rnx='./data/data-2019/mlvl1760.18d.Z'
+fichier_rnx = dwl_output_station[0][0]
 
 # Chargement des données RINEX d'observation dans un pandas dataframe via  GeodeZYX
-df_rnx_flat, l_rnx_head = geodezyx.files_rw.read_rinex2_obs(fichier_rnx,
+df_rnx_flat, l_rnx_head = files_rw.read_rinex2_obs(fichier_rnx,
                                            return_header=True)
 
 df_rnx = df_rnx_flat.set_index(['epoch', 'prn'], drop=True)
@@ -140,6 +179,11 @@ df_rnx['ind_ligne'] = range(len(df_rnx))
 
 
 #%%
+
+
+
+#%%
+
 # Chargement des fichiers d'orbites
 fichier_sp3  = ['./data/data-2019/igs20071.sp3',
                 './data/data-2019/igs20072.sp3']
