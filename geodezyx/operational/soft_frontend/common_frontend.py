@@ -93,9 +93,11 @@ def get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
 
     Notes
     -----
-    - The latency window is fixed at 4 hours for all product types.
+    - The latency window is fixed at 3 hours for all product types.
     - Dates are floored (rounded down) to the nearest interval boundary.
     - If `prod_ac_name` is unrecognized, the original date is returned with a warning.
+    - ULT and NRT products are designed to be 2 days long,
+      so an extra day is subtracted to get the correct product date.
 
     Examples
     --------
@@ -106,18 +108,28 @@ def get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
     """
     now = dt.datetime.now(dt.timezone.utc)
     date_inp_utc = date_inp.replace(tzinfo=dt.timezone.utc)
-    ult_delta = dt.timedelta(hours=24)
+    # ULT and NRT are by design 2 days long (1 day is calculated, the other is extrapolated)
+    # so we need to substract an extra day to the date to be able to get the right product
+    if "ULT" in prod_ac_name or "NRT" in prod_ac_name:
+        delta_extra = dt.timedelta(days=1)
+    else:
+        delta_extra = dt.timedelta(days=0)
 
-    #### the latency is because the data center does not provide the products before a certain time after the epoch of the products
-    laten_ult = dt.timedelta(hours=4)
+    # the latency is because the data center does not provide the products before a
+    # certain time after the epoch of the products
+    # IGS Website: latency is 3 hours offically
+    # GRG on CDDIS: empircally, ~2 hours and 5 minutes
+    # If we are within the latency window, we need to step back one
+    # period to be able to get a substitute product
+    laten_ult = dt.timedelta(hours=3)
     is_during_latency = now - date_inp_utc < laten_ult
     if is_during_latency:
         latency_stepback += 1
 
     if "ULT" in prod_ac_name:
-        rnd_def = (6,"h")
+        rnd_def = (6+24,"h") # 6 is for the
     elif "NRT" in prod_ac_name:
-        rnd_def = (1,"h")
+        rnd_def = (1+24,"h")
     elif "FIN" in prod_ac_name or "RAP" in prod_ac_name:
         rnd_def = (1,"d")
     elif "BRDC" in prod_ac_name:
@@ -127,7 +139,7 @@ def get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
         return date_inp
 
     rnd_use = str(rnd_def[0] * (1 + latency_stepback)) + rnd_def[1]
-    date_out_srt = conv.round_dt(date_inp, rnd_use, mode="floor")
+    date_out_srt = conv.round_dt(date_inp, rnd_use, mode="floor") - delta_extra
     return date_out_srt
 
 def get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
