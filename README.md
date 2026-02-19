@@ -1,6 +1,6 @@
 <img src="./geodezyx_toolbox_logo.png" width="300">
 
-# geodezyx (aka ___The GeodeZYX Toolbox___) 
+# geodezyx
 
 **Version: 5.1.0**  
 **Date: 2026-02-03**  
