@@ -128,7 +128,7 @@ def rtklib_run_mono(
 
     # RINEX START & END - FAST
     rov_srt_fast = conv.rinexname2dt(rnx_rover)
-    bas_srt_fast = conv.rinexname2dt(rnx_base)
+    #bas_srt_fast = conv.rinexname2dt(rnx_base)
 
     # RINEX NAMES
     rov_name = os.path.basename(rnx_rover)[0:4]
@@ -282,6 +282,8 @@ def rtklib_run_pair(
     out_dir,
     tmp_dir=None,
     prod_dir=None,
+    orbclklis_inp=None,
+    brdclis_inp=None,
     igs_prods="IGS0OPSFIN",
     exp_prefix="",
     xyz_dic=None,
@@ -315,6 +317,10 @@ def rtklib_run_pair(
         Temporary directory for intermediate files.
     prod_dir : str | os.PathLike | None, default=None
         Directory where to search for orbits, clocks, and BRDC files.
+    orbclklis_inp : list of str, optional
+        List of orbit/clock files to select from if not downloading.
+    brdclis_inp : list of str, optional
+        List of BRDC files to select from if not downloading.
     igs_prods : str, default="IGS0OPSFIN"
         Analysis center/product identifier.
     procs : int, default=4
@@ -378,21 +384,12 @@ def rtklib_run_pair(
     xyz_rovers = []
     xyz_bases = []
 
-    # STEP 1: Preliminary - determine time spans and download products once
+    #  Preliminary - determine xyz dictionnaries
     log.info("STEP 1: Determining time spans for all RINEX pairs...")
-    dates_srt_stk = []
     for rnx_rov, rnx_bas in rinex_pairs:
-        # Use fast method to get approximate time range
-        rov_srt, rov_per, rov_smp = conv.rinexname2dt(rnx_rov, out_per_smp=True)
-        bas_srt, bas_per, bas_smp = conv.rinexname2dt(rnx_bas, out_per_smp=True)
-        rov_end = rov_srt + rov_per
-        bas_end = bas_srt + bas_per
-        dates_srt_stk.append(bas_srt)
-
         # Prepare coordinate lists
         site_rov = os.path.basename(rnx_rov)[0:9]
         site_bas = os.path.basename(rnx_bas)[0:9]
-
         if not xyz_dic:
             xyz_dic = {}  # create dummy dict if None provided
         xyz_rov = xyz_dic[site_rov] if site_rov in xyz_dic.keys() else [0, 0, 0]
@@ -400,17 +397,8 @@ def rtklib_run_pair(
         xyz_rovers.append(xyz_rov)
         xyz_bases.append(xyz_bas)
 
-    log.info("STEP 2: Downloading shared products (SP3/CLK and BRDC)...")
-    try:
-        orbclklis_shr, brdclis_shr = dl_prods(prod_dir, dates_srt_stk, igs_prods)
-    except Exception as e:
-        log.error(f"Failed to download shared products: {e}")
-        raise
-
-    # STEP 3: Parallel processing
-    log.info(f"STEP 3: Running {len(rinex_pairs)} RTKLIB processes in parallel...")
+    #  Parallel processing
     results = []
-
     with concurrent.futures.ThreadPoolExecutor(max_workers=procs) as executor:
         # Submit all tasks
         future_to_pair = {}
@@ -423,8 +411,8 @@ def rtklib_run_pair(
                 out_dir=out_dir,
                 tmp_dir=tmp_dir,
                 download_prods=False,  # Products already downloaded in STEP 2
-                orbclklis_inp=orbclklis_shr,
-                brdclis_inp=brdclis_shr,
+                orbclklis_inp=orbclklis_inp,
+                brdclis_inp=brdclis_inp,
                 igs_prods=igs_prods,
                 exp_prefix=exp_prefix,
                 rover_auto_conf=True,
@@ -480,13 +468,14 @@ def rtklib_run(
     solformat=None,
     sateph=None,
     force=False,
-    clean_tmp=False,
+    clean_tmp=True,
     procs=8,
     exe_path="rnx2rtkp",
 ):
 
     rnxs_pairs = []
 
+    log.info("STEP 1: Finding RINEX files and matching rover/base pairs...")
     if site_base in sites_rovers:
         log.warning(f"Base site '{site_base}' is in rover sites list, removing it")
         sites_rovers.remove(site_base)
@@ -526,12 +515,24 @@ def rtklib_run(
         rnxs_pair = (rovrow["path"], row_bse["path"])
         rnxs_pairs.append(rnxs_pair)
 
+    log.info("STEP 2: Downloading shared products (SP3/CLK and BRDC)...")
+    try:
+        orbclklis_shr, brdclis_shr = dl_prods(prod_dir,
+                                              list(df_all["date"].unique()),
+                                              igs_prods)
+    except Exception as e:
+        log.error(f"Failed to download shared products: {e}")
+        raise
+
+    log.info(f"STEP 3: Running {len(rnxs_pairs)} RTKLIB processes in parallel...")
     return operational.rtklib_run_pair(
         rnxs_pairs,
         cfgfile_generik,
         out_dir=out_dir,
         tmp_dir=tmp_dir,
         prod_dir=prod_dir,
+        orbclklis_inp=orbclklis_shr,
+        brdclis_inp=brdclis_shr,
         igs_prods=igs_prods,
         exp_prefix=exp_prefix,
         xyz_dic=xyz_dic,
