@@ -968,7 +968,7 @@ def _update_table_row_with_match(table, irow, rnx_match, all_files_mode=False):
     else:
         table.loc[irow, "ok_dwl"] = False
         table.loc[irow, "rnxnam"] = ""
-        log.warning(f"No file(s) found on server :(")
+        log.warning(f"{table.loc[irow, "rnxrgx"]} not found on server :(")
 
     table.loc[irow, "crawled"] = True
 
