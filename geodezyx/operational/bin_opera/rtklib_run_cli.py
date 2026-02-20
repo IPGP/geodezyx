@@ -68,7 +68,7 @@ Examples:
     parser.add_argument(
         "-ip",
         "--igs_prods",
-        default="GRG0OPSULT",
+        default="GRG0OPSRAP",
         help="IGS product ID (default: GRG0OPSULT)",
     )
     parser.add_argument(

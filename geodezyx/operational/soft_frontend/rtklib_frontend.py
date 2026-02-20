@@ -503,8 +503,6 @@ def rtklib_run(
     df_rov = df_all[df_all["site9"].isin(sites_rovers)]
     df_bse = df_all[df_all["site9"] == site_base]
 
-    log.info(df_all.to_string())
-
     if len(df_bse) == 0:
         log.error(f"No base RINEX files found for site: {site_base}")
         log.error(f"All sites found: {str(list(df_all["site9"].unique()))}")
