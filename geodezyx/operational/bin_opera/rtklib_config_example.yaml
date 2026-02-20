@@ -2,7 +2,9 @@
 # Use with: rtklib_run -y rtklib_config_example.yaml
 
 # Required parameters
-rnx_dir: /vol/ovpf/miroir_ovpf/DonneesTemporaires/Geodesy/GNSS/RINEX/15M01S/   # Directory containing RINEX files
+rnx_dir:
+  - /vol/ovpf/miroir_ovpf/DonneesTemporaires/Geodesy/GNSS/RINEX/15M01S/   # Directory containing RINEX files
+  - /home/ovsgnss/050_DATA_GNSS/data_centipede_reu/B59300REU
 cfgfile_generik: /opt/softs_gnss/geodezyx/exemples/rtklib_configfiles/rtknavi_example_ovpf_01b.conf  # RTKLIB configuration file
 sites_rovers:                                     # List of rover stations
   - BOMG00REU
@@ -12,18 +14,18 @@ sites_rovers:                                     # List of rover stations
   - DSRG00REU
   - SNEG00REU
   - GITG00REU
-site_base: GITG00REU              # Base station
-out_dir: /backuped/calcgnss/rtklib_process/OVPF_RAP_posmode4_TEST1  # Output directory
+site_base: B59300REU              # Base station
+out_dir: /backuped/calcgnss/rtklib_process/OVPF_RAP_posmode4_B593  # Output directory
 
 # Optional parameters
+exp_prefix: OVPF_RAP_posmode4_B593                         # Output filename prefix (default: empty)
+igs_prods: GRG0OPSRAP                                      # IGS product ID (default: GRG0OPSULT)
 tmp_dir: /backuped/calcgnss/rtklib_process/090_TMP         # Temporary directory (default: <out_dir>/TMP)
 prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib   # GNSS products directory (default: <tmp_dir>)
-igs_prods: GRG0OPSRAP                                      # IGS product ID (default: GRG0OPSULT)
-exp_prefix: OVPF_RAP_posmode4_B593                         # Output filename prefix (default: empty)
 
 # Date range (optional, processes all if not specified)
 date_srt: "2026-02-01"            # Start date (YYYY-MM-DD or YYYY-DDD)
-date_end: "2026-02-18"            # End date (YYYY-MM-DD or YYYY-DDD)
+date_end: "yesterday"            # End date (YYYY-MM-DD or YYYY-DDD)
 
 # Station coordinates (optional, uses RINEX header if not provided)
 xyz_dic:
@@ -38,7 +40,7 @@ sateph: precise  # Satellite ephemeris: brdc, precise, brdc+sbas, brdc+ssrapc, b
 # Processing options
 force: false     # Force reprocessing (overwrite existing)
 clean_tmp: true  # Clean temporary directory after processing
-procs: 8         # Number of parallel workers (default: 4)
+procs: 6         # Number of parallel workers (default: 4)
 
 # Executable path (optional)
 exe_path: rnx2rtkp
