@@ -515,9 +515,8 @@ def rtklib_run(
             log.warning(f"no base for {site} at {rov_srt}")
             continue
         elif len(df_bse_sel) > 1:
-            log.warning(
-                f"multi. bases ({len(df_bse_sel)}) for {site} at {rov_srt}, get 1st: {df_bse_sel}"
-            )
+            log.warning(f"multi. bases for {site} at {rov_srt}, get 1st:")
+            log.warning(f"{df_bse_sel}")
         row_bse = df_bse_sel.iloc[0]
 
         rnxs_pair = (rovrow["path"], row_bse["path"])
