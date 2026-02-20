@@ -34,31 +34,31 @@ Examples:
                        help="YAML configuration file with all parameters. CLI args override YAML settings.")
 
     # Required arguments (unless provided in YAML)
-    parser.add_argument("--rnx_dir", help="Directory containing RINEX files to process")
-    parser.add_argument("--cfgfile_generik", help="Path to generic RTKLIB configuration file (.conf)")
-    parser.add_argument("--sites_rovers", nargs="+", help="List of rover station names (4-char codes, e.g., TLSE ZIMM BRUS)")
-    parser.add_argument("--site_base", help="Base station name (4-char or 9-char code, e.g., GRAS or GRAS00FRA)")
-    parser.add_argument("--out_dir", help="Output directory for results")
+    parser.add_argument("-r", "--rnx_dir", help="Directory containing RINEX files to process")
+    parser.add_argument("-c","--cfgfile_generik", help="Path to generic RTKLIB configuration file (.conf)")
+    parser.add_argument("-ro","--sites_rovers", nargs="+", help="List of rover station names (4-char codes, e.g., TLSE ZIMM BRUS)")
+    parser.add_argument("-b","--site_base", help="Base station name (4-char or 9-char code, e.g., GRAS or GRAS00FRA)")
+    parser.add_argument("-o","--out_dir", help="Output directory for results")
 
     # Optional arguments
-    parser.add_argument("--tmp_dir", default=None, help="Temporary directory")
-    parser.add_argument("--prod_dir", default=None, help="GNSS products directory")
-    parser.add_argument("--igs_prods", default="GRG0OPSULT", help="IGS product ID (default: GRG0OPSULT)")
-    parser.add_argument("--exp_prefix", default="", help="Output filename prefix")
-    parser.add_argument("--date_srt", default=None, help="Start date (YYYY-MM-DD or YYYY-DDD)")
-    parser.add_argument("--date_end", default=None, help="End date (YYYY-MM-DD or YYYY-DDD)")
-    parser.add_argument("--posmode", default=None,
+    parser.add_argument("-td","--tmp_dir", default=None, help="Temporary directory")
+    parser.add_argument("-pd","--prod_dir", default=None, help="GNSS products directory")
+    parser.add_argument("-ip","--igs_prods", default="GRG0OPSULT", help="IGS product ID (default: GRG0OPSULT)")
+    parser.add_argument("-exp","--exp_prefix", default="", help="Output filename prefix")
+    parser.add_argument("-s","--date_srt", default=None, help="Start date (YYYY-MM-DD or YYYY-DDD)")
+    parser.add_argument("-e","--date_end", default=None, help="End date (YYYY-MM-DD or YYYY-DDD)")
+    parser.add_argument("-m","--posmode", default=None,
                        choices=["single", "dgps", "kinematic", "static", "moving-base", "fixed", "ppp-kinematic", "ppp-static"],
                        help="Position mode")
-    parser.add_argument("--solformat", default=None, choices=["llh", "xyz", "enu", "nmea"], help="Solution format")
-    parser.add_argument("--sateph", default=None,
+    parser.add_argument("-fmt","--solformat", default=None, choices=["llh", "xyz", "enu", "nmea"], help="Solution format")
+    parser.add_argument("-eph","--sateph", default=None,
                        choices=["brdc", "precise", "brdc+sbas", "brdc+ssrapc", "brdc+ssrcom"],
                        help="Satellite ephemeris")
-    parser.add_argument("--force", action="store_true", help="Force reprocessing")
-    parser.add_argument("--clean_tmp", action="store_true", help="Clean temp directory")
-    parser.add_argument("--procs", type=int, default=4, help="Parallel workers (default: 4)")
-    parser.add_argument("--exe_path",
-                       default="/home/sakic/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp",
+    parser.add_argument("-f","--force", action="store_true", help="Force reprocessing")
+    parser.add_argument("-cln","--clean_tmp", action="store_true", help="Clean temp directory")
+    parser.add_argument("-p","--procs", type=int, default=4, help="Parallel workers (default: 4)")
+    parser.add_argument("-x","--exe_path",
+                       default="rnx2rtkp",
                        help="Path to rnx2rtkp executable")
 
     return parser.parse_args()
