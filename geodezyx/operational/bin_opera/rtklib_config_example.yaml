@@ -22,8 +22,8 @@ igs_prods: GRG0OPSRAP                                      # IGS product ID (def
 exp_prefix: OVPF_RAP_posmode4                              # Output filename prefix (default: empty)
 
 # Date range (optional, processes all if not specified)
-date_srt: "2024-01-01"            # Start date (YYYY-MM-DD or YYYY-DDD)
-date_end: "2024-01-07"            # End date (YYYY-MM-DD or YYYY-DDD)
+date_srt: "2026-02-01"            # Start date (YYYY-MM-DD or YYYY-DDD)
+date_end: "2026-02-18"            # End date (YYYY-MM-DD or YYYY-DDD)
 
 # Station coordinates (optional, uses RINEX header if not provided)
 xyz_dic:
