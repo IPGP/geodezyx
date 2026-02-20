@@ -21,7 +21,7 @@ from geodezyx import conv
 log = logging.getLogger("geodezyx")
 
 
-def _rnx_obs_rgx(date, site=None, file_period="01D"):
+def _rnx_obs_rgx(date, site="....", file_period="01D", data_freq="30S"):
     """
     Generate RINEX observation file regex patterns for both RINEX2 and RINEX3 formats.
 
@@ -37,6 +37,8 @@ def _rnx_obs_rgx(date, site=None, file_period="01D"):
         4-character GNSS station name (e.g., 'ZIMM', 'TLSE').
         Will be converted to lowercase for RINEX2 pattern.
         If None or empty string, will match all stations.
+    file_period : str, optional
+        File period identifier for RINEX3 long filenames. Default is "01D" (daily).
 
     Returns
     -------
@@ -59,9 +61,6 @@ def _rnx_obs_rgx(date, site=None, file_period="01D"):
     """
     # If site is None or empty, use wildcards to match all stations
 
-    if not site:
-        site = "...."  # 4-character wildcard for station
-
     rnx2rgx = conv.statname_dt2rinexname(site.lower(), date, rnxtype=".*")
     rnx3rgx = conv.statname_dt2rinexname_long(
         site,
@@ -69,14 +68,14 @@ def _rnx_obs_rgx(date, site=None, file_period="01D"):
         country="...",
         data_source=".",
         file_period=file_period,
-        data_freq="...",
+        data_freq=data_freq,
         data_type=".O",
         format_compression=".*",
     )
     return str(rnx2rgx), str(rnx3rgx)
 
 
-def _rnx_nav_rgx(date, site=None, sys=".", data_source=".", file_period="01D"):
+def _rnx_nav_rgx(date, site=None, sys=".", data_source=".", file_period="...", data_freq="..."):
     """
     Generate RINEX navigation file regex patterns for both RINEX2 and RINEX3 formats.
 
@@ -109,12 +108,6 @@ def _rnx_nav_rgx(date, site=None, sys=".", data_source=".", file_period="01D"):
         - "S" : Survey/static data
         - "U" : Ultra-rapid data
         - "." : Wildcard for any source
-    file_period : str, optional
-        File period identifier for RINEX3 long filenames. Default is "01D" (daily).
-        Common values:
-        - "01D" : Daily file
-        - "01H" : Hourly file
-        - "15M" : 15-minute file
 
     Returns
     -------
@@ -146,9 +139,6 @@ def _rnx_nav_rgx(date, site=None, sys=".", data_source=".", file_period="01D"):
     >>> rnx2_gps, rnx3_gps = _rnx_nav_rgx(dt.datetime(2020, 1, 1), 'BRDC', sys="G", data_source="R")
     >>> # rnx3_gps might be: 'BRDC...._R_20200010000_01D_GN.*'
     """
-    # If site is None or empty, use wildcards to match all stations
-    if not site:
-        site = "...."  # 4-character wildcard for station
 
     rnx2rgx = conv.statname_dt2rinexname(site.lower(), date, rnxtype=".*")
     rnx3rgx = conv.statname_dt2rinexname_long(
@@ -157,7 +147,7 @@ def _rnx_nav_rgx(date, site=None, sys=".", data_source=".", file_period="01D"):
         country="...",
         data_source=data_source,
         file_period=file_period,
-        data_freq="",
+        data_freq=data_freq,
         data_type=sys + "N",
         format_compression=".*",
     )
@@ -165,7 +155,7 @@ def _rnx_nav_rgx(date, site=None, sys=".", data_source=".", file_period="01D"):
     return str(rnx2rgx), str(rnx3rgx)
 
 
-def _generic_server(date, site=None, urlserver=None, urlsuffix=None, file_period="01D"):
+def _generic_server(date, site=None, urlserver=None, urlsuffix=None, file_period="...", data_freq="..."):
     """
     Generate RINEX file URLs for a generic FTP server structure.
 
@@ -214,7 +204,7 @@ def _generic_server(date, site=None, urlserver=None, urlsuffix=None, file_period
     >>> # urls[2] might be: 'ftp://example.com/data/2020/015/zimm015a.20o.*'
     >>> # urls[3] might be: 'ftp://example.com/data/2020/015/ZIMM...._R_20200150000_01D_....O.*'
     """
-    rnx2rgx, rnx3rgx = _rnx_obs_rgx(date, site, file_period=file_period)
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(date, site, file_period=file_period, data_freq=data_freq)
 
     if not urlsuffix:
         urlsuffix = ""
@@ -366,11 +356,11 @@ def nav_bkg_server(date, site=None):
 def renag_server_crtk(date, site=None, smp_01s=False):
     if smp_01s:
         urlserver = "ftp://renag.unice.fr/centipede_1s/"
-        per = "01S"
+        freq = "01S"
     else:
         urlserver = "ftp://renag.unice.fr/centipede_30s/"
-        per = "30S"
-    urldic = _generic_server(date, site, urlserver, file_period=per)
+        freq = "30S"
+    urldic = _generic_server(date, site, urlserver, data_freq=freq)
     if len(site) != 4:
         urldic.pop(2, None)
 
