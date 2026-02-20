@@ -21,7 +21,7 @@ from geodezyx import conv
 log = logging.getLogger("geodezyx")
 
 
-def _rnx_obs_rgx(date, site="....", file_period="01D", data_freq="30S"):
+def _rnx_obs_rgx(date, site="....", file_period="...", data_freq="..."):
     """
     Generate RINEX observation file regex patterns for both RINEX2 and RINEX3 formats.
 
@@ -38,7 +38,11 @@ def _rnx_obs_rgx(date, site="....", file_period="01D", data_freq="30S"):
         Will be converted to lowercase for RINEX2 pattern.
         If None or empty string, will match all stations.
     file_period : str, optional
-        File period identifier for RINEX3 long filenames. Default is "01D" (daily).
+        File period identifier for RINEX3 long filenames.
+        Default is "01D" (daily).
+    data_freq : str, optional
+        Data frequency identifier for RINEX3 long filenames.
+        Default is "..." (wildcard).
 
     Returns
     -------
@@ -94,20 +98,8 @@ def _rnx_nav_rgx(date, site=None, sys=".", data_source=".", file_period="...", d
         If None or empty string, will match all stations.
     sys : str, optional
         GNSS system identifier for RINEX3 navigation files. Default is "." (wildcard).
-        Common values:
-        - "G" : GPS navigation data
-        - "R" : GLONASS navigation data
-        - "E" : Galileo navigation data
-        - "C" : BeiDou navigation data
-        - "M" : Mixed/Multi-GNSS navigation data
-        - "." : Wildcard for any system
     data_source : str, optional
         Data source identifier for RINEX3 long filenames. Default is "." (wildcard).
-        Common values:
-        - "R" : Real-time data
-        - "S" : Survey/static data
-        - "U" : Ultra-rapid data
-        - "." : Wildcard for any source
 
     Returns
     -------
@@ -177,6 +169,8 @@ def _generic_server(date, site=None, urlserver=None, urlsuffix=None, file_period
         Should include the protocol and base path to the RINEX data directory.
     file_period : str, optional
         File period identifier for RINEX3 long filenames. Default is "01D" (daily).
+    data_freq : str, optional
+        Data frequency identifier for RINEX3 long filenames. Default is "..." (wildcard).
 
     Returns
     -------

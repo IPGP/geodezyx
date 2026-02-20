@@ -11,6 +11,7 @@ sites_rovers:                                     # List of rover stations
   - DERG00REU
   - DSRG00REU
   - SNEG00REU
+  - GITG00REU
 site_base: GITG00REU              # Base station
 out_dir: /backuped/calcgnss/rtklib_process/OVPF_RAP_posmode4_TEST1  # Output directory
 
@@ -18,7 +19,7 @@ out_dir: /backuped/calcgnss/rtklib_process/OVPF_RAP_posmode4_TEST1  # Output dir
 tmp_dir: /backuped/calcgnss/rtklib_process/090_TMP         # Temporary directory (default: <out_dir>/TMP)
 prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib   # GNSS products directory (default: <tmp_dir>)
 igs_prods: GRG0OPSRAP                                      # IGS product ID (default: GRG0OPSULT)
-exp_prefix: OVPF_RAP_posmode4                              # Output filename prefix (default: empty)
+exp_prefix: OVPF_RAP_posmode4_B593                         # Output filename prefix (default: empty)
 
 # Date range (optional, processes all if not specified)
 date_srt: "2026-02-01"            # Start date (YYYY-MM-DD or YYYY-DDD)
@@ -27,6 +28,7 @@ date_end: "2026-02-18"            # End date (YYYY-MM-DD or YYYY-DDD)
 # Station coordinates (optional, uses RINEX header if not provided)
 xyz_dic:
   GITG00REU: [+3.354343977502337e06, +4.914925760476323e06, -2.294766603476249e06]
+  B59300REU: [3364606.0383,  4907503.0340, -2293500.0091]
 
 # RTKLIB configuration overrides (optional)
 posmode: 4       # Position mode: single, dgps, kinematic, static, moving-base, fixed, ppp-kinematic, ppp-static
