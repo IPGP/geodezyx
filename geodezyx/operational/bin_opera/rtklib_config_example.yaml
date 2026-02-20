@@ -38,8 +38,8 @@ solformat: xyz   # Solution format: llh, xyz, enu, nmea
 sateph: precise  # Satellite ephemeris: brdc, precise, brdc+sbas, brdc+ssrapc, brdc+ssrcom
 
 # Processing options
-force: false     # Force reprocessing (overwrite existing)
-clean_tmp: true  # Clean temporary directory after processing
+force: False     # Force reprocessing (overwrite existing)
+clean_tmp: True  # Clean temporary directory after processing
 procs: 6         # Number of parallel workers (default: 4)
 
 # Executable path (optional)

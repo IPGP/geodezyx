@@ -19,10 +19,14 @@ from geodezyx.operational.soft_frontend import rtklib_frontend
 from geodezyx import utils
 
 import logging
-log = logging.getLogger('geodezyx')
+
+from geodezyx.stats import kwargs_for_jacobian
+
+log = logging.getLogger("geodezyx")
 
 # Extract defaults from rtklib_run function at module level for synchronization
 RTKLIB_RUN_DEFAULTS = utils.fct_def_args(rtklib_frontend.rtklib_run)
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -68,7 +72,10 @@ Examples:
 
     # Optional arguments    parser.add_argument("-td","--tmp_dir", default=None, help="Temporary directory (default: None, will use out_dir/TMP)")
     parser.add_argument(
-        "-pd", "--prod_dir", default=None, help="GNSS products directory (default: None, will use tmp_dir)"
+        "-pd",
+        "--prod_dir",
+        default=None,
+        help="GNSS products directory (default: None, will use tmp_dir)",
     )
     parser.add_argument(
         "-ip",
@@ -77,13 +84,22 @@ Examples:
         help="IGS product ID (default: GRG0OPSULT)",
     )
     parser.add_argument(
-        "-exp", "--exp_prefix", default="", help="Output filename prefix (default: empty string)"
+        "-exp",
+        "--exp_prefix",
+        default="",
+        help="Output filename prefix (default: empty string)",
     )
     parser.add_argument(
-        "-s", "--date_srt", default=None, help="Start date (YYYY-MM-DD or YYYY-DDD, default: None = all files)"
+        "-s",
+        "--date_srt",
+        default=None,
+        help="Start date (YYYY-MM-DD or YYYY-DDD, default: None = all files)",
     )
     parser.add_argument(
-        "-e", "--date_end", default=None, help="End date (YYYY-MM-DD or YYYY-DDD, default: None = all files)"
+        "-e",
+        "--date_end",
+        default=None,
+        help="End date (YYYY-MM-DD or YYYY-DDD, default: None = all files)",
     )
     parser.add_argument(
         "-m",
@@ -104,28 +120,43 @@ Examples:
         help="Position mode (default: None, uses config file setting)",
     )
     parser.add_argument(
-        "-fmt",
+        "-sol",
         "--solformat",
-        default=RTKLIB_RUN_DEFAULTS.get('solformat'),
+        default=RTKLIB_RUN_DEFAULTS.get("solformat"),
         choices=["llh", "xyz", "enu", "nmea"],
         help=f"Solution format (default: {RTKLIB_RUN_DEFAULTS.get('solformat')}, uses config file setting)",
     )
     parser.add_argument(
         "-eph",
         "--sateph",
-        default=RTKLIB_RUN_DEFAULTS.get('sateph'),
+        default=RTKLIB_RUN_DEFAULTS.get("sateph"),
         choices=["brdc", "precise"],
         help=f"Satellite ephemeris (default: {RTKLIB_RUN_DEFAULTS.get('sateph')}, uses config file setting)",
     )
-    parser.add_argument("-f", "--force", action="store_true", help=f"Force reprocessing (default: {RTKLIB_RUN_DEFAULTS.get('force')})")
     parser.add_argument(
-        "-cln", "--clean_tmp", action="store_true", help=f"Clean temp directory (default: {RTKLIB_RUN_DEFAULTS.get('clean_tmp')})"
+        "-f",
+        "--force",
+        action="store_true",
+        help=f"Force reprocessing (default: {RTKLIB_RUN_DEFAULTS.get('force')})",
     )
     parser.add_argument(
-        "-p", "--procs", type=int, default=RTKLIB_RUN_DEFAULTS.get('procs'), help=f"Parallel workers (default: {RTKLIB_RUN_DEFAULTS.get('procs')})"
+        "-cln",
+        "--clean_tmp",
+        action="store_true",
+        help=f"Clean temp directory (default: {RTKLIB_RUN_DEFAULTS.get('clean_tmp')})",
     )
     parser.add_argument(
-        "-x", "--exe_path", default=RTKLIB_RUN_DEFAULTS.get('exe_path'), help=f"Path to rnx2rtkp executable (default: {RTKLIB_RUN_DEFAULTS.get('exe_path')})"
+        "-p",
+        "--procs",
+        type=int,
+        default=RTKLIB_RUN_DEFAULTS.get("procs"),
+        help=f"Parallel workers (default: {RTKLIB_RUN_DEFAULTS.get('procs')})",
+    )
+    parser.add_argument(
+        "-x",
+        "--exe_path",
+        default=RTKLIB_RUN_DEFAULTS.get("exe_path"),
+        help=f"Path to rnx2rtkp executable (default: {RTKLIB_RUN_DEFAULTS.get('exe_path')})",
     )
 
     return parser.parse_args()
@@ -133,69 +164,58 @@ Examples:
 
 def main():
     """Main entry point for the RTKLIB CLI."""
-    args = parse_args()
+    kwargs_cli = parse_args()
 
     # Load YAML config if provided
-    config = {}
-    if args.config_yaml:
-        yaml_path = Path(args.config_yaml)
+    kwargs_cfg = {}
+    if kwargs_cli.config_yaml:
+        yaml_path = Path(kwargs_cli.config_yaml)
         if not yaml_path.exists():
-            print(
-                f"Error: YAML config file not found: {args.config_yaml}",
-                file=sys.stderr,
-            )
+            log.error(f"Error: YAML config file not found: {kwargs_cli.config_yaml}")
             sys.exit(1)
         with open(yaml_path, "r") as f:
-            config = yaml.safe_load(f) or {}
+            kwargs_cfg = yaml.safe_load(f) or {}
 
     # Start with function defaults
-    kwargs = dict(RTKLIB_RUN_DEFAULTS)
+    kwargs_out = dict(RTKLIB_RUN_DEFAULTS)
 
     # Override with YAML config
-    if config:
-        kwargs.update(config)
+    if kwargs_cfg:
+        kwargs_out.update(kwargs_cfg)
 
     # Override with CLI args (only if explicitly provided)
-    for arg_name in vars(args):
+    for arg_name in vars(kwargs_out):
         if arg_name == "config_yaml":  # Skip the YAML config file argument itself
             continue
 
-        cli_val = getattr(args, arg_name)
-
-        # Only override if CLI value is not None (default)
-        # Exception: boolean args (force, clean_tmp) should override defaults
-        if arg_name in ['force', 'clean_tmp']:
-            # Boolean args: always include them
-            kwargs[arg_name] = cli_val
-        elif cli_val is not None:
-            # Other args: only include if explicitly provided
-            kwargs[arg_name] = cli_val
-
+        kwargs_out[arg_name] = getattr(kwargs_cli, arg_name)
 
     # Parse dates if provided
-    if kwargs.get("date_srt") and kwargs.get("date_end"):
+    if kwargs_out.get("date_srt") and kwargs_out.get("date_end"):
         try:
-            kwargs["date_srt"], kwargs["date_end"] = minmax_pattern_dt(
-                kwargs["date_srt"], kwargs["date_end"]
+            kwargs_out["date_srt"], kwargs_out["date_end"] = minmax_pattern_dt(
+                kwargs_out["date_srt"], kwargs_out["date_end"]
             )
         except Exception as e:
             print(f"Error parsing dates: {e}", file=sys.stderr)
             sys.exit(1)
 
     log.info(f"RTKLIB RUN CLI parameters:")
-    for key, value in sorted(kwargs.items()):
+    for key, value in sorted(kwargs_out.items()):
         log.info(f"  {key}: {value}")
 
     # Call the function
     try:
-        results = rtklib_frontend.rtklib_run(**kwargs)
+        results = rtklib_frontend.rtklib_run(**kwargs_out)
         successful = sum(1 for r in results if r)
         return 0 if successful > 0 else 1
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         import traceback
+
         traceback.print_exc()
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())
