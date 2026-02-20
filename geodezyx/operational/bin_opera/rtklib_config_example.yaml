@@ -10,7 +10,6 @@ sites_rovers:                                     # List of rover stations
   - CFNG00REU
   - DERG00REU
   - DSRG00REU
-  - GITG00REU
   - SNEG00REU
 site_base: GITG00REU              # Base station
 out_dir: /backuped/calcgnss/rtklib_process/OVPF_RAP_posmode4_TEST1  # Output directory

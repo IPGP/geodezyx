@@ -487,6 +487,10 @@ def rtklib_run(
 
     rnxs_pairs = []
 
+    if site_base in sites_rovers:
+        log.warning(f"Base site '{site_base}' is in rover sites list, removing it")
+        sites_rovers.remove(site_base)
+
     rnxs_all = operational.rinex_finder(
         rnx_dir,
         specific_sites=sites_rovers + [site_base],
