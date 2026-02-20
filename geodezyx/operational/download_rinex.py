@@ -637,7 +637,7 @@ def _server_select(datacenter, date, site=None):
     elif datacenter == "renag_crtk":
         urldic = renag_server_crtk(date, site)
     elif datacenter == "renag_crtk_01s":
-        urldic = renag_server_crtk(date, site, smp_01sec=True)
+        urldic = renag_server_crtk(date, site, smp_01s=True)
         mode1hz = True
     elif datacenter == "rgp_01s":
         urldic = rgp_ign_smn_01s_server(date, site)
