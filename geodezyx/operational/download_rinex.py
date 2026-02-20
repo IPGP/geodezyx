@@ -56,55 +56,28 @@ def _rnx_obs_rgx(date, site=None):
     - Data frequency: wildcard ("...")
     - Data type: .O (observation)
     - Format/compression: wildcard (".*")
-
-    Examples
-    --------
-    ```
-    >>> import datetime as dt
-    >>> rnx2_pattern, rnx3_pattern = _rnx_obs_rgx(dt.datetime(2020, 1, 1), 'ZIMM')
-    >>> # rnx2_pattern might be: 'zimm001a.20o.*'
-    >>> # rnx3_pattern might be: 'ZIMM...._R_20200010000_01D_....O.*'
-    >>> # Match all stations:
-    >>> rnx2_all, rnx3_all = _rnx_obs_rgx(dt.datetime(2020, 1, 1), None)
-    >>> # rnx2_all might be: '.*001a.20o.*'
-    >>> # rnx3_all might be: '...._._20200010000_01D_....O.*'
-    ```
     """
     # If site is None or empty, use wildcards to match all stations
-    if not site:
-        # For RINEX2: .*doy0.yyo.* (matches any station name)
-        doy = conv.dt2doy(date)
-        year_short = date.strftime("%y")
-        rnx2rgx = f".*{doy}0.{year_short}o.*"
 
-        if date.hour > 0:
-            per = "01H"  # daily file
-        else:
-            per = "01D"
-
-        # For RINEX3: ....____20200010000_01D_....O.* (4 wildcards for station)
-        rnx3rgx = conv.statname_dt2rinexname_long(
-            "....",  # 4-char wildcard for station
-            date,
-            country="...",
-            data_source=".",
-            file_period=per,
-            data_freq="...",
-            data_type=".O",
-            format_compression=".*",
-        )
+    if date.hour > 0:
+        per = "01H"  # daily file
     else:
-        rnx2rgx = conv.statname_dt2rinexname(site.lower(), date, rnxtype=".*")
-        rnx3rgx = conv.statname_dt2rinexname_long(
-            site,
-            date,
-            country="...",
-            data_source=".",
-            file_period="01D",
-            data_freq="...",
-            data_type=".O",
-            format_compression=".*",
-        )
+        per = "01D"
+
+    if not site:
+        site = "...."  # 4-character wildcard for station
+
+    rnx2rgx = conv.statname_dt2rinexname(site.lower(), date, rnxtype=".*")
+    rnx3rgx = conv.statname_dt2rinexname_long(
+        site,
+        date,
+        country="...",
+        data_source=".",
+        file_period=per,
+        data_freq="...",
+        data_type=".O",
+        format_compression=".*",
+    )
     return str(rnx2rgx), str(rnx3rgx)
 
 
@@ -174,34 +147,19 @@ def _rnx_nav_rgx(date, site=None, sys=".", data_source="."):
     """
     # If site is None or empty, use wildcards to match all stations
     if not site:
-        # For RINEX2: .*doy[a-x].yyn.* (matches any station name)
-        doy = conv.dt2doy(date)
-        year_short = date.strftime("%y")
-        rnx2rgx = f".*{doy}[a-x].{year_short}n.*"
+        site = "...."  # 4-character wildcard for station
 
-        # For RINEX3: ....____20200010000_01D_[MGR]N.* (4 wildcards for station)
-        rnx3rgx = conv.statname_dt2rinexname_long(
-            "....",  # 4-char wildcard for station
-            date,
-            country="...",
-            data_source=data_source,
-            file_period="01D",
-            data_freq="",
-            data_type=sys + "N",
-            format_compression=".*",
-        )
-    else:
-        rnx2rgx = conv.statname_dt2rinexname(site.lower(), date, rnxtype=".*")
-        rnx3rgx = conv.statname_dt2rinexname_long(
-            site,
-            date,
-            country="...",
-            data_source=data_source,
-            file_period="01D",
-            data_freq="",
-            data_type=sys + "N",
-            format_compression=".*",
-        )
+    rnx2rgx = conv.statname_dt2rinexname(site.lower(), date, rnxtype=".*")
+    rnx3rgx = conv.statname_dt2rinexname_long(
+        site,
+        date,
+        country="...",
+        data_source=data_source,
+        file_period="01D",
+        data_freq="",
+        data_type=sys + "N",
+        format_compression=".*",
+    )
 
     return str(rnx2rgx), str(rnx3rgx)
 
