@@ -13,9 +13,6 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
-#sys.path.insert(0, "/home/psakicki/CODES/GeodeZYX-Toolbox_v4/geodezyx")
-#sys.path.insert(0, "/home/psakicki/CODES/GeodeZYX-Toolbox_v4/")
-
 
 # -- Project information -----------------------------------------------------
 
