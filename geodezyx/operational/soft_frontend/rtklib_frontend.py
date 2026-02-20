@@ -516,7 +516,7 @@ def rtklib_run(
             continue
         elif len(df_bse_sel) > 1:
             log.warning(
-                f"multi. bases ({len(df_bse_sel)}) for {site} at {rov_srt}, get 1st: {df_bse_sel.iloc[0]}"
+                f"multi. bases ({len(df_bse_sel)}) for {site} at {rov_srt}, get 1st: {df_bse_sel}"
             )
         row_bse = df_bse_sel.iloc[0]
 
