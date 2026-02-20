@@ -258,10 +258,11 @@ def get_best_prods(prod_list_inp, date_inp, prod_ac_name="", brdc_mode=False, la
     best_prod_out = []
     latstpbak = 0
     while len(best_prod_out) == 0 and latstpbak <= latency_stepback_max:
-        date_right = get_prod_date(date_inp, prod_ac_name=prod_ac_name, latency_stepback=latstpbak)
+        date_best = get_prod_date(date_inp, prod_ac_name=prod_ac_name, latency_stepback=latstpbak)
         for prod in prod_list_inp:
             date_prod = conv.rinexname2dt(prod) if brdc_mode else conv.sp3name_v3_2dt(prod)
-            if date_prod == date_right:
+            log.debug(f"Date: {date_prod} / Date best: {date_best} / Product: {prod}")
+            if date_prod == date_best:
                 best_prod_out.append(prod)
         latstpbak += 1
 
