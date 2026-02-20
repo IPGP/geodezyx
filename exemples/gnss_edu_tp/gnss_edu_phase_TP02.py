@@ -45,20 +45,14 @@ Dépendances: pandas, numpy, geodezyx, datetime, gpsdatetime, gnsstoolbox
 from geodezyx import files_rw     # Import the read/write module
 from geodezyx import conv         # Import the conversion module
 from geodezyx import operational  # Import the download rinex module
-
 from geodezyx import gnss_edu     # Import the learning module
-
+from geodezyx import reffram      # Import the reference frame/higher geodesy module
 
 import datetime as dt
-
 #
 import gpsdatetime as gpst
-
 import gnsstoolbox.orbits as orb
-import gnsstoolbox.gnss_const as gnss_const
-import gnsstoolbox.gnsstools as tools
-import gnsstoolbox.gnss_process as proc
-import gnsstoolbox.gnss_corr as gnss_corr
+
 
 import pandas as pd
 import numpy as np
@@ -161,24 +155,19 @@ df_rnx['ind_ligne'] = range(len(df_rnx))
 
 
 #%%
-print(dwl_output_satellite[0])
-df_sp3 = files_rw.read_sp3(dwl_output_satellite[0])
-
-
-
+fichier_sp3 = dwl_output_satellite[0]
+df_sp3 = files_rw.read_sp3(fichier_sp3)
 
 #%%
 
 # Chargement des fichiers d'orbites
-fichier_sp3  = ['./data/data-2019/igs20071.sp3',
-                './data/data-2019/igs20072.sp3']
 fichier_brdc = './data/data-2019/mlvl176z.18n'
 
 mysp3 = orb.orbit()
 mysp3.loadSp3(fichier_sp3)
 
 mynav = orb.orbit()
-mynav.loadRinexN('./data/data-2019/BRDC00GOP_R_20181760000_01D_MN.rnx')
+mynav.loadRinexN(fichier_brdc)
 
 # Il faut calculer la position de chaque satellite GNSS à chaque temps d'émission
 t = gpst.gpsdatetime()
@@ -190,13 +179,18 @@ dte_sat = []
 dRelat = []
 
 for (time_i,prn_i) in df_rnx.index:
-
+    #### OLD
     t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
-    
-    t_emission_mjd  = t.mjd - df_rnx.loc[(time_i,prn_i), 'C1'] / gnss_const.c / 86400.0
-    
+    t_emission_mjd  = t.mjd - df_rnx.loc[(time_i,prn_i), 'C1'] / conv.SPEED_OF_LIGHT / 86400.0
     (X_sat_v,Y_sat_v,Z_sat_v,dte_sat_v)	 = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd)
-    
+
+    #### NEW
+    # t_rec = time_i.to_numpy()
+    # dt_ps = df_rnx.loc[(time_i,prn_i), 'C1'] / conv.SPEED_OF_LIGHT * 1e12 # temps de vol en ps
+    # t_emi = t_rec - np.timedelta64(int(dt_ps), 'ps')
+    # orb_df_out = reffram.orb_df_lagrange_interpolate(df_sp3, t_emi)
+    # X_sat_v,Y_sat_v,Z_sat_v,dte_sat_v = orb_df_out.iloc[0]
+
     # calcul de l'effet relativiste
     delta_t = 1e-3 # écart de temps en +/- pour calculer la dérivée 
     (Xs1,Ys1,Zs1,clocks1) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd - delta_t / 86400.0)    
@@ -205,7 +199,7 @@ for (time_i,prn_i) in df_rnx.index:
     VX      = (np.array([Xs2-Xs1, Ys2-Ys1, Zs2-Zs1]))/2.0/delta_t
     VX0     = np.array([X_sat_v,Y_sat_v,Z_sat_v])
 
-    dRelat_v  = -2.0 * VX0.T@ VX /(gnss_const.c **2)
+    dRelat_v  = -2.0 * VX0.T@ VX /(conv.SPEED_OF_LIGHT **2)
     
     # temps d'emission du signal GNSS en temps GNSS (mjd)
     t_emission_mjd = t_emission_mjd - dte_sat_v / 86400.0 - dRelat_v / 86400.0
@@ -279,7 +273,7 @@ while np.linalg.norm(dP_est)>1:
     print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
     
     # Calculer les coordonnées ENU locales
-    E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
+    E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
     print("Est (E):", E)
     print("Nord (N):", N)
     print("Haut (U):", U)
@@ -290,7 +284,7 @@ while np.linalg.norm(dP_est)>1:
 
 fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial calcul.", 
                                       save_path="./trivial_bis.pdf",
-                           P_est=P_est, P_rnx_header=P_rnx_header, tools=tools);
+                           P_est=P_est, P_rnx_header=P_rnx_header, conv_module=conv);
 
 
 #del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
@@ -314,7 +308,7 @@ while np.linalg.norm(dP_est)>1:
                         (df_rnx['Z_sat'].values - P_app[2])**2)
 
     # Vecteur des observations corrigées des différents modèles
-    B = df_rnx['C1'].values - distances + gnss_const.c * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
+    B = df_rnx['C1'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
 
     # Construction de la matrice des dérivées partielles
     df_dX = (P_app[0] - df_rnx['X_sat'].values) / distances
@@ -339,7 +333,7 @@ print("\n")
 print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
 
 # Calculer les coordonnées ENU locales
-E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
+E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
 print("Est (E):", E)
 print("Nord (N):", N)
 print("Haut (U):", U)
@@ -347,7 +341,7 @@ print("\n")
 
 
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Satellite clocks correction", save_path="./sat_clocks_only.png",
-                           P_est=P_est, P_rnx_header=P_rnx_header, tools=tools)
+                           P_est=P_est, P_rnx_header=P_rnx_header, conv_module=conv)
 
 
 #del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
@@ -371,7 +365,7 @@ while np.linalg.norm(dP_est)>1:
                         (df_rnx['Z_sat'].values - P_app[2])**2)
 
     # Vecteur des observations corrigées des différents modèles
-    B = df_rnx['C1'].values - distances + gnss_const.c * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
+    B = df_rnx['C1'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
 
     # Construction de la matrice des dérivées partielles
     df_dX = (P_app[0] - df_rnx['X_sat'].values) / distances
@@ -396,7 +390,7 @@ print("\n")
 print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
 
 # Calculer les coordonnées ENU locales
-E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
+E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
 print("Est (E):", E)
 print("Nord (N):", N)
 print("Haut (U):", U)
@@ -404,7 +398,7 @@ print("\n")
 
 
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat", save_path="./corr_sat_clock.png",
-                           P_est=P_est, P_rnx_header=P_rnx_header, tools=tools)
+                           P_est=P_est, P_rnx_header=P_rnx_header, conv_module=conv)
 
 
 del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
@@ -422,7 +416,7 @@ print('*****  + Sagnac *****')
 def rotate_around_z(row):
     # C1 / c -> temps de vol
     # temps de vol * vitesse angulaire rotation terrestre -> alpha_rad
-    alpha_rad = row['C1'] / gnss_const.c * gnss_const.Omega_e
+    alpha_rad = row['C1'] / conv.SPEED_OF_LIGHT * conv.EARTH_ROTATION_MEAN_ANGULAR_VELOCITY
     # Matrice de rotation autour de l'axe Z
     Rz = np.array([[np.cos(alpha_rad), -np.sin(alpha_rad), 0],
                    [np.sin(alpha_rad), np.cos(alpha_rad), 0],
@@ -449,7 +443,7 @@ while np.linalg.norm(dP_est)>1:
                         (df_Sagnac['Z_sat'].values - P_app[2])**2)
 
     # Vecteur des observations corrigées des différents modèles
-    B = df_rnx['C1'].values - distances + gnss_const.c * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
+    B = df_rnx['C1'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
 
     # Construction de la matrice des dérivées partielles
     df_dX = (P_app[0] - df_Sagnac['X_sat'].values) / distances
@@ -474,7 +468,7 @@ print("\n")
 print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
 
 # Calculer les coordonnées ENU locales
-E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
+E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
 print("Est (E):", E)
 print("Nord (N):", N)
 print("Haut (U):", U)
@@ -526,7 +520,7 @@ while np.linalg.norm(dP_est[0:3])>1:
                         (df_Sagnac['Z_sat'].values - P_app[2])**2)
 
     # Vecteur des observations corrigées des différents modèles
-    B = df_rnx['C1'].values - distances + gnss_const.c * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
+    B = df_rnx['C1'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
 
     # Construction de la matrice des dérivées partielles
     df_dX = (P_app[0] - df_Sagnac['X_sat'].values) / distances
@@ -558,14 +552,14 @@ print("\n")
 print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
 
 # Calculer les coordonnées ENU locales
-E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
+E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
 print("Est (E):", E)
 print("Nord (N):", N)
 print("Haut (U):", U)
 print("\n")
 
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac", save_path="./corr_sat_clock_sagnac.png",
-                           P_est=P_est[:3], P_rnx_header=P_rnx_header, tools=tools)
+                           P_est=P_est[:3], P_rnx_header=P_rnx_header, conv_module=conv)
 
 
 del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distances, i, epoch, epoch_uniques, nb_epochs
@@ -593,13 +587,12 @@ print('*****  + horloges récepteur *****')
 print('*****  + iono Klobuchar *****')
 
 # Calcul des Az et des Ele de chaque mesure
-# import gnsstoolbox.gnsstools as tools
 # toolAzEle : azimut and elevation (radians) for one or several satellites Xs,Ys,Zs (scalar or vector) seen from a point with X,Y,Z coordinates.
 
-Az_rad, Ele_rad = tools.toolAzEle(P_rnx_header[0],P_rnx_header[1],P_rnx_header[2],df_rnx.X_sat,df_rnx.Y_sat,df_rnx.Z_sat)
+Az_rad, Ele_rad = conv.xyz2azi_ele(P_rnx_header[0],P_rnx_header[1],P_rnx_header[2],df_rnx.X_sat,df_rnx.Y_sat,df_rnx.Z_sat)
 
-# toolCartGeoGRS80 : cartesian to geographic coordinates conversion. All angles are given in radians.
-lon,lat,h = tools.toolCartGeoGRS80(P_rnx_header[0],P_rnx_header[1],P_rnx_header[2])
+# xyz2geo : cartesian to geographic coordinates conversion. All angles are given in radians.
+lon,lat,h = conv.xyz2geo(P_rnx_header[0],P_rnx_header[1],P_rnx_header[2])
 
 # radian to degree
 rad2deg = 180 / np.pi
@@ -655,7 +648,7 @@ while np.linalg.norm(dP_est[0:3])>1:
                         (df_Sagnac['Z_sat'].values - P_app[2])**2)
 
     # Vecteur des observations corrigées des différents modèles
-    B = df_rnx['C1'].values - distances + gnss_const.c * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values ) - df_rnx['dIon1'].values
+    B = df_rnx['C1'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values ) - df_rnx['dIon1'].values
 
     # Construction de la matrice des dérivées partielles
     df_dX = (P_app[0] - df_Sagnac['X_sat'].values) / distances
@@ -688,7 +681,7 @@ print("\n")
 print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
 
 # Calculer les coordonnées ENU locales
-E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
+E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
 print("Est (E):", E)
 print("Nord (N):", N)
 print("Haut (U):", U)
@@ -714,16 +707,16 @@ print('*****  + Sagnac *****')
 print('*****  + horloges récepteur *****')
 print('*****  + iono CL(C1,P2) *****')
 
-f1 = gnss_const.f1  
-f2 = gnss_const.f2
+f1 = conv.L1_CARRIER_FREQUENCY
+f2 = conv.L2_CARRIER_FREQUENCY
 
-l1 = gnss_const.lambda1
-l2 = gnss_const.lambda2
+l1 = conv.L1_WAVELENGTH
+l2 = conv.L2_WAVELENGTH
 
 # On applique la formule de la combinaison linéaire
 # l3 = (f1**2*l1- f2**2*l2)/(f1**2-f2**2);
 # qui se simplifie par:
-l3=gnss_const.c/(f1+f2)
+l3=conv.SPEED_OF_LIGHT/(f1+f2)
 
 
 # attention : on se rend compte que les mesures L1 et L2 sont en cycle alors que l'on
@@ -756,7 +749,7 @@ del f1, f2, l1, l2
 
 #     t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
     
-#     t_emission_mjd  = t.mjd - df_rnx.loc[(time_i,prn_i), 'P3'] / gnss_const.c / 86400.0
+#     t_emission_mjd  = t.mjd - df_rnx.loc[(time_i,prn_i), 'P3'] / conv.SPEED_OF_LIGHT / 86400.0
     
 #     (X_sat_v,Y_sat_v,Z_sat_v,dte_sat_v)	 = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd)
        
@@ -827,7 +820,7 @@ while np.linalg.norm(dP_est[0:3])>1:
                         (df_Sagnac['Z_sat'].values - P_app[2])**2)
 
     # Vecteur des observations corrigées des différents modèles
-    B = df_rnx['P3'].values - distances + gnss_const.c * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
+    B = df_rnx['P3'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
 
     # Construction de la matrice des dérivées partielles
     df_dX = (P_app[0] - df_Sagnac['X_sat'].values) / distances
@@ -861,7 +854,7 @@ print("\n")
 print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
 
 # Calculer les coordonnées ENU locales
-E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
+E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
 print("Est (E):", E)
 print("Nord (N):", N)
 print("Haut (U):", U)
@@ -870,7 +863,7 @@ print("\n")
 
 
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac et iono", save_path="./corr_sat_clock_sagnac_iono.png",
-                           P_est=P_est[:3], P_rnx_header=P_rnx_header, tools=tools)
+                           P_est=P_est[:3], P_rnx_header=P_rnx_header, conv_module=conv)
 
 del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distances, i, epoch, epoch_uniques, nb_epochs
 
@@ -896,7 +889,7 @@ print('*****  On doit obtenir la même chose que précédemment *****')
 def rotate_around_z(row):
     # C1 / c -> temps de vol
     # temps de vol * vitesse angulaire rotation terrestre -> alpha_rad
-    alpha_rad = row['C1'] / gnss_const.c * gnss_const.Omega_e
+    alpha_rad = row['C1'] / conv.SPEED_OF_LIGHT * conv.EARTH_ROTATION_MEAN_ANGULAR_VELOCITY
     # Matrice de rotation autour de l'axe Z
     Rz = np.array([[np.cos(alpha_rad), -np.sin(alpha_rad), 0],
                    [np.sin(alpha_rad), np.cos(alpha_rad), 0],
@@ -936,7 +929,7 @@ while np.linalg.norm(dP_est[0:3])>1:
                         (df_Sagnac['Z_sat'].values - P_app[2])**2)
 
     # Vecteur des observations corrigées des différents modèles
-    B = df_rnx['P3'].values - distances + gnss_const.c * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
+    B = df_rnx['P3'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
 
     # Construction de la matrice des dérivées partielles
     df_dX = (P_app[0] - df_Sagnac['X_sat'].values) / distances
@@ -970,7 +963,7 @@ print("\n")
 print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
 
 # Calculer les coordonnées ENU locales
-E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
+E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
 print("Est (E):", E)
 print("Nord (N):", N)
 print("Haut (U):", U)
@@ -1006,8 +999,8 @@ print('*****  + TROPO     *****')
 print('*****  + angle de coupure     *****')
 
 
-# toolCartGeoGRS80 : cartesian to geographic coordinates conversion. All angles are given in radians.
-lon, lat, h = tools.toolCartGeoGRS80(P_rnx_header[0],P_rnx_header[1],P_rnx_header[2])
+# xyz2geo : cartesian to geographic coordinates conversion. All angles are given in radians.
+lon, lat, h = conv.xyz2geo(P_rnx_header[0],P_rnx_header[1],P_rnx_header[2])
 
 # grille gpt3 
 gpt3_5 = gnss_edu.gpt3_5_fast_readGrid(filename ='gpt3_5.grd')
@@ -1027,7 +1020,7 @@ for (time_i,prn_i) in df_rnx.index:
     #gmfh, gmfw = gpt3.gmf(dmjd=t.mjd, dlat=lat, dlon=lon, dhgt=h, zd =np.pi/2-df_rnx.loc[(time_i,prn_i), 'Ele']*np.pi/180)
     gmfh = 1/np.sin(df_rnx.loc[(time_i,prn_i), 'Ele']*np.pi/180)
     gmfw = gmfh
-    T = gpt3.gpt3_5_fast(mjd=t.mjd, lat=np.array([lat]), lon=np.array([lon]), h_ell=np.array([h]), it=0, grid=gpt3_5)
+    T = gnss_edu.gpt3_5_fast(mjd=t.mjd, lat=np.array([lat]), lon=np.array([lon]), h_ell=np.array([h]), it=0, grid=gpt3_5)
     gm = 1 - 0.00265 * np.cos(2*lat) - 0.000285 * h*1e-3
     pression = T[0][0][0] #hPa
     ZHD_v = 0.0022768 * pression / gm
@@ -1049,7 +1042,7 @@ del gm, pression, ZHD, mfh, mfw, ZHD_v, gmfh, gmfw, gpt3_5, lat, lon, h
 
 #%% Angle de coupure
 
-Az_rad, Ele_rad = tools.toolAzEle(P_rnx_header[0],P_rnx_header[1],P_rnx_header[2],df_rnx.X_sat,df_rnx.Y_sat,df_rnx.Z_sat)
+Az_rad, Ele_rad = conv.xyz2azi_ele(P_rnx_header[0],P_rnx_header[1],P_rnx_header[2],df_rnx.X_sat,df_rnx.Y_sat,df_rnx.Z_sat)
 
 # radian to degree
 rad2deg = 180 / np.pi
@@ -1114,7 +1107,7 @@ while np.linalg.norm(dP_est[0:3])>1:
                         (df_Sagnac_new['Z_sat'].values - P_app[2])**2)
 
     # Vecteur des observations corrigées des différents modèles
-    B = df_rnx_new['P3'].values - distances + gnss_const.c * (df_rnx_new['dte_sat'].values \
+    B = df_rnx_new['P3'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx_new['dte_sat'].values \
     + df_rnx_new['dRelat'].values ) \
     - df_rnx_new['ZHD'].values* df_rnx_new['mfh'].values
 
@@ -1150,7 +1143,7 @@ print("\n")
 print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
 
 # Calculer les coordonnées ENU locales
-E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
+E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
 print("Est (E):", E)
 print("Nord (N):", N)
 print("Haut (U):", U)
@@ -1161,7 +1154,7 @@ print("\n")
 # introduire une visualisation du résultat avec folium
 
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac et iono et tropo", save_path="./corr_sat_clock_sagnac_iono_tropo.png",
-                           P_est=P_est[:3], P_rnx_header=P_rnx_header, tools=tools);
+                           P_est=P_est[:3], P_rnx_header=P_rnx_header, conv_module=conv);
 
 #%%
 
@@ -1314,7 +1307,7 @@ while np.linalg.norm(dP_est[0:3])>1:
                         (df_Sagnac_new['Z_sat'].values - P_app[2])**2)
 
     # Vecteur des observations corrigées des différents modèles
-    B = df_rnx_new['L3'].values - distances + gnss_const.c * (df_rnx_new['dte_sat'].values \
+    B = df_rnx_new['L3'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx_new['dte_sat'].values \
     + df_rnx_new['dRelat'].values ) \
     - df_rnx_new['ZHD'].values* df_rnx_new['mfh'].values
 
@@ -1350,7 +1343,7 @@ print("\n")
 print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
 
 # Calculer les coordonnées ENU locales
-E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
+E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
 print("Est (E):", E)
 print("Nord (N):", N)
 print("Haut (U):", U)
@@ -1361,22 +1354,20 @@ print("\n")
 # introduire une visualisation du résultat avec folium
 
 #plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac et iono et tropo", save_path="./corr_sat_clock_sagnac_iono_tropo.png",
-#                           P_est=P_est[:3], P_rnx_header=P_rnx_header, tools=tools)
+#                           P_est=P_est[:3], P_rnx_header=P_rnx_header, conv_module=conv)
 
 
 #%%
+f1 = conv.L1_CARRIER_FREQUENCY
+f2 = conv.L2_CARRIER_FREQUENCY
 
-
-f1 = gnss_const.f1  
-f2 = gnss_const.f2
-
-l1 = gnss_const.lambda1
-l2 = gnss_const.lambda2
+l1 = conv.L1_WAVELENGTH
+l2 = conv.L2_WAVELENGTH
 
 # On applique la formule de la combinaison linéaire
 # l3 = (f1**2*l1- f2**2*l2)/(f1**2-f2**2);
 # qui se simplifie par:
-l3=gnss_const.c/(f1+f2)
+l3=conv.SPEED_OF_LIGHT/(f1+f2)
 
 
 # attention : on se rend compte que les mesures L1 et L2 sont en cycle alors que l'on
