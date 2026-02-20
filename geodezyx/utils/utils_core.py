@@ -1173,3 +1173,14 @@ def mdotr(*args):
     for a in reversed(args[:-1]):
         ret = np.dot(a, ret)
     return ret
+
+
+def fct_def_args(func):
+    """Extract default arguments of a function as a dictionary."""
+    import inspect
+    sig = inspect.signature(func)
+    return {
+        name: param.default
+        for name, param in sig.parameters.items()
+        if param.default != inspect.Parameter.empty
+    }

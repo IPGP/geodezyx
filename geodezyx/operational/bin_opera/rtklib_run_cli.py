@@ -12,12 +12,17 @@ import argparse
 import sys
 import yaml
 import json
+import inspect
 from pathlib import Path
 from geodezyx.conv import minmax_pattern_dt
 from geodezyx.operational.soft_frontend import rtklib_frontend
+from geodezyx import utils
 
 import logging
 log = logging.getLogger('geodezyx')
+
+# Extract defaults from rtklib_run function at module level for synchronization
+RTKLIB_RUN_DEFAULTS = utils.fct_def_args(rtklib_frontend.rtklib_run)
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -101,26 +106,26 @@ Examples:
     parser.add_argument(
         "-fmt",
         "--solformat",
-        default=None,
+        default=RTKLIB_RUN_DEFAULTS.get('solformat'),
         choices=["llh", "xyz", "enu", "nmea"],
-        help="Solution format (default: None, uses config file setting)",
+        help=f"Solution format (default: {RTKLIB_RUN_DEFAULTS.get('solformat')}, uses config file setting)",
     )
     parser.add_argument(
         "-eph",
         "--sateph",
-        default=None,
+        default=RTKLIB_RUN_DEFAULTS.get('sateph'),
         choices=["brdc", "precise"],
-        help="Satellite ephemeris (default: None, uses config file setting)",
+        help=f"Satellite ephemeris (default: {RTKLIB_RUN_DEFAULTS.get('sateph')}, uses config file setting)",
     )
-    parser.add_argument("-f", "--force", action="store_true", help="Force reprocessing (default: False)")
+    parser.add_argument("-f", "--force", action="store_true", help=f"Force reprocessing (default: {RTKLIB_RUN_DEFAULTS.get('force')})")
     parser.add_argument(
-        "-cln", "--clean_tmp", action="store_true", help="Clean temp directory (default: False)"
-    )
-    parser.add_argument(
-        "-p", "--procs", type=int, default=8, help="Parallel workers (default: 8)"
+        "-cln", "--clean_tmp", action="store_true", help=f"Clean temp directory (default: {RTKLIB_RUN_DEFAULTS.get('clean_tmp')})"
     )
     parser.add_argument(
-        "-x", "--exe_path", default="rnx2rtkp", help="Path to rnx2rtkp executable (default: rnx2rtkp)"
+        "-p", "--procs", type=int, default=RTKLIB_RUN_DEFAULTS.get('procs'), help=f"Parallel workers (default: {RTKLIB_RUN_DEFAULTS.get('procs')})"
+    )
+    parser.add_argument(
+        "-x", "--exe_path", default=RTKLIB_RUN_DEFAULTS.get('exe_path'), help=f"Path to rnx2rtkp executable (default: {RTKLIB_RUN_DEFAULTS.get('exe_path')})"
     )
 
     return parser.parse_args()
@@ -143,24 +148,32 @@ def main():
         with open(yaml_path, "r") as f:
             config = yaml.safe_load(f) or {}
 
-    # Build kwargs: merge YAML and CLI args (CLI overrides YAML)
-    kwargs = {}
-    kwargs["xyz_dic"] = dict()
+    # Start with function defaults
+    kwargs = dict(RTKLIB_RUN_DEFAULTS)
+
+    # Override with YAML config
+    if config:
+        kwargs.update(config)
+
+    # Override with CLI args (only if explicitly provided)
     for arg_name in vars(args):
         if arg_name == "config_yaml":  # Skip the YAML config file argument itself
             continue
 
         cli_val = getattr(args, arg_name)
-        yaml_val = config.get(arg_name)
 
-        # CLI takes precedence if explicitly set
-        if cli_val is not None:
+        # Only override if CLI value is not None (default)
+        # Exception: boolean args (force, clean_tmp) should override defaults
+        if arg_name in ['force', 'clean_tmp']:
+            # Boolean args: always include them
             kwargs[arg_name] = cli_val
-        elif yaml_val is not None:
-            kwargs[arg_name] = yaml_val
+        elif cli_val is not None:
+            # Other args: only include if explicitly provided
+            kwargs[arg_name] = cli_val
+
 
     # Parse dates if provided
-    if "date_srt" in kwargs and "date_end" in kwargs and kwargs["date_srt"] and kwargs["date_end"]:
+    if kwargs.get("date_srt") and kwargs.get("date_end"):
         try:
             kwargs["date_srt"], kwargs["date_end"] = minmax_pattern_dt(
                 kwargs["date_srt"], kwargs["date_end"]
@@ -170,8 +183,8 @@ def main():
             sys.exit(1)
 
     log.info(f"RTKLIB RUN CLI parameters:")
-    for key in kwargs:
-        log.info(f"* {key}: {kwargs[key]}")
+    for key, value in sorted(kwargs.items()):
+        log.info(f"  {key}: {value}")
 
     # Call the function
     try:
