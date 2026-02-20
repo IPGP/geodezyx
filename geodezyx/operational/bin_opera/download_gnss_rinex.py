@@ -60,11 +60,11 @@ def parse_args():
     )
     parser.add_argument(
         "-a", "--archtype",
-        default="stat",
-        help="Archive directory structure type. Options: 'stat' (station-based), "
+        default="site",
+        help="Archive directory structure type. Options: 'site' (station-based), "
              "'year' (year-based), 'daily' (daily structure). "
-             "Exemple: 'stat/year/doy'. "
-             "Default: 'year/doy'"
+             "Exemple: 'site/year/doy'. "
+             "Default: 'site'"
     )
     parser.add_argument(
         "-u", "--user",
