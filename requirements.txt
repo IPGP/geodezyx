@@ -29,3 +29,4 @@ xarray
 logging_tree
 mergedeep
 htmllistparse
+dateparser
