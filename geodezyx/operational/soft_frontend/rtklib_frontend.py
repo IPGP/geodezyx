@@ -516,7 +516,7 @@ def rtklib_run(
             continue
         elif len(df_bse_sel) > 1:
             log.warning(f"multi. bases for {site} at {rov_srt}, get 1st:")
-            log.warning(f"{df_bse_sel}")
+            log.warning(f"\n{df_bse_sel.to_string()}")
         row_bse = df_bse_sel.iloc[0]
 
         rnxs_pair = (rovrow["path"], row_bse["path"])
