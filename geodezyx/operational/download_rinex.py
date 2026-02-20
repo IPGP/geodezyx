@@ -1337,7 +1337,7 @@ def download_gnss_rinex(
 
     if "01s" in list(statdico.keys())[0]:
         day_step = 0
-        sec_step = 60
+        sec_step = 3600
     else:
         day_step = 1
         sec_step = 0
