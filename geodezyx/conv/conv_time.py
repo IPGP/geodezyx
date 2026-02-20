@@ -1635,6 +1635,88 @@ string_date2dt = date_string_2_dt
 str_date2dt = date_string_2_dt
 strdate2dt = date_string_2_dt
 
+@vector_string_conv
+def date_pattern_2_dt(date_str_inp):
+    """
+    Time representation conversion
+
+    Convert a date string in various formats to a Python datetime object.
+
+    This function uses regular expressions to match the input date string
+    against several common date formats and converts it to a datetime object.
+
+    Parameters
+    ----------
+    date_str_inp : str
+        The input date string to be converted.
+
+    Returns
+    -------
+    datetime.datetime
+        The corresponding datetime object.
+
+    Raises
+    ------
+    ValueError
+        If the input string does not match any of the expected date formats.
+    """
+    if re.match(r'\d{4}-\d{2}-\d{2}', date_str_inp):
+        # Match format YYYY-MM-DD
+        date = dt.datetime.strptime(date_str_inp, '%Y-%m-%d')
+    elif re.match(r'\d{4}-\d{3}', date_str_inp):
+        # Match format Year-DayOfYear (e.g., 2023-123)
+        date = doy2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
+    elif re.match(r'\d{4}-\d{1}', date_str_inp):
+        # Match format GPS Week-Day (e.g., 1234-5)
+        date = gpstime2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
+    elif re.match(r'\d{8}', date_str_inp):
+        # Match format YYYYMMDD
+        date = dt.datetime.strptime(date_str_inp, '%Y%m%d')
+    elif re.match(r'\d{6}', date_str_inp):
+        # Match format YYMMDD
+        date = dt.datetime.strptime(date_str_inp, '%y%m%d')
+    elif re.match(r'\d{5}', date_str_inp):
+        # Match format JJCNES (Julian Day CNES)
+        date = jjul_cnes2dt(int(date_str_inp))
+    else:
+        import dateparser
+        try:
+            date = dateparser.parse(date_str_inp)
+        except:
+            raise ValueError("Input string does not match any expected date format.")
+    return date
+
+
+def minmax_pattern_dt(date1_inp, date2_inp):
+    """
+    Convert two date strings into datetime objects and return the minimum and maximum.
+
+    This is useful for a frontend CLI function.
+
+    Parameters
+    ----------
+    date1_inp : str
+        The first date string to be converted.
+    date2_inp : str
+        The second date string to be converted.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the minimum and maximum datetime objects derived from the input strings.
+
+    Raises
+    ------
+    ValueError
+        If the input strings cannot be converted into valid datetime objects.
+    """
+    datetup = (date_pattern_2_dt(date1_inp), date_pattern_2_dt(date2_inp))
+    return min(datetup), max(datetup)
+
+
+
+
+
 
 # Additional conversion functions follow the same pattern...
 # (MJD, CNES Julian Day, etc.)

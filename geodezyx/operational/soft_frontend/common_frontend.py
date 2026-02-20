@@ -243,10 +243,6 @@ def get_best_prods(prod_list_inp, date_inp, prod_ac_name="", brdc_mode=False, la
     - Contains potential bug in BRDC filtering logic: `[e for e in best_prod_out if "GOP"][0]`
       may raise IndexError if no products contain "GOP" substring.
 
-    Examples
-    --------
-    >>> get_best_prods(["GRG21001a.SP3"], datetime(2026, 1, 1), "FIN")
-    ["GRG21001a.SP3"]
     """
     if brdc_mode:
         prod_ac_name = "BRDC"
@@ -391,7 +387,7 @@ def dl_orbclk(
         Defaults to ("sp3", "clk", "bia", "obx", "erp").
     data_centers : tuple of str, optional
         The data centers from which to download the products
-        (e.g., "ign", "whu").
+        Defaults to ("cddis", "esa", "ign", "whu").
 
     Returns
     -------
@@ -436,9 +432,9 @@ def dl_orbclk(
             dow_manu=False,
         )
 
-        if len(prods) >= 5:
-            log.info("enougth products found: %s", len(prods))
-            break
+        #if len(prods) >= 5:
+        #    log.info("enougth products found: %s", len(prods))
+        #    break
 
     return prods
 
@@ -526,6 +522,9 @@ def dl_prods(prod_dir, dates_inp, prod_ac_name, download_lock=None, use_tite=Fal
         Analysis center identifier.
     download_lock : threading.Lock, optional
         Lock to protect concurrent downloads (if needed).
+    use_tite : bool, optional
+        If True, attempts to download SP3/CLK products from CNES's TITE server
+        instead of the default method. Defaults to False.
 
     Returns
     -------
@@ -535,6 +534,8 @@ def dl_prods(prod_dir, dates_inp, prod_ac_name, download_lock=None, use_tite=Fal
         - brdclis_out: List of downloaded BRDC files.
     """
 
+    orbclklis_out = []
+    brdclis_out = []
     ######### Download SP3/CLK products
     if not use_tite:
         if download_lock:
@@ -544,6 +545,8 @@ def dl_prods(prod_dir, dates_inp, prod_ac_name, download_lock=None, use_tite=Fal
                 prod_dir,
                 dates_inp,
                 prod_ac_name,
+                prod_types=("sp3", "clk"),
+                data_centers=("cddis", ),
             )
         finally:
             if download_lock:
@@ -588,7 +591,7 @@ def dl_prods(prod_dir, dates_inp, prod_ac_name, download_lock=None, use_tite=Fal
     brdclis_out = brdclis
 
     log.info(
-        f"Products downloaded: {len(orbclklis_out)} SP3/CLK, {len(brdclis_out)} BRDC"
+        f"Products available: {len(orbclklis_out)} SP3/CLK, {len(brdclis_out)} BRDC"
     )
 
     return orbclklis_out, brdclis_out
