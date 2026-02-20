@@ -3,7 +3,7 @@
 
 # Required parameters
 rnx_dir: /vol/ovpf/miroir_ovpf/DonneesTemporaires/Geodesy/GNSS/RINEX/15M01S/   # Directory containing RINEX files
-cfgfile_generik: ./rtknavi_example_ovpf_01b.conf  # RTKLIB configuration file
+cfgfile_generik: /opt/softs_gnss/geodezyx/exemples/rtklib_configfiles/rtknavi_example_ovpf_01b.conf  # RTKLIB configuration file
 sites_rovers:                                     # List of rover stations
   - BOMG00REU
   - BORG00REU

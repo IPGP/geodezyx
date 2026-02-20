@@ -105,14 +105,12 @@ def main():
     try:
         results = rtklib_frontend.rtklib_run(**kwargs)
         successful = sum(1 for r in results if r)
-        print(f"Processed {len(results)} pairs: {successful} successful, {len(results) - successful} failed")
         return 0 if successful > 0 else 1
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         import traceback
         traceback.print_exc()
         return 1
-
 
 if __name__ == "__main__":
     sys.exit(main())
