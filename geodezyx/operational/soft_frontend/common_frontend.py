@@ -21,6 +21,7 @@ from geodezyx import operational
 
 log = logging.getLogger("geodezyx")
 
+
 def run_command(command):
     """
     Runs a shell command and captures both stdout and stderr.
@@ -127,13 +128,13 @@ def get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
         latency_stepback += 1
 
     if "ULT" in prod_ac_name:
-        rnd_def = (6+24,"h") # 6 is for the
+        rnd_def = (6 + 24, "h")  # 6 is for the
     elif "NRT" in prod_ac_name:
-        rnd_def = (1+24,"h")
+        rnd_def = (1 + 24, "h")
     elif "FIN" in prod_ac_name or "RAP" in prod_ac_name:
-        rnd_def = (1,"d")
+        rnd_def = (1, "d")
     elif "BRDC" in prod_ac_name:
-        rnd_def = (1,"d")
+        rnd_def = (1, "d")
     else:
         log.warning("Unknown prods. '%s', unable to find the right date", prod_ac_name)
         return date_inp
@@ -141,6 +142,7 @@ def get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
     rnd_use = str(rnd_def[0] * (1 + latency_stepback)) + rnd_def[1]
     date_out_srt = conv.round_dt(date_inp, rnd_use, mode="floor") - delta_extra
     return date_out_srt
+
 
 def get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
     """
@@ -202,7 +204,10 @@ def get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
 
     return dates_lis
 
-def get_best_prods(prod_list_inp, date_inp, prod_ac_name="", brdc_mode=False, latency_stepback_max=None):
+
+def get_best_prods(
+    prod_list_inp, date_inp, prod_ac_name="", brdc_mode=False, latency_stepback_max=None
+):
     """
     Finds the best matching product file(s) for a given date with progressive latency tolerance.
 
@@ -258,15 +263,22 @@ def get_best_prods(prod_list_inp, date_inp, prod_ac_name="", brdc_mode=False, la
     best_prod_out = []
     latstpbak = 0
     while len(best_prod_out) == 0 and latstpbak <= latency_stepback_max:
-        date_best = get_prod_date(date_inp, prod_ac_name=prod_ac_name, latency_stepback=latstpbak)
+        date_best = get_prod_date(
+            date_inp, prod_ac_name=prod_ac_name, latency_stepback=latstpbak
+        )
         for prod in prod_list_inp:
-            date_prod = conv.rinexname2dt(prod) if brdc_mode else conv.sp3name_v3_2dt(prod)
+            date_prod = (
+                conv.rinexname2dt(prod) if brdc_mode else conv.sp3name_v3_2dt(prod)
+            )
             log.debug(f"Date: {date_prod} / Date best: {date_best} / Product: {prod}")
             if date_prod == date_best:
                 best_prod_out.append(prod)
         latstpbak += 1
 
     if len(best_prod_out) == 0:
+        log.warning(
+            "No optimal prod. found for %s, latency stepback up to %s, returning all prods."
+        )
         best_prod_out = prod_list_inp
     elif brdc_mode and len(best_prod_out) >= 2:
         best_prod_out = [e for e in best_prod_out if "GOP"][0]
@@ -274,6 +286,8 @@ def get_best_prods(prod_list_inp, date_inp, prod_ac_name="", brdc_mode=False, la
         pass
 
     return best_prod_out
+
+
 def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
     """
     Downloads BRDC (Broadcast Ephemeris) files for PRIDE PPPAR from a given directory and date list.
@@ -433,7 +447,7 @@ def dl_orbclk(
             dow_manu=False,
         )
 
-        #if len(prods) >= 5:
+        # if len(prods) >= 5:
         #    log.info("enougth products found: %s", len(prods))
         #    break
 
@@ -547,7 +561,7 @@ def dl_prods(prod_dir, dates_inp, prod_ac_name, download_lock=None, use_tite=Fal
                 dates_inp,
                 prod_ac_name,
                 prod_types=("sp3", "clk"),
-                data_centers=("cddis", ),
+                data_centers=("cddis",),
             )
         finally:
             if download_lock:
