@@ -77,13 +77,18 @@ def _rnx_obs_rgx(date, site=None):
         year_short = date.strftime("%y")
         rnx2rgx = f".*{doy}0.{year_short}o.*"
 
+        if date.hour > 0:
+            per = "01H"  # daily file
+        else:
+            per = "01D"
+
         # For RINEX3: ....____20200010000_01D_....O.* (4 wildcards for station)
         rnx3rgx = conv.statname_dt2rinexname_long(
             "....",  # 4-char wildcard for station
             date,
             country="...",
             data_source=".",
-            file_period="01D",
+            file_period=per,
             data_freq="...",
             data_type=".O",
             format_compression=".*",
