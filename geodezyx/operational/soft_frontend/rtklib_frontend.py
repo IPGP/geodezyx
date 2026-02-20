@@ -111,7 +111,7 @@ def rtklib_run_mono(
     sateph=None,
     force=False,
     clean_tmp=True,
-    exe_path="/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp",
+    exe_path="rnx2rtkp",
 ):
     """
     Worker function for parallel RTKLIB processing.
@@ -290,7 +290,7 @@ def rtklib_run_pair(
     force=False,
     clean_tmp=True,
     procs=4,
-    exe_path="/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp",
+    exe_path="rnx2rtkp",
 ):
     """
     Run RTKLIB processing in parallel for multiple rover/base RINEX pairs.
@@ -480,7 +480,7 @@ def rtklib_run(
     force=False,
     clean_tmp=False,
     procs=8,
-    exe_path="/home/sakic/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp",
+    exe_path="rnx2rtkp",
 ):
 
     rnxs_pairs = []
