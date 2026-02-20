@@ -11,16 +11,12 @@ CLI interface for running RTKLIB processing with the GeodeZYX toolbox.
 import argparse
 import sys
 import yaml
-import json
-import inspect
 from pathlib import Path
 from geodezyx.conv import minmax_pattern_dt
 from geodezyx.operational.soft_frontend import rtklib_frontend
 from geodezyx import utils
 
 import logging
-
-from geodezyx.stats import kwargs_for_jacobian
 
 log = logging.getLogger("geodezyx")
 
@@ -70,7 +66,8 @@ Examples:
     )
     parser.add_argument("-o", "--out_dir", help="Output directory for results")
 
-    # Optional arguments    parser.add_argument("-td","--tmp_dir", default=None, help="Temporary directory (default: None, will use out_dir/TMP)")
+    # Optional arguments
+    parser.add_argument("-td", "--tmp_dir", default=None, help="Temporary directory (default: None, will use out_dir/TMP)")
     parser.add_argument(
         "-pd",
         "--prod_dir",
@@ -159,7 +156,9 @@ Examples:
         help=f"Path to rnx2rtkp executable (default: {RTKLIB_RUN_DEFAULTS.get('exe_path')})",
     )
 
-    return parser.parse_args()
+    # Convert Namespace to dictionary
+    args_namespace = parser.parse_args()
+    return vars(args_namespace)
 
 
 def main():
@@ -168,10 +167,10 @@ def main():
 
     # Load YAML config if provided
     kwargs_cfg = {}
-    if kwargs_cli.config_yaml:
-        yaml_path = Path(kwargs_cli.config_yaml)
+    if kwargs_cli.get("config_yaml"):
+        yaml_path = Path(kwargs_cli["config_yaml"])
         if not yaml_path.exists():
-            log.error(f"Error: YAML config file not found: {kwargs_cli.config_yaml}")
+            log.error(f"Error: YAML config file not found: {kwargs_cli['config_yaml']}")
             sys.exit(1)
         with open(yaml_path, "r") as f:
             kwargs_cfg = yaml.safe_load(f) or {}
@@ -183,11 +182,12 @@ def main():
     if kwargs_cfg:
         kwargs_out.update(kwargs_cfg)
 
-    # Override with CLI args (only if explicitly provided)
-    for arg_name in kwargs_cli.keys():
+    # Override with CLI args (only if explicitly provided - not None)
+    for arg_name, arg_value in kwargs_cli.items():
         if arg_name == "config_yaml":  # Skip the YAML config file argument itself
             continue
-        kwargs_out[arg_name] = kwargs_cli[arg_name]
+        if arg_value is not None:
+            kwargs_out[arg_name] = arg_value
 
     # Parse dates if provided
     if kwargs_out.get("date_srt") and kwargs_out.get("date_end"):
