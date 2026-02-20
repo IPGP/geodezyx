@@ -397,8 +397,11 @@ def nav_bkg_server(date, site=None):
 
     return urldic
 
-def renag_server_crtk(date, site=None):
-    urlserver = "ftp://renag.unice.fr/centipede_30s/"
+def renag_server_crtk(date, site=None, smp_01s=False):
+    if smp_01s:
+        urlserver = "ftp://renag.unice.fr/centipede_1s/"
+    else:
+        urlserver = "ftp://renag.unice.fr/centipede_30s/"
     urldic = _generic_server(date, site, urlserver)
     if len(site) != 4:
         urldic.pop(2, None)
@@ -516,9 +519,9 @@ def ens_fr_server(date, site=None):
     return urldic
 
 
-def rgp_ign_smn_1_hz_server(date, site=None):
+def rgp_ign_smn_01s_server(date, site=None):
     """
-    RGP IGN 1Hz data server (hourly RINEX files).
+    RGP IGN 01S/1Hz data server (hourly RINEX files).
 
     Adapted from legacy function to standard format.
     Returns URLs for all 24 hourly sessions.
@@ -633,8 +636,11 @@ def _server_select(datacenter, date, site=None):
         urldic = spotgins_eost_server(date, site)
     elif datacenter == "renag_crtk":
         urldic = renag_server_crtk(date, site)
-    elif datacenter == "rgp_1Hz":
-        urldic = rgp_ign_smn_1_hz_server(date, site)
+    elif datacenter == "renag_crtk_01s":
+        urldic = renag_server_crtk(date, site, smp_01sec=True)
+        mode1hz = True
+    elif datacenter == "rgp_01s":
+        urldic = rgp_ign_smn_01s_server(date, site)
         mode1hz = True
     elif datacenter == "renag":
         urldic = renag_server(date, site)
@@ -1279,9 +1285,9 @@ def download_gnss_rinex(
             * nav_rt or brdc_rt as archive center allows to download *real time* nav files from the BKG server
             * rgp (IGN's RGP main server at St Mandé)
             * rgp_ensg (IGN's RGP, secondary server at ENSG, Marne-la-Vallée)
-        _ not reimplemented yet _:
-            * rgp_1Hz (IGN's RGP, all the 24 hourly rinex for the day will be downloaded)
+            * rgp_01s (IGN's RGP, all the 24 hourly rinex for the day will be downloaded)
             * renag
+            * renag_crtk & renag_crtk_01s (Centipede RTK data hosted at RENAG)
             * ovsg
             * unavco
             * geoaus (Geosciences Australia)
@@ -1366,7 +1372,14 @@ def download_gnss_rinex(
     ```
     """
 
-    date_range = conv.dt_range(startdate, enddate)
+    if "01s" in statdico.keys()[0]:
+        day_step = 0
+        sec_step = 60
+    else:
+        day_step = 1
+        sec_step = 0
+
+    date_range = conv.dt_range(startdate, enddate,day_step=day_step, sec_step=sec_step)
 
     log.info("dates: %s to %s", startdate, enddate)
 
