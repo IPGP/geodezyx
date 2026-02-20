@@ -11,6 +11,7 @@ CLI interface for running RTKLIB processing with the GeodeZYX toolbox.
 import argparse
 import sys
 import yaml
+import json
 from pathlib import Path
 from geodezyx.conv import minmax_pattern_dt
 from geodezyx.operational.soft_frontend import rtklib_frontend
@@ -60,9 +61,9 @@ Examples:
     )
     parser.add_argument("-o", "--out_dir", help="Output directory for results")
 
-    # Optional arguments    parser.add_argument("-td","--tmp_dir", default=None, help="Temporary directory")
+    # Optional arguments    parser.add_argument("-td","--tmp_dir", default=None, help="Temporary directory (default: None, will use out_dir/TMP)")
     parser.add_argument(
-        "-pd", "--prod_dir", default=None, help="GNSS products directory"
+        "-pd", "--prod_dir", default=None, help="GNSS products directory (default: None, will use tmp_dir)"
     )
     parser.add_argument(
         "-ip",
@@ -71,13 +72,20 @@ Examples:
         help="IGS product ID (default: GRG0OPSULT)",
     )
     parser.add_argument(
-        "-exp", "--exp_prefix", default="", help="Output filename prefix"
+        "-exp", "--exp_prefix", default="", help="Output filename prefix (default: empty string)"
     )
     parser.add_argument(
-        "-s", "--date_srt", default=None, help="Start date (YYYY-MM-DD or YYYY-DDD)"
+        "-s", "--date_srt", default=None, help="Start date (YYYY-MM-DD or YYYY-DDD, default: None = all files)"
     )
     parser.add_argument(
-        "-e", "--date_end", default=None, help="End date (YYYY-MM-DD or YYYY-DDD)"
+        "-e", "--date_end", default=None, help="End date (YYYY-MM-DD or YYYY-DDD, default: None = all files)"
+    )
+    parser.add_argument(
+        "-xyz",
+        "--xyz_dic",
+        default=None,
+        type=str,
+        help="XYZ position dictionary as JSON string (e.g., '{\"TLSE\": [4000000, 3000000, 5000000]}')"
     )
     parser.add_argument(
         "-m",
@@ -95,31 +103,31 @@ Examples:
             "ppp-static",
             "ppp-fixed",
         ],
-        help="Position mode",
+        help="Position mode (default: None, uses config file setting)",
     )
     parser.add_argument(
         "-fmt",
         "--solformat",
         default=None,
         choices=["llh", "xyz", "enu", "nmea"],
-        help="Solution format",
+        help="Solution format (default: None, uses config file setting)",
     )
     parser.add_argument(
         "-eph",
         "--sateph",
         default=None,
         choices=["brdc", "precise"],
-        help="Satellite ephemeris",
+        help="Satellite ephemeris (default: None, uses config file setting)",
     )
-    parser.add_argument("-f", "--force", action="store_true", help="Force reprocessing")
+    parser.add_argument("-f", "--force", action="store_true", help="Force reprocessing (default: False)")
     parser.add_argument(
-        "-cln", "--clean_tmp", action="store_true", help="Clean temp directory"
-    )
-    parser.add_argument(
-        "-p", "--procs", type=int, default=8, help="Parallel workers"
+        "-cln", "--clean_tmp", action="store_true", help="Clean temp directory (default: False)"
     )
     parser.add_argument(
-        "-x", "--exe_path", default="rnx2rtkp", help="Path to rnx2rtkp executable"
+        "-p", "--procs", type=int, default=8, help="Parallel workers (default: 8)"
+    )
+    parser.add_argument(
+        "-x", "--exe_path", default="rnx2rtkp", help="Path to rnx2rtkp executable (default: rnx2rtkp)"
     )
 
     return parser.parse_args()
@@ -158,13 +166,21 @@ def main():
             kwargs[arg_name] = yaml_val
 
     # Parse dates if provided
-    if "date_srt" in kwargs and "date_end" in kwargs:
+    if "date_srt" in kwargs and "date_end" in kwargs and kwargs["date_srt"] and kwargs["date_end"]:
         try:
             kwargs["date_srt"], kwargs["date_end"] = minmax_pattern_dt(
                 kwargs["date_srt"], kwargs["date_end"]
             )
         except Exception as e:
             print(f"Error parsing dates: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    # Parse xyz_dic if provided as JSON string
+    if "xyz_dic" in kwargs and kwargs["xyz_dic"]:
+        try:
+            kwargs["xyz_dic"] = json.loads(kwargs["xyz_dic"])
+        except json.JSONDecodeError as e:
+            print(f"Error parsing xyz_dic JSON: {e}", file=sys.stderr)
             sys.exit(1)
 
     log.info(f"RTKLIB RUN CLI parameters:")
