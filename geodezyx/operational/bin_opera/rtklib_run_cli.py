@@ -184,11 +184,10 @@ def main():
         kwargs_out.update(kwargs_cfg)
 
     # Override with CLI args (only if explicitly provided)
-    for arg_name in kwargs_out.keys():
+    for arg_name in kwargs_cli.keys():
         if arg_name == "config_yaml":  # Skip the YAML config file argument itself
             continue
-
-        kwargs_out[arg_name] = getattr(kwargs_cli, arg_name)
+        kwargs_out[arg_name] = kwargs_cli[arg_name]
 
     # Parse dates if provided
     if kwargs_out.get("date_srt") and kwargs_out.get("date_end"):
