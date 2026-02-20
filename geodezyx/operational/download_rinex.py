@@ -21,7 +21,7 @@ from geodezyx import conv
 log = logging.getLogger("geodezyx")
 
 
-def _rnx_obs_rgx(date, site=None):
+def _rnx_obs_rgx(date, site=None, file_period="01D"):
     """
     Generate RINEX observation file regex patterns for both RINEX2 and RINEX3 formats.
 
@@ -59,11 +59,6 @@ def _rnx_obs_rgx(date, site=None):
     """
     # If site is None or empty, use wildcards to match all stations
 
-    if date.hour > 0:
-        per = "01H"  # daily file
-    else:
-        per = "01D"
-
     if not site:
         site = "...."  # 4-character wildcard for station
 
@@ -73,7 +68,7 @@ def _rnx_obs_rgx(date, site=None):
         date,
         country="...",
         data_source=".",
-        file_period=per,
+        file_period=file_period,
         data_freq="...",
         data_type=".O",
         format_compression=".*",
@@ -81,7 +76,7 @@ def _rnx_obs_rgx(date, site=None):
     return str(rnx2rgx), str(rnx3rgx)
 
 
-def _rnx_nav_rgx(date, site=None, sys=".", data_source="."):
+def _rnx_nav_rgx(date, site=None, sys=".", data_source=".", file_period="01D"):
     """
     Generate RINEX navigation file regex patterns for both RINEX2 and RINEX3 formats.
 
@@ -114,6 +109,12 @@ def _rnx_nav_rgx(date, site=None, sys=".", data_source="."):
         - "S" : Survey/static data
         - "U" : Ultra-rapid data
         - "." : Wildcard for any source
+    file_period : str, optional
+        File period identifier for RINEX3 long filenames. Default is "01D" (daily).
+        Common values:
+        - "01D" : Daily file
+        - "01H" : Hourly file
+        - "15M" : 15-minute file
 
     Returns
     -------
@@ -155,7 +156,7 @@ def _rnx_nav_rgx(date, site=None, sys=".", data_source="."):
         date,
         country="...",
         data_source=data_source,
-        file_period="01D",
+        file_period=file_period,
         data_freq="",
         data_type=sys + "N",
         format_compression=".*",
@@ -164,7 +165,7 @@ def _rnx_nav_rgx(date, site=None, sys=".", data_source="."):
     return str(rnx2rgx), str(rnx3rgx)
 
 
-def _generic_server(date, site=None, urlserver=None, urlsuffix=None):
+def _generic_server(date, site=None, urlserver=None, urlsuffix=None, file_period="01D"):
     """
     Generate RINEX file URLs for a generic FTP server structure.
 
@@ -184,6 +185,8 @@ def _generic_server(date, site=None, urlserver=None, urlsuffix=None):
     urlserver : str
         Base FTP server URL (e.g., 'ftp://example.com/data/').
         Should include the protocol and base path to the RINEX data directory.
+    file_period : str, optional
+        File period identifier for RINEX3 long filenames. Default is "01D" (daily).
 
     Returns
     -------
@@ -211,7 +214,7 @@ def _generic_server(date, site=None, urlserver=None, urlsuffix=None):
     >>> # urls[2] might be: 'ftp://example.com/data/2020/015/zimm015a.20o.*'
     >>> # urls[3] might be: 'ftp://example.com/data/2020/015/ZIMM...._R_20200150000_01D_....O.*'
     """
-    rnx2rgx, rnx3rgx = _rnx_obs_rgx(date, site)
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(date, site, file_period=file_period)
 
     if not urlsuffix:
         urlsuffix = ""
@@ -363,9 +366,11 @@ def nav_bkg_server(date, site=None):
 def renag_server_crtk(date, site=None, smp_01s=False):
     if smp_01s:
         urlserver = "ftp://renag.unice.fr/centipede_1s/"
+        per = "01S"
     else:
         urlserver = "ftp://renag.unice.fr/centipede_30s/"
-    urldic = _generic_server(date, site, urlserver)
+        per = "30S"
+    urldic = _generic_server(date, site, urlserver, file_period=per)
     if len(site) != 4:
         urldic.pop(2, None)
 
@@ -1416,7 +1421,7 @@ def download_gnss_rinex(
         return zip(*out_tup_lis_fin)
 
 
-def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3):
+def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3, per="01D"):
     """
     Generate a crawl table for RINEX file downloads.
 
