@@ -277,7 +277,9 @@ def get_best_prods(
 
     if len(best_prod_out) == 0:
         log.warning(
-            "No optimal prod. found for %s, latency stepback up to %s, returning all prods."
+            "No optimal prod. found for %s, latency stepback up to %s, returning all prods.",
+            date_inp,
+            latency_stepback_max,
         )
         best_prod_out = prod_list_inp
     elif brdc_mode and len(best_prod_out) >= 2:
