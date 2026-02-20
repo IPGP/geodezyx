@@ -488,8 +488,8 @@ def rtklib_run(
     rnxs_all = operational.rinex_finder(
         rnx_dir,
         specific_sites=sites_rovers + [site_base],
-        start_epoch=date_srt,
-        end_epoch=date_end,
+        #start_epoch=date_srt,
+        #end_epoch=date_end,
     )
 
     df_all = operational.rinex_table_from_list(rnxs_all, site9_col=True)
