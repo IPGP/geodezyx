@@ -275,6 +275,7 @@ def rtklib_run_mono(
 
     return out_res_fil
 
+
 def rtklib_run_pair(
     rinex_pairs,
     cfgfile_generik,
@@ -393,7 +394,7 @@ def rtklib_run_pair(
         site_bas = os.path.basename(rnx_bas)[0:9]
 
         if not xyz_dic:
-            xyz_dic = {} # create dummy dict if None provided
+            xyz_dic = {}  # create dummy dict if None provided
         xyz_rov = xyz_dic[site_rov] if site_rov in xyz_dic.keys() else [0, 0, 0]
         xyz_bas = xyz_dic[site_bas] if site_bas in xyz_dic.keys() else [0, 0, 0]
         xyz_rovers.append(xyz_rov)
@@ -461,6 +462,7 @@ def rtklib_run_pair(
 
     return results
 
+
 def rtklib_run(
     rnx_dir,
     cfgfile_generik,
@@ -513,9 +515,9 @@ def rtklib_run(
             log.warning(f"no base for {site} at {rov_srt}")
             continue
         elif len(df_bse_sel) > 1:
-            base1st = df_bse_sel.iloc[0]
-            log.warning(f"multi. bases for {site} at {rov_srt}, get 1st: {base1st}")
-
+            log.warning(
+                f"multi. bases ({len(df_bse_sel)}) for {site} at {rov_srt}, get 1st: {df_bse_sel.iloc[0]}"
+            )
         row_bse = df_bse_sel.iloc[0]
 
         rnxs_pair = (rovrow["path"], row_bse["path"])
@@ -538,4 +540,3 @@ def rtklib_run(
         procs=procs,
         exe_path=exe_path,
     )
-
