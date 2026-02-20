@@ -2,20 +2,24 @@
 # Use with: rtklib_run -y rtklib_config_example.yaml
 
 # Required parameters
-rnx_dir: /data/rinex              # Directory containing RINEX files
-cfgfile_generik: /config/rtklib.conf  # RTKLIB configuration file
-sites_rovers:                     # List of rover stations
-  - TLSE
-  - ZIMM
-  - BRUS
-site_base: GRAS0                  # Base station
-out_dir: /results                 # Output directory
+rnx_dir: /vol/ovpf/miroir_ovpf/DonneesTemporaires/Geodesy/GNSS/RINEX/15M01S/   # Directory containing RINEX files
+cfgfile_generik: ./rtknavi_example_ovpf_01b.conf  # RTKLIB configuration file
+sites_rovers:                                     # List of rover stations
+  - BOMG00REU
+  - BORG00REU
+  - CFNG00REU
+  - DERG00REU
+  - DSRG00REU
+  - GITG00REU
+  - SNEG00REU
+site_base: GITG00REU              # Base station
+out_dir: /backuped/calcgnss/rtklib_process/OVPF_RAP_posmode4  # Output directory
 
 # Optional parameters
-tmp_dir: /tmp/rtklib              # Temporary directory (default: <out_dir>/TMP)
-prod_dir: /data/products          # GNSS products directory (default: <tmp_dir>)
-igs_prods: GRG0OPSULT             # IGS product ID (default: GRG0OPSULT)
-exp_prefix: test_                 # Output filename prefix (default: empty)
+tmp_dir: /backuped/calcgnss/rtklib_process/090_TMP         # Temporary directory (default: <out_dir>/TMP)
+prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib   # GNSS products directory (default: <tmp_dir>)
+igs_prods: GRG0OPSRAP                                      # IGS product ID (default: GRG0OPSULT)
+exp_prefix: OVPF_RAP_posmode4                              # Output filename prefix (default: empty)
 
 # Date range (optional, processes all if not specified)
 date_srt: "2024-01-01"            # Start date (YYYY-MM-DD or YYYY-DDD)
@@ -23,20 +27,19 @@ date_end: "2024-01-07"            # End date (YYYY-MM-DD or YYYY-DDD)
 
 # Station coordinates (optional, uses RINEX header if not provided)
 xyz_dic:
-  TLSE00FRA: [4627850.678, 119619.285, 4372993.642]
-  GRAS00FRA: [4581692.064, 556195.844, 4389355.658]
+  GITG00REU: [+3.354343977502337e06, +4.914925760476323e06, -2.294766603476249e06]
 
 # RTKLIB configuration overrides (optional)
-posmode: static                    # Position mode: single, dgps, kinematic, static, moving-base, fixed, ppp-kinematic, ppp-static
-solformat: llh                     # Solution format: llh, xyz, enu, nmea
-sateph: precise                    # Satellite ephemeris: brdc, precise, brdc+sbas, brdc+ssrapc, brdc+ssrcom
+posmode: 4       # Position mode: single, dgps, kinematic, static, moving-base, fixed, ppp-kinematic, ppp-static
+solformat: xyz   # Solution format: llh, xyz, enu, nmea
+sateph: precise  # Satellite ephemeris: brdc, precise, brdc+sbas, brdc+ssrapc, brdc+ssrcom
 
 # Processing options
-force: false                       # Force reprocessing (overwrite existing)
-clean_tmp: true                    # Clean temporary directory after processing
-procs: 8                           # Number of parallel workers (default: 4)
+force: false     # Force reprocessing (overwrite existing)
+clean_tmp: true  # Clean temporary directory after processing
+procs: 8         # Number of parallel workers (default: 4)
 
 # Executable path (optional)
-exe_path: /home/sakic/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp
+exe_path: rnx2rtkp
 
 
