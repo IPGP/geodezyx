@@ -79,7 +79,7 @@ def _rnx_obs_rgx(date, site="....", file_period="...", data_freq="..."):
     return str(rnx2rgx), str(rnx3rgx)
 
 
-def _rnx_nav_rgx(date, site=None, sys=".", data_source=".", file_period="...", data_freq="..."):
+def _rnx_nav_rgx(date, site="....", sys=".", data_source="."):
     """
     Generate RINEX navigation file regex patterns for both RINEX2 and RINEX3 formats.
 
@@ -115,8 +115,8 @@ def _rnx_nav_rgx(date, site=None, sys=".", data_source=".", file_period="...", d
     long filename convention for navigation files with:
     - Country code: wildcard ("...")
     - Data source: configurable (default wildcard)
-    - File period: 01D (daily)
-    - Data frequency: empty ("") for navigation files
+    - !!!! File period: 01D (daily) for navigation files !!!!
+    - !!!! Data frequency: empty ("") for navigation files !!!!
     - Data type: sys + "N" (Navigation)
     - Format/compression: wildcard (".*")
 
@@ -138,8 +138,8 @@ def _rnx_nav_rgx(date, site=None, sys=".", data_source=".", file_period="...", d
         date,
         country="...",
         data_source=data_source,
-        file_period=file_period,
-        data_freq=data_freq,
+        file_period="01D",
+        data_freq="",
         data_type=sys + "N",
         format_compression=".*",
     )
