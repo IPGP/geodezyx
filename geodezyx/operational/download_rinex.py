@@ -1372,7 +1372,7 @@ def download_gnss_rinex(
     ```
     """
 
-    if "01s" in statdico.keys()[0]:
+    if "01s" in list(statdico.keys())[0]:
         day_step = 0
         sec_step = 60
     else:

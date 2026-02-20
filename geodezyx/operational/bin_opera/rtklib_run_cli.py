@@ -116,7 +116,7 @@ Examples:
         "-cln", "--clean_tmp", action="store_true", help="Clean temp directory"
     )
     parser.add_argument(
-        "-p", "--procs", type=int, default=4, help="Parallel workers (default: 4)"
+        "-p", "--procs", type=int, default=8, help="Parallel workers"
     )
     parser.add_argument(
         "-x", "--exe_path", default="rnx2rtkp", help="Path to rnx2rtkp executable"
