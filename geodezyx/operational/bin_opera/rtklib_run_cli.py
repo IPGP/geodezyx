@@ -81,13 +81,6 @@ Examples:
         "-e", "--date_end", default=None, help="End date (YYYY-MM-DD or YYYY-DDD, default: None = all files)"
     )
     parser.add_argument(
-        "-xyz",
-        "--xyz_dic",
-        default=None,
-        type=str,
-        help="XYZ position dictionary as JSON string (e.g., '{\"TLSE\": [4000000, 3000000, 5000000]}')"
-    )
-    parser.add_argument(
         "-m",
         "--posmode",
         default=None,
@@ -152,6 +145,7 @@ def main():
 
     # Build kwargs: merge YAML and CLI args (CLI overrides YAML)
     kwargs = {}
+    kwargs["xyz_dic"] = dict()
     for arg_name in vars(args):
         if arg_name == "config_yaml":  # Skip the YAML config file argument itself
             continue
@@ -173,14 +167,6 @@ def main():
             )
         except Exception as e:
             print(f"Error parsing dates: {e}", file=sys.stderr)
-            sys.exit(1)
-
-    # Parse xyz_dic if provided as JSON string
-    if "xyz_dic" in kwargs and kwargs["xyz_dic"]:
-        try:
-            kwargs["xyz_dic"] = json.loads(kwargs["xyz_dic"])
-        except json.JSONDecodeError as e:
-            print(f"Error parsing xyz_dic JSON: {e}", file=sys.stderr)
             sys.exit(1)
 
     log.info(f"RTKLIB RUN CLI parameters:")
