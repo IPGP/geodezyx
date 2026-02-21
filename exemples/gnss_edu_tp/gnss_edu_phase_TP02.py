@@ -206,7 +206,7 @@ for prn in df_rnx_flat['prn'].unique():
 ### OLD STYLE
 
 mysp3 = orb.orbit()
-mysp3.loadSp3(fichier_sp3[:-2])
+mysp3.loadSp3(fichier_sp3)
 
 mynav = orb.orbit()
 mynav.loadRinexN(fichier_brdc)
