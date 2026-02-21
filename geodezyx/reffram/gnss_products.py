@@ -1535,15 +1535,20 @@ def orb_df_lagrange_interpolate(
 
         ### faster but anoying Future Waring
         # Tdata = np.array(df_orb_use.epoch.dt.to_pydatetime())
-        t_data = conv.numpy_dt2dt(df_orb_use.epoch.values)
 
-        xitrp = stats.lagrange_interpolate(t_data, df_orb_use["x"], titrp, n=n)
-        yitrp = stats.lagrange_interpolate(t_data, df_orb_use["y"], titrp, n=n)
-        zitrp = stats.lagrange_interpolate(t_data, df_orb_use["z"], titrp, n=n)
+        #t_type = "datetime"
+        #t_data = conv.numpy_dt2dt(df_orb_use['epoch'].values)
 
+        t_type = "pandas_timestamp"
+        t_data = df_orb_use["epoch"]
+        titrp_use = pd.Series(titrp)
+
+        xitrp = stats.lagrange_interpolate(t_data, df_orb_use["x"], titrp_use, n=n, t_type=t_type)
+        yitrp = stats.lagrange_interpolate(t_data, df_orb_use["y"], titrp_use, n=n, t_type=t_type)
+        zitrp = stats.lagrange_interpolate(t_data, df_orb_use["z"], titrp_use, n=n, t_type=t_type)
         clk_itrp = np.interp(
-            conv.dt2posix(np.array(titrp)),
-            conv.dt2posix(np.array(t_data)),
+            conv.pandas_timestamp2posix(titrp_use),
+            conv.pandas_timestamp2posix(t_data),
             df_orb_use["clk"].values,
         )
 
