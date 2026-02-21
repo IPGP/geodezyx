@@ -15,8 +15,6 @@ Version: 1.0
 Dépendances: pandas, numpy, geodezyx, datetime, gpsdatetime, gnsstoolbox
 
 """
-from exemples.gnss_edu_tp.full_gzyx.gnss_edu_phase_TP02 import Y_sat
-from exemples.gnss_edu_tp.sn_orig.gnss_edu_phase_TP02 import X_sat
 # %%
 # GeodeZYX Toolbox’s
 # [Sakic et al., 2019]
@@ -51,8 +49,8 @@ from geodezyx import reffram      # Import the reference frame/higher geodesy mo
 
 import datetime as dt
 #
-#import gpsdatetime as gpst
-#import gnsstoolbox.orbits as orb
+import gpsdatetime as gpst
+import gnsstoolbox.orbits as orb
 
 
 import pandas as pd
@@ -315,7 +313,7 @@ while np.linalg.norm(dP_est)>1:
 
 fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial calcul.", 
                                       save_path="./trivial_bis.pdf",
-                           P_est=P_est, P_rnx_header=P_rnx_header, conv_module=conv);
+                           P_est=P_est, P_rnx_header=P_rnx_header)
 
 
 # del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i

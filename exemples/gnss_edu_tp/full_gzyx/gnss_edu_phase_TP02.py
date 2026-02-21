@@ -65,7 +65,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # mon module
-from gnss_edu import *
+#from gnss_edu import *
 
 # %%
 # Chargement des fichiers RINEX d'observation
