@@ -15,32 +15,33 @@ Version: 1.0
 Dépendances: pandas, numpy, geodezyx, datetime, gpsdatetime, gnsstoolbox
 
 """
-
-#%%
+from exemples.gnss_edu_tp.full_gzyx.gnss_edu_phase_TP02 import Y_sat
+from exemples.gnss_edu_tp.sn_orig.gnss_edu_phase_TP02 import X_sat
+# %%
 # GeodeZYX Toolbox’s
 # [Sakic et al., 2019]
-# Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019): 
+# Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
 # The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes. v. 4.0.
 # GFZ Data Services. http://doi.org/10.5880/GFZ.1.1.2019.002
 #
 # Documentation
 # https://geodezyx.github.io/geodezyx-toolbox/
-# 
+#
 # Installation
 # pip install git+https://github.com/GeodeZYX/geodezyx-toolbox
 # pip uninstall geodezyx
 
-#%%
+# %%
 # gpsdatetime
 # Python GPS date/time management package
 # Copyright (C) 2014-2023, Jacques Beilin / ENSG-Geomatique
 # Distributed under terms of the CECILL-C licence.
-#%%
+# %%
 # GnssToolbox - Python package for GNSS learning
 # Copyright (C) 2014-2023, Jacques Beilin / ENSG-Geomatique
 # Distributed under terms of the CECILL-C licence.
 
-#%%
+# %%
 # GeodeZYX Toolbox’s - [Sakic et al., 2019]
 from geodezyx import files_rw     # Import the read/write module
 from geodezyx import conv         # Import the conversion module
@@ -50,8 +51,8 @@ from geodezyx import reffram      # Import the reference frame/higher geodesy mo
 
 import datetime as dt
 #
-import gpsdatetime as gpst
-import gnsstoolbox.orbits as orb
+#import gpsdatetime as gpst
+#import gnsstoolbox.orbits as orb
 
 
 import pandas as pd
@@ -64,7 +65,7 @@ from pathlib import Path
 import os
 
 
-#%%
+# %%
 # création du dossier gnss_edu_data qui va contenir les données et les résultats du TP
 # see gnss_edu_phase_TP01.py
 
@@ -76,7 +77,7 @@ folder = Path(my_directory).expanduser()
 # Création du dossier s'il n'existe pas
 folder.mkdir(parents=True, exist_ok=True)
 
-#%%
+# %%
 # Téléchargement automatique des données RINEX des stations de SMNE et MLVL distance d'une
 # dizaine de kilomètres dans la région de Paris, France sur le serveur IGN (France)
 # données pour 1 jour (2019-176) à 30s
@@ -154,23 +155,14 @@ df_rnx = df_rnx.dropna(axis=1, how='all')
 df_rnx['ind_ligne'] = range(len(df_rnx)) 
 
 
-#%%
+# %%
 fichier_sp3 = dwl_output_satellite[0]
 df_sp3 = files_rw.read_sp3(fichier_sp3)
 
-#%%
+# %%
 
 # Chargement des fichiers d'orbites
 fichier_brdc = './data/data-2019/mlvl176z.18n'
-
-mysp3 = orb.orbit()
-mysp3.loadSp3(fichier_sp3)
-
-mynav = orb.orbit()
-mynav.loadRinexN(fichier_brdc)
-
-# Il faut calculer la position de chaque satellite GNSS à chaque temps d'émission
-t = gpst.gpsdatetime()
 
 X_sat = []
 Y_sat = []
@@ -178,18 +170,61 @@ Z_sat = []
 dte_sat = []
 dRelat = []
 
+#### NEW GEODEZYX STYLE : on utilise les fonctions d'interpolation de GeodeZYX pour calculer la position des satellites à chaque temps d'émission
+for prn in df_rnx_flat['prn'].unique():
+    df_rnx_prn = df_rnx_flat[df_rnx_flat['prn'] == prn]
+    if not prn in df_sp3['prn'].unique():
+        print(f"Satellite {prn} non présent dans le fichier SP3, on ne peut pas calculer sa position à chaque temps d'émission")
+        continue
+    df_sp3_prn = df_sp3[df_sp3['prn'] == prn]
+    fly_time = df_rnx_prn['C1'] / conv.SPEED_OF_LIGHT
+    fly_time = pd.to_timedelta(fly_time, unit="s")
+    t_rec = df_rnx_prn['epoch']
+    t_emi_gross = t_rec - fly_time
+    orb_df_gross = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values)
+
+    # calcul de l'effet relativiste
+    delta_t = pd.to_timedelta(1e-3, unit="s") # écart de temps en +/- pour calculer la dérivée
+    orb_df_rel_fwd = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values + delta_t)
+    orb_df_rel_bak = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values - delta_t)
+
+    VX = (orb_df_rel_fwd[["x","y","z"]] - orb_df_rel_bak[["x","y","z"]]) / (2 / delta_t.total_seconds())
+    VX0 = orb_df_gross[["x","y","z"]]
+
+    dRelat_v = -2.0 * (VX0 * VX).sum(axis=1) / (conv.SPEED_OF_LIGHT **2)
+
+    t_emi_ok = t_emi_gross -  pd.to_timedelta(orb_df_gross["clk"].values, unit="us") # - pd.to_timedelta(dRelat_v, unit="s")
+    orb_df_ok = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_ok.values)
+
+    X_sat.extend(orb_df_ok["x"].values)
+    Y_sat.extend(orb_df_ok["y"].values)
+    Z_sat.extend(orb_df_ok["z"].values)
+    dte_sat.extend(orb_df_ok["clk"].values)
+    dRelat.extend(dRelat_v.values)
+
+
+
+
+### OLD STYLE
+
+mysp3 = orb.orbit()
+mysp3.loadSp3(fichier_sp3[:-2])
+
+mynav = orb.orbit()
+mynav.loadRinexN(fichier_brdc)
+
+# Il faut calculer la position de chaque satellite GNSS à chaque temps d'émission
+t = gpst.gpsdatetime()
+X_sat = []
+Y_sat = []
+Z_sat = []
+dte_sat = []
+dRelat = []
+
 for (time_i,prn_i) in df_rnx.index:
-    #### OLD
     t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
     t_emission_mjd  = t.mjd - df_rnx.loc[(time_i,prn_i), 'C1'] / conv.SPEED_OF_LIGHT / 86400.0
     (X_sat_v,Y_sat_v,Z_sat_v,dte_sat_v)	 = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd)
-
-    #### NEW
-    # t_rec = time_i.to_numpy()
-    # dt_ps = df_rnx.loc[(time_i,prn_i), 'C1'] / conv.SPEED_OF_LIGHT * 1e12 # temps de vol en ps
-    # t_emi = t_rec - np.timedelta64(int(dt_ps), 'ps')
-    # orb_df_out = reffram.orb_df_lagrange_interpolate(df_sp3, t_emi)
-    # X_sat_v,Y_sat_v,Z_sat_v,dte_sat_v = orb_df_out.iloc[0]
 
     # calcul de l'effet relativiste
     delta_t = 1e-3 # écart de temps en +/- pour calculer la dérivée 
@@ -213,8 +248,8 @@ for (time_i,prn_i) in df_rnx.index:
     Z_sat.append(Z_sat_v)
     dte_sat.append(dte_sat_v)
     dRelat.append(dRelat_v)
-    
-    
+
+
 df_rnx['X_sat']   = X_sat 
 df_rnx['Y_sat']   = Y_sat 
 df_rnx['Z_sat']   = Z_sat
@@ -222,12 +257,10 @@ df_rnx['dte_sat'] = dte_sat
 df_rnx['dRelat']  = dRelat
 
 
-#del X_sat, Y_sat, Z_sat, dte_sat, time_i, prn_i, t_emission_mjd, t, X_sat_v, Y_sat_v, Z_sat_v, dte_sat_v, dRelat_v, dRelat
+# del X_sat, Y_sat, Z_sat, dte_sat, time_i, prn_i, t_emission_mjd, t, X_sat_v, Y_sat_v, Z_sat_v, dte_sat_v, dRelat_v, dRelat
 
 
-
-
-#%%
+# %%
 # Traitement classique sur le code pour la position d'un récepteur GNSS
 # cas trivial
 
@@ -280,16 +313,14 @@ while np.linalg.norm(dP_est)>1:
     print("\n")
 
 
-
-
 fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial calcul.", 
                                       save_path="./trivial_bis.pdf",
                            P_est=P_est, P_rnx_header=P_rnx_header, conv_module=conv);
 
 
-#del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
+# del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
 
-#%%
+# %%
 # Traitement classique sur le code pour la position d'un récepteur GNSS
 # corrections des erreurs d'horloges satellites
 # -> elles sont connues -> correction directe du vecteur B
@@ -344,9 +375,9 @@ gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Satellite clocks cor
                            P_est=P_est, P_rnx_header=P_rnx_header, conv_module=conv)
 
 
-#del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
+# del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
 
-#%%
+# %%
 # Traitement classique sur le code pour la position d'un récepteur GNSS
 # corrections des erreurs d'horloges satellites
 # -> elles sont connues -> correction directe du vecteur B
@@ -404,7 +435,7 @@ gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat", sa
 del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
 
 
-#%%
+# %%
 # Traitement classique sur le code pour la position d'un récepteur GNSS
 # corrections des erreurs d'horloges satellites
 # -> elles sont connues -> correction directe du vecteur B
@@ -477,13 +508,7 @@ print("\n")
 del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
 
 
-
-
-
-
-
-
-#%%
+# %%
 # Traitement classique sur le code pour la position d'un récepteur GNSS
 # corrections des erreurs d'horloges satellites
 # -> elles sont connues -> correction directe du vecteur B
@@ -504,7 +529,7 @@ block_dt_r = np.zeros((len(df_rnx), nb_epochs))
 
 for i, epoch in enumerate(epoch_uniques):
     block_dt_r[df_rnx.loc[epoch, 'ind_ligne'],i]=1
-    
+
 
 # Initialisation des coordonnées approximatives du récepteur
 P_app = np.array([0, 0, 0])
@@ -543,8 +568,7 @@ while np.linalg.norm(dP_est[0:3])>1:
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
     i+=1
-    
-    
+
 
 # Calcul de la distance finale entre la position estimée et la position initiale du header RINEX
 dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est[:3] - P_rnx_header)**2))
@@ -567,9 +591,7 @@ del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distan
 # introduire une visualisation du résultat avec folium
 
 
-
-
-#%%
+# %%
 # Traitement classique sur le code pour la position d'un récepteur GNSS
 # corrections des erreurs d'horloges satellites
 # -> elles sont connues -> correction directe du vecteur B
@@ -578,8 +600,8 @@ del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distan
 # correction des effets ionosphériques via le modèle de Klobuchar
 # Questions : quel signe à apporter à la correction +/- ?
 #             correction sur le code ou sur la phase    ?
-# Réponses : 
-# 
+# Réponses :
+#
 
 print('*****  Prise en compte des erreurs d''horloge satellites *****')
 print('*****  + Sagnac *****')
@@ -606,16 +628,17 @@ Ele_deg =  Ele_rad * rad2deg
 alpha = mynav.ion_alpha_gps
 beta = mynav.ion_beta_gps
 
-t = gpst.gpsdatetime() # création d'un objet temps de la gnsstime
+#t = gpst.gpsdatetime() # création d'un objet temps de la gnsstime
 dIon1 = []
 for (time_i,prn_i) in df_rnx.index:
-    t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
-    
-    wsec_v = t.wsec       # seconds in GPS week
+    #t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
+    #wsec_v = t.wsec       # seconds in GPS week
+    t_dt = time_i.to_pydatetime()
+    _ , wsec_v = conv.dt2gpstime(t_dt, secinweek=True)
     i = df_rnx.loc[(time_i,prn_i), 'ind_ligne'] 
     dIon1_v = gnss_edu.klobuchar(lat_d, lon_d, Ele_deg[i], Az_deg[i] , wsec_v, alpha, beta )
     dIon1.append(dIon1_v)
-    
+
 df_rnx['Az']      = Az_deg
 df_rnx['Ele']     = Ele_deg
 df_rnx['dIon1']   = dIon1 
@@ -632,7 +655,7 @@ block_dt_r = np.zeros((len(df_rnx), nb_epochs))
 
 for i, epoch in enumerate(epoch_uniques):
     block_dt_r[df_rnx.loc[epoch, 'ind_ligne'],i]=1
-    
+
 
 # Initialisation des coordonnées approximatives du récepteur
 P_app = np.array([0, 0, 0])
@@ -672,8 +695,7 @@ while np.linalg.norm(dP_est[0:3])>1:
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
     i+=1
-    
-    
+
 
 # Calcul de la distance finale entre la position estimée et la position initiale du header RINEX
 dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est[:3] - P_rnx_header)**2))
@@ -692,13 +714,13 @@ del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distan
 # introduire une visualisation du résultat avec folium
 
 
-#%%
+# %%
 # Traitement classique sur le code pour la position d'un récepteur GNSS
 # corrections des erreurs d'horloges satellites
 # -> elles sont connues -> correction directe du vecteur B
 # estimation des erreurs d'horloges récepteur
 # -> elles sont inconnues et doivent être estimées à chaque époque
-# correction des effets ionosphériques en utilisant une CL des observations sur 
+# correction des effets ionosphériques en utilisant une CL des observations sur
 # le code
 # -> correction directement du vecteur B
 
@@ -726,10 +748,7 @@ df_rnx['L3']  = (f1**2*df_rnx['L1'] - f2**2*df_rnx['L2'])/(f1**2-f2**2);
 df_rnx['P3']  = (f1**2*df_rnx['C1'] - f2**2*df_rnx['P2'])/(f1**2-f2**2);
 
 
-
-
-
-#%%
+# %%
 
 del f1, f2, l1, l2
 
@@ -737,7 +756,7 @@ del f1, f2, l1, l2
 # temps de vol obtenus via P3
 # impact inférieur à 2 mm sur chacune des composantes X_sat, Y_sat et Z_sat
 
-#%%
+# %%
 # # Il faut calculer la position de chaque satellite GNSS à chaque temps d'émission
 # t = gpst.gpsdatetime()
 
@@ -748,24 +767,22 @@ del f1, f2, l1, l2
 # for (time_i,prn_i) in df_rnx.index:
 
 #     t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
-    
+
 #     t_emission_mjd  = t.mjd - df_rnx.loc[(time_i,prn_i), 'P3'] / conv.SPEED_OF_LIGHT / 86400.0
-    
+
 #     (X_sat_v,Y_sat_v,Z_sat_v,dte_sat_v)	 = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd)
-       
-    
+
+
 #     X_sat.append(X_sat_v)
 #     Y_sat.append(Y_sat_v)
 #     Z_sat.append(Z_sat_v)
 #     dte_sat.append(dte_sat_v)
-    
-    
-    
-# df_rnx['X_sat_P3']   = X_sat 
-# df_rnx['Y_sat_P3']   = Y_sat 
+
+
+# df_rnx['X_sat_P3']   = X_sat
+# df_rnx['Y_sat_P3']   = Y_sat
 # df_rnx['Z_sat_P3']   = Z_sat
 # df_rnx['dte_sat_P3'] = dte_sat
-
 
 
 # del X_sat, Y_sat, Z_sat, dte_sat, time_i, prn_i, t_emission_mjd, t, X_sat_v, Y_sat_v, Z_sat_v, dte_sat_v
@@ -793,7 +810,7 @@ del f1, f2, l1, l2
 # plt.show()
 
 
-#%%
+# %%
 
 # Obtention des époques uniques
 epoch_uniques = df_rnx.index.get_level_values('epoch').unique()
@@ -804,7 +821,7 @@ block_dt_r = np.zeros((len(df_rnx), nb_epochs))
 
 for i, epoch in enumerate(epoch_uniques):
     block_dt_r[df_rnx.loc[epoch, 'ind_ligne'],i]=1
-    
+
 
 # Initialisation des coordonnées approximatives du récepteur
 P_app = np.array([0, 0, 0])
@@ -845,8 +862,7 @@ while np.linalg.norm(dP_est[0:3])>1:
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
     i+=1
-    
-    
+
 
 # Calcul de la distance finale entre la position estimée et la position initiale du header RINEX
 dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est[:3] - P_rnx_header)**2))
@@ -861,7 +877,6 @@ print("Haut (U):", U)
 print("\n")
 
 
-
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac et iono", save_path="./corr_sat_clock_sagnac_iono.png",
                            P_est=P_est[:3], P_rnx_header=P_rnx_header, conv_module=conv)
 
@@ -870,18 +885,18 @@ del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distan
 # introduire une visualisation du résultat avec folium
 
 
-#%%
+# %%
 # Traitement classique sur le code pour la position d'un récepteur GNSS
 # corrections des erreurs d'horloges satellites
 # -> elles sont connues -> correction directe du vecteur B
 # estimation des erreurs d'horloges récepteur
 # -> elles sont inconnues et doivent être estimées à chaque époque
-# correction des effets ionosphériques en utilisant une CL des observations sur 
+# correction des effets ionosphériques en utilisant une CL des observations sur
 # le code
 # -> correction directement du vecteur B
 
 # correction de l'effet Sagnac
-# c'est lui qui se voit comme le nez au milieu de la figure alors autant ne plus 
+# c'est lui qui se voit comme le nez au milieu de la figure alors autant ne plus
 # tourner autour du pot
 
 print('*****  On doit obtenir la même chose que précédemment *****')
@@ -913,7 +928,7 @@ block_dt_r = np.zeros((len(df_rnx), nb_epochs))
 
 for i, epoch in enumerate(epoch_uniques):
     block_dt_r[df_rnx.loc[epoch, 'ind_ligne'],i]=1
-    
+
 
 # Initialisation des coordonnées approximatives du récepteur
 P_app = np.array([0, 0, 0])
@@ -954,8 +969,7 @@ while np.linalg.norm(dP_est[0:3])>1:
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
     i+=1
-    
-    
+
 
 # Calcul de la distance finale entre la position estimée et la position initiale du header RINEX
 dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est[:3] - P_rnx_header)**2))
@@ -974,19 +988,18 @@ del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distan
 # introduire une visualisation du résultat avec folium
 
 
-
-#%%
+# %%
 # Traitement classique sur le code pour la position d'un récepteur GNSS
 # corrections des erreurs d'horloges satellites
 # -> elles sont connues -> correction directe du vecteur B
 # estimation des erreurs d'horloges récepteur
 # -> elles sont inconnues et doivent être estimées à chaque époque
-# correction des effets ionosphériques en utilisant une CL des observations sur 
+# correction des effets ionosphériques en utilisant une CL des observations sur
 # le code
 # -> correction directement du vecteur B
 
 # correction de l'effet Sagnac
-# c'est lui qui se voit comme le nez au milieu de la figure alors autant ne plus 
+# c'est lui qui se voit comme le nez au milieu de la figure alors autant ne plus
 # tourner autour du pot
 
 # correction des effets troposphériques
@@ -1002,13 +1015,13 @@ print('*****  + angle de coupure     *****')
 # xyz2geo : cartesian to geographic coordinates conversion. All angles are given in radians.
 lon, lat, h = conv.xyz2geo(P_rnx_header[0],P_rnx_header[1],P_rnx_header[2])
 
-# grille gpt3 
+# grille gpt3
 gpt3_5 = gnss_edu.gpt3_5_fast_readGrid(filename ='gpt3_5.grd')
 
 
-# Il faut calculer les corrections et les estimations pour chaque satellite et 
+# Il faut calculer les corrections et les estimations pour chaque satellite et
 # pour chaque époque
-t = gpst.gpsdatetime()
+# t = gpst.gpsdatetime()
 
 ZHD = []
 mfh = []
@@ -1016,7 +1029,8 @@ mfw = []
 
 for (time_i,prn_i) in df_rnx.index:
 
-    t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
+    #t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
+    t_mjd = conv.dt2mjd(time_i.to_pydatetime())
     #gmfh, gmfw = gpt3.gmf(dmjd=t.mjd, dlat=lat, dlon=lon, dhgt=h, zd =np.pi/2-df_rnx.loc[(time_i,prn_i), 'Ele']*np.pi/180)
     gmfh = 1/np.sin(df_rnx.loc[(time_i,prn_i), 'Ele']*np.pi/180)
     gmfw = gmfh
@@ -1029,9 +1043,8 @@ for (time_i,prn_i) in df_rnx.index:
     mfh.append(gmfh)
     mfw.append(gmfw)
     ZHD.append(ZHD_v)
-   
-    
-    
+
+
 df_rnx['ZHD']   = ZHD 
 df_rnx['mfh']   = mfh 
 df_rnx['mfw']   = mfw
@@ -1040,7 +1053,7 @@ df_rnx['mfw']   = mfw
 del gm, pression, ZHD, mfh, mfw, ZHD_v, gmfh, gmfw, gpt3_5, lat, lon, h
 
 
-#%% Angle de coupure
+# %% Angle de coupure
 
 Az_rad, Ele_rad = conv.xyz2azi_ele(P_rnx_header[0],P_rnx_header[1],P_rnx_header[2],df_rnx.X_sat,df_rnx.Y_sat,df_rnx.Z_sat)
 
@@ -1056,7 +1069,7 @@ df_Sagnac_new = df_Sagnac[df_rnx['Ele']>7].copy()
 # ajout de l'indice de ligne
 df_rnx_new['ind_ligne'] = range(len(df_rnx_new)) 
 
-#%%
+# %%
 # Obtention des époques uniques
 epoch_uniques = df_rnx_new.index.get_level_values('epoch').unique()
 nb_epochs = len(epoch_uniques)
@@ -1066,7 +1079,7 @@ block_dt_r = np.zeros((len(df_rnx_new), nb_epochs))
 # Remplissage du bloc correspondant à l'estimation des erreurs d'horloge recepteur
 for i, epoch in enumerate(epoch_uniques):
     block_dt_r[df_rnx_new.loc[epoch, 'ind_ligne'],i]=1
-    
+
 # Remplissage du bloc correspondant à l'estimation des retards troposphériques humides (estimation horaire)
 start = df_rnx_new.index[0][0]
 delta_T = pd.Timedelta(days=0, hours=2, minutes=0)
@@ -1134,8 +1147,7 @@ while np.linalg.norm(dP_est[0:3])>1:
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
     i+=1
-    
-    
+
 
 # Calcul de la distance finale entre la position estimée et la position initiale du header RINEX
 dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est[:3] - P_rnx_header)**2))
@@ -1149,31 +1161,30 @@ print("Nord (N):", N)
 print("Haut (U):", U)
 print("\n")
 
-#del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distances, i, epoch, epoch_uniques, nb_epochs
+# del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distances, i, epoch, epoch_uniques, nb_epochs
 
 # introduire une visualisation du résultat avec folium
 
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac et iono et tropo", save_path="./corr_sat_clock_sagnac_iono_tropo.png",
                            P_est=P_est[:3], P_rnx_header=P_rnx_header, conv_module=conv);
 
-#%%
+# %%
 
 
-    
-#%%
+# %%
 
-    
-#%% 
+
+# %%
 # Recherche des observations continues par satellite
 df_reset = df_rnx_new.reset_index()
 df_reset['Time_Diff'] = df_reset.groupby('prn')['epoch'].diff().dt.total_seconds()
 
 # génération d'un dataframe listant les ruptures d'observation pour les satellites concernés
-# attention, certains satellites n'ont qu'une période d'observation et il n'y a qu'une seule ambiguïté 
+# attention, certains satellites n'ont qu'une période d'observation et il n'y a qu'une seule ambiguïté
 # à introduire
 
 filtered_df = df_reset[df_reset['Time_Diff'] > 30]
- 
+
 
 prns_unique_all = sorted(df_reset['prn'].unique())
 prns_unique_multi_amb = sorted(filtered_df['prn'].unique())  
@@ -1187,8 +1198,8 @@ for prn_i in prns_unique_one_amb:
     ind_ligne = np.where(df_rnx_new.index.get_level_values('prn') == prn_i )
     block_one_amb[ ind_ligne, ind_c] = 1 
     ind_c = ind_c + 1
-  
-#%% 
+
+# %%
 # Création de blocs spécifiques pour les satellites qui se lèvent/couchent
 for prn_i in prns_unique_multi_amb:
     print(prn_i)
@@ -1224,21 +1235,20 @@ for prn_i in prns_unique_multi_amb:
     for  amb in range(nb_amb_prn):
         print(amb)  
         print(extract_df.iloc[amb]['epoch'])
-        
 
 
-#%%
+# %%
 # Traitement classique sur la phase pour la position d'un récepteur GNSS
 # corrections des erreurs d'horloges satellites
 # -> elles sont connues -> correction directe du vecteur B
 # estimation des erreurs d'horloges récepteur
 # -> elles sont inconnues et doivent être estimées à chaque époque
-# correction des effets ionosphériques en utilisant une CL des observations sur 
+# correction des effets ionosphériques en utilisant une CL des observations sur
 # le code
 # -> correction directement du vecteur B
 
 # correction de l'effet Sagnac
-# c'est lui qui se voit comme le nez au milieu de la figure alors autant ne plus 
+# c'est lui qui se voit comme le nez au milieu de la figure alors autant ne plus
 # tourner autour du pot
 
 # correction des effets troposphériques
@@ -1254,8 +1264,7 @@ print('*****  + estimation amb.     *****')
 print('*****  ET NORMALEMENT ... ARG :) on est dans PLOUF  *****')
 
 
-
-#%%
+# %%
 # Obtention des époques uniques
 epoch_uniques = df_rnx_new.index.get_level_values('epoch').unique()
 nb_epochs = len(epoch_uniques)
@@ -1265,7 +1274,7 @@ block_dt_r = np.zeros((len(df_rnx_new), nb_epochs))
 # Remplissage du bloc correspondant à l'estimation des erreurs d'horloge recepteur
 for i, epoch in enumerate(epoch_uniques):
     block_dt_r[df_rnx_new.loc[epoch, 'ind_ligne'],i]=1
-    
+
 # Remplissage du bloc correspondant à l'estimation des retards troposphériques humides (estimation horaire)
 start = df_rnx_new.index[0][0]
 delta_T = pd.Timedelta(days=0, hours=2, minutes=0)
@@ -1290,7 +1299,6 @@ while start <= df_rnx_new.index[-1][0]:
     
     start = start + delta_T
     ind_c = ind_c + 1
-
 
 
 # Initialisation des coordonnées approximatives du récepteur
@@ -1334,8 +1342,7 @@ while np.linalg.norm(dP_est[0:3])>1:
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
     i+=1
-    
-    
+
 
 # Calcul de la distance finale entre la position estimée et la position initiale du header RINEX
 dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est[:3] - P_rnx_header)**2))
@@ -1349,15 +1356,15 @@ print("Nord (N):", N)
 print("Haut (U):", U)
 print("\n")
 
-#del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distances, i, epoch, epoch_uniques, nb_epochs
+# del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distances, i, epoch, epoch_uniques, nb_epochs
 
 # introduire une visualisation du résultat avec folium
 
-#plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac et iono et tropo", save_path="./corr_sat_clock_sagnac_iono_tropo.png",
+# plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac et iono et tropo", save_path="./corr_sat_clock_sagnac_iono_tropo.png",
 #                           P_est=P_est[:3], P_rnx_header=P_rnx_header, conv_module=conv)
 
 
-#%%
+# %%
 f1 = conv.L1_CARRIER_FREQUENCY
 f2 = conv.L2_CARRIER_FREQUENCY
 
@@ -1379,7 +1386,7 @@ df_rnx_new['P3']  = (f1**2*df_rnx_new['C1'] - f2**2*df_rnx_new['P2'])/(f1**2-f2*
 
 gnss_edu.plot_series(df=df_rnx_new, col1='L3', col2='P3' , coeff1=1.0, coeff2=1.0, seuil=3600, renderer="browser")
 
-#%%
+# %%
 # calcul d'autres combinaisons linéaires
 
 df_rnx_new['Lw'] = l2/(l2-l1)*df_rnx_new['L1'] - l1/(l2-l1)*df_rnx_new['L2']
@@ -1398,12 +1405,7 @@ df_rnx_new['Lmw'] = lw*(df_rnx_new['L1']/l1 - df_rnx_new['L2']/l2) - (f1*df_rnx_
 
 lmw = 0.86
 df_rnx_new['Lnew'] =  df_rnx_new['L3'] - (f2/(f1+f2)) * df_rnx_new['Lmw']
-#%%
+# %%
 
 
 fig = gnss_edu.plot_series(df=df_rnx_new, col1='Lmw', col2=None , coeff1=1.0 , coeff2=1.0, seuil=3600, renderer="browser")
-
-
-
-
-
