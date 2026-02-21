@@ -451,6 +451,80 @@ def rtklib_run_pair(
     return results
 
 
+def make_pairs(
+    rnx_dir,
+    sites_rovers,
+    site_base,
+    date_srt=None,
+    date_end=None,
+):
+    """
+    Find RINEX files and match rover/base pairs based on time coverage.
+
+    Parameters
+    ----------
+    rnx_dir : str | os.PathLike
+        Directory containing RINEX files.
+    sites_rovers : list of str
+        List of rover site codes.
+    site_base : str
+        Base site code.
+    date_srt : datetime.datetime, optional
+        Start date for RINEX file search.
+    date_end : datetime.datetime, optional
+        End date for RINEX file search.
+
+    Returns
+    -------
+    tuple
+        (rnxs_pairs, df_all) where:
+        - rnxs_pairs : list of tuples (rover_path, base_path)
+        - df_all : pandas DataFrame with all RINEX file information
+    """
+    rnxs_pairs = []
+
+    if site_base in sites_rovers:
+        log.warning(f"Base site '{site_base}' is in rover sites list, removing it")
+        sites_rovers.remove(site_base)
+
+    rnxs_all = operational.rinex_finder(
+        rnx_dir,
+        specific_sites=sites_rovers + [site_base],
+        start_epoch=date_srt,
+        end_epoch=date_end,
+    )
+
+    df_all = operational.rinex_table_from_list(rnxs_all, site9_col=True)
+    df_all["date_end"] = df_all["date"] + df_all["per"]
+    df_rov = df_all[df_all["site9"].isin(sites_rovers)]
+    df_bse = df_all[df_all["site9"] == site_base]
+
+    if len(df_bse) == 0:
+        log.error(f"No base RINEX files found for site: {site_base}")
+        log.error(f"All sites found: {str(list(df_all["site9"].unique()))}")
+        return [], df_all
+
+    for irow, rovrow in df_rov.iterrows():
+        site = rovrow["site9"]
+        rov_srt = rovrow["date"]
+        rov_end = rovrow["date_end"]
+
+        sel = (df_bse["date"] <= rov_srt) & (rov_end <= df_bse["date_end"])
+        df_bse_sel = df_bse[sel]
+        if len(df_bse_sel) == 0:
+            log.warning(f"no base for {site} at {rov_srt}")
+            continue
+        elif len(df_bse_sel) > 1:
+            log.warning(f"multi. bases for {site} at {rov_srt}, get 1st:")
+            log.warning(f"\n{df_bse_sel.to_string()}")
+        row_bse = df_bse_sel.iloc[0]
+
+        rnxs_pair = (rovrow["path"], row_bse["path"])
+        rnxs_pairs.append(rnxs_pair)
+
+    return rnxs_pairs, df_all
+
+
 def rtklib_run(
     rnx_dir,
     cfgfile_generik,
@@ -473,49 +547,16 @@ def rtklib_run(
     exe_path="rnx2rtkp",
 ):
 
-    rnxs_pairs = []
-
-    log.info("STEP 1: Finding RINEX files and matching rover/base pairs...")
-    if site_base in sites_rovers:
-        log.warning(f"Base site '{site_base}' is in rover sites list, removing it")
-        sites_rovers.remove(site_base)
-
-    rnxs_all = operational.rinex_finder(
+    log.info("STEP 1: Finding RINEX files and matching rover/base pairs")
+    rnxs_pairs, df_all = make_pairs(
         rnx_dir,
-        specific_sites=sites_rovers + [site_base],
-        start_epoch=date_srt,
-        end_epoch=date_end,
+        sites_rovers,
+        site_base,
+        date_srt=date_srt,
+        date_end=date_end,
     )
 
-    df_all = operational.rinex_table_from_list(rnxs_all, site9_col=True)
-    df_all["date_end"] = df_all["date"] + df_all["per"]
-    df_rov = df_all[df_all["site9"].isin(sites_rovers)]
-    df_bse = df_all[df_all["site9"] == site_base]
-
-    if len(df_bse) == 0:
-        log.error(f"No base RINEX files found for site: {site_base}")
-        log.error(f"All sites found: {str(list(df_all["site9"].unique()))}")
-        return []
-
-    for irow, rovrow in df_rov.iterrows():
-        site = rovrow["site9"]
-        rov_srt = rovrow["date"]
-        rov_end = rovrow["date_end"]
-
-        sel = (df_bse["date"] <= rov_srt) & (rov_end <= df_bse["date_end"])
-        df_bse_sel = df_bse[sel]
-        if len(df_bse_sel) == 0:
-            log.warning(f"no base for {site} at {rov_srt}")
-            continue
-        elif len(df_bse_sel) > 1:
-            log.warning(f"multi. bases for {site} at {rov_srt}, get 1st:")
-            log.warning(f"\n{df_bse_sel.to_string()}")
-        row_bse = df_bse_sel.iloc[0]
-
-        rnxs_pair = (rovrow["path"], row_bse["path"])
-        rnxs_pairs.append(rnxs_pair)
-
-    log.info("STEP 2: Downloading shared products (SP3/CLK and BRDC)...")
+    log.info("STEP 2: Downloading shared products (SP3/CLK and BRDC)")
     try:
         orbclklis_shr, brdclis_shr = dl_prods(prod_dir,
                                               list(df_all["date"].unique()),
@@ -524,7 +565,7 @@ def rtklib_run(
         log.error(f"Failed to download shared products: {e}")
         raise
 
-    log.info(f"STEP 3: Running {len(rnxs_pairs)} RTKLIB processes in parallel...")
+    log.info(f"STEP 3: Running {len(rnxs_pairs)} RTKLIB processes in parallel")
     return operational.rtklib_run_pair(
         rnxs_pairs,
         cfgfile_generik,
