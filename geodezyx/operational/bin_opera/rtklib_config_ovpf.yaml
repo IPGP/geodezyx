@@ -1,5 +1,5 @@
 # RTKLIB Processing Configuration Example
-# Use with: rtklib_run -y rtklib_config_example.yaml
+# Use with: rtklib_run -y rtklib_config_ovpf.yaml
 
 # Required parameters
 rnx_dir:
@@ -15,10 +15,10 @@ sites_rovers:                                     # List of rover stations
   - SNEG00REU
   - GITG00REU
 site_base: B59300REU              # Base station
-out_dir: /backuped/calcgnss/rtklib_process/OVPF_RAP_posmode4_B593  # Output directory
+out_dir: /backuped/calcgnss/rtklib_process/OVPF_RAP_posmode4_B593_ULT  # Output directory
 
 # Optional parameters
-exp_prefix: OVPF_RAP_posmode4_B593                         # Output filename prefix (default: empty)
+exp_prefix: OVPF_RAP_posmode4_B593_ULT                         # Output filename prefix (default: empty)
 igs_prods: GRG0OPSRAP                                      # IGS product ID (default: GRG0OPSULT)
 tmp_dir: /backuped/calcgnss/rtklib_process/090_TMP         # Temporary directory (default: <out_dir>/TMP)
 prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib   # GNSS products directory (default: <tmp_dir>)
