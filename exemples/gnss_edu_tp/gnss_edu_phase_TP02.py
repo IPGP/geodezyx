@@ -105,10 +105,9 @@ dwl_output_satellite = operational.download_gnss_products(archive_dir= my_direct
 fichier_rnx = dwl_output_station[0][0]
 
 # Chargement des données RINEX d'observation dans un pandas dataframe via  GeodeZYX
-df_rnx_flat, l_rnx_head = files_rw.read_rinex2_obs(fichier_rnx,
+df_rnx_orig, l_rnx_head = files_rw.read_rinex2_obs(fichier_rnx,
                                            return_header=True)
-
-df_rnx = df_rnx_flat.set_index(['epoch', 'prn'], drop=True)
+df_rnx = df_rnx_orig.copy()
 
 
 # Position approchée lue dans le header du fichier RINEX
@@ -169,8 +168,8 @@ dte_sat = []
 dRelat = []
 
 #### NEW GEODEZYX STYLE : on utilise les fonctions d'interpolation de GeodeZYX pour calculer la position des satellites à chaque temps d'émission
-for prn in df_rnx_flat['prn'].unique():
-    df_rnx_prn = df_rnx_flat[df_rnx_flat['prn'] == prn]
+for prn in df_rnx['prn'].unique():
+    df_rnx_prn = df_rnx[df_rnx['prn'] == prn]
     if not prn in df_sp3['prn'].unique():
         print(f"Satellite {prn} non présent dans le fichier SP3, on ne peut pas calculer sa position à chaque temps d'émission")
         continue
@@ -180,30 +179,43 @@ for prn in df_rnx_flat['prn'].unique():
     t_rec = df_rnx_prn['epoch']
     t_emi_gross = t_rec - fly_time
     orb_df_gross = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values)
+    # les positions dans les fichiers SP3 sont en km, on les convertit en mètre pour être cohérent avec les unités de la mesure de pseudodistance
+    orb_df_gross[["x","y","z"]] = orb_df_gross[["x","y","z"]] * 10**3 # km -> m
 
     # calcul de l'effet relativiste
     delta_t = pd.to_timedelta(1e-3, unit="s") # écart de temps en +/- pour calculer la dérivée
     orb_df_rel_fwd = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values + delta_t)
+    orb_df_rel_fwd[["x","y","z"]] = orb_df_rel_fwd[["x","y","z"]] * 10**3 # km -> m
     orb_df_rel_bak = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values - delta_t)
+    orb_df_rel_bak[["x","y","z"]] = orb_df_rel_bak[["x","y","z"]] * 10**3 # km -> m
 
-    VX = (orb_df_rel_fwd[["x","y","z"]] - orb_df_rel_bak[["x","y","z"]]) / (2 / delta_t.total_seconds())
-    VX0 = orb_df_gross[["x","y","z"]]
-
-    dRelat_v = -2.0 * (VX0 * VX).sum(axis=1) / (conv.SPEED_OF_LIGHT **2)
+    xyz_diff = (orb_df_rel_fwd[["x","y","z"]] - orb_df_rel_bak[["x","y","z"]]) / (2 * delta_t.total_seconds())
+    xyz = orb_df_gross[["x","y","z"]]
+    dRelat_v = -2.0 * (xyz_diff * xyz).sum(axis=1) / (conv.SPEED_OF_LIGHT **2)
 
     t_emi_ok = t_emi_gross -  pd.to_timedelta(orb_df_gross["clk"].values, unit="us") # - pd.to_timedelta(dRelat_v, unit="s")
     orb_df_ok = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_ok.values)
+    orb_df_ok[["x","y","z"]] = orb_df_ok[["x","y","z"]] * 10**3 # km -> m
 
     X_sat.extend(orb_df_ok["x"].values)
     Y_sat.extend(orb_df_ok["y"].values)
     Z_sat.extend(orb_df_ok["z"].values)
-    dte_sat.extend(orb_df_ok["clk"].values)
+    dte_sat.extend(orb_df_ok["clk"].values * 1e-6) # microsecondes -> secondes
     dRelat.extend(dRelat_v.values)
 
+    df_rnx.loc[df_rnx_prn.index, 'X_sat'] = orb_df_ok["x"].values
+    df_rnx.loc[df_rnx_prn.index, 'Y_sat'] = orb_df_ok["y"].values
+    df_rnx.loc[df_rnx_prn.index, 'Z_sat'] = orb_df_ok["z"].values
+    df_rnx.loc[df_rnx_prn.index, 'dte_sat'] = orb_df_ok["clk"].values * 1e-6 # microsecondes -> secondes
+    df_rnx.loc[df_rnx_prn.index, 'dRelat'] = dRelat_v.values
+
+df_rinex_flat = df_rnx.copy()
+df_rnx = df_rnx.set_index(['epoch', 'prn'], drop=True)
 
 
+### OLD STYLE ###################################################################
 
-### OLD STYLE
+df_rnx_old = df_rnx.copy()
 
 mysp3 = orb.orbit()
 mysp3.loadSp3(fichier_sp3)
@@ -213,46 +225,47 @@ mynav.loadRinexN(fichier_brdc)
 
 # Il faut calculer la position de chaque satellite GNSS à chaque temps d'émission
 t = gpst.gpsdatetime()
-X_sat = []
-Y_sat = []
-Z_sat = []
-dte_sat = []
-dRelat = []
+X_sat_old = []
+Y_sat_old = []
+Z_sat_old = []
+dte_sat_old = []
+dRelat_old = []
 
-for (time_i,prn_i) in df_rnx.index:
+for (time_i,prn_i) in df_rnx_old.index:
     t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
-    t_emission_mjd  = t.mjd - df_rnx.loc[(time_i,prn_i), 'C1'] / conv.SPEED_OF_LIGHT / 86400.0
+    t_emission_mjd  = t.mjd - df_rnx_old.loc[(time_i,prn_i), 'C1'] / conv.SPEED_OF_LIGHT / 86400.0
     (X_sat_v,Y_sat_v,Z_sat_v,dte_sat_v)	 = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd)
 
     # calcul de l'effet relativiste
     delta_t = 1e-3 # écart de temps en +/- pour calculer la dérivée 
     (Xs1,Ys1,Zs1,clocks1) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd - delta_t / 86400.0)    
     (Xs2,Ys2,Zs2,clocks2) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd + delta_t / 86400.0)  
-    
+
     VX      = (np.array([Xs2-Xs1, Ys2-Ys1, Zs2-Zs1]))/2.0/delta_t
     VX0     = np.array([X_sat_v,Y_sat_v,Z_sat_v])
 
-    dRelat_v  = -2.0 * VX0.T@ VX /(conv.SPEED_OF_LIGHT **2)
-    
+    dRelat_v1  = -2.0 * VX0.T @ VX /(conv.SPEED_OF_LIGHT **2)
+    dRelat_v2 = -2.0 * np.dot(VX0, VX) / (conv.SPEED_OF_LIGHT**2)
+
     # temps d'emission du signal GNSS en temps GNSS (mjd)
-    t_emission_mjd = t_emission_mjd - dte_sat_v / 86400.0 - dRelat_v / 86400.0
-    
-    # Recalcul de la position du satellite au temps d'emission (temps GNSS en mjd)   
+    t_emission_mjd = t_emission_mjd - dte_sat_v / 86400.0 - dRelat_v1 / 86400.0
+
+    # Recalcul de la position du satellite au temps d'emission (temps GNSS en mjd)
     (X_sat_v,Y_sat_v,Z_sat_v,dte_sat_v)	 = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd)
-    
-    
-    X_sat.append(X_sat_v)
-    Y_sat.append(Y_sat_v)
-    Z_sat.append(Z_sat_v)
-    dte_sat.append(dte_sat_v)
-    dRelat.append(dRelat_v)
 
+    X_sat_old.append(X_sat_v)
+    Y_sat_old.append(Y_sat_v)
+    Z_sat_old.append(Z_sat_v)
+    dte_sat_old.append(dte_sat_v)
+    dRelat_old.append(dRelat_v1)
 
-df_rnx['X_sat']   = X_sat 
-df_rnx['Y_sat']   = Y_sat 
-df_rnx['Z_sat']   = Z_sat
-df_rnx['dte_sat'] = dte_sat
-df_rnx['dRelat']  = dRelat
+df_rnx_old["X_sat"] = X_sat_old
+df_rnx_old["Y_sat"] = Y_sat_old
+df_rnx_old["Z_sat"] = Z_sat_old
+df_rnx_old["dte_sat"] = dte_sat_old
+df_rnx_old["dRelat"] = dRelat_old
+
+df_rnx_old[["X_sat","Y_sat","Z_sat","dte_sat","dRelat"]]
 
 
 # del X_sat, Y_sat, Z_sat, dte_sat, time_i, prn_i, t_emission_mjd, t, X_sat_v, Y_sat_v, Z_sat_v, dte_sat_v, dRelat_v, dRelat
@@ -370,7 +383,7 @@ print("\n")
 
 
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Satellite clocks correction", save_path="./sat_clocks_only.png",
-                           P_est=P_est, P_rnx_header=P_rnx_header, conv_module=conv)
+                           P_est=P_est, P_rnx_header=P_rnx_header)
 
 
 # del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
@@ -427,7 +440,7 @@ print("\n")
 
 
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat", save_path="./corr_sat_clock.png",
-                           P_est=P_est, P_rnx_header=P_rnx_header, conv_module=conv)
+                           P_est=P_est, P_rnx_header=P_rnx_header)
 
 
 del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
@@ -581,7 +594,7 @@ print("Haut (U):", U)
 print("\n")
 
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac", save_path="./corr_sat_clock_sagnac.png",
-                           P_est=P_est[:3], P_rnx_header=P_rnx_header, conv_module=conv)
+                           P_est=P_est[:3], P_rnx_header=P_rnx_header)
 
 
 del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distances, i, epoch, epoch_uniques, nb_epochs
@@ -626,7 +639,7 @@ Ele_deg =  Ele_rad * rad2deg
 alpha = mynav.ion_alpha_gps
 beta = mynav.ion_beta_gps
 
-#t = gpst.gpsdatetime() # création d'un objet temps de la gnsstime
+# t = gpst.gpsdatetime() # création d'un objet temps de la gnsstime
 dIon1 = []
 for (time_i,prn_i) in df_rnx.index:
     #t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
@@ -876,7 +889,7 @@ print("\n")
 
 
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac et iono", save_path="./corr_sat_clock_sagnac_iono.png",
-                           P_est=P_est[:3], P_rnx_header=P_rnx_header, conv_module=conv)
+                           P_est=P_est[:3], P_rnx_header=P_rnx_header)
 
 del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distances, i, epoch, epoch_uniques, nb_epochs
 
@@ -1164,7 +1177,7 @@ print("\n")
 # introduire une visualisation du résultat avec folium
 
 gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac et iono et tropo", save_path="./corr_sat_clock_sagnac_iono_tropo.png",
-                           P_est=P_est[:3], P_rnx_header=P_rnx_header, conv_module=conv);
+                           P_est=P_est[:3], P_rnx_header=P_rnx_header)
 
 # %%
 
@@ -1359,7 +1372,7 @@ print("\n")
 # introduire une visualisation du résultat avec folium
 
 # plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac et iono et tropo", save_path="./corr_sat_clock_sagnac_iono_tropo.png",
-#                           P_est=P_est[:3], P_rnx_header=P_rnx_header, conv_module=conv)
+#                           P_est=P_est[:3], P_rnx_header=P_rnx_header)
 
 
 # %%
