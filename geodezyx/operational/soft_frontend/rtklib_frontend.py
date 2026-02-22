@@ -110,7 +110,7 @@ def rtklib_run_mono(
     solformat=None,
     sateph=None,
     force=False,
-    clean_tmp=True,
+    no_clean_tmp=False,
     exe_path="rnx2rtkp",
 ):
     """
@@ -269,7 +269,7 @@ def rtklib_run_mono(
         log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
         utils.gzip_compress(out_res_fil + ".stat", rm_inp=True)
 
-    if True:
+    if not no_clean_tmp:
         shutils.rmtree(tmp_dir_wrk, ignore_errors=True)
         os.remove(out_res_fil.replace(".out", "") + "_events.pos")
 
@@ -291,7 +291,7 @@ def rtklib_run_pair(
     solformat=None,
     sateph=None,
     force=False,
-    clean_tmp=True,
+    no_clean_tmp=False,
     procs=4,
     exe_path="rnx2rtkp",
 ):
@@ -338,7 +338,7 @@ def rtklib_run_pair(
         Output solution format.
     force : bool, default=False
         If True, forces reprocessing even if output exists.
-    clean_tmp : bool, default=False
+    no_clean_tmp : bool, default=False
         If True, deletes tmp_dir contents at start.
     exe_path : str
         Filesystem path to the RTKLIB rnx2rtkp executable.
@@ -423,7 +423,7 @@ def rtklib_run_pair(
                 solformat=solformat,
                 sateph=sateph,
                 force=force,
-                clean_tmp=clean_tmp,
+                no_clean_tmp=no_clean_tmp,
                 exe_path=exe_path,
             )
             future_to_pair[future] = (rnx_rov, rnx_bas)
@@ -445,7 +445,7 @@ def rtklib_run_pair(
         f"Parallel RTKLIB processing completed. {sum(1 for r in results if r)} / {len(rinex_pairs)} successful."
     )
 
-    if clean_tmp:
+    if no_clean_tmp:
         shutils.rmtree(tmp_dir + "/*", ignore_errors=True)
 
     return results
@@ -542,7 +542,7 @@ def rtklib_run(
     solformat=None,
     sateph=None,
     force=False,
-    clean_tmp=True,
+    no_clean_tmp=False,
     procs=8,
     exe_path="rnx2rtkp",
 ):
@@ -581,7 +581,7 @@ def rtklib_run(
         solformat=solformat,
         sateph=sateph,
         force=force,
-        clean_tmp=clean_tmp,
+        no_clean_tmp=no_clean_tmp,
         procs=procs,
         exe_path=exe_path,
     )
