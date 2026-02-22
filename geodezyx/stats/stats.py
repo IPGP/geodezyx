@@ -1312,6 +1312,7 @@ def lagrange_interpolate(tdata, ydata, titrp, n=10, t_type="datetime"):
         tdata_px = np.array(tdata)
         titrp_px = np.array(titrp)
     elif t_type == "pandas_timestamp":
+        ## here we work in int64 and nanosecond precision, for better precision and stability
         tdata_px = conv.pandas_timestamp2posix(tdata)
         titrp_px = conv.pandas_timestamp2posix(titrp)
     else:

@@ -2532,7 +2532,7 @@ def pandas_timestamp2dt(timstp_in):
         else:
             return timstp_in.to_pydatetime()
 
-def pandas_timestamp2posix(timstp_in):
+def pandas_timestamp2posix(timstp_in,out_unit_coef=10**9,out_type=np.int64):
     """
     Time Python type conversion
 
@@ -2542,6 +2542,13 @@ def pandas_timestamp2posix(timstp_in):
     ----------
     timstp_in : Timestamp or list/numpy.array of Timestamp.
         Pandas's Timestamp(s).  Can handle several datetimes in an iterable.
+    out_unit_coef : int, optional
+        Coefficient to convert the output to the desired time unit.
+        For example, use 1 for seconds, 1000 for milliseconds, 10**9 for nanoseconds.
+        The default is 10**9 (nanoseconds).
+    out_type :
+        Desired output type (e.g., int, float, np.int64, np.float64).
+        The default is np.int64.
 
     Returns
     -------
@@ -2549,13 +2556,16 @@ def pandas_timestamp2posix(timstp_in):
         Time as POSIX timestamp(s)
     """
 
-    import pandas as pd
-
     if utils.is_iterable(timstp_in):
         typ = utils.get_type_smart(timstp_in)
         return typ([pandas_timestamp2posix(e) for e in timstp_in])
     else:
-        return timstp_in.timestamp() + timstp_in.nanosecond / 1e9
+
+        part1 = out_type(timstp_in.timestamp() * out_unit_coef)
+        part2 = out_type(timstp_in.nanosecond * 10**-9 * out_unit_coef)
+
+        posix_out = part1 + part2
+        return posix_out
 
 import pandas as pd
 p = pd.Timestamp("2026-01-01 00:00:00.9876543212345678")
