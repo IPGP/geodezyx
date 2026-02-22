@@ -9,7 +9,7 @@ Filière ING3 - PPMD - Traitement de la mesure de phase
 https://www.ipgp.fr/annuaire/nahmani/)
 contact : nahmani@ipgp.fr ou samuel.nahmani@ign.fr
 (1) Université Paris Cité, Institut de physique du globe de Paris, CNRS, IGN, F-75005 Paris, France.
-(2) Univ Gustave Eiffel, ENSG, IGN, F-77455 Marne-la-Vallée, France. 
+(2) Univ Gustave Eiffel, ENSG, IGN, F-77455 Marne-la-Vallée, France.
 
 Version: 1.0
 Dépendances: pandas, numpy, geodezyx, datetime, gpsdatetime, gnsstoolbox
@@ -180,14 +180,15 @@ for prn in df_rnx['prn'].unique():
     # les positions dans les fichiers SP3 sont en km, on les convertit en mètre pour être cohérent avec les unités de la mesure de pseudodistance
     orb_df_gross[["x","y","z"]] = orb_df_gross[["x","y","z"]] * 10**3 # km -> m
 
-    # calcul de l'effet relativiste
+    ###### calcul de l'effet relativiste
     delta_t = pd.to_timedelta(1e-3, unit="s") # écart de temps en +/- pour calculer la dérivée
-    orb_df_rel_fwd = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values + delta_t)
-    orb_df_rel_fwd[["x","y","z"]] = orb_df_rel_fwd[["x","y","z"]] * 10**3 # km -> m
-    orb_df_rel_bak = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values - delta_t)
-    orb_df_rel_bak[["x","y","z"]] = orb_df_rel_bak[["x","y","z"]] * 10**3 # km -> m
+    ### calcul des valeurs "avant" (forward) et "après" ( pour calculer la dérivée centrée
+    orb_df_fwd = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values + delta_t)
+    orb_df_fwd[["x", "y", "z"]] = orb_df_fwd[["x", "y", "z"]] * 10 ** 3 # km -> m
+    orb_df_bak = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values - delta_t)
+    orb_df_bak[["x", "y", "z"]] = orb_df_bak[["x", "y", "z"]] * 10 ** 3 # km -> m
 
-    xyz_diff = (orb_df_rel_fwd[["x","y","z"]] - orb_df_rel_bak[["x","y","z"]]) / (2 * delta_t.total_seconds())
+    xyz_diff = (orb_df_fwd[["x", "y", "z"]] - orb_df_bak[["x", "y", "z"]]) / (2 * delta_t.total_seconds())
     xyz = orb_df_gross[["x","y","z"]]
     dRelat_v = -2.0 * (xyz_diff * xyz).sum(axis=1) / (conv.SPEED_OF_LIGHT **2)
 
@@ -232,7 +233,7 @@ for (time_i,prn_i) in df_rnx_old.index:
     # calcul de l'effet relativiste
     delta_t = 1e-3 # écart de temps en +/- pour calculer la dérivée
     (Xs1,Ys1,Zs1,clocks1) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd - delta_t / 86400.0)
-    (Xs2,Ys2,Zs2,clocks2) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd + delta_t / 86400.0)  
+    (Xs2,Ys2,Zs2,clocks2) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd + delta_t / 86400.0)
 
     VX      = (np.array([Xs2-Xs1, Ys2-Ys1, Zs2-Zs1]))/2.0/delta_t
     VX0     = np.array([X_sat_v,Y_sat_v,Z_sat_v])
@@ -296,10 +297,10 @@ while np.linalg.norm(dP_est)>1:
     # Résolution par moindres carrés pour estimer le déplacement
     dP_est = np.linalg.inv(A.T@A)@A.T@B
     #dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
-    
+
     # Mise à jour de la position estimée
     P_est = P_app + dP_est
-    
+
     # Affichage de la position estimée à chaque itération
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
@@ -318,7 +319,7 @@ while np.linalg.norm(dP_est)>1:
     print("\n")
 
 
-fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial calcul.", 
+fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial calcul.",
                                       save_path="./trivial_bis.pdf",
                            P_est=P_est, P_rnx_header=P_rnx_header)
 
@@ -354,10 +355,10 @@ while np.linalg.norm(dP_est)>1:
 
     # Résolution par moindres carrés pour estimer le déplacement
     dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
-    
+
     # Mise à jour de la position estimée
     P_est = P_app + dP_est
-    
+
     # Affichage de la position estimée à chaque itération
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
@@ -411,10 +412,10 @@ while np.linalg.norm(dP_est)>1:
 
     # Résolution par moindres carrés pour estimer le déplacement
     dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
-    
+
     # Mise à jour de la position estimée
     P_est = P_app + dP_est
-    
+
     # Affichage de la position estimée à chaque itération
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
@@ -489,10 +490,10 @@ while np.linalg.norm(dP_est)>1:
 
     # Résolution par moindres carrés pour estimer le déplacement
     dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
-    
+
     # Mise à jour de la position estimée
     P_est = P_app + dP_est
-    
+
     # Affichage de la position estimée à chaque itération
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
@@ -1103,7 +1104,7 @@ block_zwd = np.zeros((len(df_rnx_new), nb_par_zwd))
 ind_c=0
 
 while start <= df_rnx_new.index[-1][0]:
-    
+
     end   = start + delta_T - delta_sec
     extract2c = df_rnx_new.loc[(slice(start, end)), ('ind_ligne','mfw')]
     block_zwd[extract2c['ind_ligne'],ind_c]=extract2c['mfw']
@@ -1330,17 +1331,17 @@ while np.linalg.norm(dP_est[0:3])>1:
 
     # Résolution par moindres carrés pour estimer le déplacement
     dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
-    
+
     # Mise à jour de la position estimée
     # Attention : on a estimé nb_epochs paramètres d'horloge récepteur
     P_est = np.zeros(len(dP_est))
-    
-    
+
+
     P_est[0:3] = P_app[0:3]+dP_est[0:3]
     P_est[3:]  = dP_est[3:]
-    
 
-    
+
+
     # Affichage de la position estimée à chaque itération
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
     P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
