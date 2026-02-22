@@ -163,22 +163,15 @@ df_sp3 = files_rw.read_sp3(fichier_sp3)
 
 # %%
 
-# Chargement des fichiers d'orbites
-fichier_brdc = './data/data-2019/mlvl176z.18n'
-
-X_sat = []
-Y_sat = []
-Z_sat = []
-dte_sat = []
-dRelat = []
-
 #### NEW GEODEZYX STYLE : on utilise les fonctions d'interpolation de GeodeZYX pour calculer la position des satellites à chaque temps d'émission
 for prn in df_rnx['prn'].unique():
     df_rnx_prn = df_rnx[df_rnx['prn'] == prn]
     if not prn in df_sp3['prn'].unique():
         print(f"Satellite {prn} non présent dans le fichier SP3, on ne peut pas calculer sa position à chaque temps d'émission")
         continue
+    # extraition des données SP3 pour le satellite considéré
     df_sp3_prn = df_sp3[df_sp3['prn'] == prn]
+    # calcul du temps de vol du signal GNSS pour chaque mesure de pseudodistance
     fly_time = df_rnx_prn['C1'] / conv.SPEED_OF_LIGHT
     fly_time = pd.to_timedelta(fly_time, unit="s")
     t_rec = df_rnx_prn['epoch']
@@ -198,15 +191,10 @@ for prn in df_rnx['prn'].unique():
     xyz = orb_df_gross[["x","y","z"]]
     dRelat_v = -2.0 * (xyz_diff * xyz).sum(axis=1) / (conv.SPEED_OF_LIGHT **2)
 
+    # Recalcul de la position du satellite au temps d'emission
     t_emi_ok = t_emi_gross -  pd.to_timedelta(orb_df_gross["clk"].values, unit="us") # - pd.to_timedelta(dRelat_v, unit="s")
     orb_df_ok = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_ok.values)
     orb_df_ok[["x","y","z"]] = orb_df_ok[["x","y","z"]] * 10**3 # km -> m
-
-    X_sat.extend(orb_df_ok["x"].values)
-    Y_sat.extend(orb_df_ok["y"].values)
-    Z_sat.extend(orb_df_ok["z"].values)
-    dte_sat.extend(orb_df_ok["clk"].values * 1e-6) # microsecondes -> secondes
-    dRelat.extend(dRelat_v.values)
 
     df_rnx.loc[df_rnx_prn.index, 'X_sat'] = orb_df_ok["x"].values
     df_rnx.loc[df_rnx_prn.index, 'Y_sat'] = orb_df_ok["y"].values
