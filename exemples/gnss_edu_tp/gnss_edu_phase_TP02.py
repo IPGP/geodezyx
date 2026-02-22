@@ -56,8 +56,6 @@ import gnsstoolbox.orbits as orb
 import pandas as pd
 import numpy as np
 
-# pour visualiser les données
-import matplotlib.pyplot as plt
 
 from pathlib import Path
 import os
@@ -468,13 +466,13 @@ def rotate_around_z(row):
     # temps de vol * vitesse angulaire rotation terrestre -> alpha_rad
     alpha_rad = row['C1'] / conv.SPEED_OF_LIGHT * conv.EARTH_ROTATION_MEAN_ANGULAR_VELOCITY
     # Matrice de rotation autour de l'axe Z
-    Rz = np.array([[np.cos(alpha_rad), -np.sin(alpha_rad), 0],
+    rz = np.array([[np.cos(alpha_rad), -np.sin(alpha_rad), 0],
                    [np.sin(alpha_rad), np.cos(alpha_rad), 0],
                    [0, 0, 1]])
     # Vecteur de position original
     original_vector = np.array([row['X_sat'], row['Y_sat'], row['Z_sat']])
     # Calculer le vecteur de position rotatif
-    rotated_vector = Rz.dot(original_vector)
+    rotated_vector = rz.dot(original_vector)
     return pd.Series(rotated_vector, index=['X_sat', 'Y_sat', 'Z_sat'])
 
 # Appliquer la rotation à chaque ligne et créer un nouveau dataframe avec les résultats
@@ -766,8 +764,8 @@ l3=conv.SPEED_OF_LIGHT/(f1+f2)
 # attention : on se rend compte que les mesures L1 et L2 sont en cycle alors que l'on
 # a besoin d'une mesure de distance (ambigue mais distance quand même)
 
-df_rnx['L3']  = (f1**2*df_rnx['L1'] - f2**2*df_rnx['L2'])/(f1**2-f2**2);
-df_rnx['P3']  = (f1**2*df_rnx['C1'] - f2**2*df_rnx['P2'])/(f1**2-f2**2);
+df_rnx['L3']  = (f1**2*df_rnx['L1'] - f2**2*df_rnx['L2'])/(f1**2-f2**2)
+df_rnx['P3']  = (f1**2*df_rnx['C1'] - f2**2*df_rnx['P2'])/(f1**2-f2**2)
 
 
 # %%
@@ -1397,8 +1395,8 @@ l3=conv.SPEED_OF_LIGHT/(f1+f2)
 # attention : on se rend compte que les mesures L1 et L2 sont en cycle alors que l'on
 # a besoin d'une mesure de distance (ambigue mais distance quand même)
 
-df_rnx_new['L3']  = (f1**2*df_rnx_new['L1'] - f2**2*df_rnx_new['L2'])/(f1**2-f2**2);
-df_rnx_new['P3']  = (f1**2*df_rnx_new['C1'] - f2**2*df_rnx_new['P2'])/(f1**2-f2**2);
+df_rnx_new['L3']  = (f1**2*df_rnx_new['L1'] - f2**2*df_rnx_new['L2'])/(f1**2-f2**2)
+df_rnx_new['P3']  = (f1**2*df_rnx_new['C1'] - f2**2*df_rnx_new['P2'])/(f1**2-f2**2)
 
 
 gnss_edu.plot_series(df=df_rnx_new, col1='L3', col2='P3' , coeff1=1.0, coeff2=1.0, seuil=3600, renderer="browser")
@@ -1423,6 +1421,5 @@ df_rnx_new['Lmw'] = lw*(df_rnx_new['L1']/l1 - df_rnx_new['L2']/l2) - (f1*df_rnx_
 lmw = 0.86
 df_rnx_new['Lnew'] =  df_rnx_new['L3'] - (f2/(f1+f2)) * df_rnx_new['Lmw']
 # %%
-
 
 fig = gnss_edu.plot_series(df=df_rnx_new, col1='Lmw', col2=None , coeff1=1.0 , coeff2=1.0, seuil=3600, renderer="browser")
