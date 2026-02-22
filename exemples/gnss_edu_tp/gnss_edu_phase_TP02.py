@@ -1108,11 +1108,8 @@ delta_T = pd.Timedelta(days=0, hours=2, minutes=0)
 delta_sec = pd.Timedelta(seconds=1)
 end   = start + delta_T - delta_sec
 
-
-import math
-
 delta = df_rnx_new.index[-1][0] - df_rnx_new.index[0][0]
-nb_par_zwd = math.ceil(delta / pd.Timedelta(hours=2))
+nb_par_zwd = np.ceil(delta / pd.Timedelta(hours=2))
 
 
 # Squelette du bloc à concaténer à la matrice modèle A
@@ -1303,10 +1300,8 @@ delta_T = pd.Timedelta(days=0, hours=2, minutes=0)
 delta_sec = pd.Timedelta(seconds=1)
 end   = start + delta_T - delta_sec
 
-import math
-
 delta = df_rnx_new.index[-1][0] - df_rnx_new.index[0][0]
-nb_par_zwd = math.ceil(delta / pd.Timedelta(hours=2))
+nb_par_zwd = np.ceil(delta / pd.Timedelta(hours=2))
 
 
 # Squelette du bloc à concaténer à la matrice modèle A
