@@ -24,8 +24,8 @@ tmp_dir: /backuped/calcgnss/rtklib_process/090_TMP         # Temporary directory
 prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib   # GNSS products directory (default: <tmp_dir>)
 
 # Date range (optional, processes all if not specified)
-date_srt: "7 days ago at 23:59 UTC"            # Start date (YYYY-MM-DD or YYYY-DDD)
-date_end: "2 days ago at 23:59 UTC"            # End date (YYYY-MM-DD or YYYY-DDD)
+date_srt: "7 days ago at 23:59"            # Start date (YYYY-MM-DD or YYYY-DDD)
+date_end: "2 days ago at 23:59"            # End date (YYYY-MM-DD or YYYY-DDD)
 
 # Station coordinates (optional, uses RINEX header if not provided)
 xyz_dic:
