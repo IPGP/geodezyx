@@ -39,7 +39,7 @@ sateph: precise  # Satellite ephemeris: brdc, precise, brdc+sbas, brdc+ssrapc, b
 
 # Processing options
 force: False     # Force reprocessing (overwrite existing)
-clean_tmp: True  # Clean temporary directory after processing
+keep_tmp: False  # Clean temporary directory after processing
 procs: 6         # Number of parallel workers (default: 4)
 
 # Executable path (optional)

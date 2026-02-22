@@ -137,8 +137,8 @@ Examples:
         help=f"Force reprocessing (default: {RTKLIB_RUN_DEFAULTS.get('force')})",
     )
     parser.add_argument(
-        "-nct",
-        "--no_clean_tmp",
+        "-ktmp",
+        "--keep_tmp",
         action="store_true",
         help=f"Clean temp directory (default: {RTKLIB_RUN_DEFAULTS.get('clean_tmp')})",
     )
