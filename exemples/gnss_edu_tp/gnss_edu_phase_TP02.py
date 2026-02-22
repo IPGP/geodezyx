@@ -926,13 +926,13 @@ def rotate_around_z(row):
     # temps de vol * vitesse angulaire rotation terrestre -> alpha_rad
     alpha_rad = row['C1'] / conv.SPEED_OF_LIGHT * conv.EARTH_ROTATION_MEAN_ANGULAR_VELOCITY
     # Matrice de rotation autour de l'axe Z
-    Rz = np.array([[np.cos(alpha_rad), -np.sin(alpha_rad), 0],
+    rz = np.array([[np.cos(alpha_rad), -np.sin(alpha_rad), 0],
                    [np.sin(alpha_rad), np.cos(alpha_rad), 0],
                    [0, 0, 1]])
     # Vecteur de position original
     original_vector = np.array([row['X_sat'], row['Y_sat'], row['Z_sat']])
     # Calculer le vecteur de position rotatif
-    rotated_vector = Rz.dot(original_vector)
+    rotated_vector = rz.dot(original_vector)
     return pd.Series(rotated_vector, index=['X_sat', 'Y_sat', 'Z_sat'])
 
 # Appliquer la rotation à chaque ligne et créer un nouveau dataframe avec les résultats
