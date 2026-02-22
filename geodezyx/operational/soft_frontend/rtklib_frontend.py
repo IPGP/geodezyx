@@ -269,7 +269,7 @@ def rtklib_run_mono(
         log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
         utils.gzip_compress(out_res_fil + ".stat", rm_inp=True)
 
-    if clean_tmp:
+    if True:
         shutils.rmtree(tmp_dir_wrk, ignore_errors=True)
         os.remove(out_res_fil.replace(".out", "") + "_events.pos")
 
