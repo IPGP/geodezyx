@@ -1,5 +1,5 @@
 # RTKLIB Processing Configuration Example
-# Use with: rtklib_run -y rtklib_config_ovpf.yaml
+# Use with: rtklib_run -y rtklib_config_ovpf_ult.yaml
 
 # Required parameters
 rnx_dir:
