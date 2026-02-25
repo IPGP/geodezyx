@@ -5,6 +5,7 @@ Created on 23/04/2024 21:31:45
 
 @author: psakic
 """
+
 import datetime as dt
 import glob
 import itertools
@@ -147,7 +148,9 @@ def _rnx_nav_rgx(date, site="....", sys=".", data_source="."):
     return str(rnx2rgx), str(rnx3rgx)
 
 
-def _generic_server(date, site=None, urlserver=None, urlsuffix=None, file_period="...", data_freq="..."):
+def _generic_server(
+    date, site=None, urlserver=None, urlsuffix=None, file_period="...", data_freq="..."
+):
     """
     Generate RINEX file URLs for a generic FTP server structure.
 
@@ -198,7 +201,9 @@ def _generic_server(date, site=None, urlserver=None, urlsuffix=None, file_period
     >>> # urls[2] might be: 'ftp://example.com/data/2020/015/zimm015a.20o.*'
     >>> # urls[3] might be: 'ftp://example.com/data/2020/015/ZIMM...._R_20200150000_01D_....O.*'
     """
-    rnx2rgx, rnx3rgx = _rnx_obs_rgx(date, site, file_period=file_period, data_freq=data_freq)
+    rnx2rgx, rnx3rgx = _rnx_obs_rgx(
+        date, site, file_period=file_period, data_freq=data_freq
+    )
 
     if not urlsuffix:
         urlsuffix = ""
@@ -214,6 +219,7 @@ def _generic_server(date, site=None, urlserver=None, urlsuffix=None, file_period
     urldic[3] = rnx3url
 
     return urldic
+
 
 def igs_sopac_server(date, site=None):
     # plante si trop de requete
@@ -274,7 +280,9 @@ def nav_rob_server(date, site=None):
     # can not use _generic_server here because of the specific server path structure / file name
 
     ### generate regex
-    rnx2rgx, rnx3rgx = _rnx_nav_rgx(date, site, sys="M", data_source="R")  ### NAV RNX HERE !!!
+    rnx2rgx, rnx3rgx = _rnx_nav_rgx(
+        date, site, sys="M", data_source="R"
+    )  ### NAV RNX HERE !!!
 
     ### generate urls
     urldir = os.path.join(urlserver, str(date.year))  ## NO DOY FOR THIS ONE !!!
@@ -304,10 +312,12 @@ def rgp_ensg_server(date, site=None):
     urldic = _generic_server(date, site, urlserver, "data_30")
     return urldic
 
+
 def spotgins_eost_server(date, site=None):
     urlserver = "http://loading.u-strasbg.fr/SPOTGINS/TEST/rinex/"
     urldic = _generic_server(date, site, urlserver)
     return urldic
+
 
 def euref_server(date, site=None):
     urlserver = "ftp://epncb.oma.be/pub/obs/"
@@ -346,6 +356,7 @@ def nav_bkg_server(date, site=None):
     urldic[3] = rnx3url
 
     return urldic
+
 
 def renag_server_crtk(date, site=None, smp_01s=False):
     if smp_01s:
@@ -415,7 +426,9 @@ def ovsg_server(date, site=None):
     Note: Uses HTTP, authentication may be required.
     """
     if dt.datetime(2009, 1, 1) <= date <= dt.datetime(2014, 2, 10):
-        urlserver = "http://webobs.ovsg.univ-ag.fr/rawdata/GPS-GPSDATA.backtemp_20140210/"
+        urlserver = (
+            "http://webobs.ovsg.univ-ag.fr/rawdata/GPS-GPSDATA.backtemp_20140210/"
+        )
     else:
         urlserver = "http://webobs.ovsg.univ-ag.fr/rawdata/GPS/GPSDATA/"
 
@@ -448,7 +461,9 @@ def geoaus_server(date, site=None):
     rnx2rgx, rnx3rgx = _rnx_obs_rgx(date, site)
 
     ### generate urls (with specific year+doy format)
-    urldir = os.path.join(urlserver, str(date.year), date.strftime("%y") + conv.dt2doy(date))
+    urldir = os.path.join(
+        urlserver, str(date.year), date.strftime("%y") + conv.dt2doy(date)
+    )
     rnx2url = os.path.join(urldir, rnx2rgx)
     rnx3url = os.path.join(urldir, rnx3rgx)
 
@@ -555,6 +570,7 @@ def igs_cddis_nav_server(date, site=None):
 # def geoaus_server_legacy(stat, date):
 # def ens_fr_legacy(stat, date):
 
+
 def _server_select(datacenter, date, site=None):
     mode1hz = False
     protocol = "ftp"
@@ -613,6 +629,7 @@ def _server_select(datacenter, date, site=None):
         return None, None, None
 
     return urldic, protocol, mode1hz
+
 
 def effective_save_dir(parent_archive_dir, site, date, archtype="stat"):
     """
@@ -692,7 +709,9 @@ def rnx_regex_indir_all(rnx_regex, dir_files_list):
     return matches
 
 
-def _check_local_file_exists(rnxrgx, outdir, local_files_cache, force=False, all_files_mode=False):
+def _check_local_file_exists(
+    rnxrgx, outdir, local_files_cache, force=False, all_files_mode=False
+):
     """
     Check if a RINEX file exists locally.
 
@@ -738,7 +757,7 @@ def _check_local_file_exists(rnxrgx, outdir, local_files_cache, force=False, all
                 else:
                     log.info(
                         "%d file(s) already exist locally, but re-download forced",
-                        len(valid_files)
+                        len(valid_files),
                     )
                     return False, True, rnxnam
     else:
@@ -757,7 +776,9 @@ def _check_local_file_exists(rnxrgx, outdir, local_files_cache, force=False, all
     return False, False, ""
 
 
-def _get_ftp_connection(ftpobj, host, protocol, sftp, user, passwd, prev_host, count_loop, count_nmax):
+def _get_ftp_connection(
+    ftpobj, host, protocol, sftp, user, passwd, prev_host, count_loop, count_nmax
+):
     """
     Get or create an FTP connection.
 
@@ -798,7 +819,7 @@ def _get_ftp_connection(ftpobj, host, protocol, sftp, user, passwd, prev_host, c
 
         # Determine SFTP mode: use protocol value if 'auto', otherwise use parameter
         if sftp == "auto":
-            sftp_use = (protocol == "sftp")
+            sftp_use = protocol == "sftp"
         else:
             sftp_use = bool(sftp)
 
@@ -848,9 +869,7 @@ def _get_ftp_directory_listing(ftpobj, directory, host, prev_dir):
             ftp_files_list = dlutils.ftp_dir_list_files(ftpobj)
 
             # Generate full URLs for all files using string formatting
-            ftp_files_urls = [
-                f"ftp://{host}{directory}/{f}" for f in ftp_files_list
-            ]
+            ftp_files_urls = [f"ftp://{host}{directory}/{f}" for f in ftp_files_list]
             return ftp_files_list, ftp_files_urls
 
         except Exception as e:
@@ -950,8 +969,7 @@ def _generate_download_urls(table, all_files_mode=False):
         def make_urls(row):
             filenames = row["rnxnam"].split(";")
             # Use string formatting instead of os.path.join for FTP URLs
-            urls = [f"ftp://{row['host']}/{row['dir']}/{fname}"
-                    for fname in filenames]
+            urls = [f"ftp://{row['host']}/{row['dir']}/{fname}" for fname in filenames]
             return ";".join(urls)
 
         table.loc[rnx_ok_dwl, "url_true"] = table.loc[rnx_ok_dwl].apply(
@@ -1151,8 +1169,15 @@ def crawl_ftp_files(
 
         # Get or create FTP connection
         ftpobj, prev_host = _get_ftp_connection(
-            ftpobj, row["host"], row["protocol"], sftp, user, passwd,
-            prev_host, count_loop, count_nmax
+            ftpobj,
+            row["host"],
+            row["protocol"],
+            sftp,
+            user,
+            passwd,
+            prev_host,
+            count_loop,
+            count_nmax,
         )
 
         # Save intermediate results and reset counter on reconnection
@@ -1162,7 +1187,9 @@ def crawl_ftp_files(
             _get_and_save_all_ftp_files(all_ftp_files_stk)
 
         # Get file list when directory changes
-        ftp_result = _get_ftp_directory_listing(ftpobj, row["dir"], row["host"], prev_dir)
+        ftp_result = _get_ftp_directory_listing(
+            ftpobj, row["dir"], row["host"], prev_dir
+        )
         if ftp_result[0] is not None:  # Directory changed
             ftp_files_list, ftp_files_urls = ftp_result
             prev_dir = row["dir"]
@@ -1172,7 +1199,9 @@ def crawl_ftp_files(
                 all_ftp_files_stk.append(pd.Series(ftp_files_urls))
 
         # Match files on server using regex pattern
-        rnx_match = _match_files_in_directory(row["rnxrgx"], ftp_files_list, all_files_mode)
+        rnx_match = _match_files_in_directory(
+            row["rnxrgx"], ftp_files_list, all_files_mode
+        )
 
         # Update table based on file availability
         _update_table_row_with_match(table_use, irow, rnx_match, all_files_mode)
@@ -1199,7 +1228,7 @@ def download_gnss_rinex(
     output_dir,
     startdate,
     enddate,
-    archtype='year/doy',
+    archtype="year/doy",
     parallel_download=4,
     user="anonymous",
     passwd="anonymous@isp.com",
@@ -1212,7 +1241,7 @@ def download_gnss_rinex(
     force=False,
     no_rnx2=False,
     no_rnx3=False,
-    intuitive_output = False,
+    intuitive_output=False,
 ):
     """
     Parameters
@@ -1327,13 +1356,19 @@ def download_gnss_rinex(
     if "01s" in list(statdico.keys())[0]:
         day_step = 0
         sec_step = 3600
+        rnd = "1h"
     else:
         day_step = 1
         sec_step = 0
+        rnd = "1d"
 
-    date_range = conv.dt_range(startdate, enddate,day_step=day_step, sec_step=sec_step)
+    startdate_use = conv.round_dt(startdate, rnd)
+    enddate_use = conv.round_dt(enddate, rnd)
 
-    log.info("dates: %s to %s", startdate, enddate)
+    date_range = conv.dt_range(
+        startdate_use, enddate_use, day_step=day_step, sec_step=sec_step
+    )
+    log.info("dates: %s to %s", startdate_use, enddate_use)
 
     if path_ftp_crawled_files_load:
         table = pd.read_csv(path_ftp_crawled_files_load)
@@ -1405,7 +1440,9 @@ def download_gnss_rinex(
         return zip(*out_tup_lis_fin)
 
 
-def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3, per="01D"):
+def gen_crawl_table(
+    statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3, per="01D"
+):
     """
     Generate a crawl table for RINEX file downloads.
 
@@ -1473,6 +1510,7 @@ def gen_crawl_table(statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
     table["dir"] = urlpaths.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
     return table
+
 
 # date_range = conv.dt_range(dt.datetime(2020,1,1),
 #                     dt.datetime(2020,12,31))
