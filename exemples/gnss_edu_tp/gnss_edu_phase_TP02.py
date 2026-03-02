@@ -1,51 +1,59 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Filière ING3 - PPMD - Traitement de la mesure de code (GNSS)
+
 Created on Thu Feb  1 16:44:03 2024
 
-Filière ING3 - PPMD - Traitement de la mesure de phase
-
 @author: Samuel Nahmani (1,2)
-https://www.ipgp.fr/annuaire/nahmani/)
-contact : nahmani@ipgp.fr ou samuel.nahmani@ign.fr
-(1) Université Paris Cité, Institut de physique du globe de Paris, CNRS, IGN, F-75005 Paris, France.
-(2) Univ Gustave Eiffel, ENSG, IGN, F-77455 Marne-la-Vallée, France. 
+Web: https://www.ipgp.fr/annuaire/nahmani/
+Contact: nahmani@ipgp.fr | samuel.nahmani@ign.fr
+
+(1) Université Paris Cité, Institut de physique du globe de Paris (IPGP), CNRS, IGN, F-75005 Paris, France
+(2) Univ Gustave Eiffel, Géodata Paris, IGN, F-75238 Paris, France
 
 Version: 1.0
-Dépendances: pandas, numpy, geodezyx, datetime, gpsdatetime, gnsstoolbox
 
+Dependencies (Python packages)
+-----------------------------
+- geodezyx
+- pandas
+- numpy
+
+Standard library
+----------------
+- datetime
+- pathlib
+- os
+- gc
 """
-# %%
-# GeodeZYX Toolbox’s
-# [Sakic et al., 2019]
-# Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
-# The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes. v. 4.0.
-# GFZ Data Services. http://doi.org/10.5880/GFZ.1.1.2019.002
-#
-# Documentation
-# https://geodezyx.github.io/geodezyx-toolbox/
-#
-# Installation
-# pip install git+https://github.com/GeodeZYX/geodezyx-toolbox
-# pip uninstall geodezyx
-
 
 # %%
-# GeodeZYX Toolbox’s - [Sakic et al., 2019]
-from geodezyx import files_rw     # Import the read/write module
-from geodezyx import conv         # Import the conversion module
-from geodezyx import operational  # Import the download rinex module
-from geodezyx import gnss_edu     # Import the learning module
-from geodezyx import reffram      # Import the reference frame/higher geodesy module
+# GeodeZYX toolbox reference
+# Sakic, P., Mansur, G., Chaiyaporn, K., & Ballu, V. (2019).
+# The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes (v4.0).
+# GFZ Data Services. https://doi.org/10.5880/GFZ.1.1.2019.002
+#
+# Documentation: https://geodezyx.github.io/geodezyx-toolbox/
+# Installation:  pip install git+https://github.com/GeodeZYX/geodezyx-toolbox
 
+# %%
+# Standard library
 import datetime as dt
-
-import pandas as pd
-import numpy as np
-
-from pathlib import Path
 import os
 import gc
+from pathlib import Path
+
+# Third-party
+import numpy as np
+import pandas as pd
+
+# GeodeZYX
+from geodezyx import files_rw     # read/write module
+from geodezyx import conv         # conversion module
+from geodezyx import operational  # download rinex module
+from geodezyx import gnss_edu     # learning module
+from geodezyx import reffram      # reference frame / higher geodesy module
 
 # %%
 # création du dossier gnss_edu_data qui va contenir les données et les résultats du TP
@@ -354,8 +362,9 @@ while np.linalg.norm(dP_est)>1:
     A = np.column_stack((df_dX, df_dY, df_dZ))
 
     # Résolution par moindres carrés pour estimer le déplacement
-    dP_est = np.linalg.inv(A.T@A)@A.T@B
-    #dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
+    # formule vue en cours mais qui est plus lente 
+    #dP_est = np.linalg.inv(A.T@A)@A.T@B
+    dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
     
     # Mise à jour de la position estimée
     P_est = P_app + dP_est
@@ -382,6 +391,86 @@ fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial calcul
                                       save_path = folder / "01_trivial.pdf",
                                       P_est=P_est, P_rnx_header=P_rnx_header)
 
+# -------------------------------------------------------------------------
+# Store results for later reuse
+# -------------------------------------------------------------------------
+trivial_solution = {
+    "P_est": P_est.copy(),
+    "ENU": np.array([E, N, U]),
+    "distance_to_header": dist_P_est_P_rnx_header,
+    "iterations": i-1
+}
+
+#%%
+# Numerical comparison of least-squares solution methods
+#
+# Educational objective
+# ---------------------
+# Compare different numerical implementations of the least-squares solution:
+#
+#       dP = (AᵀA)⁻¹ AᵀB
+#
+# Although this analytical formula is commonly introduced in lectures,
+# it is rarely implemented directly in scientific software.
+#
+# Three approaches are compared:
+#
+# 1) Explicit matrix inverse (theoretical formulation)
+#       -> simple but numerically inefficient and discouraged
+#
+# 2) Normal equation solved with np.linalg.solve
+#       -> faster and numerically safer
+#
+# 3) np.linalg.lstsq (QR/SVD decomposition)
+#       -> most robust method, used in professional GNSS processing
+#
+# The computation is repeated many times to make execution time differences
+# clearly visible.
+###############################################################################
+
+import time
+
+ATA = A.T @ A
+ATB = A.T @ B
+
+N_REPEAT = 5000
+
+# -------------------------------------------------------------------------
+# 1) Explicit inverse (shown for pedagogical purposes only)
+# -------------------------------------------------------------------------
+t0 = time.perf_counter()
+for _ in range(N_REPEAT):
+    x1 = np.linalg.inv(ATA) @ ATB
+t1 = time.perf_counter()
+
+# -------------------------------------------------------------------------
+# 2) Solve normal equations (recommended fast approach)
+# -------------------------------------------------------------------------
+t2 = time.perf_counter()
+for _ in range(N_REPEAT):
+    x2 = np.linalg.solve(ATA, ATB)
+t3 = time.perf_counter()
+
+# -------------------------------------------------------------------------
+# 3) Least-squares solver (robust reference method)
+# -------------------------------------------------------------------------
+t4 = time.perf_counter()
+for _ in range(N_REPEAT):
+    x3, *_ = np.linalg.lstsq(A, B, rcond=None)
+t5 = time.perf_counter()
+
+# -------------------------------------------------------------------------
+# Results
+# -------------------------------------------------------------------------
+print("===== Computational cost comparison =====")
+print(f"Inverse method : {t1 - t0:.3f} s")
+print(f"Solve method   : {t3 - t2:.3f} s")
+print(f"lstsq method   : {t5 - t4:.3f} s")
+
+print("\n===== Numerical differences =====")
+print("max|x_inv - x_solve| =", np.max(np.abs(x1 - x2)))
+print("max|x_solve - x_lstsq| =", np.max(np.abs(x2 - x3)))
+
 #%%
 # Workspace cleanup
 #
@@ -399,6 +488,8 @@ for var in [
     "E",
     "N",
     "U",
+    "ATA",
+    "ATB",
     "P_est",
     "dP_est",
     "P_app",
@@ -409,8 +500,8 @@ for var in [
     "df_dZ",
     "distances",
     "dist_P_est_P_rnx_header",
-    "fig"
-    "i",
+    "fig",
+    "i","x1","x2","x3","t0","t1","t2","t3","t4","t5","N_REPEAT"
 ]:
     if var in globals():
         del globals()[var]
