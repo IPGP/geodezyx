@@ -17,17 +17,13 @@ import plotly.graph_objects as go
 import plotly.io as pio
 
 # GeodeZYX Toolbox’s - [Sakic et al., 2019]
-import geodezyx.files_rw as files_rw  # Import the file reading module
-import geodezyx.conv as conv                  # Import the conversion module
+from geodezyx import files_rw     # Import the read/write module
+from geodezyx import conv         # Import the conversion module
+
+
 import datetime as dt
-
-
-import gnsstoolbox.orbits as orb
-import gpsdatetime as gpst
-import gnsstoolbox.gnss_const as gnss_const
-
 from .klobuchar import *
-import gnsstoolbox.gnsstools as tools
+
 
 # Pour chercher des chaînes de caractère dans des fichiers
 import re
@@ -89,74 +85,74 @@ def load_and_clean_rinex(path):
     return df
 
 
-def enrich_df_with_sat_positions(df, mysp3):
-    """
-    Pour chaque ligne du DataFrame df (avec un index composé de (epoch, prn)),
-    calcule la position du satellite en prenant en compte le retard, l'effet
-    relativiste et met à jour le DataFrame avec les colonnes X_sat, Y_sat, Z_sat,
-    dte_sat et dRelat.
+# def enrich_df_with_sat_positions(df, mysp3):
+#     """
+#     Pour chaque ligne du DataFrame df (avec un index composé de (epoch, prn)),
+#     calcule la position du satellite en prenant en compte le retard, l'effet
+#     relativiste et met à jour le DataFrame avec les colonnes X_sat, Y_sat, Z_sat,
+#     dte_sat et dRelat.
 
-    Parameters:
-      - df : pandas DataFrame dont l'index est (epoch, prn) et qui contient la colonne 'C1'
-      - mysp3 : instance de l'objet d'orbite contenant la méthode calcSatCoord
-      - t : instance de gpst.gpsdatetime() utilisée pour la conversion des temps
+#     Parameters:
+#       - df : pandas DataFrame dont l'index est (epoch, prn) et qui contient la colonne 'C1'
+#       - mysp3 : instance de l'objet d'orbite contenant la méthode calcSatCoord
+#       - t : instance de gpst.gpsdatetime() utilisée pour la conversion des temps
 
-    Returns:
-      - df enrichi avec les colonnes calculées.
-    """
+#     Returns:
+#       - df enrichi avec les colonnes calculées.
+#     """
 
-    # Listes pour stocker les résultats
-    x_sat  = []
-    y_sat  = []
-    z_sat  = []
-    dte_sat = []
-    d_relat = []
+#     # Listes pour stocker les résultats
+#     x_sat  = []
+#     y_sat  = []
+#     z_sat  = []
+#     dte_sat = []
+#     d_relat = []
 
-    # Création de l'objet temps (pour la conversion)
-    t = gpst.gpsdatetime()
+#     # Création de l'objet temps (pour la conversion)
+#     t = gpst.gpsdatetime()
 
-    # Pour chaque observation du DataFrame
-    for (time_i, prn_i) in df.index:
-        # Conversion du temps d'observation au format attendu
-        # Par exemple, on formate time_i en chaîne de caractère
-        # t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
+#     # Pour chaque observation du DataFrame
+#     for (time_i, prn_i) in df.index:
+#         # Conversion du temps d'observation au format attendu
+#         # Par exemple, on formate time_i en chaîne de caractère
+#         # t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
 
-        # Calcul du temps d'émission initial (mjd)
-        t_emission_mjd = t.mjd - df.loc[(time_i, prn_i), 'C1'] / conv.SPEED_OF_LIGHT / 86400.0
+#         # Calcul du temps d'émission initial (mjd)
+#         t_emission_mjd = t.mjd - df.loc[(time_i, prn_i), 'C1'] / conv.SPEED_OF_LIGHT / 86400.0
 
-        # Calcul initial de la position du satellite
-        (x_sat_v, y_sat_v, z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd)
+#         # Calcul initial de la position du satellite
+#         (x_sat_v, y_sat_v, z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd)
 
-        # Calcul de l'effet relativiste à partir d'une dérivée numérique
-        delta_t = 1e-3  # écart de temps en secondes
-        (xs1, ys1, zs1, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd - delta_t/86400.0)
-        (xs2, ys2, zs2, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd + delta_t/86400.0)
+#         # Calcul de l'effet relativiste à partir d'une dérivée numérique
+#         delta_t = 1e-3  # écart de temps en secondes
+#         (xs1, ys1, zs1, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd - delta_t/86400.0)
+#         (xs2, ys2, zs2, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd + delta_t/86400.0)
 
-        # Estimation de la vitesse par différence centrée
-        vx  = np.array([xs2 - xs1, ys2 - ys1, zs2 - zs1]) / (2.0 * delta_t)
-        vx0 = np.array([x_sat_v, y_sat_v, z_sat_v])
+#         # Estimation de la vitesse par différence centrée
+#         vx  = np.array([xs2 - xs1, ys2 - ys1, zs2 - zs1]) / (2.0 * delta_t)
+#         vx0 = np.array([x_sat_v, y_sat_v, z_sat_v])
 
-        d_relat_v = -2.0 * vx0.T @ vx / (conv.SPEED_OF_LIGHT ** 2)
+#         d_relat_v = -2.0 * vx0.T @ vx / (conv.SPEED_OF_LIGHT ** 2)
 
-        # Correction du temps d'émission tenant compte du retard d'horloge et de l'effet relativiste
-        t_emission_corr = t_emission_mjd - dte_sat_v / 86400.0 - d_relat_v / 86400.0
+#         # Correction du temps d'émission tenant compte du retard d'horloge et de l'effet relativiste
+#         t_emission_corr = t_emission_mjd - dte_sat_v / 86400.0 - d_relat_v / 86400.0
 
-        # Recalcul de la position au temps corrigé
-        (x_sat_v, y_sat_v, z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_corr)
+#         # Recalcul de la position au temps corrigé
+#         (x_sat_v, y_sat_v, z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_corr)
 
-        # Stockage des résultats
-        x_sat.append(x_sat_v)
-        y_sat.append(y_sat_v)
-        z_sat.append(z_sat_v)
-        dte_sat.append(dte_sat_v)
-        d_relat.append(d_relat_v)
+#         # Stockage des résultats
+#         x_sat.append(x_sat_v)
+#         y_sat.append(y_sat_v)
+#         z_sat.append(z_sat_v)
+#         dte_sat.append(dte_sat_v)
+#         d_relat.append(d_relat_v)
 
-    # Ajout des nouvelles colonnes au DataFrame
-    df['X_sat']   = x_sat
-    df['Y_sat']   = y_sat
-    df['Z_sat']   = z_sat
-    df['dte_sat'] = dte_sat
-    df['dRelat']  = d_relat
+#     # Ajout des nouvelles colonnes au DataFrame
+#     df['X_sat']   = x_sat
+#     df['Y_sat']   = y_sat
+#     df['Z_sat']   = z_sat
+#     df['dte_sat'] = dte_sat
+#     df['dRelat']  = d_relat
 
     return df
 
@@ -183,74 +179,74 @@ def Sagnac_rotate_around_z(row):
     })
 
 
-def add_az_el_iono_columns(df, P_rnx_header, mynav):
-    """
-    Ajoute dans le DataFrame les colonnes Az (azimut en degrés), Ele (élévation en degrés)
-    et d_ion1 (correction ionosphérique selon le modèle de Klobuchar).
+# def add_az_el_iono_columns(df, P_rnx_header, mynav):
+#     """
+#     Ajoute dans le DataFrame les colonnes Az (azimut en degrés), Ele (élévation en degrés)
+#     et d_ion1 (correction ionosphérique selon le modèle de Klobuchar).
 
-    Paramètres :
-      - df : DataFrame contenant les colonnes 'X_sat', 'Y_sat', 'Z_sat' et 'ind_ligne'.
-             L'index doit être un MultiIndex (time, prn).
-      - P_rnx_header : tableau ou liste contenant les coordonnées de la station (X, Y, Z)
-      - mynav : objet de navigation contenant les attributs ion_alpha_gps et ion_beta_gps.
-      - t : objet gpsdatetime (issu de gpst.gpsdatetime) pour la gestion des temps.
-      - tools : module (par ex. gnsstoolbox.gnsstools) fournissant les fonctions toolAzEle et toolCartGeoGRS80.
-      - klobuchar : module contenant la fonction klobuchar pour le calcul de la correction iono.
+#     Paramètres :
+#       - df : DataFrame contenant les colonnes 'X_sat', 'Y_sat', 'Z_sat' et 'ind_ligne'.
+#              L'index doit être un MultiIndex (time, prn).
+#       - P_rnx_header : tableau ou liste contenant les coordonnées de la station (X, Y, Z)
+#       - mynav : objet de navigation contenant les attributs ion_alpha_gps et ion_beta_gps.
+#       - t : objet gpsdatetime (issu de gpst.gpsdatetime) pour la gestion des temps.
+#       - tools : module (par ex. gnsstoolbox.gnsstools) fournissant les fonctions toolAzEle et toolCartGeoGRS80.
+#       - klobuchar : module contenant la fonction klobuchar pour le calcul de la correction iono.
 
-    Retourne :
-      - df : le DataFrame enrichi avec les colonnes 'Az', 'Ele' et 'd_ion1'.
-    """
+#     Retourne :
+#       - df : le DataFrame enrichi avec les colonnes 'Az', 'Ele' et 'd_ion1'.
+#     """
 
-    # Création de l'objet temps (pour la conversion)
-    t = gpst.gpsdatetime()
+#     # Création de l'objet temps (pour la conversion)
+#     t = gpst.gpsdatetime()
 
-    # Conversion des coordonnées de la station en géographiques
-    lon, lat, h = conv.xyz2geo(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2])
-    rad2deg = 180 / np.pi
-    lon_d = lon * rad2deg
-    lat_d = lat * rad2deg
+#     # Conversion des coordonnées de la station en géographiques
+#     lon, lat, h = conv.xyz2geo(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2])
+#     rad2deg = 180 / np.pi
+#     lon_d = lon * rad2deg
+#     lat_d = lat * rad2deg
 
-    # Calcul de l'azimut et de l'élévation en radians à partir des positions satellites
-    # az_rad, ele_rad = tools.toolAzEle(P_rnx_header[0],
-    #                                    P_rnx_header[1],
-    #                                    P_rnx_header[2],
-    #                                    df['X_sat'],
-    #                                    df['Y_sat'],
-    #                                    df['Z_sat'])
+#     # Calcul de l'azimut et de l'élévation en radians à partir des positions satellites
+#     # az_rad, ele_rad = tools.toolAzEle(P_rnx_header[0],
+#     #                                    P_rnx_header[1],
+#     #                                    P_rnx_header[2],
+#     #                                    df['X_sat'],
+#     #                                    df['Y_sat'],
+#     #                                    df['Z_sat'])
 
-    az_rad , ele_rad = conv.xyz2azi_ele(df['X_sat'], df['Y_sat'], df['Z_sat'],
-                                        P_rnx_header[0], P_rnx_header[1], P_rnx_header[2])
+#     az_rad , ele_rad = conv.xyz2azi_ele(df['X_sat'], df['Y_sat'], df['Z_sat'],
+#                                         P_rnx_header[0], P_rnx_header[1], P_rnx_header[2])
 
-    # Conversion en degrés
-    az_deg = az_rad * rad2deg
-    ele_deg = ele_rad * rad2deg
+#     # Conversion en degrés
+#     az_deg = az_rad * rad2deg
+#     ele_deg = ele_rad * rad2deg
 
-    # Récupération des coefficients ionosphériques depuis le fichier de navigation
-    alpha = mynav.ion_alpha_gps
-    beta  = mynav.ion_beta_gps
+#     # Récupération des coefficients ionosphériques depuis le fichier de navigation
+#     alpha = mynav.ion_alpha_gps
+#     beta  = mynav.ion_beta_gps
 
-    # Calcul de la correction iono pour chaque observation
-    d_ion1 = []
-    for (time_i, prn_i) in df.index:
-        # Mise à jour de l'objet temps pour cette observation (conversion via rinex_t)
-        #t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
-        #wsec_v = t.wsec  # secondes dans la semaine GPS
+#     # Calcul de la correction iono pour chaque observation
+#     d_ion1 = []
+#     for (time_i, prn_i) in df.index:
+#         # Mise à jour de l'objet temps pour cette observation (conversion via rinex_t)
+#         #t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
+#         #wsec_v = t.wsec  # secondes dans la semaine GPS
 
-        _, wsec_v = conv.dt2gpstime(time_i, secinweek=True)
+#         _, wsec_v = conv.dt2gpstime(time_i, secinweek=True)
 
-        # Récupération de l'indice de ligne correspondant (doit être un entier valide)
-        i = df.loc[(time_i, prn_i), 'ind_ligne']
+#         # Récupération de l'indice de ligne correspondant (doit être un entier valide)
+#         i = df.loc[(time_i, prn_i), 'ind_ligne']
 
-        # Calcul de la correction ionosphérique (la fonction klobuchar doit accepter ces paramètres)
-        d_ion1_v = klobuchar(lat_d, lon_d, ele_deg[i], az_deg[i], wsec_v, alpha, beta)
-        d_ion1.append(d_ion1_v)
+#         # Calcul de la correction ionosphérique (la fonction klobuchar doit accepter ces paramètres)
+#         d_ion1_v = klobuchar(lat_d, lon_d, ele_deg[i], az_deg[i], wsec_v, alpha, beta)
+#         d_ion1.append(d_ion1_v)
 
-    # Ajout des nouvelles colonnes dans le DataFrame
-    df['Az']    = az_deg
-    df['Ele']   = ele_deg
-    df['d_ion1'] = d_ion1
+#     # Ajout des nouvelles colonnes dans le DataFrame
+#     df['Az']    = az_deg
+#     df['Ele']   = ele_deg
+#     df['d_ion1'] = d_ion1
 
-    return df
+#     return df
 
 
 def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, renderer="browser"):
@@ -372,7 +368,7 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
 
 
 def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
-                           P_est=None, P_rnx_header=None, tools=None):
+                           P_est=None, P_rnx_header=None):
     """
     Computes residuals (v_est = B - A @ dP_est) and creates a figure containing:
       1. Time series of residuals (displayed as points)
@@ -392,7 +388,7 @@ def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
       - save_path (optional) : str, full path (name + extension) to save the figure.
       - P_est (optional) : array-like, estimated position (for additional info computation).
       - P_rnx_header (optional) : array-like, initial position from RINEX header.
-      - tools (optional) : module or object with toolCartLocGRS80 function.
+
 
     Returns:
       - fig : matplotlib Figure object containing all subplots.
@@ -415,7 +411,7 @@ def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
     # - Row 1: Q-Q Plot (col 0) and Residuals vs. Predicted values (col 1)
     # - Row 2: Statistics text box (spanning 2 columns)
     # - Row 3: (Optional) Position information text box (spanning 2 columns)
-    nrows = 4 if (P_est is not None and P_rnx_header is not None and tools is not None) else 3
+    nrows = 4 if (P_est is not None and P_rnx_header is not None) else 3
     height_ratios = [1, 1, 0.5, 0.5] if nrows == 4 else [1, 1, 0.5]
 
     fig = plt.figure(figsize=(15, 15))
@@ -468,7 +464,7 @@ def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
         # Compute distance between estimated position and RINEX header position
         dist = np.sqrt(np.sum((P_est - P_rnx_header)**2))
         # Compute local ENU coordinates via toolCartLocGRS80 function
-        E, N, U = tools.toolCartLocGRS80(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],
+        E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],
                                           P_est[0], P_est[1], P_est[2])
         extra_text = (
             f"Distance between estimated position and initial RINEX header position: {dist:.4f}\n"

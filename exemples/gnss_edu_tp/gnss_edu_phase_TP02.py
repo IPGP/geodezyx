@@ -34,10 +34,6 @@ Dépendances: pandas, numpy, geodezyx, datetime, gpsdatetime, gnsstoolbox
 # Python GPS date/time management package
 # Copyright (C) 2014-2023, Jacques Beilin / ENSG-Geomatique
 # Distributed under terms of the CECILL-C licence.
-# %%
-# GnssToolbox - Python package for GNSS learning
-# Copyright (C) 2014-2023, Jacques Beilin / ENSG-Geomatique
-# Distributed under terms of the CECILL-C licence.
 
 # %%
 # GeodeZYX Toolbox’s - [Sakic et al., 2019]
@@ -49,8 +45,6 @@ from geodezyx import reffram      # Import the reference frame/higher geodesy mo
 
 import datetime as dt
 #
-import gpsdatetime as gpst
-import gnsstoolbox.orbits as orb
 
 
 import pandas as pd
@@ -90,9 +84,12 @@ dwl_output_station = operational.download_gnss_rinex(statdico={"rgp" : ["SMNE","
                                 enddate= my_date_to_process ,
                                 parallel_download = 1) 
 
+# Téléchargement automatique des données ORBIT et CLOCK pour le jour du traitement
+# ici  (2019-176) qui correspond à la semaine GPS 2059
 dwl_output_satellite = operational.download_gnss_products(archive_dir= my_directory,
                                    startdate= my_date_to_process,
                                    enddate= my_date_to_process,
+                                   archtype= 'year/doy',
                                    AC_names=("IGS",),
                                    repro=0,
                                    archive_center="ign",
@@ -153,13 +150,15 @@ df_rnx['ind_ligne'] = range(len(df_rnx))
 
 
 # %%
+# Chargement du fichier sp3 dans un dataframe
 fichier_sp3 = dwl_output_satellite[0]
+
+print(f"Using SP3 file: {fichier_sp3}")
+
 df_sp3 = files_rw.read_sp3(fichier_sp3)
 
 # %%
 
-# Chargement des fichiers d'orbites
-fichier_brdc = './data/data-2019/mlvl176z.18n'
 
 X_sat = []
 Y_sat = []
@@ -177,23 +176,23 @@ for prn in df_rnx['prn'].unique():
     fly_time = df_rnx_prn['C1'] / conv.SPEED_OF_LIGHT
     fly_time = pd.to_timedelta(fly_time, unit="s")
     t_rec = df_rnx_prn['epoch']
-    t_emi_gross = t_rec - fly_time
-    orb_df_gross = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values)
+    t_emi_approx = t_rec - fly_time
+    orb_df_approx = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_approx.values)
     # les positions dans les fichiers SP3 sont en km, on les convertit en mètre pour être cohérent avec les unités de la mesure de pseudodistance
-    orb_df_gross[["x","y","z"]] = orb_df_gross[["x","y","z"]] * 10**3 # km -> m
+    orb_df_approx[["x","y","z"]] = orb_df_approx[["x","y","z"]] * 10**3 # km -> m
 
     # calcul de l'effet relativiste
     delta_t = pd.to_timedelta(1e-3, unit="s") # écart de temps en +/- pour calculer la dérivée
-    orb_df_rel_fwd = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values + delta_t)
+    orb_df_rel_fwd = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_approx.values + delta_t)
     orb_df_rel_fwd[["x","y","z"]] = orb_df_rel_fwd[["x","y","z"]] * 10**3 # km -> m
-    orb_df_rel_bak = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_gross.values - delta_t)
+    orb_df_rel_bak = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_approx.values - delta_t)
     orb_df_rel_bak[["x","y","z"]] = orb_df_rel_bak[["x","y","z"]] * 10**3 # km -> m
 
     xyz_diff = (orb_df_rel_fwd[["x","y","z"]] - orb_df_rel_bak[["x","y","z"]]) / (2 * delta_t.total_seconds())
-    xyz = orb_df_gross[["x","y","z"]]
+    xyz = orb_df_approx[["x","y","z"]]
     dRelat_v = -2.0 * (xyz_diff * xyz).sum(axis=1) / (conv.SPEED_OF_LIGHT **2)
 
-    t_emi_ok = t_emi_gross -  pd.to_timedelta(orb_df_gross["clk"].values, unit="us") # - pd.to_timedelta(dRelat_v, unit="s")
+    t_emi_ok = t_emi_approx -  pd.to_timedelta(orb_df_approx["clk"].values, unit="us") # - pd.to_timedelta(dRelat_v, unit="s")
     orb_df_ok = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_ok.values)
     orb_df_ok[["x","y","z"]] = orb_df_ok[["x","y","z"]] * 10**3 # km -> m
 
@@ -213,59 +212,6 @@ df_rinex_flat = df_rnx.copy()
 df_rnx = df_rnx.set_index(['epoch', 'prn'], drop=True)
 
 
-### OLD STYLE ###################################################################
-
-df_rnx_old = df_rnx.copy()
-
-mysp3 = orb.orbit()
-mysp3.loadSp3(fichier_sp3)
-
-mynav = orb.orbit()
-mynav.loadRinexN(fichier_brdc)
-
-# Il faut calculer la position de chaque satellite GNSS à chaque temps d'émission
-t = gpst.gpsdatetime()
-X_sat_old = []
-Y_sat_old = []
-Z_sat_old = []
-dte_sat_old = []
-dRelat_old = []
-
-for (time_i,prn_i) in df_rnx_old.index:
-    t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
-    t_emission_mjd  = t.mjd - df_rnx_old.loc[(time_i,prn_i), 'C1'] / conv.SPEED_OF_LIGHT / 86400.0
-    (X_sat_v,Y_sat_v,Z_sat_v,dte_sat_v)	 = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd)
-
-    # calcul de l'effet relativiste
-    delta_t = 1e-3 # écart de temps en +/- pour calculer la dérivée 
-    (Xs1,Ys1,Zs1,clocks1) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd - delta_t / 86400.0)    
-    (Xs2,Ys2,Zs2,clocks2) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd + delta_t / 86400.0)  
-
-    VX      = (np.array([Xs2-Xs1, Ys2-Ys1, Zs2-Zs1]))/2.0/delta_t
-    VX0     = np.array([X_sat_v,Y_sat_v,Z_sat_v])
-
-    dRelat_v1  = -2.0 * VX0.T @ VX /(conv.SPEED_OF_LIGHT **2)
-    dRelat_v2 = -2.0 * np.dot(VX0, VX) / (conv.SPEED_OF_LIGHT**2)
-
-    # temps d'emission du signal GNSS en temps GNSS (mjd)
-    t_emission_mjd = t_emission_mjd - dte_sat_v / 86400.0 - dRelat_v1 / 86400.0
-
-    # Recalcul de la position du satellite au temps d'emission (temps GNSS en mjd)
-    (X_sat_v,Y_sat_v,Z_sat_v,dte_sat_v)	 = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]),t_emission_mjd)
-
-    X_sat_old.append(X_sat_v)
-    Y_sat_old.append(Y_sat_v)
-    Z_sat_old.append(Z_sat_v)
-    dte_sat_old.append(dte_sat_v)
-    dRelat_old.append(dRelat_v1)
-
-df_rnx_old["X_sat"] = X_sat_old
-df_rnx_old["Y_sat"] = Y_sat_old
-df_rnx_old["Z_sat"] = Z_sat_old
-df_rnx_old["dte_sat"] = dte_sat_old
-df_rnx_old["dRelat"] = dRelat_old
-
-df_rnx_old[["X_sat","Y_sat","Z_sat","dte_sat","dRelat"]]
 
 
 # del X_sat, Y_sat, Z_sat, dte_sat, time_i, prn_i, t_emission_mjd, t, X_sat_v, Y_sat_v, Z_sat_v, dte_sat_v, dRelat_v, dRelat
