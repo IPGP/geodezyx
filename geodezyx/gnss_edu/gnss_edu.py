@@ -469,9 +469,9 @@ def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
         extra_text = (
             f"Distance between estimated position and initial RINEX header position: {dist:.4f}\n"
             f"Local ENU coordinates:\n"
-            f"  East (E)  : {E:.4f}"
-            f"  North (N) : {N:.4f}"
-            f"  Up (U)    : {U:.4f}"
+            f"  East (E)  : {E[0]:.4f}"
+            f"  North (N) : {N[0]:.4f}"
+            f"  Up (U)    : {U[0]:.4f}"
         )
         ax_extra = fig.add_subplot(gs[3, :])
         ax_extra.axis('off')

@@ -55,7 +55,7 @@ import matplotlib.pyplot as plt
 
 from pathlib import Path
 import os
-
+import gc
 
 # %%
 # création du dossier gnss_edu_data qui va contenir les données et les résultats du TP
@@ -157,8 +157,87 @@ print(f"Using SP3 file: {fichier_sp3}")
 
 df_sp3 = files_rw.read_sp3(fichier_sp3)
 
-# %%
+#%%
+# Workspace cleanup
+#
+# We remove intermediate variables that are no longer needed in order to:
+#   - keep the workspace readable,
+#   - avoid accidental reuse of temporary data,
+#   - reduce memory usage when working with large GNSS datasets.
+#
+# Note:
+# Python normally manages memory automatically. The explicit cleanup below
+# simply helps when working interactively with large SP3 and RINEX files.
+###############################################################################
 
+for var in [
+    "df_removed",
+    "df_rnx_orig",
+    "dwl_output_station",
+    "dwl_output_satellite",
+    "fichier_sp3",
+    "l_rnx_head",
+]:
+    if var in globals():
+        del globals()[var]
+
+del var
+gc.collect()
+
+# %%
+# Satellite position computation at signal emission time (GNSS observation model)
+#
+# This block computes satellite positions and clock corrections at the true
+# signal emission epoch for each GNSS observation contained in the RINEX
+# dataframe.
+#
+# Methodology
+# -----------
+# 1. For each satellite (PRN), the signal travel time is estimated from the
+#    pseudorange observation (C1):
+#
+#           τ ≈ ρ / c
+#
+#    where ρ is the pseudorange and c the speed of light.
+#
+# 2. An approximate emission time is derived:
+#
+#           t_emit ≈ t_receive − τ
+#
+# 3. Satellite positions are interpolated from precise SP3 orbits using
+#    Lagrange interpolation (GeodeZYX orbital interpolation tools).
+#
+# 4. The relativistic correction is computed using:
+#
+#           dRel = -2 (r · v) / c²
+#
+#    where satellite velocity is numerically estimated by centered finite
+#    differences around the emission epoch.
+#
+# 5. Satellite clock correction contained in the SP3 file is applied to refine
+#    the emission epoch.
+#
+# 6. Final satellite coordinates (ECEF, meters), clock offsets (seconds),
+#    and relativistic corrections are stored both:
+#       - in dedicated output arrays
+#       - directly inside the observation dataframe.
+#
+# Notes
+# -----
+# - SP3 positions are provided in kilometers and converted here to meters.
+# - Clock corrections are converted from microseconds to seconds.
+# - Computations are performed independently for each satellite to ensure
+#   consistency of orbital interpolation.
+#
+# Output columns added to df_rnx
+# ------------------------------
+#   X_sat   : satellite X coordinate (m, ECEF)
+#   Y_sat   : satellite Y coordinate (m, ECEF)
+#   Z_sat   : satellite Z coordinate (m, ECEF)
+#   dte_sat : satellite clock correction (s)
+#   dRelat  : relativistic correction (s)
+#
+###############################################################################
 
 X_sat = []
 Y_sat = []
@@ -211,10 +290,48 @@ for prn in df_rnx['prn'].unique():
 df_rinex_flat = df_rnx.copy()
 df_rnx = df_rnx.set_index(['epoch', 'prn'], drop=True)
 
+#%%
+# Workspace cleanup
+#
+# We remove intermediate variables that are no longer needed in order to:
+#   - keep the workspace readable,
+#   - avoid accidental reuse of temporary data,
+#   - reduce memory usage when working with large GNSS datasets.
+#
+# Note:
+# Python normally manages memory automatically. The explicit cleanup below
+# simply helps when working interactively with large SP3 and RINEX files.
+###############################################################################
 
+for var in [
+    "X_sat",
+    "Y_sat",
+    "Z_sat",
+    "xyz",
+    "xyz_diff",
+    "t_emi_approx",
+    "delta_t",
+    "df_rinex_flat",
+    "df_rnx_prn",
+    "df_sp3_prn",
+    "df_sp3",
+    "dte_sat",
+    "orb_df_approx",
+    "orb_df_ok",
+    "orb_df_rel_bak",
+    "orb_df_rel_fwd",
+    "dRelat",
+    "dRelat_v",
+    "fly_time",
+    "prn",
+    "t_emi_ok",
+    "t_rec",
+]:
+    if var in globals():
+        del globals()[var]
 
-
-# del X_sat, Y_sat, Z_sat, dte_sat, time_i, prn_i, t_emission_mjd, t, X_sat_v, Y_sat_v, Z_sat_v, dte_sat_v, dRelat_v, dRelat
+del var
+gc.collect()
 
 
 # %%
@@ -265,22 +382,95 @@ while np.linalg.norm(dP_est)>1:
     # Calculer les coordonnées ENU locales
     E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
     print("Est (E):", E)
-    print("Nord (N):", N)
-    print("Haut (U):", U)
+    print("North (N):", N)
+    print("Up (U):", U)
     print("\n")
 
 
-fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial calcul.", 
-                                      save_path="./trivial_bis.pdf",
-                           P_est=P_est, P_rnx_header=P_rnx_header)
+fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial calcul", 
+                                      save_path = folder / "01_trivial.pdf",
+                                      P_est=P_est, P_rnx_header=P_rnx_header)
+
+#%%
+# Workspace cleanup
+#
+# We remove intermediate variables that are no longer needed in order to:
+#   - keep the workspace readable,
+#   - avoid accidental reuse of temporary data,
+#   - reduce memory usage when working with large GNSS datasets.
+#
+# Note:
+# Python normally manages memory automatically. The explicit cleanup below
+# simply helps when working interactively with large SP3 and RINEX files.
+###############################################################################
+
+for var in [
+    "E",
+    "N",
+    "U",
+    "P_est",
+    "dP_est",
+    "P_app",
+    "A",
+    "B",
+    "df_dX",
+    "df_dY",
+    "df_dZ",
+    "distances",
+    "dist_P_est_P_rnx_header",
+    "fig"
+    "i",
+]:
+    if var in globals():
+        del globals()[var]
+
+del var
+gc.collect()
 
 
-# del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
 
 # %%
-# Traitement classique sur le code pour la position d'un récepteur GNSS
-# corrections des erreurs d'horloges satellites
-# -> elles sont connues -> correction directe du vecteur B
+# GNSS receiver positioning using pseudorange observations
+#
+# This block estimates the receiver position from GNSS code measurements (C1)
+# using an iterative least-squares adjustment.
+#
+# Processing strategy
+# -------------------
+# Satellite clock errors and relativistic corrections are assumed known
+# and are directly applied to the observation vector.
+#
+# At each iteration:
+#
+#   1. Compute approximate geometric distances between receiver and satellites
+#   2. Form corrected observation equation:
+#
+#          ρ_obs = ρ_geom + c (dt_sat + dRel)
+#
+#   3. Linearize the observation model around an approximate receiver position
+#   4. Build the design matrix A (line-of-sight unit vectors)
+#   5. Estimate receiver position update using least squares:
+#
+#          dP = (AᵀA)⁻¹ Aᵀ B
+#
+#   6. Update receiver coordinates until convergence
+#
+# Convergence criterion
+# ---------------------
+# Iterations stop when the position update norm becomes smaller than 1 meter.
+#
+# Outputs
+# -------
+# P_est : estimated receiver position in ECEF coordinates (meters)
+# ENU   : local East-North-Up offsets with respect to RINEX header position
+#
+# Educational note
+# ----------------
+# This implementation corresponds to the classical GNSS positioning model
+# used in Single Point Positioning (SPP), simplified here by assuming that
+# receiver clock bias has already been corrected or neglected.
+###############################################################################
+
 
 print('*****  Prise en compte des erreurs d''horloge satellites *****')
 
@@ -324,7 +514,7 @@ print("Distance entre la position estimée et la position initiale du header RIN
 E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
 print("Est (E):", E)
 print("Nord (N):", N)
-print("Haut (U):", U)
+print("Up (U):", U)
 print("\n")
 
 
@@ -332,7 +522,41 @@ gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Satellite clocks cor
                            P_est=P_est, P_rnx_header=P_rnx_header)
 
 
-# del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
+#%%
+# Workspace cleanup
+#
+# We remove intermediate variables that are no longer needed in order to:
+#   - keep the workspace readable,
+#   - avoid accidental reuse of temporary data,
+#   - reduce memory usage when working with large GNSS datasets.
+#
+# Note:
+# Python normally manages memory automatically. The explicit cleanup below
+# simply helps when working interactively with large SP3 and RINEX files.
+###############################################################################
+
+for var in [
+    "E",
+    "N",
+    "U",
+    "P_est",
+    "dP_est",
+    "P_app",
+    "A",
+    "B",
+    "df_dX",
+    "df_dY",
+    "df_dZ",
+    "distances",
+    "dist_P_est_P_rnx_header",
+    "fig",
+    "i",
+]:
+    if var in globals():
+        del globals()[var]
+
+del var
+gc.collect()
 
 # %%
 # Traitement classique sur le code pour la position d'un récepteur GNSS
