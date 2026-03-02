@@ -29,11 +29,6 @@ Dépendances: pandas, numpy, geodezyx, datetime, gpsdatetime, gnsstoolbox
 # pip install git+https://github.com/GeodeZYX/geodezyx-toolbox
 # pip uninstall geodezyx
 
-# %%
-# gpsdatetime
-# Python GPS date/time management package
-# Copyright (C) 2014-2023, Jacques Beilin / ENSG-Geomatique
-# Distributed under terms of the CECILL-C licence.
 
 # %%
 # GeodeZYX Toolbox’s - [Sakic et al., 2019]
@@ -44,8 +39,6 @@ from geodezyx import gnss_edu     # Import the learning module
 from geodezyx import reffram      # Import the reference frame/higher geodesy module
 
 import datetime as dt
-#
-
 
 import pandas as pd
 import numpy as np
@@ -81,11 +74,6 @@ dwl_output_station = operational.download_gnss_rinex(statdico={"rgp" : ["SMNE","
                                 enddate= my_date_to_process ,
                                 parallel_download = 1) 
 
-dwl_output_navigation = operational.download_gnss_rinex(statdico={"nav" : ["brdc"]},
-                                output_dir=my_directory,
-                                startdate= my_date_to_process ,
-                                enddate= my_date_to_process ,
-                                parallel_download = 1)
 
 # Téléchargement automatique des données ORBIT et CLOCK pour le jour du traitement
 # ici  (2019-176) qui correspond à la semaine GPS 2059
@@ -101,13 +89,7 @@ dwl_output_satellite = operational.download_gnss_products(archive_dir= my_direct
 
 # %%
 # Chargement des fichiers RINEX d'observation
-
 fichier_rnx = dwl_output_station[0][0]
-fichier_nav = dwl_output_navigation[0][0]
-
-# Chargement du fichier de navigation RINEX via GeodeZYX
--iono_cor_dic, time_sys_corr_dic = files_rw.read_rinex_nav_v3_header(fichier_nav)
-
 
 # Chargement des données RINEX d'observation dans un pandas dataframe via  GeodeZYX
 df_rnx_orig, l_rnx_head = files_rw.read_rinex2_obs(fichier_rnx,
@@ -183,6 +165,7 @@ for var in [
     "df_rnx_orig",
     "dwl_output_station",
     "dwl_output_satellite",
+    "dwl_output_navigation",
     "fichier_sp3",
     "l_rnx_head",
 ]:
@@ -791,6 +774,24 @@ del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distan
 #             correction sur le code ou sur la phase    ?
 # Réponses :
 #
+
+
+
+# Pour Klobchar -> besoin du fichier de navigation
+# Téléchargement automatique des données NAVIGATION pour le jour du traitement
+# ici  (2019-176) qui correspond à la semaine GPS 2059
+dwl_output_navigation = operational.download_gnss_rinex(statdico={"nav" : ["brdc"]},
+                                output_dir=my_directory,
+                                startdate= my_date_to_process ,
+                                enddate= my_date_to_process ,
+                                parallel_download = 1)
+
+fichier_nav = dwl_output_navigation[0][0]
+# Chargement du fichier de navigation RINEX via GeodeZYX
+# comme Dusa et al. on retraité tous les fichiers de navigation RINEX2 -> RINEX3
+# on en profite :-) !
+iono_cor_dic, time_sys_corr_dic = files_rw.read_rinex_nav_v3_header(fichier_nav)
+
 
 print('*****  Prise en compte des erreurs d''horloge satellites *****')
 print('*****  + Sagnac *****')
