@@ -20,7 +20,8 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import concurrent.futures
-import datetime as dt
+
+# import datetime as dt
 import collections
 
 #### Import the logger
@@ -29,7 +30,8 @@ import os
 import subprocess
 import numpy as np
 import shutil as shutils
-from threading import Lock
+
+# from threading import Lock
 
 #### geodeZYX modules
 from geodezyx import files_rw
@@ -97,7 +99,7 @@ def rtklib_run_mono(
     out_dir,
     tmp_dir,
     prod_dir=None,
-    igs_prods="IGS0OPSFIN",
+    igs_prods="GRG00OPSFIN",
     download_prods=True,
     orbclklis_inp=[],
     brdclis_inp=[],
@@ -128,7 +130,7 @@ def rtklib_run_mono(
 
     # RINEX START & END - FAST
     rov_srt_fast = conv.rinexname2dt(rnx_rover)
-    #bas_srt_fast = conv.rinexname2dt(rnx_base)
+    # bas_srt_fast = conv.rinexname2dt(rnx_base)
 
     # RINEX NAMES
     rov_name = os.path.basename(rnx_rover)[0:4]
@@ -284,7 +286,7 @@ def rtklib_run_pair(
     prod_dir=None,
     orbclklis_inp=None,
     brdclis_inp=None,
-    igs_prods="IGS0OPSFIN",
+    igs_prods="GRG0OPSFIN",
     exp_prefix="",
     xyz_dic=None,
     posmode=None,
@@ -321,7 +323,7 @@ def rtklib_run_pair(
         List of orbit/clock files to select from if not downloading.
     brdclis_inp : list of str, optional
         List of BRDC files to select from if not downloading.
-    igs_prods : str, default="IGS0OPSFIN"
+    igs_prods : str, default="GRG0OPSFIN"
         Analysis center/product identifier.
     procs : int, default=4
         Maximum number of parallel workers.
@@ -454,7 +456,7 @@ def rtklib_run_pair(
 def make_pairs(
     rnx_dir,
     sites_rovers,
-    site_base,
+    sites_bases,
     date_srt=None,
     date_end=None,
 ):
@@ -465,9 +467,9 @@ def make_pairs(
     ----------
     rnx_dir : str | os.PathLike
         Directory containing RINEX files.
-    sites_rovers : list of str
+    sites_rovers : str or list of str
         List of rover site codes.
-    site_base : str
+    sites_bases : str or list of str
         Base site code.
     date_srt : datetime.datetime, optional
         Start date for RINEX file search.
@@ -481,46 +483,56 @@ def make_pairs(
         - rnxs_pairs : list of tuples (rover_path, base_path)
         - df_all : pandas DataFrame with all RINEX file information
     """
+
+    sites_rovers = utils.listify(sites_rovers)
+    sites_bases = utils.listify(sites_bases)
+
     rnxs_pairs = []
 
-    if site_base in sites_rovers:
-        log.warning(f"Base site '{site_base}' is in rover sites list, removing it")
-        sites_rovers.remove(site_base)
+    for site_base in sites_bases:
+        if sites_bases in sites_rovers:
+            log.warning(f"Base site '{sites_bases}' is in rover sites list, removing it")
+            sites_rovers.remove(site_base)
 
     rnxs_all = operational.rinex_finder(
         rnx_dir,
-        specific_sites=sites_rovers + [site_base],
+        specific_sites=sites_rovers + sites_bases,
         start_epoch=date_srt,
         end_epoch=date_end,
     )
 
     df_all = operational.rinex_table_from_list(rnxs_all, site9_col=True)
     df_all["date_end"] = df_all["date"] + df_all["per"]
-    df_rov = df_all[df_all["site9"].isin(sites_rovers)]
-    df_bse = df_all[df_all["site9"] == site_base]
+    df_rovs = df_all[df_all["site9"].isin(sites_rovers)]
+    df_bses = df_all[df_all["site9"].isin(sites_bases)]
 
-    if len(df_bse) == 0:
-        log.error(f"No base RINEX files found for site: {site_base}")
+    if len(df_bses) == 0:
+        log.error(f"No base RINEX files found for site: {sites_bases}")
         log.error(f"All sites found: {str(list(df_all["site9"].unique()))}")
         return [], df_all
 
-    for irow, rovrow in df_rov.iterrows():
-        site = rovrow["site9"]
-        rov_srt = rovrow["date"]
-        rov_end = rovrow["date_end"]
+    for bas in sites_bases:
+        df_bse = df_bses[df_bses["site9"] == bas]
+        for irow, rovrow in df_rovs.iterrows():
+            site = rovrow["site9"]
+            if bas == site:
+                log.warning(f"Rover site '{site}' is the same as base site '{bas}', skipping pair")
+                continue
+            rov_srt = rovrow["date"]
+            rov_end = rovrow["date_end"]
 
-        sel = (df_bse["date"] <= rov_srt) & (rov_end <= df_bse["date_end"])
-        df_bse_sel = df_bse[sel]
-        if len(df_bse_sel) == 0:
-            log.warning(f"no base for {site} at {rov_srt}")
-            continue
-        elif len(df_bse_sel) > 1:
-            log.warning(f"multi. bases for {site} at {rov_srt}, get 1st:")
-            log.warning(f"\n{df_bse_sel.to_string()}")
-        row_bse = df_bse_sel.iloc[0]
+            sel = (df_bse["date"] <= rov_srt) & (rov_end <= df_bse["date_end"])
+            df_bse_sel = df_bse[sel]
+            if len(df_bse_sel) == 0:
+                log.warning(f"no base for {site} at {rov_srt}")
+                continue
+            elif len(df_bse_sel) > 1:
+                log.warning(f"multi. bases for {site} at {rov_srt}, get 1st:")
+                log.warning(f"\n{df_bse_sel.to_string()}")
+            row_bse = df_bse_sel.iloc[0]
 
-        rnxs_pair = (rovrow["path"], row_bse["path"])
-        rnxs_pairs.append(rnxs_pair)
+            rnxs_pair = (rovrow["path"], row_bse["path"])
+            rnxs_pairs.append(rnxs_pair)
 
     return rnxs_pairs, df_all
 
@@ -529,11 +541,11 @@ def rtklib_run(
     rnx_dir,
     cfgfile_generik,
     sites_rovers,
-    site_base,
+    sites_bases,
     out_dir,
     tmp_dir=None,
     prod_dir=None,
-    igs_prods="GRG0OPSULT",
+    igs_prods="GRG0OPSFIN",
     exp_prefix="",
     date_srt=None,
     date_end=None,
@@ -551,16 +563,16 @@ def rtklib_run(
     rnxs_pairs, df_all = make_pairs(
         rnx_dir,
         sites_rovers,
-        site_base,
+        sites_bases,
         date_srt=date_srt,
         date_end=date_end,
     )
 
     log.info("STEP 2: Downloading shared products (SP3/CLK and BRDC)")
     try:
-        orbclklis_shr, brdclis_shr = dl_prods(prod_dir,
-                                              list(df_all["date"].unique()),
-                                              igs_prods)
+        orbclklis_shr, brdclis_shr = dl_prods(
+            prod_dir, list(df_all["date"].unique()), igs_prods
+        )
     except Exception as e:
         log.error(f"Failed to download shared products: {e}")
         raise

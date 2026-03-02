@@ -111,7 +111,7 @@ def listify(inp):
 
     Returns
     -------
-    list
+    list : list
         A list containing the input elements if the input is iterable,
         otherwise a list with the input as its single element.
     """

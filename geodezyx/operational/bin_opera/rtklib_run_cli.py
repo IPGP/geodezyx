@@ -46,7 +46,7 @@ Examples:
 
     # Required arguments (unless provided in YAML)
     parser.add_argument(
-        "-r", "--rnx_dir", help="Directory containing RINEX files to process"
+        "-d", "--rnx_dir", help="Directory containing RINEX files to process"
     )
     parser.add_argument(
         "-c",
@@ -54,20 +54,26 @@ Examples:
         help="Path to generic RTKLIB configuration file (.conf)",
     )
     parser.add_argument(
-        "-ro",
+        "-r",
         "--sites_rovers",
         nargs="+",
         help="List of rover station names (4-char codes, e.g., TLSE ZIMM BRUS)",
     )
     parser.add_argument(
         "-b",
-        "--site_base",
-        help="Base station name (4-char or 9-char code, e.g., GRAS or GRAS00FRA)",
+        "--sites_bases",
+        nargs="+",
+        help="Base station name(s) (4-char or 9-char code, e.g., GRAS or GRAS00FRA)",
     )
     parser.add_argument("-o", "--out_dir", help="Output directory for results")
 
     # Optional arguments
-    parser.add_argument("-td", "--tmp_dir", default=None, help="Temporary directory (default: None, will use out_dir/TMP)")
+    parser.add_argument(
+        "-td",
+        "--tmp_dir",
+        default=None,
+        help="Temporary directory (default: None, will use out_dir/TMP)",
+    )
     parser.add_argument(
         "-pd",
         "--prod_dir",
