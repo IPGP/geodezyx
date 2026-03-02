@@ -489,49 +489,46 @@ def make_pairs(
 
     rnxs_pairs = []
 
-    for site_base in sites_bases:
-        if sites_bases in sites_rovers:
-            log.warning(f"Base site '{sites_bases}' is in rover sites list, removing it")
-            sites_rovers.remove(site_base)
+    sites_all = list(set(sites_rovers + sites_bases))
 
     rnxs_all = operational.rinex_finder(
         rnx_dir,
-        specific_sites=sites_rovers + sites_bases,
+        specific_sites=sites_all,
         start_epoch=date_srt,
         end_epoch=date_end,
     )
 
     df_all = operational.rinex_table_from_list(rnxs_all, site9_col=True)
     df_all["date_end"] = df_all["date"] + df_all["per"]
-    df_rovs = df_all[df_all["site9"].isin(sites_rovers)]
-    df_bses = df_all[df_all["site9"].isin(sites_bases)]
+    df_rovers = df_all[df_all["site9"].isin(sites_rovers)]
+    df_bases = df_all[df_all["site9"].isin(sites_bases)]
 
-    if len(df_bses) == 0:
+    if len(df_bases) == 0:
         log.error(f"No base RINEX files found for site: {sites_bases}")
         log.error(f"All sites found: {str(list(df_all["site9"].unique()))}")
         return [], df_all
 
-    for bas in sites_bases:
-        df_bse = df_bses[df_bses["site9"] == bas]
-        for irow, rovrow in df_rovs.iterrows():
-            site = rovrow["site9"]
-            if bas == site:
-                log.warning(f"Rover site '{site}' is the same as base site '{bas}', skipping pair")
+    for _, row_rov in df_rovers.iterrows():
+        rov = row_rov["site9"]
+        for bas, df_bas in df_bases.groupby("site9"):
+            if bas == rov:
+                log.warning(f"Rover '{rov}' is the same as base '{bas}', skipping pair")
                 continue
-            rov_srt = rovrow["date"]
-            rov_end = rovrow["date_end"]
+            rov_srt = row_rov["date"]
+            rov_end = row_rov["date_end"]
 
-            sel = (df_bse["date"] <= rov_srt) & (rov_end <= df_bse["date_end"])
-            df_bse_sel = df_bse[sel]
-            if len(df_bse_sel) == 0:
-                log.warning(f"no base for {site} at {rov_srt}")
+            sel = (df_bas["date"] <= rov_srt) & (rov_end <= df_bas["date_end"])
+            df_bas_sel = df_bas[sel]
+            if len(df_bas_sel) == 0:
+                log.warning(f"no base for rover {rov} at {rov_srt}")
                 continue
-            elif len(df_bse_sel) > 1:
-                log.warning(f"multi. bases for {site} at {rov_srt}, get 1st:")
-                log.warning(f"\n{df_bse_sel.to_string()}")
-            row_bse = df_bse_sel.iloc[0]
+            elif len(df_bas_sel) > 1:
+                log.warning(f"multi. bases for {rov} at {rov_srt}, get 1st:")
+                log.warning(f"\n{df_bas_sel.to_string()}")
 
-            rnxs_pair = (rovrow["path"], row_bse["path"])
+            row_bas = df_bas_sel.iloc[0]
+
+            rnxs_pair = (row_rov["path"], row_bas["path"])
             rnxs_pairs.append(rnxs_pair)
 
     return rnxs_pairs, df_all
