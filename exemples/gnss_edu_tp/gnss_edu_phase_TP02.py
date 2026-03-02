@@ -387,14 +387,14 @@ while np.linalg.norm(dP_est)>1:
     print("\n")
 
 
-fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial calcul", 
-                                      save_path = folder / "01_trivial.pdf",
+fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial GPS data processing", 
+                                      save_path = folder / "01_trivial.png",
                                       P_est=P_est, P_rnx_header=P_rnx_header)
 
 # -------------------------------------------------------------------------
 # Store results for later reuse
 # -------------------------------------------------------------------------
-trivial_solution = {
+S01_trivial_solution = {
     "P_est": P_est.copy(),
     "ENU": np.array([E, N, U]),
     "distance_to_header": dist_P_est_P_rnx_header,
@@ -600,8 +600,19 @@ print("Up (U):", U)
 print("\n")
 
 
-gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Satellite clocks correction", save_path="./sat_clocks_only.png",
-                           P_est=P_est, P_rnx_header=P_rnx_header)
+gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Satellite clocks correction", 
+                                save_path = folder / "02_sat_clocks_only.png",
+                                P_est=P_est, P_rnx_header=P_rnx_header)
+
+# -------------------------------------------------------------------------
+# Store results for later reuse
+# -------------------------------------------------------------------------
+S02_Clk_Sat_solution = {
+    "P_est": P_est.copy(),
+    "ENU": np.array([E, N, U]),
+    "distance_to_header": dist_P_est_P_rnx_header,
+    "iterations": i-1
+}
 
 
 #%%
@@ -647,12 +658,22 @@ gc.collect()
 
 print('*****  Prise en compte des erreurs d''horloge satellites et récepteur *****')
 
+# Obtention des époques uniques
+epoch_uniques = df_rnx.index.get_level_values('epoch').unique()
+nb_epochs = len(epoch_uniques)
+# Squelette du bloc à concaténer à la matrice modèle A
+block_dt_r = np.zeros((len(df_rnx), nb_epochs))
+# Remplissage du bloc correspondant à l'estimation des erreurs d'horloge recepteur
+
+for i, epoch in enumerate(epoch_uniques):
+    block_dt_r[df_rnx.loc[epoch, 'ind_ligne'],i]=1
+
 # Initialisation des coordonnées approximatives du récepteur
 P_app = np.array([0, 0, 0])
-dP_est=100
+dP_est= np.array([100, 100, 100])
 i=1
 # Itération pour l'affinement de la position du récepteur
-while np.linalg.norm(dP_est)>1:
+while np.linalg.norm(dP_est[0:3])>1:
     # Calcul des distances approximatives satellite-récepteur
     distances = np.sqrt((df_rnx['X_sat'].values - P_app[0])**2 +
                         (df_rnx['Y_sat'].values - P_app[1])**2 +
@@ -665,13 +686,13 @@ while np.linalg.norm(dP_est)>1:
     df_dX = (P_app[0] - df_rnx['X_sat'].values) / distances
     df_dY = (P_app[1] - df_rnx['Y_sat'].values) / distances
     df_dZ = (P_app[2] - df_rnx['Z_sat'].values) / distances
-    A = np.column_stack((df_dX, df_dY, df_dZ))
+    A = np.column_stack((df_dX, df_dY, df_dZ, block_dt_r))
 
     # Résolution par moindres carrés pour estimer le déplacement
     dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
     
     # Mise à jour de la position estimée
-    P_est = P_app + dP_est
+    P_est = P_app + dP_est[0:3]
     
     # Affichage de la position estimée à chaque itération
     print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
@@ -690,12 +711,59 @@ print("Nord (N):", N)
 print("Haut (U):", U)
 print("\n")
 
+gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Satellite clocks and receiver correction",
+                                save_path = folder / "03_sat_rec_clocks.png",
+                                P_est=P_est, P_rnx_header=P_rnx_header)
 
-gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat", save_path="./corr_sat_clock.png",
-                           P_est=P_est, P_rnx_header=P_rnx_header)
+
+# -------------------------------------------------------------------------
+# Store results for later reuse
+# -------------------------------------------------------------------------
+S03_Clk_Sat_Rec_solution = {
+    "P_est": P_est.copy(),
+    "ENU": np.array([E, N, U]),
+    "distance_to_header": dist_P_est_P_rnx_header,
+    "iterations": i-1
+}
 
 
-del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
+
+
+#%%
+# Workspace cleanup
+#
+# We remove intermediate variables that are no longer needed in order to:
+#   - keep the workspace readable,
+#   - avoid accidental reuse of temporary data,
+#   - reduce memory usage when working with large GNSS datasets.
+#
+# Note:
+# Python normally manages memory automatically. The explicit cleanup below
+# simply helps when working interactively with large SP3 and RINEX files.
+###############################################################################
+
+for var in [
+    "E",
+    "N",
+    "U",
+    "P_est",
+    "dP_est",
+    "P_app",
+    "A",
+    "B",
+    "df_dX",
+    "df_dY",
+    "df_dZ",
+    "distances",
+    "dist_P_est_P_rnx_header",
+    "fig",
+    "i","nb_epochs","epoch","block_dt_r","epoch_uniques"
+]:
+    if var in globals():
+        del globals()[var]
+
+del var
+gc.collect()
 
 
 # %%
