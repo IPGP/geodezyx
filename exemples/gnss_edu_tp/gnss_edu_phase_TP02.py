@@ -50,9 +50,6 @@ import datetime as dt
 import pandas as pd
 import numpy as np
 
-# pour visualiser les données
-import matplotlib.pyplot as plt
-
 from pathlib import Path
 import os
 import gc
@@ -84,6 +81,12 @@ dwl_output_station = operational.download_gnss_rinex(statdico={"rgp" : ["SMNE","
                                 enddate= my_date_to_process ,
                                 parallel_download = 1) 
 
+dwl_output_navigation = operational.download_gnss_rinex(statdico={"nav" : ["brdc"]},
+                                output_dir=my_directory,
+                                startdate= my_date_to_process ,
+                                enddate= my_date_to_process ,
+                                parallel_download = 1)
+
 # Téléchargement automatique des données ORBIT et CLOCK pour le jour du traitement
 # ici  (2019-176) qui correspond à la semaine GPS 2059
 dwl_output_satellite = operational.download_gnss_products(archive_dir= my_directory,
@@ -100,6 +103,11 @@ dwl_output_satellite = operational.download_gnss_products(archive_dir= my_direct
 # Chargement des fichiers RINEX d'observation
 
 fichier_rnx = dwl_output_station[0][0]
+fichier_nav = dwl_output_navigation[0][0]
+
+# Chargement du fichier de navigation RINEX via GeodeZYX
+-iono_cor_dic, time_sys_corr_dic = files_rw.read_rinex_nav_v3_header(fichier_nav)
+
 
 # Chargement des données RINEX d'observation dans un pandas dataframe via  GeodeZYX
 df_rnx_orig, l_rnx_head = files_rw.read_rinex2_obs(fichier_rnx,
@@ -630,13 +638,13 @@ def rotate_around_z(row):
     # temps de vol * vitesse angulaire rotation terrestre -> alpha_rad
     alpha_rad = row['C1'] / conv.SPEED_OF_LIGHT * conv.EARTH_ROTATION_MEAN_ANGULAR_VELOCITY
     # Matrice de rotation autour de l'axe Z
-    Rz = np.array([[np.cos(alpha_rad), -np.sin(alpha_rad), 0],
+    rz = np.array([[np.cos(alpha_rad), -np.sin(alpha_rad), 0],
                    [np.sin(alpha_rad), np.cos(alpha_rad), 0],
                    [0, 0, 1]])
     # Vecteur de position original
     original_vector = np.array([row['X_sat'], row['Y_sat'], row['Z_sat']])
     # Calculer le vecteur de position rotatif
-    rotated_vector = Rz.dot(original_vector)
+    rotated_vector = rz.dot(original_vector)
     return pd.Series(rotated_vector, index=['X_sat', 'Y_sat', 'Z_sat'])
 
 # Appliquer la rotation à chaque ligne et créer un nouveau dataframe avec les résultats
@@ -806,8 +814,8 @@ Az_deg = Az_rad * rad2deg
 Ele_deg =  Ele_rad * rad2deg
 
 # coefficients alpha et beta extrait du fichier de navigation
-alpha = mynav.ion_alpha_gps
-beta = mynav.ion_beta_gps
+alpha = iono_cor_dic["GPSA"]
+beta = iono_cor_dic["GPSB"]
 
 # t = gpst.gpsdatetime() # création d'un objet temps de la gnsstime
 dIon1 = []
@@ -824,7 +832,7 @@ df_rnx['Az']      = Az_deg
 df_rnx['Ele']     = Ele_deg
 df_rnx['dIon1']   = dIon1 
 
-del Az_rad, Ele_rad, lon, lat, lat_d, lon_d, h, rad2deg, Az_deg, Ele_deg, alpha, beta, t, dIon1, wsec_v, i, dIon1_v, time_i, prn_i
+del Az_rad, Ele_rad, lon, lat, lat_d, lon_d, h, rad2deg, Az_deg, Ele_deg, alpha, beta, dIon1, wsec_v, i, dIon1_v, time_i, prn_i
 
 
 # Obtention des époques uniques
@@ -925,8 +933,8 @@ l3=conv.SPEED_OF_LIGHT/(f1+f2)
 # attention : on se rend compte que les mesures L1 et L2 sont en cycle alors que l'on
 # a besoin d'une mesure de distance (ambigue mais distance quand même)
 
-df_rnx['L3']  = (f1**2*df_rnx['L1'] - f2**2*df_rnx['L2'])/(f1**2-f2**2);
-df_rnx['P3']  = (f1**2*df_rnx['C1'] - f2**2*df_rnx['P2'])/(f1**2-f2**2);
+df_rnx['L3']  = (f1**2*df_rnx['L1'] - f2**2*df_rnx['L2'])/(f1**2-f2**2)
+df_rnx['P3']  = (f1**2*df_rnx['C1'] - f2**2*df_rnx['P2'])/(f1**2-f2**2)
 
 
 # %%
@@ -1215,7 +1223,7 @@ for (time_i,prn_i) in df_rnx.index:
     #gmfh, gmfw = gpt3.gmf(dmjd=t.mjd, dlat=lat, dlon=lon, dhgt=h, zd =np.pi/2-df_rnx.loc[(time_i,prn_i), 'Ele']*np.pi/180)
     gmfh = 1/np.sin(df_rnx.loc[(time_i,prn_i), 'Ele']*np.pi/180)
     gmfw = gmfh
-    T = gnss_edu.gpt3_5_fast(mjd=t.mjd, lat=np.array([lat]), lon=np.array([lon]), h_ell=np.array([h]), it=0, grid=gpt3_5)
+    T = gnss_edu.gpt3_5_fast(mjd=t_mjd, lat=np.array([lat]), lon=np.array([lon]), h_ell=np.array([h]), it=0, grid=gpt3_5)
     gm = 1 - 0.00265 * np.cos(2*lat) - 0.000285 * h*1e-3
     pression = T[0][0][0] #hPa
     ZHD_v = 0.0022768 * pression / gm
@@ -1301,8 +1309,8 @@ while np.linalg.norm(dP_est[0:3])>1:
                         (df_Sagnac_new['Z_sat'].values - P_app[2])**2)
 
     # Vecteur des observations corrigées des différents modèles
-    B = df_rnx_new['P3'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx_new['dte_sat'].values \
-    + df_rnx_new['dRelat'].values ) \
+    B = df_rnx_new['P3'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx_new['dte_sat'].values
+    + df_rnx_new['dRelat'].values )
     - df_rnx_new['ZHD'].values* df_rnx_new['mfh'].values
 
     # Construction de la matrice des dérivées partielles
@@ -1561,8 +1569,8 @@ l3=conv.SPEED_OF_LIGHT/(f1+f2)
 # attention : on se rend compte que les mesures L1 et L2 sont en cycle alors que l'on
 # a besoin d'une mesure de distance (ambigue mais distance quand même)
 
-df_rnx_new['L3']  = (f1**2*df_rnx_new['L1'] - f2**2*df_rnx_new['L2'])/(f1**2-f2**2);
-df_rnx_new['P3']  = (f1**2*df_rnx_new['C1'] - f2**2*df_rnx_new['P2'])/(f1**2-f2**2);
+df_rnx_new['L3']  = (f1**2*df_rnx_new['L1'] - f2**2*df_rnx_new['L2'])/(f1**2-f2**2)
+df_rnx_new['P3']  = (f1**2*df_rnx_new['C1'] - f2**2*df_rnx_new['P2'])/(f1**2-f2**2)
 
 
 gnss_edu.plot_series(df=df_rnx_new, col1='L3', col2='P3' , coeff1=1.0, coeff2=1.0, seuil=3600, renderer="browser")
