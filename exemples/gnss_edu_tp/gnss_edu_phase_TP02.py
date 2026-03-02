@@ -1083,13 +1083,69 @@ gc.collect()
 
 
 
+# %%
+# -------------------------------------------------------------------------
+# Interpretation of remaining positioning error
+# -------------------------------------------------------------------------
+#
+# After applying precise orbit information, satellite and receiver clock
+# corrections, relativistic effects and Sagnac correction, the remaining
+# discrepancy between:
+#
+#   - the receiver position estimated from GNSS observations, and
+#   - the approximate receiver coordinates provided in the RINEX header
+#
+# is now largely dominated by signal propagation effects.
+#
+# Observation:
+# The residual error appears mainly on the vertical component (Up).
+#
+# Interpretation:
+# Atmospheric propagation delays (ionosphere and troposphere) act primarily
+# along the satellite line-of-sight. Due to GNSS satellite geometry, these
+# errors are weakly constrained horizontally and are therefore mostly
+# absorbed by the vertical component of the estimated position.
+#
+# This explains why vertical positioning is generally less accurate than
+# horizontal positioning and motivates the need for atmospheric modeling.
+# -------------------------------------------------------------------------
 
+print(
+    "Note: The remaining discrepancy with the RINEX header position is "
+    "mainly vertical, illustrating the impact of atmospheric propagation "
+    "errors (ionosphere and troposphere)."
+)
 
+# %%
+# -------------------------------------------------------------------------
+# Validity of local satellite geometry computation
+# -------------------------------------------------------------------------
+#
+# The estimated receiver position now differs from the approximate RINEX
+# header coordinates by about a few tens of meters.
+#
+# Although this accuracy is insufficient for precise positioning, it is
+# largely adequate to define the local reference frame centered on the
+# receiver antenna.
+#
+# In particular, an approximate receiver position with an error of a few
+# tens of meters introduces only negligible errors in:
+#   - satellite azimuth,
+#   - satellite elevation angles.
+#
+# Therefore, the current receiver position estimate can safely be used to
+# compute satellite directions in the local ENU frame.
+#
+# This step is essential before introducing atmospheric models, since both
+# ionospheric and tropospheric delays strongly depend on satellite elevation.
+# -------------------------------------------------------------------------
 
-
-
-
-
+print(
+    "\nReceiver position accuracy (~30 m) is sufficient "
+    "to compute satellite azimuth and elevation angles.\n"
+    "We can now analyze signal propagation effects "
+    "(ionosphere and troposphere)."
+)
 
 
 # %%
