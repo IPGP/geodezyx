@@ -572,4 +572,111 @@ print("\nBASE vs ROVER satellite position difference AFTER Sagnac (meters):")
 print(df_sagnac_diff["dr_sagnac_norm"].describe())
 
 
+# %%
+###############################################################################
+# Synchronization check between BASE and ROVER
+###############################################################################
+
+same_index = df_base_sat.index.equals(df_rover_sat.index)
+
+print("BASE / ROVER synchronized:", same_index)
+
+if not same_index:
+    raise RuntimeError(
+        "BASE and ROVER datasets are not perfectly synchronized."
+    )
+    
+print(df_base_sat.index[:5])
+print(df_rover_sat.index[:5])
+
+#%%
+# Workspace cleanup
+#
+# We remove intermediate variables that are no longer needed in order to:
+#   - keep the workspace readable,
+#   - avoid accidental reuse of temporary data,
+#   - reduce memory usage when working with large GNSS datasets.
+#
+# Note:
+# Python normally manages memory automatically. The explicit cleanup below
+# simply helps when working interactively with large SP3 and RINEX files.
+###############################################################################
+
+for var in [
+    "df_base","df_base_sync",
+    "df_rover","df_rover_sync",
+    "df_diff", "df_sp3",
+    "common_index", "df_sagnac_diff", "mag_base", "mag_rover", "same_index"
+]:
+    if var in globals():
+        del globals()[var]
+
+del var
+gc.collect()
+
+
+
+# %%
+###############################################################################
+# Single Difference (SD): ROVER − BASE
+#
+# Educational objective
+# ---------------------
+# Build single-differenced observations between two receivers for the same
+# satellite and the same epoch:
+#
+#     SD(t,s) = Obs_rover(t,s) − Obs_base(t,s)
+#
+# Key property
+# ------------
+# In single differences, the satellite clock term cancels (to first order),
+# because it is common to both receivers for a given (t,s).
+#
+# Practical note
+# --------------
+# This step requires perfect synchronization:
+# df_base_sat and df_rover_sat must share the same (epoch, prn) index.
+###############################################################################
+
+print("***** Single Difference (ROVER − BASE) *****")
+
+# -------------------------------------------------------------------------
+# 0) Safety check: strict synchronization
+# -------------------------------------------------------------------------
+if not df_base_sat.index.equals(df_rover_sat.index):
+    raise RuntimeError("BASE and ROVER are not perfectly synchronized (index mismatch).")
+
+# -------------------------------------------------------------------------
+# 1) Choose the observable used for SD
+# -------------------------------------------------------------------------
+# Keep it simple for the TP: start with L1 (carrier phase, in cycles)
+obs = "L1"
+
+if obs not in df_base_sync.columns or obs not in df_rover_sync.columns:
+    raise KeyError(f"Observable '{obs}' not found in both BASE and ROVER dataframes.")
+
+# -------------------------------------------------------------------------
+# 2) Build the Single Difference time series (cycles)
+# -------------------------------------------------------------------------
+df_SD = pd.DataFrame(index=df_base_sat.index)
+df_SD[f"SD_{obs}"] = df_rover_sync[obs] - df_base_sync[obs]
+
+# Optional: keep pseudorange SD too (meters), useful later for intuition
+if "C1" in df_base_sync.columns and "C1" in df_rover_sync.columns:
+    df_SD["SD_C1"] = df_rover_sync["C1"] - df_base_sync["C1"]
+
+print("Single differences computed.")
+print("Rows:", len(df_SD), "| Columns:", list(df_SD.columns))
+
+# Quick sanity view
+print("\nFirst SD values:")
+print(df_SD.head())
+
+
+
+
+
+
+
+
 
