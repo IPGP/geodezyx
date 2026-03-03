@@ -537,8 +537,8 @@ def add_sagnac_rotated_coords(df_sat, C1_series, suffix="_sagnac"):
 
 
 # Apply to BASE and ROVER (C1 differs slightly -> rotation differs slightly)
-df_base_sat  = add_sagnac_rotated_coords(df_base_sat,  df_base_sync["C1"])
-df_rover_sat = add_sagnac_rotated_coords(df_rover_sat, df_rover_sync["C1"])
+df_base_sat  = add_sagnac_rotated_coords(df_base_sat,  df_base_sat["C1"])
+df_rover_sat = add_sagnac_rotated_coords(df_rover_sat, df_rover_sat["C1"])
 
 # -------------------------------------------------------------------------
 # Diagnostics (pedagogical)
@@ -614,67 +614,39 @@ for var in [
 del var
 gc.collect()
 
-
-
 # %%
 ###############################################################################
-# Single Difference (SD): ROVER − BASE
+# Sanity checks before differential processing (SD / DD)
 #
-# Educational objective
-# ---------------------
-# Build single-differenced observations between two receivers for the same
-# satellite and the same epoch:
+# We now work ONLY with:
+#   - df_base_sat
+#   - df_rover_sat
 #
-#     SD(t,s) = Obs_rover(t,s) − Obs_base(t,s)
-#
-# Key property
-# ------------
-# In single differences, the satellite clock term cancels (to first order),
-# because it is common to both receivers for a given (t,s).
-#
-# Practical note
-# --------------
-# This step requires perfect synchronization:
-# df_base_sat and df_rover_sat must share the same (epoch, prn) index.
+# These dataframes must be:
+#   1) perfectly synchronized (same MultiIndex)
+#   2) containing satellite coordinates at emission time
+#   3) containing Sagnac-corrected coordinates for later geometry (optional)
 ###############################################################################
 
-print("***** Single Difference (ROVER − BASE) *****")
+required_cols = [
+    "C1",
+    "X_sat", "Y_sat", "Z_sat",
+    "X_sat_sagnac", "Y_sat_sagnac", "Z_sat_sagnac",
+]
 
-# -------------------------------------------------------------------------
-# 0) Safety check: strict synchronization
-# -------------------------------------------------------------------------
 if not df_base_sat.index.equals(df_rover_sat.index):
-    raise RuntimeError("BASE and ROVER are not perfectly synchronized (index mismatch).")
+    raise RuntimeError("df_base_sat and df_rover_sat are not synchronized (index mismatch).")
 
-# -------------------------------------------------------------------------
-# 1) Choose the observable used for SD
-# -------------------------------------------------------------------------
-# Keep it simple for the TP: start with L1 (carrier phase, in cycles)
-obs = "L1"
+missing_base = [c for c in required_cols if c not in df_base_sat.columns]
+missing_rover = [c for c in required_cols if c not in df_rover_sat.columns]
 
-if obs not in df_base_sync.columns or obs not in df_rover_sync.columns:
-    raise KeyError(f"Observable '{obs}' not found in both BASE and ROVER dataframes.")
+if missing_base:
+    raise RuntimeError(f"Missing columns in df_base_sat: {missing_base}")
+if missing_rover:
+    raise RuntimeError(f"Missing columns in df_rover_sat: {missing_rover}")
 
-# -------------------------------------------------------------------------
-# 2) Build the Single Difference time series (cycles)
-# -------------------------------------------------------------------------
-df_SD = pd.DataFrame(index=df_base_sat.index)
-df_SD[f"SD_{obs}"] = df_rover_sync[obs] - df_base_sync[obs]
-
-# Optional: keep pseudorange SD too (meters), useful later for intuition
-if "C1" in df_base_sync.columns and "C1" in df_rover_sync.columns:
-    df_SD["SD_C1"] = df_rover_sync["C1"] - df_base_sync["C1"]
-
-print("Single differences computed.")
-print("Rows:", len(df_SD), "| Columns:", list(df_SD.columns))
-
-# Quick sanity view
-print("\nFirst SD values:")
-print(df_SD.head())
-
-
-
-
+print("OK: df_base_sat and df_rover_sat are synchronized and contain Sagnac-corrected satellite coordinates.")
+print("Index example:", df_base_sat.index[:3].tolist())
 
 
 
