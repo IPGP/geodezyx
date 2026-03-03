@@ -255,3 +255,32 @@ for var in [
 
 del var
 gc.collect()
+
+
+# %%
+###############################################################################
+# Synchronization of BASE and ROVER observations
+#
+# Educational objective
+# ---------------------
+# Differential GNSS processing requires both stations to observe
+# the SAME satellite at the SAME epoch.
+#
+# We therefore keep only common (epoch, satellite) observations.
+###############################################################################
+
+print("***** Synchronizing BASE and ROVER observations *****")
+
+# Intersection of MultiIndex
+common_index = df_base.index.intersection(df_rover.index)
+
+print(f"Common observations: {len(common_index)}")
+
+# Keep synchronized observations
+df_base_sync  = df_base.loc[common_index].copy()
+df_rover_sync = df_rover.loc[common_index].copy()
+
+print("BASE synchronized rows :", len(df_base_sync))
+print("ROVER synchronized rows:", len(df_rover_sync))
+
+
