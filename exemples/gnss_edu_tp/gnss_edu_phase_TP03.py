@@ -418,3 +418,158 @@ print("\nMax ||Δr|| (m):", df_diff["dr_norm"].max())
 print("\nPer-PRN max ||Δr|| (m):")
 print(df_diff["dr_norm"].groupby(level="prn").max().sort_values(ascending=False).head(10))
 
+
+# %%
+###############################################################################
+# Receiver-dependent satellite geometry
+#
+# Educational objective
+# ---------------------
+# Demonstrate that satellite positions depend on the receiver location.
+#
+# Physical explanation
+# --------------------
+# Even if BASE and ROVER observe the same satellite at the same reception
+# epoch, the signal travel time differs slightly because the geometric
+# distance satellite–receiver is not identical.
+#
+# Consequently:
+#
+#       t_emit(BASE) ≠ t_emit(ROVER)
+#
+# and satellites are interpolated at slightly different emission epochs.
+#
+# This leads to centimetric differences in satellite coordinates between
+# receivers, typically at the 5–15 cm level for short GNSS baselines.
+#
+# Importance for GNSS processing
+# ------------------------------
+# This effect becomes significant when working with carrier-phase
+# observations and motivates the differential GNSS formulation used
+# in baseline processing.
+###############################################################################
+
+print("\n------------------------------------------------------------")
+print("Satellite position depends on receiver location.")
+print("BASE and ROVER do NOT see satellites at the same emission time.")
+print("Typical satellite position difference:", 
+      f"{df_diff['dr_norm'].mean():.3f} m")
+print("This effect becomes critical for carrier-phase positioning.")
+print("------------------------------------------------------------\n")
+
+
+
+
+
+
+# %%
+###############################################################################
+# Sagnac correction (vectorized Z-rotation) applied to BASE and ROVER
+#
+# Educational objective
+# ---------------------
+# Correct satellite ECEF coordinates for Earth rotation during signal travel time.
+#
+# Physical idea
+# -------------
+# During the signal flight time τ ≈ C1 / c, the Earth rotates by:
+#     dθ = ω_E * τ
+#
+# To express the satellite coordinates in the Earth-fixed frame at reception time,
+# we "undo" the Earth rotation during propagation. This is implemented as a
+# backward rotation around the Z-axis:
+#     α = -dθ
+#
+# Practical note (baseline)
+# -------------------------
+# τ depends on the receiver-satellite geometry, so BASE and ROVER generally have
+# slightly different τ and therefore slightly different Sagnac rotations.
+###############################################################################
+
+print("***** Sagnac correction (BASE and ROVER) *****")
+
+def add_sagnac_rotated_coords(df_sat, C1_series, suffix="_sagnac"):
+    """
+    Add Sagnac-rotated satellite coordinates to a satellite-state dataframe.
+
+    Parameters
+    ----------
+    df_sat : DataFrame (indexed by ['epoch','prn'])
+        Must contain X_sat, Y_sat, Z_sat in meters (ECEF).
+    C1_series : Series aligned with df_sat index
+        Pseudorange in meters, used to approximate flight time τ = C1/c.
+    suffix : str
+        Suffix used for new columns.
+
+    Returns
+    -------
+    df_out : DataFrame
+        Copy of df_sat with added columns:
+        X_sat{suffix}, Y_sat{suffix}, Z_sat{suffix}
+    """
+    df_out = df_sat.copy()
+
+    # Signal flight time (seconds): τ ≈ C1 / c
+    tau_s = C1_series.to_numpy(dtype=float) / conv.SPEED_OF_LIGHT
+
+    # Physical Earth rotation angle during signal travel time
+    dtheta = tau_s * conv.EARTH_ROTATION_MEAN_ANGULAR_VELOCITY
+
+    # Backward rotation to express satellite coordinates in reception frame
+    alpha = -dtheta
+
+    cos_a = np.cos(alpha)
+    sin_a = np.sin(alpha)
+
+    x = df_out["X_sat"].to_numpy(dtype=float)
+    y = df_out["Y_sat"].to_numpy(dtype=float)
+    z = df_out["Z_sat"].to_numpy(dtype=float)
+
+    x_rot = cos_a * x - sin_a * y
+    y_rot = sin_a * x + cos_a * y
+    z_rot = z
+
+    df_out[f"X_sat{suffix}"] = x_rot
+    df_out[f"Y_sat{suffix}"] = y_rot
+    df_out[f"Z_sat{suffix}"] = z_rot
+
+    return df_out
+
+
+# Apply to BASE and ROVER (C1 differs slightly -> rotation differs slightly)
+df_base_sat  = add_sagnac_rotated_coords(df_base_sat,  df_base_sync["C1"])
+df_rover_sat = add_sagnac_rotated_coords(df_rover_sat, df_rover_sync["C1"])
+
+# -------------------------------------------------------------------------
+# Diagnostics (pedagogical)
+# -------------------------------------------------------------------------
+# 1) Magnitude of Sagnac correction (per station): ||r_sagnac - r||
+def sagnac_magnitude(df_sat):
+    dx = df_sat["X_sat_sagnac"] - df_sat["X_sat"]
+    dy = df_sat["Y_sat_sagnac"] - df_sat["Y_sat"]
+    dz = df_sat["Z_sat_sagnac"] - df_sat["Z_sat"]
+    return np.sqrt(dx*dx + dy*dy + dz*dz)
+
+mag_base  = sagnac_magnitude(df_base_sat)
+mag_rover = sagnac_magnitude(df_rover_sat)
+
+print("\nSagnac correction magnitude (meters):")
+print("BASE :", pd.Series(mag_base, index=df_base_sat.index).describe())
+print("ROVER:", pd.Series(mag_rover, index=df_rover_sat.index).describe())
+
+# 2) Difference BASE vs ROVER on Sagnac-corrected satellite positions
+df_sagnac_diff = pd.DataFrame(index=df_base_sat.index)
+df_sagnac_diff["dX_sagnac"] = df_rover_sat["X_sat_sagnac"] - df_base_sat["X_sat_sagnac"]
+df_sagnac_diff["dY_sagnac"] = df_rover_sat["Y_sat_sagnac"] - df_base_sat["Y_sat_sagnac"]
+df_sagnac_diff["dZ_sagnac"] = df_rover_sat["Z_sat_sagnac"] - df_base_sat["Z_sat_sagnac"]
+df_sagnac_diff["dr_sagnac_norm"] = np.sqrt(
+    df_sagnac_diff["dX_sagnac"]**2 +
+    df_sagnac_diff["dY_sagnac"]**2 +
+    df_sagnac_diff["dZ_sagnac"]**2
+)
+
+print("\nBASE vs ROVER satellite position difference AFTER Sagnac (meters):")
+print(df_sagnac_diff["dr_sagnac_norm"].describe())
+
+
+
