@@ -94,6 +94,15 @@ dwl_output_satellite = operational.download_gnss_products(archive_dir= my_direct
                                    archive_center="ign",
                                    parallel_download = 1,
                                    ) 
+
+
+# %%
+# Chargement du fichier sp3 dans un dataframe
+# SP3 (load once)
+sp3_path = dwl_output_satellite[0][0] if isinstance(dwl_output_satellite[0], tuple) else dwl_output_satellite[0]
+print(f"Using SP3 file: {sp3_path}")
+df_sp3 = files_rw.read_sp3(sp3_path, returns_pandas=True, new_col_names=True)
+
 # %%
 ###############################################################################
 # RINEX paths returned by GeodeZYX download utility
@@ -283,4 +292,129 @@ df_rover_sync = df_rover.loc[common_index].copy()
 print("BASE synchronized rows :", len(df_base_sync))
 print("ROVER synchronized rows:", len(df_rover_sync))
 
+
+# %%
+###############################################################################
+# Satellite states computed independently for BASE and ROVER (TP02 reuse)
+#
+# Educational objective
+# ---------------------
+# Compute satellite positions at emission time separately for BASE and ROVER.
+# This allows us to quantify the (small) difference in satellite position due
+# to the slightly different signal travel times.
+###############################################################################
+
+def add_satellite_state_from_sp3(df_rnx_in, df_sp3, label=""):
+    """
+    Reuse TP02 logic: compute satellite position at emission time + clk + relativistic term.
+    Inputs
+    ------
+    df_rnx_in : DataFrame with columns at least ['epoch','prn','C1']
+    df_sp3    : SP3 DataFrame with columns at least ['epoch','prn','x','y','z','clk'] (x,y,z in km)
+    label     : used only for prints
+
+    Output
+    ------
+    df_out : same DF with columns added:
+        X_sat, Y_sat, Z_sat (m), dte_sat (s), dRelat (s)
+    """
+    df_rnx = df_rnx_in.copy()
+
+    # Ensure we have columns (not MultiIndex)
+    if isinstance(df_rnx.index, pd.MultiIndex) and set(df_rnx.index.names) >= {"epoch", "prn"}:
+        df_rnx = df_rnx.reset_index()
+
+    needed = {"epoch", "prn", "C1"}
+    missing = needed - set(df_rnx.columns)
+    if missing:
+        raise ValueError(f"{label} df_rnx is missing columns: {missing}")
+
+    # Ensure SP3 is in expected "column" form for the interpolation routine
+    df_sp3_use = df_sp3.copy()
+    if isinstance(df_sp3_use.index, pd.MultiIndex) and set(df_sp3_use.index.names) >= {"epoch", "prn"}:
+        df_sp3_use = df_sp3_use.reset_index()
+
+    # Init output columns
+    df_rnx["X_sat"] = np.nan
+    df_rnx["Y_sat"] = np.nan
+    df_rnx["Z_sat"] = np.nan
+    df_rnx["dte_sat"] = np.nan
+    df_rnx["dRelat"] = np.nan
+
+    # Loop per PRN (same as TP02)
+    for prn in df_rnx["prn"].unique():
+        df_rnx_prn = df_rnx[df_rnx["prn"] == prn]
+        if prn not in df_sp3_use["prn"].unique():
+            print(f"{label} - PRN {prn} not in SP3: skipped")
+            continue
+
+        df_sp3_prn = df_sp3_use[df_sp3_use["prn"] == prn]
+
+        # Signal flight time τ ≈ C1 / c
+        fly_time = pd.to_timedelta(df_rnx_prn["C1"] / conv.SPEED_OF_LIGHT, unit="s")
+
+        t_rec = df_rnx_prn["epoch"]
+        t_emi_approx = t_rec - fly_time
+
+        # Approx satellite state at emission time
+        orb_df_approx = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_approx.values)
+        orb_df_approx[["x", "y", "z"]] = orb_df_approx[["x", "y", "z"]] * 1e3  # km -> m
+
+        # Relativistic correction (finite-difference velocity)
+        delta_t = pd.to_timedelta(1e-3, unit="s")
+        orb_fwd = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_approx.values + delta_t)
+        orb_bak = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_approx.values - delta_t)
+        orb_fwd[["x", "y", "z"]] = orb_fwd[["x", "y", "z"]] * 1e3
+        orb_bak[["x", "y", "z"]] = orb_bak[["x", "y", "z"]] * 1e3
+
+        v_xyz = (orb_fwd[["x", "y", "z"]] - orb_bak[["x", "y", "z"]]) / (2 * delta_t.total_seconds())
+        r_xyz = orb_df_approx[["x", "y", "z"]]
+        dRelat_v = -2.0 * (v_xyz * r_xyz).sum(axis=1) / (conv.SPEED_OF_LIGHT ** 2)
+
+        # Refined emission time (apply satellite clock, in microseconds)
+        t_emi_ok = t_emi_approx - pd.to_timedelta(orb_df_approx["clk"].values, unit="us")
+
+        orb_ok = reffram.orb_df_lagrange_interpolate(df_sp3_prn, t_emi_ok.values)
+        orb_ok[["x", "y", "z"]] = orb_ok[["x", "y", "z"]] * 1e3  # km -> m
+
+        # Write back
+        df_rnx.loc[df_rnx_prn.index, "X_sat"] = orb_ok["x"].values
+        df_rnx.loc[df_rnx_prn.index, "Y_sat"] = orb_ok["y"].values
+        df_rnx.loc[df_rnx_prn.index, "Z_sat"] = orb_ok["z"].values
+        df_rnx.loc[df_rnx_prn.index, "dte_sat"] = orb_ok["clk"].values * 1e-6  # us -> s
+        df_rnx.loc[df_rnx_prn.index, "dRelat"] = dRelat_v.values
+
+    # Back to canonical GNSS index (epoch, prn)
+    df_rnx = df_rnx.set_index(["epoch", "prn"]).sort_index()
+    return df_rnx
+
+print("***** Satellite states at emission time (BASE vs ROVER) *****")
+
+# Compute sat state for each station (same routine, different C1 -> different τ -> different t_emit)
+df_base_sat  = add_satellite_state_from_sp3(df_base_sync.reset_index(),  df_sp3, label="BASE")
+df_rover_sat = add_satellite_state_from_sp3(df_rover_sync.reset_index(), df_sp3, label="ROVER")
+
+
+# %%
+###############################################################################
+# Compare satellite positions (ROVER - BASE)
+#
+# Educational objective
+# ---------------------
+# Quantify how much the satellite ECEF position differs when computed using
+# the receiver-specific emission time (via C1).
+# Expected magnitude: centimetric to decimetric for ~10 km baseline.
+###############################################################################
+
+df_diff = pd.DataFrame(index=df_base_sat.index)
+df_diff["dX"] = df_rover_sat["X_sat"] - df_base_sat["X_sat"]
+df_diff["dY"] = df_rover_sat["Y_sat"] - df_base_sat["Y_sat"]
+df_diff["dZ"] = df_rover_sat["Z_sat"] - df_base_sat["Z_sat"]
+df_diff["dr_norm"] = np.sqrt(df_diff["dX"]**2 + df_diff["dY"]**2 + df_diff["dZ"]**2)
+
+print(df_diff["dr_norm"].describe())
+print("\nMax ||Δr|| (m):", df_diff["dr_norm"].max())
+
+print("\nPer-PRN max ||Δr|| (m):")
+print(df_diff["dr_norm"].groupby(level="prn").max().sort_values(ascending=False).head(10))
 
