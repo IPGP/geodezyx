@@ -100,7 +100,7 @@ dwl_output_satellite = operational.download_gnss_products(archive_dir= my_direct
 fichier_rnx = dwl_output_station[0][0]
 
 # Chargement des données RINEX d'observation dans un pandas dataframe via  GeodeZYX
-df_rnx_orig, l_rnx_head = files_rw.read_rinex2_obs(fichier_rnx,
+df_rnx_orig, l_rnx_head = files_rw.read_rinex_obs(fichier_rnx,
                                            return_header=True)
 df_rnx = df_rnx_orig.copy()
 
