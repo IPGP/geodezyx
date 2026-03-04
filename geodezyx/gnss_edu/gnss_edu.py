@@ -29,6 +29,80 @@ from .klobuchar import *
 import re
 
 
+def detect_intra_arc_holes(df, sampling=pd.Timedelta(seconds=30),
+                          gap=pd.Timedelta(minutes=30)):
+    """
+    Detect missing observations inside satellite arcs.
+
+    A hole is defined as:
+        sampling*2 < dt < gap
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        GNSS dataframe indexed by (epoch, prn)
+    sampling : Timedelta
+        Expected RINEX sampling interval
+    gap : Timedelta
+        Arc segmentation threshold
+
+    Returns
+    -------
+    DataFrame with columns:
+        epoch_prev : last valid observation
+        epoch      : first observation after the hole
+        dt         : time difference
+        n_missing  : number of missing epochs
+    """
+
+    thr_min = 2 * sampling
+    thr_max = gap
+
+    rows = []
+
+    for prn in df.index.get_level_values("prn").unique():
+
+        t = df.xs(prn, level="prn").index.to_series().sort_values()
+        dt = t.diff()
+
+        mask = (dt > thr_min) & (dt < thr_max)
+
+        if mask.any():
+
+            idx = dt.index[mask]
+            dt_sel = dt.loc[idx]
+            prev = t.shift(1).loc[idx]
+
+            n_missing = (dt_sel / sampling).round().astype(int) - 1
+
+            rows.append(pd.DataFrame({
+                "prn": prn,
+                "epoch_prev": prev.values,
+                "epoch": idx.values,
+                "dt": dt_sel.values,
+                "n_missing": n_missing.values
+            }))
+
+    if rows:
+
+        holes = (
+            pd.concat(rows, ignore_index=True)
+            .set_index(["prn", "epoch"])
+            .sort_values(["n_missing", "dt"], ascending=False)
+        )
+
+    else:
+
+        holes = pd.DataFrame(
+            columns=["epoch_prev", "dt", "n_missing"],
+            index=pd.MultiIndex.from_arrays([[], []], names=["prn", "epoch"])
+        )
+
+    print(f"Intra-arc holes detected: {len(holes)}")
+
+    return holes
+
+
 def grep_file(pattern, filename):
     """Recherche un motif dans un fichier et retourne les lignes correspondantes."""
     results = []
@@ -495,3 +569,6 @@ def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
 
     plt.show()
     return fig
+
+
+

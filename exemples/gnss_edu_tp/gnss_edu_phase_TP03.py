@@ -954,5 +954,318 @@ def plot_phase_derivative(df_SD, observable="SD_L1", gap=pd.Timedelta(minutes=30
     plt.show()
 
 # %%
-plot_phase_derivative(df_SD, "SD_L2")
+plot_phase_derivative(df_SD, "SD_C1")
+
+# %%
+
+
+def plot_phase_derivative_by_prn(
+    df_SD,
+    observable="SD_L1",
+    gap=pd.Timedelta(minutes=30),
+    label_arcs=True
+):
+    """
+    Plot temporal derivative of GNSS phase single differences.
+    Cycle slips appear as spikes. PRN labels are placed on arcs.
+    """
+
+    if not isinstance(df_SD.index, pd.MultiIndex):
+        raise ValueError("df_SD must have a MultiIndex (epoch, prn).")
+
+    prns = df_SD.index.get_level_values("prn").unique()
+
+    fig, ax = plt.subplots(figsize=(10,6))
+
+    for prn in prns:
+
+        data = df_SD.xs(prn, level="prn").copy()
+
+        if observable not in data.columns:
+            continue
+
+        data = data.dropna(subset=[observable])
+        data = data.sort_index()
+
+        if len(data) < 2:
+            continue
+
+        # derivative
+        data["dL"] = data[observable].diff()
+
+        # segmentation
+        dt = data.index.to_series().diff()
+        seg_id = (dt > gap).cumsum()
+
+        color = None
+
+        for _, seg in data.groupby(seg_id):
+
+            if seg.empty:
+                continue
+
+            line, = ax.plot(seg.index, seg["dL"], color=color)
+
+            if color is None:
+                color = line.get_color()
+
+            # label PRN on arc
+            if label_arcs:
+                x0 = seg.index[0]
+                y0 = seg["dL"].iloc[0]
+
+                ax.text(
+                    x0,
+                    y0,
+                    prn,
+                    color=color,
+                    fontsize=8,
+                    ha="left",
+                    va="bottom"
+                )
+
+    ax.axhline(0, color="black", linewidth=0.8)
+
+    ax.set_title(f"Temporal derivative of {observable} (cycle slip detector)")
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Δ phase (cycles)")
+
+    plt.tight_layout()
+    plt.show()
+
+
+plot_phase_derivative_by_prn(df_SD, "SD_C1")
+
+
+# %%
+
+
+
+def plot_sd_derivative_by_prn(
+    df_SD: pd.DataFrame,
+    obs: str,
+    gap: pd.Timedelta = pd.Timedelta(minutes=30),
+    label_arcs: bool = True,
+    normalize_by_dt: bool = True,
+    elev_col: str | None = None,
+    cutoff_deg: float | None = None,
+    title: str | None = None,
+):
+    """
+    Plot temporal derivative of a single-difference observable by PRN.
+
+    Parameters
+    ----------
+    df_SD : DataFrame
+        MultiIndex (epoch, prn). Must contain column `obs`.
+        Optional: elevation column if elev_col provided.
+    obs : str
+        Column to differentiate (e.g., "SD_L1" in cycles, "SD_C1" in meters).
+    gap : Timedelta
+        Gap threshold to split arcs (visibility breaks).
+    label_arcs : bool
+        If True, write PRN label at the start of each arc.
+    normalize_by_dt : bool
+        If True, compute derivative as d(obs)/dt in units per second.
+        If False, compute simple differences between consecutive epochs.
+    elev_col : str or None
+        Name of elevation column (degrees) aligned with df_SD, if available.
+    cutoff_deg : float or None
+        If provided with elev_col, discard points with elevation < cutoff_deg.
+        This is useful to illustrate "angle de coupure".
+    title : str or None
+        Plot title override.
+    """
+
+    if not isinstance(df_SD.index, pd.MultiIndex):
+        raise ValueError("df_SD must have a MultiIndex (epoch, prn).")
+
+    if obs not in df_SD.columns:
+        raise ValueError(f"Column '{obs}' not found in df_SD.")
+
+    if elev_col is not None and elev_col not in df_SD.columns:
+        raise ValueError(f"elev_col='{elev_col}' not found in df_SD.")
+
+    prns = df_SD.index.get_level_values("prn").unique()
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    for prn in prns:
+        # Extract one PRN
+        s = df_SD.xs(prn, level="prn")[[obs]].copy()
+        if elev_col is not None:
+            s[elev_col] = df_SD.xs(prn, level="prn")[elev_col]
+
+        # Drop NaN
+        s = s.dropna(subset=[obs])
+        if len(s) < 2:
+            continue
+
+        # Optional cutoff filter
+        if elev_col is not None and cutoff_deg is not None:
+            s = s[s[elev_col] >= cutoff_deg]
+            if len(s) < 2:
+                continue
+
+        s = s.sort_index()
+
+        # Segment arcs (gaps)
+        dt_epoch = s.index.to_series().diff()
+        seg_id = (dt_epoch > gap).cumsum()
+
+        color = None
+
+        for _, seg in s.groupby(seg_id):
+            if len(seg) < 2:
+                continue
+
+            # Derivative
+            y = seg[obs].diff()
+
+            if normalize_by_dt:
+                dt_s = seg.index.to_series().diff().dt.total_seconds()
+                y = y / dt_s  # units per second
+
+            # First value is NaN after diff
+            seg_plot = pd.DataFrame({"y": y}).dropna()
+            if seg_plot.empty:
+                continue
+
+            line, = ax.plot(seg_plot.index, seg_plot["y"], color=color)
+            if color is None:
+                color = line.get_color()
+
+            # Label at arc start
+            if label_arcs:
+                x0 = seg_plot.index[0]
+                y0 = seg_plot["y"].iloc[0]
+                ax.text(x0, y0, prn, color=color, fontsize=8, ha="left", va="bottom")
+
+    ax.axhline(0, color="black", linewidth=0.8)
+
+    # Y label depending on normalization
+    unit = "per second" if normalize_by_dt else "per epoch-step"
+    ax.set_ylabel(f"Δ({obs}) {unit}")
+
+    if title is None:
+        cutoff_txt = ""
+        if elev_col is not None and cutoff_deg is not None:
+            cutoff_txt = f" (cutoff {cutoff_deg:.0f}°)"
+        title = f"Temporal derivative of {obs}{cutoff_txt}"
+
+    ax.set_title(title)
+    ax.set_xlabel("Time (epoch)")
+    plt.tight_layout()
+    plt.show()
+
+
+# %%
+plot_sd_derivative_by_prn(df_SD, obs="SD_L1", normalize_by_dt=False, gap=pd.Timedelta(seconds=30))
+
+
+# %%
+# Detect holes (missing epochs) per PRN in a GNSS MultiIndex dataframe (epoch, prn)
+
+sampling = pd.Timedelta(seconds=30)     # expected RINEX sampling
+thr = 2 * sampling                      # hole if dt > 60 s (adjust)
+
+out = []
+for prn in df_SD.index.get_level_values("prn").unique():
+    t = df_SD.xs(prn, level="prn").index.to_series().sort_values()
+    dt = t.diff()
+    s = dt[dt > thr]
+    if not s.empty:
+        out.append(pd.DataFrame({"prn": prn, "epoch": s.index, "dt": s.values}))
+
+holes = pd.concat(out, ignore_index=True).set_index(["prn", "epoch"]).sort_values("dt", ascending=False) if out else \
+        pd.DataFrame(columns=["dt"], index=pd.MultiIndex.from_arrays([[], []], names=["prn", "epoch"]))
+
+print(f"Holes found: {len(holes)} (threshold > {thr})")
+holes.head(20)
+
+
+# %%
+# %%
+# %%
+def detect_intra_arc_holes(df, sampling=pd.Timedelta(seconds=30),
+                          gap=pd.Timedelta(minutes=30)):
+    """
+    Detect missing observations inside satellite arcs.
+
+    A hole is defined as:
+        sampling*2 < dt < gap
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        GNSS dataframe indexed by (epoch, prn)
+    sampling : Timedelta
+        Expected RINEX sampling interval
+    gap : Timedelta
+        Arc segmentation threshold
+
+    Returns
+    -------
+    DataFrame with columns:
+        epoch_prev : last valid observation
+        epoch      : first observation after the hole
+        dt         : time difference
+        n_missing  : number of missing epochs
+    """
+
+    thr_min = 2 * sampling
+    thr_max = gap
+
+    rows = []
+
+    for prn in df.index.get_level_values("prn").unique():
+
+        t = df.xs(prn, level="prn").index.to_series().sort_values()
+        dt = t.diff()
+
+        mask = (dt > thr_min) & (dt < thr_max)
+
+        if mask.any():
+
+            idx = dt.index[mask]
+            dt_sel = dt.loc[idx]
+            prev = t.shift(1).loc[idx]
+
+            n_missing = (dt_sel / sampling).round().astype(int) - 1
+
+            rows.append(pd.DataFrame({
+                "prn": prn,
+                "epoch_prev": prev.values,
+                "epoch": idx.values,
+                "dt": dt_sel.values,
+                "n_missing": n_missing.values
+            }))
+
+    if rows:
+
+        holes = (
+            pd.concat(rows, ignore_index=True)
+            .set_index(["prn", "epoch"])
+            .sort_values(["n_missing", "dt"], ascending=False)
+        )
+
+    else:
+
+        holes = pd.DataFrame(
+            columns=["epoch_prev", "dt", "n_missing"],
+            index=pd.MultiIndex.from_arrays([[], []], names=["prn", "epoch"])
+        )
+
+    print(f"Intra-arc holes detected: {len(holes)}")
+
+    return holes
+
+
+#%%
+holes = detect_intra_arc_holes(df_rover_sat, sampling=pd.Timedelta(seconds=30),
+                          gap=pd.Timedelta(hours=30))
+
+holes.head(20)
+
+
 
