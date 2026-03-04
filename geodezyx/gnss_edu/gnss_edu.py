@@ -323,6 +323,266 @@ def Sagnac_rotate_around_z(row):
 #     return df
 
 
+
+#%% 
+# -------------------------------------------------------------------------
+# Plot Single Differences (SD) by satellite PRN (with gap handling)
+#
+# Input expected:
+#   df_SD : DataFrame indexed by (epoch, prn) with columns like "SD_L1", "SD_C1", ...
+# -------------------------------------------------------------------------
+
+def plot_gnss_sd_by_prn(
+    df_SD,
+    observable="SD_L1",
+    gap=pd.Timedelta(minutes=30),
+    label_arcs=True,
+    arc_label_fontsize=8,
+    arc_label_xytext=(3, 3),   # offset in points
+    show_legend=False,
+    legend_outside=True,
+    legend_ncol=4
+):
+    """
+    Plot GNSS single differences time series by satellite PRN, with gap handling.
+    Optionally write PRN labels directly on the plot at the beginning of each arc.
+
+    Parameters
+    ----------
+    df_SD : pandas.DataFrame
+        MultiIndex (epoch, prn). Columns include SD observables (e.g., "SD_L1").
+    observable : str
+        Column name to plot.
+    gap : pandas.Timedelta
+        Time gap threshold to break line segments.
+    label_arcs : bool
+        If True, place PRN text at the start of each continuous segment ("arc").
+    arc_label_fontsize : int
+        Font size for PRN labels.
+    arc_label_xytext : tuple
+        (dx, dy) offset in points for the text label, to avoid overlapping the line.
+    show_legend : bool
+        If True, show legend. Often unnecessary if label_arcs=True.
+    legend_outside : bool
+        If True, place legend outside the axes (right side).
+    legend_ncol : int
+        Number of columns in legend.
+
+    Returns
+    -------
+    fig, ax
+    """
+
+    if not isinstance(df_SD.index, pd.MultiIndex):
+        raise ValueError("df_SD must have a MultiIndex (epoch, prn).")
+
+    if observable not in df_SD.columns:
+        raise ValueError(f"{observable} not found in df_SD.")
+
+    if "epoch" not in df_SD.index.names or "prn" not in df_SD.index.names:
+        raise ValueError("df_SD index must have levels ('epoch','prn').")
+
+    prns = df_SD.index.get_level_values("prn").unique()
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for prn in prns:
+        # Extract one PRN time series (index becomes epochs)
+        data = df_SD.xs(prn, level="prn").copy().sort_index()
+
+        # Skip if nothing to plot
+        if not data[observable].notna().any():
+            continue
+
+        # Remove NaNs for segmentation + plotting
+        data = data.dropna(subset=[observable])
+        if data.empty:
+            continue
+
+        # Segment id based on gaps
+        dt = data.index.to_series().diff()
+        seg_id = (dt > gap).cumsum()
+
+        color = None
+
+        for _, seg in data.groupby(seg_id):
+            if seg.empty:
+                continue
+
+            # Plot this segment
+            line, = ax.plot(
+                seg.index,
+                seg[observable].to_numpy(),
+                color=color,
+                label=prn if (color is None and show_legend) else None
+            )
+
+            if color is None:
+                color = line.get_color()
+
+            # Label at the beginning of each arc (segment)
+            if label_arcs:
+                x0 = seg.index[0]
+                y0 = float(seg[observable].iloc[0])
+
+                ax.annotate(
+                    prn,
+                    xy=(x0, y0),
+                    xytext=arc_label_xytext,
+                    textcoords="offset points",
+                    fontsize=arc_label_fontsize,
+                    color=color,
+                    ha="left",
+                    va="bottom"
+                )
+
+    ax.set_title(f"Single differences time series ({observable}) by satellite PRN")
+    ax.set_xlabel("Time (epoch)")
+    ax.set_ylabel("Value (cycles for SD_L*, meters for SD_C*/SD_P*)")
+
+    if show_legend:
+        if legend_outside:
+            ax.legend(
+                title="PRN",
+                bbox_to_anchor=(1.02, 1),
+                loc="upper left",
+                borderaxespad=0,
+                ncol=legend_ncol
+            )
+            plt.tight_layout(rect=[0, 0, 0.85, 1])
+        else:
+            ax.legend(title="PRN", ncol=legend_ncol)
+            plt.tight_layout()
+    else:
+        plt.tight_layout()
+
+    plt.show()
+    return fig, ax
+
+
+
+
+
+
+def plot_sd_derivative_by_prn(
+    df_SD: pd.DataFrame,
+    obs: str,
+    gap: pd.Timedelta = pd.Timedelta(minutes=30),
+    label_arcs: bool = True,
+    normalize_by_dt: bool = True,
+    elev_col: str | None = None,
+    cutoff_deg: float | None = None,
+    title: str | None = None,
+):
+    """
+    Plot temporal derivative of a single-difference observable by PRN.
+
+    Parameters
+    ----------
+    df_SD : DataFrame
+        MultiIndex (epoch, prn). Must contain column `obs`.
+        Optional: elevation column if elev_col provided.
+    obs : str
+        Column to differentiate (e.g., "SD_L1" in cycles, "SD_C1" in meters).
+    gap : Timedelta
+        Gap threshold to split arcs (visibility breaks).
+    label_arcs : bool
+        If True, write PRN label at the start of each arc.
+    normalize_by_dt : bool
+        If True, compute derivative as d(obs)/dt in units per second.
+        If False, compute simple differences between consecutive epochs.
+    elev_col : str or None
+        Name of elevation column (degrees) aligned with df_SD, if available.
+    cutoff_deg : float or None
+        If provided with elev_col, discard points with elevation < cutoff_deg.
+        This is useful to illustrate "angle de coupure".
+    title : str or None
+        Plot title override.
+    """
+
+    if not isinstance(df_SD.index, pd.MultiIndex):
+        raise ValueError("df_SD must have a MultiIndex (epoch, prn).")
+
+    if obs not in df_SD.columns:
+        raise ValueError(f"Column '{obs}' not found in df_SD.")
+
+    if elev_col is not None and elev_col not in df_SD.columns:
+        raise ValueError(f"elev_col='{elev_col}' not found in df_SD.")
+
+    prns = df_SD.index.get_level_values("prn").unique()
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    for prn in prns:
+        # Extract one PRN
+        s = df_SD.xs(prn, level="prn")[[obs]].copy()
+        if elev_col is not None:
+            s[elev_col] = df_SD.xs(prn, level="prn")[elev_col]
+
+        # Drop NaN
+        s = s.dropna(subset=[obs])
+        if len(s) < 2:
+            continue
+
+        # Optional cutoff filter
+        if elev_col is not None and cutoff_deg is not None:
+            s = s[s[elev_col] >= cutoff_deg]
+            if len(s) < 2:
+                continue
+
+        s = s.sort_index()
+
+        # Segment arcs (gaps)
+        dt_epoch = s.index.to_series().diff()
+        seg_id = (dt_epoch > gap).cumsum()
+
+        color = None
+
+        for _, seg in s.groupby(seg_id):
+            if len(seg) < 2:
+                continue
+
+            # Derivative
+            y = seg[obs].diff()
+
+            if normalize_by_dt:
+                dt_s = seg.index.to_series().diff().dt.total_seconds()
+                y = y / dt_s  # units per second
+
+            # First value is NaN after diff
+            seg_plot = pd.DataFrame({"y": y}).dropna()
+            if seg_plot.empty:
+                continue
+
+            line, = ax.plot(seg_plot.index, seg_plot["y"], color=color)
+            if color is None:
+                color = line.get_color()
+
+            # Label at arc start
+            if label_arcs:
+                x0 = seg_plot.index[0]
+                y0 = seg_plot["y"].iloc[0]
+                ax.text(x0, y0, prn, color=color, fontsize=8, ha="left", va="bottom")
+
+    ax.axhline(0, color="black", linewidth=0.8)
+
+    # Y label depending on normalization
+    unit = "per second" if normalize_by_dt else "per epoch-step"
+    ax.set_ylabel(f"Δ({obs}) {unit}")
+
+    if title is None:
+        cutoff_txt = ""
+        if elev_col is not None and cutoff_deg is not None:
+            cutoff_txt = f" (cutoff {cutoff_deg:.0f}°)"
+        title = f"Temporal derivative of {obs}{cutoff_txt}"
+
+    ax.set_title(title)
+    ax.set_xlabel("Time (epoch)")
+    plt.tight_layout()
+    plt.show()
+
+
+
 def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, renderer="browser"):
     """
     Affiche les séries temporelles pour chaque satellite.
