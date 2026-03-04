@@ -86,13 +86,6 @@ Examples:
         help="Force conversion even if parquet file already exists",
     )
 
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="Enable verbose logging",
-    )
-
     return parser.parse_args()
 
 
