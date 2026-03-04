@@ -795,55 +795,62 @@ print(df_SD.head())
 
 
 # %%
-
-gnss_edu.plot_sd_tracking_timeline(df_SD, sampling=pd.Timedelta(seconds=30))
-
 ###############################################################################
-# Hole detection in GNSS time series (per PRN)
+# Data gaps in SD time series (per PRN) — why we care before SD plots
 #
-# Pedagogical goal
-# ----------------
-# Before interpreting SD plots or derivatives, we must understand data gaps.
-# In GNSS, gaps have two main meanings:
-#   (A) Very long gaps  -> satellite is not visible (rise/set, masking, etc.)
-#   (B) Short gaps      -> true missing observations inside a tracking arc
-#
-# Strategy
+# Key idea
 # --------
-# 1) Detect ALL gaps with a very large 'gap' (no arc segmentation)
-# 2) Look at the gap-duration distribution to identify regimes
-# 3) Re-run with a pedagogical arc gap (e.g., 30 min) to find holes inside arcs
+# In baseline processing, the SD dataset (ROVER − BASE) exists only when
+# BOTH stations tracked the SAME satellite at the SAME epoch.
 #
-# Output (from gnss_edu.detect_intra_arc_holes)
-# --------------------------------------------
-# A DataFrame indexed by (prn, epoch) with:
-#   - dt        : time gap duration
-#   - n_missing : number of expected samples missing (based on 'sampling')
+# Therefore, every "white" zone in the timeline below means:
+#   - no SD can be formed (at least one station missed the observation)
+#
+# GNSS gaps have two different meanings:
+#   (A) Long gaps   -> satellite not visible (rise/set, masking) => new arc
+#   (B) Short gaps  -> missing epochs inside an arc             => tracking loss
+#
+# Practical consequence
+# ---------------------
+# Carrier-phase ambiguities are at least "one per arc".
+# Short gaps inside an arc often force a NEW ambiguity parameter as well.
 ###############################################################################
 
-# Expected RINEX sampling (here 30 s)
+print("\n===== SD gap analysis (base + rover common tracking) =====")
+
+# Expected RINEX sampling (here: 30 s)
 sampling = pd.Timedelta(seconds=30)
 
 # -------------------------------------------------------------------------
-# 1) Detect ALL gaps (do NOT split arcs): choose an intentionally huge gap
+# Step 0 — Visual inspection (fast intuition)
 # -------------------------------------------------------------------------
-gap_all = pd.Timedelta(hours=30)   # huge on purpose: entire day becomes one "arc" per PRN
+print("\n[0] SD tracking timeline (black = present SD, white = missing)")
+print("Look for: (i) long white blocks (visibility breaks), (ii) small holes inside black arcs.")
+gnss_edu.plot_sd_tracking_timeline(df_SD, sampling=sampling)
+
+# -------------------------------------------------------------------------
+# Step 1 — Detect ALL gaps (no arc segmentation)
+#   We intentionally use a huge 'gap' so each PRN is treated as one long arc.
+#   This reveals the full distribution of gap durations.
+# -------------------------------------------------------------------------
+gap_all = pd.Timedelta(hours=30)   # huge on purpose
 
 holes_all = gnss_edu.detect_intra_arc_holes(
-    df_SD,                 # df_SD is fine here (same epochs/PRNs as observations)
+    df_SD,
     sampling=sampling,
     gap=gap_all
 )
 
 print("\n[1/3] ALL gaps detected (no arc segmentation)")
 print(f"holes_all: {len(holes_all)} gaps found (gap={gap_all}, sampling={sampling})")
-display(holes_all.sort_values("dt", ascending=False).head(20))
-
+print("Largest gaps (often rise/set or masking):")
+print(holes_all.sort_values("dt", ascending=False).head(20))
 
 # -------------------------------------------------------------------------
-# 2) Inspect the distribution of gap durations (dt)
-#    Long gaps: visibility breaks (rise/set)
-#    Short gaps: missing data inside arcs
+# Step 2 — Gap-duration distribution
+#   Goal: separate the two regimes visually:
+#     - hours-scale gaps   -> visibility breaks (new arcs)
+#     - minutes/seconds    -> true missing epochs inside arcs
 # -------------------------------------------------------------------------
 print("\n[2/3] Gap-duration distribution (minutes)")
 
@@ -857,13 +864,14 @@ ax.set_ylabel("count")
 plt.tight_layout()
 plt.show()
 
-print("Interpretation tip:")
-print("- hours-scale gaps -> satellite visibility breaks (rise/set, masking)")
-print("- minutes/seconds gaps -> true missing observations within arcs")
-
+print("Interpretation:")
+print("  - hours-scale gaps   -> visibility breaks (rise/set, masking) => new arc")
+print("  - minutes/seconds    -> true missing epochs inside arcs       => tracking loss")
 
 # -------------------------------------------------------------------------
-# 3) Detect holes INSIDE arcs: now we define a pedagogical arc segmentation
+# Step 3 — Detect holes INSIDE arcs (pedagogical arc segmentation)
+#   Now we set a realistic arc boundary (e.g., 30 min).
+#   Any missing epochs smaller than that occur *inside* a tracking arc.
 # -------------------------------------------------------------------------
 gap_arc = pd.Timedelta(minutes=30)
 
@@ -875,125 +883,262 @@ holes_arc = gnss_edu.detect_intra_arc_holes(
 
 print("\n[3/3] Holes INSIDE arcs (after arc segmentation)")
 print(f"holes_arc: {len(holes_arc)} gaps found (gap={gap_arc}, sampling={sampling})")
-display(holes_arc.sort_values("dt", ascending=False).head(20))
-
+print("Largest intra-arc holes (these often trigger new ambiguity parameters):")
+print(holes_arc.sort_values("dt", ascending=False).head(20))
 
 # -------------------------------------------------------------------------
-# Optional: quick proxy for "number of arcs per PRN"
-# (discussion point: this is an approximation)
+# Optional — Arc count proxy per PRN (very useful discussion point)
+#   Each visibility break (dt >= gap_arc) splits tracking into a new arc.
+#   So: n_arcs ≈ 1 + number_of_visibility_breaks
 # -------------------------------------------------------------------------
 visibility_breaks = holes_all[holes_all["dt"] >= gap_arc]
-arcs_per_prn = (visibility_breaks.groupby(level="prn").size() + 1).rename("n_arcs (proxy)")
+arcs_per_prn = (visibility_breaks.groupby(level="prn").size() + 1).rename("n_arcs_proxy")
 
-print("\nOptional: arc count proxy per PRN (1 + #visibility breaks)")
-display(
-    arcs_per_prn
-    .rename("n_arcs_min")
-    .sort_index()
-    .to_frame()
-)
+print("\nOptional: arc count proxy per PRN (n_arcs ≈ 1 + #visibility breaks)")
+print(arcs_per_prn.sort_index().to_frame().head(30))
 
 
 
 
-
- #%%
+#%%
 ###############################################################################
-# Visual diagnostics on simple differences (SD)
+# Visual diagnostics on Single Differences (SD)
 #
-# Educational objective
-# ---------------------
-# 1) Visualize SD on carrier phase (SD_L1) and code (SD_C1) by satellite (PRN).
-# 2) Highlight discontinuities (arcs) using "gap handling".
-# 3) Use time-derivative to reveal sharp events (cycle slips / bad code at low elevation).
-# 4) Automatically detect "holes" (missing epochs inside arcs), which often imply
-#    that a NEW ambiguity parameter must be introduced for phase processing.
+# Pedagogical goal
+# ---------------
+# Now that we have quantified data gaps, we can choose plotting parameters
+# from the data instead of arbitrary values.
 #
-# Reminder
-# --------
-# - SD_L1 is in cycles  (KISS choice: no wavelength conversion here)
-# - SD_C1 is in meters
+# What we want to show
+# --------------------
+# (1) SD_L1 (phase, cycles): smooth arcs, possible discontinuities (cycle slips)
+# (2) SD_C1 (code, meters): more affected by noise/multipath, especially at rise/set
+# (3) Temporal increments ΔSD between epochs: spikes reveal abnormal events
+#
+# Notes
+# -----
+# - SD_L* is in cycles (KISS choice here)
+# - For derivatives/increments, we may convert phase cycles -> meters to make
+#   the noise level more comparable to code.
 ###############################################################################
 
-print("\n===== SD diagnostics (by satellite) =====")
+print("\n===== SD diagnostics (by satellite PRN) =====")
 
 # -------------------------------------------------------------------------
-# 1) Carrier phase SD_L1 (cycles): should show smooth arcs + possible jumps
+# Parameters justified by the previous "hole detection" cell
 # -------------------------------------------------------------------------
-print("\n[1/4] Plot SD_L1 (phase, cycles): arcs + potential phase jumps")
+sampling = pd.Timedelta(seconds=30)      # nominal RINEX sampling for this dataset
+gap_arc  = pd.Timedelta(minutes=30)      # arc segmentation threshold (visibility breaks)
+gap_inc  = 3 * sampling + pd.Timedelta(seconds=1)
+# gap_inc: for epoch-to-epoch increments, we accept up to 3 missed epochs
+#         (<= 90 s) before splitting the segment (hence 91 s as a safe bound).
+
+print("\nPlot parameters derived from the gap analysis:")
+print(f"  sampling = {sampling}")
+print(f"  gap_arc  = {gap_arc}   (used to split visibility arcs)")
+print(f"  gap_inc  = {gap_inc}   (used for epoch-to-epoch increments)")
+
+# -------------------------------------------------------------------------
+# 1) Carrier phase SD_L1 (cycles): arcs + potential phase jumps
+# -------------------------------------------------------------------------
+print("\n[1/3] SD_L1 (phase, cycles): arcs + potential discontinuities")
 gnss_edu.plot_gnss_sd_by_prn(
     df_SD,
     observable="SD_L1",
+    gap=gap_arc,
     label_arcs=True,
     show_legend=False
 )
 
 # -------------------------------------------------------------------------
-# 2) Code SD_C1 (meters): typically noisier and more sensitive at rise/set
+# 2) Code SD_C1 (meters): noisier, especially near rise/set
 # -------------------------------------------------------------------------
-print("\n[2/4] Plot SD_C1 (code, meters): usually noisier (multipath, low elevation)")
+print("\n[2/3] SD_C1 (code, meters): typically noisier near rise/set (multipath)")
 gnss_edu.plot_gnss_sd_by_prn(
     df_SD,
     observable="SD_C1",
+    gap=gap_arc,
     label_arcs=True,
     show_legend=False
 )
 
 # -------------------------------------------------------------------------
-# 3) Time derivative: reveals sharp events (cycle slips / bad code segments)
+# 3) Epoch-to-epoch increments ΔSD: highlight sharp events
+#    - We use normalize_by_dt=False to keep 'per-epoch-step' jumps.
+#    - We use gap_inc (tight) to avoid connecting points across missing epochs.
 # -------------------------------------------------------------------------
-print("\n[3/4] Plot d/dt(SD_L1): sharp peaks often indicate cycle slips or resets")
+print("\n[3/3] Epoch-to-epoch increments ΔSD: spikes highlight abnormal events")
+print("      (phase increments are converted to meters for comparability)")
 
 gnss_edu.plot_sd_derivative_by_prn(
     df_SD,
     obs="SD_C1",
-    normalize_by_dt=False,              # keep raw ΔSD between epochs
-    gap=pd.Timedelta(seconds=91)        # gap allowed <=90 expected sampling (30 s)
-    
+    normalize_by_dt=False,
+    gap=gap_inc,
+    title="ΔSD_C1 between consecutive epochs (meters)"
 )
 
 gnss_edu.plot_sd_derivative_by_prn(
     df_SD,
     obs="SD_L1",
     phase_to_meters=True,
-    normalize_by_dt=False,              # keep raw ΔSD between epochs
-    gap=pd.Timedelta(seconds=91)        # gap allowed <=90 expected sampling (30 s)
+    normalize_by_dt=False,
+    gap=gap_inc,
+    title="ΔSD_L1 between consecutive epochs (meters, phase converted)"
+)
+
+# Optional: L2 if available in df_SD (avoid hard crash in class)
+if "SD_L2" in df_SD.columns:
+    gnss_edu.plot_sd_derivative_by_prn(
+        df_SD,
+        obs="SD_L2",
+        phase_to_meters=True,
+        normalize_by_dt=False,
+        gap=gap_inc,
+        title="ΔSD_L2 between consecutive epochs (meters, phase converted)"
+    )
+else:
+    print("Note: SD_L2 not available in df_SD (skipped).")
+
+
+
+#%%
+###############################################################################
+# Visual diagnostics on Single Differences (SD)
+#
+# Pedagogical goal
+# ---------------
+# Now that we have quantified data gaps, we can choose plotting parameters
+# from the data instead of arbitrary values.
+#
+# What we want to show
+# --------------------
+# (1) SD_L1 (phase, cycles): smooth arcs, possible discontinuities (cycle slips)
+# (2) SD_C1 (code, meters): more affected by noise/multipath, especially at rise/set
+# (3) Epoch-to-epoch increments ΔSD: spikes reveal abnormal events
+# (4) Time-normalized derivative d(SD)/dt: same idea, but expressed per second
+#
+# Notes
+# -----
+# - SD_L* is in cycles (KISS choice here)
+# - For increments/derivatives, we convert phase cycles -> meters to make the
+#   noise level comparable to code.
+###############################################################################
+
+print("\n===== SD diagnostics (by satellite PRN) =====")
+
+# -------------------------------------------------------------------------
+# Parameters justified by the previous "hole detection" cell
+# -------------------------------------------------------------------------
+sampling = pd.Timedelta(seconds=30)      # nominal RINEX sampling for this dataset
+gap_arc  = pd.Timedelta(minutes=30)      # arc segmentation threshold (visibility breaks)
+
+# For increments/derivatives, we want a much tighter gap threshold:
+# accept up to 3 missed epochs (<= 90 s) before splitting the segment.
+gap_inc  = 3 * sampling + pd.Timedelta(seconds=1)   # 91 s safe bound
+
+print("\nPlot parameters derived from the gap analysis:")
+print(f"  sampling = {sampling}")
+print(f"  gap_arc  = {gap_arc}   (used to split visibility arcs)")
+print(f"  gap_inc  = {gap_inc}   (used for increments/derivatives; do not bridge missing epochs)")
+
+# %%
+# -------------------------------------------------------------------------
+# 1) Carrier phase SD_L1 (cycles): arcs + potential phase jumps
+# -------------------------------------------------------------------------
+print("\n[1/4] SD_L1 (phase, cycles): arcs + potential discontinuities")
+gnss_edu.plot_gnss_sd_by_prn(
+    df_SD,
+    observable="SD_L1",
+    gap=gap_arc,
+    label_arcs=True,
+    show_legend=False
+)
+
+# %%
+# -------------------------------------------------------------------------
+# 2) Code SD_C1 (meters): noisier, especially near rise/set
+# -------------------------------------------------------------------------
+print("\n[2/4] SD_C1 (code, meters): typically noisier near rise/set (multipath)")
+gnss_edu.plot_gnss_sd_by_prn(
+    df_SD,
+    observable="SD_C1",
+    gap=gap_arc,
+    label_arcs=True,
+    show_legend=False
+)
+
+# %%
+# -------------------------------------------------------------------------
+# 3) Epoch-to-epoch increments ΔSD: highlight sharp events (raw jumps)
+#    - normalize_by_dt=False -> raw jump between consecutive epochs
+#    - gap_inc is tight      -> do NOT connect points across missing epochs
+# -------------------------------------------------------------------------
+print("\n[3/4] Epoch-to-epoch increments ΔSD (raw jumps)")
+print("      (phase increments are converted to meters for comparability)")
+
+gnss_edu.plot_sd_derivative_by_prn(
+    df_SD,
+    obs="SD_C1",
+    normalize_by_dt=False,
+    gap=gap_inc,
+    title="ΔSD_C1 between consecutive epochs (meters)"
 )
 
 gnss_edu.plot_sd_derivative_by_prn(
     df_SD,
-    obs="SD_L2",
+    obs="SD_L1",
     phase_to_meters=True,
-    normalize_by_dt=False,              # keep raw ΔSD between epochs
-    gap=pd.Timedelta(seconds=91)        # gap allowed <=90 expected sampling (30 s)
+    normalize_by_dt=False,
+    gap=gap_inc,
+    title="ΔSD_L1 between consecutive epochs (meters, phase converted)"
 )
 
-# -------------------------------------------------------------------------
-# 4) Detect holes in raw RINEX observation timeline (per PRN)
-#    Holes inside an arc are important: they often force a new ambiguity.
-# -------------------------------------------------------------------------
-print("\n[4/4] Detect intra-arc holes (missing epochs) in ROVER observations")
-holes = gnss_edu.detect_intra_arc_holes(
-    df_rover_sat,
-    sampling=pd.Timedelta(seconds=30),  # expected sampling
-    gap=pd.Timedelta(minutes=30)        # arc-segmentation threshold (same as plots)
-)
-
-print(f"Holes found: {len(holes)}")
-display(holes.sort_values("dt", ascending=False).head(20))
-
-
-
-
-
+if "SD_L2" in df_SD.columns:
+    gnss_edu.plot_sd_derivative_by_prn(
+        df_SD,
+        obs="SD_L2",
+        phase_to_meters=True,
+        normalize_by_dt=False,
+        gap=gap_inc,
+        title="ΔSD_L2 between consecutive epochs (meters, phase converted)"
+    )
+else:
+    print("Note: SD_L2 not available in df_SD (skipped).")
 
 # %%
+# -------------------------------------------------------------------------
+# 4) Time-normalized derivative d(SD)/dt: units per second
+#    Useful when dt is not perfectly constant, or to compare datasets.
+# -------------------------------------------------------------------------
+print("\n[4/4] Time-normalized derivative d(SD)/dt (units per second)")
+print("      (more 'physical', but spikes may look smaller if dt is larger)")
 
+gnss_edu.plot_sd_derivative_by_prn(
+    df_SD,
+    obs="SD_C1",
+    normalize_by_dt=True,
+    gap=gap_inc,
+    title="d(SD_C1)/dt (m/s)"
+)
 
-# Example usage
+gnss_edu.plot_sd_derivative_by_prn(
+    df_SD,
+    obs="SD_L1",
+    phase_to_meters=True,
+    normalize_by_dt=True,
+    gap=gap_inc,
+    title="d(SD_L1)/dt (m/s, phase converted)"
+)
 
-
-
-
-
-
+if "SD_L2" in df_SD.columns:
+    gnss_edu.plot_sd_derivative_by_prn(
+        df_SD,
+        obs="SD_L2",
+        phase_to_meters=True,
+        normalize_by_dt=True,
+        gap=gap_inc,
+        title="d(SD_L2)/dt (m/s, phase converted)"
+    )
+    
+# %%
