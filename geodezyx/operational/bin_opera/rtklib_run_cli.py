@@ -17,7 +17,6 @@ from geodezyx.operational.soft_frontend import rtklib_frontend
 from geodezyx import utils
 
 import logging
-
 log = logging.getLogger("geodezyx")
 
 # Extract defaults from rtklib_run function at module level for synchronization
@@ -167,7 +166,7 @@ Examples:
     return vars(args_namespace)
 
 
-def main():
+def rtklib_run_main():
     """Main entry point for the RTKLIB CLI."""
     kwargs_cli = parse_args()
 
@@ -223,4 +222,4 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(rtklib_run_main())
