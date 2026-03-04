@@ -50,6 +50,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
+# Jupyter / Spyder rich display
+from IPython.display import display
+
 # GeodeZYX
 from geodezyx import files_rw     # read/write module
 from geodezyx import conv         # conversion module
@@ -788,7 +792,109 @@ print(f"Code  SD columns: {len(sd_code_cols)}")
 print("\nExample SD values:")
 print(df_SD.head())
 
-#%%
+
+
+# %%
+###############################################################################
+# Hole detection in GNSS time series (per PRN)
+#
+# Pedagogical goal
+# ----------------
+# Before interpreting SD plots or derivatives, we must understand data gaps.
+# In GNSS, gaps have two main meanings:
+#   (A) Very long gaps  -> satellite is not visible (rise/set, masking, etc.)
+#   (B) Short gaps      -> true missing observations inside a tracking arc
+#
+# Strategy
+# --------
+# 1) Detect ALL gaps with a very large 'gap' (no arc segmentation)
+# 2) Look at the gap-duration distribution to identify regimes
+# 3) Re-run with a pedagogical arc gap (e.g., 30 min) to find holes inside arcs
+#
+# Output (from gnss_edu.detect_intra_arc_holes)
+# --------------------------------------------
+# A DataFrame indexed by (prn, epoch) with:
+#   - dt        : time gap duration
+#   - n_missing : number of expected samples missing (based on 'sampling')
+###############################################################################
+
+# Expected RINEX sampling (here 30 s)
+sampling = pd.Timedelta(seconds=30)
+
+# -------------------------------------------------------------------------
+# 1) Detect ALL gaps (do NOT split arcs): choose an intentionally huge gap
+# -------------------------------------------------------------------------
+gap_all = pd.Timedelta(hours=30)   # huge on purpose: entire day becomes one "arc" per PRN
+
+holes_all = gnss_edu.detect_intra_arc_holes(
+    df_SD,                 # df_SD is fine here (same epochs/PRNs as observations)
+    sampling=sampling,
+    gap=gap_all
+)
+
+print("\n[1/3] ALL gaps detected (no arc segmentation)")
+print(f"holes_all: {len(holes_all)} gaps found (gap={gap_all}, sampling={sampling})")
+display(holes_all.sort_values("dt", ascending=False).head(20))
+
+
+# -------------------------------------------------------------------------
+# 2) Inspect the distribution of gap durations (dt)
+#    Long gaps: visibility breaks (rise/set)
+#    Short gaps: missing data inside arcs
+# -------------------------------------------------------------------------
+print("\n[2/3] Gap-duration distribution (minutes)")
+
+dt_minutes = holes_all["dt"].dt.total_seconds() / 60.0
+
+fig, ax = plt.subplots(figsize=(10, 4))
+ax.hist(dt_minutes, bins=80)
+ax.set_title("Distribution of gap durations (minutes)")
+ax.set_xlabel("dt (minutes)")
+ax.set_ylabel("count")
+plt.tight_layout()
+plt.show()
+
+print("Interpretation tip:")
+print("- hours-scale gaps -> satellite visibility breaks (rise/set, masking)")
+print("- minutes/seconds gaps -> true missing observations within arcs")
+
+
+# -------------------------------------------------------------------------
+# 3) Detect holes INSIDE arcs: now we define a pedagogical arc segmentation
+# -------------------------------------------------------------------------
+gap_arc = pd.Timedelta(minutes=30)
+
+holes_arc = gnss_edu.detect_intra_arc_holes(
+    df_SD,
+    sampling=sampling,
+    gap=gap_arc
+)
+
+print("\n[3/3] Holes INSIDE arcs (after arc segmentation)")
+print(f"holes_arc: {len(holes_arc)} gaps found (gap={gap_arc}, sampling={sampling})")
+display(holes_arc.sort_values("dt", ascending=False).head(20))
+
+
+# -------------------------------------------------------------------------
+# Optional: quick proxy for "number of arcs per PRN"
+# (discussion point: this is an approximation)
+# -------------------------------------------------------------------------
+visibility_breaks = holes_all[holes_all["dt"] >= gap_arc]
+arcs_per_prn = (visibility_breaks.groupby(level="prn").size() + 1).rename("n_arcs (proxy)")
+
+print("\nOptional: arc count proxy per PRN (1 + #visibility breaks)")
+display(
+    arcs_per_prn
+    .rename("n_arcs_min")
+    .sort_index()
+    .to_frame()
+)
+
+
+
+
+
+ #%%
 ###############################################################################
 # Visual diagnostics on simple differences (SD)
 #
