@@ -49,7 +49,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+from matplotlib.colors import ListedColormap
 
 # Jupyter / Spyder rich display
 from IPython.display import display
@@ -795,6 +795,9 @@ print(df_SD.head())
 
 
 # %%
+
+gnss_edu.plot_sd_tracking_timeline(df_SD, sampling=pd.Timedelta(seconds=30))
+
 ###############################################################################
 # Hole detection in GNSS time series (per PRN)
 #
@@ -980,7 +983,17 @@ print(f"Holes found: {len(holes)}")
 display(holes.sort_values("dt", ascending=False).head(20))
 
 
+
+
+
+
 # %%
+
+
+# Example usage
+
+
+
 
 
 

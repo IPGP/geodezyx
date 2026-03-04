@@ -9,6 +9,7 @@ Created on Tue Feb 11 16:39:34 2025
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 import seaborn as sns
 import statsmodels.api as sm
 from scipy import stats
@@ -323,8 +324,76 @@ def Sagnac_rotate_around_z(row):
 #     return df
 
 
+def plot_sd_tracking_timeline(df_SD, sampling=pd.Timedelta(seconds=30), title=None):
+    """
+    Timeline heatmap of SD availability (base+rover common tracking).
 
-#%% 
+    Black = SD epoch exists for this PRN
+    White = missing epoch
+
+    Parameters
+    ----------
+    df_SD : DataFrame
+        Must be indexed by MultiIndex (epoch, prn)
+    sampling : Timedelta
+        Expected observation interval (e.g. 30 s)
+    """
+
+    if not isinstance(df_SD.index, pd.MultiIndex):
+        raise ValueError("df_SD must have MultiIndex (epoch, prn)")
+
+    epochs_obs = df_SD.index.get_level_values("epoch")
+    prns = np.array(sorted(df_SD.index.get_level_values("prn").unique()))
+
+    # Build full expected epoch grid
+    t0, t1 = epochs_obs.min(), epochs_obs.max()
+    expected_epochs = pd.date_range(start=t0, end=t1, freq=sampling)
+
+    # Availability matrix (rows = PRN, columns = epochs)
+    avail = np.zeros((len(prns), len(expected_epochs)), dtype=np.uint8)
+
+    epoch_to_col = {t: i for i, t in enumerate(expected_epochs)}
+
+    for i, prn in enumerate(prns):
+        t_prn = df_SD.xs(prn, level="prn").index
+        cols = [epoch_to_col.get(t) for t in t_prn]
+        cols = [c for c in cols if c is not None]
+        avail[i, cols] = 1
+
+    fig, ax = plt.subplots(figsize=(14, 8))
+
+    # Explicit colormap: 0 = white (missing), 1 = black (present)
+    cmap = ListedColormap(["white", "black"])
+
+    ax.imshow(avail, aspect="auto", interpolation="nearest", cmap=cmap)
+
+    # Y-axis: PRNs
+    ax.set_yticks(np.arange(len(prns)))
+    ax.set_yticklabels(prns)
+    ax.set_ylabel("PRN")
+
+    # X-axis: readable time ticks
+    nticks = 8
+    xt = np.linspace(0, len(expected_epochs) - 1, nticks).astype(int)
+    ax.set_xticks(xt)
+    ax.set_xticklabels(
+        [expected_epochs[j].strftime("%m-%d %H:%M") for j in xt],
+        rotation=0
+    )
+    ax.set_xlabel("Time (epoch)")
+
+    if title is None:
+        title = "SD availability timeline (black = present, white = missing)"
+    ax.set_title(title)
+
+    plt.tight_layout()
+    plt.show()
+
+    return fig, ax
+
+
+
+
 # -------------------------------------------------------------------------
 # Plot Single Differences (SD) by satellite PRN (with gap handling)
 #
