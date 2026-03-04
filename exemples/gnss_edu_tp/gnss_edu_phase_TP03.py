@@ -19,6 +19,7 @@ Dependencies (Python packages)
 - geodezyx
 - pandas
 - numpy
+- matplotlib
 
 Standard library
 ----------------
@@ -47,6 +48,7 @@ from pathlib import Path
 # Third-party
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # GeodeZYX
 from geodezyx import files_rw     # read/write module
@@ -645,6 +647,12 @@ if missing_rover:
 print("OK: df_base_sat and df_rover_sat are synchronized and contain Sagnac-corrected satellite coordinates.")
 print("Index example:", df_base_sat.index[:3].tolist())
 
+for var in [    "required_cols","missing_base", "missing_rover","df_rover_sync"]:
+    if var in globals():
+        del globals()[var]
+del var
+gc.collect()
+
 
 # %%
 ###############################################################################
@@ -653,8 +661,8 @@ print("Index example:", df_base_sat.index[:3].tolist())
 # Educational objective
 # ---------------------
 # Build single differences for observables that carry geometric information:
-#   - Code        : C* and P*  (meters in RINEX)
-#   - Carrier phase: L*        (cycles, KISS choice)
+#   - Code         : C* and P*  (meters in RINEX)
+#   - Carrier phase: L*         (cycles, KISS choice)
 #
 # We intentionally exclude:
 #   - Doppler (D*) and SNR (S*) : diagnostics only, not used for baseline SD/DD
@@ -664,46 +672,87 @@ print("Index example:", df_base_sat.index[:3].tolist())
 # ------
 # df_base_sat and df_rover_sat must be synchronized:
 #   - same MultiIndex (epoch, prn)
+#
+# Output
+# ------
+# df_SD: DataFrame indexed by (epoch, prn) with columns prefixed by "SD_"
 ###############################################################################
 
 print("***** Single Differences (ROVER − BASE) on C*, P*, L* *****")
 
-# -------------------------------------------------------------------------
-# Safety check: perfect synchronization
-# -------------------------------------------------------------------------
-if not df_base_sat.index.equals(df_rover_sat.index):
-    raise RuntimeError("df_base_sat and df_rover_sat are not synchronized (index mismatch).")
+
+def compute_single_differences(
+    df_base_sat: pd.DataFrame,
+    df_rover_sat: pd.DataFrame,
+    prefixes=("C", "P", "L"),
+    add_prefix="SD_",
+) -> pd.DataFrame:
+    """
+    Compute GNSS single differences (ROVER − BASE) for meaningful observables.
+
+    Meaningful observables (default)
+    -------------------------------
+    - Code  : C*, P*
+    - Phase : L*        (kept in cycles here, KISS choice)
+
+    Excluded
+    --------
+    - Doppler (D*), SNR (S*)
+    - Indicators (*_LLI, *_SSI)
+
+    Inputs
+    ------
+    df_base_sat and df_rover_sat must be synchronized and indexed by (epoch, prn).
+
+    Returns
+    -------
+    df_SD : DataFrame indexed by (epoch, prn) with columns SD_*
+    """
+
+    # -------------------------------------------------------------------------
+    # Safety check: perfect synchronization
+    # -------------------------------------------------------------------------
+    if not df_base_sat.index.equals(df_rover_sat.index):
+        raise RuntimeError("df_base_sat and df_rover_sat are not synchronized (index mismatch).")
+
+    # -------------------------------------------------------------------------
+    # Select common columns (present in both dataframes)
+    # -------------------------------------------------------------------------
+    common_cols = [c for c in df_base_sat.columns if c in df_rover_sat.columns]
+
+    def is_meaningful_obs(col: str) -> bool:
+        # Exclude non-measurement indicators
+        if col.endswith(("_LLI", "_SSI")):
+            return False
+        # Keep only code and phase observables
+        return col.startswith(prefixes)
+
+    cand_cols = [c for c in common_cols if is_meaningful_obs(c)]
+
+    # Keep only columns producing at least one valid SD value
+    usable_cols = []
+    for c in cand_cols:
+        sd_tmp = df_rover_sat[c] - df_base_sat[c]
+        if sd_tmp.notna().any():
+            usable_cols.append(c)
+
+    # -------------------------------------------------------------------------
+    # Compute SD (vectorized)
+    # -------------------------------------------------------------------------
+    df_SD = df_rover_sat[usable_cols].subtract(df_base_sat[usable_cols]).add_prefix(add_prefix)
+
+    return df_SD
+
 
 # -------------------------------------------------------------------------
-# Select common columns (present in both dataframes)
+# Compute SD using the dedicated function
 # -------------------------------------------------------------------------
-common_cols = [c for c in df_base_sat.columns if c in df_rover_sat.columns]
-
-def is_meaningful_obs(col: str) -> bool:
-    # Exclude non-measurement indicators
-    if col.endswith(("_LLI", "_SSI")):
-        return False
-    # Keep only code and phase observables
-    return col.startswith(("C", "P", "L"))
-
-cand_cols = [c for c in common_cols if is_meaningful_obs(c)]
-
-# Keep only columns producing at least one valid SD value
-usable_cols = []
-for c in cand_cols:
-    sd_tmp = df_rover_sat[c] - df_base_sat[c]
-    if sd_tmp.notna().any():
-        usable_cols.append(c)
-
-# -------------------------------------------------------------------------
-# Compute SD (vectorized)
-# -------------------------------------------------------------------------
-df_SD = df_rover_sat[usable_cols].subtract(df_base_sat[usable_cols]).add_prefix("SD_")
+df_SD = compute_single_differences(df_base_sat, df_rover_sat)
 
 # -------------------------------------------------------------------------
 # Quick diagnostics for students
 # -------------------------------------------------------------------------
-print(f"SD computed for {len(usable_cols)} observables.")
+print(f"SD computed for {df_SD.shape[1]} observables.")
 print("SD columns:", list(df_SD.columns))
 
 print("\nValid SD counts (top 15):")
@@ -716,4 +765,194 @@ sd_code_cols  = [c for c in df_SD.columns if c.startswith(("SD_C", "SD_P"))]
 print(f"\nPhase SD columns: {len(sd_phase_cols)}")
 print(f"Code  SD columns: {len(sd_code_cols)}")
 
+print("\nExample SD values:")
+print(df_SD.head())
+
+#%% 
+# -------------------------------------------------------------------------
+# Plot Single Differences (SD) by satellite PRN (with gap handling)
+#
+# Input expected:
+#   df_SD : DataFrame indexed by (epoch, prn) with columns like "SD_L1", "SD_C1", ...
+# -------------------------------------------------------------------------
+
+def plot_gnss_sd_by_prn(
+    df_SD,
+    observable="SD_L1",
+    gap=pd.Timedelta(minutes=30),
+    label_arcs=True,
+    arc_label_fontsize=8,
+    arc_label_xytext=(3, 3),   # offset in points
+    show_legend=False,
+    legend_outside=True,
+    legend_ncol=4
+):
+    """
+    Plot GNSS single differences time series by satellite PRN, with gap handling.
+    Optionally write PRN labels directly on the plot at the beginning of each arc.
+
+    Parameters
+    ----------
+    df_SD : pandas.DataFrame
+        MultiIndex (epoch, prn). Columns include SD observables (e.g., "SD_L1").
+    observable : str
+        Column name to plot.
+    gap : pandas.Timedelta
+        Time gap threshold to break line segments.
+    label_arcs : bool
+        If True, place PRN text at the start of each continuous segment ("arc").
+    arc_label_fontsize : int
+        Font size for PRN labels.
+    arc_label_xytext : tuple
+        (dx, dy) offset in points for the text label, to avoid overlapping the line.
+    show_legend : bool
+        If True, show legend. Often unnecessary if label_arcs=True.
+    legend_outside : bool
+        If True, place legend outside the axes (right side).
+    legend_ncol : int
+        Number of columns in legend.
+
+    Returns
+    -------
+    fig, ax
+    """
+
+    if not isinstance(df_SD.index, pd.MultiIndex):
+        raise ValueError("df_SD must have a MultiIndex (epoch, prn).")
+
+    if observable not in df_SD.columns:
+        raise ValueError(f"{observable} not found in df_SD.")
+
+    if "epoch" not in df_SD.index.names or "prn" not in df_SD.index.names:
+        raise ValueError("df_SD index must have levels ('epoch','prn').")
+
+    prns = df_SD.index.get_level_values("prn").unique()
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for prn in prns:
+        # Extract one PRN time series (index becomes epochs)
+        data = df_SD.xs(prn, level="prn").copy().sort_index()
+
+        # Skip if nothing to plot
+        if not data[observable].notna().any():
+            continue
+
+        # Remove NaNs for segmentation + plotting
+        data = data.dropna(subset=[observable])
+        if data.empty:
+            continue
+
+        # Segment id based on gaps
+        dt = data.index.to_series().diff()
+        seg_id = (dt > gap).cumsum()
+
+        color = None
+
+        for _, seg in data.groupby(seg_id):
+            if seg.empty:
+                continue
+
+            # Plot this segment
+            line, = ax.plot(
+                seg.index,
+                seg[observable].to_numpy(),
+                color=color,
+                label=prn if (color is None and show_legend) else None
+            )
+
+            if color is None:
+                color = line.get_color()
+
+            # Label at the beginning of each arc (segment)
+            if label_arcs:
+                x0 = seg.index[0]
+                y0 = float(seg[observable].iloc[0])
+
+                ax.annotate(
+                    prn,
+                    xy=(x0, y0),
+                    xytext=arc_label_xytext,
+                    textcoords="offset points",
+                    fontsize=arc_label_fontsize,
+                    color=color,
+                    ha="left",
+                    va="bottom"
+                )
+
+    ax.set_title(f"Single differences time series ({observable}) by satellite PRN")
+    ax.set_xlabel("Time (epoch)")
+    ax.set_ylabel("Value (cycles for SD_L*, meters for SD_C*/SD_P*)")
+
+    if show_legend:
+        if legend_outside:
+            ax.legend(
+                title="PRN",
+                bbox_to_anchor=(1.02, 1),
+                loc="upper left",
+                borderaxespad=0,
+                ncol=legend_ncol
+            )
+            plt.tight_layout(rect=[0, 0, 0.85, 1])
+        else:
+            ax.legend(title="PRN", ncol=legend_ncol)
+            plt.tight_layout()
+    else:
+        plt.tight_layout()
+
+    plt.show()
+    return fig, ax
+
+# %%
+
+plot_gnss_sd_by_prn(df_SD, observable="SD_L1", label_arcs=True, show_legend=False)
+
+# %%
+plot_gnss_sd_by_prn(df_SD, observable="SD_C1", label_arcs=True, show_legend=False)
+
+# %%
+
+def plot_phase_derivative(df_SD, observable="SD_L1", gap=pd.Timedelta(minutes=30)):
+    """
+    Plot temporal derivative of GNSS phase to highlight cycle slips.
+    """
+
+    prns = df_SD.index.get_level_values("prn").unique()
+
+    fig, ax = plt.subplots(figsize=(10,6))
+
+    for prn in prns:
+
+        data = df_SD.xs(prn, level="prn").copy()
+        data = data.dropna(subset=[observable])
+        data = data.sort_index()
+
+        if len(data) < 2:
+            continue
+
+        # temporal derivative
+        data["dL"] = data[observable].diff()
+
+        # segmentation (same logic as before)
+        dt = data.index.to_series().diff()
+        seg_id = (dt > gap).cumsum()
+
+        color = None
+
+        for _, seg in data.groupby(seg_id):
+
+            line, = ax.plot(seg.index, seg["dL"], color=color)
+
+            if color is None:
+                color = line.get_color()
+
+    ax.set_title(f"Temporal derivative of {observable} (cycle slip detector)")
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Δ phase (cycles)")
+    ax.axhline(0, color="black", linewidth=0.8)
+
+    plt.show()
+
+# %%
+plot_phase_derivative(df_SD, "SD_L2")
 
