@@ -89,7 +89,7 @@ Examples:
     return parser.parse_args()
 
 
-def main():
+def rtklib_prq_main():
     """Main entry point for the CLI."""
     args = parse_args()
     # Configure logging
@@ -128,7 +128,7 @@ def main():
         return 1
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(rtklib_prq_main())
 
 
 
