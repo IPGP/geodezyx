@@ -839,22 +839,24 @@ gnss_edu.plot_sd_derivative_by_prn(
     df_SD,
     obs="SD_C1",
     normalize_by_dt=False,              # keep raw ΔSD between epochs
-    gap=pd.Timedelta(seconds=30)        # expected sampling (30 s)
+    gap=pd.Timedelta(seconds=91)        # gap allowed <=90 expected sampling (30 s)
     
 )
 
 gnss_edu.plot_sd_derivative_by_prn(
     df_SD,
     obs="SD_L1",
+    phase_to_meters=True,
     normalize_by_dt=False,              # keep raw ΔSD between epochs
-    gap=pd.Timedelta(seconds=30)        # expected sampling (30 s)
+    gap=pd.Timedelta(seconds=91)        # gap allowed <=90 expected sampling (30 s)
 )
 
 gnss_edu.plot_sd_derivative_by_prn(
     df_SD,
     obs="SD_L2",
+    phase_to_meters=True,
     normalize_by_dt=False,              # keep raw ΔSD between epochs
-    gap=pd.Timedelta(seconds=30)        # expected sampling (30 s)
+    gap=pd.Timedelta(seconds=91)        # gap allowed <=90 expected sampling (30 s)
 )
 
 # -------------------------------------------------------------------------
@@ -870,6 +872,9 @@ holes = gnss_edu.detect_intra_arc_holes(
 
 print(f"Holes found: {len(holes)}")
 display(holes.sort_values("dt", ascending=False).head(20))
+
+
+# %%
 
 
 

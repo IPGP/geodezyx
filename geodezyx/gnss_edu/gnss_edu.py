@@ -473,31 +473,31 @@ def plot_sd_derivative_by_prn(
     elev_col: str | None = None,
     cutoff_deg: float | None = None,
     title: str | None = None,
+    phase_to_meters: bool = False,
+    wavelength_m: float | None = None,
 ):
     """
     Plot temporal derivative of a single-difference observable by PRN.
+
+    Notes (pedagogical)
+    -------------------
+    - If obs is a carrier-phase SD_L* (stored in cycles), you may set
+      phase_to_meters=True to convert cycles -> meters using the wavelength.
+      This is ONLY for comparison with code (meters); it does not remove
+      ambiguities.
 
     Parameters
     ----------
     df_SD : DataFrame
         MultiIndex (epoch, prn). Must contain column `obs`.
-        Optional: elevation column if elev_col provided.
     obs : str
-        Column to differentiate (e.g., "SD_L1" in cycles, "SD_C1" in meters).
-    gap : Timedelta
-        Gap threshold to split arcs (visibility breaks).
-    label_arcs : bool
-        If True, write PRN label at the start of each arc.
-    normalize_by_dt : bool
-        If True, compute derivative as d(obs)/dt in units per second.
-        If False, compute simple differences between consecutive epochs.
-    elev_col : str or None
-        Name of elevation column (degrees) aligned with df_SD, if available.
-    cutoff_deg : float or None
-        If provided with elev_col, discard points with elevation < cutoff_deg.
-        This is useful to illustrate "angle de coupure".
-    title : str or None
-        Plot title override.
+        Column to differentiate (e.g., "SD_L1" cycles, "SD_C1" meters).
+    phase_to_meters : bool
+        If True and obs starts with "SD_L", convert cycles to meters before
+        differencing.
+    wavelength_m : float or None
+        Override wavelength (meters) used for cycles->meters conversion.
+        If None and obs is SD_L1/SD_L2/SD_L5, use conv.L*_WAVELENGTH.
     """
 
     if not isinstance(df_SD.index, pd.MultiIndex):
@@ -509,17 +509,43 @@ def plot_sd_derivative_by_prn(
     if elev_col is not None and elev_col not in df_SD.columns:
         raise ValueError(f"elev_col='{elev_col}' not found in df_SD.")
 
-    prns = df_SD.index.get_level_values("prn").unique()
+    # ------------------------------------------------------------------
+    # Decide units / optional conversion for phase observables
+    # ------------------------------------------------------------------
+    is_phase = obs.startswith("SD_L")
+    use_phase_to_m = bool(phase_to_meters and is_phase)
 
+    if use_phase_to_m:
+        # Auto wavelength from observable name unless overridden
+        if wavelength_m is None:
+            if obs == "SD_L1":
+                wavelength_m = conv.L1_WAVELENGTH
+            elif obs == "SD_L2":
+                wavelength_m = conv.L2_WAVELENGTH
+            elif obs == "SD_L5":
+                wavelength_m = conv.L5_WAVELENGTH
+            else:
+                raise ValueError(
+                    f"Cannot infer wavelength for '{obs}'. "
+                    "Provide wavelength_m explicitly."
+                )
+
+        y_unit = "m"
+        obs_label = f"{obs} (cycles→m)"
+    else:
+        # Keep original units
+        y_unit = "cycles" if is_phase else "m"
+        obs_label = obs
+
+    prns = df_SD.index.get_level_values("prn").unique()
     fig, ax = plt.subplots(figsize=(12, 6))
 
     for prn in prns:
-        # Extract one PRN
+        # Extract one PRN series
         s = df_SD.xs(prn, level="prn")[[obs]].copy()
         if elev_col is not None:
             s[elev_col] = df_SD.xs(prn, level="prn")[elev_col]
 
-        # Drop NaN
         s = s.dropna(subset=[obs])
         if len(s) < 2:
             continue
@@ -532,12 +558,15 @@ def plot_sd_derivative_by_prn(
 
         s = s.sort_index()
 
+        # Optional conversion cycles -> meters (local only)
+        if use_phase_to_m:
+            s[obs] = s[obs] * float(wavelength_m)
+
         # Segment arcs (gaps)
         dt_epoch = s.index.to_series().diff()
         seg_id = (dt_epoch > gap).cumsum()
 
         color = None
-
         for _, seg in s.groupby(seg_id):
             if len(seg) < 2:
                 continue
@@ -549,7 +578,6 @@ def plot_sd_derivative_by_prn(
                 dt_s = seg.index.to_series().diff().dt.total_seconds()
                 y = y / dt_s  # units per second
 
-            # First value is NaN after diff
             seg_plot = pd.DataFrame({"y": y}).dropna()
             if seg_plot.empty:
                 continue
@@ -558,7 +586,6 @@ def plot_sd_derivative_by_prn(
             if color is None:
                 color = line.get_color()
 
-            # Label at arc start
             if label_arcs:
                 x0 = seg_plot.index[0]
                 y0 = seg_plot["y"].iloc[0]
@@ -567,19 +594,20 @@ def plot_sd_derivative_by_prn(
     ax.axhline(0, color="black", linewidth=0.8)
 
     # Y label depending on normalization
-    unit = "per second" if normalize_by_dt else "per epoch-step"
-    ax.set_ylabel(f"Δ({obs}) {unit}")
+    rate = "per second" if normalize_by_dt else "per epoch-step"
+    ax.set_ylabel(f"Δ({obs_label}) [{y_unit}] {rate}")
 
     if title is None:
         cutoff_txt = ""
         if elev_col is not None and cutoff_deg is not None:
             cutoff_txt = f" (cutoff {cutoff_deg:.0f}°)"
-        title = f"Temporal derivative of {obs}{cutoff_txt}"
+        title = f"Temporal derivative of {obs_label}{cutoff_txt}"
 
     ax.set_title(title)
     ax.set_xlabel("Time (epoch)")
     plt.tight_layout()
     plt.show()
+    return fig, ax
 
 
 
