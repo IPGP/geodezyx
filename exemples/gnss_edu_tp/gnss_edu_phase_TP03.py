@@ -58,6 +58,26 @@ from geodezyx import gnss_edu     # learning module
 from geodezyx import reffram      # reference frame / higher geodesy module
 
 # %%
+
+###############################################################################
+# ⚠ Development note
+#
+# If the module `gnss_edu` was modified during the session, Python keeps the
+# old version in memory. The following lines force Python to reload it.
+#
+# Tip: in Spyder, press Ctrl+G on `gnss_edu` to open the module and explore
+# the available functions.
+###############################################################################
+
+from importlib import reload
+from geodezyx import gnss_edu
+
+gnss_edu = reload(gnss_edu)
+
+# Minimal check: confirm the function exists
+print("plot_gnss_sd_by_prn available:", hasattr(gnss_edu, "plot_gnss_sd_by_prn"))
+
+# %%
 # création du dossier gnss_edu_data qui va contenir les données et les résultats du TP
 # see gnss_edu_phase_TP01.py
 
@@ -768,51 +788,88 @@ print(f"Code  SD columns: {len(sd_code_cols)}")
 print("\nExample SD values:")
 print(df_SD.head())
 
-#%% 
-# -------------------------------------------------------------------------
-# Plot Single Differences (SD) by satellite PRN (with gap handling)
-#
-# Input expected:
-#   df_SD : DataFrame indexed by (epoch, prn) with columns like "SD_L1", "SD_C1", ...
-# -------------------------------------------------------------------------
-
-
-
-
-gnss_edu.plot_gnss_sd_by_prn(df_SD, observable="SD_L1", label_arcs=True, show_legend=False)
-
-
-gnss_edu.plot_gnss_sd_by_prn(df_SD, observable="SD_C1", label_arcs=True, show_legend=False)
-
-# %%
-
-
-
-
-# %%
-
-
-
-
-
-
-# %%
-plot_sd_derivative_by_prn(df_SD, obs="SD_L1", normalize_by_dt=False, gap=pd.Timedelta(seconds=30))
-
-
-
-
-# %%
-# %%
-# %%
-
-
-
 #%%
-holes = gnss_edu.detect_intra_arc_holes(df_rover_sat, sampling=pd.Timedelta(seconds=30),
-                          gap=pd.Timedelta(hours=30))
+###############################################################################
+# Visual diagnostics on simple differences (SD)
+#
+# Educational objective
+# ---------------------
+# 1) Visualize SD on carrier phase (SD_L1) and code (SD_C1) by satellite (PRN).
+# 2) Highlight discontinuities (arcs) using "gap handling".
+# 3) Use time-derivative to reveal sharp events (cycle slips / bad code at low elevation).
+# 4) Automatically detect "holes" (missing epochs inside arcs), which often imply
+#    that a NEW ambiguity parameter must be introduced for phase processing.
+#
+# Reminder
+# --------
+# - SD_L1 is in cycles  (KISS choice: no wavelength conversion here)
+# - SD_C1 is in meters
+###############################################################################
 
-holes.head(20)
+print("\n===== SD diagnostics (by satellite) =====")
+
+# -------------------------------------------------------------------------
+# 1) Carrier phase SD_L1 (cycles): should show smooth arcs + possible jumps
+# -------------------------------------------------------------------------
+print("\n[1/4] Plot SD_L1 (phase, cycles): arcs + potential phase jumps")
+gnss_edu.plot_gnss_sd_by_prn(
+    df_SD,
+    observable="SD_L1",
+    label_arcs=True,
+    show_legend=False
+)
+
+# -------------------------------------------------------------------------
+# 2) Code SD_C1 (meters): typically noisier and more sensitive at rise/set
+# -------------------------------------------------------------------------
+print("\n[2/4] Plot SD_C1 (code, meters): usually noisier (multipath, low elevation)")
+gnss_edu.plot_gnss_sd_by_prn(
+    df_SD,
+    observable="SD_C1",
+    label_arcs=True,
+    show_legend=False
+)
+
+# -------------------------------------------------------------------------
+# 3) Time derivative: reveals sharp events (cycle slips / bad code segments)
+# -------------------------------------------------------------------------
+print("\n[3/4] Plot d/dt(SD_L1): sharp peaks often indicate cycle slips or resets")
+
+gnss_edu.plot_sd_derivative_by_prn(
+    df_SD,
+    obs="SD_C1",
+    normalize_by_dt=False,              # keep raw ΔSD between epochs
+    gap=pd.Timedelta(seconds=30)        # expected sampling (30 s)
+    
+)
+
+gnss_edu.plot_sd_derivative_by_prn(
+    df_SD,
+    obs="SD_L1",
+    normalize_by_dt=False,              # keep raw ΔSD between epochs
+    gap=pd.Timedelta(seconds=30)        # expected sampling (30 s)
+)
+
+gnss_edu.plot_sd_derivative_by_prn(
+    df_SD,
+    obs="SD_L2",
+    normalize_by_dt=False,              # keep raw ΔSD between epochs
+    gap=pd.Timedelta(seconds=30)        # expected sampling (30 s)
+)
+
+# -------------------------------------------------------------------------
+# 4) Detect holes in raw RINEX observation timeline (per PRN)
+#    Holes inside an arc are important: they often force a new ambiguity.
+# -------------------------------------------------------------------------
+print("\n[4/4] Detect intra-arc holes (missing epochs) in ROVER observations")
+holes = gnss_edu.detect_intra_arc_holes(
+    df_rover_sat,
+    sampling=pd.Timedelta(seconds=30),  # expected sampling
+    gap=pd.Timedelta(minutes=30)        # arc-segmentation threshold (same as plots)
+)
+
+print(f"Holes found: {len(holes)}")
+display(holes.sort_values("dt", ascending=False).head(20))
 
 
 
