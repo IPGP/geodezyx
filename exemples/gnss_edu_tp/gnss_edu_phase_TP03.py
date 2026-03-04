@@ -144,51 +144,53 @@ print(f"ROVER rows: {len(df_rover)}")
 # Carrier phase remains expressed in cycles.
 ###############################################################################
 
-def clean_rinex_kiss(df):
+def clean_rinex_kiss(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Minimal RINEX cleaning following the KISS principle.
+    Minimal RINEX cleaning (KISS) for baseline TP.
 
-    Philosophy
+    Key points
     ----------
-    - Keep observations as close as possible to raw RINEX data
-    - Do NOT convert carrier phase units
-    - Do NOT select observables yet
-    - Only remove structurally unusable data
+    - Keep observables as in RINEX (phases stay in cycles)
+    - Do not pre-select observables
+    - Robustly remove columns that are effectively empty
+      (all missing values, including blank strings)
 
-    Operations performed
-    --------------------
-    1. Convert observable columns to numeric when possible
-    2. Remove completely empty columns
-    3. Keep GPS satellites only
-    4. Remove rows without epoch/prn identifiers
-    5. Reset indexing and create a stable row index
-
-    Returns
-    -------
-    Cleaned pandas DataFrame
+    Steps
+    -----
+    1) Normalize "missing" string patterns to real NaN
+    2) Convert non-identifier columns to numeric when possible
+    3) Keep GPS only
+    4) Drop rows without (epoch, prn)
+    5) Drop columns that are all NaN (do it AFTER filtering too)
+    6) Reset index and add a stable row id
     """
-
     df = df.copy()
 
     # ------------------------------------------------------------------
-    # Convert observable columns to numeric (future-proof pandas)
+    # 1) Normalize common "missing" encodings to NaN
+    # ------------------------------------------------------------------
+    # If some columns are object dtype, blank strings can survive and prevent
+    # "all-NaN" detection. This makes missingness explicit.
+    df.replace(
+        to_replace=[r"^\s*$", "nan", "NaN", "NA", "N/A", "null", "None"],
+        value=np.nan,
+        regex=True,
+        inplace=True,
+    )
+
+    # ------------------------------------------------------------------
+    # 2) Convert observable columns to numeric when possible
     # ------------------------------------------------------------------
     protected_cols = {"epoch", "sys", "prn"}
-
     for col in df.columns:
-        if col not in protected_cols:
-            try:
-                df[col] = pd.to_numeric(df[col])
-            except Exception:
-                pass
+        if col in protected_cols:
+            continue
+        # Only attempt conversion for object-like columns (cheap + safe)
+        if df[col].dtype == object:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
 
     # ------------------------------------------------------------------
-    # Remove columns containing only NaN values
-    # ------------------------------------------------------------------
-    df = df.loc[:, df.notna().any(axis=0)]
-
-    # ------------------------------------------------------------------
-    # Keep GPS satellites only
+    # 3) Keep GPS only
     # ------------------------------------------------------------------
     if "sys" in df.columns:
         df = df[df["sys"] == "G"]
@@ -196,28 +198,23 @@ def clean_rinex_kiss(df):
         df = df[df["prn"].astype(str).str.startswith("G")]
 
     # ------------------------------------------------------------------
-    # Remove rows without essential identifiers
+    # 4) Drop rows without essential identifiers
     # ------------------------------------------------------------------
     df = df.dropna(subset=["epoch", "prn"])
 
     # ------------------------------------------------------------------
-    # Reset indexing (important before MultiIndex construction)
+    # 5) Drop fully empty columns (do it after filtering!)
+    # ------------------------------------------------------------------
+    df = df.loc[:, df.notna().any(axis=0)]
+
+    # ------------------------------------------------------------------
+    # 6) Reset indexing and add stable row id
     # ------------------------------------------------------------------
     df = df.reset_index(drop=True)
-
-    # Stable row index useful for matrix construction later
     df["ind_ligne"] = np.arange(len(df))
-
-    # ------------------------------------------------------------------
-    # Diagnostic print (pedagogical)
-    # ------------------------------------------------------------------
-    empty_cols = df.columns[df.isna().all()]
-    if len(empty_cols) > 0:
-        print("Warning: remaining empty columns:", list(empty_cols))
 
     print("KISS cleaning applied.")
     print(f"Remaining observations: {len(df)} rows")
-
     return df
 
 
@@ -649,6 +646,74 @@ print("OK: df_base_sat and df_rover_sat are synchronized and contain Sagnac-corr
 print("Index example:", df_base_sat.index[:3].tolist())
 
 
+# %%
+###############################################################################
+# Single Differences (SD): ROVER − BASE on meaningful observables (C*, P*, L*)
+#
+# Educational objective
+# ---------------------
+# Build single differences for observables that carry geometric information:
+#   - Code        : C* and P*  (meters in RINEX)
+#   - Carrier phase: L*        (cycles, KISS choice)
+#
+# We intentionally exclude:
+#   - Doppler (D*) and SNR (S*) : diagnostics only, not used for baseline SD/DD
+#   - Flags (LLI/SSI)           : indicators, not measurements
+#
+# Inputs
+# ------
+# df_base_sat and df_rover_sat must be synchronized:
+#   - same MultiIndex (epoch, prn)
+###############################################################################
 
+print("***** Single Differences (ROVER − BASE) on C*, P*, L* *****")
+
+# -------------------------------------------------------------------------
+# Safety check: perfect synchronization
+# -------------------------------------------------------------------------
+if not df_base_sat.index.equals(df_rover_sat.index):
+    raise RuntimeError("df_base_sat and df_rover_sat are not synchronized (index mismatch).")
+
+# -------------------------------------------------------------------------
+# Select common columns (present in both dataframes)
+# -------------------------------------------------------------------------
+common_cols = [c for c in df_base_sat.columns if c in df_rover_sat.columns]
+
+def is_meaningful_obs(col: str) -> bool:
+    # Exclude non-measurement indicators
+    if col.endswith(("_LLI", "_SSI")):
+        return False
+    # Keep only code and phase observables
+    return col.startswith(("C", "P", "L"))
+
+cand_cols = [c for c in common_cols if is_meaningful_obs(c)]
+
+# Keep only columns producing at least one valid SD value
+usable_cols = []
+for c in cand_cols:
+    sd_tmp = df_rover_sat[c] - df_base_sat[c]
+    if sd_tmp.notna().any():
+        usable_cols.append(c)
+
+# -------------------------------------------------------------------------
+# Compute SD (vectorized)
+# -------------------------------------------------------------------------
+df_SD = df_rover_sat[usable_cols].subtract(df_base_sat[usable_cols]).add_prefix("SD_")
+
+# -------------------------------------------------------------------------
+# Quick diagnostics for students
+# -------------------------------------------------------------------------
+print(f"SD computed for {len(usable_cols)} observables.")
+print("SD columns:", list(df_SD.columns))
+
+print("\nValid SD counts (top 15):")
+print(df_SD.notna().sum().sort_values(ascending=False).head(15))
+
+# Optional: split by type (useful for next steps)
+sd_phase_cols = [c for c in df_SD.columns if c.startswith("SD_L")]
+sd_code_cols  = [c for c in df_SD.columns if c.startswith(("SD_C", "SD_P"))]
+
+print(f"\nPhase SD columns: {len(sd_phase_cols)}")
+print(f"Code  SD columns: {len(sd_code_cols)}")
 
 
