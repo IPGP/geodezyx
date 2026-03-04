@@ -324,147 +324,166 @@ def Sagnac_rotate_around_z(row):
 #     return df
 
 
-def plot_sd_tracking_timeline(df_SD, sampling=pd.Timedelta(seconds=30), title=None):
+def plot_tracking_timeline(
+    df: pd.DataFrame,
+    sampling: pd.Timedelta = pd.Timedelta(seconds=30),
+    snr_col: str | None = None,
+    snr_min: float | None = None,
+    title: str | None = None,
+):
     """
-    Timeline heatmap of SD availability (base+rover common tracking).
+    Timeline heatmap of tracking availability by PRN.
 
-    Black = SD epoch exists for this PRN
-    White = missing epoch
+    Black = epoch exists for this PRN (and SNR >= snr_min if provided)
+    White = missing epoch (or SNR < snr_min)
 
     Parameters
     ----------
-    df_SD : DataFrame
-        Must be indexed by MultiIndex (epoch, prn)
+    df : DataFrame
+        Must be indexed by MultiIndex ('epoch','prn').
     sampling : Timedelta
-        Expected observation interval (e.g. 30 s)
+        Expected observation interval (e.g. 30 s).
+    snr_col : str or None
+        Column name for SNR (e.g., 'S1'). If None, only presence/absence is shown.
+    snr_min : float or None
+        If provided with snr_col, only epochs with SNR >= snr_min are considered "present".
     """
+    if not isinstance(df.index, pd.MultiIndex):
+        raise ValueError("df must have MultiIndex ('epoch','prn').")
+    if "epoch" not in df.index.names or "prn" not in df.index.names:
+        raise ValueError("df index must have levels ('epoch','prn').")
 
-    if not isinstance(df_SD.index, pd.MultiIndex):
-        raise ValueError("df_SD must have MultiIndex (epoch, prn)")
+    if snr_col is not None and snr_col not in df.columns:
+        raise ValueError(f"snr_col='{snr_col}' not found in df columns.")
 
-    epochs_obs = df_SD.index.get_level_values("epoch")
-    prns = np.array(sorted(df_SD.index.get_level_values("prn").unique()))
+    epochs_obs = df.index.get_level_values("epoch")
+    prns = np.array(sorted(df.index.get_level_values("prn").unique()))
 
-    # Build full expected epoch grid
     t0, t1 = epochs_obs.min(), epochs_obs.max()
     expected_epochs = pd.date_range(start=t0, end=t1, freq=sampling)
 
-    # Availability matrix (rows = PRN, columns = epochs)
+    epoch_to_col = {t: i for i, t in enumerate(expected_epochs)}
     avail = np.zeros((len(prns), len(expected_epochs)), dtype=np.uint8)
 
-    epoch_to_col = {t: i for i, t in enumerate(expected_epochs)}
-
     for i, prn in enumerate(prns):
-        t_prn = df_SD.xs(prn, level="prn").index
-        cols = [epoch_to_col.get(t) for t in t_prn]
+        d = df.xs(prn, level="prn").sort_index()
+
+        if snr_col is not None and snr_min is not None:
+            d = d.dropna(subset=[snr_col])
+            d = d[d[snr_col] >= snr_min]
+
+        cols = [epoch_to_col.get(t) for t in d.index]
         cols = [c for c in cols if c is not None]
-        avail[i, cols] = 1
+        if cols:
+            avail[i, cols] = 1
 
-    fig, ax = plt.subplots(figsize=(14, 8))
-
-    # Explicit colormap: 0 = white (missing), 1 = black (present)
+    fig, ax = plt.subplots(figsize=(14, 0.28 * len(prns) + 2))
     cmap = ListedColormap(["white", "black"])
-
     ax.imshow(avail, aspect="auto", interpolation="nearest", cmap=cmap)
 
-    # Y-axis: PRNs
     ax.set_yticks(np.arange(len(prns)))
     ax.set_yticklabels(prns)
     ax.set_ylabel("PRN")
 
-    # X-axis: readable time ticks
     nticks = 8
     xt = np.linspace(0, len(expected_epochs) - 1, nticks).astype(int)
     ax.set_xticks(xt)
-    ax.set_xticklabels(
-        [expected_epochs[j].strftime("%m-%d %H:%M") for j in xt],
-        rotation=0
-    )
+    ax.set_xticklabels([expected_epochs[j].strftime("%m-%d %H:%M") for j in xt], rotation=0)
     ax.set_xlabel("Time (epoch)")
 
     if title is None:
-        title = "SD availability timeline (black = present, white = missing)"
+        if snr_col is None or snr_min is None:
+            title = "Tracking timeline (black = present, white = missing)"
+        else:
+            title = f"Tracking timeline with SNR filter (black = {snr_col} ≥ {snr_min})"
     ax.set_title(title)
 
     plt.tight_layout()
     plt.show()
-
     return fig, ax
 
 
 
-
-# -------------------------------------------------------------------------
-# Plot Single Differences (SD) by satellite PRN (with gap handling)
-#
-# Input expected:
-#   df_SD : DataFrame indexed by (epoch, prn) with columns like "SD_L1", "SD_C1", ...
-# -------------------------------------------------------------------------
-
-def plot_gnss_sd_by_prn(
-    df_SD,
-    observable="SD_L1",
-    gap=pd.Timedelta(minutes=30),
-    label_arcs=True,
-    arc_label_fontsize=8,
-    arc_label_xytext=(3, 3),   # offset in points
-    show_legend=False,
-    legend_outside=True,
-    legend_ncol=4
+def plot_gnss_timeseries_by_prn(
+    df: pd.DataFrame,
+    y: str,
+    gap: pd.Timedelta = pd.Timedelta(minutes=30),
+    label_arcs: bool = True,
+    arc_label_fontsize: int = 8,
+    arc_label_xytext: tuple[int, int] = (3, 3),  # offset in points
+    show_legend: bool = False,
+    legend_outside: bool = True,
+    legend_ncol: int = 4,
+    title: str | None = None,
+    xlabel: str = "Time (epoch)",
+    ylabel: str | None = None,
+    figsize: tuple[int, int] = (10, 6),
 ):
     """
-    Plot GNSS single differences time series by satellite PRN, with gap handling.
-    Optionally write PRN labels directly on the plot at the beginning of each arc.
+    Plot a GNSS time series by satellite PRN with gap handling.
+
+    This function is generic: it works for any DataFrame that:
+      - is indexed by a MultiIndex with levels ('epoch', 'prn')
+      - contains a numeric column `y`
 
     Parameters
     ----------
-    df_SD : pandas.DataFrame
-        MultiIndex (epoch, prn). Columns include SD observables (e.g., "SD_L1").
-    observable : str
+    df : pandas.DataFrame
+        MultiIndex (epoch, prn).
+    y : str
         Column name to plot.
     gap : pandas.Timedelta
-        Time gap threshold to break line segments.
+        Time gap threshold used to split continuous segments ("arcs").
     label_arcs : bool
-        If True, place PRN text at the start of each continuous segment ("arc").
+        If True, write PRN text at the start of each arc.
     arc_label_fontsize : int
         Font size for PRN labels.
     arc_label_xytext : tuple
-        (dx, dy) offset in points for the text label, to avoid overlapping the line.
+        (dx, dy) offset in points for the arc labels.
     show_legend : bool
-        If True, show legend. Often unnecessary if label_arcs=True.
+        If True, show legend (often unnecessary if label_arcs=True).
     legend_outside : bool
         If True, place legend outside the axes (right side).
     legend_ncol : int
-        Number of columns in legend.
+        Legend columns.
+    title : str or None
+        Plot title. If None, a default title is generated.
+    xlabel : str
+        X axis label.
+    ylabel : str or None
+        Y axis label. If None, uses `y`.
+    figsize : tuple
+        Figure size.
 
     Returns
     -------
     fig, ax
     """
 
-    if not isinstance(df_SD.index, pd.MultiIndex):
-        raise ValueError("df_SD must have a MultiIndex (epoch, prn).")
+    # --- checks
+    if not isinstance(df.index, pd.MultiIndex):
+        raise ValueError("df must have a MultiIndex (epoch, prn).")
 
-    if observable not in df_SD.columns:
-        raise ValueError(f"{observable} not found in df_SD.")
+    if "epoch" not in df.index.names or "prn" not in df.index.names:
+        raise ValueError("df index must have levels ('epoch','prn').")
 
-    if "epoch" not in df_SD.index.names or "prn" not in df_SD.index.names:
-        raise ValueError("df_SD index must have levels ('epoch','prn').")
+    if y not in df.columns:
+        raise ValueError(f"Column '{y}' not found in df.")
 
-    prns = df_SD.index.get_level_values("prn").unique()
+    prns = df.index.get_level_values("prn").unique()
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=figsize)
 
     for prn in prns:
         # Extract one PRN time series (index becomes epochs)
-        data = df_SD.xs(prn, level="prn").copy().sort_index()
+        data = df.xs(prn, level="prn")[[y]].copy().sort_index()
 
         # Skip if nothing to plot
-        if not data[observable].notna().any():
+        if not data[y].notna().any():
             continue
 
-        # Remove NaNs for segmentation + plotting
-        data = data.dropna(subset=[observable])
+        # Drop NaNs for segmentation + plotting
+        data = data.dropna(subset=[y])
         if data.empty:
             continue
 
@@ -478,12 +497,11 @@ def plot_gnss_sd_by_prn(
             if seg.empty:
                 continue
 
-            # Plot this segment
             line, = ax.plot(
                 seg.index,
-                seg[observable].to_numpy(),
+                seg[y].to_numpy(),
                 color=color,
-                label=prn if (color is None and show_legend) else None
+                label=prn if (color is None and show_legend) else None,
             )
 
             if color is None:
@@ -492,8 +510,7 @@ def plot_gnss_sd_by_prn(
             # Label at the beginning of each arc (segment)
             if label_arcs:
                 x0 = seg.index[0]
-                y0 = float(seg[observable].iloc[0])
-
+                y0 = float(seg[y].iloc[0])
                 ax.annotate(
                     prn,
                     xy=(x0, y0),
@@ -502,13 +519,21 @@ def plot_gnss_sd_by_prn(
                     fontsize=arc_label_fontsize,
                     color=color,
                     ha="left",
-                    va="bottom"
+                    va="bottom",
                 )
 
-    ax.set_title(f"Single differences time series ({observable}) by satellite PRN")
-    ax.set_xlabel("Time (epoch)")
-    ax.set_ylabel("Value (cycles for SD_L*, meters for SD_C*/SD_P*)")
+    # labels
+    if title is None:
+        title = f"Time series by satellite PRN ({y})"
+    ax.set_title(title)
 
+    ax.set_xlabel(xlabel)
+
+    if ylabel is None:
+        ylabel = y
+    ax.set_ylabel(ylabel)
+
+    # legend
     if show_legend:
         if legend_outside:
             ax.legend(
@@ -516,7 +541,7 @@ def plot_gnss_sd_by_prn(
                 bbox_to_anchor=(1.02, 1),
                 loc="upper left",
                 borderaxespad=0,
-                ncol=legend_ncol
+                ncol=legend_ncol,
             )
             plt.tight_layout(rect=[0, 0, 0.85, 1])
         else:
@@ -528,6 +553,24 @@ def plot_gnss_sd_by_prn(
     plt.show()
     return fig, ax
 
+# -------------------------------------------------------------------------
+# Plot Single Differences (SD) by satellite PRN (with gap handling)
+#
+# Input expected:
+#   df_SD : DataFrame indexed by (epoch, prn) with columns like "SD_L1", "SD_C1", ...
+# -------------------------------------------------------------------------
+
+def plot_gnss_sd_by_prn(df_SD: pd.DataFrame, observable: str = "SD_L1", **kwargs):
+    """
+    Convenience wrapper for SD plots (keeps the TP API stable).
+    """
+    return plot_gnss_timeseries_by_prn(
+        df=df_SD,
+        y=observable,
+        title=f"Single differences time series by satellite PRN ({observable})",
+        ylabel="Value (cycles for SD_L*, meters for SD_C*/SD_P*)",
+        **kwargs,
+    )
 
 
 
