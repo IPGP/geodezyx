@@ -165,7 +165,7 @@ orbclk_concat = "geodezyx.operational.gins_runner.gins_orbclk_concat:main"
 download_gnss_rinex = "geodezyx.operational.bin_opera.download_gnss_rinex:main"
 vmf1_compute = "geodezyx.athmo.vmf1_compute:main"
 rtklib_run = "geodezyx.operational.bin_opera.rtklib_run_cli:rtklib_run_main"
-rtklib_parquet = "geodezyx.operational.bin_opera.rtklib_parquet:main"
+rtklib_parquet = "geodezyx.operational.bin_opera.rtklib_parquet:rtklib_prq_main"
 
 # This is configuration specific to the `setuptools` build backend.
 # If you are using a different build backend, you will need to change this.
