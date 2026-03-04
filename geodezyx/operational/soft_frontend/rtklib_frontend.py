@@ -268,8 +268,12 @@ def rtklib_run_mono(
     if not os.path.isfile(out_res_fil) or os.path.getsize(out_res_fil) < 2000:
         log.error(f"RTKLIB failed for {exp_full_name} :(")
     else:
-        log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
         utils.gzip_compress(out_res_fil + ".stat", rm_inp=True)
+        out_prq_fil = out_res_fil.replace(".out", ".parquet")
+        if not os.path.isfile(out_prq_fil):
+            df_out2prq = files_rw.read_rtklib(out_res_fil, return_df=True)
+            df_out2prq.to_parquet(out_prq_fil, engine='auto')
+        log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
 
     if not keep_tmp:
         shutils.rmtree(tmp_dir_wrk, ignore_errors=True)
