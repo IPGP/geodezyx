@@ -1042,48 +1042,55 @@ if "SD_L2" in df_SD.columns:
 
 # %%
 ###############################################################################
-# Pivot satellites for Double Differences (DD): selection + scheduling (SNR-based)
+# Pivot satellites for Double Differences (DD)
+# --------------------------------------------
+# Selection + scheduling strategy based on SNR.
 #
 # Why do we need pivot satellites?
-# -------------------------------
-# In DD processing, we pick a "pivot" satellite to form differences with all
-# other satellites. Over 24 hours, one satellite cannot stay visible all the time,
-# so we need a *strategy* to:
+# --------------------------------
+# In double-difference (DD) processing we select one satellite as a "pivot"
+# and form differences between this pivot and all other satellites.
 #
-#   (1) Select a SMALL set of candidate pivots that guarantees full time coverage
+# Over a full 24-hour session, a single satellite cannot remain visible
+# continuously. We therefore need a strategy to:
+#
+#   (1) Select a SMALL set of candidate pivots guaranteeing full coverage
 #       under a quality rule (here: SNR >= snr_min).
-#   (2) Build a STABLE "active pivot" timeline (one pivot per epoch),
-#       avoiding rapid switching (striping artifacts).
-#   (3) Visualize tracking + pivot candidates + active pivot on a single plot.
+#
+#   (2) Build a STABLE pivot schedule (one pivot per epoch),
+#       avoiding rapid switching ("striping").
+#
+#   (3) Visualize tracking, pivot candidates and the active pivot.
 #
 # Dataset note
 # ------------
-# We work on df_base_sat (BASE station) because pivot choice is usually defined
-# from one receiver's viewpoint. You can later discuss BASE vs ROVER vs common
-# tracking depending on the DD design.
+# We work with df_base_sat (BASE station observations). In many DD strategies
+# the pivot is chosen from one receiver's perspective (typically the base).
 ###############################################################################
 
-# -------------------------
+# --------------------------------------------------
 # User parameters
-# -------------------------
+# --------------------------------------------------
 snr_col = "S1"                          # RINEX SNR observable
-snr_min = 45.0                          # quality threshold (adjust in class)
-sampling = pd.Timedelta(seconds=30)     # nominal RINEX sampling
-gap_arc = pd.Timedelta(minutes=30)      # for plotting arcs (visibility breaks)
+snr_min = 48.0                          # SNR quality threshold
+sampling = pd.Timedelta(seconds=30)     # nominal sampling interval
+gap_arc = pd.Timedelta(minutes=30)      # gap threshold for arc plotting
 
-# Hysteresis: switch only if clearly better by this margin (reduces oscillations)
-switch_margin_db = 3.0
+# Hysteresis rule:
+# change pivot only if the new candidate is better by this margin
+switch_margin_db = 7.0
 
 print("\n=== Pivot strategy parameters ===")
-print(f"snr_col={snr_col}")
-print(f"snr_min={snr_min}")
-print(f"sampling={sampling}")
-print(f"switch_margin_db={switch_margin_db}")
+print(f"SNR observable : {snr_col}")
+print(f"SNR threshold  : {snr_min}")
+print(f"Sampling       : {sampling}")
+print(f"Hysteresis     : {switch_margin_db} SNR units")
 
-# -------------------------------------------------------
-# Step 0: Inspect SNR time series (intuition)
-# -------------------------------------------------------
-print("\n[0/4] SNR time series by PRN (visual intuition)")
+# --------------------------------------------------
+# Step 0 — Inspect SNR time series
+# --------------------------------------------------
+print("\n[0/4] SNR time series by satellite (visual inspection)")
+
 gnss_edu.plot_gnss_timeseries_by_prn(
     df_base_sat,
     y=snr_col,
@@ -1093,10 +1100,17 @@ gnss_edu.plot_gnss_timeseries_by_prn(
     title=f"{snr_col} time series by satellite PRN (BASE)",
 )
 
-# -------------------------------------------------------
-# Step 1: Raw tracking with SNR filter (black/white view)
-# -------------------------------------------------------
-print("\n[1/4] Tracking timeline with SNR filter only (usable vs not usable)")
+# Students should observe:
+# - satellites rise and set
+# - SNR increases near culmination
+# - some satellites provide longer high-quality arcs
+
+
+# --------------------------------------------------
+# Step 1 — Raw tracking with SNR filter
+# --------------------------------------------------
+print("\n[1/4] Tracking timeline with SNR filter")
+
 gnss_edu.plot_tracking_timeline(
     df_base_sat,
     sampling=sampling,
@@ -1104,10 +1118,15 @@ gnss_edu.plot_tracking_timeline(
     snr_min=snr_min,
 )
 
-# -------------------------------------------------------
-# Step 2: Greedy set cover (guarantee full coverage)
-# -------------------------------------------------------
-print("\n[2/4] Greedy set cover: select pivot CANDIDATES (guaranteed coverage)")
+# Interpretation:
+#   black = satellite usable (SNR >= threshold)
+#   white = not usable
+
+
+# --------------------------------------------------
+# Step 2 — Greedy set cover (pivot candidates)
+# --------------------------------------------------
+print("\n[2/4] Greedy pivot selection (set cover)")
 
 selected_prns, diag = gnss_edu.greedy_pivot_set_cover(
     df=df_base_sat,
@@ -1118,20 +1137,23 @@ selected_prns, diag = gnss_edu.greedy_pivot_set_cover(
     return_diagnostics=True,
 )
 
-print("Selected pivot candidates:", selected_prns)
-print("n_selected:", diag["n_selected"])
-print("coverage_ratio:", diag["coverage_ratio"])
-print("uncovered epochs:", diag["n_uncovered"])
+print("\nCandidate pivot satellites:", selected_prns)
+print("Number of pivots selected :", diag["n_selected"])
+print("Coverage ratio            :", diag["coverage_ratio"])
+print("Uncovered epochs          :", diag["n_uncovered"])
 
-# Hard proof (pedagogical): if this fails, snr_min is too strict
+# Pedagogical guarantee:
+# if this assertion fails, the SNR threshold is too strict
 assert diag["n_uncovered"] == 0, (
-    "Not fully covered! Lower snr_min or modify the quality rule."
+    "Full coverage impossible with current SNR threshold. "
+    "Lower snr_min or modify the quality rule."
 )
 
-# -------------------------------------------------------
-# Step 3: Stable active pivot schedule (hysteresis)
-# -------------------------------------------------------
-print("\n[3/4] Build ACTIVE pivot schedule (stable switching with hysteresis)")
+
+# --------------------------------------------------
+# Step 3 — Build the active pivot schedule
+# --------------------------------------------------
+print("\n[3/4] Build ACTIVE pivot schedule (with hysteresis)")
 
 active_pivot = gnss_edu.build_active_pivot_schedule(
     df=df_base_sat,
@@ -1143,19 +1165,19 @@ active_pivot = gnss_edu.build_active_pivot_schedule(
 )
 
 n_none = int(active_pivot.isna().sum())
-print("Active pivot = None epochs:", n_none)
+print("Epochs without pivot:", n_none)
 
-# If set cover gives full coverage, this should be 0.
-# If not, it indicates a mismatch between the set-cover rule and the scheduling rule.
+# If set cover worked, we should have no gaps
 assert n_none == 0, (
-    "Active pivot schedule has gaps. This usually means the scheduling rule is stricter "
-    "than the set-cover rule, or the expected epoch grid is inconsistent."
+    "Active pivot schedule contains gaps. "
+    "Check consistency between set-cover rule and scheduling rule."
 )
 
-# -------------------------------------------------------
-# Step 4: Final visualization (the 'tilt' plot)
-# -------------------------------------------------------
-print("\n[4/4] Timeline with: usable (black), pivot candidates (green), active pivot (dark green)")
+
+# --------------------------------------------------
+# Step 4 — Final visualization
+# --------------------------------------------------
+print("\n[4/4] Tracking timeline with pivot strategy")
 
 fig, ax, info = gnss_edu.plot_tracking_timeline_with_pivots(
     df=df_base_sat,
@@ -1163,25 +1185,55 @@ fig, ax, info = gnss_edu.plot_tracking_timeline_with_pivots(
     sampling=sampling,
     snr_col=snr_col,
     snr_min=snr_min,
-    active_pivot=active_pivot,  # IMPORTANT: use the hysteresis schedule
+    active_pivot=active_pivot,
     title=(
-        f"Pivot strategy (snr_min={snr_min:g}): usable (black), "
-        f"pivot candidates (green), active pivot (dark green, hysteresis={switch_margin_db:g})"
+        f"Pivot strategy (SNR ≥ {snr_min:g}) — "
+        f"usable (black), pivot candidates (green), "
+        f"active pivot (dark green)"
     ),
 )
 
+# Interpretation:
+#   black       = usable satellite
+#   green       = selected pivot candidate
+#   dark green  = pivot used at this epoch
 
 
 
+# %%
+###############################################################################
+# Pivot schedule analysis
+#
+# Convert the active pivot time series into continuous segments
+# to analyse pivot stability and switching behaviour.
+###############################################################################
 
+segments = gnss_edu.pivot_schedule_to_segments(
+    active_pivot,
+    sampling=sampling,
+    drop_none=True
+)
 
+print("\nNumber of pivot segments:", len(segments))
+display(segments)
 
+# --------------------------------------------------
+# Coverage diagnostics
+# --------------------------------------------------
+diag_cov = gnss_edu.check_full_coverage_from_active_pivot(active_pivot)
 
+print("\nCoverage diagnostics:")
+print(diag_cov)
 
+# --------------------------------------------------
+# Pivot usage statistics
+# --------------------------------------------------
+usage = (
+    segments.groupby("prn")["duration"]
+    .sum()
+    .sort_values(ascending=False)
+    .to_frame("total_duration")
+)
 
-
-
-
-
-
-
+print("\nTotal pivot usage by satellite:")
+display(usage)

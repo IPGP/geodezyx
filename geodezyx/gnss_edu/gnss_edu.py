@@ -111,6 +111,106 @@ def build_active_pivot_schedule(
 
     return pd.Series(out, name="active_pivot")
 
+def pivot_schedule_to_segments(
+    active_pivot: pd.Series,
+    sampling: pd.Timedelta = pd.Timedelta(seconds=30),
+    drop_none: bool = True,
+) -> pd.DataFrame:
+    """
+    Convert an 'active pivot' time series (one PRN per epoch) into contiguous segments.
+
+    Parameters
+    ----------
+    active_pivot : pd.Series
+        Indexed by epoch (DatetimeIndex). Values are PRN strings or None/NaN.
+        Expected to be on a regular grid (or close to it).
+    sampling : pd.Timedelta
+        Nominal sampling used to define contiguity.
+    drop_none : bool
+        If True, remove segments where prn is None/NaN.
+
+    Returns
+    -------
+    seg : pd.DataFrame
+        Columns:
+          - prn
+          - start
+          - end
+          - duration
+          - n_epochs
+        With one row per contiguous constant-PRN segment.
+    """
+    if not isinstance(active_pivot.index, pd.DatetimeIndex):
+        raise ValueError("active_pivot must be indexed by a DatetimeIndex.")
+
+    s = active_pivot.sort_index().copy()
+
+    # Normalize missing markers
+    s = s.where(pd.notna(s), other=None)
+
+    # A new segment starts when:
+    # - PRN changes, OR
+    # - time gap > sampling (missing epochs / irregular grid)
+    dt = s.index.to_series().diff()
+    prn_change = s.ne(s.shift(1))
+    gap_break = dt.gt(sampling)  # strictly greater than sampling => break
+
+    seg_id = (prn_change | gap_break).cumsum()
+
+    rows = []
+    for _, g in s.groupby(seg_id):
+        prn = g.iloc[0]
+        start = g.index[0]
+        end = g.index[-1]
+        n_epochs = int(len(g))
+
+        # Duration: inclusive duration consistent with sampling grid
+        # If you prefer "wall-clock" duration: use end - start
+        duration = (end - start) + sampling
+
+        rows.append(
+            {
+                "prn": prn,
+                "start": start,
+                "end": end,
+                "duration": duration,
+                "n_epochs": n_epochs,
+            }
+        )
+
+    seg = pd.DataFrame(rows)
+
+    if drop_none:
+        seg = seg[seg["prn"].notna()].reset_index(drop=True)
+
+    return seg
+
+
+def check_full_coverage_from_active_pivot(
+    active_pivot: pd.Series,
+) -> dict:
+    """
+    Quick sanity checks: do we have any None? what is the longest None run?
+    """
+    s = active_pivot.sort_index()
+    s = s.where(pd.notna(s), other=None)
+
+    none_mask = s.isna() | (s.astype(object) == None)  # robust
+    n_none = int(none_mask.sum())
+
+    # Longest consecutive None run in epochs
+    max_none_run = 0
+    if n_none > 0:
+        # Run-length encoding on the mask
+        run_id = (none_mask != none_mask.shift(1)).cumsum()
+        run_sizes = none_mask.groupby(run_id).sum()
+        max_none_run = int(run_sizes.max())
+
+    return {
+        "n_epochs": int(len(s)),
+        "n_none": n_none,
+        "max_none_run_epochs": max_none_run,
+    }
 
 
 
