@@ -512,16 +512,16 @@ def make_pairs(
         log.error(f"All sites found: {str(list(df_all["site9"].unique()))}")
         return [], df_all
 
-    bas_prev, bas_next = "", ""
+    bas_prev, rov_prev = "", ""
 
     for _, row_rov in df_rovers.iterrows():
         rov = row_rov["site9"]
         for bas, df_bas in df_bases.groupby("site9"):
             if bas == rov:
                 # this test is to silent multiple warning messages
-                if bas != bas_prev or bas != bas_next:
+                if bas != bas_prev or rov != rov_prev:
                     log.warning(f"Rover '{rov}' is the same as base '{bas}', skipping pair")
-                    base_prev, bas_next = bas, rov
+                    bas_prev, rov_prev = bas, rov
                 continue
             rov_srt = row_rov["date"]
             rov_end = row_rov["date_end"]
