@@ -193,7 +193,7 @@ def rtklib_run_main():
         log.info(f"  {key}: {value}")
 
     log.info(f"RTKLIB RUN UPDATED:")
-    for key, value in sorted(kwargs_cfg.items()):
+    for key, value in sorted(kwargs_out.items()):
         log.info(f"  {key}: {value}")
 
     # Override with CLI args (only if explicitly provided - not None)
