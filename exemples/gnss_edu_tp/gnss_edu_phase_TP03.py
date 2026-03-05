@@ -1038,6 +1038,17 @@ if "SD_L2" in df_SD.columns:
 
 
 # %%
+
+#            satellite s
+# BASE  -------------------------
+# ROVER -------------------------
+
+# Single difference:   SD_s = obs_rover − obs_base       <------ OK
+
+# Choose a pivot p                                       <------ NOW
+
+# Double difference:   DD_s = SD_s − SD_p
+
 ###############################################################################
 # Pivot satellites for Double Differences (DD)
 # --------------------------------------------
@@ -1389,8 +1400,209 @@ fig, ax, info = gnss_edu.plot_tracking_timeline_with_pivots(
 #   green       = selected pivot candidate
 #   dark green  = pivot used at this epoch
 
+
 # %%
 
+#            satellite s
+# BASE  -------------------------
+# ROVER -------------------------
+
+# Single difference:   SD_s = obs_rover − obs_base       <------ OK
+
+# Choose a pivot p                                       <------ OK
+
+# Double difference:   DD_s = SD_s − SD_p                <------ NOW
+
+def compute_double_differences_from_sd_rich(
+    df_SD: pd.DataFrame,
+    active_pivot: pd.Series,
+    sd_cols: list[str] | None = None,
+    keep_pivot_rows: bool = True,
+    add_pivot_sd: bool = True,
+    pivot_sd_prefix: str = "PIV_",
+    dd_prefix: str = "DD_",
+) -> pd.DataFrame:
+    """
+    Build a *rich* Double Differences (DD) table from Single Differences (SD)
+    using a time-varying pivot schedule.
+
+    Outputs include:
+    - pivot_prn : pivot used at each epoch
+    - is_pivot  : True if the row corresponds to the pivot PRN
+    - DD_*      : DD observables for all requested SD columns
+    - PIV_*     : (optional) pivot SD values replicated on each row of the epoch
+
+    Parameters
+    ----------
+    df_SD : DataFrame
+        MultiIndex (epoch, prn). Columns contain SD observables (e.g., SD_L1, SD_C1, ...).
+    active_pivot : Series
+        Indexed by epoch, values are pivot PRNs (e.g., "G05") or None/NaN.
+        Must cover the epochs to be processed (no None for full DD computation).
+    sd_cols : list[str] | None
+        Which SD columns to difference. If None, uses all columns in df_SD.
+    keep_pivot_rows : bool
+        If True, keep pivot PRN rows (DD will be 0 by construction).
+        If False, drop pivot PRN rows.
+    add_pivot_sd : bool
+        If True, add columns with pivot SD values replicated per epoch (PIV_*).
+    pivot_sd_prefix : str
+        Prefix for pivot SD columns (default "PIV_").
+    dd_prefix : str
+        Prefix for DD columns (default "DD_").
+
+    Returns
+    -------
+    df_DD : DataFrame
+        MultiIndex (epoch, prn) with metadata columns + DD columns (+ optional PIV columns).
+    """
+    # ----------------------- checks -----------------------
+    if not isinstance(df_SD.index, pd.MultiIndex):
+        raise ValueError("df_SD must have MultiIndex ('epoch','prn').")
+    if "epoch" not in df_SD.index.names or "prn" not in df_SD.index.names:
+        raise ValueError("df_SD index must have levels ('epoch','prn').")
+
+    if sd_cols is None:
+        sd_cols = list(df_SD.columns)
+
+    missing = [c for c in sd_cols if c not in df_SD.columns]
+    if missing:
+        raise ValueError(f"Some requested SD columns are missing in df_SD: {missing}")
+
+    # Epoch grid to process = epochs present in df_SD
+    epochs = pd.DatetimeIndex(sorted(df_SD.index.get_level_values("epoch").unique()))
+    piv = active_pivot.reindex(epochs)
+
+    if piv.isna().any():
+        n = int(piv.isna().sum())
+        first_bad = piv[piv.isna()].index[0]
+        raise RuntimeError(
+            f"active_pivot has {n} None/NaN epochs after alignment to df_SD. "
+            f"First missing pivot at epoch={first_bad}. "
+            "DD requires a pivot at each processed epoch."
+        )
+
+    # -------------------- main join -----------------------
+    df = df_SD[sd_cols].copy()
+    df = df.join(piv.rename("pivot_prn").to_frame(), on="epoch")
+
+    # Reset for easier pivot-row extraction
+    dfr = df.reset_index()  # epoch, prn, SD..., pivot_prn
+
+    # Identify pivot rows
+    dfr["is_pivot"] = dfr["prn"] == dfr["pivot_prn"]
+
+    pivot_rows = dfr[dfr["is_pivot"]]
+    if pivot_rows.empty:
+        raise RuntimeError(
+            "No pivot rows found in df_SD: pivot PRNs are not present for the corresponding epochs."
+        )
+
+    # Pivot SD values indexed by epoch
+    pivot_vals = pivot_rows.set_index("epoch")[sd_cols]
+
+    # Join pivot SD back to every row of the same epoch
+    dfr = dfr.join(pivot_vals, on="epoch", rsuffix="_PIV")
+
+    # --------------------- compute DD ---------------------
+    out = {}
+    for c in sd_cols:
+        # Use a readable DD name: DD_L1 from SD_L1, DD_C1 from SD_C1, etc.
+        name = dd_prefix + c.removeprefix("SD_")
+        out[name] = dfr[c] - dfr[c + "_PIV"]
+
+        if add_pivot_sd:
+            out[pivot_sd_prefix + c.removeprefix("SD_")] = dfr[c + "_PIV"]
+
+    # Metadata
+    out["pivot_prn"] = dfr["pivot_prn"]
+    out["is_pivot"] = dfr["is_pivot"]
+
+    df_DD = pd.DataFrame(out)
+    df_DD["epoch"] = dfr["epoch"].values
+    df_DD["prn"] = dfr["prn"].values
+    df_DD = df_DD.set_index(["epoch", "prn"]).sort_index()
+
+    if not keep_pivot_rows:
+        df_DD = df_DD.loc[~df_DD["is_pivot"]]
+
+    return df_DD
+
+
+
+def add_pivot_change_flag(df_DD: pd.DataFrame) -> pd.DataFrame:
+    """
+    Add a boolean flag 'pivot_changed' True at epochs where pivot differs from previous epoch.
+    """
+    if "pivot_prn" not in df_DD.columns:
+        raise ValueError("df_DD must contain 'pivot_prn'.")
+
+    out = df_DD.copy()
+    piv = out["pivot_prn"].groupby(level="epoch").first()
+    changed = piv.ne(piv.shift(1)).rename("pivot_changed")
+    out = out.join(changed.to_frame(), on="epoch")
+    return out
+
+
+
+# %%
+###############################################################################
+# What is df_DD?
+#
+# The dataframe `df_DD` contains the GNSS Double Differences (DD) computed
+# from the Single Differences (SD) using the pivot satellite selected at
+# each epoch.
+#
+# Each row corresponds to:
+#     one epoch  ×  one satellite
+#
+# The columns contain:
+#
+#   - pivot_prn : the pivot satellite used at that epoch
+#   - is_pivot  : indicates whether the row corresponds to the pivot satellite
+#   - DD_*      : the double differences for the available observables
+#
+# The DD are computed as:
+#
+#       DD_obs = SD_obs(satellite) − SD_obs(pivot)
+#
+# For the pivot satellite itself the DD are therefore equal to zero.
+#
+###############################################################################
+
+# %%
+###############################################################################
+# Double Differences (DD) from SD using a time-varying pivot schedule
+# (rich output: pivot info + all DD + optional pivot SD)
+###############################################################################
+
+print("\n===== Build rich DD table =====")
+
+df_DD = compute_double_differences_from_sd_rich(
+    df_SD=df_SD,
+    active_pivot=active_pivot,
+    sd_cols=None,              # <= all SD columns available in df_SD
+    keep_pivot_rows=True,      # keep pivot rows (DD=0), useful for teaching
+    add_pivot_sd=True,         # add PIV_* columns for traceability
+)
+
+print("df_DD columns (first 20):")
+print(list(df_DD.columns)[:20])
+print("... total columns:", len(df_DD.columns))
+
+print("\nSanity checks:")
+print("Unique pivots used:", df_DD["pivot_prn"].unique()[:20])
+print("Pivot rows:", int(df_DD["is_pivot"].sum()))
+print("Non-pivot rows:", int((~df_DD["is_pivot"]).sum()))
+
+print("\nExample rows:")
+print(df_DD.head(10))
+
+
+
+
+df_DD = add_pivot_change_flag(df_DD)
+print("Number of pivot change epochs:", int(df_DD["pivot_changed"].groupby(level="epoch").first().sum()))
 
 
 
