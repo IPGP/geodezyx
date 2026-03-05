@@ -192,6 +192,10 @@ def rtklib_run_main():
     for key, value in sorted(kwargs_cfg.items()):
         log.info(f"  {key}: {value}")
 
+    log.info(f"RTKLIB RUN UPDATED:")
+    for key, value in sorted(kwargs_cfg.items()):
+        log.info(f"  {key}: {value}")
+
     # Override with CLI args (only if explicitly provided - not None)
     for arg_name, arg_value in kwargs_cli.items():
         if arg_name == "config_yaml":  # Skip the YAML config file argument itself
