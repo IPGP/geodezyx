@@ -1553,20 +1553,45 @@ def add_pivot_change_flag(df_DD: pd.DataFrame) -> pd.DataFrame:
 # from the Single Differences (SD) using the pivot satellite selected at
 # each epoch.
 #
-# Each row corresponds to:
-#     one epoch  ×  one satellite
+# Index
+# -----
+# df_DD uses a MultiIndex (epoch, prn):
 #
-# The columns contain:
+#   epoch : observation time
+#   prn   : satellite identifier
 #
-#   - pivot_prn : the pivot satellite used at that epoch
-#   - is_pivot  : indicates whether the row corresponds to the pivot satellite
-#   - DD_*      : the double differences for the available observables
+# Each row therefore corresponds to one satellite observed at one epoch.
 #
-# The DD are computed as:
+# Pivot information
+# -----------------
+# Several columns describe how the DD were formed:
+#
+#   pivot_prn     : pivot satellite used at that epoch
+#   is_pivot      : True if the row corresponds to the pivot satellite itself
+#   pivot_changed : True when the pivot satellite changes compared to the
+#                   previous epoch
+#
+# When `is_pivot=True`, the DD values are zero by construction because:
+#
+#       DD_pivot = SD_pivot − SD_pivot = 0
+#
+# Observables
+# -----------
+# For each SD observable available in df_SD, the dataframe contains the
+# corresponding double difference:
 #
 #       DD_obs = SD_obs(satellite) − SD_obs(pivot)
 #
-# For the pivot satellite itself the DD are therefore equal to zero.
+# Example:
+#
+#       DD_L1 = SD_L1(satellite) − SD_L1(pivot)
+#
+# Why track pivot changes?
+# ------------------------
+# When the pivot satellite changes, the definition of the double differences
+# also changes. In carrier phase processing this typically introduces a new
+# set of ambiguity parameters. The column `pivot_changed` therefore marks
+# epochs where the DD geometry changes.
 #
 ###############################################################################
 
