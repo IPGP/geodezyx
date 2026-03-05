@@ -67,47 +67,40 @@ Examples:
     )
     parser.add_argument("-o", "--out_dir", help="Output directory for results")
 
-    # Optional arguments
+    # Optional arguments (no defaults - only explicit values)
     parser.add_argument(
         "-td",
         "--tmp_dir",
-        default=None,
         help="Temporary directory (default: None, will use out_dir/TMP)",
     )
     parser.add_argument(
         "-pd",
         "--prod_dir",
-        default=None,
         help="GNSS products directory (default: None, will use tmp_dir)",
     )
     parser.add_argument(
         "-ip",
         "--igs_prods",
-        default=RTKLIB_RUN_DEFAULTS.get("igs_prods"),
         help=f"IGS product ID (default: {RTKLIB_RUN_DEFAULTS.get('igs_prods')})",
     )
     parser.add_argument(
         "-exp",
         "--exp_prefix",
-        default="",
         help="Output filename prefix (default: empty string)",
     )
     parser.add_argument(
         "-s",
         "--date_srt",
-        default=None,
         help="Start date (YYYY-MM-DD or YYYY-DDD, default: None = all files)",
     )
     parser.add_argument(
         "-e",
         "--date_end",
-        default=None,
         help="End date (YYYY-MM-DD or YYYY-DDD, default: None = all files)",
     )
     parser.add_argument(
         "-m",
         "--posmode",
-        default=RTKLIB_RUN_DEFAULTS.get("posmode"),
         choices=[
             "single",
             "dgps",
@@ -125,14 +118,12 @@ Examples:
     parser.add_argument(
         "-sol",
         "--solformat",
-        default=RTKLIB_RUN_DEFAULTS.get("solformat"),
         choices=["llh", "xyz", "enu", "nmea"],
         help=f"Solution format (default: {RTKLIB_RUN_DEFAULTS.get('solformat')})",
     )
     parser.add_argument(
         "-eph",
         "--sateph",
-        default=RTKLIB_RUN_DEFAULTS.get("sateph"),
         choices=["brdc", "precise"],
         help=f"Satellite ephemeris (default: {RTKLIB_RUN_DEFAULTS.get('sateph')})",
     )
@@ -152,19 +143,18 @@ Examples:
         "-p",
         "--procs",
         type=int,
-        default=RTKLIB_RUN_DEFAULTS.get("procs"),
         help=f"Parallel workers (default: {RTKLIB_RUN_DEFAULTS.get('procs')})",
     )
     parser.add_argument(
         "-x",
         "--exe_path",
-        default=RTKLIB_RUN_DEFAULTS.get("exe_path"),
         help=f"Path to rnx2rtkp executable (default: {RTKLIB_RUN_DEFAULTS.get('exe_path')})",
     )
 
-    # Convert Namespace to dictionary
+    # Convert Namespace to dictionary and filter out None values (explicit args only)
     args_namespace = parser.parse_args()
-    return vars(args_namespace)
+    args_dict = vars(args_namespace)
+    return {k: v for k, v in args_dict.items() if v is not None}
 
 
 def rtklib_run_main():
