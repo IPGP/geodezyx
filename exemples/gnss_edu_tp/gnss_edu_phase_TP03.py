@@ -1078,7 +1078,7 @@ gap_arc = pd.Timedelta(minutes=30)      # gap threshold for arc plotting
 
 # Hysteresis rule:
 # change pivot only if the new candidate is better by this margin
-switch_margin_db = 7.0
+switch_margin_db = 2.0
 
 print("\n=== Pivot strategy parameters ===")
 print(f"SNR observable : {snr_col}")
@@ -1237,3 +1237,356 @@ usage = (
 
 print("\nTotal pivot usage by satellite:")
 display(usage)
+
+
+
+# %%
+
+import pandas as pd
+import numpy as np
+
+
+def pivot_can_cover_interval(
+    df,
+    prn,
+    t0,
+    t1,
+    snr_col,
+    snr_min,
+    sampling,
+):
+    """
+    Check if a satellite PRN satisfies SNR >= snr_min over the full
+    epoch grid between [t0, t1].
+    """
+
+    epochs = pd.date_range(t0, t1, freq=sampling)
+
+    try:
+        s = df.xs(prn, level="prn")[snr_col]
+    except KeyError:
+        return False
+
+    s = s.reindex(epochs)
+
+    cond = (s.notna()) & (s >= snr_min)
+
+    return bool(cond.all())
+
+
+def fix_short_pivot_segments(
+    df,
+    segments,
+    active_pivot,
+    snr_col="S1",
+    snr_min=45.0,
+    sampling=pd.Timedelta(seconds=30),
+    min_duration=pd.Timedelta(hours=1),
+):
+    """
+    Remove pivot segments shorter than `min_duration` by merging them
+    with the previous or next pivot when possible.
+
+    Returns
+    -------
+    new_active_pivot
+    new_segments
+    """
+
+    seg = segments.copy()
+    ap = active_pivot.copy()
+
+    i = 0
+
+    while i < len(seg):
+
+        if seg.loc[i, "duration"] >= min_duration:
+            i += 1
+            continue
+
+        prn = seg.loc[i, "prn"]
+        t0 = seg.loc[i, "start"]
+        t1 = seg.loc[i, "end"]
+
+        merged = False
+
+        # -----------------------
+        # Try merge with previous
+        # -----------------------
+        if i > 0:
+
+            prev_prn = seg.loc[i - 1, "prn"]
+            prev_start = seg.loc[i - 1, "start"]
+
+            if pivot_can_cover_interval(
+                df,
+                prev_prn,
+                prev_start,
+                t1,
+                snr_col,
+                snr_min,
+                sampling,
+            ):
+
+                ap.loc[t0:t1] = prev_prn
+
+                merged = True
+
+        # -----------------------
+        # Try merge with next
+        # -----------------------
+        if (not merged) and (i < len(seg) - 1):
+
+            next_prn = seg.loc[i + 1, "prn"]
+            next_end = seg.loc[i + 1, "end"]
+
+            if pivot_can_cover_interval(
+                df,
+                next_prn,
+                t0,
+                next_end,
+                snr_col,
+                snr_min,
+                sampling,
+            ):
+
+                ap.loc[t0:t1] = next_prn
+
+                merged = True
+
+        i += 1
+
+    # rebuild segments
+    new_segments = pivot_schedule_to_segments(
+        ap,
+        sampling=sampling,
+        drop_none=True,
+    )
+
+    return ap, new_segments
+
+# %%
+
+segments = gnss_edu.pivot_schedule_to_segments(active_pivot, sampling=sampling)
+
+active_pivot, segments = fix_short_pivot_segments(
+    df=df_base_sat,
+    segments=segments,
+    active_pivot=active_pivot,
+    snr_col=snr_col,
+    snr_min=snr_min,
+    sampling=sampling,
+    min_duration=pd.Timedelta(hours=1),
+)
+# %%
+
+print("\nNumber of pivot segments:", len(segments))
+display(segments)
+
+# --------------------------------------------------
+# Coverage diagnostics
+# --------------------------------------------------
+diag_cov = gnss_edu.check_full_coverage_from_active_pivot(active_pivot)
+
+print("\nCoverage diagnostics:")
+print(diag_cov)
+
+# --------------------------------------------------
+# Pivot usage statistics
+# --------------------------------------------------
+usage = (
+    segments.groupby("prn")["duration"]
+    .sum()
+    .sort_values(ascending=False)
+    .to_frame("total_duration")
+)
+
+print("\nTotal pivot usage by satellite:")
+display(usage)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# %%
+
+import pandas as pd
+import numpy as np
+
+
+def _expected_epochs(t0, t1, sampling):
+    return pd.date_range(start=t0, end=t1, freq=sampling)
+
+
+def prn_covers_interval(df, prn, t0, t1, snr_col, snr_min, sampling):
+    """
+    Return True if PRN has non-NaN SNR >= snr_min at ALL expected epochs in [t0, t1].
+    """
+    epochs = _expected_epochs(t0, t1, sampling)
+    try:
+        s = df.xs(prn, level="prn")[snr_col].reindex(epochs)
+    except KeyError:
+        return False
+    ok = s.notna() & (s >= snr_min)
+    return bool(ok.all())
+
+
+def best_prn_for_interval(df, t0, t1, snr_col, snr_min, sampling, pool_prns):
+    """
+    Pick a PRN from pool_prns that fully covers [t0, t1] (SNR>=snr_min everywhere).
+    Tie-breaker: highest mean SNR on the interval.
+    Return None if impossible.
+    """
+    epochs = _expected_epochs(t0, t1, sampling)
+
+    best_prn = None
+    best_score = -np.inf
+
+    for prn in pool_prns:
+        try:
+            s = df.xs(prn, level="prn")[snr_col].reindex(epochs)
+        except KeyError:
+            continue
+
+        ok = s.notna() & (s >= snr_min)
+        if not bool(ok.all()):
+            continue
+
+        score = float(s.mean())
+        if score > best_score:
+            best_prn = prn
+            best_score = score
+
+    return best_prn
+
+
+def fix_short_pivot_segments_with_fallback(
+    df,
+    segments,
+    active_pivot,
+    snr_col="S1",
+    snr_min=48.0,
+    sampling=pd.Timedelta(seconds=30),
+    min_duration=pd.Timedelta(hours=1),
+    pool="all",              # "all" or "selected_only"
+    selected_prns=None,      # required if pool="selected_only"
+):
+    """
+    Remove short pivot segments by:
+    (1) merging into previous if feasible
+    (2) merging into next if feasible
+    (3) otherwise fallback to another PRN that fully covers the short interval
+    """
+    if pool == "selected_only" and not selected_prns:
+        raise ValueError("selected_prns must be provided when pool='selected_only'.")
+
+    if pool == "selected_only":
+        pool_prns = list(selected_prns)
+    else:
+        pool_prns = sorted(df.index.get_level_values("prn").unique())
+
+    ap = active_pivot.copy()
+
+    for i in range(len(segments)):
+        dur = segments.loc[i, "duration"]
+        if dur >= min_duration:
+            continue
+
+        t0 = segments.loc[i, "start"]
+        t1 = segments.loc[i, "end"]
+
+        merged = False
+
+        # Try merge into previous
+        if i > 0:
+            prev_prn = segments.loc[i - 1, "prn"]
+            prev_start = segments.loc[i - 1, "start"]
+            if prn_covers_interval(df, prev_prn, t0, t1, snr_col, snr_min, sampling):
+                ap.loc[t0:t1] = prev_prn
+                merged = True
+
+        # Try merge into next
+        if (not merged) and (i < len(segments) - 1):
+            next_prn = segments.loc[i + 1, "prn"]
+            if prn_covers_interval(df, next_prn, t0, t1, snr_col, snr_min, sampling):
+                ap.loc[t0:t1] = next_prn
+                merged = True
+
+        # Fallback: any PRN that fully covers the short interval
+        if not merged:
+            fb = best_prn_for_interval(df, t0, t1, snr_col, snr_min, sampling, pool_prns)
+            if fb is not None:
+                ap.loc[t0:t1] = fb
+
+    return ap
+
+
+# %%
+
+segments = pivot_schedule_to_segments(active_pivot, sampling=sampling, drop_none=True)
+
+# Fix short segments using black satellites as fallback
+active_pivot_fixed = fix_short_pivot_segments_with_fallback(
+    df=df_base_sat,
+    segments=segments,
+    active_pivot=active_pivot,
+    snr_col=snr_col,
+    snr_min=snr_min,
+    sampling=sampling,
+    min_duration=pd.Timedelta(hours=1),
+    pool="all",  # <= key: allow any usable PRN (black)
+)
+
+segments_fixed = pivot_schedule_to_segments(active_pivot_fixed, sampling=sampling, drop_none=True)
+
+# Proof checks
+assert int(active_pivot_fixed.isna().sum()) == 0
+
+fig, ax, info = gnss_edu.plot_tracking_timeline_with_pivots(
+    df=df_base_sat,
+    selected_prns=selected_prns,
+    sampling=sampling,
+    snr_col=snr_col,
+    snr_min=snr_min,
+    active_pivot=active_pivot_fixed,
+    title=f"Pivot strategy (snr_min={snr_min:g}): usable (black), candidates (green), active (dark green) + short-seg fallback",
+)
+
+
+
+
+
+
+
+
+
+
