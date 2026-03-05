@@ -30,189 +30,6 @@ from .klobuchar import *
 import re
 
 
-def build_active_pivot_schedule(
-    df: pd.DataFrame,
-    selected_prns: list[str],
-    snr_col: str = "S1",
-    snr_min: float = 40.0,
-    sampling: pd.Timedelta = pd.Timedelta(seconds=30),
-    switch_margin_db: float = 2.0,
-):
-    """
-    Build a *stable* active pivot schedule from a pre-selected PRN set.
-
-    Inputs
-    ------
-    df : DataFrame indexed by (epoch, prn)
-    selected_prns : list of PRNs returned by greedy_pivot_set_cover (set cover)
-    snr_col : SNR column name (e.g., "S1")
-    snr_min : minimum SNR to consider a PRN usable at an epoch
-    sampling : expected sampling interval
-    switch_margin_db : hysteresis margin (dB-Hz or RINEX SNR units):
-        switch only if the best candidate is better than the current pivot
-        by at least this margin. This prevents rapid oscillations.
-
-    Returns
-    -------
-    active_pivot : pd.Series indexed by epoch, values are PRN or None
-    """
-
-    if not isinstance(df.index, pd.MultiIndex):
-        raise ValueError("df must have MultiIndex ('epoch','prn').")
-    if snr_col not in df.columns:
-        raise ValueError(f"snr_col='{snr_col}' not found.")
-    if "epoch" not in df.index.names or "prn" not in df.index.names:
-        raise ValueError("df index must have ('epoch','prn').")
-
-    # Define the expected epoch grid (same universe as set cover)
-    epochs_obs = df.index.get_level_values("epoch")
-    t0, t1 = epochs_obs.min(), epochs_obs.max()
-    expected_epochs = pd.date_range(start=t0, end=t1, freq=sampling)
-
-    active = None
-    out = {}
-
-    for epoch in expected_epochs:
-        # Extract epoch slice if present; otherwise: no data at this epoch
-        try:
-            row = df.xs(epoch, level="epoch")
-        except KeyError:
-            out[epoch] = None
-            active = None
-            continue
-
-        # Keep only selected pivots + SNR not NaN + above threshold
-        cand = row.loc[row.index.isin(selected_prns)]
-        cand = cand.dropna(subset=[snr_col])
-        cand = cand[cand[snr_col] >= snr_min]
-
-        if cand.empty:
-            out[epoch] = None
-            active = None
-            continue
-
-        # Best candidate at this epoch
-        best_prn = cand[snr_col].idxmax()
-        best_snr = float(cand.loc[best_prn, snr_col])
-
-        if active is None:
-            active = best_prn
-        else:
-            # If current pivot is not usable anymore, force switch
-            if active not in cand.index:
-                active = best_prn
-            else:
-                current_snr = float(cand.loc[active, snr_col])
-                # Hysteresis: switch only if clearly better
-                if best_snr > current_snr + switch_margin_db:
-                    active = best_prn
-
-        out[epoch] = active
-
-    return pd.Series(out, name="active_pivot")
-
-def pivot_schedule_to_segments(
-    active_pivot: pd.Series,
-    sampling: pd.Timedelta = pd.Timedelta(seconds=30),
-    drop_none: bool = True,
-) -> pd.DataFrame:
-    """
-    Convert an 'active pivot' time series (one PRN per epoch) into contiguous segments.
-
-    Parameters
-    ----------
-    active_pivot : pd.Series
-        Indexed by epoch (DatetimeIndex). Values are PRN strings or None/NaN.
-        Expected to be on a regular grid (or close to it).
-    sampling : pd.Timedelta
-        Nominal sampling used to define contiguity.
-    drop_none : bool
-        If True, remove segments where prn is None/NaN.
-
-    Returns
-    -------
-    seg : pd.DataFrame
-        Columns:
-          - prn
-          - start
-          - end
-          - duration
-          - n_epochs
-        With one row per contiguous constant-PRN segment.
-    """
-    if not isinstance(active_pivot.index, pd.DatetimeIndex):
-        raise ValueError("active_pivot must be indexed by a DatetimeIndex.")
-
-    s = active_pivot.sort_index().copy()
-
-    # Normalize missing markers
-    s = s.where(pd.notna(s), other=None)
-
-    # A new segment starts when:
-    # - PRN changes, OR
-    # - time gap > sampling (missing epochs / irregular grid)
-    dt = s.index.to_series().diff()
-    prn_change = s.ne(s.shift(1))
-    gap_break = dt.gt(sampling)  # strictly greater than sampling => break
-
-    seg_id = (prn_change | gap_break).cumsum()
-
-    rows = []
-    for _, g in s.groupby(seg_id):
-        prn = g.iloc[0]
-        start = g.index[0]
-        end = g.index[-1]
-        n_epochs = int(len(g))
-
-        # Duration: inclusive duration consistent with sampling grid
-        # If you prefer "wall-clock" duration: use end - start
-        duration = (end - start) + sampling
-
-        rows.append(
-            {
-                "prn": prn,
-                "start": start,
-                "end": end,
-                "duration": duration,
-                "n_epochs": n_epochs,
-            }
-        )
-
-    seg = pd.DataFrame(rows)
-
-    if drop_none:
-        seg = seg[seg["prn"].notna()].reset_index(drop=True)
-
-    return seg
-
-
-def check_full_coverage_from_active_pivot(
-    active_pivot: pd.Series,
-) -> dict:
-    """
-    Quick sanity checks: do we have any None? what is the longest None run?
-    """
-    s = active_pivot.sort_index()
-    s = s.where(pd.notna(s), other=None)
-
-    none_mask = s.isna() | (s.astype(object) == None)  # robust
-    n_none = int(none_mask.sum())
-
-    # Longest consecutive None run in epochs
-    max_none_run = 0
-    if n_none > 0:
-        # Run-length encoding on the mask
-        run_id = (none_mask != none_mask.shift(1)).cumsum()
-        run_sizes = none_mask.groupby(run_id).sum()
-        max_none_run = int(run_sizes.max())
-
-    return {
-        "n_epochs": int(len(s)),
-        "n_none": n_none,
-        "max_none_run_epochs": max_none_run,
-    }
-
-
 
 def detect_intra_arc_holes(df, sampling=pd.Timedelta(seconds=30),
                           gap=pd.Timedelta(minutes=30)):
@@ -287,165 +104,6 @@ def detect_intra_arc_holes(df, sampling=pd.Timedelta(seconds=30),
 
     return holes
 
-def greedy_pivot_set_cover(
-    df: pd.DataFrame,
-    snr_col: str,
-    snr_min: float,
-    sampling: pd.Timedelta = pd.Timedelta(seconds=30),
-    require_full_coverage: bool = True,
-    return_diagnostics: bool = True,
-):
-    """
-    Greedy set-cover selection of PRNs to cover ALL expected epochs with SNR >= snr_min.
-
-    Key guarantee
-    -------------
-    If require_full_coverage=True, the function raises a RuntimeError when full
-    coverage is impossible with the chosen snr_min (i.e., there exist epochs for
-    which no PRN meets the SNR threshold).
-
-    Returns
-    -------
-    selected_prns : list[str]
-    diagnostics : dict (if return_diagnostics=True)
-        - coverage_ratio
-        - uncovered_epochs (sorted DatetimeIndex)
-        - n_uncovered
-        - max_uncovered_run (Timedelta)
-        - first_uncovered, last_uncovered
-        - snr_min
-        - sampling
-        - t0, t1
-    """
-    # ----------------------- checks -----------------------
-    if not isinstance(df.index, pd.MultiIndex):
-        raise ValueError("df must have MultiIndex ('epoch','prn').")
-    if snr_col not in df.columns:
-        raise ValueError(f"snr_col='{snr_col}' not found.")
-    if "epoch" not in df.index.names or "prn" not in df.index.names:
-        raise ValueError("df index must have ('epoch','prn').")
-
-    # --------------------- universe -----------------------
-    epochs_obs = df.index.get_level_values("epoch")
-    t0, t1 = epochs_obs.min(), epochs_obs.max()
-    expected_epochs = pd.date_range(start=t0, end=t1, freq=sampling)
-    universe = set(expected_epochs)
-
-    # ------------------ build cover sets ------------------
-    prns = sorted(df.index.get_level_values("prn").unique())
-    cover: dict[str, set[pd.Timestamp]] = {}
-    mean_snr: dict[str, float] = {}
-
-    for prn in prns:
-        d = df.xs(prn, level="prn").sort_index()
-        d = d.dropna(subset=[snr_col])
-        good = d[d[snr_col] >= snr_min]
-        good_idx = good.index.intersection(expected_epochs)
-
-        s = set(good_idx)
-        if s:
-            cover[prn] = s
-            mean_snr[prn] = float(good.loc[good_idx, snr_col].mean())
-
-    # ------------------ feasibility check -----------------
-    # If some expected epochs are not covered by ANY PRN, full coverage is impossible.
-    union_all = set().union(*cover.values()) if cover else set()
-    impossible = sorted(universe - union_all)
-    if require_full_coverage and impossible:
-        raise RuntimeError(
-            "Full coverage is IMPOSSIBLE with the current SNR threshold.\n"
-            f"- snr_col={snr_col}, snr_min={snr_min}\n"
-            f"- sampling={sampling}\n"
-            f"- missing epochs (first 10): {impossible[:10]}\n"
-            "Lower snr_min (or change quality rule) if you need guaranteed coverage."
-        )
-
-    # ---------------------- greedy ------------------------
-    uncovered = set(universe)
-    selected: list[str] = []
-
-    while uncovered:
-        if not cover:
-            break
-
-        best_prn = None
-        best_gain = -1
-        best_snr = -np.inf
-
-        for prn, s in cover.items():
-            gain = len(s & uncovered)
-            if gain > best_gain or (gain == best_gain and mean_snr.get(prn, -np.inf) > best_snr):
-                best_prn = prn
-                best_gain = gain
-                best_snr = mean_snr.get(prn, -np.inf)
-
-        if best_prn is None or best_gain <= 0:
-            break
-
-        selected.append(best_prn)
-        uncovered -= cover[best_prn]
-        del cover[best_prn]
-
-    uncovered_sorted = pd.DatetimeIndex(sorted(uncovered))
-
-    coverage_ratio = 1.0 - (len(uncovered_sorted) / len(expected_epochs))
-
-    # If you require full coverage, enforce it here too (should only fail if cover emptied unexpectedly)
-    if require_full_coverage and len(uncovered_sorted) > 0:
-        # compute longest uncovered run (pedagogical diagnostic)
-        if len(uncovered_sorted) >= 2:
-            gaps = uncovered_sorted.to_series().diff().dropna()
-            # consecutive uncovered epochs are spaced by sampling; "run breaks" when gap > sampling
-            run_breaks = gaps[gaps > sampling].index
-            # estimate max run length
-            # Split into runs by breakpoints
-            run_ids = (gaps > sampling).cumsum()
-            run_sizes = run_ids.value_counts()
-            max_run_n = int(run_sizes.max()) + 1  # +1 because diffs count edges
-            max_run = max_run_n * sampling
-        elif len(uncovered_sorted) == 1:
-            max_run = sampling
-        else:
-            max_run = pd.Timedelta(0)
-
-        raise RuntimeError(
-            "Greedy selection did not achieve full coverage (unexpected if feasibility check passed).\n"
-            f"- coverage_ratio={coverage_ratio:.6f}\n"
-            f"- uncovered epochs={len(uncovered_sorted)} (first 10: {list(uncovered_sorted[:10])})\n"
-            f"- max uncovered run ~ {max_run}\n"
-        )
-
-    if not return_diagnostics:
-        return selected, coverage_ratio
-
-    # --------- diagnostics: useful to *prove* coverage ---------
-    # longest uncovered run (even if fully covered -> 0)
-    if len(uncovered_sorted) >= 2:
-        gaps = uncovered_sorted.to_series().diff().dropna()
-        run_ids = (gaps > sampling).cumsum()
-        run_sizes = run_ids.value_counts()
-        max_run_n = int(run_sizes.max()) + 1
-        max_uncovered_run = max_run_n * sampling
-    elif len(uncovered_sorted) == 1:
-        max_uncovered_run = sampling
-    else:
-        max_uncovered_run = pd.Timedelta(0)
-
-    diagnostics = {
-        "coverage_ratio": coverage_ratio,
-        "uncovered_epochs": uncovered_sorted,
-        "n_uncovered": int(len(uncovered_sorted)),
-        "max_uncovered_run": max_uncovered_run,
-        "first_uncovered": uncovered_sorted[0] if len(uncovered_sorted) else None,
-        "last_uncovered": uncovered_sorted[-1] if len(uncovered_sorted) else None,
-        "snr_min": float(snr_min),
-        "sampling": sampling,
-        "t0": t0,
-        "t1": t1,
-        "n_selected": len(selected),
-    }
-
-    return selected, diagnostics
 
 
 
@@ -1445,6 +1103,427 @@ def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
 
     plt.show()
     return fig
+
+
+# =============================================================================
+# Helpers (epoch grid + per-PRN SNR extraction)
+# =============================================================================
+
+def expected_epochs(t0: pd.Timestamp, t1: pd.Timestamp, sampling: pd.Timedelta) -> pd.DatetimeIndex:
+    """Return the expected epoch grid (inclusive endpoints) for a given sampling."""
+    return pd.date_range(start=t0, end=t1, freq=sampling)
+
+
+def prn_snr_on_grid(
+    df: pd.DataFrame,
+    prn: str,
+    snr_col: str,
+    epochs: pd.DatetimeIndex,
+) -> pd.Series:
+    """
+    Return SNR series for one PRN reindexed on `epochs`.
+    Missing epochs -> NaN.
+    """
+    try:
+        s = df.xs(prn, level="prn")[snr_col]
+    except KeyError:
+        return pd.Series(index=epochs, dtype="float64")
+    return s.reindex(epochs)
+
+
+# =============================================================================
+# Coverage predicates (the only one you really need)
+# =============================================================================
+
+def prn_covers_interval(
+    df: pd.DataFrame,
+    prn: str,
+    t0: pd.Timestamp,
+    t1: pd.Timestamp,
+    snr_col: str,
+    snr_min: float,
+    sampling: pd.Timedelta,
+) -> bool:
+    """
+    True if PRN has non-NaN SNR >= snr_min at ALL expected epochs in [t0, t1].
+    """
+    epochs = expected_epochs(t0, t1, sampling)
+    s = prn_snr_on_grid(df, prn, snr_col, epochs)
+    ok = s.notna() & (s >= snr_min)
+    return bool(ok.all())
+
+
+def best_prn_for_interval(
+    df: pd.DataFrame,
+    t0: pd.Timestamp,
+    t1: pd.Timestamp,
+    snr_col: str,
+    snr_min: float,
+    sampling: pd.Timedelta,
+    pool_prns: list[str],
+) -> str | None:
+    """
+    Pick a PRN from pool_prns that fully covers [t0, t1] with SNR>=snr_min.
+    Tie-breaker: highest mean SNR over the interval.
+
+    Returns None if no PRN can fully cover the interval.
+    """
+    epochs = expected_epochs(t0, t1, sampling)
+    best_prn = None
+    best_score = -np.inf
+
+    for prn in pool_prns:
+        s = prn_snr_on_grid(df, prn, snr_col, epochs)
+        ok = s.notna() & (s >= snr_min)
+        if not bool(ok.all()):
+            continue
+        score = float(s.mean())
+        if score > best_score:
+            best_prn = prn
+            best_score = score
+
+    return best_prn
+
+
+# =============================================================================
+# 1) Greedy set cover (candidate pivots)
+# =============================================================================
+
+def greedy_pivot_set_cover(
+    df: pd.DataFrame,
+    snr_col: str,
+    snr_min: float,
+    sampling: pd.Timedelta = pd.Timedelta(seconds=30),
+    require_full_coverage: bool = True,
+    return_diagnostics: bool = True,
+):
+    """
+    Greedy set-cover selection of PRNs to cover ALL expected epochs with SNR >= snr_min.
+
+    Guarantee:
+    - If require_full_coverage=True: raise RuntimeError if full coverage is impossible.
+
+    Returns
+    -------
+    selected_prns : list[str]
+    diagnostics : dict (optional)
+    """
+    if not isinstance(df.index, pd.MultiIndex):
+        raise ValueError("df must have MultiIndex ('epoch','prn').")
+    if snr_col not in df.columns:
+        raise ValueError(f"snr_col='{snr_col}' not found.")
+    if "epoch" not in df.index.names or "prn" not in df.index.names:
+        raise ValueError("df index must have ('epoch','prn').")
+
+    epochs_obs = df.index.get_level_values("epoch")
+    t0, t1 = epochs_obs.min(), epochs_obs.max()
+    grid = expected_epochs(t0, t1, sampling)
+    universe = set(grid)
+
+    prns = sorted(df.index.get_level_values("prn").unique())
+    cover: dict[str, set[pd.Timestamp]] = {}
+    mean_snr: dict[str, float] = {}
+
+    for prn in prns:
+        d = df.xs(prn, level="prn").sort_index()
+        d = d.dropna(subset=[snr_col])
+        good = d[d[snr_col] >= snr_min]
+        good_idx = good.index.intersection(grid)
+        s = set(good_idx)
+        if s:
+            cover[prn] = s
+            mean_snr[prn] = float(good.loc[good_idx, snr_col].mean())
+
+    union_all = set().union(*cover.values()) if cover else set()
+    impossible = sorted(universe - union_all)
+    if require_full_coverage and impossible:
+        raise RuntimeError(
+            "Full coverage is IMPOSSIBLE with the current SNR threshold.\n"
+            f"- snr_col={snr_col}, snr_min={snr_min}\n"
+            f"- sampling={sampling}\n"
+            f"- missing epochs (first 10): {impossible[:10]}\n"
+            "Lower snr_min (or change quality rule) if you need guaranteed coverage."
+        )
+
+    uncovered = set(universe)
+    selected: list[str] = []
+
+    while uncovered and cover:
+        best_prn = None
+        best_gain = -1
+        best_snr = -np.inf
+
+        for prn, s in cover.items():
+            gain = len(s & uncovered)
+            ms = mean_snr.get(prn, -np.inf)
+            if gain > best_gain or (gain == best_gain and ms > best_snr):
+                best_prn, best_gain, best_snr = prn, gain, ms
+
+        if best_prn is None or best_gain <= 0:
+            break
+
+        selected.append(best_prn)
+        uncovered -= cover[best_prn]
+        del cover[best_prn]
+
+    uncovered_sorted = pd.DatetimeIndex(sorted(uncovered))
+    coverage_ratio = 1.0 - (len(uncovered_sorted) / len(grid))
+
+    if require_full_coverage and len(uncovered_sorted) > 0:
+        raise RuntimeError(
+            "Greedy selection did not achieve full coverage (unexpected if feasibility passed).\n"
+            f"- coverage_ratio={coverage_ratio:.6f}\n"
+            f"- uncovered epochs={len(uncovered_sorted)} (first 10: {list(uncovered_sorted[:10])})\n"
+        )
+
+    if not return_diagnostics:
+        return selected, coverage_ratio
+
+    diagnostics = {
+        "coverage_ratio": coverage_ratio,
+        "uncovered_epochs": uncovered_sorted,
+        "n_uncovered": int(len(uncovered_sorted)),
+        "snr_min": float(snr_min),
+        "sampling": sampling,
+        "t0": t0,
+        "t1": t1,
+        "n_selected": len(selected),
+    }
+    return selected, diagnostics
+
+
+# =============================================================================
+# 2) Stable active pivot schedule (hysteresis)
+# =============================================================================
+
+def build_active_pivot_schedule(
+    df: pd.DataFrame,
+    selected_prns: list[str],
+    snr_col: str = "S1",
+    snr_min: float = 40.0,
+    sampling: pd.Timedelta = pd.Timedelta(seconds=30),
+    switch_margin_db: float = 2.0,
+) -> pd.Series:
+    """
+    Build a stable active pivot schedule from a pre-selected PRN set.
+    Switch only if the best candidate is better than current by switch_margin_db.
+
+    Returns
+    -------
+    active_pivot : pd.Series indexed by expected epochs, values are PRN or None
+    """
+    if not isinstance(df.index, pd.MultiIndex):
+        raise ValueError("df must have MultiIndex ('epoch','prn').")
+    if snr_col not in df.columns:
+        raise ValueError(f"snr_col='{snr_col}' not found.")
+    if "epoch" not in df.index.names or "prn" not in df.index.names:
+        raise ValueError("df index must have ('epoch','prn').")
+
+    epochs_obs = df.index.get_level_values("epoch")
+    t0, t1 = epochs_obs.min(), epochs_obs.max()
+    grid = expected_epochs(t0, t1, sampling)
+
+    active = None
+    out = {}
+
+    for epoch in grid:
+        try:
+            row = df.xs(epoch, level="epoch")
+        except KeyError:
+            out[epoch] = None
+            active = None
+            continue
+
+        cand = row.loc[row.index.isin(selected_prns)]
+        cand = cand.dropna(subset=[snr_col])
+        cand = cand[cand[snr_col] >= snr_min]
+
+        if cand.empty:
+            out[epoch] = None
+            active = None
+            continue
+
+        best_prn = cand[snr_col].idxmax()
+        best_snr = float(cand.loc[best_prn, snr_col])
+
+        if active is None:
+            active = best_prn
+        else:
+            if active not in cand.index:
+                active = best_prn
+            else:
+                current_snr = float(cand.loc[active, snr_col])
+                if best_snr > current_snr + switch_margin_db:
+                    active = best_prn
+
+        out[epoch] = active
+
+    return pd.Series(out, name="active_pivot")
+
+
+# =============================================================================
+# 3) Schedule -> segments + coverage check
+# =============================================================================
+
+def pivot_schedule_to_segments(
+    active_pivot: pd.Series,
+    sampling: pd.Timedelta,
+    drop_none: bool = True,
+) -> pd.DataFrame:
+    """
+    Convert an active pivot schedule to segments:
+    columns = prn, start, end, duration, n_epochs.
+    """
+    s = active_pivot.copy()
+    if drop_none:
+        s = s.dropna()
+
+    if s.empty:
+        return pd.DataFrame(columns=["prn", "start", "end", "duration", "n_epochs"])
+
+    # A new segment starts when PRN changes or when epochs are not consecutive.
+    dt = s.index.to_series().diff()
+    new_seg = (s != s.shift(1)) | (dt != sampling)
+    seg_id = new_seg.cumsum()
+
+    rows = []
+    for _, g in s.groupby(seg_id):
+        prn = str(g.iloc[0])
+        start = g.index[0]
+        end = g.index[-1]
+        n = int(len(g))
+        duration = (n - 1) * sampling  # span covered by consecutive epochs
+        rows.append((prn, start, end, duration, n))
+
+    return pd.DataFrame(rows, columns=["prn", "start", "end", "duration", "n_epochs"])
+
+
+def check_full_coverage_from_active_pivot(active_pivot: pd.Series) -> dict:
+    """
+    Simple proof helper:
+    - counts None epochs
+    - returns first/last None epoch if any
+    """
+    n_none = int(active_pivot.isna().sum())
+    none_epochs = active_pivot.index[active_pivot.isna()]
+    return {
+        "n_epochs": int(len(active_pivot)),
+        "n_none": n_none,
+        "first_none": none_epochs[0] if n_none else None,
+        "last_none": none_epochs[-1] if n_none else None,
+    }
+
+
+# =============================================================================
+# 4) Post-processing: remove too-short segments (merge prev/next, else fallback)
+# =============================================================================
+
+def fix_short_pivot_segments(
+    df: pd.DataFrame,
+    active_pivot: pd.Series,
+    snr_col: str,
+    snr_min: float,
+    sampling: pd.Timedelta,
+    min_duration: pd.Timedelta,
+    pool: str = "selected_only",          # "selected_only" or "all"
+    selected_prns: list[str] | None = None,
+) -> pd.Series:
+    """
+    Remove segments shorter than min_duration.
+    Priority:
+      1) merge into previous pivot if it covers the short interval
+      2) merge into next pivot if it covers the short interval
+      3) fallback: pick best PRN that covers the short interval (optional pool)
+
+    Returns
+    -------
+    active_pivot_fixed : pd.Series
+    """
+    if pool not in ("selected_only", "all"):
+        raise ValueError("pool must be 'selected_only' or 'all'.")
+    if pool == "selected_only" and not selected_prns:
+        raise ValueError("selected_prns must be provided when pool='selected_only'.")
+
+    seg = pivot_schedule_to_segments(active_pivot, sampling=sampling, drop_none=True)
+    if seg.empty:
+        return active_pivot
+
+    pool_prns = list(selected_prns) if pool == "selected_only" else \
+        sorted(df.index.get_level_values("prn").unique())
+
+    ap = active_pivot.copy()
+
+    for i in range(len(seg)):
+        if seg.loc[i, "duration"] >= min_duration:
+            continue
+
+        t0 = seg.loc[i, "start"]
+        t1 = seg.loc[i, "end"]
+
+        merged = False
+
+        # Try previous
+        if i > 0:
+            prev_prn = seg.loc[i - 1, "prn"]
+            if prn_covers_interval(df, prev_prn, t0, t1, snr_col, snr_min, sampling):
+                ap.loc[t0:t1] = prev_prn
+                merged = True
+
+        # Try next
+        if (not merged) and (i < len(seg) - 1):
+            next_prn = seg.loc[i + 1, "prn"]
+            if prn_covers_interval(df, next_prn, t0, t1, snr_col, snr_min, sampling):
+                ap.loc[t0:t1] = next_prn
+                merged = True
+
+        # Fallback: best PRN in pool
+        if not merged:
+            fb = best_prn_for_interval(df, t0, t1, snr_col, snr_min, sampling, pool_prns)
+            if fb is not None:
+                ap.loc[t0:t1] = fb
+
+    return ap
+
+
+# =============================================================================
+# 5) Small elegant stability improvement: minimum dwell time
+# =============================================================================
+
+def enforce_min_dwell(
+    df: pd.DataFrame,
+    active_pivot: pd.Series,
+    snr_col: str,
+    snr_min: float,
+    sampling: pd.Timedelta,
+    min_dwell: pd.Timedelta,
+) -> pd.Series:
+    """
+    Stability post-filter:
+    If a segment is shorter than min_dwell, try to absorb it into the previous pivot
+    if the previous pivot can cover the short interval.
+
+    This reduces last-minute tiny segments (e.g. 25 min) without harming coverage.
+    """
+    seg = pivot_schedule_to_segments(active_pivot, sampling=sampling, drop_none=True)
+    if seg.empty:
+        return active_pivot
+
+    ap = active_pivot.copy()
+
+    for i in range(len(seg)):
+        if seg.loc[i, "duration"] >= min_dwell:
+            continue
+        if i == 0:
+            continue
+
+        t0 = seg.loc[i, "start"]
+        t1 = seg.loc[i, "end"]
+        prev_prn = seg.loc[i - 1, "prn"]
+
+        if prn_covers_interval(df, prev_prn, t0, t1, snr_col, snr_min, sampling):
+            ap.loc[t0:t1] = prev_prn
+
+    return ap
 
 
 
