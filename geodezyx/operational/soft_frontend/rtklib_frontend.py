@@ -99,7 +99,7 @@ def rtklib_run_mono(
     out_dir,
     tmp_dir,
     prod_dir=None,
-    igs_prods="GRG00OPSFIN",
+    igs_prods="GRG0OPSFIN",
     download_prods=True,
     orbclklis_inp=[],
     brdclis_inp=[],

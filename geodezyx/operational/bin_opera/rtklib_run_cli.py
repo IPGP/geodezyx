@@ -82,8 +82,8 @@ Examples:
     parser.add_argument(
         "-ip",
         "--igs_prods",
-        default="GRG0OPSRAP",
-        help="IGS product ID (default: GRG0OPSULT)",
+        default=RTKLIB_RUN_DEFAULTS.get("igs_prods"),
+        help=f"IGS product ID (default: {RTKLIB_RUN_DEFAULTS.get('igs_prods')})",
     )
     parser.add_argument(
         "-exp",
@@ -106,7 +106,7 @@ Examples:
     parser.add_argument(
         "-m",
         "--posmode",
-        default=None,
+        default=RTKLIB_RUN_DEFAULTS.get("posmode"),
         choices=[
             "single",
             "dgps",
@@ -119,21 +119,21 @@ Examples:
             "ppp-static",
             "ppp-fixed",
         ],
-        help="Position mode (default: None, uses config file setting)",
+        help=f"Position mode (default: {RTKLIB_RUN_DEFAULTS.get('posmode')})",
     )
     parser.add_argument(
         "-sol",
         "--solformat",
         default=RTKLIB_RUN_DEFAULTS.get("solformat"),
         choices=["llh", "xyz", "enu", "nmea"],
-        help=f"Solution format (default: {RTKLIB_RUN_DEFAULTS.get('solformat')}, uses config file setting)",
+        help=f"Solution format (default: {RTKLIB_RUN_DEFAULTS.get('solformat')})",
     )
     parser.add_argument(
         "-eph",
         "--sateph",
         default=RTKLIB_RUN_DEFAULTS.get("sateph"),
         choices=["brdc", "precise"],
-        help=f"Satellite ephemeris (default: {RTKLIB_RUN_DEFAULTS.get('sateph')}, uses config file setting)",
+        help=f"Satellite ephemeris (default: {RTKLIB_RUN_DEFAULTS.get('sateph')})",
     )
     parser.add_argument(
         "-f",
