@@ -9,7 +9,7 @@ Created on Tue Feb 11 16:39:34 2025
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
+from matplotlib.colors import ListedColormap, BoundaryNorm
 import seaborn as sns
 import statsmodels.api as sm
 from scipy import stats
@@ -28,6 +28,90 @@ from .klobuchar import *
 
 # Pour chercher des chaînes de caractère dans des fichiers
 import re
+
+
+def build_active_pivot_schedule(
+    df: pd.DataFrame,
+    selected_prns: list[str],
+    snr_col: str = "S1",
+    snr_min: float = 40.0,
+    sampling: pd.Timedelta = pd.Timedelta(seconds=30),
+    switch_margin_db: float = 2.0,
+):
+    """
+    Build a *stable* active pivot schedule from a pre-selected PRN set.
+
+    Inputs
+    ------
+    df : DataFrame indexed by (epoch, prn)
+    selected_prns : list of PRNs returned by greedy_pivot_set_cover (set cover)
+    snr_col : SNR column name (e.g., "S1")
+    snr_min : minimum SNR to consider a PRN usable at an epoch
+    sampling : expected sampling interval
+    switch_margin_db : hysteresis margin (dB-Hz or RINEX SNR units):
+        switch only if the best candidate is better than the current pivot
+        by at least this margin. This prevents rapid oscillations.
+
+    Returns
+    -------
+    active_pivot : pd.Series indexed by epoch, values are PRN or None
+    """
+
+    if not isinstance(df.index, pd.MultiIndex):
+        raise ValueError("df must have MultiIndex ('epoch','prn').")
+    if snr_col not in df.columns:
+        raise ValueError(f"snr_col='{snr_col}' not found.")
+    if "epoch" not in df.index.names or "prn" not in df.index.names:
+        raise ValueError("df index must have ('epoch','prn').")
+
+    # Define the expected epoch grid (same universe as set cover)
+    epochs_obs = df.index.get_level_values("epoch")
+    t0, t1 = epochs_obs.min(), epochs_obs.max()
+    expected_epochs = pd.date_range(start=t0, end=t1, freq=sampling)
+
+    active = None
+    out = {}
+
+    for epoch in expected_epochs:
+        # Extract epoch slice if present; otherwise: no data at this epoch
+        try:
+            row = df.xs(epoch, level="epoch")
+        except KeyError:
+            out[epoch] = None
+            active = None
+            continue
+
+        # Keep only selected pivots + SNR not NaN + above threshold
+        cand = row.loc[row.index.isin(selected_prns)]
+        cand = cand.dropna(subset=[snr_col])
+        cand = cand[cand[snr_col] >= snr_min]
+
+        if cand.empty:
+            out[epoch] = None
+            active = None
+            continue
+
+        # Best candidate at this epoch
+        best_prn = cand[snr_col].idxmax()
+        best_snr = float(cand.loc[best_prn, snr_col])
+
+        if active is None:
+            active = best_prn
+        else:
+            # If current pivot is not usable anymore, force switch
+            if active not in cand.index:
+                active = best_prn
+            else:
+                current_snr = float(cand.loc[active, snr_col])
+                # Hysteresis: switch only if clearly better
+                if best_snr > current_snr + switch_margin_db:
+                    active = best_prn
+
+        out[epoch] = active
+
+    return pd.Series(out, name="active_pivot")
+
+
 
 
 def detect_intra_arc_holes(df, sampling=pd.Timedelta(seconds=30),
@@ -102,6 +186,168 @@ def detect_intra_arc_holes(df, sampling=pd.Timedelta(seconds=30),
     print(f"Intra-arc holes detected: {len(holes)}")
 
     return holes
+
+def greedy_pivot_set_cover(
+    df: pd.DataFrame,
+    snr_col: str,
+    snr_min: float,
+    sampling: pd.Timedelta = pd.Timedelta(seconds=30),
+    require_full_coverage: bool = True,
+    return_diagnostics: bool = True,
+):
+    """
+    Greedy set-cover selection of PRNs to cover ALL expected epochs with SNR >= snr_min.
+
+    Key guarantee
+    -------------
+    If require_full_coverage=True, the function raises a RuntimeError when full
+    coverage is impossible with the chosen snr_min (i.e., there exist epochs for
+    which no PRN meets the SNR threshold).
+
+    Returns
+    -------
+    selected_prns : list[str]
+    diagnostics : dict (if return_diagnostics=True)
+        - coverage_ratio
+        - uncovered_epochs (sorted DatetimeIndex)
+        - n_uncovered
+        - max_uncovered_run (Timedelta)
+        - first_uncovered, last_uncovered
+        - snr_min
+        - sampling
+        - t0, t1
+    """
+    # ----------------------- checks -----------------------
+    if not isinstance(df.index, pd.MultiIndex):
+        raise ValueError("df must have MultiIndex ('epoch','prn').")
+    if snr_col not in df.columns:
+        raise ValueError(f"snr_col='{snr_col}' not found.")
+    if "epoch" not in df.index.names or "prn" not in df.index.names:
+        raise ValueError("df index must have ('epoch','prn').")
+
+    # --------------------- universe -----------------------
+    epochs_obs = df.index.get_level_values("epoch")
+    t0, t1 = epochs_obs.min(), epochs_obs.max()
+    expected_epochs = pd.date_range(start=t0, end=t1, freq=sampling)
+    universe = set(expected_epochs)
+
+    # ------------------ build cover sets ------------------
+    prns = sorted(df.index.get_level_values("prn").unique())
+    cover: dict[str, set[pd.Timestamp]] = {}
+    mean_snr: dict[str, float] = {}
+
+    for prn in prns:
+        d = df.xs(prn, level="prn").sort_index()
+        d = d.dropna(subset=[snr_col])
+        good = d[d[snr_col] >= snr_min]
+        good_idx = good.index.intersection(expected_epochs)
+
+        s = set(good_idx)
+        if s:
+            cover[prn] = s
+            mean_snr[prn] = float(good.loc[good_idx, snr_col].mean())
+
+    # ------------------ feasibility check -----------------
+    # If some expected epochs are not covered by ANY PRN, full coverage is impossible.
+    union_all = set().union(*cover.values()) if cover else set()
+    impossible = sorted(universe - union_all)
+    if require_full_coverage and impossible:
+        raise RuntimeError(
+            "Full coverage is IMPOSSIBLE with the current SNR threshold.\n"
+            f"- snr_col={snr_col}, snr_min={snr_min}\n"
+            f"- sampling={sampling}\n"
+            f"- missing epochs (first 10): {impossible[:10]}\n"
+            "Lower snr_min (or change quality rule) if you need guaranteed coverage."
+        )
+
+    # ---------------------- greedy ------------------------
+    uncovered = set(universe)
+    selected: list[str] = []
+
+    while uncovered:
+        if not cover:
+            break
+
+        best_prn = None
+        best_gain = -1
+        best_snr = -np.inf
+
+        for prn, s in cover.items():
+            gain = len(s & uncovered)
+            if gain > best_gain or (gain == best_gain and mean_snr.get(prn, -np.inf) > best_snr):
+                best_prn = prn
+                best_gain = gain
+                best_snr = mean_snr.get(prn, -np.inf)
+
+        if best_prn is None or best_gain <= 0:
+            break
+
+        selected.append(best_prn)
+        uncovered -= cover[best_prn]
+        del cover[best_prn]
+
+    uncovered_sorted = pd.DatetimeIndex(sorted(uncovered))
+
+    coverage_ratio = 1.0 - (len(uncovered_sorted) / len(expected_epochs))
+
+    # If you require full coverage, enforce it here too (should only fail if cover emptied unexpectedly)
+    if require_full_coverage and len(uncovered_sorted) > 0:
+        # compute longest uncovered run (pedagogical diagnostic)
+        if len(uncovered_sorted) >= 2:
+            gaps = uncovered_sorted.to_series().diff().dropna()
+            # consecutive uncovered epochs are spaced by sampling; "run breaks" when gap > sampling
+            run_breaks = gaps[gaps > sampling].index
+            # estimate max run length
+            # Split into runs by breakpoints
+            run_ids = (gaps > sampling).cumsum()
+            run_sizes = run_ids.value_counts()
+            max_run_n = int(run_sizes.max()) + 1  # +1 because diffs count edges
+            max_run = max_run_n * sampling
+        elif len(uncovered_sorted) == 1:
+            max_run = sampling
+        else:
+            max_run = pd.Timedelta(0)
+
+        raise RuntimeError(
+            "Greedy selection did not achieve full coverage (unexpected if feasibility check passed).\n"
+            f"- coverage_ratio={coverage_ratio:.6f}\n"
+            f"- uncovered epochs={len(uncovered_sorted)} (first 10: {list(uncovered_sorted[:10])})\n"
+            f"- max uncovered run ~ {max_run}\n"
+        )
+
+    if not return_diagnostics:
+        return selected, coverage_ratio
+
+    # --------- diagnostics: useful to *prove* coverage ---------
+    # longest uncovered run (even if fully covered -> 0)
+    if len(uncovered_sorted) >= 2:
+        gaps = uncovered_sorted.to_series().diff().dropna()
+        run_ids = (gaps > sampling).cumsum()
+        run_sizes = run_ids.value_counts()
+        max_run_n = int(run_sizes.max()) + 1
+        max_uncovered_run = max_run_n * sampling
+    elif len(uncovered_sorted) == 1:
+        max_uncovered_run = sampling
+    else:
+        max_uncovered_run = pd.Timedelta(0)
+
+    diagnostics = {
+        "coverage_ratio": coverage_ratio,
+        "uncovered_epochs": uncovered_sorted,
+        "n_uncovered": int(len(uncovered_sorted)),
+        "max_uncovered_run": max_uncovered_run,
+        "first_uncovered": uncovered_sorted[0] if len(uncovered_sorted) else None,
+        "last_uncovered": uncovered_sorted[-1] if len(uncovered_sorted) else None,
+        "snr_min": float(snr_min),
+        "sampling": sampling,
+        "t0": t0,
+        "t1": t1,
+        "n_selected": len(selected),
+    }
+
+    return selected, diagnostics
+
+
 
 
 def grep_file(pattern, filename):
@@ -401,6 +647,136 @@ def plot_tracking_timeline(
     plt.tight_layout()
     plt.show()
     return fig, ax
+
+def plot_tracking_timeline_with_pivots(
+    df: pd.DataFrame,
+    selected_prns: list[str],
+    sampling: pd.Timedelta = pd.Timedelta(seconds=30),
+    snr_col: str = "S1",
+    snr_min: float = 40.0,
+    active_pivot: pd.Series | None = None,
+    title: str | None = None,
+):
+    """
+    Tracking timeline with SNR threshold + pivot satellites highlighted.
+
+    Color meaning
+    -------------
+    0 = white : missing epoch OR SNR < snr_min
+    1 = black : usable (SNR >= snr_min) but NOT selected as pivot
+    2 = green : usable (SNR >= snr_min) AND selected as pivot
+    3 = dark green : active pivot at this epoch (provided by `active_pivot`)
+
+    Parameters
+    ----------
+    df : DataFrame
+        MultiIndex (epoch, prn). Must contain snr_col.
+    selected_prns : list[str]
+        PRNs selected by the greedy algorithm (candidate pivots).
+    sampling : Timedelta
+        Expected sampling interval (e.g. 30 s).
+    snr_col : str
+        SNR column name (e.g., "S1").
+    snr_min : float
+        Minimum SNR threshold to consider a satellite usable.
+    active_pivot : pd.Series | None
+        Series indexed by expected_epochs, values are PRN (string) or None/NaN.
+        If provided, it is used to mark state=3 (dark green).
+    title : str | None
+        Plot title override.
+
+    Returns
+    -------
+    fig, ax, info
+    """
+
+    # ----------------------- checks -----------------------
+    if not isinstance(df.index, pd.MultiIndex):
+        raise ValueError("df must have MultiIndex ('epoch','prn').")
+    if "epoch" not in df.index.names or "prn" not in df.index.names:
+        raise ValueError("df index must have levels ('epoch','prn').")
+    if snr_col not in df.columns:
+        raise ValueError(f"snr_col='{snr_col}' not found in df.")
+
+    # ---------------------- setup ------------------------
+    epochs_obs = df.index.get_level_values("epoch")
+    t0, t1 = epochs_obs.min(), epochs_obs.max()
+    expected_epochs = pd.date_range(start=t0, end=t1, freq=sampling)
+
+    prns = pd.Index(sorted(df.index.get_level_values("prn").unique()))
+    prn_to_row = {p: i for i, p in enumerate(prns)}
+    epoch_to_col = {t: j for j, t in enumerate(expected_epochs)}
+
+    # 0 white, 1 black, 2 green, 3 dark green
+    mat = np.zeros((len(prns), len(expected_epochs)), dtype=np.uint8)
+    selected_set = set(selected_prns)
+
+    # ------------------- fill usable states --------------
+    for prn in prns:
+        d = df.xs(prn, level="prn").sort_index()
+
+        d = d.dropna(subset=[snr_col])
+        if d.empty:
+            continue
+
+        d = d.loc[d.index.intersection(expected_epochs)]
+        if d.empty:
+            continue
+
+        good = d[d[snr_col] >= snr_min]
+        if good.empty:
+            continue
+
+        r = prn_to_row[prn]
+        cols = [epoch_to_col[t] for t in good.index]
+        mat[r, cols] = 2 if prn in selected_set else 1
+
+    # ------------------ overlay active pivot -------------
+    if active_pivot is not None:
+        # Align to expected grid
+        ap = active_pivot.reindex(expected_epochs)
+
+        # Mark dark green only where:
+        # - an active pivot is defined
+        # - the pivot PRN is actually usable at this epoch (mat state >= 1)
+        for t, prn in ap.dropna().items():
+            r = prn_to_row.get(prn)
+            c = epoch_to_col.get(t)
+            if r is None or c is None:
+                continue
+            if mat[r, c] >= 1:
+                mat[r, c] = 3  # dark green
+
+    # ------------------------- plot -----------------------
+    fig, ax = plt.subplots(figsize=(14, max(6, 0.25 * len(prns))))
+
+    cmap = ListedColormap(["white", "black", "#2ca02c", "#006400"])
+    norm = BoundaryNorm([-0.5, 0.5, 1.5, 2.5, 3.5], cmap.N)
+
+    ax.imshow(mat, aspect="auto", interpolation="nearest", cmap=cmap, norm=norm)
+
+    ax.set_yticks(np.arange(len(prns)))
+    ax.set_yticklabels(prns)
+    ax.set_ylabel("PRN")
+
+    nticks = 8
+    xt = np.linspace(0, len(expected_epochs) - 1, nticks).astype(int)
+    ax.set_xticks(xt)
+    ax.set_xticklabels([expected_epochs[j].strftime("%m-%d %H:%M") for j in xt])
+    ax.set_xlabel("Time (epoch)")
+
+    if title is None:
+        title = (
+            f"Tracking timeline (snr_min={snr_min:g}) "
+            f"+ candidate pivots (green) + active pivot (dark green)"
+        )
+    ax.set_title(title)
+
+    plt.tight_layout()
+    plt.show()
+
+    info = {"expected_epochs": expected_epochs, "prns": prns}
+    return fig, ax, info
 
 
 
