@@ -22,9 +22,13 @@ log = logging.getLogger("geodezyx")
 
 # Extract defaults from rtklib_run function at module level for synchronization
 RTKLIB_RUN_DEFAULTS = utils.fct_def_args(rtklib_frontend.rtklib_run)
+# then, no need of default values in the argparse arguments,
+# as they will be overridden by YAML or CLI if provided,
+# otherwise will use the function defaults
 
 
 def parse_args():
+    """Parse CLI arguments and return only explicitly provided values."""
     parser = argparse.ArgumentParser(
         description="Run RTKLIB (rnx2rtkp) processing for multiple rover/base RINEX pairs.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -40,7 +44,6 @@ Examples:
     parser.add_argument(
         "-y",
         "--config_yaml",
-        default=None,
         help="YAML configuration file with all parameters. CLI args override YAML settings.",
     )
 
@@ -151,10 +154,14 @@ Examples:
         help=f"Path to rnx2rtkp executable (default: {RTKLIB_RUN_DEFAULTS.get('exe_path')})",
     )
 
-    # Convert Namespace to dictionary and filter out None values (explicit args only)
     args_namespace = parser.parse_args()
     args_dict = vars(args_namespace)
-    return {k: v for k, v in args_dict.items() if v is not None}
+
+    # Filter: keep only arguments explicitly provided (not None, not False for action="store_true")
+    return {
+        k: v for k, v in args_dict.items()
+        if v is not None and v is not False
+    }
 
 
 def rtklib_run_main():
@@ -163,7 +170,7 @@ def rtklib_run_main():
 
     # Load YAML config if provided
     kwargs_cfg = {}
-    if kwargs_cli.get("config_yaml"):
+    if "config_yaml" in kwargs_cli:
         yaml_path = Path(kwargs_cli["config_yaml"])
         if not yaml_path.exists():
             log.error(f"Error: YAML config file not found: {kwargs_cli['config_yaml']}")
@@ -171,31 +178,10 @@ def rtklib_run_main():
         with open(yaml_path, "r") as f:
             kwargs_cfg = yaml.safe_load(f) or {}
 
-    # Start with function defaults
+    # Merge: function defaults → YAML → CLI (each layer overrides the previous)
     kwargs_out = dict(RTKLIB_RUN_DEFAULTS)
-
-    # Override with YAML config
-    if kwargs_cfg:
-        kwargs_out.update(kwargs_cfg)
-
-    log.info(f"RTKLIB RUN from CFG:")
-    for key, value in sorted(kwargs_cfg.items()):
-        log.info(f"  {key}: {value}")
-
-    log.info(f"RTKLIB RUN UPDATED:")
-    for key, value in sorted(kwargs_out.items()):
-        log.info(f"  {key}: {value}")
-
-    log.info(f"RTKLIB RUN CLI:")
-    for key, value in sorted(kwargs_cli.items()):
-        log.info(f"  {key}: {value}")
-
-    # Override with CLI args (only if explicitly provided - not None)
-    for arg_name, arg_value in kwargs_cli.items():
-        if arg_name == "config_yaml":  # Skip the YAML config file argument itself
-            continue
-        if arg_value is not None:
-            kwargs_out[arg_name] = arg_value
+    kwargs_out.update(kwargs_cfg)
+    kwargs_out.update({k: v for k, v in kwargs_cli.items() if k != "config_yaml"})
 
     # Parse dates if provided
     if kwargs_out.get("date_srt") and kwargs_out.get("date_end"):
@@ -222,7 +208,6 @@ def rtklib_run_main():
 
         traceback.print_exc()
         return 1
-
 
 if __name__ == "__main__":
     sys.exit(rtklib_run_main())
