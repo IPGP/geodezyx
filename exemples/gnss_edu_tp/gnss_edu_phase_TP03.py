@@ -1389,7 +1389,7 @@ fig, ax, info = gnss_edu.plot_tracking_timeline_with_pivots(
 #   green       = selected pivot candidate
 #   dark green  = pivot used at this epoch
 
-
+# %%
 
 
 
