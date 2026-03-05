@@ -138,7 +138,7 @@ def get_prod_date(date_inp, prod_ac_name="", period_stepback=0):
     period_unit = rnd_def[1]
     # ULT and NRT are by design 2 days long (1 day is calculated, the other is extrapolated)
     # so we need to substract an extra day to the date to be able to get the right product
-    extra_delta = rnd_def[2]
+    extra_delta = dt.timedelta(days=rnd_def[2])
 
     rnd_use = str(period_val * (1 + period_stepback)) + period_unit
     date_out_srt = conv.round_dt(date_inp, rnd_use, mode="floor") - extra_delta
