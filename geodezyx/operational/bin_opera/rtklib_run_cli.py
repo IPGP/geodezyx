@@ -17,6 +17,7 @@ from geodezyx.operational.soft_frontend import rtklib_frontend
 from geodezyx import utils
 
 import logging
+
 log = logging.getLogger("geodezyx")
 
 # Extract defaults from rtklib_run function at module level for synchronization
@@ -187,6 +188,10 @@ def rtklib_run_main():
     if kwargs_cfg:
         kwargs_out.update(kwargs_cfg)
 
+    log.info(f"RTKLIB RUN from CFG:")
+    for key, value in sorted(kwargs_cfg.items()):
+        log.info(f"  {key}: {value}")
+
     # Override with CLI args (only if explicitly provided - not None)
     for arg_name, arg_value in kwargs_cli.items():
         if arg_name == "config_yaml":  # Skip the YAML config file argument itself
@@ -204,7 +209,7 @@ def rtklib_run_main():
             print(f"Error parsing dates: {e}", file=sys.stderr)
             sys.exit(1)
 
-    log.info(f"RTKLIB RUN CLI parameters:")
+    log.info(f"RTKLIB RUN parameters:")
     for key, value in sorted(kwargs_out.items()):
         log.info(f"  {key}: {value}")
 
