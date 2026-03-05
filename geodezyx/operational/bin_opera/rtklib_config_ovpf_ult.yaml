@@ -35,7 +35,7 @@ xyz_dic:
   B59300REU: [3364606.0383,  4907503.0340, -2293500.0091]
 
 # RTKLIB configuration overrides (optional)
-posmode: 0  # Position mode: 0:single,1:dgps,2:kinematic,3:static,4:static-start,5:movingbase,6:fixed,7:ppp-kine,8:ppp-static,9:ppp-fixed
+posmode: static-start  # Position mode: 0:single,1:dgps,2:kinematic,3:static,4:static-start,5:movingbase,6:fixed,7:ppp-kine,8:ppp-static,9:ppp-fixed
 solformat: xyz   # Solution format: llh, xyz, enu, nmea
 sateph: precise  # Satellite ephemeris: brdc, precise, brdc+sbas, brdc+ssrapc, brdc+ssrcom
 
