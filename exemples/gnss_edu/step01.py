@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Feb  1 10:12:46 2024
-Filière ING3 - PPMD - Traitement de la mesure de phase
+Engineering Program ING3 - PPMD - Phase Measurement Processing
 @author: Samuel Nahmani (1,2)
 https://www.ipgp.fr/annuaire/nahmani/)
 contact : nahmani@ipgp.fr ou samuel.nahmani@ign.fr
@@ -10,7 +10,7 @@ contact : nahmani@ipgp.fr ou samuel.nahmani@ign.fr
 (2) Univ Gustave Eiffel, ENSG, IGN, F-77455 Marne-la-Vallée, France. 
 
 Version: 1.0
-Dépendances: pandas, numpy, geodezyx, datetime
+Dependencies: pandas, numpy, geodezyx, datetime
 
 """
 #%%
@@ -35,29 +35,29 @@ import datetime as dt
 import pandas as pd
 import numpy as np
 
-# pour visualiser les données
+# To visualize the data
 import matplotlib.pyplot as plt
 
 from pathlib import Path
 import os
 
 #%%
-# création du dossier gnss_edu_data qui va contenir les données et les résultats du TP
+# Create the gnss_edu_data folder which will contain the data and TP results
 my_directory = os.environ["HOME"] + "/gnss_edu_data/"
 
-# Chemin avec expansion du ~ vers le home
+# Path with expansion of ~ to home
 folder = Path(my_directory).expanduser()
 
-# Création du dossier s'il n'existe pas
+# Create the folder if it does not exist
 folder.mkdir(parents=True, exist_ok=True)
 
 
 #%%
-# Téléchargement automatique des données RINEX des stations de SMNE et MLVL distance d'une
-# dizaine de kilomètres dans la région de Paris, France sur le serveur IGN (France)
-# données pour 1 jour (2019-176) à 30s
+# Automatic download of RINEX data from SMNE and MLVL stations approximately 10 km apart
+# in the Paris region, France from the IGN (France) server
+# data for 1 day (2019-176) at 30s
 
-# Création d'un datetime pour gérer le jour de traitement et ne pas à avoir à gérer les doy, les jjul etc !
+# Create a datetime to manage the processing day without having to manage doy, jjul, etc!
 my_date_to_process = dt.datetime(2019,6,25)
 
 dwl_output = operational.download_gnss_rinex(statdico={"rgp" : ["SMNE","MLVL"]},
@@ -72,25 +72,25 @@ fichier_base     =   dwl_output[0][0]
 fichier_mobile   =   dwl_output[1][0]
 
 
-#%% Préambule
-# chargement des pandas DataFrame et utilisation
-# Lecture des observations RINEX en deux formats de DataFrame différents
+#%% Preamble
+# Loading pandas DataFrames and their usage
+# Reading RINEX observations in two different DataFrame formats
 
 df_flat = files_rw.read_rinex_obs(fichier_base)
 
 df_index = files_rw.read_rinex_obs(fichier_base, set_index=['epoch', 'prn'])
 
-# Quelles différences observez-vous entre les deux dataframes df_flat et df_index ?
+# What differences do you observe between the two dataframes df_flat and df_index?
 
-#df_index['ind_ligne'] = range(len(df_index)) # à décommenter quand c'est compris
-# Que s'est il passé sur le dataframe df_index ? Indication, ouvrez le et examiner les colonnes...
+#df_index['ind_ligne'] = range(len(df_index)) # uncomment when understood
+# What happened to the df_index dataframe? Hint: open it and examine the columns...
 
 #%%
-# Selection "FLAT" - Utilisation d'un DataFrame sans index personnalisé
-# Avantage : Accès direct aux numéros de lignes pour faciliter la construction 
-# de la matrice modèle
+# "FLAT" Selection - Using a DataFrame without custom index
+# Advantage: Direct access to line numbers to facilitate the construction
+# of the model matrix
 
-# Filtrage des observations pour le satellite 'G10' à un moment précis
+# Filter observations for satellite 'G05' at a specific time
 my_prn_for_extraction = 'G05'
 my_date_for_extraction =  my_date_to_process + dt.timedelta(hours=2, minutes=40, seconds=0)
 my_obs_to_extract = 'L1'
@@ -103,7 +103,7 @@ extract1a = df_flat.loc[bool_prn & bool_epoch, my_obs_to_extract]
 print(extract1a)
 
 
-# Extraction des observations pour 'G10' sur une période spécifique
+# Extract observations for 'G05' over a specific period
 my_prn_for_extraction = 'G05'
 my_date_for_extraction_start =  my_date_to_process + dt.timedelta(hours=2, minutes=40, seconds=0)
 my_date_for_extraction_end =  my_date_to_process + dt.timedelta(hours=2, minutes=45, seconds=30)
@@ -115,30 +115,30 @@ extract1b = df_flat.loc[bool_prn & bool_epoch, my_obs_to_extract]
 print(extract1b)
 
 
-# Extraction des observations pour 'G10' sur une période définie par une date de début et un delta de temps
+# Extract observations for 'G05' over a period defined by a start date and a time delta
 my_prn_for_extraction = 'G05'
 my_date_for_extraction =  my_date_to_process + dt.timedelta(hours=2, minutes=40, seconds=0)
 my_obs_to_extract = 'L1'
 
 bool_prn = df_flat['prn'] ==  my_prn_for_extraction
 start = pd.Timestamp(my_date_for_extraction)
-delta_T = pd.Timedelta(days=0, hours=1, minutes=15) # on peut gérér le delta T par pandas
+delta_T = pd.Timedelta(days=0, hours=1, minutes=15) # We can manage the delta T with pandas
 end = start + delta_T
 bool_epoch = (df_flat['epoch'] >= start) & (df_flat['epoch'] <= end)
 extract1c = df_flat.loc[bool_prn & bool_epoch, my_obs_to_extract]
 print(extract1c)
 
-# Remarquez que l'utilisation des booléens nous permet d'accéder directement aux numéros
-# des lignes concernées. Si on veut les numéros de ligne, il suffit de faire : 
-serie_bool = bool_prn & bool_epoch ; 
+# Note that using booleans allows us to directly access the line numbers of interest.
+# If we want the line numbers, we just need to do:
+serie_bool = bool_prn & bool_epoch ;
 serie_chiffre = serie_bool.astype(int) ; 
 
 
 
 #%%
-#### selection (multi)-index
-# Je fais des filtrages avec .loc 
-# Extraction pour le satellite 'G10' à un moment précis avec df_index
+#### (Multi)-index selection
+# I do filtering with .loc
+# Extract for satellite 'G10' at a specific moment with df_index
 
 my_prn_for_extraction = 'G10'
 my_date_for_extraction =  my_date_to_process + dt.timedelta(hours=3, minutes=27, seconds=30)
@@ -147,7 +147,7 @@ my_obs_to_extract = 'L1'
 extract2a = df_index.loc[(pd.Timestamp(my_date_for_extraction), my_prn_for_extraction), my_obs_to_extract]
 print(extract2a)
 
-# Extraction pour 'G10' sur une période spécifique avec df_index
+# Extract for 'G10' over a specific period with df_index
 my_prn_for_extraction = 'G10'
 my_date_for_extraction_start =  my_date_to_process + dt.timedelta(hours=3, minutes=27, seconds=0)
 my_date_for_extraction_end =  my_date_to_process + dt.timedelta(hours=3, minutes=32, seconds=30)
@@ -158,7 +158,7 @@ end_period = pd.Timestamp(my_date_for_extraction_end )
 extract2b = df_index.loc[(slice(start_period, end_period), my_prn_for_extraction), my_obs_to_extract]
 print(extract2b)
 
-# Extraction pour 'G10' sur une période définie par une date de début et un delta de temps avec df_index
+# Extract for 'G10' over a period defined by a start date and a time delta with df_index
 my_prn_for_extraction = 'G10'
 my_date_for_extraction =  my_date_to_process + dt.timedelta(hours=3, minutes=27, seconds=30)
 my_obs_to_extract = 'L1'
@@ -170,11 +170,11 @@ extract2c = df_index.loc[(slice(start, end), my_prn_for_extraction), my_obs_to_e
 print(extract2c)
 
 #%%
-# bloc à commenter une fois que c'est compris.
-# Dans ce cas, si je veux récuperer le numéro des lignes concernées par une condition
-# je peux utiliser la commande numpy where
-# exemple :   
-    
+# Section to comment out once this is understood.
+# In this case, if I want to retrieve the line numbers affected by a condition
+# I can use the numpy where command
+# example:
+
 my_prn_for_extraction = 'G10'
 my_date_for_extraction_start =  my_date_to_process + dt.timedelta(hours=3, minutes=27, seconds=0)
 my_date_for_extraction_end =  my_date_to_process + dt.timedelta(hours=3, minutes=32, seconds=30)
@@ -185,11 +185,11 @@ condition3 = df_index.index.get_level_values('prn') == my_prn_for_extraction
 
 np.where(condition1 & condition2 & condition3)
 
-# une méthode plus rapide est directement d'ajouter une colonne de numéros de ligne au DataFrame original
-# Ajouter une colonne de numéros de ligne au DataFrame original
+# A faster method is to directly add a column of line numbers to the original DataFrame
+# Add a column of line numbers to the original DataFrame
 df_index['ind_ligne'] = range(len(df_index))
 
-# on a accès aux données et à leurs indices ...
+# We have access to data and their indices ...
 my_prn_for_extraction = 'G10'
 my_date_for_extraction_start =  my_date_to_process + dt.timedelta(hours=3, minutes=27, seconds=0)
 my_date_for_extraction_end =  my_date_to_process + dt.timedelta(hours=3, minutes=42, seconds=30)
@@ -199,31 +199,31 @@ end   = pd.Timestamp(my_date_for_extraction_end)
 extract2c = df_index.loc[(slice(start, end), my_prn_for_extraction), ('L1','ind_ligne')]
 
 #%%
-# A partir d'ici, vous êtes armés pour charger des fichiers RINEX d'observation
-# et accéder facilement aux données.
-# Obtenir une liste des PRNs uniques
+# From here on, you are equipped to load RINEX observation files
+# and easily access the data.
+# Get a list of unique PRNs
 
 my_obs_to_extract = 'L1'
 
 prns = df_index.index.get_level_values('prn').unique()
 
-# Créer une figure et un axe pour le plot
+# Create a figure and an axis for the plot
 fig, ax = plt.subplots(figsize=(10, 6))
 
-# Boucler sur chaque PRN et tracer sa série temporelle
+# Loop over each PRN and plot its time series
 for prn in prns:
-    # Sélectionner les données pour le PRN actuel
+    # Select the data for the current PRN
     data = df_index.xs(prn, level='prn')
-    # Tracer les données
+    # Plot the data
     ax.plot(data.index.get_level_values('epoch'), data[my_obs_to_extract], label=prn)
 
-# Configurer le graphique
-ax.set_title('Séries temporelles '+my_obs_to_extract+' par PRN de satellite')
-ax.set_xlabel('Temps')
-ax.set_ylabel('Valeur')
+# Configure the graph
+ax.set_title('Time series '+my_obs_to_extract+' by satellite PRN')
+ax.set_xlabel('Time')
+ax.set_ylabel('Value')
 ax.legend(title='PRN')
 
-# Afficher le graphique
+# Display the graph
 plt.show()
 
 
@@ -237,53 +237,53 @@ prns = df_index.index.get_level_values("prn").unique()
 fig, ax = plt.subplots(figsize=(10, 6))
 
 for prn in prns:
-    # 1) données du PRN
+    # 1) data of the PRN
     data = df_index.xs(prn, level="prn").copy()
 
-    # 2) récupérer l'index temps (epoch) et trier
+    # 2) get the time index (epoch) and sort
     t = data.index.get_level_values("epoch")
     data = data.set_index(t)
     data = data.sort_index()
 
-    # 3) calcul des gaps et création d'un id de segment
+    # 3) calculate gaps and create a segment id
     dt = data.index.to_series().diff()
     seg_id = (dt > gap).cumsum()
 
-    # 4) couleur unique pour ce PRN (on la fixe via le 1er plot)
+    # 4) unique color for this PRN (we set it via the 1st plot)
     color = None
     for _, seg in data.groupby(seg_id):
         line, = ax.plot(seg.index, seg[my_obs_to_extract], color=color, label=prn if color is None else None)
         if color is None:
-            color = line.get_color()  # récupérer la couleur auto attribuée et la réutiliser
+            color = line.get_color()  # retrieve the auto-assigned color and reuse it
 
-ax.set_title(f"Séries temporelles {my_obs_to_extract} par PRN de satellite")
-ax.set_xlabel("Temps")
-ax.set_ylabel("Valeur")
+ax.set_title(f"Time series {my_obs_to_extract} by satellite PRN")
+ax.set_xlabel("Time")
+ax.set_ylabel("Value")
 ax.legend(title="PRN")
 plt.show()
 
 
 
 #%%
-# Il n'est pas nécessaire de garder dans le dataframe des colonnes inutilisées:
-# Supprimer les colonnes où toutes les valeurs sont NaN
+# It is not necessary to keep unused columns in the dataframe:
+# Remove columns where all values are NaN
 df_index = df_index.dropna(axis=1, how='all')
 
-# On remarque que certaines mesures n'ont pas été réalisées sur L1 ou L2, ce qui
-# pourrait être problématique lors de la formation des CL :
+# We notice that some measurements were not made on L1 or L2, which
+# could be problematic when forming the combinations:
 
-# Identifier les lignes avec NaN dans 'L1' ou 'L2'
+# Identify rows with NaN in 'L1' or 'L2'
 rows_with_nan = df_index[['L1', 'L2']].isna().any(axis=1)
 
-# Créer un DataFrame avec les lignes à supprimer
-# potentiellement utile de savoir quand a eu lieu un éventuel problème
+# Create a DataFrame with the rows to be removed
+# potentially useful to know when a possible problem occurred
 df_removed = df_index[rows_with_nan]
 
 
-# Supprimer les lignes contenant NaN dans 'L1' ou 'L2' du DataFrame original
+# Remove rows containing NaN in 'L1' or 'L2' from the original DataFrame
 df_index = df_index.dropna(subset=['L1', 'L2'])
 
 #%%
-# Reste à s'occuper des satellites et obtenir leurs positions et corrections aux 
-# dates d'intérêt
+# Still need to handle the satellites and get their positions and corrections at
+# the dates of interest
 
