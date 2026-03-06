@@ -1,51 +1,59 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Filière ING3 - PPMD - Traitement de la mesure de code (GNSS)
+
 Created on Thu Feb  1 16:44:03 2024
 
-Filière ING3 - PPMD - Traitement de la mesure de phase
-
 @author: Samuel Nahmani (1,2)
-https://www.ipgp.fr/annuaire/nahmani/)
-contact : nahmani@ipgp.fr ou samuel.nahmani@ign.fr
-(1) Université Paris Cité, Institut de physique du globe de Paris, CNRS, IGN, F-75005 Paris, France.
-(2) Univ Gustave Eiffel, ENSG, IGN, F-77455 Marne-la-Vallée, France. 
+Web: https://www.ipgp.fr/annuaire/nahmani/
+Contact: nahmani@ipgp.fr | samuel.nahmani@ign.fr
+
+(1) Université Paris Cité, Institut de physique du globe de Paris (IPGP), CNRS, IGN, F-75005 Paris, France
+(2) Univ Gustave Eiffel, Géodata Paris, IGN, F-75238 Paris, France
 
 Version: 1.0
-Dépendances: pandas, numpy, geodezyx, datetime, gpsdatetime, gnsstoolbox
 
+Dependencies (Python packages)
+-----------------------------
+- geodezyx
+- pandas
+- numpy
+
+Standard library
+----------------
+- datetime
+- pathlib
+- os
+- gc
 """
-# %%
-# GeodeZYX Toolbox’s
-# [Sakic et al., 2019]
-# Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
-# The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes. v. 4.0.
-# GFZ Data Services. http://doi.org/10.5880/GFZ.1.1.2019.002
-#
-# Documentation
-# https://geodezyx.github.io/geodezyx-toolbox/
-#
-# Installation
-# pip install git+https://github.com/GeodeZYX/geodezyx-toolbox
-# pip uninstall geodezyx
-
 
 # %%
-# GeodeZYX Toolbox’s - [Sakic et al., 2019]
-from geodezyx import files_rw     # Import the read/write module
-from geodezyx import conv         # Import the conversion module
-from geodezyx import operational  # Import the download rinex module
-from geodezyx import gnss_edu     # Import the learning module
-from geodezyx import reffram      # Import the reference frame/higher geodesy module
+# GeodeZYX toolbox reference
+# Sakic, P., Mansur, G., Chaiyaporn, K., & Ballu, V. (2019).
+# The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes (v4.0).
+# GFZ Data Services. https://doi.org/10.5880/GFZ.1.1.2019.002
+#
+# Documentation: https://geodezyx.github.io/geodezyx-toolbox/
+# Installation:  pip install git+https://github.com/GeodeZYX/geodezyx-toolbox
 
+# %%
+# Standard library
 import datetime as dt
-
-import pandas as pd
-import numpy as np
-
-from pathlib import Path
 import os
 import gc
+from pathlib import Path
+
+# Third-party
+import numpy as np
+import pandas as pd
+
+# GeodeZYX
+from geodezyx import files_rw     # read/write module
+from geodezyx import conv         # conversion module
+from geodezyx import operational  # download rinex module
+from geodezyx import gnss_edu     # learning module
+from geodezyx import reffram      # reference frame / higher geodesy module
 
 # %%
 # création du dossier gnss_edu_data qui va contenir les données et les résultats du TP
@@ -92,7 +100,7 @@ dwl_output_satellite = operational.download_gnss_products(archive_dir= my_direct
 fichier_rnx = dwl_output_station[0][0]
 
 # Chargement des données RINEX d'observation dans un pandas dataframe via  GeodeZYX
-df_rnx_orig, l_rnx_head = files_rw.read_rinex2_obs(fichier_rnx,
+df_rnx_orig, l_rnx_head = files_rw.read_rinex_obs(fichier_rnx,
                                            return_header=True)
 df_rnx = df_rnx_orig.copy()
 
@@ -354,8 +362,9 @@ while np.linalg.norm(dP_est)>1:
     A = np.column_stack((df_dX, df_dY, df_dZ))
 
     # Résolution par moindres carrés pour estimer le déplacement
-    dP_est = np.linalg.inv(A.T@A)@A.T@B
-    #dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
+    # formule vue en cours mais qui est plus lente 
+    #dP_est = np.linalg.inv(A.T@A)@A.T@B
+    dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
     
     # Mise à jour de la position estimée
     P_est = P_app + dP_est
@@ -378,9 +387,89 @@ while np.linalg.norm(dP_est)>1:
     print("\n")
 
 
-fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial calcul", 
-                                      save_path = folder / "01_trivial.pdf",
+fig = gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Trivial GPS data processing", 
+                                      save_path = folder / "01_trivial.png",
                                       P_est=P_est, P_rnx_header=P_rnx_header)
+
+# -------------------------------------------------------------------------
+# Store results for later reuse
+# -------------------------------------------------------------------------
+S01_trivial_solution = {
+    "P_est": P_est.copy(),
+    "ENU": np.array([E, N, U]),
+    "distance_to_header": dist_P_est_P_rnx_header,
+    "iterations": i-1
+}
+
+#%%
+# Numerical comparison of least-squares solution methods
+#
+# Educational objective
+# ---------------------
+# Compare different numerical implementations of the least-squares solution:
+#
+#       dP = (AᵀA)⁻¹ AᵀB
+#
+# Although this analytical formula is commonly introduced in lectures,
+# it is rarely implemented directly in scientific software.
+#
+# Three approaches are compared:
+#
+# 1) Explicit matrix inverse (theoretical formulation)
+#       -> simple but numerically inefficient and discouraged
+#
+# 2) Normal equation solved with np.linalg.solve
+#       -> faster and numerically safer
+#
+# 3) np.linalg.lstsq (QR/SVD decomposition)
+#       -> most robust method, used in professional GNSS processing
+#
+# The computation is repeated many times to make execution time differences
+# clearly visible.
+###############################################################################
+
+import time
+
+ATA = A.T @ A
+ATB = A.T @ B
+
+N_REPEAT = 5000
+
+# -------------------------------------------------------------------------
+# 1) Explicit inverse (shown for pedagogical purposes only)
+# -------------------------------------------------------------------------
+t0 = time.perf_counter()
+for _ in range(N_REPEAT):
+    x1 = np.linalg.inv(ATA) @ ATB
+t1 = time.perf_counter()
+
+# -------------------------------------------------------------------------
+# 2) Solve normal equations (recommended fast approach)
+# -------------------------------------------------------------------------
+t2 = time.perf_counter()
+for _ in range(N_REPEAT):
+    x2 = np.linalg.solve(ATA, ATB)
+t3 = time.perf_counter()
+
+# -------------------------------------------------------------------------
+# 3) Least-squares solver (robust reference method)
+# -------------------------------------------------------------------------
+t4 = time.perf_counter()
+for _ in range(N_REPEAT):
+    x3, *_ = np.linalg.lstsq(A, B, rcond=None)
+t5 = time.perf_counter()
+
+# -------------------------------------------------------------------------
+# Results
+# -------------------------------------------------------------------------
+print("===== Computational cost comparison =====")
+print(f"Inverse method : {t1 - t0:.3f} s")
+print(f"Solve method   : {t3 - t2:.3f} s")
+print(f"lstsq method   : {t5 - t4:.3f} s")
+
+print("\n===== Numerical differences =====")
+print("max|x_inv - x_solve| =", np.max(np.abs(x1 - x2)))
+print("max|x_solve - x_lstsq| =", np.max(np.abs(x2 - x3)))
 
 #%%
 # Workspace cleanup
@@ -399,6 +488,8 @@ for var in [
     "E",
     "N",
     "U",
+    "ATA",
+    "ATB",
     "P_est",
     "dP_est",
     "P_app",
@@ -409,8 +500,8 @@ for var in [
     "df_dZ",
     "distances",
     "dist_P_est_P_rnx_header",
-    "fig"
-    "i",
+    "fig",
+    "i","x1","x2","x3","t0","t1","t2","t3","t4","t5","N_REPEAT"
 ]:
     if var in globals():
         del globals()[var]
@@ -509,8 +600,19 @@ print("Up (U):", U)
 print("\n")
 
 
-gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Satellite clocks correction", save_path="./sat_clocks_only.png",
-                           P_est=P_est, P_rnx_header=P_rnx_header)
+gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Satellite clocks correction", 
+                                save_path = folder / "02_sat_clocks_only.png",
+                                P_est=P_est, P_rnx_header=P_rnx_header)
+
+# -------------------------------------------------------------------------
+# Store results for later reuse
+# -------------------------------------------------------------------------
+S02_Clk_Sat_solution = {
+    "P_est": P_est.copy(),
+    "ENU": np.array([E, N, U]),
+    "distance_to_header": dist_P_est_P_rnx_header,
+    "iterations": i-1
+}
 
 
 #%%
@@ -550,217 +652,500 @@ del var
 gc.collect()
 
 # %%
-# Traitement classique sur le code pour la position d'un récepteur GNSS
-# corrections des erreurs d'horloges satellites
-# -> elles sont connues -> correction directe du vecteur B
+#
+# GNSS receiver positioning using code observations
+# Satellite and receiver clock corrections
+#
+# Educational objective
+# ---------------------
+# Estimate the receiver position from GNSS pseudorange observations while:
+#   - correcting satellite clock errors (known from SP3 products),
+#   - estimating one receiver clock bias per epoch.
+#
+# Observation model (simplified SPP formulation)
+# ----------------------------------------------
+#   ρ = R + c(dt_r - dt_s) + c·dRel
+#
+# with:
+#   R    : geometric range satellite–receiver
+#   dt_s : satellite clock correction (known from SP3)
+#   dt_r : receiver clock bias (estimated here per epoch)
+#   dRel : relativistic correction
+#
+# Implementation note
+# -------------------
+# The receiver clock is represented by a block of columns appended to the
+# design matrix A: one column per epoch (indicator matrix).
+# A fast vectorized construction is preferred over a Python loop.
+###############################################################################
 
-print('*****  Prise en compte des erreurs d''horloge satellites et récepteur *****')
+print("*****  Prise en compte des erreurs d'horloge satellites et récepteur *****")
 
-# Initialisation des coordonnées approximatives du récepteur
-P_app = np.array([0, 0, 0])
-dP_est=100
-i=1
-# Itération pour l'affinement de la position du récepteur
-while np.linalg.norm(dP_est)>1:
-    # Calcul des distances approximatives satellite-récepteur
-    distances = np.sqrt((df_rnx['X_sat'].values - P_app[0])**2 +
-                        (df_rnx['Y_sat'].values - P_app[1])**2 +
-                        (df_rnx['Z_sat'].values - P_app[2])**2)
+# -------------------------------------------------------------------------
+# Receiver clock block (one parameter per epoch)
+# -------------------------------------------------------------------------
+# We build an indicator matrix block_dt_r of size (n_obs, n_epochs) such that:
+#   block_dt_r[k, i] = 1 if observation k belongs to epoch i, else 0.
 
-    # Vecteur des observations corrigées des différents modèles
-    B = df_rnx['C1'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
+# --- (Reference / naive approach) ---
+# This approach is explicit but slower and relies on an auxiliary 'ind_ligne'.
+#
+# epoch_uniques = df_rnx.index.get_level_values("epoch").unique()
+# nb_epochs = len(epoch_uniques)
+# block_dt_r = np.zeros((len(df_rnx), nb_epochs))
+# for i, epoch in enumerate(epoch_uniques):
+#     block_dt_r[df_rnx.loc[epoch, "ind_ligne"], i] = 1
 
-    # Construction de la matrice des dérivées partielles
-    df_dX = (P_app[0] - df_rnx['X_sat'].values) / distances
-    df_dY = (P_app[1] - df_rnx['Y_sat'].values) / distances
-    df_dZ = (P_app[2] - df_rnx['Z_sat'].values) / distances
-    A = np.column_stack((df_dX, df_dY, df_dZ))
+# --- Optimized vectorized approach (recommended) ----------------------------
+#
+# Goal:
+# Build the receiver clock block appended to the design matrix A.
+#
+# Each observation must be associated with ONE receiver clock parameter
+# corresponding to its observation epoch.
+#
+# Principle:
+# pd.factorize assigns an integer identifier to each unique epoch while
+# preserving the order of observations in df_rnx.
+#
+# Example:
+#   epochs → [t1, t1, t1, t2, t2, t3]
+#   codes  → [0 , 0 , 0 , 1 , 1 , 2 ]
+#
+# This allows direct construction of an indicator matrix without looping
+# over epochs (vectorized implementation).
+#
+# Result:
+# block_dt_r[k, i] = 1
+#     if observation k belongs to epoch i
+#     else 0
+# ---------------------------------------------------------------------------
 
-    # Résolution par moindres carrés pour estimer le déplacement
-    dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
-    
-    # Mise à jour de la position estimée
-    P_est = P_app + dP_est
-    
-    # Affichage de la position estimée à chaque itération
-    print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
-    P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
-    i+=1
+# Assign integer code to each observation epoch
+epoch_codes, epoch_uniques = pd.factorize(
+    df_rnx.index.get_level_values("epoch")
+)
 
-# Calcul de la distance finale entre la position estimée et la position initiale du header RINEX
-dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est - P_rnx_header)**2))
-print("\n")
-print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
-
-# Calculer les coordonnées ENU locales
-E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
-print("Est (E):", E)
-print("Nord (N):", N)
-print("Haut (U):", U)
-print("\n")
-
-
-gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat", save_path="./corr_sat_clock.png",
-                           P_est=P_est, P_rnx_header=P_rnx_header)
-
-
-del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
-
-
-# %%
-# Traitement classique sur le code pour la position d'un récepteur GNSS
-# corrections des erreurs d'horloges satellites
-# -> elles sont connues -> correction directe du vecteur B
-
-print('*****  Prise en compte des erreurs d''horloge satellites *****')
-print('*****  + Sagnac *****')
-
-# introduire une visualisation du résultat avec folium
-def rotate_around_z(row):
-    # C1 / c -> temps de vol
-    # temps de vol * vitesse angulaire rotation terrestre -> alpha_rad
-    alpha_rad = row['C1'] / conv.SPEED_OF_LIGHT * conv.EARTH_ROTATION_MEAN_ANGULAR_VELOCITY
-    # Matrice de rotation autour de l'axe Z
-    rz = np.array([[np.cos(alpha_rad), -np.sin(alpha_rad), 0],
-                   [np.sin(alpha_rad), np.cos(alpha_rad), 0],
-                   [0, 0, 1]])
-    # Vecteur de position original
-    original_vector = np.array([row['X_sat'], row['Y_sat'], row['Z_sat']])
-    # Calculer le vecteur de position rotatif
-    rotated_vector = rz.dot(original_vector)
-    return pd.Series(rotated_vector, index=['X_sat', 'Y_sat', 'Z_sat'])
-
-# Appliquer la rotation à chaque ligne et créer un nouveau dataframe avec les résultats
-df_Sagnac = df_rnx.apply(rotate_around_z, axis=1)
-
-
-# Initialisation des coordonnées approximatives du récepteur
-P_app = np.array([0, 0, 0])
-dP_est=100
-i=1
-# Itération pour l'affinement de la position du récepteur
-while np.linalg.norm(dP_est)>1:
-    # Calcul des distances approximatives satellite-récepteur
-    distances = np.sqrt((df_Sagnac['X_sat'].values - P_app[0])**2 +
-                        (df_Sagnac['Y_sat'].values - P_app[1])**2 +
-                        (df_Sagnac['Z_sat'].values - P_app[2])**2)
-
-    # Vecteur des observations corrigées des différents modèles
-    B = df_rnx['C1'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
-
-    # Construction de la matrice des dérivées partielles
-    df_dX = (P_app[0] - df_Sagnac['X_sat'].values) / distances
-    df_dY = (P_app[1] - df_Sagnac['Y_sat'].values) / distances
-    df_dZ = (P_app[2] - df_Sagnac['Z_sat'].values) / distances
-    A = np.column_stack((df_dX, df_dY, df_dZ))
-
-    # Résolution par moindres carrés pour estimer le déplacement
-    dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
-    
-    # Mise à jour de la position estimée
-    P_est = P_app + dP_est
-    
-    # Affichage de la position estimée à chaque itération
-    print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
-    P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
-    i+=1
-
-# Calcul de la distance finale entre la position estimée et la position initiale du header RINEX
-dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est - P_rnx_header)**2))
-print("\n")
-print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
-
-# Calculer les coordonnées ENU locales
-E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
-print("Est (E):", E)
-print("Nord (N):", N)
-print("Haut (U):", U)
-print("\n")
-
-del E, N, U, P_est, dP_est, P_app, A, B, df_dX, df_dY, df_dZ, distances, i
-
-
-# %%
-# Traitement classique sur le code pour la position d'un récepteur GNSS
-# corrections des erreurs d'horloges satellites
-# -> elles sont connues -> correction directe du vecteur B
-# estimation des erreurs d'horloges récepteur
-# -> elles sont inconnues et doivent être estimées à chaque époque
-
-
-print('*****  Prise en compte des erreurs d''horloge satellites *****')
-print('*****  + Sagnac *****')
-print('*****  + horloges récepteur *****')
-
-# Obtention des époques uniques
-epoch_uniques = df_rnx.index.get_level_values('epoch').unique()
+# Number of receiver clock parameters (one per epoch)
 nb_epochs = len(epoch_uniques)
-# Squelette du bloc à concaténer à la matrice modèle A
+
+# Initialize receiver clock design matrix block
 block_dt_r = np.zeros((len(df_rnx), nb_epochs))
-# Remplissage du bloc correspondant à l'estimation des erreurs d'horloge recepteur
 
-for i, epoch in enumerate(epoch_uniques):
-    block_dt_r[df_rnx.loc[epoch, 'ind_ligne'],i]=1
+# Vectorized filling of the indicator matrix
+block_dt_r[np.arange(len(df_rnx)), epoch_codes] = 1.0
 
 
-# Initialisation des coordonnées approximatives du récepteur
-P_app = np.array([0, 0, 0])
+# -------------------------------------------------------------------------
+# Initial receiver position guess
+# -------------------------------------------------------------------------
+P_app = np.array([0.0, 0.0, 0.0])
+dP_est = np.array([100.0, 100.0, 100.0])  # dummy init to enter loop
+i = 1
 
-dP_est=np.array([100, 100, 100])
-i=1
-# Itération pour l'affinement de la position du récepteur
-while np.linalg.norm(dP_est[0:3])>1:
-    
-    # Calcul des distances approximatives satellite-récepteur
-    distances = np.sqrt((df_Sagnac['X_sat'].values - P_app[0])**2 +
-                        (df_Sagnac['Y_sat'].values - P_app[1])**2 +
-                        (df_Sagnac['Z_sat'].values - P_app[2])**2)
 
-    # Vecteur des observations corrigées des différents modèles
-    B = df_rnx['C1'].values - distances + conv.SPEED_OF_LIGHT * (df_rnx['dte_sat'].values + df_rnx['dRelat'].values )
+# -------------------------------------------------------------------------
+# Iterative least-squares adjustment
+# -------------------------------------------------------------------------
+while np.linalg.norm(dP_est[0:3]) > 1.0:
 
-    # Construction de la matrice des dérivées partielles
-    df_dX = (P_app[0] - df_Sagnac['X_sat'].values) / distances
-    df_dY = (P_app[1] - df_Sagnac['Y_sat'].values) / distances
-    df_dZ = (P_app[2] - df_Sagnac['Z_sat'].values) / distances
+    # Approximate geometric distances
+    distances = np.sqrt(
+        (df_rnx["X_sat"].values - P_app[0]) ** 2 +
+        (df_rnx["Y_sat"].values - P_app[1]) ** 2 +
+        (df_rnx["Z_sat"].values - P_app[2]) ** 2
+    )
+
+    # Observation vector (meters)
+    # C1 (m) - R (m) + c*(dt_s + dRel) (m)
+    B = (
+        df_rnx["C1"].values
+        - distances
+        + conv.SPEED_OF_LIGHT * (df_rnx["dte_sat"].values + df_rnx["dRelat"].values)
+    )
+
+    # Design matrix:
+    # - first three columns: line-of-sight unit vectors (geometry)
+    # - appended block: receiver clock parameters (one per epoch)
+    df_dX = (P_app[0] - df_rnx["X_sat"].values) / distances
+    df_dY = (P_app[1] - df_rnx["Y_sat"].values) / distances
+    df_dZ = (P_app[2] - df_rnx["Z_sat"].values) / distances
+
     A = np.column_stack((df_dX, df_dY, df_dZ, block_dt_r))
 
-    # Résolution par moindres carrés pour estimer le déplacement
-    dP_est = np.linalg.inv(A.T@A)@A.T@B     
-    
-    # Mise à jour de la position estimée
-    # Attention : on a estimé nb_epochs paramètres d'horloge récepteur
-    P_est = np.zeros(len(dP_est))
-    
-    P_est[0:3] = P_app[0:3]+dP_est[0:3]
-    P_est[3:]  = dP_est[3:]
-    
-    
-    # Affichage de la position estimée à chaque itération
-    print(f"Iteration {i}: Position estimée - X: {P_est[0]}, Y: {P_est[1]}, Z: {P_est[2]}")
-    P_app = P_est  # Mise à jour de la position approximative pour la prochaine itération
-    i+=1
+    # Least-squares solution
+    dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
+
+    # Update receiver coordinates
+    P_est = P_app + dP_est[0:3]
+
+    print(f"Iteration {i}: X={P_est[0]:.3f}, Y={P_est[1]:.3f}, Z={P_est[2]:.3f}")
+
+    P_app = P_est
+    i += 1
 
 
-# Calcul de la distance finale entre la position estimée et la position initiale du header RINEX
-dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est[:3] - P_rnx_header)**2))
-print("\n")
-print("Distance entre la position estimée et la position initiale du header RINEX:", dist_P_est_P_rnx_header)
+# -------------------------------------------------------------------------
+# Final diagnostics
+# -------------------------------------------------------------------------
+dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est - P_rnx_header) ** 2))
+print("\nDistance entre la position estimée et le header RINEX:",
+      dist_P_est_P_rnx_header)
 
-# Calculer les coordonnées ENU locales
-E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],P_est[0], P_est[1], P_est[2])
-print("Est (E):", E)
-print("Nord (N):", N)
-print("Haut (U):", U)
-print("\n")
-
-gnss_edu.plot_residual_analysis(A, B, dP_est, figure_title="Calcul corr Sat Rec et Sagnac", save_path="./corr_sat_clock_sagnac.png",
-                           P_est=P_est[:3], P_rnx_header=P_rnx_header)
+E, N, U = conv.xyz2enu(
+    P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],
+    P_est[0], P_est[1], P_est[2]
+)
+print(f"Est (E): {E}")
+print(f"Nord (N): {N}")
+print(f"Haut (U): {U}\n")
 
 
-del E, N, U, P_est, dP_est, P_app, A, block_dt_r, B, df_dX, df_dY, df_dZ, distances, i, epoch, epoch_uniques, nb_epochs
+# -------------------------------------------------------------------------
+# Residual analysis
+# -------------------------------------------------------------------------
+gnss_edu.plot_residual_analysis(
+    A, B, dP_est,
+    figure_title="Satellite clocks and receiver correction",
+    save_path=folder / "03_sat_rec_clocks.png",
+    P_est=P_est,
+    P_rnx_header=P_rnx_header
+)
 
-# introduire une visualisation du résultat avec folium
+
+# -------------------------------------------------------------------------
+# Store results for later reuse
+# -------------------------------------------------------------------------
+S03_Clk_Sat_Rec_solution = {
+    "P_est": P_est.copy(),
+    "ENU": np.array([E, N, U]),
+    "distance_to_header": dist_P_est_P_rnx_header,
+    "iterations": i - 1
+}
+
+
+#%%
+# Workspace cleanup
+#
+# We remove intermediate variables that are no longer needed in order to:
+#   - keep the workspace readable,
+#   - avoid accidental reuse of temporary data,
+#   - reduce memory usage when working with large GNSS datasets.
+#
+# Note:
+# Python normally manages memory automatically. The explicit cleanup below
+# simply helps when working interactively with large SP3 and RINEX files.
+###############################################################################
+
+for var in [
+    "E",
+    "N",
+    "U",
+    "P_est",
+    "dP_est",
+    "P_app",
+    "A",
+    "B",
+    "df_dX",
+    "df_dY",
+    "df_dZ",
+    "distances",
+    "dist_P_est_P_rnx_header",
+    "fig",
+    "i","nb_epochs","epoch","block_dt_r","epoch_uniques"
+]:
+    if var in globals():
+        del globals()[var]
+
+del var
+gc.collect()
+
+
+# %%
+# GNSS receiver positioning: satellite + receiver clocks, plus Sagnac effect
+#
+# Educational objective
+# ---------------------
+# Introduce the Earth rotation (Sagnac) correction in the computation of
+# satellite positions used in the pseudorange model.
+#
+# Physical idea
+# -------------
+# During the signal travel time τ ≈ C1 / c, the Earth rotates by an angle:
+#
+#       Δθ = ω_E * τ
+#
+# where ω_E is the Earth's mean angular rotation rate.
+#
+# Reference-frame consistency
+# ---------------------------
+# Satellite coordinates from SP3 are expressed in the Earth-fixed frame at
+# signal emission time, whereas the receiver is naturally expressed in the
+# Earth-fixed frame at reception time.
+#
+# To compare satellite and receiver in the SAME frame (reception frame),
+# we compensate the Earth's rotation that occurred during propagation:
+#
+#       X_sat(reception) = Rz(-Δθ) · X_sat(emission)
+#
+# Hence the rotation applied to satellite coordinates uses the negative angle.
+#
+# Implementation note (important)
+# -------------------------------
+# Using df.apply(axis=1) is convenient but slow because it loops in Python.
+# Here we implement a fully vectorized version to keep the TP fast and to
+# illustrate good scientific Python practices.
+###############################################################################
+
+print("*****  Prise en compte des erreurs d'horloge satellites et recepteur *****")
+print("*****  + Sagnac *****")
+
+# -------------------------------------------------------------------------
+# Vectorized Sagnac rotation of satellite coordinates
+# -------------------------------------------------------------------------
+# Inputs expected in df_rnx:
+#   - C1     : pseudorange (m)
+#   - X_sat, Y_sat, Z_sat : satellite coordinates in ECEF (m)
+#
+# Output:
+#   df_Sagnac with rotated satellite coordinates (m), expressed in the
+#   Earth-fixed frame at reception time.
+# -------------------------------------------------------------------------
+
+# Signal flight time (seconds): τ ≈ C1 / c
+tau_s = df_rnx["C1"].to_numpy(dtype=float) / conv.SPEED_OF_LIGHT
+
+# Physical Earth rotation angle during signal travel time (radians)
+dtheta = tau_s * conv.EARTH_ROTATION_MEAN_ANGULAR_VELOCITY
+
+# We rotate satellite coordinates backward to express them in the reception frame
+alpha = -dtheta
+
+cos_a = np.cos(alpha)
+sin_a = np.sin(alpha)
+
+x = df_rnx["X_sat"].to_numpy(dtype=float)
+y = df_rnx["Y_sat"].to_numpy(dtype=float)
+z = df_rnx["Z_sat"].to_numpy(dtype=float)
+
+# Rotation around Z-axis (ECEF):
+# [x'] = [ cos -sin  0 ] [x]
+# [y']   [ sin  cos  0 ] [y]
+# [z']   [  0    0   1 ] [z]
+x_rot = cos_a * x - sin_a * y
+y_rot = sin_a * x + cos_a * y
+z_rot = z
+
+# Store results in a DataFrame aligned with df_rnx index
+df_Sagnac = pd.DataFrame(
+    {"X_sat": x_rot, "Y_sat": y_rot, "Z_sat": z_rot},
+    index=df_rnx.index
+)
+
+# Option (recommended for clarity in later steps):
+# keep both versions in df_rnx to compare models
+df_rnx["X_sat_sagnac"] = df_Sagnac["X_sat"]
+df_rnx["Y_sat_sagnac"] = df_Sagnac["Y_sat"]
+df_rnx["Z_sat_sagnac"] = df_Sagnac["Z_sat"]
+
+
+# Assign integer code to each observation epoch
+epoch_codes, epoch_uniques = pd.factorize(
+    df_rnx.index.get_level_values("epoch")
+)
+
+# Number of receiver clock parameters (one per epoch)
+nb_epochs = len(epoch_uniques)
+
+# Initialize receiver clock design matrix block
+block_dt_r = np.zeros((len(df_rnx), nb_epochs))
+
+# Vectorized filling of the indicator matrix
+block_dt_r[np.arange(len(df_rnx)), epoch_codes] = 1.0
+
+
+# -------------------------------------------------------------------------
+# Initial receiver position guess
+# -------------------------------------------------------------------------
+P_app = np.array([0.0, 0.0, 0.0])
+dP_est = np.array([100.0, 100.0, 100.0])  # dummy init to enter loop
+i = 1
+
+
+# -------------------------------------------------------------------------
+# Iterative least-squares adjustment
+# -------------------------------------------------------------------------
+while np.linalg.norm(dP_est[0:3]) > 1.0:
+
+    # Approximate geometric distances
+    distances = np.sqrt(
+        (df_rnx["X_sat_sagnac"].values - P_app[0]) ** 2 +
+        (df_rnx["Y_sat_sagnac"].values - P_app[1]) ** 2 +
+        (df_rnx["Z_sat_sagnac"].values - P_app[2]) ** 2
+    )
+
+    # Observation vector (meters)
+    # C1 (m) - R (m) + c*(dt_s + dRel) (m)
+    B = (
+        df_rnx["C1"].values
+        - distances
+        + conv.SPEED_OF_LIGHT * (df_rnx["dte_sat"].values + df_rnx["dRelat"].values)
+    )
+
+    # Design matrix:
+    # - first three columns: line-of-sight unit vectors (geometry)
+    # - appended block: receiver clock parameters (one per epoch)
+    df_dX = (P_app[0] - df_rnx["X_sat_sagnac"].values) / distances
+    df_dY = (P_app[1] - df_rnx["Y_sat_sagnac"].values) / distances
+    df_dZ = (P_app[2] - df_rnx["Z_sat_sagnac"].values) / distances
+
+    A = np.column_stack((df_dX, df_dY, df_dZ, block_dt_r))
+
+    # Least-squares solution
+    dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
+
+    # Update receiver coordinates
+    P_est = P_app + dP_est[0:3]
+
+    print(f"Iteration {i}: X={P_est[0]:.3f}, Y={P_est[1]:.3f}, Z={P_est[2]:.3f}")
+
+    P_app = P_est
+    i += 1
+
+
+# -------------------------------------------------------------------------
+# Final diagnostics
+# -------------------------------------------------------------------------
+dist_P_est_P_rnx_header = np.sqrt(np.sum((P_est - P_rnx_header) ** 2))
+print("\nDistance entre la position estimée et le header RINEX:",
+      dist_P_est_P_rnx_header)
+
+E, N, U = conv.xyz2enu(
+    P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],
+    P_est[0], P_est[1], P_est[2]
+)
+print(f"Est (E): {E}")
+print(f"Nord (N): {N}")
+print(f"Haut (U): {U}\n")
+
+
+# -------------------------------------------------------------------------
+# Residual analysis
+# -------------------------------------------------------------------------
+gnss_edu.plot_residual_analysis(
+    A, B, dP_est,
+    figure_title="Satellite clocks and receiver correction + Sagnac",
+    save_path=folder / "04_sat_rec_clocks_sagnac.png",
+    P_est=P_est,
+    P_rnx_header=P_rnx_header
+)
+
+
+# -------------------------------------------------------------------------
+# Store results for later reuse
+# -------------------------------------------------------------------------
+S04_Clk_Sat_Rec_Sagnac_solution = {
+    "P_est": P_est.copy(),
+    "ENU": np.array([E, N, U]),
+    "distance_to_header": dist_P_est_P_rnx_header,
+    "iterations": i - 1
+}
+
+
+
+#%%
+# Workspace cleanup
+#
+# We remove intermediate variables that are no longer needed in order to:
+#   - keep the workspace readable,
+#   - avoid accidental reuse of temporary data,
+#   - reduce memory usage when working with large GNSS datasets.
+#
+# Note:
+# Python normally manages memory automatically. The explicit cleanup below
+# simply helps when working interactively with large SP3 and RINEX files.
+###############################################################################
+
+for var in [
+    "E", "N", "U",
+    "P_est", "dP_est", "P_app",
+    "A", "B", "df_dX", "df_dY", "df_dZ",
+    "distances", "dist_P_est_P_rnx_header",
+    "fig",
+    "i","nb_epochs","epoch","block_dt_r","epoch_uniques","dtheta","epoch_codes",
+    "alpha","cos_a","sin_a", "tau_s","x","y","z","x_rot","y_rot","z_rot","df_Sagnac",
+]:
+    if var in globals():
+        del globals()[var]
+
+del var
+gc.collect()
+
+
+
+# %%
+# -------------------------------------------------------------------------
+# Interpretation of remaining positioning error
+# -------------------------------------------------------------------------
+#
+# After applying precise orbit information, satellite and receiver clock
+# corrections, relativistic effects and Sagnac correction, the remaining
+# discrepancy between:
+#
+#   - the receiver position estimated from GNSS observations, and
+#   - the approximate receiver coordinates provided in the RINEX header
+#
+# is now largely dominated by signal propagation effects.
+#
+# Observation:
+# The residual error appears mainly on the vertical component (Up).
+#
+# Interpretation:
+# Atmospheric propagation delays (ionosphere and troposphere) act primarily
+# along the satellite line-of-sight. Due to GNSS satellite geometry, these
+# errors are weakly constrained horizontally and are therefore mostly
+# absorbed by the vertical component of the estimated position.
+#
+# This explains why vertical positioning is generally less accurate than
+# horizontal positioning and motivates the need for atmospheric modeling.
+# -------------------------------------------------------------------------
+
+print(
+    "Note: The remaining discrepancy with the RINEX header position is "
+    "mainly vertical, illustrating the impact of atmospheric propagation "
+    "errors (ionosphere and troposphere)."
+)
+
+# %%
+# -------------------------------------------------------------------------
+# Validity of local satellite geometry computation
+# -------------------------------------------------------------------------
+#
+# The estimated receiver position now differs from the approximate RINEX
+# header coordinates by about a few tens of meters.
+#
+# Although this accuracy is insufficient for precise positioning, it is
+# largely adequate to define the local reference frame centered on the
+# receiver antenna.
+#
+# In particular, an approximate receiver position with an error of a few
+# tens of meters introduces only negligible errors in:
+#   - satellite azimuth,
+#   - satellite elevation angles.
+#
+# Therefore, the current receiver position estimate can safely be used to
+# compute satellite directions in the local ENU frame.
+#
+# This step is essential before introducing atmospheric models, since both
+# ionospheric and tropospheric delays strongly depend on satellite elevation.
+# -------------------------------------------------------------------------
+
+print(
+    "\nReceiver position accuracy (~30 m) is sufficient "
+    "to compute satellite azimuth and elevation angles.\n"
+    "We can now analyze signal propagation effects "
+    "(ionosphere and troposphere)."
+)
 
 
 # %%
