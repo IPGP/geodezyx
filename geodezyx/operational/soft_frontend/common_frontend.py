@@ -271,7 +271,7 @@ def get_best_prods(
             date_prod = (
                 conv.rinexname2dt(prod) if brdc_mode else conv.sp3name_v3_2dt(prod)
             )
-            log.info(f"Date: {date_prod} / Date best: {date_best} / Product: {prod}")
+            log.debug(f"input date {date_inp} / wished best prod: {date_best} / current prod: {date_prod} / product: {prod}")
             if date_prod == date_best:
                 best_prod_out.append(prod)
         perstpbak += 1
