@@ -30,6 +30,7 @@ import os
 import subprocess
 import numpy as np
 import shutil as shutils
+import pandas as pd
 
 # from threading import Lock
 
@@ -277,6 +278,17 @@ def rtklib_run_mono(
     if not keep_tmp:
         shutils.rmtree(tmp_dir_wrk, ignore_errors=True)
         os.remove(out_res_fil.replace(".out", "") + "_events.pos")
+
+    # merge all parquet files into one
+    tot_prq_path = os.path.join(out_dir, exp_prefix + "_merged.parquet")
+    l_prq = utils.find_recursive(out_dir, "*parquet")
+    df_stk = []
+    for f in l_prq:
+        if "_merged" in f:
+            continue
+        df_stk.append(pd.read_parquet(f))
+    df_all = pd.concat(df_stk)
+    df_all.to_parquet(tot_prq_path, engine="auto")
 
     return out_res_fil
 
