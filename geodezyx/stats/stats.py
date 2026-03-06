@@ -86,15 +86,17 @@ def linear_regression(x, y, fulloutput=False, simple_lsq=False, alpha=0.95):
 
     # Perform least squares regression if simple_lsq is True
     if simple_lsq:
-        A = np.array(
+        a_arr = np.array(
             [x, np.ones(len(x))]
         )  # x2 faster than np.column_stack([x, np.ones(len(x))])
-        slope, intercept = np.linalg.lstsq(A.T, y, rcond=None)[
+        slope, intercept = np.linalg.lstsq(a_arr.T, y, rcond=None)[
             0
         ]  # obtaining the parameters
+        std_err = np.nan
     else:
         # Perform scipy's linregress if simple_lsq is False
-        slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(x, y)
+        outtup = scipy.stats.linregress(x, y)
+        slope, intercept, r_value, p_value, std_err = outtup
 
     # Return only the slope and intercept if fulloutput is False
     if simple_lsq or not fulloutput:
@@ -179,45 +181,54 @@ def linear_coef_a_b(x1, y1, x2, y2):
     return a, b1, b2
 
 
-def detrend_timeseries(X, Y):
+def detrend_timeseries(x, y):
     """
     detrend, i.e. remove linear tendence of a timeserie Y(X)
 
     Parameters
     ----------
-    X & Y: list or numpy.array
+    x & y: list or numpy.array
         Values
 
     Returns
     -------
-    X & Yout: list or numpy.array
+    x & yout: list or numpy.array
         Detrended Y
 
     """
 
-    X = np.array(X)
-    Y = np.array(Y)
-    a, b = linear_regression(X, Y)
+    x = np.array(x)
+    y = np.array(y)
+    a, b = linear_regression(x, y)
 
-    # Yout = Y - a * (X - X[0])
-    # Yout = Y - ( a * X + b )
+    ylinear = a * x + b
+    yout = y - ylinear + y[0]
 
-    Ylinear = a * X + b
-    Yout = Y - Ylinear + Y[0]
-
-    return X, Yout
-
+    return x, yout
 
 def confid_interval_slope(x, y, alpha=0.95):
     """
-     Calcule un intervalle de confiance sur une tendance
-     En entrée: x     = la variable indépendante
-                y     = la variable dépendante
-                alpha = la probabilité d'erreur tolérée
-     En sortie: mi    = la borne inférieure de l'intervalle
-                ma    = la borne supérieure de l'intervalle
+    Calculate a confidence interval on the slope of a linear trend.
 
-    Source (???? => En fait non ...)
+    Parameters
+    ----------
+    x : array_like
+        Independent variable.
+    y : array_like
+        Dependent variable.
+    alpha : float, optional
+        Confidence level (default is 0.95 for 95% confidence).
+
+    Returns
+    -------
+    mi : float
+        Lower bound of the confidence interval for the slope.
+    ma : float
+        Upper bound of the confidence interval for the slope.
+
+    Source
+    -------
+    Based on methods from:
     http://www.i4.auc.dk/borre/matlab
     http://kom.aau.dk/~borre/matlab/
     """
@@ -227,22 +238,22 @@ def confid_interval_slope(x, y, alpha=0.95):
     suy = np.sum(y)
     yb = np.mean(y)
     n = len(x)
-    S1 = np.sum(x * y)
-    S2 = sux * suy / n
-    Sxy = S1 - S2
-    S4 = np.sum(x**2)
-    S5 = (sux**2) / n
-    Sxx = S4 - S5
-    S7 = np.sum(y**2)
-    S8 = (suy**2) / n
-    Syy = S7 - S8
-    b1 = Sxy / Sxx
+    s1 = np.sum(x * y)
+    s2 = sux * suy / n
+    sxy = s1 - s2
+    s4 = np.sum(x**2)
+    s5 = (sux**2) / n
+    sxx = s4 - s5
+    s7 = np.sum(y**2)
+    s8 = (suy**2) / n
+    syy = s7 - s8
+    b1 = sxy / sxx
     b0 = yb - b1 * xb
-    S14 = (Sxy**2) / Sxx
-    s2y = (Syy - S14) / (n - 2)
+    s14 = (sxy**2) / sxx
+    s2y = (syy - s14) / (n - 2)
     sy = np.sqrt(s2y)
-    s2b1 = s2y / Sxx
-    s2b0 = s2y * (1 / n + (xb**2) / Sxx)
+    s2b1 = s2y / sxx
+    s2b0 = s2y * (1 / n + (xb**2) / sxx)
     # t=tq(1-alpha/2,n-2)
     t = scipy.stats.t.ppf(1 - alpha / 2, n - 2)
     mi = b1 - t * np.sqrt(s2b1)
