@@ -279,17 +279,6 @@ def rtklib_run_mono(
         shutils.rmtree(tmp_dir_wrk, ignore_errors=True)
         os.remove(out_res_fil.replace(".out", "") + "_events.pos")
 
-    # merge all parquet files into one
-    tot_prq_path = os.path.join(out_dir, exp_prefix + "_all.parquet")
-    l_prq = utils.find_recursive(out_dir, "*parquet")
-    df_stk = []
-    for f in l_prq:
-        if f.endswith("_all.parquet"):
-            continue
-        df_stk.append(pd.read_parquet(f))
-    df_all = pd.concat(df_stk)
-    df_all.to_parquet(tot_prq_path, engine="auto")
-
     return out_res_fil
 
 
@@ -595,7 +584,7 @@ def rtklib_run(
         raise
 
     log.info(f"STEP 3: Running {len(rnxs_pairs)} RTKLIB processes in parallel")
-    return operational.rtklib_run_pair(
+    out_run_pairs = operational.rtklib_run_pair(
         rnxs_pairs,
         cfgfile_generik,
         out_dir=out_dir,
@@ -614,3 +603,17 @@ def rtklib_run(
         procs=procs,
         exe_path=exe_path,
     )
+
+    # merge all parquet files into one
+    log.info("STEP 4: Merging individual parquet files into one")
+    tot_prq_path = os.path.join(out_dir, exp_prefix + "_all.parquet")
+    l_prq = utils.find_recursive(out_dir, "*parquet")
+    df_stk = []
+    for f in l_prq:
+        if f.endswith("_all.parquet"):
+            continue
+        df_stk.append(pd.read_parquet(f))
+    df_all = pd.concat(df_stk)
+    df_all.to_parquet(tot_prq_path, engine="auto")
+
+    return out_run_pairs
