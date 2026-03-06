@@ -280,11 +280,11 @@ def rtklib_run_mono(
         os.remove(out_res_fil.replace(".out", "") + "_events.pos")
 
     # merge all parquet files into one
-    tot_prq_path = os.path.join(out_dir, exp_prefix + "_merged.parquet")
+    tot_prq_path = os.path.join(out_dir, exp_prefix + "_all.parquet")
     l_prq = utils.find_recursive(out_dir, "*parquet")
     df_stk = []
     for f in l_prq:
-        if "_merged" in f:
+        if f.endswith("_all.parquet"):
             continue
         df_stk.append(pd.read_parquet(f))
     df_all = pd.concat(df_stk)
