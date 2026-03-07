@@ -1,289 +1,591 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
-Created on Thu Feb  1 10:12:46 2024
-Engineering Program ING3 - PPMD - Phase Measurement Processing
+Step 01 - From RINEX observations to structured GNSS data tables
+
+Educational scope
+-----------------
+This first step introduces the data structures that will be reused in the
+following GNSS teaching scripts.
+
+Learning goals
+--------------
+By the end of this script, students should be able to:
+1. download sample GNSS RINEX observation files with geodezyx,
+2. read a RINEX observation file into pandas DataFrames,
+3. compare a flat table and a MultiIndex table,
+4. extract observations for one satellite and one epoch or time window,
+5. visualize one observable over time,
+6. identify incomplete observations before moving to GNSS modeling.
+
+Pedagogical position in the curriculum
+--------------------------------------
+This script corresponds to the "from data to model" stage:
+students manipulate GNSS observations with pandas before introducing
+least-squares models in Step 02.
+
 @author: Samuel Nahmani (1,2)
-https://www.ipgp.fr/annuaire/nahmani/)
-contact : nahmani@ipgp.fr ou samuel.nahmani@ign.fr
-(1) Université Paris Cité, Institut de physique du globe de Paris, CNRS, IGN, F-75005 Paris, France.
-(2) Univ Gustave Eiffel, ENSG, IGN, F-77455 Marne-la-Vallée, France. 
+Web: https://www.ipgp.fr/annuaire/nahmani/
+Contact: nahmani@ipgp.fr | samuel.nahmani@ign.fr
+
+(1) Université Paris Cité, Institut de physique du globe de Paris (IPGP),
+    CNRS, IGN, F-75005 Paris, France
+(2) Univ Gustave Eiffel, Géodata Paris, IGN, F-75238 Paris, France
 
 Version: 1.0
-Dependencies: pandas, numpy, geodezyx, datetime
 
+Dependencies (Python packages)
+------------------------------
+- geodezyx
+- pandas
+- numpy
+- matplotlib
+
+Standard library
+----------------
+- datetime
+- os
+- pathlib
 """
-#%%
-# GeodeZYX Toolbox’s
-# [Sakic et al., 2019]
-# Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019): 
-# The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes. v. 4.0.
-# GFZ Data Services. http://doi.org/10.5880/GFZ.1.1.2019.002
-#
-# Documentation
-# https://geodezyx.github.io/geodezyx-toolbox/
-# 
-# Installation
-# pip install git+https://github.com/GeodeZYX/geodezyx-toolbox
-# 
-from geodezyx import files_rw     # Import the read/write module
-from geodezyx import conv         # Import the conversion module
-from geodezyx import operational  # Import the download rinex module
 
-                
+# %%
+###############################################################################
+# Reference
+#
+# Sakic, P., Mansur, G., Chaiyaporn, K., & Ballu, V. (2019).
+# The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented
+# purposes (v4.0). GFZ Data Services.
+# https://doi.org/10.5880/GFZ.1.1.2019.002
+###############################################################################
+
+
+# %%
+###############################################################################
+# Imports
+###############################################################################
+
 import datetime as dt
-import pandas as pd
-import numpy as np
-
-# To visualize the data
-import matplotlib.pyplot as plt
-
-from pathlib import Path
 import os
+from pathlib import Path
 
-#%%
-# Create the gnss_edu_data folder which will contain the data and TP results
-my_directory = os.environ["HOME"] + "/gnss_edu_data/"
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
-# Path with expansion of ~ to home
-folder = Path(my_directory).expanduser()
+from geodezyx import files_rw
+from geodezyx import operational
 
-# Create the folder if it does not exist
-folder.mkdir(parents=True, exist_ok=True)
+# Robust import for the pedagogical plotting helper
+try:
+    from geodezyx.gnss_edu import plot_gnss_timeseries_by_prn
+except Exception:
+    try:
+        from geodezyx import gnss_edu
+        plot_gnss_timeseries_by_prn = gnss_edu.plot_gnss_timeseries_by_prn
+    except Exception as exc:
+        raise ImportError(
+            "Could not import 'plot_gnss_timeseries_by_prn' from gnss_edu. "
+            "Please check where this function is exposed in your local geodezyx branch."
+        ) from exc
 
 
-#%%
-# Automatic download of RINEX data from SMNE and MLVL stations approximately 10 km apart
-# in the Paris region, France from the IGN (France) server
-# data for 1 day (2019-176) at 30s
+# %%
+###############################################################################
+# Configuration
+###############################################################################
 
-# Create a datetime to manage the processing day without having to manage doy, jjul, etc!
-my_date_to_process = dt.datetime(2019,6,25)
+PROCESSING_DATE = dt.datetime(2019, 6, 25)
+WORK_DIR = Path(os.environ["HOME"]).expanduser() / "gnss_edu_data"
 
-dwl_output = operational.download_gnss_rinex(statdico={"rgp" : ["SMNE","MLVL"]},
-                                output_dir=my_directory,
-                                startdate= my_date_to_process ,
-                                enddate= my_date_to_process ,
-                                parallel_download = 1) 
+# Two permanent GNSS stations about 10 km apart in the Paris region
+STATION_DICT = {"rgp": ["SMNE", "MLVL"]}
 
-#%%
+# Examples used throughout the script
+EXAMPLE_PRN = "G05"
+EXAMPLE_OBSERVABLE = "L1"
+EXAMPLE_START_TIME = PROCESSING_DATE + dt.timedelta(hours=2, minutes=40)
+EXAMPLE_END_TIME = PROCESSING_DATE + dt.timedelta(hours=2, minutes=45, seconds=30)
+
+# Time gap threshold used to split continuous GNSS arcs
+GAP_THRESHOLD = pd.Timedelta(minutes=30)
+
+print("Configuration loaded.")
+print("Processing date :", PROCESSING_DATE)
+print("Working directory:", WORK_DIR)
+print("Example PRN     :", EXAMPLE_PRN)
+print("Example observable:", EXAMPLE_OBSERVABLE)
+
+
+# %%
+###############################################################################
+# Create the working directory
 #
-fichier_base     =   dwl_output[0][0]
-fichier_mobile   =   dwl_output[1][0]
+# Educational objective
+# ---------------------
+# Prepare a clean local folder to store downloaded data and generated outputs.
+###############################################################################
+
+WORK_DIR.mkdir(parents=True, exist_ok=True)
+
+print("Working directory is ready:")
+print(WORK_DIR)
 
 
-#%% Preamble
-# Loading pandas DataFrames and their usage
-# Reading RINEX observations in two different DataFrame formats
+# %%
+###############################################################################
+# Download sample RINEX observation files
+#
+# Educational objective
+# ---------------------
+# Obtain real GNSS observation files that will serve as the raw input data.
+#
+# Why this matters
+# ----------------
+# A teaching workflow is much more meaningful when students manipulate
+# real observation files rather than artificial toy arrays.
+###############################################################################
 
-df_flat = files_rw.read_rinex_obs(fichier_base)
+download_output = operational.download_gnss_rinex(
+    statdico=STATION_DICT,
+    output_dir=str(WORK_DIR),
+    startdate=PROCESSING_DATE,
+    enddate=PROCESSING_DATE,
+    parallel_download=1,
+)
 
-df_index = files_rw.read_rinex_obs(fichier_base, set_index=['epoch', 'prn'])
-
-# What differences do you observe between the two dataframes df_flat and df_index?
-
-#df_index['ind_ligne'] = range(len(df_index)) # uncomment when understood
-# What happened to the df_index dataframe? Hint: open it and examine the columns...
-
-#%%
-# "FLAT" Selection - Using a DataFrame without custom index
-# Advantage: Direct access to line numbers to facilitate the construction
-# of the model matrix
-
-# Filter observations for satellite 'G05' at a specific time
-my_prn_for_extraction = 'G05'
-my_date_for_extraction =  my_date_to_process + dt.timedelta(hours=2, minutes=40, seconds=0)
-my_obs_to_extract = 'L1'
-
-print(my_date_for_extraction)
-
-bool_prn = df_flat['prn'] == my_prn_for_extraction
-bool_epoch = df_flat['epoch'] == pd.Timestamp(my_date_for_extraction)
-extract1a = df_flat.loc[bool_prn & bool_epoch, my_obs_to_extract]
-print(extract1a)
+print("Download output:")
+print(download_output)
 
 
-# Extract observations for 'G05' over a specific period
-my_prn_for_extraction = 'G05'
-my_date_for_extraction_start =  my_date_to_process + dt.timedelta(hours=2, minutes=40, seconds=0)
-my_date_for_extraction_end =  my_date_to_process + dt.timedelta(hours=2, minutes=45, seconds=30)
-my_obs_to_extract = 'L1'
+# %%
+###############################################################################
+# Identify the BASE and ROVER files
+#
+# Note
+# ----
+# geodezyx usually returns tuples of the form:
+#   (local_file_path, success_flag)
+###############################################################################
 
-bool_prn = df_flat['prn'] == my_prn_for_extraction
-bool_epoch = (df_flat['epoch'] >= pd.Timestamp(my_date_for_extraction_start)) & (df_flat['epoch'] <= pd.Timestamp(my_date_for_extraction_end))
-extract1b = df_flat.loc[bool_prn & bool_epoch, my_obs_to_extract]
-print(extract1b)
+def _extract_download_path(entry):
+    """Return the local file path from a geodezyx download entry."""
+    if isinstance(entry, tuple):
+        if len(entry) >= 2 and not entry[1]:
+            raise RuntimeError(f"Download reported as failed for entry: {entry}")
+        return entry[0]
+    return entry
 
+base_rinex_file = _extract_download_path(download_output[0])
+rover_rinex_file = _extract_download_path(download_output[1])
 
-# Extract observations for 'G05' over a period defined by a start date and a time delta
-my_prn_for_extraction = 'G05'
-my_date_for_extraction =  my_date_to_process + dt.timedelta(hours=2, minutes=40, seconds=0)
-my_obs_to_extract = 'L1'
-
-bool_prn = df_flat['prn'] ==  my_prn_for_extraction
-start = pd.Timestamp(my_date_for_extraction)
-delta_T = pd.Timedelta(days=0, hours=1, minutes=15) # We can manage the delta T with pandas
-end = start + delta_T
-bool_epoch = (df_flat['epoch'] >= start) & (df_flat['epoch'] <= end)
-extract1c = df_flat.loc[bool_prn & bool_epoch, my_obs_to_extract]
-print(extract1c)
-
-# Note that using booleans allows us to directly access the line numbers of interest.
-# If we want the line numbers, we just need to do:
-serie_bool = bool_prn & bool_epoch ;
-serie_chiffre = serie_bool.astype(int) ; 
+print("BASE RINEX file :")
+print(base_rinex_file)
+print()
+print("ROVER RINEX file:")
+print(rover_rinex_file)
 
 
+# %%
+###############################################################################
+# Read one RINEX file in two different pandas formats
+#
+# Educational objective
+# ---------------------
+# Understand that the same GNSS observations can be organized in different
+# tabular structures depending on the intended use.
+#
+# Flat table
+# ----------
+# Convenient for explicit boolean filtering and row-by-row inspection.
+#
+# MultiIndex table
+# ----------------
+# Convenient when GNSS observations are naturally indexed by (epoch, prn).
+###############################################################################
 
-#%%
-#### (Multi)-index selection
-# I do filtering with .loc
-# Extract for satellite 'G10' at a specific moment with df_index
+df_flat, rinex_header = files_rw.read_rinex_obs(
+    base_rinex_file,
+    return_header=True,
+)
 
-my_prn_for_extraction = 'G10'
-my_date_for_extraction =  my_date_to_process + dt.timedelta(hours=3, minutes=27, seconds=30)
-my_obs_to_extract = 'L1'
+df_index = files_rw.read_rinex_obs(
+    base_rinex_file,
+    set_index=["epoch", "prn"],
+)
 
-extract2a = df_index.loc[(pd.Timestamp(my_date_for_extraction), my_prn_for_extraction), my_obs_to_extract]
-print(extract2a)
+print("Flat DataFrame")
+print("--------------")
+print("Shape      :", df_flat.shape)
+print("Index type :", type(df_flat.index).__name__)
+print("Columns    :", list(df_flat.columns[:12]))
 
-# Extract for 'G10' over a specific period with df_index
-my_prn_for_extraction = 'G10'
-my_date_for_extraction_start =  my_date_to_process + dt.timedelta(hours=3, minutes=27, seconds=0)
-my_date_for_extraction_end =  my_date_to_process + dt.timedelta(hours=3, minutes=32, seconds=30)
-my_obs_to_extract = 'L1'
+print("\nMultiIndex DataFrame")
+print("--------------------")
+print("Shape      :", df_index.shape)
+print("Index type :", type(df_index.index).__name__)
+print("Index names:", df_index.index.names)
+print("Columns    :", list(df_index.columns[:12]))
 
-start_period = pd.Timestamp(my_date_for_extraction_start)
-end_period = pd.Timestamp(my_date_for_extraction_end )
-extract2b = df_index.loc[(slice(start_period, end_period), my_prn_for_extraction), my_obs_to_extract]
-print(extract2b)
 
-# Extract for 'G10' over a period defined by a start date and a time delta with df_index
-my_prn_for_extraction = 'G10'
-my_date_for_extraction =  my_date_to_process + dt.timedelta(hours=3, minutes=27, seconds=30)
-my_obs_to_extract = 'L1'
+# %%
+###############################################################################
+# Optional inspection in Spyder
+#
+# Open the Variable Explorer and compare:
+#   - df_flat
+#   - df_index
+#
+# Question for students
+# ---------------------
+# What are the practical differences between these two DataFrames?
+###############################################################################
 
-start = pd.Timestamp(my_date_for_extraction)
-delta_T = pd.Timedelta(days=0, hours=1, minutes=15)
-end = start + delta_T
-extract2c = df_index.loc[(slice(start, end), my_prn_for_extraction), my_obs_to_extract]
-print(extract2c)
+df_flat
+# df_index
 
-#%%
-# Section to comment out once this is understood.
-# In this case, if I want to retrieve the line numbers affected by a condition
-# I can use the numpy where command
-# example:
 
-my_prn_for_extraction = 'G10'
-my_date_for_extraction_start =  my_date_to_process + dt.timedelta(hours=3, minutes=27, seconds=0)
-my_date_for_extraction_end =  my_date_to_process + dt.timedelta(hours=3, minutes=32, seconds=30)
+# %%
+###############################################################################
+# Extract the approximate receiver position from the RINEX header
+#
+# Educational objective
+# ---------------------
+# Show that useful metadata are stored in the RINEX header and can already
+# provide a first reference position.
+###############################################################################
 
-condition1 = df_index.index.get_level_values('epoch') >= pd.Timestamp(my_date_for_extraction_start )
-condition2 = df_index.index.get_level_values('epoch') <= pd.Timestamp(my_date_for_extraction_end)
-condition3 = df_index.index.get_level_values('prn') == my_prn_for_extraction
+approx_position_lines = [
+    line for line in rinex_header if "APPROX POSITION XYZ" in line
+]
 
-np.where(condition1 & condition2 & condition3)
+if len(approx_position_lines) > 0:
+    approx_position_xyz = np.array(
+        approx_position_lines[0].split()[:3],
+        dtype=float,
+    )
+else:
+    approx_position_xyz = np.array([0.0, 0.0, 0.0])
 
-# A faster method is to directly add a column of line numbers to the original DataFrame
-# Add a column of line numbers to the original DataFrame
-df_index['ind_ligne'] = range(len(df_index))
+print("Approximate receiver XYZ position from RINEX header [m]:")
+print(approx_position_xyz)
 
-# We have access to data and their indices ...
-my_prn_for_extraction = 'G10'
-my_date_for_extraction_start =  my_date_to_process + dt.timedelta(hours=3, minutes=27, seconds=0)
-my_date_for_extraction_end =  my_date_to_process + dt.timedelta(hours=3, minutes=42, seconds=30)
 
-start = pd.Timestamp(my_date_for_extraction_start)
-end   = pd.Timestamp(my_date_for_extraction_end)
-extract2c = df_index.loc[(slice(start, end), my_prn_for_extraction), ('L1','ind_ligne')]
+# %%
+###############################################################################
+# Flat-table selection: one PRN at one epoch
+#
+# Educational objective
+# ---------------------
+# Learn explicit selection using boolean masks.
+#
+# Why this matters
+# ----------------
+# This is the simplest way to show students how GNSS observations are stored
+# before introducing more advanced indexing strategies.
+###############################################################################
 
-#%%
-# From here on, you are equipped to load RINEX observation files
-# and easily access the data.
-# Get a list of unique PRNs
+example_epoch = pd.Timestamp(EXAMPLE_START_TIME)
 
-my_obs_to_extract = 'L1'
+bool_prn = df_flat["prn"] == EXAMPLE_PRN
+bool_epoch = df_flat["epoch"] == example_epoch
 
-prns = df_index.index.get_level_values('prn').unique()
+flat_single_epoch = df_flat.loc[
+    bool_prn & bool_epoch,
+    EXAMPLE_OBSERVABLE,
+]
 
-# Create a figure and an axis for the plot
-fig, ax = plt.subplots(figsize=(10, 6))
+print("Flat-table selection")
+print("--------------------")
+print(f"Satellite  : {EXAMPLE_PRN}")
+print(f"Epoch      : {example_epoch}")
+print(f"Observable : {EXAMPLE_OBSERVABLE}")
+print()
+print(flat_single_epoch)
 
-# Loop over each PRN and plot its time series
-for prn in prns:
-    # Select the data for the current PRN
-    data = df_index.xs(prn, level='prn')
-    # Plot the data
-    ax.plot(data.index.get_level_values('epoch'), data[my_obs_to_extract], label=prn)
 
-# Configure the graph
-ax.set_title('Time series '+my_obs_to_extract+' by satellite PRN')
-ax.set_xlabel('Time')
-ax.set_ylabel('Value')
-ax.legend(title='PRN')
+# %%
+###############################################################################
+# Flat-table selection: one PRN over a time window
+#
+# Educational objective
+# ---------------------
+# Extend the previous selection from a single epoch to a small time interval.
+###############################################################################
 
-# Display the graph
+bool_prn = df_flat["prn"] == EXAMPLE_PRN
+bool_time_window = (
+    (df_flat["epoch"] >= pd.Timestamp(EXAMPLE_START_TIME))
+    & (df_flat["epoch"] <= pd.Timestamp(EXAMPLE_END_TIME))
+)
+
+flat_time_window = df_flat.loc[
+    bool_prn & bool_time_window,
+    [EXAMPLE_OBSERVABLE, "epoch", "prn"],
+]
+
+print("Flat-table time-window selection")
+print("--------------------------------")
+print(f"Satellite  : {EXAMPLE_PRN}")
+print(f"Start time : {EXAMPLE_START_TIME}")
+print(f"End time   : {EXAMPLE_END_TIME}")
+print()
+print(flat_time_window)
+
+
+# %%
+###############################################################################
+# MultiIndex selection: one PRN at one epoch
+#
+# Educational objective
+# ---------------------
+# Show how hierarchical indexing makes GNSS queries more natural when
+# observations are identified by (epoch, prn).
+###############################################################################
+
+index_single_epoch = df_index.loc[
+    (example_epoch, EXAMPLE_PRN),
+    EXAMPLE_OBSERVABLE,
+]
+
+print("MultiIndex selection")
+print("--------------------")
+print(f"Satellite  : {EXAMPLE_PRN}")
+print(f"Epoch      : {example_epoch}")
+print(f"Observable : {EXAMPLE_OBSERVABLE}")
+print()
+print(index_single_epoch)
+
+
+# %%
+###############################################################################
+# MultiIndex selection: one PRN over a time window
+#
+# Educational objective
+# ---------------------
+# Use slice-based selection in a structure that is closer to GNSS logic.
+###############################################################################
+
+index_time_window = df_index.loc[
+    (
+        slice(pd.Timestamp(EXAMPLE_START_TIME), pd.Timestamp(EXAMPLE_END_TIME)),
+        EXAMPLE_PRN,
+    ),
+    [EXAMPLE_OBSERVABLE],
+]
+
+print("MultiIndex time-window selection")
+print("--------------------------------")
+print(index_time_window)
+
+
+# %%
+###############################################################################
+# Add an explicit row identifier
+#
+# Educational objective
+# ---------------------
+# Make the future link between data rows and least-squares equations visible.
+#
+# Why this matters
+# ----------------
+# In Step 02, each selected observation will progressively contribute to a row
+# of the design matrix. Adding a row identifier now helps students see this
+# connection explicitly.
+###############################################################################
+
+df_index = df_index.copy()
+df_index["row_id"] = np.arange(len(df_index))
+
+row_demo = df_index.loc[
+    (
+        slice(pd.Timestamp(EXAMPLE_START_TIME), pd.Timestamp(EXAMPLE_END_TIME)),
+        EXAMPLE_PRN,
+    ),
+    [EXAMPLE_OBSERVABLE, "row_id"],
+]
+
+print("Observation rows with explicit row identifiers")
+print("----------------------------------------------")
+print(row_demo)
+
+
+# %%
+###############################################################################
+# Visualize one observable by satellite PRN
+#
+# Educational objective
+# ---------------------
+# Inspect the temporal evolution of one observable and identify tracking arcs.
+#
+# Why this matters
+# ----------------
+# GNSS observations are not always continuous in time for each satellite.
+# Gap-aware plotting helps students see that the observable is naturally split
+# into arcs.
+###############################################################################
+
+my_obs_to_extract = EXAMPLE_OBSERVABLE
+
+fig, ax = plot_gnss_timeseries_by_prn(
+    df=df_index,
+    y=my_obs_to_extract,
+    gap=GAP_THRESHOLD,
+    label_arcs=True,
+    arc_label_fontsize=8,
+    show_legend=False,
+    title=f"Time series of {my_obs_to_extract} by satellite PRN",
+    xlabel="Time (epoch)",
+    ylabel=my_obs_to_extract,
+    figsize=(10, 6),
+)
+
+ax.grid(True, alpha=0.3)
 plt.show()
 
 
-#%%
+# %%
+###############################################################################
+# Optional variant: the same plot with a legend
+#
+# Note
+# ----
+# For dense GNSS plots, direct arc labels are often more readable than
+# a large legend. This cell is kept as an optional comparison.
+###############################################################################
 
-my_obs_to_extract = "L1"
-gap = pd.Timedelta(minutes=30)
+fig, ax = plot_gnss_timeseries_by_prn(
+    df=df_index,
+    y=my_obs_to_extract,
+    gap=GAP_THRESHOLD,
+    label_arcs=False,
+    show_legend=True,
+    legend_outside=True,
+    legend_ncol=2,
+    title=f"Time series of {my_obs_to_extract} by satellite PRN",
+    xlabel="Time (epoch)",
+    ylabel=my_obs_to_extract,
+    figsize=(10, 6),
+)
 
-prns = df_index.index.get_level_values("prn").unique()
-
-fig, ax = plt.subplots(figsize=(10, 6))
-
-for prn in prns:
-    # 1) data of the PRN
-    data = df_index.xs(prn, level="prn").copy()
-
-    # 2) get the time index (epoch) and sort
-    t = data.index.get_level_values("epoch")
-    data = data.set_index(t)
-    data = data.sort_index()
-
-    # 3) calculate gaps and create a segment id
-    dt = data.index.to_series().diff()
-    seg_id = (dt > gap).cumsum()
-
-    # 4) unique color for this PRN (we set it via the 1st plot)
-    color = None
-    for _, seg in data.groupby(seg_id):
-        line, = ax.plot(seg.index, seg[my_obs_to_extract], color=color, label=prn if color is None else None)
-        if color is None:
-            color = line.get_color()  # retrieve the auto-assigned color and reuse it
-
-ax.set_title(f"Time series {my_obs_to_extract} by satellite PRN")
-ax.set_xlabel("Time")
-ax.set_ylabel("Value")
-ax.legend(title="PRN")
+ax.grid(True, alpha=0.3)
 plt.show()
 
 
+# %%
+###############################################################################
+# Clean the observation table before later modeling
+#
+# Educational objective
+# ---------------------
+# Identify missing values robustly and keep only rows that are complete for
+# selected observables.
+#
+# Why this matters
+# ----------------
+# In GNSS tables, missing values are not always stored as true NaN values.
+# They may appear as blank strings or textual placeholders, which must be
+# normalized before column and row cleaning.
+###############################################################################
 
-#%%
-# It is not necessary to keep unused columns in the dataframe:
-# Remove columns where all values are NaN
-df_index = df_index.dropna(axis=1, how='all')
+required_observables = ["L1", "L2"]
 
-# We notice that some measurements were not made on L1 or L2, which
-# could be problematic when forming the combinations:
+df_clean = df_index.copy()
 
-# Identify rows with NaN in 'L1' or 'L2'
-rows_with_nan = df_index[['L1', 'L2']].isna().any(axis=1)
+# Normalize common textual encodings of missing values
+df_clean = df_clean.replace(
+    to_replace=[r"^\s*$", "nan", "NaN", "NA", "N/A", "null", "None"],
+    value=np.nan,
+    regex=True,
+)
 
-# Create a DataFrame with the rows to be removed
-# potentially useful to know when a possible problem occurred
-df_removed = df_index[rows_with_nan]
+protected_cols = {"sys", "prn", "prni", "row_id"}
+
+# -------------------------------------------------------------------------
+# First pass: remove columns already fully empty
+# -------------------------------------------------------------------------
+for col in df_clean.columns:
+    if col not in protected_cols:
+        df_clean[col] = pd.to_numeric(df_clean[col], errors="coerce")
+
+empty_cols_before = df_clean.columns[~df_clean.notna().any(axis=0)].tolist()
+
+print("Columns removed before row cleaning:")
+print(empty_cols_before if empty_cols_before else "None")
+
+df_clean = df_clean.drop(columns=empty_cols_before)
+
+# -------------------------------------------------------------------------
+# Row cleaning based on required observables
+# -------------------------------------------------------------------------
+required_observables_available = [
+    obs for obs in required_observables if obs in df_clean.columns
+]
+
+if not required_observables_available:
+    print("\nNo required observable is available. No row-based cleaning performed.")
+    df_removed = df_clean.iloc[0:0].copy()
+else:
+    rows_with_missing = df_clean[required_observables_available].isna().any(axis=1)
+    df_removed = df_clean.loc[rows_with_missing].copy()
+    df_clean = df_clean.dropna(subset=required_observables_available)
+
+# -------------------------------------------------------------------------
+# Second pass: remove columns that became empty after row cleaning
+# -------------------------------------------------------------------------
+empty_cols_after = df_clean.columns[~df_clean.notna().any(axis=0)].tolist()
+
+print("\nColumns removed after row cleaning:")
+print(empty_cols_after if empty_cols_after else "None")
+
+df_clean = df_clean.drop(columns=empty_cols_after)
+
+# -------------------------------------------------------------------------
+# Summary
+# -------------------------------------------------------------------------
+print("\nCleaning summary")
+print("----------------")
+print("Original shape            :", df_index.shape)
+print("Final clean shape         :", df_clean.shape)
+print("Removed rows              :", len(df_removed))
+print("Required observables used :", required_observables_available)
+
+if len(df_removed) > 0:
+    print("\nFirst removed rows:")
+    print(df_removed.head())
+
+# %%
+###############################################################################
+# Suggested student questions
+#
+# 1. Why is the MultiIndex structure convenient for GNSS observations?
+# 2. Why can a row identifier be useful before introducing least squares?
+# 3. Why should we avoid plotting across large temporal gaps?
+# 4. Why do dual-frequency combinations require complete observations?
+###############################################################################
 
 
-# Remove rows containing NaN in 'L1' or 'L2' from the original DataFrame
-df_index = df_index.dropna(subset=['L1', 'L2'])
+# %%
+###############################################################################
+# Step 01 conclusion
+#
+# At this stage, students should be able to:
+#   - read a RINEX observation file with geodezyx,
+#   - compare flat and MultiIndex pandas tables,
+#   - extract one satellite at one epoch or over a time window,
+#   - visualize one observable by PRN,
+#   - identify missing observations before modeling.
+#
+# Bridge to Step 02
+# -----------------
+# In Step 02, this structured observation table will be reused to build a
+# simple GNSS positioning model. The key pedagogical idea is that each
+# observation row will progressively contribute to a least-squares system.
+###############################################################################
 
-#%%
-# Still need to handle the satellites and get their positions and corrections at
-# the dates of interest
+print("Step 01 completed.")
+print("The observation table is now ready for the data-to-model transition in Step 02.")
+
+
+
 
