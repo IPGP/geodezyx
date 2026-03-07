@@ -993,3 +993,108 @@ print("Main workspace objects to keep in mind:")
 print("  - df_code    : the main MultiIndex working DataFrame")
 print("  - solutions  : the successive positioning solutions")
 print("  - df_summary : the final model comparison table")
+
+
+
+
+
+
+# %%
+
+# %%
+###############################################################################
+# Export a compact LaTeX table with Model, short Description, and ENU components
+# ENU coordinates are rounded to the nearest millimeter.
+###############################################################################
+
+import numpy as np
+import pandas as pd
+
+
+def solutions_to_latex_table_enu(
+    solutions: dict,
+    caption: str = "Progressive evolution of the estimated position in the local ENU frame.",
+    label: str = "tab:step02_enu_progression",
+    filepath: str | None = None,
+) -> tuple[pd.DataFrame, str]:
+    """
+    Convert the pedagogical `solutions` dictionary into a compact LaTeX table
+    showing the model name, a short description, and the ENU components of the
+    successive positioning solutions.
+    """
+
+    model_name_map = {
+        "M0_naive_code": "M0",
+        "M1_satellite_clock": "M1",
+        "M2_receiver_clock": "M2",
+        "M3_sagnac": "M3",
+    }
+
+    model_description_map = {
+    "M0_naive_code": "Naive code model (Geometry only)",
+    "M1_satellite_clock": "+ sat. clock + relativity",
+    "M2_receiver_clock": "+ receiver clock",
+    "M3_sagnac": "+ Earth rotation (Sagnac effect)",
+}
+
+    rows = []
+
+    for model_name, result in solutions.items():
+        enu = result.get("enu_error_m", [np.nan, np.nan, np.nan])
+
+        rows.append({
+            "Model": model_name_map.get(model_name, model_name),
+            "Description": model_description_map.get(
+                model_name,
+                result.get("description", "")
+            ),
+            "E [m]": float(enu[0]),
+            "N [m]": float(enu[1]),
+            "U [m]": float(enu[2]),
+        })
+
+    df_summary = pd.DataFrame(rows)
+
+    desired_order = ["M0", "M1", "M2", "M3"]
+    df_summary["Model"] = pd.Categorical(
+        df_summary["Model"],
+        categories=desired_order,
+        ordered=True,
+    )
+    df_summary = df_summary.sort_values("Model").reset_index(drop=True)
+
+    # Round to the nearest millimeter
+    df_summary[["E [m]", "N [m]", "U [m]"]] = (
+        df_summary[["E [m]", "N [m]", "U [m]"]].round(3)
+    )
+
+    latex_table = df_summary.to_latex(
+        index=False,
+        escape=True,
+        caption=caption,
+        label=label,
+        column_format="llrrr",
+        float_format="%.3f",
+    )
+
+    if filepath is not None:
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(latex_table)
+
+    return df_summary, latex_table
+
+
+# Example of use
+df_enu, latex_enu = solutions_to_latex_table_enu(
+    solutions,
+    caption=(
+        "Progressive evolution of the estimated position in the local ENU frame "
+        "as the code-based GNSS model is enriched."
+    ),
+    label="tab:step02_enu_progression",
+    filepath=str(WORK_DIR / "step02_enu_progression.tex"),
+)
+
+print(df_enu)
+print()
+print(latex_enu)
