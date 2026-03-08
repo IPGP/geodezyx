@@ -38,6 +38,30 @@ log = logging.getLogger('geodezyx')
 
 
 def color_list(L , colormap='jet'):
+    """
+    Generate a list of colors from a colormap for each unique value in L.
+
+    Parameters
+    ----------
+    L : array-like
+        Input list or array of values. The number of unique values determines the number of colors.
+    colormap : str, optional
+        Name of the matplotlib colormap to use. The default is 'jet'.
+
+    Returns
+    -------
+    colist : list of tuple
+        List of RGBA color tuples from the specified colormap.
+
+    Notes
+    -----
+    The colors are evenly distributed across the colormap based on the number of unique values in L.
+
+    See Also
+    --------
+    matplotlib.pyplot.get_cmap : Get a colormap by name.
+    colors_from_colormap_getter : Alternative function to get colors from a colormap.
+    """
     cm     = plt.get_cmap(colormap)
     NCOL   = len(np.unique(L))
     colist = [cm(1.*i/NCOL) for i in range(NCOL)]
@@ -79,11 +103,51 @@ def symbols_list(L=None):
 
 
 def colors_from_colormap_getter(ncolors , colormap = 'viridis'):
+    """
+    Get a list of colors from a matplotlib colormap.
+
+    Parameters
+    ----------
+    ncolors : int
+        Number of colors to generate.
+    colormap : str, optional
+        Name of the matplotlib colormap to use. The default is 'viridis'.
+
+    Returns
+    -------
+    list of tuple
+        List of RGBA color tuples from the specified colormap.
+
+    See Also
+    --------
+    color_list : Generate colors based on unique values in a list.
+    """
     import matplotlib.pyplot as plt
     cm = plt.get_cmap(colormap)
     return [cm(1.*i/ncolors) for i in range(ncolors)]
 
 def ylim_easy(Lin,delta = .1, min_null_if_neg = False):
+    """
+    Calculate convenient axis limits for a data array.
+
+    Parameters
+    ----------
+    Lin : array-like
+        Input data.
+    delta : float, optional
+        Fraction of the data range to add as padding. The default is 0.1.
+    min_null_if_neg : bool, optional
+        If True, set the lower limit to 0 if it would be negative. The default is False.
+
+    Returns
+    -------
+    tuple of float
+        (lower_limit, upper_limit) for the y-axis.
+
+    Notes
+    -----
+    Useful for automatic axis limit calculation in plots.
+    """
     minn = np.min(Lin)
     maxx = np.max(Lin)
     rangee = np.abs(maxx - minn)
@@ -93,12 +157,25 @@ def ylim_easy(Lin,delta = .1, min_null_if_neg = False):
         return (minn - delta * rangee , maxx + delta * rangee)
 
 def get_figure(figin = 0):
-    # Un autre exemple comme défini dans
-    # export_ts_figure_pdf
-    #    if type(fig) is int:
-    #        f = plt.figure(fig)
-    #    elif type(fig) is Figure:
-    #        f = fig
+    """
+    Get or create a matplotlib Figure object.
+
+    Parameters
+    ----------
+    figin : int or matplotlib.figure.Figure, optional
+        Figure specification. If 0, creates a new figure.
+        If an integer, returns figure with that number.
+        If a Figure object, returns that figure. The default is 0.
+
+    Returns
+    -------
+    figout : matplotlib.figure.Figure
+        The requested or created figure object with at least one axes.
+
+    Notes
+    -----
+    Ensures the returned figure has at least one axes (subplot).
+    """
     if isinstance(figin,matplotlib.figure.Figure):
         figout = figin
     elif figin == 0:
@@ -158,6 +235,7 @@ def figure_saver(figobjt_in , outdir , outname ,
         else:   
             outpath = os.path.join(outdir,outname+outtype_iter)
             
+            formtup = None
             if formt:
                 if type(formt) is tuple:
                     formtup = formt
@@ -170,8 +248,9 @@ def figure_saver(figobjt_in , outdir , outname ,
                         log.warning("assume Figure format as A4")
                         formtup = (11.69,8.27)
                         
-                figobjt_in.set_size_inches(*formtup)
-            
+                if formtup:
+                    figobjt_in.set_size_inches(*formtup)
+
             figobjt_in.savefig(outpath,transparent=transparent,dpi=dpi)
 
         outpath_stk.append(outpath)
@@ -206,21 +285,37 @@ def id2val(value_lis,id_lis,idin):
         replace dico bc. set is not supproted as key"""
     return value_lis[id_lis.index(idin)]
 
-def set_size_for_pub(width=418.25368, fraction=1,subplot=[1, 1]):
-    """ Set aesthetic figure dimensions to avoid scaling in latex.
+def set_size_for_pub(width=418.25368, fraction=1, subplot=None):
+    """
+    Set aesthetic figure dimensions to avoid scaling in LaTeX.
 
     Parameters
     ----------
-    width: float
-            Width in pts
-    fraction: float
-            Fraction of the width which you wish the figure to occupy
+    width : float, optional
+        Width of the figure in points (pt). The default is 418.25368 (approximately 146 mm).
+    fraction : float, optional
+        Fraction of the width that the figure should occupy. The default is 1.
+    subplot : list of int, optional
+        Subplot grid dimensions as [nrows, ncols]. The default is [1, 1].
 
     Returns
     -------
-    fig_dim: tuple
-            Dimensions of figure in inches
+    fig_dim : tuple of float
+        Dimensions of the figure as (width_inches, height_inches).
+
+    Notes
+    -----
+    Uses the golden ratio (φ = (√5 - 1) / 2 ≈ 0.618) to set aesthetic figure height.
+    Useful for creating publication-ready plots that fit nicely in LaTeX documents.
+
+    Examples
+    --------
+    >>> width = 418.25368  # Standard LaTeX column width
+    >>> fig_dim = set_size_for_pub(width, fraction=0.5, subplot=[2, 2])
+    >>> fig = plt.figure(figsize=fig_dim)
     """
+    if subplot is None:
+        subplot = [1, 1]
     # Width of figure
     fig_width_pt = width * fraction
 
@@ -240,42 +335,61 @@ def set_size_for_pub(width=418.25368, fraction=1,subplot=[1, 1]):
     return fig_dim
 
 
-def gaussian_for_plot(D,density=False,nbins=500,nsigma=3.5):
+def gaussian_for_plot(d, density=False, nbins=500, nsigma=3.5):
     """
-    generate a gaussian curve for histogram plot
+    Generate a Gaussian curve for histogram overlay plots.
 
     Parameters
     ----------
-    D : iterable
-        data vector.
+    d : array-like
+        Data vector to fit a Gaussian distribution to.
     density : bool, optional
-        Adapted curve for desity mode. The default is False.
+        If True, returns the PDF (normalized). If False, scales the PDF to match histogram area.
+        The default is False.
     nbins : int, optional
-        number of bins. The default is 500.
-    nsigma : TYPE, optional
-        n sigmas for the x axis. The default is 3.5.
+        Number of bins (points) to generate for the curve. The default is 500.
+    nsigma : float, optional
+        Number of standard deviations to span for the x-axis (μ ± nsigma*σ).
+        The default is 3.5.
 
     Returns
     -------
-    Xpdf : array
-        gaussian curve x.
-    Ypdf_out : TYPE
-        gaussian curve x.
+    Xpdf : numpy.ndarray
+        X coordinates of the Gaussian curve.
+    ypdf_out : numpy.ndarray
+        Y coordinates of the Gaussian curve (PDF or histogram-scaled).
 
+    Notes
+    -----
+    Useful for overlaying a fitted Gaussian curve on a histogram.
+    When density=False, the curve is scaled to match the histogram's area.
+    When density=True, the curve is the probability density function.
+
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> data = np.random.randn(1000)
+    >>> x_curve, y_curve = gaussian_for_plot(data)
+    >>> plt.hist(data, bins=50, density=True)
+    >>> plt.plot(x_curve, y_curve, 'r-', label='Gaussian fit')
+
+    See Also
+    --------
+    scipy.stats.norm.pdf : Probability density function for normal distribution.
     """
     import scipy
+    from scipy import integrate
 
-    mu = np.mean(D)
-    sigma = np.std(D)
+    mu = np.mean(d)
+    sigma = np.std(d)
     Xpdf = np.linspace(mu - nsigma*sigma,
                        mu + nsigma*sigma,
                        nbins)
-    Ypdf = scipy.stats.norm.pdf(Xpdf, mu, sigma)
-    Ypdf_out = Ypdf
+    ypdf = scipy.stats.norm.pdf(Xpdf, mu, sigma)
+    ypdf_out = ypdf
     if not density:
-        Ybin,Xbin = np.histogram(D,bins=nbins)
-        area_bin = np.trapz(Ybin,dx=np.diff(Xbin)[0])
-        
-        Ypdf_out = Ypdf*area_bin
-        
-    return Xpdf,Ypdf_out    
+        Ybin, Xbin = np.histogram(d, bins=nbins)
+        area_bin = integrate.trapezoid(Ybin, dx=np.diff(Xbin)[0])
+
+        ypdf_out = ypdf * area_bin
+    return Xpdf,ypdf_out
