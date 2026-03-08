@@ -234,7 +234,7 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
 
     Parameters
     ----------
-    pathin : list or str.
+    pathin : list or str
         If list: list of the Logsheet paths.
         If str: path of the directory containing the Logsheets.
     wildcardin : str, optional
@@ -242,24 +242,26 @@ def multi_logsheet_read(pathin,wildcardin='*log',return_dico=True,
         used only for pathin in a string path.
         The default is '*log'.
     return_dico : bool, optional
-        If False, returns period_lis_lis , stat_lis , loc_lis
+        If False, returns ``period_lis_lis``, ``stat_lis``, ``loc_lis``
         the False mode is useful for station.info generation
-        with write_station_info_from_datalists
+        with ``write_station_info_from_datalists``
         The default is True.
     output_mode : str, optional
         Defines the output mode if a dictionary is asked.
         (It is not relevant if list are asked)
-        'classic': returns in the period_lis , stat , loc
-        'pretty': returns the period_lis, stat, loc but with 
-        period_lis as a DataFrame
-        'legacy': returns in the dico period_lis_lis , stat_lis , loc_lis 
-        (should not be used anymore)
+
+        - 'classic': returns in the ``period_lis``, ``stat``, ``loc``
+        - 'pretty': returns the ``period_lis``, ``stat``, ``loc`` but with
+          ``period_lis`` as a DataFrame
+        - 'legacy': returns in the dico ``period_lis_lis``, ``stat_lis``, ``loc_lis``
+          (should not be used anymore)
+
         The default is 'classic'.
-        
+
     Returns
     -------
     stations_dico : dict
-        a dictionnary like stations_dico['STAT'] = (period_lis, station, loc).
+        a dictionnary like ``stations_dico['STAT'] = (period_lis, station, loc)``.
 
     """
     

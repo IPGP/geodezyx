@@ -1,4 +1,4 @@
-geodezyx's complete reference package
+GeodeZYX's complete reference package
 =====================================
 
 .. automodule:: geodezyx
@@ -14,7 +14,6 @@ Subpackages
 
    geodezyx.athmo
    geodezyx.conv
-   geodezyx.externlib
    geodezyx.files_rw
    geodezyx.geodyn
    geodezyx.gnss_edu

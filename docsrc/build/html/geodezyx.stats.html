@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>geodezyx.stats package &mdash; geodezyx 4.x documentation</title>
+  <title>geodezyx.stats package &mdash; geodezyx 5.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -51,7 +51,6 @@
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
@@ -674,16 +673,20 @@ The default is 7.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.lagrange_interpolate">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">lagrange_interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ydata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Titrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.lagrange_interpolate" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">lagrange_interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">titrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.lagrange_interpolate" title="Link to this definition"></a></dt>
 <dd><p>Perform a temporal lagrangian interpolation
 the X-component is a time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Tdata</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – X/T component of the known points.</p></li>
-<li><p><strong>Ydata</strong> (<em>iterable</em><em> of </em><em>floats</em>) – Y component of the known points..</p></li>
-<li><p><strong>Titrp</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – Epochs of the wished points.</p></li>
+<li><p><strong>tdata</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – X/T component of the known points.</p></li>
+<li><p><strong>ydata</strong> (<em>iterable</em><em> of </em><em>floats</em>) – Y component of the known points..</p></li>
+<li><p><strong>titrp</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – Epochs of the wished points.</p></li>
 <li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – degree of the polynom. Better if even. The default is 10.</p></li>
+<li><p><strong>t_type</strong> (<em>str</em><em>, </em><em>optional</em>) – type of the time component, can be “datetime”, “posix” or “pandas_timestamp”.
+The default is “datetime”.
+pandas_timestamp is recommended for a more precise applications
+(nanosecond precision instead of microsecond for datetime)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

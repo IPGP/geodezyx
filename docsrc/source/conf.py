@@ -21,7 +21,7 @@ copyright = '2025, Pierre Sakic - Gustavo Mansur'
 author = 'Pierre Sakic - Gustavo Mansur'
 
 # The full version, including alpha/beta/rc tags
-release = '4.x'
+release = '5.1.1'
 
 
 # -- General configuration ---------------------------------------------------

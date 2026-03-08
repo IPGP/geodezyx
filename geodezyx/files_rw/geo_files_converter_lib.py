@@ -912,7 +912,7 @@ def write_station_info_from_datalists(
     period_lis_lis, site_lis, location_lis, station_info_out_path
 ):
     """
-
+    Write station information from data lists to station.info file.
 
     Parameters
     ----------
@@ -927,17 +927,19 @@ def write_station_info_from_datalists(
 
     Returns
     -------
-    None.
+    None
 
-    Note
-    ----
+    Notes
+    -----
     The different data lists (i.e. period_lis_lis , stat_lis , loc_lis)
     are produced by:
-        * mono_logsheet_read
-              do not forget to activate return_lists = True
 
-        * multi_logsheet_read
-              do not forget to activate return_dico = False
+    * mono_logsheet_read
+      do not forget to activate return_lists = True
+
+    * multi_logsheet_read
+      do not forget to activate return_dico = False
+
     """
 
     si_file = open(station_info_out_path, "w")

@@ -153,27 +153,31 @@ def calc_stand_ties_gpt3(
     """
     Determine standard atmospheric ties from meteological information from GPT3 with analytical equation from Teke et al. (2011)
 
-    Parameters:
+    Parameters
     ----------
-        epoc :
-            time in Python datetime
-        lat_ref :
-            Latitude of Ref. station
-        lat_rov :
-            Latitude of Rov. station
-        h_ref :
-            Height of Ref. station
-        h_rov :
-            Height of Rov. station
-        grid_file :
-            meteological grid file
-        unit :
-            in meters (m) or milimeters (mm)
+    epoc
+        time in Python datetime
+    lat_ref
+        Latitude of Ref. station
+    lon_ref
+        Longitude of Ref. station
+    lat_rov
+        Latitude of Rov. station
+    lon_rov
+        Longitude of Rov. station
+    h_ref
+        Height of Ref. station
+    h_rov
+        Height of Rov. station
+    grid
+        meteological grid file
+    unit
+        in meters (m) or milimeters (mm)
 
-    Return:
-    ----------
-        ties :
-            Standard ties of total delay in milimeters or meters
+    Returns
+    -------
+    ties
+        Standard ties of total delay in milimeters or meters
 
     """
     if utils.is_iterable(lat_ref):
@@ -219,29 +223,29 @@ def calc_stand_ties(epoc, lat_ref, h_ref, h_rov, p0, t0, e0, unit="mm"):
     """
     Determine standard atmospheric ties with analytical equation from Teke et al. (2011)
 
-    Parameters:
+    Parameters
     ----------
-        epoc :
-            time in Python datetime
-        lat_ref :
-            Latitude of Ref. station
-        h_ref :
-            Height of Ref. station
-        h_rov :
-            Height of Rov. station
-        p0:
-            Pressure of Ref. station in hPa
-        t0:
-            Temperature in C of Ref. station
-        e0:
-            Water vapor pressure of Ref. station in hPa
-        unit :
-            in meters (m) or milimeters (mm)
+    epoc
+        time in Python datetime
+    lat_ref
+        Latitude of Ref. station
+    h_ref
+        Height of Ref. station
+    h_rov
+        Height of Rov. station
+    p0
+        Pressure of Ref. station in hPa
+    t0
+        Temperature in C of Ref. station
+    e0
+        Water vapor pressure of Ref. station in hPa
+    unit
+        in meters (m) or milimeters (mm)
 
-    Return:
-    ----------
-        ties :
-            Standard ties of total delay in milimeters or meters
+    Returns
+    -------
+    ties
+        Standard ties of total delay in milimeters or meters
 
     """
     if utils.is_iterable(lat_ref):
@@ -284,84 +288,70 @@ def gpt3(dtin, lat, lon, h_ell, C, it=0):
     values as well as sine and cosine amplitudes for the annual and
     semiannual variation of the coefficients.
 
-    Parameters:
+    Parameters
     ----------
-    dtin :
+    dtin
         datatime in Python datetime object
-
-    lat:
+    lat
         ellipsoidal latitude in radians [-pi/2:+pi/2]
-
-    lon:
+    lon
         longitude in radians [-pi:pi] or [0:2pi]
-
-    h_ell:
+    h_ell
         ellipsoidal height in m
-
-    it:
+    C
+        grid data
+    it
         case 1 no time variation but static quantities, case 0 with time variation (annual and semiannual terms)
 
-    Returns:
-    ----------
-    p:
+    Returns
+    -------
+    p
         pressure in hPa
-
-    T:
+    T
         temperature in degrees Celsius
-
-    dT:
+    dT
         temperature lapse rate in degrees per km
-
-    Tm:
+    Tm
         mean temperature weighted with the water vapor in degrees Kelvin
-
-    e:
+    e
         water vapour pressure in hPa
-
-    ah:
+    ah
         hydrostatic mapping function coefficient at zero height (VMF3)
-
-    aw:
+    aw
         wet mapping function coefficient (VMF3)
-
-    la:
+    la
         water vapour decrease factor
-
-    undu:
+    undu
         geoid undulation in m
-
-    Gn_h:
+    Gn_h
         hydrostatic north gradient in m
-
-    Ge_h:
+    Ge_h
         hydrostatic east gradient in m
-
-    Gn_w:
+    Gn_w
         wet north gradient in m
-
-    Ge_w:
+    Ge_w
         wet east gradient in m
 
     Notes
-    ----------
-        Modified for Python by Chaiyaporn Kitpracha
+    ------
+    Modified for Python by Chaiyaporn Kitpracha
 
     Source
-    ----------
-        (c) Department of Geodesy and Geoinformation, Vienna University of
-        Technology, 2017
+    ------
+    (c) Department of Geodesy and Geoinformation, Vienna University of
+    Technology, 2017
 
-        The copyright in this document is vested in the Department of Geodesy and
-        Geoinformation (GEO), Vienna University of Technology, Austria. This document
-        may only be reproduced in whole or in part, or stored in a retrieval
-        system, or transmitted in any form, or by any means electronic,
-        mechanical, photocopying or otherwise, either with the prior permission
-        of GEO or in accordance with the terms of ESTEC Contract No.
-        4000107329/12/NL/LvH.
+    The copyright in this document is vested in the Department of Geodesy and
+    Geoinformation (GEO), Vienna University of Technology, Austria. This document
+    may only be reproduced in whole or in part, or stored in a retrieval
+    system, or transmitted in any form, or by any means electronic,
+    mechanical, photocopying or otherwise, either with the prior permission
+    of GEO or in accordance with the terms of ESTEC Contract No.
+    4000107329/12/NL/LvH.
 
-        D. Landskron, J. Böhm (2018), VMF3/GPT3: Refined Discrete and Empirical Troposphere Mapping Functions,
-        J Geod (2018) 92: 349., doi: 10.1007/s00190-017-1066-2.
-        Download at: https://link.springer.com/content/pdf/10.1007%2Fs00190-017-1066-2.pdf
+    D. Landskron, J. Böhm (2018), VMF3/GPT3: Refined Discrete and Empirical Troposphere Mapping Functions,
+    J Geod (2018) 92: 349., doi: 10.1007/s00190-017-1066-2.
+    Download at: https://link.springer.com/content/pdf/10.1007%2Fs00190-017-1066-2.pdf
     """
     lat = np.array(lat)
     lon = np.array(lon)
@@ -808,133 +798,126 @@ def gpt3(dtin, lat, lon, h_ell, C, it=0):
 
 def gpt2_5(mjd, lat, lon, HELL, IT, VEC):
     """
-     (c) Department of Geodesy and Geoinformation, Vienna University of
-     Technology, 2013
+    (c) Department of Geodesy and Geoinformation, Vienna University of
+    Technology, 2013
 
-     The copyright in this document is vested in the Department of Geodesy and
-     Geoinformation (GEO), Vienna University of Technology, Austria. This document
-     may only be reproduced in whole or in part, or stored in a retrieval
-     system, or transmitted in any form, or by any means electronic,
-     mechanical, photocopying or otherwise, either with the prior permission
-     of GEO or in accordance with the terms of ESTEC Contract No.
-     4000107329/12/NL/LvH.
-     ---
+    The copyright in this document is vested in the Department of Geodesy and
+    Geoinformation (GEO), Vienna University of Technology, Austria. This document
+    may only be reproduced in whole or in part, or stored in a retrieval
+    system, or transmitted in any form, or by any means electronic,
+    mechanical, photocopying or otherwise, either with the prior permission
+    of GEO or in accordance with the terms of ESTEC Contract No.
+    4000107329/12/NL/LvH.
 
-     This subroutine determines pressure, temperature, temperature lapse rate,
-     mean temperature of the water vapor, water vapour pressure, hydrostatic
-     and wet mapping function coefficients ah and aw, water vapour decrease
-     factor and geoid undulation for specific sites near the Earth surface.
-     It is based on a 5 x 5 degree external grid file ('gpt2_5.grd') with mean
-     values as well as sine and cosine amplitudes for the annual and
-     semiannual variation of the coefficients.
+    This subroutine determines pressure, temperature, temperature lapse rate,
+    mean temperature of the water vapor, water vapour pressure, hydrostatic
+    and wet mapping function coefficients ah and aw, water vapour decrease
+    factor and geoid undulation for specific sites near the Earth surface.
+    It is based on a 5 x 5 degree external grid file ('gpt2_5.grd') with mean
+    values as well as sine and cosine amplitudes for the annual and
+    semiannual variation of the coefficients.
 
-     The hydrostatic mapping function coefficients have to be used with the
-     height dependent Vienna Mapping Function 1 (vmf_ht.f) because the
-     coefficients refer to zero height.
+    The hydrostatic mapping function coefficients have to be used with the
+    height dependent Vienna Mapping Function 1 (vmf_ht.f) because the
+    coefficients refer to zero height.
 
-     Example 1 (Vienna, 2 August 2012, with time variation):
+    Examples
+    --------
 
-     dmjd = 56141.d0
-     dlat(1) = 48.20d0*pi/180.d0
-     dlon(1) = 16.37d0*pi/180.d0
-     hell(1) = 156.d0
-     nstat = 1
-     it = 0
+    Example 1 (Vienna, 2 August 2012, with time variation):
 
-     output:
-     p = 1002.56 hPa
-     T = 22.12 deg Celsius
-     dT = -6.53 deg / km
-     Tm = 281.11 K
-     e = 16.72 hPa
-     ah = 0.0012647
-     aw = 0.0005726
-     la = 2.6964
-     undu = 44.06 m
+    dmjd = 56141.d0
+    dlat(1) = 48.20d0*pi/180.d0
+    dlon(1) = 16.37d0*pi/180.d0
+    hell(1) = 156.d0
+    nstat = 1
+    it = 0
 
-     Example 2 (Vienna, 2 August 2012, without time variation, i.e. constant values):
+    output:
+    p = 1002.56 hPa
+    T = 22.12 deg Celsius
+    dT = -6.53 deg / km
+    Tm = 281.11 K
+    e = 16.72 hPa
+    ah = 0.0012647
+    aw = 0.0005726
+    la = 2.6964
+    undu = 44.06 m
 
-     dmjd = 56141.d0
-     dlat(1) = 48.20d0*pi/180.d0
-     dlon(1) = 16.37d0*pi/180.d0
-     hell(1) = 156.d0
-     nstat = 1
-     it = 1
+    Example 2 (Vienna, 2 August 2012, without time variation, i.e. constant values):
 
-     output:
-     p = 1003.49 hPa
-     T = 11.95 deg Celsius
-     dT = -5.47 deg / km
-     Tm = 273.00 K
-     e = 10.23 hPa
-     ah = 0.0012395
-     aw = 0.0005560
-     la = 2.6649
-     undu = 44.06 m
+    dmjd = 56141.d0
+    dlat(1) = 48.20d0*pi/180.d0
+    dlon(1) = 16.37d0*pi/180.d0
+    hell(1) = 156.d0
+    nstat = 1
+    it = 1
 
-     Klemens Lagler, 2 August 2012
-     Johannes Boehm, 6 August 2012, revision
-     Klemens Lagler, 21 August 2012, epoch change to January 1 2000
-     Johannes Boehm, 23 August 2012, adding possibility to determine constant field
-     Johannes Boehm, 27 December 2012, reference added
-     Johannes Boehm, 10 January 2013, correction for dlat = -90 degrees
-      (problem found by Changyong He)
-     Johannes Boehm, 21 May 2013, bug with dmjd removed (input parameter dmjd was replaced
-     unintentionally; problem found by Dennis Ferguson)
-     Gregory Pain,   17 June 2013, adding water vapour decrease factor la
-     Gregory Pain,   01 July 2013, adding mean temperature Tm
-     Gregory Pain,   30 July 2013, changing the method to calculate the water vapor partial pressure (e)
-     Gregory Pain,   31 July 2013, correction for (dlat = -90 degrees, dlon = 360 degrees)
-     Johannes Boehm, 27 December 2013, copyright notice added
-     Johannes Boehm, 25 August 2014, reference changed to Boehm et al. in GPS
-     Solutions
+    output:
+    p = 1003.49 hPa
+    T = 11.95 deg Celsius
+    dT = -5.47 deg / km
+    Tm = 273.00 K
+    e = 10.23 hPa
+    ah = 0.0012395
+    aw = 0.0005560
+    la = 2.6649
+    undu = 44.06 m
 
-    Source
+    Parameters
     ----------
-         J. Böhm, G. Möller, M. Schindelegger, G. Pain, R. Weber, Development of an
-         improved blind model for slant delays in the troposphere (GPT2w),
-         GPS Solutions, 2014, doi:10.1007/s10291-014-0403-7
-    Notes:
-         Modified for Python by: Chaiyaporn Kitpracha
-
-    Parameters:
-    ----------
-    mjd:
-         modified Julian date (scalar, only one epoch per call is possible)
-
-    lat:
-         ellipsoidal latitude in degrees
-
-    lon:
-         longitude in degrees
-
-    HELL:
-         ellipsoidal height in m
-
-    IT:
-         case 1: no time variation but static quantities
-    case 0: with time variation (annual and semiannual terms)
-
-    VEC:
+    mjd
+        modified Julian date (scalar, only one epoch per call is possible)
+    lat
+        ellipsoidal latitude in degrees
+    lon
+        longitude in degrees
+    HELL
+        ellipsoidal height in m
+    IT
+        case 1: no time variation but static quantities
+        case 0: with time variation (annual and semiannual terms)
+    VEC
         GPT2 grid data in numpy array size 5 x 5 degree ('gpt2_5.grd')
 
-    Returns:
+    Returns
+    -------
+    p
+        pressure in hPa
+    T
+        temperature in degrees Celsius
+    dT
+        temperature lapse rate in degrees per km
+    e
+        water vapour pressure in hPa
+    undu
+        geoid undulation in m
+
+    Notes
+    -----
+    Modified for Python by: Chaiyaporn Kitpracha
+
+    References
     ----------
-     p:
-         pressure in hPa
+    Klemens Lagler, 2 August 2012
+    Johannes Boehm, 6 August 2012, revision
+    Klemens Lagler, 21 August 2012, epoch change to January 1 2000
+    Johannes Boehm, 23 August 2012, adding possibility to determine constant field
+    Johannes Boehm, 27 December 2012, reference added
+    Johannes Boehm, 10 January 2013, correction for dlat = -90 degrees
+    (problem found by Changyong He)
+    Johannes Boehm, 21 May 2013, bug with dmjd removed (input parameter dmjd was replaced
+    unintentionally; problem found by Dennis Ferguson)
+    Gregory Pain,   17 June 2013, adding water vapour decrease factor la
+    Gregory Pain,   01 July 2013, adding mean temperature Tm
+    Gregory Pain,   30 July 2013, changing the method to calculate the water vapor partial pressure (e)
+    Gregory Pain,   31 July 2013, correction for (dlat = -90 degrees, dlon = 360 degrees)
+    Johannes Boehm, 27 December 2013, copyright notice added
+    Johannes Boehm, 25 August 2014, reference changed to Boehm et al. in GPS Solutions
 
-     T:
-         temperature in degrees Celsius
-
-     dT:
-         temperature lapse rate in degrees per km
-
-     e:
-         water vapour pressure in hPa
-
-     undu:
-         geoid undulation in m
-
+    J. Böhm, G. Möller, M. Schindelegger, G. Pain, R. Weber, Development of an
+    improved blind model for slant delays in the troposphere (GPT2w),
+    GPS Solutions, 2014, doi:10.1007/s10291-014-0403-7
     """
     GM = 9.80665
     DMTR = 28.965e-3
@@ -1123,32 +1106,32 @@ def vmf1(ah, aw, dt, dlat, zd):
 
     Parameters
     ----------
-    ah:
+    ah
         hydrostatic coefficient a
-    aw:
+    aw
         wet coefficient a
-    dt:
+    dt
         datetime in python datetime
-    dlat:
+    dlat
         ellipsoidal latitude in radians
-    zd:
+    zd
         zenith distance in radians
 
-    Return
-    ----------
-    vmf1h:
+    Returns
+    -------
+    vmf1h
         hydrostatic mapping function
-    vmf1w:
+    vmf1w
         wet mapping function
 
-    Reference
+    References
     ----------
     Boehm, J., B. Werl, H. Schuh (2006), Troposphere mapping functions for GPS and very long baseline interferometry
     from European Centre for Medium-Range Weather Forecasts operational analysis data,
     J. Geoph. Res., Vol. 111, B02406, doi:10.1029/2005JB003629.
 
     Notes
-    ----------
+    -----
     Written by Johannes Boehm, 2005 October 2
 
     Translated to python by Chaiyaporn Kitpracha
