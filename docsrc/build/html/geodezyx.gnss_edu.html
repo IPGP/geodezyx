@@ -196,23 +196,23 @@ if the previous pivot can cover the short interval.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.fix_short_pivot_segments">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">fix_short_pivot_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_pivot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'selected_only'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_prns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Series</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.fix_short_pivot_segments" title="Link to this definition"></a></dt>
-<dd><p>Remove segments shorter than min_duration.
-Priority:</p>
-<blockquote>
-<div><ol class="arabic simple">
+<dd><p>Remove segments shorter than min_duration.</p>
+<section id="priority">
+<h3>Priority<a class="headerlink" href="#priority" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
 <li><p>merge into previous pivot if it covers the short interval</p></li>
 <li><p>merge into next pivot if it covers the short interval</p></li>
 <li><p>fallback: pick best PRN that covers the short interval (optional pool)</p></li>
 </ol>
-</div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>active_pivot_fixed</strong></p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.Series</p>
 </dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -403,21 +403,33 @@ If None and obs is SD_L1/SD_L2/SD_L5, use conv.L*_WAVELENGTH.</p>
 Si col2 est fourni, affiche la série : coeff1 * col1 - coeff2 * col2.
 Sinon, affiche la série de la colonne col1 directement.
 La série est découpée en segments lorsqu’un “trou” (écart &gt; seuil) est détecté.</p>
-<dl>
-<dt>Paramètres :</dt><dd><dl class="simple">
-<dt>df<span class="classifier">DataFrame avec un index multi-niveaux contenant au moins le niveau ‘prn’</span></dt><dd><p>et les colonnes col1 (et éventuellement col2).</p>
+<section id="parametres">
+<h3>Paramètres<a class="headerlink" href="#parametres" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>df<span class="classifier">DataFrame</span></dt><dd><p>DataFrame avec un index multi-niveaux contenant au moins le niveau ‘prn’
+et les colonnes col1 (et éventuellement col2).</p>
+</dd>
+<dt>col1<span class="classifier">str</span></dt><dd><p>Nom de la première colonne.</p>
+</dd>
+<dt>col2<span class="classifier">str, optional</span></dt><dd><p>Nom de la seconde colonne (optionnel). Si None, on affiche col1.</p>
+</dd>
+<dt>coeff1<span class="classifier">float</span></dt><dd><p>Coefficient multiplicateur pour la première colonne (défaut 1.0).</p>
+</dd>
+<dt>coeff2<span class="classifier">float</span></dt><dd><p>Coefficient multiplicateur pour la seconde colonne (défaut 1.0).</p>
+</dd>
+<dt>seuil<span class="classifier">float</span></dt><dd><p>Seuil en secondes pour considérer un “trou” dans la série (défaut 3600).</p>
+</dd>
+<dt>renderer<span class="classifier">str</span></dt><dd><p>Renderer Plotly (ex : “browser” ou “iframe”).</p>
 </dd>
 </dl>
-<p>col1    : Nom de la première colonne.
-col2    : Nom de la seconde colonne (optionnel). Si None, on affiche col1.
-coeff1  : Coefficient multiplicateur pour la première colonne (défaut 1.0).
-coeff2  : Coefficient multiplicateur pour la seconde colonne (défaut 1.0).
-seuil   : Seuil en secondes pour considérer un “trou” dans la série (défaut 3600).
-renderer: Renderer Plotly (ex : “browser” ou “iframe”).</p>
-</dd>
-<dt>Retourne :</dt><dd><p>fig     : Figure Plotly contenant les courbes tracées.</p>
+</section>
+<section id="retourne">
+<h3>Retourne<a class="headerlink" href="#retourne" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fig<span class="classifier">Figure</span></dt><dd><p>Figure Plotly contenant les courbes tracées.</p>
 </dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -664,8 +676,8 @@ Implémentation autonome (remplace jdutil.jd_to_date).</p>
 <dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.read_vmf1_grid">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.read_vmf1_grid.</span></span><span class="sig-name descname"><span class="pre">read_vmf1_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.read_vmf1_grid" title="Link to this definition"></a></dt>
 <dd><p>Retourne (ah_vec, aw_vec) pour chaque MJD donné et une station ell=[lat_deg, lon_deg, h_m].</p>
-<section id="parametres">
-<h3>Paramètres<a class="headerlink" href="#parametres" title="Link to this heading"></a></h3>
+<section id="id1">
+<h3>Paramètres<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>mjd<span class="classifier">Iterable[float]</span></dt><dd><p>Liste/array de dates en Modified Julian Day (UTC).</p>
 </dd>

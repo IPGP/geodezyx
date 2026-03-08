@@ -588,10 +588,10 @@ Implemented only for the new naming format</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>main_dir</strong> (<em>str</em>) – Main directory where the RINEX files are stored.
-The directory can contain wildcards (‘*’, ‘?’, etc.) and date aliases
-(‘%Y’, ‘%j’, etc.). If the main_dir contains date aliases and both
+The directory can contain wildcards (<code class="docutils literal notranslate"><span class="pre">'*'</span></code>, <code class="docutils literal notranslate"><span class="pre">'?'</span></code>, etc.) and date aliases
+(<code class="docutils literal notranslate"><span class="pre">'%Y'</span></code>, <code class="docutils literal notranslate"><span class="pre">'%j'</span></code>, etc.). If the main_dir contains date aliases and both
 start_epoch and end_epoch are defined, you can indicate a more precise
-directory (e.g., main_dir = “/path/to/data/<a href="#id1"><span class="problematic" id="id2">*</span></a>/%Y/%j/”).
+directory (e.g., main_dir = <code class="docutils literal notranslate"><span class="pre">&quot;/path/to/data/*/%Y/%j/&quot;</span></code>).
 Note: The day level is the maximum resolution for the wildcard.</p></li>
 <li><p><strong>short_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – Check if the pattern matches a short name RINEX. Default is True.</p></li>
 <li><p><strong>long_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – Check if the pattern matches a long name RINEX. Default is True.</p></li>
@@ -2695,64 +2695,67 @@ or copies it to the temporary directory if not already there.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rtklib_frontend.rtklib_run_from_rinex">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">rtklib_run_from_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_rover</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generik_conf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experience_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rover_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_rover</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IGS0OPSFIN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_tmp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exe_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rtklib_frontend.rtklib_run_from_rinex" title="Link to this definition"></a></dt>
-<dd><p>Run RTKLIB `rnx2rtkp` from rover/base RINEX observations using a generic RTKLIB
+<dd><p>Run RTKLIB <code class="docutils literal notranslate"><span class="pre">rnx2rtkp</span></code> from rover/base RINEX observations using a generic RTKLIB
 configuration file, optionally overriding antenna/receiver metadata from RINEX
 headers and downloading required GNSS products (SP3 precise orbits and BRDC nav).</p>
-<p>The function:
-- creates output and temporary directory structure
-- uncompresses compressed RINEX inputs if needed
-- reads start/end times and sampling interval from the rover/base RINEX
-- builds a run-specific RTKLIB config file from `generik_conf`
-- optionally fills rover/base antenna positions and eccentricities from RINEX headers
-- downloads required products into `prod_dir`:</p>
-<blockquote>
-<div><p>- SP3 precise orbit from `calc_center`
-- BRDC navigation RINEX</p>
-</div></blockquote>
-<p>- calls the external executable `rnx2rtkp` with assembled arguments
-- writes outputs to the `out_dir` directory</p>
+<p>The function:</p>
+<ul class="simple">
+<li><p>creates output and temporary directory structure</p></li>
+<li><p>uncompresses compressed RINEX inputs if needed</p></li>
+<li><p>reads start/end times and sampling interval from the rover/base RINEX</p></li>
+<li><p>builds a run-specific RTKLIB config file from <code class="docutils literal notranslate"><span class="pre">generik_conf</span></code></p></li>
+<li><p>optionally fills rover/base antenna positions and eccentricities from RINEX headers</p></li>
+<li><p>downloads required products into <code class="docutils literal notranslate"><span class="pre">prod_dir</span></code>:</p>
+<ul>
+<li><p>SP3 precise orbit from <code class="docutils literal notranslate"><span class="pre">calc_center</span></code></p></li>
+<li><p>BRDC navigation RINEX</p></li>
+</ul>
+</li>
+<li><p>calls the external executable <code class="docutils literal notranslate"><span class="pre">rnx2rtkp</span></code> with assembled arguments</p></li>
+<li><p>writes outputs to the <code class="docutils literal notranslate"><span class="pre">out_dir</span></code> directory</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rnx_rover</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to rover observation RINEX. May be compressed (e.g. `.gz`, `.Z` and
-other formats supported by `geodezyx.operational.check_if_compressed_rinex`).</p></li>
-<li><p><strong>rnx_base</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to base observation RINEX. May be compressed.</p></li>
-<li><p><strong>generik_conf</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to a generic RTKLIB configuration file (key=value format). This file is
-parsed by `read_conf_file` and then overridden according to function options.</p></li>
-<li><p><strong>out_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Directory where results are saved. This parameter is mandatory.</p></li>
-<li><p><strong>tmp_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em><em> | </em><em>None</em><em>, </em><em>default=None</em>) – Temporary directory for intermediate files. Optional. If not provided,
-defaults to `out_dir/TMP`.</p></li>
-<li><p><strong>prod_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em><em> | </em><em>None</em><em>, </em><em>default=None</em>) – Directory where to search for orbits, clocks, and BRDC files. Optional.
-If not provided, defaults to `tmp_dir`.</p></li>
-<li><p><strong>experience_prefix</strong> (<em>str</em><em>, </em><em>default=&quot;&quot;</em>) – Prefix added to the output file stem used to name the generated `.conf`
-and `.out` files.</p></li>
+<li><p><strong>rnx_rover</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Path to rover observation RINEX. May be compressed (e.g. <code class="docutils literal notranslate"><span class="pre">.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">.Z</span></code> and
+other formats supported by <code class="docutils literal notranslate"><span class="pre">geodezyx.operational.check_if_compressed_rinex</span></code>).</p></li>
+<li><p><strong>rnx_base</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Path to base observation RINEX. May be compressed.</p></li>
+<li><p><strong>generik_conf</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Path to a generic RTKLIB configuration file (key=value format). This file is
+parsed by <code class="docutils literal notranslate"><span class="pre">read_conf_file</span></code> and then overridden according to function options.</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Directory where results are saved. This parameter is mandatory.</p></li>
+<li><p><strong>tmp_dir</strong> (<em>str</em><em> or </em><em>os.PathLike</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Temporary directory for intermediate files. Optional. If not provided,
+defaults to <code class="docutils literal notranslate"><span class="pre">out_dir/TMP</span></code>.</p></li>
+<li><p><strong>prod_dir</strong> (<em>str</em><em> or </em><em>os.PathLike</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Directory where to search for orbits, clocks, and BRDC files. Optional.
+If not provided, defaults to <code class="docutils literal notranslate"><span class="pre">tmp_dir</span></code>.</p></li>
+<li><p><strong>experience_prefix</strong> (<em>str</em><em>, </em><em>default=&quot;&quot;</em>) – Prefix added to the output file stem used to name the generated <code class="docutils literal notranslate"><span class="pre">.conf</span></code>
+and <code class="docutils literal notranslate"><span class="pre">.out</span></code> files.</p></li>
 <li><p><strong>rover_auto_conf</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, reads rover RINEX header and injects rover antenna type, XYZ position,
-and antenna eccentricities into the produced config (keys `ant1-*`).
-If False, rover settings remain those defined in `generik_conf`.</p></li>
+and antenna eccentricities into the produced config (keys <code class="docutils literal notranslate"><span class="pre">ant1-*</span></code>).
+If False, rover settings remain those defined in <code class="docutils literal notranslate"><span class="pre">generik_conf</span></code>.</p></li>
 <li><p><strong>base_auto_conf</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, reads base RINEX header and injects base antenna type, XYZ position,
-and antenna eccentricities into the produced config (keys `ant2-*`).</p></li>
-<li><p><strong>xyz_rover</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Rover station ECEF XYZ coordinates in meters ([X, Y, Z]). If `xyz_rover[0] != 0`,
+and antenna eccentricities into the produced config (keys <code class="docutils literal notranslate"><span class="pre">ant2-*</span></code>).</p></li>
+<li><p><strong>xyz_rover</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Rover station ECEF XYZ coordinates in meters <code class="docutils literal notranslate"><span class="pre">[X,</span> <span class="pre">Y,</span> <span class="pre">Z]</span></code>. If <code class="docutils literal notranslate"><span class="pre">xyz_rover[0]</span> <span class="pre">!=</span> <span class="pre">0</span></code>,
 these coordinates override the rover RINEX header coordinates; otherwise the rover
 header coordinates are used.</p></li>
-<li><p><strong>xyz_base</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Base station ECEF XYZ coordinates in meters ([X, Y, Z]). If `xyz_base[0] != 0`,
+<li><p><strong>xyz_base</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Base station ECEF XYZ coordinates in meters <code class="docutils literal notranslate"><span class="pre">[X,</span> <span class="pre">Y,</span> <span class="pre">Z]</span></code>. If <code class="docutils literal notranslate"><span class="pre">xyz_base[0]</span> <span class="pre">!=</span> <span class="pre">0</span></code>,
 these coordinates override the base RINEX header coordinates; otherwise the base
 header coordinates are used.
 Note: this is a simple sentinel check; a real X coordinate of 0 would be treated
 as “not provided”.</p></li>
-<li><p><strong>outtype</strong> (<em>str</em><em>, </em><em>default=&quot;auto&quot;</em>) – Output solution format. If not `”auto”`, sets RTKLIB `out-solformat` to one of:
-`”dms”`, `”deg”`, `”xyz”`, `”enu”` (case-insensitive).
-If `”auto”`, uses whatever is defined in `generik_conf`.</p></li>
+<li><p><strong>outtype</strong> (<em>str</em><em>, </em><em>default=&quot;auto&quot;</em>) – Output solution format. If not <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, sets RTKLIB <code class="docutils literal notranslate"><span class="pre">out-solformat</span></code> to one of:
+<code class="docutils literal notranslate"><span class="pre">&quot;dms&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;deg&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;xyz&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;enu&quot;</span></code> (case-insensitive).
+If <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, uses whatever is defined in <code class="docutils literal notranslate"><span class="pre">generik_conf</span></code>.</p></li>
 <li><p><strong>calc_center</strong> (<em>str</em><em>, </em><em>default=&quot;IGS0OPSFIN&quot;</em>) – Analysis center/product identifier used when downloading GNSS precise products
-via `geodezyx.operational.download_gnss_products`. Must match what that
+via <code class="docutils literal notranslate"><span class="pre">geodezyx.operational.download_gnss_products</span></code>. Must match what that
 downloader expects.</p></li>
 <li><p><strong>force</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, forces reprocessing even if output file already exists.</p></li>
-<li><p><strong>clean_tmp</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, deletes all contents of `tmp_dir` at the beginning of the
+<li><p><strong>clean_tmp</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, deletes all contents of <code class="docutils literal notranslate"><span class="pre">tmp_dir</span></code> at the beginning of the
 function execution.</p></li>
-<li><p><strong>exe_path</strong> (<em>str</em><em>, </em><em>default=</em><em>...</em>) – Filesystem path to the RTKLIB `rnx2rtkp` executable.</p></li>
+<li><p><strong>exe_path</strong> (<em>str</em><em>, </em><em>default=</em><em>...</em>) – Filesystem path to the RTKLIB <code class="docutils literal notranslate"><span class="pre">rnx2rtkp</span></code> executable.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out_result_fil</strong> – Path to the RTKLIB output solution file (`.out`).</p>
+<dd class="field-even"><p><strong>out_result_fil</strong> – Path to the RTKLIB output solution file (<code class="docutils literal notranslate"><span class="pre">.out</span></code>).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -2762,13 +2765,13 @@ function execution.</p></li>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<dl class="simple">
-<dt>- The generated config file is written to `out_dir` and named using:</dt><dd><p>`&lt;experience_prefix&gt;_&lt;rover4&gt;_&lt;base4&gt;_&lt;YYYY_DOY&gt;.conf`.</p>
-</dd>
-<dt>- The RTKLIB command is executed via `subprocess.call(…, shell=True)` using</dt><dd><p>`/bin/bash`, with a single concatenated command string.</p>
-</dd>
-</dl>
-<p>- A warning is emitted if the base RINEX time span does not fully cover the rover span.</p>
+<ul class="simple">
+<li><p>The generated config file is written to <code class="docutils literal notranslate"><span class="pre">out_dir</span></code> and named using:
+<code class="docutils literal notranslate"><span class="pre">&lt;experience_prefix&gt;_&lt;rover4&gt;_&lt;base4&gt;_&lt;YYYY_DOY&gt;.conf</span></code>.</p></li>
+<li><p>The RTKLIB command is executed via <code class="docutils literal notranslate"><span class="pre">subprocess.call(...,</span> <span class="pre">shell=True)</span></code> using
+<code class="docutils literal notranslate"><span class="pre">/bin/bash</span></code>, with a single concatenated command string.</p></li>
+<li><p>A warning is emitted if the base RINEX time span does not fully cover the rover span.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">

@@ -206,15 +206,16 @@
 <dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_class.</span></span><span class="sig-name descname"><span class="pre">TimeSerieObs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typeobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NULL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>LES DIFFERENCES AVEC TSPOINT
-* Les objets ne contiennent qu’un type de données sous une seul forme
-(a la difference d’un point qui peut exister sous plusieurs formes)
-* Dans un fichier en input, il peut y avoir plusieurs “devices”</p>
-<blockquote>
-<div><p>=&gt; les fonctions de lectures produisent donc obligatoirement des listes
+<p>Time series observation class.</p>
+<p>Differences with TSPOINT:</p>
+<ul class="simple">
+<li><p>Les objets ne contiennent qu’un type de données sous une seul forme
+(a la difference d’un point qui peut exister sous plusieurs formes)</p></li>
+<li><p>Dans un fichier en input, il peut y avoir plusieurs “devices”
+=&gt; les fonctions de lectures produisent donc obligatoirement des listes
 de TS (le cas échéant une liste à 1 élt)
-=&gt; la methode readfile() nécessite donc l’indice de la device</p>
-</div></blockquote>
+=&gt; la methode readfile() nécessite donc l’indice de la device</p></li>
+</ul>
 <dl class="py method">
 <dt class="sig sig-object py" id="geodezyx.time_series.ts_class.TimeSerieObs.add_obs">
 <span class="sig-name descname"><span class="pre">add_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inObs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_class.TimeSerieObs.add_obs" title="Link to this definition"></a></dt>
@@ -1184,13 +1185,32 @@ different coordinate types and allows customization of plot appearance.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.mad_cleaner">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">mad_cleaner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seuil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dist'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ABC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detrend_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_detrended</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.mad_cleaner" title="Link to this definition"></a></dt>
-<dd><dl>
-<dt>method<span class="classifier">methode d’élimination :</span></dt><dd><p>dist : on élimine les point qu sont trop loin en distance de la posi de ref
-indep : on traite les point independaments</p>
-<p>dist est a privilégier</p>
+<dd><p>Clean time series using Median Absolute Deviation (MAD) method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tsin</strong> (<em>TimeSerie</em>) – Input time series object</p></li>
+<li><p><strong>seuil</strong> (<em>float</em>) – Threshold for outlier detection (default 3.5)</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – <p>Method of elimination:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'dist'</span></code>: eliminate points that are too far in distance from ref position</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'indep'</span></code>: treat points independently</p></li>
+</ul>
+<p>dist is preferred</p>
+</p></li>
+<li><p><strong>coortype</strong> (<em>str</em>) – Coordinate type (default <code class="docutils literal notranslate"><span class="pre">'ABC'</span></code>)</p></li>
+<li><p><strong>detrend_first</strong> (<em>bool</em>) – Remove trend before cleaning (default False)</p></li>
+<li><p><strong>output_detrended</strong> (<em>bool</em>) – Output detrended data (only works if detrend_first is True)</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Print verbose output (default False)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tsout</strong> – Cleaned time series</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TimeSerie</p>
 </dd>
 </dl>
-<p>output_detrended ne marche que si detrend_first est activé</p>
 </dd></dl>
 
 <dl class="py function">

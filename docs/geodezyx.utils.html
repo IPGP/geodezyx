@@ -318,21 +318,31 @@ in this case, doesn’t return the mean of the 2 medians, but the nearest value<
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.occurence">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">occurence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.occurence" title="Link to this definition"></a></dt>
-<dd><dl>
-<dt>Input :</dt><dd><dl class="simple">
-<dt>tolerence<span class="classifier">tolerence to find close elements of L</span></dt><dd><p>if no tolerence is given then a set() is used</p>
+<dd><p>Count occurrences of elements in a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> (<em>list</em>) – Input list</p></li>
+<li><p><strong>tolerence</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance to find close elements of L
+if no tolerance is given then a set() is used</p></li>
+<li><p><strong>pretty_output</strong> (<em>bool</em>) – <dl class="simple">
+<dt>if False, return a list of 2-tuples:</dt><dd><p>(element of the list, number of occurrence of this element in the list)</p>
 </dd>
 </dl>
+<p>if True, return tuple with sorted occurrences and values</p>
+</p></li>
+</ul>
 </dd>
-<dt>Returns :</dt><dd><dl class="simple">
-<dt>if pretty_output = False :</dt><dd><p>return a list of 2-tuples : (element of the list, number of occurence of this element in the list)</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>output</strong> – See pretty_output parameter</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list or tuple</p>
 </dd>
 </dl>
-<p>if pretty_output 0 True :</p>
-</dd>
-<dt>Nota<span class="classifier">pretty_output is implemented because the first mode is not really useful (180612)</span></dt><dd><p>the equal test is also replaced by is close</p>
-</dd>
-</dl>
+<p class="rubric">Notes</p>
+<p>pretty_output is implemented because the first mode is not really useful (180612)
+the equal test is also replaced by is close</p>
 </dd></dl>
 
 <dl class="py function">
@@ -387,12 +397,21 @@ and sort X</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.sort_table">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">sort_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.sort_table" title="Link to this definition"></a></dt>
-<dd><p>sort a table by multiple columns
-table: a list of lists (or tuple of tuples) where each inner list</p>
-<blockquote>
-<div><p>represents a row</p>
-</div></blockquote>
-<p>cols: specifying the column numbers to sort by</p>
+<dd><p>Sort a table by multiple columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>list</em><em> of </em><em>lists</em><em> or </em><em>tuple</em><em> of </em><em>tuples</em>) – where each inner list represents a row</p></li>
+<li><p><strong>col</strong> (<em>int</em>) – column number to sort by</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>outtable</strong> – sorted table</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -476,12 +495,26 @@ GitHub repository :
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.shell_like.cat">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">cat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outfilename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">infilenames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.cat" title="Link to this definition"></a></dt>
-<dd><p>Is for concatenating files …
-For just a print, use cat_print !
-<a class="reference external" href="http://stackoverflow.com/questions/11532980/reproduce-the-unix-cat-command-in-python">http://stackoverflow.com/questions/11532980/reproduce-the-unix-cat-command-in-python</a></p>
-<blockquote>
-<div><p>kindall response</p>
-</div></blockquote>
+<dd><p>Concatenate files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outfilename</strong> (<em>str</em>) – Output filename</p></li>
+<li><p><strong>infilenames</strong> (<em>str</em>) – Input filenames to concatenate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>outfilename</strong> – The output filename</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For just a print, use cat_print!</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="http://stackoverflow.com/questions/11532980/reproduce-the-unix-cat-command-in-python">http://stackoverflow.com/questions/11532980/reproduce-the-unix-cat-command-in-python</a>
+kindall response</p>
 </dd></dl>
 
 <dl class="py function">
@@ -961,14 +994,27 @@ convention</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.eval_a_dict">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">eval_a_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.eval_a_dict" title="Link to this definition"></a></dt>
-<dd><p>where is most of time globals()
-WARN : doesnt work in a function !!!
-use instead :
-for k,v in booldic.items():</p>
-<blockquote>
-<div><p>globals()[k] = v
-locals()[k] = v</p>
-</div></blockquote>
+<dd><p>Evaluate dictionary values in a given namespace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictin</strong> (<em>dict</em>) – Dictionary to evaluate</p></li>
+<li><p><strong>where</strong> (<em>dict</em>) – Namespace where to evaluate (usually globals() or locals())</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Print verbose output (default True)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>WARNING: doesn’t work in a function!
+Use instead:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">booldic</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">globals</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="nb">locals</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -1270,10 +1316,11 @@ The default is None.</p></li>
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.split_string_after_n_chars_at_space">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">split_string_after_n_chars_at_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.split_string_after_n_chars_at_space" title="Link to this definition"></a></dt>
 <dd><blockquote>
-<div><p>Splits a string into substrings of a maximum length of n characters,
-but only splits at spaces and inserts a newline (</p>
+<div><p>Splits a string into substrings of a maximum length of n characters.</p>
+<p>This function splits a string into substrings of a maximum length of n characters,
+but only splits at spaces and inserts a newline (``</p>
 </div></blockquote>
-<p>) after each substring.</p>
+<p><a href="#id3"><span class="problematic" id="id4">``</span></a>) after each substring.</p>
 <blockquote>
 <div><dl class="simple">
 <dt>s<span class="classifier">str</span></dt><dd><p>The input string to be split.</p>

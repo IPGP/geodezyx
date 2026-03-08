@@ -199,26 +199,33 @@ a,b,phi,x0,y0 of an ellipse</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.least_squares.ellipse_get_coords">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.least_squares.</span></span><span class="sig-name descname"><span class="pre">ellipse_get_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_separate_X_Y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trigo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.least_squares.ellipse_get_coords" title="Link to this definition"></a></dt>
-<dd><p>Draws an ellipse using (360*k + 1) discrete points; based on pseudo code
-given at <a class="reference external" href="http://en.wikipedia.org/wiki/Ellipse">http://en.wikipedia.org/wiki/Ellipse</a>
-k = 1 means 361 points (degree by degree)
-a = major axis distance,
-b = minor axis distance,
-x = offset along the x-axis
-y = offset along the y-axis
-angle = trigo/clockwise rotation [in degrees] of the ellipse;</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>angle=0  : the ellipse is aligned with the positive x-axis</p></li>
-<li><p>angle=30 : rotated 30 degrees trigo/clockwise from positive x-axis</p></li>
-</ul>
-</div></blockquote>
+<dd><p>Draws an ellipse using (360*k + 1) discrete points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>float</em>) – major axis distance</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – minor axis distance</p></li>
+<li><p><strong>x</strong> (<em>float</em>) – offset along the x-axis</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – offset along the y-axis</p></li>
+<li><p><strong>angle</strong> (<em>float</em>) – <p>trigo/clockwise rotation [in degrees] of the ellipse;
+- angle=0  : the ellipse is aligned with the positive x-axis
+- angle=30 : rotated 30 degrees trigo/clockwise from positive x-axis</p>
 <p>trigo sense is the standard convention</p>
-<dl class="simple">
-<dt>NB<span class="classifier">clockwise is the internal convention, but we prefer trigo</span></dt><dd><p>convention for the Ghiliani ellipses made by error_ellipse_parameters</p>
+</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – k = 1 means 361 points (degree by degree)</p></li>
+<li><p><strong>out_separate_X_Y</strong> (<em>bool</em>) – if True, returns separate X and Y arrays</p></li>
+<li><p><strong>trigo</strong> (<em>bool</em>) – if True, use trigonometric convention;
+if False, use clockwise convention</p></li>
+</ul>
 </dd>
 </dl>
-<p>source : scipy-central.org/item/23/1/plot-an-ellipse</p>
+<p class="rubric">Notes</p>
+<p>This function is based on pseudo code given at
+<a class="reference external" href="http://en.wikipedia.org/wiki/Ellipse">http://en.wikipedia.org/wiki/Ellipse</a></p>
+<p>The internal convention is clockwise, but we prefer trigo
+convention for the Ghiliani ellipses made by error_ellipse_parameters</p>
+<p class="rubric">References</p>
+<p>scipy-central.org/item/23/1/plot-an-ellipse</p>
 </dd></dl>
 
 <dl class="py function">
@@ -519,20 +526,25 @@ this function use shall be avoided</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.confid_interval_slope">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">confid_interval_slope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.confid_interval_slope" title="Link to this definition"></a></dt>
-<dd><blockquote>
-<div><p>Calcule un intervalle de confiance sur une tendance
-En entrée: x     = la variable indépendante</p>
-<blockquote>
-<div><p>y     = la variable dépendante
-alpha = la probabilité d’erreur tolérée</p>
-</div></blockquote>
-<dl class="simple">
-<dt>En sortie: mi    = la borne inférieure de l’intervalle</dt><dd><p>ma    = la borne supérieure de l’intervalle</p>
+<dd><p>Calcule un intervalle de confiance sur une tendance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array</em>) – la variable indépendante</p></li>
+<li><p><strong>y</strong> (<em>array</em>) – la variable dépendante</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – la probabilité d’erreur tolérée</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>mi</strong> (<em>float</em>) – la borne inférieure de l’intervalle</p></li>
+<li><p><strong>ma</strong> (<em>float</em>) – la borne supérieure de l’intervalle</p></li>
+</ul>
+</p>
 </dd>
 </dl>
-</div></blockquote>
-<p>Source (???? =&gt; En fait non …)
-<a class="reference external" href="http://www.i4.auc.dk/borre/matlab">http://www.i4.auc.dk/borre/matlab</a>
+<p class="rubric">References</p>
+<p><a class="reference external" href="http://www.i4.auc.dk/borre/matlab">http://www.i4.auc.dk/borre/matlab</a>
 <a class="reference external" href="http://kom.aau.dk/~borre/matlab/">http://kom.aau.dk/~borre/matlab/</a></p>
 </dd></dl>
 
@@ -824,8 +836,9 @@ Roman Kh ans</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>threshold_values</strong> (<em>single value</em><em> (</em><em>float</em><em>) or </em><em>a 2-tuple</em>) – <p>(lower bound theshold , upper bound theshold)</p>
-<p><cite>WARN</cite> : those value(s) have to be positives.
+<li><p><strong>X</strong> (<em>array</em>) – Input array</p></li>
+<li><p><strong>threshold_values</strong> (<em>single value</em><em> (</em><em>float</em><em>) or </em><em>a 2-tuple</em>) – <p>(lower bound threshold, upper bound threshold)</p>
+<p>WARN: those value(s) have to be positives.
 Minus sign for lower bound and plus sign for upper
 one will be applied internally</p>
 </p></li>
@@ -852,7 +865,7 @@ if it is a fuction (e.g. np.std()) then it is this value returned
 by this function which is used
 Only useful when theshold_absolute = False</p></li>
 <li><p><strong>return_booleans</strong> (<em>bool</em>) – return booleans or not</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>)</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – print debug information</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -873,29 +886,36 @@ associated X so as X =&gt; Y(X)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>threshold_values</strong> (<em>single value</em><em> (</em><em>float</em><em>) or </em><em>a 2-tuple</em>) – <p>(lower bound theshold , upper bound theshold)</p>
-<p><cite>WARN</cite> : those value(s) have to be positives.
+<li><p><strong>Y</strong> (<em>array</em>) – The dependent variable</p></li>
+<li><p><strong>X</strong> (<em>array</em>) – The independent variable</p></li>
+<li><p><strong>threshold_values</strong> (<em>single value</em><em> (</em><em>float</em><em>) or </em><em>a 2-tuple</em>) – (lower bound threshold, upper bound threshold)</p></li>
+<li><p><strong>reference</strong> (<em>float</em><em> or </em><em>callable</em>) – the central reference value</p></li>
+<li><p><strong>theshold_absolute</strong> (<em>bool</em>) – if True threshold_values are absolutes values</p></li>
+<li><p><strong>theshold_relative_value</strong> (<em>str</em><em> or </em><em>function</em>) – relative threshold value specification</p></li>
+<li><p><strong>return_booleans</strong> (<em>bool</em>) – return booleans or not</p></li>
+<li><p><strong>detrend_first</strong> (<em>bool</em>) – remove trend before outlier detection</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – print debug information</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Yout</strong> (<em>array</em>) – Filtered Y values</p></li>
+<li><p><strong>Xout</strong> (<em>array</em>) – Corresponding filtered X values</p></li>
+<li><p><strong>Xout</strong> (<em>array</em>) – Corresponding filtered X values
+<cite>WARN</cite> : those value(s) have to be positives.
 Minus sign for lower bound and plus sign for upper
-one will be applied internally</p>
-</p></li>
-<li><p><strong>reference</strong> (<em>float</em><em> or </em><em>callable</em>) – the central reference value
+one will be applied internally</p></li>
+<li><p><strong>reference</strong> (<em>float or callable</em>) – the central reference value
 can be a absolute fixed value (float) or
 a function (e.g. np.mean of np.median)</p></li>
-<li><p><strong>theshold_absolute</strong> (<em>bool</em>) – <dl>
-<dt>if True threshold_values are absolutes values</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">low</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">-</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">upp</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">+</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</pre></div>
-</div>
-</dd>
-<dt>if False they are fractions of theshold_relative_value</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">low</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">-</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">theshold_relative_value</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">upp</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">+</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">theshold_relative_value</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-<p>(see also below)</p>
-</p></li>
-<li><p><strong>theshold_relative_value</strong> (<em>str</em><em> or </em><em>function</em>) – if the string “reference” or None is given, then it the reference
+<li><p><strong>theshold_absolute</strong> (<em>bool</em>) – if True threshold_values are absolutes values
+&gt;&gt;&gt; low = reference - threshold_values[0]
+&gt;&gt;&gt; upp = reference + threshold_values[1]
+if False they are fractions of theshold_relative_value
+&gt;&gt;&gt; low = reference - threshold_values[0] * theshold_relative_value
+&gt;&gt;&gt; upp = reference + threshold_values[1] * theshold_relative_value
+(see also below)</p></li>
+<li><p><strong>theshold_relative_value</strong> (<em>str or function</em>) – if the string “reference” or None is given, then it the reference
 value which is used
 if it is a fuction (e.g. np.std()) then it is this value returned
 by this function which is used
@@ -905,9 +925,10 @@ Recommended</p></li>
 <li><p><strong>return_booleans</strong> (<em>bool</em>) – return booleans or not</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>)</p></li>
 </ul>
+</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
 <li><p><strong>Xout</strong> (<em>numpy array</em>) – X between low_bound &amp; upp_bound</p></li>
 <li><p><strong>bbool</strong> (<em>numpy array</em>) – X-sized array of booleans</p></li>
 </ul>
@@ -1127,33 +1148,43 @@ The default is None.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.smooth">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hanning'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.smooth" title="Link to this definition"></a></dt>
-<dd><p>smooth the data using a window with requested size.</p>
+<dd><p>Smooth the data using a window with requested size.</p>
 <p>This method is based on the convolution of a scaled window with the signal.
 The signal is prepared by introducing reflected copies of the signal
 (with the window size) in both ends so that transient parts are minimized
-in the begining and end part of the output signal.</p>
-<p>NOTA PERSO : works only for equaly spaced data ….</p>
-<dl>
-<dt>input:</dt><dd><p>x: the input signal
-window_len: the dimension of the smoothing window; should be an odd integer
-window: the type of window from ‘flat’, ‘hanning’, ‘hamming’, ‘bartlett’, ‘blackman’</p>
-<blockquote>
-<div><p>flat window will produce a moving average smoothing.</p>
-</div></blockquote>
+in the beginning and end part of the output signal.</p>
+<p>Note: works only for equally spaced data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array</em>) – the input signal</p></li>
+<li><p><strong>window_len</strong> (<em>int</em>) – the dimension of the smoothing window; should be an odd integer</p></li>
+<li><p><strong>window</strong> (<em>str</em>) – the type of window from ‘flat’, ‘hanning’, ‘hamming’, ‘bartlett’, ‘blackman’
+flat window will produce a moving average smoothing.</p></li>
+</ul>
 </dd>
-<dt>output:</dt><dd><p>the smoothed signal</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the smoothed signal</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
 </dd>
 </dl>
-<p>example:</p>
-<p>t=linspace(-2,2,0.1)
-x=sin(t)+randn(len(t))*0.1
-y=smooth(x)</p>
-<p>see also:</p>
-<p>numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
-scipy.signal.lfilter</p>
-<p>TODO: the window parameter could be the window itself if an array instead of a string
-NOTE: length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
-SOURCE : <a class="reference external" href="http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html">http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html</a></p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">*</span><span class="mf">0.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">smooth</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.hanning</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.hamming</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.bartlett</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.blackman</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.convolve</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.lfilter</span></code></p>
+</div>
+<p class="rubric">Notes</p>
+<p>The window parameter could be the window itself if an array instead of a string
+length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html">http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html</a></p>
 </dd></dl>
 
 <dl class="py function">

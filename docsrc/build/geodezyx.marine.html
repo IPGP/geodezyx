@@ -466,11 +466,12 @@ Options are ‘forward’, ‘backward’, and ‘averaged’. Default is ‘for
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>phibot = Ocean hydrostatic bottom pressure anomaly
-<a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html</a>
+<p>phibot = Ocean hydrostatic bottom pressure anomaly</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html</a>
 <a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2146301108-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2146301108-POCLOUD.html</a></p>
 <dl class="simple">
-<dt>PHIBOT              Bottom Pressure Pot. Anomaly (p/rhonil, m^2/s^2)</dt><dd><p>To convert to m, divide by g (g=9.81 m/s^2)
+<dt>PHIBOT is the Bottom Pressure Potential Anomaly (p/rhonil, m^2/s^2)</dt><dd><p>To convert to m, divide by g (g=9.81 m/s^2)
 PHIBOT is the anomaly relative to Depth * rhonil * g
 The absolute bottom pressure in Pa is:
 Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)</p>
@@ -1169,14 +1170,14 @@ The function uses different colors for the pressure and temperature data for bet
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obscom.pres2freq">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obscom.</span></span><span class="sig-name descname"><span class="pre">pres2freq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'psi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_optimize_object</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obscom.pres2freq" title="Link to this definition"></a></dt>
-<dd><p>Convert pressure to  pressure sensor frequency</p>
-<p>There is no analytic solution, thus an root find is required</p>
+<dd><p>Convert pressure to pressure sensor frequency</p>
+<p>There is no analytic solution, thus a root find is required</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>p_in</strong> – pressure in psi.</p></li>
-<li><p><strong>t_in</strong> – temperature in Celsius.</p></li>
-<li><p><strong>inp</strong> (<em>optional</em>) – input for p_in as pressure (‘psi’, ‘bar’, ‘mbar’, ‘pa’)
+<li><p><strong>p_in</strong> (<em>float</em>) – pressure in psi.</p></li>
+<li><p><strong>t_in</strong> (<em>float</em>) – temperature in Celsius.</p></li>
+<li><p><strong>inp</strong> (<em>str</em><em>, </em><em>optional</em>) – input for p_in as pressure (‘psi’, ‘bar’, ‘mbar’, ‘pa’)
 or distance (‘meter’).
 The default is ‘psi’.</p></li>
 <li><p><strong>return_optimize_object</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, return the object of scipy’s optimize.root function.
@@ -1191,6 +1192,8 @@ The default is False.</p></li>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The conversion uses a root-finding algorithm to solve the inverse function.</p>
 </dd></dl>
 
 <dl class="py function">

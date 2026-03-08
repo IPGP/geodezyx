@@ -146,19 +146,32 @@ This option has a (much) faster execution speed.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.pandas_DF_2_tuple_serie">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_DF_2_tuple_serie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns_name_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_index_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.pandas_DF_2_tuple_serie" title="Link to this definition"></a></dt>
-<dd><p>This function is made to solve the multiple columns selection
-problem
-the idea is :
-<code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">S1</span> <span class="pre">=</span> <span class="pre">pandas_DF_2_tuple_serie(DF1</span> <span class="pre">,</span> <span class="pre">columns_name_list)</span>
-<span class="pre">S2</span> <span class="pre">=</span> <span class="pre">pandas_DF_2_tuple_serie(DF2</span> <span class="pre">,</span> <span class="pre">columns_name_list)</span>
-<span class="pre">BOOL</span> <span class="pre">=</span> <span class="pre">S1.isin(S2)</span>
-<span class="pre">DF1[BOOL]</span>
-<span class="pre">`</span></code>
-Source :</p>
-<blockquote>
-<div><p><a class="reference external" href="https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns">https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns</a></p>
-</div></blockquote>
+<dd><p>Solve the multiple columns selection problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DFin</strong> (<em>pandas.DataFrame</em>) – Input DataFrame</p></li>
+<li><p><strong>columns_name_list</strong> (<em>list</em>) – List of column names to select</p></li>
+<li><p><strong>reset_index_first</strong> (<em>bool</em><em>, </em><em>optional</em>) – Reset index before conversion (default False)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Series of tuples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.Series</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The idea is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">S1</span> <span class="o">=</span> <span class="n">pandas_DF_2_tuple_serie</span><span class="p">(</span><span class="n">DF1</span><span class="p">,</span> <span class="n">columns_name_list</span><span class="p">)</span>
+<span class="n">S2</span> <span class="o">=</span> <span class="n">pandas_DF_2_tuple_serie</span><span class="p">(</span><span class="n">DF2</span><span class="p">,</span> <span class="n">columns_name_list</span><span class="p">)</span>
+<span class="n">BOOL</span> <span class="o">=</span> <span class="n">S1</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">S2</span><span class="p">)</span>
+<span class="n">DF1</span><span class="p">[</span><span class="n">BOOL</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns">https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -169,28 +182,55 @@ Source :</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.pandas_column_rename_dic">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_column_rename_dic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inpnames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.pandas_column_rename_dic" title="Link to this definition"></a></dt>
-<dd><p>wrapper of renamedic_fast_4_pandas</p>
-<p>EXEMPLE :
-rnamedic = utils.renamedic_fast_4_pandas(<a href="#id1"><span class="problematic" id="id2">*</span></a>[“zmax”,”ang”,”zsmooth”,”smoothtype”,”xgrad”,”ygrad”,</p>
-<blockquote>
-<div><p>‘r_eiko’,’z_eiko’,’pt_eiko_x’,’pt_eiko_y’,”t_eiko”,
-‘r_sd’,  ‘z_sd’,  ‘pt_sd_x’  ,’pt_sd_y’  ,’t_sd’,
-‘diff_x’,’diff_y’,’diff’,’diff_t’])</p>
-</div></blockquote>
-<p>pda = pda.rename(columns = rnamedic)</p>
+<dd><p>Wrapper of renamedic_fast_4_pandas for Pandas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*inpnames</strong> (<em>str</em>) – Column names to rename</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary mapping column indices to new names</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rnamedic</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">renamedic_fast_4_pandas</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="s2">&quot;zmax&quot;</span><span class="p">,</span><span class="s2">&quot;ang&quot;</span><span class="p">,</span><span class="s2">&quot;zsmooth&quot;</span><span class="p">,</span><span class="s2">&quot;smoothtype&quot;</span><span class="p">,</span><span class="s2">&quot;xgrad&quot;</span><span class="p">,</span><span class="s2">&quot;ygrad&quot;</span><span class="p">,</span>
+                                   <span class="s1">&#39;r_eiko&#39;</span><span class="p">,</span><span class="s1">&#39;z_eiko&#39;</span><span class="p">,</span><span class="s1">&#39;pt_eiko_x&#39;</span><span class="p">,</span><span class="s1">&#39;pt_eiko_y&#39;</span><span class="p">,</span><span class="s2">&quot;t_eiko&quot;</span><span class="p">,</span>
+                                   <span class="s1">&#39;r_sd&#39;</span><span class="p">,</span>  <span class="s1">&#39;z_sd&#39;</span><span class="p">,</span>  <span class="s1">&#39;pt_sd_x&#39;</span>  <span class="p">,</span><span class="s1">&#39;pt_sd_y&#39;</span>  <span class="p">,</span><span class="s1">&#39;t_sd&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;diff_x&#39;</span><span class="p">,</span><span class="s1">&#39;diff_y&#39;</span><span class="p">,</span><span class="s1">&#39;diff&#39;</span><span class="p">,</span><span class="s1">&#39;diff_t&#39;</span><span class="p">])</span>
+
+<span class="n">pda</span> <span class="o">=</span> <span class="n">pda</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="n">rnamedic</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.renamedic_fast_4_pandas">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">renamedic_fast_4_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inpnames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.renamedic_fast_4_pandas" title="Link to this definition"></a></dt>
-<dd><p>EXEMPLE :
-rnamedic = utils.renamedic_fast_4_pandas(<a href="#id3"><span class="problematic" id="id4">*</span></a>[“zmax”,”ang”,”zsmooth”,”smoothtype”,”xgrad”,”ygrad”,</p>
-<blockquote>
-<div><p>‘r_eiko’,’z_eiko’,’pt_eiko_x’,’pt_eiko_y’,”t_eiko”,
-‘r_sd’,  ‘z_sd’,  ‘pt_sd_x’  ,’pt_sd_y’  ,’t_sd’,
-‘diff_x’,’diff_y’,’diff’,’diff_t’])</p>
-</div></blockquote>
-<p>pda = pda.rename(columns = rnamedic)</p>
+<dd><p>Create rename dictionary for Pandas columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*inpnames</strong> (<em>str</em>) – Column names</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary mapping column indices to new names</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rnamedic</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">renamedic_fast_4_pandas</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="s2">&quot;zmax&quot;</span><span class="p">,</span><span class="s2">&quot;ang&quot;</span><span class="p">,</span><span class="s2">&quot;zsmooth&quot;</span><span class="p">,</span><span class="s2">&quot;smoothtype&quot;</span><span class="p">,</span><span class="s2">&quot;xgrad&quot;</span><span class="p">,</span><span class="s2">&quot;ygrad&quot;</span><span class="p">,</span>
+                                   <span class="s1">&#39;r_eiko&#39;</span><span class="p">,</span><span class="s1">&#39;z_eiko&#39;</span><span class="p">,</span><span class="s1">&#39;pt_eiko_x&#39;</span><span class="p">,</span><span class="s1">&#39;pt_eiko_y&#39;</span><span class="p">,</span><span class="s2">&quot;t_eiko&quot;</span><span class="p">,</span>
+                                   <span class="s1">&#39;r_sd&#39;</span><span class="p">,</span>  <span class="s1">&#39;z_sd&#39;</span><span class="p">,</span>  <span class="s1">&#39;pt_sd_x&#39;</span>  <span class="p">,</span><span class="s1">&#39;pt_sd_y&#39;</span>  <span class="p">,</span><span class="s1">&#39;t_sd&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;diff_x&#39;</span><span class="p">,</span><span class="s1">&#39;diff_y&#39;</span><span class="p">,</span><span class="s1">&#39;diff&#39;</span><span class="p">,</span><span class="s1">&#39;diff_t&#39;</span><span class="p">])</span>
+
+<span class="n">pda</span> <span class="o">=</span> <span class="n">pda</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="n">rnamedic</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
