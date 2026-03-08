@@ -1623,9 +1623,6 @@ print("Non-pivot rows:", int((~df_DD["is_pivot"]).sum()))
 print("\nExample rows:")
 print(df_DD.head(10))
 
-
-
-
 df_DD = add_pivot_change_flag(df_DD)
 print("Number of pivot change epochs:", int(df_DD["pivot_changed"].groupby(level="epoch").first().sum()))
 
