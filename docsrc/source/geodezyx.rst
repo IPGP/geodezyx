@@ -1,4 +1,4 @@
-geodezyx's complete reference package
+GeodeZYX's complete reference package
 =====================================
 
 .. automodule:: geodezyx

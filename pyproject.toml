@@ -37,7 +37,7 @@ version = "5.1.1-beta0" # REQUIRED, although can be dynamic
 # This is a one-line description or tagline of what your project does. This
 # corresponds to the "Summary" metadata field:
 # https://packaging.python.org/specifications/core-metadata/#summary
-description = "geodezyx (a.k.a. The GeodeZYX toolbox) aims to provide simple but useful functions for Geodesy and Geophysics."
+description = "geodezyx (formerly known as The GeodeZYX toolbox) aims to provide simple but useful functions for Geodesy and Geophysics."
 
 # This is an optional longer description of your project that represents
 # the body of text which users will see when they visit PyPI.

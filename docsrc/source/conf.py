@@ -17,8 +17,8 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- Project information -----------------------------------------------------
 
 project = 'geodezyx'
-copyright = '2025, Pierre Sakic - Gustavo Mansur'
-author = 'Pierre Sakic - Gustavo Mansur'
+copyright = '2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani'
+author = 'Pierre Sakic - Gustavo Mansur - Samuel Nahmani'
 
 # The full version, including alpha/beta/rc tags
 release = '5.1.1'
