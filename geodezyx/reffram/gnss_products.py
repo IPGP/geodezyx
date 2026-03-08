@@ -1075,8 +1075,8 @@ def compar_sinex(
     """
     Compare 2 SINEX files and provide statistics on station position differences
 
-    Inputs
-    ------
+    Parameters
+    ----------
     snx1, snx2 : str or DataFrame
         Paths to the SINEX files to compare or DataFrames containing SINEX data
     stat_select : str or list, optional
@@ -1090,6 +1090,7 @@ def compar_sinex(
     out_dataframe : bool, optional
         If True, return the output as a DataFrame; otherwise, return as a tuple
     manu_wwwwd : str, optional
+        Manual specification of week/day if not extracted from filename
     """
 
     if type(snx1) is str:

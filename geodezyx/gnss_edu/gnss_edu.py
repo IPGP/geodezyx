@@ -864,18 +864,28 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
     Sinon, affiche la série de la colonne col1 directement.
     La série est découpée en segments lorsqu'un "trou" (écart > seuil) est détecté.
 
-    Paramètres :
-        df      : DataFrame avec un index multi-niveaux contenant au moins le niveau 'prn'
-                  et les colonnes col1 (et éventuellement col2).
-        col1    : Nom de la première colonne.
-        col2    : Nom de la seconde colonne (optionnel). Si None, on affiche col1.
-        coeff1  : Coefficient multiplicateur pour la première colonne (défaut 1.0).
-        coeff2  : Coefficient multiplicateur pour la seconde colonne (défaut 1.0).
-        seuil   : Seuil en secondes pour considérer un "trou" dans la série (défaut 3600).
-        renderer: Renderer Plotly (ex : "browser" ou "iframe").
+    Paramètres
+    ----------
+    df : DataFrame
+        DataFrame avec un index multi-niveaux contenant au moins le niveau 'prn'
+        et les colonnes col1 (et éventuellement col2).
+    col1 : str
+        Nom de la première colonne.
+    col2 : str, optional
+        Nom de la seconde colonne (optionnel). Si None, on affiche col1.
+    coeff1 : float
+        Coefficient multiplicateur pour la première colonne (défaut 1.0).
+    coeff2 : float
+        Coefficient multiplicateur pour la seconde colonne (défaut 1.0).
+    seuil : float
+        Seuil en secondes pour considérer un "trou" dans la série (défaut 3600).
+    renderer : str
+        Renderer Plotly (ex : "browser" ou "iframe").
 
-    Retourne :
-        fig     : Figure Plotly contenant les courbes tracées.
+    Retourne
+    --------
+    fig : Figure
+        Figure Plotly contenant les courbes tracées.
     """
     # Configuration du renderer
     pio.renderers.default = renderer
@@ -1430,10 +1440,12 @@ def fix_short_pivot_segments(
 ) -> pd.Series:
     """
     Remove segments shorter than min_duration.
-    Priority:
-      1) merge into previous pivot if it covers the short interval
-      2) merge into next pivot if it covers the short interval
-      3) fallback: pick best PRN that covers the short interval (optional pool)
+
+    Priority
+    --------
+    1. merge into previous pivot if it covers the short interval
+    2. merge into next pivot if it covers the short interval
+    3. fallback: pick best PRN that covers the short interval (optional pool)
 
     Returns
     -------

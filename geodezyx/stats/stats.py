@@ -204,14 +204,26 @@ def detrend_timeseries(X,Y):
 
 def confid_interval_slope(x,y,alpha=.95):
     """
-     Calcule un intervalle de confiance sur une tendance
-     En entrée: x     = la variable indépendante
-                y     = la variable dépendante
-                alpha = la probabilité d'erreur tolérée
-     En sortie: mi    = la borne inférieure de l'intervalle
-                ma    = la borne supérieure de l'intervalle
-                
-    Source (???? => En fait non ...)
+    Calcule un intervalle de confiance sur une tendance
+
+    Parameters
+    ----------
+    x : array
+        la variable indépendante
+    y : array
+        la variable dépendante
+    alpha : float
+        la probabilité d'erreur tolérée
+
+    Returns
+    -------
+    mi : float
+        la borne inférieure de l'intervalle
+    ma : float
+        la borne supérieure de l'intervalle
+
+    References
+    ----------
     http://www.i4.auc.dk/borre/matlab
     http://kom.aau.dk/~borre/matlab/
     """
@@ -640,38 +652,50 @@ def gaussian_filter_GFZ_style_smoother_improved(tim_ref, dat_ref, width=7):
 
 
 def smooth(x,window_len=11,window='hanning'):
-    """smooth the data using a window with requested size.
-    
+    """
+    Smooth the data using a window with requested size.
+
     This method is based on the convolution of a scaled window with the signal.
-    The signal is prepared by introducing reflected copies of the signal 
+    The signal is prepared by introducing reflected copies of the signal
     (with the window size) in both ends so that transient parts are minimized
-    in the begining and end part of the output signal.
-    
-    NOTA PERSO : works only for equaly spaced data ....
-    
-    input:
-        x: the input signal 
-        window_len: the dimension of the smoothing window; should be an odd integer
-        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
-            flat window will produce a moving average smoothing.
+    in the beginning and end part of the output signal.
 
-    output:
+    Note: works only for equally spaced data
+
+    Parameters
+    ----------
+    x : array
+        the input signal
+    window_len : int
+        the dimension of the smoothing window; should be an odd integer
+    window : str
+        the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
+        flat window will produce a moving average smoothing.
+
+    Returns
+    -------
+    array
         the smoothed signal
-        
-    example:
 
-    t=linspace(-2,2,0.1)
-    x=sin(t)+randn(len(t))*0.1
-    y=smooth(x)
-    
-    see also: 
-    
+    Examples
+    --------
+    >>> t = np.linspace(-2, 2, 0.1)
+    >>> x = np.sin(t) + np.random.randn(len(t))*0.1
+    >>> y = smooth(x)
+
+    See Also
+    --------
     numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
     scipy.signal.lfilter
- 
-    TODO: the window parameter could be the window itself if an array instead of a string
-    NOTE: length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
-    SOURCE : http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
+
+    Notes
+    -----
+    The window parameter could be the window itself if an array instead of a string
+    length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
+
+    References
+    ----------
+    http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
     """
 
     if x.ndim != 1:
@@ -986,49 +1010,54 @@ def outlier_above_below(X , threshold_values ,
                         theshold_relative_value = "reference",
                         verbose = False):
 
-    """    
+    """
     Gives values of X which are between threshold values
 
     Parameters
     ----------
-    threshold_values : single value (float) or a 2-tuple 
-        (lower bound theshold , upper bound theshold)
-        
-        `WARN` : those value(s) have to be positives.
-        Minus sign for lower bound and plus sign for upper 
+    X : array
+        Input array
+    threshold_values : single value (float) or a 2-tuple
+        (lower bound threshold, upper bound threshold)
+
+        WARN: those value(s) have to be positives.
+        Minus sign for lower bound and plus sign for upper
         one will be applied internally
-        
+
     reference : float or callable
         the central reference value
-        can be a absolute fixed value (float) or 
+        can be a absolute fixed value (float) or
         a function (e.g. np.mean of np.median)
 
     theshold_absolute : bool
         if True threshold_values are absolutes values
-            >>> low = reference - threshold_values[0] 
-            >>> upp = reference + threshold_values[1] 
-        if False they are fractions of theshold_relative_value 
-            >>> low = reference - threshold_values[0] * theshold_relative_value 
+            >>> low = reference - threshold_values[0]
+            >>> upp = reference + threshold_values[1]
+
+        if False they are fractions of theshold_relative_value
+            >>> low = reference - threshold_values[0] * theshold_relative_value
             >>> upp = reference + threshold_values[1] * theshold_relative_value
+
         (see also below)
-    
+
     theshold_relative_value : str or function
-        if the string "reference" or None is given, then it the reference 
+        if the string "reference" or None is given, then it the reference
         value which is used
         if it is a fuction (e.g. np.std()) then it is this value returned
         by this function which is used
         Only useful when theshold_absolute = False
-        
+
     return_booleans : bool
         return booleans or not
 
     verbose : bool
-                
+        print debug information
+
     Returns
     -------
     Xout : numpy array
         X between low_bound & upp_bound
-        
+
     bbool : numpy array
         X-sized array of booleans
     """
@@ -1089,15 +1118,38 @@ def outlier_above_below_binom(Y , X ,
                               verbose           = False):
     
     
-    """    
-    Gives values of Y which are between threshold values, and correct an 
+    """
+    Gives values of Y which are between threshold values, and correct an
     associated X so as X => Y(X)
 
     Parameters
     ----------
-    threshold_values : single value (float) or a 2-tuple 
-        (lower bound theshold , upper bound theshold)
-        
+    Y : array
+        The dependent variable
+    X : array
+        The independent variable
+    threshold_values : single value (float) or a 2-tuple
+        (lower bound threshold, upper bound threshold)
+
+    reference : float or callable
+        the central reference value
+    theshold_absolute : bool
+        if True threshold_values are absolutes values
+    theshold_relative_value : str or function
+        relative threshold value specification
+    return_booleans : bool
+        return booleans or not
+    detrend_first : bool
+        remove trend before outlier detection
+    verbose : bool
+        print debug information
+
+    Returns
+    -------
+    Yout : array
+        Filtered Y values
+    Xout : array
+        Corresponding filtered X values
         `WARN` : those value(s) have to be positives.
         Minus sign for lower bound and plus sign for upper 
         one will be applied internally

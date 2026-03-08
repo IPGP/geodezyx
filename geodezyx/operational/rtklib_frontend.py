@@ -101,80 +101,83 @@ def rtklib_run_from_rinex(
     exe_path = '/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'
 ):
     r"""
-    Run RTKLIB \`rnx2rtkp\` from rover/base RINEX observations using a generic RTKLIB
+    Run RTKLIB ``rnx2rtkp`` from rover/base RINEX observations using a generic RTKLIB
     configuration file, optionally overriding antenna/receiver metadata from RINEX
     headers and downloading required GNSS products (SP3 precise orbits and BRDC nav).
 
     The function:
-    \- creates output and temporary directory structure
-    \- uncompresses compressed RINEX inputs if needed
-    \- reads start/end times and sampling interval from the rover/base RINEX
-    \- builds a run\-specific RTKLIB config file from \`generik_conf\`
-    \- optionally fills rover/base antenna positions and eccentricities from RINEX headers
-    \- downloads required products into \`prod_dir\`:
-      \- SP3 precise orbit from \`calc_center\`
-      \- BRDC navigation RINEX
-    \- calls the external executable \`rnx2rtkp\` with assembled arguments
-    \- writes outputs to the \`out_dir\` directory
+
+    - creates output and temporary directory structure
+    - uncompresses compressed RINEX inputs if needed
+    - reads start/end times and sampling interval from the rover/base RINEX
+    - builds a run-specific RTKLIB config file from ``generik_conf``
+    - optionally fills rover/base antenna positions and eccentricities from RINEX headers
+    - downloads required products into ``prod_dir``:
+
+      - SP3 precise orbit from ``calc_center``
+      - BRDC navigation RINEX
+
+    - calls the external executable ``rnx2rtkp`` with assembled arguments
+    - writes outputs to the ``out_dir`` directory
 
     Parameters
     ----------
-    rnx_rover : str | os.PathLike
-        Path to rover observation RINEX. May be compressed (e.g. \`.gz\`, \`.Z\` and
-        other formats supported by \`geodezyx.operational.check_if_compressed_rinex\`).
-    rnx_base : str | os.PathLike
+    rnx_rover : str or os.PathLike
+        Path to rover observation RINEX. May be compressed (e.g. ``.gz``, ``.Z`` and
+        other formats supported by ``geodezyx.operational.check_if_compressed_rinex``).
+    rnx_base : str or os.PathLike
         Path to base observation RINEX. May be compressed.
-    generik_conf : str | os.PathLike
+    generik_conf : str or os.PathLike
         Path to a generic RTKLIB configuration file (key=value format). This file is
-        parsed by \`read_conf_file\` and then overridden according to function options.
-    out_dir : str | os.PathLike
+        parsed by ``read_conf_file`` and then overridden according to function options.
+    out_dir : str or os.PathLike
         Directory where results are saved. This parameter is mandatory.
-    tmp_dir : str | os.PathLike | None, default=None
+    tmp_dir : str or os.PathLike or None, default=None
         Temporary directory for intermediate files. Optional. If not provided,
-        defaults to \`out_dir/TMP\`.
-    prod_dir : str | os.PathLike | None, default=None
+        defaults to ``out_dir/TMP``.
+    prod_dir : str or os.PathLike or None, default=None
         Directory where to search for orbits, clocks, and BRDC files. Optional.
-        If not provided, defaults to \`tmp_dir\`.
+        If not provided, defaults to ``tmp_dir``.
     experience_prefix : str, default=""
-        Prefix added to the output file stem used to name the generated \`.conf\`
-        and \`.out\` files.
+        Prefix added to the output file stem used to name the generated ``.conf``
+        and ``.out`` files.
     rover_auto_conf : bool, default=False
         If True, reads rover RINEX header and injects rover antenna type, XYZ position,
-        and antenna eccentricities into the produced config (keys \`ant1\-\*\`).
-        If False, rover settings remain those defined in \`generik_conf\`.
+        and antenna eccentricities into the produced config (keys ``ant1-*``).
+        If False, rover settings remain those defined in ``generik_conf``.
     base_auto_conf : bool, default=True
         If True, reads base RINEX header and injects base antenna type, XYZ position,
-        and antenna eccentricities into the produced config (keys \`ant2\-\*\`).
+        and antenna eccentricities into the produced config (keys ``ant2-*``).
     xyz_rover : list[float], default=[0, 0, 0]
-        Rover station ECEF XYZ coordinates in meters \([X, Y, Z]\). If \`xyz_rover[0] != 0\`,
+        Rover station ECEF XYZ coordinates in meters ``[X, Y, Z]``. If ``xyz_rover[0] != 0``,
         these coordinates override the rover RINEX header coordinates; otherwise the rover
         header coordinates are used.
     xyz_base : list[float], default=[0, 0, 0]
-        Base station ECEF XYZ coordinates in meters \([X, Y, Z]\). If \`xyz_base[0] != 0\`,
+        Base station ECEF XYZ coordinates in meters ``[X, Y, Z]``. If ``xyz_base[0] != 0``,
         these coordinates override the base RINEX header coordinates; otherwise the base
         header coordinates are used.
         Note: this is a simple sentinel check; a real X coordinate of 0 would be treated
         as "not provided".
     outtype : str, default="auto"
-        Output solution format. If not \`"auto"\`, sets RTKLIB \`out\-solformat\` to one of:
-        \`"dms"\`, \`"deg"\`, \`"xyz"\`, \`"enu"\` (case\-insensitive).
-        If \`"auto"\`, uses whatever is defined in \`generik_conf\`.
+        Output solution format. If not ``"auto"``, sets RTKLIB ``out-solformat`` to one of:
+        ``"dms"``, ``"deg"``, ``"xyz"``, ``"enu"`` (case-insensitive).
+        If ``"auto"``, uses whatever is defined in ``generik_conf``.
     calc_center : str, default="IGS0OPSFIN"
         Analysis center/product identifier used when downloading GNSS precise products
-        via \`geodezyx.operational.download_gnss_products\`. Must match what that
+        via ``geodezyx.operational.download_gnss_products``. Must match what that
         downloader expects.
     force : bool, default=False
         If True, forces reprocessing even if output file already exists.
     clean_tmp : bool, default=False
-        If True, deletes all contents of \`tmp_dir\` at the beginning of the
+        If True, deletes all contents of ``tmp_dir`` at the beginning of the
         function execution.
     exe_path : str, default=...
-        Filesystem path to the RTKLIB \`rnx2rtkp\` executable.
+        Filesystem path to the RTKLIB ``rnx2rtkp`` executable.
 
     Returns
     -------
     out_result_fil : str
-        Path to the RTKLIB output solution file (\`.out\`).
+        Path to the RTKLIB output solution file (``.out``).
 
     Raises
     ------
@@ -183,11 +186,11 @@ def rtklib_run_from_rinex(
 
     Notes
     -----
-    \- The generated config file is written to \`out_dir\` and named using:
-      \`<experience_prefix>\_<rover4>\_<base4>\_<YYYY\_DOY>.conf\`.
-    \- The RTKLIB command is executed via \`subprocess.call(..., shell=True)\` using
-      \`/bin/bash\`, with a single concatenated command string.
-    \- A warning is emitted if the base RINEX time span does not fully cover the rover span.
+    - The generated config file is written to ``out_dir`` and named using:
+      ``<experience_prefix>_<rover4>_<base4>_<YYYY_DOY>.conf``.
+    - The RTKLIB command is executed via ``subprocess.call(..., shell=True)`` using
+      ``/bin/bash``, with a single concatenated command string.
+    - A warning is emitted if the base RINEX time span does not fully cover the rover span.
     """
     # Directory structure setup
     # out_dir: mandatory, where results are saved

@@ -264,10 +264,28 @@ def regex_or_from_list(listin):
 
 def cat(outfilename, *infilenames):
     """
-    Is for concatenating files ...
-    For just a print, use cat_print !
+    Concatenate files.
+
+    Parameters
+    ----------
+    outfilename : str
+        Output filename
+    infilenames : str
+        Input filenames to concatenate
+
+    Returns
+    -------
+    outfilename : str
+        The output filename
+
+    Notes
+    -----
+    For just a print, use cat_print!
+
+    References
+    ----------
     http://stackoverflow.com/questions/11532980/reproduce-the-unix-cat-command-in-python
-        kindall response
+    kindall response
     """
     with open(outfilename, 'w') as outfile:
         for infilename in infilenames:

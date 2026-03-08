@@ -48,17 +48,17 @@ def rinex_finder(
     ----------
     main_dir : str
         Main directory where the RINEX files are stored.
-        The directory can contain wildcards ('*', '?', etc.) and date aliases 
-        ('%Y', '%j', etc.). If the main_dir contains date aliases and both 
-        start_epoch and end_epoch are defined, you can indicate a more precise 
-        directory (e.g., main_dir = "/path/to/data/*/%Y/%j/").
+        The directory can contain wildcards (``'*'``, ``'?'``, etc.) and date aliases
+        (``'%Y'``, ``'%j'``, etc.). If the main_dir contains date aliases and both
+        start_epoch and end_epoch are defined, you can indicate a more precise
+        directory (e.g., main_dir = ``"/path/to/data/*/%Y/%j/"``).
         Note: The day level is the maximum resolution for the wildcard.
     short_name : bool, optional
         Check if the pattern matches a short name RINEX. Default is True.
     long_name : bool, optional
         Check if the pattern matches a long name RINEX. Default is True.
     gfz_godc_name : bool, optional
-        Check if the pattern matches a GFZ's GODC (GNSS Operational Data Center) 
+        Check if the pattern matches a GFZ's GODC (GNSS Operational Data Center)
         internal long name RINEX. Default is True.
     compressed : bool or None, optional
         Check if the pattern matches a compressed RINEX (True) or not (False).
@@ -78,8 +78,8 @@ def rinex_finder(
 
     Notes
     -----
-    This function is very similar to geodetik.rinex_lister, gins_runner.get_rinex_list, 
-    and operational.multi_finder_rinex. However, this one is the most recent and 
+    This function is very similar to geodetik.rinex_lister, gins_runner.get_rinex_list,
+    and operational.multi_finder_rinex. However, this one is the most recent and
     elaborated (July 2022) and should be used in priority.
     """
 

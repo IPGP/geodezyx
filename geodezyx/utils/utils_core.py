@@ -508,8 +508,10 @@ def open_readlines_smart(file_in, decode_type="iso-8859-1", verbose=False):
 
 def split_string_after_n_chars_at_space(s, n):
     """
-    Splits a string into substrings of a maximum length of n characters,
-    but only splits at spaces and inserts a newline (\n) after each substring.
+    Splits a string into substrings of a maximum length of n characters.
+
+    This function splits a string into substrings of a maximum length of n characters,
+    but only splits at spaces and inserts a newline (``\n``) after each substring.
 
     Parameters
     ----------
@@ -699,12 +701,29 @@ def stringizer(tupin, separ=' ', eol=True):
 
 def eval_a_dict(dictin, where, verbose=True):
     """
-    where is most of time globals()
-    WARN : doesnt work in a function !!!
-    use instead :
-    for k,v in booldic.items():
-        globals()[k] = v
-        locals()[k] = v
+    Evaluate dictionary values in a given namespace.
+
+    Parameters
+    ----------
+    dictin : dict
+        Dictionary to evaluate
+    where : dict
+        Namespace where to evaluate (usually globals() or locals())
+    verbose : bool
+        Print verbose output (default True)
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    WARNING: doesn't work in a function!
+    Use instead::
+
+        for k, v in booldic.items():
+            globals()[k] = v
+            locals()[k] = v
     """
     for k, v in dictin.items():
         where[k] = v

@@ -716,23 +716,44 @@ def error_ellipse_parameters_2(sigx,sigy,sigxy,out_deg=True):
 
 def ellipse_get_coords(a=0.0, b=0.0, x=0.0, y=0.0, angle=0.0, k=2 ,
                        out_separate_X_Y = True , trigo = True):
-    """ Draws an ellipse using (360*k + 1) discrete points; based on pseudo code
-    given at http://en.wikipedia.org/wiki/Ellipse
-    k = 1 means 361 points (degree by degree)
-    a = major axis distance,
-    b = minor axis distance,
-    x = offset along the x-axis
-    y = offset along the y-axis
-    angle = trigo/clockwise rotation [in degrees] of the ellipse;
-        * angle=0  : the ellipse is aligned with the positive x-axis
-        * angle=30 : rotated 30 degrees trigo/clockwise from positive x-axis
+    """
+    Draws an ellipse using (360*k + 1) discrete points.
 
-    trigo sense is the standard convention
+    Parameters
+    ----------
+    a : float
+        major axis distance
+    b : float
+        minor axis distance
+    x : float
+        offset along the x-axis
+    y : float
+        offset along the y-axis
+    angle : float
+        trigo/clockwise rotation [in degrees] of the ellipse;
+        - angle=0  : the ellipse is aligned with the positive x-axis
+        - angle=30 : rotated 30 degrees trigo/clockwise from positive x-axis
 
-    NB : clockwise is the internal convention, but we prefer trigo
-         convention for the Ghiliani ellipses made by error_ellipse_parameters
+        trigo sense is the standard convention
+    k : int
+        k = 1 means 361 points (degree by degree)
+    out_separate_X_Y : bool
+        if True, returns separate X and Y arrays
+    trigo : bool
+        if True, use trigonometric convention;
+        if False, use clockwise convention
 
-    source : scipy-central.org/item/23/1/plot-an-ellipse
+    Notes
+    -----
+    This function is based on pseudo code given at
+    http://en.wikipedia.org/wiki/Ellipse
+
+    The internal convention is clockwise, but we prefer trigo
+    convention for the Ghiliani ellipses made by error_ellipse_parameters
+
+    References
+    ----------
+    scipy-central.org/item/23/1/plot-an-ellipse
     """
 
     if trigo:

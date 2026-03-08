@@ -39,7 +39,7 @@ log = logging.getLogger("geodezyx")
 
 def eci_2_kepler_elts(pos, vel, rad2deg=True, mu=3.9860044188e14):
     """
-    Convert ECI coordinates > Kepler's elements
+    Convert ECI coordinates to Kepler's elements
 
     Parameters
     ----------
@@ -58,27 +58,27 @@ def eci_2_kepler_elts(pos, vel, rad2deg=True, mu=3.9860044188e14):
 
     Returns
     -------
-    a,ecc,i,o_peri,o_lan,m: floats
+    a, ecc, i, o_peri, o_lan, m : floats
         Kepler's elements:
 
-        * a : semi-major axis
-        * ecc : orbit eccentricity
-        * i : orbit inclination
-        * o_peri : argument of periapsis ω
-        * o_lan : longitude of the ascending node Ω
-        * m : mean anomaly m
+        - a : semi-major axis
+        - ecc : orbit eccentricity
+        - i : orbit inclination
+        - o_peri : argument of periapsis ω
+        - o_lan : longitude of the ascending node Ω
+        - m : mean anomaly m
 
-    Note
-    ----
+    Notes
+    -----
     Be sure your input is in ECI (SP3 are in ECEF for instance).
 
-    If neeeded, use ``conv.ecef2eci()`` (gross results)
+    If needed, use ``conv.ecef2eci()`` (gross results)
     or ``reffram.orb_df_crf2trf(inv_trf2crf=True)`` (precise results)
 
     You can get the velocity with ``reffram.orb_df_velocity_calc()``
 
-    Source
-    ------
+    References
+    ----------
     https://downloads.rene-schwarz.com/download/M002-Cartesian_State_Vectors_to_Keplerian_Orbit_Elements.pdf
 
     """

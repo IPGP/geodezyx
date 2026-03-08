@@ -432,16 +432,29 @@ def find_interval_bound(listin, val, outindexes=True):
 
 def occurence(L, tolerence=None, pretty_output=False):
     """
-    Input :
-        tolerence : tolerence to find close elements of L
-                    if no tolerence is given then a set() is used
-    Returns :
-        if pretty_output = False :
-            return a list of 2-tuples : (element of the list, number of occurence of this element in the list)
-        if pretty_output 0 True :
+    Count occurrences of elements in a list.
 
-    Nota : pretty_output is implemented because the first mode is not really useful (180612)
-           the equal test is also replaced by is close
+    Parameters
+    ----------
+    L : list
+        Input list
+    tolerence : float, optional
+        Tolerance to find close elements of L
+        if no tolerance is given then a set() is used
+    pretty_output : bool
+        if False, return a list of 2-tuples:
+            (element of the list, number of occurrence of this element in the list)
+        if True, return tuple with sorted occurrences and values
+
+    Returns
+    -------
+    output : list or tuple
+        See pretty_output parameter
+
+    Notes
+    -----
+    pretty_output is implemented because the first mode is not really useful (180612)
+    the equal test is also replaced by is close
     """
     if tolerence:
         Lset = uniquetol2(L, tol=tolerence)
@@ -533,10 +546,20 @@ def duplicates_finder(seq):
 
 
 def sort_table(table, col):
-    """sort a table by multiple columns
-    table: a list of lists (or tuple of tuples) where each inner list
-           represents a row
-    cols: specifying the column numbers to sort by
+    """
+    Sort a table by multiple columns.
+
+    Parameters
+    ----------
+    table : list of lists or tuple of tuples
+        where each inner list represents a row
+    col : int
+        column number to sort by
+
+    Returns
+    -------
+    outtable : list
+        sorted table
     """
     refcol = list(table[col])
     outtable = []

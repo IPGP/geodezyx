@@ -6,10 +6,6 @@ Created on Tue Jul  9 09:23:54 2019
 @author: Chaiyaporn Kitpracha
 """
 
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
-
 import numpy as np
 from geodezyx import conv, utils
 
