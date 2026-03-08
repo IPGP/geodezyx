@@ -105,7 +105,7 @@ def anubis_runner(
 
     or directly on the GeodeZYX's toolbox GitHub repository:
 
-    https://github.com/GeodeZYX/geodezyx-toolbox/tree/master/geodezyx/000_exemples/anubis_configfiles
+    https://github.com/IPGP/geodezyx/tree/master/geodezyx/000_exemples/anubis_configfiles
 
 
     """

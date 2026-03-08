@@ -13,7 +13,7 @@ functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 
 This module is based on the work of :
 Goudarzi, M. A., Cocard, M., & Santerre, R. (2014).
