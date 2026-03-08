@@ -15,3 +15,4 @@ find . -iname "tmp*" | xargs rm -fvr
 find . -name "*.pyc"       | xargs rm -fv
 git commit -a -m "$user $hosnam $dat"
 git push origin master
+
