@@ -13,18 +13,15 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
-#sys.path.insert(0, "/home/psakicki/CODES/GeodeZYX-Toolbox_v4/geodezyx")
-#sys.path.insert(0, "/home/psakicki/CODES/GeodeZYX-Toolbox_v4/")
-
 
 # -- Project information -----------------------------------------------------
 
 project = 'geodezyx'
-copyright = '2025, Pierre Sakic - Gustavo Mansur'
-author = 'Pierre Sakic - Gustavo Mansur'
+copyright = '2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani'
+author = 'Pierre Sakic - Gustavo Mansur - Samuel Nahmani'
 
 # The full version, including alpha/beta/rc tags
-release = '4.x'
+release = '5.1.1'
 
 
 # -- General configuration ---------------------------------------------------

@@ -6,11 +6,11 @@ This sub-module of geodezyx.operational contains functions to download
 gnss data and products from distant IGS servers. 
 it can be imported directly with:
 from geodezyx import operational
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 ########## BEGIN IMPORT ##########
@@ -22,6 +22,7 @@ import multiprocessing as mp
 import os
 import re
 import shutil
+import datetime as dt
 
 import numpy as np
 
@@ -71,13 +72,13 @@ def download_gnss_products(
     ----------
     archive_dir : str
         the parent directory where the products will be stored.
-    startdate : datetime
+    startdate : dt.datetime
         the start date in regular calendar date.
-    enddate : datetime
+    enddate : dt.datetime
         the end date in regular calendar date..
     AC_names : tuple, optional
         the names of the wished analysis centers.
-        It also control the product's lattency with the new naming convention:
+        It also controls the product's lattency with the new naming convention:
         simply add it completly in the AC name e.g. IGS0OPSRAP
         The default is ("wum","cod").
     prod_types : tuple, optional

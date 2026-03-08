@@ -1,5 +1,9 @@
 ## Changelog
 
+### after v5.0.0
+Get the changelog directly in:
+https://github.com/IPGP/geodezyx/releases
+
 ### v5.0.0, 2025-07-10
 **Breaking changes**:
   * (Much) faster import. The main `geodezyx` doesn't import all modules per default anymore. Thus, favor the following import methods:

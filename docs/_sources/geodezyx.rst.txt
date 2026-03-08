@@ -1,4 +1,4 @@
-GeodeZYX's complete reference package
+geodezyx's complete reference package
 =====================================
 
 .. automodule:: geodezyx
@@ -12,9 +12,8 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   geodezyx.athmo
+   geodezyx.atmo
    geodezyx.conv
-   geodezyx.externlib
    geodezyx.files_rw
    geodezyx.geodyn
    geodezyx.gnss_edu

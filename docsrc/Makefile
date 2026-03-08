@@ -19,10 +19,11 @@ help:
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
+
 %: Makefile
-	@ sed -i "1 s/geodezyx/GeodeZYX\'s complete reference/" source/geodezyx.rst
+	@ sed -i "1 s/geodezyx/geodezyx\'s complete reference/" source/geodezyx.rst
 	@ sed -i "2 s/========/=============================/" source/geodezyx.rst
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O) 
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@cp -a build/html/. ../docs
 
 

@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>geodezyx.operational package &mdash; geodezyx 4.x documentation</title>
+  <title>geodezyx.operational package &mdash; geodezyx 5.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -49,9 +49,8 @@
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
@@ -268,8 +267,8 @@ The default is “/opt/gnss_softs/bin/anubis”</p></li>
 <p>Generic Configuration files for Anubis version 2 and 3
 can be found here:</p>
 <p><code class="docutils literal notranslate"><span class="pre">&lt;...&gt;/geodezyx/exemples/anubis_configfiles</span></code></p>
-<p>or directly on the GeodeZYX’s toolbox GitHub repository:</p>
-<p><a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox/tree/master/geodezyx/000_exemples/anubis_configfiles">https://github.com/GeodeZYX/geodezyx-toolbox/tree/master/geodezyx/000_exemples/anubis_configfiles</a></p>
+<p>or directly on the geodezyx’s toolbox GitHub repository:</p>
+<p><a class="reference external" href="https://github.com/IPGP/geodezyx/tree/master/geodezyx/000_exemples/anubis_configfiles">https://github.com/IPGP/geodezyx/tree/master/geodezyx/000_exemples/anubis_configfiles</a></p>
 </div>
 </dd></dl>
 
@@ -281,11 +280,11 @@ can be found here:</p>
 to the GFZ’s cluster in a batch mode.</p>
 <p>it can be imported directly with:
 from geodezyx import operational</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.cluster_gfz.cluster_GFZ_run">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.cluster_gfz.</span></span><span class="sig-name descname"><span class="pre">cluster_GFZ_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commands_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bunch_on_off</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bunch_job_nbr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bunch_wait_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_on_off</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_mini_nbr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_wait_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bj_check_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_cjob_cmd_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_sleeping_before_launch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.cluster_gfz.cluster_GFZ_run" title="Link to this definition"></a></dt>
@@ -343,11 +342,11 @@ This sub-module of geodezyx.operational contains functions to download
 gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_cddis.download_rp3_cddis">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_cddis.</span></span><span class="sig-name descname"><span class="pre">download_rp3_cddis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">week_ini</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_cddis.download_rp3_cddis" title="Link to this definition"></a></dt>
@@ -492,11 +491,11 @@ This sub-module of geodezyx.operational contains functions to download
 gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_find_files.find_igs_products_files">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_find_files.</span></span><span class="sig-name descname"><span class="pre">find_igs_products_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ACs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'incl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex_old_naming</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex_new_naming</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex_igs_tfcc_naming</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_weekly_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_hourly_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_find_files.find_igs_products_files" title="Link to this definition"></a></dt>
@@ -589,10 +588,10 @@ Implemented only for the new naming format</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>main_dir</strong> (<em>str</em>) – Main directory where the RINEX files are stored.
-The directory can contain wildcards (‘*’, ‘?’, etc.) and date aliases
-(‘%Y’, ‘%j’, etc.). If the main_dir contains date aliases and both
+The directory can contain wildcards (<code class="docutils literal notranslate"><span class="pre">'*'</span></code>, <code class="docutils literal notranslate"><span class="pre">'?'</span></code>, etc.) and date aliases
+(<code class="docutils literal notranslate"><span class="pre">'%Y'</span></code>, <code class="docutils literal notranslate"><span class="pre">'%j'</span></code>, etc.). If the main_dir contains date aliases and both
 start_epoch and end_epoch are defined, you can indicate a more precise
-directory (e.g., main_dir = “/path/to/data/<a href="#id1"><span class="problematic" id="id2">*</span></a>/%Y/%j/”).
+directory (e.g., main_dir = <code class="docutils literal notranslate"><span class="pre">&quot;/path/to/data/*/%Y/%j/&quot;</span></code>).
 Note: The day level is the maximum resolution for the wildcard.</p></li>
 <li><p><strong>short_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – Check if the pattern matches a short name RINEX. Default is True.</p></li>
 <li><p><strong>long_name</strong> (<em>bool</em><em>, </em><em>optional</em>) – Check if the pattern matches a long name RINEX. Default is True.</p></li>
@@ -627,11 +626,11 @@ This sub-module of geodezyx.operational contains functions to download
 gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_prods.download_gnss_products">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_prods.</span></span><span class="sig-name descname"><span class="pre">download_gnss_products</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">archive_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AC_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('wum',</span> <span class="pre">'cod')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('sp3',</span> <span class="pre">'clk')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('ULA',)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'week'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_name_conv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ign'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mgex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repro</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorted_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_also_uncompressed_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftp_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dow_manu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_prods.download_gnss_products" title="Link to this definition"></a></dt>
@@ -640,10 +639,10 @@ GitHub repository :
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>archive_dir</strong> (<em>str</em>) – the parent directory where the products will be stored.</p></li>
-<li><p><strong>startdate</strong> (<em>datetime</em>) – the start date in regular calendar date.</p></li>
-<li><p><strong>enddate</strong> (<em>datetime</em>) – the end date in regular calendar date..</p></li>
+<li><p><strong>startdate</strong> (<em>dt.datetime</em>) – the start date in regular calendar date.</p></li>
+<li><p><strong>enddate</strong> (<em>dt.datetime</em>) – the end date in regular calendar date..</p></li>
 <li><p><strong>AC_names</strong> (<em>tuple</em><em>, </em><em>optional</em>) – the names of the wished analysis centers.
-It also control the product’s lattency with the new naming convention:
+It also controls the product’s lattency with the new naming convention:
 simply add it completly in the AC name e.g. IGS0OPSRAP
 The default is (“wum”,”cod”).</p></li>
 <li><p><strong>prod_types</strong> (<em>tuple</em><em>, </em><em>optional</em>) – the wished products.
@@ -1186,11 +1185,11 @@ This sub-module of geodezyx.operational contains functions to download
 gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_rinex_legacy.download_gnss_rinex_legacy">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_rinex_legacy.</span></span><span class="sig-name descname"><span class="pre">download_gnss_rinex_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statdico</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorted_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_ftp_crawler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_load</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_archive_for_sup_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_rinex_legacy.download_gnss_rinex_legacy" title="Link to this definition"></a></dt>
@@ -1414,11 +1413,11 @@ This sub-module of geodezyx.operational contains functions to download
 gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geodezyx.operational.download_utils.MyFTP_TLS">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_utils.</span></span><span class="sig-name descname"><span class="pre">MyFTP_TLS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_utils.MyFTP_TLS" title="Link to this definition"></a></dt>
@@ -1843,11 +1842,11 @@ And for the threading:
 time series velocities estimation software HECTOR.</p>
 <p>it can be imported directly with:
 from geodezyx import operational</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.hector_frontend.MJD2dt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">MJD2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.hector_frontend.MJD2dt" title="Link to this definition"></a></dt>
@@ -1924,11 +1923,11 @@ for each stat getting the 3 ENU sum files</p>
 time series velocities estimation software MIDAS.</p>
 <p>it can be imported directly with:
 from geodezyx import operational</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.midas_frontend.midas_plot">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.midas_frontend.</span></span><span class="sig-name descname"><span class="pre">midas_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_tenu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_vel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.midas_frontend.midas_plot" title="Link to this definition"></a></dt>
@@ -2202,11 +2201,11 @@ The function prints the return code of the process once it completes.</p>
 <p>This sub-module of geodezyx.operational generates RINEX timeline plot.</p>
 <p>it can be imported directly with:
 from geodezyx import operational</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_lister_plotter.listing_gins_timeline">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_lister_plotter.</span></span><span class="sig-name descname"><span class="pre">listing_gins_timeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_strt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_strt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix_regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_lister_plotter.listing_gins_timeline" title="Link to this definition"></a></dt>
@@ -2443,11 +2442,11 @@ on 20180118 15:59A</p>
 RINEX files (version 2, quite obsolate).</p>
 <p>it can be imported directly with:
 from geodezyx import operational</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rinex_utils.check_if_compressed_rinex">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rinex_utils.</span></span><span class="sig-name descname"><span class="pre">check_if_compressed_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rinex_utils.check_if_compressed_rinex" title="Link to this definition"></a></dt>
@@ -2676,11 +2675,11 @@ delta of interval_size - 1s</p>
 GNSS processing software RTKLIB.</p>
 <p>it can be imported directly with:
 from geodezyx import operational</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rtklib_frontend.prods2tmp">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">prods2tmp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_out</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rtklib_frontend.prods2tmp" title="Link to this definition"></a></dt>
@@ -2696,64 +2695,67 @@ or copies it to the temporary directory if not already there.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.rtklib_frontend.rtklib_run_from_rinex">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">rtklib_run_from_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_rover</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generik_conf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experience_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rover_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_rover</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IGS0OPSFIN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_tmp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exe_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.rtklib_frontend.rtklib_run_from_rinex" title="Link to this definition"></a></dt>
-<dd><p>Run RTKLIB `rnx2rtkp` from rover/base RINEX observations using a generic RTKLIB
+<dd><p>Run RTKLIB <code class="docutils literal notranslate"><span class="pre">rnx2rtkp</span></code> from rover/base RINEX observations using a generic RTKLIB
 configuration file, optionally overriding antenna/receiver metadata from RINEX
 headers and downloading required GNSS products (SP3 precise orbits and BRDC nav).</p>
-<p>The function:
-- creates output and temporary directory structure
-- uncompresses compressed RINEX inputs if needed
-- reads start/end times and sampling interval from the rover/base RINEX
-- builds a run-specific RTKLIB config file from `generik_conf`
-- optionally fills rover/base antenna positions and eccentricities from RINEX headers
-- downloads required products into `prod_dir`:</p>
-<blockquote>
-<div><p>- SP3 precise orbit from `calc_center`
-- BRDC navigation RINEX</p>
-</div></blockquote>
-<p>- calls the external executable `rnx2rtkp` with assembled arguments
-- writes outputs to the `out_dir` directory</p>
+<p>The function:</p>
+<ul class="simple">
+<li><p>creates output and temporary directory structure</p></li>
+<li><p>uncompresses compressed RINEX inputs if needed</p></li>
+<li><p>reads start/end times and sampling interval from the rover/base RINEX</p></li>
+<li><p>builds a run-specific RTKLIB config file from <code class="docutils literal notranslate"><span class="pre">generik_conf</span></code></p></li>
+<li><p>optionally fills rover/base antenna positions and eccentricities from RINEX headers</p></li>
+<li><p>downloads required products into <code class="docutils literal notranslate"><span class="pre">prod_dir</span></code>:</p>
+<ul>
+<li><p>SP3 precise orbit from <code class="docutils literal notranslate"><span class="pre">calc_center</span></code></p></li>
+<li><p>BRDC navigation RINEX</p></li>
+</ul>
+</li>
+<li><p>calls the external executable <code class="docutils literal notranslate"><span class="pre">rnx2rtkp</span></code> with assembled arguments</p></li>
+<li><p>writes outputs to the <code class="docutils literal notranslate"><span class="pre">out_dir</span></code> directory</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rnx_rover</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to rover observation RINEX. May be compressed (e.g. `.gz`, `.Z` and
-other formats supported by `geodezyx.operational.check_if_compressed_rinex`).</p></li>
-<li><p><strong>rnx_base</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to base observation RINEX. May be compressed.</p></li>
-<li><p><strong>generik_conf</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to a generic RTKLIB configuration file (key=value format). This file is
-parsed by `read_conf_file` and then overridden according to function options.</p></li>
-<li><p><strong>out_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Directory where results are saved. This parameter is mandatory.</p></li>
-<li><p><strong>tmp_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em><em> | </em><em>None</em><em>, </em><em>default=None</em>) – Temporary directory for intermediate files. Optional. If not provided,
-defaults to `out_dir/TMP`.</p></li>
-<li><p><strong>prod_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em><em> | </em><em>None</em><em>, </em><em>default=None</em>) – Directory where to search for orbits, clocks, and BRDC files. Optional.
-If not provided, defaults to `tmp_dir`.</p></li>
-<li><p><strong>experience_prefix</strong> (<em>str</em><em>, </em><em>default=&quot;&quot;</em>) – Prefix added to the output file stem used to name the generated `.conf`
-and `.out` files.</p></li>
+<li><p><strong>rnx_rover</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Path to rover observation RINEX. May be compressed (e.g. <code class="docutils literal notranslate"><span class="pre">.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">.Z</span></code> and
+other formats supported by <code class="docutils literal notranslate"><span class="pre">geodezyx.operational.check_if_compressed_rinex</span></code>).</p></li>
+<li><p><strong>rnx_base</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Path to base observation RINEX. May be compressed.</p></li>
+<li><p><strong>generik_conf</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Path to a generic RTKLIB configuration file (key=value format). This file is
+parsed by <code class="docutils literal notranslate"><span class="pre">read_conf_file</span></code> and then overridden according to function options.</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Directory where results are saved. This parameter is mandatory.</p></li>
+<li><p><strong>tmp_dir</strong> (<em>str</em><em> or </em><em>os.PathLike</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Temporary directory for intermediate files. Optional. If not provided,
+defaults to <code class="docutils literal notranslate"><span class="pre">out_dir/TMP</span></code>.</p></li>
+<li><p><strong>prod_dir</strong> (<em>str</em><em> or </em><em>os.PathLike</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Directory where to search for orbits, clocks, and BRDC files. Optional.
+If not provided, defaults to <code class="docutils literal notranslate"><span class="pre">tmp_dir</span></code>.</p></li>
+<li><p><strong>experience_prefix</strong> (<em>str</em><em>, </em><em>default=&quot;&quot;</em>) – Prefix added to the output file stem used to name the generated <code class="docutils literal notranslate"><span class="pre">.conf</span></code>
+and <code class="docutils literal notranslate"><span class="pre">.out</span></code> files.</p></li>
 <li><p><strong>rover_auto_conf</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, reads rover RINEX header and injects rover antenna type, XYZ position,
-and antenna eccentricities into the produced config (keys `ant1-*`).
-If False, rover settings remain those defined in `generik_conf`.</p></li>
+and antenna eccentricities into the produced config (keys <code class="docutils literal notranslate"><span class="pre">ant1-*</span></code>).
+If False, rover settings remain those defined in <code class="docutils literal notranslate"><span class="pre">generik_conf</span></code>.</p></li>
 <li><p><strong>base_auto_conf</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, reads base RINEX header and injects base antenna type, XYZ position,
-and antenna eccentricities into the produced config (keys `ant2-*`).</p></li>
-<li><p><strong>xyz_rover</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Rover station ECEF XYZ coordinates in meters ([X, Y, Z]). If `xyz_rover[0] != 0`,
+and antenna eccentricities into the produced config (keys <code class="docutils literal notranslate"><span class="pre">ant2-*</span></code>).</p></li>
+<li><p><strong>xyz_rover</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Rover station ECEF XYZ coordinates in meters <code class="docutils literal notranslate"><span class="pre">[X,</span> <span class="pre">Y,</span> <span class="pre">Z]</span></code>. If <code class="docutils literal notranslate"><span class="pre">xyz_rover[0]</span> <span class="pre">!=</span> <span class="pre">0</span></code>,
 these coordinates override the rover RINEX header coordinates; otherwise the rover
 header coordinates are used.</p></li>
-<li><p><strong>xyz_base</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Base station ECEF XYZ coordinates in meters ([X, Y, Z]). If `xyz_base[0] != 0`,
+<li><p><strong>xyz_base</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Base station ECEF XYZ coordinates in meters <code class="docutils literal notranslate"><span class="pre">[X,</span> <span class="pre">Y,</span> <span class="pre">Z]</span></code>. If <code class="docutils literal notranslate"><span class="pre">xyz_base[0]</span> <span class="pre">!=</span> <span class="pre">0</span></code>,
 these coordinates override the base RINEX header coordinates; otherwise the base
 header coordinates are used.
 Note: this is a simple sentinel check; a real X coordinate of 0 would be treated
 as “not provided”.</p></li>
-<li><p><strong>outtype</strong> (<em>str</em><em>, </em><em>default=&quot;auto&quot;</em>) – Output solution format. If not `”auto”`, sets RTKLIB `out-solformat` to one of:
-`”dms”`, `”deg”`, `”xyz”`, `”enu”` (case-insensitive).
-If `”auto”`, uses whatever is defined in `generik_conf`.</p></li>
+<li><p><strong>outtype</strong> (<em>str</em><em>, </em><em>default=&quot;auto&quot;</em>) – Output solution format. If not <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, sets RTKLIB <code class="docutils literal notranslate"><span class="pre">out-solformat</span></code> to one of:
+<code class="docutils literal notranslate"><span class="pre">&quot;dms&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;deg&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;xyz&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;enu&quot;</span></code> (case-insensitive).
+If <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>, uses whatever is defined in <code class="docutils literal notranslate"><span class="pre">generik_conf</span></code>.</p></li>
 <li><p><strong>calc_center</strong> (<em>str</em><em>, </em><em>default=&quot;IGS0OPSFIN&quot;</em>) – Analysis center/product identifier used when downloading GNSS precise products
-via `geodezyx.operational.download_gnss_products`. Must match what that
+via <code class="docutils literal notranslate"><span class="pre">geodezyx.operational.download_gnss_products</span></code>. Must match what that
 downloader expects.</p></li>
 <li><p><strong>force</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, forces reprocessing even if output file already exists.</p></li>
-<li><p><strong>clean_tmp</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, deletes all contents of `tmp_dir` at the beginning of the
+<li><p><strong>clean_tmp</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, deletes all contents of <code class="docutils literal notranslate"><span class="pre">tmp_dir</span></code> at the beginning of the
 function execution.</p></li>
-<li><p><strong>exe_path</strong> (<em>str</em><em>, </em><em>default=</em><em>...</em>) – Filesystem path to the RTKLIB `rnx2rtkp` executable.</p></li>
+<li><p><strong>exe_path</strong> (<em>str</em><em>, </em><em>default=</em><em>...</em>) – Filesystem path to the RTKLIB <code class="docutils literal notranslate"><span class="pre">rnx2rtkp</span></code> executable.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>out_result_fil</strong> – Path to the RTKLIB output solution file (`.out`).</p>
+<dd class="field-even"><p><strong>out_result_fil</strong> – Path to the RTKLIB output solution file (<code class="docutils literal notranslate"><span class="pre">.out</span></code>).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -2763,13 +2765,13 @@ function execution.</p></li>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<dl class="simple">
-<dt>- The generated config file is written to `out_dir` and named using:</dt><dd><p>`&lt;experience_prefix&gt;_&lt;rover4&gt;_&lt;base4&gt;_&lt;YYYY_DOY&gt;.conf`.</p>
-</dd>
-<dt>- The RTKLIB command is executed via `subprocess.call(…, shell=True)` using</dt><dd><p>`/bin/bash`, with a single concatenated command string.</p>
-</dd>
-</dl>
-<p>- A warning is emitted if the base RINEX time span does not fully cover the rover span.</p>
+<ul class="simple">
+<li><p>The generated config file is written to <code class="docutils literal notranslate"><span class="pre">out_dir</span></code> and named using:
+<code class="docutils literal notranslate"><span class="pre">&lt;experience_prefix&gt;_&lt;rover4&gt;_&lt;base4&gt;_&lt;YYYY_DOY&gt;.conf</span></code>.</p></li>
+<li><p>The RTKLIB command is executed via <code class="docutils literal notranslate"><span class="pre">subprocess.call(...,</span> <span class="pre">shell=True)</span></code> using
+<code class="docutils literal notranslate"><span class="pre">/bin/bash</span></code>, with a single concatenated command string.</p></li>
+<li><p>A warning is emitted if the base RINEX time span does not fully cover the rover span.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
@@ -2785,11 +2787,11 @@ function execution.</p></li>
 GNSS processing software TRACK.</p>
 <p>it can be imported directly with:
 from geodezyx import operational</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.track_frontend.run_track">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.track_frontend.</span></span><span class="sig-name descname"><span class="pre">run_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_full_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_conf_fil</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_rover</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.track_frontend.run_track" title="Link to this definition"></a></dt>
@@ -2814,7 +2816,7 @@ GitHub repository :
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

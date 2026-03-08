@@ -9,12 +9,12 @@ to the GFZ's cluster in a batch mode.
 it can be imported directly with:
 from geodezyx import operational
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 
@@ -35,7 +35,7 @@ import numpy as np
 from geodezyx import utils
 
 #### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
+# from geodezyx import *                   # Import the geodezyx modules
 # from geodezyx.externlib import *         # Import the external modules
 # from geodezyx.megalib.megalib import *   # Import the legacy modules names
 log = logging.getLogger('geodezyx')

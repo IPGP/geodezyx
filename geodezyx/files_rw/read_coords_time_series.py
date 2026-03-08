@@ -9,12 +9,12 @@ import files containing geodetic time series.
 it can be imported directly with:
 from geodezyx import files_rw
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 ########## BEGIN IMPORT ##########
@@ -1785,7 +1785,7 @@ def read_epos_sta_coords_mono(filein, return_df=True):
         path of the input coordinate file.
     return_df : bool, optional
         if True, returns the coordinates as a Pandas DataFrame.
-        if False, return a list of GeodeZYX's point objects (advanced)
+        if False, return a list of geodezyx's point objects (advanced)
         The default is True.
 
     Returns
@@ -1895,7 +1895,7 @@ def read_epos_sta_coords_multi(filein_list, output_type="DataFrame"):
         list of input coordinate files inputs.
     output_type : str, optional
         "DataFrame": returns a Pandas DataFrame containing the coordinates
-        "TSobjects": returns a dictionary of GeodeZYX's TimeSeries objects (advanced)
+        "TSobjects": returns a dictionary of geodezyx's TimeSeries objects (advanced)
         The default is "DataFrame".
 
     Returns
@@ -1929,8 +1929,8 @@ def read_epos_sta_coords_multi_legacy(filein_list, return_dict=True):
     filein_list : list
         list of input coordinate files inputs.
     return_dict : bool, optional
-        True: returns a dictionary of GeodeZYX's TimeSeries objects 
-        "TSobjects": returns a list of GeodeZYX's TimeSeries objects 
+        True: returns a dictionary of geodezyx's TimeSeries objects 
+        "TSobjects": returns a list of geodezyx's TimeSeries objects 
         The default is True.
 
     Returns

@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>geodezyx.gnss_edu package &mdash; geodezyx 4.x documentation</title>
+  <title>geodezyx.gnss_edu package &mdash; geodezyx 5.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -49,22 +49,16 @@
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.gnss_edu package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#geodezyx-gnss-edu-compute-vmf1-values-module">geodezyx.gnss_edu.compute_vmf1_values module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#geodezyx-gnss-edu-download-vmf-module">geodezyx.gnss_edu.download_VMF module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.gmf_function">geodezyx.gnss_edu.gmf_function module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.gnss_edu">geodezyx.gnss_edu.gnss_edu module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#geodezyx-gnss-edu-gnss-edu-test-skyplot-module">geodezyx.gnss_edu.gnss_edu_test_skyplot module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.gpt3">geodezyx.gnss_edu.gpt3 module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.klobuchar">geodezyx.gnss_edu.klobuchar module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.read_vmf1_grid">geodezyx.gnss_edu.read_vmf1_grid module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.gnss_edu.vmf1_ht">geodezyx.gnss_edu.vmf1_ht module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
@@ -114,52 +108,6 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="geodezyx-gnss-edu-compute-vmf1-values-module">
-<h2>geodezyx.gnss_edu.compute_vmf1_values module<a class="headerlink" href="#geodezyx-gnss-edu-compute-vmf1-values-module" title="Link to this heading"></a></h2>
-</section>
-<section id="geodezyx-gnss-edu-download-vmf-module">
-<h2>geodezyx.gnss_edu.download_VMF module<a class="headerlink" href="#geodezyx-gnss-edu-download-vmf-module" title="Link to this heading"></a></h2>
-</section>
-<section id="module-geodezyx.gnss_edu.gmf_function">
-<span id="geodezyx-gnss-edu-gmf-function-module"></span><h2>geodezyx.gnss_edu.gmf_function module<a class="headerlink" href="#module-geodezyx.gnss_edu.gmf_function" title="Link to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.gnss_edu.gmf_function.gmf">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gmf_function.</span></span><span class="sig-name descname"><span class="pre">gmf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dmjd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dhgt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gmf_function.gmf" title="Link to this definition"></a></dt>
-<dd><p>Determine the Global Mapping Functions (GMF) for hydrostatic and wet components.</p>
-<p>This function calculates mapping functions used in atmospheric delay modeling
-for satellite geodesy applications. The GMF is based on numerical weather model
-data and provides improved accuracy over earlier mapping functions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dmjd</strong> (<em>float</em>) – Modified Julian Date.</p></li>
-<li><p><strong>dlat</strong> (<em>float</em>) – Ellipsoidal latitude in radians.</p></li>
-<li><p><strong>dlon</strong> (<em>float</em>) – Longitude in radians.</p></li>
-<li><p><strong>dhgt</strong> (<em>float</em>) – Height above sea level in meters.</p></li>
-<li><p><strong>zd</strong> (<em>float</em>) – Zenith distance in radians.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>gmfh</strong> (<em>float</em>) – Hydrostatic mapping function value.</p></li>
-<li><p><strong>gmfw</strong> (<em>float</em>) – Wet mapping function value.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-<p class="rubric">References</p>
-<p>Boehm, J., A.E. Niell, p. Tregoning, H. Schuh (2006),
-Global Mapping Functions (GMF): A new empirical mapping function based on
-numerical weather model data, Geoph. Res. Letters, Vol. 33, L07304,
-doi:10.1029/2005GL025545.</p>
-<p class="rubric">Notes</p>
-<p>Original implementation by Johannes Boehm, 2005 August 30.
-Recursions for Legendre polynomials updated 2006 Aug. 14 (O. Montenbruck).
-Latitude changed to ellipsoidal latitude 2011 Jul. 21 (J. Boehm).
-Converted to Python by Zohreh Adavi (<a class="reference external" href="mailto:zohreh&#46;adavi&#37;&#52;&#48;tuwien&#46;ac&#46;at">zohreh<span>&#46;</span>adavi<span>&#64;</span>tuwien<span>&#46;</span>ac<span>&#46;</span>at</a>), 2023-02-20.</p>
-</dd></dl>
-
-</section>
 <section id="module-geodezyx.gnss_edu.gnss_edu">
 <span id="geodezyx-gnss-edu-gnss-edu-module"></span><h2>geodezyx.gnss_edu.gnss_edu module<a class="headerlink" href="#module-geodezyx.gnss_edu.gnss_edu" title="Link to this heading"></a></h2>
 <p>Created on Tue Feb 11 16:39:34 2025</p>
@@ -172,53 +120,99 @@ Retourne un pd.Series avec les nouvelles colonnes X_sat_corr, Y_sat_corr, Z_sat_
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.add_az_el_iono_columns">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">add_az_el_iono_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_rnx_header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mynav</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.add_az_el_iono_columns" title="Link to this definition"></a></dt>
-<dd><p>Ajoute dans le DataFrame les colonnes Az (azimut en degrés), Ele (élévation en degrés)
-et d_ion1 (correction ionosphérique selon le modèle de Klobuchar).</p>
-<dl class="simple">
-<dt>Paramètres :</dt><dd><ul class="simple">
-<li><dl class="simple">
-<dt>df<span class="classifier">DataFrame contenant les colonnes ‘X_sat’, ‘Y_sat’, ‘Z_sat’ et ‘ind_ligne’.</span></dt><dd><p>L’index doit être un MultiIndex (time, prn).</p>
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.best_prn_for_interval">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">best_prn_for_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool_prns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.best_prn_for_interval" title="Link to this definition"></a></dt>
+<dd><p>Pick a PRN from pool_prns that fully covers [t0, t1] with SNR&gt;=snr_min.
+Tie-breaker: highest mean SNR over the interval.</p>
+<p>Returns None if no PRN can fully cover the interval.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.build_active_pivot_schedule">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">build_active_pivot_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_prns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'S1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Timedelta('0</span> <span class="pre">days</span> <span class="pre">00:00:30')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">switch_margin_db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Series</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.build_active_pivot_schedule" title="Link to this definition"></a></dt>
+<dd><p>Build a stable active pivot schedule from a pre-selected PRN set.
+Switch only if the best candidate is better than current by switch_margin_db.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>active_pivot</strong></p>
 </dd>
-</dl>
-</li>
-<li><p>P_rnx_header : tableau ou liste contenant les coordonnées de la station (X, Y, Z)</p></li>
-<li><p>mynav : objet de navigation contenant les attributs ion_alpha_gps et ion_beta_gps.</p></li>
-<li><p>t : objet gpsdatetime (issu de gpst.gpsdatetime) pour la gestion des temps.</p></li>
-<li><p>tools : module (par ex. gnsstoolbox.gnsstools) fournissant les fonctions toolAzEle et toolCartGeoGRS80.</p></li>
-<li><p>klobuchar : module contenant la fonction klobuchar pour le calcul de la correction iono.</p></li>
-</ul>
-</dd>
-<dt>Retourne :</dt><dd><ul class="simple">
-<li><p>df : le DataFrame enrichi avec les colonnes ‘Az’, ‘Ele’ et ‘d_ion1’.</p></li>
-</ul>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.Series indexed by expected epochs, values are PRN or None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.enrich_df_with_sat_positions">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">enrich_df_with_sat_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mysp3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.enrich_df_with_sat_positions" title="Link to this definition"></a></dt>
-<dd><p>Pour chaque ligne du DataFrame df (avec un index composé de (epoch, prn)),
-calcule la position du satellite en prenant en compte le retard, l’effet
-relativiste et met à jour le DataFrame avec les colonnes X_sat, Y_sat, Z_sat,
-dte_sat et dRelat.</p>
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.check_full_coverage_from_active_pivot">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">check_full_coverage_from_active_pivot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_pivot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.check_full_coverage_from_active_pivot" title="Link to this definition"></a></dt>
+<dd><p>Simple proof helper:
+- counts None epochs
+- returns first/last None epoch if any</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.detect_intra_arc_holes">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">detect_intra_arc_holes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Timedelta('0</span> <span class="pre">days</span> <span class="pre">00:00:30')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Timedelta('0</span> <span class="pre">days</span> <span class="pre">00:30:00')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.detect_intra_arc_holes" title="Link to this definition"></a></dt>
+<dd><p>Detect missing observations inside satellite arcs.</p>
+<dl class="simple">
+<dt>A hole is defined as:</dt><dd><p>sampling*2 &lt; dt &lt; gap</p>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>-</em>) – pandas DataFrame dont l’index est (epoch, prn) et qui contient la colonne ‘C1’</p></li>
-<li><p><strong>mysp3</strong> (<em>-</em>) – instance de l’objet d’orbite contenant la méthode calcSatCoord</p></li>
-<li><p><strong>t</strong> (<em>-</em>) – instance de gpst.gpsdatetime() utilisée pour la conversion des temps</p></li>
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – GNSS dataframe indexed by (epoch, prn)</p></li>
+<li><p><strong>sampling</strong> (<em>Timedelta</em>) – Expected RINEX sampling interval</p></li>
+<li><p><strong>gap</strong> (<em>Timedelta</em>) – Arc segmentation threshold</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p>df enrichi avec les colonnes calculées.</p></li>
-</ul>
-</p>
+<dd class="field-even"><p>epoch_prev : last valid observation
+epoch      : first observation after the hole
+dt         : time difference
+n_missing  : number of missing epochs</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with columns</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.enforce_min_dwell">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">enforce_min_dwell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_pivot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dwell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Series</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.enforce_min_dwell" title="Link to this definition"></a></dt>
+<dd><p>Stability post-filter:
+If a segment is shorter than min_dwell, try to absorb it into the previous pivot
+if the previous pivot can cover the short interval.</p>
+<p>This reduces last-minute tiny segments (e.g. 25 min) without harming coverage.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.expected_epochs">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">expected_epochs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DatetimeIndex</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.expected_epochs" title="Link to this definition"></a></dt>
+<dd><p>Return the expected epoch grid (inclusive endpoints) for a given sampling.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.fix_short_pivot_segments">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">fix_short_pivot_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_pivot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'selected_only'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_prns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Series</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.fix_short_pivot_segments" title="Link to this definition"></a></dt>
+<dd><p>Remove segments shorter than min_duration.</p>
+<section id="priority">
+<h3>Priority<a class="headerlink" href="#priority" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>merge into previous pivot if it covers the short interval</p></li>
+<li><p>merge into next pivot if it covers the short interval</p></li>
+<li><p>fallback: pick best PRN that covers the short interval (optional pool)</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>active_pivot_fixed</strong></p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.Series</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -226,6 +220,23 @@ dte_sat et dRelat.</p>
 <span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">get_approx_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fichier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.get_approx_position" title="Link to this definition"></a></dt>
 <dd><p>Recherche la ligne contenant ‘APPROX POSITION XYZ’ dans le fichier
 et retourne les trois premières valeurs sous forme de numpy.array.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.greedy_pivot_set_cover">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">greedy_pivot_set_cover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Timedelta('0</span> <span class="pre">days</span> <span class="pre">00:00:30')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_full_coverage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_diagnostics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.greedy_pivot_set_cover" title="Link to this definition"></a></dt>
+<dd><p>Greedy set-cover selection of PRNs to cover ALL expected epochs with SNR &gt;= snr_min.</p>
+<p>Guarantee:
+- If require_full_coverage=True: raise RuntimeError if full coverage is impossible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>selected_prns</strong> (<em>list[str]</em>)</p></li>
+<li><p><strong>diagnostics</strong> (<em>dict (optional)</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -255,8 +266,56 @@ et retourne les trois premières valeurs sous forme de numpy.array.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.pivot_schedule_to_segments">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">pivot_schedule_to_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active_pivot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_none</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.pivot_schedule_to_segments" title="Link to this definition"></a></dt>
+<dd><p>Convert an active pivot schedule to segments:
+columns = prn, start, end, duration, n_epochs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.plot_gnss_sd_by_prn">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_gnss_sd_by_prn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_SD</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'SD_L1'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_gnss_sd_by_prn" title="Link to this definition"></a></dt>
+<dd><p>Convenience wrapper for SD plots (keeps the TP API stable).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.plot_gnss_timeseries_by_prn">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_gnss_timeseries_by_prn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Timedelta('0</span> <span class="pre">days</span> <span class="pre">00:30:00')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_arcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arc_label_fontsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arc_label_xytext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(3,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_legend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_outside</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_ncol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Time</span> <span class="pre">(epoch)'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(10,</span> <span class="pre">6)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_gnss_timeseries_by_prn" title="Link to this definition"></a></dt>
+<dd><p>Plot a GNSS time series by satellite PRN with gap handling.</p>
+<dl class="simple">
+<dt>This function is generic: it works for any DataFrame that:</dt><dd><ul class="simple">
+<li><p>is indexed by a MultiIndex with levels (‘epoch’, ‘prn’)</p></li>
+<li><p>contains a numeric column <cite>y</cite></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – MultiIndex (epoch, prn).</p></li>
+<li><p><strong>y</strong> (<em>str</em>) – Column name to plot.</p></li>
+<li><p><strong>gap</strong> (<em>pandas.Timedelta</em>) – Time gap threshold used to split continuous segments (“arcs”).</p></li>
+<li><p><strong>label_arcs</strong> (<em>bool</em>) – If True, write PRN text at the start of each arc.</p></li>
+<li><p><strong>arc_label_fontsize</strong> (<em>int</em>) – Font size for PRN labels.</p></li>
+<li><p><strong>arc_label_xytext</strong> (<em>tuple</em>) – (dx, dy) offset in points for the arc labels.</p></li>
+<li><p><strong>show_legend</strong> (<em>bool</em>) – If True, show legend (often unnecessary if label_arcs=True).</p></li>
+<li><p><strong>legend_outside</strong> (<em>bool</em>) – If True, place legend outside the axes (right side).</p></li>
+<li><p><strong>legend_ncol</strong> (<em>int</em>) – Legend columns.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em> or </em><em>None</em>) – Plot title. If None, a default title is generated.</p></li>
+<li><p><strong>xlabel</strong> (<em>str</em>) – X axis label.</p></li>
+<li><p><strong>ylabel</strong> (<em>str</em><em> or </em><em>None</em>) – Y axis label. If None, uses <cite>y</cite>.</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em>) – Figure size.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>fig, ax</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.plot_residual_analysis">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_residual_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dP_est</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_est</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_rnx_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tools</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_residual_analysis" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_residual_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dP_est</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_est</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_rnx_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_residual_analysis" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Computes residuals (v_est = B - A &#64; dP_est) and creates a figure containing:</dt><dd><ol class="arabic simple">
 <li><p>Time series of residuals (displayed as points)</p></li>
@@ -280,7 +339,6 @@ et retourne les trois premières valeurs sous forme de numpy.array.</p>
 <li><p><strong>save_path</strong> (<em>-</em>) – str, full path (name + extension) to save the figure.</p></li>
 <li><p><strong>P_est</strong> (<em>-</em>) – array-like, estimated position (for additional info computation).</p></li>
 <li><p><strong>P_rnx_header</strong> (<em>-</em>) – array-like, initial position from RINEX header.</p></li>
-<li><p><strong>tools</strong> (<em>-</em>) – module or object with toolCartLocGRS80 function.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -296,32 +354,176 @@ et retourne les trois premières valeurs sous forme de numpy.array.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.plot_sd_derivative_by_prn">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_sd_derivative_by_prn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_SD</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Timedelta('0</span> <span class="pre">days</span> <span class="pre">00:30:00')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_arcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_by_dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elev_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_deg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_to_meters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength_m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_sd_derivative_by_prn" title="Link to this definition"></a></dt>
+<dd><p>Plot temporal derivative of a single-difference observable by PRN.</p>
+<section id="notes-pedagogical">
+<h3>Notes (pedagogical)<a class="headerlink" href="#notes-pedagogical" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>If obs is a carrier-phase SD_L* (stored in cycles), you may set
+phase_to_meters=True to convert cycles -&gt; meters using the wavelength.
+This is ONLY for comparison with code (meters); it does not remove
+ambiguities.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">param df_SD<span class="colon">:</span></dt>
+<dd class="field-odd"><p>MultiIndex (epoch, prn). Must contain column <cite>obs</cite>.</p>
+</dd>
+<dt class="field-even">type df_SD<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame</p>
+</dd>
+<dt class="field-odd">param obs<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Column to differentiate (e.g., “SD_L1” cycles, “SD_C1” meters).</p>
+</dd>
+<dt class="field-even">type obs<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">param phase_to_meters<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If True and obs starts with “SD_L”, convert cycles to meters before
+differencing.</p>
+</dd>
+<dt class="field-even">type phase_to_meters<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+<dt class="field-odd">param wavelength_m<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Override wavelength (meters) used for cycles-&gt;meters conversion.
+If None and obs is SD_L1/SD_L2/SD_L5, use conv.L*_WAVELENGTH.</p>
+</dd>
+<dt class="field-even">type wavelength_m<span class="colon">:</span></dt>
+<dd class="field-even"><p>float or None</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.plot_series">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeff1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeff2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seuil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'browser'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_series" title="Link to this definition"></a></dt>
 <dd><p>Affiche les séries temporelles pour chaque satellite.
 Si col2 est fourni, affiche la série : coeff1 * col1 - coeff2 * col2.
 Sinon, affiche la série de la colonne col1 directement.
 La série est découpée en segments lorsqu’un “trou” (écart &gt; seuil) est détecté.</p>
-<dl>
-<dt>Paramètres :</dt><dd><dl class="simple">
-<dt>df<span class="classifier">DataFrame avec un index multi-niveaux contenant au moins le niveau ‘prn’</span></dt><dd><p>et les colonnes col1 (et éventuellement col2).</p>
+<section id="parametres">
+<h3>Paramètres<a class="headerlink" href="#parametres" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>df<span class="classifier">DataFrame</span></dt><dd><p>DataFrame avec un index multi-niveaux contenant au moins le niveau ‘prn’
+et les colonnes col1 (et éventuellement col2).</p>
+</dd>
+<dt>col1<span class="classifier">str</span></dt><dd><p>Nom de la première colonne.</p>
+</dd>
+<dt>col2<span class="classifier">str, optional</span></dt><dd><p>Nom de la seconde colonne (optionnel). Si None, on affiche col1.</p>
+</dd>
+<dt>coeff1<span class="classifier">float</span></dt><dd><p>Coefficient multiplicateur pour la première colonne (défaut 1.0).</p>
+</dd>
+<dt>coeff2<span class="classifier">float</span></dt><dd><p>Coefficient multiplicateur pour la seconde colonne (défaut 1.0).</p>
+</dd>
+<dt>seuil<span class="classifier">float</span></dt><dd><p>Seuil en secondes pour considérer un “trou” dans la série (défaut 3600).</p>
+</dd>
+<dt>renderer<span class="classifier">str</span></dt><dd><p>Renderer Plotly (ex : “browser” ou “iframe”).</p>
 </dd>
 </dl>
-<p>col1    : Nom de la première colonne.
-col2    : Nom de la seconde colonne (optionnel). Si None, on affiche col1.
-coeff1  : Coefficient multiplicateur pour la première colonne (défaut 1.0).
-coeff2  : Coefficient multiplicateur pour la seconde colonne (défaut 1.0).
-seuil   : Seuil en secondes pour considérer un “trou” dans la série (défaut 3600).
-renderer: Renderer Plotly (ex : “browser” ou “iframe”).</p>
+</section>
+<section id="retourne">
+<h3>Retourne<a class="headerlink" href="#retourne" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fig<span class="classifier">Figure</span></dt><dd><p>Figure Plotly contenant les courbes tracées.</p>
 </dd>
-<dt>Retourne :</dt><dd><p>fig     : Figure Plotly contenant les courbes tracées.</p>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.plot_tracking_timeline">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_tracking_timeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Timedelta('0</span> <span class="pre">days</span> <span class="pre">00:00:30')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_tracking_timeline" title="Link to this definition"></a></dt>
+<dd><p>Timeline heatmap of tracking availability by PRN.</p>
+<p>Black = epoch exists for this PRN (and SNR &gt;= snr_min if provided)
+White = missing epoch (or SNR &lt; snr_min)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – Must be indexed by MultiIndex (‘epoch’,’prn’).</p></li>
+<li><p><strong>sampling</strong> (<em>Timedelta</em>) – Expected observation interval (e.g. 30 s).</p></li>
+<li><p><strong>snr_col</strong> (<em>str</em><em> or </em><em>None</em>) – Column name for SNR (e.g., ‘S1’). If None, only presence/absence is shown.</p></li>
+<li><p><strong>snr_min</strong> (<em>float</em><em> or </em><em>None</em>) – If provided with snr_col, only epochs with SNR &gt;= snr_min are considered “present”.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.plot_tracking_timeline_with_pivots">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_tracking_timeline_with_pivots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_prns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Timedelta('0</span> <span class="pre">days</span> <span class="pre">00:00:30')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'S1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_pivot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_tracking_timeline_with_pivots" title="Link to this definition"></a></dt>
+<dd><p>Tracking timeline with SNR threshold + pivot satellites highlighted.</p>
+<section id="color-meaning">
+<h3>Color meaning<a class="headerlink" href="#color-meaning" title="Link to this heading"></a></h3>
+<p>0 = white : missing epoch OR SNR &lt; snr_min
+1 = black : usable (SNR &gt;= snr_min) but NOT selected as pivot
+2 = green : usable (SNR &gt;= snr_min) AND selected as pivot
+3 = dark green : active pivot at this epoch (provided by <cite>active_pivot</cite>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">param df<span class="colon">:</span></dt>
+<dd class="field-odd"><p>MultiIndex (epoch, prn). Must contain snr_col.</p>
+</dd>
+<dt class="field-even">type df<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame</p>
+</dd>
+<dt class="field-odd">param selected_prns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PRNs selected by the greedy algorithm (candidate pivots).</p>
+</dd>
+<dt class="field-even">type selected_prns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+<dt class="field-odd">param sampling<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Expected sampling interval (e.g. 30 s).</p>
+</dd>
+<dt class="field-even">type sampling<span class="colon">:</span></dt>
+<dd class="field-even"><p>Timedelta</p>
+</dd>
+<dt class="field-odd">param snr_col<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SNR column name (e.g., “S1”).</p>
+</dd>
+<dt class="field-even">type snr_col<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">param snr_min<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Minimum SNR threshold to consider a satellite usable.</p>
+</dd>
+<dt class="field-even">type snr_min<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param active_pivot<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Series indexed by expected_epochs, values are PRN (string) or None/NaN.
+If provided, it is used to mark state=3 (dark green).</p>
+</dd>
+<dt class="field-even">type active_pivot<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.Series | None</p>
+</dd>
+<dt class="field-odd">param title<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Plot title override.</p>
+</dd>
+<dt class="field-even">type title<span class="colon">:</span></dt>
+<dd class="field-even"><p>str | None</p>
+</dd>
+<dt class="field-odd">rtype<span class="colon">:</span></dt>
+<dd class="field-odd"><p>fig, ax, info</p>
+</dd>
+</dl>
 </section>
-<section id="geodezyx-gnss-edu-gnss-edu-test-skyplot-module">
-<h2>geodezyx.gnss_edu.gnss_edu_test_skyplot module<a class="headerlink" href="#geodezyx-gnss-edu-gnss-edu-test-skyplot-module" title="Link to this heading"></a></h2>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.prn_covers_interval">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">prn_covers_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.prn_covers_interval" title="Link to this definition"></a></dt>
+<dd><p>True if PRN has non-NaN SNR &gt;= snr_min at ALL expected epochs in [t0, t1].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.prn_snr_on_grid">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">prn_snr_on_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DatetimeIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Series</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.prn_snr_on_grid" title="Link to this definition"></a></dt>
+<dd><p>Return SNR series for one PRN reindexed on <cite>epochs</cite>.
+Missing epochs -&gt; NaN.</p>
+</dd></dl>
+
 </section>
 <section id="module-geodezyx.gnss_edu.gpt3">
 <span id="geodezyx-gnss-edu-gpt3-module"></span><h2>geodezyx.gnss_edu.gpt3 module<a class="headerlink" href="#module-geodezyx.gnss_edu.gpt3" title="Link to this heading"></a></h2>
@@ -474,8 +676,8 @@ Implémentation autonome (remplace jdutil.jd_to_date).</p>
 <dt class="sig sig-object py" id="geodezyx.gnss_edu.read_vmf1_grid.read_vmf1_grid">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.read_vmf1_grid.</span></span><span class="sig-name descname"><span class="pre">read_vmf1_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.read_vmf1_grid.read_vmf1_grid" title="Link to this definition"></a></dt>
 <dd><p>Retourne (ah_vec, aw_vec) pour chaque MJD donné et une station ell=[lat_deg, lon_deg, h_m].</p>
-<section id="parametres">
-<h3>Paramètres<a class="headerlink" href="#parametres" title="Link to this heading"></a></h3>
+<section id="id1">
+<h3>Paramètres<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>mjd<span class="classifier">Iterable[float]</span></dt><dd><p>Liste/array de dates en Modified Julian Day (UTC).</p>
 </dd>
@@ -502,14 +704,6 @@ aw_vec : np.ndarray shape (N,)</p>
 </dd></dl>
 
 </section>
-<section id="module-geodezyx.gnss_edu.vmf1_ht">
-<span id="geodezyx-gnss-edu-vmf1-ht-module"></span><h2>geodezyx.gnss_edu.vmf1_ht module<a class="headerlink" href="#module-geodezyx.gnss_edu.vmf1_ht" title="Link to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.gnss_edu.vmf1_ht.vmf1_ht">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.vmf1_ht.</span></span><span class="sig-name descname"><span class="pre">vmf1_ht</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ah</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmjd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dlat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ht</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.vmf1_ht.vmf1_ht" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</section>
 </section>
 
 
@@ -523,7 +717,7 @@ aw_vec : np.ndarray shape (N,)</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

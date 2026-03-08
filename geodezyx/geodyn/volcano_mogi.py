@@ -10,12 +10,12 @@ volcano-geodesy analytic models.
 It is direcly inspired by the work of Scott Henderson
 https://github.com/scottyhq/cov9
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 import matplotlib.pyplot as plt

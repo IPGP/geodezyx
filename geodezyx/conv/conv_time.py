@@ -11,12 +11,12 @@ This sub-module of geodezyx.conv deals with time conversion.
 it can be imported directly with:
 from geodezyx import conv
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 
 REFACTORING NOTES:
 ==================
@@ -1310,8 +1310,7 @@ def dt2gpstime(dtin, secinweek=False, inp_ref="utc", outputtype=int):
 
     Returns
     -------
-    tuple or iterable of tuples
-        (GPS_week, GPS_day/GPS_sec)
+    GPS_week, GPS_day/GPS_sec:
         If input is iterable, returns same type of iterable containing tuples.
 
     Note
@@ -2505,7 +2504,7 @@ def dt2date(dt_in):
         return dt_in.date()
 
 
-def pandas_timestamp2dt(timestamp_in):
+def pandas_timestamp2dt(timstp_in):
     """
     Time Python type conversion
 
@@ -2513,7 +2512,7 @@ def pandas_timestamp2dt(timestamp_in):
 
     Parameters
     ----------
-    timestamp_in : Timestamp or list/numpy.array of Timestamp.
+    timstp_in : Timestamp or list/numpy.array of Timestamp.
         Pandas's Timestamp(s).  Can handle several datetimes in an iterable.
 
     Returns
@@ -2524,15 +2523,54 @@ def pandas_timestamp2dt(timestamp_in):
 
     import pandas as pd
 
-    if utils.is_iterable(timestamp_in):
-        typ = utils.get_type_smart(timestamp_in)
-        return typ([pandas_timestamp2dt(e) for e in timestamp_in])
+    if utils.is_iterable(timstp_in):
+        typ = utils.get_type_smart(timstp_in)
+        return typ([pandas_timestamp2dt(e) for e in timstp_in])
     else:
-        if isinstance(timestamp_in, pd.Timedelta):
-            return timestamp_in.to_pytimedelta()
+        if isinstance(timstp_in, pd.Timedelta):
+            return timstp_in.to_pytimedelta()
         else:
-            return timestamp_in.to_pydatetime()
+            return timstp_in.to_pydatetime()
 
+def pandas_timestamp2posix(timstp_in,out_unit_coef=10**9,out_type=np.int64):
+    """
+    Time Python type conversion
+
+    Pandas's Timestamp => POSIX timestamp (seconds since epoch)
+
+    Parameters
+    ----------
+    timstp_in : Timestamp or list/numpy.array of Timestamp.
+        Pandas's Timestamp(s).  Can handle several datetimes in an iterable.
+    out_unit_coef : int, optional
+        Coefficient to convert the output to the desired time unit.
+        For example, use 1 for seconds, 1000 for milliseconds, 10**9 for nanoseconds.
+        The default is 10**9 (nanoseconds).
+    out_type :
+        Desired output type (e.g., int, float, np.int64, np.float64).
+        The default is np.int64.
+
+    Returns
+    -------
+    L : float or list of float
+        Time as POSIX timestamp(s)
+    """
+
+    if utils.is_iterable(timstp_in):
+        typ = utils.get_type_smart(timstp_in)
+        return typ([pandas_timestamp2posix(e) for e in timstp_in])
+    else:
+
+        part1 = out_type(timstp_in.timestamp() * out_unit_coef)
+        part2 = out_type(timstp_in.nanosecond * 10**-9 * out_unit_coef)
+
+        posix_out = part1 + part2
+        return posix_out
+
+import pandas as pd
+p = pd.Timestamp("2026-01-01 00:00:00.9876543212345678")
+pandas_timestamp2posix(p)
+np.float64(p.timestamp()) + np.float64(p.nanosecond / 1e9)
 
 def numpy_dt2dt(numpy_dt_in):
     """

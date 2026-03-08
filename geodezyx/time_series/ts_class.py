@@ -1441,13 +1441,18 @@ class Attitude:
 
 
 class TimeSerieObs(object):
-    """LES DIFFERENCES AVEC TSPOINT
-    * Les objets ne contiennent qu'un type de données sous une seul forme
-    (a la difference d'un point qui peut exister sous plusieurs formes)
-    * Dans un fichier en input, il peut y avoir plusieurs "devices"
+    """
+    Time series observation class.
+
+    Differences with TSPOINT:
+
+    - Les objets ne contiennent qu'un type de données sous une seul forme
+      (a la difference d'un point qui peut exister sous plusieurs formes)
+    - Dans un fichier en input, il peut y avoir plusieurs "devices"
       => les fonctions de lectures produisent donc obligatoirement des listes
       de TS (le cas échéant une liste à 1 élt)
-      => la methode readfile() nécessite donc l'indice de la device"""
+      => la methode readfile() nécessite donc l'indice de la device
+    """
 
     def __init__(self, typeobs="NULL", filepath=""):
 
