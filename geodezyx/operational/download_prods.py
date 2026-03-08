@@ -6,38 +6,29 @@ This sub-module of geodezyx.operational contains functions to download
 gnss data and products from distant IGS servers. 
 it can be imported directly with:
 from geodezyx import operational
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 ########## BEGIN IMPORT ##########
 #### External modules
-# import glob
 import itertools
 #### Import the logger
 import logging
 import multiprocessing as mp
 import os
-# import pandas as pd
 import re
 import shutil
+import datetime as dt
 
 import numpy as np
 
-import geodezyx.operational.download_utils as dlutils
 #### geodeZYX modules
-from geodezyx import conv
-from geodezyx import utils
-
-# import urllib
-# import ftplib
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+from geodezyx import conv, utils
+import geodezyx.operational.download_utils as dlutils
 log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
@@ -47,7 +38,7 @@ log = logging.getLogger('geodezyx')
 # |  __ \             | |          | |       |  __ \                    | |               | |
 # | |__) | __ ___   __| |_   _  ___| |_ ___  | |  | | _____      ___ __ | | ___   __ _  __| | ___ _ __
 # |  ___/ '__/ _ \ / _` | | | |/ __| __/ __| | |  | |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |/ _ \ '__|
-# | |   | | | (_) | (_| | |_| | (__| |_\__ \ | |__| | (_) \ V  V /| | | | | (_) | (_| | (_| |  __/ |
+# | |   | | | (_) | (_| | |_| | (__| |_\__ \ | |__| | (_) \ v  v /| | | | | (_) | (_| | (_| |  __/ |
 # |_|   |_|  \___/ \__,_|\__,_|\___|\__|___/ |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|
 
 
@@ -81,13 +72,13 @@ def download_gnss_products(
     ----------
     archive_dir : str
         the parent directory where the products will be stored.
-    startdate : datetime
+    startdate : dt.datetime
         the start date in regular calendar date.
-    enddate : datetime
+    enddate : dt.datetime
         the end date in regular calendar date..
     AC_names : tuple, optional
         the names of the wished analysis centers.
-        It also control the product's lattency with the new naming convention:
+        It also controls the product's lattency with the new naming convention:
         simply add it completly in the AC name e.g. IGS0OPSRAP
         The default is ("wum","cod").
     prod_types : tuple, optional
@@ -205,7 +196,7 @@ def download_gnss_products(
         ftp_download = False
         log.info("ACC experimental mgex combi. as data center, HTTP download forced")
 
-    Dates_list = conv.dt_range(startdate, enddate)
+    dates_list = conv.dt_range(startdate, enddate)
 
     wwww_dir_previous = None
     if parallel_download > 1:
@@ -218,7 +209,7 @@ def download_gnss_products(
 
     ### check if the pattern of the wished products are in the listed daily files
     for ipatt_tup, patt_tup in enumerate(
-        list(itertools.product(Dates_list, AC_names, prod_types))
+        list(itertools.product(dates_list, AC_names, prod_types))
     ):
         dt_cur, ac_cur, prod_cur = patt_tup
         wwww, dow = conv.dt2gpstime(dt_cur)
@@ -363,7 +354,7 @@ def download_gnss_products(
         ### Actual Download
         if ftp_download and parallel_download == 1:
             for tup in downld_tuples_list:
-                dlutils.ftp_downloader_core(*tup)
+                dlutils.ftp_downld_core(*tup)
         elif ftp_download and parallel_download > 1:
             _ = pool.map_async(dlutils.ftp_downloader_wo_objects, downld_tuples_list)
         elif not ftp_download and parallel_download == 1:
@@ -381,12 +372,12 @@ def download_gnss_products(
     else:
         pot_locfiles_list_use = []
         for localfile in potential_localfiles_list_all:
-            Pot_compress_name_list = [localfile]
-            Pot_compress_name_list.append(localfile.replace(".gz", ""))
-            Pot_compress_name_list.append(localfile.replace(".Z", ""))
-            Pot_compress_name_list = list(set(Pot_compress_name_list))
+            pot_compress_name_list = [localfile]
+            pot_compress_name_list.append(localfile.replace(".gz", ""))
+            pot_compress_name_list.append(localfile.replace(".Z", ""))
+            pot_compress_name_list = list(set(pot_compress_name_list))
 
-            pot_locfiles_list_use = pot_locfiles_list_use + Pot_compress_name_list
+            pot_locfiles_list_use = pot_locfiles_list_use + pot_compress_name_list
 
     for pot_localfile in pot_locfiles_list_use:
         if os.path.isfile(pot_localfile):
@@ -533,7 +524,7 @@ def orbclk_long2short_name(
 # |  ____|              | | (_)              / ____|                                       | |
 # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
 # |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | | |_ | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
-# | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+# | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ v /  __/ |_| | (_| | | | (_| |
 # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
 #                                                                        __/ |
 #                                                                       |___/
@@ -554,88 +545,59 @@ def multi_downloader_orbs_clks(
     return_also_uncompressed_files=True,
 ):
     """
-    Download IGS products. Can manage MGEX products too
-    (see archive_center argument)
+    Download IGS products. Can manage MGEX products too.
 
     Parameters
     ----------
     archive_dir : str
-        Parent archive directory where files will be stored
-
-    startdate & enddate : datetime
-        Start and End of the wished period
-
-    calc_center : str or list of str
-        calc_center can be a string or a list, describing the calc center
-        e.g. 'igs','grg','cod','jpl' ...
-
-    sp3clk : str
-        Product type, can handle :
-
-            'clk'
-
-            'clk_30s'
-
-            'sp3'
-
-            'snx'
-
-            'sum'
-
-            'erp'
-
-            'bia'
-
-    archive_center : str
-        server of download, "regular" IGS or MGEX, can handle :
-
-            'cddis'
-
-            'cddis_mgex'
-
-            'cddis_mgex_longname'
-
-            'ign'
-
-            'ign_mgex'
-
-            'ign_mgex_longname'
-
-            'gfz_local'
-
-    archtype: str
-        string describing how the archive directory is structured, e.g :
-
-            stat
-
-            stat/year
-
-            stat/year/doy
-
-            year/doy
-
-            year/stat
-
-            week/dow/stat
-
-            ... etc ...
-
-    repro : int
-        number of the IGS reprocessing (0 = routine processing)
-
-    sorted_mode : bool
-        if False:
-            using the map multiprocess fct so the download order will
-            be scrambled
-        if True:
-            using the apply multiprocess fct so the download order will be
-            in the chrono. order
-        The scrambled (False) is better, bc. it doesn't create zombies processes
+        Parent archive directory where files will be stored.
+    startdate : datetime
+        Start of the wished period.
+    enddate : datetime
+        End of the wished period.
+    calc_center : str or list of str, optional
+        Calc center can be a string or a list, describing the calc center.
+        Examples: 'igs', 'grg', 'cod', 'jpl', etc. Default is "igs".
+    sp3clk : str, optional
+        Product type. Can handle: 'clk', 'clk_30s', 'sp3', 'snx', 'sum', 
+        'erp', 'bia'. Default is "sp3".
+    archtype : str, optional
+        String describing how the archive directory is structured.
+        Examples: 'stat', 'stat/year', 'stat/year/doy', 'year/doy', 
+        'year/stat', 'week/dow/stat', etc. Default is "year/doy".
+    parallel_download : int, optional
+        Number of parallel downloads. Default is 4.
+    archive_center : str, optional
+        Server of download, "regular" IGS or MGEX. Can handle: 'cddis', 
+        'cddis_mgex', 'cddis_mgex_longname', 'ign', 'ign_mgex', 
+        'ign_mgex_longname', 'gfz_local'. Default is "ign".
+    repro : int, optional
+        Number of the IGS reprocessing (0 = routine processing). Default is 0.
+    sorted_mode : bool, optional
+        If False, uses the map multiprocess function so the download order 
+        will be scrambled. If True, uses the apply multiprocess function so 
+        the download order will be in chronological order. The scrambled 
+        (False) is better because it doesn't create zombie processes. 
+        Default is False.
+    force_weekly_file : bool, optional
+        Force download of weekly files. Default is False.
+    return_also_uncompressed_files : bool, optional
+        Include already downloaded and uncompressed files in the final list 
+        output. Default is True.
 
     Returns
     -------
     localfiles_lis : list of str
-        list of downloaded products paths
+        List of downloaded products paths.
+
+    See Also
+    --------
+    download_gnss_products : Newer implementation of this function.
+
+    Notes
+    -----
+    This function can manage MGEX products by setting the appropriate 
+    archive_center
     """
 
     log.error(
@@ -674,8 +636,8 @@ def multi_downloader_orbs_clks(
 #     for cc in calc_center:
 #             curdate = startdate
 #             while curdate <= enddate:
-#                 if re.search("igs([0-9][0-9]|yy|YY)P",cc):
-#                     cc = "igs" + str(curdate.year)[2:] + "P"
+#                 if re.search("igs([0-9][0-9]|yy|YY)p",cc):
+#                     cc = "igs" + str(curdate.year)[2:] + "p"
 #                     log.info("INFO : IGS reference frame snx/ssc, correcting the year : " + cc)
 
 #                 url = ''
@@ -706,7 +668,7 @@ def multi_downloader_orbs_clks(
 #                 else:
 #                     log.error('ERR : Wrong archive_center name !!! :' + archive_center)
 #                 urllist.append(url)
-#                 savedir = dlutils.effective_save_dir_orbit(archive_dir,
+#                 savedir = dlutils.effective_save_dir_orbit(output_dir,
 #                                                            cc,
 #                                                            curdate,
 #                                                            archtype)

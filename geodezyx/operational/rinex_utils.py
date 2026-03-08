@@ -4,23 +4,24 @@
 @author: psakic
 
 This sub-module of geodezyx.operational contains functions to manipulate
-RINEX files (version 2, quite obsolate). 
+RINEX files (version 2, quite obsolate).
 
 it can be imported directly with:
 from geodezyx import operational
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
 import glob
+
 #### Import the logger
 import logging
 import os
@@ -28,6 +29,7 @@ import re
 import shutil
 import string
 import subprocess
+import io
 
 import dateutil
 import hatanaka
@@ -38,149 +40,33 @@ import pandas as pd
 from geodezyx import conv
 from geodezyx import utils
 
-log = logging.getLogger('geodezyx')
+log = logging.getLogger("geodezyx")
+
 
 ##########  END IMPORT  ##########
 
 
-def rinexs_table_from_list(rnxs_inp, site9_col=False, round_date=False, path_col=True):
+def rinex_open(rnx_path_inp):
     """
-    From a simple RINEX list, summarize the data in an ad-hoc DataFrame
+    Open RINEX content and return a text in-memory file (`io.StringIO`).
 
     Parameters
     ----------
-    rnxs_inp : iterable or str
-        if iterable, a list of RINEX files
-        if str, path of an input RINEX list as text file.
+    rnx_path_inp : str or pathlib.Path
+        Path to the RINEX file. Can be a compressed RINEX file
+        (detected by `conv.rinex_regex_search_tester`).
 
     Returns
     -------
-    DF : Pandas DataFrame
-        A DataFrame with the RINEX info in it.
+    io.StringIO
+        An in-memory text file (UTF-8 decoded) ready for reading.
     """
-
-    if utils.is_iterable(rnxs_inp):
-        DF = pd.DataFrame(rnxs_inp, columns=["path"])
+    if conv.rinex_regex_search_tester(rnx_path_inp, compressed=True):
+        rnx_use = io.StringIO(hatanaka.decompress(rnx_path_inp).decode("utf-8"))
     else:
-        DF = pd.read_csv(rnxs_inp, names=["path"])
+        rnx_use = io.StringIO(open(rnx_path_inp, 'r', encoding="utf-8").read())
 
-    DF["name"] = DF["path"].apply(os.path.basename)
-    DF["site4"] = DF["name"].str[:4].str.lower()
-
-    if site9_col:
-        DF["site9"] = DF["name"].str[:9].str.lower()
-        #### set generic 9-char name if 4 char name file
-        BoolNewName = DF["name"].str.match(conv.rinex_regex_long_name())
-        BoolOldName = np.logical_not(BoolNewName)
-        Site9_generic = DF["site4"].str.upper() + "00XXX"
-        DF["site9"].loc[BoolOldName] = Site9_generic[BoolOldName]
-
-    DF["date"] = DF["name"].apply(conv.rinexname2dt)
-    if round_date:
-        DF["date"] = conv.round_dt(DF["date"].values, "1D", True, "floor")
-    DoyYear = DF["date"].apply(conv.dt2doy_year)
-    DF["doy"] = DoyYear.apply(lambda x: x[0])
-    DF["year"] = DoyYear.apply(lambda x: x[1])
-
-    cols = DF.columns.tolist()
-
-    cols = cols[1:] + [cols[0]]
-
-    DF = DF[cols]
-
-    if not path_col:
-        DF.drop("path", axis=1, inplace=True)
-
-    pd.options.display.max_info_columns = 150
-
-    return DF
-
-
-def rinex_sats_checker(p_rnx):
-    """
-    Check the consistency of a RINEX's sat list for each epoch
-
-    Designed for checking the consistency of IPGP-OVPF corrupted RINEXs
-    RINEX-2 only
-
-    Parameters
-    ----------
-    p_rnx : str
-        input RINEX path.
-
-    Returns
-    -------
-    bad RINEX path or None.
-
-    """
-
-    import hatanaka
-
-    ### This bloc must  be replaced by open_readlines_smart
-    if p_rnx.endswith(".Z") or p_rnx.endswith(".gz"):
-        O = hatanaka.decompress(p_rnx)
-        O = str(O)
-        L = O.split("\\n")
-    else:
-        F = open(p_rnx, "r+")
-        L = F.readlines()
-
-    iline_bloc = 0
-    nlines_bloc = -1
-
-    Blocs_stack = []
-
-    ###### This loop read all lines
-    for l in L:
-        re_epoch = "^ {1,2}([0-9]{1,2} * ){5}"
-        # re_sat="[A-Z][0-9][0-9]"
-        bool_epoch = re.search(re_epoch, l)
-        # bool_sat=re.search(re_sat,l)
-
-        ### we found an epoch line
-        if bool_epoch:
-            in_epoch = True
-            nsat = int(l[30:32])
-            iline_bloc = 0
-            nlines_bloc = int(np.ceil(nsat / 12))
-            LineBloc = []
-            lineconcat = ""
-            date = read_rnx_epoch_line(l, rnx2=True)
-
-        ### we read the sat lines based on the number of sat
-        if iline_bloc <= nlines_bloc:
-            LineBloc.append(l[32:].strip())
-            lineconcat = lineconcat + l[32:].strip()
-            iline_bloc += 1
-
-        ### we stack everything when the sat block is over
-        if iline_bloc == nlines_bloc:
-            in_epoch = False
-            bloc_tuple = (date, nsat, lineconcat)
-            Blocs_stack.append(bloc_tuple)
-
-    #### we do a DF with all the found line
-    DF = pd.DataFrame(Blocs_stack)
-
-    DF[3] = None
-
-    for irow, row in DF.iterrows():
-        nsat = str(row[1])
-        satstr = row[2]
-        re_sat = "([A-Z][0-9][0-9]){" + nsat + "}"
-        bool_sat = re.search(re_sat, satstr)
-
-        #### the the right number of sat is found True = Good
-        if bool_sat:
-            DF.iloc[irow, 3] = True
-        else:
-            DF.iloc[irow, 3] = False
-
-    if DF[3].sum() != len(DF):
-        return rinex_sats_checker
-    else:
-        return None
-
+    return rnx_use
 
 def read_rnx_epoch_line(line, rnx2=True):
     """
@@ -236,7 +122,7 @@ def read_rnx_epoch_line(line, rnx2=True):
 
 #  _____  _____ _   _ ________   __   _____       _ _ _
 # |  __ \|_   _| \ | |  ____\ \ / /  / ____|     | (_) |
-# | |__) | | | |  \| | |__   \ V /  | (___  _ __ | |_| |_ ___ _ __
+# | |__) | | | |  \| | |__   \ v /  | (___  _ __ | |_| |_ ___ _ __
 # |  _  /  | | | . ` |  __|   > <    \___ \| '_ \| | | __/ _ \ '__|
 # | | \ \ _| |_| |\  | |____ / . \   ____) | |_) | | | ||  __/ |
 # |_|  \_\_____|_| \_|______/_/ \_\ |_____/| .__/|_|_|\__\___|_|
@@ -245,11 +131,63 @@ def read_rnx_epoch_line(line, rnx2=True):
 
 
 def check_if_compressed_rinex(rinex_path):
+    """
+    Check if a RINEX file is compressed (CRZ or O.Z / D.Z)
+
+    Parameters
+    ----------
+    rinex_path : string
+        path of the RINEX file.
+
+    Returns
+    -------
+    bool
+        True if compressed RINEX, False else.
+    """
     boolout = bool(re.search(r".*((d|o)\.(Z)|(gz))$", rinex_path))
     return boolout
 
 
-def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX"):
+def uncomp_rnxpath(rinex_path, outdir=""):
+    """
+    Generate the output path for an uncompressed RINEX file.
+
+    This function determines the appropriate output file name and path for an uncompressed
+    RINEX file based on its input path. It handles both short and long RINEX file names.
+
+    Parameters
+    ----------
+    rinex_path : str
+        The path of the input RINEX file (compressed or uncompressed).
+    outdir : str, optional
+        The directory where the uncompressed RINEX file will be saved. If not provided,
+        the output file will be saved in the same directory as the input file.
+
+    Returns
+    -------
+    str
+        The full path of the uncompressed RINEX file.
+    """
+    # Check if the RINEX file matches the long name format
+    if conv.rinex_regex_search_tester(rinex_path, short_name=False, long_name=True):
+        # Extract the base name of the file and split it by "."
+        out_rinex_name_splited = os.path.basename(rinex_path).split(".")
+        # Construct the output file name with ".rnx" extension
+        out_rinex_name = out_rinex_name_splited[0] + ".rnx"
+        # Combine the output directory and file name to get the full path
+        out_rinex_path = os.path.join(outdir, out_rinex_name)
+    else:
+        # Handle short name format
+        out_rinex_name_splited = os.path.basename(rinex_path).split(".")
+        # Remove the last part of the name and replace the extension with "o"
+        out_rinex_name = ".".join(out_rinex_name_splited[:-1])
+        out_rinex_name = out_rinex_name[:-1] + "o"
+        # Combine the output directory and file name to get the full path
+        out_rinex_path = os.path.join(outdir, out_rinex_name)
+
+    return out_rinex_path
+
+def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX", verbose=True):
     """assuming that CRZ2RNX is in the system PATH per default"""
 
     if not os.path.isfile(rinex_path):
@@ -265,13 +203,10 @@ def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX"):
     if outdir == "":
         outdir = os.path.dirname(rinex_path)
 
-    out_rinex_name_splited = os.path.basename(rinex_path).split(".")
-    out_rinex_name = ".".join(out_rinex_name_splited[:-1])
-    out_rinex_name = out_rinex_name[:-1] + "o"
-    out_rinex_path = os.path.join(outdir, out_rinex_name)
+    out_rinex_path = uncomp_rnxpath(rinex_path, outdir)
 
     if os.path.isfile(out_rinex_path) and not force:
-        log.info(out_rinex_path + "already exists, skiping ...")
+        log.warning(out_rinex_path + "already exists, skiping ...")
     else:
         os.chdir(outdir)
         # stream = os.popen(command)
@@ -282,51 +217,13 @@ def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX"):
         status = proc.wait()
 
         if status != 0 or not os.path.isfile(out_rinex_path):
-            log.info(out_rinex_path + " not created ! :(")
+            log.error(out_rinex_path + " not created!")
+        elif verbose:
+            log.info(out_rinex_path + " created")
         else:
-            log.info(out_rinex_path + " created :)")
+            pass
         #    print stream.read()
         os.chdir(curdir)
-    return out_rinex_path
-
-
-def crz2rnx_bad(crinex_in_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX"):
-    """assuming that CRZ2RNX is in the system PATH per default"""
-
-    if not os.path.isfile(crinex_in_path):
-        raise Exception(crinex_in_path + " dont exists !")
-
-    if force:
-        forcearg = "-f"
-    else:
-        forcearg = ""
-
-    command = path_of_crz2rnx + " " + forcearg + " " + crinex_in_path
-    convert_dir = os.path.dirname(crinex_in_path)
-
-    if outdir == "":
-        outdir = convert_dir
-
-    out_rinex_name_splited = os.path.basename(crinex_in_path).split(".")
-    out_rinex_name = ".".join(out_rinex_name_splited[:-1])
-    out_rinex_name = out_rinex_name[:-1] + "o"
-
-    out_rinex_path = os.path.join(outdir, out_rinex_name)
-    temp_rinex_path = os.path.join(convert_dir, out_rinex_name)
-
-    if os.path.isfile(out_rinex_path) and not force:
-        log.info(out_rinex_path + "already exists, skiping ...")
-
-    else:
-        stream = os.popen(command)
-        log.info("output in " + outdir)
-        try:
-            shutil.move(temp_rinex_path, outdir)
-        except:
-            pass
-
-        #    print stream.read()
-    #    os.chdir(curdir)
     return out_rinex_path
 
 
@@ -347,8 +244,8 @@ def rnx2crz(rinex_path, outdir="", force=True, path_of_rnx2crz="RNX2CRZ"):
         outdir = os.path.dirname(rinex_path)
 
     out_rinex_name_o = os.path.basename(rinex_path)
-    out_rinex_name_d_Z = out_rinex_name_o[:-1] + "d.Z"
-    out_rinex_path = os.path.join(outdir, out_rinex_name_d_Z)
+    out_rinex_name_d_z = out_rinex_name_o[:-1] + "d.Z"
+    out_rinex_path = os.path.join(outdir, out_rinex_name_d_z)
 
     if os.path.isfile(out_rinex_path) and not force:
         log.info(out_rinex_path + "already exists, skiping ...")
@@ -359,30 +256,6 @@ def rnx2crz(rinex_path, outdir="", force=True, path_of_rnx2crz="RNX2CRZ"):
         #    print stream.read()
     os.chdir(curdir)
     return out_rinex_path
-
-
-# def rinex_regex(compressed=True,compiled=False):
-#     if compressed:
-#         regexstr = "....[0-9]{3}.\.[0-9]{2}((d\.(Z)|(gz))|(o)|(d))"
-#     else:
-#         regexstr = "....[0-9]{3}.\.[0-9]{2}o"
-
-#     if compiled:
-#         return re.compile(regexstr)
-#     else:
-#         return regexstr
-
-
-# def rinex_regex_new_name(compressed=True,compiled=False):
-#     if compressed:
-#         regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}\.gz"
-#     else:
-#         regexstr = ".{4}[0-9]{2}.{3}_(R|S|U)_[0-9]{11}_[0-9]{2}\w_[0-9]{2}\w_\w{2}\.\w{3}"
-
-#     if compiled:
-#         return re.compile(regexstr)
-#     else:
-#         return regexstr
 
 
 def rinex_read_epoch(
@@ -433,10 +306,10 @@ def rinex_read_epoch(
     except:
         pass
 
-    RnxLines = utils.open_readlines_smart(input_rinex_path_or_string)
+    rnx_lines = utils.open_readlines_smart(input_rinex_path_or_string)
 
-    Index_list = []
-    for iline, line in enumerate(RnxLines):
+    index_list = []
+    for iline, line in enumerate(rnx_lines):
         epoch_rnx2 = re.search("^ {1,2}([0-9]{1,2} * ){5}", line)
         epoch_rnx3 = re.search("^>", line)
 
@@ -444,7 +317,7 @@ def rinex_read_epoch(
             try:
                 epochdt = read_rnx_epoch_line(line, rnx2=True)
                 epochs_list.append(epochdt)
-                Index_list.append(iline)
+                index_list.append(iline)
             except:
                 log.error(line)
 
@@ -452,7 +325,7 @@ def rinex_read_epoch(
             try:
                 epochdt = read_rnx_epoch_line(line, rnx2=False)
                 epochs_list.append(epochdt)
-                Index_list.append(iline)
+                index_list.append(iline)
             except:
                 log.error(line)
 
@@ -460,14 +333,14 @@ def rinex_read_epoch(
         epochs_list = [e.replace(tzinfo=dateutil.tz.tzutc()) for e in epochs_list]
 
     if out_index:
-        OUTPUT = [epochs_list, Index_list]
+        output = [epochs_list, index_list]
     else:
-        OUTPUT = epochs_list
+        output = epochs_list
 
     if out_array:
-        OUTPUT = np.array(OUTPUT).T
+        output = np.array(output).T
 
-    return OUTPUT
+    return output
 
 
 def same_day_rinex_check(rinex1, rinex2):
@@ -483,6 +356,7 @@ def rinex_start_end(
     add_tzinfo=False,
     verbose=True,
     safety_mode=True,
+    line_count=1000,
 ):
     """
     Return the first and the last epoch of a RINEX file
@@ -507,15 +381,20 @@ def rinex_start_end(
     verbose : bool, optional
         verbose mode. The default is True.
 
-    safety_mode : TYPE, optional
+    safety_mode : bool, optional
         if the epoch reading fails (e.g. in case of a compressed RINEX)
         activate a reading of the header and the file name as backup.
         The default is True.
 
+    line_count : int, optional
+        number of lines to read at the beginning and the end of the file
+        to find the first and last epochs.
+        The default is 750.
+
     Returns
     -------
     first_epoch , last_epoch , [interval]
-        First, las epoches and interval if asked.
+        First, last epochs and interval if asked.
 
     """
 
@@ -525,14 +404,14 @@ def rinex_start_end(
     # NBsuite : c'est fait au 161018 mais par contre c'est un dirty copier coller
 
     epochs_list = []
-    Head = utils.head(input_rinex_path, 1500)
+    head = utils.head(input_rinex_path, line_count)
     epochs_list_head = rinex_read_epoch(
-        Head, interval_out=interval_out, add_tzinfo=add_tzinfo, out_array=False
+        head, interval_out=interval_out, add_tzinfo=add_tzinfo, out_array=False
     )
 
-    Tail = utils.tail(input_rinex_path, 1500)
+    tail = utils.tail(input_rinex_path, line_count)
     epochs_list_tail = rinex_read_epoch(
-        Tail, interval_out=interval_out, add_tzinfo=add_tzinfo, out_array=False
+        tail, interval_out=interval_out, add_tzinfo=add_tzinfo, out_array=False
     )
 
     epochs_list = epochs_list_head + epochs_list_tail
@@ -597,265 +476,12 @@ def rinex_session_id(first_epoch, last_epoch, full_mode=False):
 
     return rnx_interval_ext
 
-
-# def rinex_spliter(input_rinex_path,output_directory,stat_out_name='',
-#                  interval_size=24,compress=False,shift = 0):
-#    """
-#    if shift != 0:
-#    the start/end of a session is shifted of shift minutes
-#    """
-#
-#    if stat_out_name == '':
-#        stat_out_name = os.path.basename(input_rinex_path)[0:4]
-#
-#    # check if the RINEX is compressed ...
-#    bool_comp_rnx = check_if_compressed_rinex(input_rinex_path)
-#    # ... if not crz2rnx !
-#    if bool_comp_rnx:
-#        input_rinex_path = crz2rnx(input_rinex_path)
-#
-#    inp_rinex_obj=open(input_rinex_path,'r+')
-#    out_dir = output_directory # nom redondant mais j'ai la flemme d'aller corriger le nom de la variable
-#
-#    if not os.path.exists(out_dir):
-#        os.makedirs(out_dir)
-#    os.chdir(out_dir)
-#
-#    first_epoch , last_epoch = rinex_start_end(input_rinex_path)
-#
-#    # In this function, Date are truncated epochs
-#    # (only the day if interval == 24 , + the hour else)
-#    first_date = datetime.datetime(first_epoch.year,first_epoch.month,
-#                                   first_epoch.day,first_epoch.hour)
-#    last_date = datetime.datetime(last_epoch.year,last_epoch.month,
-#                                  last_epoch.day,last_epoch.hour)+datetime.timedelta(hours=1)
-#
-#    print "first & last dates (truncated) : " , first_date , last_date
-#
-#    time_interval = genefun.get_interval(first_date,last_date,
-#                                         datetime.timedelta(hours=interval_size))
-#
-#    alphabet = list(string.ascii_lowercase)
-#
-#    rinex_out_name_lis = []
-#
-#    for i,curr_date in enumerate(time_interval):
-#        if interval_size == 24:
-#            rnx_interval_ext = '0.'
-#        else:
-#            rnx_interval_ext = alphabet[curr_date.hour] + '.'
-#
-#        p = subprocess.Popen('',executable='/bin/bash', stdin=subprocess.PIPE , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
-#        command = 'teqc ' + '-O.mo ' + stat_out_name.upper() +' -st ' +  curr_date.strftime('%y%m%d%H%M%S') + ' +dh ' + str(interval_size) + ' ' + input_rinex_path
-#        print command
-#        rinex_out_name = stat_out_name + curr_date.strftime('%j') + rnx_interval_ext + curr_date.strftime('%y') + 'o'
-#        err_log_name = curr_date.strftime('%j') + rnx_interval_ext + "err.log"
-#        print rinex_out_name
-#        stdout,stderr = p.communicate( command )
-#        std_file = open(rinex_out_name, "w")
-#        std_file.write(stdout)
-#        std_file.close()
-#        if stderr != '':
-#            print err_log_name + " is not empty, must be checked !"
-#            print stderr
-#            err_file = open(err_log_name, "w")
-#            err_file.write(stderr)
-#            err_file.close()
-#
-#        rnx_splt_path = os.path.join(out_dir,rinex_out_name)
-#        if compress:
-#            rinex_out_final = rnx2crz(rnx_splt_path)
-#            os.remove(rnx_splt_path)
-#        else:
-#            rinex_out_final = rnx_splt_path
-#
-#        rinex_out_name_lis.append(rinex_out_final)
-#
-#    return rinex_out_name_lis
-
-
-def rinex_spliter(
-    input_rinex_path,
-    output_directory,
-    stat_out_name="",
-    interval_size=24,
-    compress=False,
-    shift=0,
-    inclusive=False,
-    teqc_cmd="teqc",
-):
+def check_if_compressed_rinex(rinex_path):
     """
-    if shift != 0:
-    the start/end of a session is shifted of shift minutes
-
-    inclusive:
-    delta of exaclty interval_size => add the 1st epoch of the next sess
-    not inclusive:
-    delta of interval_size - 1s
+    Obsolete function, use conv.rinex_regex_search_tester instead
     """
-    """
-    Split RINEX file using teqc
-
-    Parameters
-    ----------
-    input_rinex_path : str
-        Path of the input RINEX
-
-    output_directory : str
-        Description param2
-        
-    stat_out_name : str
-        Station name for the output RINEX
-        
-    interval_size : int
-        Size of the splitted interval
-    
-    compress : bool
-        compress the outputed RINEX    
-
-    interval_size : int
-        Size of the splitted interval 
-        
-        
-    FINIR CE HEADER !!!!
-                
-    Returns
-    -------
-    out1 : float or int or str or dict or n-tuple or bool or list or numpy.array
-        Description out1
-    
-    out2 : float or int or str or dict or n-tuple or bool or list or numpy.array
-        Description out2
-        
-    Note
-    ----
-    Misc. Notes
-
-    Source
-    ------
-    www.forum-source.com
-    
-    Examples
-    --------
-    >> answer
-    42    
-    """
-
-    if stat_out_name == "":
-        stat_out_name = os.path.basename(input_rinex_path)[0:4]
-
-    # check if the RINEX is compressed ...
-    bool_comp_rnx = check_if_compressed_rinex(input_rinex_path)
-
-    # ... if not crz2rnx !
-    if bool_comp_rnx:
-        input_rinex_path = crz2rnx(input_rinex_path)
-
-    inp_rinex_obj = open(input_rinex_path, "r+")
-    out_dir = output_directory  # nom redondant mais j'ai la flemme d'aller corriger le nom de la variable
-
-    if not os.path.exists(out_dir):
-        os.makedirs(out_dir)
-    os.chdir(out_dir)
-
-    first_epoch, last_epoch = rinex_start_end(input_rinex_path)
-
-    # In this function, Date are truncated epochs
-    # (only the day if interval == 24 , + the hour else)
-    first_date = dt.datetime(
-        first_epoch.year, first_epoch.month, first_epoch.day, first_epoch.hour
-    )
-    last_date = dt.datetime(
-        last_epoch.year, last_epoch.month, last_epoch.day, last_epoch.hour
-    ) + dt.timedelta(hours=1)
-
-    log.info("first & last dates (truncated): %s %s", first_date, last_date)
-
-    time_interval = utils.get_interval(
-        first_date, last_date, dt.timedelta(hours=interval_size)
-    )
-
-    alphabet = list(string.ascii_lowercase)
-
-    rinex_out_name_lis = []
-
-    for i, curr_date in enumerate(time_interval):
-
-        if shift != 0:
-            log.warning("shifted mode on, be careful !!!")
-
-        if bool(shift) and i != 0:
-            curr_date = curr_date + dt.timedelta(minutes=shift)
-            interval_size_ope = interval_size
-        elif bool(shift) and i == 0:
-            interval_size_ope = interval_size + float(shift) / 60.0
-        else:
-            interval_size_ope = interval_size
-
-        if not inclusive:
-            interval_size_ope = interval_size_ope - 1 / 3600.0
-
-        if not bool(shift):
-            if interval_size == 24:
-                rnx_interval_ext = "0."
-            else:
-                rnx_interval_ext = alphabet[curr_date.hour] + "."
-        else:
-            if interval_size == 24:
-                rnx_interval_ext = "0."
-            else:
-                rnx_interval_ext = alphabet[curr_date.hour] + "."
-
-        p = subprocess.Popen(
-            "",
-            executable="/bin/bash",
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        # - 1/3600. # one_sec2h
-        command = (
-            teqc_cmd
-            + " -O.mo "
-            + stat_out_name.upper()
-            + " -st "
-            + curr_date.strftime("%y%m%d%H%M%S")
-            + " +dh "
-            + str(interval_size_ope)
-            + " "
-            + input_rinex_path
-        )
-        log.info(command)
-        rinex_out_name = (
-            stat_out_name
-            + curr_date.strftime("%j")
-            + rnx_interval_ext
-            + curr_date.strftime("%y")
-            + "o"
-        )
-        err_log_name = curr_date.strftime("%j") + rnx_interval_ext + "err.log"
-        log.info(rinex_out_name)
-        stdout, stderr = p.communicate(command.encode())
-        std_file = open(rinex_out_name, "w")
-        std_file.write(stdout.decode("utf-8"))
-        std_file.close()
-        if stderr:
-            log.warning(err_log_name + " is not empty, must be checked !")
-            log.info(stderr.decode("utf-8"))
-            err_file = open(err_log_name, "w")
-            err_file.write(stderr.decode("utf-8"))
-            err_file.close()
-
-        rnx_splt_path = os.path.join(out_dir, rinex_out_name)
-        if compress:
-            rinex_out_final = rnx2crz(rnx_splt_path)
-            os.remove(rnx_splt_path)
-        else:
-            rinex_out_final = rnx_splt_path
-
-        rinex_out_name_lis.append(rinex_out_final)
-
-    return rinex_out_name_lis
+    boolout = bool(re.search(r".*((d|o)\.(Z)|(gz))$", rinex_path))
+    return boolout
 
 
 def rinex_spliter_gfzrnx(
@@ -869,7 +495,6 @@ def rinex_spliter_gfzrnx(
     output_name="::RX3::",
     custom_cmds="",
 ):
-
     interval_size_hour = interval_size / 3600.0
 
     if stat_out_name == "":
@@ -1000,88 +625,6 @@ def rinex_spliter_gfzrnx(
             rnx_splt_path = os.path.join(out_dir, latest_file)
 
         rinex_out_name_lis.append(rnx_splt_path)
-
-
-def teqc_qc(rinex_path, quick_mode=False, optional_args=""):
-    """
-    quick mode : reduced qc and no summary file written
-    """
-    if quick_mode:
-        qcmode = "+qcq"
-    else:
-        qcmode = "+qc"
-
-    # check if the RINEX is compressed ...
-    bool_comp_rnx = check_if_compressed_rinex(rinex_path)
-
-    # ... if not crz2rnx !
-    if bool_comp_rnx:
-        rinex_path_work = crz2rnx(rinex_path)
-    else:
-        rinex_path_work = rinex_path
-
-    kommand = " ".join(("teqc", qcmode, optional_args, rinex_path))
-
-    log.info(kommand)
-
-    proc = subprocess.Popen(
-        kommand, shell=True, stdout=subprocess.PIPE, executable="/bin/bash"
-    )
-    status = proc.wait()
-
-    if bool_comp_rnx:
-        os.remove(rinex_path_work)
-
-    if status:
-        log.error("crash for " + rinex_path + ", code " + str(proc.poll()))
-        return None
-
-    output = proc.stdout.read()
-
-    return output.decode("ASCII")
-
-
-def rinex_renamer(input_rinex_path, output_directory, stat_out_name="", remove=False):
-
-    if stat_out_name == "":
-        stat_out_name = os.path.basename(input_rinex_path)[0:4]
-
-    stat_out_name = stat_out_name.lower()
-
-    inp_rinex_obj = open(input_rinex_path, "r+")
-    out_dir = output_directory  # nom redondant mais j'ai la flemme d'aller corriger le nom de la variable
-
-    if not os.path.exists(out_dir):
-        os.makedirs(out_dir)
-    os.chdir(out_dir)
-
-    first_epoch, last_epoch = rinex_start_end(input_rinex_path)
-    rnx_interval_ext = rinex_session_id(first_epoch, last_epoch) + "."
-    rinex_out_name = (
-        stat_out_name
-        + first_epoch.strftime("%j")
-        + rnx_interval_ext
-        + first_epoch.strftime("%y")
-        + "o"
-    )
-
-    log.info(rinex_out_name)
-
-    output_rinex_path = os.path.join(out_dir, rinex_out_name)
-
-    if input_rinex_path != output_rinex_path:
-        log.info("copy of " + input_rinex_path + " to " + output_rinex_path)
-        shutil.copy(input_rinex_path, output_rinex_path)
-
-        if remove and os.isfile(output_rinex_path):
-            log.info("removing ", input_rinex_path)
-            os.remove(input_rinex_path)
-    else:
-        log.info(input_rinex_path)
-        log.info("and " + output_rinex_path + " are the same file")
-        log.info("nothing's done ...")
-
-    return output_rinex_path
 
 
 # def rinex_renamer_gfz_odc_2_igs(rinex_in,output_dir=None):

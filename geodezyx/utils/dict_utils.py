@@ -9,12 +9,12 @@ related to Python's dictionary manipulations.
 it can be imported directly with:
 from geodezyx import utils
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 #### Import the logger
@@ -22,14 +22,31 @@ import logging
 log = logging.getLogger('geodezyx')
 
 def dicts_merge(*dict_args):
-    '''
-    Given any number of dicts, shallow copy and merge into a new dict,
-    precedence goes to key value pairs in latter dicts.
+    """
+    Merge multiple dictionaries into a single dictionary.
 
-    WARN : first values will be erased if the same key is present in following dicts !!!
+    Performs a shallow copy and merge of any number of dictionaries with
+    precedence going to key-value pairs in later dictionaries.
 
-    http://stackoverflow.com/questions/38987/how-can-i-merge-two-python-dictionaries-in-a-single-expression
-    '''
+    Parameters
+    ----------
+    *dict_args : dict
+        Variable number of dictionaries to merge.
+
+    Returns
+    -------
+    dict
+        A new merged dictionary.
+
+    Warnings
+    --------
+    First values will be erased if the same key is present in following
+    dictionaries. Later dictionaries override earlier ones.
+
+    Notes
+    -----
+    See https://stackoverflow.com/questions/38987/how-can-i-merge-two-python-dictionaries-in-a-single-expression
+    """
     result = {}
     for dictionary in dict_args:
         result.update(dictionary)
@@ -37,7 +54,23 @@ def dicts_merge(*dict_args):
 
 def dicts_of_list_merge_mono(dol1, dol2):
     """
-    https://stackoverflow.com/questions/1495510/combining-dictionaries-of-lists-in-python
+    Merge two dictionaries of lists by combining list values for common keys.
+
+    Parameters
+    ----------
+    dol1 : dict
+        First dictionary with lists as values.
+    dol2 : dict
+        Second dictionary with lists as values.
+
+    Returns
+    -------
+    dict
+        Merged dictionary where lists from both input dictionaries are combined.
+
+    Notes
+    -----
+    See https://stackoverflow.com/questions/1495510/combining-dictionaries-of-lists-in-python
     """
     keys = set(dol1).union(dol2)
     no = []
@@ -45,6 +78,23 @@ def dicts_of_list_merge_mono(dol1, dol2):
 
 
 def dicts_of_list_merge(*dict_args):
+    """
+    Merge multiple dictionaries of lists into a single dictionary.
+
+    Parameters
+    ----------
+    *dict_args : dict
+        Variable number of dictionaries with lists as values.
+
+    Returns
+    -------
+    dict
+        Merged dictionary where lists from all input dictionaries are combined.
+
+    See Also
+    --------
+    dicts_of_list_merge_mono : Merge two dictionaries of lists.
+    """
     result = dict()
     for dictionary in dict_args:
         result = dicts_of_list_merge_mono(result,dictionary)
@@ -53,14 +103,34 @@ def dicts_of_list_merge(*dict_args):
 
 def dic_key_for_vals_list_finder(dic_in , value_in):
     """
-    dic_in is a dict like :
-        dic_in[key1] = [val1a , val1b]
-        dic_in[key2] = [val2a , val2b , val2c]
-        
-    E.g. if value_in = val2b then the function returns key2
-    
-    NB : the function returns the first value found, then
-         dic_in has to be injective !!
+    Find the key in a dictionary of lists that contains a given value.
+
+    Parameters
+    ----------
+    dic_in : dict
+        Dictionary with lists as values, e.g.:
+
+            dic_in[key1] = [val1a, val1b]
+            dic_in[key2] = [val2a, val2b, val2c]
+
+    value_in : object
+        Value to search for in the lists.
+
+    Returns
+    -------
+    key or None
+        The key associated with the list containing value_in, or None if not found.
+
+    Warnings
+    --------
+    This function returns the first key found. The input dictionary should be
+    injective (no duplicate values across lists) for predictable behavior.
+
+    Notes
+    -----
+    Example: if value_in = val2b, the function returns key2.
+
+    Uses log.warning() to report when no key is found for the given value.
     """
     for k , v in dic_in.items():
         if value_in in v:

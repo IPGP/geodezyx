@@ -3,26 +3,28 @@
 """
 @author: psakic
 
-This sub-module of geodezyx.operational generates RINEX timeline plot. 
+This sub-module of geodezyx.operational generates RINEX timeline plot.
 
 it can be imported directly with:
 from geodezyx import operational
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
+
 #### Import the logger
 import logging
 import os
 import re
+import pandas as pd
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,9 +35,174 @@ from geodezyx import conv
 from geodezyx import operational
 from geodezyx import utils
 
-log = logging.getLogger('geodezyx')
+log = logging.getLogger("geodezyx")
 
 ##########  END IMPORT  ##########
+
+
+def rinex_table_from_list(
+    rnxs_inp,
+    site9_col=False,
+    round_date=False,
+    path_col=True,
+    size_col=False,
+    sort=True,
+):
+    """
+    From a simple RINEX list, summarize the data in an ad-hoc DataFrame.
+
+    Parameters
+    ----------
+    rnxs_inp : iterable or str
+        If iterable, a list of RINEX files.
+        If str, path of an input RINEX list as text file.
+    site9_col : bool, optional
+        If True, include a 'site9' column in the DataFrame. Defaults to False.
+    round_date : bool, optional
+        If True, round the dates to the nearest day. Defaults to False.
+    path_col : bool, optional
+        If True, include the 'path' column in the DataFrame. Defaults to True.
+    size_col : bool, optional
+        If True, include a 'size' column in the DataFrame.
+        Corresponds to the size of the file in bytes.
+        It can slow down the process if the list is long.
+        Defaults to False.
+    sort : bool, optional
+        If True, sort the DataFrame by 'site4' or 'site9' (if site9_col is True) and 'date'.
+         Defaults to True.
+
+    Returns
+    -------
+    df : pandas.DataFrame
+        A DataFrame with the RINEX info in it.
+    """
+    if utils.is_iterable(rnxs_inp):
+        df = pd.DataFrame(rnxs_inp, columns=["path"])
+    else:
+        df = pd.read_csv(rnxs_inp, names=["path"])
+
+    df["name"] = df["path"].apply(os.path.basename)
+    df["site4"] = df["name"].str[:4].str.lower()
+
+    if site9_col:
+        df["site9"] = df["name"].str[:9].str.lower()
+        # Set generic 9-char name if 4 char name file
+        bool_new_name = df["name"].str.match(conv.rinex_regex_long_name())
+        bool_old_name = np.logical_not(bool_new_name)
+        site9_generic = df["site4"].str.upper() + "00XXX"
+        df.loc[bool_old_name, "site9"] = site9_generic[bool_old_name]
+
+    df["date"] = df["name"].apply(conv.rinexname2dt)
+    if round_date:
+        df["date"] = conv.round_dt(df["date"].values, "1D", True, "floor")
+    doy_year = df["date"].apply(conv.dt2doy_year)
+    df["doy"] = doy_year.apply(lambda x: x[0])
+    df["year"] = doy_year.apply(lambda x: x[1])
+
+    if size_col:
+        size_path = lambda f: os.path.getsize(f) if os.path.isfile(f) else np.nan
+        df["size"] = df["path"].apply(size_path)
+
+    cols = df.columns.tolist()
+    cols = cols[1:] + [cols[0]]
+    df = df[cols]
+
+    if not path_col:
+        df.drop("path", axis=1, inplace=True)
+
+    pd.options.display.max_info_columns = 150
+
+    if sort:
+        site_col = "site9" if site9_col else "site4"
+        df.sort_values(by=[site_col, "date"], inplace=True)
+        df.reset_index(drop=True, inplace=True)
+
+    return df
+
+
+def rinex_lists_diff(rnx_lis1, rnx_lis2, out_dir=None, out_name=None, site9_col=False):
+    """
+    Compare two lists of RINEX files and identify differences.
+
+    Parameters
+    ----------
+    rnx_lis1 : list
+        First list of RINEX file paths.
+    rnx_lis2 : list
+        Second list of RINEX file paths.
+    out_dir : str, optional
+        Directory to save the output files. If None, no files are saved.
+    out_name : str, optional
+        Base name for the output files. Defaults to 'rnx_diff' if not provided.
+    site9_col : bool, optional
+        If True, use 'site9' as the column name for site identification. Defaults to False.
+
+    Returns
+    -------
+    diff1m2 : pandas.DataFrame
+        DataFrame containing entries in rnx_lis1 but not in rnx_lis2.
+    diff2m1 : pandas.DataFrame
+        DataFrame containing entries in rnx_lis2 but not in rnx_lis1.
+    intrsec : pandas.DataFrame
+        DataFrame containing entries common to both rnx_lis1 and rnx_lis2.
+    symdiff : pandas.DataFrame
+        DataFrame containing entries that are in either rnx_lis1 or rnx_lis2 but not in both.
+    """
+
+    site_col = "site9" if site9_col else "site4"
+
+    # Create DataFrames from the RINEX lists
+    d1 = rinex_table_from_list(
+        rnx_lis1, path_col=True, round_date=False, site9_col=site9_col
+    )
+    d2 = rinex_table_from_list(
+        rnx_lis2, path_col=True, round_date=False, site9_col=site9_col
+    )
+
+    # Set the index to the site and date columns
+    d1 = d1.set_index([site_col, "date"])
+    d2 = d2.set_index([site_col, "date"])
+
+    # Find the differences in the indices
+    idx_diff1m2 = d1.index.difference(d2.index)
+    idx_diff2m1 = d2.index.difference(d1.index)
+    idx_intrsec = d1.index.intersection(d2.index)
+    idx_symdiff = d1.index.symmetric_difference(d2.index)
+
+    # Locate the differences in the DataFrames
+    diff1m2 = d1.loc[idx_diff1m2]
+    diff2m1 = d2.loc[idx_diff2m1]
+    intrsec = d1.loc[idx_intrsec]
+    d12 = pd.concat([d1, d2], axis=0)
+    symdiff = d12.loc[idx_symdiff]
+
+    diff1m2.sort_index(inplace=True)
+    diff2m1.sort_index(inplace=True)
+    intrsec.sort_index(inplace=True)
+    symdiff.sort_index(inplace=True)
+
+    res_dic = dict()
+    res_dic["diff. 1-2"] = diff1m2
+    res_dic["diff. 2-1"] = diff2m1
+    res_dic["intersection"] = intrsec
+    res_dic["sym. diff."] = intrsec
+
+    # If an output directory is specified, save the differences to files
+    if out_dir:
+        if not out_name:
+            out_name = ""
+
+        # Save the paths of the differences to text files
+        # Save the full DataFrames of the differences to CSV files
+        for k, v in res_dic.items():
+            if len(v) > 0:
+                out_suffix = k.replace(".", "").replace("-", "_").replace(" ", "_")
+                out_path = os.path.join(out_dir, out_name + "_" + out_suffix)
+                log.info("Saving rinex %s to %s", k, out_path + ".txt/.csv")
+                v["path"].to_csv(out_path + ".txt", index=False, header=False)
+                v.to_csv(out_path + ".csv", index=False, header=True)
+
+    return diff1m2, diff2m1, intrsec, symdiff
 
 
 def rinex_lister(path, add_long_names=True):
@@ -196,7 +363,7 @@ def rinex_timeline_datadico(
     rinexfilelist_new = [
         fil for fil in filelist if re.search(conv.rinex_regex_long_name(), fil)
     ]
-    
+
     rinexfilelist = rinexfilelist_old + rinexfilelist_new
 
     if not use_rinex_lister:
@@ -215,7 +382,9 @@ def rinex_timeline_datadico(
 
     for rnx in rinexfilelist:
         try:
-            datadico[rnx[0:4].lower()].append((rnx, optional_info, conv.rinexname2dt(rnx)))
+            datadico[rnx[0:4].lower()].append(
+                (rnx, optional_info, conv.rinexname2dt(rnx))
+            )
         except:
             log.error("error with : %s", rnx)
 
@@ -319,7 +488,7 @@ def timeline_plotter(
     stats_only_list : list, optional
         If given, keep only the stations of this list
         The default is [].
-        
+
 
     Returns
     -------
@@ -344,13 +513,12 @@ def timeline_plotter(
         stats_concat_list = list(reversed(sorted(list(set(stats_concat_list)))))
     else:
         stats_concat_list = list(reversed(sorted(list(datadico.keys()))))
-        
+
     stats_concat_list = [e.lower() for e in stats_concat_list]
-        
+
     if stats_only_list:
         stats_only_list = [e.lower() for e in stats_only_list]
         stats_concat_list = [e for e in stats_concat_list if e in stats_only_list]
-        
 
     # the plot has not the same behavior if it is the morning or not
     # (rinexs timelines wont be ploted if it is the morning)
@@ -361,14 +529,14 @@ def timeline_plotter(
 
     legend_list = []  # must be here before the loop
     for i, stat in enumerate(stats_concat_list):
-                
+
         ## exclude stats
         if len(stats_only_list) > 0 and not stat in stats_only_list:
             continue
-        
+
         # PART 1 : PLOT MAIN DATADICO
         if not stat in datadico.keys():
-            print("AAAAAA",stat)
+            print("AAAAAA", stat)
             continue
 
         # T = Time, O = Station name (Observation)
@@ -384,7 +552,7 @@ def timeline_plotter(
 
         T, O = utils.sort_binom_list(T, O)
 
-        TMJD = conv.dt2MJD(T)
+        TMJD = conv.dt2mjd(T)
         TGrpAll = utils.consecutive_groupIt(
             TMJD, True
         )  # Tuples (start,end) of continue period
@@ -433,10 +601,10 @@ def timeline_plotter(
             )  # +1 because the end boundary day is not included
             # must stay there, in case of not colordico_for_main_datadico
             if not jul_date_plot:
-                tgrp = conv.MJD2dt(tgrp)
+                tgrp = conv.mjd2dt(tgrp)
                 if extra_archive:
                     Tgrp_plt = [
-                        (conv.MJD2dt(e[0]), conv.MJD2dt(e[1])) for e in Tgrp_plt
+                        (conv.mjd2dt(e[0]), conv.mjd2dt(e[1])) for e in Tgrp_plt
                     ]
 
             # PLOT part
@@ -459,7 +627,7 @@ def timeline_plotter(
                 T = sorted(T)
 
                 if jul_date_plot:
-                    T = conv.MJD2dt(T)
+                    T = conv.mjd2dt(T)
 
                 (pale_blue_dot,) = ax.plot(
                     T, i * np.ones(len(T)), "o", color="skyblue", label="final SNX"
@@ -593,51 +761,51 @@ def listing_gins_timeline(
 # |  ____|              | | (_)              / ____|                                       | |
 # | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
 # |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | | |_ | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
-# | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+# | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ v /  __/ |_| | (_| | | | (_| |
 # |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
 #                                                                        __/ |
 #                                                                       |___/
 
 
-def rinex_timeline_datadico_merge_not_very_smart(datadico_list, priority_list):
-    """
-    Merge different RINEXs datadico, produced by rinex_timeline_datadico
-    coming from different archives
-    Args :
-        rinex_timeline_datadico : list of RINEX datadico
-        priority_list : priority list of 'optional_info' (archive ID)
-                        it will erase optional_info of lower priority
-    Returns :
-        datadico_out : a merged datadico
-    """
+# def rinex_timeline_datadico_merge_not_very_smart(datadico_list, priority_list):
+#     """
+#     Merge different RINEXs datadico, produced by rinex_timeline_datadico
+#     coming from different archives
+#     Args :
+#         rinex_timeline_datadico : list of RINEX datadico
+#         priority_list : priority list of 'optional_info' (archive ID)
+#                         it will erase optional_info of lower priority
+#     Returns :
+#         datadico_out : a merged datadico
+#     """
 
-    datadico_out = dict()
+#     datadico_out = dict()
 
-    datadico_merged = utils.dicts_of_list_merge(*datadico_list)
+#     datadico_merged = utils.dicts_of_list_merge(*datadico_list)
 
-    for k, dataval in datadico_merged.items():
+#     for k, dataval in datadico_merged.items():
 
-        rnxname_list = [e[0] for e in dataval]
-        archive_list = [e[1] for e in dataval]
-        date_list = [e[-1] for e in dataval]
+#         rnxname_list = [e[0] for e in dataval]
+#         archive_list = [e[1] for e in dataval]
+#         date_list = [e[-1] for e in dataval]
 
-        out_date_list, out_all_list = [], []
-        for r, a, d in zip(rnxname_list, archive_list, date_list):
-            if d not in out_date_list:
-                out_date_list.append(d)
-                out_all_list.append((r, a, d))
-            else:
-                ind_existing = out_date_list.index(d)
-                archd_existing = out_all_list[ind_existing][1]
-                if priority_list.index(a) < priority_list.index(archd_existing):
-                    out_date_list.remove(d)
-                    out_all_list.remove(out_all_list[ind_existing])
-                    out_date_list.append(d)
-                    out_all_list.append((r, a, d))
+#         out_date_list, out_all_list = [], []
+#         for r, a, d in zip(rnxname_list, archive_list, date_list):
+#             if d not in out_date_list:
+#                 out_date_list.append(d)
+#                 out_all_list.append((r, a, d))
+#             else:
+#                 ind_existing = out_date_list.index(d)
+#                 archd_existing = out_all_list[ind_existing][1]
+#                 if priority_list.index(a) < priority_list.index(archd_existing):
+#                     out_date_list.remove(d)
+#                     out_all_list.remove(out_all_list[ind_existing])
+#                     out_date_list.append(d)
+#                     out_all_list.append((r, a, d))
 
-        datadico_out[k] = out_all_list
+#         datadico_out[k] = out_all_list
 
-    return datadico_out
+#     return datadico_out
 
 
 # def timeline_plotter_old_bkp(datadico,start = dt.datetime(1980,1,1) ,
@@ -675,7 +843,7 @@ def rinex_timeline_datadico_merge_not_very_smart(datadico_list, priority_list):
 #                 #old old with dots
 #                 ax.plot(T,i*np.ones(len(T)), '.')
 #             else:
-#                 TMJD=dt2MJD(T)
+#                 TMJD=dt2mjd(T)
 #                 TGrpAll = utils.consecutive_groupIt(TMJD,True)
 #
 #                 for tgrp in TGrpAll:
@@ -709,9 +877,9 @@ def rinex_timeline_datadico_merge_not_very_smart(datadico_list, priority_list):
 #                     tgrp = (tgrp[0] , tgrp[1] + 1) # +1 because the end boundary day is not included
 #
 #                     if not jul_date_plot:
-#                         tgrp = MJD2dt(tgrp)
+#                         tgrp = mjd2dt(tgrp)
 #                         if extra_archive:
-#                             Tgrp_plt = [ (MJD2dt(e[0]) , MJD2dt(e[1])) for e in Tgrp_plt ]
+#                             Tgrp_plt = [ (mjd2dt(e[0]) , mjd2dt(e[1])) for e in Tgrp_plt ]
 #
 #
 #                     #PLOT part
@@ -733,7 +901,7 @@ def rinex_timeline_datadico_merge_not_very_smart(datadico_list, priority_list):
 #                 T = sorted(T)
 #
 #                 if jul_date_plot:
-#                     T = MJD2dt(T)
+#                     T = mjd2dt(T)
 #
 #                 pale_blue_dot , = ax.plot(T,i*np.ones(len(T)), 'o', color='skyblue',label="final SNX")
 #                 legend_list = [pale_blue_dot]

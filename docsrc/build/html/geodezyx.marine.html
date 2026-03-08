@@ -6,16 +6,16 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>geodezyx.marine package &mdash; geodezyx 4.x documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+  <title>geodezyx.marine package &mdash; geodezyx 5.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -47,17 +47,19 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to geodezyx’s documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">GeodeZYX’s complete reference package</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx’s complete reference package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.marine package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.marine.dac">geodezyx.marine.dac module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.marine.export_obp">geodezyx.marine.export_obp module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.marine.marine">geodezyx.marine.marine module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.marine.obp">geodezyx.marine.obp module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.marine.obscom">geodezyx.marine.obscom module</a></li>
@@ -67,8 +69,8 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
 </ul>
 </li>
 </ul>
@@ -89,7 +91,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="geodezyx.html">GeodeZYX’s complete reference package</a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.html">geodezyx’s complete reference package</a></li>
       <li class="breadcrumb-item active">geodezyx.marine package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/geodezyx.marine.rst.txt" rel="nofollow"> View page source</a>
@@ -158,6 +160,87 @@ the DAC values.</p>
 </dd></dl>
 
 </section>
+<section id="module-geodezyx.marine.export_obp">
+<span id="geodezyx-marine-export-obp-module"></span><h2>geodezyx.marine.export_obp module<a class="headerlink" href="#module-geodezyx.marine.export_obp" title="Link to this heading"></a></h2>
+<p>Created on 06/12/2025 21:28:55</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.marine.export_obp.export_obp_to_netcdf">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.export_obp.</span></span><span class="sig-name descname"><span class="pre">export_obp_to_netcdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_obp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversion_factors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_sensor_dimension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality_flags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#geodezyx.marine.export_obp.export_obp_to_netcdf" title="Link to this definition"></a></dt>
+<dd><p>Export ocean bottom pressure data to CF-1.6 compliant NetCDF file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_obp</strong> (<em>pd.DataFrame</em>) – dataframe with time column and measurement columns</p></li>
+<li><p><strong>column_mapping</strong> (<em>dict</em>) – Dictionary mapping standard variable names to dataframe column names:
+- “time”: time column name
+- “pressure_seafloor”: pressure column name(s) (str or list of str)
+- “temperature_sensor”: internal temperature column name(s) (str or list of str)
+- “temperature_seawater”: seawater temperature column name(s) (str or list of str)
+- “pressure_barometer”: barometer pressure column name(s) (str or list of str, optional)
+- “temperature_barometer”: barometer temperature column name(s) (str or list of str , optional)</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – Output directory path</p></li>
+<li><p><strong>metadata_dict</strong> (<em>dict</em>) – Station metadata configuration containing:
+- station_id: str (MANDATORY)
+- latitude: float (MANDATORY)
+- longitude: float (MANDATORY)
+- depth: float (MANDATORY, meters)
+- institution: str (MANDATORY)
+- source: str (MANDATORY)
+- references: str (MANDATORY)
+- station_name: str (MANDATORY)
+- comment: str (MANDATORY)
+- project: str (MANDATORY)
+- creator_name: str (MANDATORY)
+- creator_email: str (MANDATORY)
+- creator_url: str (MANDATORY)
+- processing_level: str (MANDATORY)
+- summary: str (MANDATORY)
+- title: str (optional)</p></li>
+<li><p><strong>conversion_factors</strong> (<em>dict</em><em>, </em><em>optional</em>) – Conversion factors for each variable type:
+- “pressure”: pressure conversion factor (e.g., 0.01 for hPa to dbar)
+- “temperature_seawater”: temperature conversion factor
+- “pressure_barometer”: barometer pressure conversion factor</p></li>
+<li><p><strong>keep_sensor_dimension</strong> (<em>bool</em>) – Whether to keep sensor dimension even for single sensor</p></li>
+<li><p><strong>quality_flags</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Quality control flags array (0=good, 1=questionable, 2=bad)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>output_path</strong> – Path to the created NetCDF file</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.marine.export_obp.read_halios_first_deploy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.export_obp.</span></span><span class="sig-name descname"><span class="pre">read_halios_first_deploy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_pressure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_temp_sensor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_temp_seawater</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pres'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_sensor_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'temp_sns'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_seawater_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'temp_sea'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#geodezyx.marine.export_obp.read_halios_first_deploy" title="Link to this definition"></a></dt>
+<dd><p>Read data from a simple HALIOS instrument (1 pressure + 2 temperature sensors).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_pressure</strong> (<em>str</em>) – Path to pressure data pickle file</p></li>
+<li><p><strong>path_temp_sensor</strong> (<em>str</em>) – Path to sensor internal temperature pickle file</p></li>
+<li><p><strong>path_temp_seawater</strong> (<em>str</em>) – Path to seawater temperature pickle file</p></li>
+<li><p><strong>time_col</strong> (<em>str</em>) – Name of the time column in the raw data</p></li>
+<li><p><strong>pressure_col</strong> (<em>str</em>) – Name of the pressure column in the raw data</p></li>
+<li><p><strong>temp_sensor_col</strong> (<em>str</em>) – Name of the sensor temperature column in the raw data</p></li>
+<li><p><strong>temp_seawater_col</strong> (<em>str</em>) – Name of the seawater temperature column in the raw data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df_out</strong> (<em>pd.DataFrame</em>) – Clean dataframe with time and data columns</p></li>
+<li><p><strong>column_mapping_out</strong> (<em>dict</em>) – Dictionary mapping standard names to actual column names in the dataframe</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-geodezyx.marine.marine">
 <span id="geodezyx-marine-marine-module"></span><h2>geodezyx.marine.marine module<a class="headerlink" href="#module-geodezyx.marine.marine" title="Link to this heading"></a></h2>
 <p>&#64;author: psakic</p>
@@ -165,11 +248,11 @@ the DAC values.</p>
 GEBCO bathymetry.</p>
 <p>it can be imported directly with:
 from geodezyx import marine</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.marine.gebco_bathy_grid_extractor">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.marine.</span></span><span class="sig-name descname"><span class="pre">gebco_bathy_grid_extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonmax</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.marine.gebco_bathy_grid_extractor" title="Link to this definition"></a></dt>
@@ -383,11 +466,12 @@ Options are ‘forward’, ‘backward’, and ‘averaged’. Default is ‘for
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>phibot = Ocean hydrostatic bottom pressure anomaly
-<a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html</a>
+<p>phibot = Ocean hydrostatic bottom pressure anomaly</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html</a>
 <a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2146301108-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2146301108-POCLOUD.html</a></p>
 <dl class="simple">
-<dt>PHIBOT              Bottom Pressure Pot. Anomaly (p/rhonil, m^2/s^2)</dt><dd><p>To convert to m, divide by g (g=9.81 m/s^2)
+<dt>PHIBOT is the Bottom Pressure Potential Anomaly (p/rhonil, m^2/s^2)</dt><dd><p>To convert to m, divide by g (g=9.81 m/s^2)
 PHIBOT is the anomaly relative to Depth * rhonil * g
 The absolute bottom pressure in Pa is:
 Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)</p>
@@ -763,6 +847,11 @@ Is a Series with time as Index</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.marine.obp.padlen">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">padlen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.padlen" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obp.polynomial_3">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">polynomial_3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.polynomial_3" title="Link to this definition"></a></dt>
 <dd><p>Computes a 3rd degree polynomial.</p>
@@ -855,6 +944,11 @@ Is a Series with time as Index</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.marine.obp.read_rbr_txt_data">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obp.</span></span><span class="sig-name descname"><span class="pre">read_rbr_txt_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obp.read_rbr_txt_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-geodezyx.marine.obscom">
 <span id="geodezyx-marine-obscom-module"></span><h2>geodezyx.marine.obscom module<a class="headerlink" href="#module-geodezyx.marine.obscom" title="Link to this heading"></a></h2>
@@ -913,7 +1007,7 @@ for temperature and <code class="docutils literal notranslate"><span class="pre"
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obscom.freq2counter">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obscom.</span></span><span class="sig-name descname"><span class="pre">freq2counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_or_tau_sensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_sensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_or_tau_clk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integ_timespan=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp='freq'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round_fct=&lt;ufunc</span> <span class="pre">'floor'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obscom.freq2counter" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obscom.</span></span><span class="sig-name descname"><span class="pre">freq2counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_or_tau_sensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_sensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_or_tau_clk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integ_timespan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'freq'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round_fct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;ufunc</span> <span class="pre">'floor'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obscom.freq2counter" title="Link to this definition"></a></dt>
 <dd><p>Convert sensor frequency to count number</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1076,14 +1170,14 @@ The function uses different colors for the pressure and temperature data for bet
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obscom.pres2freq">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obscom.</span></span><span class="sig-name descname"><span class="pre">pres2freq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'psi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_optimize_object</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obscom.pres2freq" title="Link to this definition"></a></dt>
-<dd><p>Convert pressure to  pressure sensor frequency</p>
-<p>There is no analytic solution, thus an root find is required</p>
+<dd><p>Convert pressure to pressure sensor frequency</p>
+<p>There is no analytic solution, thus a root find is required</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>p_in</strong> – pressure in psi.</p></li>
-<li><p><strong>t_in</strong> – temperature in Celsius.</p></li>
-<li><p><strong>inp</strong> (<em>optional</em>) – input for p_in as pressure (‘psi’, ‘bar’, ‘mbar’, ‘pa’)
+<li><p><strong>p_in</strong> (<em>float</em>) – pressure in psi.</p></li>
+<li><p><strong>t_in</strong> (<em>float</em>) – temperature in Celsius.</p></li>
+<li><p><strong>inp</strong> (<em>str</em><em>, </em><em>optional</em>) – input for p_in as pressure (‘psi’, ‘bar’, ‘mbar’, ‘pa’)
 or distance (‘meter’).
 The default is ‘psi’.</p></li>
 <li><p><strong>return_optimize_object</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, return the object of scipy’s optimize.root function.
@@ -1098,6 +1192,8 @@ The default is False.</p></li>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The conversion uses a root-finding algorithm to solve the inverse function.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1186,7 +1282,7 @@ with the cofficients of the sensor #158073
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

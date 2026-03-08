@@ -9,12 +9,12 @@ time series velocities estimation software HECTOR.
 it can be imported directly with:
 from geodezyx import operational
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 ########## BEGIN IMPORT ##########
@@ -315,11 +315,12 @@ def multi_momfile_trend_processing(
 
 
 def sumfiles_to_statdico(inpdir, specific_stats=(), invert_specific=False):
-    """this fct search for every sum file in a folder
+    """
+    this fct search for every sum file in a folder
     a stat dico contains no data
     only the paths to the E,N,U sum files
     statdico[stat] = [path/E.sum,path/N.sum,path/U.sum ]
-     for each stat getting the 3 ENU sum files
+    for each stat getting the 3 ENU sum files
 
     Thoses lists will be send in sumfiles_trend_extract
     """
@@ -385,7 +386,7 @@ def velfile_from_a_list_of_statVsV_tuple(
     if style == "globk":
         outfile = open(out_dir + "/" + out_prefix + ".vel", "w+")
         outfile.write(
-            "* Velocity field created with Hector Runner / P. Sakic - La Rochelle Univ. (FRA) \n"
+            "* Velocity field created with Hector Runner / p. Sakic - La Rochelle Univ. (FRA) \n"
         )
         outfile.write(
             "*  Long         Lat        Evel    Nvel    dEv     dNv    E +-    N +-    Rne      Hvel     dHv    H +-  Site\n"
@@ -506,14 +507,14 @@ def velfile_from_a_list_of_statVsV_tuple(
 #    """ make a dirty velocity file compatible with EPC """
 #    outfile = open(out_dir +'/' + out_prefix + '.vel.neu','w+')
 #    for tup in listoftup:
-#        stat , V , sV = tup
+#        stat , v , sV = tup
 #        try:
 #            neufile = utils.regex2filelist(raw_neu_dir,stat)[0]
 #            lat , lon , hau = get_FLH_from_NEUfile(neufile)
 #        except:
 #            lat , lon , hau = 0,0,0
 #
-#        line = '{} {} {} {} {} {} {} {}\n'.format(stat,lat,refframe.wrapTo180(lon),V['N'],V['E'],sV['N'],sV['E'],0)
+#        line = '{} {} {} {} {} {} {} {}\n'.format(stat,lat,refframe.wrapTo180(lon),v['N'],v['E'],sV['N'],sV['E'],0)
 #        outfile.write(line)
 #    return None
 

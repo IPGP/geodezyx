@@ -48,7 +48,7 @@ def read_erp(file_path_in,ac=None):
     ----
     Columns name
     
-    ('MJD','X-P (arcsec)', 'Y-P (arcsec)', 'UT1UTC (E-7S)','LOD (E-7S/D)','S-X (E-6" arcsec)','S-Y (E-6" arcsec)',
+    ('MJD','X-p (arcsec)', 'Y-p (arcsec)', 'UT1UTC (E-7S)','LOD (E-7S/D)','S-X (E-6" arcsec)','S-Y (E-6" arcsec)',
     'S-UT (E-7S)','S-LD (E-7S/D)','NR (E-6" arcsec)', 'NF (E-6" arcsec)', 'NT (E-6" arcsec)',
     'X-RT (arcsec/D)','Y-RT (arcsec/D)','S-XR (E-6" arcsec/D)','S-YR (E-6" arcsec/D)', 'C-XY', 'C-XT',
     'C-YT', 'DPSI', 'DEPS','S-DP','S-DE')
@@ -121,7 +121,7 @@ def read_erp(file_path_in,ac=None):
                     XPO_std = float(Lines[i][69:80])*(10**-3)
                     XPO_stk.append(XPO)
                     XPO_std_stk.append(XPO_std)
-                    MJD_stk.append(conv.dt2MJD(Date))
+                    MJD_stk.append(conv.dt2mjd(Date))
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
                     
                 if utils.contains_word(Lines[i],'YPO') and marker:
@@ -135,7 +135,7 @@ def read_erp(file_path_in,ac=None):
                     YPO_std = float(Lines[i][69:80])*(10**-3)
                     YPO_stk.append(YPO)
                     YPO_std_stk.append(YPO_std)
-                    MJD_stk.append(conv.dt2MJD(Date))
+                    MJD_stk.append(conv.dt2mjd(Date))
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
 
                     
@@ -151,7 +151,7 @@ def read_erp(file_path_in,ac=None):
                     LOD_stk.append(LOD)
                     LOD_std_stk.append(LOD_std)
                     #MJD_stk.append(cmg.jd_to_mjd(cmg.date_to_jd(Date.year,Date.month,Date.day)))
-                    MJD_stk.append(conv.dt2MJD(Date))
+                    MJD_stk.append(conv.dt2mjd(Date))
 
         MJD = list(sorted(set(MJD_stk)))
         if len(LOD_stk) == 0:
@@ -188,7 +188,7 @@ def read_erp(file_path_in,ac=None):
         linecache.clearcache()
         
 
-#        Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
+#        Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-p', 'Y-p', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
 #                                                 'X-RT','Y-RT','S-XR','S-YR',"Delivery_date"])
 #        return Erp_end
 #
@@ -211,7 +211,7 @@ def read_erp(file_path_in,ac=None):
                 
         linecache.clearcache()
 
-#        Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
+#        Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-p', 'Y-p', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
 #                                                 'X-RT','Y-RT','S-XR','S-YR'])
 #        return Erp_end
 #
@@ -232,7 +232,7 @@ def read_erp(file_path_in,ac=None):
                 ERP.append(ERP_data)
         linecache.clearcache()
 
-#        Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
+#        Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-p', 'Y-p', 'UT1UTC(UT1 -TAI)','LOD','S-X','S-Y','S-UT','S-LD','NR', 'NF', 'NT',
 #                                                 'X-RT','Y-RT','S-XR','S-YR'])  ##EH TBM O RATE XY POR DIA??????
 #        return Erp_end
 
@@ -260,7 +260,7 @@ def read_erp(file_path_in,ac=None):
 
 
 
-    Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-P', 'Y-P', 
+    Erp_end = pd.DataFrame(ERP, columns=['AC','MJD','X-p', 'Y-p',
                                          'UT1UTC(UT1 -TAI)','LOD',
                                          'S-X','S-Y','S-UT','S-LD',
                                          'NR', 'NF', 'NT',
@@ -424,7 +424,7 @@ def read_eop_C04(file_path_in):
     
     DF.columns = cols
     
-    DF["epoch"] = conv.MJD2dt(DF.MJD)
+    DF["epoch"] = conv.mjd2dt(DF.MJD)
     
     return DF
 
@@ -546,7 +546,7 @@ def read_eop_finals(file_path_in,precnut_model = 2000,
     
     #### DF 2 is a simplified version, base on the C04 DF
     DF2 = pd.DataFrame()
-    DF2["epoch"] = conv.MJD2dt(DF["MJD"])
+    DF2["epoch"] = conv.mjd2dt(DF["MJD"])
     
     if simplified_EOP_DF == 'mixed':
         ### Create epoch and use B-values per default

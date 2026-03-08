@@ -10,27 +10,19 @@ This sub-module of geodezyx.conv deals with low-level geometric operation.
 it can be imported directly with:
 from geodezyx import conv
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 
 ########## BEGIN IMPORT ##########
 #### External modules
 import numpy as np
-import scipy
 
-
-#### geodeZYX modules
-
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 
 ##########  END IMPORT  ##########
 
@@ -40,7 +32,7 @@ import scipy
 # | |                   | |              | |                                                
 # | |     _____      __ | | _____   _____| |                                                
 # | |    / _ \ \ /\ / / | |/ _ \ \ / / _ \ |                                                
-# | |___| (_) \ V  V /  | |  __/\ V /  __/ |                                                
+# | |___| (_) \ v  v /  | |  __/\ v /  __/ |
 # |______\___/ \_/\_/   |_|\___| \_/ \___|_|_         __                  _   _             
 #                                 | |      (_)       / _|                | | (_)            
 #   __ _  ___  ___  _ __ ___   ___| |_ _ __ _  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  
@@ -89,7 +81,7 @@ def dist_diff(A,B):
     """
 
     dAB   = A-B
-    dist  = scipy.linalg.norm(dAB)
+    dist  = np.linalg.norm(dAB)
 
     diffA =   dAB / dist
     diffB = - dAB / dist
@@ -264,7 +256,7 @@ def vincenty_full(point1, point2, miles=False,full=True,azimuth_in_deg=True):
     
 def orthogonal_projection(Xa,Xb,Xv):
     """
-    Project a point A on a line defined with a vector V and a point B
+    Project a point A on a line defined with a vector v and a point B
     
     Parameters
     ----------
@@ -285,8 +277,8 @@ def orthogonal_projection(Xa,Xb,Xv):
     D : float
         Distance between A and H
         
-    Note
-    ----
+    Notes
+    -----
     Misc. Notes
 
     Source

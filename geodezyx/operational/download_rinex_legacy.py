@@ -6,11 +6,11 @@ This sub-module of geodezyx.operational contains functions to download
 gnss data and products from distant IGS servers. 
 it can be imported directly with:
 from geodezyx import operational
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 ########## BEGIN IMPORT ##########
@@ -18,26 +18,12 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 import datetime as dt
 #### Import the logger
 import logging
-# from ftplib import FTP
-# import glob
-# import itertools
 import multiprocessing as mp
 import os
 
 import geodezyx.operational.download_utils as dlutils
 #### geodeZYX modules
-from geodezyx import conv
-from geodezyx import utils
-
-# import pandas as pd
-# import re
-# import shutil
-# import urllib
-# import ftplib
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
+from geodezyx import conv, utils
 
 log = logging.getLogger('geodezyx')
 
@@ -47,9 +33,9 @@ log = logging.getLogger('geodezyx')
 
 # _____________ _   _ ________   __  _____                      _                 _
 # |  __ \|_   _| \ | |  ____\ \ / / |  __ \                    | |               | |
-# | |__) | | | |  \| | |__   \ V /  | |  | | _____      ___ __ | | ___   __ _  __| | ___ _ __
+# | |__) | | | |  \| | |__   \ v /  | |  | | _____      ___ __ | | ___   __ _  __| | ___ _ __
 # |  _  /  | | | . ` |  __|   > <   | |  | |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |/ _ \ '__|
-# | | \ \ _| |_| |\  | |____ / . \  | |__| | (_) \ V  V /| | | | | (_) | (_| | (_| |  __/ |
+# | | \ \ _| |_| |\  | |____ / . \  | |__| | (_) \ v  v /| | | | | (_) | (_| | (_| |  __/ |
 # |_|  \_\_____|_| \_|______/_/ \_\ |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|
 
 
@@ -263,123 +249,91 @@ def download_gnss_rinex_legacy(
     force=False,
 ):
     """
+    Download GNSS RINEX files from various archive centers.
+
     Parameters
     ----------
     statdico : dict
-        a statdico is a dictionary associating Archives Centers to list of stations
-
-        Exemple:
-            >>> statdico['archive center 1'] = ['STA1','STA2','STA3', ...]
-            >>> statdico['archive center 2'] = ['STA2','STA1','STA4', ...]
-
-        the supported archive center are (july 2015):
-            igs_cddis or igs (cddis center)
-
-            igs_sopac (for the sopac/ucsd/sio center, but not very reliable)
-
-            rgp (IGN's RGP St Mandé center)
-
-            rgp_mlv (IGN's RGP Marne la Vallée center)
-
-            rgp_1Hz (IGN's RGP, all the 24 hourly rinex for the day will be downloaded)
-
-            renag
-
-            ovsg
-
-            unavco
-
-            sonel
-
-            geoaus (Geosciences Australia)
-
-            ens_fr
-
-            nav or brdc as archive center allows to download nav files (using 'BRDC' as station name)
-            from the ROB server, using GOP files
-
-            nav_rt or brdc_rt as archive center allows to download *real time* nav files
-            from the BKG server
-
-
-    archtype : str
-        string describing how the archive directory is structured, e.g :
-
-            stat
-
-            stat/year
-
-            stat/year/doy
-
-            year/doy
-
-            year/stat
-
-            week/dow/stat
-
-            ... etc ...
-
-    sorted_mode : bool
-        if False:
-            using the map multiprocess fct so the download order will
-            be scrambled
-        if True:
-            using the apply multiprocess fct so the download order will be
-            in the chrono. order
-        The scrambled (False) is better, bc. it doesn't create zombies processes
-
-    user & passwd : str
-        user & password for a locked server
-
-    filter_ftp_crawler : bool
-        use an improved FTP crawler to find which files actually exist
+        Dictionary associating archive centers to list of stations.
+        Format: statdico['archive_center'] = ['STA1', 'STA2', ...]
+        
+        Supported archive centers:
+        - 'igs_cddis' or 'igs' : CDDIS center
+        - 'igs_sopac' : SOPAC/UCSD/SIO center (not very reliable)
+        - 'rgp' : IGN's RGP St Mandé center
+        - 'rgp_mlv' : IGN's RGP Marne la Vallée center  
+        - 'rgp_1Hz' : IGN's RGP, downloads all 24 hourly RINEX for the day
+        - 'renag' : RENAG network
+        - 'ovsg' : OVSG network
+        - 'unavco' : UNAVCO center
+        - 'sonel' : SONEL network
+        - 'geoaus' : Geosciences Australia
+        - 'ens_fr' : ENS France
+        - 'nav' or 'brdc' : Navigation files from ROB server using GOP files
+        - 'nav_rt' or 'brdc_rt' : Real-time navigation files from BKG server
+    archive_dir : str
+        Parent archive directory where files will be stored.
+    startdate : datetime
+        Start date of the wished period.
+    enddate : datetime  
+        End date of the wished period.
+    archtype : str, optional
+        String describing how the archive directory is structured.
+        Examples: 'stat', 'stat/year', 'stat/year/doy', 'year/doy', 
+        'year/stat', 'week/dow/stat', etc. Default is "stat".
+    parallel_download : int, optional
+        Number of parallel downloads. Default is 4.
+    sorted_mode : bool, optional
+        If False, uses the map multiprocess function so the download order 
+        will be scrambled. If True, uses the apply multiprocess function so 
+        the download order will be in chronological order. The scrambled 
+        (False) is better because it doesn't create zombie processes. 
+        Default is False.
+    user : str, optional
+        Username for locked servers. Default is "".
+    passwd : str, optional
+        Password for locked servers. Default is "".
+    filter_ftp_crawler : bool, optional
+        Use an improved FTP crawler to find which files actually exist
         to accelerate the download. If path_ftp_crawled_files_load is given,
-        use this loaded list.
-
-    path_ftp_crawled_files_save : str
-        will save at the given path (directory+filname) in a pickle containing
-        the list of the existing RINEXs found on the server by the FTP crawler.
-        It allows to use this list directly if one face a timeout during
-        the download part.
-        NB for advanced users: the pickle is a tuple (urllist,savedirlist)
-
-    path_ftp_crawled_files_load : str
-        load and use the list of the existing RINEXs found on the FTP server,
-        generated by a previous run of the FTP crawler (called by
-        download_gnss_rinex or directly by ftp_files_crawler).
-        overrides an internal call of ftp_files_crawler.
-
-    quiet_mode : bool
-        List the available RINEXs without downloading them.
-        Useful only if path_ftp_crawled_files_save is given
-
-    final_archive_for_sup_check : str
+        use this loaded list. Default is True.
+    path_ftp_crawled_files_save : str, optional
+        Path (directory + filename) to save a pickle containing the list of 
+        existing RINEXs found on the server by the FTP crawler. Allows using 
+        this list directly if facing a timeout during the download part.
+        Default is None.
+    path_ftp_crawled_files_load : str, optional
+        Load and use the list of existing RINEXs found on the FTP server,
+        generated by a previous run of the FTP crawler. Overrides an internal 
+        call of crawl_ftp_files. Default is None.
+    quiet_mode : bool, optional
+        List the available RINEXs without downloading them. Useful only if 
+        path_ftp_crawled_files_save is given. Default is False.
+    final_archive_for_sup_check : str, optional
         The final archive path or a file containing the archived RINEXs in
-        their final destination.
-        useful if the final archive is different from archive_dir
-
-    force : bool
-        Force the download even if the file already exists locally
+        their final destination. Useful if the final archive is different 
+        from archive_dir. Default is None.
+    force : bool, optional
+        Force the download even if the file already exists locally. 
+        Default is False.
 
     Returns
     -------
     url_list : list of str
-        list of URLs
-
+        List of URLs.
     savedir_list : list of str
-        list of downloaded products paths
+        List of downloaded products paths.
 
-    Minimal exemple
-    ---------------
-        >>> statdic = dict()
-        >>> statdic['igs_cddis'] = ['ZIMM']
-        >>> archive_dir = '/home/USER/test_dl_rnx'
-        >>> startdate = dt.datetime(2000,1,1)
-        >>> enddate = dt.datetime(2000,1,31)
-        >>> geodezyx.operational.download_gnss_rinex_legacy(statdic, archive_dir, startdate, enddate)
-
+    Examples
+    --------
+    >>> statdic = dict()
+    >>> statdic['igs_cddis'] = ['ZIMM']
+    >>> output_dir = '/home/USER/test_dl_rnx'
+    >>> startdate = dt.datetime(2000, 1, 1)
+    >>> enddate = dt.datetime(2000, 1, 31)
+    >>> geodezyx.operational.download_gnss_rinex_legacy(statdic,
     """
-
+    
     curdate = startdate
 
     pool = mp.Pool(processes=parallel_download)
@@ -512,7 +466,7 @@ def download_gnss_rinex_legacy(
             )
 
             for iurl, isavedir in zip(urllist, savedirlist):
-                localpath, bool_dl = dlutils.ftp_downloader(ftp_obj, iurl[0], isavedir)
+                localpath, bool_dl = dlutils.ftp_downld_mono(ftp_obj, iurl[0], isavedir)
 
     localfiles_lis = []
     skiped_url = 0
@@ -565,25 +519,35 @@ def multi_archiver_rinex(
     rinex_lis, parent_archive_dir, archtype="stat", move=True, force_mv_or_cp=False
 ):
     """
-    from rinex_lis, a list of rinex (generated by the function
-    multi_finder_rinex)
+    Move or copy RINEX files to an archive directory structure.
+    
+    Takes a list of RINEX files and organizes them in the parent_archive_dir 
+    according to the specified archive type structure.
 
-    move (if move=True) of copy (if move=False) those rinexs in the
-    parent_archive_dir according to the archtype,
-    string describing how the archive directory is structured, e.g :
-            stat
+    Parameters
+    ----------
+    rinex_lis : list of str
+        List of RINEX file paths (typically generated by multi_finder_rinex).
+    parent_archive_dir : str
+        Parent directory where files will be archived.
+    archtype : str, optional
+        String describing how the archive directory is structured.
+        Examples: 'stat', 'stat/year', 'stat/year/doy', 'year/doy', 
+        'year/stat', 'week/dow/stat', etc. Default is "stat".
+    move : bool, optional
+        If True, move the files. If False, copy the files. Default is True.
+    force_mv_or_cp : bool, optional
+        If True, force move/copy even if the file already exists in the 
+        destination. Default is False.
 
-            stat/year
+    Returns
+    -------
+    None
 
-            stat/year/doy
-
-            year/doy
-
-            year/stat
-
-            week/dow/stat
-
-            ... etc ...
+    Notes
+    -----
+    The function logs the number of files processed, skipped, and moved/copied.
+    Directory structure is created automatically
     """
 
     mv_cnt = 0

@@ -10,12 +10,12 @@ This sub-module of geodezyx.conv deals with rinex name handeling conversion.
 it can be imported directly with:
 from geodezyx import conv
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 
@@ -25,13 +25,9 @@ import logging
 ########## BEGIN IMPORT ##########
 #### External modules
 import os
-
-# import scipy
-# from scipy.spatial.transform import Rotation
 import re
 
 ### Imported in the corresponding function to avoid cyclic import
-### from geodezyx.conv import conv_interpolators
 ### https://stackoverflow.com/questions/1250103/attributeerror-module-object-has-no-attribute
 log = logging.getLogger('geodezyx')
 
@@ -114,12 +110,13 @@ def rinex_regex(compressed=None, compiled=False):
     out : string or python's regex
         a regex
     """
+    # ([0 - 9]{2})? is for subhourly files (260107)
     if compressed is None:
-        regexstr = r"^....[0-9]{3}.\.[0-9]{2}((d\.(Z|z|gz))|o|d)$"
+        regexstr = r"^....[0-9]{3}.([0-9]{2})?\.[0-9]{2}((d\.(Z|z|gz))|o|d)$"
     elif not compressed:
-        regexstr = r"^....[0-9]{3}.\.[0-9]{2}o$"
+        regexstr = r"^....[0-9]{3}.([0-9]{2})?\.[0-9]{2}o$"
     else:
-        regexstr = r"^....[0-9]{3}.\.[0-9]{2}((d\.(Z|z|gz))|d)$"
+        regexstr = r"^....[0-9]{3}.([0-9]{2})?\.[0-9]{2}((d\.(Z|z|gz))|d)$"
 
     if compiled:
         return re.compile(regexstr)

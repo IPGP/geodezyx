@@ -1,10 +1,10 @@
-GeodeZYX's complete reference package
+geodezyx's complete reference package
 =====================================
 
 .. automodule:: geodezyx
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Subpackages
 -----------
@@ -12,16 +12,17 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   geodezyx.athmo
+   geodezyx.atmo
    geodezyx.conv
-   geodezyx.externlib
    geodezyx.files_rw
    geodezyx.geodyn
+   geodezyx.gnss_edu
+   geodezyx.interp
    geodezyx.logconfig
    geodezyx.marine
    geodezyx.operational
    geodezyx.reffram
    geodezyx.stats
    geodezyx.time_series
-   geodezyx.toolbox_meta
    geodezyx.utils
+   geodezyx.utils_xtra

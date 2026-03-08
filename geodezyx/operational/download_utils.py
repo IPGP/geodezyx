@@ -3,17 +3,20 @@
 """
 @author: psakic
 This sub-module of geodezyx.operational contains functions to download
-gnss data and products from distant IGS servers. 
+gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 import ftplib
+import requests
+import tqdm
+
 #### Import the logger
 import logging
 import os
@@ -21,6 +24,8 @@ import pathlib
 import shutil
 import time
 import urllib
+import urllib.request
+
 ########## BEGIN IMPORT ##########
 #### External modules
 from ftplib import FTP, FTP_TLS
@@ -32,7 +37,9 @@ import pandas as pd
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
-log = logging.getLogger('geodezyx')
+from geodezyx.stats import outlier_mad
+
+log = logging.getLogger("geodezyx")
 
 
 ##########  END IMPORT  ##########
@@ -105,7 +112,7 @@ def effective_save_dir_orbit(
 # | |  | |__   __|__   __|  __ \  |  __ \                    | |               | |
 # | |__| |  | |     | |  | |__) | | |  | | _____      ___ __ | | ___   __ _  __| |
 # |  __  |  | |     | |  |  ___/  | |  | |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |
-# | |  | |  | |     | |  | |      | |__| | (_) \ V  V /| | | | | (_) | (_| | (_| |
+# | |  | |  | |     | |  | |      | |__| | (_) \ v  v /| | | | | (_) | (_| | (_| |
 # |_|  |_|  |_|     |_|  |_|      |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|
 
 
@@ -202,11 +209,84 @@ def downloader_wrap(intup):
     return None
 
 
+def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
+    """
+    Download a file from an HTTP server with retry logic and progress bar.
+
+    Parameters
+    ----------
+    url : str
+        The URL of the file to download.
+    output_dir : str
+        The directory where the downloaded file will be saved.
+    timeout : int, optional
+        The timeout for the HTTP connection in seconds. Default is 120 seconds.
+    max_try : int, optional
+        The maximum number of retry attempts in case of failure. Default is 4.
+    sleep_time : int, optional
+        The sleep time between retry attempts in seconds. Default is 5 seconds.
+
+    Returns
+    -------
+    str
+        The path to the downloaded file, or an empty string if the download failed.
+
+    Raises
+    ------
+    AutorinoDownloadError
+        If the download fails after the maximum number of retry attempts.
+    """
+
+    # Get file size
+    log.info("Download file: %s", url)
+    response = requests.head(url, timeout=timeout)
+    file_size = int(response.headers.get("content-length", 0))
+
+    # Construct output path
+    filename = url.split("/")[-1]
+    output_path = os.path.join(output_dir, filename)
+
+    # Ensure output directory exists
+    os.makedirs(output_dir, exist_ok=True)
+
+    dwl = False
+
+    # Check if file already exists
+    if os.path.isfile(output_path):
+        log.info(f"{filename} already exists locally ;)")
+        return (output_path, dwl)
+
+    # Download file with progress bar
+    try_count = 0
+    while True:
+        try:
+            response = requests.get(url, stream=True, timeout=timeout)
+            with open(output_path, "wb") as f:
+                with tqdm.tqdm(
+                    total=file_size, unit="B", unit_scale=True, desc=filename
+                ) as pbar:
+                    for data in response.iter_content(chunk_size=1024):
+                        f.write(data)
+                        pbar.update(len(data))
+            break
+        except requests.exceptions.RequestException as e:
+            try_count += 1
+            if try_count > max_try:
+                log.error("download failed after %i attempts", max_try)
+                return (url, dwl)
+
+            log.warning("download failed (%s), try %i/%i", str(e), try_count, max_try)
+            time.sleep(sleep_time)
+
+    dwl = True
+    return (output_path, dwl)
+
+
 #  ______ _______ _____    _____                      _                 _
 # |  ____|__   __|  __ \  |  __ \                    | |               | |
 # | |__     | |  | |__) | | |  | | _____      ___ __ | | ___   __ _  __| |
 # |  __|    | |  |  ___/  | |  | |/ _ \ \ /\ / / '_ \| |/ _ \ / _` |/ _` |
-# | |       | |  | |      | |__| | (_) \ V  V /| | | | | (_) | (_| | (_| |
+# | |       | |  | |      | |__| | (_) \ v  v /| | | | | (_) | (_| | (_| |
 # |_|       |_|  |_|      |_____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|
 
 
@@ -253,7 +333,7 @@ class MyFTP_TLS(FTP_TLS):
         return conn, size
 
 
-def _ftp_dir_list_files(ftp_obj_in):
+def ftp_dir_list_files(ftp_obj_in):
     """
     Lists the files in the current directory of the FTP object.
 
@@ -364,10 +444,10 @@ def ftp_objt_create(
     return ftp_main, ftp_obj_list_out
 
 
-def _ftp_downloader_core(ftp_obj, filename, localdir):
+def ftp_downld_core(ftp_obj, filename, localdir, force=False):
     """
     Performs the FTP download if we are already in the correct FTP folder.
-    This is an internal function of ftp_downloader.
+    This is an internal function of ftp_downld.
 
     Parameters
     ----------
@@ -377,6 +457,9 @@ def _ftp_downloader_core(ftp_obj, filename, localdir):
         The name of the file to be downloaded.
     localdir : str
         The local directory where the downloaded file should be saved.
+    force : bool, optional
+        If True, forces the download even if the file already exists locally.
+        Default is False.
 
     Returns
     -------
@@ -397,10 +480,20 @@ def _ftp_downloader_core(ftp_obj, filename, localdir):
     if not os.path.isdir(localdir):
         utils.create_dir(localdir)
 
+    dl_go = True
+    # Check if the file already exists locally
+    bool_dl = False
     if not utils.empty_file_check(localpath):
-        log.info(filename + " already exists ;)")
-        bool_dl = True
-    else:
+        if not force:
+            log.info(filename + " already exists ;)")
+            bool_dl = True
+            dl_go = False
+        else:
+            log.info(filename + " already exists, but re-download forced")
+            bool_dl = False
+            dl_go = True
+
+    if dl_go:
         try:
             localfile = open(localpath, "wb")
             ftp_obj.retrbinary("RETR " + filename, localfile.write, 1024)
@@ -416,7 +509,7 @@ def _ftp_downloader_core(ftp_obj, filename, localdir):
     return localpath, bool_dl
 
 
-def ftp_downloader(ftp_obj, full_remote_path, localdir):
+def ftp_downld_mono(ftp_obj, full_remote_path, localdir, force=False):
     """
     Downloads a file through FTP protocol.
 
@@ -428,6 +521,9 @@ def ftp_downloader(ftp_obj, full_remote_path, localdir):
         The full path of the file on the FTP server.
     localdir : str
         The local directory where the downloaded file should be saved.
+    force : bool, optional
+        If True, forces the download even if the file already exists locally.
+        Default is False.
 
     Returns
     -------
@@ -447,28 +543,28 @@ def ftp_downloader(ftp_obj, full_remote_path, localdir):
 
     ftp_obj.cwd(intermed_path)
 
-    return _ftp_downloader_core(ftp_obj, filename, localdir)
+    return ftp_downld_core(ftp_obj, filename, localdir, force=force)
 
 
-def ftp_downloader_wrap(intup):
+def ftp_downld_wrap(intup):
     """
-    This function is a wrapper for the ftp_downloader function. It unpacks the input tuple and passes it to the ftp_downloader function.
+    This function is a wrapper for the ftp_downld function. It unpacks the input tuple and passes it to the ftp_downld function.
 
     Parameters
     ----------
     intup : tuple
-        A tuple containing the parameters to be passed to the ftp_downloader function.
+        A tuple containing the parameters to be passed to the ftp_downld function.
 
     Returns
     -------
     tuple
-        The output of the ftp_downloader function.
+        The output of the ftp_downld function.
     """
-    outtup = ftp_downloader(*intup)
+    outtup = ftp_downld_mono(*intup)
     return outtup
 
 
-def ftp_download_frontend(
+def ftp_downld_front(
     urls,
     savedirs,
     parallel_download=1,
@@ -499,7 +595,11 @@ def ftp_download_frontend(
 
     Returns
     -------
-    None
+    out_tup_lis : List of tuples
+        Returns a list of tuples containing
+        the local path of the downloaded file and
+        a boolean indicating whether the download was successful.
+        e.g. [(local_path1, True), (local_path2, False), ...]
 
     Notes
     -----
@@ -507,15 +607,10 @@ def ftp_download_frontend(
     """
 
     # Check if urls and savedirs are iterable, if not convert them to list
-    if not utils.is_iterable(urls):
-        urllist = [urls]
-    else:
-        urllist = urls
-
-    if not utils.is_iterable(savedirs):
-        savedirlist = [savedirs] * len(urllist)
-    else:
-        savedirlist = savedirs
+    urllist = urls if utils.is_iterable(urls) else [urls]
+    savedirlist = savedirs if utils.is_iterable(savedirs) else [savedirs] * len(urllist)
+    secure_ftp_use = secure_ftp[0] if utils.is_iterable(secure_ftp) else secure_ftp
+    ##### dirty to select secure_ftp 1st elt only....
 
     # Check if the length of urllist and savedirlist are the same
     if len(urllist) != len(savedirlist):
@@ -531,7 +626,7 @@ def ftp_download_frontend(
 
     # Create the FTP object
     ftpobj_main, ftpobj_lis = ftp_objt_create(
-        secure_ftp_inp=secure_ftp,
+        secure_ftp_inp=secure_ftp_use,
         host=host_use,
         parallel_download=parallel_download,
         user=user,
@@ -540,6 +635,7 @@ def ftp_download_frontend(
 
     # Create a list of FTP objects for parallel downloads
     ftpobj_mp_lis = ftpobj_lis * int(np.ceil(len(urllist) / parallel_download))
+    force_lis = [force] * len(urllist)
 
     # Check if there are less FTP objects than URLs for parallel download
     if len(ftpobj_mp_lis) < len(urllist):
@@ -551,8 +647,11 @@ def ftp_download_frontend(
     pool = ThreadPool(parallel_download)
 
     # Start the parallel downloads
-    _ = pool.map(ftp_downloader_wrap, list(zip(ftpobj_mp_lis, urllist, savedirlist)))
-    return
+    out_tup_lis = pool.map(
+        ftp_downld_wrap, list(zip(ftpobj_mp_lis, urllist, savedirlist, force_lis))
+    )
+
+    return out_tup_lis
 
 
 def ftp_downloader_wo_objects(tupin):
@@ -565,7 +664,7 @@ def ftp_downloader_wo_objects(tupin):
     ftp_obj_wk = FTP(arch_center_main)
     ftp_obj_wk.login()
     ftp_obj_wk.cwd(wwww_dir)
-    localpath, bool_dl = _ftp_downloader_core(ftp_obj_wk, filename, localdir)
+    localpath, bool_dl = ftp_downld_core(ftp_obj_wk, filename, localdir)
     ftp_obj_wk.close()
     return localpath, bool_dl
 
@@ -602,11 +701,11 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
     #### Initialisation of the 1st variables for the loop
     prev_row_ftpobj = df.iloc[0]
     prev_row_cwd = df.iloc[0]
-    FTP_files_list = []
+    ftp_files_list = []
     count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
     #### Initialisation of the FTP object
 
-    FTPobj, _ = ftp_objt_create(
+    ftpobj, _ = ftp_objt_create(
         secure_ftp_inp=secure_ftp,
         host=prev_row_ftpobj.root,
         user=prev_row_ftpobj.user,
@@ -618,7 +717,7 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
 
         ####### we recreate a new FTP object if the root URL is not the same
         if row.root != prev_row_ftpobj.root or count_loop > 20:
-            FTPobj, _ = ftp_objt_create(
+            ftpobj, _ = ftp_objt_create(
                 secure_ftp_inp=secure_ftp,
                 host=prev_row_ftpobj.root,
                 user=prev_row_ftpobj.user,
@@ -631,34 +730,34 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
         ####### we recreate a new file list if the date path is not the same
         if (prev_row_cwd.dir != row.dir) or irow == 0:
             log.info("chdir " + row.dirname)
-            FTPobj.cwd("/")
+            ftpobj.cwd("/")
 
             try:  #### we try to change for the right folder
-                FTPobj.cwd(row.dir)
+                ftpobj.cwd(row.dir)
             except:  #### If not possible, then no file in the list
-                FTP_files_list = []
+                ftp_files_list = []
 
-            FTP_files_list = _ftp_dir_list_files(FTPobj)
+            ftp_files_list = ftp_dir_list_files(ftpobj)
             prev_row_cwd = row
 
             ####### we check if the files is avaiable
-        if row.basename in FTP_files_list:
+        if row.basename in ftp_files_list:
             df.loc[irow, "bool"] = True
             log.info(row.basename + " found on server :)")
         else:
             df.loc[irow, "bool"] = False
             log.warning(row.basename + " not found on server :(")
 
-    DFgood = df[df["bool"]].copy()
+    df_good = df[df["bool"]].copy()
 
-    DFgood["url"] = "ftp://" + DFgood["url"]
+    df_good["url"] = "ftp://" + df_good["url"]
 
     ### generate the outputs
     if loginftp:
-        urllist_out = list(zip(DFgood.url, DFgood.user, DFgood["pass"]))
+        urllist_out = list(zip(df_good.url, df_good.user, df_good["pass"]))
     else:
-        urllist_out = list(DFgood.url)
+        urllist_out = list(df_good.url)
 
-    savedirlist_out = list(DFgood.savedir)
+    savedirlist_out = list(df_good.savedir)
 
     return urllist_out, savedirlist_out

@@ -6,35 +6,24 @@ This sub-module of geodezyx.operational contains functions to download
 gnss data and products from distant IGS servers. 
 it can be imported directly with:
 from geodezyx import operational
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 #### Import the logger
 import logging
 ########## BEGIN IMPORT ##########
 #### External modules
-# import datetime as dt
-# import glob
-# import itertools
-# import multiprocessing as mp
 import os
-
 import pandas as pd
 
 #### geodeZYX modules
 from geodezyx import conv
 from geodezyx import utils
 
-# import re
-# import shutil
-#### Import star style
-# from geodezyx import *                   # Import the GeodeZYX modules
-# from geodezyx.externlib import *         # Import the external modules
-# from geodezyx.megalib.megalib import *   # Import the legacy modules names
 log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########

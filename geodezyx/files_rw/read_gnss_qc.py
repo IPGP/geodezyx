@@ -26,6 +26,21 @@ log = logging.getLogger('geodezyx')
                         
 
 def read_anubis_xtr_sum(xtr_in):
+    """
+    Read ANUBIS XTR summary information
+
+    Input
+    -----
+    xtr_in : str
+        Path to the XTR file
+
+    Returns
+    -------
+    df_totsum : pandas.DataFrame
+        DataFrame containing the TOTSUM information
+    df_gnssum : pandas.DataFrame
+        DataFrame containing the GNSSUM information
+    """
     
     if os.path.basename(xtr_in).split(".")[-1]  != "xtr":
         log.warn("%s is not a XTR file",xtr_in)
@@ -99,6 +114,19 @@ def read_anubis_xtr_sum(xtr_in):
 #                 |___/   
 
 def read_ringo_systems(file_in):
+    """
+    Read RINGO satellite systems summary tables
+
+    Input
+    -----
+    file_in : str
+        Path to the RINGO QC file
+
+    Returns
+    -------
+    tables : dict
+        Dictionary containing DataFrames for each satellite system
+    """
     
     F = open(file_in)
     L = F.readlines()

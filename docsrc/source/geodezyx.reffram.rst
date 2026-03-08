@@ -3,8 +3,8 @@ geodezyx.reffram package
 
 .. automodule:: geodezyx.reffram
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Submodules
 ----------
@@ -14,37 +14,37 @@ geodezyx.reffram.geometry module
 
 .. automodule:: geodezyx.reffram.geometry
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 geodezyx.reffram.gnss\_products module
 --------------------------------------
 
 .. automodule:: geodezyx.reffram.gnss_products
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 geodezyx.reffram.kepler\_gzyx module
 ------------------------------------
 
 .. automodule:: geodezyx.reffram.kepler_gzyx
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 geodezyx.reffram.quaternions module
 -----------------------------------
 
 .. automodule:: geodezyx.reffram.quaternions
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
-geodezyx.reffram.sofa18 module
-------------------------------
+geodezyx.reffram.sofa module
+----------------------------
 
-.. automodule:: geodezyx.reffram.sofa18
+.. automodule:: geodezyx.reffram.sofa
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

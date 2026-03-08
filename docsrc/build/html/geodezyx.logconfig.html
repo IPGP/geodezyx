@@ -6,21 +6,21 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>geodezyx.logconfig package &mdash; geodezyx 4.x documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+  <title>geodezyx.logconfig package &mdash; geodezyx 5.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="geodezyx.marine package" href="geodezyx.marine.html" />
-    <link rel="prev" title="geodezyx.geodyn package" href="geodezyx.geodyn.html" /> 
+    <link rel="prev" title="geodezyx.interp package" href="geodezyx.interp.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,13 +47,14 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to geodezyx’s documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">GeodeZYX’s complete reference package</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx’s complete reference package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.logconfig package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.logconfig.loggzyx">geodezyx.logconfig.loggzyx module</a></li>
@@ -64,8 +65,8 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.toolbox_meta.html">geodezyx.toolbox_meta package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
 </ul>
 </li>
 </ul>
@@ -86,7 +87,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="geodezyx.html">GeodeZYX’s complete reference package</a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.html">geodezyx’s complete reference package</a></li>
       <li class="breadcrumb-item active">geodezyx.logconfig package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/geodezyx.logconfig.rst.txt" rel="nofollow"> View page source</a>
@@ -111,14 +112,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="geodezyx.geodyn.html" class="btn btn-neutral float-left" title="geodezyx.geodyn package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.interp.html" class="btn btn-neutral float-left" title="geodezyx.interp package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="geodezyx.marine.html" class="btn btn-neutral float-right" title="geodezyx.marine package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

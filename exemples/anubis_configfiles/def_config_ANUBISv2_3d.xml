@@ -111,17 +111,17 @@
    -->
  <gps>            		  <!-- any GNSS constellation: GPS GLO GAL BDS SBS QZS -->
    <sat>  </sat>  		  <!-- list of sys satellites: G01 G02 .. or empty(ALL) -->
-   <type> </type> 		  <!-- list of obs data types: C L D S P or empty(ALL)  -->
+   <type> </type> 		  <!-- list of obs data types: C L D S p or empty(ALL)  -->
    <band> </band> 		  <!-- list of obs data bands: 1 2 5 or empty(ALL) -->
-   <attr> </attr> 		  <!-- list of obs data attrs: A B C D I L M N P Q S W X Y Z or empty(ALL) -->
+   <attr> </attr> 		  <!-- list of obs data attrs: A B C D I L M N p Q S W X Y Z or empty(ALL) -->
    <gobs> </gobs> 		  <!-- list of extend signals: C1C C2C L1C L2C ... or empty(ALL) -->
  </gps>
 
  <glo>            		  <!-- any GNSS constellation: GPS GLO GAL BDS SBS QZS -->
    <sat>  </sat>  		  <!-- list of sys satellites: R01 R02 .. or empty(ALL) -->
-   <type> </type> 		  <!-- list of obs data types: C L D S P or empty(ALL)  -->
+   <type> </type> 		  <!-- list of obs data types: C L D S p or empty(ALL)  -->
    <band> </band> 		  <!-- list of obs data bands: 1 2 3 or empty(ALL) -->
-   <attr> </attr> 		  <!-- list of obs data attrs: A B C D I L M N P Q S W X Y Z or empty(ALL) -->
+   <attr> </attr> 		  <!-- list of obs data attrs: A B C D I L M N p Q S W X Y Z or empty(ALL) -->
    <gobs> </gobs> 		  <!-- list of extend signals: C1C C2C L1C L2C ... or empty(ALL) -->
  </glo>
 

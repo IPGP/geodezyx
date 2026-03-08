@@ -672,17 +672,17 @@ def pres2freq(
         return_optimize_object=False,
 ):
     """
-    Convert pressure to  pressure sensor frequency
+    Convert pressure to pressure sensor frequency
 
-    There is no analytic solution, thus an root find is required
+    There is no analytic solution, thus a root find is required
 
     Parameters
     ----------
-    p_in :
+    p_in : float
         pressure in psi.
-    t_in :
+    t_in : float
         temperature in Celsius.
-    inp : optional
+    inp : str, optional
         input for p_in as pressure ('psi', 'bar', 'mbar', 'pa')
         or distance ('meter').
         The default is 'psi'.
@@ -696,9 +696,9 @@ def pres2freq(
     float
         pressure sensor frequency (Hertz).
 
-    Note
-    ----
-
+    Notes
+    -----
+    The conversion uses a root-finding algorithm to solve the inverse function.
     """
 
     #### Handle p_in as an interable (array, list....)
@@ -1050,7 +1050,7 @@ def resolution_plot_as_gradient_grid(
 #  / _|                | | (_)                                                           | |
 # | |_ _   _ _ __   ___| |_ _  ___  _ __     __ _ _ __ __ ___   _____ _   _  __ _ _ __ __| |
 # |  _| | | | '_ \ / __| __| |/ _ \| '_ \   / _` | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
-# | | | |_| | | | | (__| |_| | (_) | | | | | (_| | | | (_| |\ V /  __/ |_| | (_| | | | (_| |
+# | | | |_| | | | | (__| |_| | (_) | | | | | (_| | | | (_| |\ v /  __/ |_| | (_| | | | (_| |
 # |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|  \__, |_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
 #                                            __/ |                     __/ |
 #                                           |___/                     |___/

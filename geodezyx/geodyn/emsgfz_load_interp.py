@@ -7,12 +7,12 @@ Created on Fri Jun 25 16:43:48 2021
 This sub-module of geodezyx.geodyn contains functions to load 
 and use the GFZ's ESM loading model.
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 ########## BEGIN IMPORT ##########
@@ -248,7 +248,7 @@ def ESMGFZ_extrapolator(path_or_netcdf_object_in,
     
     if time_smart:
         # we work in MJD
-        start_date = conv.dt2MJD(conv.str_date2dt(NC['time'].units[11:]))
+        start_date = conv.dt2mjd(conv.str_date2dt(NC['time'].units[11:]))
         if len(time_orig) <= 366:
             time = start_date - .0 + time_orig 
         else:
@@ -291,7 +291,7 @@ def ESMGFZ_extrapolator(path_or_netcdf_object_in,
     if output_type == "DataFrame":
         Points_out = pd.DataFrame(WishVals_dic)
         if time_smart:
-            Points_out['time_dt'] = conv.MJD2dt(Points_out['time'])
+            Points_out['time_dt'] = conv.mjd2dt(Points_out['time'])
     elif output_type == "dict":
         Points_out = WishVals_dic
     elif output_type == "array":

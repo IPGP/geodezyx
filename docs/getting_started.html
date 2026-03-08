@@ -6,16 +6,16 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Getting started &mdash; geodezyx 4.x documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+  <title>Getting started &mdash; geodezyx 5.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -57,7 +57,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="geodezyx.html">GeodeZYX’s complete reference package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="geodezyx.html">geodezyx’s complete reference package</a></li>
 </ul>
 
         </div>
@@ -88,7 +88,7 @@
 <span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
 <section id="installation">
 <span id="install"></span><h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
-<p>We recommend you to use Python’s virtual environnements to have a clean and isolated environment for the <cite>geodezyx</cite> toolbox.
+<p>We recommend you to use Python’s virtual environnements to have a clean and isolated environment for <cite>geodezyx</cite>.
 If you are not familiar with Python’s virtual environnements, you can follow the <a class="reference external" href="https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/">official documentation</a>.</p>
 <section id="standard-installation-for-non-admin-users">
 <h3>Standard installation (for non-admin users)<a class="headerlink" href="#standard-installation-for-non-admin-users" title="Link to this heading"></a></h3>
@@ -119,25 +119,24 @@ If you are not familiar with Python’s virtual environnements, you can follow t
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">geodezyx</span></code></p></li>
 </ul>
-<p>And then install the toolbox you downloaded. Three solutions are possible:</p>
+<p>And then install the module you downloaded:</p>
 <ol class="arabic simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> (<a class="reference external" href="https://setuptools.pypa.io/en/latest/userguide/development_mode.html">editable mode</a>, recommended if you want to edit the source code)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></code> (standard mode)</p></li>
-<li><p>Add the <code class="docutils literal notranslate"><span class="pre">geodezyx</span></code> folder in your <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>, for experimented (and old-fashoned) users</p></li>
 </ol>
+<p>To push your changes to the repository, don’t forget to set your <a class="reference external" href="https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token">GitHub token first</a>.</p>
 </section>
 </section>
 <section id="minimal-exemple">
 <h2>Minimal exemple<a class="headerlink" href="#minimal-exemple" title="Link to this heading"></a></h2>
-<p>To test if the <cite>geodezyx</cite> toolbox is well installed, import:</p>
+<p>To test if <cite>geodezyx</cite> is well installed, import:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#### Import</span>
-<span class="kn">import</span> <span class="nn">geodezyx</span>           <span class="c1"># Import the geodezyx modules</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geodezyx</span>           <span class="c1"># Import the geodezyx modules</span>
 </pre></div>
 </div>
-<p>If the module are well imported (without errors in the console), fine! you have installed the <cite>geodezyx</cite> toolbox!
+<p>If the module are well imported (without errors in the console), fine! you have installed <cite>geodezyx</cite>!
 If not, check again the potential errors during the installation.</p>
 <p>It might be better to import the modules separatelly, e.g.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">geodezyx.conv</span> <span class="k">as</span> <span class="nn">conv</span>                  <span class="c1"># Import the conversion module</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geodezyx.conv</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">conv</span>                  <span class="c1"># Import the conversion module</span>
 </pre></div>
 </div>
 <p>See the description of each module in the following section</p>
@@ -145,7 +144,7 @@ If not, check again the potential errors during the installation.</p>
 <section id="description-of-the-modules">
 <h2>Description of the Modules<a class="headerlink" href="#description-of-the-modules" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="geodezyx.athmo.html#module-geodezyx.athmo" title="geodezyx.athmo"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.athmo</span></code></a>: functions implementing troposhere/ionosphere models</p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.athmo</span></code>: functions implementing troposhere/ionosphere models</p></li>
 <li><p><a class="reference internal" href="geodezyx.conv.html#module-geodezyx.conv" title="geodezyx.conv"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.conv</span></code></a>: time and coordinates conversion</p></li>
 <li><p><a class="reference internal" href="geodezyx.files_rw.html#module-geodezyx.files_rw" title="geodezyx.files_rw"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.files_rw</span></code></a>: read, import &amp; write geodetic files</p></li>
 <li><p><a class="reference internal" href="geodezyx.geodyn.html#module-geodezyx.geodyn" title="geodezyx.geodyn"><code class="xref py py-mod docutils literal notranslate"><span class="pre">geodezyx.geodyn</span></code></a>: Euler pole calculator and plot velocity field maps</p></li>
@@ -170,7 +169,7 @@ If not, check again the potential errors during the installation.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

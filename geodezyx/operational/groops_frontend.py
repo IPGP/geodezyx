@@ -406,7 +406,7 @@ def groops_ppp_full_runner(
     #### Define rinex-linked variables
     site4char = os.path.basename(rinex_path)[:4].lower()
     date_rnx = conv.rinexname2dt(rinex_path)
-    date_rnx_mjd = int(conv.dt2MJD(date_rnx))
+    date_rnx_mjd = int(conv.dt2mjd(date_rnx))
     date_rin_ymd = conv.dt2str(date_rnx, "%Y-%m-%d")
     date_rin_doy = utils.join_improved("-", *list(reversed(conv.dt2doy_year(date_rnx))))
     date_rin_dow = utils.join_improved("-", *conv.dt2gpstime(date_rnx))

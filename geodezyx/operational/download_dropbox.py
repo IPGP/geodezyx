@@ -24,7 +24,6 @@ import datetime as dt
 #### Import the logger
 import logging
 import os
-
 import pandas as pd
 
 # import wget

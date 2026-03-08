@@ -8,7 +8,7 @@
 Convert time
 ------------
 
-The `geodezyx` toolbox can handle a lot of time **scales** and time **representations**. 
+`geodezyx` can handle a lot of time **scales** and time **representations**. 
 
 What we call `scale` is a physical definition: UTC, GPS Time, TAI...
 
@@ -44,7 +44,7 @@ Convert year/day of year to Modified Julian Day
 
     year,doy = (2021, 169)
     epoch = conv.doy(year, doy)
-    mjd = conv.dt2MJD(epoch)
+    mjd = conv.dt2mjd(epoch)
 
     mjd
     Out: 59383.0
@@ -74,7 +74,7 @@ All the module's functionalites can be found here:
 Convert coordinates 
 -------------------
 
-The `geodezyx` toolbox can easily handle coordinate conversion in Geocentric (X,Y,Z), Geographic (latitude, longitude, height) and topocentric (East, North, Up). 
+`geodezyx` can easily handle coordinate conversion in Geocentric (X,Y,Z), Geographic (latitude, longitude, height) and topocentric (East, North, Up). 
 
 **Warning**: This is considered as the "low-level" coordinate conversions. It does not deal with the different Reference Frame and their realisations (ITRFxx, ETRFxx...). This is managed by "high-level" functions in the ``reffram`` module.
 
@@ -83,40 +83,40 @@ These functions are optimized for arrays (multiple inputs) but can also handle s
 Coordinates conversion exemples
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We consider as exemple the coordinates of the Helmertturm given in latitude, longitude, height from Wikipedia and the GNSS station POTS in Geocentric XYZ.
+We consider as exemple the coordinates of the Helmert Tower, potsdam, Germany given in latitude, longitude, height from Wikipedia and the GNSS station POTS00GER in Geocentric XYZ.
 ::
 
-    Helmertturm = np.array([52.380278, 13.065278,147.983])
-    POTS = np.array([3800689.6341,882077.3857,5028791.3179 ])
+    helmertturm = np.array([52.380278, 13.065278,147.983])
+    pots = np.array([3800689.6341,882077.3857,5028791.3179 ])
 
-We can bring POTS in Geographic and the Helmertturm in Geocentric coordinates
+We can bring pots in Geographic and the helmertturm in Geocentric coordinates
 ::
 
-    POTS_geo = conv.XYZ2GEO(POTS[0],POTS[1],POTS[2])
-    POTS_geo = conv.XYZ2GEO(*POTS)
+    pots_geo = conv.xyz2geo(pots[0],pots[1],pots[2])
+    pots_geo = conv.xyz2geo(*pots)
 
-    POTS_geo
+    pots_geo
     Out: (52.37929737808202, 13.066091316954145, 144.41769897658378)
 
 ::
 
-    Helmertturm_xyz = conv.GEO2XYZ(Helmertturm[0],
-                                   Helmertturm[1],
-                                   Helmertturm[2])
+    helmertturm_xyz = conv.geo2xyz(helmertturm[0],
+                                   helmertturm[1],
+                                   helmertturm[2])
 
-    Helmertturm_xyz = conv.GEO2XYZ(*Helmertturm)
+    helmertturm_xyz = conv.geo2xyz(*helmertturm)
 
-    Helmertturm_xyz
+    helmertturm_xyz
     Out: (89.92804903383008, 14.005569048843014, -6356604.297220887)
 
 
-We can also get the vector between POTS and the Helmertturm 
-(i.e. the Helmertturm in the Topocentric frame centered on POTS)
+We can also get the vector between pots and the helmertturm 
+(i.e. the helmertturm in the Topocentric frame centered on pots)
 
 ::
 
-    conv.XYZ2ENU_2(Helmertturm[0], Helmertturm[1], Helmertturm[2], 
-                   POTS[0],POTS[1],POTS[2])
+    conv.xyz2enu(helmertturm[0], helmertturm[1], helmertturm[2],
+                   pots[0],pots[1],pots[2])
     Out: (array([0.88515353]), array([20735.55848087]), array([-6364723.46820732]))
 
 
@@ -149,7 +149,7 @@ All the module's functionalites can be found here:
 Euler pole determination
 ------------------------
 
-The toolbox proposes tools to manipulate Euler rotation poles:
+`geodezyx` proposes tools to manipulate Euler rotation poles:
 
 - to determine the tectonic plate's Euler pole based on some GNSS absolute velocities (:py:func:`geodezyx.geodyn.euler_pole_calc.euler_pole_calc`).
 - to analyze the quality of the Euler Pole estimation (:py:func:`geodezyx.geodyn.euler_pole_calc.euler_pole_quality`).
@@ -170,7 +170,7 @@ Read and import geodetic products
 Main import functionalities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The toolbox mainly handles:
+`geodezyx` mainly handles:
 
 - The GNSS products such as clock offsets (.clk files) and orbits (.sp3 files): :py:mod:`geodezyx.files_rw.read_gnss_prods`
 - The Earth orientation parameters: :py:mod:`geodezyx.files_rw.read_gnss_prods`
@@ -186,7 +186,7 @@ All the module's functionalites can be found here:
 Read and import geodetic time series
 ------------------------------------
 
-The toolbox is designed to import and pre-process a wide range of geodetic GNSS Time Series.
+`geodezyx` is designed to import and pre-process a wide range of geodetic GNSS Time Series.
 
 Read the dedicated Jupyter notebook stored in  ``<...>/geodezyx/000_exemples/timeseries_reader``
 
@@ -208,32 +208,32 @@ Read the dedicated Jupyter notebook stored in  ``<...>/geodezyx/000_exemples/log
 Point and Click to detect offsets manually
 ------------------------------------------
 
-The toolbox contains a tool to select manually the jumps in the Geodetic Time Series.
+`geodezyx` contains a tool to select manually the jumps in the Geodetic Time Series.
 
 Based on `matplotlib`, you can "point and click" the discontinuities you detected visually with your mouse.
 
-Plot first your data (in a theoretical DataFrame DF)
+Plot first your data (in a theoretical DataFrame df)
 
 ::
 
     fig,(axn,axe,axu) = plt.subplots(3,1)
-    axn.plot(DF["t"],DF["n"])
-    axe.plot(DF["t"],DF["e"])
-    axu.plot(DF["t"],DF["u"])
+    axn.plot(df["t"],df["n"])
+    axe.plot(df["t"],df["e"])
+    axu.plot(df["t"],df["u"])
 
 
 Then, create the Point and Click object
 ::
 
-    PnC = gcls.point_n_click_plot()
-    multi , cid = PnC(fig=fig)
+    pnc = gcls.point_n_click_plot()
+    multi , cid = pnc(fig=fig)
 
 
 
 The selected jumps/offsets are stored in a list attribute of the Point and Click object
 ::
 
-    PnC.selectedX
+    pnc.selectedX
 
 
 Read the dedicated script stored in  ``<...>/geodezyx/000_exemples/logsheets_reader``.
@@ -245,8 +245,23 @@ Statistics and plots for orbit and clock comparisons
 
 TBC
 
+-------------------------------------------------------------
+Complie FORTRAN SOFA library for Earth Orientation Parameters
+-------------------------------------------------------------
 
+1. Download the FORTRAN SOFA library from the IAU SOFA website: https://www.iausofa.org/current-software
+2. Unzip the downloaded file and open a terminal and go to the unzipped folder ``src``
+3. be sure you have ``numpy`` and ``f2py`` installed in your Python environment ``pip install numpy``
+4. Be sure you have _meson_ and _ninja_ build systems installed ``meson ninja-build``
+5. Compile the library with the following command: ``f2py -c *for -m sofa``
+6. Move the generated ``sofa.cpython-<...>.so`` file to the ``geodezyx/reffram`` module
 
+-------------------------------------------------------------
+Pedagogical features for teaching GNSS processing
+-------------------------------------------------------------
+_geodezyx_ integrates a set of educational scripts designed to guide students step-by-step through the logic of GNSS data processing.
+The approach is based on progressive enrichment of the least-squares model, making each geophysical correction or parameter estimation visible and traceable.
 
+These scripts are self-explanatory and located in the `exemples/gnss_edu` folder.
 
 

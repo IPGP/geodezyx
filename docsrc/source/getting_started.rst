@@ -10,7 +10,7 @@ Getting started
 Installation
 ------------
 
-We recommend you to use Python's virtual environnements to have a clean and isolated environment for the `geodezyx` toolbox.
+We recommend you to use Python's virtual environnements to have a clean and isolated environment for `geodezyx`.
 If you are not familiar with Python's virtual environnements, you can follow the `official documentation <https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/>`_.
 
 Standard installation (for non-admin users)
@@ -56,24 +56,23 @@ Go to the folder where you cloned the repository:
 
 * ``cd geodezyx``
 
-And then install the toolbox you downloaded. Three solutions are possible:
+And then install the module you downloaded:
 
 1. ``pip install -e .`` (`editable mode <https://setuptools.pypa.io/en/latest/userguide/development_mode.html>`_, recommended if you want to edit the source code)
-2. ``python setup.py install`` (standard mode)
-3. Add the ``geodezyx`` folder in your ``PYTHONPATH``, for experimented (and old-fashoned) users
 
+To push your changes to the repository, don't forget to set your `GitHub token first <https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token>`_.
 
 ---------------
 Minimal exemple
 ---------------
 
-To test if the `geodezyx` toolbox is well installed, import:
+To test if `geodezyx` is well installed, import:
 ::
 
     #### Import
     import geodezyx           # Import the geodezyx modules
 
-If the module are well imported (without errors in the console), fine! you have installed the `geodezyx` toolbox!
+If the module are well imported (without errors in the console), fine! you have installed `geodezyx`!
 If not, check again the potential errors during the installation.
 
 It might be better to import the modules separatelly, e.g.:

@@ -17,8 +17,11 @@ import pandas as pd
 import xarray as xr
 # import gsw
 #from scipy.signal import butter, filtfilt
-import scipy.signal as signal
-import scipy.optimize as optimize
+#import scipy.signal as signal
+#import scipy.optimize as optimize
+import scipy
+
+
 import datetime as dt
 
 
@@ -28,6 +31,23 @@ import datetime as dt
 #from scipy.signal import butter
 
 GRAVITY = 9.81
+
+
+def read_rbr_txt_data(file, t0 = None, t1 = None):
+
+    col = ['BPR temperature', 'BPR pressure', 'BPR temperature.1',
+           'BPR pressure.1', 'Temperature', 'Barometer temperature',
+           'Barometer pressure']
+
+    new_col = ['BPR temperature 1', 'BPR pressure 1', 'BPR temperature 2',
+           'BPR pressure 2', 'Temperature', 'Barometer temperature',
+           'Barometer pressure']
+
+    a0a = pd.read_csv(file, index_col = 0, parse_dates = True)
+    a0a = a0a[col]
+    a0a.columns = new_col
+    return a0a[t0:t1].dropna()
+
 
 def butter_highpass(cutoff, fs, order=5):
     """
@@ -51,7 +71,7 @@ def butter_highpass(cutoff, fs, order=5):
     """
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
-    out_butter = signal.butter(order, normal_cutoff, btype='high', analog=False, output='ba')
+    out_butter = scipy.signal.butter(order, normal_cutoff, btype='high', analog=False, output='ba')
     b, a = out_butter[0], out_butter[1]
     return b, a
 
@@ -77,10 +97,14 @@ def butter_lowpass(cutoff, fs, order=5):
     """
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
-    out_butter = signal.butter(order, normal_cutoff, btype='low', analog=False, output='ba')
+    out_butter = scipy.signal.butter(order, normal_cutoff, btype='low', analog=False, output='ba')
     b, a = out_butter[0], out_butter[1]
 
     return b, a
+
+def padlen(data_inp):
+    #return len(data_inp) - 1
+    return None
 
 def butter_highpass_filtfilt(data, cutoff, fs, order=4):
     """
@@ -103,7 +127,7 @@ def butter_highpass_filtfilt(data, cutoff, fs, order=4):
         The filtered data.
     """
     b, a = butter_highpass(cutoff, fs, order=order)
-    y = signal.filtfilt(b, a, data)
+    y = scipy.signal.filtfilt(b, a, data, padlen=padlen(data), padtype=None)
     return y
 
 def butter_lowpass_filtfilt(data, cutoff, fs, order=4):
@@ -127,7 +151,7 @@ def butter_lowpass_filtfilt(data, cutoff, fs, order=4):
         The filtered data.
     """
     b, a = butter_lowpass(cutoff, fs, order=order)
-    y = signal.filtfilt(b, a, data)
+    y = scipy.signal.filtfilt(b, a, data, padlen=padlen(data))
     return y
 
 def butter_bandpass(lowcut, highcut, fs, order=3):
@@ -152,7 +176,7 @@ def butter_bandpass(lowcut, highcut, fs, order=3):
     a : ndarray
         The denominator coefficient vector of the filter.
     """
-    return signal.butter(order, [lowcut, highcut], fs=fs, btype='band')
+    return scipy.signal.butter(order, [lowcut, highcut], fs=fs, btype='band')
 
 def butter_bandpass_filtfilt(data, lowcut, highcut, fs, order=4):
     """
@@ -177,7 +201,7 @@ def butter_bandpass_filtfilt(data, lowcut, highcut, fs, order=4):
         The filtered data.
     """
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = signal.filtfilt(b, a, data)
+    y = scipy.signal.filtfilt(b, a, data)
     return y
 
 def butterworth(df, t0=3*24*3600, t1=10*24*3600, kind='bandpass', order=4):
@@ -213,17 +237,19 @@ def butterworth(df, t0=3*24*3600, t1=10*24*3600, kind='bandpass', order=4):
         return
     else:
         fs = 1/(float(difftime[0])/1e9)
+        
+    vals = df.values.squeeze()
 
     if kind == 'highpass':
         cut = 1/t0
-        y = butter_highpass_filtfilt(df.values, cut, fs, order=order)
+        y = butter_highpass_filtfilt(vals, cut, fs, order=order)
     elif kind == 'lowpass':
         cut = 1/t0
-        y = butter_lowpass_filtfilt(df.values, cut, fs, order=order)
+        y = butter_lowpass_filtfilt(vals, cut, fs, order=order)
     elif kind == 'bandpass':
         lowcut = 1/t1
         highcut = 1/t0
-        y = butter_bandpass_filtfilt(df.values, lowcut, highcut, fs, order=order)
+        y = butter_bandpass_filtfilt(vals, lowcut, highcut, fs, order=order)
     else:
         print(f'Invalid filter type : {kind}. Must be highpass, lowpass, or bandpass.')
         return
@@ -515,15 +541,18 @@ def compute_phibot(profile, ssh=None, integration='forward', rho=10.35, remove_m
     Notes
     -----
     phibot = Ocean hydrostatic bottom pressure anomaly
+
+    References
+    ----------
     https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html
     https://cmr.earthdata.nasa.gov/search/concepts/V2146301108-POCLOUD.html
 
+    PHIBOT is the Bottom Pressure Potential Anomaly (p/rhonil, m^2/s^2)
+        To convert to m, divide by g (g=9.81 m/s^2)
+        PHIBOT is the anomaly relative to Depth * rhonil * g
+        The absolute bottom pressure in Pa is:
+        Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)
 
-    PHIBOT		Bottom Pressure Pot. Anomaly (p/rhonil, m^2/s^2)
-                To convert to m, divide by g (g=9.81 m/s^2)
-		PHIBOT is the anomaly relative to Depth * rhonil * g
-		The absolute bottom pressure in Pa is:
-		Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)
     http://apdrc.soest.hawaii.edu/doc/Readme_ecco2_cube92
     """
     if isinstance(ssh, type(None)):
@@ -563,7 +592,9 @@ def compute_spectrogram(df, max_period=45, nchunks=3600*6):
     """
     from scipy.signal import spectrogram
 
-    f, t, sxx = spectrogram(df.values, nperseg=nchunks, scaling='density')
+    vals = df.values.squeeze()
+
+    f, t, sxx = spectrogram(vals, nperseg=nchunks, scaling='density')
     p = (1/f[1:])
     sxx = sxx[1:]
     i = np.argmin(np.abs(p - max_period))
