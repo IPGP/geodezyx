@@ -2,7 +2,7 @@
 
 # geodezyx
 
-**Version: 5.1.1**  
+**Version: 5.1.1-final1**  
 **Date: 2026-03-08**  
 
 **Authors:** 
@@ -37,9 +37,6 @@ time and space-coordinates conversion functions,
 data (especially GNSS observations and orbits) retrieve functions, 
 plots and visual selection functions ...
 
-It is designed for Python 3 on a LINUX Ubuntu-like system.
-Also tested with Anaconda
-
 ## Toolbox's highlights
 * read RINEX2 and RINEX3/4 as Pandas' DataFrame
 * read SINEX, SP3 & Clock RINEX as Pandas' DataFrame
@@ -73,7 +70,7 @@ GNU Lesser General Public License, Version 3, 29 June 2007
 _geodezyx_ is free software: you can redistribute it and/or modify it
 under the terms of the GNU Lesser General Public License as published by the 
 Free Software Foundation, either version 3 of the License, or 
-(at your option) any later version. The geodeZYX toolbox is distributed 
+(at your option) any later version. _geodezyx_ is distributed 
 in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even 
 the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 See the GNU Lesser General Public License for more details. 
