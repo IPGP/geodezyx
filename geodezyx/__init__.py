@@ -30,7 +30,7 @@ else:
 from . import conv
 from . import utils
 
-#from . import athmo
+#from . import atmo
 #from . import files_rw
 #from . import geodyn
 #from . import interp
@@ -41,7 +41,7 @@ from . import utils
 #from . import time_series
 #from . import utils_xtra
 
-__all__ = ['athmo',
+__all__ = ['atmo',
            'conv',
            'externlib',
            'files_rw',
