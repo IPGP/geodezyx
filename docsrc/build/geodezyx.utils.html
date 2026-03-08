@@ -169,69 +169,213 @@ GitHub repository :
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.chunkIt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">chunkIt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.chunkIt" title="Link to this definition"></a></dt>
-<dd><p>make num sublists of a list</p>
+<dd><p>Divide a list into approximately num equal sublists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seq</strong> (<em>list</em><em> or </em><em>array-like</em>) – Input sequence to divide.</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – Desired number of sublists.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of sublists, each roughly equal in size.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The sublists may vary in size by 1 element if the sequence length
+is not evenly divisible by num.</p>
+<p>Source: <a class="reference external" href="http://stackoverflow.com/questions/2130016/splitting-a-list-of-arbitrary-size-into-only-roughly-n-equal-parts">http://stackoverflow.com/questions/2130016/splitting-a-list-of-arbitrary-size-into-only-roughly-n-equal-parts</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.consecutive_groupIt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">consecutive_groupIt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_start_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.consecutive_groupIt" title="Link to this definition"></a></dt>
-<dd><p>Identify groups of continuous numbers in a list</p>
-<p>Useful for time period with a prealable conversion to MJD</p>
+<dd><p>Identify groups of continuous numbers in a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>list</em><em> or </em><em>array-like</em>) – Input sequence of numbers.</p></li>
+<li><p><strong>only_start_end</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return only (start, end) tuples for each group.
+If False, return full lists of elements in each group. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of groups. Each group is either a list of consecutive elements
+(if only_start_end=False) or a tuple (start, end) (if only_start_end=True).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Useful for time periods with a prior conversion to MJD.</p>
 <p>Source :
 <a class="reference external" href="https://stackoverflow.com/questions/2154249/identify-groups-of-continuous-numbers-in-a-list">https://stackoverflow.com/questions/2154249/identify-groups-of-continuous-numbers-in-a-list</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.decimateIt">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">decimateIt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.decimateIt" title="Link to this definition"></a></dt>
-<dd><p>n so as np.mod(i,n) == 0</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">decimateIt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listinp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.decimateIt" title="Link to this definition"></a></dt>
+<dd><p>Decimate a list by selecting every n-th element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>listinp</strong> (<em>list</em><em> or </em><em>array-like</em>) – Input sequence to decimate.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Decimation factor. Elements at indices where i % n == 0 are selected.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decimated list containing every n-th element.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.df_sel_val_in_col">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">df_sel_val_in_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.df_sel_val_in_col" title="Link to this definition"></a></dt>
-<dd><p>Return a selected value of a column in a DataFrame
-i.e.
-return DF[DF[col_name] == col_val]</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">df_sel_val_in_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.df_sel_val_in_col" title="Link to this definition"></a></dt>
+<dd><p>Select rows from a DataFrame where a column matches a specific value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – Input DataFrame.</p></li>
+<li><p><strong>col_name</strong> (<em>str</em>) – Name of the column to filter by.</p></li>
+<li><p><strong>col_val</strong> (<em>scalar</em>) – Value to match in the specified column.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered DataFrame containing only rows where col_name == col_val.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.dicofdic">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">dicofdic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.dicofdic" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Create a 2D dictionary from a matrix and corresponding names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat</strong> (<em>array-like</em>) – N x N matrix of values.</p></li>
+<li><p><strong>names</strong> (<em>list</em>) – List of N names to use as keys for both dimensions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A nested dictionary where dic[name1][name2] = mat[i, j]
+where i and j are the indices corresponding to name1 and name2.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Source: <a class="reference external" href="http://stackoverflow.com/questions/13326042/2d-dictionary-with-multiple-keys-per-value">http://stackoverflow.com/questions/13326042/2d-dictionary-with-multiple-keys-per-value</a></p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.duplicates_finder">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">duplicates_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.duplicates_finder" title="Link to this definition"></a></dt>
-<dd><p>from
-<a class="reference external" href="http://stackoverflow.com/questions/9835762/find-and-list-duplicates-in-python-list">http://stackoverflow.com/questions/9835762/find-and-list-duplicates-in-python-list</a>
-moooeeeep solution</p>
+<dd><p>Find all duplicate elements in a sequence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seq</strong> (<em>iterable</em>) – Input sequence to search for duplicates.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of elements that appear more than once in the input sequence.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Source: <a class="reference external" href="http://stackoverflow.com/questions/9835762/find-and-list-duplicates-in-python-list">http://stackoverflow.com/questions/9835762/find-and-list-duplicates-in-python-list</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.find_common_elts">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">find_common_elts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">lists</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.find_common_elts" title="Link to this definition"></a></dt>
-<dd><p>Find common elements in different lists</p>
+<dd><p>Find common elements across multiple lists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*lists</strong> (<em>list</em>) – Variable number of input lists.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sorted array of elements common to all input lists.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.find_index_multi_occurences">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">find_index_multi_occurences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.find_index_multi_occurences" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">find_index_multi_occurences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.find_index_multi_occurences" title="Link to this definition"></a></dt>
+<dd><p>Find all indices where an element occurs in a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>l</strong> (<em>list</em>) – Input list to search.</p></li>
+<li><p><strong>elt</strong> (<em>scalar</em>) – Element to find.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of indices where elt appears in L.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.find_interval_bound">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">find_interval_bound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outindexes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.find_interval_bound" title="Link to this definition"></a></dt>
-<dd><p>trouve les bornes d’un intervalle
-(listin est supposé triée)</p>
+<dd><p>Find the bounding values/indices of an interval around a target value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>listin</strong> (<em>list</em><em> or </em><em>array-like</em>) – Input list/array (assumed to be sorted).</p></li>
+<li><p><strong>val</strong> (<em>scalar</em>) – Target value to find bounds for.</p></li>
+<li><p><strong>outindexes</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return indices of bounds. If False, return the bounding values.
+Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>If outindexes is True, returns (lower_index, upper_index).
+If outindexes is False, returns (lower_value, upper_value).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.find_nearest">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">find_nearest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.find_nearest" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>value of the nearest , index of the nearest</p>
+<dd><p>Find the nearest value in a list to a target value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>listin</strong> (<em>list</em><em> or </em><em>array-like</em>) – Input list/array to search.</p></li>
+<li><p><strong>value</strong> (<em>scalar</em>) – Target value to find nearest element to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(nearest_value, index_of_nearest) where nearest_value is the element
+in listin closest to value, and index_of_nearest is its index.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
@@ -239,22 +383,47 @@ moooeeeep solution</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.find_regex_in_list">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">find_regex_in_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_first_occurence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.find_regex_in_list" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Find elements in a list matching a regular expression pattern.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regex</strong> (<em>str</em>) – Regular expression pattern to search for.</p></li>
+<li><p><strong>L</strong> (<em>list</em>) – List of strings to search.</p></li>
+<li><p><strong>only_first_occurence</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return only the first match. If False, return all matches.
+Default is False.</p></li>
+<li><p><strong>line_number</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return tuples of (index, element). If False, return just elements.
+Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>If only_first_occurence=True, returns a single match (element or tuple).
+If only_first_occurence=False, returns a list of matches.
+Format depends on line_number parameter.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list or scalar</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.find_surrounding">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">find_surrounding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.find_surrounding" title="Link to this definition"></a></dt>
-<dd><p>find the surrounding values</p>
+<dd><p>Find the two nearest values surrounding a target value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>L</strong> (<em>Iterable</em>) – Input list/array.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> (<em>iterable</em>) – Input list/array to search.</p></li>
+<li><p><strong>v</strong> (<em>scalar</em>) – Target value to find surrounding values for.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>surrounding_values</strong> (<em>tuple</em>) – surounding values.</p></li>
-<li><p><strong>surrounding_index</strong> (<em>tuple</em>) – surounding indexes.</p></li>
-</ul>
-</p>
+<dd class="field-even"><p>(surrounding_values, surrounding_indices) where:
+- surrounding_values is a tuple of the two nearest values
+- surrounding_indices is a tuple of their indices in L</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
@@ -262,67 +431,196 @@ moooeeeep solution</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.get_interval">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">get_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.get_interval" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Generate a list of values at regular intervals between start and end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>numeric</em>) – Starting value (inclusive).</p></li>
+<li><p><strong>end</strong> (<em>numeric</em>) – Ending value (exclusive).</p></li>
+<li><p><strong>delta</strong> (<em>numeric</em>) – Step size between consecutive values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of values from start to end with step delta.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Source: <a class="reference external" href="http://stackoverflow.com/questions/10688006/generate-a-list-of-datetimes-between-an-interval-in-python">http://stackoverflow.com/questions/10688006/generate-a-list-of-datetimes-between-an-interval-in-python</a></p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.groups_near_central_values">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">groups_near_central_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.groups_near_central_values" title="Link to this definition"></a></dt>
-<dd><p>beta … bug if tol is bad
-tol : absolute tolerance
-170514 : B is an annex list</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">groups_near_central_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.groups_near_central_values" title="Link to this definition"></a></dt>
+<dd><p>group elements of an array by proximity to unique central values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>array-like</em>) – Input array to group.</p></li>
+<li><p><strong>tol</strong> (<em>float</em>) – Absolute tolerance for grouping elements near central values.</p></li>
+<li><p><strong>b</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Auxiliary array corresponding to elements in A. Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>If B is None, returns a list of lists where each sublist contains
+elements from A grouped around a central value.
+If B is provided, returns a tuple (groups_A, groups_B) containing
+grouped elements from both arrays.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list or tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function is in beta status and may have bugs if tolerance is poorly chosen.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.identical_consecutive_eltsIt">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">identical_consecutive_eltsIt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Lin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.identical_consecutive_eltsIt" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.list_utils.identical_groupIt">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">identical_groupIt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.identical_groupIt" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Source :</dt><dd><p><a class="reference external" href="https://stackoverflow.com/questions/30293071/python-find-same-values-in-a-list-and-group-together-a-new-list">https://stackoverflow.com/questions/30293071/python-find-same-values-in-a-list-and-group-together-a-new-list</a></p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">identical_consecutive_eltsIt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">linp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.identical_consecutive_eltsIt" title="Link to this definition"></a></dt>
+<dd><p>Group consecutive identical elements together.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>linp</strong> (<em>list</em><em> or </em><em>iterable</em>) – Input sequence with potentially repeated consecutive elements.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of lists, where each inner list contains consecutive identical elements.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.list_utils.identical_groupIt">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">identical_groupIt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.identical_groupIt" title="Link to this definition"></a></dt>
+<dd><p>Group consecutive identical elements together.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em><em> or </em><em>iterable</em>) – Input sequence with potentially repeated consecutive elements.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of lists, where each inner list contains consecutive identical elements.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Source :
+<a class="reference external" href="https://stackoverflow.com/questions/30293071/python-find-same-values-in-a-list-and-group-together-a-new-list">https://stackoverflow.com/questions/30293071/python-find-same-values-in-a-list-and-group-together-a-new-list</a></p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.is_listoflist">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">is_listoflist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.is_listoflist" title="Link to this definition"></a></dt>
-<dd><p>check if inp is a list of list [[…] , […] , … ,[…]]</p>
+<dd><p>Check if inp is a list of list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inp</strong> (<em>iterable</em>) – Input object to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if inp contains at least one list or numpy array element,
+False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_listoflist</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_listoflist</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">False</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.median_improved">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">median_improved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.median_improved" title="Link to this definition"></a></dt>
-<dd><p>manage the case where len(L) is even
-in this case, doesn’t return the mean of the 2 medians, but the nearest value</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">median_improved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.median_improved" title="Link to this definition"></a></dt>
+<dd><p>Calculate the median of a list, handling even-length lists differently.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>l</strong> (<em>list</em><em> or </em><em>array-like</em>) – Input sequence.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The median value. For even-length lists, returns the nearest value
+in the list to the actual median instead of interpolating.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>scalar</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For even-length lists, does not return the mean of the two middle values
+but instead returns the nearest value from the input list.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.middle">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">middle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Lin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.middle" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">middle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">linp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.middle" title="Link to this definition"></a></dt>
+<dd><p>Calculate the midpoints between consecutive elements of a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>linp</strong> (<em>list</em><em> or </em><em>array-like</em>) – Input sequence with at least 2 elements.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of midpoint values between consecutive elements.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.minmax">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">minmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.minmax" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">minmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.minmax" title="Link to this definition"></a></dt>
+<dd><p>Find the minimum and maximum values in a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>l</strong> (<em>list</em><em> or </em><em>array-like</em>) – Input sequence.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(min_value, max_value) of the input sequence.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.most_common">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">most_common</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.most_common" title="Link to this definition"></a></dt>
-<dd><p><a class="reference external" href="http://stackoverflow.com/questions/1518522/python-most-common-element-in-a-list">http://stackoverflow.com/questions/1518522/python-most-common-element-in-a-list</a></p>
+<dd><p>Find the most frequently occurring element in a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lst</strong> (<em>list</em><em> or </em><em>iterable</em>) – Input sequence to analyze.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The element with the highest frequency in the list.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>scalar</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Source: <a class="reference external" href="http://stackoverflow.com/questions/1518522/python-most-common-element-in-a-list">http://stackoverflow.com/questions/1518522/python-most-common-element-in-a-list</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.occurence">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">occurence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.occurence" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">occurence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.occurence" title="Link to this definition"></a></dt>
 <dd><p>Count occurrences of elements in a list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>L</strong> (<em>list</em>) – Input list</p></li>
+<li><p><strong>l</strong> (<em>list</em>) – Input list</p></li>
 <li><p><strong>tolerence</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance to find close elements of L
 if no tolerance is given then a set() is used</p></li>
 <li><p><strong>pretty_output</strong> (<em>bool</em>) – <p>if False, return a list of 2-tuples:</p>
@@ -348,19 +646,69 @@ the equal test is also replaced by is close</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.second_smallest">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">second_smallest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numbers</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.second_smallest" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Find the second smallest value in a sequence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>numbers</strong> (<em>iterable</em>) – Input sequence to analyze.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The second smallest element in the sequence.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>scalar</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Returns infinity if there are fewer than 2 elements.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.shrink_listoflist">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">shrink_listoflist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.shrink_listoflist" title="Link to this definition"></a></dt>
-<dd><p>if lin (list in) is a list of list and contains only one element
-then returns the sublist, e.g. : [[a,b,c]] =&gt; [a,b,c]</p>
+<dd><p>Shrink a list of list if it contains only one sublist.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">lin</span></code> is a list of list and contains only one element,
+returns the inner sublist, e.g. <code class="docutils literal notranslate"><span class="pre">[[a,</span> <span class="pre">b,</span> <span class="pre">c]]</span></code> =&gt; <code class="docutils literal notranslate"><span class="pre">[a,</span> <span class="pre">b,</span> <span class="pre">c]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lin</strong> (<em>list</em>) – Input list, potentially a list of lists.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The single sublist if <code class="docutils literal notranslate"><span class="pre">lin</span></code> is a one-element list of lists,
+otherwise <code class="docutils literal notranslate"><span class="pre">lin</span></code> unchanged.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">shrink_listoflist</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="go">[1, 2, 3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shrink_listoflist</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+<span class="go">[[1, 2], [3, 4]]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.sliceIt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">sliceIt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.sliceIt" title="Link to this definition"></a></dt>
-<dd><p>make sublist of num elts of a list</p>
+<dd><p>Divide a list into sublists of fixed size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seq</strong> (<em>list</em><em> or </em><em>array-like</em>) – Input sequence to divide.</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – Size of each sublist.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of sublists, each containing num elements (last sublist may be shorter).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Source: <a class="reference external" href="http://stackoverflow.com/questions/4501636/creating-sublists">http://stackoverflow.com/questions/4501636/creating-sublists</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -382,16 +730,48 @@ then returns the sublist, e.g. : [[a,b,c]] =&gt; [a,b,c]</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.sort_binom_list">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">sort_binom_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">array_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.sort_binom_list" title="Link to this definition"></a></dt>
-<dd><p>sort Y according to X
-and sort X</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">sort_binom_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">array_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.sort_binom_list" title="Link to this definition"></a></dt>
+<dd><p>Sort Y according to X and sort X.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>list</em><em> or </em><em>array-like</em>) – Reference values to sort by.</p></li>
+<li><p><strong>y</strong> (<em>list</em><em> or </em><em>array-like</em>) – Values to sort according to X ordering.</p></li>
+<li><p><strong>array_out</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return numpy arrays. If False, return lists. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(xnew, ynew) where both are sorted according to X.
+Type depends on array_out parameter.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Warning</strong> – If len(X) != len(Y), a warning is logged.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.sort_multinom_list">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">sort_multinom_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.sort_multinom_list" title="Link to this definition"></a></dt>
-<dd><p>sort Y according to X
-and sort X</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">sort_multinom_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.sort_multinom_list" title="Link to this definition"></a></dt>
+<dd><p>Sort multiple Y sequences according to X and sort X.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>list</em><em> or </em><em>array-like</em>) – Reference values to sort by.</p></li>
+<li><p><strong>*y</strong> (<em>list</em><em> or </em><em>array-like</em>) – Variable number of sequences to sort according to X ordering.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(xnew, Ynew_1, Ynew_2, …) where all sequences are sorted according to X.
+X is returned as a numpy array, while Y sequences are returned as lists.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -417,64 +797,185 @@ and sort X</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.sublistsIt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">sublistsIt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lenofsublis_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.sublistsIt" title="Link to this definition"></a></dt>
-<dd><p>make sublists of seq , accoding to len of the sublist in lenofsublis_lis
-ex lenofsublis_lis = [2,3,4,2]</p>
-<p>if output_array : output list of array , else list of list</p>
-<p>(fct perso)</p>
+<dd><p>Divide a sequence into sublists of specified sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seq</strong> (<em>list</em><em> or </em><em>array-like</em>) – Input sequence to divide.</p></li>
+<li><p><strong>lenofsublis_lis</strong> (<em>list</em>) – List of integers specifying the size of each sublist.
+Example: [2, 3, 4, 2] creates 4 sublists of sizes 2, 3, 4, and 2.</p></li>
+<li><p><strong>output_array</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return list of numpy arrays. If False, return list of lists.
+Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of sublists (or arrays if output_array=True).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If sum(lenofsublis_lis) != len(seq).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.trio_lists_2_tab">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">trio_lists_2_tab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xlis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ylis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vlis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.trio_lists_2_tab" title="Link to this definition"></a></dt>
-<dd><p>From a trio of lists
-Xlis =&gt; parameter you want in columns
-Ylis =&gt; parameter you want in rows
-Vlis =&gt; data(X,Y)</p>
-<p>make a tab compatible with mabular module
-tabulate(Finalis, headers=”firstrow”)</p>
-<p>NB : very dirty research of the elements …</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">trio_lists_2_tab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xlis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.trio_lists_2_tab" title="Link to this definition"></a></dt>
+<dd><p>Convert three lists into a 2D table structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xlis</strong> (<em>list</em>) – List of X values that will become column headers.</p></li>
+<li><p><strong>ylis</strong> (<em>list</em>) – List of Y values that will become row headers.</p></li>
+<li><p><strong>vlis</strong> (<em>list</em>) – List of data values corresponding to (X, Y) pairs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 2D table structure where the first row contains X values,
+and subsequent rows contain Y value and corresponding V values.
+Compatible with the tabulate module.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The data lookup is performed with a brute-force approach (nested loops),
+which is not optimized for large datasets.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">trio_lists_2_tab</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">])</span>
+<span class="go">[[1, 2], [1, 10, 20], [2, 30, 40]]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.uniq_and_sort">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">uniq_and_sort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.uniq_and_sort" title="Link to this definition"></a></dt>
-<dd><p>In a list, remove duplicates and sort the list</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">uniq_and_sort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.uniq_and_sort" title="Link to this definition"></a></dt>
+<dd><p>Remove duplicates from a list and sort it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>l</strong> (<em>list</em>) – Input list to deduplicate and sort.</p></li>
+<li><p><strong>natural_sort</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use natural sorting (default). If False, use standard sorting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sorted list with duplicate elements removed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.uniq_set_list">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">uniq_set_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">setlis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.uniq_set_list" title="Link to this definition"></a></dt>
-<dd><p>uniqify a list of sets</p>
+<dd><p>Remove duplicate sets from a list of sets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>setlis</strong> (<em>list</em><em> of </em><em>sets</em>) – Input list containing sets or set-like iterables.</p></li>
+<li><p><strong>frozen</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, returns frozensets (hashable and immutable). Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of unique sets (either sets or frozensets depending on frozen parameter).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.uniqify_list">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">uniqify_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idfun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.uniqify_list" title="Link to this definition"></a></dt>
-<dd><p>order preserving uniq function
-based on
-<a class="reference external" href="https://www.peterbe.com/plog/uniqifiers-benchmark">https://www.peterbe.com/plog/uniqifiers-benchmark</a></p>
+<dd><p>Remove duplicate elements from a sequence while preserving order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seq</strong> (<em>iterable</em>) – Input sequence to deduplicate.</p></li>
+<li><p><strong>idfun</strong> (<em>callable</em><em>, </em><em>optional</em>) – Function to extract the identifier for uniqueness comparison.
+If None, the elements themselves are used as identifiers.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Deduplicated sequence with order preserved.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Based on: <a class="reference external" href="https://www.peterbe.com/plog/uniqifiers-benchmark">https://www.peterbe.com/plog/uniqifiers-benchmark</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.uniqify_list_of_lists">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">uniqify_list_of_lists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.uniqify_list_of_lists" title="Link to this definition"></a></dt>
-<dd><p>source
-<a class="reference external" href="http://stackoverflow.com/questions/3724551/python-uniqueness-for-list-of-lists">http://stackoverflow.com/questions/3724551/python-uniqueness-for-list-of-lists</a></p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">uniqify_list_of_lists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.uniqify_list_of_lists" title="Link to this definition"></a></dt>
+<dd><p>Remove duplicate sublists while preserving uniqueness.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>l</strong> (<em>list</em><em> of </em><em>lists</em>) – Input list containing sublists.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of unique sublists.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Source: <a class="reference external" href="http://stackoverflow.com/questions/3724551/python-uniqueness-for-list-of-lists">http://stackoverflow.com/questions/3724551/python-uniqueness-for-list-of-lists</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.uniquetol">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">uniquetol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.uniquetol" title="Link to this definition"></a></dt>
-<dd><p>tol : absolute tolerance
-source
-<a class="reference external" href="http://stackoverflow.com/questions/37847053/uniquify-an-array-list-with-a-tolerance-in-python-uniquetol-equivalent">http://stackoverflow.com/questions/37847053/uniquify-an-array-list-with-a-tolerance-in-python-uniquetol-equivalent</a></p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">uniquetol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.uniquetol" title="Link to this definition"></a></dt>
+<dd><p>Find unique elements in an array within a tolerance threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>array-like</em>) – Input array.</p></li>
+<li><p><strong>tol</strong> (<em>float</em>) – Absolute tolerance for uniqueness comparison.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of unique elements within the specified tolerance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Source: <a class="reference external" href="http://stackoverflow.com/questions/37847053/uniquify-an-array-list-with-a-tolerance-in-python-uniquetol-equivalent">http://stackoverflow.com/questions/37847053/uniquify-an-array-list-with-a-tolerance-in-python-uniquetol-equivalent</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.list_utils.uniquetol2">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">uniquetol2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.uniquetol2" title="Link to this definition"></a></dt>
-<dd><p>This one is faster
-<a class="reference external" href="https://stackoverflow.com/questions/5426908/find-unique-elements-of-floating-point-array-in-numpy-with-comparison-using-a-d">https://stackoverflow.com/questions/5426908/find-unique-elements-of-floating-point-array-in-numpy-with-comparison-using-a-d</a></p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.list_utils.</span></span><span class="sig-name descname"><span class="pre">uniquetol2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.list_utils.uniquetol2" title="Link to this definition"></a></dt>
+<dd><p>Find unique elements in an array within a tolerance threshold (optimized version).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>array-like</em>) – Input array.</p></li>
+<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for rounding before finding unique elements. Default is 10**-6.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of unique elements.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is a faster alternative to uniquetol.
+Source: <a class="reference external" href="https://stackoverflow.com/questions/5426908/find-unique-elements-of-floating-point-array-in-numpy-with-comparison-using-a-d">https://stackoverflow.com/questions/5426908/find-unique-elements-of-floating-point-array-in-numpy-with-comparison-using-a-d</a></p>
 </dd></dl>
 
 </section>

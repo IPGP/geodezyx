@@ -511,7 +511,7 @@ def split_string_after_n_chars_at_space(s, n):
     Splits a string into substrings of a maximum length of n characters.
 
     This function splits a string into substrings of a maximum length of n characters,
-    but only splits at spaces and inserts a newline (``\n``) after each substring.
+    but only splits at spaces and inserts a newline (``\\n``) after each substring.
 
     Parameters
     ----------
