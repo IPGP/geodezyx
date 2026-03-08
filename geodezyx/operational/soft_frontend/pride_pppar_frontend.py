@@ -12,15 +12,13 @@ import datetime as dt
 import logging
 import multiprocessing as mp
 import os
-import re
 import shutil
-import subprocess
 
 import hatanaka
 
 from geodezyx import conv
-from geodezyx import files_rw
 from geodezyx import operational
+import geodezyx.operational.soft_frontend.common_frontend as common_frontend
 from geodezyx import utils
 
 log = logging.getLogger('geodezyx')
@@ -50,188 +48,7 @@ def remove_regex_reserved_characters(input_string):
 
     return cleaned_string
 
-def run_command(command):
-    """
-    Runs a shell command and captures both stdout and stderr.
-
-    Parameters
-    ----------
-    command : str
-        The shell command to be executed.
-
-    Notes
-    -----
-    This function uses subprocess.Popen to run the command in a new process.
-    It continuously reads and prints stdout and stderr until the process finishes.
-    The function prints the return code of the process once it completes.
-    """
-    # Run the command and capture both stdout and stderr
-    process = subprocess.Popen(
-        [command],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        executable="/bin/bash",
-        shell=True,
-    )
-
-    # Continuously read and print stdout and stderr
-    while True:
-        # Read a line from stdout
-        stdout_line = process.stdout.read().decode("utf-8")
-        if stdout_line:
-            print("STDOUT: %s", stdout_line.strip())
-        # Read a line from stderr
-        # stderr_line = process.stderr.read1().decode("utf-8")
-        # if stderr_line:
-        #    print(f"STDERR: {stderr_line.strip()}", end='', flush=True)
-
-        # Check if the process has finished
-        return_code = process.poll()
-        if return_code is not None:
-            print("RETURN CODE: %s", return_code)
-            break
-
-
-def dl_brdc_pride_pppar(prod_parent_dir, date_list):
-    """
-    Downloads BRDC (Broadcast Ephemeris) files for PRIDE PPPAR from a given directory and date list.
-
-    Parameters
-    ----------
-    prod_parent_dir : str
-        The parent directory where the products are stored.
-    date_list : iterable of datetime
-        The list of dates for which the BRDC files are to be downloaded.
-
-    Returns
-    -------
-    list
-        A list of downloaded BRDC files.
-
-    Notes
-    -----
-    This function first rounds the dates in the date list to the nearest day and removes duplicates.
-    It then downloads the BRDC files for each unique date using the operational.download_gnss_rinex function.
-    The downloaded files are appended to a list which is returned at the end.
-    """
-    brdc_lis = []
-    ######### BROADCAST
-    date_list_uniq = [conv.round_dt(d, "1D", "floor") for d in date_list]
-    date_list_uniq = sorted(list(set(date_list_uniq)))
-
-    for date in date_list_uniq:
-        brdc = operational.download_gnss_rinex(
-            {"nav_rt": ["BRDC"]},
-            prod_parent_dir,
-            date,
-            date,
-            archtype="year/doy",
-            parallel_download=1,
-            force=False,
-        )
-        brdc_lis.append(brdc)
-
-    return brdc_lis
-
-
-def dl_prods_pride_pppar(prod_parent_dir, date_list, prod_ac_name):
-    """
-    Downloads GNSS products for PRIDE PPPAR from a given directory and date list.
-
-    Parameters
-    ----------
-    prod_parent_dir : str
-        The parent directory where the products are stored.
-    date_list : iterable of datetime
-        The list of dates for which the GNSS products are to be downloaded.
-    prod_ac_name : str
-        The name of the analysis center providing the products.
-
-    Returns
-    -------
-    list
-        A list of downloaded GNSS products.
-
-    Notes
-    -----
-    This function downloads various GNSS products such as orbits, clocks, biases, etc.
-    It iterates over specified data centers and attempts to download the products.
-    If at least 5 products are found, the function stops further downloads.
-    """
-
-    dl_prods_fct = operational.download_gnss_products
-
-    ######### ORBITS CLOCKS ETC...
-    for data_center in ("ign", "whu"):  ##'whu'
-        if "MGX" in prod_ac_name:
-            mgex = True
-        else:
-            mgex = False
-
-        prods = dl_prods_fct(
-            prod_parent_dir,
-            min(date_list),
-            max(date_list),
-            AC_names=(prod_ac_name,),
-            prod_types=("sp3", "clk", "bia", "obx", "erp"),
-            remove_patterns=("ULA",),
-            archtype="year/doy",
-            new_name_conv=True,
-            parallel_download=1,
-            archive_center=data_center,
-            mgex=mgex,
-            repro=0,
-            sorted_mode=False,
-            return_also_uncompressed_files=True,
-            ftp_download=False,
-            dow_manu=False,
-        )
-
-        if len(prods) >= 5:
-            log.info("enougth products found: %s", len(prods))
-            break
-
-    return prods
-
-
-def get_right_brdc(brdc_lis_inp, tmp_dir_inp):
-    """
-    Selects the appropriate BRDC (Broadcast Ephemeris) file from a list and unzips it.
-
-    Parameters
-    ----------
-    brdc_lis_inp : list
-        A list of BRDC file paths.
-    tmp_dir_inp : str
-        The directory where the unzipped BRDC file will be stored.
-
-    Returns
-    -------
-    tuple
-        A tuple containing the original BRDC file path and the unzipped BRDC file path.
-    """
-    if len(brdc_lis_inp) == 1:  ## normal case
-        brdc_ori = brdc_lis_inp[0]
-        brdc_unzip = files_rw.unzip_gz_z(brdc_ori, out_gzip_dir=tmp_dir_inp)
-    elif len(brdc_lis_inp) == 0:
-        brdc_ori = None
-        brdc_unzip = None
-        log.warning("no brdc. found")
-    elif len(brdc_lis_inp) > 1:
-        log.warning("several brdc found, keep the last one")
-        log.warning(brdc_lis_inp)
-        brdc_ori = brdc_lis_inp[-1]
-        brdc_unzip = files_rw.unzip_gz_z(brdc_ori, out_gzip_dir=tmp_dir_inp)
-    else:
-        #### this should never happend
-        brdc_ori = None
-        brdc_unzip = None
-        pass
-
-    return brdc_ori, brdc_unzip
-
-
-def get_best_latency(prod_lis_inp):
+def pride_best_latency(prod_lis_inp):
     """
     Selects the best latency from a list of product files.
 
@@ -266,7 +83,7 @@ def get_best_latency(prod_lis_inp):
     return out_prods_lis
 
 
-def get_right_prod(prod_lis_inp, tmp_dir_inp, prod_name, default_fallback):
+def pride_right_prod(prod_lis_inp, tmp_dir_inp, prod_name, default_fallback):
     """
     Selects the appropriate product file from a list and unzips it if necessary.
 
@@ -296,14 +113,14 @@ def get_right_prod(prod_lis_inp, tmp_dir_inp, prod_name, default_fallback):
     elif len(prod_lis_inp) == 0 and not default_fallback:
         log.warning(
             "no prod. %s found, no fallback to Default set (default_fallback option), aborting...",
-            prod_name
+            prod_name,
         )
         prod_out = None
         prod_ori = None
     elif len(prod_lis_inp) > 1:
         log.warning("several prod found, search for the best latency")
         log.warning(prod_lis_inp)
-        prod_lis_bst = get_best_latency(prod_lis_inp)
+        prod_lis_bst = pride_best_latency(prod_lis_inp)
 
         if len(prod_lis_bst) == 1:
             prod_ori = prod_lis_bst[0]
@@ -320,6 +137,43 @@ def get_right_prod(prod_lis_inp, tmp_dir_inp, prod_name, default_fallback):
         pass
 
     return prod_out, prod_ori
+
+
+def pride_right_brdc(brdc_lis_inp, tmp_dir_inp):
+    """
+    Selects the appropriate BRDC (Broadcast Ephemeris) file from a list and unzips it.
+
+    Parameters
+    ----------
+    brdc_lis_inp : list
+        A list of BRDC file paths.
+    tmp_dir_inp : str
+        The directory where the unzipped BRDC file will be stored.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the original BRDC file path and the unzipped BRDC file path.
+    """
+    if len(brdc_lis_inp) == 1:  ## normal case
+        brdc_ori = brdc_lis_inp[0]
+        brdc_unzip = files_rw.unzip_gz_z(brdc_ori, out_gzip_dir=tmp_dir_inp)
+    elif len(brdc_lis_inp) == 0:
+        brdc_ori = None
+        brdc_unzip = None
+        log.warning("no brdc. found")
+    elif len(brdc_lis_inp) > 1:
+        log.warning("several brdc found, keep the last one")
+        log.warning(brdc_lis_inp)
+        brdc_ori = brdc_lis_inp[-1]
+        brdc_unzip = files_rw.unzip_gz_z(brdc_ori, out_gzip_dir=tmp_dir_inp)
+    else:
+        #### this should never happend
+        brdc_ori = None
+        brdc_unzip = None
+        pass
+
+    return brdc_ori, brdc_unzip
 
 
 def pride_pppar_runner_mono(
@@ -420,8 +274,8 @@ def pride_pppar_runner_mono(
 
     ########### DOWNLOAD PRODUCTS + BROADCASTS
     if dl_prods:
-        _ = dl_prods_pride_pppar(prod_parent_dir, [srt], prod_ac_name)
-        _ = dl_brdc_pride_pppar(prod_parent_dir, [srt])
+        _ = common_frontend.dl_orbclk(prod_parent_dir, [srt], prod_ac_name)
+        _ = common_frontend.dl_brdc(prod_parent_dir, [srt])
 
     if dl_prods_only:
         log.info("products downloaded, exiting (dl_prods_only is activated.)")
@@ -452,7 +306,7 @@ def pride_pppar_runner_mono(
         brdc_lis = utils.find_recursive(prod_dir_year_doy, brdc_pattern.strip())
 
         # 2ND STEP: unzip the brdc
-        brdc_ori, brdc_unzip = get_right_brdc(brdc_lis, tmp_dir_use)
+        brdc_ori, brdc_unzip = common_frontend.get_right_brdc(brdc_lis, tmp_dir_use)
 
         ##### 3RD STEP: rename the brdc
         if not brdc_unzip:
@@ -534,7 +388,7 @@ def pride_pppar_runner_mono(
                 break
 
         #### differents behaviors depending on the number of files found
-        prod_out, prod_ori = get_right_prod(prod_lis, tmp_dir_use, prod, default_fallback)
+        prod_out, prod_ori = common_frontend.get_right_prod(prod_lis, tmp_dir_use, prod, default_fallback)
 
         return prod_out, prod_ori
 
@@ -616,7 +470,7 @@ def pride_pppar_runner_mono(
     os.chdir(run_dir_use)  ## not run_dir_use, pdp3 will goes by itselft to yyyy/doy
 
     ## run the command ####
-    run_command(cmd)
+    common_frontend.run_command(cmd)
     #######################
 
     if clean_run_dir:
@@ -728,8 +582,8 @@ def pride_pppar_runner(rnx_path_list,
     if dl_prods or dl_prods_only:
         if dl_prods_only and not dl_prods_only:
             log.warning("dl_prods_only is activated, but not dl_prods. Products download is forced anyway.")
-        _ = dl_prods_pride_pppar(prod_parent_dir, date_list, prod_ac_name)
-        _ = dl_brdc_pride_pppar(prod_parent_dir, date_list)
+        _ = common_frontend.dl_orbclk(prod_parent_dir, date_list, prod_ac_name)
+        _ = common_frontend.dl_brdc(prod_parent_dir, date_list)
         if dl_prods_only:
             log.info("products downloaded, exiting (dl_prods_only is activated.)")
             return None
