@@ -103,7 +103,7 @@ def anubis_runner(
 
     ``<...>/geodezyx/exemples/anubis_configfiles``
 
-    or directly on the GeodeZYX's toolbox GitHub repository:
+    or directly on the geodezyx's toolbox GitHub repository:
 
     https://github.com/IPGP/geodezyx/tree/master/geodezyx/000_exemples/anubis_configfiles
 
