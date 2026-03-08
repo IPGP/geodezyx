@@ -12,7 +12,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   geodezyx.athmo
+   geodezyx.atmo
    geodezyx.conv
    geodezyx.files_rw
    geodezyx.geodyn

@@ -49,7 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
@@ -325,10 +325,10 @@ in this case, doesn’t return the mean of the 2 medians, but the nearest value<
 <li><p><strong>L</strong> (<em>list</em>) – Input list</p></li>
 <li><p><strong>tolerence</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance to find close elements of L
 if no tolerance is given then a set() is used</p></li>
-<li><p><strong>pretty_output</strong> (<em>bool</em>) – <dl class="simple">
-<dt>if False, return a list of 2-tuples:</dt><dd><p>(element of the list, number of occurrence of this element in the list)</p>
-</dd>
-</dl>
+<li><p><strong>pretty_output</strong> (<em>bool</em>) – <p>if False, return a list of 2-tuples:</p>
+<blockquote>
+<div><p>(element of the list, number of occurrence of this element in the list)</p>
+</div></blockquote>
 <p>if True, return tuple with sorted occurrences and values</p>
 </p></li>
 </ul>
@@ -1315,24 +1315,23 @@ The default is None.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.split_string_after_n_chars_at_space">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">split_string_after_n_chars_at_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.split_string_after_n_chars_at_space" title="Link to this definition"></a></dt>
-<dd><blockquote>
-<div><p>Splits a string into substrings of a maximum length of n characters.</p>
+<dd><p>Splits a string into substrings of a maximum length of n characters.</p>
 <p>This function splits a string into substrings of a maximum length of n characters,
-but only splits at spaces and inserts a newline (``</p>
-</div></blockquote>
-<p><a href="#id3"><span class="problematic" id="id4">``</span></a>) after each substring.</p>
-<blockquote>
-<div><dl class="simple">
-<dt>s<span class="classifier">str</span></dt><dd><p>The input string to be split.</p>
+but only splits at spaces and inserts a newline (<code class="docutils literal notranslate"><span class="pre">\n</span></code>) after each substring.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>str</em>) – The input string to be split.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – The maximum length of each substring.</p></li>
+</ul>
 </dd>
-<dt>n<span class="classifier">int</span></dt><dd><p>The maximum length of each substring.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The modified string with newlines inserted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
-<dl class="simple">
-<dt>str</dt><dd><p>The modified string with newlines inserted.</p>
-</dd>
-</dl>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
