@@ -3,8 +3,8 @@
 """
 @author: psakic
 
-This sub-module of geodezyx.utils contains functions for operations 
-related to Python's plot operations. 
+This sub-module of geodezyx.utils contains functions for operations
+related to Python's plot operations.
 
 it can be imported directly with:
 from geodezyx import utils
@@ -16,8 +16,6 @@ Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
 https://github.com/IPGP/geodezyx
 """
-
-
 
 #### Import the logger
 import logging
@@ -32,18 +30,18 @@ import numpy as np
 #### geodeZYX modules
 from geodezyx import utils
 
-log = logging.getLogger('geodezyx')
+log = logging.getLogger("geodezyx")
 
 ##########  END IMPORT  ##########
 
 
-def color_list(L , colormap='jet'):
+def color_list(l, colormap="jet"):
     """
     Generate a list of colors from a colormap for each unique value in L.
 
     Parameters
     ----------
-    L : array-like
+    l : array-like
         Input list or array of values. The number of unique values determines the number of colors.
     colormap : str, optional
         Name of the matplotlib colormap to use. The default is 'jet'.
@@ -62,47 +60,49 @@ def color_list(L , colormap='jet'):
     matplotlib.pyplot.get_cmap : Get a colormap by name.
     colors_from_colormap_getter : Alternative function to get colors from a colormap.
     """
-    cm     = plt.get_cmap(colormap)
-    NCOL   = len(np.unique(L))
-    colist = [cm(1.*i/NCOL) for i in range(NCOL)]
+    cm = plt.get_cmap(colormap)
+    ncol = len(np.unique(l))
+    colist = [cm(1.0 * i / ncol) for i in range(ncol)]
     return colist
 
-def symbols_list(L=None):
 
-    Lsym = ["o",
-    "v",
-    "^",
-    "<",
-    ">",
-    ".",
-    ",",
-    "1",
-    "2",
-    "3",
-    "4",
-    "8",
-    "s",
-    "p",
-    "p",
-    "*",
-    "h",
-    "H",
-    "+",
-    "x",
-    "X",
-    "D",
-    "d",
-    "|",
-    "_"]
+def symbols_list(l=None):
 
-    if not L:
-        return Lsym
+    lsym = [
+        "o",
+        "v",
+        "^",
+        "<",
+        ">",
+        ".",
+        ",",
+        "1",
+        "2",
+        "3",
+        "4",
+        "8",
+        "s",
+        "p",
+        "p",
+        "*",
+        "h",
+        "H",
+        "+",
+        "x",
+        "X",
+        "D",
+        "d",
+        "|",
+        "_",
+    ]
+
+    if not l:
+        return lsym
     else:
-        return Lsym[:len(L)]
+        return lsym[: len(l)]
 
 
-
-def colors_from_colormap_getter(ncolors , colormap = 'viridis'):
+def colors_from_colormap_getter(ncolors, colormap="viridis"):
     """
     Get a list of colors from a matplotlib colormap.
 
@@ -123,16 +123,18 @@ def colors_from_colormap_getter(ncolors , colormap = 'viridis'):
     color_list : Generate colors based on unique values in a list.
     """
     import matplotlib.pyplot as plt
-    cm = plt.get_cmap(colormap)
-    return [cm(1.*i/ncolors) for i in range(ncolors)]
 
-def ylim_easy(Lin,delta = .1, min_null_if_neg = False):
+    cm = plt.get_cmap(colormap)
+    return [cm(1.0 * i / ncolors) for i in range(ncolors)]
+
+
+def ylim_easy(lin, delta=0.1, min_null_if_neg=False):
     """
     Calculate convenient axis limits for a data array.
 
     Parameters
     ----------
-    Lin : array-like
+    lin : array-like
         Input data.
     delta : float, optional
         Fraction of the data range to add as padding. The default is 0.1.
@@ -148,15 +150,16 @@ def ylim_easy(Lin,delta = .1, min_null_if_neg = False):
     -----
     Useful for automatic axis limit calculation in plots.
     """
-    minn = np.min(Lin)
-    maxx = np.max(Lin)
+    minn = np.min(lin)
+    maxx = np.max(lin)
     rangee = np.abs(maxx - minn)
-    if  min_null_if_neg and (minn - delta * rangee) < 0. :
-        return (0. , maxx + delta * rangee)
+    if min_null_if_neg and (minn - delta * rangee) < 0.0:
+        return (0.0, maxx + delta * rangee)
     else:
-        return (minn - delta * rangee , maxx + delta * rangee)
+        return (minn - delta * rangee, maxx + delta * rangee)
 
-def get_figure(figin = 0):
+
+def get_figure(figin=0):
     """
     Get or create a matplotlib Figure object.
 
@@ -176,7 +179,7 @@ def get_figure(figin = 0):
     -----
     Ensures the returned figure has at least one axes (subplot).
     """
-    if isinstance(figin,matplotlib.figure.Figure):
+    if isinstance(figin, matplotlib.figure.Figure):
         figout = figin
     elif figin == 0:
         figout = plt.figure()
@@ -189,11 +192,15 @@ def get_figure(figin = 0):
     return figout
 
 
-def figure_saver(figobjt_in , outdir , outname ,
-                 outtype = ('.png','.pdf','.figpik') ,
-                 formt = None ,
-                 dpi = 200 ,
-                 transparent=False):
+def figure_saver(
+    figobjt_in,
+    outdir,
+    outname,
+    outtype=(".png", ".pdf", ".figpik"),
+    formt=None,
+    dpi=200,
+    transparent=False,
+):
     """
     This function provides a front end to export pretty-print plots
 
@@ -208,7 +215,7 @@ def figure_saver(figobjt_in , outdir , outname ,
     outtype : tuple, optional
         the output formats. The default is ('.png','.pdf','.figpik').
     formt : 2-tuple or string , optional
-        the format (size) of the plot. 
+        the format (size) of the plot.
         if string: a Ax format (A4, A3 etc...)
         if tuple: size of the plot  in inches.
         The default is None.
@@ -223,46 +230,45 @@ def figure_saver(figobjt_in , outdir , outname ,
         output paths of the plots.
 
     """
-    
+
     if not utils.is_iterable(outtype):
-         outtype = (outtype,) 
-         
+        outtype = (outtype,)
+
     outpath_stk = []
     for outtype_iter in outtype:
         if "pik" in outtype_iter:
-            outpath = utils.pickle_saver(figobjt_in,outdir,
-                                         outname,outtype_iter)
-        else:   
-            outpath = os.path.join(outdir,outname+outtype_iter)
-            
+            outpath = utils.pickle_saver(figobjt_in, outdir, outname, outtype_iter)
+        else:
+            outpath = os.path.join(outdir, outname + outtype_iter)
+
             formtup = None
             if formt:
                 if type(formt) is tuple:
                     formtup = formt
                 elif type(formt) is str:
                     if formt.upper() == "A4":
-                        formtup = (11.69,8.27)
+                        formtup = (11.69, 8.27)
                     elif formt.upper() == "A3":
-                        formtup = (16.53,11.69)                        
+                        formtup = (16.53, 11.69)
                     else:
                         log.warning("assume Figure format as A4")
-                        formtup = (11.69,8.27)
-                        
+                        formtup = (11.69, 8.27)
+
                 if formtup:
                     figobjt_in.set_size_inches(*formtup)
 
-            figobjt_in.savefig(outpath,transparent=transparent,dpi=dpi)
+            figobjt_in.savefig(outpath, transparent=transparent, dpi=dpi)
 
         outpath_stk.append(outpath)
-        
+
     if len(outpath_stk) == 1:
         outpath_stk = outpath_stk[0]
     return outpath_stk
 
 
-def axis_data_coords_sys_transform(axis_obj_in,xin,yin,inverse=False):
-    """ inverse = False : Axis => Data
-                = True  : Data => Axis
+def axis_data_coords_sys_transform(axis_obj_in, xin, yin, inverse=False):
+    """inverse = False : Axis => Data
+    = True  : Data => Axis
     """
     xlim = axis_obj_in.get_xlim()
     ylim = axis_obj_in.get_ylim()
@@ -270,20 +276,22 @@ def axis_data_coords_sys_transform(axis_obj_in,xin,yin,inverse=False):
     xdelta = xlim[1] - xlim[0]
     ydelta = ylim[1] - ylim[0]
     if not inverse:
-        xout =  xlim[0] + xin * xdelta
-        yout =  ylim[0] + yin * ydelta
+        xout = xlim[0] + xin * xdelta
+        yout = ylim[0] + yin * ydelta
     else:
         xdelta2 = xin - xlim[0]
         ydelta2 = yin - ylim[0]
         xout = xdelta2 / xdelta
         yout = ydelta2 / ydelta
-    return xout,yout
+    return xout, yout
 
-def id2val(value_lis,id_lis,idin):
-    """ from a value list and a id pointer list
-        return the good val from the good id
-        replace dico bc. set is not supproted as key"""
+
+def id2val(value_lis, id_lis, idin):
+    """from a value list and a id pointer list
+    return the good val from the good id
+    replace dico bc. set is not supproted as key"""
     return value_lis[id_lis.index(idin)]
+
 
 def set_size_for_pub(width=418.25368, fraction=1, subplot=None):
     """
@@ -323,7 +331,7 @@ def set_size_for_pub(width=418.25368, fraction=1, subplot=None):
     inches_per_pt = 1 / 72.27
 
     # Golden ratio to set aesthetic figure height
-    golden_ratio = (5**.5 - 1) / 2
+    golden_ratio = (5**0.5 - 1) / 2
 
     # Figure width in inches
     fig_width_in = fig_width_pt * inches_per_pt
@@ -354,7 +362,7 @@ def gaussian_for_plot(d, density=False, nbins=500, nsigma=3.5):
 
     Returns
     -------
-    Xpdf : numpy.ndarray
+    xpdf : numpy.ndarray
         X coordinates of the Gaussian curve.
     ypdf_out : numpy.ndarray
         Y coordinates of the Gaussian curve (PDF or histogram-scaled).
@@ -382,14 +390,12 @@ def gaussian_for_plot(d, density=False, nbins=500, nsigma=3.5):
 
     mu = np.mean(d)
     sigma = np.std(d)
-    Xpdf = np.linspace(mu - nsigma*sigma,
-                       mu + nsigma*sigma,
-                       nbins)
-    ypdf = scipy.stats.norm.pdf(Xpdf, mu, sigma)
+    xpdf = np.linspace(mu - nsigma * sigma, mu + nsigma * sigma, nbins)
+    ypdf = scipy.stats.norm.pdf(xpdf, mu, sigma)
     ypdf_out = ypdf
     if not density:
-        Ybin, Xbin = np.histogram(d, bins=nbins)
-        area_bin = integrate.trapezoid(Ybin, dx=np.diff(Xbin)[0])
+        ybin, xbin = np.histogram(d, bins=nbins)
+        area_bin = integrate.trapezoid(ybin, dx=np.diff(xbin)[0])
 
         ypdf_out = ypdf * area_bin
-    return Xpdf,ypdf_out
+    return xpdf, ypdf_out
