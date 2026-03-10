@@ -1096,6 +1096,264 @@ else:
     del distances, dX, dY, dZ, A, B
     gc.collect()
 
+# %%
+###############################################################################
+# Model M5 - Simple tropospheric modeling with piecewise-constant ZTD
+#
+# Educational objective
+# ---------------------
+# Introduce a first explicit tropospheric parameterization by estimating one
+# Zenith Total Delay (ZTD) parameter per fixed time interval.
+#
+# Physical idea
+# -------------
+# In this simplified model, the slant tropospheric delay is written as:
+#
+#     STD(elevation) = ZTD / sin(elevation)
+#
+# where:
+#   - STD is the slant tropospheric delay,
+#   - ZTD is the zenith total delay,
+#   - elevation is the satellite elevation angle.
+#
+# Pedagogical note
+# ----------------
+# This is a deliberately simple mapping function. The purpose is not yet to
+# introduce a sophisticated tropospheric model, but to show how an atmospheric
+# parameter can be estimated directly in the least-squares system.
+###############################################################################
+
+print("***** M5 - Simple tropospheric modeling *****")
+
+# User-defined duration (in hours) of each [a,b) ZTD interval
+TROPO_ZTD_INTERVAL_HOURS = 2.0
+
+# Elevation cutoff
+TROPO_ELEVATION_CUTOFF_DEG = 10.0
+TROPO_ELEVATION_CUTOFF_RAD = np.radians(TROPO_ELEVATION_CUTOFF_DEG)
+
+if "df_if" not in locals():
+    raise RuntimeError(
+        "The simple tropospheric step cannot run because df_if is not available. "
+        "Run M4_iono_free first."
+    )
+
+# -------------------------------------------------------------------------
+# Choose the receiver position used to compute azimuth/elevation
+# -------------------------------------------------------------------------
+if "M4_iono_free" in solutions:
+    receiver_xyz_geom_ref = solutions["M4_iono_free"]["receiver_xyz_m"].copy()
+    print("Using M4_iono_free receiver position as geometry reference.")
+else:
+    receiver_xyz_geom_ref = approx_receiver_xyz.copy()
+    print("Using approximate RINEX-header position as geometry reference.")
+
+x0, y0, z0 = receiver_xyz_geom_ref
+
+# -------------------------------------------------------------------------
+# Compute azimuth and elevation from the Sagnac-corrected satellite positions
+# -------------------------------------------------------------------------
+sat_xyz = df_if[["X_sat_sagnac", "Y_sat_sagnac", "Z_sat_sagnac"]].to_numpy(dtype=float)
+
+azimuth_rad_list = []
+elevation_rad_list = []
+
+for sat_xyz_i in sat_xyz:
+    azi_rad_i, ele_rad_i, _ = conv.xyz2azi_ele(
+        sat_xyz_i[0], sat_xyz_i[1], sat_xyz_i[2],
+        x0, y0, z0,
+        outdeg=False,
+    )
+    azimuth_rad_list.append(azi_rad_i)
+    elevation_rad_list.append(ele_rad_i)
+
+df_if["azimuth_rad"] = np.array(azimuth_rad_list, dtype=float)
+df_if["elevation_rad"] = np.array(elevation_rad_list, dtype=float)
+df_if["azimuth_deg"] = np.degrees(df_if["azimuth_rad"])
+df_if["elevation_deg"] = np.degrees(df_if["elevation_rad"])
+
+print("Elevation statistics before cutoff [deg]:")
+print(df_if["elevation_deg"].describe())
+
+# -------------------------------------------------------------------------
+# Apply the elevation cutoff
+# -------------------------------------------------------------------------
+rows_before_cutoff = len(df_if)
+df_if = df_if[df_if["elevation_rad"] >= TROPO_ELEVATION_CUTOFF_RAD].copy()
+rows_after_cutoff = len(df_if)
+
+print()
+print("Elevation cutoff applied")
+print("------------------------")
+print("Cutoff [deg]       :", TROPO_ELEVATION_CUTOFF_DEG)
+print("Rows before cutoff :", rows_before_cutoff)
+print("Rows after cutoff  :", rows_after_cutoff)
+print("Rows removed       :", rows_before_cutoff - rows_after_cutoff)
+
+# -------------------------------------------------------------------------
+# Simple tropospheric mapping function: 1 / sin(elevation)
+# -------------------------------------------------------------------------
+df_if["tropo_map"] = 1.0 / np.sin(df_if["elevation_rad"].to_numpy(dtype=float))
+
+print()
+print("Elevation statistics after cutoff [deg]:")
+print(df_if["elevation_deg"].describe())
+print()
+print("Tropospheric mapping function statistics:")
+print(df_if["tropo_map"].describe())
+
+# -------------------------------------------------------------------------
+# Build [a,b) ZTD intervals covering all remaining observations
+# -------------------------------------------------------------------------
+epoch_values = df_if.index.get_level_values("epoch")
+epoch_start = epoch_values.min()
+epoch_end = epoch_values.max()
+
+interval_length = pd.Timedelta(hours=TROPO_ZTD_INTERVAL_HOURS)
+interval_id = ((epoch_values - epoch_start) // interval_length).astype(int)
+
+df_if["ztd_interval_id"] = interval_id
+
+interval_unique = np.sort(df_if["ztd_interval_id"].unique())
+n_intervals = len(interval_unique)
+
+print()
+print("ZTD interval definition")
+print("-----------------------")
+print("First epoch         :", epoch_start)
+print("Last epoch          :", epoch_end)
+print("Data span           :", epoch_end - epoch_start)
+print("Interval length [h] :", TROPO_ZTD_INTERVAL_HOURS)
+print("Unique interval ids :", interval_unique)
+print("Number of intervals :", n_intervals)
+
+for interval_k in interval_unique:
+    a_k = epoch_start + interval_k * interval_length
+    b_k = a_k + interval_length
+    print(f"Interval {interval_k}: [{a_k}, {b_k})")
+
+# -------------------------------------------------------------------------
+# Build the receiver-clock block and the ZTD block
+# -------------------------------------------------------------------------
+block_dt_r, epoch_unique = build_receiver_clock_block(df_if.index)
+
+block_ztd = np.zeros((len(df_if), n_intervals))
+interval_to_col = {interval_k: j for j, interval_k in enumerate(interval_unique)}
+
+ztd_interval_array = df_if["ztd_interval_id"].to_numpy()
+tropo_map_array = df_if["tropo_map"].to_numpy(dtype=float)
+
+for i_obs in range(len(df_if)):
+    j = interval_to_col[ztd_interval_array[i_obs]]
+    block_ztd[i_obs, j] = tropo_map_array[i_obs]
+
+print()
+print("Receiver clock block shape :", block_dt_r.shape)
+print("ZTD block shape            :", block_ztd.shape)
+print("First rows of block_ztd:")
+print(block_ztd[:5, :])
+
+# -------------------------------------------------------------------------
+# Solve the ionosphere-free + simple troposphere positioning model
+# -------------------------------------------------------------------------
+P_app = np.array([0.0, 0.0, 0.0])
+dP_est = np.array([100.0, 100.0, 100.0])
+n_iter = 0
+
+while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
+    distances = np.sqrt(
+        (df_if["X_sat_sagnac"].values - P_app[0]) ** 2 +
+        (df_if["Y_sat_sagnac"].values - P_app[1]) ** 2 +
+        (df_if["Z_sat_sagnac"].values - P_app[2]) ** 2
+    )
+
+    B = (
+        df_if["code_if_m"].values
+        - distances
+        + conv.SPEED_OF_LIGHT * (df_if["dte_sat"].values + df_if["dRelat"].values)
+    )
+
+    dX = (P_app[0] - df_if["X_sat_sagnac"].values) / distances
+    dY = (P_app[1] - df_if["Y_sat_sagnac"].values) / distances
+    dZ = (P_app[2] - df_if["Z_sat_sagnac"].values) / distances
+
+    A = np.column_stack((dX, dY, dZ, block_dt_r, block_ztd))
+
+    dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
+
+    P_est = P_app.copy()
+    P_est[0:3] = P_app[0:3] + dP_est[0:3]
+
+    n_iter += 1
+    print(
+        f"Iteration {n_iter}: "
+        f"X={P_est[0]:.3f}, Y={P_est[1]:.3f}, Z={P_est[2]:.3f}"
+    )
+
+    P_app = P_est.copy()
+
+gnss_edu.plot_residual_analysis(
+    A,
+    B,
+    dP_est,
+    figure_title="M5 - Iono-free code + simple troposphere",
+    save_path=WORK_DIR / "06_M5_tropo_simple.png",
+    P_est=P_est[:3],
+    P_rnx_header=approx_receiver_xyz,
+)
+
+store_solution(
+    key="M5_tropo_simple",
+    description="Iono-free code + simple troposphere",
+    P_est=P_est[:3],
+    P_ref=approx_receiver_xyz,
+    residual_vector=B - A @ dP_est,
+    n_iterations=n_iter,
+    active_effects=[
+        "ionosphere-free code combination (C1, P2)",
+        "satellite clock correction",
+        "relativistic correction",
+        "receiver clock estimation",
+        "Earth-rotation (Sagnac) correction",
+        f"observations below {TROPO_ELEVATION_CUTOFF_DEG:.1f} deg excluded",
+        f"piecewise-constant ZTD every {TROPO_ZTD_INTERVAL_HOURS:.1f} h",
+        "simple mapping function 1/sin(elevation)",
+    ],
+)
+
+# -------------------------------------------------------------------------
+# Store the estimated ZTD parameters for later inspection
+# -------------------------------------------------------------------------
+n_clock_params = block_dt_r.shape[1]
+ztd_estimates_m = dP_est[3 + n_clock_params : 3 + n_clock_params + n_intervals]
+
+solutions["M5_tropo_simple"]["elevation_cutoff_deg"] = TROPO_ELEVATION_CUTOFF_DEG
+solutions["M5_tropo_simple"]["ztd_interval_hours"] = TROPO_ZTD_INTERVAL_HOURS
+solutions["M5_tropo_simple"]["ztd_interval_ids"] = interval_unique.copy()
+solutions["M5_tropo_simple"]["ztd_estimates_m"] = ztd_estimates_m.copy()
+
+print()
+print("Estimated ZTD parameters [m]:")
+for interval_k, ztd_k in zip(interval_unique, ztd_estimates_m):
+    a_k = epoch_start + interval_k * interval_length
+    b_k = a_k + interval_length
+    print(f"Interval {interval_k} [{a_k}, {b_k}) : ZTD = {ztd_k:.4f} m")
+
+# -------------------------------------------------------------------------
+# Cleanup
+# -------------------------------------------------------------------------
+del receiver_xyz_geom_ref, x0, y0, z0
+del sat_xyz, azimuth_rad_list, elevation_rad_list
+del rows_before_cutoff, rows_after_cutoff
+del epoch_values, epoch_start, epoch_end, interval_length
+del interval_id, interval_unique, n_intervals
+del block_dt_r, epoch_unique, block_ztd
+del interval_to_col, ztd_interval_array, tropo_map_array
+del P_app, dP_est, P_est, n_iter
+del distances, dX, dY, dZ, A, B
+del n_clock_params, ztd_estimates_m
+gc.collect()
+
 
 
 
@@ -1184,6 +1442,7 @@ def solutions_to_latex_table_enu(
         "M2_receiver_clock": "M2",
         "M3_sagnac": "M3",
         "M4_iono_free": "M4",
+        "M5_tropo_simple": "M5",
     }
 
     model_description_map = {
@@ -1192,6 +1451,7 @@ def solutions_to_latex_table_enu(
     "M2_receiver_clock": "+ receiver clock",
     "M3_sagnac": "+ Earth rotation (Sagnac effect)",
     "M4_iono_free": "+ iono-free code",
+    "M5_tropo_simple": "+ simple troposphere",
 }
 
     rows = []
@@ -1212,7 +1472,7 @@ def solutions_to_latex_table_enu(
 
     df_summary = pd.DataFrame(rows)
 
-    desired_order = ["M0", "M1", "M2", "M3", "M4"]
+    desired_order = ["M0", "M1", "M2", "M3", "M4", "M5"]
     df_summary["Model"] = pd.Categorical(
         df_summary["Model"],
         categories=desired_order,
