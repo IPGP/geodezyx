@@ -1126,7 +1126,7 @@ else:
 print("***** M5 - Simple tropospheric modeling *****")
 
 # User-defined duration (in hours) of each [a,b) ZTD interval
-TROPO_ZTD_INTERVAL_HOURS = 2.0
+TROPO_ZTD_INTERVAL_HOURS = 1.0
 
 # Elevation cutoff
 TROPO_ELEVATION_CUTOFF_DEG = 10.0
@@ -1296,10 +1296,10 @@ gnss_edu.plot_residual_analysis(
     A,
     B,
     dP_est,
-    figure_title=["M5 - Iono-free code positioning with simple tropospheric modeling\n",
-                  f"Iono-free C1/P2, cutoff = {TROPO_ELEVATION_CUTOFF_DEG:.1f} deg, ",
-                  f"STD = ZTD/sin(e), piecewise-constant ZTD every {TROPO_ZTD_INTERVAL_HOURS:.1f} h",
-    ],
+    figure_title=("M5 - Iono-free code positioning with simple tropospheric modeling\n"
+                  f"Iono-free C1/P2, cutoff = {TROPO_ELEVATION_CUTOFF_DEG:.1f} deg, "
+                  f"STD = ZTD/sin(e), piecewise-constant ZTD every {TROPO_ZTD_INTERVAL_HOURS:.1f} h"
+    ),
     save_path=WORK_DIR / "06_M5_tropo_simple.png",
     P_est=P_est[:3],
     P_rnx_header=approx_receiver_xyz,
@@ -1357,6 +1357,44 @@ del distances, dX, dY, dZ, A, B
 del n_clock_params, ztd_estimates_m
 gc.collect()
 
+# %%# %%
+###############################################################################
+# Plot the estimated ZTD parameters as a piecewise-constant function
+###############################################################################
+import matplotlib.pyplot as plt
+if "M5_tropo_simple" not in solutions:
+    print("No M5_tropo_simple solution available.")
+else:
+    ztd_interval_hours = solutions["M5_tropo_simple"]["ztd_interval_hours"]
+    ztd_interval_ids = solutions["M5_tropo_simple"]["ztd_interval_ids"]
+    ztd_estimates_m = solutions["M5_tropo_simple"]["ztd_estimates_m"]
+
+    epoch_values = df_if.index.get_level_values("epoch")
+    epoch_start = epoch_values.min()
+    interval_length = pd.Timedelta(hours=ztd_interval_hours)
+
+    interval_starts = [
+        epoch_start + int(k) * interval_length
+        for k in ztd_interval_ids
+    ]
+    interval_ends = [t + interval_length for t in interval_starts]
+
+    # Build step coordinates
+    x_step = []
+    y_step = []
+
+    for t0, t1, ztd in zip(interval_starts, interval_ends, ztd_estimates_m):
+        x_step.extend([t0, t1])
+        y_step.extend([ztd, ztd])
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(x_step, y_step)
+    ax.set_title("Estimated ZTD parameters (piecewise-constant)")
+    ax.set_xlabel("Time")
+    ax.set_ylabel("ZTD [m]")
+    ax.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()
 
 
 
