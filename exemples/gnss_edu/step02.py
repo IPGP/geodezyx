@@ -946,6 +946,161 @@ gc.collect()
 
 # %%
 ###############################################################################
+# Model M4 - Ionosphere-free code combination
+#
+# Educational objective
+# ---------------------
+# Build a dual-frequency ionosphere-free code observable and use it in the
+# same positioning framework as in M3.
+#
+# Physical idea
+# -------------
+# The first-order ionospheric delay depends on the inverse square of the
+# carrier frequency. By combining two code observables measured at different
+# frequencies, we can remove this first-order effect.
+#
+# Pedagogical note
+# ----------------
+# In this step, we keep the satellite-state columns already computed in df_code.
+# This keeps the workflow simple and lets students focus on the effect of the
+# new observable itself.
+###############################################################################
+
+print("***** M4 - Ionosphere-free code combination *****")
+
+required_if_obs = ["C1", "P2"]
+missing_if_obs = [obs for obs in required_if_obs if obs not in df_obs.columns]
+
+if missing_if_obs:
+    print("The ionosphere-free step is skipped.")
+    print("Missing observables:", missing_if_obs)
+
+else:
+    # -------------------------------------------------------------------------
+    # Build the ionosphere-free observable
+    # -------------------------------------------------------------------------
+    f1 = conv.L1_CARRIER_FREQUENCY
+    f2 = conv.L2_CARRIER_FREQUENCY
+    f1_2 = f1 ** 2
+    f2_2 = f2 ** 2
+
+    df_if = df_obs[required_if_obs].copy()
+    df_if = df_if.dropna(subset=required_if_obs).copy()
+
+    df_if["code_if_m"] = (f1_2 * df_if["C1"] - f2_2 * df_if["P2"]) / (f1_2 - f2_2)
+
+    # -------------------------------------------------------------------------
+    # Reuse the satellite-state columns already available in df_code
+    # -------------------------------------------------------------------------
+    sat_cols_needed = [
+        "X_sat", "Y_sat", "Z_sat",
+        "dte_sat", "dRelat",
+        "X_sat_sagnac", "Y_sat_sagnac", "Z_sat_sagnac",
+    ]
+
+    missing_sat_cols = [col for col in sat_cols_needed if col not in df_code.columns]
+    if missing_sat_cols:
+        raise RuntimeError(
+            f"Missing satellite-state columns in df_code: {missing_sat_cols}"
+        )
+
+    df_if = df_if.join(df_code[sat_cols_needed], how="inner")
+    df_if = df_if.dropna(
+        subset=["code_if_m"] + sat_cols_needed
+    ).copy()
+
+    df_if["row_id"] = np.arange(len(df_if))
+
+    print("Ionosphere-free working DataFrame")
+    print("---------------------------------")
+    print("Shape   :", df_if.shape)
+    print("Columns :", df_if.columns.tolist())
+    print()
+    print(df_if.head())
+
+    # -------------------------------------------------------------------------
+    # Receiver clock block
+    # -------------------------------------------------------------------------
+    block_dt_r, epoch_unique = build_receiver_clock_block(df_if.index)
+
+    # -------------------------------------------------------------------------
+    # Solve the ionosphere-free positioning model
+    # -------------------------------------------------------------------------
+    P_app = np.array([0.0, 0.0, 0.0])
+    dP_est = np.array([100.0, 100.0, 100.0])
+    n_iter = 0
+
+    while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
+        distances = np.sqrt(
+            (df_if["X_sat_sagnac"].values - P_app[0]) ** 2 +
+            (df_if["Y_sat_sagnac"].values - P_app[1]) ** 2 +
+            (df_if["Z_sat_sagnac"].values - P_app[2]) ** 2
+        )
+
+        B = (
+            df_if["code_if_m"].values
+            - distances
+            + conv.SPEED_OF_LIGHT * (df_if["dte_sat"].values + df_if["dRelat"].values)
+        )
+
+        dX = (P_app[0] - df_if["X_sat_sagnac"].values) / distances
+        dY = (P_app[1] - df_if["Y_sat_sagnac"].values) / distances
+        dZ = (P_app[2] - df_if["Z_sat_sagnac"].values) / distances
+        A = np.column_stack((dX, dY, dZ, block_dt_r))
+
+        dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
+
+        P_est = P_app.copy()
+        P_est[0:3] = P_app[0:3] + dP_est[0:3]
+
+        n_iter += 1
+        print(
+            f"Iteration {n_iter}: "
+            f"X={P_est[0]:.3f}, Y={P_est[1]:.3f}, Z={P_est[2]:.3f}"
+        )
+
+        P_app = P_est.copy()
+
+    gnss_edu.plot_residual_analysis(
+        A,
+        B,
+        dP_est,
+        figure_title="M4 - Ionosphere-free code combination",
+        save_path=WORK_DIR / "05_M4_iono_free.png",
+        P_est=P_est[:3],
+        P_rnx_header=approx_receiver_xyz,
+    )
+
+    store_solution(
+        key="M4_iono_free",
+        description="Iono-free code combination",
+        P_est=P_est[:3],
+        P_ref=approx_receiver_xyz,
+        residual_vector=B - A @ dP_est,
+        n_iterations=n_iter,
+        active_effects=[
+            "ionosphere-free code combination (C1, P2)",
+            "satellite clock correction",
+            "relativistic correction",
+            "receiver clock estimation",
+            "Earth-rotation (Sagnac) correction",
+        ],
+    )
+
+    # -------------------------------------------------------------------------
+    # Cleanup
+    # -------------------------------------------------------------------------
+    del f1, f2, f1_2, f2_2
+    del block_dt_r, epoch_unique
+    del P_app, dP_est, P_est, n_iter
+    del distances, dX, dY, dZ, A, B
+    gc.collect()
+
+
+
+
+# %%
+###############################################################################
 # Compare the successive positioning models
 ###############################################################################
 
@@ -1028,6 +1183,7 @@ def solutions_to_latex_table_enu(
         "M1_satellite_clock": "M1",
         "M2_receiver_clock": "M2",
         "M3_sagnac": "M3",
+        "M4_iono_free": "M4",
     }
 
     model_description_map = {
@@ -1035,6 +1191,7 @@ def solutions_to_latex_table_enu(
     "M1_satellite_clock": "+ sat. clock + relativity",
     "M2_receiver_clock": "+ receiver clock",
     "M3_sagnac": "+ Earth rotation (Sagnac effect)",
+    "M4_iono_free": "+ iono-free code",
 }
 
     rows = []
@@ -1055,7 +1212,7 @@ def solutions_to_latex_table_enu(
 
     df_summary = pd.DataFrame(rows)
 
-    desired_order = ["M0", "M1", "M2", "M3"]
+    desired_order = ["M0", "M1", "M2", "M3", "M4"]
     df_summary["Model"] = pd.Categorical(
         df_summary["Model"],
         categories=desired_order,
