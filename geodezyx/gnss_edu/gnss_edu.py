@@ -130,6 +130,406 @@ def get_approx_position(fichier):
         return np.array(valeurs, dtype=float)
     else:
         return None
+    
+def hatch_carrier_smoothing_by_satellite(
+    df: pd.DataFrame,
+    code_col: str,
+    phase_col: str,
+    window: int = 100,
+    sampling_seconds: float = 30.0,
+    max_gap_factor: float = 1.5,
+    slip_threshold_m: float | None = 10.0,
+) -> pd.Series:
+    """
+    Apply Hatch carrier smoothing to a code observable independently for each
+    satellite.
+
+    This function implements a simple code-phase smoothing strategy in which
+    the code observable provides the absolute range level, while the carrier
+    phase provides a much less noisy short-term range evolution.
+
+    The smoothing is performed separately for each satellite track, assuming
+    that the input DataFrame uses a MultiIndex containing at least:
+        - 'epoch' : observation epoch
+        - 'prn'   : satellite identifier
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input observation DataFrame indexed by a MultiIndex containing
+        at least ('epoch', 'prn').
+    code_col : str
+        Name of the code observable column, in meters.
+    phase_col : str
+        Name of the carrier-phase observable column, in meters.
+        Important: this must already be expressed in meters, not in cycles.
+    window : int, default=100
+        Maximum Hatch smoothing length, in number of epochs.
+
+        The effective smoothing duration is approximately:
+
+            window * sampling_seconds
+
+        With the default values used in this TP:
+            100 * 30 s = 3000 s ≈ 50 min
+
+        A larger window gives stronger smoothing but requires longer
+        continuity of the phase observable.
+    sampling_seconds : float, default=30.0
+        Nominal time interval, in seconds, between two consecutive epochs
+        for a given satellite.
+
+        This is used to detect abnormal time gaps. For example:
+            - 30.0 for a 30-second RINEX
+            - 1.0  for a 1-second RINEX
+    max_gap_factor : float, default=1.5
+        Time-gap tolerance factor used to decide whether the smoothing filter
+        must be reset.
+
+        The filter is reset when the time interval between two consecutive
+        epochs exceeds:
+
+            max_gap_factor * sampling_seconds
+
+        With the default values:
+            1.5 * 30 s = 45 s
+
+        Therefore, the filter is reset if a time gap larger than 45 seconds
+        is detected.
+    slip_threshold_m : float | None, default=10.0
+        Optional crude consistency threshold, in meters, used as a simple
+        protection against cycle slips or other discontinuities.
+
+        At each epoch, the function compares:
+            - the code increment   : P(k) - P(k-1)
+            - the phase increment  : L(k) - L(k-1)
+
+        If:
+
+            abs( [P(k)-P(k-1)] - [L(k)-L(k-1)] ) > slip_threshold_m
+
+        the filter is reset.
+
+        This is only a simple pedagogical safeguard, not a rigorous
+        cycle-slip detection method.
+
+        If set to None, this additional test is disabled.
+
+    Returns
+    -------
+    pd.Series
+        Smoothed code observable, in meters, aligned with df.index.
+
+    Notes
+    -----
+    The recursive Hatch formula is:
+
+        P_tilde(k) = (1/n) * P(k)
+                   + ((n - 1)/n) * [P_tilde(k-1) + L(k) - L(k-1)]
+
+    where:
+        - P_tilde(k) is the smoothed code,
+        - P(k) is the raw code,
+        - L(k) is the carrier phase in meters,
+        - n is the current smoothing length, increasing progressively up to
+          the maximum value 'window'.
+
+    The filter is reset when:
+        - the code or phase is missing,
+        - the time gap is too large,
+        - the optional code-phase increment consistency test fails.
+
+    In this TP, the default values are chosen for a simple and robust
+    introductory use case based on 30-second GNSS data.
+    """
+    # -------------------------------------------------------------------------
+    # Input validation
+    # -------------------------------------------------------------------------
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("df must be a pandas DataFrame.")
+
+    if not isinstance(df.index, pd.MultiIndex):
+        raise ValueError(
+            "The input DataFrame must use a MultiIndex containing at least "
+            "'epoch' and 'prn'."
+        )
+
+    required_index_names = {"epoch", "prn"}
+    if not required_index_names.issubset(df.index.names):
+        raise ValueError(
+            "The DataFrame MultiIndex must contain at least the levels "
+            "'epoch' and 'prn'."
+        )
+
+    if code_col not in df.columns:
+        raise KeyError(f"Column '{code_col}' was not found in the DataFrame.")
+
+    if phase_col not in df.columns:
+        raise KeyError(f"Column '{phase_col}' was not found in the DataFrame.")
+
+    if not isinstance(window, int):
+        raise TypeError("window must be an integer.")
+
+    if window < 1:
+        raise ValueError("window must be >= 1.")
+
+    if sampling_seconds <= 0:
+        raise ValueError("sampling_seconds must be > 0.")
+
+    if max_gap_factor <= 0:
+        raise ValueError("max_gap_factor must be > 0.")
+
+    if slip_threshold_m is not None and slip_threshold_m <= 0:
+        raise ValueError("slip_threshold_m must be > 0 when provided.")
+
+    # -------------------------------------------------------------------------
+    # Prepare output
+    # -------------------------------------------------------------------------
+    smoothed = pd.Series(
+        index=df.index,
+        dtype=float,
+        name=f"{code_col}_smoothed",
+    )
+
+    epoch_level = df.index.names.index("epoch")
+
+    # -------------------------------------------------------------------------
+    # Process each satellite independently
+    # -------------------------------------------------------------------------
+    for _, df_sat in df.groupby(level="prn", sort=False):
+        df_sat = df_sat.sort_index(level="epoch")
+
+        prev_epoch = None
+        prev_code = None
+        prev_phase = None
+        prev_smoothed = None
+        n_valid = 0
+
+        for idx, row in df_sat.iterrows():
+            epoch = idx[epoch_level]
+            code = row[code_col]
+            phase = row[phase_col]
+
+            reset_filter = False
+
+            # Missing data break the smoothing continuity
+            if pd.isna(code) or pd.isna(phase):
+                reset_filter = True
+
+            # Large time gaps also break the continuity
+            if not reset_filter and prev_epoch is not None:
+                dt_seconds = (epoch - prev_epoch).total_seconds()
+                if dt_seconds > max_gap_factor * sampling_seconds:
+                    reset_filter = True
+
+            # Optional crude code-phase consistency check
+            if (
+                not reset_filter
+                and slip_threshold_m is not None
+                and prev_code is not None
+                and prev_phase is not None
+            ):
+                code_increment = code - prev_code
+                phase_increment = phase - prev_phase
+
+                if abs(code_increment - phase_increment) > slip_threshold_m:
+                    reset_filter = True
+
+            # Initialize or continue the Hatch recursion
+            if reset_filter or prev_smoothed is None:
+                smoothed.loc[idx] = code
+                n_valid = 1
+            else:
+                n_valid = min(n_valid + 1, window)
+                smoothed.loc[idx] = (
+                    (1.0 / n_valid) * code
+                    + ((n_valid - 1.0) / n_valid)
+                    * (prev_smoothed + (phase - prev_phase))
+                )
+
+            prev_epoch = epoch
+            prev_code = code
+            prev_phase = phase
+            prev_smoothed = smoothed.loc[idx]
+
+    return smoothed
+
+def hatch_carrier_smoothing_by_satellite_fb(
+    df: pd.DataFrame,
+    code_col: str,
+    phase_col: str,
+    window: int = 100,
+    sampling_seconds: float = 30.0,
+    max_gap_factor: float = 1.5,
+    slip_threshold_m: float | None = 10.0,
+) -> pd.DataFrame:
+    """
+    Apply forward-backward Hatch carrier smoothing independently for each
+    satellite.
+
+    The function returns three aligned series:
+        - forward  Hatch smoothing
+        - backward Hatch smoothing
+        - forward-backward average
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input observation DataFrame indexed by a MultiIndex containing at
+        least ('epoch', 'prn').
+    code_col : str
+        Name of the code observable column, in meters.
+    phase_col : str
+        Name of the carrier-phase observable column, in meters.
+        Important: this phase must already be expressed in meters.
+    window : int, default=100
+        Maximum Hatch smoothing length, in number of epochs.
+    sampling_seconds : float, default=30.0
+        Nominal sampling interval in seconds.
+    max_gap_factor : float, default=1.5
+        Reset the filter when the time gap exceeds
+        max_gap_factor * sampling_seconds.
+    slip_threshold_m : float | None, default=10.0
+        Optional crude consistency threshold, in meters, applied to the
+        difference between code and phase increments. If exceeded, the filter
+        is reset. If None, no such test is applied.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with three columns:
+            - f"{code_col}_smooth_fwd"
+            - f"{code_col}_smooth_bwd"
+            - f"{code_col}_smooth_fb"
+
+    Notes
+    -----
+    The forward-backward average is a simple way to reduce the edge effects
+    of a purely forward causal smoother. It remains pedagogical and easy to
+    inspect, but it is not an optimal state-space smoother.
+    """
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("df must be a pandas DataFrame.")
+
+    if not isinstance(df.index, pd.MultiIndex):
+        raise ValueError(
+            "The input DataFrame must use a MultiIndex containing at least "
+            "'epoch' and 'prn'."
+        )
+
+    required_index_names = {"epoch", "prn"}
+    if not required_index_names.issubset(df.index.names):
+        raise ValueError(
+            "The DataFrame MultiIndex must contain at least the levels "
+            "'epoch' and 'prn'."
+        )
+
+    if code_col not in df.columns:
+        raise KeyError(f"Column '{code_col}' was not found in the DataFrame.")
+
+    if phase_col not in df.columns:
+        raise KeyError(f"Column '{phase_col}' was not found in the DataFrame.")
+
+    if not isinstance(window, int):
+        raise TypeError("window must be an integer.")
+
+    if window < 1:
+        raise ValueError("window must be >= 1.")
+
+    if sampling_seconds <= 0:
+        raise ValueError("sampling_seconds must be > 0.")
+
+    if max_gap_factor <= 0:
+        raise ValueError("max_gap_factor must be > 0.")
+
+    if slip_threshold_m is not None and slip_threshold_m <= 0:
+        raise ValueError("slip_threshold_m must be > 0 when provided.")
+
+    def _hatch_one_direction(
+        df_in: pd.DataFrame,
+        reverse: bool = False,
+    ) -> pd.Series:
+        """
+        Apply one-direction Hatch smoothing satellite by satellite.
+
+        If reverse=False, smoothing is applied forward in time.
+        If reverse=True, smoothing is applied backward in time.
+        """
+        smoothed = pd.Series(
+            index=df_in.index,
+            dtype=float,
+            name=f"{code_col}_smoothed",
+        )
+
+        epoch_level = df_in.index.names.index("epoch")
+
+        for _, df_sat in df_in.groupby(level="prn", sort=False):
+            df_sat = df_sat.sort_index(level="epoch", ascending=not reverse)
+
+            prev_epoch = None
+            prev_code = None
+            prev_phase = None
+            prev_smoothed = None
+            n_valid = 0
+
+            for idx, row in df_sat.iterrows():
+                epoch = idx[epoch_level]
+                code = row[code_col]
+                phase = row[phase_col]
+
+                reset_filter = False
+
+                if pd.isna(code) or pd.isna(phase):
+                    reset_filter = True
+
+                if not reset_filter and prev_epoch is not None:
+                    dt_seconds = abs((epoch - prev_epoch).total_seconds())
+                    if dt_seconds > max_gap_factor * sampling_seconds:
+                        reset_filter = True
+
+                if (
+                    not reset_filter
+                    and slip_threshold_m is not None
+                    and prev_code is not None
+                    and prev_phase is not None
+                ):
+                    code_increment = code - prev_code
+                    phase_increment = phase - prev_phase
+
+                    if abs(code_increment - phase_increment) > slip_threshold_m:
+                        reset_filter = True
+
+                if reset_filter or prev_smoothed is None:
+                    smoothed.loc[idx] = code
+                    n_valid = 1
+                else:
+                    n_valid = min(n_valid + 1, window)
+                    smoothed.loc[idx] = (
+                        (1.0 / n_valid) * code
+                        + ((n_valid - 1.0) / n_valid)
+                        * (prev_smoothed + (phase - prev_phase))
+                    )
+
+                prev_epoch = epoch
+                prev_code = code
+                prev_phase = phase
+                prev_smoothed = smoothed.loc[idx]
+
+        return smoothed
+
+    smooth_fwd = _hatch_one_direction(df, reverse=False)
+    smooth_bwd = _hatch_one_direction(df, reverse=True)
+    smooth_fb = 0.5 * (smooth_fwd + smooth_bwd)
+
+    return pd.DataFrame(
+        {
+            f"{code_col}_smooth_fwd": smooth_fwd,
+            f"{code_col}_smooth_bwd": smooth_bwd,
+            f"{code_col}_smooth_fb": smooth_fb,
+        },
+        index=df.index,
+    )
+
 
 
 def load_and_clean_rinex(path):
@@ -164,76 +564,7 @@ def load_and_clean_rinex(path):
     return df
 
 
-# def enrich_df_with_sat_positions(df, mysp3):
-#     """
-#     Pour chaque ligne du DataFrame df (avec un index composé de (epoch, prn)),
-#     calcule la position du satellite en prenant en compte le retard, l'effet
-#     relativiste et met à jour le DataFrame avec les colonnes X_sat, Y_sat, Z_sat,
-#     dte_sat et dRelat.
 
-#     Parameters:
-#       - df : pandas DataFrame dont l'index est (epoch, prn) et qui contient la colonne 'C1'
-#       - mysp3 : instance de l'objet d'orbite contenant la méthode calcSatCoord
-#       - t : instance de gpst.gpsdatetime() utilisée pour la conversion des temps
-
-#     Returns:
-#       - df enrichi avec les colonnes calculées.
-#     """
-
-#     # Listes pour stocker les résultats
-#     x_sat  = []
-#     y_sat  = []
-#     z_sat  = []
-#     dte_sat = []
-#     d_relat = []
-
-#     # Création de l'objet temps (pour la conversion)
-#     t = gpst.gpsdatetime()
-
-#     # Pour chaque observation du DataFrame
-#     for (time_i, prn_i) in df.index:
-#         # Conversion du temps d'observation au format attendu
-#         # Par exemple, on formate time_i en chaîne de caractère
-#         # t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
-
-#         # Calcul du temps d'émission initial (mjd)
-#         t_emission_mjd = t.mjd - df.loc[(time_i, prn_i), 'C1'] / conv.SPEED_OF_LIGHT / 86400.0
-
-#         # Calcul initial de la position du satellite
-#         (x_sat_v, y_sat_v, z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd)
-
-#         # Calcul de l'effet relativiste à partir d'une dérivée numérique
-#         delta_t = 1e-3  # écart de temps en secondes
-#         (xs1, ys1, zs1, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd - delta_t/86400.0)
-#         (xs2, ys2, zs2, _) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_mjd + delta_t/86400.0)
-
-#         # Estimation de la vitesse par différence centrée
-#         vx  = np.array([xs2 - xs1, ys2 - ys1, zs2 - zs1]) / (2.0 * delta_t)
-#         vx0 = np.array([x_sat_v, y_sat_v, z_sat_v])
-
-#         d_relat_v = -2.0 * vx0.T @ vx / (conv.SPEED_OF_LIGHT ** 2)
-
-#         # Correction du temps d'émission tenant compte du retard d'horloge et de l'effet relativiste
-#         t_emission_corr = t_emission_mjd - dte_sat_v / 86400.0 - d_relat_v / 86400.0
-
-#         # Recalcul de la position au temps corrigé
-#         (x_sat_v, y_sat_v, z_sat_v, dte_sat_v) = mysp3.calcSatCoord(prn_i[0], int(prn_i[1:]), t_emission_corr)
-
-#         # Stockage des résultats
-#         x_sat.append(x_sat_v)
-#         y_sat.append(y_sat_v)
-#         z_sat.append(z_sat_v)
-#         dte_sat.append(dte_sat_v)
-#         d_relat.append(d_relat_v)
-
-#     # Ajout des nouvelles colonnes au DataFrame
-#     df['X_sat']   = x_sat
-#     df['Y_sat']   = y_sat
-#     df['Z_sat']   = z_sat
-#     df['dte_sat'] = dte_sat
-#     df['dRelat']  = d_relat
-
-    return df
 
 def Sagnac_rotate_around_z(row):
     """
@@ -258,74 +589,7 @@ def Sagnac_rotate_around_z(row):
     })
 
 
-# def add_az_el_iono_columns(df, P_rnx_header, mynav):
-#     """
-#     Ajoute dans le DataFrame les colonnes Az (azimut en degrés), Ele (élévation en degrés)
-#     et d_ion1 (correction ionosphérique selon le modèle de Klobuchar).
 
-#     Paramètres :
-#       - df : DataFrame contenant les colonnes 'X_sat', 'Y_sat', 'Z_sat' et 'ind_ligne'.
-#              L'index doit être un MultiIndex (time, prn).
-#       - P_rnx_header : tableau ou liste contenant les coordonnées de la station (X, Y, Z)
-#       - mynav : objet de navigation contenant les attributs ion_alpha_gps et ion_beta_gps.
-#       - t : objet gpsdatetime (issu de gpst.gpsdatetime) pour la gestion des temps.
-#       - tools : module (par ex. gnsstoolbox.gnsstools) fournissant les fonctions toolAzEle et toolCartGeoGRS80.
-#       - klobuchar : module contenant la fonction klobuchar pour le calcul de la correction iono.
-
-#     Retourne :
-#       - df : le DataFrame enrichi avec les colonnes 'Az', 'Ele' et 'd_ion1'.
-#     """
-
-#     # Création de l'objet temps (pour la conversion)
-#     t = gpst.gpsdatetime()
-
-#     # Conversion des coordonnées de la station en géographiques
-#     lon, lat, h = conv.xyz2geo(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2])
-#     rad2deg = 180 / np.pi
-#     lon_d = lon * rad2deg
-#     lat_d = lat * rad2deg
-
-#     # Calcul de l'azimut et de l'élévation en radians à partir des positions satellites
-#     # az_rad, ele_rad = tools.toolAzEle(P_rnx_header[0],
-#     #                                    P_rnx_header[1],
-#     #                                    P_rnx_header[2],
-#     #                                    df['X_sat'],
-#     #                                    df['Y_sat'],
-#     #                                    df['Z_sat'])
-
-#     az_rad , ele_rad = conv.xyz2azi_ele(df['X_sat'], df['Y_sat'], df['Z_sat'],
-#                                         P_rnx_header[0], P_rnx_header[1], P_rnx_header[2])
-
-#     # Conversion en degrés
-#     az_deg = az_rad * rad2deg
-#     ele_deg = ele_rad * rad2deg
-
-#     # Récupération des coefficients ionosphériques depuis le fichier de navigation
-#     alpha = mynav.ion_alpha_gps
-#     beta  = mynav.ion_beta_gps
-
-#     # Calcul de la correction iono pour chaque observation
-#     d_ion1 = []
-#     for (time_i, prn_i) in df.index:
-#         # Mise à jour de l'objet temps pour cette observation (conversion via rinex_t)
-#         #t.rinex_t(time_i.to_pydatetime().strftime('%y %m %d %H %M %S.%f'))
-#         #wsec_v = t.wsec  # secondes dans la semaine GPS
-
-#         _, wsec_v = conv.dt2gpstime(time_i, secinweek=True)
-
-#         # Récupération de l'indice de ligne correspondant (doit être un entier valide)
-#         i = df.loc[(time_i, prn_i), 'ind_ligne']
-
-#         # Calcul de la correction ionosphérique (la fonction klobuchar doit accepter ces paramètres)
-#         d_ion1_v = klobuchar(lat_d, lon_d, ele_deg[i], az_deg[i], wsec_v, alpha, beta)
-#         d_ion1.append(d_ion1_v)
-
-#     # Ajout des nouvelles colonnes dans le DataFrame
-#     df['Az']    = az_deg
-#     df['Ele']   = ele_deg
-#     df['d_ion1'] = d_ion1
-
-#     return df
 
 
 def plot_tracking_timeline(
@@ -983,6 +1247,93 @@ def plot_series(df, col1, col2=None, coeff1=1.0, coeff2=1.0, seuil=3600, rendere
 
     fig.show()
     return fig
+
+
+
+def build_residual_dataframe(
+    df_obs_used: pd.DataFrame,
+    A: np.ndarray,
+    B: np.ndarray,
+    dP_est: np.ndarray,
+    predicted_col: str = "predicted_m",
+    residual_col: str = "residual_m",
+) -> pd.DataFrame:
+    """
+    Build a residual DataFrame aligned with the observation DataFrame actually
+    used in the least-squares adjustment.
+
+    Parameters
+    ----------
+    df_obs_used : pd.DataFrame
+        Observation DataFrame used to build A and B.
+        Its row order must match the row order of A and B.
+    A : np.ndarray
+        Design matrix.
+    B : np.ndarray
+        Observation vector.
+    dP_est : np.ndarray
+        Estimated parameter vector.
+    predicted_col : str, default="predicted_m"
+        Name of the column storing the predicted values A @ dP_est.
+    residual_col : str, default="residual_m"
+        Name of the column storing the residuals B - A @ dP_est.
+
+    Returns
+    -------
+    pd.DataFrame
+        Copy of df_obs_used enriched with predicted values and residuals.
+
+    Notes
+    -----
+    This function assumes that:
+        - len(df_obs_used) == number of rows of A == len(B)
+        - the row order is exactly the same in df_obs_used, A, and B
+
+    This is the safest way to analyse residuals by satellite, epoch,
+    elevation, or any other observation metadata.
+    """
+    if not isinstance(df_obs_used, pd.DataFrame):
+        raise TypeError("df_obs_used must be a pandas DataFrame.")
+
+    if A.ndim != 2:
+        raise ValueError("A must be a 2D array.")
+
+    if B.ndim != 1:
+        raise ValueError("B must be a 1D array.")
+
+    if dP_est.ndim != 1:
+        raise ValueError("dP_est must be a 1D array.")
+
+    n_obs = len(df_obs_used)
+
+    if A.shape[0] != n_obs:
+        raise ValueError(
+            "Row mismatch: A and df_obs_used must contain the same number "
+            "of observations."
+        )
+
+    if len(B) != n_obs:
+        raise ValueError(
+            "Length mismatch: B and df_obs_used must contain the same number "
+            "of observations."
+        )
+
+    if A.shape[1] != len(dP_est):
+        raise ValueError(
+            "Dimension mismatch: the number of columns in A must match the "
+            "length of dP_est."
+        )
+
+    predicted = A @ dP_est
+    residuals = B - predicted
+
+    df_res = df_obs_used.copy()
+    df_res[predicted_col] = predicted
+    df_res[residual_col] = residuals
+
+    return df_res
+
+
 
 
 def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,

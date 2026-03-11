@@ -1297,7 +1297,7 @@ gnss_edu.plot_residual_analysis(
     B,
     dP_est,
     figure_title=("M5 - Iono-free code positioning with simple tropospheric modeling\n"
-                  f"Iono-free C1/P2, cutoff = {TROPO_ELEVATION_CUTOFF_DEG:.1f} deg, "
+                  f"Iono-free C1/P2, cutoff = {TROPO_ELEVATION_CUTOFF_DEG:.1f} deg,\n"
                   f"STD = ZTD/sin(e), piecewise-constant ZTD every {TROPO_ZTD_INTERVAL_HOURS:.1f} h"
     ),
     save_path=WORK_DIR / "06_M5_tropo_simple.png",
@@ -1362,6 +1362,7 @@ gc.collect()
 # Plot the estimated ZTD parameters as a piecewise-constant function
 ###############################################################################
 import matplotlib.pyplot as plt
+
 if "M5_tropo_simple" not in solutions:
     print("No M5_tropo_simple solution available.")
 else:
@@ -1395,6 +1396,348 @@ else:
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.show()
+
+
+# %%
+###############################################################################
+# Model M6 - Carrier-smoothed ionosphere-free code
+#
+# Educational objective
+# ---------------------
+# Keep the same physical model as in M5, but improve the code observable by
+# smoothing the ionosphere-free code with the ionosphere-free carrier phase.
+#
+# Principle
+# ---------
+# The code pseudorange provides an absolute range-like observable, but it is
+# relatively noisy.
+#
+# The carrier phase is much less noisy and describes very well how the range
+# evolves from one epoch to the next, as long as it remains continuous
+# (no cycle slip).
+#
+# The idea is therefore:
+#    - keep the absolute information from the code,
+#    - use the carrier phase to reduce the code noise.
+#
+# Hatch smoothing
+# ---------------
+# Let:
+#    P_tilde(k) = smoothed code at epoch k
+#    P(k)       = raw code at epoch k
+#    L(k)       = carrier phase in meters at epoch k
+#
+# The Hatch recursive formula is:
+#
+#     P_tilde(k) = (1/n) * P(k)
+#                + ((n - 1)/n) * [P_tilde(k-1) + L(k) - L(k-1)]
+#
+# Interpretation:
+#    - the phase increment L(k) - L(k-1) provides a precise short-term
+#      evolution of the range,
+#    - the code P(k) keeps the observable tied to the absolute range level,
+#    - the recursion progressively reduces the code noise.
+#
+# Why ionosphere-free?
+# --------------------
+# Since M5 uses the ionosphere-free code observable, we must smooth it with
+# the corresponding ionosphere-free carrier phase:
+#
+#     P_IF = ionosphere-free code
+#     L_IF = ionosphere-free carrier phase
+#
+# This keeps the smoothing physically consistent.
+#
+# What changes compared with M5?
+# ------------------------------
+# Only the observable changes:
+#    M5 : raw ionosphere-free code
+#    M6 : carrier-smoothed ionosphere-free code
+#
+# The positioning model itself remains the same.
+#
+# Important note
+# --------------
+# This is still a code-based positioning approach.
+# The carrier phase is only used here to improve the code observable.
+#
+# Quick summary
+# -------------
+# Raw IF code      : noisy absolute observable
+# IF carrier phase : precise relative evolution
+# Smoothed IF code : absolute observable with reduced noise
+###############################################################################
+
+print("***** M6 - Carrier-smoothed ionosphere-free code *****")
+
+M6_SMOOTHING_METHOD = "forward_backward"   # "forward" or "forward_backward"
+M6_SMOOTHING_WINDOW = 100
+M6_SAMPLING_SECONDS = 30.0
+M6_MAX_GAP_FACTOR = 1.5
+M6_SLIP_THRESHOLD_M = 10.0
+
+required_phase_obs = ["L1", "L2"]
+missing_phase_obs = [obs for obs in required_phase_obs if obs not in df_obs.columns]
+
+if missing_phase_obs:
+    print("The carrier-smoothed ionosphere-free step is skipped.")
+    print("Missing observables:", missing_phase_obs)
+
+else:
+    # -------------------------------------------------------------------------
+    # Select smoothing strategy once, outside the main processing flow
+    # -------------------------------------------------------------------------
+    if M6_SMOOTHING_METHOD == "forward":
+        smoothing_callable = gnss_edu.hatch_carrier_smoothing_by_satellite
+        smoothed_col_name = "code_if_smooth_m"
+        smoothing_description = "forward Hatch smoothing"
+        figure_method_label = "forward"
+
+    elif M6_SMOOTHING_METHOD == "forward_backward":
+        smoothing_callable = gnss_edu.hatch_carrier_smoothing_by_satellite_fb
+        smoothed_col_name = "code_if_m_smooth_fb"
+        smoothing_description = "forward-backward Hatch smoothing"
+        figure_method_label = "forward_backward"
+
+    else:
+        raise ValueError(
+            "Unsupported M6 smoothing method. Use 'forward' or "
+            "'forward_backward'."
+        )
+
+    # -------------------------------------------------------------------------
+    # Build ionosphere-free code and carrier phase
+    # -------------------------------------------------------------------------
+    f1 = conv.L1_CARRIER_FREQUENCY
+    f2 = conv.L2_CARRIER_FREQUENCY
+    f1_2 = f1 ** 2
+    f2_2 = f2 ** 2
+
+    lambda_1 = conv.SPEED_OF_LIGHT / f1
+    lambda_2 = conv.SPEED_OF_LIGHT / f2
+
+    df_phase_if = df_obs[["C1", "P2", "L1", "L2"]].copy()
+    df_phase_if = df_phase_if.dropna(subset=["C1", "P2", "L1", "L2"]).copy()
+
+    df_phase_if["code_if_m"] = (
+        f1_2 * df_phase_if["C1"] - f2_2 * df_phase_if["P2"]
+    ) / (f1_2 - f2_2)
+
+    df_phase_if["phase_if_m"] = (
+        f1_2 * (df_phase_if["L1"] * lambda_1)
+        - f2_2 * (df_phase_if["L2"] * lambda_2)
+    ) / (f1_2 - f2_2)
+
+    # -------------------------------------------------------------------------
+    # Apply smoothing
+    # -------------------------------------------------------------------------
+    df_smooth = smoothing_callable(
+        df=df_phase_if,
+        code_col="code_if_m",
+        phase_col="phase_if_m",
+        window=M6_SMOOTHING_WINDOW,
+        sampling_seconds=M6_SAMPLING_SECONDS,
+        max_gap_factor=M6_MAX_GAP_FACTOR,
+        slip_threshold_m=M6_SLIP_THRESHOLD_M,
+    )
+
+    if isinstance(df_smooth, pd.Series):
+        df_phase_if["code_if_smooth_m"] = df_smooth
+    else:
+        df_phase_if = df_phase_if.join(df_smooth)
+        df_phase_if["code_if_smooth_m"] = df_phase_if[smoothed_col_name]
+
+    # -------------------------------------------------------------------------
+    # Reuse the M5 observation table and attach the smoothed IF code
+    # -------------------------------------------------------------------------
+    df_m6 = df_if.copy()
+
+    join_cols = ["phase_if_m", "code_if_smooth_m"]
+    for col in [
+        "code_if_m_smooth_fwd",
+        "code_if_m_smooth_bwd",
+        "code_if_m_smooth_fb",
+    ]:
+        if col in df_phase_if.columns:
+            join_cols.append(col)
+
+    df_m6 = df_m6.join(df_phase_if[join_cols], how="left")
+
+    rows_before_dropna = len(df_m6)
+    df_m6 = df_m6.dropna(subset=["code_if_smooth_m"]).copy()
+    rows_after_dropna = len(df_m6)
+
+    print("Carrier-smoothed IF DataFrame")
+    print("-----------------------------")
+    print("Rows before dropna :", rows_before_dropna)
+    print("Rows after dropna  :", rows_after_dropna)
+    print("Rows removed       :", rows_before_dropna - rows_after_dropna)
+    print()
+    print(df_m6[["code_if_m", "code_if_smooth_m", "phase_if_m"]].head())
+
+    # -------------------------------------------------------------------------
+    # Rebuild the receiver-clock block and the ZTD block
+    # -------------------------------------------------------------------------
+    block_dt_r_m6, epoch_unique_m6 = build_receiver_clock_block(df_m6.index)
+
+    interval_unique_m6 = np.sort(df_m6["ztd_interval_id"].unique())
+    n_intervals_m6 = len(interval_unique_m6)
+
+    block_ztd_m6 = np.zeros((len(df_m6), n_intervals_m6))
+    interval_to_col_m6 = {
+        interval_k: j for j, interval_k in enumerate(interval_unique_m6)
+    }
+
+    ztd_interval_array_m6 = df_m6["ztd_interval_id"].to_numpy()
+    tropo_map_array_m6 = df_m6["tropo_map"].to_numpy(dtype=float)
+
+    for i_obs in range(len(df_m6)):
+        j = interval_to_col_m6[ztd_interval_array_m6[i_obs]]
+        block_ztd_m6[i_obs, j] = tropo_map_array_m6[i_obs]
+
+    print()
+    print("Receiver clock block shape (M6) :", block_dt_r_m6.shape)
+    print("ZTD block shape (M6)            :", block_ztd_m6.shape)
+
+    # -------------------------------------------------------------------------
+    # Solve the same model as M5, but with carrier-smoothed IF code
+    # -------------------------------------------------------------------------
+    P_app = np.array([0.0, 0.0, 0.0])
+    dP_est = np.array([100.0, 100.0, 100.0])
+    n_iter = 0
+
+    while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
+        distances = np.sqrt(
+            (df_m6["X_sat_sagnac"].values - P_app[0]) ** 2
+            + (df_m6["Y_sat_sagnac"].values - P_app[1]) ** 2
+            + (df_m6["Z_sat_sagnac"].values - P_app[2]) ** 2
+        )
+
+        B = (
+            df_m6["code_if_smooth_m"].values
+            - distances
+            + conv.SPEED_OF_LIGHT
+            * (df_m6["dte_sat"].values + df_m6["dRelat"].values)
+        )
+
+        dX = (P_app[0] - df_m6["X_sat_sagnac"].values) / distances
+        dY = (P_app[1] - df_m6["Y_sat_sagnac"].values) / distances
+        dZ = (P_app[2] - df_m6["Z_sat_sagnac"].values) / distances
+
+        A = np.column_stack((dX, dY, dZ, block_dt_r_m6, block_ztd_m6))
+
+        dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
+
+        P_est = P_app.copy()
+        P_est[0:3] = P_app[0:3] + dP_est[0:3]
+
+        n_iter += 1
+        print(
+            f"Iteration {n_iter}: "
+            f"X={P_est[0]:.3f}, Y={P_est[1]:.3f}, Z={P_est[2]:.3f}"
+        )
+
+        P_app = P_est.copy()
+
+    gnss_edu.plot_residual_analysis(
+        A,
+        B,
+        dP_est,
+        figure_title=(
+            "M6 - Carrier-smoothed iono-free code positioning\n"
+            f"Method = {figure_method_label}, "
+            f"C1/P2 iono-free smoothed by L1/L2, "
+            f"cutoff = {TROPO_ELEVATION_CUTOFF_DEG:.1f} deg, "
+            f"STD = ZTD/sin(e), "
+            f"constant ZTD every {TROPO_ZTD_INTERVAL_HOURS:.1f} h"
+        ),
+        save_path=WORK_DIR / f"07_M6_code_phase_smoothing_{figure_method_label}.png",
+        P_est=P_est[:3],
+        P_rnx_header=approx_receiver_xyz,
+    )
+
+    solution_key = f"M6_code_phase_smoothing_{figure_method_label}"
+
+    store_solution(
+        key=solution_key,
+        description=(
+            "Carrier-smoothed iono-free code + simple troposphere "
+            f"({smoothing_description})"
+        ),
+        P_est=P_est[:3],
+        P_ref=approx_receiver_xyz,
+        residual_vector=B - A @ dP_est,
+        n_iterations=n_iter,
+        active_effects=[
+            "ionosphere-free code combination (C1, P2)",
+            "ionosphere-free carrier phase combination (L1, L2)",
+            smoothing_description,
+            f"smoothing window = {M6_SMOOTHING_WINDOW:d} epochs",
+            f"nominal sampling = {M6_SAMPLING_SECONDS:.1f} s",
+            f"max gap factor = {M6_MAX_GAP_FACTOR:.1f}",
+            (
+                f"slip threshold = {M6_SLIP_THRESHOLD_M:.1f} m"
+                if M6_SLIP_THRESHOLD_M is not None
+                else "no slip-threshold consistency test"
+            ),
+            "satellite clock correction",
+            "relativistic correction",
+            "receiver clock estimation",
+            "Earth-rotation (Sagnac) correction",
+            f"observations below {TROPO_ELEVATION_CUTOFF_DEG:.1f} deg excluded",
+            f"piecewise-constant ZTD every {TROPO_ZTD_INTERVAL_HOURS:.1f} h",
+            "simple mapping function 1/sin(elevation)",
+        ],
+    )
+
+    # -------------------------------------------------------------------------
+    # Store useful M6 quantities for later inspection
+    # -------------------------------------------------------------------------
+    n_clock_params_m6 = block_dt_r_m6.shape[1]
+    ztd_estimates_m6 = dP_est[
+        3 + n_clock_params_m6 : 3 + n_clock_params_m6 + n_intervals_m6
+    ]
+
+    solutions[solution_key]["elevation_cutoff_deg"] = TROPO_ELEVATION_CUTOFF_DEG
+    solutions[solution_key]["ztd_interval_hours"] = TROPO_ZTD_INTERVAL_HOURS
+    solutions[solution_key]["ztd_interval_ids"] = interval_unique_m6.copy()
+    solutions[solution_key]["ztd_estimates_m"] = ztd_estimates_m6.copy()
+    solutions[solution_key]["smoothing_method"] = M6_SMOOTHING_METHOD
+    solutions[solution_key]["smoothing_window_epochs"] = M6_SMOOTHING_WINDOW
+    solutions[solution_key]["sampling_seconds"] = M6_SAMPLING_SECONDS
+    solutions[solution_key]["max_gap_factor"] = M6_MAX_GAP_FACTOR
+    solutions[solution_key]["slip_threshold_m"] = M6_SLIP_THRESHOLD_M
+    solutions[solution_key]["smoothed_code_used_m"] = df_m6["code_if_smooth_m"].copy()
+
+    if "code_if_m_smooth_fwd" in df_m6.columns:
+        solutions[solution_key]["smoothed_code_forward_m"] = (
+            df_m6["code_if_m_smooth_fwd"].copy()
+        )
+
+    if "code_if_m_smooth_bwd" in df_m6.columns:
+        solutions[solution_key]["smoothed_code_backward_m"] = (
+            df_m6["code_if_m_smooth_bwd"].copy()
+        )
+
+    if "code_if_m_smooth_fb" in df_m6.columns:
+        solutions[solution_key]["smoothed_code_forward_backward_m"] = (
+            df_m6["code_if_m_smooth_fb"].copy()
+        )
+
+    # -------------------------------------------------------------------------
+    # Cleanup
+    # -------------------------------------------------------------------------
+    del f1, f2, f1_2, f2_2, lambda_1, lambda_2
+    del block_dt_r_m6, epoch_unique_m6
+    del interval_unique_m6, n_intervals_m6, interval_to_col_m6
+    del ztd_interval_array_m6, tropo_map_array_m6, block_ztd_m6
+    del rows_before_dropna, rows_after_dropna
+    del P_app, dP_est, P_est, n_iter
+    del distances, dX, dY, dZ, A, B
+    del n_clock_params_m6, ztd_estimates_m6
+    del smoothing_callable, smoothed_col_name, smoothing_description
+    del figure_method_label, solution_key, df_smooth
+    gc.collect()
 
 
 
