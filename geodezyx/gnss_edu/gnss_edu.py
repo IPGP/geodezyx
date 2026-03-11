@@ -26,6 +26,9 @@ import datetime as dt
 from .klobuchar import *
 
 
+import warnings
+
+
 # Pour chercher des chaînes de caractère dans des fichiers
 import re
 
@@ -1282,27 +1285,16 @@ def build_residual_dataframe(
     -------
     pd.DataFrame
         Copy of df_obs_used enriched with predicted values and residuals.
-
-    Notes
-    -----
-    This function assumes that:
-        - len(df_obs_used) == number of rows of A == len(B)
-        - the row order is exactly the same in df_obs_used, A, and B
-
-    This is the safest way to analyse residuals by satellite, epoch,
-    elevation, or any other observation metadata.
     """
     if not isinstance(df_obs_used, pd.DataFrame):
         raise TypeError("df_obs_used must be a pandas DataFrame.")
 
+    A = np.asarray(A)
+    B = np.asarray(B).ravel()
+    dP_est = np.asarray(dP_est).ravel()
+
     if A.ndim != 2:
         raise ValueError("A must be a 2D array.")
-
-    if B.ndim != 1:
-        raise ValueError("B must be a 1D array.")
-
-    if dP_est.ndim != 1:
-        raise ValueError("dP_est must be a 1D array.")
 
     n_obs = len(df_obs_used)
 
@@ -1330,56 +1322,256 @@ def build_residual_dataframe(
     df_res = df_obs_used.copy()
     df_res[predicted_col] = predicted
     df_res[residual_col] = residuals
+    df_res["abs_residual_m"] = np.abs(residuals)
 
     return df_res
 
 
-
-
-def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
-                           P_est=None, P_rnx_header=None):
+def _plot_residual_analysis_from_df(
+    df_residuals: pd.DataFrame,
+    figure_title: str | None = None,
+    save_path=None,
+    P_est=None,
+    P_rnx_header=None,
+    residual_col: str = "residual_m",
+    predicted_col: str = "predicted_m",
+    top_left_plot: str = "timeseries",
+    prn_gap: pd.Timedelta = pd.Timedelta(minutes=30),
+    label_arcs: bool = True,
+):
     """
-    Computes residuals (v_est = B - A @ dP_est) and creates a figure containing:
-      1. Time series of residuals (displayed as points)
-      2. Histogram of residuals (number of observations per bin)
-      3. Q-Q Plot of residuals
-      4. Scatter plot of residuals vs predicted values
-      5. Text box displaying statistics (mean, variance, std dev, skewness, kurtosis)
-      6. (Optional) Text box with additional position information:
-         - Distance between estimated position and initial RINEX header position
-         - Local ENU coordinates computed via tools.toolCartLocGRS80
-
-    Parameters:
-      - A : array-like, design matrix.
-      - B : array-like, observation vector.
-      - dP_est : array-like, estimated parameter vector.
-      - figure_title (optional) : str, overall figure title.
-      - save_path (optional) : str, full path (name + extension) to save the figure.
-      - P_est (optional) : array-like, estimated position (for additional info computation).
-      - P_rnx_header (optional) : array-like, initial position from RINEX header.
-
-
-    Returns:
-      - fig : matplotlib Figure object containing all subplots.
+    New implementation: create a residual diagnostic figure from a residual
+    DataFrame.
     """
+    if not isinstance(df_residuals, pd.DataFrame):
+        raise TypeError("df_residuals must be a pandas DataFrame.")
 
+    if residual_col not in df_residuals.columns:
+        raise ValueError(f"Column '{residual_col}' not found in df_residuals.")
+
+    if predicted_col not in df_residuals.columns:
+        raise ValueError(f"Column '{predicted_col}' not found in df_residuals.")
+
+    v_est = df_residuals[residual_col].to_numpy(dtype=float)
+    b_est = df_residuals[predicted_col].to_numpy(dtype=float)
+
+    mean_val = np.mean(v_est)
+    variance = np.var(v_est)
+    std_dev = np.std(v_est)
+    rms_val = np.sqrt(np.mean(v_est ** 2))
+    median_val = np.median(v_est)
+    skewness = stats.skew(v_est)
+    kurtosis = stats.kurtosis(v_est)
+
+    nrows = 4 if (P_est is not None and P_rnx_header is not None) else 3
+    height_ratios = [1, 1, 0.5, 0.5] if nrows == 4 else [1, 1, 0.5]
+
+    fig = plt.figure(figsize=(15, 15))
+    gs = fig.add_gridspec(nrows, 2, height_ratios=height_ratios)
+
+    # ------------------------------------------------------------------
+    # 1. Top-left panel
+    # ------------------------------------------------------------------
+    ax_top_left = fig.add_subplot(gs[0, 0])
+
+    if top_left_plot == "timeseries":
+        ax_top_left.scatter(np.arange(len(v_est)), v_est, color="green", s=12)
+        ax_top_left.set_title("Time Series of Residuals")
+        ax_top_left.set_xlabel("Observation index")
+        ax_top_left.set_ylabel("Residuals (m)")
+
+    elif top_left_plot == "by_prn":
+        if not isinstance(df_residuals.index, pd.MultiIndex):
+            raise ValueError(
+                "For top_left_plot='by_prn', df_residuals must use a MultiIndex "
+                "with levels ('epoch', 'prn')."
+            )
+
+        if "epoch" not in df_residuals.index.names or "prn" not in df_residuals.index.names:
+            raise ValueError(
+                "For top_left_plot='by_prn', df_residuals index must contain "
+                "levels ('epoch', 'prn')."
+            )
+
+        prns = df_residuals.index.get_level_values("prn").unique()
+
+        for prn in prns:
+            data = df_residuals.xs(prn, level="prn")[[residual_col]].copy()
+            data = data.sort_index().dropna(subset=[residual_col])
+
+            if data.empty:
+                continue
+
+            dt = data.index.to_series().diff()
+            seg_id = (dt > prn_gap).cumsum()
+
+            color = None
+
+            for _, seg in data.groupby(seg_id):
+                if seg.empty:
+                    continue
+
+                (line,) = ax_top_left.plot(
+                    seg.index,
+                    seg[residual_col].to_numpy(),
+                    color=color,
+                    linewidth=1.0,
+                )
+
+                if color is None:
+                    color = line.get_color()
+
+                if label_arcs:
+                    x0 = seg.index[0]
+                    y0 = float(seg[residual_col].iloc[0])
+                    ax_top_left.annotate(
+                        prn,
+                        xy=(x0, y0),
+                        xytext=(3, 3),
+                        textcoords="offset points",
+                        fontsize=8,
+                        color=color,
+                        ha="left",
+                        va="bottom",
+                    )
+
+        ax_top_left.set_title("Residuals by Satellite PRN")
+        ax_top_left.set_xlabel("Epoch")
+        ax_top_left.set_ylabel("Residuals (m)")
+
+    else:
+        raise ValueError(
+            "Unsupported top_left_plot. Use 'timeseries' or 'by_prn'."
+        )
+
+    # ------------------------------------------------------------------
+    # 2. Histogram
+    # ------------------------------------------------------------------
+    ax_hist = fig.add_subplot(gs[0, 1])
+    ax_hist.hist(v_est, bins=30, edgecolor="black")
+    ax_hist.set_title("Histogram of Residuals")
+    ax_hist.set_xlabel("Residuals (m)")
+    ax_hist.set_ylabel("Number of Observations")
+
+    # ------------------------------------------------------------------
+    # 3. Q-Q plot
+    # ------------------------------------------------------------------
+    ax_qq = fig.add_subplot(gs[1, 0])
+    sm.qqplot(v_est, line="s", ax=ax_qq)
+    ax_qq.set_title("Q-Q Plot of Residuals")
+
+    # ------------------------------------------------------------------
+    # 4. Residuals vs predicted values
+    # ------------------------------------------------------------------
+    ax_scatter = fig.add_subplot(gs[1, 1])
+    ax_scatter.scatter(b_est, v_est, alpha=0.7, color="darkorange", s=12)
+    ax_scatter.axhline(0, color="red", linestyle="--")
+    ax_scatter.set_xlabel("Predicted values")
+    ax_scatter.set_ylabel("Residuals (m)")
+    ax_scatter.set_title("Residuals vs. Predicted Values")
+
+    # ------------------------------------------------------------------
+    # 5. Statistics text box
+    # ------------------------------------------------------------------
+    ax_stats = fig.add_subplot(gs[2, :])
+    ax_stats.axis("off")
+
+    stats_text = (
+        f"Mean       : {mean_val:.4f}\n"
+        f"Median     : {median_val:.4f}\n"
+        f"Variance   : {variance:.4f}\n"
+        f"Std Dev    : {std_dev:.4f}\n"
+        f"RMS        : {rms_val:.4f}\n"
+        f"Skewness   : {skewness:.4f}\n"
+        f"Kurtosis   : {kurtosis:.4f}"
+    )
+
+    ax_stats.text(
+        0.5,
+        0.5,
+        stats_text,
+        transform=ax_stats.transAxes,
+        fontsize=14,
+        verticalalignment="center",
+        horizontalalignment="center",
+        bbox=dict(facecolor="wheat", edgecolor="black", boxstyle="round,pad=1"),
+    )
+    ax_stats.set_title("Residual Statistics", fontsize=16)
+
+    # ------------------------------------------------------------------
+    # 6. Optional position information
+    # ------------------------------------------------------------------
+    if nrows == 4:
+        dist = np.sqrt(np.sum((P_est - P_rnx_header) ** 2))
+        E, N, U = conv.xyz2enu(
+            P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],
+            P_est[0], P_est[1], P_est[2]
+        )
+
+        extra_text = (
+            "Distance between estimated position and initial RINEX header "
+            f"position: {dist:.4f} m\n"
+            "Local ENU coordinates:\n"
+            f"  East (E)  : {E[0]:.4f} m\n"
+            f"  North (N) : {N[0]:.4f} m\n"
+            f"  Up (U)    : {U[0]:.4f} m"
+        )
+
+        ax_extra = fig.add_subplot(gs[3, :])
+        ax_extra.axis("off")
+        ax_extra.text(
+            0.5,
+            0.5,
+            extra_text,
+            transform=ax_extra.transAxes,
+            fontsize=14,
+            verticalalignment="center",
+            horizontalalignment="center",
+            bbox=dict(facecolor="lightcyan", edgecolor="black", boxstyle="round,pad=1"),
+        )
+        ax_extra.set_title("Position Information", fontsize=16)
+
+    if figure_title is not None:
+        fig.suptitle(figure_title, fontsize=20)
+        plt.subplots_adjust(top=0.92)
+
+    plt.tight_layout(rect=[0, 0, 1, 0.95])
+
+    if save_path is not None:
+        fig.savefig(save_path)
+        print(f"Figure saved to: {save_path}")
+
+    plt.show()
+    return fig
+
+
+def _plot_residual_analysis_legacy(
+    A,
+    B,
+    dP_est,
+    figure_title=None,
+    save_path=None,
+    P_est=None,
+    P_rnx_header=None,
+):
+    """
+    Legacy implementation preserved for backward compatibility.
+
+    Behavior is intentionally kept as close as possible to the published
+    version, with only non-breaking micro-corrections.
+    """
     # Compute residuals and predicted values
     v_est = B - A @ dP_est
     b_est = A @ dP_est
 
     # Compute residual statistics
-    mean_val   = np.mean(v_est)
-    variance   = np.var(v_est)
-    std_dev    = np.std(v_est)
-    skewness   = stats.skew(v_est)
-    kurtosis   = stats.kurtosis(v_est)
+    mean_val = np.mean(v_est)
+    variance = np.var(v_est)
+    std_dev = np.std(v_est)
+    skewness = stats.skew(v_est)
+    kurtosis = stats.kurtosis(v_est)
 
     # Create figure with GridSpec
-    # Using 4 rows and 2 columns:
-    # - Row 0: Time series (col 0) and Histogram (col 1)
-    # - Row 1: Q-Q Plot (col 0) and Residuals vs. Predicted values (col 1)
-    # - Row 2: Statistics text box (spanning 2 columns)
-    # - Row 3: (Optional) Position information text box (spanning 2 columns)
     nrows = 4 if (P_est is not None and P_rnx_header is not None) else 3
     height_ratios = [1, 1, 0.5, 0.5] if nrows == 4 else [1, 1, 0.5]
 
@@ -1388,34 +1580,34 @@ def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
 
     # 1. Time series of residuals (points only) – Top left
     ax_time = fig.add_subplot(gs[0, 0])
-    ax_time.scatter(np.arange(len(v_est)), v_est, color='green')
+    ax_time.scatter(np.arange(len(v_est)), v_est, color="green")
     ax_time.set_title("Time Series of Residuals")
     ax_time.set_xlabel("Time / Index")
     ax_time.set_ylabel("Residuals (m)")
 
-    # 2. Histogram of residuals (raw observation count) – Top right
+    # 2. Histogram of residuals – Top right
     ax_hist = fig.add_subplot(gs[0, 1])
-    sns.histplot(v_est, bins=30, stat="count", color='skyblue', edgecolor='black', ax=ax_hist)
+    ax_hist.hist(v_est, bins=30, edgecolor="black")
     ax_hist.set_title("Histogram of Residuals")
     ax_hist.set_xlabel("Residuals")
     ax_hist.set_ylabel("Number of Observations")
 
-    # 3. Q-Q Plot of residuals – Row 1, Column 0
+    # 3. Q-Q Plot of residuals
     ax_qq = fig.add_subplot(gs[1, 0])
-    sm.qqplot(v_est, line='s', ax=ax_qq)
+    sm.qqplot(v_est, line="s", ax=ax_qq)
     ax_qq.set_title("Q-Q Plot of Residuals")
 
-    # 4. Residuals vs. predicted values plot – Row 1, Column 1
+    # 4. Residuals vs. predicted values plot
     ax_scatter = fig.add_subplot(gs[1, 1])
-    ax_scatter.scatter(b_est, v_est, alpha=0.7, color='darkorange')
-    ax_scatter.axhline(0, color='red', linestyle='--')
+    ax_scatter.scatter(b_est, v_est, alpha=0.7, color="darkorange")
+    ax_scatter.axhline(0, color="red", linestyle="--")
     ax_scatter.set_xlabel("Predicted Values")
     ax_scatter.set_ylabel("Residuals (m)")
     ax_scatter.set_title("Residuals vs. Predicted Values")
 
-    # 5. Statistics text box – Next row (spans 2 columns)
+    # 5. Statistics text box
     ax_stats = fig.add_subplot(gs[2, :])
-    ax_stats.axis('off')  # Hide axes
+    ax_stats.axis("off")
     stats_text = (
         f"Mean       : {mean_val:.4f}\n"
         f"Variance   : {variance:.4f}\n"
@@ -1423,47 +1615,157 @@ def plot_residual_analysis(A, B, dP_est, figure_title=None, save_path=None,
         f"Skewness   : {skewness:.4f}\n"
         f"Kurtosis   : {kurtosis:.4f}"
     )
-    ax_stats.text(0.5, 0.5, stats_text, transform=ax_stats.transAxes,
-                  fontsize=14, verticalalignment='center', horizontalalignment='center',
-                  bbox=dict(facecolor='wheat', edgecolor='black', boxstyle='round,pad=1'))
+    ax_stats.text(
+        0.5,
+        0.5,
+        stats_text,
+        transform=ax_stats.transAxes,
+        fontsize=14,
+        verticalalignment="center",
+        horizontalalignment="center",
+        bbox=dict(facecolor="wheat", edgecolor="black", boxstyle="round,pad=1"),
+    )
     ax_stats.set_title("Residual Statistics", fontsize=16)
 
-    # 6. Position information text box – (optional)
+    # 6. Position information text box – optional
     if nrows == 4:
-        # Compute distance between estimated position and RINEX header position
-        dist = np.sqrt(np.sum((P_est - P_rnx_header)**2))
-        # Compute local ENU coordinates via toolCartLocGRS80 function
-        E, N, U = conv.xyz2enu(P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],
-                                          P_est[0], P_est[1], P_est[2])
+        dist = np.sqrt(np.sum((P_est - P_rnx_header) ** 2))
+        E, N, U = conv.xyz2enu(
+            P_rnx_header[0], P_rnx_header[1], P_rnx_header[2],
+            P_est[0], P_est[1], P_est[2]
+        )
         extra_text = (
             f"Distance between estimated position and initial RINEX header position: {dist:.4f} m\n"
             f"Local ENU coordinates:\n"
-            f"  East (E)  : {E[0]:.4f} m"
-            f"  North (N) : {N[0]:.4f} m"
+            f"  East (E)  : {E[0]:.4f} m\n"
+            f"  North (N) : {N[0]:.4f} m\n"
             f"  Up (U)    : {U[0]:.4f} m"
         )
         ax_extra = fig.add_subplot(gs[3, :])
-        ax_extra.axis('off')
-        ax_extra.text(0.5, 0.5, extra_text, transform=ax_extra.transAxes,
-                      fontsize=14, verticalalignment='center', horizontalalignment='center',
-                      bbox=dict(facecolor='lightcyan', edgecolor='black', boxstyle='round,pad=1'))
+        ax_extra.axis("off")
+        ax_extra.text(
+            0.5,
+            0.5,
+            extra_text,
+            transform=ax_extra.transAxes,
+            fontsize=14,
+            verticalalignment="center",
+            horizontalalignment="center",
+            bbox=dict(facecolor="lightcyan", edgecolor="black", boxstyle="round,pad=1"),
+        )
         ax_extra.set_title("Position Information", fontsize=16)
 
-    # Overall figure title if provided
     if figure_title is not None:
         fig.suptitle(figure_title, fontsize=20)
         plt.subplots_adjust(top=0.92)
 
-    # Adjust layout
     plt.tight_layout(rect=[0, 0, 1, 0.95])
 
-    # Save figure if path is provided
     if save_path is not None:
         fig.savefig(save_path)
         print(f"Figure saved to: {save_path}")
 
     plt.show()
     return fig
+
+
+def plot_residual_analysis(
+    *args,
+    df_residuals: pd.DataFrame | None = None,
+    figure_title: str | None = None,
+    save_path=None,
+    P_est=None,
+    P_rnx_header=None,
+    residual_col: str = "residual_m",
+    predicted_col: str = "predicted_m",
+    top_left_plot: str = "timeseries",
+    prn_gap: pd.Timedelta = pd.Timedelta(minutes=30),
+    label_arcs: bool = True,
+    **kwargs,
+):
+    """
+    Public residual-analysis function with backward-compatible routing.
+
+    Preferred API
+    -------------
+    plot_residual_analysis(
+        df_residuals=df_residuals,
+        figure_title=...,
+        save_path=...,
+        P_est=...,
+        P_rnx_header=...,
+        top_left_plot="timeseries" or "by_prn",
+    )
+
+    Legacy API (deprecated)
+    -----------------------
+    plot_residual_analysis(
+        A, B, dP_est,
+        figure_title=...,
+        save_path=...,
+        P_est=...,
+        P_rnx_header=...,
+    )
+    """
+    if kwargs:
+        unexpected = ", ".join(kwargs.keys())
+        raise TypeError(f"Unexpected keyword argument(s): {unexpected}")
+
+    # --------------------------------------------------------------
+    # New API
+    # --------------------------------------------------------------
+    if df_residuals is not None:
+        if len(args) != 0:
+            raise TypeError(
+                "When 'df_residuals' is provided, do not pass positional "
+                "arguments A, B, dP_est."
+            )
+
+        return _plot_residual_analysis_from_df(
+            df_residuals=df_residuals,
+            figure_title=figure_title,
+            save_path=save_path,
+            P_est=P_est,
+            P_rnx_header=P_rnx_header,
+            residual_col=residual_col,
+            predicted_col=predicted_col,
+            top_left_plot=top_left_plot,
+            prn_gap=prn_gap,
+            label_arcs=label_arcs,
+        )
+
+    # --------------------------------------------------------------
+    # Legacy API
+    # --------------------------------------------------------------
+    if len(args) >= 3:
+        A, B, dP_est = args[:3]
+
+        warnings.warn(
+            "Calling plot_residual_analysis(A, B, dP_est, ...) is deprecated "
+            "and will be removed in a future release. "
+            "Please use build_residual_dataframe(...) and then call "
+            "plot_residual_analysis(df_residuals=..., ...).",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        return _plot_residual_analysis_legacy(
+            A=A,
+            B=B,
+            dP_est=dP_est,
+            figure_title=figure_title,
+            save_path=save_path,
+            P_est=P_est,
+            P_rnx_header=P_rnx_header,
+        )
+
+    raise TypeError(
+        "Invalid call. Use either:\n"
+        "  plot_residual_analysis(df_residuals=..., ...)\n"
+        "or the deprecated legacy form:\n"
+        "  plot_residual_analysis(A, B, dP_est, ...)"
+    )
+
 
 
 # =============================================================================

@@ -635,14 +635,27 @@ while np.linalg.norm(dP_est) > POSITION_CONVERGENCE_THRESHOLD_M:
     print(f"Iteration {n_iter}: X={P_est[0]:.3f}, Y={P_est[1]:.3f}, Z={P_est[2]:.3f}")
     P_app = P_est
 
+# Reattach residuals to the observations used in the adjustment.
+# This makes the residual analysis physically meaningful, since each residual
+# remains linked to its observation context (epoch, PRN, elevation, etc.).
+df_residuals = gnss_edu.build_residual_dataframe(
+    df_obs_used=df_code,
+    A=A,
+    B=B,
+    dP_est=dP_est,
+)
+
+# Choose the residual plot shown in the top-left panel:
+# - "timeseries"
+# - "by_prn"
+residual_plot_mode = "by_prn"
 gnss_edu.plot_residual_analysis(
-    A,
-    B,
-    dP_est,
+    df_residuals=df_residuals,
     figure_title="M0 - Naive code-based positioning",
-    save_path=WORK_DIR / "01_M0_naive_code.png",
-    P_est=P_est,
+    save_path=WORK_DIR / f"01_M0_naive_code_{residual_plot_mode}.png",
+    P_est=P_est[:3],
     P_rnx_header=approx_receiver_xyz,
+    top_left_plot=residual_plot_mode,
 )
 
 store_solution(
@@ -741,15 +754,30 @@ while np.linalg.norm(dP_est) > POSITION_CONVERGENCE_THRESHOLD_M:
     print(f"Iteration {n_iter}: X={P_est[0]:.3f}, Y={P_est[1]:.3f}, Z={P_est[2]:.3f}")
     P_app = P_est
 
-gnss_edu.plot_residual_analysis(
-    A,
-    B,
-    dP_est,
-    figure_title="M1 - Satellite clock and relativistic corrections",
-    save_path=WORK_DIR / "02_M1_satellite_clock.png",
-    P_est=P_est,
-    P_rnx_header=approx_receiver_xyz,
+
+# Reattach residuals to the observations used in the adjustment.
+# This makes the residual analysis physically meaningful, since each residual
+# remains linked to its observation context (epoch, PRN, elevation, etc.).
+df_residuals = gnss_edu.build_residual_dataframe(
+    df_obs_used=df_code,
+    A=A,
+    B=B,
+    dP_est=dP_est,
 )
+
+# Choose the residual plot shown in the top-left panel:
+# - "timeseries"
+# - "by_prn"
+residual_plot_mode = "by_prn"
+gnss_edu.plot_residual_analysis(
+    df_residuals=df_residuals,
+    figure_title="M1 - Satellite clock and relativistic corrections",
+    save_path=WORK_DIR / f"02_M1_satellite_clock_{residual_plot_mode}.png",
+    P_est=P_est[:3],
+    P_rnx_header=approx_receiver_xyz,
+    top_left_plot=residual_plot_mode,
+)
+
 
 store_solution(
     key="M1_satellite_clock",
@@ -815,15 +843,29 @@ while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
     print(f"Iteration {n_iter}: X={P_est[0]:.3f}, Y={P_est[1]:.3f}, Z={P_est[2]:.3f}")
     P_app = P_est
 
-gnss_edu.plot_residual_analysis(
-    A,
-    B,
-    dP_est,
-    figure_title="M2 - Satellite and receiver clock corrections",
-    save_path=WORK_DIR / "03_M2_satellite_receiver_clock.png",
-    P_est=P_est,
-    P_rnx_header=approx_receiver_xyz,
+# Reattach residuals to the observations used in the adjustment.
+# This makes the residual analysis physically meaningful, since each residual
+# remains linked to its observation context (epoch, PRN, elevation, etc.).
+df_residuals = gnss_edu.build_residual_dataframe(
+    df_obs_used=df_code,
+    A=A,
+    B=B,
+    dP_est=dP_est,
 )
+
+# Choose the residual plot shown in the top-left panel:
+# - "timeseries"
+# - "by_prn"
+residual_plot_mode = "by_prn"
+gnss_edu.plot_residual_analysis(
+    df_residuals=df_residuals,
+    figure_title="M2 - Satellite and receiver clock corrections",
+    save_path=WORK_DIR / f"03_M2_satellite_receiver_clock_{residual_plot_mode}.png",
+    P_est=P_est[:3],
+    P_rnx_header=approx_receiver_xyz,
+    top_left_plot=residual_plot_mode,
+)
+
 
 store_solution(
     key="M2_receiver_clock",
@@ -912,15 +954,29 @@ while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
     print(f"Iteration {n_iter}: X={P_est[0]:.3f}, Y={P_est[1]:.3f}, Z={P_est[2]:.3f}")
     P_app = P_est
 
-gnss_edu.plot_residual_analysis(
-    A,
-    B,
-    dP_est,
-    figure_title="M3 - Satellite and receiver clocks + Sagnac",
-    save_path=WORK_DIR / "04_M3_satellite_receiver_clock_sagnac.png",
-    P_est=P_est,
-    P_rnx_header=approx_receiver_xyz,
+# Reattach residuals to the observations used in the adjustment.
+# This makes the residual analysis physically meaningful, since each residual
+# remains linked to its observation context (epoch, PRN, elevation, etc.).
+df_residuals = gnss_edu.build_residual_dataframe(
+    df_obs_used=df_code,
+    A=A,
+    B=B,
+    dP_est=dP_est,
 )
+
+# Choose the residual plot shown in the top-left panel:
+# - "timeseries"
+# - "by_prn"
+residual_plot_mode = "by_prn"
+gnss_edu.plot_residual_analysis(
+    df_residuals=df_residuals,
+    figure_title="M3 - Satellite and receiver clocks + Sagnac",
+    save_path=WORK_DIR / f"04_M3_satellite_receiver_clock_sagnac_{residual_plot_mode}.png",
+    P_est=P_est[:3],
+    P_rnx_header=approx_receiver_xyz,
+    top_left_plot=residual_plot_mode,
+)
+
 
 store_solution(
     key="M3_sagnac",
@@ -972,129 +1028,145 @@ required_if_obs = ["C1", "P2"]
 missing_if_obs = [obs for obs in required_if_obs if obs not in df_obs.columns]
 
 if missing_if_obs:
-    print("The ionosphere-free step is skipped.")
-    print("Missing observables:", missing_if_obs)
-
-else:
-    # -------------------------------------------------------------------------
-    # Build the ionosphere-free observable
-    # -------------------------------------------------------------------------
-    f1 = conv.L1_CARRIER_FREQUENCY
-    f2 = conv.L2_CARRIER_FREQUENCY
-    f1_2 = f1 ** 2
-    f2_2 = f2 ** 2
-
-    df_if = df_obs[required_if_obs].copy()
-    df_if = df_if.dropna(subset=required_if_obs).copy()
-
-    df_if["code_if_m"] = (f1_2 * df_if["C1"] - f2_2 * df_if["P2"]) / (f1_2 - f2_2)
-
-    # -------------------------------------------------------------------------
-    # Reuse the satellite-state columns already available in df_code
-    # -------------------------------------------------------------------------
-    sat_cols_needed = [
-        "X_sat", "Y_sat", "Z_sat",
-        "dte_sat", "dRelat",
-        "X_sat_sagnac", "Y_sat_sagnac", "Z_sat_sagnac",
-    ]
-
-    missing_sat_cols = [col for col in sat_cols_needed if col not in df_code.columns]
-    if missing_sat_cols:
-        raise RuntimeError(
-            f"Missing satellite-state columns in df_code: {missing_sat_cols}"
-        )
-
-    df_if = df_if.join(df_code[sat_cols_needed], how="inner")
-    df_if = df_if.dropna(
-        subset=["code_if_m"] + sat_cols_needed
-    ).copy()
-
-    df_if["row_id"] = np.arange(len(df_if))
-
-    print("Ionosphere-free working DataFrame")
-    print("---------------------------------")
-    print("Shape   :", df_if.shape)
-    print("Columns :", df_if.columns.tolist())
-    print()
-    print(df_if.head())
-
-    # -------------------------------------------------------------------------
-    # Receiver clock block
-    # -------------------------------------------------------------------------
-    block_dt_r, epoch_unique = build_receiver_clock_block(df_if.index)
-
-    # -------------------------------------------------------------------------
-    # Solve the ionosphere-free positioning model
-    # -------------------------------------------------------------------------
-    P_app = np.array([0.0, 0.0, 0.0])
-    dP_est = np.array([100.0, 100.0, 100.0])
-    n_iter = 0
-
-    while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
-        distances = np.sqrt(
-            (df_if["X_sat_sagnac"].values - P_app[0]) ** 2 +
-            (df_if["Y_sat_sagnac"].values - P_app[1]) ** 2 +
-            (df_if["Z_sat_sagnac"].values - P_app[2]) ** 2
-        )
-
-        B = (
-            df_if["code_if_m"].values
-            - distances
-            + conv.SPEED_OF_LIGHT * (df_if["dte_sat"].values + df_if["dRelat"].values)
-        )
-
-        dX = (P_app[0] - df_if["X_sat_sagnac"].values) / distances
-        dY = (P_app[1] - df_if["Y_sat_sagnac"].values) / distances
-        dZ = (P_app[2] - df_if["Z_sat_sagnac"].values) / distances
-        A = np.column_stack((dX, dY, dZ, block_dt_r))
-
-        dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
-
-        P_est = P_app.copy()
-        P_est[0:3] = P_app[0:3] + dP_est[0:3]
-
-        n_iter += 1
-        print(
-            f"Iteration {n_iter}: "
-            f"X={P_est[0]:.3f}, Y={P_est[1]:.3f}, Z={P_est[2]:.3f}"
-        )
-
-        P_app = P_est.copy()
-
-    gnss_edu.plot_residual_analysis(
-        A,
-        B,
-        dP_est,
-        figure_title="M4 - Ionosphere-free code combination",
-        save_path=WORK_DIR / "05_M4_iono_free.png",
-        P_est=P_est[:3],
-        P_rnx_header=approx_receiver_xyz,
+    raise RuntimeError(
+        "The ionosphere-free step is skipped. "
+        f"Missing observables: {', '.join(missing_if_obs)}"
     )
 
-    store_solution(
-        key="M4_iono_free",
-        description="Iono-free code combination",
-        P_est=P_est[:3],
-        P_ref=approx_receiver_xyz,
-        residual_vector=B - A @ dP_est,
-        n_iterations=n_iter,
-        active_effects=[
-            "ionosphere-free code combination (C1, P2)",
-            "satellite clock correction",
-            "relativistic correction",
-            "receiver clock estimation",
-            "Earth-rotation (Sagnac) correction",
-        ],
+
+# -------------------------------------------------------------------------
+# Build the ionosphere-free observable
+# -------------------------------------------------------------------------
+f1 = conv.L1_CARRIER_FREQUENCY
+f2 = conv.L2_CARRIER_FREQUENCY
+f1_2 = f1 ** 2
+f2_2 = f2 ** 2
+
+df_if = df_obs[required_if_obs].copy()
+df_if = df_if.dropna(subset=required_if_obs).copy()
+
+df_if["code_if_m"] = (f1_2 * df_if["C1"] - f2_2 * df_if["P2"]) / (f1_2 - f2_2)
+
+# -------------------------------------------------------------------------
+# Reuse the satellite-state columns already available in df_code
+# -------------------------------------------------------------------------
+sat_cols_needed = [
+    "X_sat", "Y_sat", "Z_sat",
+    "dte_sat", "dRelat",
+    "X_sat_sagnac", "Y_sat_sagnac", "Z_sat_sagnac",
+]
+
+missing_sat_cols = [col for col in sat_cols_needed if col not in df_code.columns]
+if missing_sat_cols:
+    raise RuntimeError(
+        f"Missing satellite-state columns in df_code: {missing_sat_cols}"
     )
 
-    # -------------------------------------------------------------------------
-    # Cleanup
-    # -------------------------------------------------------------------------
-    del f1, f2, f1_2, f2_2
-    del block_dt_r, epoch_unique
-    del P_app, dP_est, P_est, n_iter
-    del distances, dX, dY, dZ, A, B
-    gc.collect()
+df_if = df_if.join(df_code[sat_cols_needed], how="inner")
+df_if = df_if.dropna(
+    subset=["code_if_m"] + sat_cols_needed
+).copy()
+
+df_if["row_id"] = np.arange(len(df_if))
+
+print("Ionosphere-free working DataFrame")
+print("---------------------------------")
+print("Shape   :", df_if.shape)
+print("Columns :", df_if.columns.tolist())
+print()
+print(df_if.head())
+
+# -------------------------------------------------------------------------
+# Receiver clock block
+# -------------------------------------------------------------------------
+block_dt_r, epoch_unique = build_receiver_clock_block(df_if.index)
+
+# -------------------------------------------------------------------------
+# Solve the ionosphere-free positioning model
+# -------------------------------------------------------------------------
+P_app = np.array([0.0, 0.0, 0.0])
+dP_est = np.array([100.0, 100.0, 100.0])
+n_iter = 0
+
+while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
+    distances = np.sqrt(
+        (df_if["X_sat_sagnac"].values - P_app[0]) ** 2 +
+        (df_if["Y_sat_sagnac"].values - P_app[1]) ** 2 +
+        (df_if["Z_sat_sagnac"].values - P_app[2]) ** 2
+    )
+
+    B = (
+        df_if["code_if_m"].values
+        - distances
+        + conv.SPEED_OF_LIGHT * (df_if["dte_sat"].values + df_if["dRelat"].values)
+    )
+
+    dX = (P_app[0] - df_if["X_sat_sagnac"].values) / distances
+    dY = (P_app[1] - df_if["Y_sat_sagnac"].values) / distances
+    dZ = (P_app[2] - df_if["Z_sat_sagnac"].values) / distances
+    A = np.column_stack((dX, dY, dZ, block_dt_r))
+
+    dP_est, _, _, _ = np.linalg.lstsq(A, B, rcond=None)
+
+    P_est = P_app.copy()
+    P_est[0:3] = P_app[0:3] + dP_est[0:3]
+
+    n_iter += 1
+    print(
+        f"Iteration {n_iter}: "
+        f"X={P_est[0]:.3f}, Y={P_est[1]:.3f}, Z={P_est[2]:.3f}"
+    )
+
+    P_app = P_est.copy()
+
+# Reattach residuals to the observations used in the adjustment.
+# This makes the residual analysis physically meaningful, since each residual
+# remains linked to its observation context (epoch, PRN, elevation, etc.).
+df_residuals = gnss_edu.build_residual_dataframe(
+    df_obs_used=df_code,
+    A=A,
+    B=B,
+    dP_est=dP_est,
+)
+
+# Choose the residual plot shown in the top-left panel:
+# - "timeseries"
+# - "by_prn"
+residual_plot_mode = "by_prn"
+gnss_edu.plot_residual_analysis(
+    df_residuals=df_residuals,
+    figure_title="M4 - Ionosphere-free code combination",
+    save_path=WORK_DIR / f"05_M4_iono_free_{residual_plot_mode}.png",
+    P_est=P_est[:3],
+    P_rnx_header=approx_receiver_xyz,
+    top_left_plot=residual_plot_mode,
+)
+
+
+store_solution(
+    key="M4_iono_free",
+    description="Iono-free code combination",
+    P_est=P_est[:3],
+    P_ref=approx_receiver_xyz,
+    residual_vector=B - A @ dP_est,
+    n_iterations=n_iter,
+    active_effects=[
+        "ionosphere-free code combination (C1, P2)",
+        "satellite clock correction",
+        "relativistic correction",
+        "receiver clock estimation",
+        "Earth-rotation (Sagnac) correction",
+    ],
+)
+
+# -------------------------------------------------------------------------
+# Cleanup
+# -------------------------------------------------------------------------
+del f1, f2, f1_2, f2_2
+del block_dt_r, epoch_unique
+del P_app, dP_est, P_est, n_iter
+del distances, dX, dY, dZ, A, B
+gc.collect()
 
 # %%
 ###############################################################################
@@ -1292,18 +1364,22 @@ while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
 
     P_app = P_est.copy()
 
+# Choose the residual plot shown in the top-left panel:
+# - "timeseries"
+# - "by_prn"
+residual_plot_mode = "by_prn"
 gnss_edu.plot_residual_analysis(
-    A,
-    B,
-    dP_est,
+    df_residuals=df_residuals,
     figure_title=("M5 - Iono-free code positioning with simple tropospheric modeling\n"
                   f"Iono-free C1/P2, cutoff = {TROPO_ELEVATION_CUTOFF_DEG:.1f} deg,\n"
                   f"STD = ZTD/sin(e), piecewise-constant ZTD every {TROPO_ZTD_INTERVAL_HOURS:.1f} h"
     ),
-    save_path=WORK_DIR / "06_M5_tropo_simple.png",
+    save_path=WORK_DIR / f"06_M5_tropo_simple_{residual_plot_mode}.png",
     P_est=P_est[:3],
     P_rnx_header=approx_receiver_xyz,
+    top_left_plot=residual_plot_mode,
 )
+
 
 store_solution(
     key="M5_tropo_simple",
