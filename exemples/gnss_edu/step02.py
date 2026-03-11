@@ -1363,6 +1363,16 @@ while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
     )
 
     P_app = P_est.copy()
+    
+# Reattach residuals to the observations used in the adjustment.
+# This makes the residual analysis physically meaningful, since each residual
+# remains linked to its observation context (epoch, PRN, elevation, etc.).
+df_residuals = gnss_edu.build_residual_dataframe(
+    df_obs_used=df_code,
+    A=A,
+    B=B,
+    dP_est=dP_est,
+)
 
 # Choose the residual plot shown in the top-left panel:
 # - "timeseries"
@@ -1714,23 +1724,38 @@ else:
         )
 
         P_app = P_est.copy()
-
+        
+        
+    # Reattach residuals to the observations used in the adjustment.
+    # This makes the residual analysis physically meaningful, since each residual
+    # remains linked to its observation context (epoch, PRN, elevation, etc.).
+    df_residuals = gnss_edu.build_residual_dataframe(
+        df_obs_used=df_m6,
+        A=A,
+        B=B,
+        dP_est=dP_est,
+    )
+    
+    # Choose the residual plot shown in the top-left panel:
+    # - "timeseries"
+    # - "by_prn"
+    residual_plot_mode = "by_prn"
     gnss_edu.plot_residual_analysis(
-        A,
-        B,
-        dP_est,
+        df_residuals=df_residuals,
         figure_title=(
             "M6 - Carrier-smoothed iono-free code positioning\n"
             f"Method = {figure_method_label}, "
             f"C1/P2 iono-free smoothed by L1/L2, "
-            f"cutoff = {TROPO_ELEVATION_CUTOFF_DEG:.1f} deg, "
+            f"cutoff = {TROPO_ELEVATION_CUTOFF_DEG:.1f} deg,\n "
             f"STD = ZTD/sin(e), "
             f"constant ZTD every {TROPO_ZTD_INTERVAL_HOURS:.1f} h"
         ),
-        save_path=WORK_DIR / f"07_M6_code_phase_smoothing_{figure_method_label}.png",
+        save_path=WORK_DIR / f"07_M6_code_phase_smoothing_{figure_method_label}_{residual_plot_mode}.png",
         P_est=P_est[:3],
         P_rnx_header=approx_receiver_xyz,
+        top_left_plot=residual_plot_mode,
     )
+
 
     solution_key = f"M6_code_phase_smoothing_{figure_method_label}"
 
