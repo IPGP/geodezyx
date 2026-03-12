@@ -21,8 +21,6 @@ can be useful for Geodesy and Geophysics.
 
 It includes low level functions, file management functions, time and space-coordinates conversion functions, data (especially GNSS observations and orbits) retrieve functions, plots and visual selection functions ...
 
-It is designed for Python 3 on a LINUX Ubuntu-like system. Also tested with Anaconda.
-
 ------------
 Installation
 ------------
@@ -54,8 +52,6 @@ License
 -------
 
 GNU Lesser General Public License, Version 3, 29 June 2007
-
-Copyright © 2019 Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences, Potsdam, Germany (Pierre Sakic, et al.)
 
 geodezyx is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
