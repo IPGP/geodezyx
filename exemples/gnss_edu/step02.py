@@ -1123,7 +1123,7 @@ while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
 # This makes the residual analysis physically meaningful, since each residual
 # remains linked to its observation context (epoch, PRN, elevation, etc.).
 df_residuals = gnss_edu.build_residual_dataframe(
-    df_obs_used=df_code,
+    df_obs_used=df_if,
     A=A,
     B=B,
     dP_est=dP_est,
@@ -1368,7 +1368,7 @@ while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
 # This makes the residual analysis physically meaningful, since each residual
 # remains linked to its observation context (epoch, PRN, elevation, etc.).
 df_residuals = gnss_edu.build_residual_dataframe(
-    df_obs_used=df_code,
+    df_obs_used=df_if,
     A=A,
     B=B,
     dP_est=dP_est,
@@ -1895,18 +1895,11 @@ print("  - df_summary : the final model comparison table")
 
 
 
-
-
-# %%
-
 # %%
 ###############################################################################
 # Export a compact LaTeX table with Model, short Description, and ENU components
 # ENU coordinates are rounded to the nearest millimeter.
 ###############################################################################
-
-import numpy as np
-import pandas as pd
 
 
 def solutions_to_latex_table_enu(
@@ -1928,62 +1921,76 @@ def solutions_to_latex_table_enu(
         "M3_sagnac": "M3",
         "M4_iono_free": "M4",
         "M5_tropo_simple": "M5",
+        "M6_code_phase_smoothing_forward": "M6",
+        "M6_code_phase_smoothing_forward_backward": "M6",
     }
 
     model_description_map = {
-    "M0_naive_code": "Naive code model (Geometry only)",
-    "M1_satellite_clock": "+ sat. clock + relativity",
-    "M2_receiver_clock": "+ receiver clock",
-    "M3_sagnac": "+ Earth rotation (Sagnac effect)",
-    "M4_iono_free": "+ iono-free code",
-    "M5_tropo_simple": "+ simple troposphere",
-}
+        "M0_naive_code": "Naive code model (Geometry only)",
+        "M1_satellite_clock": "+ sat. clock + relativity",
+        "M2_receiver_clock": "+ receiver clock",
+        "M3_sagnac": "+ Earth rotation (Sagnac effect)",
+        "M4_iono_free": "+ iono-free code",
+        "M5_tropo_simple": "+ simple troposphere",
+        "M6_code_phase_smoothing_forward": "+ carrier-smoothed iono-free code (forward Hatch)",
+        "M6_code_phase_smoothing_forward_backward": "+ carrier-smoothed iono-free code (forward-backward Hatch)",
+    }
 
     rows = []
 
-    for model_name, result in solutions.items():
-        enu = result.get("enu_error_m", [np.nan, np.nan, np.nan])
+    for key, sol in solutions.items():
+        if "enu_error_m" not in sol:
+            continue
 
-        rows.append({
-            "Model": model_name_map.get(model_name, model_name),
-            "Description": model_description_map.get(
-                model_name,
-                result.get("description", "")
-            ),
-            "E [m]": float(enu[0]),
-            "N [m]": float(enu[1]),
-            "U [m]": float(enu[2]),
-        })
+        enu = np.asarray(sol["enu_error_m"], dtype=float).ravel()
+        if enu.size != 3:
+            raise ValueError(
+                f"Solution '{key}' has an invalid 'enu_error_m'. Expected 3 values."
+            )
 
-    df_summary = pd.DataFrame(rows)
+        model = model_name_map.get(key, key)
+        description = model_description_map.get(key, sol.get("description", ""))
 
-    desired_order = ["M0", "M1", "M2", "M3", "M4", "M5"]
-    df_summary["Model"] = pd.Categorical(
-        df_summary["Model"],
+        rows.append(
+            {
+                "Model": model,
+                "Description": description,
+                "E [m]": enu[0],
+                "N [m]": enu[1],
+                "U [m]": enu[2],
+            }
+        )
+
+    df_table = pd.DataFrame(rows)
+
+    if df_table.empty:
+        raise ValueError(
+            "No valid ENU solutions were found in the input dictionary. "
+            "Expected key 'enu_error_m' in each solution."
+        )
+
+    desired_order = ["M0", "M1", "M2", "M3", "M4", "M5", "M6"]
+    df_table["Model"] = pd.Categorical(
+        df_table["Model"],
         categories=desired_order,
         ordered=True,
     )
-    df_summary = df_summary.sort_values("Model").reset_index(drop=True)
+    df_table = df_table.sort_values("Model").reset_index(drop=True)
 
-    # Round to the nearest millimeter
-    df_summary[["E [m]", "N [m]", "U [m]"]] = (
-        df_summary[["E [m]", "N [m]", "U [m]"]].round(3)
-    )
-
-    latex_table = df_summary.to_latex(
+    latex_table = df_table.to_latex(
         index=False,
-        escape=True,
         caption=caption,
         label=label,
-        column_format="llrrr",
         float_format="%.3f",
+        column_format="llrrr",
+        escape=False,
     )
 
     if filepath is not None:
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(latex_table)
 
-    return df_summary, latex_table
+    return df_table, latex_table
 
 
 # Example of use
