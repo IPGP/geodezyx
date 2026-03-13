@@ -679,48 +679,6 @@ def rnx_regex_indir_all(rnx_regex, dir_files_list):
     return dlutils.regex_match_indir_all(rnx_regex, dir_files_list)
 
 
-def _check_local_file_exists(
-    rnxrgx, outdir, local_files_cache, force=False, all_files_mode=False
-):
-    """Wrapper for backward compatibility. See dlutils.check_local_file_exists."""
-    return dlutils.check_local_file_exists(
-        rnxrgx, outdir, local_files_cache, force, all_files_mode
-    )
-
-
-def _get_ftp_connection(
-    ftpobj, host, protocol, sftp, user, passwd, prev_host, count_loop, count_nmax
-):
-    """Wrapper for backward compatibility. See dlutils.get_ftp_connection."""
-    return dlutils.get_ftp_connection(
-        ftpobj, host, protocol, sftp, user, passwd, prev_host, count_loop, count_nmax
-    )
-
-
-def _get_ftp_directory_listing(ftpobj, directory, host, prev_dir):
-    """Wrapper for backward compatibility. See dlutils.get_ftp_directory_listing."""
-    return dlutils.get_ftp_directory_listing(ftpobj, directory, host, prev_dir)
-
-
-def _match_files_in_directory(rnxrgx, ftp_files_list, all_files_mode=False):
-    """Wrapper for backward compatibility. See dlutils.match_files_in_directory."""
-    return dlutils.match_files_in_directory(rnxrgx, ftp_files_list, all_files_mode)
-
-
-def _update_table_row_with_match(table, irow, rnx_match, all_files_mode=False):
-    """Wrapper for backward compatibility. See dlutils.update_table_row_with_match."""
-    return dlutils.update_table_row_with_match(table, irow, rnx_match, all_files_mode)
-
-
-def _generate_download_urls(table, all_files_mode=False):
-    """Wrapper for backward compatibility. See dlutils.generate_download_urls."""
-    return dlutils.generate_download_urls(table, all_files_mode)
-
-
-def _collect_local_files(table):
-    """Wrapper for backward compatibility. See dlutils.collect_local_files."""
-    return dlutils.collect_local_files(table)
-
 
 def crawl_ftp_files(
     table,
