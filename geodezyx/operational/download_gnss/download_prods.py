@@ -50,6 +50,8 @@ log = logging.getLogger("geodezyx")
 
 
 from .servers_prods import _server_select_products
+
+
 def _prod_regex(dt_cur, ac_cur, prod_cur, new_name_conv=True, dow_manu=False):
     """
     Generate a regex pattern to match GNSS product files for both old and
@@ -89,13 +91,7 @@ def _prod_regex(dt_cur, ac_cur, prod_cur, new_name_conv=True, dow_manu=False):
 
     # Old naming convention regex: e.g. wum22380.sp3.Z
     ptrn_oldnam = (
-        ac_cur.lower()
-        + ".*"
-        + str(wwww)
-        + str(dow)
-        + ".*"
-        + prod_cur.lower()
-        + r"\..*"
+        ac_cur.lower() + ".*" + str(wwww) + str(dow) + ".*" + prod_cur.lower() + r"\..*"
     )
 
     # New naming convention regex: e.g. WUM0MGXFIN_20200150000_01D_15M_ORB.SP3.gz
@@ -180,9 +176,7 @@ def gen_crawl_table_products(
 
     table_proto = []
 
-    for dt_cur, ac_cur, prod_cur in itertools.product(
-        dates_list, ac_names, prod_types
-    ):
+    for dt_cur, ac_cur, prod_cur in itertools.product(dates_list, ac_names, prod_types):
         wwww, dow = conv.dt2gpstime(dt_cur)
 
         # Build remote directory path
@@ -191,14 +185,10 @@ def gen_crawl_table_products(
         remote_dir = remote_dir.rstrip("/")
 
         # Build regex pattern
-        filrgx, dow_str = _prod_regex(
-            dt_cur, ac_cur, prod_cur, new_name_conv, dow_manu
-        )
+        filrgx, dow_str = _prod_regex(dt_cur, ac_cur, prod_cur, new_name_conv, dow_manu)
 
         # Build local output directory
-        outdir = dlutils.effective_save_dir_orbit(
-            archive_dir, ac_cur, dt_cur, archtype
-        )
+        outdir = dlutils.effective_save_dir_orbit(archive_dir, ac_cur, dt_cur, archtype)
 
         table_proto.append(
             (dt_cur, ac_cur, prod_cur, outdir, host, remote_dir, filrgx, protocol)
@@ -218,6 +208,7 @@ def gen_crawl_table_products(
     table["filnam"] = ""
 
     return table
+
 
 def download_gnss_products(
     archive_dir,
@@ -656,8 +647,5 @@ def multi_downloader_orbs_clks(
     --------
     download_gnss_products : Newer implementation of this function.
     """
-    log.error(
-        "multi_downloader_orbs_clks IS DISCONTINUED, use download_gnss_products"
-    )
+    log.error("multi_downloader_orbs_clks IS DISCONTINUED, use download_gnss_products")
     return None
-

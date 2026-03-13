@@ -17,6 +17,7 @@ from geodezyx import conv
 
 log = logging.getLogger("geodezyx")
 
+
 def _rnx_obs_rgx(date, site="....", file_period="...", data_freq="..."):
     """
     Generate RINEX observation file regex patterns for both RINEX2 and RINEX3 formats.
@@ -553,6 +554,7 @@ def igs_cddis_nav_server(date, site=None):
 
     return urldic
 
+
 def _server_select_rnx(datacenter, date, site=None):
     mode1hz = False
     protocol = "ftp"
@@ -611,5 +613,3 @@ def _server_select_rnx(datacenter, date, site=None):
         return None, None, None
 
     return urldic, protocol, mode1hz
-
-

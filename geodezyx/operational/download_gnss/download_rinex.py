@@ -24,7 +24,6 @@ log = logging.getLogger("geodezyx")
 from .servers_rinex import _server_select_rnx
 
 
-
 def download_gnss_rinex(
     statdico,
     output_dir,

@@ -11,6 +11,7 @@ import logging
 
 log = logging.getLogger("geodezyx")
 
+
 def _server_select_products(archive_center, mgex=False, repro=0):
     """
     Resolve archive center name to FTP host, base directory, and protocol.
@@ -79,5 +80,3 @@ def _server_select_products(archive_center, mgex=False, repro=0):
         return None, None, None, None
 
     return host, basedir, protocol, secure_ftp
-
-
