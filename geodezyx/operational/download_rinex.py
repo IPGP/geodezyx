@@ -669,44 +669,6 @@ def effective_save_dir(parent_archive_dir, site, date, archtype="stat"):
     return out_save_dir
 
 
-def rnx_regex_indir(rnx_regex, dir_files_list):
-    """Wrapper for backward compatibility. See dlutils.regex_match_indir."""
-    return dlutils.regex_match_indir(rnx_regex, dir_files_list)
-
-
-def rnx_regex_indir_all(rnx_regex, dir_files_list):
-    """Wrapper for backward compatibility. See dlutils.regex_match_indir_all."""
-    return dlutils.regex_match_indir_all(rnx_regex, dir_files_list)
-
-
-
-def crawl_ftp_files(
-    table,
-    sftp="auto",
-    user=None,
-    passwd=None,
-    path_ftp_crawled_files_save=None,
-    path_all_ftp_files_save=None,
-    force=False,
-    all_files_mode=False,
-):
-    """
-    Wrapper for backward compatibility.
-    Delegates to dlutils.crawl_ftp_files.
-    See dlutils.crawl_ftp_files for full documentation.
-    """
-    return dlutils.crawl_ftp_files(
-        table,
-        sftp=sftp,
-        user=user,
-        passwd=passwd,
-        path_ftp_crawled_files_save=path_ftp_crawled_files_save,
-        path_all_ftp_files_save=path_all_ftp_files_save,
-        force=force,
-        all_files_mode=all_files_mode,
-    )
-
-
 def download_gnss_rinex(
     statdico,
     output_dir,
@@ -870,7 +832,7 @@ def download_gnss_rinex(
         files_all = pd.Series([], dtype=str)
         files_loc = pd.Series([], dtype=str)
     else:
-        table_crawl, files_all, files_loc = crawl_ftp_files(
+        table_crawl, files_all, files_loc = dlutils.crawl_ftp_files(
             table,
             sftp="auto",
             user=user,
