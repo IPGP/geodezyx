@@ -29,7 +29,7 @@ import pandas as pd
 
 #### geodeZYX modules
 from geodezyx import conv, utils
-import geodezyx.operational.download_utils as dlutils
+from . import download_utils as dlutils
 
 log = logging.getLogger("geodezyx")
 

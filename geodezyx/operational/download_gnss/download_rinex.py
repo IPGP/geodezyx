@@ -16,7 +16,7 @@ import re
 
 import pandas as pd
 
-import geodezyx.operational.download_utils as dlutils
+from . import download_utils as dlutils
 from geodezyx import conv
 
 log = logging.getLogger("geodezyx")

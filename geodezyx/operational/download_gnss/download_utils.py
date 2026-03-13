@@ -119,96 +119,6 @@ def effective_save_dir_orbit(
 #### HTTP classic Download
 
 
-def downloader(
-    url, savedir, force=False, check_if_file_already_exists_uncompressed=True
-):
-    """
-    general function to download a file
-
-    can also handle non secure FTP
-    """
-
-    if type(url) is tuple:
-        need_auth = True
-        username = url[1]
-        password = url[2]
-        url = url[0]
-    else:
-        need_auth = False
-        username = ""
-        password = ""
-
-    url_print = str(url)
-
-    rnxname = os.path.basename(url)
-
-    pot_compress_files_list = [os.path.join(savedir, rnxname)]
-
-    if check_if_file_already_exists_uncompressed:
-        pot_compress_files_list.append(
-            os.path.join(savedir, rnxname.replace(".gz", ""))
-        )
-        pot_compress_files_list.append(os.path.join(savedir, rnxname.replace(".Z", "")))
-        pot_compress_files_list = list(set(pot_compress_files_list))
-
-    for f in pot_compress_files_list:
-        if os.path.isfile(f) and (not force):
-            log.info(os.path.basename(f) + " already exists locally ;)")
-            return None
-
-    ##### LOCAL FILE (particular case for GFZ)
-    if os.path.isfile(url):
-        log.info("INFO : downloader : the is a local file, a simple copy will be used")
-        log.info("       URL : %s", url)
-        shutil.copy(url, savedir)
-
-    ##### REMOTE FILE (General case)
-    elif ("http" in url) or (("ftp" in url) and not need_auth):
-        # managing an authentification
-        if need_auth:  # HTTP with Auth
-            password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
-            top_level_url = url
-            password_mgr.add_password(None, top_level_url, username, password)
-            handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
-            # create "opener" (OpenerDirector instance)
-            opener = urllib.request.build_opener(handler)
-        else:  # FTP or HTTP without Auth
-            opener = urllib.request.build_opener()
-
-        # use the opener to fetch a URL
-        try:
-            f = opener.open(url)
-        except (urllib.error.HTTPError, urllib.error.URLError) as exp:
-            log.warning("%s not found :(", rnxname)
-            log.warning(url_print)
-            log.warning(exp)
-            return ""
-
-        log.info("%s found, downloading :)", rnxname)
-        data = f.read()
-        if not os.path.exists(savedir):
-            os.makedirs(savedir)
-        outpath = os.path.join(savedir, rnxname)
-        with open(outpath, "wb") as code:
-            code.write(data)
-        return_str = outpath
-
-    elif ("ftp" in url) and need_auth:
-        log.critical("MUST BE IMPEMENTED")
-        return_str = ""
-    else:
-        log.error("something goes wrong with the URL")
-        log.error(url)
-        return_str = ""
-
-    return return_str
-
-
-def downloader_wrap(intup):
-    downloader(*intup)
-    return None
-
-
 def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
     """
     Download a file from an HTTP server with retry logic and progress bar.
@@ -762,6 +672,7 @@ def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
 
     return urllist_out, savedirlist_out
 
+
 ######################################################################
 ######## GENERIC FTP CRAWL INFRASTRUCTURE
 ######################################################################
@@ -787,6 +698,7 @@ def regex_match_indir(regex, dir_files_list):
         The first matching filename, or None if no match is found.
     """
     import re
+
     matches = [file for file in dir_files_list if re.search(regex, file)]
     return matches[0] if matches else None
 
@@ -808,6 +720,7 @@ def regex_match_indir_all(regex, dir_files_list):
         List of all matching filenames, or empty list if no match is found.
     """
     import re
+
     matches = [file for file in dir_files_list if re.search(regex, file)]
     return matches
 
@@ -867,9 +780,7 @@ def check_local_file_exists(
                 log.info("%s already exists locally ;)", fil_bn)
                 return True, False, fil_bn
             else:
-                log.info(
-                    "%s already exists locally, but re-download forced", fil_bn
-                )
+                log.info("%s already exists locally, but re-download forced", fil_bn)
                 return False, True, fil_bn
 
     return False, False, ""
@@ -1046,6 +957,7 @@ def generate_download_urls(table, all_files_mode=False):
     fil_ok_dwl = table["ok_dwl"] & ~table["ok_loc"]
 
     if all_files_mode:
+
         def make_urls(row):
             filenames = row[nam_col].split(";")
             # Normalize dir: RINEX dir has no leading '/' (built from pathlib.Path parts),
@@ -1293,3 +1205,95 @@ def crawl_ftp_files(
 
     return table_use, all_ftp_files, all_loc_files
 
+
+#### GRAVEYARD
+
+
+def downloader(
+    url, savedir, force=False, check_if_file_already_exists_uncompressed=True
+):
+    """
+    general function to download a file
+
+    can also handle non secure FTP
+    """
+
+    if type(url) is tuple:
+        need_auth = True
+        username = url[1]
+        password = url[2]
+        url = url[0]
+    else:
+        need_auth = False
+        username = ""
+        password = ""
+
+    url_print = str(url)
+
+    rnxname = os.path.basename(url)
+
+    pot_compress_files_list = [os.path.join(savedir, rnxname)]
+
+    if check_if_file_already_exists_uncompressed:
+        pot_compress_files_list.append(
+            os.path.join(savedir, rnxname.replace(".gz", ""))
+        )
+        pot_compress_files_list.append(os.path.join(savedir, rnxname.replace(".Z", "")))
+        pot_compress_files_list = list(set(pot_compress_files_list))
+
+    for f in pot_compress_files_list:
+        if os.path.isfile(f) and (not force):
+            log.info(os.path.basename(f) + " already exists locally ;)")
+            return None
+
+    ##### LOCAL FILE (particular case for GFZ)
+    if os.path.isfile(url):
+        log.info("INFO : downloader : the is a local file, a simple copy will be used")
+        log.info("       URL : %s", url)
+        shutil.copy(url, savedir)
+
+    ##### REMOTE FILE (General case)
+    elif ("http" in url) or (("ftp" in url) and not need_auth):
+        # managing an authentification
+        if need_auth:  # HTTP with Auth
+            password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+            top_level_url = url
+            password_mgr.add_password(None, top_level_url, username, password)
+            handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+            # create "opener" (OpenerDirector instance)
+            opener = urllib.request.build_opener(handler)
+        else:  # FTP or HTTP without Auth
+            opener = urllib.request.build_opener()
+
+        # use the opener to fetch a URL
+        try:
+            f = opener.open(url)
+        except (urllib.error.HTTPError, urllib.error.URLError) as exp:
+            log.warning("%s not found :(", rnxname)
+            log.warning(url_print)
+            log.warning(exp)
+            return ""
+
+        log.info("%s found, downloading :)", rnxname)
+        data = f.read()
+        if not os.path.exists(savedir):
+            os.makedirs(savedir)
+        outpath = os.path.join(savedir, rnxname)
+        with open(outpath, "wb") as code:
+            code.write(data)
+        return_str = outpath
+
+    elif ("ftp" in url) and need_auth:
+        log.critical("MUST BE IMPEMENTED")
+        return_str = ""
+    else:
+        log.error("something goes wrong with the URL")
+        log.error(url)
+        return_str = ""
+
+    return return_str
+
+
+def downloader_wrap(intup):
+    downloader(*intup)
+    return None
