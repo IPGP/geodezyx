@@ -298,7 +298,7 @@ def download_gnss_products(
     remove_patterns=("ULA",),
     archtype="week",
     new_name_conv=True,
-    parallel_download=4,
+    parallel_download=1,
     archive_center="ign",
     mgex=False,
     repro=0,
@@ -471,11 +471,28 @@ def download_gnss_products(
     elif quiet_mode:
         log.warning("quiet mode, no download was performed")
     else:
-        out_tup_lis = dlutils.ftp_downld_front(
+        # Expand semicolon-joined URLs (produced by all_files_mode) into individual URLs.
+        # Each row in table_dl may hold multiple ';'-separated URLs for a given
+        # date/AC/product combination.  ftp_downld_front / ftp_downld_mono only
+        # handles one URL at a time, so we must split them out here.
+        url_list_exp = []
+        outdir_list_exp = []
+        protocol_list_exp = []
+        for url_val, outdir_val, prot_val in zip(
             table_dl["url_true"].values,
             table_dl["outdir"].values,
+            (table_dl["protocol"] == "sftp").values,
+        ):
+            parts = str(url_val).split(";")
+            url_list_exp.extend(parts)
+            outdir_list_exp.extend([outdir_val] * len(parts))
+            protocol_list_exp.extend([prot_val] * len(parts))
+
+        out_tup_lis = dlutils.ftp_downld_front(
+            url_list_exp,
+            outdir_list_exp,
             parallel_download=parallel_download,
-            secure_ftp=(table_dl["protocol"] == "sftp").values,
+            secure_ftp=protocol_list_exp,
             force=force,
         )
 

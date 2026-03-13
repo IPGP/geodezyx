@@ -1048,15 +1048,20 @@ def generate_download_urls(table, all_files_mode=False):
     if all_files_mode:
         def make_urls(row):
             filenames = row[nam_col].split(";")
-            urls = [f"ftp://{row['host']}/{row['dir']}/{fname}" for fname in filenames]
+            # Normalize dir: RINEX dir has no leading '/' (built from pathlib.Path parts),
+            # while products dir has a leading '/' (built from os.path.join with absolute
+            # basedir).  Strip any leading '/' and always add exactly one.
+            dir_clean = row["dir"].lstrip("/")
+            urls = [f"ftp://{row['host']}/{dir_clean}/{fname}" for fname in filenames]
             return ";".join(urls)
 
         table.loc[fil_ok_dwl, "url_true"] = table.loc[fil_ok_dwl].apply(
             make_urls, axis=1
         )
     else:
+        # Same normalization for the single-file case
         table.loc[fil_ok_dwl, "url_true"] = table.loc[fil_ok_dwl].apply(
-            lambda x: f"ftp://{x['host']}/{x['dir']}/{x[nam_col]}", axis=1
+            lambda x: f"ftp://{x['host']}/{x['dir'].lstrip('/')}/{x[nam_col]}", axis=1
         )
 
 
