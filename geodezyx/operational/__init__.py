@@ -8,7 +8,6 @@ from .download_dropbox import *
 from .download_find_files import *
 from .download_prods import *
 from .download_rinex import *
-from .download_rinex_legacy import *
 from .download_utils import *
 from .soft_frontend import *
 #from .soft_frontend.anubis_frontend import *
