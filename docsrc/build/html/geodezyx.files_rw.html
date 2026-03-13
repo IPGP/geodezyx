@@ -6,21 +6,21 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>geodezyx.files_rw package &mdash; geodezyx 4.x documentation</title>
+  <title>geodezyx.files_rw package &mdash; geodezyx 5.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="geodezyx.geodyn package" href="geodezyx.geodyn.html" />
-    <link rel="prev" title="geodezyx.externlib package" href="geodezyx.externlib.html" /> 
+    <link rel="prev" title="geodezyx.conv package" href="geodezyx.conv.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,11 +47,10 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to geodezyx’s documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">GeodeZYX’s complete reference package</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx’s complete reference package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.files_rw package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.files_rw.geo_files_converter_lib">geodezyx.files_rw.geo_files_converter_lib module</a></li>
@@ -105,7 +104,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="geodezyx.html">GeodeZYX’s complete reference package</a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.html">geodezyx’s complete reference package</a></li>
       <li class="breadcrumb-item active">geodezyx.files_rw package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/geodezyx.files_rw.rst.txt" rel="nofollow"> View page source</a>
@@ -128,11 +127,11 @@
 between different file standards .</p>
 <p>it can be imported directly with:
 from geodezyx import files_rw</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.convert_statinfo2eqfile">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">convert_statinfo2eqfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statinfoin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eqfileout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.convert_statinfo2eqfile" title="Link to this definition"></a></dt>
@@ -391,7 +390,8 @@ lat&lt;0 - degrees South, lon&lt;0 - degrees West</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.write_station_info_from_datalists">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">write_station_info_from_datalists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">period_lis_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">station_info_out_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.write_station_info_from_datalists" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Write station information from data lists to station.info file.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>period_lis_lis</strong> (<em>list</em><em> of </em><em>lists</em>) – list of lists of periods.</p></li>
@@ -401,28 +401,18 @@ lat&lt;0 - degrees South, lon&lt;0 - degrees West</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None.</p>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<p class="rubric">Notes</p>
 <p>The different data lists (i.e. period_lis_lis , stat_lis , loc_lis)
 are produced by:</p>
-<blockquote>
-<div><ul class="simple">
-<li><dl class="simple">
-<dt>mono_logsheet_read</dt><dd><p>do not forget to activate return_lists = True</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>multi_logsheet_read</dt><dd><p>do not forget to activate return_dico = False</p>
-</dd>
-</dl>
-</li>
+<ul class="simple">
+<li><p>mono_logsheet_read
+do not forget to activate return_lists = True</p></li>
+<li><p>multi_logsheet_read
+do not forget to activate return_dico = False</p></li>
 </ul>
-</div></blockquote>
-</div>
 </dd></dl>
 
 </section>
@@ -747,11 +737,11 @@ This other function should be used !!!</p>
 import files containing geodetic time series.</p>
 <p>it can be imported directly with:
 from geodezyx import files_rw</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_coords_time_series.MZB_GINS_2_ATM_GAMIT">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_coords_time_series.</span></span><span class="sig-name descname"><span class="pre">MZB_GINS_2_ATM_GAMIT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listing_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_out</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_coords_time_series.MZB_GINS_2_ATM_GAMIT" title="Link to this definition"></a></dt>
@@ -829,7 +819,7 @@ To read several files at the same time see read_epos_sta_coords_multi</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filein</strong> (<em>str</em>) – path of the input coordinate file.</p></li>
 <li><p><strong>return_df</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, returns the coordinates as a Pandas DataFrame.
-if False, return a list of GeodeZYX’s point objects (advanced)
+if False, return a list of geodezyx’s point objects (advanced)
 The default is True.</p></li>
 </ul>
 </dd>
@@ -851,7 +841,7 @@ The default is True.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filein_list</strong> (<em>list</em>) – list of input coordinate files inputs.</p></li>
 <li><p><strong>output_type</strong> (<em>str</em><em>, </em><em>optional</em>) – “DataFrame”: returns a Pandas DataFrame containing the coordinates
-“TSobjects”: returns a dictionary of GeodeZYX’s TimeSeries objects (advanced)
+“TSobjects”: returns a dictionary of geodezyx’s TimeSeries objects (advanced)
 The default is “DataFrame”.</p></li>
 </ul>
 </dd>
@@ -873,8 +863,8 @@ Legacy version</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filein_list</strong> (<em>list</em>) – list of input coordinate files inputs.</p></li>
-<li><p><strong>return_dict</strong> (<em>bool</em><em>, </em><em>optional</em>) – True: returns a dictionary of GeodeZYX’s TimeSeries objects
-“TSobjects”: returns a list of GeodeZYX’s TimeSeries objects
+<li><p><strong>return_dict</strong> (<em>bool</em><em>, </em><em>optional</em>) – True: returns a dictionary of geodezyx’s TimeSeries objects
+“TSobjects”: returns a list of geodezyx’s TimeSeries objects
 The default is True.</p></li>
 </ul>
 </dd>
@@ -1485,11 +1475,11 @@ The default is True.</p></li>
 import files containing geodetic observations/products.</p>
 <p>it can be imported directly with:
 from geodezyx import files_rw</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_geo_files_misc.AC_equiv_vals">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_geo_files_misc.</span></span><span class="sig-name descname"><span class="pre">AC_equiv_vals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AC1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AC2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_geo_files_misc.AC_equiv_vals" title="Link to this definition"></a></dt>
@@ -1856,11 +1846,11 @@ X (excuded) =&gt; np.inf
 import GNSS logsheets/sitelogs.</p>
 <p>it can be imported directly with:
 from geodezyx import files_rw</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_logsheets.Antenna">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_logsheets.</span></span><span class="sig-name descname"><span class="pre">Antenna</span></span><a class="headerlink" href="#geodezyx.files_rw.read_logsheets.Antenna" title="Link to this definition"></a></dt>
@@ -1964,27 +1954,30 @@ Useful only for such write_&lt;…&gt; functions.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>pathin</strong> (<em>list</em><em> or </em><em>str.</em>) – If list: list of the Logsheet paths.
+<li><p><strong>pathin</strong> (<em>list</em><em> or </em><em>str</em>) – If list: list of the Logsheet paths.
 If str: path of the directory containing the Logsheets.</p></li>
 <li><p><strong>wildcardin</strong> (<em>str</em><em>, </em><em>optional</em>) – a wildcard describing the logsheet pattern.
 used only for pathin in a string path.
-The default is ‘<a href="#id2"><span class="problematic" id="id3">*</span></a>log’.</p></li>
-<li><p><strong>return_dico</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, returns period_lis_lis , stat_lis , loc_lis
+The default is <code class="docutils literal notranslate"><span class="pre">'*log'</span></code>.</p></li>
+<li><p><strong>return_dico</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, returns <code class="docutils literal notranslate"><span class="pre">period_lis_lis</span></code>, <code class="docutils literal notranslate"><span class="pre">stat_lis</span></code>, <code class="docutils literal notranslate"><span class="pre">loc_lis</span></code>
 the False mode is useful for station.info generation
-with write_station_info_from_datalists
+with <code class="docutils literal notranslate"><span class="pre">write_station_info_from_datalists</span></code>
 The default is True.</p></li>
-<li><p><strong>output_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Defines the output mode if a dictionary is asked.
-(It is not relevant if list are asked)
-‘classic’: returns in the period_lis , stat , loc
-‘pretty’: returns the period_lis, stat, loc but with
-period_lis as a DataFrame
-‘legacy’: returns in the dico period_lis_lis , stat_lis , loc_lis
-(should not be used anymore)
-The default is ‘classic’.</p></li>
+<li><p><strong>output_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – <p>Defines the output mode if a dictionary is asked.
+(It is not relevant if list are asked)</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'classic'</span></code>: returns in the <code class="docutils literal notranslate"><span class="pre">period_lis</span></code>, <code class="docutils literal notranslate"><span class="pre">stat</span></code>, <code class="docutils literal notranslate"><span class="pre">loc</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'pretty'</span></code>: returns the <code class="docutils literal notranslate"><span class="pre">period_lis</span></code>, <code class="docutils literal notranslate"><span class="pre">stat</span></code>, <code class="docutils literal notranslate"><span class="pre">loc</span></code> but with
+<code class="docutils literal notranslate"><span class="pre">period_lis</span></code> as a DataFrame</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'legacy'</span></code>: returns in the dico <code class="docutils literal notranslate"><span class="pre">period_lis_lis</span></code>, <code class="docutils literal notranslate"><span class="pre">stat_lis</span></code>, <code class="docutils literal notranslate"><span class="pre">loc_lis</span></code>
+(should not be used anymore)</p></li>
+</ul>
+<p>The default is <code class="docutils literal notranslate"><span class="pre">'classic'</span></code>.</p>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>stations_dico</strong> – a dictionnary like stations_dico[‘STAT’] = (period_lis, station, loc).</p>
+<dd class="field-even"><p><strong>stations_dico</strong> – a dictionnary like <code class="docutils literal notranslate"><span class="pre">stations_dico['STAT']</span> <span class="pre">=</span> <span class="pre">(period_lis,</span> <span class="pre">station,</span> <span class="pre">loc)</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
@@ -2031,11 +2024,11 @@ Then the output is a 1-item List</p>
 read RINEX files observation files.</p>
 <p>it can be imported directly with:
 from geodezyx import files_rw</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex.df_rnx_clean_lli_ssi">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex.</span></span><span class="sig-name descname"><span class="pre">df_rnx_clean_lli_ssi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_rnx_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex.df_rnx_clean_lli_ssi" title="Link to this definition"></a></dt>
@@ -2043,13 +2036,13 @@ GitHub repository :
 columns in a DataFrame RINEX</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>df_rnx_in</strong> (<em>Pandas DataFrame / GeodeZYX's RINEX format</em>) – A RINEX DataFrame with LLI/SSI columns.</p>
+<dd class="field-odd"><p><strong>df_rnx_in</strong> (<em>Pandas DataFrame / geodezyx's RINEX format</em>) – A RINEX DataFrame with LLI/SSI columns.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>df_rnx_out</strong> – A RINEX DataFrame without LLI/SSI columns.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
+<dd class="field-odd"><p>Pandas DataFrame / geodezyx’s RINEX format</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2079,7 +2072,7 @@ And the observalbes for each system as values.</p>
 <dd><p>Gives the GNSS observables for each GNSS system in a dictionnary</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>df_rnx_in</strong> (<em>Pandas DataFrame / GeodeZYX's RINEX format</em>) – A RINEX DataFrame.</p>
+<dd class="field-odd"><p><strong>df_rnx_in</strong> (<em>Pandas DataFrame / geodezyx's RINEX format</em>) – A RINEX DataFrame.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>dict_sys_obs</strong> – A dictionnary with GNSS system as key (G,R,E…).
@@ -2121,7 +2114,7 @@ where header_lines is a list of strings containing the header lines.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>df_rnx_obs</strong> (<em>Pandas DataFrame / GeodeZYX’s RINEX format</em>)</p></li>
+<li><p><strong>df_rnx_obs</strong> (<em>Pandas DataFrame / geodezyx’s RINEX format</em>)</p></li>
 <li><p><strong>header_lines</strong> (<em>list of str, optional</em>) – If return_header is True, this contains the header lines of the RINEX file.
 Otherwise, it is not returned.</p></li>
 </ul>
@@ -2151,7 +2144,7 @@ where header_lines is a list of strings containing the header lines.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>df_rnx_obs</strong> (<em>Pandas DataFrame / GeodeZYX’s RINEX format</em>)</p></li>
+<li><p><strong>df_rnx_obs</strong> (<em>Pandas DataFrame / geodezyx’s RINEX format</em>)</p></li>
 <li><p><strong>header_lines</strong> (<em>list of str, optional</em>) – If return_header is True, this contains the header lines of the RINEX file.
 Otherwise, it is not returned.</p></li>
 </ul>
@@ -2182,7 +2175,7 @@ The default is None.</p></li>
 <dd class="field-even"><p><strong>df_rnxobs</strong></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Pandas DataFrame / GeodeZYX’s RINEX format</p>
+<dd class="field-odd"><p>Pandas DataFrame / geodezyx’s RINEX format</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2208,7 +2201,7 @@ where header_lines is a list of strings containing the header lines.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>df_rnx_obs</strong> (<em>Pandas DataFrame / GeodeZYX’s RINEX format</em>)</p></li>
+<li><p><strong>df_rnx_obs</strong> (<em>Pandas DataFrame / geodezyx’s RINEX format</em>)</p></li>
 <li><p><strong>header_lines</strong> (<em>list of str, optional</em>) – If return_header is True, this contains the header lines of the RINEX file.
 Otherwise, it is not returned.</p></li>
 </ul>
@@ -2224,10 +2217,59 @@ Otherwise, it is not returned.</p></li>
 <p>&#64;author: psakic</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex_nav.read_rinex_nav">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex_nav.</span></span><span class="sig-name descname"><span class="pre">read_rinex_nav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writeh5</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex_nav.read_rinex_nav" title="Link to this definition"></a></dt>
-<dd><p>Based on Michael Hirsch readRinexNav function
-Manage RINEX3
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex_nav.</span></span><span class="sig-name descname"><span class="pre">read_rinex_nav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writeh5</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex_nav.read_rinex_nav" title="Link to this definition"></a></dt>
+<dd><p>Read a RINEX 2 or RINEX 3 navigation file into a DataFrame.</p>
+<p>Based on Michael Hirsch readRinexNav function.
 <a class="reference external" href="http://gage14.upc.es/gLAB/HTML/GPS_Navigation_Rinex_v2.11.html">http://gage14.upc.es/gLAB/HTML/GPS_Navigation_Rinex_v2.11.html</a></p>
+<p>The RINEX version is auto-detected from the file header.
+Compressed files (.gz / .Z) are decompressed automatically.</p>
+<p>RINEX3 reading is optimized for GOP files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fn</strong> (<em>str</em>) – Path to the RINEX navigation file (plain or .gz / .Z compressed).</p></li>
+<li><p><strong>writeh5</strong> (<em>ignored</em>) – Kept for backward compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>nav</strong> – Navigation data with columns defined in _NAV_COLS plus ‘sys’ and ‘svni’.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.read_rinex_nav.read_rinex_nav_v3_header">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.read_rinex_nav.</span></span><span class="sig-name descname"><span class="pre">read_rinex_nav_v3_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.read_rinex_nav.read_rinex_nav_v3_header" title="Link to this definition"></a></dt>
+<dd><p>Parse IONOSPHERIC CORR and TIME SYSTEM CORR records from a RINEX 3
+navigation file header.</p>
+<p>Compressed files (.gz / .Z) are decompressed automatically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>str</em>) – Path to the RINEX 3 navigation file (plain or .gz / .Z compressed).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>iono_corr_dic</strong> (<em>dict</em>) – Keys are the 4-character correction type (e.g. <code class="docutils literal notranslate"><span class="pre">'GPSA'</span></code>, <code class="docutils literal notranslate"><span class="pre">'GPSB'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'GAL'</span></code>, <code class="docutils literal notranslate"><span class="pre">'BDSA'</span></code> …).  Values are numpy arrays of the numeric
+parameters found on that line.</p></li>
+<li><p><strong>time_sys_corr_dic</strong> (<em>dict</em>) – Keys are the 4-character correction type (e.g. <code class="docutils literal notranslate"><span class="pre">'GAUT'</span></code>, <code class="docutils literal notranslate"><span class="pre">'GPUT'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'GLUT'</span></code> …).  Values are numpy arrays of the numeric parameters
+(2 floats + 2 ints) found on that line.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">iono</span><span class="p">,</span> <span class="n">tsys</span> <span class="o">=</span> <span class="n">read_rinex_nav_v3_header</span><span class="p">(</span><span class="s1">&#39;BRDC00GOP_R_20191760000_01D_MN.rnx&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iono</span><span class="p">[</span><span class="s1">&#39;GPSA&#39;</span><span class="p">]</span>
+<span class="go">array([ 4.6566e-09,  1.4901e-08, -5.9605e-08, -1.1921e-07])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tsys</span><span class="p">[</span><span class="s1">&#39;GAUT&#39;</span><span class="p">]</span>
+<span class="go">array([ 1.9557774067e-08, -1.154631946e-14,  1.72800e+05,  2.059e+03])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -2375,11 +2417,11 @@ e.g. : solnam = lambda x: x.split(“/”)[-5][4:]</p></li>
 write misc. geodetic data in dedicated files.</p>
 <p>it can be imported directly with:
 from geodezyx import files_rw</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.write_geo_files.ine_block_mono">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">ine_block_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_intrvl_strt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_intrvl_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_geo_files.ine_block_mono" title="Link to this definition"></a></dt>
@@ -2517,11 +2559,11 @@ The default is True.</p></li>
 read RINEX files observation files.</p>
 <p>it can be imported directly with:
 from geodezyx import files_rw</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.write_rinex.header_rinex3_generic">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write_rinex.</span></span><span class="sig-name descname"><span class="pre">header_rinex3_generic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write_rinex.header_rinex3_generic" title="Link to this definition"></a></dt>
@@ -2618,14 +2660,14 @@ Retourne une liste triée: [iso_date, ZTD, ZTD_STD, ZHD, ZWD, TGN, STD_TGN, TGE,
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="geodezyx.externlib.html" class="btn btn-neutral float-left" title="geodezyx.externlib package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.conv.html" class="btn btn-neutral float-left" title="geodezyx.conv package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="geodezyx.geodyn.html" class="btn btn-neutral float-right" title="geodezyx.geodyn package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

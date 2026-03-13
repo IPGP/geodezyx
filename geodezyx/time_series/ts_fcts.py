@@ -753,12 +753,34 @@ def mad_cleaner(
     verbose=False,
 ):
     """
-    method : methode d'élimination :
-            dist : on élimine les point qu sont trop loin en distance de la posi de ref
-            indep : on traite les point independaments
+    Clean time series using Median Absolute Deviation (MAD) method.
 
-            dist est a privilégier
-    output_detrended ne marche que si detrend_first est activé
+    Parameters
+    ----------
+    tsin : TimeSerie
+        Input time series object
+    seuil : float
+        Threshold for outlier detection (default 3.5)
+    method : str
+        Method of elimination:
+
+        - ``'dist'``: eliminate points that are too far in distance from ref position
+        - ``'indep'``: treat points independently
+
+        dist is preferred
+    coortype : str
+        Coordinate type (default ``'ABC'``)
+    detrend_first : bool
+        Remove trend before cleaning (default False)
+    output_detrended : bool
+        Output detrended data (only works if detrend_first is True)
+    verbose : bool
+        Print verbose output (default False)
+
+    Returns
+    -------
+    tsout : TimeSerie
+        Cleaned time series
     """
 
     if coortype == "ABC":

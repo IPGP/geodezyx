@@ -256,6 +256,12 @@ Complie FORTRAN SOFA library for Earth Orientation Parameters
 5. Compile the library with the following command: ``f2py -c *for -m sofa``
 6. Move the generated ``sofa.cpython-<...>.so`` file to the ``geodezyx/reffram`` module
 
+-------------------------------------------------------------
+Pedagogical features for teaching GNSS processing
+-------------------------------------------------------------
+_geodezyx_ integrates a set of educational scripts designed to guide students step-by-step through the logic of GNSS data processing.
+The approach is based on progressive enrichment of the least-squares model, making each geophysical correction or parameter estimation visible and traceable.
 
+These scripts are self-explanatory and located in the `exemples/gnss_edu` folder.
 
 

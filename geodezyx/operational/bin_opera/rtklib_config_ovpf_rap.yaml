@@ -17,10 +17,10 @@ sites_rovers:                                     # List of rover stations
 sites_bases:
   - GITG00REU              # Base station
   - B59300REU              # Base station
-out_dir: /backuped/calcgnss/rtklib_process/OVPF_RAP_posmode4_B593  # Output directory
+out_dir: /backuped/calcgnss/rtklib_process/OVPF_static-start_RAP  # Output directory
 
 # Optional parameters
-exp_prefix: OVPF_RAP_posmode4_B593                         # Output filename prefix (default: empty)
+exp_prefix: OVPF_static-start_RAP                          # Output filename prefix (default: empty)
 igs_prods: GRG0OPSRAP                                      # IGS product ID (default: GRG0OPSULT)
 tmp_dir: /backuped/calcgnss/rtklib_process/090_TMP         # Temporary directory (default: <out_dir>/TMP)
 prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib   # GNSS products directory (default: <tmp_dir>)

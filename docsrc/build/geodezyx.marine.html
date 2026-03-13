@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>geodezyx.marine package &mdash; geodezyx 4.x documentation</title>
+  <title>geodezyx.marine package &mdash; geodezyx 5.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -49,9 +49,8 @@
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
@@ -249,11 +248,11 @@ the DAC values.</p>
 GEBCO bathymetry.</p>
 <p>it can be imported directly with:
 from geodezyx import marine</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.marine.gebco_bathy_grid_extractor">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.marine.</span></span><span class="sig-name descname"><span class="pre">gebco_bathy_grid_extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lonmax</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.marine.gebco_bathy_grid_extractor" title="Link to this definition"></a></dt>
@@ -467,11 +466,12 @@ Options are ‘forward’, ‘backward’, and ‘averaged’. Default is ‘for
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>phibot = Ocean hydrostatic bottom pressure anomaly
-<a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html</a>
+<p>phibot = Ocean hydrostatic bottom pressure anomaly</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html</a>
 <a class="reference external" href="https://cmr.earthdata.nasa.gov/search/concepts/V2146301108-POCLOUD.html">https://cmr.earthdata.nasa.gov/search/concepts/V2146301108-POCLOUD.html</a></p>
 <dl class="simple">
-<dt>PHIBOT              Bottom Pressure Pot. Anomaly (p/rhonil, m^2/s^2)</dt><dd><p>To convert to m, divide by g (g=9.81 m/s^2)
+<dt>PHIBOT is the Bottom Pressure Potential Anomaly (p/rhonil, m^2/s^2)</dt><dd><p>To convert to m, divide by g (g=9.81 m/s^2)
 PHIBOT is the anomaly relative to Depth * rhonil * g
 The absolute bottom pressure in Pa is:
 Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)</p>
@@ -1170,14 +1170,14 @@ The function uses different colors for the pressure and temperature data for bet
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.marine.obscom.pres2freq">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.marine.obscom.</span></span><span class="sig-name descname"><span class="pre">pres2freq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'psi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_optimize_object</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.marine.obscom.pres2freq" title="Link to this definition"></a></dt>
-<dd><p>Convert pressure to  pressure sensor frequency</p>
-<p>There is no analytic solution, thus an root find is required</p>
+<dd><p>Convert pressure to pressure sensor frequency</p>
+<p>There is no analytic solution, thus a root find is required</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>p_in</strong> – pressure in psi.</p></li>
-<li><p><strong>t_in</strong> – temperature in Celsius.</p></li>
-<li><p><strong>inp</strong> (<em>optional</em>) – input for p_in as pressure (‘psi’, ‘bar’, ‘mbar’, ‘pa’)
+<li><p><strong>p_in</strong> (<em>float</em>) – pressure in psi.</p></li>
+<li><p><strong>t_in</strong> (<em>float</em>) – temperature in Celsius.</p></li>
+<li><p><strong>inp</strong> (<em>str</em><em>, </em><em>optional</em>) – input for p_in as pressure (‘psi’, ‘bar’, ‘mbar’, ‘pa’)
 or distance (‘meter’).
 The default is ‘psi’.</p></li>
 <li><p><strong>return_optimize_object</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, return the object of scipy’s optimize.root function.
@@ -1192,6 +1192,8 @@ The default is False.</p></li>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The conversion uses a root-finding algorithm to solve the inverse function.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1280,7 +1282,7 @@ with the cofficients of the sensor #158073
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

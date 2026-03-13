@@ -9,12 +9,12 @@ This sub-module of geodezyx.utils contains functions for Shell-like
 it can be imported directly with:
 from geodezyx import utils
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 
@@ -49,8 +49,34 @@ def subprocess_frontend(cmd_in,
                         log_name_out="out.log",
                         log_name_err="err.log",
                         logname_timestamp=False):
-    
-    
+    """
+    Run a shell command and optionally save output to log files.
+
+    Parameters
+    ----------
+    cmd_in : str
+        Command to execute via shell.
+    save_log : bool, optional
+        If True, save stdout and stderr to log files. Default is False.
+    log_dir : str, optional
+        Directory where log files will be saved. Default is current working directory.
+    log_name_out : str, optional
+        Name of the stdout log file. Default is "out.log".
+    log_name_err : str, optional
+        Name of the stderr log file. Default is "err.log".
+    logname_timestamp : bool, optional
+        If True, prepend timestamp to log filenames. Default is False.
+
+    Returns
+    -------
+    tuple
+        - process1 : subprocess.CompletedProcess
+            The subprocess return object.
+        - process1_stdout : str
+            Standard output from the command.
+        - process1_stderr : str
+            Standard error from the command.
+    """
     now = utils.get_timestamp()
     
     process1 = subprocess.run([cmd_in],
@@ -85,9 +111,24 @@ def subprocess_frontend(cmd_in,
 
 def tail(filename, count=1, offset=1024):
     """
-    A more efficent way of getting the last few lines of a file.
+    Get the last few lines of a file efficiently.
+
     Depending on the length of your lines, you will want to modify offset
     to get better performance.
+
+    Parameters
+    ----------
+    filename : str or file-like object
+        Path to the file or a file-like object (StringIO, BytesIO, etc.)
+    count : int, optional
+        Number of lines to return from the end of the file. Default is 1.
+    offset : int, optional
+        Number of bytes to read from the end of the file. Default is 1024.
+
+    Returns
+    -------
+    list
+        List of lines from the end of the file.
     """
 
     # file-like object handling (StringIO, BytesIO, open file, etc.)
@@ -125,7 +166,19 @@ def tail(filename, count=1, offset=1024):
 
 def head(filename, count=1):
     """
-    This one is fairly trivial to implement but it is here for completeness.
+    Get the first few lines of a file.
+
+    Parameters
+    ----------
+    filename : str or file-like object
+        Path to the file or a file-like object (StringIO, BytesIO, etc.)
+    count : int, optional
+        Number of lines to return from the beginning of the file. Default is 1.
+
+    Returns
+    -------
+    list
+        List of lines from the beginning of the file.
     """
 
     # file-like object handling (StringIO, BytesIO, open file, etc.)
@@ -158,17 +211,42 @@ def grep(file_in, search_string, only_first_occur=False,
          invert=False, regex=False, line_number=False, col=(None, None),
          force_list_output=False):
     """
-    if nothing is found returns a empty string : ""
-    (and NOT a singleton list with an empty string inside)
+    Search for lines matching a pattern in a file.
 
-    Args :
-        col : Define the columns where the grep is executed
-              (Not delimited columns , one character = a new column)
-              from 1st col. / until last col. : use None as index
-              force_list_output : if the output is an unique element,
-              it will be returned in a list anyway
+    Returns an empty string if nothing is found, not a singleton list with an
+    empty string inside.
 
-    search_string can be a list (150721 change)
+    Parameters
+    ----------
+    file_in : str or file-like object
+        Path to the file or a file-like object to search.
+    search_string : str or list
+        String(s) to search for.
+    only_first_occur : bool, optional
+        Return only the first occurrence. Default is False.
+    invert : bool, optional
+        If True, return lines that do NOT match the search string. Default is False.
+    regex : bool, optional
+        If True, treat search_string as a regular expression. Default is False.
+    line_number : bool, optional
+        If True, also return the line numbers. Default is False.
+    col : tuple of int, optional
+        Column range (start, end) where the grep is executed.
+        Use None for unbounded indices. Default is (None, None).
+    force_list_output : bool, optional
+        If True, always return a list even for single elements. Default is False.
+
+    Returns
+    -------
+    str, list, or tuple
+        - If line_number is True and single result: (line_number, line)
+        - If line_number is True and multiple results: (line_numbers_list, lines_list)
+        - Otherwise returns matching line(s) as str or list, or empty string if no matches.
+
+    Notes
+    -----
+    - If nothing is found returns an empty string (not a singleton list)
+    - search_string can be a list of patterns to match any
     """
     if type(search_string) is str:
         search_string = [search_string]
@@ -227,10 +305,29 @@ def grep(file_in, search_string, only_first_occur=False,
 
 def egrep_big_string(regex,bigstring,only_first_occur=False):
     """
-    perform a regex grep on a big string sepatated with \n
-    NB : must be improved with regular pattern matching, wo regex
+    Perform a regex grep on a big string separated with newlines.
 
-    OBSOLETE: grep can manage it (260121)
+    .. deprecated::
+        Use :func:`grep` instead, which handles this functionality (as of 260121).
+
+    Parameters
+    ----------
+    regex : str
+        Regular expression pattern to search for.
+    bigstring : str
+        The large string (separated by newlines) to search in.
+    only_first_occur : bool, optional
+        If True, return only the first matching line. Default is False.
+
+    Returns
+    -------
+    str or list
+        Matching line(s) as str if single result, list if multiple results,
+        or empty string if no matches.
+
+    Notes
+    -----
+    This function must be improved with regular pattern matching, without relying on regex.
     """
 
     matching_line_list = []
@@ -254,20 +351,66 @@ def egrep_big_string(regex,bigstring,only_first_occur=False):
         return matching_line_list
 
 def grep_boolean(file_in,search_string):
+    """
+    Check if a string exists in a file.
+
+    Parameters
+    ----------
+    file_in : str
+        Path to the file to search.
+    search_string : str
+        String to search for.
+
+    Returns
+    -------
+    bool
+        True if search_string is found in the file, False otherwise.
+    """
     for line in open(file_in):
         if search_string in line:
             return True
     return False
 
 def regex_or_from_list(listin):
+    """
+    Create a regex OR pattern from a list of strings.
+
+    Parameters
+    ----------
+    listin : list
+        List of strings to convert to regex OR pattern.
+
+    Returns
+    -------
+    str
+        Regex pattern matching any of the input strings, e.g., "(pattern1|pattern2)".
+    """
     return "(" + utils.join_improved("|" , *listin) +  ")"
 
 def cat(outfilename, *infilenames):
     """
-    Is for concatenating files ...
-    For just a print, use cat_print !
+    Concatenate files.
+
+    Parameters
+    ----------
+    outfilename : str
+        Output filename
+    infilenames : str
+        Input filenames to concatenate
+
+    Returns
+    -------
+    outfilename : str
+        The output filename
+
+    Notes
+    -----
+    For just a print, use cat_print!
+
+    References
+    ----------
     http://stackoverflow.com/questions/11532980/reproduce-the-unix-cat-command-in-python
-        kindall response
+    kindall response
     """
     with open(outfilename, 'w') as outfile:
         for infilename in infilenames:
@@ -280,9 +423,27 @@ def cat(outfilename, *infilenames):
 
 def cat_remove_header(infilepath,outfilepath,header='',
                       header_included = False):
+    """
+    Concatenate file content starting from a specified header line.
 
-    bool_out = False
+    Parameters
+    ----------
+    infilepath : str
+        Path to the input file.
+    outfilepath : str
+        Path to the output file.
+    header : str, optional
+        The header pattern to search for. Default is empty string.
+    header_included : bool, optional
+        If True, include the header line in the output. Default is False.
+
+    Returns
+    -------
+    str
+        Path to the output file.
+    """
     F = open(infilepath,'r+')
+    bool_out = False
 
     with open(outfilepath, 'w') as outfile:
         for line in F:
@@ -296,6 +457,18 @@ def cat_remove_header(infilepath,outfilepath,header='',
     return outfilepath
 
 def cat_print(inpfile):
+    """
+    Print file contents to stdout, line by line.
+
+    Parameters
+    ----------
+    inpfile : str
+        Path to the file to print.
+
+    Returns
+    -------
+    None
+    """
     fil = open(inpfile)
     for l in fil:
         if l[-1] == '\n':
@@ -307,24 +480,20 @@ def cat_print(inpfile):
 
 def empty_file_check(fpath):
     """
-    Check if a file is empty or not. 
-    NB : Also check if the file exists
-    
+    Check if a file is empty or does not exist.
+
     Parameters
     ----------
     fpath : str
-        the file path
-                
+        The file path to check.
+
     Returns
-    -------  
-    True : 
-        the file is empty or does not exist
-    
-    False : 
-        the file exists and is not empty
-         
-    Source
-    ------
+    -------
+    bool
+        True if the file is empty or does not exist, False otherwise.
+
+    See Also
+    --------
     http://stackoverflow.com/questions/2507808/python-how-to-check-file-empty-or-not
     """
     return not (os.path.isfile(fpath) and os.path.getsize(fpath) > 0)
@@ -448,8 +617,25 @@ def find_recursive(parent_folder , pattern,
     return matches
 
 def glob_smart(dir_path,file_pattern=None,verbose=True):
+    """
+    Find files in a directory using glob pattern with optional logging.
+
+    Parameters
+    ----------
+    dir_path : str
+        The directory path to search in.
+    file_pattern : str, optional
+        File pattern to match. Default is None (search all files).
+    verbose : bool, optional
+        If True, log warnings/info about search results. Default is True.
+
+    Returns
+    -------
+    list
+        List of file paths matching the pattern.
+    """
     if file_pattern:
-        dir_path_ok = os.join.path(dir_path,file_pattern)
+        dir_path_ok = os.path.join(dir_path,file_pattern)
     else:
         dir_path_ok = dir_path
         
@@ -465,7 +651,24 @@ def glob_smart(dir_path,file_pattern=None,verbose=True):
 
 
 def insert_lines_in_file(file_path,text_values,lines_ids):
-    
+    """
+    Insert text lines at specified positions in a file.
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the file to modify.
+    text_values : str or list
+        Text string(s) to insert.
+    lines_ids : int or list
+        Line number(s) where text should be inserted.
+
+    Returns
+    -------
+    str
+        Path to the modified file.
+    """
+
     if not utils.is_iterable(text_values):
         text_values = [text_values]
     
@@ -491,7 +694,29 @@ def insert_str_in_file_if_line_contains(file_path,str_to_insert,
                                     position=None,
                                     only_first_occur=False):
     """
-    NB : position is not implemented
+    Insert a string at lines matching a pattern.
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the file to modify.
+    str_to_insert : str
+        String to insert before matching lines.
+    line_pattern_tup : tuple
+        Tuple of patterns to search for.
+    position : int, optional
+        Position for insertion (not implemented). Default is None.
+    only_first_occur : bool, optional
+        If True, only process the first occurrence. Default is False.
+
+    Returns
+    -------
+    str
+        Path to the modified file.
+
+    Notes
+    -----
+    The position parameter is not currently implemented.
     """
     f = open(file_path, "r")
     contents = f.readlines()
@@ -520,6 +745,25 @@ def insert_str_in_file_if_line_contains(file_path,str_to_insert,
     return file_path
 
 def gzip_compress(inp_path, out_dir=None, out_fname=None, rm_inp=False):
+    """
+    Compress a file using gzip.
+
+    Parameters
+    ----------
+    inp_path : str
+        Path to the input file to compress.
+    out_dir : str, optional
+        Output directory. Default is None (same as input file).
+    out_fname : str, optional
+        Output filename. Default is None (input filename + ".gz").
+    rm_inp : bool, optional
+        If True, remove the input file after compression. Default is False.
+
+    Returns
+    -------
+    str
+        Path to the compressed output file.
+    """
     if not out_dir:
         out_dir = os.path.dirname(inp_path)
     if not out_fname:
@@ -534,6 +778,26 @@ def gzip_compress(inp_path, out_dir=None, out_fname=None, rm_inp=False):
     return out_path
 
 def uncompress(pathin,dirout = '', opts='-f'):
+    """
+    Uncompress a file using the uncompress command.
+
+    .. deprecated::
+        Use :func:`geodezyx.files_rw.unzip_gz_z` instead.
+
+    Parameters
+    ----------
+    pathin : str
+        Path to the file to uncompress.
+    dirout : str, optional
+        Output directory. Default is '' (current directory).
+    opts : str, optional
+        Options for the uncompress command. Default is '-f'.
+
+    Returns
+    -------
+    str or None
+        Path to the uncompressed file, or None if input file does not exist.
+    """
     log.warning("function discontinued, use files_rw.unzip_gz_z() instead")
     if not os.path.isfile(pathin):
         log.error('uncompress : %s doesnt exist !!!', pathin)
@@ -551,11 +815,40 @@ def uncompress(pathin,dirout = '', opts='-f'):
 
 
 def create_dir(directory):
+    """
+    Create a directory if it does not already exist.
+
+    Parameters
+    ----------
+    directory : str
+        Path to the directory to create.
+
+    Returns
+    -------
+    str
+        The directory path.
+    """
     if not os.path.exists(directory):
         os.makedirs(directory)
     return directory
 
 def remove_dir(directory):
+    """
+    Remove a directory and all its contents.
+
+    Parameters
+    ----------
+    directory : str
+        Path to the directory to remove.
+
+    Returns
+    -------
+    None
+
+    Warnings
+    --------
+    Logs a warning if the directory does not exist.
+    """
     if os.path.exists(directory):
         shutil.rmtree(directory)
     else:
@@ -590,6 +883,20 @@ def walk_dir(parent_dir):
     return files_list, dirs_list
 
 def fileprint(output,outfile):
+    """
+    Log output to console and append to a file.
+
+    Parameters
+    ----------
+    output : str
+        The output message to log and write.
+    outfile : str
+        Path to the output file.
+
+    Returns
+    -------
+    None
+    """
     log.debug(output)
     with open(outfile, "a") as f:
         f.write("{}\n".format(output))
@@ -598,10 +905,33 @@ def fileprint(output,outfile):
 def write_in_file(string_to_write, outdir_or_outpath,
                   outname="", ext='.txt', encoding='utf8', append=False):
     """
-    encoding : utf8, latin_1
-    https://docs.python.org/3/library/codecs.html#standard-encodings
+    Write a string to a file with support for bytes or text encoding.
 
-    check the following commented old version if troubles
+    Parameters
+    ----------
+    string_to_write : str or bytes
+        The content to write to the file.
+    outdir_or_outpath : str
+        Output directory path or full file path.
+    outname : str, optional
+        Output filename (without extension). Default is "".
+    ext : str, optional
+        File extension. Default is '.txt'.
+    encoding : str, optional
+        Text encoding to use. Default is 'utf8'.
+        See https://docs.python.org/3/library/codecs.html#standard-encodings
+    append : bool, optional
+        If True, append to existing file. If False, overwrite. Default is False.
+
+    Returns
+    -------
+    str
+        Path to the output file.
+
+    Notes
+    -----
+    Supported encodings: utf8, latin_1, etc.
+    See https://docs.python.org/3/library/codecs.html#standard-encodings
     """
 
     if outname:
@@ -692,12 +1022,24 @@ def replace(file_path, pattern, subst):
 
 
 def regex2filelist(dossier,regex,outtype='file'):
+    """
+    Get files in a directory matching a regex pattern.
 
-    ''' a partir d'un chemin de dossier et d'une regex, donne les éléments
-    du dossier correspondant à la regex
+    Parameters
+    ----------
+    dossier : str
+        Path to the directory.
+    regex : str
+        Regular expression pattern to match filenames.
+    outtype : str, optional
+        Type of output. 'file' returns only files, other values return all matches.
+        Default is 'file'.
 
-    OUTTYPE :
-    file : juste les fichiers'''
+    Returns
+    -------
+    list
+        Sorted list of file paths matching the pattern.
+    """
 
     templist = []
 
@@ -717,9 +1059,21 @@ def regex2filelist(dossier,regex,outtype='file'):
     return outlist
 
 def check_regex(filein,regex):
+    """
+    Check if a file contains a regex pattern.
 
-    ''' verfie si un fichier contient une regex
-        retourne un booleen '''
+    Parameters
+    ----------
+    filein : str
+        Path to the file to search.
+    regex : str
+        Regular expression pattern to search for.
+
+    Returns
+    -------
+    bool
+        True if the pattern is found in the file, False otherwise.
+    """
 
     outbool = False
 
@@ -733,18 +1087,17 @@ def check_regex(filein,regex):
 
 def is_exe(fpath):
     """
-    Chech if a file is executable
+    Check if a file is executable.
 
     Parameters
     ----------
     fpath : str
-        file path.
+        File path.
 
     Returns
     -------
     bool
-        is executable.
-
+        True if the file is executable, False otherwise.
     """
     return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
@@ -760,6 +1113,10 @@ def copy_recursive(src, dst, force=False):
         The destination directory path.
     force : bool, optional
         If True, overwrite the destination directory if it exists. Default is False.
+
+    Returns
+    -------
+    None
     """
     if force and os.path.exists(dst):
         shutil.rmtree(dst)

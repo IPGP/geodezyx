@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>geodezyx.utils_xtra package &mdash; geodezyx 4.x documentation</title>
+  <title>geodezyx.utils_xtra package &mdash; geodezyx 5.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -48,9 +48,8 @@
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
@@ -111,11 +110,11 @@
 related to Python’s Pandas object manipulations.</p>
 <p>it can be imported directly with:
 from geodezyx import utils</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.diff_pandas">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">diff_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_np_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.diff_pandas" title="Link to this definition"></a></dt>
@@ -147,19 +146,32 @@ This option has a (much) faster execution speed.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.pandas_DF_2_tuple_serie">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_DF_2_tuple_serie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns_name_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_index_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.pandas_DF_2_tuple_serie" title="Link to this definition"></a></dt>
-<dd><p>This function is made to solve the multiple columns selection
-problem
-the idea is :
-<code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">S1</span> <span class="pre">=</span> <span class="pre">pandas_DF_2_tuple_serie(DF1</span> <span class="pre">,</span> <span class="pre">columns_name_list)</span>
-<span class="pre">S2</span> <span class="pre">=</span> <span class="pre">pandas_DF_2_tuple_serie(DF2</span> <span class="pre">,</span> <span class="pre">columns_name_list)</span>
-<span class="pre">BOOL</span> <span class="pre">=</span> <span class="pre">S1.isin(S2)</span>
-<span class="pre">DF1[BOOL]</span>
-<span class="pre">`</span></code>
-Source :</p>
-<blockquote>
-<div><p><a class="reference external" href="https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns">https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns</a></p>
-</div></blockquote>
+<dd><p>Solve the multiple columns selection problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DFin</strong> (<em>pandas.DataFrame</em>) – Input DataFrame</p></li>
+<li><p><strong>columns_name_list</strong> (<em>list</em>) – List of column names to select</p></li>
+<li><p><strong>reset_index_first</strong> (<em>bool</em><em>, </em><em>optional</em>) – Reset index before conversion (default False)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Series of tuples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.Series</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The idea is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">S1</span> <span class="o">=</span> <span class="n">pandas_DF_2_tuple_serie</span><span class="p">(</span><span class="n">DF1</span><span class="p">,</span> <span class="n">columns_name_list</span><span class="p">)</span>
+<span class="n">S2</span> <span class="o">=</span> <span class="n">pandas_DF_2_tuple_serie</span><span class="p">(</span><span class="n">DF2</span><span class="p">,</span> <span class="n">columns_name_list</span><span class="p">)</span>
+<span class="n">BOOL</span> <span class="o">=</span> <span class="n">S1</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">S2</span><span class="p">)</span>
+<span class="n">DF1</span><span class="p">[</span><span class="n">BOOL</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns">https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -170,28 +182,55 @@ Source :</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.pandas_column_rename_dic">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_column_rename_dic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inpnames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.pandas_column_rename_dic" title="Link to this definition"></a></dt>
-<dd><p>wrapper of renamedic_fast_4_pandas</p>
-<p>EXEMPLE :
-rnamedic = utils.renamedic_fast_4_pandas(<a href="#id1"><span class="problematic" id="id2">*</span></a>[“zmax”,”ang”,”zsmooth”,”smoothtype”,”xgrad”,”ygrad”,</p>
-<blockquote>
-<div><p>‘r_eiko’,’z_eiko’,’pt_eiko_x’,’pt_eiko_y’,”t_eiko”,
-‘r_sd’,  ‘z_sd’,  ‘pt_sd_x’  ,’pt_sd_y’  ,’t_sd’,
-‘diff_x’,’diff_y’,’diff’,’diff_t’])</p>
-</div></blockquote>
-<p>pda = pda.rename(columns = rnamedic)</p>
+<dd><p>Wrapper of renamedic_fast_4_pandas for Pandas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*inpnames</strong> (<em>str</em>) – Column names to rename</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary mapping column indices to new names</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rnamedic</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">renamedic_fast_4_pandas</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="s2">&quot;zmax&quot;</span><span class="p">,</span><span class="s2">&quot;ang&quot;</span><span class="p">,</span><span class="s2">&quot;zsmooth&quot;</span><span class="p">,</span><span class="s2">&quot;smoothtype&quot;</span><span class="p">,</span><span class="s2">&quot;xgrad&quot;</span><span class="p">,</span><span class="s2">&quot;ygrad&quot;</span><span class="p">,</span>
+                                   <span class="s1">&#39;r_eiko&#39;</span><span class="p">,</span><span class="s1">&#39;z_eiko&#39;</span><span class="p">,</span><span class="s1">&#39;pt_eiko_x&#39;</span><span class="p">,</span><span class="s1">&#39;pt_eiko_y&#39;</span><span class="p">,</span><span class="s2">&quot;t_eiko&quot;</span><span class="p">,</span>
+                                   <span class="s1">&#39;r_sd&#39;</span><span class="p">,</span>  <span class="s1">&#39;z_sd&#39;</span><span class="p">,</span>  <span class="s1">&#39;pt_sd_x&#39;</span>  <span class="p">,</span><span class="s1">&#39;pt_sd_y&#39;</span>  <span class="p">,</span><span class="s1">&#39;t_sd&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;diff_x&#39;</span><span class="p">,</span><span class="s1">&#39;diff_y&#39;</span><span class="p">,</span><span class="s1">&#39;diff&#39;</span><span class="p">,</span><span class="s1">&#39;diff_t&#39;</span><span class="p">])</span>
+
+<span class="n">pda</span> <span class="o">=</span> <span class="n">pda</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="n">rnamedic</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.renamedic_fast_4_pandas">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">renamedic_fast_4_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inpnames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.renamedic_fast_4_pandas" title="Link to this definition"></a></dt>
-<dd><p>EXEMPLE :
-rnamedic = utils.renamedic_fast_4_pandas(<a href="#id3"><span class="problematic" id="id4">*</span></a>[“zmax”,”ang”,”zsmooth”,”smoothtype”,”xgrad”,”ygrad”,</p>
-<blockquote>
-<div><p>‘r_eiko’,’z_eiko’,’pt_eiko_x’,’pt_eiko_y’,”t_eiko”,
-‘r_sd’,  ‘z_sd’,  ‘pt_sd_x’  ,’pt_sd_y’  ,’t_sd’,
-‘diff_x’,’diff_y’,’diff’,’diff_t’])</p>
-</div></blockquote>
-<p>pda = pda.rename(columns = rnamedic)</p>
+<dd><p>Create rename dictionary for Pandas columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*inpnames</strong> (<em>str</em>) – Column names</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary mapping column indices to new names</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rnamedic</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">renamedic_fast_4_pandas</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="s2">&quot;zmax&quot;</span><span class="p">,</span><span class="s2">&quot;ang&quot;</span><span class="p">,</span><span class="s2">&quot;zsmooth&quot;</span><span class="p">,</span><span class="s2">&quot;smoothtype&quot;</span><span class="p">,</span><span class="s2">&quot;xgrad&quot;</span><span class="p">,</span><span class="s2">&quot;ygrad&quot;</span><span class="p">,</span>
+                                   <span class="s1">&#39;r_eiko&#39;</span><span class="p">,</span><span class="s1">&#39;z_eiko&#39;</span><span class="p">,</span><span class="s1">&#39;pt_eiko_x&#39;</span><span class="p">,</span><span class="s1">&#39;pt_eiko_y&#39;</span><span class="p">,</span><span class="s2">&quot;t_eiko&quot;</span><span class="p">,</span>
+                                   <span class="s1">&#39;r_sd&#39;</span><span class="p">,</span>  <span class="s1">&#39;z_sd&#39;</span><span class="p">,</span>  <span class="s1">&#39;pt_sd_x&#39;</span>  <span class="p">,</span><span class="s1">&#39;pt_sd_y&#39;</span>  <span class="p">,</span><span class="s1">&#39;t_sd&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;diff_x&#39;</span><span class="p">,</span><span class="s1">&#39;diff_y&#39;</span><span class="p">,</span><span class="s1">&#39;diff&#39;</span><span class="p">,</span><span class="s1">&#39;diff_t&#39;</span><span class="p">])</span>
+
+<span class="n">pda</span> <span class="o">=</span> <span class="n">pda</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="n">rnamedic</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -211,11 +250,11 @@ rnamedic = utils.renamedic_fast_4_pandas(<a href="#id3"><span class="problematic
 related to Python’s plot operations.</p>
 <p>it can be imported directly with:
 from geodezyx import utils</p>
-<p>The GeodeZYX Toolbox is a software for simple but useful
+<p>The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 <p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
 GitHub repository :
-<a class="reference external" href="https://github.com/GeodeZYX/geodezyx-toolbox">https://github.com/GeodeZYX/geodezyx-toolbox</a></p>
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.axis_data_coords_sys_transform">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">axis_data_coords_sys_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis_obj_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.axis_data_coords_sys_transform" title="Link to this definition"></a></dt>
@@ -225,13 +264,61 @@ GitHub repository :
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.color_list">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">color_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jet'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.color_list" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">color_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jet'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.color_list" title="Link to this definition"></a></dt>
+<dd><p>Generate a list of colors from a colormap for each unique value in L.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>l</strong> (<em>array-like</em>) – Input list or array of values. The number of unique values determines the number of colors.</p></li>
+<li><p><strong>colormap</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the matplotlib colormap to use. The default is ‘jet’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>colist</strong> – List of RGBA color tuples from the specified colormap.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The colors are evenly distributed across the colormap based on the number of unique values in L.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.pyplot.get_cmap</span></code></dt><dd><p>Get a colormap by name.</p>
+</dd>
+<dt><a class="reference internal" href="#geodezyx.utils_xtra.plot_utils.colors_from_colormap_getter" title="geodezyx.utils_xtra.plot_utils.colors_from_colormap_getter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colors_from_colormap_getter</span></code></a></dt><dd><p>Alternative function to get colors from a colormap.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.colors_from_colormap_getter">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">colors_from_colormap_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ncolors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'viridis'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.colors_from_colormap_getter" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Get a list of colors from a matplotlib colormap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ncolors</strong> (<em>int</em>) – Number of colors to generate.</p></li>
+<li><p><strong>colormap</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the matplotlib colormap to use. The default is ‘viridis’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of RGBA color tuples from the specified colormap.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of tuple</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#geodezyx.utils_xtra.plot_utils.color_list" title="geodezyx.utils_xtra.plot_utils.color_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_list</span></code></a></dt><dd><p>Generate colors based on unique values in a list.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.figure_saver">
@@ -263,31 +350,68 @@ The default is None.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.gaussian_for_plot">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">gaussian_for_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.gaussian_for_plot" title="Link to this definition"></a></dt>
-<dd><p>generate a gaussian curve for histogram plot</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">gaussian_for_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.gaussian_for_plot" title="Link to this definition"></a></dt>
+<dd><p>Generate a Gaussian curve for histogram overlay plots.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>D</strong> (<em>iterable</em>) – data vector.</p></li>
-<li><p><strong>density</strong> (<em>bool</em><em>, </em><em>optional</em>) – Adapted curve for desity mode. The default is False.</p></li>
-<li><p><strong>nbins</strong> (<em>int</em><em>, </em><em>optional</em>) – number of bins. The default is 500.</p></li>
-<li><p><strong>nsigma</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – n sigmas for the x axis. The default is 3.5.</p></li>
+<li><p><strong>d</strong> (<em>array-like</em>) – Data vector to fit a Gaussian distribution to.</p></li>
+<li><p><strong>density</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, returns the PDF (normalized). If False, scales the PDF to match histogram area.
+The default is False.</p></li>
+<li><p><strong>nbins</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bins (points) to generate for the curve. The default is 500.</p></li>
+<li><p><strong>nsigma</strong> (<em>float</em><em>, </em><em>optional</em>) – Number of standard deviations to span for the x-axis (μ ± nsigma*σ).
+The default is 3.5.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>Xpdf</strong> (<em>array</em>) – gaussian curve x.</p></li>
-<li><p><strong>Ypdf_out</strong> (<em>TYPE</em>) – gaussian curve x.</p></li>
+<li><p><strong>xpdf</strong> (<em>numpy.ndarray</em>) – X coordinates of the Gaussian curve.</p></li>
+<li><p><strong>ypdf_out</strong> (<em>numpy.ndarray</em>) – Y coordinates of the Gaussian curve (PDF or histogram-scaled).</p></li>
 </ul>
 </p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Useful for overlaying a fitted Gaussian curve on a histogram.
+When density=False, the curve is scaled to match the histogram’s area.
+When density=True, the curve is the probability density function.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x_curve</span><span class="p">,</span> <span class="n">y_curve</span> <span class="o">=</span> <span class="n">gaussian_for_plot</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_curve</span><span class="p">,</span> <span class="n">y_curve</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gaussian fit&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.stats.norm.pdf</span></code></dt><dd><p>Probability density function for normal distribution.</p>
+</dd>
+</dl>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.get_figure">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">get_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.get_figure" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Get or create a matplotlib Figure object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>figin</strong> (<em>int</em><em> or </em><em>matplotlib.figure.Figure</em><em>, </em><em>optional</em>) – Figure specification. If 0, creates a new figure.
+If an integer, returns figure with that number.
+If a Figure object, returns that figure. The default is 0.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>figout</strong> – The requested or created figure object with at least one axes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Ensures the returned figure has at least one axes (subplot).</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.id2val">
@@ -299,33 +423,61 @@ replace dico bc. set is not supproted as key</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.set_size_for_pub">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">set_size_for_pub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">418.25368</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.set_size_for_pub" title="Link to this definition"></a></dt>
-<dd><p>Set aesthetic figure dimensions to avoid scaling in latex.</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">set_size_for_pub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">418.25368</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.set_size_for_pub" title="Link to this definition"></a></dt>
+<dd><p>Set aesthetic figure dimensions to avoid scaling in LaTeX.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>width</strong> (<em>float</em>) – Width in pts</p></li>
-<li><p><strong>fraction</strong> (<em>float</em>) – Fraction of the width which you wish the figure to occupy</p></li>
+<li><p><strong>width</strong> (<em>float</em><em>, </em><em>optional</em>) – Width of the figure in points (pt). The default is 418.25368 (approximately 146 mm).</p></li>
+<li><p><strong>fraction</strong> (<em>float</em><em>, </em><em>optional</em>) – Fraction of the width that the figure should occupy. The default is 1.</p></li>
+<li><p><strong>subplot</strong> (<em>list</em><em> of </em><em>int</em><em>, </em><em>optional</em>) – Subplot grid dimensions as [nrows, ncols]. The default is [1, 1].</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>fig_dim</strong> – Dimensions of figure in inches</p>
+<dd class="field-even"><p><strong>fig_dim</strong> – Dimensions of the figure as (width_inches, height_inches).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple</p>
+<dd class="field-odd"><p>tuple of float</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Uses the golden ratio (φ = (√5 - 1) / 2 ≈ 0.618) to set aesthetic figure height.
+Useful for creating publication-ready plots that fit nicely in LaTeX documents.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">width</span> <span class="o">=</span> <span class="mf">418.25368</span>  <span class="c1"># Standard LaTeX column width</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig_dim</span> <span class="o">=</span> <span class="n">set_size_for_pub</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">subplot</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">fig_dim</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.symbols_list">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">symbols_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.symbols_list" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">symbols_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.symbols_list" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.plot_utils.ylim_easy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">ylim_easy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Lin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_null_if_neg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.ylim_easy" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.plot_utils.</span></span><span class="sig-name descname"><span class="pre">ylim_easy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_null_if_neg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.plot_utils.ylim_easy" title="Link to this definition"></a></dt>
+<dd><p>Calculate convenient axis limits for a data array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lin</strong> (<em>array-like</em>) – Input data.</p></li>
+<li><p><strong>delta</strong> (<em>float</em><em>, </em><em>optional</em>) – Fraction of the data range to add as padding. The default is 0.1.</p></li>
+<li><p><strong>min_null_if_neg</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, set the lower limit to 0 if it would be negative. The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(lower_limit, upper_limit) for the y-axis.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Useful for automatic axis limit calculation in plots.</p>
+</dd></dl>
 
 </section>
 </section>
@@ -340,7 +492,7 @@ replace dico bc. set is not supproted as key</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

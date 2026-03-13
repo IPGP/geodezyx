@@ -9,12 +9,12 @@ read RINEX files observation files.
 it can be imported directly with:
 from geodezyx import files_rw
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 #### Import the logger
@@ -60,7 +60,7 @@ def read_rinex_obs(rnx_in, set_index=None , return_header = False):
 
     Returns
     -------
-    df_rnx_obs : Pandas DataFrame / GeodeZYX's RINEX format
+    df_rnx_obs : Pandas DataFrame / geodezyx's RINEX format
     header_lines : list of str, optional
         If return_header is True, this contains the header lines of the RINEX file.
         Otherwise, it is not returned.
@@ -98,7 +98,7 @@ def read_rinex2_obs(rnx_in, set_index=None, return_header = False):
 
     Returns
     -------
-    df_rnx_obs : Pandas DataFrame / GeodeZYX's RINEX format
+    df_rnx_obs : Pandas DataFrame / geodezyx's RINEX format
     header_lines : list of str, optional
         If return_header is True, this contains the header lines of the RINEX file.
         Otherwise, it is not returned.
@@ -236,7 +236,7 @@ def read_rinex3_obs(rnx_in, set_index=None, return_header = False):
 
     Returns
     -------
-    df_rnx_obs : Pandas DataFrame / GeodeZYX's RINEX format
+    df_rnx_obs : Pandas DataFrame / geodezyx's RINEX format
     header_lines : list of str, optional
         If return_header is True, this contains the header lines of the RINEX file.
         Otherwise, it is not returned.
@@ -396,12 +396,12 @@ def df_rnx_clean_lli_ssi(df_rnx_in):
 
     Parameters
     ----------
-    df_rnx_in : Pandas DataFrame / GeodeZYX's RINEX format
+    df_rnx_in : Pandas DataFrame / geodezyx's RINEX format
         A RINEX DataFrame with LLI/SSI columns.
 
     Returns
     -------
-    df_rnx_out : Pandas DataFrame / GeodeZYX's RINEX format
+    df_rnx_out : Pandas DataFrame / geodezyx's RINEX format
         A RINEX DataFrame without LLI/SSI columns.
     """
     cols = df_rnx_in.columns
@@ -417,7 +417,7 @@ def observables_dict_per_sys(df_rnx_in):
 
     Parameters
     ----------
-    df_rnx_in : Pandas DataFrame / GeodeZYX's RINEX format
+    df_rnx_in : Pandas DataFrame / geodezyx's RINEX format
         A RINEX DataFrame.
 
     Returns
@@ -608,7 +608,7 @@ def read_rinex3_obs_legacy(rnx_in, set_index=None):
 
     Returns
     -------
-    df_rnxobs : Pandas DataFrame / GeodeZYX's RINEX format
+    df_rnxobs : Pandas DataFrame / geodezyx's RINEX format
     """
 
     #### open rinex

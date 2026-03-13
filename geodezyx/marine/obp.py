@@ -541,15 +541,18 @@ def compute_phibot(profile, ssh=None, integration='forward', rho=10.35, remove_m
     Notes
     -----
     phibot = Ocean hydrostatic bottom pressure anomaly
+
+    References
+    ----------
     https://cmr.earthdata.nasa.gov/search/concepts/V2028471168-POCLOUD.html
     https://cmr.earthdata.nasa.gov/search/concepts/V2146301108-POCLOUD.html
 
+    PHIBOT is the Bottom Pressure Potential Anomaly (p/rhonil, m^2/s^2)
+        To convert to m, divide by g (g=9.81 m/s^2)
+        PHIBOT is the anomaly relative to Depth * rhonil * g
+        The absolute bottom pressure in Pa is:
+        Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)
 
-    PHIBOT		Bottom Pressure Pot. Anomaly (p/rhonil, m^2/s^2)
-                To convert to m, divide by g (g=9.81 m/s^2)
-		PHIBOT is the anomaly relative to Depth * rhonil * g
-		The absolute bottom pressure in Pa is:
-		Depth * rhonil * g + PHIBOT * rhonil (rhonil=1027.5 kg/m^3)
     http://apdrc.soest.hawaii.edu/doc/Readme_ecco2_cube92
     """
     if isinstance(ssh, type(None)):

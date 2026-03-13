@@ -10,12 +10,12 @@ related to GNSS-products
 it can be imported directly with:
 from geodezyx import reffram
 
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/GeodeZYX/geodezyx-toolbox
+https://github.com/IPGP/geodezyx
 """
 
 ########## BEGIN IMPORT ##########
@@ -1075,8 +1075,8 @@ def compar_sinex(
     """
     Compare 2 SINEX files and provide statistics on station position differences
 
-    Inputs
-    ------
+    Parameters
+    ----------
     snx1, snx2 : str or DataFrame
         Paths to the SINEX files to compare or DataFrames containing SINEX data
     stat_select : str or list, optional
@@ -1090,6 +1090,7 @@ def compar_sinex(
     out_dataframe : bool, optional
         If True, return the output as a DataFrame; otherwise, return as a tuple
     manu_wwwwd : str, optional
+        Manual specification of week/day if not extracted from filename
     """
 
     if type(snx1) is str:
@@ -1535,15 +1536,20 @@ def orb_df_lagrange_interpolate(
 
         ### faster but anoying Future Waring
         # Tdata = np.array(df_orb_use.epoch.dt.to_pydatetime())
-        t_data = conv.numpy_dt2dt(df_orb_use.epoch.values)
 
-        xitrp = stats.lagrange_interpolate(t_data, df_orb_use["x"], titrp, n=n)
-        yitrp = stats.lagrange_interpolate(t_data, df_orb_use["y"], titrp, n=n)
-        zitrp = stats.lagrange_interpolate(t_data, df_orb_use["z"], titrp, n=n)
+        #t_type = "datetime"
+        #t_data = conv.numpy_dt2dt(df_orb_use['epoch'].values)
 
+        t_type = "pandas_timestamp"
+        t_data = df_orb_use["epoch"]
+        titrp_use = pd.Series(titrp)
+
+        xitrp = stats.lagrange_interpolate(t_data, df_orb_use["x"], titrp_use, n=n, t_type=t_type)
+        yitrp = stats.lagrange_interpolate(t_data, df_orb_use["y"], titrp_use, n=n, t_type=t_type)
+        zitrp = stats.lagrange_interpolate(t_data, df_orb_use["z"], titrp_use, n=n, t_type=t_type)
         clk_itrp = np.interp(
-            conv.dt2posix(np.array(titrp)),
-            conv.dt2posix(np.array(t_data)),
+            conv.pandas_timestamp2posix(titrp_use),
+            conv.pandas_timestamp2posix(t_data),
             df_orb_use["clk"].values,
         )
 

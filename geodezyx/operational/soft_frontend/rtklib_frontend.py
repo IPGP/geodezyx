@@ -30,6 +30,7 @@ import os
 import subprocess
 import numpy as np
 import shutil as shutils
+import pandas as pd
 
 # from threading import Lock
 
@@ -99,7 +100,7 @@ def rtklib_run_mono(
     out_dir,
     tmp_dir,
     prod_dir=None,
-    igs_prods="GRG00OPSFIN",
+    igs_prods="GRG0OPSFIN",
     download_prods=True,
     orbclklis_inp=[],
     brdclis_inp=[],
@@ -270,9 +271,8 @@ def rtklib_run_mono(
     else:
         utils.gzip_compress(out_res_fil + ".stat", rm_inp=True)
         out_prq_fil = out_res_fil.replace(".out", ".parquet")
-        if not os.path.isfile(out_prq_fil):
-            df_out2prq = files_rw.read_rtklib(out_res_fil, return_df=True)
-            df_out2prq.to_parquet(out_prq_fil, engine='auto')
+        df_out2prq = files_rw.read_rtklib(out_res_fil, return_df=True)
+        df_out2prq.to_parquet(out_prq_fil, engine='auto')
         log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
 
     if not keep_tmp:
@@ -512,16 +512,16 @@ def make_pairs(
         log.error(f"All sites found: {str(list(df_all["site9"].unique()))}")
         return [], df_all
 
-    bas_prev, bas_next = "", ""
+    bas_prev, rov_prev = "", ""
 
     for _, row_rov in df_rovers.iterrows():
         rov = row_rov["site9"]
         for bas, df_bas in df_bases.groupby("site9"):
             if bas == rov:
                 # this test is to silent multiple warning messages
-                if bas != bas_prev or bas != bas_next:
+                if bas != bas_prev or rov != rov_prev:
                     log.warning(f"Rover '{rov}' is the same as base '{bas}', skipping pair")
-                    base_prev, bas_next = bas, rov
+                    bas_prev, rov_prev = bas, rov
                 continue
             rov_srt = row_rov["date"]
             rov_end = row_rov["date_end"]
@@ -584,7 +584,7 @@ def rtklib_run(
         raise
 
     log.info(f"STEP 3: Running {len(rnxs_pairs)} RTKLIB processes in parallel")
-    return operational.rtklib_run_pair(
+    out_run_pairs = operational.rtklib_run_pair(
         rnxs_pairs,
         cfgfile_generik,
         out_dir=out_dir,
@@ -603,3 +603,17 @@ def rtklib_run(
         procs=procs,
         exe_path=exe_path,
     )
+
+    # merge all parquet files into one
+    log.info("STEP 4: Merging individual parquet files into one")
+    tot_prq_path = os.path.join(out_dir, exp_prefix + "_all.parquet")
+    l_prq = utils.find_recursive(out_dir, "*parquet")
+    df_stk = []
+    for f in l_prq:
+        if f.endswith("_all.parquet"):
+            continue
+        df_stk.append(pd.read_parquet(f))
+    df_all = pd.concat(df_stk)
+    df_all.to_parquet(tot_prq_path, engine="auto")
+
+    return out_run_pairs

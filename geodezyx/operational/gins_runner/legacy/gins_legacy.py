@@ -286,11 +286,14 @@ def smart_listing_archive(
     prepars_archive,
     director_archive,
 ):
-    """for each listing corresponding to the wildcard :
-    if it's a prepars => go to the prepars_archive
-    if it's a gins without duplicate  => go to the gins_main_archive
-    if it's a gins with duplcates => one goes to gins_main_archive
-                                     the others in gins_anex_archive"""
+    """
+    For each listing corresponding to the wildcard:
+
+    - if it's a prepars => go to the prepars_archive
+    - if it's a gins without duplicate => go to the gins_main_archive
+    - if it's a gins with duplicates => one goes to gins_main_archive,
+      the others in gins_anex_archive
+    """
 
     listing_path = os.path.join(
         gynscmn.get_gin_path(), "gin", "batch", "listing", wildcard_dir

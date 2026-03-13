@@ -16,12 +16,10 @@ Introduction
    :width: 250px
    :align: center
 
-The purpose of `geodezyx` (pronounced `geode-` **zeecks**), also known as `the GeodeZYX toolbox`, is to provide all the functions which
+The purpose of `geodezyx` (pronounced `geode-` **zeecks**), formerly known as `the GeodeZYX toolbox`, is to provide all the functions which
 can be useful for Geodesy and Geophysics. 
 
 It includes low level functions, file management functions, time and space-coordinates conversion functions, data (especially GNSS observations and orbits) retrieve functions, plots and visual selection functions ...
-
-It is designed for Python 3 on a LINUX Ubuntu-like system. Also tested with Anaconda
 
 ------------
 Installation
@@ -43,7 +41,7 @@ Useful links
 Authors
 -------
 
-Pierre Sakic (IPGP, Paris, France) Gustavo Mansur, and Kitpracha "Na" Chaiyaporn (GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
+Pierre Sakic, Samuel Nahmani (IPGP, Paris, France) Gustavo Mansur, and Kitpracha "Na" Chaiyaporn (GFZ, Potsdam, Germany), with contributions from Valérie Ballu (CNRS/La Rochelle University, France)
 
 **Contact e-mail:** sakic@ipgp.fr
 
@@ -53,14 +51,20 @@ Pierre Sakic (IPGP, Paris, France) Gustavo Mansur, and Kitpracha "Na" Chaiyaporn
 License
 -------
 
-GNU General Public License, Version 3, 29 June 2007
+GNU Lesser General Public License, Version 3, 29 June 2007
 
-Copyright © 2019 Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences, Potsdam, Germany (Pierre Sakic, Gustavo Mansur, and Kitpracha "Na" Chaiyaporn, Valérie Ballu)
+geodezyx is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
 
-The geodezyx toolbox is a free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. The geodezyx toolbox is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+geodezyx is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
-
+You should have received a copy of the GNU Lesser General Public
+License along with this library.  If not, see http://www.gnu.org/licenses/.
 
 
 ------------------

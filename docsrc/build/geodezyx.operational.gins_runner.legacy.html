@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>geodezyx.operational.gins_runner.legacy package &mdash; geodezyx 4.x documentation</title>
+  <title>geodezyx.operational.gins_runner.legacy package &mdash; geodezyx 5.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7b2efbeb"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -49,9 +49,8 @@
 <li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.athmo.html">geodezyx.athmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="geodezyx.externlib.html">geodezyx.externlib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
@@ -273,13 +272,13 @@ whitout those who worked</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.gins_runner.legacy.gins_legacy.smart_listing_archive">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.gins_runner.legacy.gins_legacy.</span></span><span class="sig-name descname"><span class="pre">smart_listing_archive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wildcard_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gins_main_archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gins_anex_archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepars_archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">director_archive</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.gins_runner.legacy.gins_legacy.smart_listing_archive" title="Link to this definition"></a></dt>
-<dd><p>for each listing corresponding to the wildcard :
-if it’s a prepars =&gt; go to the prepars_archive
-if it’s a gins without duplicate  =&gt; go to the gins_main_archive
-if it’s a gins with duplcates =&gt; one goes to gins_main_archive</p>
-<blockquote>
-<div><p>the others in gins_anex_archive</p>
-</div></blockquote>
+<dd><p>For each listing corresponding to the wildcard:</p>
+<ul class="simple">
+<li><p>if it’s a prepars =&gt; go to the prepars_archive</p></li>
+<li><p>if it’s a gins without duplicate =&gt; go to the gins_main_archive</p></li>
+<li><p>if it’s a gins with duplicates =&gt; one goes to gins_main_archive,
+the others in gins_anex_archive</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
@@ -345,7 +344,7 @@ eg : i = 18 for filename KARIB_MK3_FLH_v2__bara_22282_2011_003</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur.</p>
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

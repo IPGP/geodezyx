@@ -64,7 +64,7 @@ def run_command(command):
             break
 
 
-def get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
+def get_prod_date(date_inp, prod_ac_name="", period_stepback=0):
     """
     Adjusts product dates based on data center latency and product type.
 
@@ -83,9 +83,10 @@ def get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
         - "FIN" or "RAP": Final or Rapid (1-day intervals)
         - "BRDC": Broadcast ephemeris (1-day intervals)
         Default is empty string.
-    latency_stepback : int, optional
-        Number of periods to step back from the current time. Incremented internally
-        if within the latency window. Defaults to 0.
+    period_stepback : int, optional
+        Number of periods to step back from the current time.
+        Incremented internally if within the latency window.
+        Defaults to 0.
 
     Returns
     -------
@@ -102,19 +103,13 @@ def get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
 
     Examples
     --------
-    >>> get_prod_date(datetime(2026, 2, 15, 10, 30), "ULT")
-    datetime(2026, 2, 15, 6, 0)
-    >>> get_prod_date(datetime(2026, 2, 15, 10, 30), "FIN")
+    >>> get_prod_date(dt.datetime(2026, 2, 15, 10, 30), "ULT")
+    datetime(2026, 2, 14, 6, 0)
+    >>> get_prod_date(dt.datetime(2026, 2, 15, 10, 30), "FIN")
     datetime(2026, 2, 15, 0, 0)
     """
     now = dt.datetime.now(dt.timezone.utc)
     date_inp_utc = date_inp.replace(tzinfo=dt.timezone.utc)
-    # ULT and NRT are by design 2 days long (1 day is calculated, the other is extrapolated)
-    # so we need to substract an extra day to the date to be able to get the right product
-    if "ULT" in prod_ac_name or "NRT" in prod_ac_name:
-        delta_extra = dt.timedelta(days=1)
-    else:
-        delta_extra = dt.timedelta(days=0)
 
     # the latency is because the data center does not provide the products before a
     # certain time after the epoch of the products
@@ -125,22 +120,28 @@ def get_prod_date(date_inp, prod_ac_name="", latency_stepback=0):
     laten_ult = dt.timedelta(hours=3)
     is_during_latency = now - date_inp_utc < laten_ult
     if is_during_latency:
-        latency_stepback += 1
+        period_stepback += 1
 
     if "ULT" in prod_ac_name:
-        rnd_def = (6 + 24, "h")  # 6 is for the
+        rnd_def = (6, "h", 1)
     elif "NRT" in prod_ac_name:
-        rnd_def = (1 + 24, "h")
+        rnd_def = (1, "h", 1)
     elif "FIN" in prod_ac_name or "RAP" in prod_ac_name:
-        rnd_def = (1, "d")
+        rnd_def = (1, "d", 0)
     elif "BRDC" in prod_ac_name:
-        rnd_def = (1, "d")
+        rnd_def = (1, "d", 0)
     else:
         log.warning("Unknown prods. '%s', unable to find the right date", prod_ac_name)
         return date_inp
 
-    rnd_use = str(rnd_def[0] * (1 + latency_stepback)) + rnd_def[1]
-    date_out_srt = conv.round_dt(date_inp, rnd_use, mode="floor") - delta_extra
+    period_val = rnd_def[0]
+    period_unit = rnd_def[1]
+    # ULT and NRT are by design 2 days long (1 day is calculated, the other is extrapolated)
+    # so we need to substract an extra day to the date to be able to get the right product
+    extra_delta = dt.timedelta(days=rnd_def[2])
+
+    rnd_use = str(period_val * (1 + period_stepback)) + period_unit
+    date_out_srt = conv.round_dt(date_inp, rnd_use, mode="floor") - extra_delta
     return date_out_srt
 
 
@@ -177,11 +178,11 @@ def get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
 
     Examples
     --------
-    >>> get_dates_fmt(datetime(2026, 2, 15))
+    >>> get_dates_fmt(dt.datetime(2026, 2, 15))
     [datetime(2026, 2, 15, 0, 0)]
-    >>> get_dates_fmt([datetime(2026, 2, 15), datetime(2026, 2, 15)])
+    >>> get_dates_fmt([dt.datetime(2026, 2, 15), dt.datetime(2026, 2, 15)])
     [datetime(2026, 2, 15, 0, 0)]
-    >>> get_dates_fmt((datetime(2026, 2, 15), datetime(2026, 2, 17)))
+    >>> get_dates_fmt((dt.datetime(2026, 2, 15), dt.datetime(2026, 2, 17)))
     [datetime(2026, 2, 15, 0, 0), datetime(2026, 2, 16, 0, 0), datetime(2026, 2, 17, 0, 0)]
     """
     if type(dates_inp) is tuple:
@@ -206,7 +207,7 @@ def get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
 
 
 def get_best_prods(
-    prod_list_inp, date_inp, prod_ac_name="", brdc_mode=False, latency_stepback_max=None
+    prod_list_inp, date_inp, prod_ac_name="", brdc_mode=False, period_stepback_max=None
 ):
     """
     Finds the best matching product file(s) for a given date with progressive latency tolerance.
@@ -227,7 +228,7 @@ def get_best_prods(
     brdc_mode : bool, optional
         If True, treats files as BRDC (Broadcast) files and uses `rinexname2dt` for parsing.
         If False, uses `sp3name_v3_2dt`. Defaults to False.
-    latency_stepback_max : int, optional
+    period_stepback_max : int, optional
         Maximum number of latency steps to attempt. If None, defaults are:
         - "ULT": 3 steps
         - "NRT": 23 steps
@@ -252,34 +253,34 @@ def get_best_prods(
     if brdc_mode:
         prod_ac_name = "BRDC"
 
-    if latency_stepback_max is None:
+    if period_stepback_max is None:
         if "ULT" in prod_ac_name:
-            latency_stepback_max = 3
+            period_stepback_max = 3
         elif "NRT" in prod_ac_name:
-            latency_stepback_max = 23
+            period_stepback_max = 23
         else:
-            latency_stepback_max = 0
+            period_stepback_max = 0
 
     best_prod_out = []
-    latstpbak = 0
-    while len(best_prod_out) == 0 and latstpbak <= latency_stepback_max:
+    perstpbak = 0
+    while len(best_prod_out) == 0 and perstpbak <= period_stepback_max:
         date_best = get_prod_date(
-            date_inp, prod_ac_name=prod_ac_name, latency_stepback=latstpbak
+            date_inp, prod_ac_name=prod_ac_name, period_stepback=perstpbak
         )
         for prod in prod_list_inp:
             date_prod = (
                 conv.rinexname2dt(prod) if brdc_mode else conv.sp3name_v3_2dt(prod)
             )
-            log.debug(f"Date: {date_prod} / Date best: {date_best} / Product: {prod}")
+            log.debug(f"input date {date_inp} / wished best prod: {date_best} / current prod: {date_prod} / product: {prod}")
             if date_prod == date_best:
                 best_prod_out.append(prod)
-        latstpbak += 1
+        perstpbak += 1
 
     if len(best_prod_out) == 0:
         log.warning(
             "No optimal prod. found for %s, latency stepback up to %s, returning all prods.",
             date_inp,
-            latency_stepback_max,
+            period_stepback_max,
         )
         best_prod_out = prod_list_inp
     elif brdc_mode and len(best_prod_out) >= 2:
