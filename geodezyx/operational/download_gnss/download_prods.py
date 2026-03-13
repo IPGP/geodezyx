@@ -49,76 +49,7 @@ log = logging.getLogger("geodezyx")
 ############################################################################
 
 
-def _server_select_products(archive_center, mgex=False, repro=0):
-    """
-    Resolve archive center name to FTP host, base directory, and protocol.
-
-    Parameters
-    ----------
-    archive_center : str
-        Name of the IGS archive/data center.
-    mgex : bool, optional
-        Get MGEX products. Default is False.
-    repro : int, optional
-        Reprocessing campaign number. Default is 0 (operational).
-
-    Returns
-    -------
-    tuple of (str, str, str, bool)
-        - host : FTP server hostname
-        - basedir : Base directory on the server
-        - protocol : "ftp" or "sftp"
-        - secure_ftp : whether SFTP is needed
-    """
-    mgex_str = "mgex/" if mgex else ""
-    protocol = "ftp"
-    secure_ftp = False
-
-    if archive_center == "cddis":
-        host = "gdc.cddis.eosdis.nasa.gov"
-        basedir = "/pub/gps/products/" + mgex_str
-        protocol = "sftp"
-        secure_ftp = True
-
-    elif archive_center == "cddis_glonass":
-        host = "cddis.gsfc.nasa.gov"
-        basedir = "/pub/glonass/products/" + mgex_str
-
-    elif archive_center == "esa":
-        host = "gssc.esa.int"
-        basedir = "/gnss/products/" + mgex_str
-
-    elif archive_center == "ign":
-        host = "igs.ign.fr"
-        basedir = "/pub/igs/products/" + mgex_str
-
-    elif archive_center == "ign_iono":
-        host = "igs-rf.ign.fr"
-        basedir = "/pub/"
-
-    elif archive_center == "ensg":
-        host = "igs.ensg.ign.fr"
-        basedir = "/pub/igs/products/" + mgex_str
-
-    elif archive_center == "whu":
-        host = "igs.gnsswhu.cn"
-        basedir = "/pub/gps/products/" + mgex_str
-
-    elif archive_center == "ign_rf":
-        host = "igs-rf.ign.fr"
-        basedir = "/pub/" + mgex_str
-
-    elif archive_center == "ensg_rf":
-        host = "igs-rf.ensg.ign.fr"
-        basedir = "/pub/" + mgex_str
-
-    else:
-        log.error("Unknown archive center: %s", archive_center)
-        return None, None, None, None
-
-    return host, basedir, protocol, secure_ftp
-
-
+from .servers_prods import _server_select_products
 def _prod_rgx(dt_cur, ac_cur, prod_cur, new_name_conv=True, dow_manu=False):
     """
     Generate a regex pattern to match GNSS product files for both old and
