@@ -108,6 +108,46 @@ def effective_save_dir_orbit(
     return out_save_dir
 
 
+def effective_save_dir(parent_archive_dir, site, date, archtype="stat"):
+    """
+    INTERNAL_FUNCTION
+
+    archtype =
+        site
+        site/year
+        site/year/doy
+        year/doy
+        year/site
+        week/dow
+        OR only '/' for a dirty saving in the parent folder
+        ... etc ...
+
+    If site is None or empty, it will be replaced with "ALL_STATIONS" in the path.
+    """
+    if archtype == "/":
+        return parent_archive_dir
+
+    if len(archtype) > 0 and archtype.startswith("/"):
+        log.warning("The archive type starts with /, remove it to avoid error")
+
+    out_save_dir = parent_archive_dir
+    fff = archtype.split("/")
+    year = str(date.year)
+    doy = conv.dt2doy(date)
+    _, _ = year, doy  ## simply to remove the unused linter warning...
+    week, dow = conv.dt2gpstime(date)
+
+    # If site is None or empty, replace with a placeholder
+    if not site:
+        site = "ALL_STATIONS"
+
+    stat = site  # alias: archtype tokens may use either 'site' or 'stat'
+
+    for f in fff:
+        out_save_dir = os.path.join(out_save_dir, str(eval(f)))
+    return out_save_dir
+
+
 #  _    _ _______ _______ _____    _____                      _                 _
 # | |  | |__   __|__   __|  __ \  |  __ \                    | |               | |
 # | |__| |  | |     | |  | |__) | | |  | | _____      ___ __ | | ___   __ _  __| |

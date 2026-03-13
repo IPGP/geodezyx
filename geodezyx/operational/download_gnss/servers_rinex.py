@@ -553,20 +553,7 @@ def igs_cddis_nav_server(date, site=None):
 
     return urldic
 
-
-# Remove legacy function definitions
-# def igs_cddis_nav_server_legacy(stat, date):
-# def rgp_ign_smn_1_hz_server_legacy(stat, date):
-# def unavco_server_legacy(stat, date):
-# def renag_server_legacy(stat, date):
-# def uwiseismic_server_legacy(stat, date, user="", passwd=""):
-# def orpheon_server_legacy(stat, date, user="", passwd=""):
-# def ovsg_server_legacy(stat, date, user="", passwd=""):
-# def geoaus_server_legacy(stat, date):
-# def ens_fr_legacy(stat, date):
-
-
-def _server_select(datacenter, date, site=None):
+def _server_select_rnx(datacenter, date, site=None):
     mode1hz = False
     protocol = "ftp"
     urldic = dict()

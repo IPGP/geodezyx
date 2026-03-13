@@ -21,52 +21,8 @@ from geodezyx import conv
 
 log = logging.getLogger("geodezyx")
 
+from .servers_rinex import _server_select_rnx
 
-from .servers_rinex import (
-    _rnx_obs_rgx, _rnx_nav_rgx, _generic_server, _server_select,
-    igs_cddis_server, igs_sopac_server, igs_ign_server,
-    igs_ign_ensg_server, igs_bkg_server, nav_rob_server, sonel_server,
-    rgp_server, rgp_ensg_server, spotgins_eost_server, euref_server,
-    nav_bkg_server, renag_server_crtk, unavco_server, renag_server,
-    uwiseismic_server, orpheon_server, ovsg_server, geoaus_server,
-    ens_fr_server, rgp_ign_smn_01s_server, igs_cddis_nav_server,
-)
-def effective_save_dir(parent_archive_dir, site, date, archtype="stat"):
-    """
-    INTERNAL_FUNCTION
-
-    archtype =
-        site
-        site/year
-        site/year/doy
-        year/doy
-        year/site
-        week/dow
-        OR only '/' for a dirty saving in the parent folder
-        ... etc ...
-
-    If site is None or empty, it will be replaced with "ALL_STATIONS" in the path.
-    """
-    if archtype == "/":
-        return parent_archive_dir
-
-    if len(archtype) > 0 and archtype.startswith("/"):
-        log.warning("The archive type starts with /, remove it to avoid error")
-
-    out_save_dir = parent_archive_dir
-    fff = archtype.split("/")
-    year = str(date.year)
-    doy = conv.dt2doy(date)
-    _, _ = year, doy  ## simply to remove the unused linter warning...
-    week, dow = conv.dt2gpstime(date)
-
-    # If site is None or empty, replace with a placeholder
-    if not site:
-        site = "ALL_STATIONS"
-
-    for f in fff:
-        out_save_dir = os.path.join(out_save_dir, eval(f))
-    return out_save_dir
 
 
 def download_gnss_rinex(
@@ -325,11 +281,11 @@ def gen_crawl_table(
             if site is None:
                 all_sites = True
 
-            urldic, protocol, _ = _server_select(datacenter, date, site)
+            urldic, protocol, _ = _server_select_rnx(datacenter, date, site)
             if not urldic:
                 continue
 
-            outdir = effective_save_dir(output_dir, site, date, archtype)
+            outdir = dlutils.effective_save_dir(output_dir, site, date, archtype)
 
             for rnxver, rnxurl in urldic.items():
                 if (rnxver == 2 and no_rnx2) or (rnxver == 3 and no_rnx3):
@@ -356,13 +312,3 @@ def gen_crawl_table(
     table["dir"] = urlpaths.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
     return table
-
-
-# date_range = conv.dt_range(dt.datetime(2020,1,1),
-#                     dt.datetime(2020,12,31))
-# t = gen_crawl_table({"igs_ign":None},
-#                     date_range,
-#                     "","/",
-#                 False, False)
-#
-# c = crawl_ftp_files(t,all_files_mode=True)

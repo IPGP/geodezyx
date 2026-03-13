@@ -6,7 +6,7 @@ This sub-module of geodezyx.operational contains functions to download
 gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
-The GeodeZYX Toolbox is a software for simple but useful
+The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
@@ -50,7 +50,7 @@ log = logging.getLogger("geodezyx")
 
 
 from .servers_prods import _server_select_products
-def _prod_rgx(dt_cur, ac_cur, prod_cur, new_name_conv=True, dow_manu=False):
+def _prod_regex(dt_cur, ac_cur, prod_cur, new_name_conv=True, dow_manu=False):
     """
     Generate a regex pattern to match GNSS product files for both old and
     new naming conventions.
@@ -121,7 +121,7 @@ def _prod_rgx(dt_cur, ac_cur, prod_cur, new_name_conv=True, dow_manu=False):
 
 def gen_crawl_table_products(
     dates_list,
-    AC_names,
+    ac_names,
     prod_types,
     archive_dir,
     archive_center,
@@ -142,7 +142,7 @@ def gen_crawl_table_products(
     ----------
     dates_list : list of datetime
         List of dates to download products for.
-    AC_names : tuple of str
+    ac_names : tuple of str
         Analysis center names.
     prod_types : tuple of str
         Product types (e.g., "sp3", "clk").
@@ -181,7 +181,7 @@ def gen_crawl_table_products(
     table_proto = []
 
     for dt_cur, ac_cur, prod_cur in itertools.product(
-        dates_list, AC_names, prod_types
+        dates_list, ac_names, prod_types
     ):
         wwww, dow = conv.dt2gpstime(dt_cur)
 
@@ -191,7 +191,7 @@ def gen_crawl_table_products(
         remote_dir = remote_dir.rstrip("/")
 
         # Build regex pattern
-        filrgx, dow_str = _prod_rgx(
+        filrgx, dow_str = _prod_regex(
             dt_cur, ac_cur, prod_cur, new_name_conv, dow_manu
         )
 
@@ -218,7 +218,6 @@ def gen_crawl_table_products(
     table["filnam"] = ""
 
     return table
-
 
 def download_gnss_products(
     archive_dir,
