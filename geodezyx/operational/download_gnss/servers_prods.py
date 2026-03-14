@@ -12,7 +12,7 @@ import logging
 log = logging.getLogger("geodezyx")
 
 
-def _server_select_products(archive_center, mgex=False, repro=0):
+def _server_select_prods(archive_center, mgex=False, repro=0):
     """
     Resolve archive center name to FTP host, base directory, and protocol.
 
@@ -27,11 +27,14 @@ def _server_select_products(archive_center, mgex=False, repro=0):
 
     Returns
     -------
-    tuple of (str, str, str, bool)
-        - host : FTP server hostname
-        - basedir : Base directory on the server
-        - protocol : "ftp" or "sftp"
-        - secure_ftp : whether SFTP is needed
+    host : str
+        FTP server hostname
+    basedir : str
+        Base directory on the server
+    protocol : str
+        "ftp" or "sftp"
+    secure_ftp : str
+        whether SFTP is needed
     """
     mgex_str = "mgex/" if mgex else ""
     protocol = "ftp"

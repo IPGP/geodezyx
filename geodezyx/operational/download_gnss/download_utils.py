@@ -34,10 +34,9 @@ from multiprocessing.dummy import Pool as ThreadPool
 import numpy as np
 import pandas as pd
 
-#### geodeZYX modules
+#### geodezyx modules
 from geodezyx import conv
 from geodezyx import utils
-from geodezyx.stats import outlier_mad
 
 log = logging.getLogger("geodezyx")
 
@@ -786,11 +785,13 @@ def check_local_file_exists(
 
     Returns
     -------
-    tuple of (bool, bool, str)
-        - ok_loc : True if file exists locally and should not be re-downloaded
-        - ok_dwl : True if file should be downloaded (not local or force=True)
-        - filename : Filename if found locally (semicolon-separated if
-          all_files_mode=True), empty string otherwise
+    ok_loc : bool
+        True if file exists locally and should not be re-downloaded.
+    ok_dwl : bool
+        True if file should be downloaded (not local or force=True).
+    filename : str
+        Filename if found locally (semicolon-separated if
+        all_files_mode=True), empty string otherwise.
     """
     if all_files_mode:
         fillocal_list = regex_match_indir_all(filergx, local_files_cache)
@@ -858,9 +859,10 @@ def get_ftp_connection(
 
     Returns
     -------
-    tuple of (FTP, str)
-        - ftpobj : FTP connection object
-        - new_host : str - The host name for connection tracking
+    ftpobj : FTP
+        FTP connection object.
+    new_host : str
+        The host name for connection tracking.
     """
     if host != prev_host or count_loop > count_nmax or count_loop == 1:
         if ftpobj:
@@ -902,10 +904,11 @@ def get_ftp_directory_listing(ftpobj, directory, host, prev_dir):
 
     Returns
     -------
-    tuple of (list, list)
-        - ftp_files_list : list of filenames in the directory
-        - ftp_files_urls : list of complete FTP URLs for all files
-        Returns (None, None) if directory is unchanged.
+    ftp_files_list : list of str
+        Filenames in the remote directory. None if directory is unchanged.
+    ftp_files_urls : list of str
+        Complete FTP URLs for all files in the directory. None if directory
+        is unchanged. Empty list if the directory change failed.
     """
     if prev_dir != directory:
         log.info("chdir " + directory)
@@ -966,15 +969,15 @@ def update_table_row_with_match(table, irow, file_match, all_files_mode=False):
     if file_match:
         table.loc[irow, "ok_dwl"] = True
         if all_files_mode:
-            table.loc[irow, "filnam"] = ";".join(file_match)
+            table.loc[irow, "filename"] = ";".join(file_match)
             log.info(f"{len(file_match)} file(s) found on server :)")
         else:
-            table.loc[irow, "filnam"] = file_match
+            table.loc[irow, "filename"] = file_match
             log.info(file_match + " found on server :)")
     else:
         table.loc[irow, "ok_dwl"] = False
-        table.loc[irow, "filnam"] = ""
-        log.warning(f"{table.loc[irow, 'filrgx']} not found on server :(")
+        table.loc[irow, "filename"] = ""
+        log.warning(f"{table.loc[irow, 'regex']} not found on server :(")
 
     table.loc[irow, "crawled"] = True
 
@@ -987,12 +990,11 @@ def generate_download_urls(table, all_files_mode=False):
     ----------
     table : pd.DataFrame
         Table with crawl results. Must have columns: ok_dwl, ok_loc, host,
-        dir, filnam (or rnxnam for backward compat).
+        dir, filename.
     all_files_mode : bool, optional
         If True, handle semicolon-separated filenames. Default is False.
     """
-    # support both new generic column name and legacy rnxnam
-    nam_col = "filnam" if "filnam" in table.columns else "rnxnam"
+    nam_col = "filename"
 
     fil_ok_dwl = table["ok_dwl"] & ~table["ok_loc"]
 
@@ -1025,14 +1027,14 @@ def collect_local_files(table):
     ----------
     table : pd.DataFrame
         Table with crawl results containing 'ok_loc', 'outdir' columns,
-        and either 'filnam' or 'rnxnam' column.
+        and 'filename' column.
 
     Returns
     -------
     pd.Series
         Series of local file paths, or empty Series if no local files.
     """
-    nam_col = "filnam" if "filnam" in table.columns else "rnxnam"
+    nam_col = "filename"
 
     ok_loc = table["ok_loc"]
     if ok_loc.sum() > 0:
@@ -1070,7 +1072,7 @@ def crawl_ftp_files(
         - 'host': FTP server hostname
         - 'dir': Remote directory path
         - 'outdir': Local output directory
-        - 'filrgx' or 'rnxrgx': Filename regex pattern
+        - 'regex': Filename regex pattern
         - 'protocol': String indicating protocol ("ftp" or "sftp")
         - 'crawled': Boolean indicating if already crawled
     sftp : str or bool, optional
@@ -1094,17 +1096,18 @@ def crawl_ftp_files(
 
     Returns
     -------
-    tuple of (pd.DataFrame, pd.Series, pd.Series)
-        - table_use : Updated table with crawl results
-        - all_ftp_files : All files discovered on FTP servers
-        - all_loc_files : Local file paths for files that already exist
+    table_use : pd.DataFrame
+        Updated table with crawl results.
+    all_ftp_files : pd.Series
+        All files discovered on FTP servers.
+    all_loc_files : pd.Series
+        Local file paths for files that already exist.
     """
     import glob
     import re as re_module
 
-    # Support both generic (filrgx/filnam) and legacy (rnxrgx/rnxnam) column names
-    rgx_col = "filrgx" if "filrgx" in table.columns else "rnxrgx"
-    nam_col = "filnam" if "filrgx" in table.columns else "rnxnam"
+    rgx_col = "regex"
+    nam_col = "filename"
 
     def _save_crawled_files(table_inp):
         if path_ftp_crawled_files_save:
@@ -1244,6 +1247,125 @@ def crawl_ftp_files(
     all_loc_files = collect_local_files(table_use)
 
     return table_use, all_ftp_files, all_loc_files
+
+
+def orbclk_long2short_name(
+    longname_filepath_in,
+    rm_longname_file=False,
+    center_id_last_letter=None,
+    center_manual_short_name=None,
+    force=False,
+    dryrun=False,
+    output_dirname=None,
+):
+    """
+    Rename a long naming new convention IGS product file to the short old
+    convention.
+
+    Naming will be done automatically based on the 3 first characters of the
+    long AC id. e.g. CODE => cod, GRGS => grg, NOAA => noa ...
+
+    Parameters
+    ----------
+    longname_filepath_in : str
+        Full path of the long name product file.
+    rm_longname_file : bool
+        Remove the original long name product file.
+    center_id_last_letter : str
+        Replace the last letter of the short AC id by another letter
+        (see note below).
+    center_manual_short_name : str
+        Replace completely the long name with this one.
+        Overrides center_id_last_letter.
+    force : bool
+        If False, skip if the file already exists.
+    dryrun : bool
+        If True, don't rename effectively, just output the new name.
+    output_dirname : str
+        Directory where the output shortname will be created.
+        If None, will be created in the same folder as the input longname.
+
+    Returns
+    -------
+    shortname_filepath : str
+        Path of the short old-named product file.
+
+    Note
+    ----
+    If you rename MGEX orbits, we advise to set
+    center_id_last_letter="m".
+    The AC code name will be changed to keep a MGEX convention
+    (but any other character can be used too).
+
+    e.g. for Bern's products, the long id is CODE
+
+    if center_id_last_letter=None, it will become cod,
+    if center_id_last_letter=m, it will become com
+    """
+
+    log.info("will rename " + longname_filepath_in)
+
+    longname_basename = os.path.basename(longname_filepath_in)
+    longname_dirname = os.path.dirname(longname_filepath_in)
+
+    if not output_dirname:
+        output_dirname = longname_dirname
+
+    center = longname_basename[:3]
+
+    if center_manual_short_name:
+        center = center_manual_short_name
+    elif center_id_last_letter:
+        center_as_list = list(center)
+        center_as_list[-1] = center_id_last_letter
+        center = "".join(center_as_list)
+
+    yyyy = int(longname_basename.split("_")[1][:4])
+    doy = int(longname_basename.split("_")[1][4:7])
+
+    day_dt = conv.doy2dt(yyyy, doy)
+
+    wwww, dow = conv.dt2gpstime(day_dt)
+
+    shortname_prefix = center.lower() + str(wwww).zfill(4) + str(dow)
+
+    ### Type handling
+    shortname = shortname_prefix  # default
+    if "SP3" in longname_basename:
+        shortname = shortname_prefix + ".sp3"
+    elif "CLK" in longname_basename:
+        shortname = shortname_prefix + ".clk"
+    elif "ERP" in longname_basename:
+        shortname = shortname_prefix + ".erp"
+    elif "BIA" in longname_basename:
+        shortname = shortname_prefix + ".bia"
+    elif "SNX" in longname_basename:
+        shortname = shortname_prefix + ".snx"
+    else:
+        log.error("filetype not found for " + longname_basename)
+
+    ### Compression handling
+    if longname_basename[-3:] == ".gz":
+        shortname = shortname + ".gz"
+    elif longname_basename[-2:] == ".Z":
+        shortname = shortname + ".Z"
+
+    shortname_filepath = os.path.join(output_dirname, shortname)
+
+    if not force and os.path.isfile(shortname_filepath):
+        log.info("skip " + longname_filepath_in)
+        log.info(shortname_filepath + " already exists")
+        return shortname_filepath
+
+    if not dryrun:
+        log.info("renaming " + longname_filepath_in + " => " + shortname_filepath)
+        shutil.copy2(longname_filepath_in, shortname_filepath)
+
+    if rm_longname_file and not dryrun:
+        log.info("remove " + longname_filepath_in)
+        os.remove(longname_filepath_in)
+
+    return shortname_filepath
 
 
 #### GRAVEYARD

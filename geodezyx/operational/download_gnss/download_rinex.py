@@ -155,13 +155,9 @@ def download_gnss_rinex(
     """
 
     if "01s" in list(statdico.keys())[0]:
-        day_step = 0
-        sec_step = 3600
-        rnd = "1h"
+        day_step, sec_step, rnd = 0, 3600, "1h"
     else:
-        day_step = 1
-        sec_step = 0
-        rnd = "1d"
+        day_step, sec_step, rnd = 1, 0, "1d"
 
     startdate_use = conv.round_dt(startdate, rnd)
     enddate_use = conv.round_dt(enddate, rnd)
@@ -172,23 +168,23 @@ def download_gnss_rinex(
     log.info("dates: %s to %s", startdate_use, enddate_use)
 
     if path_ftp_crawled_files_load:
-        table = pd.read_csv(path_ftp_crawled_files_load)
+        table_ini = pd.read_csv(path_ftp_crawled_files_load)
     else:
-        table = gen_crawl_table(
+        table_ini = gen_table_rnx(
             statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3
         )
 
-    if len(table) == 0:
+    if len(table_ini) == 0:
         log.error("No RINEX files found for the given criteria.")
         return None
 
     if skip_crawl:
-        table_crawl = table
+        table_crawl = table_ini
         files_all = pd.Series([], dtype=str)
         files_loc = pd.Series([], dtype=str)
     else:
         table_crawl, files_all, files_loc = dlutils.crawl_ftp_files(
-            table,
+            table_ini,
             sftp="auto",
             user=user,
             passwd=passwd,
@@ -198,24 +194,25 @@ def download_gnss_rinex(
         )
 
     #### get only the valid (true) url
-    table_dl = table_crawl.loc[table_crawl["url_true"].dropna().index]
+    table_dwld = table_crawl.loc[table_crawl["url_true"].dropna().index]
 
     # Initialize output list
     out_tup_lis = []
 
     # Only download if files are available and not in quiet mode
-    if len(table_dl) == 0:
-        log.error(
+    if len(table_dwld) == 0:
+        errmsg = (
             "no valid RINEX URL found/selected on the FTP server, check your inputs"
         )
+        log.error(errmsg)
     elif quiet_mode:
         log.warning("quiet mode, no download was performed")
     else:
         out_tup_lis = dlutils.ftp_downld_front(
-            table_dl["url_true"].values,
-            table_dl["outdir"].values,
+            table_dwld["url_true"].values,
+            table_dwld["outdir"].values,
             parallel_download=parallel_download,
-            secure_ftp=(table_dl["protocol"] == "sftp").values,
+            secure_ftp=(table_dwld["protocol"] == "sftp").values,
             user=user,
             passwd=passwd,
             force=force,
@@ -241,8 +238,13 @@ def download_gnss_rinex(
         return zip(*out_tup_lis_fin)
 
 
-def gen_crawl_table(
-    statdico, date_range, output_dir, archtype, no_rnx2, no_rnx3, per="01D"
+def gen_table_rnx(
+    statdico,
+    date_range,
+    output_dir,
+    archtype,
+    no_rnx2,
+    no_rnx3,
 ):
     """
     Generate a crawl table for RINEX file downloads.
@@ -291,10 +293,9 @@ def gen_crawl_table(
                     continue
                 table_proto.append((date, site, outdir, rnxver, rnxurl, protocol))
 
+    cols = ["date", "site", "outdir", "ver", "url_theo", "protocol"]
     # Create DataFrame with all collected data
-    table = pd.DataFrame(
-        table_proto, columns=["date", "site", "outdir", "ver", "url_theo", "protocol"]
-    )
+    table = pd.DataFrame(table_proto, columns=cols)
 
     # Add status columns
     table["crawled"] = False
@@ -302,11 +303,11 @@ def gen_crawl_table(
     table["ok_loc"] = False
     table["all"] = all_sites
     table["url_true"] = None
-    table["rnxnam"] = ""
+    table["filename"] = ""
 
     # Parse URL components
     urlpaths = table["url_theo"].apply(pathlib.Path)
-    table["rnxrgx"] = urlpaths.apply(lambda p: p.name)
+    table["regex"] = urlpaths.apply(lambda p: p.name)
     table["host"] = urlpaths.apply(lambda p: p.parts[1])
     table["dir"] = urlpaths.apply(lambda p: os.path.join(*p.parts[2:-1]))
 

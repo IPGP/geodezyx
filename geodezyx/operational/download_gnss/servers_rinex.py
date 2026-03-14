@@ -17,7 +17,6 @@ from geodezyx import conv
 
 log = logging.getLogger("geodezyx")
 
-
 def _rnx_obs_rgx(date, site="....", file_period="...", data_freq="..."):
     """
     Generate RINEX observation file regex patterns for both RINEX2 and RINEX3 formats.

@@ -20,11 +20,6 @@ import itertools
 #### Import the logger
 import logging
 import os
-import pathlib
-import re
-import shutil
-
-import numpy as np
 import pandas as pd
 
 #### geodeZYX modules
@@ -49,10 +44,10 @@ log = logging.getLogger("geodezyx")
 ############################################################################
 
 
-from .servers_prods import _server_select_products
+from .servers_prods import _server_select_prods
 
 
-def _prod_regex(dt_cur, ac_cur, prod_cur, new_name_conv=True, dow_manu=False):
+def _regex_prods(dt_cur, ac_cur, prod_cur, new_name_conv=True, dow_manu=False):
     """
     Generate a regex pattern to match GNSS product files for both old and
     new naming conventions.
@@ -115,7 +110,7 @@ def _prod_regex(dt_cur, ac_cur, prod_cur, new_name_conv=True, dow_manu=False):
     return combined_rgx, str(dow)
 
 
-def gen_crawl_table_products(
+def gen_table_prods(
     dates_list,
     ac_names,
     prod_types,
@@ -161,10 +156,10 @@ def gen_crawl_table_products(
     -------
     pd.DataFrame
         Table with download metadata for each product file, with columns:
-        date, ac, prod, outdir, host, dir, filrgx, protocol, crawled,
-        ok_dwl, ok_loc, url_true, filnam.
+        date, ac, prod, outdir, host, dir, regex, protocol, crawled,
+        ok_dwl, ok_loc, url_true, filename.
     """
-    host, basedir, protocol, secure_ftp = _server_select_products(
+    host, basedir, protocol, secure_ftp = _server_select_prods(
         archive_center, mgex, repro
     )
 
@@ -185,27 +180,25 @@ def gen_crawl_table_products(
         remote_dir = remote_dir.rstrip("/")
 
         # Build regex pattern
-        filrgx, dow_str = _prod_regex(dt_cur, ac_cur, prod_cur, new_name_conv, dow_manu)
+        regex, dow_str = _regex_prods(dt_cur, ac_cur, prod_cur, new_name_conv, dow_manu)
 
         # Build local output directory
         outdir = dlutils.effective_save_dir_orbit(archive_dir, ac_cur, dt_cur, archtype)
 
         table_proto.append(
-            (dt_cur, ac_cur, prod_cur, outdir, host, remote_dir, filrgx, protocol)
+            (dt_cur, ac_cur, prod_cur, outdir, host, remote_dir, regex, protocol)
         )
 
+    cols = ["date", "ac", "prod", "outdir", "host", "dir", "regex", "protocol"]
     # Create DataFrame
-    table = pd.DataFrame(
-        table_proto,
-        columns=["date", "ac", "prod", "outdir", "host", "dir", "filrgx", "protocol"],
-    )
+    table = pd.DataFrame(table_proto, columns=cols)
 
     # Add status columns
     table["crawled"] = False
     table["ok_dwl"] = False
     table["ok_loc"] = False
     table["url_true"] = None
-    table["filnam"] = ""
+    table["filename"] = ""
 
     return table
 
@@ -214,7 +207,7 @@ def download_gnss_products(
     archive_dir,
     startdate,
     enddate=None,
-    AC_names=("wum", "cod"),
+    ac_names=("wum", "cod"),
     prod_types=("sp3", "clk"),
     remove_patterns=("ULA",),
     archtype="week",
@@ -251,7 +244,7 @@ def download_gnss_products(
     enddate : datetime or None
         the end date in regular calendar date.
         If None, only the startdate is be considered as a date list.
-    AC_names : tuple, optional
+    ac_names : tuple, optional
         the names of the wished analysis centers.
         It also control the product's lattency with the new naming convention:
         simply add it completly in the AC name e.g. IGS0OPSRAP
@@ -340,11 +333,11 @@ def download_gnss_products(
     ###################################################################
     ########### Build or load the crawl table
     if path_ftp_crawled_files_load:
-        table = pd.read_csv(path_ftp_crawled_files_load)
+        table_ini = pd.read_csv(path_ftp_crawled_files_load)
     else:
-        table = gen_crawl_table_products(
+        table_ini = gen_table_prods(
             dates_list,
-            AC_names,
+            ac_names,
             prod_types,
             archive_dir,
             archive_center,
@@ -355,21 +348,21 @@ def download_gnss_products(
             dow_manu=dow_manu,
         )
 
-    if len(table) == 0:
+    if len(table_ini) == 0:
         log.error("No product entries generated for the given criteria.")
         return []
 
-    log.info("Crawl table: %d entries generated", len(table))
+    log.info("Crawl table: %d entries generated", len(table_ini))
 
     ###################################################################
     ########### FTP Crawl (with local file check)
     if skip_crawl:
-        table_crawl = table
+        table_use = table_ini
         files_all = pd.Series([], dtype=str)
         files_loc = pd.Series([], dtype=str)
     else:
-        table_crawl, files_all, files_loc = dlutils.crawl_ftp_files(
-            table,
+        table_use, files_all, files_loc = dlutils.crawl_ftp_files(
+            table_ini,
             sftp="auto",
             path_ftp_crawled_files_save=path_ftp_crawled_files_save,
             path_all_ftp_files_save=path_all_ftp_files_save,
@@ -381,7 +374,7 @@ def download_gnss_products(
     ###################################################################
     ########### Download
     # Get only the valid (non-null) URLs
-    table_dl = table_crawl.loc[table_crawl["url_true"].dropna().index]
+    table_dl = table_use.loc[table_use["url_true"].dropna().index]
 
     out_tup_lis = []
 
@@ -461,191 +454,3 @@ def multi_downloader_orbs_clks_2(**kwargs):
         "function download_gnss_products"
     )
     return download_gnss_products(**kwargs)
-
-
-def orbclk_long2short_name(
-    longname_filepath_in,
-    rm_longname_file=False,
-    center_id_last_letter=None,
-    center_manual_short_name=None,
-    force=False,
-    dryrun=False,
-    output_dirname=None,
-):
-    """
-    Rename a long naming new convention IGS product file to the short old
-    convention.
-
-    Naming will be done automatically based on the 3 first characters of the
-    long AC id. e.g. CODE => cod, GRGS => grg, NOAA => noa ...
-
-    Parameters
-    ----------
-    longname_filepath_in : str
-        Full path of the long name product file.
-    rm_longname_file : bool
-        Remove the original long name product file.
-    center_id_last_letter : str
-        Replace the last letter of the short AC id by another letter
-        (see note below).
-    center_manual_short_name : str
-        Replace completely the long name with this one.
-        Overrides center_id_last_letter.
-    force : bool
-        If False, skip if the file already exists.
-    dryrun : bool
-        If True, don't rename effectively, just output the new name.
-    output_dirname : str
-        Directory where the output shortname will be created.
-        If None, will be created in the same folder as the input longname.
-
-    Returns
-    -------
-    shortname_filepath : str
-        Path of the short old-named product file.
-
-    Note
-    ----
-    If you rename MGEX orbits, we advise to set
-    center_id_last_letter="m".
-    The AC code name will be changed to keep a MGEX convention
-    (but any other character can be used too).
-
-    e.g. for Bern's products, the long id is CODE
-
-    if center_id_last_letter=None, it will become cod,
-    if center_id_last_letter=m, it will become com
-    """
-
-    log.info("will rename " + longname_filepath_in)
-
-    longname_basename = os.path.basename(longname_filepath_in)
-    longname_dirname = os.path.dirname(longname_filepath_in)
-
-    if not output_dirname:
-        output_dirname = longname_dirname
-
-    center = longname_basename[:3]
-
-    if center_manual_short_name:
-        center = center_manual_short_name
-    elif center_id_last_letter:
-        center_as_list = list(center)
-        center_as_list[-1] = center_id_last_letter
-        center = "".join(center_as_list)
-
-    yyyy = int(longname_basename.split("_")[1][:4])
-    doy = int(longname_basename.split("_")[1][4:7])
-
-    day_dt = conv.doy2dt(yyyy, doy)
-
-    wwww, dow = conv.dt2gpstime(day_dt)
-
-    shortname_prefix = center.lower() + str(wwww).zfill(4) + str(dow)
-
-    ### Type handling
-    shortname = shortname_prefix  # default
-    if "SP3" in longname_basename:
-        shortname = shortname_prefix + ".sp3"
-    elif "CLK" in longname_basename:
-        shortname = shortname_prefix + ".clk"
-    elif "ERP" in longname_basename:
-        shortname = shortname_prefix + ".erp"
-    elif "BIA" in longname_basename:
-        shortname = shortname_prefix + ".bia"
-    elif "SNX" in longname_basename:
-        shortname = shortname_prefix + ".snx"
-    else:
-        log.error("filetype not found for " + longname_basename)
-
-    ### Compression handling
-    if longname_basename[-3:] == ".gz":
-        shortname = shortname + ".gz"
-    elif longname_basename[-2:] == ".Z":
-        shortname = shortname + ".Z"
-
-    shortname_filepath = os.path.join(output_dirname, shortname)
-
-    if not force and os.path.isfile(shortname_filepath):
-        log.info("skip " + longname_filepath_in)
-        log.info(shortname_filepath + " already exists")
-        return shortname_filepath
-
-    if not dryrun:
-        log.info("renaming " + longname_filepath_in + " => " + shortname_filepath)
-        shutil.copy2(longname_filepath_in, shortname_filepath)
-
-    if rm_longname_file and not dryrun:
-        log.info("remove " + longname_filepath_in)
-        os.remove(longname_filepath_in)
-
-    return shortname_filepath
-
-
-#  ______                _   _                _____                                         _
-# |  ____|              | | (_)              / ____|                                       | |
-# | |__ _   _ _ __   ___| |_ _  ___  _ __   | |  __ _ __ __ ___   _____ _   _  __ _ _ __ __| |
-# |  __| | | | '_ \ / __| __| |/ _ \| '_ \  | | |_ | '__/ _` \ \ / / _ \ | | |/ _` | '__/ _` |
-# | |  | |_| | | | | (__| |_| | (_) | | | | | |__| | | | (_| |\ v /  __/ |_| | (_| | | | (_| |
-# |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|  \_____|_|  \__,_| \_/ \___|\__, |\__,_|_|  \__,_|
-#                                                                        __/ |
-#                                                                       |___/
-
-
-def multi_downloader_orbs_clks(
-    archive_dir,
-    startdate,
-    enddate,
-    calc_center="igs",
-    sp3clk="sp3",
-    archtype="year/doy",
-    parallel_download=4,
-    archive_center="ign",
-    repro=0,
-    sorted_mode=False,
-    force_weekly_file=False,
-    return_also_uncompressed_files=True,
-):
-    """
-    Download IGS products. Can manage MGEX products too.
-
-    .. deprecated::
-        Use :func:`download_gnss_products` instead.
-
-    Parameters
-    ----------
-    archive_dir : str
-        Parent archive directory where files will be stored.
-    startdate : datetime
-        Start of the wished period.
-    enddate : datetime
-        End of the wished period.
-    calc_center : str or list of str, optional
-        Analysis center name. Default is "igs".
-    sp3clk : str, optional
-        Product type. Default is "sp3".
-    archtype : str, optional
-        Archive directory structure. Default is "year/doy".
-    parallel_download : int, optional
-        Number of parallel downloads. Default is 4.
-    archive_center : str, optional
-        Server of download. Default is "ign".
-    repro : int, optional
-        IGS reprocessing number (0 = routine). Default is 0.
-    sorted_mode : bool, optional
-        Sort the download order. Default is False.
-    force_weekly_file : bool, optional
-        Force download of weekly files. Default is False.
-    return_also_uncompressed_files : bool, optional
-        Include uncompressed files in output. Default is True.
-
-    Returns
-    -------
-    None
-
-    See Also
-    --------
-    download_gnss_products : Newer implementation of this function.
-    """
-    log.error("multi_downloader_orbs_clks IS DISCONTINUED, use download_gnss_products")
-    return None

@@ -111,14 +111,14 @@ dwl_output_station = operational.download_gnss_rinex(statdico={"rgp" : ["SMNE","
 # Téléchargement automatique des données ORBIT et CLOCK pour le jour du traitement
 # ici  (2019-176) qui correspond à la semaine GPS 2059
 dwl_output_satellite = operational.download_gnss_products(archive_dir= my_directory,
-                                   startdate= my_date_to_process,
-                                   enddate= my_date_to_process,
-                                   archtype= 'year/doy',
-                                   AC_names=("IGS",),
-                                   repro=0,
-                                   archive_center="ign",
-                                   parallel_download = 1,
-                                   ) 
+                                                          startdate= my_date_to_process,
+                                                          enddate= my_date_to_process,
+                                                          archtype= 'year/doy',
+                                                          ac_names=("IGS",),
+                                                          repro=0,
+                                                          archive_center="ign",
+                                                          parallel_download = 1,
+                                                          )
 
 
 # %%

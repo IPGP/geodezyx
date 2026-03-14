@@ -117,8 +117,8 @@ def track_runner(
         strt_rnd = dt.datetime(*bas_srt.timetuple()[:3])
         end_rnd = dt.datetime(*bas_end.timetuple()[:3])
 
-        orblis = operational.multi_downloader_orbs_clks(
-            temp_dir, strt_rnd, end_rnd, archtype="/", calc_center=calc_center
+        orblis = operational.download_gnss_products(
+            temp_dir, strt_rnd, end_rnd, archtype="/", ac_names=calc_center
         )
 
         # sp3Z = orblis[0]
