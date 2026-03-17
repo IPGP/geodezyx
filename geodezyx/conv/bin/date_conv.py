@@ -30,9 +30,9 @@ def main():
 
     Accepted input formats
     ----------------------
-    YYYY-MM-DD    : ISO date              e.g.  2026-03-17
-    YYYY-DDD      : Year + DayOfYear      e.g.  2026-076
-    WWWW-D        : GPS Week + DoW        e.g.  2408-2
+    YYYY-MM-DD    : ISO date              e.g.  2026-03-17  or  2026 03 17
+    YYYY-DDD      : Year + DayOfYear      e.g.  2026-076    or  2026 076
+    WWWW-D        : GPS Week + DoW        e.g.  2408-2      or  2408 2
     YYYYMMDD      : compact ISO           e.g.  20260317
     YYMMDD        : 2-digit year ISO      e.g.  260317
     JJJJJ         : CNES Julian day       e.g.  29665
@@ -46,27 +46,40 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Accepted input formats:
-  YYYY-MM-DD   ISO date               e.g.  2026-03-17
-  YYYY-DDD     Year + Day-of-Year     e.g.  2026-076
-  WWWW-D       GPS Week + Day-of-Week e.g.  2408-2
+  YYYY-MM-DD   ISO date               e.g.  2026-03-17  or  2026 03 17
+  YYYY-DDD     Year + Day-of-Year     e.g.  2026-076    or  2026 076
+  WWWW-D       GPS Week + Day-of-Week e.g.  2408-2      or  2408 2
   YYYYMMDD     Compact ISO            e.g.  20260317
   YYMMDD       2-digit year ISO       e.g.  260317
   JJJJJ        CNES Julian day        e.g.  29665
   <free text>  Parsed by dateparser   e.g.  "17 March 2026"
+
+Spaces between tokens are treated as dashes, so '2026 076' is the same as '2026-076'.
 """,
     )
     parser.add_argument(
         "date_str",
+        nargs="*",
+        default=None,
         type=str,
-        help="Input date string to convert (see accepted formats above).",
+        help="Input date string to convert (see accepted formats above). "
+             "Spaces between tokens are treated as dashes (e.g. '2026 076' → '2026-076'). "
+             "Defaults to today.",
     )
     args = parser.parse_args()
 
+    # --- default to today if no input given ---
+    import datetime as _dt
+    if not args.date_str:
+        date_str = _dt.date.today().strftime("%Y-%m-%d")
+    else:
+        date_str = "-".join(args.date_str)
+
     # --- parse the input ---
     try:
-        date = date_pattern2dt(args.date_str)
+        date = date_pattern2dt(date_str)
     except Exception as exc:
-        parser.error(f"Could not parse '{args.date_str}': {exc}")
+        parser.error(f"Could not parse '{date_str}': {exc}")
         return  # unreachable, but satisfies linters
 
     # --- gather all representations ---
@@ -79,9 +92,9 @@ Accepted input formats:
     year_dec        = dt2year_decimal(date)
 
     # --- formatted output ---
-    sep = "-" * 55
+    sep = "-" * 53
     print(sep)
-    print(f"  Input string  : {args.date_str}")
+    print(f"  Input : {date_str}")
     print(sep)
     print(f"  {'YYYY-MM-DD':<28}: {date.strftime('%Y-%m-%d')}")
     print(f"  {'YYYYMMDD':<28}: {date.strftime('%Y%m%d')}")
