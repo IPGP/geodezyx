@@ -79,7 +79,7 @@ Accepted input formats:
     year_dec        = dt2year_decimal(date)
 
     # --- formatted output ---
-    sep = "-" * 44
+    sep = "-" * 55
     print(sep)
     print(f"  Input string  : {args.date_str}")
     print(sep)
