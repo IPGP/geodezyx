@@ -133,14 +133,14 @@ def main():
     parser.add_argument(
         "-s",
         "--start_epoch",
-        type=lambda s: conv.date_pattern_2_dt(s),
+        type=lambda s: conv.date_pattern2dt(s),
         default=dt.datetime(2000, 5, 3),
         help="Start date and time for the selected RINEXs.",
     )
     parser.add_argument(
         "-e",
         "--end_epoch",
-        type=lambda s: conv.date_pattern_2_dt(s),
+        type=lambda s: conv.date_pattern2dt(s),
         default=dt.datetime(2099, 12, 31),
         help="End date and time for the selected RINEXs.",
     )

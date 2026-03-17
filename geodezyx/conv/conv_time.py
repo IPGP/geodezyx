@@ -1635,7 +1635,7 @@ str_date2dt = date_string_2_dt
 strdate2dt = date_string_2_dt
 
 @vector_string_conv
-def date_pattern_2_dt(date_str_inp):
+def date_pattern2dt(date_str_inp):
     """
     Time representation conversion
 
@@ -1709,7 +1709,7 @@ def minmax_pattern_dt(date1_inp, date2_inp):
     ValueError
         If the input strings cannot be converted into valid datetime objects.
     """
-    datetup = (date_pattern_2_dt(date1_inp), date_pattern_2_dt(date2_inp))
+    datetup = (date_pattern2dt(date1_inp), date_pattern2dt(date2_inp))
     return min(datetup), max(datetup)
 
 
@@ -2955,3 +2955,5 @@ def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
         log.debug(out)
 
     return out
+
+

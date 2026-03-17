@@ -504,7 +504,7 @@ def main():
     parser.add_argument(
         "-s",
         "--date_srt",
-        type=lambda s: conv.date_pattern_2_dt(s),
+        type=lambda s: conv.date_pattern2dt(s),
         required=False,
         default=dt.datetime(2000, 5, 3),
         help=(
@@ -516,7 +516,7 @@ def main():
     parser.add_argument(
         "-e",
         "--date_end",
-        type=lambda s: conv.date_pattern_2_dt(s),
+        type=lambda s: conv.date_pattern2dt(s),
         required=False,
         default=None,
         help=(
