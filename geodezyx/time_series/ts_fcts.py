@@ -56,11 +56,11 @@ def plot_timeseries(
     ----------
     coor_inp : tuple or pd.DataFrame
         Input coordinates data. It can be either:
-        - A 7-tuple (A, B, C, T, sA, sB, sC) where:
+        - a 7-tuple (A, B, C, T, sA, sB, sC) where:
             - A, B, C: coordinate components as numpy arrays
             - T: time epochs as numpy array (POSIX timestamps)
             - sA, sB, sC: uncertainties of the components as numpy arrays
-        - A DataFrame with columns corresponding to the coordinate type
+        - a DataFrame with columns corresponding to the coordinate type
          (e.g., 'e', 'n', 'u' for ENU) and their
          uncertainties (e.g., 'se', 'sn', 'su'),
          along with an 'epoch' column for time epochs.
@@ -225,34 +225,34 @@ def _print4compar(dA, dB, dC, dD, coortype):
 
     log.info("moyenne aritm & RMS et std composante %s", a_str)
     log.info(str(np.nanmean(dA)))
-    log.info(stats.RMSmean(dA))
+    log.info(stats.rms_mean(dA))
     log.info(str(np.nanstd(dA)))
     log.info("")
 
     log.info("moyenne aritm & RMS et std composante %s", b_str)
     log.info(str(np.nanmean(dB)))
-    log.info(stats.RMSmean(dB))
+    log.info(stats.rms_mean(dB))
     log.info(str(np.nanstd(dB)))
     log.info("")
 
     log.info("moyenne aritm & RMS et std composante %s", c_str)
     log.info(str(np.nanmean(dC)))
-    log.info(stats.RMSmean(dC))
+    log.info(stats.rms_mean(dC))
     log.info(str(np.nanstd(dC)))
     log.info("")
 
     log.info("moyenne aritm & RMS et std composante D")
     log.info(str(np.nanmean(dD)))
-    log.info(stats.RMSmean(dD))
+    log.info(stats.rms_mean(dD))
     log.info(str(np.nanstd(dD)))
     log.info("")
 
     log.info(
         "RMS3D : sqrt((RMS_{}**2 + RMS_{}**2 + RMS_{}**2)/3 ) ".format(a_str, b_str, c_str)
     )
-    log.info(stats.RMSmean([stats.RMSmean(dA), stats.RMSmean(dB), stats.RMSmean(dC)]))
+    log.info(stats.rms_mean([stats.rms_mean(dA), stats.rms_mean(dB), stats.rms_mean(dC)]))
     log.info("RMS2D : uniquement sur les 2 composantes plani")
-    log.info(stats.RMSmean([stats.RMSmean(dA), stats.RMSmean(dB)]))
+    log.info(stats.rms_mean([stats.rms_mean(dA), stats.rms_mean(dB)]))
     log.info("")
 
 
@@ -325,30 +325,30 @@ def print4compar_tabular(dicolist, split=0, print_2D3D_if_any=True):
         line.append(stat)
 
         line.append(np.nanmean(dA))
-        line.append(stats.RMSmean(dA))
+        line.append(stats.rms_mean(dA))
         line.append(np.nanstd(dA))
 
         line.append(np.nanmean(dB))
-        line.append(stats.RMSmean(dB))
+        line.append(stats.rms_mean(dB))
         line.append(np.nanstd(dB))
 
         line.append(np.nanmean(dC))
-        line.append(stats.RMSmean(dC))
+        line.append(stats.rms_mean(dC))
         line.append(np.nanstd(dC))
 
         line.append(np.nanmean(dD))
-        line.append(stats.RMSmean(dD))
+        line.append(stats.rms_mean(dD))
         line.append(np.nanstd(dD))
 
         if D2Dn3D:
             line.append(np.nanmean(dDb))
-            line.append(stats.RMSmean(dDb))
+            line.append(stats.rms_mean(dDb))
             line.append(np.nanstd(dDb))
 
         line.append(
-            stats.RMSmean([stats.RMSmean(dA), stats.RMSmean(dB), stats.RMSmean(dC)])
+            stats.rms_mean([stats.rms_mean(dA), stats.rms_mean(dB), stats.rms_mean(dC)])
         )
-        line.append(stats.RMSmean([stats.RMSmean(dA), stats.RMSmean(dB)]))
+        line.append(stats.rms_mean([stats.rms_mean(dA), stats.rms_mean(dB)]))
 
         LINES_STK.append(line)
 

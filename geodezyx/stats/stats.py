@@ -24,6 +24,7 @@ import datetime as dt
 import logging
 
 import numpy as np
+import pandas as pd
 import scipy
 
 #### geodeZYX modules
@@ -261,9 +262,29 @@ def confid_interval_slope(x, y, alpha=0.95):
     return mi, ma
 
 
-def running_mean(data_in, window, convolve_mode="same"):
+def running_mean(data_in, window):
     """
     Gives running mean / moving average of data
+
+    Parameters
+    ----------
+    data_in : list or numpy.array
+        Values
+    window :  float or int
+        Size of the window for the running mean
+
+    Returns
+    -------
+    data_run : numpy.array
+        Running mean of data
+    """
+    return pd.DataFrame(data_in).mean(window=window).values.flatten()
+
+
+def running_mean_convolut(data_in, window, convolve_mode="same"):
+    """
+    Gives running mean / moving average of data
+    using convolution mode
 
     Parameters
     ----------
@@ -284,102 +305,92 @@ def running_mean(data_in, window, convolve_mode="same"):
 
     Note
     ----
-    Nota :
-        After a stress test, this one is the only one to
-        provide an output with same size as input
-        AND not shifted
-        This fct is slow but at leat, do the job
+    After a stress test, this one is the only one to
+    provide an output with same size as input
+    AND not shifted
+    This fct is slow but at leat, do the job
 
-        See running_mean_help for more details
+    See running_mean_help for more details
 
-        convolve_mode should stay fixed as "same"
+    convolve_mode should stay fixed as "same"
 
-    Nota 2 (for developpers) :
-        Wrapper based on fct movingaverage_bis
-
-        The substraction of the mean is an empirical trick
+    Wrapper based on fct running_mean_4
+    The substraction of the mean is an empirical trick
     """
 
     data_mean = np.nanmean(data_in)
     data_zero_centered = data_in - data_mean
 
-    data_run = movingaverage_bis(data_zero_centered, window)
+    data_run = running_mean_4(data_zero_centered, window, convolve_mode)
 
     return data_run + data_mean
 
-
-def running_mean_help():
-    help_str = """
-    
-Running Means functions with INTERNAL ID 1 3 5
-return an Y output shorter than the input : not very convenient 
-to align it on a X vector ...
-
-INTERNAL ID 2 gives Y with same size as X
-but result is shifted
-Y[0] should be aligned with the middle of the 1st window
-
-INTERNAL ID 4 is selected. It's declared as slow on StackOverflow,
-but at least the job is done.
-https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python
-
-About the speed, the ID4 is not the slowest in fact,
-it is the ID2 which is totally slow
-so this weakness has to be relativised
-(the answer is pretty old, so the convolve fct might have been improved)
-
-About the convolution mode, it is detailed here : 
-https://stackoverflow.com/questions/13728392/moving-average-or-running-mean
-"valid" mode is advised BUT do the same jobs as the others fcts (smaller output)
-The "same" mode is the best one for our applications.
-And "full" mode is not working either.
-
-BUT all the fcts are maintened here, because they can be usefull for some 
-other cases !
-    
-##### EXEMPLE STRESS TEST CODE
-X = np.arange(1,1000,1) / (np.pi * 6)
-
-plt.clf()
-Ytrue = np.sin(X) * 100
-Y = Ytrue + np.random.randn(len(X)) * 100
-
-plt.plot(X,Y)
-
-N = 50
-
-Y1 = stats.movingaverage(Y,N)
-Y2 = stats.runningMean(Y,N)
-Y3 = stats.running_mean_core(Y,N)
-Y4a = stats.movingaverage_bis(Y,N,"same")
-Y4b = stats.movingaverage_bis(Y,N,"full")
-Y5 = stats.movingaverage_ter(Y,N)
-
-plt.clf()
-plt.plot(Y)
-plt.plot(Ytrue)
-plt.plot(Y1,"r.")
-plt.plot(Y2,"b.")
-plt.plot(Y3,"r.")
-plt.plot(Y4a,"y.")
-plt.plot(Y5,"g.")
-
-
-plt.clf()
-plt.plot(X,Y)
-plt.plot(X,Ytrue)
-#plt.plot(X,Y1,"r.")
-plt.plot(X,Y2,"b.")
-#plt.plot(X,Y3,"r.")
-plt.plot(X,Y4a,"y.")
-#plt.plot(X,Y4b,"r.")
-#plt.plot(X,Y5,"g.")
-    """
-
-    return help_str
+# Running Means functions with INTERNAL ID 1 3 5
+# return an Y output shorter than the input : not very convenient
+# to align it on a X vector ...
+#
+# INTERNAL ID 2 gives Y with same size as X
+# but result is shifted
+# Y[0] should be aligned with the middle of the 1st window
+#
+# INTERNAL ID 4 is selected. It's declared as slow on StackOverflow,
+# but at least the job is done.
+# https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python
+#
+# About the speed, the ID4 is not the slowest in fact,
+# it is the ID2 which is totally slow
+# so this weakness has to be relativised
+# (the answer is pretty old, so the convolve fct might have been improved)
+#
+# About the convolution mode, it is detailed here :
+# https://stackoverflow.com/questions/13728392/moving-average-or-running-mean
+# "valid" mode is advised BUT do the same jobs as the others fcts (smaller output)
+# The "same" mode is the best one for our applications.
+# And "full" mode is not working either.
+#
+# BUT all the fcts are maintened here, because they can be usefull for some
+# other cases !
+#
+# ##### EXEMPLE STRESS TEST CODE
+# X = np.arange(1,1000,1) / (np.pi * 6)
+#
+# plt.clf()
+# Ytrue = np.sin(X) * 100
+# Y = Ytrue + np.random.randn(len(X)) * 100
+#
+# plt.plot(X,Y)
+#
+# N = 50
+#
+# Y1 = stats.movingaverage(Y,N)
+# Y2 = stats.runningMean(Y,N)
+# Y3 = stats.running_mean_core(Y,N)
+# Y4a = stats.movingaverage_bis(Y,N,"same")
+# Y4b = stats.movingaverage_bis(Y,N,"full")
+# Y5 = stats.movingaverage_ter(Y,N)
+#
+# plt.clf()
+# plt.plot(Y)
+# plt.plot(Ytrue)
+# plt.plot(Y1,"r.")
+# plt.plot(Y2,"b.")
+# plt.plot(Y3,"r.")
+# plt.plot(Y4a,"y.")
+# plt.plot(Y5,"g.")
+#
+#
+# plt.clf()
+# plt.plot(X,Y)
+# plt.plot(X,Ytrue)
+# #plt.plot(X,Y1,"r.")
+# plt.plot(X,Y2,"b.")
+# #plt.plot(X,Y3,"r.")
+# plt.plot(X,Y4a,"y.")
+# #plt.plot(X,Y4b,"r.")
+# #plt.plot(X,Y5,"g.")
 
 
-def movingaverage(values, window):
+def running_mean_1(values, window):
     """
     including valid will REQUIRE there to be enough datapoints.
     for example, if you take out valid, it will start @ point one,
@@ -393,7 +404,7 @@ def movingaverage(values, window):
     return smas  # as a numpy array
 
 
-def runningMean(x, N):
+def running_mean_2(x, N):
     """
     http://stackoverflow.com/questions/13728392/moving-average-or-running-mean
 
@@ -405,7 +416,7 @@ def runningMean(x, N):
     return y / N
 
 
-def running_mean_core(x, N):
+def running_mean_3(x, N):
     """
     moyenne glissante
     https://stackoverflow.com/questions/13728392/moving-average-or-running-mean
@@ -419,7 +430,7 @@ def running_mean_core(x, N):
     return xout
 
 
-def movingaverage_bis(interval, window_size, convolve_mode="same"):
+def running_mean_4(interval, window_size, convolve_mode="same"):
     """
     moyenne glissante, plus lente mais donne une sortie de meme taille que l'entrée
     https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python
@@ -430,10 +441,10 @@ def movingaverage_bis(interval, window_size, convolve_mode="same"):
     return np.convolve(interval, window, convolve_mode)
 
 
-def movingaverage_ter(data, window_width):
+def running_mean_5(data, window_width):
     """
     https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python
-    Roman Kh ans
+    Roman Kh answer
 
     INTERNAL_ID_5
     """
@@ -498,75 +509,7 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
     y = scipy.butter.lfilter(b, a, data)
     return y
 
-
-def gaussian_filter_GFZ_style_smoother(tim_ref, dat_ref, width=7):
-    """
-    Gaussian filter to smooth data, based on
-    GFZ's GMT_plus.pm/gaussian_kernel
-
-    Args :
-        tim_ref : the X/T component of the time serie (in decimal days !)
-
-        dat_ref : the Y component (the data)
-
-        width   : size of the window (odd number is best ?)
-
-    Returns :
-        dat_smt : smoothed Y
-
-    NB :
-        Some other nice ideas here
-        http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
-        https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way
-        https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth
-
-    NB2 : THIS VERSION IS VERY SLOW (DIRTY CONVERSION OF A PERL FCT)
-          THE PYTHONIC VERSION gaussian_filter_GFZ_style_smoother_improved
-          BELOW SHOULD BE USED  !!!
-    """
-
-    log.warning("WARN : THIS function gaussian_filter_GFZ_style_smoother")
-    log.warning("IS VERY SLOW (DIRTY CONVERSION OF A PERL FCT)")
-    log.warning("THE PYTHONIC VERSION gaussian_filter_GFZ_style_smoother_improved")
-    log.warning("SHOULD BE USED  !!!")
-
-    tim_raw = tim_ref
-    dat_raw = dat_ref
-
-    num_raw = len(tim_raw)
-    icomp = 0
-
-    dat_smt = [np.nan] * len(dat_ref)
-
-    for ismt in range(num_raw):  # +1
-
-        x_val = 0.0
-        x_wht = 0.0
-
-        for iraw in reversed(range(0, ismt)):
-            x_lag = tim_raw[ismt] - tim_raw[iraw]
-            x_fac = np.exp(-((x_lag / width) ** 2) / 2)
-            x_val += dat_raw[iraw] * x_fac
-            x_wht += x_fac
-            icomp += 1
-            if x_fac < 0.01:
-                break
-
-        for iraw in range(ismt + 1, num_raw):
-            x_lag = tim_raw[ismt] - tim_raw[iraw]
-            x_fac = np.exp(-((x_lag / width) ** 2) / 2)
-            x_val += dat_raw[iraw] * x_fac
-            x_wht += x_fac
-            icomp += 1
-            if x_fac < 0.01:
-                break
-
-        dat_smt[ismt] = x_val / x_wht
-
-    return dat_smt
-
-
-def gaussian_filter_GFZ_style_smoother_improved(tim_ref, dat_ref, width=7):
+def gaussian_filter_gfz(tim_ref, dat_ref, width=7):
     """
     Gaussian filter to smooth data,
     based on GFZ's GMT_plus.pm/gaussian_kernel
@@ -607,49 +550,29 @@ def gaussian_filter_GFZ_style_smoother_improved(tim_ref, dat_ref, width=7):
         tim_raw_work = np.delete(tim_raw, ismt)
         dat_raw_work = np.delete(dat_raw, ismt)
 
-        X_lag = tim_raw[ismt] - tim_raw_work
-        X_fac = np.exp(-((X_lag / width) ** 2) / 2)
+        x_lag = tim_raw[ismt] - tim_raw_work
+        x_fac = np.exp(-((x_lag / width) ** 2) / 2)
 
-        # X_fac[X_fac < 0.01] = 0.
+        # x_fac[x_fac < 0.01] = 0.
 
-        clean_bool = X_fac > 0.01
+        clean_bool = x_fac > 0.01
         ## It differs a bit of the official fct, because the next element
         ## following this criteria is included anyway
 
         dat_raw_clean = dat_raw_work[clean_bool]
-        X_fac_clean = X_fac[clean_bool]
+        x_fac_clean = x_fac[clean_bool]
 
         dat_raw_clean = dat_raw_clean[~np.isnan(dat_raw_clean)]
-        X_fac_clean = X_fac_clean[~np.isnan(X_fac_clean)]
+        x_fac_clean = x_fac_clean[~np.isnan(x_fac_clean)]
 
-        X_val = np.sum(np.multiply(dat_raw_clean, X_fac_clean))
-        X_wht = np.sum(X_fac_clean)
+        x_val = np.sum(np.multiply(dat_raw_clean, x_fac_clean))
+        x_wht = np.sum(x_fac_clean)
 
-        dat_smt2.append(X_val / X_wht)
+        dat_smt2.append(x_val / x_wht)
 
     dat_smt2 = np.array(dat_smt2)
 
     return dat_smt2
-
-
-# def interpolate_gaps(values, limit=None):
-#    """
-#    Fill gaps using linear interpolation, optionally only fill gaps up to a
-#    size of `limit`.
-#    """
-#    values = np.asarray(values)
-#    i = np.arange(values.size)
-#    valid = np.isfinite(values)
-#    filled = np.interp(i, i[valid], values[valid])
-#
-#    if limit is not None:
-#        invalid = ~valid
-#        for n in range(1, limit+1):
-#            invalid[:-n] &= invalid[n:]
-#        filled[invalid] = np.nan
-#
-#    return filled
-
 
 def smooth(x, window_len=11, window="hanning"):
     """smooth the data using a window with requested size.
@@ -747,13 +670,13 @@ def find_intersection(x1, y1, x2, y2):
     return roots, p1(roots)
 
 
-def wrapTo360(lon):
+def wrap_to360(lon):
     # according to the MATLAB fct
     lon = np.mod(lon, 360)
     return lon
 
 
-def wrapTo180(lon):
+def wrap_to180(lon):
     # according to the MATLAB fct
     if not (lon is np.array):
         notaarray = True
@@ -761,7 +684,7 @@ def wrapTo180(lon):
     else:
         notaarray = False
     q = (lon < -180) + (180 < lon)
-    lon[q] = wrapTo360(lon[q] + 180) - 180
+    lon[q] = wrap_to360(lon[q] + 180) - 180
     if notaarray:
         lon = lon[0]
     return lon
@@ -770,25 +693,13 @@ def wrapTo180(lon):
 # Low level statistic function
 
 
-def rms_mean(A):
+def rms_mean(a):
     """
     returns RMS mean of a list/array
     """
-    return np.sqrt(np.nanmean(np.square(np.array(A, np.float64))))
+    return np.sqrt(np.nanmean(np.square(np.array(a, np.float64))))
 
-
-def RMSmean(indata):
-    """
-    returns RMS mean of a list/array
-
-    useless redundancy with rms_mean
-    this function use shall be avoided
-    """
-    rms = np.sqrt(np.nanmean(np.square(indata)))
-    return rms
-
-
-def rms_mean_alternativ(A):
+def rms_mean_alternativ(a):
     """
     returns "GRGS style" RMS of a list/array
     the arithmetic mean of the values is substracted from the values
@@ -797,14 +708,14 @@ def rms_mean_alternativ(A):
     i.e.    _
     √< (A - A)^2 > instead of √< (A)^2 >
     """
-    return np.sqrt(np.nanmean(np.square(A - np.nanmean(A))))
+    return np.sqrt(np.nanmean(np.square(a - np.nanmean(a))))
 
 
-def rms_mean_kouba(A, multipl_coef=3, deg_of_freedom=7):
+def rms_mean_kouba(a, multipl_coef=3, deg_of_freedom=7):
     """
     returns RMS mean of a list/array
     """
-    return np.sqrt(np.sum(np.square(A)) / (multipl_coef * len(A) - deg_of_freedom))
+    return np.sqrt(np.sum(np.square(a)) / (multipl_coef * len(a) - deg_of_freedom))
 
 
 def mad(data, mode="median"):
@@ -813,10 +724,11 @@ def mad(data, mode="median"):
     """
 
     if mode == "median":
-        MAD = np.nanmedian(np.abs(data - np.nanmedian(data)))
+        mad_out = np.nanmedian(np.abs(data - np.nanmedian(data)))
     elif mode == "mean":
-        MAD = np.nanmean(np.abs(data - np.nanmean(data)))
-    return MAD
+        mad_out = np.nanmean(np.abs(data - np.nanmean(data)))
+
+    return mad_out
 
 
 def outlier_mad(
@@ -940,25 +852,25 @@ def outlier_mad_binom(
 
     Returns
     -------
-    Yclean & Xclean : numpy.array
+    yclean & xclean : numpy.array
 
     bb : numpy.array (if return_booleans == True)
         Y-sized booleans
     """
     if detrend_first:
-        _, Ywork = detrend_timeseries(X, Y)
+        _, ywork = detrend_timeseries(X, Y)
     else:
-        _, Ywork = np.array(X), np.array(Y)
+        _, ywork = np.array(X), np.array(Y)
 
-    _, bb = outlier_mad(Ywork, threshold, verbose)
+    _, bb = outlier_mad(ywork, threshold, verbose)
 
-    Xclean = np.array(X)[bb]
-    Yclean = np.array(Y)[bb]
+    xclean = np.array(X)[bb]
+    yclean = np.array(Y)[bb]
 
     if not return_booleans:
-        return Yclean, Xclean
+        return yclean, xclean
     else:
-        return Yclean, Xclean, bb
+        return yclean, xclean, bb
 
 
 def outlier_above_below_simple(X, low_bound, upp_bound, return_booleans=True):
@@ -978,7 +890,7 @@ def outlier_above_below_simple(X, low_bound, upp_bound, return_booleans=True):
 
     Returns
     -------
-    Xout : numpy.array
+    xout : numpy.array
         X between low_bound & upp_bound
 
     bbool : bool
@@ -986,25 +898,25 @@ def outlier_above_below_simple(X, low_bound, upp_bound, return_booleans=True):
 
     """
 
-    Xwork = np.array(X)
+    xwork = np.array(X)
 
     if low_bound >= upp_bound:
         log.warning("lower bound >= upper bound !!!")
         log.warning("low_bond : ", low_bound)
         log.warning("upp_bond : ", upp_bound)
 
-    bbool = (low_bound <= Xwork) & (Xwork <= upp_bound)
+    bbool = (low_bound <= xwork) & (xwork <= upp_bound)
 
-    Xout = Xwork[bbool]
+    xout = xwork[bbool]
 
     if return_booleans:
-        return Xout, bbool
+        return xout, bbool
     else:
-        return Xout
+        return xout
 
 
 def outlier_above_below(
-    X,
+    x,
     threshold_values,
     reference=np.nanmean,
     theshold_absolute=True,
@@ -1052,7 +964,7 @@ def outlier_above_below(
 
     Returns
     -------
-    Xout : numpy array
+    xout : numpy array
         X between low_bound & upp_bound
 
     bbool : numpy array
@@ -1071,14 +983,14 @@ def outlier_above_below(
         log.warning("minus sign for lower bound will be applied internally")
 
     if callable(reference):
-        ref_val = reference(X)
+        ref_val = reference(x)
     else:
         ref_val = reference
 
     if theshold_relative_value in ("reference", None):
         relativ_val = reference
     elif callable(theshold_relative_value):
-        relativ_val = theshold_relative_value(X)
+        relativ_val = theshold_relative_value(x)
     else:
         relativ_val = reference
 
@@ -1095,12 +1007,12 @@ def outlier_above_below(
         log.info("effective lower bound: %s", ths_low)
         log.info("effective upper bound: %s", ths_upp)
 
-    Xout, bbool = outlier_above_below_simple(X, ths_low, ths_upp)
+    xout, bbool = outlier_above_below_simple(x, ths_low, ths_upp)
 
     if return_booleans:
-        return Xout, bbool
+        return xout, bbool
     else:
-        return Xout
+        return xout
 
 
 def outlier_above_below_binom(
@@ -1613,3 +1525,71 @@ def outlier_mad_binom_legacy(
 #         out_bar = ax_in.axvline(x,color=color,linewidth=linewidth)
 #         out_bar_list.append(out_bar)
 #     return out_bar_list
+
+
+
+def gaussian_filter_gfz_legacy(tim_ref, dat_ref, width=7):
+    """
+    Gaussian filter to smooth data, based on
+    GFZ's GMT_plus.pm/gaussian_kernel
+
+    Args :
+        tim_ref : the X/T component of the time serie (in decimal days !)
+
+        dat_ref : the Y component (the data)
+
+        width   : size of the window (odd number is best ?)
+
+    Returns :
+        dat_smt : smoothed Y
+
+    NB :
+        Some other nice ideas here
+        http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
+        https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way
+        https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth
+
+    NB2 : THIS VERSION IS VERY SLOW (DIRTY CONVERSION OF A PERL FCT)
+          THE PYTHONIC VERSION gaussian_filter_GFZ_style_smoother_improved
+          BELOW SHOULD BE USED  !!!
+    """
+
+    log.warning("WARN : THIS function gaussian_filter_GFZ_style_smoother")
+    log.warning("IS VERY SLOW (DIRTY CONVERSION OF A PERL FCT)")
+    log.warning("THE PYTHONIC VERSION gaussian_filter_GFZ_style_smoother_improved")
+    log.warning("SHOULD BE USED  !!!")
+
+    tim_raw = tim_ref
+    dat_raw = dat_ref
+
+    num_raw = len(tim_raw)
+    icomp = 0
+
+    dat_smt = [np.nan] * len(dat_ref)
+
+    for ismt in range(num_raw):  # +1
+
+        x_val = 0.0
+        x_wht = 0.0
+
+        for iraw in reversed(range(0, ismt)):
+            x_lag = tim_raw[ismt] - tim_raw[iraw]
+            x_fac = np.exp(-((x_lag / width) ** 2) / 2)
+            x_val += dat_raw[iraw] * x_fac
+            x_wht += x_fac
+            icomp += 1
+            if x_fac < 0.01:
+                break
+
+        for iraw in range(ismt + 1, num_raw):
+            x_lag = tim_raw[ismt] - tim_raw[iraw]
+            x_fac = np.exp(-((x_lag / width) ** 2) / 2)
+            x_val += dat_raw[iraw] * x_fac
+            x_wht += x_fac
+            icomp += 1
+            if x_fac < 0.01:
+                break
+
+        dat_smt[ismt] = x_val / x_wht
+
+    return dat_smt
