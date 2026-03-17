@@ -207,7 +207,7 @@ def download_gnss_products(
     archive_dir,
     startdate,
     enddate=None,
-    ac_names=("wum", "cod"),
+    ac_names=("grg", "cod"),
     prod_types=("sp3", "clk"),
     remove_patterns=("ULA",),
     archtype="week",
@@ -216,9 +216,7 @@ def download_gnss_products(
     archive_center="ign",
     mgex=False,
     repro=0,
-    sorted_mode=False,
     return_also_uncompressed_files=True,
-    ftp_download=False,
     dow_manu=False,
     quiet_mode=False,
     force=False,
@@ -248,7 +246,7 @@ def download_gnss_products(
         the names of the wished analysis centers.
         It also control the product's lattency with the new naming convention:
         simply add it completly in the AC name e.g. IGS0OPSRAP
-        The default is ("wum","cod").
+        The default is ("grg","cod").
     prod_types : tuple, optional
         the wished products.
         The default is ("sp3","clk").

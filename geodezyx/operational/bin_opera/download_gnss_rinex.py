@@ -13,7 +13,6 @@ from geodezyx import conv
 
 from geodezyx.operational.download_gnss.download_rinex import download_gnss_rinex
 
-
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Download GNSS RINEX files from various data centers. "
