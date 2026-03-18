@@ -232,9 +232,10 @@ def read_vmf1_grid(mjd: Iterable[float], ell: Iterable[float]) -> Tuple[np.ndarr
 
     Notes
     -----
-    - Les fichiers requis sont:
-        ./Mapping_Fcn/vmf1/VMFG_YYYYMMDD.H{00,06,12,18}
+    - Les fichiers requis sont :
+      ``./Mapping_Fcn/vmf1/VMFG_YYYYMMDD.H{00,06,12,18}``
       pour les 6h entourant chaque MJD.
+
     - Interpolation temporelle: linéaire entre t0=⌊MJD⌋_6h et t1=t0+6h.
     """
     mjd_arr = np.atleast_1d(np.array(list(mjd), dtype=float))

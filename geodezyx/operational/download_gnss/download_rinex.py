@@ -144,14 +144,14 @@ def download_gnss_rinex(
 
     Minimal exemple
     ---------------
-    ```
-    >>> statdic = dict()
-    >>> statdic['igs_cddis'] = ['ZIMM','tlse']
-    >>> archive_dir = '/home/USER/test_dl_rnx'
-    >>> startdate = dt.datetime(2020,1,1)
-    >>> enddate = dt.datetime(2020,1,31)
-    >>> geodezyx.operational.download_gnss_rinex(statdic, output_dir, startdate, enddate)
-    ```
+    .. code-block:: python
+
+        >>> statdic = dict()
+        >>> statdic['igs_cddis'] = ['ZIMM','tlse']
+        >>> archive_dir = '/home/USER/test_dl_rnx'
+        >>> startdate = dt.datetime(2020,1,1)
+        >>> enddate = dt.datetime(2020,1,31)
+        >>> geodezyx.operational.download_gnss_rinex(statdic, output_dir, startdate, enddate)
     """
 
     if "01s" in list(statdico.keys())[0]:

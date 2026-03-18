@@ -57,13 +57,15 @@ def plot_timeseries(
     coor_inp : tuple or pd.DataFrame
         Input coordinates data. It can be either:
         - a 7-tuple (A, B, C, T, sA, sB, sC) where:
-            - A, B, C: coordinate components as numpy arrays
-            - T: time epochs as numpy array (POSIX timestamps)
-            - sA, sB, sC: uncertainties of the components as numpy arrays
+
+          - A, B, C: coordinate components as numpy arrays
+          - T: time epochs as numpy array (POSIX timestamps)
+          - sA, sB, sC: uncertainties of the components as numpy arrays
+
         - a DataFrame with columns corresponding to the coordinate type
-         (e.g., 'e', 'n', 'u' for ENU) and their
-         uncertainties (e.g., 'se', 'sn', 'su'),
-         along with an 'epoch' column for time epochs.
+          (e.g., 'e', 'n', 'u' for ENU) and their
+          uncertainties (e.g., 'se', 'sn', 'su'),
+          along with an 'epoch' column for time epochs.
     coortype : str, optional
         The coordinates type. The default is 'ENU'.
         Options: 'ENU', 'XYZ', 'FLH', 'UTM'

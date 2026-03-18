@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="geodezyx.geodyn package" href="geodezyx.geodyn.html" />
-    <link rel="prev" title="geodezyx.conv package" href="geodezyx.conv.html" /> 
+    <link rel="prev" title="geodezyx.conv.bin package" href="geodezyx.conv.bin.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -298,9 +298,31 @@ handles “sopac” or “ulr” yet. The default is “sopac”.</p></li>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.unzip_gz">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">unzip_gz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_gzip_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_gzip_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_gzip_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.unzip_gz" title="Link to this definition"></a></dt>
+<dd><p>unzip a gzip file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inp_gzip_file</strong> (<em>str</em>) – the path of the input gzip file.</p></li>
+<li><p><strong>out_gzip_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – output directory.
+If not precised, file will be extracted in the same folder
+as inp_gzip_file. The default is None.</p></li>
+<li><p><strong>out_gzip_fname</strong> (<em>str</em><em>, </em><em>optional</em>) – output filename. If not precised, file will be extracted with the same name
+as inp_gzip_file without the .gz extension. The default is None.</p></li>
+<li><p><strong>remove_inp</strong> (<em>bool</em><em>, </em><em>optional</em>) – remove the input file. The default is False.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – force the decompression. The default is False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.files_rw.geo_files_converter_lib.unzip_gz_z">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.geo_files_converter_lib.</span></span><span class="sig-name descname"><span class="pre">unzip_gz_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_gzip_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_gzip_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_gzip_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.geo_files_converter_lib.unzip_gz_z" title="Link to this definition"></a></dt>
 <dd><p>frontend function to unzip files (gzip and legacy Z compression)</p>
+<p>This function is complex and should be used with care, especially for .Z files.
+Prefer using new function <cite>unzip_gz</cite> for .gz files and avoid .Z files if possible.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2660,7 +2682,7 @@ Retourne une liste triée: [iso_date, ZTD, ZTD_STD, ZHD, ZWD, TGN, STD_TGN, TGE,
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="geodezyx.conv.html" class="btn btn-neutral float-left" title="geodezyx.conv package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.conv.bin.html" class="btn btn-neutral float-left" title="geodezyx.conv.bin package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="geodezyx.geodyn.html" class="btn btn-neutral float-right" title="geodezyx.geodyn package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

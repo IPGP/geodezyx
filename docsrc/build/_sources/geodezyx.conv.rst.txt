@@ -6,6 +6,14 @@ geodezyx.conv package
    :show-inheritance:
    :undoc-members:
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   geodezyx.conv.bin
+
 Submodules
 ----------
 

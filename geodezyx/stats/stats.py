@@ -1240,11 +1240,15 @@ def outlier_above_below(
 
     theshold_absolute : bool
         if True threshold_values are absolutes values
+
             >>> low = reference - threshold_values[0]
             >>> upp = reference + threshold_values[1]
+
         if False they are fractions of theshold_relative_value
+
             >>> low = reference - threshold_values[0] * theshold_relative_value
             >>> upp = reference + threshold_values[1] * theshold_relative_value
+
         (see also below)
 
     theshold_relative_value : str or function
@@ -1343,11 +1347,15 @@ def outlier_above_below_binom(
 
     theshold_absolute : bool
         if True threshold_values are absolutes values
+
             >>> low = reference - threshold_values[0]
             >>> upp = reference + threshold_values[1]
+
         if False they are fractions of theshold_relative_value
+
             >>> low = reference - threshold_values[0] * theshold_relative_value
             >>> upp = reference + threshold_values[1] * theshold_relative_value
+
         (see also below)
 
     theshold_relative_value : str or function

@@ -247,11 +247,6 @@ class MyFTP_TLS(FTP_TLS):
     This class is a subclass of FTP_TLS from the ftplib module. It is used to create an FTPS client that shares the TLS session.
     This is to avoid the error: ssl.SSLEOFError: EOF occurred in violation of protocol (_ssl.c:2396)
     Source: https://stackoverflow.com/questions/14659154/ftps-with-python-ftplib-session-reuse-required
-
-    Methods
-    -------
-    ntransfercmd(cmd, rest=None)
-        Initiate a data transfer over a new connection.
     """
 
     def ntransfercmd(self, cmd, rest=None):
