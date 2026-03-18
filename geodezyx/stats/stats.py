@@ -109,33 +109,37 @@ def linear_regression(x, y, fulloutput=False, simple_lsq=False, alpha=0.95):
 
 def linear_reg_getvalue(X, a, b, full=True):
     """
-    From a vector X and coefficients a & b, get Y = a*X + b
+    Compute Y = a*X + b from a vector X and coefficients a and b.
 
     Parameters
     ----------
-    X : list or numpy.array
-        Values
-
-    a & b : float
-        Linear regression coefficients
-
-    full : bool
-        True : return X , Y = aX + b , False : return Y = aX + b
+    X : list or numpy.ndarray
+        Input values.
+    a : float
+        Linear regression slope coefficient.
+    b : float
+        Linear regression intercept coefficient.
+    full : bool, optional
+        If True, return both X and Y = aX + b.
+        If False, return only Y = aX + b.
+        Default is True.
 
     Returns
     -------
-    Y : numpy.array
-        if full == False
+    Y : numpy.ndarray
+        Computed values Y = aX + b.
+        Only returned if `full` is False.
+    X : numpy.ndarray
+        Input values (unchanged).
+        Only returned if `full` is True.
+    Y : numpy.ndarray
+        Computed values Y = aX + b.
+        Only returned if `full` is True.
 
-    OR
-
-    X , Y : numpy.array
-        if full == True
-
-    Note
-    ----
-        Unstable while working with POSIX Time as X-data (too heigh values ? ...)
-        Decimal Years are recommended
+    Notes
+    -----
+    This function may be unstable when working with POSIX Time as X-data due to 
+    large values. Decimal Years are recommended for better numerical stability.
 
     """
 
@@ -147,21 +151,30 @@ def linear_reg_getvalue(X, a, b, full=True):
 
 def linear_coef_a_b(x1, y1, x2, y2):
     """
-    Gives coefficients of the line between two points (x1,y1) & (x2,y2)
-    x1,y1,x2,y2 can be iterables
+    Calculate line coefficients from two points.
+
+    Calculates the slope (a) and intercept (b) coefficients of a line passing 
+    through two points (x1, y1) and (x2, y2). Input values can be scalars or iterables.
 
     Parameters
     ----------
-    x1,y1,x2,y2 : float or list or numpy.array
-        Coordinates of the 1st and the 2nd point
+    x1 : float or list or numpy.ndarray
+        X-coordinate(s) of the first point.
+    y1 : float or list or numpy.ndarray
+        Y-coordinate(s) of the first point.
+    x2 : float or list or numpy.ndarray
+        X-coordinate(s) of the second point.
+    y2 : float or list or numpy.ndarray
+        Y-coordinate(s) of the second point.
 
     Returns
     -------
-    a : float
-        regression coefficient
-
-    b1 & b2 : float
-        regression offsets coefficient (b1 must be equal to b2)
+    a : float or numpy.ndarray
+        Slope coefficient of the line.
+    b1 : float or numpy.ndarray
+        Y-intercept using first point (should equal b2).
+    b2 : float or numpy.ndarray
+        Y-intercept using second point (should equal b1).
 
     """
 
@@ -184,17 +197,24 @@ def linear_coef_a_b(x1, y1, x2, y2):
 
 def detrend_timeseries(x, y):
     """
-    detrend, i.e. remove linear tendence of a timeserie Y(X)
+    Remove linear trend from a time series.
+
+    Removes the linear trend from Y(X) by subtracting the fitted line and 
+    restoring the original starting value.
 
     Parameters
     ----------
-    x & y: list or numpy.array
-        Values
+    x : list or numpy.ndarray
+        Independent variable (time or similar).
+    y : list or numpy.ndarray
+        Dependent variable (data values).
 
     Returns
     -------
-    x & yout: list or numpy.array
-        Detrended Y
+    x : numpy.ndarray
+        Independent variable (unchanged).
+    yout : numpy.ndarray
+        Detrended dependent variable.
 
     """
 
@@ -264,58 +284,56 @@ def confid_interval_slope(x, y, alpha=0.95):
 
 def running_mean(data_in, window):
     """
-    Gives running mean / moving average of data
+    Compute running mean (moving average) of data.
 
     Parameters
     ----------
-    data_in : list or numpy.array
-        Values
-    window :  float or int
-        Size of the window for the running mean
+    data_in : list or numpy.ndarray
+        Input data values.
+    window : float or int
+        Size of the window for the running mean.
 
     Returns
     -------
-    data_run : numpy.array
-        Running mean of data
+    data_run : numpy.ndarray
+        Running mean of the input data.
+
     """
     return pd.DataFrame(data_in).mean(window=window).values.flatten()
 
 
 def running_mean_convolut(data_in, window, convolve_mode="same"):
     """
-    Gives running mean / moving average of data
-    using convolution mode
+    Compute running mean using convolution mode.
+
+    Computes the moving average of input data using convolution with a 
+    specified mode. The result is mean-centered to avoid bias.
 
     Parameters
     ----------
-    data_in : list or numpy.array
-        Values
-
-    window :  float or int
-        Size of the window for the running mean
-
-    convolve_mode : str
-        (expert) mode for the underlying convolution
+    data_in : list or numpy.ndarray
+        Input data values.
+    window : float or int
+        Size of the window for the running mean.
+    convolve_mode : str, optional
+        Mode for underlying convolution operation. Default is 'same'.
 
     Returns
     -------
-    data_run : numpy.array
-        running mean of data_in (sane size as data_in)
-        should stay "same"
+    data_run : numpy.ndarray
+        Running mean of data_in with same size as input (not shifted).
 
-    Note
-    ----
-    After a stress test, this one is the only one to
-    provide an output with same size as input
-    AND not shifted
-    This fct is slow but at leat, do the job
+    Notes
+    -----
+    After stress testing, this implementation provides output with the same 
+    size as input without shifting, though it is slower than some alternatives.
+    The subtraction of the mean is an empirical trick to center the result.
 
-    See running_mean_help for more details
+    This is a wrapper based on running_mean_4. For more details on convolution 
+    modes, see:
+    - https://stackoverflow.com/questions/13728392/moving-average-or-running-mean
+    - https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python
 
-    convolve_mode should stay fixed as "same"
-
-    Wrapper based on fct running_mean_4
-    The substraction of the mean is an empirical trick
     """
 
     data_mean = np.nanmean(data_in)
@@ -392,12 +410,29 @@ def running_mean_convolut(data_in, window, convolve_mode="same"):
 
 def running_mean_1(values, window):
     """
-    including valid will REQUIRE there to be enough datapoints.
-    for example, if you take out valid, it will start @ point one,
-    not having any prior points, so itll be 1+0+0 = 1 /3 = .3333
-    http://sentdex.com/sentiment-analysisbig-data-and-python-tutorials-algorithmic-trading/how-to-chart-stocks-and-forex-doing-your-own-financial-charting/calculate-simple-moving-average-sma-python/
+    Compute running mean using convolution with 'valid' mode.
 
-    INTERNAL_ID_1
+    This method includes the 'valid' mode which requires enough datapoints. 
+    For example, without 'valid', it would start at the first point with no prior 
+    points, resulting in (1+0+0)/3 = 0.3333.
+
+    Parameters
+    ----------
+    values : array-like
+        Input data values.
+    window : int
+        Window size for the running mean.
+
+    Returns
+    -------
+    smas : numpy.ndarray
+        Running mean values using 'valid' convolution mode.
+
+    Notes
+    -----
+    Internal ID: 1
+    See: http://sentdex.com/sentiment-analysisbig-data-and-python-tutorials-algorithmic-trading/
+
     """
     weigths = np.repeat(1.0, window) / window
     smas = np.convolve(values, weigths, "valid")
@@ -406,9 +441,25 @@ def running_mean_1(values, window):
 
 def running_mean_2(x, N):
     """
-    http://stackoverflow.com/questions/13728392/moving-average-or-running-mean
+    Compute running mean by explicit windowing.
 
-    INTERNAL_ID_2
+    Parameters
+    ----------
+    x : array-like
+        Input data values.
+    N : int
+        Window size for the running mean.
+
+    Returns
+    -------
+    y : numpy.ndarray
+        Running mean values.
+
+    Notes
+    -----
+    Internal ID: 2
+    See: http://stackoverflow.com/questions/13728392/moving-average-or-running-mean
+
     """
     y = np.zeros((len(x),))
     for ctr in range(len(x)):
@@ -418,11 +469,26 @@ def running_mean_2(x, N):
 
 def running_mean_3(x, N):
     """
-    moyenne glissante
-    https://stackoverflow.com/questions/13728392/moving-average-or-running-mean
-    Alleo answer
+    Compute running mean using cumulative sum (moyenne glissante).
 
-    INTERNAL_ID_3
+    Parameters
+    ----------
+    x : array-like
+        Input data values.
+    N : int
+        Window size for the running mean.
+
+    Returns
+    -------
+    xout : numpy.ndarray
+        Running mean values.
+
+    Notes
+    -----
+    Internal ID: 3
+    See: https://stackoverflow.com/questions/13728392/moving-average-or-running-mean
+    (Alleo's answer)
+
     """
     cumsum = np.cumsum(np.insert(x, 0, 0))
     xout = (cumsum[N:] - cumsum[:-N]) / N
@@ -432,10 +498,30 @@ def running_mean_3(x, N):
 
 def running_mean_4(interval, window_size, convolve_mode="same"):
     """
-    moyenne glissante, plus lente mais donne une sortie de meme taille que l'entrée
-    https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python
+    Compute running mean using convolution with configurable mode.
 
-    INTERNAL_ID_4
+    This method is slower than some alternatives but provides output with the same 
+    size as input without shifting.
+
+    Parameters
+    ----------
+    interval : array-like
+        Input data values.
+    window_size : int
+        Size of the convolution window.
+    convolve_mode : str, optional
+        Convolution mode ('same', 'valid', 'full'). Default is 'same'.
+
+    Returns
+    -------
+    result : numpy.ndarray
+        Running mean values.
+
+    Notes
+    -----
+    Internal ID: 4
+    See: https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python
+
     """
     window = np.ones(int(window_size)) / float(window_size)
     return np.convolve(interval, window, convolve_mode)
@@ -443,10 +529,26 @@ def running_mean_4(interval, window_size, convolve_mode="same"):
 
 def running_mean_5(data, window_width):
     """
-    https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python
-    Roman Kh answer
+    Compute running mean using cumulative sum method.
 
-    INTERNAL_ID_5
+    Parameters
+    ----------
+    data : array-like
+        Input data values.
+    window_width : int
+        Width of the running mean window.
+
+    Returns
+    -------
+    ma_vec : numpy.ndarray
+        Moving average vector.
+
+    Notes
+    -----
+    Internal ID: 5
+    See: https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python
+    (Roman Kh's answer)
+
     """
     cumsum_vec = np.cumsum(np.insert(data, 0, 0))
     ma_vec = (cumsum_vec[window_width:] - cumsum_vec[:-window_width]) / window_width
@@ -456,36 +558,35 @@ def running_mean_5(data, window_width):
 
 def sinusoide(T, A, omega, phi=0, f=None):
     """
-    produce a sinusoidal waveform
+    Generate a sinusoidal waveform.
+
+    Produces a sinusoidal waveform of the form: A * sin(ω*T + φ)
 
     Parameters
     ----------
-    T : float
-        time variable.
+    T : float or array-like
+        Time variable.
     A : float
-        amplitude, the peak deviation of the function from zero.
-    omega : float, optional
-        ω = 2πf, angular frequency, the rate of change of the
-        function argument in units of radians per second.
+        Amplitude, the peak deviation of the function from zero.
+    omega : float
+        Angular frequency (ω = 2πf), the rate of change of the function 
+        argument in units of radians per second.
     phi : float, optional
-        phase, specifies (in radians) where in its cycle
-        the oscillation is at t = 0.
-        The default is 0.
-    f : float
-        ordinary frequency, the number of oscillations (cycles)
-        that occur each second of time.
-        If given, it overrides the angular frequency omega.
-        Thus, to use it, declare also omega = 0
-        The default is None.
+        Phase offset in radians, specifying where in its cycle the 
+        oscillation is at t = 0. Default is 0.
+    f : float, optional
+        Ordinary frequency (cycles per second). If provided, it overrides 
+        the `omega` parameter. To use this parameter, set omega=0. 
+        Default is None.
 
     Returns
     -------
-    float
-        a sinusoidal waveform.
+    result : float or numpy.ndarray
+        The sinusoidal waveform value(s).
 
     Notes
     -----
-    https://en.wikipedia.org/wiki/Sine_wave
+    See: https://en.wikipedia.org/wiki/Sine_wave
 
     """
 
@@ -498,6 +599,31 @@ def sinusoide(T, A, omega, phi=0, f=None):
 
 
 def butter_lowpass(cutoff, fs, order=5):
+    """
+    Design a Butterworth lowpass digital filter.
+
+    Parameters
+    ----------
+    cutoff : float
+        Critical frequency (Hertz). Frequencies above this will be attenuated.
+    fs : float
+        Sampling frequency (Hertz).
+    order : int, optional
+        Order of the filter. Default is 5.
+
+    Returns
+    -------
+    b : numpy.ndarray
+        Numerator (zeros) of the IIR filter.
+    a : numpy.ndarray
+        Denominator (poles) of the IIR filter.
+
+    See Also
+    --------
+    scipy.signal.butter : Design IIR filters
+    butter_lowpass_filter : Apply the designed filter to data
+
+    """
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
     b, a = scipy.signal.butter(order, normal_cutoff, btype="low", analog=False)
@@ -505,37 +631,65 @@ def butter_lowpass(cutoff, fs, order=5):
 
 
 def butter_lowpass_filter(data, cutoff, fs, order=5):
+    """
+    Apply Butterworth lowpass digital filter to data.
+
+    Parameters
+    ----------
+    data : array-like
+        Input signal to be filtered.
+    cutoff : float
+        Critical frequency (Hertz). Frequencies above this will be attenuated.
+    fs : float
+        Sampling frequency (Hertz).
+    order : int, optional
+        Order of the filter. Default is 5.
+
+    Returns
+    -------
+    y : numpy.ndarray
+        Filtered signal.
+
+    See Also
+    --------
+    butter_lowpass : Design the lowpass filter
+    scipy.signal.butter : Design IIR filters
+    scipy.signal.lfilter : Apply IIR filters
+
+    """
     b, a = butter_lowpass(cutoff, fs, order=order)
     y = scipy.butter.lfilter(b, a, data)
     return y
 
 def gaussian_filter_gfz(tim_ref, dat_ref, width=7):
     """
-    Gaussian filter to smooth data,
-    based on GFZ's GMT_plus.pm/gaussian_kernel
+    Apply Gaussian filter to smooth data.
+
+    Gaussian filter based on GFZ's GMT_plus.pm/gaussian_kernel. 
+    Smooths data by weighted averaging using Gaussian weights.
 
     Parameters
     ----------
-    tim_ref : iterable (list or array)
-        the X/T component of the time serie (in decimal days!)
-    dat_ref : iterable (list or array)
-        the Y component (the data).
+    tim_ref : array-like (list or numpy.ndarray)
+        X/T component of the time series (in decimal days).
+    dat_ref : array-like (list or numpy.ndarray)
+        Y component (the data values).
     width : int, optional
-        size of the window
-        (odd number is best ?).
-        The default is 7.
+        Size of the smoothing window. An odd number is recommended.
+        Default is 7.
 
     Returns
     -------
-    dat_smt2 : array
-        smoothed Y.
+    dat_smt2 : numpy.ndarray
+        Smoothed Y values with Gaussian weighting.
 
-    Note
-    ----
-    Some other nice ideas here
-    http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
-    https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way
-    https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth
+    Notes
+    -----
+    For additional smoothing ideas and references, see:
+    - http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
+    - https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way
+    - https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth
+
     """
 
     tim_raw = tim_ref
@@ -575,38 +729,58 @@ def gaussian_filter_gfz(tim_ref, dat_ref, width=7):
     return dat_smt2
 
 def smooth(x, window_len=11, window="hanning"):
-    """smooth the data using a window with requested size.
+    """
+    Smooth data using a window with requested size.
 
-    This method is based on the convolution of a scaled window with the signal.
-    The signal is prepared by introducing reflected copies of the signal
-    (with the window size) in both ends so that transient parts are minimized
-    in the begining and end part of the output signal.
+    This method is based on the convolution of a scaled window with the signal. 
+    The signal is prepared by introducing reflected copies of the signal 
+    (with the window size) in both ends to minimize transient parts at the 
+    beginning and end of the output signal.
 
-    NOTA PERSO : works only for equaly spaced data ....
+    Parameters
+    ----------
+    x : numpy.ndarray
+        The input signal. Must be 1-dimensional.
+    window_len : int, optional
+        The dimension of the smoothing window. Should be an odd integer.
+        Default is 11.
+    window : str, optional
+        The type of window from {'flat', 'hanning', 'hamming', 'bartlett', 'blackman'}.
+        'flat' window will produce a moving average smoothing.
+        Default is 'hanning'.
 
-    input:
-        x: the input signal
-        window_len: the dimension of the smoothing window; should be an odd integer
-        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
-            flat window will produce a moving average smoothing.
+    Returns
+    -------
+    y : numpy.ndarray
+        The smoothed signal.
 
-    output:
-        the smoothed signal
+    Raises
+    ------
+    ValueError
+        If input is not 1-dimensional or smaller than window size.
 
-    example:
+    Notes
+    -----
+    Works only for equally spaced data.
+    
+    The output length may differ from input length. To correct this, 
+    return `y[(window_len/2-1):-(window_len/2)]` instead of `y`.
 
-    t=linspace(-2,2,0.1)
-    x=sin(t)+randn(len(t))*0.1
-    y=smooth(x)
-
-    see also:
-
+    See Also
+    --------
     numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
     scipy.signal.lfilter
 
-    TODO: the window parameter could be the window itself if an array instead of a string
-    NOTE: length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
-    SOURCE : http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
+    References
+    ----------
+    http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
+
+    Examples
+    --------
+    >>> t = np.linspace(-2, 2, 0.1)
+    >>> x = np.sin(t) + np.random.randn(len(t)) * 0.1
+    >>> y = smooth(x)
+
     """
 
     if x.ndim != 1:
@@ -636,7 +810,18 @@ def smooth(x, window_len=11, window="hanning"):
 
 def harmonic_mean(A):
     """
-    harmonic mean of a list/array A
+    Compute harmonic mean of a list or array.
+
+    Parameters
+    ----------
+    A : array-like
+        Input values.
+
+    Returns
+    -------
+    result : float
+        The harmonic mean of the input values.
+
     """
 
     A = np.array(A)
@@ -644,7 +829,32 @@ def harmonic_mean(A):
 
 
 def find_intersection(x1, y1, x2, y2):
-    # http://stackoverflow.com/questions/8094374/python-matplotlib-find-intersection-of-lineplots
+    """
+    Find intersection points of two line plots.
+
+    Parameters
+    ----------
+    x1 : array-like
+        X-coordinates of the first line.
+    y1 : array-like
+        Y-coordinates of the first line.
+    x2 : array-like
+        X-coordinates of the second line.
+    y2 : array-like
+        Y-coordinates of the second line.
+
+    Returns
+    -------
+    roots : numpy.ndarray
+        X-coordinates of the intersection points.
+    y_intersect : numpy.ndarray
+        Y-coordinates of the intersection points.
+
+    References
+    ----------
+    http://stackoverflow.com/questions/8094374/python-matplotlib-find-intersection-of-lineplots
+
+    """
 
     import scipy.interpolate as interpolate
     import scipy.optimize as optimize
@@ -671,13 +881,47 @@ def find_intersection(x1, y1, x2, y2):
 
 
 def wrap_to360(lon):
-    # according to the MATLAB fct
+    """
+    Wrap longitude values to the range [0, 360).
+
+    Parameters
+    ----------
+    lon : float or array-like
+        Longitude values in degrees.
+
+    Returns
+    -------
+    result : float or numpy.ndarray
+        Longitude values wrapped to [0, 360).
+
+    Notes
+    -----
+    Based on MATLAB's wrap_to360 function.
+
+    """
     lon = np.mod(lon, 360)
     return lon
 
 
 def wrap_to180(lon):
-    # according to the MATLAB fct
+    """
+    Wrap longitude values to the range (-180, 180].
+
+    Parameters
+    ----------
+    lon : float or array-like
+        Longitude values in degrees.
+
+    Returns
+    -------
+    result : float or numpy.ndarray
+        Longitude values wrapped to (-180, 180].
+
+    Notes
+    -----
+    Based on MATLAB's wrap_to180 function.
+
+    """
     if not (lon is np.array):
         notaarray = True
         lon = np.array([lon])
@@ -695,32 +939,85 @@ def wrap_to180(lon):
 
 def rms_mean(a):
     """
-    returns RMS mean of a list/array
+    Compute RMS (Root Mean Square) of a list or array.
+
+    Parameters
+    ----------
+    a : array-like
+        Input values.
+
+    Returns
+    -------
+    result : float
+        The RMS value of the input.
+
     """
     return np.sqrt(np.nanmean(np.square(np.array(a, np.float64))))
 
 def rms_mean_alternativ(a):
     """
-    returns "GRGS style" RMS of a list/array
-    the arithmetic mean of the values is substracted from the values
-    NB 1808 : It is basically the standard deviation ...
+    Compute RMS with mean subtraction (standard deviation equivalent).
 
-    i.e.    _
-    √< (A - A)^2 > instead of √< (A)^2 >
+    Computes: √< (A - Ā)² > instead of √< (A)² >, where Ā is the arithmetic mean.
+    This is essentially the standard deviation.
+
+    Parameters
+    ----------
+    a : array-like
+        Input values.
+
+    Returns
+    -------
+    result : float
+        The RMS value with mean subtraction.
+
+    Notes
+    -----
+    This is equivalent to the standard deviation of the input.
+
     """
     return np.sqrt(np.nanmean(np.square(a - np.nanmean(a))))
 
 
 def rms_mean_kouba(a, multipl_coef=3, deg_of_freedom=7):
     """
-    returns RMS mean of a list/array
+    Compute weighted RMS (Root Mean Square) with Kouba's method.
+
+    Parameters
+    ----------
+    a : array-like
+        Input values.
+    multipl_coef : int, optional
+        Multiplication coefficient. Default is 3.
+    deg_of_freedom : int, optional
+        Degrees of freedom. Default is 7.
+
+    Returns
+    -------
+    result : float
+        The weighted RMS value.
+
     """
     return np.sqrt(np.sum(np.square(a)) / (multipl_coef * len(a) - deg_of_freedom))
 
 
 def mad(data, mode="median"):
     """
-    returns Median Absolute Deviation (MAD) a list/array
+    Compute Median Absolute Deviation (MAD).
+
+    Parameters
+    ----------
+    data : array-like
+        Input data values.
+    mode : str, optional
+        Mode for computing deviation center: 'median' or 'mean'.
+        Default is 'median'.
+
+    Returns
+    -------
+    result : float
+        The Median Absolute Deviation.
+
     """
 
     if mode == "median":
@@ -1105,9 +1402,30 @@ def outlier_above_below_binom(
 
 def outlier_sigma(datasigmain, threshold=3):
     """
-    si un point a un sigma > threshold * moy(sigmas) on le vire
+    Remove outliers based on sigma threshold (legacy method).
 
-    really old and discontinued, and not really efficient
+    Removes points where sigma > threshold * median(sigmas). This is an old 
+    and discontinued method that is not very efficient.
+
+    Parameters
+    ----------
+    datasigmain : array-like
+        Input sigma (uncertainty) values.
+    threshold : int, optional
+        Multiplier for the sigma threshold. Default is 3.
+
+    Returns
+    -------
+    datasigmaout : numpy.ndarray
+        Sigma values filtered to exclude outliers.
+    boolbad : numpy.ndarray
+        Boolean array indicating valid values (True = keep, False = outlier).
+
+    Notes
+    -----
+    This is a legacy function and is rarely used. More modern methods like 
+    MAD-based outlier detection are recommended.
+
     """
     moy = np.median(datasigmain)
     marge = moy * threshold
@@ -1123,23 +1441,28 @@ def outlier_sigma(datasigmain, threshold=3):
 
 def lagrange1(points):
     """
-    Low level function to determine a lagrangian polynom
+    Determine Lagrangian polynomial from points (low-level function).
 
-    Replace scipy.interpolate.lagrange which is HIGHLY instable
+    Creates a polynomial interpolation function using Lagrange's method. 
+    This replaces scipy.interpolate.lagrange which is highly unstable.
 
     Parameters
     ----------
-    points : list of n-interable
-        point list.
+    points : list of tuple
+        List of (x, y) coordinate tuples defining the polynomial.
 
     Returns
     -------
-    p : function
-        function representing the polynom.
+    P : callable
+        Function representing the Lagrangian polynomial.
 
-    Source
-    ------
-    from : https://gist.github.com/melpomene/2482930
+    Notes
+    -----
+    More numerically stable than scipy.interpolate.lagrange.
+
+    References
+    ----------
+    https://gist.github.com/melpomene/2482930
 
     """
 
@@ -1168,25 +1491,32 @@ def lagrange1(points):
 
 def lagrange2(X, Y):
     """
-    Low level function to determine a lagrangian polynom
+    Determine Lagrangian polynomial from points (more Pythonic version).
 
-    Replace scipy.interpolate.lagrange which is HIGHLY instable
-
-    this function is more pythonic, but slower thant lagrange1....
+    Creates a polynomial interpolation function using Lagrange's method. 
+    This version is more Pythonic but slower than lagrange1. Like lagrange1, 
+    it replaces scipy.interpolate.lagrange which is highly unstable.
 
     Parameters
     ----------
-    points : list of n-interable
-        point list.
+    X : array-like
+        X-coordinates of the interpolation points.
+    Y : array-like
+        Y-coordinates of the interpolation points.
 
     Returns
     -------
-    p : function
-        function representing the polynom.
+    P : callable
+        Function representing the Lagrangian polynomial.
 
-    Source
-    ------
-    from : https://gist.github.com/melpomene/2482930
+    Notes
+    -----
+    More numerically stable than scipy.interpolate.lagrange.
+    More Pythonic but slower than lagrange1.
+
+    References
+    ----------
+    https://gist.github.com/melpomene/2482930
 
     """
 
@@ -1213,28 +1543,35 @@ def lagrange2(X, Y):
 
 def lagrange_interpolate(Tdata, Ydata, Titrp, n=10):
     """
-    Perform a temporal lagrangian interpolation
-    the X-component is a time
+    Perform temporal Lagrangian polynomial interpolation.
+
+    Interpolates Y values at specified time epochs using Lagrangian polynomial 
+    fitting. The X-component represents time.
 
     Parameters
     ----------
-    Tdata : iterable of datetime
-        X/T component of the known points.
-    Ydata : iterable of floats
-        Y component of the known points..
-    Titrp : iterable of datetime
-        Epochs of the wished points.
+    Tdata : array-like of datetime
+        X/T component (time) of the known interpolation points.
+    Ydata : array-like of float
+        Y component (data values) of the known interpolation points.
+    Titrp : array-like of datetime
+        Epochs at which to compute interpolated values.
     n : int, optional
-        degree of the polynom. Better if even. The default is 10.
+        Degree of the Lagrangian polynomial. Better if even. Default is 10.
 
     Returns
     -------
-    Yintrp : float array
-        output interpolated data.
+    Yintrp : numpy.ndarray
+        Interpolated Y values at the requested epochs.
 
-    Tips
-    ----
-    Use conv.dt_range to generate the wished epochs range
+    See Also
+    --------
+    lagrange1 : Low-level Lagrangian polynomial function
+    conv.dt_range : Generate a range of datetime epochs
+
+    Notes
+    -----
+    Use conv.dt_range to generate the wished epochs range.
 
     """
 
@@ -1300,6 +1637,22 @@ def lagrange_interpolate(Tdata, Ydata, Titrp, n=10):
 
 
 def dates_middle(start, end):
+    """
+    Compute the midpoint between two dates.
+
+    Parameters
+    ----------
+    start : datetime or numeric
+        Start date/time.
+    end : datetime or numeric
+        End date/time.
+
+    Returns
+    -------
+    middle : datetime or numeric
+        The midpoint between start and end.
+
+    """
     return start + (end - start) / 2
 
 
@@ -1315,16 +1668,45 @@ def time_win_basic(
     only_boolis=False,
 ):
     """
-    In Intern, we works in POSIX
+    Filter data within a time window.
 
-    only_boolis : To gain speed, no operation on Tlis & Datalisin is be done
-                  None is outputed for Tlisout , Datalisout
+    Selects data points that fall within a specified time window. 
+    Internally converts to POSIX time for computation.
 
-    Outputs :
-        If out_boolis == True:
-            Tlisout , Datalisout , boolis
-        If out_boolis == False:
-            Tlisout , Datalisout
+    Parameters
+    ----------
+    start : datetime or float
+        Start of the time window.
+    end : datetime or float
+        End of the time window.
+    Tlisin : array-like of datetime or float
+        Time values of the data points.
+    Datalisin : array-like
+        Data values corresponding to the times.
+    outposix : bool, optional
+        If True, output times in POSIX format.
+        If False, output as datetime. Default is True.
+    invert : bool, optional
+        If True, invert the boolean selection (select data outside window).
+        Default is False.
+    out_array : bool, optional
+        If True, return outputs as numpy arrays. Default is False.
+    out_boolis : bool, optional
+        If True, also return the boolean selection array. Default is False.
+    only_boolis : bool, optional
+        If True, skip filtering and only return boolean array.
+        Default is False.
+
+    Returns
+    -------
+    Tlisout : array-like
+        Filtered time values. None if only_boolis=True.
+    Datalisout : array-like
+        Filtered data values. None if only_boolis=True.
+    boolis : numpy.ndarray, optional
+        Boolean array indicating selected points.
+        Only returned if out_boolis=True.
+
     """
 
     if isinstance(Tlisin[0], dt.datetime):
@@ -1373,6 +1755,41 @@ def time_win_basic(
 def time_win_multi(
     start, end, Tlist, Datalislis, outposix=True, invert=False, out_array=False
 ):
+    """
+    Filter multiple datasets within a time window.
+
+    Applies time window filtering to multiple data arrays simultaneously, 
+    using the same time array for all datasets.
+
+    Parameters
+    ----------
+    start : datetime or float
+        Start of the time window.
+    end : datetime or float
+        End of the time window.
+    Tlist : array-like
+        Time values for filtering.
+    Datalislis : list of array-like
+        Multiple data arrays to filter.
+    outposix : bool, optional
+        If True, output times in POSIX format. Default is True.
+    invert : bool, optional
+        If True, invert the selection. Default is False.
+    out_array : bool, optional
+        If True, return outputs as numpy arrays. Default is False.
+
+    Returns
+    -------
+    Tlisout : array-like
+        Filtered time values.
+    Datalislisout : list of array-like
+        Filtered data arrays.
+
+    See Also
+    --------
+    time_win_basic : Filter single dataset within time window
+
+    """
     Datalislisout = []
     for i, datalis in enumerate(Datalislis):
 
@@ -1394,13 +1811,49 @@ def time_win_multi_start_end(
     out_boolis=False,
 ):
     """
-    In Intern, we works in POSIX
+    Filter data within multiple time windows simultaneously.
 
-    Outputs :
-        If out_boolis == True:
-            Tlisout , Datalisout , boolis_opera , boolis_stk (4 values !!)
-        If out_boolis == False:
-            Tlisout , Datalisout
+    Selects data points that fall within ALL specified time windows. 
+    This is useful for selecting intersections of multiple time periods.
+    Internally converts to POSIX time for computation.
+
+    Parameters
+    ----------
+    Start_list_in : list of datetime or float
+        Start times of the time windows.
+    End_list_in : list of datetime or float
+        End times of the time windows.
+    Tlisin : array-like of datetime or float
+        Time values of the data points.
+    Datalisin : array-like
+        Data values corresponding to the times.
+    outposix : bool, optional
+        If True, output times in POSIX format. Default is True.
+    invert : bool, optional
+        If True, invert the selection. Default is False.
+    out_array : bool, optional
+        If True, return outputs as numpy arrays. Default is False.
+    out_boolis : bool, optional
+        If True, also return boolean selection arrays. Default is False.
+
+    Returns
+    -------
+    Tlisout : array-like
+        Filtered time values.
+    Datalisout : array-like
+        Filtered data values.
+    boolis_opera : numpy.ndarray, optional
+        Combined boolean array (intersection of all windows).
+        Only returned if out_boolis=True.
+    boolis_stk : numpy.ndarray, optional
+        Stack of individual boolean arrays for each window.
+        Only returned if out_boolis=True.
+
+    Raises
+    ------
+    ValueError
+        If len(Start_list_in) != len(End_list_in).
+
     """
 
     if len(Start_list_in) != len(End_list_in):
@@ -1445,6 +1898,30 @@ def time_win_multi_start_end(
 
 
 def get_season(now):
+    """
+    Determine the season for a given date.
+
+    Parameters
+    ----------
+    now : datetime.date or datetime.datetime
+        The date to determine the season for. If datetime is provided, 
+        the date component is used.
+
+    Returns
+    -------
+    season : str
+        The season name: 'winter', 'spring', 'summer', or 'autumn'.
+        Returns None if the date is outside the defined ranges.
+
+    Notes
+    -----
+    Season boundaries are:
+    - Winter: Dec 21 - Mar 20
+    - Spring: Mar 21 - Jun 20
+    - Summer: Jun 21 - Sep 22
+    - Autumn: Sep 23 - Dec 20
+
+    """
 
     seasons = [
         ("winter", (dt.date(1, 1, 1), dt.date(1, 3, 20))),
@@ -1465,6 +1942,27 @@ def get_season(now):
 
 
 def color_of_season(datein):
+    """
+    Get color representation for a season.
+
+    Maps seasons to matplotlib-compatible color codes.
+
+    Parameters
+    ----------
+    datein : datetime.date or datetime.datetime
+        The date to get the season color for.
+
+    Returns
+    -------
+    color : str
+        Color code: 'b' (blue) for winter, 'r' (red) for summer,
+        'g' (green) for spring, 'k' (black) for autumn.
+
+    See Also
+    --------
+    get_season : Determine season from date
+
+    """
     season = get_season(datein)
     if season == "winter":
         outcolor = "b"
@@ -1491,10 +1989,44 @@ def outlier_mad_binom_legacy(
     X, Y, threshold=3.5, verbose=False, detrend_first=False, return_booleans=False
 ):
     """
-    clean the outlier of X and clean the corresponding values in Y
+    Remove outliers from paired X,Y data using MAD (legacy version).
 
-    legacy : order of X Y is different than in the main version, and here
-    it might be unstable for the detrend
+    Legacy version with different argument order than the main version.
+    May be unstable when detrending.
+
+    Parameters
+    ----------
+    X : array-like
+        X values.
+    Y : array-like
+        Y values (dependent on X).
+    threshold : float, optional
+        MAD threshold. Default is 3.5.
+    verbose : bool, optional
+        If True, print elimination information. Default is False.
+    detrend_first : bool, optional
+        If True, detrend before outlier detection. Default is False.
+    return_booleans : bool, optional
+        If True, also return boolean selection array. Default is False.
+
+    Returns
+    -------
+    Xclean : numpy.ndarray
+        Cleaned X values.
+    Yclean : numpy.ndarray
+        Cleaned Y values.
+    bb : numpy.ndarray, optional
+        Boolean array indicating valid points.
+        Only returned if return_booleans=True.
+
+    Notes
+    -----
+    This is a legacy function. Use outlier_mad_binom for the standard version.
+
+    See Also
+    --------
+    outlier_mad_binom : Main version with correct argument order
+
     """
     if detrend_first:
         Xwork, _ = detrend_timeseries(X, Y)
@@ -1530,28 +2062,42 @@ def outlier_mad_binom_legacy(
 
 def gaussian_filter_gfz_legacy(tim_ref, dat_ref, width=7):
     """
-    Gaussian filter to smooth data, based on
-    GFZ's GMT_plus.pm/gaussian_kernel
+    Apply Gaussian filter to smooth data (legacy, slow version).
 
-    Args :
-        tim_ref : the X/T component of the time serie (in decimal days !)
+    Gaussian filter based on GFZ's GMT_plus.pm/gaussian_kernel. 
+    This is a legacy version that is VERY SLOW due to a dirty conversion 
+    from Perl code. The pythonic version gaussian_filter_gfz should be 
+    used instead.
 
-        dat_ref : the Y component (the data)
+    Parameters
+    ----------
+    tim_ref : array-like
+        X/T component of the time series (in decimal days).
+    dat_ref : array-like
+        Y component (the data values).
+    width : int, optional
+        Size of the window. Odd numbers are recommended. Default is 7.
 
-        width   : size of the window (odd number is best ?)
+    Returns
+    -------
+    dat_smt : list
+        Smoothed Y values.
 
-    Returns :
-        dat_smt : smoothed Y
+    Warnings
+    --------
+    This function is VERY SLOW. Use gaussian_filter_gfz instead.
 
-    NB :
-        Some other nice ideas here
-        http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
-        https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way
-        https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth
+    Notes
+    -----
+    For additional smoothing ideas and references, see:
+    - http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
+    - https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way
+    - https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth
 
-    NB2 : THIS VERSION IS VERY SLOW (DIRTY CONVERSION OF A PERL FCT)
-          THE PYTHONIC VERSION gaussian_filter_GFZ_style_smoother_improved
-          BELOW SHOULD BE USED  !!!
+    See Also
+    --------
+    gaussian_filter_gfz : Pythonic and faster version
+
     """
 
     log.warning("WARN : THIS function gaussian_filter_GFZ_style_smoother")
