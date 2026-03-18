@@ -1644,8 +1644,8 @@ else:
     # -------------------------------------------------------------------------
     f1 = conv.L1_CARRIER_FREQUENCY
     f2 = conv.L2_CARRIER_FREQUENCY
-    f1_2 = f1 ** 2
-    f2_2 = f2 ** 2
+    f1_sq = f1 ** 2
+    f2_sq = f2 ** 2
 
     lambda_1 = conv.SPEED_OF_LIGHT / f1
     lambda_2 = conv.SPEED_OF_LIGHT / f2
@@ -1654,13 +1654,13 @@ else:
     df_phase_if = df_phase_if.dropna(subset=["C1", "P2", "L1", "L2"]).copy()
 
     df_phase_if["code_if_m"] = (
-        f1_2 * df_phase_if["C1"] - f2_2 * df_phase_if["P2"]
-    ) / (f1_2 - f2_2)
+        f1_sq * df_phase_if["C1"] - f2_sq * df_phase_if["P2"]
+    ) / (f1_sq - f2_sq)
 
     df_phase_if["phase_if_m"] = (
-        f1_2 * (df_phase_if["L1"] * lambda_1)
-        - f2_2 * (df_phase_if["L2"] * lambda_2)
-    ) / (f1_2 - f2_2)
+        f1_sq * (df_phase_if["L1"] * lambda_1)
+        - f2_sq * (df_phase_if["L2"] * lambda_2)
+    ) / (f1_sq - f2_sq)
 
     # -------------------------------------------------------------------------
     # Apply smoothing
@@ -1876,7 +1876,7 @@ else:
     # -------------------------------------------------------------------------
     # Cleanup
     # -------------------------------------------------------------------------
-    del f1, f2, f1_2, f2_2, lambda_1, lambda_2
+    del f1, f2, f1_sq, f2_sq, lambda_1, lambda_2
     del block_dt_r_m6, epoch_unique_m6
     del interval_unique_m6, n_intervals_m6, interval_to_col_m6
     del ztd_interval_array_m6, tropo_map_array_m6, block_ztd_m6
