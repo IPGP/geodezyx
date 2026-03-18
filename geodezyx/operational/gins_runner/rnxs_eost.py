@@ -8,7 +8,7 @@ Created on 05/01/2026 19:09:20
 
 import os
 import htmllistparse
-import geodezyx.operational.download_utils as dlutils
+import geodezyx.operational.download_gnss.download_utils as dlutils
 import geodezyx.conv as conv
 import re
 

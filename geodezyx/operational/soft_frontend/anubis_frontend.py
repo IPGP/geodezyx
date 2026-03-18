@@ -243,7 +243,7 @@ def anubis_runner(
                 nav_dir,
                 date_start,
                 date_end,
-                AC_names=["COD"],
+                ac_names=["COD"],
                 prod_types=["SP3"],
                 remove_patterns=("ULA",),
                 archtype="/",

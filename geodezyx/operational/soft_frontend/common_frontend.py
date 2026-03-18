@@ -435,7 +435,7 @@ def dl_orbclk(
             prod_parent_dir,
             dates_lis,
             None,
-            AC_names=(prod_ac_name,),
+            ac_names=(prod_ac_name,),
             prod_types=prod_types,
             remove_patterns=("ULA",),
             archtype="year/doy",

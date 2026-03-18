@@ -11,8 +11,7 @@ import datetime as dt
 import sys
 from geodezyx import conv
 
-from geodezyx.operational.download_rinex import download_gnss_rinex
-
+from geodezyx.operational.download_gnss.download_rinex import download_gnss_rinex
 
 def parse_args():
     parser = argparse.ArgumentParser(
