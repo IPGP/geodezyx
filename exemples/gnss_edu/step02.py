@@ -126,13 +126,18 @@ print("Preferred code observable  :", CODE_OBSERVABLE)
 # Pedagogical roadmap
 ###############################################################################
 
-print("Step 02 roadmap")
-print("----------------")
-print("M0 : naive code-based positioning")
-print("M1 : add satellite clock and relativistic corrections")
-print("M2 : estimate one receiver clock parameter per epoch")
-print("M3 : add Earth-rotation (Sagnac) correction")
-print("Later extensions: ionosphere, troposphere, antenna effects")
+print(
+    "Step 02 roadmap\n"
+    "----------------\n"
+    "M0: basic code-based positioning\n"
+    "M1: add satellite clock and relativistic corrections\n"
+    "M2: estimate one receiver clock offset per epoch\n"
+    "M3: add Earth rotation (Sagnac) correction\n"
+    "M4: switch to the ionosphere-free code combination\n"
+    "M5: add simple tropospheric modeling\n"
+    "M6: apply carrier smoothing to the ionosphere-free code\n"
+    "Next steps: antenna phase-center effects"
+)
 
 # This dictionary stores the successive positioning solutions.
 # It is the main pedagogical backbone of Step 02.
@@ -1035,17 +1040,32 @@ if missing_if_obs:
 
 
 # -------------------------------------------------------------------------
-# Build the ionosphere-free observable
+# Build the first-order ionosphere-free code combination
+#
+# Principle
+# ---------
+# The first-order ionospheric delay scales as 1 / f^2. By combining two code
+# observables measured at different carrier frequencies, we eliminate this
+# dominant ionospheric term.
+#
+# Important consequence
+# ---------------------
+# The ionosphere-free code is less biased by the ionosphere, but it is noisier
+# than each original code observable taken separately.
 # -------------------------------------------------------------------------
 f1 = conv.L1_CARRIER_FREQUENCY
 f2 = conv.L2_CARRIER_FREQUENCY
-f1_2 = f1 ** 2
-f2_2 = f2 ** 2
+f1_sq = f1 ** 2
+f2_sq = f2 ** 2
 
 df_if = df_obs[required_if_obs].copy()
 df_if = df_if.dropna(subset=required_if_obs).copy()
 
-df_if["code_if_m"] = (f1_2 * df_if["C1"] - f2_2 * df_if["P2"]) / (f1_2 - f2_2)
+# P_IF = (f1^2 * P1 - f2^2 * P2) / (f1^2 - f2^2)
+# Here, C1 is used as the L1 code observable and P2 as the L2 code observable.
+df_if["code_if_m"] = (
+    f1_sq * df_if["C1"] - f2_sq * df_if["P2"]
+) / (f1_sq - f2_sq)
 
 
 
@@ -1164,7 +1184,7 @@ store_solution(
 # -------------------------------------------------------------------------
 # Cleanup
 # -------------------------------------------------------------------------
-del f1, f2, f1_2, f2_2
+del f1, f2, f1_sq, f2_sq
 del block_dt_r, epoch_unique
 del P_app, dP_est, P_est, n_iter
 del distances, dX, dY, dZ, A, B
