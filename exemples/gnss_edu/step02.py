@@ -102,7 +102,9 @@ PROCESSING_DATE = dt.datetime(2019, 6, 25)
 WORK_DIR = Path(os.environ["HOME"]).expanduser() / "gnss_edu_data"
 
 # Two permanent GNSS stations about 10 km apart in the Paris region
-STATION_DICT = {"rgp": ["SMNE", "MLVL"]}
+BASE_STATION = "SMNE"
+ROVER_STATION = "MLVL"
+STATION_DICT = {"rgp": [BASE_STATION, ROVER_STATION]}
 
 # First code observable to try
 CODE_OBSERVABLE = "C1"
@@ -154,6 +156,18 @@ def extract_download_path(entry):
     if isinstance(entry, tuple):
         return entry[0]
     return entry
+
+
+def build_station_file_map(download_entries) -> dict[str, str]:
+    """Map 4-character station codes to downloaded local RINEX paths."""
+    station_map = {}
+
+    for entry in download_entries:
+        path = extract_download_path(entry)
+        station_code = Path(path).name[:4].upper()
+        station_map[station_code] = path
+
+    return station_map
 
 
 def build_receiver_clock_block(index: pd.MultiIndex) -> tuple[np.ndarray, np.ndarray]:
@@ -261,17 +275,29 @@ print(download_output)
 
 # %%
 ###############################################################################
-# Identify the BASE and ROVER files
+# Resolve the downloaded files for the configured BASE and ROVER stations
 ###############################################################################
 
-base_rinex_file = extract_download_path(download_output[0])
-rover_rinex_file = extract_download_path(download_output[1])
+station_file_map = build_station_file_map(download_output)
 
-print("BASE RINEX file :")
-print(base_rinex_file)
+missing_stations = [
+    station for station in [BASE_STATION, ROVER_STATION]
+    if station not in station_file_map
+]
+if missing_stations:
+    raise RuntimeError(
+        "Missing downloaded RINEX files for requested stations: "
+        f"{missing_stations}"
+    )
+
+base_rinex_file = station_file_map[BASE_STATION]
+rover_rinex_file = station_file_map[ROVER_STATION]
+
+print("BASE station     :", BASE_STATION)
+print("BASE RINEX file  :", base_rinex_file)
 print()
-print("ROVER RINEX file:")
-print(rover_rinex_file)
+print("ROVER station    :", ROVER_STATION)
+print("ROVER RINEX file :", rover_rinex_file)
 
 
 # %%
