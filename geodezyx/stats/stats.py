@@ -1541,23 +1541,28 @@ def lagrange2(x, y):
     return poly
 
 
-def lagrange_interpolate(t_data, y_data, t_itrp, n=10):
+def lagrange_interpolate(tdata, ydata, titrp, n=10, t_type="datetime"):
     """
     Perform temporal Lagrangian polynomial interpolation.
 
-    Interpolates Y values at specified time epochs using Lagrangian polynomial 
+    Interpolates Y values at specified time epochs using Lagrangian polynomial
     fitting. The X-component represents time.
 
     Parameters
     ----------
-    t_data : array-like of datetime
+    tdata : array-like of datetime
         X/T component (time) of the known interpolation points.
-    y_data : array-like of float
+    ydata : array-like of float
         Y component (data values) of the known interpolation points.
-    t_itrp : array-like of datetime
+    titrp : array-like of datetime
         Epochs at which to compute interpolated values.
     n : int, optional
         Degree of the Lagrangian polynomial. Better if even. Default is 10.
+    t_type : str, optional
+        type of the time component, can be "datetime", "posix" or "pandas_timestamp".
+        The default is "datetime".
+        pandas_timestamp is recommended for a more precise applications
+        (nanosecond precision instead of microsecond for datetime)
 
     Returns
     -------
@@ -1572,69 +1577,75 @@ def lagrange_interpolate(t_data, y_data, t_itrp, n=10):
     Notes
     -----
     Use conv.dt_range to generate the wished epochs range.
-
     """
-
-    t_data = np.array(t_data)
-    y_data = np.array(y_data)
-    t_itrp = np.array(t_itrp)
+    ydata = np.array(ydata)
 
     nn = int(n / 2)
 
-    t_data_px = conv.dt2posix(np.array(t_data))
-    t_itrp_px = conv.dt2posix(np.array(t_itrp))
+    if t_type == "datetime":
+        tdata_px = conv.dt2posix(np.array(tdata))
+        titrp_px = conv.dt2posix(np.array(titrp))
+    elif t_type == "posix":
+        tdata_px = np.array(tdata)
+        titrp_px = np.array(titrp)
+    elif t_type == "pandas_timestamp":
+        ## here we work in int64 and nanosecond precision, for better precision and stability
+        tdata_px = conv.pandas_timestamp2posix(tdata)
+        titrp_px = conv.pandas_timestamp2posix(titrp)
+    else:
+        log.error("t_type should be 'datetime', 'posix' or 'pandas_timestamp'")
+        raise ValueError("t_type should be 'datetime', 'posix' or 'pandas_timestamp'")
 
-    tref = t_data_px[0]
+    tref = tdata_px[0]
 
     ### we substract a ref time to avoid numerical instability
-    t_data_px = t_data_px - tref
-    t_itrp_px = t_itrp_px - tref
+    tdata_px = tdata_px - tref
+    titrp_px = titrp_px - tref
 
     sur_val = (np.nan, np.nan)
     sur_idx = (np.nan, np.nan)
 
     ### some checks
-    if np.any(np.diff(t_data_px) == 0):
+    if np.any(np.diff(tdata_px) == 0):
         log.warning("some Tdata are equals")
 
-    if np.any(np.diff(y_data) == 0):
+    if np.any(np.diff(ydata) == 0):
         log.warning("some Ydata are equals")
 
-    if np.any(t_itrp_px < 0):
+    if np.any(titrp_px < 0):
         log.warning("some wanted values are outside the data interval!!!!")
 
-    y_intrp = []
+    yintrp = []
 
-    for t_intrp in t_itrp_px:
+    for tintrp in titrp_px:
 
-        if (sur_val[0] <= t_intrp) & (t_intrp <= sur_val[1]):
+        if (sur_val[0] <= tintrp) & (tintrp <= sur_val[1]):
             ### the Polynom is alread determined
             pass
         else:
-            sur_val, sur_idx = utils.find_surrounding(t_data_px, t_intrp)
+            sur_val, sur_idx = utils.find_surrounding(tdata_px, tintrp)
 
             if sur_idx[0] - nn < 0:  # manage side effect for first points
                 imin = 0
                 imax = n + 1
-            elif sur_idx[1] + nn > len(y_data):  # manage side effect for last points
-                imin = len(y_data) - n - 1
-                imax = len(y_data)
+            elif sur_idx[1] + nn > len(ydata):  # manage side effect for last points
+                imin = len(ydata) - n - 1
+                imax = len(ydata)
             else:  # regular case
-                ### if (sur_idx[0] - nn >= 0) and (sur_idx[1] + nn >= len(y_data)):
+                ### if (sur_idx[0] - nn >= 0) and (sur_idx[1] + nn >= len(Ydata)):
                 imin = sur_idx[0] - nn
                 imax = sur_idx[1] + nn
 
-            t_use = t_data_px[imin:imax]
-            y_use = y_data[imin:imax]
+            tuse = tdata_px[imin:imax]
+            yuse = ydata[imin:imax]
 
-            poly = lagrange1(list(zip(t_use, y_use)))
-            # poly = lagrange2(t_use,y_use)
+            poly = lagrange1(list(zip(tuse, yuse)))
+            # poly = lagrange2(tuse,yuse)
 
-        y_intrp_val = poly(t_intrp)
-        y_intrp.append(y_intrp_val)
+        yintrp = poly(tintrp)
+        yintrp.append(yintrp)
 
-    return np.array(y_intrp)
-
+    return np.array(yintrp)
 
 def dates_middle(start, end):
     """
