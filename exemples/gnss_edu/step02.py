@@ -1047,6 +1047,8 @@ df_if = df_if.dropna(subset=required_if_obs).copy()
 
 df_if["code_if_m"] = (f1_2 * df_if["C1"] - f2_2 * df_if["P2"]) / (f1_2 - f2_2)
 
+
+
 # -------------------------------------------------------------------------
 # Reuse the satellite-state columns already available in df_code
 # -------------------------------------------------------------------------
