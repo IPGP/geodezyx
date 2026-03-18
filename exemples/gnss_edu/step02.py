@@ -1882,24 +1882,27 @@ print(df_summary)
 #
 # Educational message
 # -------------------
-# After applying precise satellite positions, satellite clock correction,
-# relativistic correction, receiver clock estimation, and Sagnac correction,
-# the remaining discrepancy with the RINEX-header position is usually dominated
-# by propagation effects, especially in the vertical component.
+# After introducing satellite clock correction, relativistic correction,
+# receiver clock estimation, Earth-rotation correction, ionosphere-free code,
+# simple tropospheric modeling, and carrier smoothing, the remaining mismatch
+# with the RINEX-header position should be interpreted with caution.
 #
-# This naturally motivates the next pedagogical extensions:
-#   - ionosphere-free combinations,
-#   - tropospheric modeling,
-#   - antenna phase-center effects.
+# At this stage, the residual discrepancy is no longer driven only by the main
+# first-order propagation effects. It can also reflect the limits of the code-
+# based model itself, residual atmospheric effects, antenna phase-center
+# effects, measurement noise, and the fact that the RINEX-header position is
+# only an approximate reference.
 ###############################################################################
 
 print("Interpretation")
 print("--------------")
 print(
-    "The remaining discrepancy with the RINEX-header position is expected to "
-    "be dominated mainly by propagation effects, especially in the vertical "
-    "component. This motivates the next model enrichments: ionosphere, "
-    "troposphere, and antenna modeling."
+    "After the successive model enrichments up to M6, the remaining \n"
+    "discrepancy with the RINEX-header position is expected to reflect both \n"
+    "residual propagation effects and the intrinsic limits of a code-based \n"
+    "positioning model. Remaining contributors may include residual \n"
+    "tropospheric effects, antenna phase-center effects, measurement noise, \n"
+    "and the approximate nature of the RINEX-header coordinates themselves."
 )
 
 
