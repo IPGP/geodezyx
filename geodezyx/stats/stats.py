@@ -107,13 +107,13 @@ def linear_regression(x, y, fulloutput=False, simple_lsq=False, alpha=0.95):
         return slope, intercept, confid_interval_slope(x, y, alpha), std_err
 
 
-def linear_reg_getvalue(X, a, b, full=True):
+def linear_reg_getvalue(x, a, b, full=True):
     """
     Compute Y = a*X + b from a vector X and coefficients a and b.
 
     Parameters
     ----------
-    X : list or numpy.ndarray
+    x : list or numpy.ndarray
         Input values.
     a : float
         Linear regression slope coefficient.
@@ -126,13 +126,13 @@ def linear_reg_getvalue(X, a, b, full=True):
 
     Returns
     -------
-    Y : numpy.ndarray
+    y : numpy.ndarray
         Computed values Y = aX + b.
         Only returned if `full` is False.
-    X : numpy.ndarray
+    x : numpy.ndarray
         Input values (unchanged).
         Only returned if `full` is True.
-    Y : numpy.ndarray
+    y : numpy.ndarray
         Computed values Y = aX + b.
         Only returned if `full` is True.
 
@@ -144,9 +144,9 @@ def linear_reg_getvalue(X, a, b, full=True):
     """
 
     if full:
-        return np.array(X), a * np.array(X) + b
+        return np.array(x), a * np.array(x) + b
     else:
-        return a * np.array(X) + b
+        return a * np.array(x) + b
 
 
 def linear_coef_a_b(x1, y1, x2, y2):
@@ -431,7 +431,7 @@ def running_mean_1(values, window):
     Notes
     -----
     Internal ID: 1
-    See: http://sentdex.com/sentiment-analysisbig-data-and-python-tutorials-algorithmic-trading/
+    See: https://sentdex.com/sentiment-analysisbig-data-and-python-tutorials-algorithmic-trading/
 
     """
     weigths = np.repeat(1.0, window) / window
@@ -439,7 +439,7 @@ def running_mean_1(values, window):
     return smas  # as a numpy array
 
 
-def running_mean_2(x, N):
+def running_mean_2(x, n):
     """
     Compute running mean by explicit windowing.
 
@@ -447,7 +447,7 @@ def running_mean_2(x, N):
     ----------
     x : array-like
         Input data values.
-    N : int
+    n : int
         Window size for the running mean.
 
     Returns
@@ -458,16 +458,16 @@ def running_mean_2(x, N):
     Notes
     -----
     Internal ID: 2
-    See: http://stackoverflow.com/questions/13728392/moving-average-or-running-mean
+    See: https://stackoverflow.com/questions/13728392/moving-average-or-running-mean
 
     """
     y = np.zeros((len(x),))
     for ctr in range(len(x)):
-        y[ctr] = np.sum(x[ctr : (ctr + N)])
-    return y / N
+        y[ctr] = np.sum(x[ctr : (ctr + n)])
+    return y / n
 
 
-def running_mean_3(x, N):
+def running_mean_3(x, n):
     """
     Compute running mean using cumulative sum (moyenne glissante).
 
@@ -475,7 +475,7 @@ def running_mean_3(x, N):
     ----------
     x : array-like
         Input data values.
-    N : int
+    n : int
         Window size for the running mean.
 
     Returns
@@ -491,7 +491,7 @@ def running_mean_3(x, N):
 
     """
     cumsum = np.cumsum(np.insert(x, 0, 0))
-    xout = (cumsum[N:] - cumsum[:-N]) / N
+    xout = (cumsum[n:] - cumsum[:-n]) / n
 
     return xout
 
@@ -556,7 +556,7 @@ def running_mean_5(data, window_width):
     return ma_vec
 
 
-def sinusoide(T, A, omega, phi=0, f=None):
+def sinusoide(t, a, omega, phi=0, f=None):
     """
     Generate a sinusoidal waveform.
 
@@ -564,9 +564,9 @@ def sinusoide(T, A, omega, phi=0, f=None):
 
     Parameters
     ----------
-    T : float or array-like
+    t : float or array-like
         Time variable.
-    A : float
+    a : float
         Amplitude, the peak deviation of the function from zero.
     omega : float
         Angular frequency (ω = 2πf), the rate of change of the function 
@@ -595,7 +595,7 @@ def sinusoide(T, A, omega, phi=0, f=None):
     else:
         omega_use = omega
 
-    return A * np.sin(omega_use * T + phi)
+    return a * np.sin(omega_use * t + phi)
 
 
 def butter_lowpass(cutoff, fs, order=5):
@@ -686,7 +686,7 @@ def gaussian_filter_gfz(tim_ref, dat_ref, width=7):
     Notes
     -----
     For additional smoothing ideas and references, see:
-    - http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
+    - https://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
     - https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way
     - https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth
 
@@ -773,7 +773,7 @@ def smooth(x, window_len=11, window="hanning"):
 
     References
     ----------
-    http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
+    https://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
 
     Examples
     --------
@@ -808,13 +808,13 @@ def smooth(x, window_len=11, window="hanning"):
     return y
 
 
-def harmonic_mean(A):
+def harmonic_mean(a):
     """
     Compute harmonic mean of a list or array.
 
     Parameters
     ----------
-    A : array-like
+    a : array-like
         Input values.
 
     Returns
@@ -824,8 +824,8 @@ def harmonic_mean(A):
 
     """
 
-    A = np.array(A)
-    return len(A) / np.sum(1.0 / A)
+    a = np.array(a)
+    return len(a) / np.sum(1.0 / a)
 
 
 def find_intersection(x1, y1, x2, y2):
@@ -892,7 +892,7 @@ def wrap_to360(lon):
     Returns
     -------
     result : float or numpy.ndarray
-        Longitude values wrapped to [0, 360).
+        Longitude values wrapped to [0, 360].
 
     Notes
     -----
@@ -1071,8 +1071,8 @@ def outlier_mad(
     Source
     ------
     Utilisation de la MAD pour detecter les outliers
-    http://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm
-    http://web.ipac.caltech.edu/staff/fmasci/home/statistics_refs/BetterThanMAD.pdf
+    https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm
+    https://web.ipac.caltech.edu/staff/fmasci/home/statistics_refs/BetterThanMAD.pdf
     """
 
     if seuil:
@@ -1082,7 +1082,7 @@ def outlier_mad(
     if convert_to_np_array:
         data = np.array(data)
     nbinp = float(len(data))
-    MAD = mad(data, mode=mad_mode)
+    mad_value = mad(data, mode=mad_mode)
     med = np.nanmedian(data)
 
     if np.isclose(np.sum(np.abs(np.diff(data))), 0.0):
@@ -1095,16 +1095,16 @@ def outlier_mad(
             log.info("elimination ratio: 0 , null median")
         return data, np.array([True] * len(data))
 
-    if np.isclose(MAD, 0.0):
+    if np.isclose(mad_value, 0.0):
         if verbose:
             log.info("elimination ratio: 0 , null MAD")
         return data, np.array([True] * len(data))
 
     diff = data - med
-    MZS = 0.6745 * np.abs(diff) / MAD
+    mzs = 0.6745 * np.abs(diff) / mad_value
 
-    MZS[np.isnan(MZS)] = threshold * 10  ### makes a threshold virtually higher for NaN
-    boolbad = MZS < threshold  ## remendir: False means that the values are bad.
+    mzs[np.isnan(mzs)] = threshold * 10  ### makes a threshold virtually higher for NaN
+    boolbad = mzs < threshold  ## remendir: False means that the values are bad.
 
     dataout = data[boolbad]
     nbout = float(sum(boolbad))
@@ -1120,7 +1120,7 @@ def outlier_mad(
 
 
 def outlier_mad_binom(
-    Y, X, threshold=3.5, verbose=False, detrend_first=False, return_booleans=False
+    y, x, threshold=3.5, verbose=False, detrend_first=False, return_booleans=False
 ):
     """
     clean the outlier of Y using the MAD approach
@@ -1130,10 +1130,10 @@ def outlier_mad_binom(
 
     Parameters
     ----------
-    Y : list or numpy.array
+    y : list or numpy.array
         Values
 
-    X : list or numpy.array
+    x : list or numpy.array
         X Values so as X => Y(X)
 
     threshold : float
@@ -1155,28 +1155,28 @@ def outlier_mad_binom(
         Y-sized booleans
     """
     if detrend_first:
-        _, ywork = detrend_timeseries(X, Y)
+        _, y_work = detrend_timeseries(x, y)
     else:
-        _, ywork = np.array(X), np.array(Y)
+        _, y_work = np.array(x), np.array(y)
 
-    _, bb = outlier_mad(ywork, threshold, verbose)
+    _, bb = outlier_mad(y_work, threshold, verbose)
 
-    xclean = np.array(X)[bb]
-    yclean = np.array(Y)[bb]
+    x_clean = np.array(x)[bb]
+    y_clean = np.array(y)[bb]
 
     if not return_booleans:
-        return yclean, xclean
+        return y_clean, x_clean
     else:
-        return yclean, xclean, bb
+        return y_clean, x_clean, bb
 
 
-def outlier_above_below_simple(X, low_bound, upp_bound, return_booleans=True):
+def outlier_above_below_simple(x, low_bound, upp_bound, return_booleans=True):
     """
     Gives values of X which are between low_bound & upp_bound
 
     Parameters
     ----------
-    X : list or numpy.array
+    x : list or numpy.array
         Values
 
     low_bound & upp_bound  : float
@@ -1195,7 +1195,7 @@ def outlier_above_below_simple(X, low_bound, upp_bound, return_booleans=True):
 
     """
 
-    xwork = np.array(X)
+    xwork = np.array(x)
 
     if low_bound >= upp_bound:
         log.warning("lower bound >= upper bound !!!")
@@ -1313,8 +1313,8 @@ def outlier_above_below(
 
 
 def outlier_above_below_binom(
-    Y,
-    X,
+    y,
+    x,
     threshold_values,
     reference=np.nanmean,
     theshold_absolute=True,
@@ -1369,7 +1369,7 @@ def outlier_above_below_binom(
 
     Returns
     -------
-    Xout : numpy array
+    x_out : numpy array
         X between low_bound & upp_bound
 
     bbool : numpy array
@@ -1377,12 +1377,12 @@ def outlier_above_below_binom(
     """
 
     if detrend_first:
-        _, Ywork = detrend_timeseries(X, Y)
+        _, y_work = detrend_timeseries(x, y)
     else:
-        _, Ywork = np.array(X), np.array(Y)
+        _, y_work = np.array(x), np.array(y)
 
     _, bb = outlier_above_below(
-        Ywork,
+        y_work,
         threshold_values,
         reference=reference,
         theshold_absolute=theshold_absolute,
@@ -1391,13 +1391,13 @@ def outlier_above_below_binom(
         verbose=verbose,
     )
 
-    Xclean = np.array(X)[bb]
-    Yclean = np.array(Y)[bb]
+    x_clean = np.array(x)[bb]
+    y_clean = np.array(y)[bb]
 
     if not return_booleans:
-        return Yclean, Xclean
+        return y_clean, x_clean
     else:
-        return Yclean, Xclean, bb
+        return y_clean, x_clean, bb
 
 
 def outlier_sigma(datasigmain, threshold=3):
@@ -1453,7 +1453,7 @@ def lagrange1(points):
 
     Returns
     -------
-    P : callable
+    p : callable
         Function representing the Lagrangian polynomial.
 
     Notes
@@ -1466,19 +1466,19 @@ def lagrange1(points):
 
     """
 
-    def P(x):
+    def poly(x):
         total = 0
         n = len(points)
         for i in range(n):
             xi, yi = points[i]
 
-            def g(i, n):
+            def g(ii, nn):
 
                 tot_mul = 1
-                for j in range(n):
-                    if i == j:
+                for jj in range(nn):
+                    if ii == jj:
                         continue
-                    xj, yj = points[j]
+                    xj, yj = points[jj]
                     tot_mul *= (x - xj) / float(xi - xj)
 
                 return tot_mul
@@ -1486,10 +1486,10 @@ def lagrange1(points):
             total += yi * g(i, n)
         return total
 
-    return P
+    return poly
 
 
-def lagrange2(X, Y):
+def lagrange2(x, y):
     """
     Determine Lagrangian polynomial from points (more Pythonic version).
 
@@ -1499,14 +1499,14 @@ def lagrange2(X, Y):
 
     Parameters
     ----------
-    X : array-like
+    x : array-like
         X-coordinates of the interpolation points.
-    Y : array-like
+    y : array-like
         Y-coordinates of the interpolation points.
 
     Returns
     -------
-    P : callable
+    p : callable
         Function representing the Lagrangian polynomial.
 
     Notes
@@ -1520,28 +1520,28 @@ def lagrange2(X, Y):
 
     """
 
-    def P(x_itrp):
+    def poly(x_itrp):
         total = 0
-        n = len(X)
+        n = len(x)
         for i in range(n):
 
-            def g(i, n):
-                X_but_i = np.concatenate((X[:i], X[i + 1 :]))
-                # mask = np.ones(len(X),dtype=bool)
+            def g(ii, nn):
+                x_but_i = np.concatenate((x[:ii], x[ii + 1:]))
+                # mask = np.ones(len(x),dtype=bool)
                 # mask[i] = False
-                # X_but_i = np.concatenate((X[:i],X[i+1:]))
-                # X_but_i = X[mask]
-                # return np.product((x_itrp -X[mask])/(X[i] - X[mask]))
+                # x_but_i = np.concatenate((x[:i],x[i+1:]))
+                # x_but_i = x[mask]
+                # return np.prod((x_itrp -x[mask])/(x[i] - x[mask]))
 
-                return np.product((x_itrp - X_but_i) / (X[i] - X_but_i))
+                return np.prod((x_itrp - x_but_i) / (x[ii] - x_but_i))
 
-            total += Y[i] * g(i, n)
+            total += y[i] * g(i, n)
         return total
 
-    return P
+    return poly
 
 
-def lagrange_interpolate(Tdata, Ydata, Titrp, n=10):
+def lagrange_interpolate(t_data, y_data, t_itrp, n=10):
     """
     Perform temporal Lagrangian polynomial interpolation.
 
@@ -1550,18 +1550,18 @@ def lagrange_interpolate(Tdata, Ydata, Titrp, n=10):
 
     Parameters
     ----------
-    Tdata : array-like of datetime
+    t_data : array-like of datetime
         X/T component (time) of the known interpolation points.
-    Ydata : array-like of float
+    y_data : array-like of float
         Y component (data values) of the known interpolation points.
-    Titrp : array-like of datetime
+    t_itrp : array-like of datetime
         Epochs at which to compute interpolated values.
     n : int, optional
         Degree of the Lagrangian polynomial. Better if even. Default is 10.
 
     Returns
     -------
-    Yintrp : numpy.ndarray
+    y_intrp : numpy.ndarray
         Interpolated Y values at the requested epochs.
 
     See Also
@@ -1575,65 +1575,65 @@ def lagrange_interpolate(Tdata, Ydata, Titrp, n=10):
 
     """
 
-    Tdata = np.array(Tdata)
-    Ydata = np.array(Ydata)
-    Titrp = np.array(Titrp)
+    t_data = np.array(t_data)
+    y_data = np.array(y_data)
+    t_itrp = np.array(t_itrp)
 
     nn = int(n / 2)
 
-    Tdata_px = conv.dt2posix(np.array(Tdata))
-    Titrp_px = conv.dt2posix(np.array(Titrp))
+    t_data_px = conv.dt2posix(np.array(t_data))
+    t_itrp_px = conv.dt2posix(np.array(t_itrp))
 
-    tref = Tdata_px[0]
+    tref = t_data_px[0]
 
     ### we substract a ref time to avoid numerical instability
-    Tdata_px = Tdata_px - tref
-    Titrp_px = Titrp_px - tref
+    t_data_px = t_data_px - tref
+    t_itrp_px = t_itrp_px - tref
 
     sur_val = (np.nan, np.nan)
     sur_idx = (np.nan, np.nan)
 
     ### some checks
-    if np.any(np.diff(Tdata_px) == 0):
+    if np.any(np.diff(t_data_px) == 0):
         log.warning("some Tdata are equals")
 
-    if np.any(np.diff(Ydata) == 0):
+    if np.any(np.diff(y_data) == 0):
         log.warning("some Ydata are equals")
 
-    if np.any(Titrp_px < 0):
+    if np.any(t_itrp_px < 0):
         log.warning("some wanted values are outside the data interval!!!!")
 
-    Yintrp = []
+    y_intrp = []
 
-    for tintrp in Titrp_px:
+    for t_intrp in t_itrp_px:
 
-        if (sur_val[0] <= tintrp) & (tintrp <= sur_val[1]):
+        if (sur_val[0] <= t_intrp) & (t_intrp <= sur_val[1]):
             ### the Polynom is alread determined
             pass
         else:
-            sur_val, sur_idx = utils.find_surrounding(Tdata_px, tintrp)
+            sur_val, sur_idx = utils.find_surrounding(t_data_px, t_intrp)
 
             if sur_idx[0] - nn < 0:  # manage side effect for first points
                 imin = 0
                 imax = n + 1
-            elif sur_idx[1] + nn > len(Ydata):  # manage side effect for last points
-                imin = len(Ydata) - n - 1
-                imax = len(Ydata)
+            elif sur_idx[1] + nn > len(y_data):  # manage side effect for last points
+                imin = len(y_data) - n - 1
+                imax = len(y_data)
             else:  # regular case
-                ### if (sur_idx[0] - nn >= 0) and (sur_idx[1] + nn >= len(Ydata)):
+                ### if (sur_idx[0] - nn >= 0) and (sur_idx[1] + nn >= len(y_data)):
                 imin = sur_idx[0] - nn
                 imax = sur_idx[1] + nn
 
-            Tuse = Tdata_px[imin:imax]
-            Yuse = Ydata[imin:imax]
+            t_use = t_data_px[imin:imax]
+            y_use = y_data[imin:imax]
 
-            Poly = lagrange1(list(zip(Tuse, Yuse)))
-            # Poly = lagrange2(Tuse,Yuse)
+            poly = lagrange1(list(zip(t_use, y_use)))
+            # poly = lagrange2(t_use,y_use)
 
-        yintrp = Poly(tintrp)
-        Yintrp.append(yintrp)
+        y_intrp_val = poly(t_intrp)
+        y_intrp.append(y_intrp_val)
 
-    return np.array(Yintrp)
+    return np.array(y_intrp)
 
 
 def dates_middle(start, end):
@@ -1659,8 +1659,8 @@ def dates_middle(start, end):
 def time_win_basic(
     start,
     end,
-    Tlisin,
-    Datalisin,
+    t_lis_inp,
+    data_lis_inp,
     outposix=True,
     invert=False,
     out_array=False,
@@ -1679,9 +1679,9 @@ def time_win_basic(
         Start of the time window.
     end : datetime or float
         End of the time window.
-    Tlisin : array-like of datetime or float
+    t_lis_inp : array-like of datetime or float
         Time values of the data points.
-    Datalisin : array-like
+    data_lis_inp : array-like
         Data values corresponding to the times.
     outposix : bool, optional
         If True, output times in POSIX format.
@@ -1699,9 +1699,9 @@ def time_win_basic(
 
     Returns
     -------
-    Tlisout : array-like
+    tlisout : array-like
         Filtered time values. None if only_boolis=True.
-    Datalisout : array-like
+    datalisout : array-like
         Filtered data values. None if only_boolis=True.
     boolis : numpy.ndarray, optional
         Boolean array indicating selected points.
@@ -1709,51 +1709,51 @@ def time_win_basic(
 
     """
 
-    if isinstance(Tlisin[0], dt.datetime):
-        Tlis = conv.dt2posix(Tlisin)
+    if isinstance(t_lis_inp[0], dt.datetime):
+        tlis = conv.dt2posix(t_lis_inp)
     else:
-        Tlis = Tlisin
+        tlis = t_lis_inp
 
     if isinstance(start, dt.datetime):
         start = conv.dt2posix(start)
     if isinstance(end, dt.datetime):
         end = conv.dt2posix(end)
 
-    if not isinstance(Tlis, np.ndarray) or not isinstance(Datalisin, np.ndarray):
-        Tlis = np.array(Tlis)
-        Datalis = np.array(Datalisin)
+    if not isinstance(tlis, np.ndarray) or not isinstance(data_lis_inp, np.ndarray):
+        tlis = np.array(tlis)
+        datalis = np.array(data_lis_inp)
     else:
-        Tlis = Tlis
-        Datalis = Datalisin
+        tlis = tlis
+        datalis = data_lis_inp
 
-    boolis = (start <= Tlis) * (Tlis <= end)
+    boolis = (start <= tlis) * (tlis <= end)
 
     if invert:
         boolis = np.logical_not(boolis)
 
     if only_boolis:
-        Datalisout = None
-        Tlisout = None
+        datalisout = None
+        tlisout = None
     else:
-        Datalisout = Datalis[boolis]
-        Tlisout = Tlis[boolis]
+        datalisout = datalis[boolis]
+        tlisout = tlis[boolis]
 
         if not outposix:
-            Tlisout = conv.posix2dt(Tlisout)
+            tlisout = conv.posix2dt(tlisout)
 
         if out_array:
-            Tlisout, Datalisout = np.array(Tlisout), np.array(Datalisout)
+            tlisout, datalisout = np.array(tlisout), np.array(datalisout)
 
     if out_boolis:
-        out_tuple = (Tlisout, Datalisout, boolis)
+        out_tuple = (tlisout, datalisout, boolis)
     else:
-        out_tuple = (Tlisout, Datalisout)
+        out_tuple = (tlisout, datalisout)
 
     return out_tuple
 
 
 def time_win_multi(
-    start, end, Tlist, Datalislis, outposix=True, invert=False, out_array=False
+    start, end, t_lis, data_lislis, outposix=True, invert=False, out_array=False
 ):
     """
     Filter multiple datasets within a time window.
@@ -1767,9 +1767,9 @@ def time_win_multi(
         Start of the time window.
     end : datetime or float
         End of the time window.
-    Tlist : array-like
+    t_lis : array-like
         Time values for filtering.
-    Datalislis : list of array-like
+    data_lislis : list of array-like
         Multiple data arrays to filter.
     outposix : bool, optional
         If True, output times in POSIX format. Default is True.
@@ -1782,7 +1782,7 @@ def time_win_multi(
     -------
     Tlisout : array-like
         Filtered time values.
-    Datalislisout : list of array-like
+    datalislisout : list of array-like
         Filtered data arrays.
 
     See Also
@@ -1790,21 +1790,21 @@ def time_win_multi(
     time_win_basic : Filter single dataset within time window
 
     """
-    Datalislisout = []
-    for i, datalis in enumerate(Datalislis):
+    datalislisout = []
+    for i, datalis in enumerate(data_lislis):
 
         Tlisout, datalisout = time_win_basic(
-            start, end, Tlist, datalis, outposix, invert, out_array=out_array
+            start, end, t_lis, datalis, outposix, invert, out_array=out_array
         )
-        Datalislisout.append(datalisout)
-    return Tlisout, Datalislisout
+        datalislisout.append(datalisout)
+    return Tlisout, datalislisout
 
 
 def time_win_multi_start_end(
-    Start_list_in,
-    End_list_in,
-    Tlisin,
-    Datalisin,
+    start_list_inp,
+    end_list_inp,
+    t_lis_inp,
+    data_lis_inp,
     outposix=True,
     invert=False,
     out_array=False,
@@ -1819,13 +1819,13 @@ def time_win_multi_start_end(
 
     Parameters
     ----------
-    Start_list_in : list of datetime or float
+    start_list_inp : list of datetime or float
         Start times of the time windows.
-    End_list_in : list of datetime or float
+    end_list_inp : list of datetime or float
         End times of the time windows.
-    Tlisin : array-like of datetime or float
+    t_lis_inp : array-like of datetime or float
         Time values of the data points.
-    Datalisin : array-like
+    data_lis_inp : array-like
         Data values corresponding to the times.
     outposix : bool, optional
         If True, output times in POSIX format. Default is True.
@@ -1838,9 +1838,9 @@ def time_win_multi_start_end(
 
     Returns
     -------
-    Tlisout : array-like
+    tlisout : array-like
         Filtered time values.
-    Datalisout : array-like
+    datalisout : array-like
         Filtered data values.
     boolis_opera : numpy.ndarray, optional
         Combined boolean array (intersection of all windows).
@@ -1856,16 +1856,16 @@ def time_win_multi_start_end(
 
     """
 
-    if len(Start_list_in) != len(End_list_in):
+    if len(start_list_inp) != len(end_list_inp):
         log.error("len(Start_list_in) != len(End_list_in) !!")
 
     boolis_stk = []
-    for start, end in zip(Start_list_in, End_list_in):
+    for start, end in zip(start_list_inp, end_list_inp):
         _, _, boolis = time_win_basic(
             start,
             end,
-            Tlisin,
-            Datalisin,
+            t_lis_inp,
+            data_lis_inp,
             outposix=outposix,
             invert=invert,
             out_boolis=True,
@@ -1877,22 +1877,22 @@ def time_win_multi_start_end(
     boolis_stk = np.stack(boolis_stk)
     boolis_opera = np.all(boolis_stk, axis=0)
 
-    Datalis = np.array(Datalisin)
-    Tlis = np.array(Tlisin)
+    datalis = np.array(data_lis_inp)
+    tlis = np.array(t_lis_inp)
 
-    Datalisout = Datalis[boolis_opera]
-    Tlisout = Tlis[boolis_opera]
+    datalisout = datalis[boolis_opera]
+    tlisout = tlis[boolis_opera]
 
     if not outposix:
-        Tlisout = conv.posix2dt(Tlisout)
+        tlisout = conv.posix2dt(tlisout)
 
     if out_array:
-        Tlisout, Datalisout = np.array(Tlisout), np.array(Datalisout)
+        tlisout, datalisout = np.array(tlisout), np.array(datalisout)
 
     if out_boolis:
-        out_tuple = (Tlisout, Datalisout, boolis_opera, boolis_stk)
+        out_tuple = (tlisout, datalisout, boolis_opera, boolis_stk)
     else:
-        out_tuple = (Tlisout, Datalisout)
+        out_tuple = (tlisout, datalisout)
 
     return out_tuple
 
@@ -1986,7 +1986,7 @@ def color_of_season(datein):
 
 
 def outlier_mad_binom_legacy(
-    X, Y, threshold=3.5, verbose=False, detrend_first=False, return_booleans=False
+    x, y, threshold=3.5, verbose=False, detrend_first=False, return_booleans=False
 ):
     """
     Remove outliers from paired X,Y data using MAD (legacy version).
@@ -1996,9 +1996,9 @@ def outlier_mad_binom_legacy(
 
     Parameters
     ----------
-    X : array-like
+    x : array-like
         X values.
-    Y : array-like
+    y : array-like
         Y values (dependent on X).
     threshold : float, optional
         MAD threshold. Default is 3.5.
@@ -2011,9 +2011,9 @@ def outlier_mad_binom_legacy(
 
     Returns
     -------
-    Xclean : numpy.ndarray
+    x_clean : numpy.ndarray
         Cleaned X values.
-    Yclean : numpy.ndarray
+    y_clean : numpy.ndarray
         Cleaned Y values.
     bb : numpy.ndarray, optional
         Boolean array indicating valid points.
@@ -2029,19 +2029,19 @@ def outlier_mad_binom_legacy(
 
     """
     if detrend_first:
-        Xwork, _ = detrend_timeseries(X, Y)
+        x_work, _ = detrend_timeseries(x, y)
     else:
-        Xwork, _ = np.array(X), np.array(Y)
+        x_work, _ = np.array(x), np.array(y)
 
-    _, bb = outlier_mad(Xwork, threshold, verbose)
+    _, bb = outlier_mad(x_work, threshold, verbose)
 
-    Xclean = np.array(X)[bb]
-    Yclean = np.array(Y)[bb]
+    x_clean = np.array(x)[bb]
+    y_clean = np.array(y)[bb]
 
     if not return_booleans:
-        return Xclean, Yclean
+        return x_clean, y_clean
     else:
-        return Xclean, Yclean, bb
+        return x_clean, y_clean, bb
 
 
 # def plot_vertical_bar(xlis , color='r',linewidth=1):
