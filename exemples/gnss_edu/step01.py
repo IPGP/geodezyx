@@ -97,6 +97,8 @@ except Exception:
 
 PROCESSING_DATE = dt.datetime(2019, 6, 25)
 WORK_DIR = Path(os.environ["HOME"]).expanduser() / "gnss_edu_data"
+FIGURES_DIR = WORK_DIR / "figures"
+SHOW_FIGURES = False
 
 # Two permanent GNSS stations about 10 km apart in the Paris region
 STATION_DICT = {"rgp": ["SMNE", "MLVL"]}
@@ -113,6 +115,8 @@ GAP_THRESHOLD = pd.Timedelta(minutes=30)
 print("Configuration loaded.")
 print("Processing date :", PROCESSING_DATE)
 print("Working directory:", WORK_DIR)
+print("Figures directory:", FIGURES_DIR)
+print("Show figures     :", SHOW_FIGURES)
 print("Example PRN     :", EXAMPLE_PRN)
 print("Example observable:", EXAMPLE_OBSERVABLE)
 
@@ -127,9 +131,30 @@ print("Example observable:", EXAMPLE_OBSERVABLE)
 ###############################################################################
 
 WORK_DIR.mkdir(parents=True, exist_ok=True)
+FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
 print("Working directory is ready:")
 print(WORK_DIR)
+print("Figures directory is ready:")
+print(FIGURES_DIR)
+
+if SHOW_FIGURES:
+    plt.ion()
+else:
+    plt.ioff()
+    plt.show = lambda *args, **kwargs: None
+
+
+def finalize_figure(fig, output_name, show=SHOW_FIGURES):
+    """Save a figure to disk and optionally display it."""
+    output_path = FIGURES_DIR / output_name
+    fig.savefig(output_path, dpi=150, bbox_inches="tight")
+    print(f"Figure saved: {output_path}")
+
+    if show:
+        fig.show()
+
+    plt.close(fig)
 
 
 # %%
@@ -441,7 +466,7 @@ fig, ax = plot_gnss_timeseries_by_prn(
 )
 
 ax.grid(True, alpha=0.3)
-plt.show()
+finalize_figure(fig, "step01_timeseries_by_prn_arcs.png")
 
 
 # %%
@@ -469,7 +494,7 @@ fig, ax = plot_gnss_timeseries_by_prn(
 )
 
 ax.grid(True, alpha=0.3)
-plt.show()
+finalize_figure(fig, "step01_timeseries_by_prn_legend.png")
 
 
 # %%
@@ -585,7 +610,5 @@ if len(df_removed) > 0:
 
 print("Step 01 completed.")
 print("The observation table is now ready for the data-to-model transition in Step 02.")
-
-
 
 
