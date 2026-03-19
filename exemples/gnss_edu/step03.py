@@ -80,6 +80,7 @@ Standard library
 import datetime as dt
 import gc
 import os
+from itertools import count
 from pathlib import Path
 
 from _io_guard import ensure_matplotlib_cache
@@ -156,6 +157,8 @@ else:
     plt.ioff()
     plt.show = lambda *args, **kwargs: None
 
+FIGURE_COUNTER = count(1)
+
 
 # %%
 ###############################################################################
@@ -192,7 +195,12 @@ print(
 
 def finalize_figure(fig, output_name, show=SHOW_FIGURES):
     """Save a figure to disk and optionally display it."""
-    output_path = FIGURES_DIR / output_name
+    figure_index = next(FIGURE_COUNTER)
+    output_name_clean = output_name
+    if output_name_clean.startswith("step03_"):
+        output_name_clean = output_name_clean[len("step03_") :]
+    numbered_output_name = f"step03_{figure_index:02d}_{output_name_clean}"
+    output_path = FIGURES_DIR / numbered_output_name
     fig.savefig(output_path, dpi=150, bbox_inches="tight")
     print(f"Figure saved: {output_path}")
 
