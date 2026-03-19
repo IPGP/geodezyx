@@ -103,6 +103,8 @@ from geodezyx import reffram
 
 PROCESSING_DATE = dt.datetime(2019, 6, 25)
 WORK_DIR = Path(os.environ["HOME"]).expanduser() / "gnss_edu_data"
+FIGURES_DIR = WORK_DIR / "figures"
+SHOW_FIGURES = False
 
 BASE_STATION = "SMNE"
 ROVER_STATION = "MLVL"
@@ -115,26 +117,38 @@ PIVOT_ELEVATION_COLUMN = "elevation_deg"
 
 RINEX_SAMPLING = pd.Timedelta(seconds=30)
 ARC_GAP = pd.Timedelta(minutes=30)
-PIVOT_ELEVATION_CUTOFF_DEG = 15.0
+PIVOT_ELEVATION_FLOOR_DEG = 60.0
+PIVOT_KEEP_TOP_RANK = 3
+PIVOT_ELEVATION_SWITCH_MARGIN_DEG = 5.0
 PIVOT_SNR_MIN = 48.0
-PIVOT_SWITCH_MARGIN_DB = 2.0
 # Examples:
 #   ("L1",)       -> mono-frequency pivot compatibility
 #   ("L1", "L5")  -> keep only pivots compatible with iono-free L1/L5 work
 PIVOT_REQUIRED_OBSERVABLES = ("L1",)
-PIVOT_MIN_DURATION = pd.Timedelta(hours=1)
+PIVOT_MIN_DURATION = pd.Timedelta(hours=1, minutes=30)
 PIVOT_MIN_DWELL = pd.Timedelta(minutes=45)
 
 print("Configuration loaded.")
 print("Processing date          :", PROCESSING_DATE)
 print("Working directory        :", WORK_DIR)
+print("Figures directory        :", FIGURES_DIR)
+print("Show figures             :", SHOW_FIGURES)
 print("Base station             :", BASE_STATION)
 print("Rover station            :", ROVER_STATION)
 print("Satellite system         :", SATELLITE_SYSTEM)
 print("Primary code observable  :", PRIMARY_CODE_OBSERVABLE)
 print("SNR observable           :", SNR_COLUMN)
-print("Elevation cutoff [deg]   :", PIVOT_ELEVATION_CUTOFF_DEG)
+print("Elevation floor [deg]    :", PIVOT_ELEVATION_FLOOR_DEG)
 print("Required pivot observables:", PIVOT_REQUIRED_OBSERVABLES)
+
+WORK_DIR.mkdir(parents=True, exist_ok=True)
+FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+
+if SHOW_FIGURES:
+    plt.ion()
+else:
+    plt.ioff()
+    plt.show = lambda *args, **kwargs: None
 
 
 # %%
@@ -175,6 +189,18 @@ def extract_download_path(entry):
     if isinstance(entry, tuple):
         return entry[0]
     return entry
+
+
+def finalize_figure(fig, output_name, show=SHOW_FIGURES):
+    """Save a figure to disk and optionally display it."""
+    output_path = FIGURES_DIR / output_name
+    fig.savefig(output_path, dpi=150, bbox_inches="tight")
+    print(f"Figure saved: {output_path}")
+
+    if show:
+        fig.show()
+
+    plt.close(fig)
 
 
 def prepare_work_directory(work_dir: Path) -> Path:
@@ -969,6 +995,7 @@ sampling = RINEX_SAMPLING
 print("\n[0] SD tracking timeline (black = present SD, white = missing)")
 print("Look for: (i) long white blocks (visibility breaks), (ii) small holes inside black arcs.")
 gnss_edu.plot_tracking_timeline(df_SD, sampling=sampling)
+finalize_figure(plt.gcf(), "step03_sd_tracking_timeline.png")
 
 # -------------------------------------------------------------------------
 # Step 1 — Detect ALL gaps (no arc segmentation)
@@ -1004,7 +1031,7 @@ ax.set_title("Distribution of gap durations (minutes)")
 ax.set_xlabel("dt (minutes)")
 ax.set_ylabel("count")
 plt.tight_layout()
-plt.show()
+finalize_figure(fig, "step03_gap_duration_distribution.png")
 
 print("Interpretation:")
 print("  - hours-scale gaps   -> visibility breaks (rise/set, masking) => new arc")
@@ -1094,6 +1121,7 @@ gnss_edu.plot_gnss_sd_by_prn(
     label_arcs=True,
     show_legend=False
 )
+finalize_figure(plt.gcf(), "step03_sd_l1_by_prn.png")
 
 # %%
 # -------------------------------------------------------------------------
@@ -1107,6 +1135,7 @@ gnss_edu.plot_gnss_sd_by_prn(
     label_arcs=True,
     show_legend=False
 )
+finalize_figure(plt.gcf(), "step03_sd_c1_by_prn.png")
 
 # %%
 # -------------------------------------------------------------------------
@@ -1124,6 +1153,7 @@ gnss_edu.plot_sd_derivative_by_prn(
     gap=gap_inc,
     title="ΔSD_C1 between consecutive epochs (meters)"
 )
+finalize_figure(plt.gcf(), "step03_delta_sd_c1.png")
 
 gnss_edu.plot_sd_derivative_by_prn(
     df_SD,
@@ -1133,6 +1163,7 @@ gnss_edu.plot_sd_derivative_by_prn(
     gap=gap_inc,
     title="ΔSD_L1 between consecutive epochs (meters, phase converted)"
 )
+finalize_figure(plt.gcf(), "step03_delta_sd_l1.png")
 
 if "SD_L2" in df_SD.columns:
     gnss_edu.plot_sd_derivative_by_prn(
@@ -1143,6 +1174,7 @@ if "SD_L2" in df_SD.columns:
         gap=gap_inc,
         title="ΔSD_L2 between consecutive epochs (meters, phase converted)"
     )
+    finalize_figure(plt.gcf(), "step03_delta_sd_l2.png")
 else:
     print("Note: SD_L2 not available in df_SD (skipped).")
 
@@ -1161,6 +1193,7 @@ gnss_edu.plot_sd_derivative_by_prn(
     gap=gap_inc,
     title="d(SD_C1)/dt (m/s)"
 )
+finalize_figure(plt.gcf(), "step03_dsd_dt_c1.png")
 
 gnss_edu.plot_sd_derivative_by_prn(
     df_SD,
@@ -1170,6 +1203,7 @@ gnss_edu.plot_sd_derivative_by_prn(
     gap=gap_inc,
     title="d(SD_L1)/dt (m/s, phase converted)"
 )
+finalize_figure(plt.gcf(), "step03_dsd_dt_l1.png")
 
 if "SD_L2" in df_SD.columns:
     gnss_edu.plot_sd_derivative_by_prn(
@@ -1180,6 +1214,7 @@ if "SD_L2" in df_SD.columns:
         gap=gap_inc,
         title="d(SD_L2)/dt (m/s, phase converted)"
     )
+    finalize_figure(plt.gcf(), "step03_dsd_dt_l2.png")
     
 
 
@@ -1237,6 +1272,7 @@ def plot_tracking_timeline_from_mask(
     mask_col: str,
     sampling: pd.Timedelta,
     title: str,
+    output_name: str | None = None,
 ):
     """Plot a black/white tracking timeline from a boolean availability mask."""
     if mask_col not in df.columns:
@@ -1276,7 +1312,8 @@ def plot_tracking_timeline_from_mask(
     ax.set_title(title)
 
     plt.tight_layout()
-    plt.show()
+    if output_name is not None:
+        finalize_figure(fig, output_name)
     return fig, ax
 
 
@@ -1288,6 +1325,7 @@ def plot_tracking_timeline_colored(
     cmap: str = "viridis",
     vmin: float | None = None,
     vmax: float | None = None,
+    output_name: str | None = None,
 ):
     """Plot satellite presence with color driven by a per-epoch value."""
     if value_col not in df.columns:
@@ -1333,7 +1371,103 @@ def plot_tracking_timeline_colored(
     cbar.set_label(value_col)
 
     plt.tight_layout()
-    plt.show()
+    if output_name is not None:
+        finalize_figure(fig, output_name)
+    return fig, ax
+
+
+def plot_elevation_timeseries_with_active_pivot(
+    df: pd.DataFrame,
+    active_pivot: pd.Series,
+    elev_col: str,
+    sampling: pd.Timedelta,
+    gap: pd.Timedelta,
+    elevation_floor_deg: float | None = None,
+    title: str | None = None,
+    output_name: str | None = None,
+):
+    """
+    Plot elevation time series by PRN and highlight active pivot segments.
+
+    Thin lines show all satellite elevation arcs.
+    Thick lines show the epochs where the satellite is the active pivot.
+    """
+    if not isinstance(df.index, pd.MultiIndex):
+        raise ValueError("df must have a MultiIndex (epoch, prn).")
+    if elev_col not in df.columns:
+        raise ValueError(f"Column '{elev_col}' not found in df.")
+
+    prns = df.index.get_level_values("prn").unique()
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    for prn in prns:
+        data = df.xs(prn, level="prn")[[elev_col]].copy().sort_index()
+        data = data.dropna(subset=[elev_col])
+        if data.empty:
+            continue
+
+        dt = data.index.to_series().diff()
+        seg_id = (dt > gap).cumsum()
+
+        color = None
+        for _, seg in data.groupby(seg_id):
+            if seg.empty:
+                continue
+
+            line, = ax.plot(
+                seg.index,
+                seg[elev_col].to_numpy(),
+                linewidth=1.0,
+                alpha=0.6,
+                color=color,
+            )
+
+            if color is None:
+                color = line.get_color()
+
+            pivot_mask = active_pivot.reindex(seg.index) == prn
+            pivot_seg = seg.loc[pivot_mask.fillna(False)]
+            if pivot_seg.empty:
+                continue
+
+            dt_pivot = pivot_seg.index.to_series().diff()
+            pivot_subseg_id = (dt_pivot > gap).cumsum()
+            for _, pivot_subseg in pivot_seg.groupby(pivot_subseg_id):
+                if pivot_subseg.empty:
+                    continue
+                ax.plot(
+                    pivot_subseg.index,
+                    pivot_subseg[elev_col].to_numpy(),
+                    color=color,
+                    linewidth=3.5,
+                    alpha=1.0,
+                )
+
+    if elevation_floor_deg is not None:
+        ax.axhline(
+            elevation_floor_deg,
+            color="red",
+            linestyle="--",
+            linewidth=1.2,
+            label=f"Elevation floor = {elevation_floor_deg:.0f} deg",
+        )
+
+    if title is None:
+        title = (
+            "Elevation time series by satellite PRN (BASE)\n"
+            "Active pivot segments highlighted in bold"
+        )
+
+    ax.set_title(title)
+    ax.set_xlabel("Time (epoch)")
+    ax.set_ylabel("Elevation angle [deg]")
+
+    if elevation_floor_deg is not None:
+        ax.legend(loc="upper right")
+
+    plt.tight_layout()
+    if output_name is not None:
+        finalize_figure(fig, output_name)
     return fig, ax
 
 
@@ -1357,7 +1491,7 @@ def build_observable_compatibility_mask(
 def build_pivot_support_dataframe(
     df: pd.DataFrame,
     elev_col: str,
-    elev_cutoff_deg: float,
+    elev_floor_deg: float,
     snr_col: str,
     snr_min: float,
     required_observables: tuple[str, ...],
@@ -1371,12 +1505,13 @@ def build_pivot_support_dataframe(
     """
     df_out = df.copy()
 
-    df_out["pivot_elev_ok"] = df_out[elev_col] >= elev_cutoff_deg
+    df_out["pivot_elev_ok"] = df_out[elev_col] >= elev_floor_deg
     df_out["pivot_snr_ok"] = df_out[snr_col].notna() & (df_out[snr_col] >= snr_min)
     df_out["pivot_obs_ok"] = build_observable_compatibility_mask(
         df_out,
         required_observables=required_observables,
     )
+    df_out["pivot_elev_obs_ok"] = df_out["pivot_elev_ok"] & df_out["pivot_obs_ok"]
     df_out["pivot_elev_snr_ok"] = df_out["pivot_elev_ok"] & df_out["pivot_snr_ok"]
     df_out["pivot_usable"] = df_out["pivot_elev_snr_ok"] & df_out["pivot_obs_ok"]
     df_out[support_col] = df_out[snr_col].where(df_out["pivot_usable"])
@@ -1384,15 +1519,139 @@ def build_pivot_support_dataframe(
     return df_out
 
 
+def build_active_pivot_schedule_from_elevation(
+    df: pd.DataFrame,
+    usable_col: str,
+    elev_col: str,
+    sampling: pd.Timedelta,
+    keep_top_rank: int = 2,
+    switch_margin_deg: float = 3.0,
+) -> pd.Series:
+    """
+    Build an active pivot schedule driven by elevation dominance.
+
+    The active pivot is kept as long as it remains usable and still belongs to
+    the top-ranked satellites in elevation, unless another candidate becomes
+    clearly better by more than `switch_margin_deg`.
+    """
+    if not isinstance(df.index, pd.MultiIndex):
+        raise ValueError("df must have MultiIndex ('epoch','prn').")
+    if usable_col not in df.columns:
+        raise ValueError(f"usable_col='{usable_col}' not found in df.")
+    if elev_col not in df.columns:
+        raise ValueError(f"elev_col='{elev_col}' not found in df.")
+
+    epochs_obs = df.index.get_level_values("epoch")
+    t0, t1 = epochs_obs.min(), epochs_obs.max()
+    grid = pd.date_range(start=t0, end=t1, freq=sampling)
+
+    active = None
+    out = {}
+
+    for epoch in grid:
+        try:
+            row = df.xs(epoch, level="epoch").copy()
+        except KeyError:
+            out[epoch] = None
+            active = None
+            continue
+
+        cand = row.loc[row[usable_col].fillna(False).astype(bool)]
+        cand = cand.dropna(subset=[elev_col])
+
+        if cand.empty:
+            out[epoch] = None
+            active = None
+            continue
+
+        cand = cand.sort_values(elev_col, ascending=False)
+        best_prn = cand.index[0]
+        best_elev = float(cand.iloc[0][elev_col])
+        top_prns = set(cand.index[:max(1, keep_top_rank)])
+
+        if active is None or active not in cand.index:
+            active = best_prn
+        else:
+            current_elev = float(cand.loc[active, elev_col])
+            if active not in top_prns and best_elev > current_elev + switch_margin_deg:
+                active = best_prn
+
+        out[epoch] = active
+
+    return pd.Series(out, name="active_pivot")
+
+
+def fill_active_pivot_gaps(
+    df: pd.DataFrame,
+    active_pivot: pd.Series,
+    elev_col: str,
+    sampling: pd.Timedelta,
+    fallback_usable_cols: tuple[str, ...] = ("pivot_elev_obs_ok", "pivot_obs_ok"),
+) -> tuple[pd.Series, pd.DataFrame]:
+    """
+    Fill None epochs in an active pivot schedule using relaxed fallback rules.
+
+    Fallback order is applied epoch by epoch:
+      1) keep elevation + observables, ignore SNR
+      2) keep observables only, use the highest-elevation candidate available
+    """
+    if elev_col not in df.columns:
+        raise ValueError(f"elev_col='{elev_col}' not found in df.")
+
+    epochs_obs = df.index.get_level_values("epoch")
+    t0, t1 = epochs_obs.min(), epochs_obs.max()
+    grid = pd.date_range(start=t0, end=t1, freq=sampling)
+
+    ap = active_pivot.reindex(grid).copy()
+    fallback_records = []
+
+    for epoch in grid[ap.isna()]:
+        try:
+            row = df.xs(epoch, level="epoch").copy()
+        except KeyError:
+            continue
+
+        chosen_prn = None
+        chosen_rule = None
+
+        for usable_col in fallback_usable_cols:
+            if usable_col not in row.columns:
+                continue
+            cand = row.loc[row[usable_col].fillna(False).astype(bool)]
+            cand = cand.dropna(subset=[elev_col])
+            if cand.empty:
+                continue
+
+            cand = cand.sort_values(elev_col, ascending=False)
+            chosen_prn = cand.index[0]
+            chosen_rule = usable_col
+            break
+
+        if chosen_prn is not None:
+            ap.loc[epoch] = chosen_prn
+            fallback_records.append(
+                {
+                    "epoch": epoch,
+                    "pivot_prn": chosen_prn,
+                    "fallback_rule": chosen_rule,
+                    "elevation_deg": float(row.loc[chosen_prn, elev_col]),
+                }
+            )
+
+    fallback_df = pd.DataFrame(fallback_records)
+    return ap.rename("active_pivot"), fallback_df
+
+
 ###############################################################################
 # Pivot satellites for Double Differences (DD)
 # --------------------------------------------
 # Progressive pedagogical strategy:
 #   0) inspect raw availability,
-#   1) apply an elevation mask,
+#   1) inspect elevation-driven visibility,
 #   2) refine with SNR,
 #   3) keep only satellites compatible with required observables,
-#   4) build a minimal and stable pivot schedule over the full session.
+#   4) choose a pivot that stays among the highest satellites for as long as possible,
+#   5) stabilize pivot changes to avoid short unnecessary switches.
 #
 # Pedagogical assumption
 # ----------------------
@@ -1411,10 +1670,11 @@ snr_col = SNR_COLUMN
 elev_col = PIVOT_ELEVATION_COLUMN
 sampling = RINEX_SAMPLING
 gap_arc = ARC_GAP
-elev_cutoff_deg = PIVOT_ELEVATION_CUTOFF_DEG
+elev_floor_deg = PIVOT_ELEVATION_FLOOR_DEG
 snr_min = PIVOT_SNR_MIN
 required_observables = PIVOT_REQUIRED_OBSERVABLES
-switch_margin_db = PIVOT_SWITCH_MARGIN_DB
+keep_top_rank = PIVOT_KEEP_TOP_RANK
+switch_margin_deg = PIVOT_ELEVATION_SWITCH_MARGIN_DEG
 support_col = "pivot_support_score"
 
 base_receiver_xyz = extract_approx_position_from_rinex_header(rinex_base_header)
@@ -1431,7 +1691,7 @@ print(df_base_sat[elev_col].describe())
 df_base_pivot = build_pivot_support_dataframe(
     df=df_base_sat,
     elev_col=elev_col,
-    elev_cutoff_deg=elev_cutoff_deg,
+    elev_floor_deg=elev_floor_deg,
     snr_col=snr_col,
     snr_min=snr_min,
     required_observables=required_observables,
@@ -1440,12 +1700,13 @@ df_base_pivot = build_pivot_support_dataframe(
 
 print("\n=== Pivot strategy parameters ===")
 print(f"Elevation column       : {elev_col}")
-print(f"Elevation cutoff [deg] : {elev_cutoff_deg}")
+print(f"Elevation floor [deg]  : {elev_floor_deg}")
+print(f"Keep top rank          : {keep_top_rank}")
+print(f"Elevation margin [deg] : {switch_margin_deg}")
 print(f"SNR observable         : {snr_col}")
 print(f"SNR threshold          : {snr_min}")
 print(f"Required observables   : {required_observables}")
 print(f"Sampling               : {sampling}")
-print(f"Hysteresis             : {switch_margin_db} SNR units")
 
 # --------------------------------------------------
 # Level 0 — Raw satellite availability
@@ -1457,12 +1718,33 @@ gnss_edu.plot_tracking_timeline(
     sampling=sampling,
     title="Raw tracking timeline at BASE (present / missing)",
 )
+finalize_figure(plt.gcf(), "step03_base_raw_tracking_timeline.png")
 
 # --------------------------------------------------
 # Level 1 — Elevation-driven availability
 # --------------------------------------------------
 print("\n[1/4] Elevation-based availability")
-print("Color = elevation angle. The cutoff removes the low-elevation arc edges.")
+print("Color = elevation angle. The floor only removes the lowest, least useful points.")
+
+fig, ax = gnss_edu.plot_gnss_timeseries_by_prn(
+    df_base_pivot,
+    y=elev_col,
+    gap=gap_arc,
+    label_arcs=True,
+    show_legend=False,
+    title=f"{elev_col} time series by satellite PRN (BASE)",
+    ylabel="Elevation angle [deg]",
+)
+ax.axhline(
+    elev_floor_deg,
+    color="red",
+    linestyle="--",
+    linewidth=1.2,
+    label=f"Elevation floor = {elev_floor_deg:.0f} deg",
+)
+ax.legend(loc="upper right")
+plt.tight_layout()
+finalize_figure(fig, "step03_elevation_by_prn_base.png")
 
 plot_tracking_timeline_colored(
     df_base_pivot,
@@ -1472,13 +1754,15 @@ plot_tracking_timeline_colored(
     cmap="viridis",
     vmin=0.0,
     vmax=90.0,
+    output_name="step03_tracking_colored_elevation.png",
 )
 
 plot_tracking_timeline_from_mask(
     df_base_pivot,
     mask_col="pivot_elev_ok",
     sampling=sampling,
-    title=f"Tracking above elevation cutoff ({elev_cutoff_deg:.0f} deg)",
+    title=f"Tracking above elevation floor ({elev_floor_deg:.0f} deg)",
+    output_name="step03_tracking_mask_elevation_floor.png",
 )
 
 # --------------------------------------------------
@@ -1494,6 +1778,7 @@ gnss_edu.plot_gnss_timeseries_by_prn(
     show_legend=False,
     title=f"{snr_col} time series by satellite PRN (BASE)",
 )
+finalize_figure(plt.gcf(), "step03_snr_by_prn_base.png")
 
 plot_tracking_timeline_from_mask(
     df_base_pivot,
@@ -1501,8 +1786,9 @@ plot_tracking_timeline_from_mask(
     sampling=sampling,
     title=(
         f"Tracking after elevation + SNR filters "
-        f"({elev_cutoff_deg:.0f} deg, {snr_col} >= {snr_min:g})"
+        f"({elev_floor_deg:.0f} deg, {snr_col} >= {snr_min:g})"
     ),
+    output_name="step03_tracking_mask_elevation_snr.png",
 )
 
 # --------------------------------------------------
@@ -1526,6 +1812,7 @@ plot_tracking_timeline_from_mask(
         "Tracking after elevation + SNR + observable compatibility "
         f"{required_observables}"
     ),
+    output_name="step03_tracking_mask_pivot_usable.png",
 )
 
 obs_compat_per_prn = (
@@ -1539,39 +1826,52 @@ print("\nUsable epochs per PRN after all cumulative filters:")
 display(obs_compat_per_prn)
 
 # --------------------------------------------------
-# Level 4 — Minimal coverage + stable pivot schedule
+# Level 4 — Elevation-dominant pivot schedule
 # --------------------------------------------------
-print("\n[4/4] Minimal pivot set cover and stable active schedule")
-
-selected_prns, diag = gnss_edu.greedy_pivot_set_cover(
-    df=df_base_pivot,
-    snr_col=support_col,
-    snr_min=0.0,
-    sampling=sampling,
-    require_full_coverage=True,
-    return_diagnostics=True,
+print("\n[4/4] Long high-elevation arcs and stable active schedule")
+print(
+    "The pivot is kept as long as it remains usable and still belongs to the "
+    f"top {keep_top_rank} satellites in elevation."
 )
 
-print("\nCandidate pivot satellites:", selected_prns)
-print("Number of pivots selected :", diag["n_selected"])
-print("Coverage ratio            :", diag["coverage_ratio"])
-print("Uncovered epochs          :", diag["n_uncovered"])
-
-active_pivot = gnss_edu.build_active_pivot_schedule(
+active_pivot = build_active_pivot_schedule_from_elevation(
     df=df_base_pivot,
-    selected_prns=selected_prns,
-    snr_col=support_col,
-    snr_min=0.0,
+    usable_col="pivot_usable",
+    elev_col=elev_col,
     sampling=sampling,
-    switch_margin_db=switch_margin_db,
+    keep_top_rank=keep_top_rank,
+    switch_margin_deg=switch_margin_deg,
 )
 
 cov = gnss_edu.check_full_coverage_from_active_pivot(active_pivot)
 print("Coverage check before stability post-processing:", cov)
+
+if cov["n_none"] > 0:
+    print(
+        "Some epochs remain uncovered after the strict pivot filters. "
+        "Trying a fallback strategy that first relaxes SNR, then elevation."
+    )
+    active_pivot, pivot_gap_fallbacks = fill_active_pivot_gaps(
+        df=df_base_pivot,
+        active_pivot=active_pivot,
+        elev_col=elev_col,
+        sampling=sampling,
+        fallback_usable_cols=("pivot_elev_obs_ok", "pivot_obs_ok"),
+    )
+    cov = gnss_edu.check_full_coverage_from_active_pivot(active_pivot)
+    print("Coverage check after fallback gap filling:", cov)
+    if "pivot_gap_fallbacks" in locals() and not pivot_gap_fallbacks.empty:
+        print("Fallback epochs used to maintain coverage:")
+        display(pivot_gap_fallbacks.head(20))
+
 assert cov["n_none"] == 0, (
-    "Active pivot has gaps after the cumulative filters. "
-    "Relax one of the filters or revise the observable requirement."
+    "Active pivot still has gaps after fallback filling. "
+    "Relax the filters further or revise the observable requirement."
 )
+
+selected_prns = sorted(active_pivot.dropna().unique())
+print("\nCandidate pivot satellites from elevation-dominant schedule:", selected_prns)
+print("Number of pivots used before post-processing:", len(selected_prns))
 
 active_pivot = gnss_edu.fix_short_pivot_segments(
     df=df_base_pivot,
@@ -1600,6 +1900,9 @@ assert cov["n_none"] == 0, (
     "Relax the stability constraints or the candidate filters."
 )
 
+selected_prns = sorted(active_pivot.dropna().unique())
+print("Number of pivots used after post-processing:", len(selected_prns))
+
 fig, ax, info = gnss_edu.plot_tracking_timeline_with_pivots(
     df=df_base_pivot,
     selected_prns=selected_prns,
@@ -1608,9 +1911,25 @@ fig, ax, info = gnss_edu.plot_tracking_timeline_with_pivots(
     snr_min=0.0,
     active_pivot=active_pivot,
     title=(
-        "Final pivot strategy after elevation + SNR + observable compatibility "
-        "+ stable scheduling"
+        "Final pivot strategy: long arcs among the highest-elevation satellites\n"
+        f"with observable compatibility {required_observables}, "
+        "SNR screening, and stabilized pivot changes"
     ),
+)
+finalize_figure(fig, "step03_tracking_with_active_pivots.png")
+
+plot_elevation_timeseries_with_active_pivot(
+    df=df_base_pivot,
+    active_pivot=active_pivot,
+    elev_col=elev_col,
+    sampling=sampling,
+    gap=gap_arc,
+    elevation_floor_deg=elev_floor_deg,
+    title=(
+        "Conclusion on pivot choice: elevation time series by satellite PRN (BASE)\n"
+        "Active pivot periods highlighted in bold"
+    ),
+    output_name="step03_elevation_active_pivot.png",
 )
 
 

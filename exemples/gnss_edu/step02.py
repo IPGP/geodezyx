@@ -83,6 +83,7 @@ import gc
 import os
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -100,6 +101,8 @@ from geodezyx import reffram
 
 PROCESSING_DATE = dt.datetime(2019, 6, 25)
 WORK_DIR = Path(os.environ["HOME"]).expanduser() / "gnss_edu_data"
+FIGURES_DIR = WORK_DIR / "figures"
+SHOW_FIGURES = False
 
 # Two permanent GNSS stations about 10 km apart in the Paris region
 BASE_STATION = "SMNE"
@@ -119,8 +122,19 @@ POSITION_CONVERGENCE_THRESHOLD_M = 1.0
 print("Configuration loaded.")
 print("Processing date            :", PROCESSING_DATE)
 print("Working directory          :", WORK_DIR)
+print("Figures directory          :", FIGURES_DIR)
+print("Show figures               :", SHOW_FIGURES)
 print("Satellite system           :", SATELLITE_SYSTEM)
 print("Preferred code observable  :", CODE_OBSERVABLE)
+
+WORK_DIR.mkdir(parents=True, exist_ok=True)
+FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+
+if SHOW_FIGURES:
+    plt.ion()
+else:
+    plt.ioff()
+    plt.show = lambda *args, **kwargs: None
 
 
 # %%
@@ -224,6 +238,18 @@ def store_solution(
     print("Residual RMS [m]               :", residual_rms)
     print("Iterations                     :", n_iterations)
     print()
+
+
+def finalize_figure(fig, output_name, show=SHOW_FIGURES):
+    """Save a figure to disk and optionally display it."""
+    output_path = FIGURES_DIR / output_name
+    fig.savefig(output_path, dpi=150, bbox_inches="tight")
+    print(f"Figure saved: {output_path}")
+
+    if show:
+        fig.show()
+
+    plt.close(fig)
 
 
 def summarize_solutions(solutions_dict: dict) -> pd.DataFrame:
@@ -1495,7 +1521,6 @@ gc.collect()
 ###############################################################################
 # Plot the estimated ZTD parameters as a piecewise-constant function
 ###############################################################################
-import matplotlib.pyplot as plt
 
 if "M5_tropo_simple" not in solutions:
     print("No M5_tropo_simple solution available.")
@@ -1529,7 +1554,7 @@ else:
     ax.set_ylabel("ZTD [m]")
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.show()
+    finalize_figure(fig, "step02_ztd_piecewise_constant.png")
 
 
 # %%
