@@ -42,7 +42,7 @@ log = logging.getLogger("geodezyx")
 
 def rinex_table_from_list(
     rnxs_inp,
-    site9_col=False,
+    site9_col=True,
     round_date=False,
     path_col=True,
     size_col=False,
@@ -85,14 +85,18 @@ def rinex_table_from_list(
     df["site4"] = df["name"].str[:4].str.lower()
 
     if site9_col:
-        df["site9"] = df["name"].str[:9].str.lower()
+        df["site9"] = df["name"].str[:9].str.upper()
         # Set generic 9-char name if 4 char name file
         bool_new_name = df["name"].str.match(conv.rinex_regex_long_name())
         bool_old_name = np.logical_not(bool_new_name)
         site9_generic = df["site4"].str.upper() + "00XXX"
         df.loc[bool_old_name, "site9"] = site9_generic[bool_old_name]
 
-    df["date"] = df["name"].apply(conv.rinexname2dt)
+    d, per, smp = conv.rinexname2dt(df["name"].to_list(), True)
+    df["date"] = d
+    df["per"] = per
+    df["smp"] = smp
+
     if round_date:
         df["date"] = conv.round_dt(df["date"].values, "1D", True, "floor")
     doy_year = df["date"].apply(conv.dt2doy_year)

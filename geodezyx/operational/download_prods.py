@@ -3,33 +3,34 @@
 """
 @author: psakic
 This sub-module of geodezyx.operational contains functions to download
-gnss data and products from distant IGS servers. 
+gnss data and products from distant IGS servers.
 it can be imported directly with:
 from geodezyx import operational
-The geodezyx toolbox is a software for simple but useful
+The GeodeZYX Toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
 GitHub repository :
-https://github.com/IPGP/geodezyx
+https://github.com/GeodeZYX/geodezyx-toolbox
 """
 
 ########## BEGIN IMPORT ##########
 #### External modules
 import itertools
+
 #### Import the logger
 import logging
 import multiprocessing as mp
 import os
 import re
 import shutil
-import datetime as dt
 
 import numpy as np
 
 #### geodeZYX modules
 from geodezyx import conv, utils
 import geodezyx.operational.download_utils as dlutils
-log = logging.getLogger('geodezyx')
+
+log = logging.getLogger("geodezyx")
 
 ##########  END IMPORT  ##########
 
@@ -50,7 +51,7 @@ log = logging.getLogger('geodezyx')
 def download_gnss_products(
     archive_dir,
     startdate,
-    enddate,
+    enddate=None,
     AC_names=("wum", "cod"),
     prod_types=("sp3", "clk"),
     remove_patterns=("ULA",),
@@ -72,13 +73,14 @@ def download_gnss_products(
     ----------
     archive_dir : str
         the parent directory where the products will be stored.
-    startdate : dt.datetime
+    startdate : datetime or list of datetime
         the start date in regular calendar date.
-    enddate : dt.datetime
-        the end date in regular calendar date..
+    enddate : datetime or None
+        the end date in regular calendar date.
+        If None, only the startdate is be considered as a date list.
     AC_names : tuple, optional
         the names of the wished analysis centers.
-        It also controls the product's lattency with the new naming convention:
+        It also control the product's lattency with the new naming convention:
         simply add it completly in the AC name e.g. IGS0OPSRAP
         The default is ("wum","cod").
     prod_types : tuple, optional
@@ -154,49 +156,58 @@ def download_gnss_products(
     log.info("mgex/repro : %s/%s", mgex, repro)
 
     if archive_center == "cddis":
-        arch_center_main = "gdc.cddis.eosdis.nasa.gov"
-        arch_center_basedir = "/pub/gps/products/" + mgex_str
+        dc_url = "gdc.cddis.eosdis.nasa.gov"
+        dc_basedir = "/pub/gps/products/" + mgex_str
         ftp_download = True
         secure_ftp = True
         parallel_download = 1
         log.info("cddis as data center, FTP and no parallel download forced")
 
     elif archive_center == "cddis_glonass":
-        arch_center_main = "cddis.gsfc.nasa.gov"
-        arch_center_basedir = "/pub/glonass/products/" + mgex_str
+        dc_url = "cddis.gsfc.nasa.gov"
+        dc_basedir = "/pub/glonass/products/" + mgex_str
+
+    elif archive_center == "esa":
+        dc_url = "gssc.esa.int"
+        dc_basedir = "/gnss/products/" + mgex_str
 
     elif archive_center == "ign":
-        arch_center_main = "igs.ign.fr"
-        arch_center_basedir = "/pub/igs/products/" + mgex_str
+        dc_url = "igs.ign.fr"
+        dc_basedir = "/pub/igs/products/" + mgex_str
 
     elif archive_center == "ign_iono":
-        arch_center_main = "igs-rf.ign.fr"
-        arch_center_basedir = "/pub/"
+        dc_url = "igs-rf.ign.fr"
+        dc_basedir = "/pub/"
 
     elif archive_center == "ensg":
-        arch_center_main = "igs.ensg.ign.fr"
-        arch_center_basedir = "/pub/igs/products/" + mgex_str
+        dc_url = "igs.ensg.ign.fr"
+        dc_basedir = "/pub/igs/products/" + mgex_str
 
     elif archive_center == "whu":
-        arch_center_main = "igs.gnsswhu.cn"
-        arch_center_basedir = "/pub/gps/products/" + mgex_str
+        dc_url = "igs.gnsswhu.cn"
+        dc_basedir = "/pub/gps/products/" + mgex_str
 
     elif archive_center == "ign_rf":
-        arch_center_main = "igs-rf.ign.fr"
-        arch_center_basedir = "/pub/" + mgex_str
+        dc_url = "igs-rf.ign.fr"
+        dc_basedir = "/pub/" + mgex_str
 
     elif archive_center == "ensg_rf":
-        arch_center_main = "igs-rf.ensg.ign.fr"
-        arch_center_basedir = "/pub/" + mgex_str
+        dc_url = "igs-rf.ensg.ign.fr"
+        dc_basedir = "/pub/" + mgex_str
 
     elif archive_center == "acc_xpr_mgex_cmb":
         ##### DO NOT WORK !!!!!
         ## and this archive is not mainteed anyway (2023-01)
-        arch_center_main = "http://igsacc.s3-eu-central-1.amazonaws.com/products/mgex/final/2069/igm20694.sp3.Z"
+        dc_url = "http://igsacc.s3-eu-central-1.amazonaws.com/products/mgex/final/2069/igm20694.sp3.Z"
         ftp_download = False
         log.info("ACC experimental mgex combi. as data center, HTTP download forced")
 
-    dates_list = conv.dt_range(startdate, enddate)
+    if enddate:
+        dates_list = conv.dt_range(startdate, enddate)
+    elif utils.is_iterable(startdate):
+        dates_list = startdate
+    else:
+        dates_list = [startdate]
 
     wwww_dir_previous = None
     if parallel_download > 1:
@@ -224,10 +235,10 @@ def download_gnss_products(
         else:
             dow = str(dow_manu)
 
-        log.info(
-            "*** Search prods. for %s-%s, AC/prod: %s/%s", wwww, dow, ac_cur, prod_cur
-        )
-        wwww_dir = os.path.join(arch_center_basedir, str(wwww), repro_str)
+        msgstr = f"{wwww}-{dow} ({dt_cur}) AC/prod: {ac_cur}/{prod_cur}"
+
+        log.info("*** Search prods. for %s", msgstr)
+        wwww_dir = os.path.join(dc_basedir, str(wwww), repro_str)
 
         n_ftp_ask = 500  ## Max interrogation of the FTP server to avoid
         ## potential errors
@@ -237,7 +248,7 @@ def download_gnss_products(
             log.info("Create a new FTP instance")
 
             ftp, ftp_obj_list = dlutils.ftp_objt_create(
-                secure_ftp_inp=secure_ftp, host=arch_center_main
+                secure_ftp_inp=secure_ftp, host=dc_url
             )
 
         if wwww_dir_previous != wwww_dir or np.mod(ipatt_tup, n_ftp_ask) == 0:
@@ -293,7 +304,7 @@ def download_gnss_products(
         files = files + files_new_nam
 
         if len(files) == 0:
-            log.warning("no product found for" + " %s" * len(patt_tup), *patt_tup)
+            log.warning("no product found for %s", msgstr)
             # log.warning("found files: %s",files_listed_in_ftp)
 
         files_remote_date_list = files_remote_date_list + files
@@ -332,12 +343,12 @@ def download_gnss_products(
                         )
                     else:
                         downld_tuples_list.append(
-                            (arch_center_main, wwww_dir, filchunk, archive_dir_specif)
+                            (dc_url, wwww_dir, filchunk, archive_dir_specif)
                         )
         else:  ### HTTP download
             downld_tuples_list = itertools.product(
                 [
-                    "/".join(("ftp://" + arch_center_main, wwww_dir, f))
+                    "/".join(("ftp://" + dc_url, wwww_dir, f))
                     for f in files_remote_date_list
                 ],
                 [archive_dir_specif],
@@ -559,30 +570,30 @@ def multi_downloader_orbs_clks(
         Calc center can be a string or a list, describing the calc center.
         Examples: 'igs', 'grg', 'cod', 'jpl', etc. Default is "igs".
     sp3clk : str, optional
-        Product type. Can handle: 'clk', 'clk_30s', 'sp3', 'snx', 'sum', 
+        Product type. Can handle: 'clk', 'clk_30s', 'sp3', 'snx', 'sum',
         'erp', 'bia'. Default is "sp3".
     archtype : str, optional
         String describing how the archive directory is structured.
-        Examples: 'stat', 'stat/year', 'stat/year/doy', 'year/doy', 
+        Examples: 'stat', 'stat/year', 'stat/year/doy', 'year/doy',
         'year/stat', 'week/dow/stat', etc. Default is "year/doy".
     parallel_download : int, optional
         Number of parallel downloads. Default is 4.
     archive_center : str, optional
-        Server of download, "regular" IGS or MGEX. Can handle: 'cddis', 
-        'cddis_mgex', 'cddis_mgex_longname', 'ign', 'ign_mgex', 
+        Server of download, "regular" IGS or MGEX. Can handle: 'cddis',
+        'cddis_mgex', 'cddis_mgex_longname', 'ign', 'ign_mgex',
         'ign_mgex_longname', 'gfz_local'. Default is "ign".
     repro : int, optional
         Number of the IGS reprocessing (0 = routine processing). Default is 0.
     sorted_mode : bool, optional
-        If False, uses the map multiprocess function so the download order 
-        will be scrambled. If True, uses the apply multiprocess function so 
-        the download order will be in chronological order. The scrambled 
-        (False) is better because it doesn't create zombie processes. 
+        If False, uses the map multiprocess function so the download order
+        will be scrambled. If True, uses the apply multiprocess function so
+        the download order will be in chronological order. The scrambled
+        (False) is better because it doesn't create zombie processes.
         Default is False.
     force_weekly_file : bool, optional
         Force download of weekly files. Default is False.
     return_also_uncompressed_files : bool, optional
-        Include already downloaded and uncompressed files in the final list 
+        Include already downloaded and uncompressed files in the final list
         output. Default is True.
 
     Returns
@@ -596,7 +607,7 @@ def multi_downloader_orbs_clks(
 
     Notes
     -----
-    This function can manage MGEX products by setting the appropriate 
+    This function can manage MGEX products by setting the appropriate
     archive_center
     """
 

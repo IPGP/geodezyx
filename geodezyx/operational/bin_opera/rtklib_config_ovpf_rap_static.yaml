@@ -1,0 +1,50 @@
+# RTKLIB Processing Configuration Example
+# Use with: rtklib_run -y rtklib_config_ovpf_ult.yaml
+
+# Required parameters
+rnx_dir:
+  - /vol/ovpf/miroir_ovpf/DonneesTemporaires/Geodesy/GNSS/RINEX/15M01S/   # Directory containing RINEX files
+  - /home/ovsgnss/050_DATA_GNSS/data_centipede_reu/B59300REU
+cfgfile_generik: /opt/softs_gnss/geodezyx/exemples/rtklib_configfiles/rtknavi_example_ovpf_01b.conf  # RTKLIB configuration file
+sites_rovers:                                     # List of rover stations
+  - BOMG00REU
+  - BORG00REU
+  - CFNG00REU
+  - DERG00REU
+  - DSRG00REU
+  - SNEG00REU
+  - GITG00REU
+sites_bases:
+  - GITG00REU              # Base station
+  - B59300REU              # Base station
+out_dir: /backuped/calcgnss/rtklib_process/OVPF_static_RAP  # Output directory
+
+# Optional parameters
+exp_prefix: OVPF_static_RAP                          # Output filename prefix (default: empty)
+igs_prods: GRG0OPSRAP                                      # IGS product ID (default: GRG0OPSULT)
+tmp_dir: /backuped/calcgnss/rtklib_process/090_TMP         # Temporary directory (default: <out_dir>/TMP)
+prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib   # GNSS products directory (default: <tmp_dir>)
+
+# Date range (optional, processes all if not specified)
+date_srt: "7 days ago at 23:59"            # Start date (YYYY-MM-DD or YYYY-DDD)
+date_end: "2 days ago at 23:59"            # End date (YYYY-MM-DD or YYYY-DDD)
+
+# Station coordinates (optional, uses RINEX header if not provided)
+xyz_dic:
+  GITG00REU: [+3.354343977502337e06, +4.914925760476323e06, -2.294766603476249e06]
+  B59300REU: [3364606.0383,  4907503.0340, -2293500.0091]
+
+# RTKLIB configuration overrides (optional)
+posmode: static  # Position mode: 0:single,1:dgps,2:kinematic,3:static,4:static-start,5:movingbase,6:fixed,7:ppp-kine,8:ppp-static,9:ppp-fixed
+solformat: xyz   # Solution format: llh, xyz, enu, nmea
+sateph: precise  # Satellite ephemeris: brdc, precise, brdc+sbas, brdc+ssrapc, brdc+ssrcom
+
+# Processing options
+force: False     # Force reprocessing (overwrite existing)
+keep_tmp: False  # Clean temporary directory after processing
+procs: 6         # Number of parallel workers (default: 4)
+
+# Executable path (optional)
+exe_path: rnx2rtkp
+
+
