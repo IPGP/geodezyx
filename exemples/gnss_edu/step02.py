@@ -126,13 +126,18 @@ print("Preferred code observable  :", CODE_OBSERVABLE)
 # Pedagogical roadmap
 ###############################################################################
 
-print("Step 02 roadmap")
-print("----------------")
-print("M0 : naive code-based positioning")
-print("M1 : add satellite clock and relativistic corrections")
-print("M2 : estimate one receiver clock parameter per epoch")
-print("M3 : add Earth-rotation (Sagnac) correction")
-print("Later extensions: ionosphere, troposphere, antenna effects")
+print(
+    "Step 02 roadmap\n"
+    "----------------\n"
+    "M0: basic code-based positioning\n"
+    "M1: add satellite clock and relativistic corrections\n"
+    "M2: estimate one receiver clock offset per epoch\n"
+    "M3: add Earth rotation (Sagnac) correction\n"
+    "M4: switch to the ionosphere-free code combination\n"
+    "M5: add simple tropospheric modeling\n"
+    "M6: apply carrier smoothing to the ionosphere-free code\n"
+    "Next steps: antenna phase-center effects"
+)
 
 # This dictionary stores the successive positioning solutions.
 # It is the main pedagogical backbone of Step 02.
@@ -1035,17 +1040,34 @@ if missing_if_obs:
 
 
 # -------------------------------------------------------------------------
-# Build the ionosphere-free observable
+# Build the first-order ionosphere-free code combination
+#
+# Principle
+# ---------
+# The first-order ionospheric delay scales as 1 / f^2. By combining two code
+# observables measured at different carrier frequencies, we eliminate this
+# dominant ionospheric term.
+#
+# Important consequence
+# ---------------------
+# The ionosphere-free code is less biased by the ionosphere, but it is noisier
+# than each original code observable taken separately.
 # -------------------------------------------------------------------------
 f1 = conv.L1_CARRIER_FREQUENCY
 f2 = conv.L2_CARRIER_FREQUENCY
-f1_2 = f1 ** 2
-f2_2 = f2 ** 2
+f1_sq = f1 ** 2
+f2_sq = f2 ** 2
 
 df_if = df_obs[required_if_obs].copy()
 df_if = df_if.dropna(subset=required_if_obs).copy()
 
-df_if["code_if_m"] = (f1_2 * df_if["C1"] - f2_2 * df_if["P2"]) / (f1_2 - f2_2)
+# P_IF = (f1^2 * P1 - f2^2 * P2) / (f1^2 - f2^2)
+# Here, C1 is used as the L1 code observable and P2 as the L2 code observable.
+df_if["code_if_m"] = (
+    f1_sq * df_if["C1"] - f2_sq * df_if["P2"]
+) / (f1_sq - f2_sq)
+
+
 
 # -------------------------------------------------------------------------
 # Reuse the satellite-state columns already available in df_code
@@ -1123,7 +1145,7 @@ while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
 # This makes the residual analysis physically meaningful, since each residual
 # remains linked to its observation context (epoch, PRN, elevation, etc.).
 df_residuals = gnss_edu.build_residual_dataframe(
-    df_obs_used=df_code,
+    df_obs_used=df_if,
     A=A,
     B=B,
     dP_est=dP_est,
@@ -1162,7 +1184,7 @@ store_solution(
 # -------------------------------------------------------------------------
 # Cleanup
 # -------------------------------------------------------------------------
-del f1, f2, f1_2, f2_2
+del f1, f2, f1_sq, f2_sq
 del block_dt_r, epoch_unique
 del P_app, dP_est, P_est, n_iter
 del distances, dX, dY, dZ, A, B
@@ -1368,7 +1390,7 @@ while np.linalg.norm(dP_est[0:3]) > POSITION_CONVERGENCE_THRESHOLD_M:
 # This makes the residual analysis physically meaningful, since each residual
 # remains linked to its observation context (epoch, PRN, elevation, etc.).
 df_residuals = gnss_edu.build_residual_dataframe(
-    df_obs_used=df_code,
+    df_obs_used=df_if,
     A=A,
     B=B,
     dP_est=dP_est,
@@ -1895,18 +1917,11 @@ print("  - df_summary : the final model comparison table")
 
 
 
-
-
-# %%
-
 # %%
 ###############################################################################
 # Export a compact LaTeX table with Model, short Description, and ENU components
 # ENU coordinates are rounded to the nearest millimeter.
 ###############################################################################
-
-import numpy as np
-import pandas as pd
 
 
 def solutions_to_latex_table_enu(
@@ -1928,62 +1943,76 @@ def solutions_to_latex_table_enu(
         "M3_sagnac": "M3",
         "M4_iono_free": "M4",
         "M5_tropo_simple": "M5",
+        "M6_code_phase_smoothing_forward": "M6",
+        "M6_code_phase_smoothing_forward_backward": "M6",
     }
 
     model_description_map = {
-    "M0_naive_code": "Naive code model (Geometry only)",
-    "M1_satellite_clock": "+ sat. clock + relativity",
-    "M2_receiver_clock": "+ receiver clock",
-    "M3_sagnac": "+ Earth rotation (Sagnac effect)",
-    "M4_iono_free": "+ iono-free code",
-    "M5_tropo_simple": "+ simple troposphere",
-}
+        "M0_naive_code": "Naive code model (Geometry only)",
+        "M1_satellite_clock": "+ sat. clock + relativity",
+        "M2_receiver_clock": "+ receiver clock",
+        "M3_sagnac": "+ Earth rotation (Sagnac effect)",
+        "M4_iono_free": "+ iono-free code",
+        "M5_tropo_simple": "+ simple troposphere",
+        "M6_code_phase_smoothing_forward": "+ carrier-smoothed iono-free code (forward Hatch)",
+        "M6_code_phase_smoothing_forward_backward": "+ carrier-smoothed iono-free code (forward-backward Hatch)",
+    }
 
     rows = []
 
-    for model_name, result in solutions.items():
-        enu = result.get("enu_error_m", [np.nan, np.nan, np.nan])
+    for key, sol in solutions.items():
+        if "enu_error_m" not in sol:
+            continue
 
-        rows.append({
-            "Model": model_name_map.get(model_name, model_name),
-            "Description": model_description_map.get(
-                model_name,
-                result.get("description", "")
-            ),
-            "E [m]": float(enu[0]),
-            "N [m]": float(enu[1]),
-            "U [m]": float(enu[2]),
-        })
+        enu = np.asarray(sol["enu_error_m"], dtype=float).ravel()
+        if enu.size != 3:
+            raise ValueError(
+                f"Solution '{key}' has an invalid 'enu_error_m'. Expected 3 values."
+            )
 
-    df_summary = pd.DataFrame(rows)
+        model = model_name_map.get(key, key)
+        description = model_description_map.get(key, sol.get("description", ""))
 
-    desired_order = ["M0", "M1", "M2", "M3", "M4", "M5"]
-    df_summary["Model"] = pd.Categorical(
-        df_summary["Model"],
+        rows.append(
+            {
+                "Model": model,
+                "Description": description,
+                "E [m]": enu[0],
+                "N [m]": enu[1],
+                "U [m]": enu[2],
+            }
+        )
+
+    df_table = pd.DataFrame(rows)
+
+    if df_table.empty:
+        raise ValueError(
+            "No valid ENU solutions were found in the input dictionary. "
+            "Expected key 'enu_error_m' in each solution."
+        )
+
+    desired_order = ["M0", "M1", "M2", "M3", "M4", "M5", "M6"]
+    df_table["Model"] = pd.Categorical(
+        df_table["Model"],
         categories=desired_order,
         ordered=True,
     )
-    df_summary = df_summary.sort_values("Model").reset_index(drop=True)
+    df_table = df_table.sort_values("Model").reset_index(drop=True)
 
-    # Round to the nearest millimeter
-    df_summary[["E [m]", "N [m]", "U [m]"]] = (
-        df_summary[["E [m]", "N [m]", "U [m]"]].round(3)
-    )
-
-    latex_table = df_summary.to_latex(
+    latex_table = df_table.to_latex(
         index=False,
-        escape=True,
         caption=caption,
         label=label,
-        column_format="llrrr",
         float_format="%.3f",
+        column_format="llrrr",
+        escape=False,
     )
 
     if filepath is not None:
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(latex_table)
 
-    return df_summary, latex_table
+    return df_table, latex_table
 
 
 # Example of use
