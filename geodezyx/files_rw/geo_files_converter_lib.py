@@ -1664,11 +1664,67 @@ def read_OTPS_tide_file(pathin, print_line=False, return_array=True):
         return latlis, lonlis, datlis, hlis
 
 
+
+def unzip_gz(inp_gzip_file, out_gzip_dir=None, out_gzip_fname=None,
+             remove_inp=False, force=False, verbose=True):
+    """
+    unzip a gzip file
+
+    Parameters
+    ----------
+    inp_gzip_file : str
+        the path of the input gzip file.
+    out_gzip_dir : str, optional
+        output directory.
+        If not precised, file will be extracted in the same folder
+        as inp_gzip_file. The default is None.
+    out_gzip_fname : str, optional
+        output filename. If not precised, file will be extracted with the same name
+        as inp_gzip_file without the .gz extension. The default is None.
+    remove_inp : bool, optional
+        remove the input file. The default is False.
+    force : bool, optional
+        force the decompression. The default is False.
+    """
+    import gzip
+
+    if out_gzip_fname is None:
+        out_gzip_fname = os.path.basename(inp_gzip_file).replace(".gz", "")
+
+    if out_gzip_dir is None:
+        out_gzip_dir = os.path.dirname(inp_gzip_file)
+
+    out_gzip_file = os.path.join(out_gzip_dir, out_gzip_fname)
+
+    if os.path.isfile(out_gzip_file) and not force:
+        if verbose:
+            log.info("%s already exists, skiping (use force option)", out_gzip_file)
+        pass
+    else:
+        with gzip.open(inp_gzip_file, "rb") as f_in, open(
+            out_gzip_file, "wb"
+        ) as f_out:
+            shutil.copyfileobj(f_in, f_out)
+        if verbose:
+            log.info("uncompress %s to  %s", inp_gzip_file, out_gzip_file)
+
+    ### Removing part
+    if remove_inp and type(remove_inp) is bool and os.path.getsize(out_gzip_file) > 0:
+        if verbose:
+            log.info("removing %s")
+        os.remove(inp_gzip_file)
+
+    return out_gzip_file
+
+
 def unzip_gz_z(
     inp_gzip_file, out_gzip_file="", remove_inp=False, force=False, out_gzip_dir=None
 ):
     """
     frontend function to unzip files (gzip and legacy Z compression)
+
+    This function is complex and should be used with care, especially for .Z files.
+    Prefer using new function `unzip_gz` for .gz files and avoid .Z files if possible.
 
     Parameters
     ----------

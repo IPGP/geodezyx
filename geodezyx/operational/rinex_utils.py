@@ -187,7 +187,59 @@ def uncomp_rnxpath(rinex_path, outdir=""):
 
     return out_rinex_path
 
-def crz2rnx(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX", verbose=True):
+def crz2rnx(rinex_path, outdir="", mode="python",
+            force=True, path_of_crz2rnx="CRZ2RNX", verbose=False):
+    """
+    Frontend function to uncompress a RINEX file.
+    It can use either Python's `hantanaka` module (mode="python")
+    or the `CRZ2RNX` command line tool (mode="command").
+    """
+    if mode == "python":
+        return crz2rnx_python(rinex_path, outdir=outdir, verbose=verbose)
+    elif mode == "command":
+        return crz2rnx_command(rinex_path, outdir=outdir, force=force,
+                       path_of_crz2rnx=path_of_crz2rnx, verbose=verbose)
+    else:
+        raise ValueError("Invalid mode. Use 'python' or 'command'.")
+
+def crz2rnx_python(rinex_path, outdir="", verbose=True):
+    """
+    Uncompress a RINEX file using the `hantanaka` module.
+
+    Parameters
+    ----------
+    rinex_path : str
+        The path of the input RINEX file (compressed).
+    outdir : str, optional
+        The directory where the uncompressed RINEX file will be saved. If not provided,
+        the output file will be saved in the same directory as the input file.
+    verbose : bool, optional
+        If True, logs information about the uncompression process. The default is True.
+
+    Returns
+    -------
+    str
+        The full path of the uncompressed RINEX file.
+    """
+    if not os.path.isfile(rinex_path):
+        raise Exception(rinex_path + " does not exist!")
+
+    out_rinex_path = uncomp_rnxpath(rinex_path, outdir)
+
+    if os.path.isfile(out_rinex_path):
+        log.warning(out_rinex_path + " already exists, skipping uncompression.")
+    else:
+        try:
+            uncompressed_content = hatanaka.decompress(rinex_path)
+            utils.write_in_file(uncompressed_content, out_rinex_path)
+            if verbose:
+                log.info(out_rinex_path + " created successfully.")
+        except Exception as e:
+            log.error("Failed to uncompress " + rinex_path + ": " + str(e))
+
+    return out_rinex_path
+
+def crz2rnx_command(rinex_path, outdir="", force=True, path_of_crz2rnx="CRZ2RNX", verbose=True):
     """assuming that CRZ2RNX is in the system PATH per default"""
 
     if not os.path.isfile(rinex_path):
@@ -256,7 +308,6 @@ def rnx2crz(rinex_path, outdir="", force=True, path_of_rnx2crz="RNX2CRZ"):
         #    print stream.read()
     os.chdir(curdir)
     return out_rinex_path
-
 
 def rinex_read_epoch(
     input_rinex_path_or_string,

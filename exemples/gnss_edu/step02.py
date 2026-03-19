@@ -83,6 +83,7 @@ import gc
 import os
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -100,9 +101,13 @@ from geodezyx import reffram
 
 PROCESSING_DATE = dt.datetime(2019, 6, 25)
 WORK_DIR = Path(os.environ["HOME"]).expanduser() / "gnss_edu_data"
+FIGURES_DIR = WORK_DIR / "figures"
+SHOW_FIGURES = False
 
 # Two permanent GNSS stations about 10 km apart in the Paris region
-STATION_DICT = {"rgp": ["SMNE", "MLVL"]}
+BASE_STATION = "SMNE"
+ROVER_STATION = "MLVL"
+STATION_DICT = {"rgp": [BASE_STATION, ROVER_STATION]}
 
 # First code observable to try
 CODE_OBSERVABLE = "C1"
@@ -117,8 +122,19 @@ POSITION_CONVERGENCE_THRESHOLD_M = 1.0
 print("Configuration loaded.")
 print("Processing date            :", PROCESSING_DATE)
 print("Working directory          :", WORK_DIR)
+print("Figures directory          :", FIGURES_DIR)
+print("Show figures               :", SHOW_FIGURES)
 print("Satellite system           :", SATELLITE_SYSTEM)
 print("Preferred code observable  :", CODE_OBSERVABLE)
+
+WORK_DIR.mkdir(parents=True, exist_ok=True)
+FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+
+if SHOW_FIGURES:
+    plt.ion()
+else:
+    plt.ioff()
+    plt.show = lambda *args, **kwargs: None
 
 
 # %%
@@ -154,6 +170,18 @@ def extract_download_path(entry):
     if isinstance(entry, tuple):
         return entry[0]
     return entry
+
+
+def build_station_file_map(download_entries) -> dict[str, str]:
+    """Map 4-character station codes to downloaded local RINEX paths."""
+    station_map = {}
+
+    for entry in download_entries:
+        path = extract_download_path(entry)
+        station_code = Path(path).name[:4].upper()
+        station_map[station_code] = path
+
+    return station_map
 
 
 def build_receiver_clock_block(index: pd.MultiIndex) -> tuple[np.ndarray, np.ndarray]:
@@ -212,6 +240,18 @@ def store_solution(
     print()
 
 
+def finalize_figure(fig, output_name, show=SHOW_FIGURES):
+    """Save a figure to disk and optionally display it."""
+    output_path = FIGURES_DIR / output_name
+    fig.savefig(output_path, dpi=150, bbox_inches="tight")
+    print(f"Figure saved: {output_path}")
+
+    if show:
+        fig.show()
+
+    plt.close(fig)
+
+
 def summarize_solutions(solutions_dict: dict) -> pd.DataFrame:
     """
     Convert the pedagogical solution dictionary into a summary DataFrame.
@@ -261,17 +301,29 @@ print(download_output)
 
 # %%
 ###############################################################################
-# Identify the BASE and ROVER files
+# Resolve the downloaded files for the configured BASE and ROVER stations
 ###############################################################################
 
-base_rinex_file = extract_download_path(download_output[0])
-rover_rinex_file = extract_download_path(download_output[1])
+station_file_map = build_station_file_map(download_output)
 
-print("BASE RINEX file :")
-print(base_rinex_file)
+missing_stations = [
+    station for station in [BASE_STATION, ROVER_STATION]
+    if station not in station_file_map
+]
+if missing_stations:
+    raise RuntimeError(
+        "Missing downloaded RINEX files for requested stations: "
+        f"{missing_stations}"
+    )
+
+base_rinex_file = station_file_map[BASE_STATION]
+rover_rinex_file = station_file_map[ROVER_STATION]
+
+print("BASE station     :", BASE_STATION)
+print("BASE RINEX file  :", base_rinex_file)
 print()
-print("ROVER RINEX file:")
-print(rover_rinex_file)
+print("ROVER station    :", ROVER_STATION)
+print("ROVER RINEX file :", rover_rinex_file)
 
 
 # %%
@@ -1469,7 +1521,6 @@ gc.collect()
 ###############################################################################
 # Plot the estimated ZTD parameters as a piecewise-constant function
 ###############################################################################
-import matplotlib.pyplot as plt
 
 if "M5_tropo_simple" not in solutions:
     print("No M5_tropo_simple solution available.")
@@ -1503,7 +1554,7 @@ else:
     ax.set_ylabel("ZTD [m]")
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.show()
+    finalize_figure(fig, "step02_ztd_piecewise_constant.png")
 
 
 # %%
@@ -1618,8 +1669,8 @@ else:
     # -------------------------------------------------------------------------
     f1 = conv.L1_CARRIER_FREQUENCY
     f2 = conv.L2_CARRIER_FREQUENCY
-    f1_2 = f1 ** 2
-    f2_2 = f2 ** 2
+    f1_sq = f1 ** 2
+    f2_sq = f2 ** 2
 
     lambda_1 = conv.SPEED_OF_LIGHT / f1
     lambda_2 = conv.SPEED_OF_LIGHT / f2
@@ -1628,13 +1679,13 @@ else:
     df_phase_if = df_phase_if.dropna(subset=["C1", "P2", "L1", "L2"]).copy()
 
     df_phase_if["code_if_m"] = (
-        f1_2 * df_phase_if["C1"] - f2_2 * df_phase_if["P2"]
-    ) / (f1_2 - f2_2)
+        f1_sq * df_phase_if["C1"] - f2_sq * df_phase_if["P2"]
+    ) / (f1_sq - f2_sq)
 
     df_phase_if["phase_if_m"] = (
-        f1_2 * (df_phase_if["L1"] * lambda_1)
-        - f2_2 * (df_phase_if["L2"] * lambda_2)
-    ) / (f1_2 - f2_2)
+        f1_sq * (df_phase_if["L1"] * lambda_1)
+        - f2_sq * (df_phase_if["L2"] * lambda_2)
+    ) / (f1_sq - f2_sq)
 
     # -------------------------------------------------------------------------
     # Apply smoothing
@@ -1850,7 +1901,7 @@ else:
     # -------------------------------------------------------------------------
     # Cleanup
     # -------------------------------------------------------------------------
-    del f1, f2, f1_2, f2_2, lambda_1, lambda_2
+    del f1, f2, f1_sq, f2_sq, lambda_1, lambda_2
     del block_dt_r_m6, epoch_unique_m6
     del interval_unique_m6, n_intervals_m6, interval_to_col_m6
     del ztd_interval_array_m6, tropo_map_array_m6, block_ztd_m6
@@ -1882,24 +1933,27 @@ print(df_summary)
 #
 # Educational message
 # -------------------
-# After applying precise satellite positions, satellite clock correction,
-# relativistic correction, receiver clock estimation, and Sagnac correction,
-# the remaining discrepancy with the RINEX-header position is usually dominated
-# by propagation effects, especially in the vertical component.
+# After introducing satellite clock correction, relativistic correction,
+# receiver clock estimation, Earth-rotation correction, ionosphere-free code,
+# simple tropospheric modeling, and carrier smoothing, the remaining mismatch
+# with the RINEX-header position should be interpreted with caution.
 #
-# This naturally motivates the next pedagogical extensions:
-#   - ionosphere-free combinations,
-#   - tropospheric modeling,
-#   - antenna phase-center effects.
+# At this stage, the residual discrepancy is no longer driven only by the main
+# first-order propagation effects. It can also reflect the limits of the code-
+# based model itself, residual atmospheric effects, antenna phase-center
+# effects, measurement noise, and the fact that the RINEX-header position is
+# only an approximate reference.
 ###############################################################################
 
 print("Interpretation")
 print("--------------")
 print(
-    "The remaining discrepancy with the RINEX-header position is expected to "
-    "be dominated mainly by propagation effects, especially in the vertical "
-    "component. This motivates the next model enrichments: ionosphere, "
-    "troposphere, and antenna modeling."
+    "After the successive model enrichments up to M6, the remaining \n"
+    "discrepancy with the RINEX-header position is expected to reflect both \n"
+    "residual propagation effects and the intrinsic limits of a code-based \n"
+    "positioning model. Remaining contributors may include residual \n"
+    "tropospheric effects, antenna phase-center effects, measurement noise, \n"
+    "and the approximate nature of the RINEX-header coordinates themselves."
 )
 
 
