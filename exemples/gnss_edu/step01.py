@@ -69,12 +69,15 @@ import datetime as dt
 import os
 from pathlib import Path
 
+from _io_guard import ensure_matplotlib_cache
+from _io_guard import resolve_rinex_files
+
+ensure_matplotlib_cache()
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 from geodezyx import files_rw
-from geodezyx import operational
 
 # Robust import for the pedagogical plotting helper
 try:
@@ -156,7 +159,6 @@ def finalize_figure(fig, output_name, show=SHOW_FIGURES):
 
     plt.close(fig)
 
-
 # %%
 ###############################################################################
 # Download sample RINEX observation files
@@ -171,16 +173,11 @@ def finalize_figure(fig, output_name, show=SHOW_FIGURES):
 # real observation files rather than artificial toy arrays.
 ###############################################################################
 
-download_output = operational.download_gnss_rinex(
+download_output = resolve_rinex_files(
     statdico=STATION_DICT,
-    output_dir=str(WORK_DIR),
-    startdate=PROCESSING_DATE,
-    enddate=PROCESSING_DATE,
-    parallel_download=1,
+    date=PROCESSING_DATE,
+    work_dir=WORK_DIR,
 )
-
-print("Download output:")
-print(download_output)
 
 
 # %%
@@ -610,5 +607,3 @@ if len(df_removed) > 0:
 
 print("Step 01 completed.")
 print("The observation table is now ready for the data-to-model transition in Step 02.")
-
-

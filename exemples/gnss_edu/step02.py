@@ -83,6 +83,12 @@ import gc
 import os
 from pathlib import Path
 
+from _io_guard import ensure_matplotlib_cache
+from _io_guard import extract_download_path
+from _io_guard import resolve_rinex_files
+from _io_guard import resolve_sp3_product
+
+ensure_matplotlib_cache()
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -164,12 +170,6 @@ solutions = {}
 ###############################################################################
 # Helper functions
 ###############################################################################
-
-def extract_download_path(entry):
-    """Return the local file path from a geodezyx download entry."""
-    if isinstance(entry, tuple):
-        return entry[0]
-    return entry
 
 
 def build_station_file_map(download_entries) -> dict[str, str]:
@@ -287,16 +287,11 @@ print(WORK_DIR)
 # Download sample RINEX observation files
 ###############################################################################
 
-download_output = operational.download_gnss_rinex(
+download_output = resolve_rinex_files(
     statdico=STATION_DICT,
-    output_dir=str(WORK_DIR),
-    startdate=PROCESSING_DATE,
-    enddate=PROCESSING_DATE,
-    parallel_download=1,
+    date=PROCESSING_DATE,
+    work_dir=WORK_DIR,
 )
-
-print("Download output:")
-print(download_output)
 
 
 # %%
@@ -493,27 +488,10 @@ print(receiver_xyz_approx)
 # Download precise satellite products
 ###############################################################################
 
-download_products = operational.download_gnss_products(
-    archive_dir=str(WORK_DIR),
-    startdate=PROCESSING_DATE,
-    enddate=PROCESSING_DATE,
-    archtype="year/doy",
-    ac_names=("IGS",),
-    repro=0,
-    archive_center="ign",
-    parallel_download=1,
+sp3_path = resolve_sp3_product(
+    work_dir=WORK_DIR,
+    processing_date=PROCESSING_DATE,
 )
-
-print("Precise product download output:")
-print(download_products)
-
-
-# %%
-###############################################################################
-# Load the SP3 precise orbit/clock product
-###############################################################################
-
-sp3_path = extract_download_path(download_products[0])
 
 print("Using SP3 file:")
 print(sp3_path)

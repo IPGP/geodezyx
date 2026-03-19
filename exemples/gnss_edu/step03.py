@@ -82,6 +82,12 @@ import gc
 import os
 from pathlib import Path
 
+from _io_guard import ensure_matplotlib_cache
+from _io_guard import extract_download_path
+from _io_guard import resolve_rinex_files
+from _io_guard import resolve_sp3_product
+
+ensure_matplotlib_cache()
 from importlib import reload
 
 import numpy as np
@@ -184,13 +190,6 @@ print(
 # Helper functions
 ###############################################################################
 
-def extract_download_path(entry):
-    """Return the local file path from a geodezyx download entry."""
-    if isinstance(entry, tuple):
-        return entry[0]
-    return entry
-
-
 def finalize_figure(fig, output_name, show=SHOW_FIGURES):
     """Save a figure to disk and optionally display it."""
     output_path = FIGURES_DIR / output_name
@@ -214,26 +213,18 @@ def download_station_and_product_data(
     processing_date: dt.datetime,
     station_dict: dict[str, list[str]],
 ):
-    """Download RINEX observations and precise products for one processing day."""
-    station_downloads = operational.download_gnss_rinex(
+    """Reuse valid local files when available, otherwise download them."""
+    station_downloads = resolve_rinex_files(
         statdico=station_dict,
-        output_dir=str(work_dir),
-        startdate=processing_date,
-        enddate=processing_date,
-        parallel_download=1,
+        date=processing_date,
+        work_dir=work_dir,
     )
-
-    product_downloads = operational.download_gnss_products(
-        archive_dir=str(work_dir),
-        startdate=processing_date,
-        enddate=processing_date,
-        archtype="year/doy",
-        AC_names=("IGS",),
-        repro=0,
-        archive_center="ign",
-        parallel_download=1,
-    )
-
+    product_downloads = [
+        resolve_sp3_product(
+            work_dir=work_dir,
+            processing_date=processing_date,
+        )
+    ]
     return station_downloads, product_downloads
 
 
@@ -245,8 +236,9 @@ def assign_base_and_rover_paths(
     """Map downloaded RINEX files to the requested BASE and ROVER stations."""
     station_paths = {}
 
-    for path, ok in station_downloads:
-        if not ok:
+    for entry in station_downloads:
+        path = extract_download_path(entry)
+        if isinstance(entry, tuple) and len(entry) >= 2 and not entry[1]:
             raise RuntimeError(f"Download failed for station entry: {path}")
         station_paths[Path(path).name[:4].upper()] = path
 
