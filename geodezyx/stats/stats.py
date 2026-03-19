@@ -1623,7 +1623,7 @@ def lagrange_interpolate(tdata, ydata, titrp, n=10, t_type="datetime"):
     if np.any(titrp_px < 0):
         log.warning("some wanted values are outside the data interval!!!!")
 
-    yintrp = []
+    yintrp_stk = []
 
     for tintrp in titrp_px:
 
@@ -1651,9 +1651,9 @@ def lagrange_interpolate(tdata, ydata, titrp, n=10, t_type="datetime"):
             # poly = lagrange2(tuse,yuse)
 
         yintrp = poly(tintrp)
-        yintrp.append(yintrp)
+        yintrp_stk.append(yintrp)
 
-    return np.array(yintrp)
+    return np.array(yintrp_stk)
 
 def dates_middle(start, end):
     """
