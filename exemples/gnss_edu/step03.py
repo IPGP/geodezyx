@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# %%
+# Step 03 - Differential GNSS processing on a short baseline with carrier phase
 """
 Step 03 - Differential GNSS processing on a short baseline with carrier phase
 

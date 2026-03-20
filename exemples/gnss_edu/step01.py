@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+# %%
+# Step 01 - From RINEX observations to structured GNSS data tables
 """
 Step 01 - From RINEX observations to structured GNSS data tables
 
@@ -257,7 +258,7 @@ print("Columns    :", list(df_index.columns[:12]))
 
 
 # %%
-# Optional inspection in Spyder
+# Optional inspection in Spyder or PyCharm or VS Code
 ###############################################################################
 #
 # Open the Variable Explorer and compare:
@@ -613,3 +614,5 @@ if len(df_removed) > 0:
 
 print("Step 01 completed.")
 print("The observation table is now ready for the data-to-model transition in Step 02.")
+
+# %%
