@@ -444,9 +444,7 @@ def dl_orbclk(
             archive_center=data_centers,
             mgex=mgex,
             repro=0,
-            sorted_mode=False,
             return_also_uncompressed_files=True,
-            ftp_download=False,
             dow_manu=False,
         )
 
