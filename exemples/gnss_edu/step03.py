@@ -177,6 +177,11 @@ print(
     "M6: build rich double differences with pivot traceability"
 )
 
+# These dictionaries play the same pedagogical role as `solutions` in Step 02.
+# Here we compare pivot-strategy diagnostics first, and baseline solutions later.
+pivot_strategies = {}
+baseline_solutions = {}
+
 ###############################################################################
 # Interactive development note
 ###############################################################################
@@ -208,6 +213,187 @@ def finalize_figure(fig, output_name, show=SHOW_FIGURES):
         fig.show()
 
     plt.close(fig)
+
+
+def compute_pivot_schedule_diagnostics(
+    active_pivot: pd.Series,
+    sampling: pd.Timedelta,
+    short_segment_threshold: pd.Timedelta,
+) -> dict:
+    """Summarize one pivot schedule with metrics useful for teaching."""
+    coverage = gnss_edu.check_full_coverage_from_active_pivot(active_pivot)
+    segments = gnss_edu.pivot_schedule_to_segments(
+        active_pivot,
+        sampling=sampling,
+        drop_none=True,
+    )
+
+    active_non_null = active_pivot.dropna()
+    unique_pivots = sorted(active_non_null.unique()) if not active_non_null.empty else []
+    n_pivot_changes = (
+        int(active_non_null.ne(active_non_null.shift()).iloc[1:].sum())
+        if len(active_non_null) >= 2 else 0
+    )
+
+    diagnostics = {
+        "n_epochs": int(len(active_pivot)),
+        "n_none_epochs": int(coverage["n_none"]),
+        "n_pivots_used": int(len(unique_pivots)),
+        "selected_prns": unique_pivots,
+        "n_pivot_changes": n_pivot_changes,
+        "n_segments": int(len(segments)),
+        "median_segment_min": np.nan,
+        "mean_segment_min": np.nan,
+        "shortest_segment_min": np.nan,
+        "longest_segment_min": np.nan,
+        "short_segment_fraction": np.nan,
+        "segments": segments,
+    }
+
+    if not segments.empty:
+        duration_min = segments["duration"].dt.total_seconds() / 60.0
+        short_mask = segments["duration"] < short_segment_threshold
+        diagnostics.update(
+            {
+                "median_segment_min": float(duration_min.median()),
+                "mean_segment_min": float(duration_min.mean()),
+                "shortest_segment_min": float(duration_min.min()),
+                "longest_segment_min": float(duration_min.max()),
+                "short_segment_fraction": float(short_mask.mean()),
+            }
+        )
+
+    return diagnostics
+
+
+def store_pivot_strategy(
+    key: str,
+    description: str,
+    active_pivot: pd.Series,
+    sampling: pd.Timedelta,
+    short_segment_threshold: pd.Timedelta,
+    rationale: list[str],
+) -> None:
+    """Store one pivot strategy and print a compact pedagogical summary."""
+    diagnostics = compute_pivot_schedule_diagnostics(
+        active_pivot=active_pivot,
+        sampling=sampling,
+        short_segment_threshold=short_segment_threshold,
+    )
+
+    pivot_strategies[key] = {
+        "description": description,
+        "active_pivot": active_pivot.copy(),
+        "rationale": rationale.copy(),
+        **diagnostics,
+    }
+
+    print(f"\n{key} pivot-strategy summary")
+    print("-" * (len(key) + 24))
+    print("Description                :", description)
+    print("Pivots used                :", diagnostics["selected_prns"])
+    print("Number of pivots           :", diagnostics["n_pivots_used"])
+    print("Pivot changes              :", diagnostics["n_pivot_changes"])
+    print("Segments                   :", diagnostics["n_segments"])
+    print("Coverage gaps              :", diagnostics["n_none_epochs"])
+    print("Median segment length [min]:", diagnostics["median_segment_min"])
+    print("Short segment fraction     :", diagnostics["short_segment_fraction"])
+
+
+def update_pivot_strategy_with_dd_metrics(strategy_key: str, df_DD: pd.DataFrame) -> None:
+    """Attach DD-level diagnostics to an already stored pivot strategy."""
+    if strategy_key not in pivot_strategies:
+        raise KeyError(f"Unknown pivot strategy key: {strategy_key}")
+
+    non_pivot_mask = ~df_DD["is_pivot"]
+    dd_counts = (
+        df_DD.loc[non_pivot_mask]
+        .groupby(level="epoch")
+        .size()
+        .rename("n_dd_non_pivot")
+    )
+    pivot_changed = (
+        df_DD["pivot_changed"].groupby(level="epoch").first()
+        if "pivot_changed" in df_DD.columns
+        else pd.Series(dtype=bool)
+    )
+
+    metrics = {
+        "n_dd_rows_non_pivot": int(non_pivot_mask.sum()),
+        "n_dd_epochs": int(dd_counts.size),
+        "mean_dd_per_epoch": float(dd_counts.mean()) if not dd_counts.empty else np.nan,
+        "min_dd_per_epoch": float(dd_counts.min()) if not dd_counts.empty else np.nan,
+        "max_dd_per_epoch": float(dd_counts.max()) if not dd_counts.empty else np.nan,
+        "epochs_with_lt4_dd": int((dd_counts < 4).sum()) if not dd_counts.empty else 0,
+        "n_pivot_change_epochs": int(pivot_changed.sum()) if not pivot_changed.empty else 0,
+    }
+    pivot_strategies[strategy_key].update(metrics)
+
+
+def summarize_pivot_strategies(pivot_strategies_dict: dict) -> pd.DataFrame:
+    """Convert stored pivot strategies into a comparison table."""
+    rows = []
+    for key, result in pivot_strategies_dict.items():
+        rows.append(
+            {
+                "strategy": key,
+                "description": result["description"],
+                "n_pivots_used": result["n_pivots_used"],
+                "n_pivot_changes": result["n_pivot_changes"],
+                "n_segments": result["n_segments"],
+                "median_segment_min": result["median_segment_min"],
+                "short_segment_fraction": result["short_segment_fraction"],
+                "n_none_epochs": result["n_none_epochs"],
+                "mean_dd_per_epoch": result.get("mean_dd_per_epoch", np.nan),
+                "epochs_with_lt4_dd": result.get("epochs_with_lt4_dd", np.nan),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def store_baseline_solution(
+    key: str,
+    pivot_strategy_key: str,
+    description: str,
+    status: str = "pending",
+    baseline_xyz_m: np.ndarray | None = None,
+    residual_rms_m: float | None = None,
+    n_epochs_used: int | None = None,
+    n_dd_rows: int | None = None,
+    n_pivot_change_epochs: int | None = None,
+    notes: str = "",
+) -> None:
+    """Store one baseline-solution entry linked to a pivot strategy."""
+    baseline_solutions[key] = {
+        "pivot_strategy_key": pivot_strategy_key,
+        "description": description,
+        "status": status,
+        "baseline_xyz_m": None if baseline_xyz_m is None else np.array(baseline_xyz_m, dtype=float),
+        "residual_rms_m": residual_rms_m,
+        "n_epochs_used": n_epochs_used,
+        "n_dd_rows": n_dd_rows,
+        "n_pivot_change_epochs": n_pivot_change_epochs,
+        "notes": notes,
+    }
+
+
+def summarize_baseline_solutions(baseline_solutions_dict: dict) -> pd.DataFrame:
+    """Convert stored baseline-solution entries into a comparison table."""
+    rows = []
+    for key, result in baseline_solutions_dict.items():
+        rows.append(
+            {
+                "solution": key,
+                "pivot_strategy": result["pivot_strategy_key"],
+                "status": result["status"],
+                "description": result["description"],
+                "n_epochs_used": result["n_epochs_used"],
+                "n_dd_rows": result["n_dd_rows"],
+                "n_pivot_change_epochs": result["n_pivot_change_epochs"],
+                "residual_rms_m": result["residual_rms_m"],
+            }
+        )
+    return pd.DataFrame(rows)
 
 
 def prepare_work_directory(work_dir: Path) -> Path:
@@ -1708,6 +1894,18 @@ print(f"SNR threshold          : {snr_min}")
 print(f"Required observables   : {required_observables}")
 print(f"Sampling               : {sampling}")
 
+print("\nPedagogical problem statement")
+print("-----------------------------")
+print(
+    "A good pivot is not only the highest satellite at one epoch. "
+    "It should also remain usable long enough to avoid excessive pivot changes."
+)
+print(
+    "The exploratory strategy below is deliberately local and imperfect: "
+    "it gives students something concrete to critique before linking pivot "
+    "choice to DD construction and baseline estimation."
+)
+
 # --------------------------------------------------
 # Level 0 — Raw satellite availability
 # --------------------------------------------------
@@ -1903,6 +2101,22 @@ assert cov["n_none"] == 0, (
 selected_prns = sorted(active_pivot.dropna().unique())
 print("Number of pivots used after post-processing:", len(selected_prns))
 
+store_pivot_strategy(
+    key="P0_local_stabilized",
+    description=(
+        "Exploratory local pivot strategy: highest-elevation usable candidates "
+        "with top-rank persistence, then short-segment and dwell-time stabilization"
+    ),
+    active_pivot=active_pivot,
+    sampling=sampling,
+    short_segment_threshold=PIVOT_MIN_DWELL,
+    rationale=[
+        "Prefer satellites with strong geometry at the BASE receiver",
+        "Preserve continuity as long as the current pivot remains among the strongest candidates",
+        "Reduce very short arcs a posteriori to limit unnecessary pivot switches",
+    ],
+)
+
 fig, ax, info = gnss_edu.plot_tracking_timeline_with_pivots(
     df=df_base_pivot,
     selected_prns=selected_prns,
@@ -1991,6 +2205,18 @@ print("\nPedagogical discussion point:")
 print(
     "Up to what rover-base distance does a pivot strategy defined from the "
     "BASE perspective remain a reasonable approximation?"
+)
+
+print("\nInterpretation guide for students")
+print("---------------------------------")
+print(
+    "If many short pivot segments remain, the strategy is still too local: "
+    "it may look reasonable epoch by epoch while being globally fragile."
+)
+print(
+    "Each pivot change potentially changes the DD reference and can create a "
+    "new ambiguity regime. The quality of the baseline estimate will therefore "
+    "depend on how stable this schedule really is."
 )
 
 
@@ -2218,3 +2444,48 @@ print(df_DD.head(10))
 
 df_DD = add_pivot_change_flag(df_DD)
 print("Number of pivot change epochs:", int(df_DD["pivot_changed"].groupby(level="epoch").first().sum()))
+
+update_pivot_strategy_with_dd_metrics("P0_local_stabilized", df_DD)
+
+store_baseline_solution(
+    key="B0_from_P0_local_stabilized",
+    pivot_strategy_key="P0_local_stabilized",
+    description=(
+        "Baseline solution driven by the exploratory local pivot strategy. "
+        "This entry is intentionally created before the final estimation stage "
+        "to keep the comparison framework explicit."
+    ),
+    status="pending",
+    n_epochs_used=int(df_DD.index.get_level_values("epoch").nunique()),
+    n_dd_rows=int((~df_DD["is_pivot"]).sum()),
+    n_pivot_change_epochs=int(df_DD["pivot_changed"].groupby(level="epoch").first().sum()),
+    notes=(
+        "Populate baseline_xyz_m and residual metrics once the baseline "
+        "estimation step is introduced."
+    ),
+)
+
+df_pivot_strategy_summary = summarize_pivot_strategies(pivot_strategies)
+df_baseline_summary = summarize_baseline_solutions(baseline_solutions)
+
+print("\nPivot-strategy comparison table")
+print("-------------------------------")
+display(df_pivot_strategy_summary)
+
+print("\nBaseline-solution comparison table (initial scaffold)")
+print("----------------------------------------------------")
+display(df_baseline_summary)
+
+print("\nQuestions for the next step")
+print("---------------------------")
+print(
+    "1. Does a visually stable pivot schedule also provide more DD per epoch?"
+)
+print(
+    "2. Do frequent pivot changes merely affect readability, or do they also "
+    "change the ambiguity structure of the baseline problem?"
+)
+print(
+    "3. When a future baseline estimate is added, will the most stable pivot "
+    "strategy also be the most accurate one?"
+)
