@@ -3,10 +3,10 @@
 
 # Required parameters
 rnx_dir:
-  - /vol/ovpf/miroir_ovpf/DonneesTemporaires/Geodesy/GNSS/RINEX/15M01S/   # Directory containing RINEX files
+  - /vol/ovpf/miroir_ovpf/DonneesTemporaires/Geodesy/GNSS/RINEX/15M01S/ # Directory containing RINEX files
   - /home/ovsgnss/050_DATA_GNSS/data_centipede_reu/B59300REU
-cfgfile_generik: /opt/softs_gnss/geodezyx/exemples/rtklib_configfiles/rtknavi_example_ovpf_01b.conf  # RTKLIB configuration file
-sites_rovers:                                     # List of rover stations
+cfgfile_generik: /opt/softs_gnss/geodezyx/exemples/rtklib_configfiles/rtknavi_example_ovpf_01b.conf # RTKLIB configuration file
+sites_rovers:  # List of rover stations
   - BOMG00REU
   - BORG00REU
   - CFNG00REU
@@ -15,19 +15,19 @@ sites_rovers:                                     # List of rover stations
   - SNEG00REU
   - GITG00REU
 sites_bases:
-  - GITG00REU              # Base station
-  - B59300REU              # Base station
+  - GITG00REU  # Base station
+  - B59300REU  # Base station
 out_dir: /backuped/calcgnss/rtklib_process/OVPF_static-start_ULT  # Output directory
 
 # Optional parameters
-exp_prefix: OVPF_static-start_ULT                          # Output filename prefix (default: empty)
-igs_prods: GRG0OPSULT                                      # IGS product ID (default: GRG0OPSULT)
-tmp_dir: /backuped/calcgnss/rtklib_process/090_TMP         # Temporary directory (default: <out_dir>/TMP)
-prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib   # GNSS products directory (default: <tmp_dir>)
+exp_prefix: OVPF_static-start_ULT                         # Output filename prefix (default: empty)
+igs_prods: GRG0OPSULT                                     # IGS product ID (default: GRG0OPSULT)
+tmp_dir: /backuped/calcgnss/rtklib_process/090_TMP        # Temporary directory (default: <out_dir>/TMP)
+prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib  # GNSS products directory (default: <tmp_dir>)
 
 # Date range (optional, processes all if not specified)
-date_srt: "7 days ago at 23:59"            # Start date (YYYY-MM-DD or YYYY-DDD)
-date_end: "2 days ago at 23:59"            # End date (YYYY-MM-DD or YYYY-DDD)
+date_srt: "5 days ago at 23:59" # Start date (YYYY-MM-DD or YYYY-DDD)
+date_end: "2 hours ago"         # End date (YYYY-MM-DD or YYYY-DDD)
 
 # Station coordinates (optional, uses RINEX header if not provided)
 xyz_dic:
