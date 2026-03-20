@@ -443,6 +443,8 @@ def download_gnss_products(
                     extra_files.append(variant)
         localfiles_lis = list(set(localfiles_lis + extra_files))
 
+    localfiles_lis = list(sorted(localfiles_lis))
+
     return localfiles_lis
 
 

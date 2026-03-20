@@ -499,6 +499,7 @@ download_products = operational.download_gnss_products(
     enddate=PROCESSING_DATE,
     archtype="year/doy",
     ac_names=("IGS",),
+    prod_types=("sp3",),
     repro=0,
     archive_center="ign",
     parallel_download=1,

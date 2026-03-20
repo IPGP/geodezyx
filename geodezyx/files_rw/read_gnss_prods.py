@@ -24,14 +24,13 @@ from geodezyx.reffram import orb_df_velocity_calc
 
 log = logging.getLogger('geodezyx')
 
- #   _____ _            _       __ _ _           
- #  / ____| |          | |     / _(_) |          
- # | |    | | ___   ___| | __ | |_ _| | ___  ___ 
- # | |    | |/ _ \ / __| |/ / |  _| | |/ _ \/ __|
- # | |____| | (_) | (__|   <  | | | | |  __/\__ \
- #  \_____|_|\___/ \___|_|\_\ |_| |_|_|\___||___/
-                                               
-                                               
+#   _____ _            _       __ _ _
+#  / ____| |          | |     / _(_) |
+# | |    | | ___   ___| | __ | |_ _| | ___  ___
+# | |    | |/ _ \ / __| |/ / |  _| | |/ _ \/ __|
+# | |____| | (_) | (__|   <  | | | | |  __/\__ \
+#  \_____|_|\___/ \___|_|\_\ |_| |_|_|\___||___/
+
 
 def read_clk(file_path_inp,names_4char=False):
     """
@@ -243,13 +242,38 @@ def clk_diff(file_1,file_2):
                               columns = ['name','type','date','diff'])
     return diff_df
 
- #   ____       _     _ _       _______ _____ ____     __ _ _           
- #  / __ \     | |   (_) |     / / ____|  __ \___ \   / _(_) |          
- # | |  | |_ __| |__  _| |_   / / (___ | |__) |__) | | |_ _| | ___  ___ 
- # | |  | | '__| '_ \| | __| / / \___ \|  ___/|__ <  |  _| | |/ _ \/ __|
- # | |__| | |  | |_) | | |_ / /  ____) | |    ___) | | | | | |  __/\__ \
- #  \____/|_|  |_.__/|_|\__/_/  |_____/|_|   |____/  |_| |_|_|\___||___/
-                                                                      
+#   ____       _     _ _       _______ _____ ____     __ _ _
+#  / __ \     | |   (_) |     / / ____|  __ \___ \   / _(_) |
+# | |  | |_ __| |__  _| |_   / / (___ | |__) |__) | | |_ _| | ___  ___
+# | |  | | '__| '_ \| | __| / / \___ \|  ___/|__ <  |  _| | |/ _ \/ __|
+# | |__| | |  | |_) | | |_ / /  ____) | |    ___) | | | | | |  __/\__ \
+#  \____/|_|  |_.__/|_|\__/_/  |_____/|_|   |____/  |_| |_|_|\___||___/
+
+
+def load_sp3(sp3_inp):
+    sp3_name = sp3_inp
+    if type(sp3_inp) is list:
+        ### case when read_sp3_header is used as a subfunction of read_sp3
+        lines = sp3_inp
+        sp3_name = "sp3_from_list"
+    elif sp3_inp[-2:] in ("gz","GZ"):
+        f = gzip.open(sp3_inp, "r+")
+        lines = [e.decode('utf-8') for e in f]
+    elif sp3_inp[-2:] in (".Z",):
+        import ncompress
+        fh = open(sp3_inp, 'rb')
+        f = ncompress.decompress(fh).decode("utf-8")
+        lines = f.split('\n')
+    else:
+        f = open(sp3_inp,'r')
+        lines = f.readlines()
+
+    import re
+    if not re.match("^#[a-z][PV]", lines[0]):
+        errmsg = f"{sp3_name} is not a valid SP3 file"
+        log.warning(errmsg)
+    return lines
+
 def read_sp3(file_path_inp,returns_pandas = True, name = '',
              epoch_as_pd_index = False,km_conv_coef=1,
              skip_null_epoch=True,
@@ -309,19 +333,7 @@ def read_sp3(file_path_inp,returns_pandas = True, name = '',
     """
     
     ac_name =  os.path.basename(file_path_inp)[:3]
-
-    if file_path_inp[-2:] in ("gz","GZ"):
-        f = gzip.open(file_path_inp, "r+")
-        lines = [e.decode('utf-8') for e in f]
-    elif file_path_inp[-2:] in (".Z",):
-        import ncompress
-        fh = open(file_path_inp, 'rb')
-        f = ncompress.decompress(fh).decode("utf-8")
-        lines = f.split('\n')
-    else:
-        f = open(file_path_inp,'r')
-        lines = f.readlines()
-
+    lines = load_sp3(file_path_inp)
 
     #### List/DF initialization
     epoch_stk = []
@@ -459,16 +471,8 @@ def read_sp3_header(sp3_inp,ac_name_inp=None):
     http://acc.igs.org/orbacc.txt
     """
 
-    if type(sp3_inp) is list:
-        ### case when read_sp3_header is used as a subfunction of read_sp3
-        lines = sp3_inp
-    elif sp3_inp[-2:] in ("gz","GZ"):
-        F = gzip.open(sp3_inp, "r+")
-        lines = [e.decode('utf-8') for e in F]
-    else:
-        F = open(sp3_inp,'r+')
-        lines = F.readlines()
-    
+    lines = load_sp3(sp3_inp)
+
     if not ac_name_inp:
         ac_name = os.path.basename(sp3_inp)[:3]
     else:
@@ -611,5 +615,3 @@ def sp3_decimate(file_inp,file_out,step=15):
             Fout.write(l)
 
     return file_out
-
-    
