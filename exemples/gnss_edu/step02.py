@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+# %%
+# Step 02 - Code-based GNSS positioning with progressive model enrichment
 """
 Step 02 - Code-based GNSS positioning with progressive model enrichment
 
@@ -2042,3 +2043,5 @@ df_enu, latex_enu = solutions_to_latex_table_enu(
 print(df_enu)
 print()
 print(latex_enu)
+
+# %%
