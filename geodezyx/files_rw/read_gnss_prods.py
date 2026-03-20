@@ -59,25 +59,26 @@ def read_clk(file_path_inp, names_4char=False):
     head_line = utils.grep(
         file_path_inp, "END OF HEADER", only_first_occur=True, line_number=True
     )
+    cols = [
+        "type",
+        "name",
+        "year",
+        "month",
+        "day",
+        "hour",
+        "minute",
+        "second",
+        "n_values",
+        "bias",
+        "sigma",
+    ]
 
     clk_df = pd.read_csv(
-        file_path_inp,
-        skiprows=head_line[0] + 1,
+        str(file_path_inp),
+        skiprows=int(head_line[0] + 1),
         header=None,
         delim_whitespace=True,
-        names=[
-            "type",
-            "name",
-            "year",
-            "month",
-            "day",
-            "hour",
-            "minute",
-            "second",
-            "n_values",
-            "bias",
-            "sigma",
-        ],
+        names=cols,
     )
 
     # Special case when D-0n instead of E-0n (e.g. IAC),
@@ -285,6 +286,7 @@ def clk_diff(file_1, file_2):
 # | |  | | '__| '_ \| | __| / / \___ \|  ___/|__ <  |  _| | |/ _ \/ __|
 # | |__| | |  | |_) | | |_ / /  ____) | |    ___) | | | | | |  __/\__ \
 #  \____/|_|  |_.__/|_|\__/_/  |_____/|_|   |____/  |_| |_|_|\___||___/
+
 
 def load_sp3(sp3_inp):
     """
