@@ -67,14 +67,18 @@ Standard library
 
 import datetime as dt
 import os
+from itertools import count
 from pathlib import Path
 
+from _io_guard import ensure_matplotlib_cache
+from _io_guard import resolve_rinex_files
+
+ensure_matplotlib_cache()
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 from geodezyx import files_rw
-from geodezyx import operational
 
 # Robust import for the pedagogical plotting helper
 try:
@@ -144,10 +148,17 @@ else:
     plt.ioff()
     plt.show = lambda *args, **kwargs: None
 
+FIGURE_COUNTER = count(1)
+
 
 def finalize_figure(fig, output_name, show=SHOW_FIGURES):
     """Save a figure to disk and optionally display it."""
-    output_path = FIGURES_DIR / output_name
+    figure_index = next(FIGURE_COUNTER)
+    output_name_clean = output_name
+    if output_name_clean.startswith("step01_"):
+        output_name_clean = output_name_clean[len("step01_") :]
+    numbered_output_name = f"step01_{figure_index:02d}_{output_name_clean}"
+    output_path = FIGURES_DIR / numbered_output_name
     fig.savefig(output_path, dpi=150, bbox_inches="tight")
     print(f"Figure saved: {output_path}")
 
@@ -155,7 +166,6 @@ def finalize_figure(fig, output_name, show=SHOW_FIGURES):
         fig.show()
 
     plt.close(fig)
-
 
 # %%
 ###############################################################################
@@ -171,16 +181,11 @@ def finalize_figure(fig, output_name, show=SHOW_FIGURES):
 # real observation files rather than artificial toy arrays.
 ###############################################################################
 
-download_output = operational.download_gnss_rinex(
+download_output = resolve_rinex_files(
     statdico=STATION_DICT,
-    output_dir=str(WORK_DIR),
-    startdate=PROCESSING_DATE,
-    enddate=PROCESSING_DATE,
-    parallel_download=1,
+    date=PROCESSING_DATE,
+    work_dir=WORK_DIR,
 )
-
-print("Download output:")
-print(download_output)
 
 
 # %%
@@ -610,5 +615,3 @@ if len(df_removed) > 0:
 
 print("Step 01 completed.")
 print("The observation table is now ready for the data-to-model transition in Step 02.")
-
-
