@@ -1249,9 +1249,56 @@ ONLY IMPLEMENTED FOR ENU coords for the moment</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.print4compar">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">print4compar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.print4compar" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.plot_timeseries">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">plot_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coor_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coortype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ENU'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diapt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errbar_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'best'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_ncol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.plot_timeseries" title="Link to this definition"></a></dt>
+<dd><p>Standalone function to plot TimeSerie data.</p>
+<p>This function can be called independently to plot time series data
+with three components (A, B, C) and their uncertainties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coor_inp</strong> (<em>tuple</em><em> or </em><em>pd.DataFrame</em>) – <p>Input coordinates data. It can be either:
+- a 7-tuple (A, B, C, T, sA, sB, sC) where:</p>
+<blockquote>
+<div><ul>
+<li><p>A, B, C: coordinate components as numpy arrays</p></li>
+<li><p>T: time epochs as numpy array (POSIX timestamps)</p></li>
+<li><p>sA, sB, sC: uncertainties of the components as numpy arrays</p></li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p>a DataFrame with columns corresponding to the coordinate type
+(e.g., ‘e’, ‘n’, ‘u’ for ENU) and their
+uncertainties (e.g., ‘se’, ‘sn’, ‘su’),
+along with an ‘epoch’ column for time epochs.</p></li>
+</ul>
+</p></li>
+<li><p><strong>coortype</strong> (<em>str</em><em>, </em><em>optional</em>) – The coordinates type. The default is ‘ENU’.
+Options: ‘ENU’, ‘XYZ’, ‘FLH’, ‘UTM’</p></li>
+<li><p><strong>diapt</strong> (<em>float</em><em>, </em><em>optional</em>) – Point diameter. The default is 1.5.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Alpha (transparency) of points. The default is 0.8.</p></li>
+<li><p><strong>fig</strong> (<em>int</em><em> or </em><em>Figure object</em><em>, </em><em>optional</em>) – Figure ID where the data will be plotted.
+Can accept an int (id of a Figure) OR the figure Object itself.
+The default is 1.</p></li>
+<li><p><strong>errbar</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot the error bars. The default is True.</p></li>
+<li><p><strong>symbol</strong> (<em>str</em><em>, </em><em>optional</em>) – Marker symbol. The default is ‘.’.</p></li>
+<li><p><strong>errbar_width</strong> (<em>float</em><em>, </em><em>optional</em>) – Coefficient for the error bar size. The default is 1.</p></li>
+<li><p><strong>ylim</strong> (<em>tuple</em><em>, </em><em>optional</em>) – Y-axis limits. The default is None.</p></li>
+<li><p><strong>legend_loc</strong> (<em>str</em><em>, </em><em>optional</em>) – Location of the legend. The default is ‘best’.</p></li>
+<li><p><strong>legend_ncol</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of columns in the legend. The default is 1.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name for the plot legend. The default is “”.</p></li>
+<li><p><strong>stat</strong> (<em>str</em><em>, </em><em>optional</em>) – Station name for the figure title. The default is “”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>figobj</strong> (<em>Figure object</em>) – Figure object of the plot.</p></li>
+<li><p><strong>axes</strong> (<em>array of Axes objects</em>) – Array of the 3 axes objects of the plot.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.print4compar_tabular">
@@ -1317,13 +1364,13 @@ SORTIE une window (liste de listes)</p>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.time_win_T">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">time_win_T</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'del'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.time_win_T" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.time_win_multi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">time_win_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inplis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.time_win_multi" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.time_win_multi">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">time_win_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inplis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.time_win_multi" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.time_series.ts_fcts.time_win_t">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.time_series.ts_fcts.</span></span><span class="sig-name descname"><span class="pre">time_win_t</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'del'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.time_series.ts_fcts.time_win_t" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">

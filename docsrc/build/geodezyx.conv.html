@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="geodezyx.files_rw package" href="geodezyx.files_rw.html" />
+    <link rel="next" title="geodezyx.conv.bin package" href="geodezyx.conv.bin.html" />
     <link rel="prev" title="geodezyx.atmo package" href="geodezyx.atmo.html" /> 
 </head>
 
@@ -51,6 +51,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.conv package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_angle">geodezyx.conv.conv_angle module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.conv.conv_constant">geodezyx.conv.conv_constant module</a></li>
@@ -110,6 +111,23 @@
              
   <section id="module-geodezyx.conv">
 <span id="geodezyx-conv-package"></span><h1>geodezyx.conv package<a class="headerlink" href="#module-geodezyx.conv" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="geodezyx.conv.bin.html">geodezyx.conv.bin package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="geodezyx.conv.bin.html#geodezyx-bin">geodezyx.bin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geodezyx.conv.bin.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geodezyx.conv.bin.html#module-geodezyx.conv.bin.date_conv">geodezyx.conv.bin.date_conv module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.bin.html#geodezyx-bin-doy">geodezyx.bin.doy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.bin.html#geodezyx.conv.bin.date_conv.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
@@ -940,17 +958,17 @@ GitHub repository :
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_geometric.dist">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_geometric.</span></span><span class="sig-name descname"><span class="pre">dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_geometric.dist" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_geometric.</span></span><span class="sig-name descname"><span class="pre">dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_geometric.dist" title="Link to this definition"></a></dt>
 <dd><p>Cartesian distance between 2 points A &amp; B</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – 3D-points</p></li>
-<li><p><strong>B</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – 3D-points</p></li>
+<li><p><strong>a</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – 3D-points</p></li>
+<li><p><strong>b</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – 3D-points</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>D</strong> – distance between A &amp; B</p>
+<dd class="field-even"><p><strong>d</strong> – distance between A &amp; B</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
@@ -960,19 +978,19 @@ GitHub repository :
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_geometric.dist_diff">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_geometric.</span></span><span class="sig-name descname"><span class="pre">dist_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_geometric.dist_diff" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_geometric.</span></span><span class="sig-name descname"><span class="pre">dist_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_geometric.dist_diff" title="Link to this definition"></a></dt>
 <dd><p>First derivative of cartesian distance between 2 points A &amp; B</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – “points”, can be 2D or 3D vectors (list, np.array …)</p></li>
-<li><p><strong>B</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – “points”, can be 2D or 3D vectors (list, np.array …)</p></li>
+<li><p><strong>a</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – “points”, can be 2D or 3D vectors (list, np.array …)</p></li>
+<li><p><strong>b</strong> (<em>numpy.array</em><em> of </em><em>float</em>) – “points”, can be 2D or 3D vectors (list, np.array …)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>diffA</strong> (<em>numpy.array of float</em>) – [ dD/dxa , dD/dya , dD/dza ]</p></li>
-<li><p><strong>diffB</strong> (<em>numpy.array of float</em>) – [ dD/dxb , dD/dyb , dD/dzb ] = -diffA</p></li>
+<li><p><strong>diff_a</strong> (<em>numpy.array of float</em>) – [ dD/dxa , dD/dya , dD/dza ]</p></li>
+<li><p><strong>diff_b</strong> (<em>numpy.array of float</em>) – [ dD/dxb , dD/dyb , dD/dzb ] = -diff_a</p></li>
 </ul>
 </p>
 </dd>
@@ -996,10 +1014,11 @@ GitHub repository :
 <li><p><strong>y1</strong> (<em>float</em>) – Coordinates of the start point</p></li>
 <li><p><strong>x2</strong> (<em>float</em>) – Coordinates of the end point</p></li>
 <li><p><strong>y2</strong> (<em>float</em>) – Coordinates of the end point</p></li>
+<li><p><strong>nbpts</strong> (<em>int</em>) – Number of points to determine on the line</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>X,Y</strong> – points of the line</p>
+<dd class="field-even"><p><strong>xout, yout</strong> – points of the line</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.array of float</p>
@@ -1067,7 +1086,7 @@ Gives also the Azimuth between 2 points</p>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>s</strong> (<em>float</em>) – Distance betwwen the 2 points</p></li>
-<li><p><strong>fwdAz,revAz</strong> (<em>float</em>) – Forward and Reverse Azimuth between the 2 points</p></li>
+<li><p><strong>fwd_az,rev_az</strong> (<em>float</em>) – Forward and Reverse Azimuth between the 2 points</p></li>
 </ul>
 </p>
 </dd>
@@ -1075,20 +1094,20 @@ Gives also the Azimuth between 2 points</p>
 <p class="rubric">References</p>
 <p><a class="reference external" href="https://github.com/maurycyp/vincenty/blob/master/vincenty/">https://github.com/maurycyp/vincenty/blob/master/vincenty/</a></p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>  <span class="c1"># coincident points</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty_full</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>  <span class="c1"># coincident points</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty_full</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
 <span class="go">111.319491</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty_full</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
 <span class="go">110.574389</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">179.5</span><span class="p">))</span>  <span class="c1"># slow convergence</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty_full</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">179.5</span><span class="p">))</span>  <span class="c1"># slow convergence</span>
 <span class="go">19936.288579</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">179.7</span><span class="p">))</span>  <span class="c1"># failure to converge</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty_full</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">179.7</span><span class="p">))</span>  <span class="c1"># failure to converge</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">boston</span> <span class="o">=</span> <span class="p">(</span><span class="mf">42.3541165</span><span class="p">,</span> <span class="o">-</span><span class="mf">71.0693514</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">newyork</span> <span class="o">=</span> <span class="p">(</span><span class="mf">40.7791472</span><span class="p">,</span> <span class="o">-</span><span class="mf">73.9680804</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty</span><span class="p">(</span><span class="n">boston</span><span class="p">,</span> <span class="n">newyork</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty_full</span><span class="p">(</span><span class="n">boston</span><span class="p">,</span> <span class="n">newyork</span><span class="p">)</span>
 <span class="go">298.396057</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty</span><span class="p">(</span><span class="n">boston</span><span class="p">,</span> <span class="n">newyork</span><span class="p">,</span> <span class="n">miles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vincenty_full</span><span class="p">(</span><span class="n">boston</span><span class="p">,</span> <span class="n">newyork</span><span class="p">,</span> <span class="n">miles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">185.414657</span>
 </pre></div>
 </div>
@@ -1699,6 +1718,29 @@ GitHub repository :
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Datetime or list of Datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_time.date_pattern2dt">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">date_pattern2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_str_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.date_pattern2dt" title="Link to this definition"></a></dt>
+<dd><p>Time representation conversion</p>
+<p>Convert a date string in various formats to a Python datetime object.</p>
+<p>This function uses regular expressions to match the input date string
+against several common date formats and converts it to a datetime object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>date_str_inp</strong> (<em>str</em>) – The input date string to be converted.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corresponding datetime object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime.datetime</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the input string does not match any of the expected date formats.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2530,6 +2572,30 @@ There can be side effects when input time is close to a leap second jump.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_time.minmax_pattern_dt">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">minmax_pattern_dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date1_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date2_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.minmax_pattern_dt" title="Link to this definition"></a></dt>
+<dd><p>Convert two date strings into datetime objects and return the minimum and maximum.</p>
+<p>This is useful for a frontend CLI function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date1_inp</strong> (<em>str</em>) – The first date string to be converted.</p></li>
+<li><p><strong>date2_inp</strong> (<em>str</em>) – The second date string to be converted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the minimum and maximum datetime objects derived from the input strings.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the input strings cannot be converted into valid datetime objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.mjd2dt">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">mjd2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round_to</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1s'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.mjd2dt" title="Link to this definition"></a></dt>
 <dd><p>Time representation conversion</p>
@@ -2679,22 +2745,33 @@ The default is np.int64.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.rinexname2dt">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">rinexname2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinexpath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.rinexname2dt" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">rinexname2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinexpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_per_smp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.rinexname2dt" title="Link to this definition"></a></dt>
 <dd><p>Time representation conversion</p>
 <p>RINEX Name (short or long naming convention)  =&gt; Python’s Datetime</p>
 <p>Extract the date in a RINEX name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>rinexpath</strong> (<em>string</em>) – RINEX path. The RINEX basename will be extracted automatically.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rinexpath</strong> (<em>string</em><em> or </em><em>iterable</em><em> of </em><em>string</em>) – RINEX path(s). The RINEX basename will be extracted automatically.
+Can handle iterable of strings.</p></li>
+<li><p><strong>out_per_smp</strong> (<em>bool</em>) – if True, also returns the period and sample as timedelta objects.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>dt</strong> – Datetime</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>datetime</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>dt</strong> (<em>datetime or iterable of datetime</em>) – Datetime(s). If input is iterable, returns same type.</p></li>
+<li><p><strong>per</strong> (<em>timedelta or iterable of timedelta,</em>) – optional Period of the RINEX file (if out_per_smp is True)</p></li>
+<li><p><strong>smp</strong> (<em>timedelta or iterable of timedelta,</em>) – optional Sample interval of the RINEX file (if out_per_smp is True)</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_time.rnxperiod2tdlta">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">rnxperiod2tdlta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peri_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.rnxperiod2tdlta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.round_dt">
@@ -2736,57 +2813,78 @@ Default is ‘round’</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.sp3name2dt">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">sp3name2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sp3path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.sp3name2dt" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">sp3name2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sp3path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_per_smp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.sp3name2dt" title="Link to this definition"></a></dt>
 <dd><p>Time representation conversion</p>
 <p>Orbit SP3 Name (legacy/new naming convention)  =&gt; Python’s Datetime</p>
 <p>Extract the date in a Orbit SP3 name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>sp3path</strong> (<em>string</em>) – Orbit SP3 path. The basename will be extracted automatically.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sp3path</strong> (<em>string</em><em> or </em><em>iterable</em><em> of </em><em>string</em>) – Orbit SP3 path(s). The basename will be extracted automatically.
+Can handle iterable of strings.</p></li>
+<li><p><strong>out_per_smp</strong> (<em>bool</em>) – if True, also returns the period and sample as timedelta objects.
+Default is False.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>dt</strong> – Datetime</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>datetime</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>dt</strong> (<em>datetime or iterable of datetime</em>) – Datetime(s). If input is iterable, returns same type.</p></li>
+<li><p><strong>per</strong> (<em>timedelta or iterable of timedelta,</em>) – optional Period of the SP3 file (if out_per_smp is True)</p></li>
+<li><p><strong>smp</strong> (<em>timedelta or iterable of timedelta,</em>) – optional Sample interval of the SP3 file (if out_per_smp is True)</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.sp3name_leg_2dt">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">sp3name_leg_2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sp3path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.sp3name_leg_2dt" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">sp3name_leg_2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sp3path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_per_smp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.sp3name_leg_2dt" title="Link to this definition"></a></dt>
 <dd><p>Time representation conversion</p>
 <p>Orbit SP3 Name (old/legacy naming convention)  =&gt; Python’s Datetime</p>
 <p>Extract the date in a Orbit SP3 name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>sp3path</strong> (<em>string</em>) – Orbit SP3 path. The basename will be extracted automatically.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sp3path</strong> (<em>string</em><em> or </em><em>iterable</em><em> of </em><em>string</em>) – Orbit SP3 path(s). The basename will be extracted automatically.
+Can handle iterable of strings.</p></li>
+<li><p><strong>out_per_smp</strong> (<em>bool</em>) – if True, also returns the period and sample as timedelta objects.
+Default is False.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>dt</strong> – Datetime</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>datetime</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>dt</strong> (<em>datetime or iterable of datetime</em>) – Datetime(s). If input is iterable, returns same type.</p></li>
+<li><p><strong>per</strong> (<em>timedelta or iterable of timedelta,</em>) – optional Period of the SP3 file (if out_per_smp is True)</p></li>
+<li><p><strong>smp</strong> (<em>timedelta or iterable of timedelta,</em>) – optional Sample interval of the SP3 file (if out_per_smp is True)</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.sp3name_v3_2dt">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">sp3name_v3_2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sp3path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.sp3name_v3_2dt" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">sp3name_v3_2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sp3path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_per_smp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.sp3name_v3_2dt" title="Link to this definition"></a></dt>
 <dd><p>Time representation conversion</p>
 <p>Orbit SP3 Name (new naming convention)  =&gt; Python’s Datetime</p>
 <p>Extract the date in a Orbit SP3 name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>sp3path</strong> (<em>string</em>) – Orbit SP3 path. The basename will be extracted automatically.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sp3path</strong> (<em>string</em><em> or </em><em>iterable</em><em> of </em><em>string</em>) – Orbit SP3 path(s). The basename will be extracted automatically.
+Can handle iterable of strings.</p></li>
+<li><p><strong>out_per_smp</strong> (<em>bool</em>) – if True, also returns the period and sample as timedelta objects.
+Default is False.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>dt</strong> – Datetime</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>datetime</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>dt</strong> (<em>datetime or iterable of datetime</em>) – Datetime(s). If input is iterable, returns same type.</p></li>
+<li><p><strong>per</strong> (<em>timedelta or iterable of timedelta,</em>) – optional Period of the SP3 file (if out_per_smp is True)</p></li>
+<li><p><strong>smp</strong> (<em>timedelta or iterable of timedelta,</em>) – optional Sample interval of the SP3 file (if out_per_smp is True)</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3078,13 +3176,14 @@ Will extract the basename of a path.</p>
 <dd><p>Convert UTC Time to GPS Time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dtin_utc</strong> (<em>datetime</em>) – input UTC time.</p>
+<dd class="field-odd"><p><strong>dtin_utc</strong> (<em>datetime</em><em> or </em><em>iterable</em><em> of </em><em>datetime</em>) – input UTC time(s). Can handle iterable of datetimes.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Converted epoch in GPS time, i.e. GPS Week and GPS seconds in week.</p>
+<dd class="field-even"><p><strong>(gpsweek, gpssecs)</strong> – Converted epoch(s) in GPS time, i.e. (GPS Week, GPS seconds in week).
+If input is iterable, returns same type.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>gpsweek,gpssecs</p>
+<dd class="field-odd"><p>tuple or iterable of tuples</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5099,7 +5198,7 @@ can manage NaN too (return POSIX 0 epoch if NaN)</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="geodezyx.atmo.html" class="btn btn-neutral float-left" title="geodezyx.atmo package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="geodezyx.files_rw.html" class="btn btn-neutral float-right" title="geodezyx.files_rw package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="geodezyx.conv.bin.html" class="btn btn-neutral float-right" title="geodezyx.conv.bin package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

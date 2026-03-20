@@ -144,7 +144,7 @@ def weighted_average(df,data_col,weight_col,by_col):
     return result
 
 
-def diff_pandas(DF, col_name, use_np_diff=False):
+def diff_pandas(df, col_name, use_np_diff=False):
     """
     Differentiate a Pandas DataFrame, if index is time.
 
@@ -154,7 +154,7 @@ def diff_pandas(DF, col_name, use_np_diff=False):
 
     Parameters
     ----------
-    DF : pandas.DataFrame
+    df : pandas.DataFrame
         The input DataFrame. The index should represent time.
 
     col_name : str
@@ -174,11 +174,11 @@ def diff_pandas(DF, col_name, use_np_diff=False):
 
     """
     if not use_np_diff:
-        out = DF[col_name].diff() / DF[col_name].index.to_series().diff().dt.total_seconds()
+        out = df[col_name].diff() / df[col_name].index.to_series().diff().dt.total_seconds()
     else:
-        dif = np.diff(DF[col_name].values) / np.diff(DF.index).astype(np.float32) * 10**-9 ## because it is in nanosec per def
-        out = pd.Series(np.insert(dif,0,np.nan), ## add NaN as the 1st value
-                        index=DF[col_name].index,
+        dif = np.diff(df[col_name].values) / np.diff(df.index).astype(np.float32) * 10 ** -9 ## because it is in nanosec per def
+        out = pd.Series(np.insert(dif,0,np.nan),  ## add NaN as the 1st value
+                        index=df[col_name].index,
                         name=col_name)
     return out
 

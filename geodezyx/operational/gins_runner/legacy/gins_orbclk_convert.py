@@ -201,13 +201,13 @@ def download_convert_2_gins_orb_clk(
     # standard clock else
     if not clk_zlis:
         print("INFO : clock download : no 30s clock found, trying std. clocks")
-        clk_zlis = operational.multi_downloader_orbs_clks(
+        clk_zlis = operational.download_gnss_products(
             temp_dir,
             strtdt,
             enddt,
-            sp3clk="clk",
-            ac=ac,
-            data_center=data_center,
+            prod_types=("clk",),
+            ac_names=(ac,),
+            archive_center=data_center,
             repro=repro,
             archtype="/",
             sorted_mode=0,

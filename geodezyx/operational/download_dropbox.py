@@ -109,7 +109,7 @@ def dropbox_list_files(dbx, path):
 
 
 def dropbox_wget_cmds(
-    DFfiles,
+    df_files,
     dbx,
     out_dir_dwnld_files,
     out_dir_cmd_list,
@@ -126,7 +126,7 @@ def dropbox_wget_cmds(
 
     Parameters
     ----------
-    DFfiles : DataFrame
+    df_files : DataFrame
         Files DataFrame outputed from dropbox_list_files.
     dbx : dropbox.dropbox_client.Dropbox
         The dropbox_connect output object.
@@ -150,16 +150,16 @@ def dropbox_wget_cmds(
 
     Returns
     -------
-    WgetList : list
+    wget_list : list
         list of wget commands.
-    UrlDF : DataFrame
+    url_df : DataFrame
         DataFrame of the download URLs.
 
     """
 
-    LinkList, WgetList, UrlList = [], [], []
+    LinkList, wget_list, UrlList = [], [], []
 
-    for ifil, fil in DFfiles.iterrows():
+    for ifil, fil in df_files.iterrows():
 
         fil_name = fil["name"]
         fil_path = fil.path_display
@@ -219,7 +219,7 @@ def dropbox_wget_cmds(
         )
 
         print(wget_cmd)
-        WgetList.append(wget_cmd)
+        wget_list.append(wget_cmd)
 
         UrlList.append((fil_out_name, LinkTuple[0]))
 
@@ -238,9 +238,9 @@ def dropbox_wget_cmds(
         + ".list"
     )
     with open(out_cmd_list, "w+") as F:
-        F.write("\n".join(WgetList))
+        F.write("\n".join(wget_list))
 
-    UrlDF = pd.DataFrame(UrlList)
+    url_df = pd.DataFrame(UrlList)
     out_url_list = (
         out_dir_cmd_list
         + "/"
@@ -250,6 +250,6 @@ def dropbox_wget_cmds(
         + cmd_list_suffix
         + ".csv"
     )
-    UrlDF.to_csv(out_url_list, header=["fout", "url"], index=False)
+    url_df.to_csv(out_url_list, header=["fout", "url"], index=False)
 
-    return WgetList, UrlDF, out_cmd_list, out_url_list
+    return wget_list, url_df, out_cmd_list, out_url_list
