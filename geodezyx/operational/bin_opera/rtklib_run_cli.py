@@ -27,6 +27,46 @@ RTKLIB_RUN_DEFAULTS = utils.fct_def_args(rtklib_frontend.rtklib_run)
 # otherwise will use the function defaults
 
 
+def parse_site_pair(sites_rovers_raw, sites_bases_raw=None):
+    """
+    Parse sites_rovers that may contain comma-separated 'ROVER,BASE' pairs.
+
+    If any item in sites_rovers_raw contains a comma, **all** items are interpreted
+    as explicit rover/base pairs (2-tuples), and sites_bases is forced to None so
+    that make_pairs uses the explicit-pairs branch.
+
+    Parameters
+    ----------
+    sites_rovers_raw : list of str
+        Raw rover list, e.g. ``['TLSE', 'ZIMM']`` or ``['TLSE,GRAS', 'ZIMM,GRAS']``.
+    sites_bases_raw : list of str or None
+        Raw base list; ignored (set to None) when pair syntax is detected.
+
+    Returns
+    -------
+    sites_rovers : list of str or list of (str, str)
+    sites_bases  : list of str or None
+    """
+    if not sites_rovers_raw:
+        return sites_rovers_raw, sites_bases_raw
+
+    has_pairs = any("," in str(s) for s in sites_rovers_raw)
+
+    if has_pairs:
+        pairs = []
+        for s in sites_rovers_raw:
+            parts = str(s).split(",")
+            if len(parts) != 2:
+                raise ValueError(
+                    f"Invalid rover/base pair: '{s}'. "
+                    f"Expected 'ROVER,BASE' format (exactly one comma)."
+                )
+            pairs.append((parts[0].strip(), parts[1].strip()))
+        return pairs, None
+
+    return sites_rovers_raw, sites_bases_raw
+
+
 def parse_args():
     """Parse CLI arguments and return only explicitly provided values."""
     parser = argparse.ArgumentParser(
@@ -34,9 +74,15 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  rtklib_run --rnx_dir /data/rinex --cfgfile_generik config.conf --sites_rovers TLSE ZIMM --site_base GRAS0 --out_dir /results
+  # Standard mode: all rovers paired with all bases (cartesian product)
+  rtklib_run --rnx_dir /data/rinex --cfgfile_generik config.conf --sites_rovers TLSE ZIMM --sites_bases GRAS --out_dir /results
+
+  # Explicit pair mode: comma-separated ROVER,BASE pairs (sites_bases is ignored)
+  rtklib_run --rnx_dir /data/rinex --cfgfile_generik config.conf --sites_rovers TLSE,GRAS ZIMM,BRUS --out_dir /results
+
+  # YAML config (all CLI args override YAML settings)
   rtklib_run -y config.yaml
-  rtklib_run -y config.yaml --sites_rovers TLSE ZIMM  # Override YAML settings
+  rtklib_run -y config.yaml --sites_rovers TLSE,GRAS ZIMM,BRUS
 """,
     )
 
@@ -60,13 +106,21 @@ Examples:
         "-r",
         "--sites_rovers",
         nargs="+",
-        help="List of rover station names (4-char codes, e.g., TLSE ZIMM BRUS)",
+        help=(
+            "List of rover station names (4-char or 9-char codes, e.g., TLSE ZIMM BRUS). "
+            "Alternatively, provide explicit ROVER,BASE pairs separated by a comma "
+            "(e.g., TLSE,GRAS ZIMM,BRUS); in that case --sites_bases is ignored. "
+            "Both standard names and ROVER,BASE syntax are also accepted in the YAML config."
+        ),
     )
     parser.add_argument(
         "-b",
         "--sites_bases",
         nargs="+",
-        help="Base station name(s) (4-char or 9-char code, e.g., GRAS or GRAS00FRA)",
+        help=(
+            "Base station name(s) (4-char or 9-char code, e.g., GRAS or GRAS00FRA). "
+            "Not needed when --sites_rovers uses ROVER,BASE pair syntax."
+        ),
     )
     parser.add_argument("-o", "--out_dir", help="Output directory for results")
 
@@ -158,10 +212,7 @@ Examples:
     args_dict = vars(args_namespace)
 
     # Filter: keep only arguments explicitly provided (not None, not False for action="store_true")
-    return {
-        k: v for k, v in args_dict.items()
-        if v is not None and v is not False
-    }
+    return {k: v for k, v in args_dict.items() if v is not None and v is not False}
 
 
 def rtklib_run_main():
@@ -182,6 +233,14 @@ def rtklib_run_main():
     kwargs_out = dict(RTKLIB_RUN_DEFAULTS)
     kwargs_out.update(kwargs_cfg)
     kwargs_out.update({k: v for k, v in kwargs_cli.items() if k != "config_yaml"})
+
+    # Parse rover/base pairs if provided as 'ROVER,BASE' comma-separated strings
+    # (works for both CLI and YAML sources)
+    if "sites_rovers" in kwargs_out:
+        kwargs_out["sites_rovers"], kwargs_out["sites_bases"] = parse_site_pair(
+            kwargs_out.get("sites_rovers"),
+            kwargs_out.get("sites_bases"),
+        )
 
     # Parse dates if provided
     if kwargs_out.get("date_srt") and kwargs_out.get("date_end"):
@@ -208,6 +267,7 @@ def rtklib_run_main():
 
         traceback.print_exc()
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(rtklib_run_main())
