@@ -587,6 +587,7 @@ def rtklib_merge_parquet(
     if not fast_parquet_merge:
         l_prq = utils.find_recursive(parquet_dir, "*parquet")
     else:
+        rtklib_out_files = [f for f in rtklib_out_files if os.path.exists(f)]
         l_prq = [f.replace(".out", ".parquet") for f in rtklib_out_files]
 
     l_stk_df = []
@@ -603,8 +604,6 @@ def rtklib_merge_parquet(
     df_merged.to_parquet(all_prq_path, engine="auto")
     log.info(f"Merged parquet saved to {all_prq_path}")
     return all_prq_path
-
-
 
 
 def rtklib_run(
