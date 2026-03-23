@@ -558,22 +558,22 @@ def make_pairs(
 
 
 def rtklib_merge_parquet(
-    out_dir, exp_prefix="", out_run_pairs=None, fast_parquet_merge=False
+    parquet_dir, exp_prefix="", rtklib_out_files=None, fast_parquet_merge=False
 ):
     """
     Merge individual RTKLIB parquet files into a single consolidated parquet file.
 
     Parameters
     ----------
-    out_dir : str | os.PathLike
-        Directory where parquet files are located and where the merged file is saved.
+    parquet_dir : str | os.PathLike
+        Root directory where parquet files are located and where the merged file is saved.
     exp_prefix : str, default=""
         Prefix used to name the merged output file (<exp_prefix>_all.parquet).
-    out_run_pairs : list of str, optional
+    rtklib_out_files : list of str, optional
         List of ``.out`` file paths produced by a previous RTKLIB run.
         Only used when ``fast_parquet_merge=True`` to avoid a full directory scan.
     fast_parquet_merge : bool, default=False
-        If True, only merges the parquet files corresponding to ``out_run_pairs``
+        If True, only merges the parquet files corresponding to ``out_files``
         and appends them to an already-existing ``_all.parquet`` file.
         If False, scans the whole ``out_dir`` recursively for parquet files.
 
@@ -582,12 +582,12 @@ def rtklib_merge_parquet(
     str
         Path to the merged parquet file.
     """
-    all_prq_path = os.path.join(out_dir, exp_prefix + "_all.parquet")
+    all_prq_path = os.path.join(parquet_dir, exp_prefix + "_all.parquet")
 
     if not fast_parquet_merge:
-        l_prq = utils.find_recursive(out_dir, "*parquet")
+        l_prq = utils.find_recursive(parquet_dir, "*parquet")
     else:
-        l_prq = [f.replace(".out", ".parquet") for f in out_run_pairs]
+        l_prq = [f.replace(".out", ".parquet") for f in rtklib_out_files]
 
     l_stk_df = []
     for f in l_prq:
@@ -603,6 +603,8 @@ def rtklib_merge_parquet(
     df_merged.to_parquet(all_prq_path, engine="auto")
     log.info(f"Merged parquet saved to {all_prq_path}")
     return all_prq_path
+
+
 
 
 def rtklib_run(
@@ -672,7 +674,7 @@ def rtklib_run(
     rtklib_merge_parquet(
         out_dir,
         exp_prefix=exp_prefix,
-        out_run_pairs=out_run_pairs,
+        rtklib_out_files=out_run_pairs,
         fast_parquet_merge=fast_parquet_merge,
     )
 

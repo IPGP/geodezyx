@@ -17,7 +17,6 @@ from geodezyx import utils, files_rw
 
 log = logging.getLogger("geodezyx")
 
-
 def rtklib_parquet(resdir, pattern="*out", force=False):
     """
     Convert RTKLIB output files to Parquet format.
@@ -47,7 +46,6 @@ def rtklib_parquet(resdir, pattern="*out", force=False):
             log.info(f"Created parquet file: {f_prq}")
 
     return f_prq_lis
-
 
 def parse_args():
     """Parse command line arguments."""
