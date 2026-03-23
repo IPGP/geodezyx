@@ -13,18 +13,28 @@ cfgfile_generik: /opt/softs_gnss/geodezyx/exemples/rtklib_configfiles/rtknavi_ex
 # sites_rovers:
 #   - BOMG00REU,GITG00REU
 #   - BORG00REU,B59300REU
-## (below uses syntax A)
+## (below uses syntax B)
 sites_rovers:  # List of rover stations
-  - BOMG00REU
-  - BORG00REU
-  - CFNG00REU
-  - DERG00REU
-  - DSRG00REU
-  - SNEG00REU
-  - GITG00REU
+  - BOMG00REU, GITG00REU  # Explicit pair: BOMG00REU as rover, GITG00REU as base
+  - BORG00REU, GITG00REU  # Explicit pair: BORG00REU as rover, B59300REU as base
+  - CFNG00REU, GITG00REU  # Explicit pair: CFNG00REU as rover, GITG00REU as base
+  - DERG00REU, GITG00REU  # Explicit pair: DERG00REU as rover, GITG00REU as base
+  - DSRG00REU, GITG00REU  # Explicit pair: DSRG00REU as rover, GITG00REU as base
+  - SNEG00REU, GITG00REU  # Explicit pair: SNEG00REU as rover, GITG00REU as base
+  - BOMG00REU, DSRG00REU
+  - DSRG00REU, BOMG00REU
+  - BOMG00REU, SNEG00REU
+  - SNEG00REU, BOMG00REU
+  - SNEG00REU, DSRG00REU
+  - DSRG00REU, SNEG00REU
+  - SNEG00REU, DERG00REU
+  - DERG00REU, SNEG00REU
+  - DERG00REU, DSRG00REU
+  - DSRG00REU, DERG00REU
 sites_bases:
-  - GITG00REU  # Base station
-  - B59300REU  # Base station
+  - NONE       # No base station
+#  - GITG00REU  # Base station
+#  - B59300REU  # Base station
 out_dir: /backuped/calcgnss/rtklib_process/OVPF_static-start_ULT  # Output directory
 
 # Optional parameters
@@ -54,5 +64,8 @@ procs: 6         # Number of parallel workers (default: 4)
 
 # Executable path (optional)
 exe_path: rnx2rtkp
+
+# Parquet merge options
+fast_parquet_merge: False  # If True, only merge newly created parquet files instead of scanning the whole output directory
 
 

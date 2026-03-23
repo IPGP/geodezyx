@@ -55,4 +55,7 @@ procs: 6         # Number of parallel workers (default: 4)
 # Executable path (optional)
 exe_path: rnx2rtkp
 
+# Parquet merge options
+fast_parquet_merge: False  # If True, only merge newly created parquet files instead of scanning the whole output directory
+
 

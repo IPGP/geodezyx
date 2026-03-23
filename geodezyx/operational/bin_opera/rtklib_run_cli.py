@@ -75,14 +75,14 @@ def parse_args():
         epilog="""
 Examples:
   # Standard mode: all rovers paired with all bases (cartesian product)
-  rtklib_run --rnx_dir /data/rinex --cfgfile_generik config.conf --sites_rovers TLSE ZIMM --sites_bases GRAS --out_dir /results
+  rtklib_run --rnx_dir /data/rinex --cfgfile_generik config.conf --sites_rovers TLSE00FRA ZIMM00CHE --sites_bases GRAS00FRA --out_dir /results
 
   # Explicit pair mode: comma-separated ROVER,BASE pairs (sites_bases is ignored)
-  rtklib_run --rnx_dir /data/rinex --cfgfile_generik config.conf --sites_rovers TLSE,GRAS ZIMM,BRUS --out_dir /results
+  rtklib_run --rnx_dir /data/rinex --cfgfile_generik config.conf --sites_rovers TLSE00FRA,GRAS00FRA ZIMM00CHE,BRUS00BEL --out_dir /results
 
   # YAML config (all CLI args override YAML settings)
   rtklib_run -y config.yaml
-  rtklib_run -y config.yaml --sites_rovers TLSE,GRAS ZIMM,BRUS
+  rtklib_run -y config.yaml --sites_rovers TLSE00FRA,GRAS00FRA ZIMM00CHE,BRUS00BEL
 """,
     )
 
@@ -107,7 +107,7 @@ Examples:
         "--sites_rovers",
         nargs="+",
         help=(
-            "List of rover station names (4-char or 9-char codes, e.g., TLSE ZIMM BRUS). "
+            "List of rover station names (4-char or 9-char codes, e.g., TLSE00FRA ZIMM00CHE BRUS00BEL). "
             "Alternatively, provide explicit ROVER,BASE pairs separated by a comma "
             "(e.g., TLSE,GRAS ZIMM,BRUS); in that case --sites_bases is ignored. "
             "Both standard names and ROVER,BASE syntax are also accepted in the YAML config."
@@ -118,7 +118,7 @@ Examples:
         "--sites_bases",
         nargs="+",
         help=(
-            "Base station name(s) (4-char or 9-char code, e.g., GRAS or GRAS00FRA). "
+            "Base station name(s) (4-char or 9-char code, e.g., GRAS00FRA). "
             "Not needed when --sites_rovers uses ROVER,BASE pair syntax."
         ),
     )
@@ -206,6 +206,12 @@ Examples:
         "-x",
         "--exe_path",
         help=f"Path to rnx2rtkp executable (default: {RTKLIB_RUN_DEFAULTS.get('exe_path')})",
+    )
+    parser.add_argument(
+        "-fpm",
+        "--fast_parquet_merge",
+        action="store_true",
+        help=f"Fast parquet merge: only merge newly created parquet files instead of scanning the whole output directory (default: {RTKLIB_RUN_DEFAULTS.get('fast_parquet_merge')})",
     )
 
     args_namespace = parser.parse_args()
