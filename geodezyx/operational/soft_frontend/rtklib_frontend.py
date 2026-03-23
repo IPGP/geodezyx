@@ -557,6 +557,54 @@ def make_pairs(
     return rnxs_pairs, df_all
 
 
+def rtklib_merge_parquet(
+    out_dir, exp_prefix="", out_run_pairs=None, fast_parquet_merge=False
+):
+    """
+    Merge individual RTKLIB parquet files into a single consolidated parquet file.
+
+    Parameters
+    ----------
+    out_dir : str | os.PathLike
+        Directory where parquet files are located and where the merged file is saved.
+    exp_prefix : str, default=""
+        Prefix used to name the merged output file (<exp_prefix>_all.parquet).
+    out_run_pairs : list of str, optional
+        List of ``.out`` file paths produced by a previous RTKLIB run.
+        Only used when ``fast_parquet_merge=True`` to avoid a full directory scan.
+    fast_parquet_merge : bool, default=False
+        If True, only merges the parquet files corresponding to ``out_run_pairs``
+        and appends them to an already-existing ``_all.parquet`` file.
+        If False, scans the whole ``out_dir`` recursively for parquet files.
+
+    Returns
+    -------
+    str
+        Path to the merged parquet file.
+    """
+    all_prq_path = os.path.join(out_dir, exp_prefix + "_all.parquet")
+
+    if not fast_parquet_merge:
+        l_prq = utils.find_recursive(out_dir, "*parquet")
+    else:
+        l_prq = [f.replace(".out", ".parquet") for f in out_run_pairs]
+
+    l_stk_df = []
+    for f in l_prq:
+        if f.endswith("_all.parquet"):
+            continue
+        l_stk_df.append(pd.read_parquet(f))
+    df_merged = pd.concat(l_stk_df)
+
+    if fast_parquet_merge:
+        df_all_prev = pd.read_parquet(all_prq_path)
+        df_merged = pd.concat([df_all_prev, df_merged])
+
+    df_merged.to_parquet(all_prq_path, engine="auto")
+    log.info(f"Merged parquet saved to {all_prq_path}")
+    return all_prq_path
+
+
 def rtklib_run(
     rnx_dir,
     cfgfile_generik,
@@ -621,23 +669,11 @@ def rtklib_run(
 
     # merge all parquet files into one
     log.info("STEP 4: Merging individual parquet files into one")
-    all_prq_path = os.path.join(out_dir, exp_prefix + "_all.parquet")
-    if not fast_parquet_merge:
-        l_prq = utils.find_recursive(out_dir, "*parquet")
-    else:
-        l_prq = [f.replace(".out", ".parquet") for f in out_run_pairs]
-
-    l_stk_df = []
-    for f in l_prq:
-        if f.endswith("_all.parquet"):
-            continue
-        l_stk_df.append(pd.read_parquet(f))
-    df_all = pd.concat(l_stk_df)
-
-    if fast_parquet_merge:
-        df_all_prev = pd.read_parquet(all_prq_path)
-        df_all = pd.concat([df_all_prev, df_all])
-
-    df_all.to_parquet(all_prq_path, engine="auto")
+    rtklib_merge_parquet(
+        out_dir,
+        exp_prefix=exp_prefix,
+        out_run_pairs=out_run_pairs,
+        fast_parquet_merge=fast_parquet_merge,
+    )
 
     return out_run_pairs
