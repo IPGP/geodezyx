@@ -519,18 +519,19 @@ def make_pairs(
 
     bas_prev, rov_prev = "", ""
 
-    def _find_bas4rov(row_rov, rov, bas, df_bas):
+    def _find_bas4rov(row_rov, df_bas_inp):
         """Find matching base for a rover row using time coverage."""
         rov_srt = row_rov["date"]
         rov_end = row_rov["date_end"]
-        sel = (df_bas["date"] <= rov_srt) & (rov_end <= df_bas["date_end"])
-        df_bas_sel = df_bas[sel]
+        rov_sit = row_rov["site9"]
+        sel = (df_bas_inp["date"] <= rov_srt) & (rov_end <= df_bas_inp["date_end"])
+        df_bas_sel = df_bas_inp[sel]
 
         if len(df_bas_sel) == 0:
-            log.warning(f"no base for rover {rov} at {rov_srt}")
+            log.warning(f"no base for rover {rov_sit} at {rov_srt}")
             return None
         elif len(df_bas_sel) > 1:
-            log.warning(f"multi. bases for {rov} at {rov_srt}, get 1st")
+            log.warning(f"multi. bases for {rov_sit} at {rov_srt}, get 1st")
             log.warning(f"\n{df_bas_sel.to_string()}")
 
         row_bas = df_bas_sel.iloc[0]
@@ -549,9 +550,7 @@ def make_pairs(
         df_bas = df_bases[df_bases["site9"] == bas]
 
         # Use apply to process each rover row
-        pairs_for_rov = df_rov.apply(
-            lambda r: _find_bas4rov(r, rov, bas, df_bas), axis=1
-        )
+        pairs_for_rov = df_rov.apply(lambda r: _find_bas4rov(r, df_bas), axis=1)
         # Add non-None pairs to the list
         rnxs_pairs.extend([pair for pair in pairs_for_rov if pair is not None])
 
