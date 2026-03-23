@@ -272,7 +272,7 @@ def rtklib_run_mono(
         utils.gzip_compress(out_res_fil + ".stat", rm_inp=True)
         out_prq_fil = out_res_fil.replace(".out", ".parquet")
         df_out2prq = files_rw.read_rtklib(out_res_fil, return_df=True)
-        df_out2prq.to_parquet(out_prq_fil, engine='auto')
+        df_out2prq.to_parquet(out_prq_fil, engine="auto")
         log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
 
     if not keep_tmp:
@@ -469,7 +469,7 @@ def make_pairs(
 
     Parameters
     ----------
-    rnx_dir : str | os.PathLike
+    rnx_dir : str or os.PathLike
         Directory containing RINEX files.
     sites_rovers : str or list of str
         List of rover site codes.
@@ -482,63 +482,78 @@ def make_pairs(
 
     Returns
     -------
-    tuple
-        (rnxs_pairs, df_all) where:
-        - rnxs_pairs : list of tuples (rover_path, base_path)
-        - df_all : pandas DataFrame with all RINEX file information
+    rnxs_pairs : list of tuples
+        rover_path, base_path
+    df_all : pandas DataFrame
+        all RINEX file information
     """
 
-    sites_rovers = utils.listify(sites_rovers)
-    sites_bases = utils.listify(sites_bases)
+    if sites_bases is not None:
+        sit_rov_use = utils.listify(sites_rovers)
+        sit_bas_use = utils.listify(sites_bases)
+        pairs_use = [(r, b) for r in sit_rov_use for b in sit_bas_use]
+    else:
+        sit_rov_use, sit_bas_use = zip(*sites_rovers)
+        pairs_use = sites_rovers
 
     rnxs_pairs = []
 
-    sites_all = list(set(sites_rovers + sites_bases))
+    sit_all = list(set(sit_rov_use + sit_bas_use))
 
     rnxs_all = operational.rinex_finder(
         rnx_dir,
-        specific_sites=sites_all,
+        specific_sites=sit_all,
         start_epoch=date_srt,
         end_epoch=date_end,
     )
 
     df_all = operational.rinex_table_from_list(rnxs_all, site9_col=True)
     df_all["date_end"] = df_all["date"] + df_all["per"]
-    df_rovers = df_all[df_all["site9"].isin(sites_rovers)]
-    df_bases = df_all[df_all["site9"].isin(sites_bases)]
+    df_rovers = df_all[df_all["site9"].isin(sit_rov_use)]
+    df_bases = df_all[df_all["site9"].isin(sit_bas_use)]
 
     if len(df_bases) == 0:
-        log.error(f"No base RINEX files found for site: {sites_bases}")
+        log.error(f"No base RINEX files found for site: {sit_bas_use}")
         log.error(f"All sites found: {str(list(df_all["site9"].unique()))}")
         return [], df_all
 
     bas_prev, rov_prev = "", ""
 
-    for _, row_rov in df_rovers.iterrows():
-        rov = row_rov["site9"]
-        for bas, df_bas in df_bases.groupby("site9"):
-            if bas == rov:
-                # this test is to silent multiple warning messages
-                if bas != bas_prev or rov != rov_prev:
-                    log.warning(f"Rover '{rov}' is the same as base '{bas}', skipping pair")
-                    bas_prev, rov_prev = bas, rov
-                continue
-            rov_srt = row_rov["date"]
-            rov_end = row_rov["date_end"]
+    def _find_bas4rov(row_rov, rov, bas, df_bas):
+        """Find matching base for a rover row using time coverage."""
+        rov_srt = row_rov["date"]
+        rov_end = row_rov["date_end"]
+        sel = (df_bas["date"] <= rov_srt) & (rov_end <= df_bas["date_end"])
+        df_bas_sel = df_bas[sel]
 
-            sel = (df_bas["date"] <= rov_srt) & (rov_end <= df_bas["date_end"])
-            df_bas_sel = df_bas[sel]
-            if len(df_bas_sel) == 0:
-                log.warning(f"no base for rover {rov} at {rov_srt}")
-                continue
-            elif len(df_bas_sel) > 1:
-                log.warning(f"multi. bases for {rov} at {rov_srt}, get 1st:")
-                log.warning(f"\n{df_bas_sel.to_string()}")
+        if len(df_bas_sel) == 0:
+            log.warning(f"no base for rover {rov} at {rov_srt}")
+            return None
+        elif len(df_bas_sel) > 1:
+            log.warning(f"multi. bases for {rov} at {rov_srt}, get 1st")
+            log.warning(f"\n{df_bas_sel.to_string()}")
 
-            row_bas = df_bas_sel.iloc[0]
+        row_bas = df_bas_sel.iloc[0]
+        return row_rov["path"], row_bas["path"]
 
-            rnxs_pair = (row_rov["path"], row_bas["path"])
-            rnxs_pairs.append(rnxs_pair)
+    for rov, bas in pairs_use:
+        if rov == bas:
+            # this test is to silent multiple warning messages
+            if bas != bas_prev or rov != rov_prev:
+                wm = f"Rover '{rov}' is the same as base '{bas}', skipping pair"
+                log.warning(wm)
+                bas_prev, rov_prev = bas, rov
+            continue
+
+        df_rov = df_rovers[df_rovers["site9"] == rov]
+        df_bas = df_bases[df_bases["site9"] == bas]
+
+        # Use apply to process each rover row
+        pairs_for_rov = df_rov.apply(
+            lambda r: _find_bas4rov(r, rov, bas, df_bas), axis=1
+        )
+        # Add non-None pairs to the list
+        rnxs_pairs.extend([pair for pair in pairs_for_rov if pair is not None])
 
     return rnxs_pairs, df_all
 
@@ -563,6 +578,7 @@ def rtklib_run(
     keep_tmp=False,
     procs=8,
     exe_path="rnx2rtkp",
+    fast_parquet_merge=False,
 ):
 
     log.info("STEP 1: Finding RINEX files and matching rover/base pairs")
@@ -606,14 +622,23 @@ def rtklib_run(
 
     # merge all parquet files into one
     log.info("STEP 4: Merging individual parquet files into one")
-    tot_prq_path = os.path.join(out_dir, exp_prefix + "_all.parquet")
-    l_prq = utils.find_recursive(out_dir, "*parquet")
-    df_stk = []
+    all_prq_path = os.path.join(out_dir, exp_prefix + "_all.parquet")
+    if not fast_parquet_merge:
+        l_prq = utils.find_recursive(out_dir, "*parquet")
+    else:
+        l_prq = [f.replace(".out", ".parquet") for f in out_run_pairs]
+
+    l_stk_df = []
     for f in l_prq:
         if f.endswith("_all.parquet"):
             continue
-        df_stk.append(pd.read_parquet(f))
-    df_all = pd.concat(df_stk)
-    df_all.to_parquet(tot_prq_path, engine="auto")
+        l_stk_df.append(pd.read_parquet(f))
+    df_all = pd.concat(l_stk_df)
+
+    if fast_parquet_merge:
+        df_all_prev = pd.read_parquet(all_prq_path)
+        df_all = pd.concat([df_all_prev, df_all])
+
+    df_all.to_parquet(all_prq_path, engine="auto")
 
     return out_run_pairs
