@@ -607,8 +607,9 @@ def rtklib_merge_parquet(
     prq_path_out = os.path.join(prq_out_dir, exp_prefix + "_all.parquet")
     prq_path_tmp = prq_path_out + ".tmp"
 
-    # Exclude the output file itself from the source list
-    l_prq = [f for f in l_prq if not f.endswith("_all.parquet")]
+    # Exclude the output file itself and stray temp files from the source list
+    l_prq = [f for f in l_prq if not f.endswith("_all.parquet")
+             and not f.endswith(".tmp")]
 
     # When fast-merging, prepend the existing merged file so it is streamed
     # first; write to a temp path to avoid reading and writing the same file.
@@ -630,6 +631,9 @@ def rtklib_merge_parquet(
     try:
         for f in l_prq_merge:
             tbl = _drop_pandas_meta(pq.read_table(f))
+            if tbl.num_columns == 0:
+                log.warning(f"Skipping empty/corrupt parquet file: {f}")
+                continue
             if writer is None:
                 writer = pq.ParquetWriter(prq_path_wrk, tbl.schema)
             writer.write_table(tbl)
