@@ -619,12 +619,17 @@ def rtklib_merge_parquet(
         l_prq_merge = l_prq
         prq_path_wrk = prq_path_out
 
+    def _drop_pandas_meta(tbl):
+        """Drop the 'pandas' metadata key so all tables share the same schema."""
+        meta = {k: v for k, v in tbl.schema.metadata.items() if k != b"pandas"}
+        return tbl.replace_schema_metadata(meta)
+
     # Stream each source table directly through a ParquetWriter —
     # no pandas conversion, no in-memory concat.
     writer = None
     try:
         for f in l_prq_merge:
-            tbl = pq.read_table(f)
+            tbl = _drop_pandas_meta(pq.read_table(f))
             if writer is None:
                 writer = pq.ParquetWriter(prq_path_wrk, tbl.schema)
             writer.write_table(tbl)
