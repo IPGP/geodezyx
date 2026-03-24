@@ -31,6 +31,7 @@ import subprocess
 import numpy as np
 import shutil as shutils
 import pandas as pd
+import pyarrow.parquet as pq
 
 # from threading import Lock
 
@@ -315,13 +316,13 @@ def rtklib_run_pair(
     ----------
     rinex_pairs : list of tuples
         List of (rnx_rov, rnx_bas) file path tuples to process.
-    cfgfile_generik : str | os.PathLike
+    cfgfile_generik : str or os.PathLike
         Path to generic RTKLIB configuration file.
-    out_dir : str | os.PathLike
+    out_dir : str or os.PathLike
         Directory where results are saved.
-    tmp_dir : str | os.PathLike | None, default=None
+    tmp_dir : str or os.PathLike or None, default=None
         Temporary directory for intermediate files.
-    prod_dir : str | os.PathLike | None, default=None
+    prod_dir : str or os.PathLike or None, default=None
         Directory where to search for orbits, clocks, and BRDC files.
     orbclklis_inp : list of str, optional
         List of orbit/clock files to select from if not downloading.
@@ -558,52 +559,85 @@ def make_pairs(
 
 
 def rtklib_merge_parquet(
-    parquet_dir, exp_prefix="", rtklib_out_files=None, fast_parquet_merge=False
+    parquet_inp,
+    rtklib_out_files=None,
+    fast_merge=False,
+    exp_prefix="",
 ):
     """
     Merge individual RTKLIB parquet files into a single consolidated parquet file.
 
     Parameters
     ----------
-    parquet_dir : str | os.PathLike
-        Root directory where parquet files are located and where the merged file is saved.
-    exp_prefix : str, default=""
-        Prefix used to name the merged output file (<exp_prefix>_all.parquet).
+    parquet_inp : str or os.PathLike or list of str
+        Either a directory path (all ``*.parquet`` files inside are collected
+        recursively) **or** an explicit list of parquet file paths.
+        The merged output file is written to the directory (or, for a list,
+        to the directory of the first file in the list).
     rtklib_out_files : list of str, optional
         List of ``.out`` file paths produced by a previous RTKLIB run.
-        Only used when ``fast_parquet_merge=True`` to avoid a full directory scan.
-    fast_parquet_merge : bool, default=False
-        If True, only merges the parquet files corresponding to ``out_files``
-        and appends them to an already-existing ``_all.parquet`` file.
-        If False, scans the whole ``out_dir`` recursively for parquet files.
+        Only used when ``fast_merge=True`` and ``parquet_inp`` is a directory,
+        to avoid a full recursive scan.
+    fast_merge : bool, default=False
+        If True, only merges the parquet files corresponding to
+        ``rtklib_out_files`` (or those in the explicit list) and appends them
+        to an already-existing ``_all.parquet`` file.
+        If False, scans the whole directory recursively for parquet files.
+    exp_prefix : str, default=""
+        Prefix used to name the merged output file (<exp_prefix>_all.parquet).
 
     Returns
     -------
     str
         Path to the merged parquet file.
     """
-    all_prq_path = os.path.join(parquet_dir, exp_prefix + "_all.parquet")
-
-    if not fast_parquet_merge:
-        l_prq = utils.find_recursive(parquet_dir, "*parquet")
+    # --- resolve source files and output directory ---
+    if isinstance(parquet_inp, (str, os.PathLike)) and os.path.isdir(parquet_inp):
+        prq_out_dir = str(parquet_inp)
+        if fast_merge and rtklib_out_files:
+            l_prq = [f.replace(".out", ".parquet") for f in rtklib_out_files]
+            l_prq = [f for f in l_prq if os.path.exists(f)]
+        else:
+            l_prq = utils.find_recursive(prq_out_dir, "*parquet")
     else:
-        rtklib_out_files = [f for f in rtklib_out_files if os.path.exists(f)]
-        l_prq = [f.replace(".out", ".parquet") for f in rtklib_out_files]
+        # parquet_inp is an explicit list of parquet files
+        l_prq = list(parquet_inp)
+        prq_out_dir = os.path.dirname(os.path.abspath(l_prq[0])) if l_prq else "."
 
-    l_stk_df = []
-    for f in l_prq:
-        if f.endswith("_all.parquet"):
-            continue
-        l_stk_df.append(pd.read_parquet(f))
-    df_merged = pd.concat(l_stk_df)
+    prq_path_out = os.path.join(prq_out_dir, exp_prefix + "_all.parquet")
+    prq_path_tmp = prq_path_out + ".tmp"
 
-    if fast_parquet_merge:
-        df_all_prev = pd.read_parquet(all_prq_path)
-        df_merged = pd.concat([df_all_prev, df_merged])
+    # Exclude the output file itself from the source list
+    l_prq = [f for f in l_prq if not f.endswith("_all.parquet")]
 
-    df_merged.to_parquet(all_prq_path, engine="auto")
-    log.info(f"Merged parquet saved to {all_prq_path}")
-    return all_prq_path
+    # When fast-merging, prepend the existing merged file so it is streamed
+    # first; write to a temp path to avoid reading and writing the same file.
+    if fast_merge and os.path.exists(prq_path_out):
+        l_prq_merge = [prq_path_out] + l_prq
+        prq_path_wrk = prq_path_tmp
+    else:
+        l_prq_merge = l_prq
+        prq_path_wrk = prq_path_out
+
+    # Stream each source table directly through a ParquetWriter —
+    # no pandas conversion, no in-memory concat.
+    writer = None
+    try:
+        for f in l_prq_merge:
+            tbl = pq.read_table(f)
+            if writer is None:
+                writer = pq.ParquetWriter(prq_path_wrk, tbl.schema)
+            writer.write_table(tbl)
+    finally:
+        if writer:
+            writer.close()
+
+    # Atomically replace the previous merged file when using a temp path
+    if prq_path_wrk == prq_path_tmp and os.path.exists(prq_path_tmp):
+        os.replace(prq_path_tmp, prq_path_out)
+
+    log.info(f"Merged parquet saved to {prq_path_out}")
+    return prq_path_out
 
 
 def rtklib_run(
@@ -672,9 +706,9 @@ def rtklib_run(
     log.info("STEP 4: Merging individual parquet files into one")
     rtklib_merge_parquet(
         out_dir,
-        exp_prefix=exp_prefix,
         rtklib_out_files=out_run_pairs,
-        fast_parquet_merge=fast_parquet_merge,
+        fast_merge=fast_parquet_merge,
+        exp_prefix=exp_prefix,
     )
 
     return out_run_pairs
