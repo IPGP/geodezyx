@@ -32,6 +32,7 @@ import numpy as np
 import shutil as shutils
 import pandas as pd
 import pyarrow.parquet as pq
+from tqdm import tqdm
 
 # from threading import Lock
 
@@ -629,7 +630,9 @@ def rtklib_merge_parquet(
     # no pandas conversion, no in-memory concat.
     writer = None
     try:
-        for f in l_prq_merge:
+        pbar = tqdm(l_prq_merge, desc="Merging parquet", unit="file")
+        for f in pbar:
+            pbar.set_postfix_str(os.path.basename(f), refresh=False)
             tbl = _drop_pandas_meta(pq.read_table(f))
             if tbl.num_columns == 0:
                 log.warning(f"Skipping empty/corrupt parquet file: {f}")
