@@ -26,22 +26,22 @@ def parse_args():
         epilog="""
 Examples:
   # scan a whole directory
-  rtklib_merge_parquet -d /path/to/results
+  rtklib_merge_parquet -i /path/to/results
 
   # scan a directory with an experiment prefix
-  rtklib_merge_parquet -d /path/to/results -e myexp
+  rtklib_merge_parquet -i /path/to/results -e myexp
 
   # fast merge: append specific files to an existing _all.parquet
-  rtklib_merge_parquet -d /path/to/results -e myexp --fast_merge \\
+  rtklib_merge_parquet -i /path/to/results -e myexp --fast_merge \\
       -o /path/to/results/2024/001/run1.out /path/to/results/2024/002/run2.out
 
   # explicit list of parquet files (no directory scan)
-  rtklib_merge_parquet -d /path/to/a.parquet /path/to/b.parquet -e myexp
+  rtklib_merge_parquet -i /path/to/a.parquet /path/to/b.parquet -e myexp
 """,
     )
 
     parser.add_argument(
-        "-d",
+        "-i",
         "--parquet_inp",
         nargs="+",
         required=True,
