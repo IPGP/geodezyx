@@ -561,9 +561,9 @@ def make_pairs(
 
 def rtklib_merge_parquet(
     parquet_inp,
-    rtklib_out_files=None,
-    fast_merge=False,
     exp_prefix="",
+    fast_merge=False,
+    rtklib_out_files=None,
 ):
     """
     Merge individual RTKLIB parquet files into a single consolidated parquet file.
@@ -575,17 +575,17 @@ def rtklib_merge_parquet(
         recursively) **or** an explicit list of parquet file paths.
         The merged output file is written to the directory (or, for a list,
         to the directory of the first file in the list).
+    exp_prefix : str, default=""
+        Prefix used to name the merged output file (<exp_prefix>_all.parquet).
+    fast_merge : bool, default=False
+        If True, only merges the parquet files corresponding to
+        ``rtklib_out_files`` (or those in the explicit list) and appends them
+        to an already-existing ``<exp_prefix>_all.parquet`` file.
+        If False, scans the whole directory recursively for parquet files.
     rtklib_out_files : list of str, optional
         List of ``.out`` file paths produced by a previous RTKLIB run.
         Only used when ``fast_merge=True`` and ``parquet_inp`` is a directory,
         to avoid a full recursive scan.
-    fast_merge : bool, default=False
-        If True, only merges the parquet files corresponding to
-        ``rtklib_out_files`` (or those in the explicit list) and appends them
-        to an already-existing ``_all.parquet`` file.
-        If False, scans the whole directory recursively for parquet files.
-    exp_prefix : str, default=""
-        Prefix used to name the merged output file (<exp_prefix>_all.parquet).
 
     Returns
     -------
@@ -718,9 +718,9 @@ def rtklib_run(
     log.info("STEP 4: Merging individual parquet files into one")
     rtklib_merge_parquet(
         out_dir,
-        rtklib_out_files=out_run_pairs,
-        fast_merge=fast_parquet_merge,
         exp_prefix=exp_prefix,
+        fast_merge=fast_parquet_merge,
+        rtklib_out_files=out_run_pairs,
     )
 
     return out_run_pairs
