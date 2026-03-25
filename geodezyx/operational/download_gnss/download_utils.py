@@ -277,38 +277,6 @@ class MyFTP_TLS(FTP_TLS):
         return conn, size
 
 
-def ftp_dir_list_files(ftp_obj_in):
-    """
-    Lists the files in the current directory of the FTP object.
-
-    Parameters
-    ----------
-    ftp_obj_in : FTP object
-        The FTP object used to connect to the FTP server.
-
-    Returns
-    -------
-    list
-        A list of filenames in the current directory of the FTP object.
-
-    Notes
-    -----
-    This function tries to get the list of filenames in the current directory of the FTP object.
-    If it encounters a permission error, it checks if the error message is "550 No files found".
-    If it is, it logs a warning message and returns an empty list.
-    If the error message is different, it raises the exception.
-    """
-    files = []
-    try:
-        files = ftp_obj_in.nlst()
-    except ftplib.error_perm as resp:
-        if str(resp) == "550 No files found":
-            log.warning("No files in this directory" + ftp_obj_in.pwd())
-        else:
-            raise
-    return files
-
-
 def ftp_objt_create(
     secure_ftp_inp=False,
     host="",
@@ -598,113 +566,113 @@ def ftp_downld_front(
     return out_tup_lis
 
 
-def ftp_downloader_wo_objects(tupin):
-    """
-    create the necessary FTP object
+# def ftp_downloader_wo_objects(tupin):
+#     """
+#     create the necessary FTP object
+#
+#     should not be used anymore
+#     """
+#     arch_center_main, wwww_dir, filename, localdir = tupin
+#     ftp_obj_wk = FTP(arch_center_main)
+#     ftp_obj_wk.login()
+#     ftp_obj_wk.cwd(wwww_dir)
+#     localpath, bool_dl = ftp_downld_core(ftp_obj_wk, filename, localdir)
+#     ftp_obj_wk.close()
+#     return localpath, bool_dl
 
-    should not be used anymore
-    """
-    arch_center_main, wwww_dir, filename, localdir = tupin
-    ftp_obj_wk = FTP(arch_center_main)
-    ftp_obj_wk.login()
-    ftp_obj_wk.cwd(wwww_dir)
-    localpath, bool_dl = ftp_downld_core(ftp_obj_wk, filename, localdir)
-    ftp_obj_wk.close()
-    return localpath, bool_dl
 
-
-def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
-    """
-    filter urllist,savedirlist generated with download_gnss_rinex with an
-    optimized FTP crawl
-
-    """
-    ### create a DataFrame based on the urllist and savedirlist lists
-    df = pd.concat((pd.DataFrame(urllist), pd.DataFrame(savedirlist)), axis=1)
-    df_orig = df.copy()
-
-    ### rename the columns
-    if df.shape[1] == 4:
-        loginftp = True
-        df.columns = ("url", "user", "pass", "savedir")
-    else:
-        loginftp = False
-        df.columns = ("url", "savedir")
-        df["user"] = "anonymous"
-        df["pass"] = ""
-
-    ### Do the correct split for the URLs
-    df = df.sort_values("url")
-    df["url"] = df["url"].str.replace("ftp://", "")
-    df["dirname"] = df["url"].apply(os.path.dirname)
-    df["basename"] = df["url"].apply(os.path.basename)
-    df["root"] = [e.split("/")[0] for e in df["dirname"].values]
-    df["dir"] = [e1.replace(e2, "")[1:] for (e1, e2) in zip(df["dirname"], df["root"])]
-    df["bool"] = False
-
-    #### Initialisation of the 1st variables for the loop
-    prev_row_ftpobj = df.iloc[0]
-    prev_row_cwd = df.iloc[0]
-    ftp_files_list = []
-    count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
-    #### Initialisation of the FTP object
-
-    ftpobj, _ = ftp_objt_create(
-        secure_ftp_inp=secure_ftp,
-        host=prev_row_ftpobj.root,
-        user=prev_row_ftpobj.user,
-        passwd=prev_row_ftpobj["pass"],
-    )
-
-    for irow, row in df.iterrows():
-        count_loop += 1
-
-        ####### we recreate a new FTP object if the root URL is not the same
-        if row.root != prev_row_ftpobj.root or count_loop > 20:
-            ftpobj, _ = ftp_objt_create(
-                secure_ftp_inp=secure_ftp,
-                host=prev_row_ftpobj.root,
-                user=prev_row_ftpobj.user,
-                passwd=prev_row_ftpobj["pass"],
-            )
-
-            prev_row_ftpobj = row
-            count_loop = 0
-
-        ####### we recreate a new file list if the date path is not the same
-        if (prev_row_cwd.dir != row.dir) or irow == 0:
-            log.info("chdir " + row.dirname)
-            ftpobj.cwd("/")
-
-            try:  #### we try to change for the right folder
-                ftpobj.cwd(row.dir)
-            except:  #### If not possible, then no file in the list
-                ftp_files_list = []
-
-            ftp_files_list = ftp_dir_list_files(ftpobj)
-            prev_row_cwd = row
-
-            ####### we check if the files is avaiable
-        if row.basename in ftp_files_list:
-            df.loc[irow, "bool"] = True
-            log.info(row.basename + " found on server :)")
-        else:
-            df.loc[irow, "bool"] = False
-            log.warning(row.basename + " not found on server :(")
-
-    df_good = df[df["bool"]].copy()
-
-    df_good["url"] = "ftp://" + df_good["url"]
-
-    ### generate the outputs
-    if loginftp:
-        urllist_out = list(zip(df_good.url, df_good.user, df_good["pass"]))
-    else:
-        urllist_out = list(df_good.url)
-
-    savedirlist_out = list(df_good.savedir)
-
-    return urllist_out, savedirlist_out
+# def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
+#     """
+#     filter urllist,savedirlist generated with download_gnss_rinex with an
+#     optimized FTP crawl
+#
+#     """
+#     ### create a DataFrame based on the urllist and savedirlist lists
+#     df = pd.concat((pd.DataFrame(urllist), pd.DataFrame(savedirlist)), axis=1)
+#     df_orig = df.copy()
+#
+#     ### rename the columns
+#     if df.shape[1] == 4:
+#         loginftp = True
+#         df.columns = ("url", "user", "pass", "savedir")
+#     else:
+#         loginftp = False
+#         df.columns = ("url", "savedir")
+#         df["user"] = "anonymous"
+#         df["pass"] = ""
+#
+#     ### Do the correct split for the URLs
+#     df = df.sort_values("url")
+#     df["url"] = df["url"].str.replace("ftp://", "")
+#     df["dirname"] = df["url"].apply(os.path.dirname)
+#     df["basename"] = df["url"].apply(os.path.basename)
+#     df["root"] = [e.split("/")[0] for e in df["dirname"].values]
+#     df["dir"] = [e1.replace(e2, "")[1:] for (e1, e2) in zip(df["dirname"], df["root"])]
+#     df["bool"] = False
+#
+#     #### Initialisation of the 1st variables for the loop
+#     prev_row_ftpobj = df.iloc[0]
+#     prev_row_cwd = df.iloc[0]
+#     ftp_files_list = []
+#     count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
+#     #### Initialisation of the FTP object
+#
+#     ftpobj, _ = ftp_objt_create(
+#         secure_ftp_inp=secure_ftp,
+#         host=prev_row_ftpobj.root,
+#         user=prev_row_ftpobj.user,
+#         passwd=prev_row_ftpobj["pass"],
+#     )
+#
+#     for irow, row in df.iterrows():
+#         count_loop += 1
+#
+#         ####### we recreate a new FTP object if the root URL is not the same
+#         if row.root != prev_row_ftpobj.root or count_loop > 20:
+#             ftpobj, _ = ftp_objt_create(
+#                 secure_ftp_inp=secure_ftp,
+#                 host=prev_row_ftpobj.root,
+#                 user=prev_row_ftpobj.user,
+#                 passwd=prev_row_ftpobj["pass"],
+#             )
+#
+#             prev_row_ftpobj = row
+#             count_loop = 0
+#
+#         ####### we recreate a new file list if the date path is not the same
+#         if (prev_row_cwd.dir != row.dir) or irow == 0:
+#             log.info("chdir " + row.dirname)
+#             ftpobj.cwd("/")
+#
+#             try:  #### we try to change for the right folder
+#                 ftpobj.cwd(row.dir)
+#             except:  #### If not possible, then no file in the list
+#                 ftp_files_list = []
+#
+#             ftp_files_list = ftp_dir_list_files(ftpobj)
+#             prev_row_cwd = row
+#
+#             ####### we check if the files is avaiable
+#         if row.basename in ftp_files_list:
+#             df.loc[irow, "bool"] = True
+#             log.info(row.basename + " found on server :)")
+#         else:
+#             df.loc[irow, "bool"] = False
+#             log.warning(row.basename + " not found on server :(")
+#
+#     df_good = df[df["bool"]].copy()
+#
+#     df_good["url"] = "ftp://" + df_good["url"]
+#
+#     ### generate the outputs
+#     if loginftp:
+#         urllist_out = list(zip(df_good.url, df_good.user, df_good["pass"]))
+#     else:
+#         urllist_out = list(df_good.url)
+#
+#     savedirlist_out = list(df_good.savedir)
+#
+#     return urllist_out, savedirlist_out
 
 
 ######################################################################
@@ -822,7 +790,7 @@ def check_local_file_exists(
     return False, False, ""
 
 
-def get_ftp_connection(
+def get_ftp_connect(
     ftpobj, host, protocol, sftp, user, passwd, prev_host, count_loop, count_nmax
 ):
     """
@@ -879,7 +847,39 @@ def get_ftp_connection(
     return ftpobj, prev_host
 
 
-def get_ftp_directory_listing(ftpobj, directory, host, prev_dir):
+def list_ftp_dir_core(ftpobj):
+    """
+    Lists the files in the current directory of the FTP object.
+
+    Parameters
+    ----------
+    ftpobj : FTP object
+        The FTP object used to connect to the FTP server.
+
+    Returns
+    -------
+    list
+        A list of filenames in the current directory of the FTP object.
+
+    Notes
+    -----
+    This function tries to get the list of filenames in the current directory of the FTP object.
+    If it encounters a permission error, it checks if the error message is "550 No files found".
+    If it is, it logs a warning message and returns an empty list.
+    If the error message is different, it raises the exception.
+    """
+    files = []
+    try:
+        files = ftpobj.nlst()
+    except ftplib.error_perm as resp:
+        if str(resp) == "550 No files found":
+            log.warning("No files in this directory" + ftpobj.pwd())
+        else:
+            raise
+    return files
+
+
+def list_ftp_dir(ftpobj, dir_inp, host, prev_dir):
     """
     Get FTP directory file listing.
 
@@ -890,7 +890,7 @@ def get_ftp_directory_listing(ftpobj, directory, host, prev_dir):
     ----------
     ftpobj : FTP
         FTP connection object.
-    directory : str
+    dir_inp : str
         Remote directory path.
     host : str
         FTP server hostname (for logging/URL generation).
@@ -905,24 +905,26 @@ def get_ftp_directory_listing(ftpobj, directory, host, prev_dir):
         Complete FTP URLs for all files in the directory. None if directory
         is unchanged. Empty list if the directory change failed.
     """
-    if prev_dir != directory:
-        log.info("chdir " + directory)
+    if prev_dir != dir_inp:
+        log.info("chdir " + dir_inp)
         ftpobj.cwd("/")
 
         try:
-            ftpobj.cwd(directory)
-            ftp_files_list = ftp_dir_list_files(ftpobj)
-            ftp_files_urls = [f"ftp://{host}{directory}/{f}" for f in ftp_files_list]
+            ftpobj.cwd(dir_inp)
+            ftp_files_list = list_ftp_dir_core(ftpobj)
+            ftp_files_urls = [
+                f"ftp://{host}/{dir_inp.lstrip('/')}/{f}" for f in ftp_files_list
+            ]
             return ftp_files_list, ftp_files_urls
 
         except Exception as e:
-            log.warning("unable to chdir to %s, exception %s", directory, e)
+            log.warning("unable to chdir to %s, exception %s", dir_inp, e)
             return [], []
 
     return None, None
 
 
-def match_files_in_directory(filergx, ftp_files_list, all_files_mode=False):
+def match_files_in_dir(filergx, ftp_files_list, all_files_mode=False):
     """
     Match files in FTP directory using regex pattern.
 
@@ -1116,7 +1118,7 @@ def crawl_ftp_files(
             all_ftp_files_out = pd.Series([], dtype=str)
 
         if path_all_ftp_files_save:
-            all_ftp_files_out.to_csv(path_all_ftp_files_save)
+            all_ftp_files_out.to_csv(path_all_ftp_files_save, header=False)
 
         return all_ftp_files_out
 
@@ -1163,7 +1165,7 @@ def crawl_ftp_files(
         count_loop += 1
 
         # Get or create FTP connection
-        ftpobj, prev_host = get_ftp_connection(
+        ftpobj, prev_host = get_ftp_connect(
             ftpobj,
             row["host"],
             row["protocol"],
@@ -1182,9 +1184,7 @@ def crawl_ftp_files(
             _save_all_ftp_files(all_ftp_files_stk)
 
         # Get file list when directory changes
-        ftp_result = get_ftp_directory_listing(
-            ftpobj, row["dir"], row["host"], prev_dir
-        )
+        ftp_result = list_ftp_dir(ftpobj, row["dir"], row["host"], prev_dir)
         if ftp_result[0] is not None:
             ftp_files_list, ftp_files_urls = ftp_result
             prev_dir = row["dir"]
@@ -1193,9 +1193,7 @@ def crawl_ftp_files(
                 all_ftp_files_stk.append(pd.Series(ftp_files_urls))
 
         # Match files on server using regex pattern
-        file_match = match_files_in_directory(
-            row[rgx_col], ftp_files_list, all_files_mode
-        )
+        file_match = match_files_in_dir(row[rgx_col], ftp_files_list, all_files_mode)
 
         # Apply exclude patterns
         if exclude_patterns and file_match:
