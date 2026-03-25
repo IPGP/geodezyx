@@ -1875,6 +1875,25 @@ def dt2str(dtin, str_format="%Y-%m-%d %H:%M:%S"):
     """
     return dtin.strftime(str_format)
 
+@vector_datetime_conv
+def dt2str_iso(dtin):
+    """
+    Time representation conversion
+
+    Python's Datetime => ISO 8601 String
+
+    Parameters
+    ----------
+    dtin : datetime or iterable of datetime
+        Datetime(s). Can handle iterable of datetimes.
+
+    Returns
+    -------
+    str or iterable of str
+        Time as ISO 8601 string(s). If input is iterable, returns same type.
+    """
+    return dtin.isoformat()
+
 
 def date2dt(date_in):
     """
