@@ -114,6 +114,8 @@ def download_gnss_rinex(
     path_all_ftp_files_save : str
         will save at the given path (directory+filename) in a CSV file
         ALL the remote files found on the FTP server.
+        NB: CSV file will be saved each time a new FTP instance
+        is created, i.e. every 50 days
 
     quiet_mode : bool
         List the available RINEXs without downloading them.

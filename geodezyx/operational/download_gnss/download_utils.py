@@ -1108,7 +1108,7 @@ def crawl_ftp_files(
         if path_ftp_crawled_files_save:
             table_inp.to_csv(path_ftp_crawled_files_save)
 
-    def _get_and_save_all_ftp_files(all_ftp_files_stk_inp):
+    def _save_all_ftp_files(all_ftp_files_stk_inp):
         if all_ftp_files_stk_inp:
             all_ftp_files_out = pd.concat(all_ftp_files_stk_inp)
             all_ftp_files_out.reset_index(drop=True, inplace=True)
@@ -1179,7 +1179,7 @@ def crawl_ftp_files(
         if count_loop > count_nmax:
             count_loop = 0
             _save_crawled_files(table_use)
-            _get_and_save_all_ftp_files(all_ftp_files_stk)
+            _save_all_ftp_files(all_ftp_files_stk)
 
         # Get file list when directory changes
         ftp_result = get_ftp_directory_listing(
@@ -1232,7 +1232,7 @@ def crawl_ftp_files(
 
     # Save final results
     _save_crawled_files(table_use)
-    all_ftp_files = _get_and_save_all_ftp_files(all_ftp_files_stk)
+    all_ftp_files = _save_all_ftp_files(all_ftp_files_stk)
 
     # Clean up FTP connection
     if ftpobj:
