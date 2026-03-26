@@ -122,6 +122,7 @@ def get_prod_date(date_inp, prod_ac_name="", period_stepback=0):
     if is_during_latency:
         period_stepback += 1
 
+    # rnd_def tuple : (period value, period unit, extra_delta)
     if "ULT" in prod_ac_name:
         rnd_def = (6, "h", 1)
     elif "NRT" in prod_ac_name:

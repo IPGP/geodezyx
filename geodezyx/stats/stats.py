@@ -138,7 +138,7 @@ def linear_reg_getvalue(x, a, b, full=True):
 
     Notes
     -----
-    This function may be unstable when working with POSIX Time as X-data due to 
+    This function may be unstable when working with POSIX Time as X-data due to
     large values. Decimal Years are recommended for better numerical stability.
 
     """
@@ -153,7 +153,7 @@ def linear_coef_a_b(x1, y1, x2, y2):
     """
     Calculate line coefficients from two points.
 
-    Calculates the slope (a) and intercept (b) coefficients of a line passing 
+    Calculates the slope (a) and intercept (b) coefficients of a line passing
     through two points (x1, y1) and (x2, y2). Input values can be scalars or iterables.
 
     Parameters
@@ -199,7 +199,7 @@ def detrend_timeseries(x, y):
     """
     Remove linear trend from a time series.
 
-    Removes the linear trend from Y(X) by subtracting the fitted line and 
+    Removes the linear trend from Y(X) by subtracting the fitted line and
     restoring the original starting value.
 
     Parameters
@@ -226,6 +226,7 @@ def detrend_timeseries(x, y):
     yout = y - ylinear + y[0]
 
     return x, yout
+
 
 def confid_interval_slope(x, y, alpha=0.95):
     """
@@ -306,7 +307,7 @@ def running_mean_convolut(data_in, window, convolve_mode="same"):
     """
     Compute running mean using convolution mode.
 
-    Computes the moving average of input data using convolution with a 
+    Computes the moving average of input data using convolution with a
     specified mode. The result is mean-centered to avoid bias.
 
     Parameters
@@ -325,11 +326,11 @@ def running_mean_convolut(data_in, window, convolve_mode="same"):
 
     Notes
     -----
-    After stress testing, this implementation provides output with the same 
+    After stress testing, this implementation provides output with the same
     size as input without shifting, though it is slower than some alternatives.
     The subtraction of the mean is an empirical trick to center the result.
 
-    This is a wrapper based on running_mean_4. For more details on convolution 
+    This is a wrapper based on running_mean_4. For more details on convolution
     modes, see:
     - https://stackoverflow.com/questions/13728392/moving-average-or-running-mean
     - https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python
@@ -342,6 +343,7 @@ def running_mean_convolut(data_in, window, convolve_mode="same"):
     data_run = running_mean_4(data_zero_centered, window, convolve_mode)
 
     return data_run + data_mean
+
 
 # Running Means functions with INTERNAL ID 1 3 5
 # return an Y output shorter than the input : not very convenient
@@ -412,8 +414,8 @@ def running_mean_1(values, window):
     """
     Compute running mean using convolution with 'valid' mode.
 
-    This method includes the 'valid' mode which requires enough datapoints. 
-    For example, without 'valid', it would start at the first point with no prior 
+    This method includes the 'valid' mode which requires enough datapoints.
+    For example, without 'valid', it would start at the first point with no prior
     points, resulting in (1+0+0)/3 = 0.3333.
 
     Parameters
@@ -500,7 +502,7 @@ def running_mean_4(interval, window_size, convolve_mode="same"):
     """
     Compute running mean using convolution with configurable mode.
 
-    This method is slower than some alternatives but provides output with the same 
+    This method is slower than some alternatives but provides output with the same
     size as input without shifting.
 
     Parameters
@@ -569,14 +571,14 @@ def sinusoide(t, a, omega, phi=0, f=None):
     a : float
         Amplitude, the peak deviation of the function from zero.
     omega : float
-        Angular frequency (ω = 2πf), the rate of change of the function 
+        Angular frequency (ω = 2πf), the rate of change of the function
         argument in units of radians per second.
     phi : float, optional
-        Phase offset in radians, specifying where in its cycle the 
+        Phase offset in radians, specifying where in its cycle the
         oscillation is at t = 0. Default is 0.
     f : float, optional
-        Ordinary frequency (cycles per second). If provided, it overrides 
-        the `omega` parameter. To use this parameter, set omega=0. 
+        Ordinary frequency (cycles per second). If provided, it overrides
+        the `omega` parameter. To use this parameter, set omega=0.
         Default is None.
 
     Returns
@@ -661,11 +663,12 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
     y = scipy.butter.lfilter(b, a, data)
     return y
 
+
 def gaussian_filter_gfz(tim_ref, dat_ref, width=7):
     """
     Apply Gaussian filter to smooth data.
 
-    Gaussian filter based on GFZ's GMT_plus.pm/gaussian_kernel. 
+    Gaussian filter based on GFZ's GMT_plus.pm/gaussian_kernel.
     Smooths data by weighted averaging using Gaussian weights.
 
     Parameters
@@ -728,13 +731,14 @@ def gaussian_filter_gfz(tim_ref, dat_ref, width=7):
 
     return dat_smt2
 
+
 def smooth(x, window_len=11, window="hanning"):
     """
     Smooth data using a window with requested size.
 
-    This method is based on the convolution of a scaled window with the signal. 
-    The signal is prepared by introducing reflected copies of the signal 
-    (with the window size) in both ends to minimize transient parts at the 
+    This method is based on the convolution of a scaled window with the signal.
+    The signal is prepared by introducing reflected copies of the signal
+    (with the window size) in both ends to minimize transient parts at the
     beginning and end of the output signal.
 
     Parameters
@@ -762,8 +766,8 @@ def smooth(x, window_len=11, window="hanning"):
     Notes
     -----
     Works only for equally spaced data.
-    
-    The output length may differ from input length. To correct this, 
+
+    The output length may differ from input length. To correct this,
     return `y[(window_len/2-1):-(window_len/2)]` instead of `y`.
 
     See Also
@@ -954,6 +958,7 @@ def rms_mean(a):
     """
     return np.sqrt(np.nanmean(np.square(np.array(a, np.float64))))
 
+
 def rms_mean_alternativ(a):
     """
     Compute RMS with mean subtraction (standard deviation equivalent).
@@ -1017,13 +1022,16 @@ def mad(data, mode="median"):
     -------
     result : float
         The Median Absolute Deviation.
-
     """
 
     if mode == "median":
         mad_out = np.nanmedian(np.abs(data - np.nanmedian(data)))
     elif mode == "mean":
         mad_out = np.nanmean(np.abs(data - np.nanmean(data)))
+    else:
+        errmsg = f"{mode} mode is unknown. Use 'median' or 'mean'."
+        log.error(errmsg)
+        raise ValueError(errmsg)
 
     return mad_out
 
@@ -1117,6 +1125,25 @@ def outlier_mad(
             ratio * 100,
         )
     return dataout, boolbad
+
+
+def outlier_mad_df(
+    df, columns, threshold=3.5, columns_aggrgation=np.logical_or, mad_mode="median"
+):
+
+    if not utils.is_iterable(columns):
+        columns = [columns]
+
+    bb_stk = []
+    # bb = bool_bad
+    for col in columns:
+        _, bb = outlier_mad(df[col].values, threshold=threshold, mad_mode=mad_mode)
+        bb_stk.append(bb)
+
+    bb_out = columns_aggrgation(*bb_stk)
+    df_out = df[bb_out]
+
+    return df_out, bb_out
 
 
 def outlier_mad_binom(
@@ -1412,7 +1439,7 @@ def outlier_sigma(datasigmain, threshold=3):
     """
     Remove outliers based on sigma threshold (legacy method).
 
-    Removes points where sigma > threshold * median(sigmas). This is an old 
+    Removes points where sigma > threshold * median(sigmas). This is an old
     and discontinued method that is not very efficient.
 
     Parameters
@@ -1431,7 +1458,7 @@ def outlier_sigma(datasigmain, threshold=3):
 
     Notes
     -----
-    This is a legacy function and is rarely used. More modern methods like 
+    This is a legacy function and is rarely used. More modern methods like
     MAD-based outlier detection are recommended.
 
     """
@@ -1451,7 +1478,7 @@ def lagrange1(points):
     """
     Determine Lagrangian polynomial from points (low-level function).
 
-    Creates a polynomial interpolation function using Lagrange's method. 
+    Creates a polynomial interpolation function using Lagrange's method.
     This replaces scipy.interpolate.lagrange which is highly unstable.
 
     Parameters
@@ -1501,8 +1528,8 @@ def lagrange2(x, y):
     """
     Determine Lagrangian polynomial from points (more Pythonic version).
 
-    Creates a polynomial interpolation function using Lagrange's method. 
-    This version is more Pythonic but slower than lagrange1. Like lagrange1, 
+    Creates a polynomial interpolation function using Lagrange's method.
+    This version is more Pythonic but slower than lagrange1. Like lagrange1,
     it replaces scipy.interpolate.lagrange which is highly unstable.
 
     Parameters
@@ -1534,7 +1561,7 @@ def lagrange2(x, y):
         for i in range(n):
 
             def g(ii, nn):
-                x_but_i = np.concatenate((x[:ii], x[ii + 1:]))
+                x_but_i = np.concatenate((x[:ii], x[ii + 1 :]))
                 # mask = np.ones(len(x),dtype=bool)
                 # mask[i] = False
                 # x_but_i = np.concatenate((x[:i],x[i+1:]))
@@ -1655,6 +1682,7 @@ def lagrange_interpolate(tdata, ydata, titrp, n=10, t_type="datetime"):
 
     return np.array(yintrp_stk)
 
+
 def dates_middle(start, end):
     """
     Compute the midpoint between two dates.
@@ -1689,7 +1717,7 @@ def time_win_basic(
     """
     Filter data within a time window.
 
-    Selects data points that fall within a specified time window. 
+    Selects data points that fall within a specified time window.
     Internally converts to POSIX time for computation.
 
     Parameters
@@ -1777,7 +1805,7 @@ def time_win_multi(
     """
     Filter multiple datasets within a time window.
 
-    Applies time window filtering to multiple data arrays simultaneously, 
+    Applies time window filtering to multiple data arrays simultaneously,
     using the same time array for all datasets.
 
     Parameters
@@ -1832,7 +1860,7 @@ def time_win_multi_start_end(
     """
     Filter data within multiple time windows simultaneously.
 
-    Selects data points that fall within ALL specified time windows. 
+    Selects data points that fall within ALL specified time windows.
     This is useful for selecting intersections of multiple time periods.
     Internally converts to POSIX time for computation.
 
@@ -1923,7 +1951,7 @@ def get_season(now):
     Parameters
     ----------
     now : datetime.date or datetime.datetime
-        The date to determine the season for. If datetime is provided, 
+        The date to determine the season for. If datetime is provided,
         the date component is used.
 
     Returns
@@ -2078,14 +2106,13 @@ def outlier_mad_binom_legacy(
 #     return out_bar_list
 
 
-
 def gaussian_filter_gfz_legacy(tim_ref, dat_ref, width=7):
     """
     Apply Gaussian filter to smooth data (legacy, slow version).
 
-    Gaussian filter based on GFZ's GMT_plus.pm/gaussian_kernel. 
-    This is a legacy version that is VERY SLOW due to a dirty conversion 
-    from Perl code. The pythonic version gaussian_filter_gfz should be 
+    Gaussian filter based on GFZ's GMT_plus.pm/gaussian_kernel.
+    This is a legacy version that is VERY SLOW due to a dirty conversion
+    from Perl code. The pythonic version gaussian_filter_gfz should be
     used instead.
 
     Parameters
