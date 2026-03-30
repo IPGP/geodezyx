@@ -153,7 +153,7 @@ def rtklib_run_mono(
     if (
         not force
         and os.path.isfile(out_res_fil)
-        and os.path.getsize(out_res_fil) > 2000
+        and os.path.getsize(out_res_fil) > 25000
     ):
         log.info(f"Output file already exists, skipping: {out_res_fil}")
         return out_res_fil
