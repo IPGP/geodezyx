@@ -1128,8 +1128,60 @@ def outlier_mad(
 
 
 def outlier_mad_df(
-    df, columns, threshold=3.5, columns_aggrgation=np.logical_or, mad_mode="median"
-):
+        df, columns, threshold=3.5, columns_aggrgation=np.logical_or, mad_mode="median"
+    ):
+    """
+    Remove outliers from pandas DataFrame columns using MAD (Median Absolute Deviation).
+
+    This function applies MAD-based outlier detection to one or more columns in a
+    pandas DataFrame and returns a filtered DataFrame. Multiple columns can be
+    evaluated simultaneously with results aggregated using a specified logical operator.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input DataFrame to filter.
+    columns : str or list of str
+        Column name(s) to evaluate for outliers.
+        If a single string is provided, it will be converted to a list.
+    threshold : float, optional
+        MAD threshold for outlier detection. Default is 3.5.
+        Points where MAD > threshold are considered outliers.
+    columns_aggrgation : callable, optional
+        Function to aggregate boolean masks from multiple columns.
+        Should accept variable number of boolean arrays as arguments.
+        Common choices: np.logical_or (any column flags as outlier),
+        np.logical_and (all columns flag as outlier).
+        Default is np.logical_or.
+    mad_mode : str, optional
+        Mode for computing deviation center: 'median' or 'mean'.
+        Default is 'median'.
+
+    Returns
+    -------
+    df_out : pandas.DataFrame
+        Filtered DataFrame with outliers removed. Has same structure
+        as input but with fewer rows.
+    bb_out : numpy.ndarray
+        Boolean array indicating valid (True) and outlier (False) rows.
+        Size matches the number of rows in the input DataFrame.
+
+    See Also
+    --------
+    outlier_mad : Single column outlier detection using MAD
+    outlier_mad_binom : Paired X,Y data outlier removal with MAD
+
+    Notes
+    -----
+    - When multiple columns are specified, the aggregation function determines
+      how results are combined. With np.logical_or (default), a row is kept
+      only if it passes in ALL columns. With np.logical_and, a row is kept
+      if it passes in ANY column.
+    - The function preserves the original DataFrame index in the output.
+    - Works seamlessly with pandas DataFrames, extracting values internally
+      via the .values accessor.
+
+    """
 
     if not utils.is_iterable(columns):
         columns = [columns]
@@ -1140,7 +1192,7 @@ def outlier_mad_df(
         _, bb = outlier_mad(df[col].values, threshold=threshold, mad_mode=mad_mode)
         bb_stk.append(bb)
 
-    bb_out = columns_aggrgation(*bb_stk)
+    bb_out = columns_aggrgation(*bb_stk) if len(bb_stk) > 1 else bb_stk[0]
     df_out = df[bb_out]
 
     return df_out, bb_out
