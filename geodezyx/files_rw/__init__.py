@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .geo_files_converter_lib import *
-from .read_athmo import *
+from .read_atmo import *
 from .read_coords_misc import *
 from .read_coords_time_series import *
 from .read_eop import *
