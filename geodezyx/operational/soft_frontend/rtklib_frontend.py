@@ -153,7 +153,7 @@ def rtklib_run_mono(
     if (
         not force
         and os.path.isfile(out_res_fil)
-        and os.path.getsize(out_res_fil) > 25000
+        and os.path.getsize(out_res_fil) > 25000  # empiric failed file limit
     ):
         log.info(f"Output file already exists, skipping: {out_res_fil}")
         return out_res_fil
@@ -609,8 +609,9 @@ def rtklib_merge_parquet(
     prq_path_tmp = prq_path_out + ".tmp"
 
     # Exclude the output file itself and stray temp files from the source list
-    l_prq = [f for f in l_prq if not f.endswith("_all.parquet")
-             and not f.endswith(".tmp")]
+    l_prq = [
+        f for f in l_prq if not f.endswith("_all.parquet") and not f.endswith(".tmp")
+    ]
 
     # When fast-merging, prepend the existing merged file so it is streamed
     # first; write to a temp path to avoid reading and writing the same file.
