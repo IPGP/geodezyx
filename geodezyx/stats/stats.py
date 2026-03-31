@@ -1128,7 +1128,7 @@ def outlier_mad(
 
 
 def outlier_mad_df(
-        df, columns, threshold=3.5, columns_aggrgation=np.logical_or, mad_mode="median"
+        df, columns, threshold=3.5, columns_aggrgation=np.logical_and, mad_mode="median"
     ):
     """
     Remove outliers from pandas DataFrame columns using MAD (Median Absolute Deviation).
@@ -1150,9 +1150,10 @@ def outlier_mad_df(
     columns_aggrgation : callable, optional
         Function to aggregate boolean masks from multiple columns.
         Should accept variable number of boolean arrays as arguments.
-        Common choices: np.logical_or (any column flags as outlier),
-        np.logical_and (all columns flag as outlier).
-        Default is np.logical_or.
+        Common choices: np.logical_and (any column flags as outlier),
+        np.logical_or (all columns flag as outlier).
+        See Notes for more details.
+        Default is np.logical_and.
     mad_mode : str, optional
         Mode for computing deviation center: 'median' or 'mean'.
         Default is 'median'.
@@ -1174,13 +1175,11 @@ def outlier_mad_df(
     Notes
     -----
     - When multiple columns are specified, the aggregation function determines
-      how results are combined. With np.logical_or (default), a row is kept
-      only if it passes in ALL columns. With np.logical_and, a row is kept
+      how results are combined. With np.logical_and (default), a row is kept
+      only if it passes in ALL columns. With np.logical_or, a row is kept
       if it passes in ANY column.
-    - The function preserves the original DataFrame index in the output.
-    - Works seamlessly with pandas DataFrames, extracting values internally
-      via the .values accessor.
-
+    - Since the bad values are flagged False, and good values are True,
+      the operator logic is inverted, which might be counterintuitive.
     """
 
     if not utils.is_iterable(columns):
