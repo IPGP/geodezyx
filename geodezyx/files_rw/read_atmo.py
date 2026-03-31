@@ -74,7 +74,7 @@ def read_snx_trop(snxfile, dataframe_output=True, version=2):
         else:
             continue
 
-        if flagtrop == True:
+        if flagtrop:
 
             STAT.append(fields[0].upper())
 
@@ -387,13 +387,15 @@ def read_rinex_met_2(metfile):
     df.set_index("epoch", inplace=True)
     return df
 
+
 def read_spotgins_tropo(filepath):
     """
-    Read a SPOTGINS tropospheric time series file (.ztd or .grad).
+    Read a SPOTGINS tropospheric time series file (ZTD or GRAD format).
 
-    Parses SPOTGINS ZTD (zenith total delay) or GRAD (gradient) files and
-    returns tropospheric parameters with associated metadata. Product type is
-    inferred from file extension. Header metadata is extracted from comments.
+    Parses SPOTGINS ZTD (zenith total delay) or GRAD (horizontal gradients)
+    format and returns tropospheric parameters with associated metadata.
+    Column names are extracted from file headers and converted to lowercase.
+    Header metadata is dynamically inferred from the file (no hardcoded fields).
 
     Parameters
     ----------
@@ -403,91 +405,48 @@ def read_spotgins_tropo(filepath):
     Returns
     -------
     df : pandas.DataFrame
-        DataFrame with one row per epoch. Float columns include MJD, TROTOT,
-        TGNTOT, DECYEAR. String columns: DATETIME, CONST, DATEOFEXE,
-        GINS_VERSION, PRAIRIE_VERSION. Index is pandas.DatetimeIndex from
-        DATETIME column (name='EPOCH').
+        DataFrame with one row per epoch. Columns are lowercase with the
+        datetime column named 'epoch'. No index is set.
     meta : dict
-        Scalar header values extracted from comment block, including station
+        Header metadata extracted from comment block. Keys are converted to
+        lowercase with spaces replaced by underscores. Includes station
         information, constellation, coordinates, and other metadata.
     """
-
-    _ZTD_COLS = [
-        "MJD",
-        "TROTOT",
-        "TRODRY",
-        "TROWET",
-        "STDWET",
-        "DATETIME",
-        "DECYEAR",
-        "CONST",
-        "DATEOFEXE",
-        "GINS_VERSION",
-        "PRAIRIE_VERSION",
-    ]
-
-    _GRAD_COLS = [
-        "MJD",
-        "TGNTOT",
-        "STDTGN",
-        "TGETOT",
-        "STDTGE",
-        "DATETIME",
-        "DECYEAR",
-        "CONST",
-        "DATEOFEXE",
-        "GINS_VERSION",
-        "PRAIRIE_VERSION",
-    ]
-
-    _HEADER_FIELDS = {
-        "STATION": "station",
-        "ANALYSIS_CENTRE": "analysis_centre",
-        "CONSTELLATION": "constellation",
-        "REF_FRAME": "ref_frame",
-        "X_pos": "x_pos",
-        "Y_pos": "y_pos",
-        "Z_pos": "z_pos",
-        "Longitude": "longitude",
-        "Latitude": "latitude",
-        "Height": "height",
-    }
-
-    ext = os.path.splitext(filepath)[-1].lower()
-    if ext == ".gz":
-        ext = os.path.splitext(os.path.splitext(filepath)[0])[-1].lower()
-
-    cols = _ZTD_COLS if ext == ".ztd" else _GRAD_COLS
-
     meta = {}
     data_lines = []
+    cols = None
+    datetime_col = None
 
     with open(filepath, "r") as fh:
         for line in fh:
             line = line.rstrip("\n")
             if line.startswith("#"):
-                # skip the column-header line (starts with #MJD)
-                if line.lstrip("#").strip().startswith("MJD"):
-                    continue
+                # The last comment line is the column header
+                cols = line.lstrip("#").strip().split()
+                # Find the datetime column (contains timestamp format)
+                datetime_col = next((col for col in cols if any(x in col.lower() for x in ["hh", "mm", "ss"])), None)
+                
+                # Extract metadata from key: value lines
                 m = re.match(r"^#\s*([^:]+?)\s*:\s*(.+)", line)
                 if m:
                     key = m.group(1).strip()
                     value = m.group(2).strip()
-                    if key in _HEADER_FIELDS:
-                        dest = _HEADER_FIELDS[key]
-                        try:
-                            meta[dest] = float(value)
-                        except ValueError:
-                            meta[dest] = value
+                    # Convert key to lowercase with underscores for spaces
+                    meta_key = key.lower().replace(" ", "_")
+                    try:
+                        meta[meta_key] = float(value)
+                    except ValueError:
+                        meta[meta_key] = value
             else:
                 stripped = line.strip()
                 if stripped:
                     data_lines.append(stripped)
 
-    if not data_lines:
-        import pandas as pd
+    if cols is None:
+        raise ValueError("Could not find column header in file")
 
-        return pd.DataFrame(columns=cols), meta
+    if not data_lines:
+        return pd.DataFrame(columns=cols).rename(str.lower, axis=1), meta
 
     from io import StringIO
 
@@ -498,18 +457,24 @@ def read_spotgins_tropo(filepath):
         names=cols,
     )
 
-    float_cols = [
-        c
-        for c in cols
-        if c
-        not in ("DATETIME", "CONST", "DATEOFEXE", "GINS_VERSION", "PRAIRIE_VERSION")
-    ]
+    # Convert to lowercase column names
+    df.columns = df.columns.str.lower()
 
+    # Rename datetime column to epoch
+    if datetime_col:
+        datetime_col_lower = datetime_col.lower()
+        if datetime_col_lower in df.columns:
+            df = df.rename(columns={datetime_col_lower: "epoch"})
 
+    # Convert numeric columns to float (exclude string/metadata columns)
+    # String columns: const, dateofexe, ginsversion, prairieversion, epoch
+    string_cols = {"epoch", "const", "dateofexe", "ginsversion", "prairieversion"}
+    float_cols = [c for c in df.columns if c not in string_cols]
+    
     df[float_cols] = df[float_cols].apply(pd.to_numeric, errors="coerce")
-    df.index = pd.to_datetime(df["DATETIME"], format="%Y-%m-%dT%H:%M:%S")
-    df.index.name = "EPOCH"
+
+    # Add station from metadata as first column named 'site'
+    if "station" in meta:
+        df.insert(0, "site", meta["station"])
 
     return df, meta
-
-
