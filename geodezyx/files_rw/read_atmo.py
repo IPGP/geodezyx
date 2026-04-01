@@ -470,8 +470,8 @@ def read_spotgins_tropo(filepath):
     # String columns: const, dateofexe, ginsversion, prairieversion, epoch
     string_cols = {"epoch", "const", "dateofexe", "ginsversion", "prairieversion"}
     float_cols = [c for c in df.columns if c not in string_cols]
-    
     df[float_cols] = df[float_cols].apply(pd.to_numeric, errors="coerce")
+    df["epoch"] = pd.to_datetime(df["epoch"], errors="coerce")
 
     # Add station from metadata as first column named 'site'
     if "station" in meta:
