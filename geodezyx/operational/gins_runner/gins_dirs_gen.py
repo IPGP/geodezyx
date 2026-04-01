@@ -34,27 +34,28 @@ log = logging.getLogger("geodezyx")
 
 
 def gen_dirs_rnxs(
-        rnx_paths_inp,
-        director_generik_path,
-        director_name_prefix,
-        out_director_folder=None,
-        temp_data_folder=None,
-        stations_file=None,
-        oceanload_file=None,
-        options_prairie_file=None,
-        auto_stations_file=False,
-        auto_oceanload=False,
-        perso_orbclk=False,
-        ac="igs",
-        repro=2,
-        auto_interval=True,
-        out_coords="NULL",
-        prairie=False,
-        prairie_kwargs={"with_historik": 1, "with_wsb": 1},
-        force=False,
-        verbose=True,
-        sites_id9=None,
-        add_tropo_sol=True,
+    rnx_paths_inp,
+    director_generik_path,
+    director_name_prefix,
+    out_director_folder=None,
+    temp_data_folder=None,
+    stations_file=None,
+    oceanload_file=None,
+    options_prairie_file=None,
+    auto_stations_file=False,
+    auto_oceanload=False,
+    perso_orbclk=False,
+    ac="igs",
+    repro=2,
+    auto_interval=True,
+    out_coords="NULL",
+    prairie=False,
+    prairie_kwargs={"with_historik": 1, "with_wsb": 1},
+    force=False,
+    verbose=True,
+    sites_id9=None,
+    add_tropo_sol=True,
+    country_code="XXX"
 ):
     """
     Generate directors from RINEX files.
@@ -125,6 +126,10 @@ def gen_dirs_rnxs(
     add_tropo_sol : bool, optional
         Add tropospheric solution keys to the director and
         then results in the listing and solution. Defaults to True.
+    country_code : str, optional
+        A string (3 caracter ISO code) to help find the site_id9 in case of ambiguity
+        e.g. "FRA" for France.
+        Defaults to "XXX".
 
     Returns
     -------
@@ -171,7 +176,7 @@ def gen_dirs_rnxs(
         rnx_name = os.path.basename(rnx_path_ori)
         rnx_dt = conv.rinexname2dt(rnx_name)
         sites_id9_series = pd.Series(sites_id9)
-        siteid9, siteid4_up, siteid4_lo = _dir_rnx_site_id(rnx_name, sites_id9_series)
+        siteid9, siteid4_up, siteid4_lo = _dir_rnx_site_id(rnx_name, sites_id9_series, country_code)
 
         coord_prefix = (
             f"_{out_coords.lower()}" if out_coords.upper() in ("FLH", "XYZ") else ""
@@ -218,8 +223,10 @@ def gen_dirs_rnxs(
             crinex_path = rnx_path
             crz2rnx_classic = True
             if crz2rnx_classic:
-                rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use, verbose=verbose)
-            else: # with Valgur's hatanaka
+                rnx_path = operational.crz2rnx(
+                    crinex_path, tmp_fld_use, verbose=verbose
+                )
+            else:  # with Valgur's hatanaka
                 rnx_path = operational.uncomp_rnxpath(crinex_path, tmp_fld_use)
                 rnx_content = hatanaka.decompress(crinex_path)
                 utils.write_in_file(rnx_content, rnx_path)
@@ -249,9 +256,13 @@ def gen_dirs_rnxs(
         srt_epo, end_epo, freq_rnx = None, None, None
 
         try:
-            srt_epo, end_epo, freq_rnx = operational.rinex_start_end(rnx_path, True, verbose=verbose)
+            srt_epo, end_epo, freq_rnx = operational.rinex_start_end(
+                rnx_path, True, verbose=verbose
+            )
         except Exception:
-            log.warning("Unable to read RINEX, fallback to filename to get its start/end")
+            log.warning(
+                "Unable to read RINEX, fallback to filename to get its start/end"
+            )
             srt_epo = rnx_dt
             end_epo = srt_epo + dt.timedelta(seconds=86360)  # 1 day
             freq_rnx = 30
@@ -283,7 +294,7 @@ def gen_dirs_rnxs(
         # SPOTGINS compatibility for the full day
         # one more sec will be +/- below
         strt_sec = 19
-        end_sec =  86389.0
+        end_sec = 86389.0
 
         dir_dic["date"]["arc_start"][0] = strt_day
         dir_dic["date"]["arc_stop"][0] = end_day
@@ -291,10 +302,10 @@ def gen_dirs_rnxs(
             dir_dic["date"]["initial_state_vector_date"][0] = strt_day
 
         dir_dic["date"]["arc_start"][1] = (
-                strt_sec - 1
+            strt_sec - 1
         )  # -1 to make it SPOTGINS compatible
         dir_dic["date"]["arc_stop"][1] = (
-                end_sec + 1
+            end_sec + 1
         )  # +1 to make it SPOTGINS compatible
         if "initial_state_vector_date" in list(dir_dic["date"].keys()):
             dir_dic["date"]["initial_state_vector_date"][1] = strt_sec
@@ -332,12 +343,16 @@ def gen_dirs_rnxs(
             )
 
         if stations_file:
-            stfi_ingin = gynscmn.bring_to_gin(str(stations_file), tmp_fld_use, verbose=verbose)
+            stfi_ingin = gynscmn.bring_to_gin(
+                str(stations_file), tmp_fld_use, verbose=verbose
+            )
             dir_dic["object"]["station"]["station_coordinates"] = (
                 gynscmn.make_path_ginsstyle(stfi_ingin)
             )
         if oceanload_file:
-            oclo_ingin = gynscmn.bring_to_gin(str(oceanload_file), tmp_fld_use, verbose=verbose)
+            oclo_ingin = gynscmn.bring_to_gin(
+                str(oceanload_file), tmp_fld_use, verbose=verbose
+            )
             dir_dic["object"]["station"]["ocean_tide_loading"] = (
                 gynscmn.make_path_ginsstyle(oclo_ingin)
             )
@@ -420,9 +435,10 @@ def _dir_regular_orbclk(dt_rinex_inp):
     """
 
     import datetime as dt
+
     if dt.datetime.now() - dt_rinex_inp >= dt.timedelta(days=14):
         prod_id = "G20"
-    #elif dt.datetime.now() - dt_rinex_inp <= dt.timedelta(days=4):
+    # elif dt.datetime.now() - dt_rinex_inp <= dt.timedelta(days=4):
     #    prod_id = "GRU"
     else:
         prod_id = "G20R"
@@ -442,10 +458,10 @@ def _dir_auto_intrvl(dir_dic, freq_rnx):
     dir_dic["observation"]["removal"]["simulation_stepsize"] = freq_rnx
     # check if its not a static dir
     if (
-            dir_dic["parameter"]["adjustment_parameters"]["stations"][
-                "adjustment_frequency"
-            ][-1]
-            != 0
+        dir_dic["parameter"]["adjustment_parameters"]["stations"][
+            "adjustment_frequency"
+        ][-1]
+        != 0
     ):
         dir_dic["parameter"]["adjustment_parameters"]["stations"][
             "adjustment_frequency"
@@ -518,26 +534,37 @@ def _dir_auto_oclo(stat_lower, dt_rinex, temp_data_folder, stat_path_inp):
     return oclo_path_out
 
 
-def _dir_rnx_site_id(rnx_name, sites_id9_series):
+def _dir_rnx_site_id(rnx_name, sites_id9_series, country_code="XXX"):
     """
     Extract the site_id9 from a Series (from e.g. a SPOTGINS master file)
     based on the RINEX name
+
+    NB: country_code is used only in case of ambiguity
     """
+    if not type(sites_id9_series) is pd.Series:
+        sites_id9_series = pd.Series(sites_id9_series)
+
     if conv.rinex_regex_search_tester(
-            rnx_name, short_name=False, long_name=True
+        rnx_name, short_name=False, long_name=True
     ):  ### RINEX3
         site_id9 = rnx_name[0:9].upper()
     else:  ### RINEX2
         site_id4 = rnx_name[0:4].upper()
         site_id9 = site_id4 + "00XXX"
-        if type(sites_id9_series) is pd.Series:
-            ser_bool = sites_id9_series.str[:4].str.match(site_id4)
-            if ser_bool.any():
-                site_id9 = sites_id9_series.loc[ser_bool].values[0]
-            if ser_bool.sum() > 1:
-                log.warning("more than one site_id9 found for %s: %s", site_id4,
-                            sites_id9_series.loc[ser_bool].values)
-                log.warning("taking the first one : %s", site_id9)
+
+        ser_sit_bool = sites_id9_series.str[:4].str.match(site_id4)
+        sites_id9_fnd = sites_id9_series.loc[ser_sit_bool]
+        ser_cnt_bool = sites_id9_fnd.str.contains(country_code)
+
+        if ser_sit_bool.any():
+            site_id9 = sites_id9_fnd.values[0]
+
+        if ser_sit_bool.sum() > 1 and ser_cnt_bool.any():
+            site_id9 = sites_id9_fnd.loc[ser_cnt_bool].values[0]
+        else:
+            warnmsg = "more than one site_id9 found for %s: %s"
+            log.warning(warnmsg, site_id4, sites_id9_fnd.to_list())
+            log.warning("keeping the first one : %s", site_id9)
 
     site_id4_upper = site_id9[0:4]
     site_id4_lower = site_id4_upper.lower()
