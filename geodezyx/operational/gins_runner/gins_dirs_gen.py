@@ -559,7 +559,7 @@ def _dir_rnx_site_id(rnx_name, sites_id9_series, country_code="XXX"):
         if ser_sit_bool.any():
             site_id9 = sites_id9_fnd.values[0]
 
-        if ser_sit_bool.sum() > 1 and ser_cnt_bool.any():
+        if ser_sit_bool.sum() > 1 and ser_cnt_bool.sum() == 1:
             site_id9 = sites_id9_fnd.loc[ser_cnt_bool].values[0]
         else:
             warnmsg = "more than one site_id9 found for %s: %s"
