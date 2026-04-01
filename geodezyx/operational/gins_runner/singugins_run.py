@@ -114,7 +114,8 @@ def singugins_run(
         force=force,
         quick_mode=quick_mode,
         no_clean_tmp=no_clean_tmp,
-        country_code=country_code**spotgins_run_kwargs,
+        country_code=country_code,
+        **spotgins_run_kwargs,
     )
 
     return
