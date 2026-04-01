@@ -227,8 +227,9 @@ def get_best_prods(
         Analysis center name (e.g., "ULT", "NRT", "FIN"). Determines maximum latency steps
         if not explicitly provided. Defaults to empty string.
     brdc_mode : bool, optional
-        If True, treats files as BRDC (Broadcast) files and uses `rinexname2dt` for parsing.
-        If False, uses `sp3name_v3_2dt`. Defaults to False.
+        If True, treats files as BRDC (Broadcast), and uses `rinexname2dt` for parsing.
+        If False, treats files as SP3/CLK, and uses `sp3name_v3_2dt`.
+        Defaults to False.
     period_stepback_max : int, optional
         Maximum number of latency steps to attempt. If None, defaults are:
         - "ULT": 3 steps
@@ -272,7 +273,9 @@ def get_best_prods(
             date_prod = (
                 conv.rinexname2dt(prod) if brdc_mode else conv.sp3name_v3_2dt(prod)
             )
-            log.debug(f"input date {date_inp} / wished best prod: {date_best} / current prod: {date_prod} / product: {prod}")
+            log.debug(
+                f"input date {date_inp} / wished best prod: {date_best} / current prod: {date_prod} / product: {prod}"
+            )
             if date_prod == date_best:
                 best_prod_out.append(prod)
         perstpbak += 1
@@ -345,7 +348,8 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
         )
         brdc_fnd = utils.find_recursive(prod_dir_doy, brdc_fname)
 
-        if len(brdc_fnd) > 0 and brdc_fnd[0] < now.timestamp() - redwld_delta * 3600:
+        redl_lim = now.timestamp() - redwld_delta * 3600
+        if len(brdc_fnd) > 0 and os.path.getmtime(brdc_fnd[0]) < redl_lim:
             log.info(
                 "BRDC %s found but older than %sh, re-downloading...",
                 brdc_fnd[0],
