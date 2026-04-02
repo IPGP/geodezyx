@@ -36,7 +36,6 @@ log.setLevel(logging.INFO)
 
 ##########  END IMPORT  ##########
 
-
 class Point:
 
     def __init__(
@@ -604,59 +603,60 @@ class TimeSeriePoint:
         """
 
         if coortype == "XYZ":
-            A, B, C = "X", "Y", "Z"
-            sA, sB, sC = "sX", "sY", "sZ"
+            a_lbl, b_lbl, c_lbl = "X", "Y", "Z"
+            sa_lbl, sb_lbl, sc_lbl = "sX", "sY", "sZ"
 
         elif coortype == "FLH":
-            A, B, C = "F", "L", "H"
-            sA, sB, sC = "sF", "sL", "sH"
+            a_lbl, b_lbl, c_lbl = "F", "L", "H"
+            sa_lbl, sb_lbl, sc_lbl = "sF", "sL", "sH"
 
         elif coortype == "ENU":
             if not self.boolENU:
                 log.warning("no ENU coord. for " + self.name)
                 return None
 
-            A, B, C = "E", "N", "U"
-            sA, sB, sC = "sE", "sN", "sU"
+            a_lbl, b_lbl, c_lbl = "E", "N", "U"
+            sa_lbl, sb_lbl, sc_lbl = "sE", "sN", "sU"
 
         elif coortype == "UTM":
             if not self.boolUTM:
                 log.warning("no UTM coord. for " + self.name)
                 return None
 
-            A, B, C = "Eutm", "Nutm", "Uutm"
-            sA, sB, sC = "sEutm", "sNutm", "sUutm"
+            a_lbl, b_lbl, c_lbl = "Eutm", "Nutm", "Uutm"
+            sa_lbl, sb_lbl, sc_lbl = "sEutm", "sNutm", "sUutm"
 
         else:
             log.error("coortype does not exist")
+            raise Exception
 
         if self.nbpts == 0:
             log.error(self.name + " the timeserie is empty")
 
-        A = np.asarray([getattr(pt, A) for pt in self.pts])
-        B = np.asarray([getattr(pt, B) for pt in self.pts])
-        C = np.asarray([getattr(pt, C) for pt in self.pts])
-        T = np.asarray([pt.T for pt in self.pts])
+        a = np.asarray([getattr(pt, a_lbl) for pt in self.pts])
+        b = np.asarray([getattr(pt, b_lbl) for pt in self.pts])
+        c = np.asarray([getattr(pt, c_lbl) for pt in self.pts])
+        t = np.asarray([pt.T for pt in self.pts])
 
-        if hasattr(self.pts[0], sA):
-            sA = np.asarray([getattr(pt, sA) for pt in self.pts])
-            sB = np.asarray([getattr(pt, sB) for pt in self.pts])
-            sC = np.asarray([getattr(pt, sC) for pt in self.pts])
+        if hasattr(self.pts[0], sa_lbl):
+            sa = np.asarray([getattr(pt, sa_lbl) for pt in self.pts])
+            sb = np.asarray([getattr(pt, sb_lbl) for pt in self.pts])
+            sc = np.asarray([getattr(pt, sc_lbl) for pt in self.pts])
         else:
-            sA = np.asarray([np.nan] * len(self.pts))
-            sB = np.asarray([np.nan] * len(self.pts))
-            sC = np.asarray([np.nan] * len(self.pts))
+            sa = np.asarray([np.nan] * len(self.pts))
+            sb = np.asarray([np.nan] * len(self.pts))
+            sc = np.asarray([np.nan] * len(self.pts))
         # il faut squeezer les vecteurs parce que des fois on se retrouve
         # avec des matrices
 
         if time_as_datetime:
-            Tout = conv.posix2dt(T)
+            tout = conv.posix2dt(t)
         else:
-            Tout = T
+            tout = t
 
         sq = np.squeeze
-        outtup = (sq(A), sq(B), sq(C), sq(Tout), sq(sA), sq(sB), sq(sC))
-        if specific_output == None:
+        outtup = (sq(a), sq(b), sq(c), sq(tout), sq(sa), sq(sb), sq(sc))
+        if specific_output is None:
             return outtup
         elif type(specific_output) is int:
             return outtup[specific_output]
@@ -692,24 +692,24 @@ class TimeSeriePoint:
         col_name_stk = []
 
         for icoty, coty in enumerate(coortype):
-            A, B, C, T, sA, sB, sC = self.to_list(coty)
+            a, b, c, t, sa, sb, sc = self.to_list(coty)
 
             if coty == "UTM":
-                cotycolnam = ["Eutm", "Nutm", "Uutm"]
+                cotycolnam = ["e_utm", "n_utm", "u_utm"]
             else:
                 cotycolnam = coty
 
             if icoty == 0:
-                Tdt = conv.posix2dt(T)
-                col_stk = col_stk + (Tdt, T, A, B, C, sA, sB, sC)
+                tdt = conv.posix2dt(t)
+                col_stk = col_stk + (tdt, t, a, b, c, sa, sb, sc)
                 col_name_stk = (
-                    ["Tdt", "T"]
-                    + [e for e in cotycolnam]
-                    + ["s" + e for e in cotycolnam]
+                    ["epoch", "t"]
+                    + [e.lower() for e in cotycolnam]
+                    + ["s" + e.lower() for e in cotycolnam]
                 )
             else:
-                col_stk = col_stk + (A, B, C, sA, sB, sC)
-                col_name_stk = [e for e in coty] + ["s" + e for e in coty]
+                col_stk = col_stk + (a, b, c, sa, sb, sc)
+                col_name_stk = [e.lower() for e in coty] + ["s" + e.lower() for e in coty]
 
             if anex_key_list:
                 for key in anex_key_list:
@@ -741,13 +741,15 @@ class TimeSeriePoint:
     def plot(
         self,
         coortype="ENU",
-        diapt=2,
+        diapt=1.5,
         alpha=0.8,
         fig=1,
         errbar=True,
         symbol=".",
         errbar_width=1,
         ylim=None,
+        legend_loc="best",
+        legend_ncol=1
     ):
         """
         Plot data in a TimeSerie Object
@@ -757,9 +759,10 @@ class TimeSeriePoint:
         coortype : str, optional
             The coordinates type. The default is 'ENU'.
         diapt : float, optional
-            Point diameter. The default is 2.
+            Point diameter. The default is 1.
         alpha : float, optional
-            Alpha (transparency) of points. The default is 0.8.
+            Alpha (transparency) of points.
+            The default is 0.8.
         fig : int or Figure object, optional
             Figure ID where the data will be plotted
             can accept a int (id of a Figure)
@@ -773,14 +776,19 @@ class TimeSeriePoint:
             coefficient for the error bar size. The default is 1.
         ylim : tuple, optional
             Y-axis limits. The default is None.
+        legend_loc : str, optional
+            Location of the legend. The default is 'best'.
+        legend_ncol : int, optional
+            Number of columns in the legend. The default is 1.
 
         Returns
         -------
-        The matplotlib Figure object.
+        figobj : Figure object
+            figure object of the plot.
+        axes : array of Axes objects
+            array of the 3 axes objects of the plot.
 
         """
-
-        log.setLevel(logging.INFO)
 
         try:
             A, B, C, T, sA, sB, sC = self.to_list(coortype=coortype)
@@ -789,89 +797,23 @@ class TimeSeriePoint:
             log.info("TRICK : check if the given coortype is in the timeserie")
             raise tyer
 
-        # Define titles and labels based on coordinate type
-        coord_config = {
-            "ENU": ("East", "North", "Up", "displacement (m)"),
-            "XYZ": ("X", "Y", "Z", "displacement (m)"),
-            "FLH": ("Phi", "Lambda", "Haut", "displacement (m)"),
-            "UTM": ("East (UTM)", "North (UTM)", "Up", "displacement (m)"),
-        }
+        coor_tup = (A, B, C, T, sA, sB, sC)
 
-        Atitle, Btitle, Ctitle, yylabel = coord_config.get(
-            coortype, ("A", "B", "C", "displacement (??)")
+        return time_series.plot_timeseries(
+            coor_tup,
+            coortype=coortype,
+            diapt=diapt,
+            alpha=alpha,
+            fig=fig,
+            errbar=errbar,
+            symbol=symbol,
+            errbar_width=errbar_width,
+            ylim=ylim,
+            legend_loc=legend_loc,
+            legend_ncol=legend_ncol,
+            name=self.name,
+            stat=self.stat
         )
-
-        log.info("plot : %s, pts : %s", self.nbpts, self.stat)
-
-        Tdt = conv.posix2dt(T)
-
-        # Get figure number
-        if isinstance(fig, int):
-            fig_num = fig
-        elif isinstance(fig, plt.Figure):
-            fig_num = fig.number
-        else:
-            fig_num = 1
-
-        # Label for the plot
-        name4plot = self.name[:10] if self.name else self.stat
-
-        # Check if figure already exists, reuse axes if yes, create it if no
-        if plt.fignum_exists(fig_num):
-            figobj = plt.figure(fig_num)
-            # Reuse existing axes if the figure has 3 axes
-            if len(figobj.axes) == 3:
-                axes = figobj.axes
-            else:
-                # Clear and create new axes if wrong number of axes
-                figobj.clear()
-                axes = figobj.subplots(3, 1, sharex=True)
-        else:
-            figobj, axes = plt.subplots(3, 1, num=fig_num, sharex=True)
-        figobj.suptitle(self.stat)
-
-        # Component data and titles
-        components = [
-            (A, sA, Atitle),
-            (B, sB, Btitle),
-            (C, sC, Ctitle),
-        ]
-
-        # Common plot parameters
-        plot_kwargs = {
-            'label': name4plot,
-            'markersize': diapt,
-            'alpha': alpha,
-        }
-
-        errbar_kwargs = {
-            **plot_kwargs,
-            'fmt': symbol,
-            'ecolor': 'xkcd:light grey',
-            'elinewidth': errbar_width,
-        }
-
-        # Loop through components and plot
-        for ax, (data, sigma, title) in zip(axes, components):
-            if errbar:
-                ax.errorbar(Tdt, data, sigma, **errbar_kwargs)
-            else:
-                ax.plot(Tdt, data, symbol, **plot_kwargs)
-            ax.set_ylabel(yylabel)
-            ax.set_title(title)
-            ax.legend()
-            if ylim:
-                ax.set_ylim(ylim)
-
-        # Set x-label only on bottom subplot
-        axes[-1].set_xlabel("Date")
-
-        figobj.autofmt_xdate()
-        figobj.set_size_inches(8.27, 11.69)
-        figobj.tight_layout()
-        plt.subplots_adjust(top=0.93)
-
-        return figobj
 
     def plot_discont(self, fig=1):
         """
@@ -906,12 +848,7 @@ class TimeSeriePoint:
         if self.bool_discont_manu:
             for ax in figobj.axes:
                 stats.plot_vertical_bar_ax(self.discont_manu, ax, "g")
-
-    #        figobj.axes[1]
-    #        stats.plot_vertical_bar(self.discont)
-    #
-    #        figobj.axes[2]
-    #        stats.plot_vertical_bar(self.discont)
+        return None
 
     def discont_manu_click(self, fig=1):
         """
@@ -1206,6 +1143,10 @@ class TimeSeriePoint:
             B = self.NutmfT(T)
             C = self.UutmfT(T)
 
+        else:
+            log.error("coortype does not exist")
+            raise Exception
+
         for i in range(len(T)):
             tsout.add_point(Point(A[i], B[i], C[i], T=T[i], initype=coortype))
 
@@ -1261,6 +1202,9 @@ class TimeSeriePoint:
             Aout = np.nanmedian(A)
             Bout = np.nanmedian(B)
             Cout = np.nanmedian(C)
+        else:
+            log.error("mean_type does not exist")
+            raise Exception
 
         Tout = (np.max(T) - np.min(T)) / 2
 
@@ -1362,9 +1306,9 @@ class TimeSeriePoint:
         -------
         None
         """
-        T = self.to_dataframe(coortype)["T"]
+        t = self.to_dataframe(coortype)["t"]
 
-        dup_bool = T.duplicated()
+        dup_bool = t.duplicated()
 
         if dup_bool.sum() > 0:
             log.warning(
@@ -1532,6 +1476,9 @@ class TimeSerieObs(object):
         if self.typeobs == "RPY":
             A, B, C = "R", "p", "Y"
             sA, sB, sC = "sR", "sP", "sY"
+        else:
+            log.error("typeobs not recognized")
+            raise Exception
 
         A = np.asarray([getattr(o, A) for o in self.obs])
         B = np.asarray([getattr(o, B) for o in self.obs])
