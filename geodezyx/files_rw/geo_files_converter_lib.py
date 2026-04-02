@@ -38,7 +38,7 @@ import pandas as pd
 from geodezyx import conv
 from geodezyx import operational
 from geodezyx import utils
-from geodezyx.files_rw import read_logsheets
+from geodezyx.files_rw.read import read_logsheets
 
 log = logging.getLogger("geodezyx")
 
