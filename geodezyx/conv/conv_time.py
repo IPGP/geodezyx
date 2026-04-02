@@ -1634,6 +1634,7 @@ string_date2dt = date_string_2_dt
 str_date2dt = date_string_2_dt
 strdate2dt = date_string_2_dt
 
+
 @vector_string_conv
 def date_pattern2dt(date_str_inp):
     """
@@ -1659,26 +1660,27 @@ def date_pattern2dt(date_str_inp):
     ValueError
         If the input string does not match any of the expected date formats.
     """
-    if re.match(r'\d{4}-\d{2}-\d{2}', date_str_inp):
+    if re.match(r"\d{4}-\d{2}-\d{2}", date_str_inp):
         # Match format YYYY-MM-DD
-        date = dt.datetime.strptime(date_str_inp, '%Y-%m-%d')
-    elif re.match(r'\d{4}-\d{3}', date_str_inp):
+        date = dt.datetime.strptime(date_str_inp, "%Y-%m-%d")
+    elif re.match(r"\d{4}-\d{3}", date_str_inp):
         # Match format Year-DayOfYear (e.g., 2023-123)
         date = doy2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
-    elif re.match(r'\d{4}-\d{1}', date_str_inp):
+    elif re.match(r"\d{4}-\d{1}", date_str_inp):
         # Match format GPS Week-Day (e.g., 1234-5)
         date = gpstime2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
-    elif re.match(r'\d{8}', date_str_inp):
+    elif re.match(r"\d{8}", date_str_inp):
         # Match format YYYYMMDD
-        date = dt.datetime.strptime(date_str_inp, '%Y%m%d')
-    elif re.match(r'\d{6}', date_str_inp):
+        date = dt.datetime.strptime(date_str_inp, "%Y%m%d")
+    elif re.match(r"\d{6}", date_str_inp):
         # Match format YYMMDD
-        date = dt.datetime.strptime(date_str_inp, '%y%m%d')
-    elif re.match(r'\d{5}', date_str_inp):
+        date = dt.datetime.strptime(date_str_inp, "%y%m%d")
+    elif re.match(r"\d{5}", date_str_inp):
         # Match format JJCNES (Julian Day CNES)
         date = jjul_cnes2dt(int(date_str_inp))
     else:
         import dateparser
+
         try:
             date = dateparser.parse(date_str_inp)
         except:
@@ -1711,10 +1713,6 @@ def minmax_pattern_dt(date1_inp, date2_inp):
     """
     datetup = (date_pattern2dt(date1_inp), date_pattern2dt(date2_inp))
     return min(datetup), max(datetup)
-
-
-
-
 
 
 # Additional conversion functions follow the same pattern...
@@ -1874,6 +1872,7 @@ def dt2str(dtin, str_format="%Y-%m-%d %H:%M:%S"):
         Time as string(s). If input is iterable, returns same type.
     """
     return dtin.strftime(str_format)
+
 
 @vector_datetime_conv
 def dt2str_iso(dtin):
@@ -2746,7 +2745,8 @@ def pandas_timestamp2dt(timstp_in):
         else:
             return timstp_in.to_pydatetime()
 
-def pandas_timestamp2posix(timstp_in,out_unit_coef=10**9,out_type=np.int64):
+
+def pandas_timestamp2posix(timstp_in, out_unit_coef=10**9, out_type=np.int64):
     """
     Time Python type conversion
 
@@ -2781,10 +2781,13 @@ def pandas_timestamp2posix(timstp_in,out_unit_coef=10**9,out_type=np.int64):
         posix_out = part1 + part2
         return posix_out
 
+
 import pandas as pd
+
 p = pd.Timestamp("2026-01-01 00:00:00.9876543212345678")
 pandas_timestamp2posix(p)
 np.float64(p.timestamp()) + np.float64(p.nanosecond / 1e9)
+
 
 def numpy_dt2dt(numpy_dt_in):
     """
@@ -2974,5 +2977,3 @@ def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
         log.debug(out)
 
     return out
-
-
