@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# %%
+# Step 03 - Differential GNSS processing on a short baseline with carrier phase
 """
 Step 03 - Differential GNSS processing on a short baseline with carrier phase
 
@@ -63,7 +65,6 @@ Standard library
 """
 
 # %%
-###############################################################################
 # Reference
 ###############################################################################
 
@@ -73,7 +74,6 @@ Standard library
 # https://doi.org/10.5880/GFZ.1.1.2019.002
 
 # %%
-###############################################################################
 # Imports
 ###############################################################################
 
@@ -104,7 +104,6 @@ from geodezyx import operational
 from geodezyx import reffram
 
 # %%
-###############################################################################
 # Configuration
 ###############################################################################
 
@@ -161,7 +160,6 @@ FIGURE_COUNTER = count(1)
 
 
 # %%
-###############################################################################
 # Pedagogical roadmap
 ###############################################################################
 
@@ -194,7 +192,6 @@ print(
 )
 
 # %%
-###############################################################################
 # Helper functions
 ###############################################################################
 
@@ -471,7 +468,6 @@ def cleanup_variables(*variable_names: str) -> None:
     gc.collect()
 
 # %%
-###############################################################################
 # Working directory
 ###############################################################################
 
@@ -480,7 +476,6 @@ print("Working directory ready:", WORK_DIR)
 
 
 # %%
-###############################################################################
 # Download RINEX observations and precise products
 ###############################################################################
 
@@ -492,7 +487,6 @@ station_downloads, product_downloads = download_station_and_product_data(
 
 
 # %%
-###############################################################################
 # Precise orbit product
 ###############################################################################
 
@@ -500,7 +494,6 @@ sp3_path, df_sp3 = read_sp3_product(product_downloads)
 print(f"Using SP3 file: {sp3_path}")
 
 # %%
-###############################################################################
 # RINEX observation files
 ###############################################################################
 
@@ -525,8 +518,8 @@ print(f"ROVER rows: {len(df_rover)}")
 
 
 # %%
-###############################################################################
 # Minimal RINEX cleaning (KISS principle)
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -617,8 +610,8 @@ print("KISS cleaning applied.")
 print("Observables kept:", df_base.columns)
 
 # %%
-###############################################################################
 # GNSS canonical indexing (same structure as step02.py)
+###############################################################################
 #
 # Each observation is uniquely identified by:
 #     (epoch, satellite)
@@ -647,8 +640,8 @@ cleanup_variables("station_downloads", "product_downloads")
 
 
 # %%
-###############################################################################
 # Synchronization of BASE and ROVER observations
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -674,8 +667,8 @@ print("ROVER synchronized rows:", len(df_rover_sync))
 
 
 # %%
-###############################################################################
 # Satellite states computed independently for BASE and ROVER (TP02 reuse)
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -776,8 +769,8 @@ df_rover_sat = add_satellite_state_from_sp3(df_rover_sync.reset_index(), df_sp3,
 
 
 # %%
-###############################################################################
 # Compare satellite positions (ROVER - BASE)
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -800,8 +793,8 @@ print(df_diff["dr_norm"].groupby(level="prn").max().sort_values(ascending=False)
 
 
 # %%
-###############################################################################
 # Receiver-dependent satellite geometry
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -840,8 +833,8 @@ print("------------------------------------------------------------\n")
 
 
 # %%
-###############################################################################
 # Sagnac correction (vectorized Z-rotation) applied to BASE and ROVER
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -950,7 +943,6 @@ print(df_sagnac_diff["dr_sagnac_norm"].describe())
 
 
 # %%
-###############################################################################
 # Synchronization check between BASE and ROVER
 ###############################################################################
 
@@ -992,8 +984,8 @@ del var
 gc.collect()
 
 # %%
-###############################################################################
 # Sanity checks before differential processing (SD / DD)
+###############################################################################
 #
 # We now work ONLY with:
 #   - df_base_sat
@@ -1033,8 +1025,8 @@ gc.collect()
 
 
 # %%
-###############################################################################
 # Single Differences (SD): ROVER − BASE on meaningful observables (C*, P*, L*)
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -1149,8 +1141,8 @@ print(df_SD.head())
 
 
 # %%
-###############################################################################
 # Data gaps in SD time series (per PRN) — why we care before SD plots
+###############################################################################
 #
 # Key idea
 # --------
@@ -1296,7 +1288,6 @@ print(f"  gap_arc  = {gap_arc}   (used to split visibility arcs)")
 print(f"  gap_inc  = {gap_inc}   (used for increments/derivatives; do not bridge missing epochs)")
 
 # %%
-# -------------------------------------------------------------------------
 # 1) Carrier phase SD_L1 (cycles): arcs + potential phase jumps
 # -------------------------------------------------------------------------
 print("\n[1/4] SD_L1 (phase, cycles): arcs + potential discontinuities")
@@ -1310,7 +1301,6 @@ gnss_edu.plot_gnss_sd_by_prn(
 finalize_figure(plt.gcf(), "step03_sd_l1_by_prn.png")
 
 # %%
-# -------------------------------------------------------------------------
 # 2) Code SD_C1 (meters): noisier, especially near rise/set
 # -------------------------------------------------------------------------
 print("\n[2/4] SD_C1 (code, meters): typically noisier near rise/set (multipath)")
@@ -1324,8 +1314,8 @@ gnss_edu.plot_gnss_sd_by_prn(
 finalize_figure(plt.gcf(), "step03_sd_c1_by_prn.png")
 
 # %%
-# -------------------------------------------------------------------------
 # 3) Epoch-to-epoch increments ΔSD: highlight sharp events (raw jumps)
+# -------------------------------------------------------------------------
 #    - normalize_by_dt=False -> raw jump between consecutive epochs
 #    - gap_inc is tight      -> do NOT connect points across missing epochs
 # -------------------------------------------------------------------------
@@ -1365,8 +1355,8 @@ else:
     print("Note: SD_L2 not available in df_SD (skipped).")
 
 # %%
-# -------------------------------------------------------------------------
 # 4) Time-normalized derivative d(SD)/dt: units per second
+# -------------------------------------------------------------------------
 #    Useful when dt is not perfectly constant, or to compare datasets.
 # -------------------------------------------------------------------------
 print("\n[4/4] Time-normalized derivative d(SD)/dt (units per second)")
@@ -1405,7 +1395,7 @@ if "SD_L2" in df_SD.columns:
 
 
 # %%
-
+# From Single Differences To Pivot Choice
 #            satellite s
 # BASE  -------------------------
 # ROVER -------------------------
@@ -2148,7 +2138,6 @@ plot_elevation_timeseries_with_active_pivot(
 
 
 # %%
-###############################################################################
 # Pivot schedule -> segments -> diagnostics
 ###############################################################################
 
@@ -2221,7 +2210,7 @@ print(
 
 
 # %%
-
+# From Single Differences To Double Differences
 #            satellite s
 # BASE  -------------------------
 # ROVER -------------------------
@@ -2365,8 +2354,8 @@ def add_pivot_change_flag(df_DD: pd.DataFrame) -> pd.DataFrame:
 
 
 # %%
-###############################################################################
 # What is df_DD?
+###############################################################################
 #
 # The dataframe `df_DD` contains the GNSS Double Differences (DD) computed
 # from the Single Differences (SD) using the pivot satellite selected at
@@ -2415,8 +2404,8 @@ def add_pivot_change_flag(df_DD: pd.DataFrame) -> pd.DataFrame:
 ###############################################################################
 
 # %%
-###############################################################################
 # Double Differences (DD) from SD using a time-varying pivot schedule
+###############################################################################
 # (rich output: pivot info + all DD + optional pivot SD)
 ###############################################################################
 
