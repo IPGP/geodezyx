@@ -54,20 +54,22 @@ log = logging.getLogger("geodezyx")
 
 def read_gins_solution(filein, mode="cinematic"):
     """
-    Read a GINS solution file
+    Read a GINS solution file.
 
     Parameters
     ----------
     filein : str
-        path of the input file.
+        Path of the input file.
     mode : str, optional
-        cinematic : retrun a TimeSerie
-        static : retrun a point
+        Processing mode. Either 'cinematic' to return a TimeSeriePoint object
+        or 'static' to return a Point object. Default is 'cinematic'.
 
     Returns
     -------
-    TimeSeries or Point object
-        output Time Series.
+    TimeSeriePoint or Point
+        If mode='cinematic', returns a TimeSeriePoint object containing
+        the time series. If mode='static', returns the first Point object.
+        Returns None if no points are found in the file.
 
     """
 
@@ -183,14 +185,17 @@ def read_gins_solution_multi(filein_list, return_dict=True):
     filein_list : list
         List of input file paths.
     return_dict : bool, optional
-        If True, return a dictionary of time series.
-        If False, return a list of time series. Defaults to True.
+        If True, return a dictionary with station names as keys and TimeSeriePoint
+        objects as values. If False, return a list of TimeSeriePoint objects.
+        Default is True.
 
     Returns
     -------
     dict or list
-        A dictionary or list of TimeSeriePoint objects,
-        depending on the value of return_dict.
+        If return_dict=True, a dictionary with station names as keys and
+        TimeSeriePoint objects as values. If return_dict=False, a list of
+        TimeSeriePoint objects.
+
     """
 
     filein_list = sorted(filein_list)
@@ -231,12 +236,39 @@ def read_gins(
     kf_result=False,
 ):
     """
-    Static : donne un point
-    Kinematic : donne une TS
+    Read a GINS listing file and extract coordinate time series.
 
-    force_get_convergence : if there is a bug about
-    'COORDONNEES DES STATIONS AJUSTEES EN HAUTE FREQUENCE' field, it is in the listing
-    but empty ... so we force the retreive of the 'c o n v e r g e n c e' part
+    Parameters
+    ----------
+    filein : str
+        Path to the input GINS listing file.
+    kineorstatic : str, optional
+        Type of processing. Either 'kine' for kinematic processing (returns
+        TimeSeriePoint) or 'static' for static processing (returns Point).
+        Default is 'kine'.
+    flh_in_rad : bool, optional
+        If True, FLH coordinates are in radians and will be converted to degrees.
+        Default is True.
+    force_get_convergence : bool, optional
+        If True, forces retrieval of 'convergence' part even if
+        'COORDONNEES DES STATIONS AJUSTEES EN HAUTE FREQUENCE' field is present.
+        Default is False.
+    kf_result : bool, optional
+        If True, processes Kalman Filter results. Default is False.
+
+    Returns
+    -------
+    TimeSeriePoint or Point
+        If kineorstatic='kine', returns a TimeSeriePoint object containing
+        the time series. If kineorstatic='static', returns the first Point object.
+
+    Notes
+    -----
+    The function handles special cases such as:
+    - Double convergence fields (keeps the last one)
+    - Final adjustment coordinates ('COORDONNEES DES STATIONS AJUSTEES EN HAUTE FREQUENCE')
+    - Midnight boundary (hour=24) handling
+
     """
 
     if ".prepars" in filein:
@@ -441,6 +473,33 @@ def read_gins(
 
 
 def gins_read_time(line):
+    """
+    Extract and parse time information from a GINS listing line.
+
+    Parameters
+    ----------
+    line : str
+        A line from a GINS listing file containing time information at
+        fixed character positions.
+
+    Returns
+    -------
+    datetime.datetime
+        The parsed datetime object. Returns 1970-01-01 if parsing fails.
+
+    Notes
+    -----
+    Extracts time components from fixed character positions in the line:
+    - Characters 108-110: day (jour)
+    - Characters 110-112: hour (h)
+    - Characters 112-114: minute (m)
+    - Characters 114-116: second (s)
+    - Characters 125-127: year (yy)
+
+    Month is parsed from character 127 where letters O, N, D represent
+    October, November, December respectively.
+
+    """
     jour = int(line[108:110])
     h = int(line[110:112])
     m = int(line[112:114])
@@ -486,7 +545,31 @@ def gins_read_time(line):
 
 def gins_read_MZB(filein, return_df=False):
     """
-    Read Mean Zeintal Bias in a GINS' listing
+    Read Mean Zonal Bias (MZB) from a GINS listing file.
+
+    Parameters
+    ----------
+    filein : str
+        Path to the input GINS listing file.
+    return_df : bool, optional
+        If True, return results as a pandas DataFrame. If False, return as
+        separate lists. Default is False.
+
+    Returns
+    -------
+    tuple or DataFrame
+        If return_df=False: tuple of (Tstk, MZBstk, sMZBstk, NameStat)
+            - Tstk : list of datetime objects
+            - MZBstk : list of MZB values
+            - sMZBstk : list of MZB standard deviations
+            - NameStat : list of station names
+
+        If return_df=True: pandas DataFrame with columns:
+            - epoch : datetime
+            - mzb : MZB value (float)
+            - mzb_std : MZB standard deviation (float)
+            - site : station name
+
     """
 
     F = open(filein)
@@ -545,7 +628,22 @@ def gins_read_MZB(filein, return_df=False):
 
 def gins_readTROPOZ(filein):
     """
-    Read TROPOZ in a GINS' listing
+    Read TROPOZ (zenith tropospheric delay) from a GINS listing file.
+
+    Parameters
+    ----------
+    filein : str
+        Path to the input GINS listing file.
+
+    Returns
+    -------
+    DataFrame
+        pandas DataFrame with columns:
+        - jjul_cnes : CNES Julian day number
+        - tropoz_std : TROPOZ standard deviation
+        - tropoz : TROPOZ value
+        - epoch : datetime of the measurement (rounded to 1 second)
+
     """
 
     L = utils.grep(filein, "TROPOZ COR_ZEN_ESTIM")
@@ -559,6 +657,28 @@ def gins_readTROPOZ(filein):
 
 
 def write_ATM_GAMIT(Tstk, MZBstk, sMZBstk, namestat, file_out):
+    """
+    Write atmospheric data in GAMIT ATM_ZEN format.
+
+    Parameters
+    ----------
+    Tstk : list
+        List of datetime objects.
+    MZBstk : list
+        List of Mean Zonal Bias (MZB) values.
+    sMZBstk : list
+        List of MZB standard deviations.
+    namestat : str
+        Station name.
+    file_out : str
+        Path to the output file.
+
+    Returns
+    -------
+    str
+        Path to the output file.
+
+    """
     Fout = open(file_out, "w+")
     for T, mzb, smzb in zip(Tstk, MZBstk, sMZBstk):
         yy = T.year
@@ -574,6 +694,22 @@ def write_ATM_GAMIT(Tstk, MZBstk, sMZBstk, namestat, file_out):
 
 
 def MZB_GINS_2_ATM_GAMIT(listing_in, path_out):
+    """
+    Convert Mean Zonal Bias (MZB) from GINS listing to GAMIT ATM format.
+
+    Parameters
+    ----------
+    listing_in : str
+        Path to the input GINS listing file.
+    path_out : str
+        Path to the output directory.
+
+    Returns
+    -------
+    str
+        Path to the generated output file.
+
+    """
     Tstk, MZBstk, sMZBstk, namestat = gins_read_MZB(listing_in)
     doy, yy = conv.dt2doy_year(Tstk[0], str)
     file_out = os.path.join(
@@ -586,15 +722,24 @@ def MZB_GINS_2_ATM_GAMIT(listing_in, path_out):
 
 def read_gins_wrapper(input_list_or_path, flh_in_rad=True):
     """
-    pour une liste de paths renvoie une liste de timeseries
-    AUTANT DE TIMESERIES QUE DE LISTINGS
+    Read multiple GINS listing files and return a list of time series.
 
-    INPUT :
-    Une liste de fichiers
-    Un path compatible avec glob
+    Parameters
+    ----------
+    input_list_or_path : str or list
+        Either a list of file paths or a path glob pattern to match GINS files.
+    flh_in_rad : bool, optional
+        If True, FLH coordinates are in radians. Default is True.
 
-    les fichiers sans extensions .gins
-    sont automatiquement exclus
+    Returns
+    -------
+    list
+        List of TimeSeriePoint objects, one per GINS listing file.
+
+    Notes
+    -----
+    Files without the .gins extension are automatically excluded from processing.
+
     """
 
     if type(input_list_or_path) is str:
@@ -617,6 +762,36 @@ def read_gins_wrapper(input_list_or_path, flh_in_rad=True):
 def convert_sp3_clk_2_GINS_clk(
     sp3_path_in, clk_gins_out, interpo_30sec=True, return_as_DF=True
 ):
+    """
+    Convert SP3 satellite clock data to GINS clock format.
+
+    Parameters
+    ----------
+    sp3_path_in : str
+        Path to the input SP3 file.
+    clk_gins_out : str
+        Path to the output GINS clock file.
+    interpo_30sec : bool, optional
+        If True, interpolate clock data to 30-second intervals. Default is True.
+    return_as_DF : bool, optional
+        If True, return results as a pandas DataFrame. If False, return the
+        path to the output file. Default is True.
+
+    Returns
+    -------
+    str or DataFrame
+        If return_as_DF=True, returns a pandas DataFrame with columns:
+            - epoch : datetime
+            - sv : satellite vehicle number
+            - clk : clock value
+
+        If return_as_DF=False, returns the path to the output file.
+
+    Notes
+    -----
+    This function is in beta status and currently only supports GPS clocks.
+
+    """
     DF = files_rw.read_sp3(sp3_path_in)
 
     Fout = open(clk_gins_out, "w+")
@@ -701,8 +876,28 @@ def convert_sp3_clk_2_GINS_clk(
 
 def read_gins_multi_raw_listings(filelistin, kineorstatic="static", flh_in_rad=True):
     """
-    traite une liste de listing bruts
-    pour obtenir UNE SEULE timeserie
+    Read multiple raw GINS listing files and return a single time series.
+
+    Parameters
+    ----------
+    filelistin : list
+        List of input GINS listing file paths.
+    kineorstatic : str, optional
+        Type of processing. Either 'static' or 'kine' for kinematic.
+        Default is 'static'.
+    flh_in_rad : bool, optional
+        If True, FLH coordinates are in radians. Default is True.
+
+    Returns
+    -------
+    TimeSeriePoint
+        A single TimeSeriePoint object containing points from all input files.
+
+    Notes
+    -----
+    Files must contain the "c o n v e r g e n c e" field to be processed.
+    All points should have the same station name.
+
     """
 
     tsout = time_series.TimeSeriePoint()
@@ -739,9 +934,28 @@ def read_gins_multi_raw_listings(filelistin, kineorstatic="static", flh_in_rad=T
 
 def read_gins_multi_extracted(filelistin, flh_in_rad=True):
     """
-    traite les extractions de listings
-    sous la forme par ex. S<HLP>__ddhhiissxxxxxxxxxyym.HOUE
-    La liste doit contenir exactement 3 fichiers (pour chacune des composantes)
+    Read extracted GINS listing files and return a time series.
+
+    Parameters
+    ----------
+    filelistin : list
+        List of input file paths. Must contain exactly 3 files, one for each
+        coordinate component (X/p, Y/L, Z/H).
+    flh_in_rad : bool, optional
+        If True, FLH coordinates are in radians and will be converted to degrees.
+        Default is True.
+
+    Returns
+    -------
+    TimeSeriePoint or None
+        A TimeSeriePoint object containing the time series if successful.
+        Returns None if the list does not contain exactly 3 files.
+
+    Notes
+    -----
+    The input files are expected to have the format: S<HLP>__ddhhiissxxxxxxxxxyym.HOUE
+    where one file contains X/p, one contains Y/L, and one contains Z/H coordinates.
+
     """
     tsout = time_series.TimeSeriePoint()
     if len(filelistin) != 3:
@@ -830,7 +1044,19 @@ def read_gins_multi_extracted(filelistin, flh_in_rad=True):
 
 def read_gins_double_diff(filein):
     """
-    return a list of Point object for a double diff listing
+    Extract point objects from a GINS double difference listing file.
+
+    Parameters
+    ----------
+    filein : str
+        Path to the input GINS double difference listing file.
+
+    Returns
+    -------
+    list or None
+        List of Point objects extracted from the file.
+        Returns None if the file has no convergence section.
+
     """
 
     if utils.grep(filein, "c o n v e r g e n c e") == "":
@@ -881,7 +1107,18 @@ def read_gins_double_diff(filein):
 
 def read_gins_double_diff_multi(filelistin):
     """
-    return a dictionnary with station names as keys and timeseries as values
+    Read multiple GINS double difference listing files and return a dictionary of time series.
+
+    Parameters
+    ----------
+    filelistin : list
+        List of input GINS double difference listing file paths.
+
+    Returns
+    -------
+    dict
+        Dictionary with station names as keys and TimeSeriePoint objects as values.
+
     """
 
     Ptsstk = []
@@ -907,6 +1144,24 @@ def read_gins_double_diff_multi(filelistin):
 
 
 def read_spotgins_quick(p):
+    """
+    Read SpotGINS quick format file.
+
+    Parameters
+    ----------
+    p : str
+        Path to the input SpotGINS file.
+
+    Returns
+    -------
+    DataFrame
+        pandas DataFrame with columns:
+        - E : East coordinate
+        - N : North coordinate
+        - U : Up coordinate
+        Indexed by date (datetime).
+
+    """
     df = pd.read_csv(p, comment="#", header=None, sep=r"\s+")
 
     with open(p) as f:
@@ -922,6 +1177,23 @@ def read_spotgins_quick(p):
 
 
 def diff_spotgins_quick(df1, df2):
+    """
+    Compute the difference between two SpotGINS coordinate dataframes.
+
+    Parameters
+    ----------
+    df1 : DataFrame
+        First SpotGINS dataframe with E, N, U columns indexed by date.
+    df2 : DataFrame
+        Second SpotGINS dataframe with E, N, U columns indexed by date.
+
+    Returns
+    -------
+    DataFrame
+        DataFrame containing the differences (df1 - df2) with rounded hourly indices,
+        with NaN values removed.
+
+    """
     def _rndidx(d):
         duse = d.index.to_series().dt.round("1h").values
         dout = d.set_index(duse)

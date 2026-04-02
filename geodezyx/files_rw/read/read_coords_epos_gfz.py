@@ -53,7 +53,19 @@ log = logging.getLogger("geodezyx")
 
 def read_epos_sta_kinematics(filein):
     """
-    read an EPOS kinematic solutions
+    Read EPOS kinematic station solutions.
+
+    Parameters
+    ----------
+    filein : str
+        Path to the input EPOS kinematic solutions file.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame containing kinematic solutions with columns:
+        'site', 'site_num', 'MJD_epo', 'numobs', 'x', 'y', 'z',
+        'sx', 'sy', 'sz', 'N', 'E', 'U', 'sN', 'sE', 's_u'.
     """
 
     F = open(filein)
@@ -127,23 +139,28 @@ def read_epos_sta_kinematics(filein):
 
 def read_epos_sta_coords_mono(filein, return_df=True):
     """
-    Read an GFZ EPOS's coordinate file.
-    To read several files at the same time see read_epos_sta_coords_multi
+    Read a single GFZ EPOS coordinate file.
+
+    For reading multiple files simultaneously, see :func:`read_epos_sta_coords_multi`.
 
     Parameters
     ----------
     filein : str
-        path of the input coordinate file.
+        Path to the input EPOS coordinate file. Supports compressed files (.Z, .gz).
     return_df : bool, optional
-        if True, returns the coordinates as a Pandas DataFrame.
-        if False, return a list of GeodeZYX's point objects (advanced)
-        The default is True.
+        If True, returns coordinates as a Pandas DataFrame.
+        If False, returns a list of GeodeZYX Point objects (advanced usage).
+        Default is True.
 
     Returns
     -------
-    DataFrame or List of Points
-        Ouput coordinates.
-
+    pd.DataFrame or list of Point
+        Output coordinates. DataFrame contains columns:
+        'site', 'site_num', 'tecto_plate', 'epoch', 'MJD_ref',
+        'MJD_start', 'MJD_end', 'x', 'y', 'z', 'sx', 'sy', 'sz',
+        'Vx', 'Vy', 'Vz', 'sVx', 'sVy', 'sVz' if return_df=True.
+        Otherwise a list of Point objects with velocity information stored
+        in the 'anex' attribute.
     """
     # """
     # read an EPOS's YYYY_DDD_XX_sta_coordinates coordinates files
@@ -270,22 +287,24 @@ def read_epos_sta_coords_mono(filein, return_df=True):
 
 def read_epos_sta_coords_multi(filein_list, output_type="DataFrame"):
     """
-    Read several GFZ EPOS's coordinate files.
+    Read multiple GFZ EPOS coordinate files.
 
     Parameters
     ----------
-    filein_list : list
-        list of input coordinate files inputs.
-    output_type : str, optional
-        "DataFrame": returns a Pandas DataFrame containing the coordinates
-        "TSobjects": returns a dictionary of GeodeZYX's TimeSeries objects (advanced)
-        The default is "DataFrame".
+    filein_list : list of str
+        List of input EPOS coordinate file paths.
+    output_type : {'DataFrame', 'TSobjects'}, optional
+        Output format:
+        - 'DataFrame': Returns a concatenated Pandas DataFrame containing all coordinates.
+        - 'TSobjects': Returns a dictionary of GeodeZYX TimeSeries objects (advanced usage).
+        Default is 'DataFrame'.
 
     Returns
     -------
-    OUT : DataFrame or dict
-        See "output_type" input parameter.
-
+    pd.DataFrame or dict
+        Concatenated coordinate data as specified by output_type parameter.
+        If 'DataFrame', returns a single DataFrame with all coordinates.
+        If 'TSobjects', returns a dictionary keyed by station names.
     """
 
     if output_type == "TSobjects":
@@ -304,22 +323,26 @@ def read_epos_sta_coords_multi(filein_list, output_type="DataFrame"):
 
 def read_epos_sta_coords_multi_legacy(filein_list, return_dict=True):
     """
-    Read several GFZ EPOS's coordinate files.
-    Legacy version
+    Read multiple GFZ EPOS coordinate files (legacy version).
+
+    This is the legacy implementation that directly returns GeodeZYX TimeSeries objects.
+    For new code, consider using :func:`read_epos_sta_coords_multi` instead.
 
     Parameters
     ----------
-    filein_list : list
-        list of input coordinate files inputs.
+    filein_list : list of str
+        List of input EPOS coordinate file paths.
     return_dict : bool, optional
-        True: returns a dictionary of GeodeZYX's TimeSeries objects
-        "TSobjects": returns a list of GeodeZYX's TimeSeries objects
-        The default is True.
+        If True, returns a dictionary of GeodeZYX TimeSeries objects keyed by station names.
+        If False, returns a list of GeodeZYX TimeSeries objects.
+        Default is True.
 
     Returns
     -------
-    OUT : dict or list
-        See "return_dict" input parameter.
+    dict or list of TimeSeries
+        Time series data for each station. Type determined by return_dict parameter.
+        If return_dict=True, returns dict with station names as keys.
+        If return_dict=False, returns list of TimeSeries objects.
     """
 
     filein_list = sorted(filein_list)
@@ -351,9 +374,27 @@ def read_epos_sta_coords_multi_legacy(filein_list, return_dict=True):
 
 def read_epos_slv_times(p, convert_to_time=False):
     """
-    convert_to_time : divide by the speed of light to get time-homogene values.
-    Values in meter instead
-    If convert_to_time : time in sec
+    Extract station and satellite clock/bias solution times from EPOS result file.
+
+    Parameters
+    ----------
+    p : str or path-like
+        Path to the EPOS solution file.
+    convert_to_time : bool, optional
+        If True, convert offset values from meters to seconds by dividing by
+        the speed of light (299792458 m/s).
+        If False, values remain in meters.
+        Default is False.
+
+    Returns
+    -------
+    tuple of (pd.DataFrame, pd.DataFrame)
+        Station and satellite solution times:
+
+        - DF_stat : DataFrame with columns 'epoch', 'stat', 'offset', 'offset_sig'
+          Station-specific clock parameters.
+        - DF_sat : DataFrame with columns 'epoch', 'sat', 'offset', 'offset_sig'
+          Satellite-specific bias parameters.
     """
 
     L = utils.extract_text_between_elements_2(
@@ -400,7 +441,22 @@ def read_epos_slv_times(p, convert_to_time=False):
 
 def read_epos_tim(tim_file_in, convert_to_sec=False):
     """
-    results in microsec
+    Read satellite clock bias solutions from EPOS timing file.
+
+    Parameters
+    ----------
+    tim_file_in : str or path-like
+        Path to the input EPOS timing file.
+    convert_to_sec : bool, optional
+        If True, convert offset values from microseconds to seconds.
+        If False, values remain in microseconds.
+        Default is False.
+
+    Returns
+    -------
+    pd.DataFrame
+        Satellite timing solutions with columns:
+        'epoch' (datetime), 'sat' (satellite identifier), 'offset' (float).
     """
     F = open(tim_file_in)
 
@@ -429,19 +485,19 @@ def read_epos_tim(tim_file_in, convert_to_sec=False):
 
 def stations_in_epos_sta_coords_file_mono(coords_file_path):
     """
-    Gives stations in a EPOS coords. file (YYYY_DDD_sta_coordinates)
+    Extract station names and mean epoch from a GFZ EPOS coordinate file.
 
     Parameters
     ----------
-    coords_file_path : str
-        path of the EPOS coords. file.
+    coords_file_path : str or path-like
+        Path to the EPOS coordinate file (YYYY_DDD_sta_coordinates format).
 
     Returns
     -------
     epoch : datetime
-        the main mean epoch in the EPOS coords. file.
-    stats_list : list
-        list of 4 char station list.
+        Mean epoch of the measurements in the file.
+    stats_list : list of str
+        List of station names (typically 4-character identifiers).
     """
 
     site_line_list = utils.grep(coords_file_path , " SITE            m")

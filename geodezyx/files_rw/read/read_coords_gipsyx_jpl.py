@@ -20,7 +20,6 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 #### External modules
 import datetime as dt
-import glob
 import gzip
 
 #### Import the logger
@@ -30,13 +29,10 @@ import re
 
 import numpy as np
 import pandas as pd
-import scipy
 
 #### geodeZYX modules
 from geodezyx import conv
-from geodezyx import files_rw
 from geodezyx import time_series
-from geodezyx import utils
 
 log = logging.getLogger("geodezyx")
 
@@ -52,17 +48,18 @@ log = logging.getLogger("geodezyx")
 
 def read_gipsy_tdp(filein):
     """
-    Read legacy Gipsy TDP (Time Dependent Parameter) File
+    Read legacy Gipsy TDP (Time Dependent Parameter) file.
 
     Parameters
     ----------
     filein : str
-        input file path.
+        Path to the input TDP file.
 
     Returns
     -------
-    tsout : TimeSeries Object
-        output TimeSerie.
+    TimeSeriePoint
+        Time series object containing the extracted coordinates.
+
     """
 
     X, Y, Z = np.nan, np.nan, np.nan
@@ -107,18 +104,18 @@ def read_gipsy_tdp(filein):
 
 def read_gipsy_tdp_list(filelistin):
     """
-    Read Several GIPSY TDP (Time Dependent Parameter) Files
-
+    Read multiple legacy Gipsy TDP (Time Dependent Parameter) files.
 
     Parameters
     ----------
     filelistin : list
-        input file paths in a list.
+        List of input file paths.
 
     Returns
     -------
-    tsout : TimeSeries Object
-        output TimeSerie.
+    TimeSeriePoint
+        Merged time series object containing data from all input files.
+
     """
 
     tslist = []
@@ -137,17 +134,23 @@ def read_gipsy_tdp_list(filelistin):
 
 def read_gipsyx_tdp(filein):
     """
-    Read GipsyX TDP (Time Dependent Parameter) File
+    Read GipsyX TDP (Time Dependent Parameter) file.
 
     Parameters
     ----------
     filein : str
-        input file path.
+        Path to the input GipsyX TDP file.
 
     Returns
     -------
-    tsout : TimeSeries Object
-        output TimeSerie.
+    TimeSeriePoint
+        Time series object containing the extracted coordinates.
+
+    Raises
+    ------
+    Exception
+        If the file cannot be opened.
+
     """
 
     X, Y, Z = np.nan, np.nan, np.nan
@@ -204,18 +207,18 @@ def read_gipsyx_tdp(filein):
 
 def read_gipsyx_tdp_list(filelistin):
     """
-    Read Several GIPSYX TDP (Time Dependent Parameter) Files
-
+    Read multiple GipsyX TDP (Time Dependent Parameter) files.
 
     Parameters
     ----------
     filelistin : list
-        input file paths in a list.
+        List of input file paths.
 
     Returns
     -------
-    tsout : TimeSeries Object
-        output TimeSerie.
+    TimeSeriePoint
+        Merged time series object containing data from all input files.
+
     """
 
     tslist = []
@@ -233,6 +236,20 @@ def read_gipsyx_tdp_list(filelistin):
 
 
 def read_gipsy_gdcov(filein):
+    """
+    Read GIPSY GDCOV (geodetic covariance) file.
+
+    Parameters
+    ----------
+    filein : str
+        Path to the input GDCOV file.
+
+    Returns
+    -------
+    TimeSeriePoint
+        Time series object containing the extracted coordinates with covariance information.
+
+    """
     X, Y, Z = np.nan, np.nan, np.nan
     Tx, Ty, Tz, T = np.nan, np.nan, np.nan, np.nan
     sX, sY, sZ = np.nan, np.nan, np.nan
@@ -283,6 +300,20 @@ def read_gipsy_gdcov(filein):
 
 
 def read_gipsy_gdcov_list(filelistin):
+    """
+    Read multiple GIPSY GDCOV (geodetic covariance) files.
+
+    Parameters
+    ----------
+    filelistin : list
+        List of input file paths.
+
+    Returns
+    -------
+    TimeSeriePoint
+        Merged time series object containing data from all input files.
+
+    """
     tslist = []
     for fil in filelistin:
         ts = read_gipsy_gdcov(fil)
@@ -299,20 +330,19 @@ def read_gipsy_gdcov_list(filelistin):
 
 def read_gipsyx_xfile(filein):
     """
-    Read GIPSYX X file i.e. the transformation parameters and their
-    residuals
-
+    Read GipsyX X file containing transformation parameters and residuals.
 
     Parameters
     ----------
     filein : str
-        input file path.
-        Can handle gz compressed files
+        Input file path. Can handle gzip-compressed files (.gz).
 
     Returns
     -------
     df_trans_out : DataFrame
-        Helmert transformation parameters and their sigmas.
+        Helmert transformation parameters and their standard deviations.
+        Columns include transformation parameters (e.g., TX, TY, TZ) and
+        their corresponding standard deviations (sTX, sTY, sTZ).
     df_resid_out : DataFrame
         Coordinates residuals (not implemented yet).
 
@@ -358,20 +388,19 @@ def read_gipsyx_xfile(filein):
 
 def read_gipsyx_xfile_list(filelistin):
     """
-    Read several GIPSYX X files i.e. the transformation parameters and their
-    residuals
+    Read multiple GipsyX X files containing transformation parameters and residuals.
 
     Parameters
     ----------
     filelistin : list
-        input file paths in a list.
-        Can handle gz compressed files
-
+        List of input file paths. Can handle gzip-compressed files (.gz).
 
     Returns
     -------
     df_trans_out : DataFrame
-        Helmert transformation parameters and their sigmas.
+        Combined Helmert transformation parameters and their standard deviations
+        from all input files. Columns include transformation parameters and their
+        corresponding standard deviations.
     df_resid_out : DataFrame
         Coordinates residuals (not implemented yet).
 
@@ -390,17 +419,23 @@ def read_gipsyx_xfile_list(filelistin):
 
 def read_gipsy_bosser(filein):
     """
-    Read p. Bosser (@ENSTA Brest) File (GIPSY)
+    Read a GIPSY file in the format used by P. Bosser at ENSTA Brest.
 
     Parameters
     ----------
     filein : str
-        input file path.
+        Path to the input file.
 
     Returns
     -------
-    tsout : TimeSeries Object
-        output TimeSerie.
+    TimeSeriePoint
+        Time series object containing the extracted coordinates in FLH format.
+
+    Notes
+    -----
+    File format contains year, day of year, latitude, longitude, height,
+    and RMS values. Latitude and longitude are converted from radians to degrees.
+
     """
 
     F, L, H = 0, 0, 0
@@ -434,17 +469,25 @@ def read_gipsy_bosser(filein):
 
 def read_gipsy_apps(filein):
     """
-    Read GIPSY APPS (Online tool) File
+    Read GIPSY APPS (Online processing tool) output file.
 
     Parameters
     ----------
     filein : str
-        input file path.
+        Path to the input file.
 
     Returns
     -------
-    tsout : TimeSeries Object
-        output TimeSerie.
+    TimeSeriePoint
+        Time series object containing the extracted coordinates in XYZ format
+        with standard deviations.
+
+    Notes
+    -----
+    The file format contains timestamp, X, Y, Z coordinates and their corresponding
+    standard deviations. Comment lines starting with '#' and lines containing
+    'Kinematic Processing' are skipped.
+
     """
 
     tsout = time_series.TimeSeriePoint()
@@ -473,6 +516,34 @@ def read_gipsy_apps(filein):
 
 
 def read_jpl_timeseries_solo(latlonrad_files_list):
+    """
+    Read JPL time series from separate latitude, longitude, and radial component files.
+
+    Parameters
+    ----------
+    latlonrad_files_list : list
+        List of three file paths containing latitude (.lat), longitude (.lon),
+        and radial (.rad) components of the time series.
+
+    Returns
+    -------
+    TimeSeriePoint
+        Time series object containing the extracted coordinates in ENU (East-North-Up)
+        format with standard deviations. Station name is extracted from the file names.
+
+    Raises
+    ------
+    Exception
+        If the files have different epoch times or if station names do not match
+        across the three input files.
+
+    Notes
+    -----
+    The three input files are expected to contain the same epochs in the same order.
+    Station name is extracted from the filename prefix (before the first dot).
+    Coordinates are assumed to be in centimeter units and converted to meter units.
+
+    """
     tsout = time_series.TimeSeriePoint()
 
     latpath = [f for f in latlonrad_files_list if ".lat" in f][0]
