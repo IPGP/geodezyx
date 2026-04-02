@@ -904,3 +904,40 @@ def read_gins_double_diff_multi(filelistin):
         ts.sort()
 
     return tsdico
+
+
+def read_spotgins_quick(p):
+    df = pd.read_csv(p, comment="#", header=None, sep=r"\s+")
+
+    with open(p) as f:
+        header_line = [line for line in f if line.startswith("#")][-1]
+    df.columns = header_line.strip().split()
+    df = df[df.columns[:4]]
+    df.columns = ["mjd", "E", "N", "U"]
+    df["date"] = conv.mjd2dt(df["mjd"])
+    df.set_index("date", inplace=True)
+    df = df.drop("mjd", axis=1)
+
+    return df
+
+
+def diff_spotgins_quick(df1, df2):
+    def _rndidx(d):
+        duse = d.index.to_series().dt.round("1h").values
+        dout = d.set_index(duse)
+        return dout
+
+    def _jjul(d):
+        d = _rndidx(d)
+        duse = d.index.to_series()
+        duse = conv.numpy_dt2dt(duse)
+        jjul = conv.dt2jjul_cnes(duse, True)
+
+        dout = d.set_index(jjul)  # + jjul[1]/86400)
+        return dout
+
+    lbda = _rndidx
+
+    dfout = (lbda(df1) - lbda(df2)).dropna()
+    # print(dfout.to_string())
+    return dfout
