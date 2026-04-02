@@ -67,28 +67,28 @@ class Point:
         initype : str, optional
             The inital coordinates type. The default is 'XYZ'.
             The others are 'FLH', 'ENU' and 'NED'
-        sA : TYPE, optional
-            sigma of A component. The default is 0.
-        sB : TYPE, optional
-            sigma of B component. The default is 0.
-        sC : TYPE, optional
-            sigma of C component. The default is 0.
+        sA : float, optional
+            Sigma (standard deviation) of A component. The default is 0.
+        sB : float, optional
+            Sigma (standard deviation) of B component. The default is 0.
+        sC : float, optional
+            Sigma (standard deviation) of C component. The default is 0.
         name : str, optional
             Flexible name for the Point identification. The default is 'noname'.
         anex : dict, optional
             Additional data. The default is None. See Note
 
-        Note
-        ----
+        Notes
+        -----
 
         A dictionary called anex is also initialized to allow a
-        versatile storage of a variety of data
+        versatile storage of a variety of data.
 
-        Exemple of dictionary keys
-        RMS: average RMS (for gipsy)
-        sdAB , sdBC , sdAC : the variances between A,B,C (for rtklib)
-        sdXY , sdXZ , sdYZ : the variances between XYZ (pbo.pos)
-        Vx , Vy , Vz , sVx , sVy , sVz : velocity of the point (EPOS coordinates)
+        Examples of dictionary keys:
+            - RMS: average RMS (for gipsy)
+            - sdAB, sdBC, sdAC: the variances between A,B,C (for rtklib)
+            - sdXY, sdXZ, sdYZ: the variances between XYZ (pbo.pos)
+            - Vx, Vy, Vz, sVx, sVy, sVz: velocity of the point (EPOS coordinates)
         """
 
         self.Tset(T)
@@ -144,7 +144,29 @@ class Point:
         else:
             return "{},{},{},{},{}".format(self.X, self.Y, self.Z, self.Tdt, self.T)
 
-    def XYZset(self, X=0, Y=0, Z=0, sX=0, sY=0, sZ=0):
+    def XYZset(self, X=0., Y=0., Z=0., sX=0., sY=0., sZ=0.):
+        """
+        Set Cartesian XYZ coordinates for the Point.
+
+        Parameters
+        ----------
+        X : float, optional
+            X Cartesian coordinate. The default is 0.
+        Y : float, optional
+            Y Cartesian coordinate. The default is 0.
+        Z : float, optional
+            Z Cartesian coordinate. The default is 0.
+        sX : float, optional
+            Sigma (standard deviation) of X. The default is 0.
+        sY : float, optional
+            Sigma (standard deviation) of Y. The default is 0.
+        sZ : float, optional
+            Sigma (standard deviation) of Z. The default is 0.
+
+        Returns
+        -------
+        None
+        """
         self.X = X
         self.Y = Y
         self.Z = Z
@@ -155,7 +177,29 @@ class Point:
         self.initype = "XYZ"
         self.F, self.L, self.H = conv.xyz2geo(self.X, self.Y, self.Z)
 
-    def FLHset(self, F=0, L=0, H=0, sF=0, sL=0, sH=0):
+    def FLHset(self, F=0., L=0., H=0., sF=0., sL=0., sH=0.):
+        """
+        Set geodetic coordinates (F=latitude, L=longitude, H=height) for the Point.
+
+        Parameters
+        ----------
+        F : float, optional
+            Latitude in decimal degrees. The default is 0.
+        L : float, optional
+            Longitude in decimal degrees. The default is 0.
+        H : float, optional
+            Height (altitude) in meters. The default is 0.
+        sF : float, optional
+            Sigma (standard deviation) of F. The default is 0.
+        sL : float, optional
+            Sigma (standard deviation) of L. The default is 0.
+        sH : float, optional
+            Sigma (standard deviation) of H. The default is 0.
+
+        Returns
+        -------
+        None
+        """
         self.F = F
         self.L = L
         self.H = H
@@ -168,6 +212,28 @@ class Point:
         self.sX, self.sY, self.sZ = conv.sigma_geo2xyz(F, L, H, sF, sL, sH)
 
     def ENUset(self, E=np.nan, N=np.nan, U=np.nan, sE=np.nan, sN=np.nan, sU=np.nan):
+        """
+        Set East-North-Up local topocentric coordinates for the Point.
+
+        Parameters
+        ----------
+        E : float, optional
+            East component in meters. The default is NaN.
+        N : float, optional
+            North component in meters. The default is NaN.
+        U : float, optional
+            Up component in meters. The default is NaN.
+        sE : float, optional
+            Sigma (standard deviation) of E. The default is NaN.
+        sN : float, optional
+            Sigma (standard deviation) of N. The default is NaN.
+        sU : float, optional
+            Sigma (standard deviation) of U. The default is NaN.
+
+        Returns
+        -------
+        None
+        """
         self.E = E
         self.N = N
         self.U = U
@@ -179,6 +245,28 @@ class Point:
         self._flh_computed = False
 
     def NEDset(self, N=np.nan, E=np.nan, D=np.nan, sN=np.nan, sE=np.nan, sD=np.nan):
+        """
+        Set North-East-Down local topocentric coordinates for the Point.
+
+        Parameters
+        ----------
+        N : float, optional
+            North component in meters. The default is NaN.
+        E : float, optional
+            East component in meters. The default is NaN.
+        D : float, optional
+            Down component in meters. The default is NaN.
+        sN : float, optional
+            Sigma (standard deviation) of N. The default is NaN.
+        sE : float, optional
+            Sigma (standard deviation) of E. The default is NaN.
+        sD : float, optional
+            Sigma (standard deviation) of D. The default is NaN.
+
+        Returns
+        -------
+        None
+        """
         self.N = N
         self.E = E
         self.D = D
@@ -198,6 +286,28 @@ class Point:
         sNutm=np.nan,
         sUutm=np.nan,
     ):
+        """
+        Set UTM projected coordinates for the Point.
+
+        Parameters
+        ----------
+        Eutm : float, optional
+            UTM Easting coordinate in meters. The default is NaN.
+        Nutm : float, optional
+            UTM Northing coordinate in meters. The default is NaN.
+        Uutm : float, optional
+            Height (altitude) in meters. The default is NaN.
+        sEutm : float, optional
+            Sigma (standard deviation) of Eutm. The default is NaN.
+        sNutm : float, optional
+            Sigma (standard deviation) of Nutm. The default is NaN.
+        sUutm : float, optional
+            Sigma (standard deviation) of Uutm. The default is NaN.
+
+        Returns
+        -------
+        None
+        """
         self.Eutm = Eutm
         self.Nutm = Nutm
         self.Uutm = Uutm
@@ -209,10 +319,46 @@ class Point:
         self._flh_computed = False
 
     def add_offset(self, dA, dB, dC, coortype="ENU"):
+        """
+        Add an offset to the Point coordinates.
+
+        Parameters
+        ----------
+        dA : float
+            Offset for the A component (depends on coortype).
+        dB : float
+            Offset for the B component (depends on coortype).
+        dC : float
+            Offset for the C component (depends on coortype).
+        coortype : str, optional
+            Coordinate type ('ENU', 'XYZ', 'FLH', 'NED', 'UTM'). The default is 'ENU'.
+
+        Returns
+        -------
+        None
+        """
         temp = time_series.add_offset_point(self, dA, dB, dC, coortype=coortype)
         self.__dict__ = temp.__dict__
 
     def Tset(self, T=0):
+        """
+        Set the time/epoch of the Point.
+
+        Parameters
+        ----------
+        T : float or datetime.datetime, optional
+            Time value. If 0, defaults to current time. Can be POSIX timestamp
+            or datetime object. The default is 0.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        The time is stored in both POSIX timestamp format (self.T) and
+        datetime object format (self.Tdt).
+        """
         if T == 0:
             T = dt.datetime.now()
 
@@ -225,8 +371,22 @@ class Point:
             self.Tdt = conv.posix2dt(float(T))
 
     def ENUcalc_pt(self, refENU):
+        """
+        Calculate East-North-Up (ENU) coordinates relative to a reference point.
 
-        self.refENU = refENU
+        Parameters
+        ----------
+        refENU : Point
+            Reference point for ENU coordinate calculation.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Updates the E, N, U attributes and calculates sigmas if available.
+        """
 
         dX = self.X - refENU.X
         dY = self.Y - refENU.Y
@@ -268,20 +428,86 @@ class Point:
             )
 
     def UTMcalc_pt(self, ellips="wgs84"):
+        """
+        Calculate UTM projected coordinates.
+
+        Parameters
+        ----------
+        ellips : str, optional
+            Ellipsoid model to use. The default is 'wgs84'.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Updates the Eutm, Nutm, Uutm attributes.
+        """
         self.Eutm, self.Nutm, _ = conv.utm_geo2xy(self.F, self.L)
         self.Uutm = self.H
 
     def keysanex(self):
+        """
+        Get the keys of the anex (annex data) dictionary.
+
+        Returns
+        -------
+        list
+            List of keys in the anex dictionary.
+        """
         return list(self.anex.keys())
 
     def helmert_trans(self, params="itrf2008_2_etrf2000", invert=False):
+        """
+        Apply Helmert transformation to the Point coordinates.
+
+        Parameters
+        ----------
+        params : str, optional
+            Transformation parameter set name. The default is 'itrf2008_2_etrf2000'.
+        invert : bool, optional
+            If True, apply inverse transformation. The default is False.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Updates the Point coordinates in-place based on the Helmert transformation.
+        """
         Xb = reffram.helmert_trans(np.array([self.X, self.Y, self.Z]), params, invert)
         self.XYZset(*Xb)
         return None
 
     def velocity_trans(self, vx, vy, vz, epoc_init="auto", epoc_end="auto"):
         """
-        auto == epoc of the measures
+        Apply velocity-based coordinate transformation over time.
+
+        Parameters
+        ----------
+        vx : float
+            Velocity in X direction (m/year).
+        vy : float
+            Velocity in Y direction (m/year).
+        vz : float
+            Velocity in Z direction (m/year).
+        epoc_init : float or 'auto', optional
+            Initial epoch in decimal years. If 'auto', uses the point's epoch.
+            The default is 'auto'.
+        epoc_end : float or 'auto', optional
+            Final epoch in decimal years. If 'auto', uses the point's epoch.
+            The default is 'auto'.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        At least one of epoc_init or epoc_end must not be 'auto'.
+        Updates the Point coordinates based on the velocity transformation.
         """
 
         if epoc_init == "auto" and epoc_end == "auto":
@@ -333,7 +559,13 @@ class TimeSeriePoint:
 
     def __repr__(self):
         """
-        Representation of a TimeSeriePoint object
+        Return string representation of the TimeSeriePoint object.
+
+        Returns
+        -------
+        str
+            String containing station code, number of points, date range,
+            number of days, and data coverage percentage.
         """
         if self.pts == []:
             raise Exception("ERR: TimeSeriePoint is empty ...")
@@ -349,6 +581,19 @@ class TimeSeriePoint:
         )
 
     def __getitem__(self, i):
+        """
+        Get a Point from the TimeSerie by index.
+
+        Parameters
+        ----------
+        i : int
+            Index of the Point.
+
+        Returns
+        -------
+        Point
+            Point object at index i.
+        """
         return self.pts[i]
 
     @property
@@ -366,22 +611,21 @@ class TimeSeriePoint:
 
     def meta_set(self, path="", stat="STAT", name=""):
         """
-        Set meta data about the TimeSerie
+        Set metadata about the TimeSerie.
 
         Parameters
         ----------
         path : str, optional
-            file path. The default is ''.
+            File path. The default is ''.
         stat : str, optional
-            station 4-char. code. The default is 'STAT'.
+            Station 4-character code. The default is 'STAT'.
         name : str, optional
-            free name of for the TS,
-            like the experience, the periode , the software ...
+            Free name for the TimeSerie (e.g., experiment, period, software name).
             The default is ''.
 
         Returns
         -------
-        None.
+        None
         """
 
         self.path = path
@@ -415,18 +659,20 @@ class TimeSeriePoint:
 
     def readfile(self, filein):
         """
-        Method to read the data form a file
-        Should be used with care
+        Read time series data from a file.
 
         Parameters
         ----------
         filein : str
-            path of the file.
+            Path of the file to read.
 
         Returns
         -------
-        None.
+        None
 
+        Notes
+        -----
+        Should be used with care. Replaces all internal data.
         """
         self.__dict__ = files_rw.read_all_points(filein).__dict__
 
@@ -434,16 +680,20 @@ class TimeSeriePoint:
 
     def add_point(self, point_inp):
         """
-        Method to add a Point in the TimeSerie Object
+        Add a Point to the TimeSerie.
 
         Parameters
         ----------
-        point_inp : Point Object
+        point_inp : Point
+            Point object to add to the time series.
 
         Returns
         -------
-        None.
+        None
 
+        Notes
+        -----
+        Marks interpolation as outdated and should be recalculated if needed.
         """
         self.pts.append(point_inp)
         # this line is discontiued, because now nbpts is a property
@@ -453,12 +703,12 @@ class TimeSeriePoint:
 
     def aleapt(self):
         """
-        Method to get a random Point in the TimeSeries
+        Get a random Point from the TimeSeries.
 
         Returns
         -------
-        Point Object
-
+        Point
+            Randomly selected Point object.
         """
         ipt = np.random.randint(self.nbpts)
         log.info("random point selected #%s", str(ipt))
@@ -467,35 +717,42 @@ class TimeSeriePoint:
 
     def startdate(self):
         """
-        Method to get the first epoch of the data in the TimeSerie
+        Get the first epoch of the data in the TimeSerie.
 
         Returns
         -------
-        DateTime
-
+        datetime.datetime
+            First timestamp in the time series.
         """
         self.sort()
         return conv.posix2dt(self.pts[0].T)
 
     def enddate(self):
         """
-        Method to get the last epoch of the data in the TimeSerie
+        Get the last epoch of the data in the TimeSerie.
 
         Returns
         -------
-        DateTime
-
+        datetime.datetime
+            Last timestamp in the time series.
         """
         self.sort()
         return conv.posix2dt(self.pts[-1].T)
 
     def len_period(self, output_seconds=False):
         """
-        Method to get the period length
+        Get the period length of the TimeSerie.
+
+        Parameters
+        ----------
+        output_seconds : bool, optional
+            If True, return the result in seconds. If False, return as timedelta.
+            The default is False.
 
         Returns
         -------
-        timedelta or
+        int or datetime.timedelta
+            Period length (as timedelta if output_seconds=False, as int seconds otherwise).
         """
         delta = self.enddate() - self.startdate()
 
@@ -506,13 +763,12 @@ class TimeSeriePoint:
 
     def interval_nominal(self):
         """
-        Method to get the nominal internal between two epochs.
+        Get the nominal interval between consecutive epochs.
 
         Returns
         -------
         float
-            interval nominal.
-
+            Nominal interval between epochs in seconds (rounded to 1 decimal place).
         """
 
         if len(self.pts) < 2:
@@ -525,31 +781,30 @@ class TimeSeriePoint:
 
     def from_list(self, T, A, B, C, coortype="XYZ", sA=[], sB=[], sC=[]):
         """
-        Method to load data from lists to the TimeSerie
+        Load data from lists into the TimeSerie.
 
         Parameters
         ----------
-        T : float
-            Time.
+        T : list of float
+            Times (POSIX timestamps).
         A : list of float
-            X, F (latitude), E..
+            First component (X, F latitude, or E depending on coortype).
         B : list of float
-            Y, L (longitude), N.
+            Second component (Y, L longitude, or N depending on coortype).
         C : list of float
-            Z, H (hight), U.
+            Third component (Z, H height, or U depending on coortype).
         coortype : str, optional
-            The coordinates type. The default is 'XYZ'.
+            Coordinate type ('XYZ', 'FLH', 'ENU', 'NED', 'UTM'). The default is 'XYZ'.
         sA : list of float, optional
-            sigma of A component. The default is [].
+            Sigma (standard deviation) of A component. The default is [].
         sB : list of float, optional
-            sigma of B component. The default is [].
+            Sigma (standard deviation) of B component. The default is [].
         sC : list of float, optional
-            sigma of C component. The default is [].
+            Sigma (standard deviation) of C component. The default is [].
 
         Returns
         -------
-        None.
-
+        None
         """
 
         if not sA:
@@ -576,30 +831,27 @@ class TimeSeriePoint:
 
     def to_list(self, coortype="XYZ", specific_output=None, time_as_datetime=False):
         """
-        Export the TimeSerie Object as Lists (Numpy Arrays)
+        Export the TimeSerie as lists of numpy arrays.
 
         Parameters
         ----------
         coortype : str, optional
-        The coordinates type exported to the list.
-        The default is 'XYZ'.
+            Coordinate type to export ('XYZ', 'FLH', 'ENU', 'UTM').
+            The default is 'XYZ'.
         specific_output : int, optional
-            ask for a specific list, ranges between 0 and 6.
-            The default is None.
+            If specified, return only one array (index 0-6).
+            The default is None (returns all 7 arrays).
         time_as_datetime : bool, optional
-            if True the Time list is exported in datetime
-            if False the Time list is exported in Posix time
+            If True, return time as datetime objects. If False, return POSIX timestamps.
+            The default is False.
 
         Returns
         -------
-        A,B,C,T,sA,sB,sC : lists
-            A = X, F (latitude), E.
-            B = Y, L (longitude), N.
-            C = Z, H (hight), U.
-            T = Time
-            sA = sigma of A component
-            sB = sigma of B component
-            sC = sigma of C component
+        tuple of 7 numpy arrays
+            (A, B, C, T, sA, sB, sC) where:
+            - A, B, C depend on coortype (e.g., X, Y, Z for XYZ)
+            - T is time (datetime or POSIX depending on time_as_datetime)
+            - sA, sB, sC are standard deviations
         """
 
         if coortype == "XYZ":
@@ -667,22 +919,22 @@ class TimeSeriePoint:
 
     def to_dataframe(self, coortype="XYZ", anex_key_list=None):
         """
-        Export the TimeSerie Object as DataFrame
+        Export the TimeSerie as a pandas DataFrame.
 
         Parameters
         ----------
-        coortype : str or iterable of str.
-            The coordinates type exported to the DataFrame.
-            'XYZ', 'FLH', 'ENU', 'NED'
-            can be also an iterable like ('XYZ','FLH')
+        coortype : str or iterable of str, optional
+            Coordinate type(s) to export ('XYZ', 'FLH', 'ENU', 'UTM').
+            Can be a single string or tuple of strings for multiple coordinates.
             The default is 'XYZ'.
         anex_key_list : list of str, optional
-            list of point's 'anex' keys to be added as columns in the DataFrame.
+            List of keys from the point's anex (annex) dictionary to add as columns.
             The default is None.
+
         Returns
         -------
-        df : DataFrame
-            output DataFrame.
+        df : pandas.DataFrame
+            DataFrame with columns for epoch, time, coordinates, and uncertainties.
         """
 
         if not utils.is_iterable(coortype):
@@ -729,12 +981,15 @@ class TimeSeriePoint:
 
     def sort(self):
         """
-        Internal method to sort the point in the TimeSerie Object
+        Sort points in the TimeSerie by time (in-place).
 
         Returns
         -------
-        None.
+        None
 
+        Notes
+        -----
+        Modifies the internal list of points in chronological order.
         """
         self.pts.sort(key=lambda x: x.T)
 
@@ -817,20 +1072,17 @@ class TimeSeriePoint:
 
     def plot_discont(self, fig=1):
         """
-        Plot discontinuties of a TimeSerie Object contained in discont list
+        Plot discontinuities of the TimeSerie on existing plot.
 
         Parameters
         ----------
-        fig : int or Figure object, optional
-            Figure ID where the data will be plotted
-            can accept a int (id of a Figure)
-            OR the figure Object itself.
+        fig : int or matplotlib.figure.Figure, optional
+            Figure ID or Figure object where discontinuities will be plotted.
             The default is 1.
 
         Returns
         -------
-        None.
-
+        None
         """
 
         if not self.bool_discont:
@@ -852,19 +1104,32 @@ class TimeSeriePoint:
 
     def discont_manu_click(self, fig=1):
         """
-        manual discontinuities are both recorded in the "main" discont list
-        and in a new discont_manu list,
-        thus the manual discontinuites can be identified
+        Interactively record manual discontinuities by clicking on plot.
 
-        IMPORTANT : cursor objects (multi , cid)
-                    must be stored as global variables like this :
-                    multi , cid = tsout.discont_manu_click()
+        Parameters
+        ----------
+        fig : int or matplotlib.figure.Figure, optional
+            Figure ID or Figure object for interaction. The default is 1.
 
+        Returns
+        -------
+        tuple
+            (multi, cid) cursor objects that must be stored as global variables.
 
-        NOTE : This method was created before point_n_click_plot():
-            this other one is more complete
-            both has to be merged ASAP !!!!!
+        Notes
+        -----
+        Manual discontinuities are recorded in both the "main" discont list
+        and a separate discont_manu list for identification.
 
+        Use SPACE key to record a discontinuity at the cursor position.
+
+        Important: cursor objects must be stored as global variables:
+
+            multi, cid = tsout.discont_manu_click()
+
+        See Also
+        --------
+        point_n_click_plot : More complete interactive plotting method.
         """
 
         if type(fig) is int:
@@ -911,22 +1176,32 @@ class TimeSeriePoint:
         return multi, cid
 
     def initype(self):
-        L = [pt.initype for pt in self.pts]
-        return Counter(L).most_common(1)[0][0]
-
-    def ENUcalc(self, refENU):
         """
-        Method to determine the ENU components based on a reference point
-
-        Parameters
-        ----------
-        refENU : Point Object or TimeSeriePoint Object
-            Reference point.
+        Get the most common coordinate type in the TimeSerie.
 
         Returns
         -------
-        None.
+        str
+            The coordinate type that appears most frequently ('XYZ', 'FLH', 'ENU', etc.).
+        """
 
+    def ENUcalc(self, refENU):
+        """
+        Calculate ENU coordinates relative to a reference point or time series.
+
+        Parameters
+        ----------
+        refENU : Point or TimeSeriePoint
+            Reference point or time series for ENU calculation.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        If refENU is a TimeSeriePoint, interpolation is performed to get
+        reference coordinates at each measurement epoch.
         """
         if refENU.__class__.__name__ == "Point":
             self.refENU = refENU
@@ -956,32 +1231,55 @@ class TimeSeriePoint:
 
     def ENUcalc_from_mean_posi(self, mean_type="median"):
         """
-        Method to determine the ENU components based directly
-        on the mean/median position
+        Calculate ENU coordinates relative to the mean/median position of the TimeSerie.
+
+        Parameters
+        ----------
+        mean_type : str, optional
+            Type of mean to use ('median' or 'mean'). The default is 'median'.
 
         Returns
         -------
-        None.
-
+        None
         """
         self.ENUcalc(self.mean_posi(mean_type="median"))
         return None
 
     def ENUcalc_from_first_posi(self):
         """
-        Method to determine the ENU components based directly
-        on the mean/median position
+        Calculate ENU coordinates relative to the first position in the TimeSerie.
 
         Returns
         -------
-        None.
-
+        None
         """
         self.ENUcalc(self.pts[0])
         return None
 
     def from_uniq_point(self, Point, startdate, enddate, pas=1):
-        self.del_data()
+        """
+        Create a TimeSerie from a single Point with defined time range.
+
+        Parameters
+        ----------
+        Point : Point
+            Reference Point object to replicate at different epochs.
+        startdate : float or datetime.datetime
+            Start date (POSIX timestamp or datetime object).
+        enddate : float or datetime.datetime
+            End date (POSIX timestamp or datetime object).
+        pas : float, optional
+            Time step in seconds. The default is 1.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Creates a time series by replicating the Point at regular intervals
+        from startdate to enddate.
+        """
 
         if type(startdate) == dt.datetime:
             startdate = conv.dt2posix(startdate)
@@ -1001,36 +1299,60 @@ class TimeSeriePoint:
 
     def UTMcalc(self):
         """
-        Method to determine the UTM E and N projected coordinates
-
-        Parameters
-        ----------
+        Calculate UTM projected coordinates for all points in the TimeSerie.
 
         Returns
         -------
-        None.
+        None
 
+        Notes
+        -----
+        Updates the UTM coordinates (Eutm, Nutm, Uutm) for all points.
+        Sets boolUTM to True.
         """
         self.boolUTM = True
         [pt.UTMcalc_pt() for pt in self.pts]
 
     def time_win(self, windows, mode="keep"):
-        """IL EST TRES DANGEREUX DE L'APPLIQUER UN FENETRAGE A SOI MEME"""
+        """
+        Apply a time window filter to the TimeSerie.
+
+        Parameters
+        ----------
+        windows : list of tuple or list of datetime
+            Time windows to process. Format depends on implementation.
+        mode : str, optional
+            Filter mode ('keep' or 'remove'). The default is 'keep'.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        This operation replaces the internal data. Be cautious when applying
+        this method as it modifies the TimeSerie in place.
+        """
         self.__dict__ = time_series.time_win(self, windows, mode).__dict__
 
     def interp_set(self, interptype="slinear"):
         """
-        Method to set the coordinate interpolators
+        Set up coordinate interpolators for the TimeSerie.
 
         Parameters
         ----------
-        interptype : TYPE, optional
-            Interpolation type. The default is 'slinear'.
+        interptype : str, optional
+            Interpolation type. The default is 'slinear' (linear).
 
         Returns
         -------
-        None.
+        None
 
+        Notes
+        -----
+        Creates interpolation functions for each available coordinate type
+        (ENU, XYZ, FLH, UTM). Interpolators are stored as attributes
+        (EfT, NfT, UfT, etc.) for later use.
         """
         if (not hasattr(self.pts[0], "E")) or np.isnan(self.pts[0].E) == True:
             log.warning("no ENU for " + self.name)
@@ -1097,20 +1419,24 @@ class TimeSeriePoint:
 
     def interp_get(self, T, coortype="ENU"):
         """
-        Method to get the coordinate interpolators
+        Get interpolated coordinates at given times.
 
         Parameters
         ----------
         T : float or list of float
-            Time (IN POSIX Time) where the interpolation is wished.
+            Time(s) in POSIX format where interpolation is desired.
         coortype : str, optional
-            The coordinates type. The default is 'ENU'.
+            Coordinate type ('ENU', 'XYZ', 'FLH', 'UTM'). The default is 'ENU'.
 
         Returns
         -------
-        tsout :
-            DESCRIPTION.
+        TimeSeriePoint
+            New TimeSerie with interpolated points at requested times.
 
+        Notes
+        -----
+        Interpolators must be set up first using interp_set().
+        If interpolators are outdated, they are automatically recalculated.
         """
 
         if self.bool_interp_uptodate == False:
@@ -1154,38 +1480,44 @@ class TimeSeriePoint:
 
     def set_discont(self, indiscont):
         """
-        Method to set the discontinuties list
+        Set the list of discontinuities in the TimeSerie.
 
         Parameters
         ----------
-        indiscont : list of time
-            Discontinuities in the TimeSerie.
+        indiscont : list of datetime or float
+            List of discontinuity times (datetime objects or POSIX timestamps).
 
         Returns
         -------
-        None.
+        None
 
+        Notes
+        -----
+        Discontinuities are typically used for visualization and
+        can be detected or manually set.
         """
         self.discont = indiscont
         self.bool_discont = True
 
     def mean_posi(self, coortype="XYZ", outtype="point", mean_type="median"):
         """
-        Method to determine the mean position of the TimeSerie
+        Calculate the mean position of the TimeSerie.
 
         Parameters
         ----------
-        coortype : TYPE, optional
-            The coordinates type. The default is 'XYZ'.
-        outtype : TYPE, optional
-            'point' or 'tuple'. The default is 'point'.
-        mean_type : TYPE, optional
-            'mean' or 'median'. The default is 'median'.
+        coortype : str, optional
+            Coordinate type for calculation ('XYZ', 'FLH', 'ENU', 'UTM').
+            The default is 'XYZ'.
+        outtype : str, optional
+            Output format ('point' for Point object, 'tuple' for coordinates).
+            The default is 'point'.
+        mean_type : str, optional
+            Type of mean ('mean' or 'median'). The default is 'median'.
 
         Returns
         -------
-        Point or coordinates tuple
-
+        Point or tuple
+            Mean position as Point object or tuple of coordinates (A, B, C, T).
         """
 
         # special case where only one point
@@ -1219,48 +1551,65 @@ class TimeSeriePoint:
 
     def add_offset(self, dA, dB, dC, coortype="ENU"):
         """
-        Method to add an offset to all points in the TimeSerie
+        Add an offset to all points in the TimeSerie.
+
+        Parameters
+        ----------
+        dA : float
+            Offset for the A component.
+        dB : float
+            Offset for the B component.
+        dC : float
+            Offset for the C component.
+        coortype : str, optional
+            Coordinate type for offset ('ENU', 'XYZ', etc.). The default is 'ENU'.
+
+        Returns
+        -------
+        None
         """
         for pt in self.pts:
             pt.add_offset(dA, dB, dC, coortype="ENU")
 
     def decimate(self, dec):
         """
-        Method to decimate a TimeSerie
+        Decimate the TimeSerie by keeping 1 out of every dec points.
 
         Parameters
         ----------
         dec : int
-            keep 1/dec point in the TimeSerie.
+            Decimation factor (keep 1/dec points).
 
         Returns
         -------
-        None.
+        None
 
+        Notes
+        -----
+        Modifies the TimeSerie in place, removing points to reduce data density.
         """
         self.__dict__ = time_series.decimate_cleaner(self, dec).__dict__
         # decimate_cleaner(self,dec,True)
 
     def find_point(self, tin, tol=0.001, stop_when_found=True):
         """
-        Method to find a specific point according to its timestamp
+        Find a Point by timestamp with tolerance.
 
         Parameters
         ----------
-        tin : float or datetime
-            timestamp of the researched point.
+        tin : float or datetime.datetime
+            Target timestamp (POSIX or datetime).
         tol : float, optional
-            tolerence of the research. The default is 0.001.
+            Tolerance in seconds. The default is 0.001.
         stop_when_found : bool, optional
-            Stop the research when a point is found. The default is True.
+            If True, stop at first match. If False, return all matches.
+            The default is True.
 
         Returns
         -------
-        Point Object
-            Point Found.
-        int or list of int
-            index of the point.
-
+        tuple
+            If stop_when_found=True: (Point, int) - Point and its index
+            If stop_when_found=False: (list of Point, list of int) - Points and indices
         """
 
         find = False
@@ -1329,9 +1678,40 @@ class TimeSeriePoint:
 
 
 class Attitude:
+    """Attitude (Roll, Pitch, Yaw) representation."""
+
     def __init__(
         self, R=0, P=0, Y=0, T=0, sR=0, sP=0, sY=0, devID="NULL", angtype="deg"
     ):
+        """
+        Initialize an Attitude object.
+
+        Parameters
+        ----------
+        R : float, optional
+            Roll angle. The default is 0.
+        P : float, optional
+            Pitch angle. The default is 0.
+        Y : float, optional
+            Yaw angle. The default is 0.
+        T : float or datetime.datetime, optional
+            Epoch time. The default is 0 (current time).
+        sR : float, optional
+            Standard deviation of Roll. The default is 0.
+        sP : float, optional
+            Standard deviation of Pitch. The default is 0.
+        sY : float, optional
+            Standard deviation of Yaw. The default is 0.
+        devID : str, optional
+            Device identifier. The default is 'NULL'.
+        angtype : str, optional
+            Angle type ('deg' for degrees or 'rad' for radians). The default is 'deg'.
+
+        Raises
+        ------
+        Exception
+            If angtype is not 'deg' or 'rad'.
+        """
 
         self.Tset(T)
         self.devID = devID
@@ -1351,12 +1731,46 @@ class Attitude:
         self.Qcalc()
 
     def __call__(self):
+        """
+        Return the Attitude as a tuple of Roll, Pitch, Yaw, and datetime.
+
+        Returns
+        -------
+        tuple
+            (Roll, Pitch, Yaw, datetime)
+        """
         return self.R, self.P, self.Y, self.Tdt
 
     def __repr__(self):
+        """
+        Return string representation of the Attitude.
+
+        Returns
+        -------
+        str
+            String in format "R,P,Y,datetime"
+        """
         return "{},{},{},{}".format(self.R, self.P, self.Y, self.Tdt)
 
     def Tset(self, T=0):
+        """
+        Set the time/epoch of the Attitude.
+
+        Parameters
+        ----------
+        T : float or datetime.datetime, optional
+            Time value. If 0, defaults to current time. Can be POSIX timestamp
+            or datetime object. The default is 0.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        The time is stored in both POSIX timestamp format (self.T) and
+        datetime object format (self.Tdt).
+        """
         if T == 0:
             T = dt.datetime.now()
 
@@ -1369,36 +1783,89 @@ class Attitude:
             self.Tdt = conv.posix2dt(float(T))
 
     def RPYget(self):
+        """
+        Get Roll, Pitch, Yaw angles.
+
+        Returns
+        -------
+        tuple
+            (Roll, Pitch, Yaw) in degrees.
+        """
         return self.R, self.P, self.Y
 
     def RPYset(self, R=0, P=0, Y=0, sR=0, sP=0, sY=0):
-        self.R = R
-        self.P = P
-        self.Y = Y
-        self.sR = sR
-        self.sP = sP
-        self.sY = sY
+        """
+        Set Roll, Pitch, Yaw angles and their standard deviations.
+
+        Parameters
+        ----------
+        R : float, optional
+            Roll angle in degrees. The default is 0.
+        P : float, optional
+            Pitch angle in degrees. The default is 0.
+        Y : float, optional
+            Yaw angle in degrees. The default is 0.
+        sR : float, optional
+            Standard deviation of Roll. The default is 0.
+        sP : float, optional
+            Standard deviation of Pitch. The default is 0.
+        sY : float, optional
+            Standard deviation of Yaw. The default is 0.
+
+        Returns
+        -------
+        None
+        """
 
     def Qcalc(self):
+        """
+        Calculate quaternion from Roll, Pitch, Yaw angles.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Stores the quaternion in self.Q.
+        """
         self.Q = conv.quaternion(self.R, self.P, self.Y, "deg")
         return None
 
 
 class TimeSerieObs(object):
     """
-    Time series observation class.
+    Time series observation class for homogeneous observation data.
 
-    Differences with TSPOINT:
+    Unlike TimeSeriePoint, objects contain only one type of observation data
+    in a single coordinate form. When reading from files with multiple devices,
+    the read functions return a list of TimeSerieObs objects.
 
-    - Les objets ne contiennent qu'un type de données sous une seul forme
-      (a la difference d'un point qui peut exister sous plusieurs formes)
-    - Dans un fichier en input, il peut y avoir plusieurs "devices"
-      => les fonctions de lectures produisent donc obligatoirement des listes
-      de TS (le cas échéant une liste à 1 élt)
-      => la methode readfile() nécessite donc l'indice de la device
+    Attributes
+    ----------
+    obs : list
+        List of observation objects.
+    typeobs : str
+        Type of observations (e.g., 'RPY' for Roll-Pitch-Yaw).
+    nbobs : int
+        Number of observations.
     """
 
     def __init__(self, typeobs="NULL", filepath=""):
+        """
+        Initialize a TimeSerieObs object.
+
+        Parameters
+        ----------
+        typeobs : str, optional
+            Type of observations ('RPY' or other). The default is 'NULL'.
+        filepath : str, optional
+            File path for metadata. The default is ''.
+
+        Returns
+        -------
+        None
+        """
 
         self.obs = []
         self.nbobs = 0
@@ -1410,6 +1877,22 @@ class TimeSerieObs(object):
         self.meta_set(filepath)
 
     def meta_set(self, path="", devID="NULL", name=""):
+        """
+        Set metadata for the TimeSerieObs.
+
+        Parameters
+        ----------
+        path : str, optional
+            File path. The default is ''.
+        devID : str, optional
+            Device identifier. The default is 'NULL'.
+        name : str, optional
+            Observation series name. The default is ''.
+
+        Returns
+        -------
+        None
+        """
         self.path = path
         self.devID = devID
 
@@ -1425,53 +1908,123 @@ class TimeSerieObs(object):
         self.interval_nominal()
 
     def del_data(self):
-        self.obs = []
-        self.nbobs = 0
+        """
+        Delete all observations from the TimeSerieObs.
+
+        Returns
+        -------
+        None
+        """
 
     def readfile(self, filein, indtab=0):
-        log.info("selection device %s", indtab)
-        temp = files_rw.read_all_obs(filein)[indtab]
-        self.__dict__ = temp.__dict__
+        """
+        Read observation data from a file.
 
-        self.interp_set()
+        Parameters
+        ----------
+        filein : str
+            Path to the file to read.
+        indtab : int, optional
+            Index of the device/table to read. The default is 0.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Replaces all internal data with data from file.
+        """
 
     def add_obs(self, inObs):
-        self.obs.append(inObs)
-        self.nbobs = len(self.obs)
+        """
+        Add an observation to the TimeSerieObs.
 
-        self.bool_interp_uptodate = False
+        Parameters
+        ----------
+        inObs : Attitude or observation object
+            Observation to add.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Marks interpolation as outdated.
+        """
 
     def aleaobs(self):
-        iobs = np.random.randint(0, self.nbobs)
-        log.info("observation no " + str(iobs))
+        """
+        Get a random observation from the TimeSerieObs.
 
-        log.info(self.obs[iobs])
-
-        return self.obs[iobs]
+        Returns
+        -------
+        observation object
+            Randomly selected observation.
+        """
 
     def interval_nominal(self):
-        if len(self.obs) < 2:
-            self.i_nomi = 0
-        else:
-            Ttemp = np.sort([o.T for o in self.obs])
-            self.i_nomi = np.round(np.min(np.diff(Ttemp)), 1)
+        """
+        Get the nominal interval between consecutive observations.
 
-        return self.i_nomi
+        Returns
+        -------
+        float
+            Nominal interval in seconds (rounded to 1 decimal place).
+        """
 
     def timewin(self, windows, mode="keep"):
-        """IL EST TRES DANGEREUX DE L'APPLIQUER UN FENETRAGE A SOI MEME"""
+        """
+        Apply a time window filter to the TimeSerieObs.
+
+        Parameters
+        ----------
+        windows : list
+            Time windows to process.
+        mode : str, optional
+            Filter mode ('keep' or 'remove'). The default is 'keep'.
+
+        Returns
+        -------
+        None
+        """
         self.__dict__ = time_series.time_win(self, windows, mode).__dict__
 
     def startdate(self):
+        """
+        Get the first epoch of observations.
+
+        Returns
+        -------
+        float
+            First POSIX timestamp.
+        """
         return self.obs[0].T
 
     def enddate(self):
+        """
+        Get the last epoch of observations.
+
+        Returns
+        -------
+        float
+            Last POSIX timestamp.
+        """
         return self.obs[-1].T
 
     def to_list(self):
-        if self.typeobs == "NULL":
-            log.error("pas de typeobs defini (NULL)")
-            return 0
+        """
+        Export observations as lists of numpy arrays.
+
+        Returns
+        -------
+        tuple of 7 numpy arrays
+            (A, B, C, T, sA, sB, sC) where:
+            - A, B, C are the main observation components (e.g., R, P, Y for RPY)
+            - T is time (POSIX timestamps)
+            - sA, sB, sC are standard deviations
+        """
 
         if self.typeobs == "RPY":
             A, B, C = "R", "p", "Y"
@@ -1498,10 +2051,23 @@ class TimeSerieObs(object):
         return A, B, C, T, sA, sB, sC
 
     def interp_set(self, interptype="slinear"):
+        """
+        Set up observation interpolators.
 
-        if self.typeobs == "NULL":
-            log.error("no typeobs defined (NULL)")
-            return 0
+        Parameters
+        ----------
+        interptype : str, optional
+            Interpolation type (e.g., 'slinear'). The default is 'slinear'.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Creates interpolation functions for each observation component.
+        For RPY observations, creates RfT, PfT, YfT interpolators.
+        """
 
         if self.typeobs == "RPY":
 
@@ -1520,6 +2086,23 @@ class TimeSerieObs(object):
         self.bool_interp_uptodate = True
 
     def interp_get(self, T):
+        """
+        Get interpolated observations at given times.
+
+        Parameters
+        ----------
+        T : float or list of float
+            Time(s) in POSIX format where interpolation is desired.
+
+        Returns
+        -------
+        TimeSerieObs
+            New TimeSerieObs with interpolated observations at requested times.
+
+        Notes
+        -----
+        Interpolators must be set up first using interp_set().
+        """
 
         if self.bool_interp_uptodate == False:
             log.warning("interp obsolete, recalcul auto")
@@ -1546,10 +2129,28 @@ class TimeSerieObs(object):
         return tsout
 
     def plot(self, diapt=10, alpha=0.8, fig=1, new_style=True):
+        """
+        Plot observations as multi-panel figure.
 
-        A, B, C, T, sA, sB, sC = self.to_list()
+        Parameters
+        ----------
+        diapt : float, optional
+            Point marker size. The default is 10.
+        alpha : float, optional
+            Alpha (transparency) of points. The default is 0.8.
+        fig : int or matplotlib.figure.Figure, optional
+            Figure ID or Figure object. The default is 1.
+        new_style : bool, optional
+            If True, use 410 layout. If False, use 220 layout. The default is True.
 
-        log.info("plot : %s, pts : %s", self.nbpts, self.stat)
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Creates a 4-panel plot with phase space and time series for each component.
+        """
 
         if self.typeobs == "RPY":
             listtitle = ["", "Roll", "Pitch", "Yaw"]
@@ -1656,49 +2257,75 @@ class TimeSerieObs(object):
 
 class point_n_click_plot:
     """
-    This method allow to do "point and click" on a plot, to localize offsets
-    for instance
+    Interactive point selection tool for plots.
 
-    Usage
+    Allows interactive selection of points on a plot by clicking, useful for
+    identifying offsets, discontinuities, or other features of interest.
+
+    Attributes
+    ----------
+    selectedX : list
+        List of selected X-values (timestamps if Xdata_are_time=True).
+    ver_bar_stk : list
+        Stack of vertical bar objects for visualization.
+
+    Examples
+    --------
+    Basic usage:
+
+    >>> PnC = point_n_click_plot()
+    >>> multi, cid = PnC(fig=1, Xdata_are_time=True)
+    >>> selected_times = PnC.selectedX
+
+    Notes
     -----
-    Data have to be ploted already in a figure
+    - Press SPACE to record a point
+    - Press R to remove the last recorded point
+    - Cursor objects (multi, cid) must be stored as global variables
+      to keep them in scope during interactive use
 
-    .. code-block:: python
-
-        PnC = point_n_click_plot()
-        multi , cid = PnC(fig=1,Xdata_are_time=True)
-        PnC.selectedX
-
-    i.e.
-
-    Create an object point_n_click_plot (here it is PnC in the exemple below) \n
-    Call the object like a function with as 1st argument the id of the plot figure or the plot figure itself \n
-    Make your selection using the SPACE key \n
-    Get your results in a list called PnC.selectedX
-
-    Important
-    ---------
-
-    cursor objects (i.e. multi & cid)
-    must be stored as global variables when you call the method
-    like this :
-
-    .. code-block:: python
-
-        multi , cid = PnC(fig=1)
-
+    See Also
+    --------
+    TimeSeriePoint.discont_manu_click : Similar functionality for discontinuities
     """
 
     def __init__(self):
+        """
+        Initialize the point_n_click_plot object.
+
+        Returns
+        -------
+        None
+        """
         self.selectedX = []
         self.ver_bar_stk = []
 
     def __call__(self, fig=1, Xdata_are_time=True):
         """
-        IMPORTANT : cursor objects (i.e. multi & cid)
-                    must be stored as global variables when you call the method
-                    like this :
-                    multi , cid = PnC(fig=1)
+        Activate interactive point selection on a figure.
+
+        Parameters
+        ----------
+        fig : int or matplotlib.figure.Figure, optional
+            Figure ID or Figure object for interaction. The default is 1.
+        Xdata_are_time : bool, optional
+            If True, X-data are treated as timestamps (datetime).
+            If False, X-data are treated as regular float values.
+            The default is True.
+
+        Returns
+        -------
+        tuple
+            (multi, cid) cursor objects that must be stored as global variables.
+
+        Notes
+        -----
+        - Press SPACE to record the current X-value
+        - Press R to remove the previously recorded value
+
+        Important: cursor objects must be stored as global variables:
+
+            multi, cid = PnC(fig=1)
         """
 
         if type(fig) is int:
