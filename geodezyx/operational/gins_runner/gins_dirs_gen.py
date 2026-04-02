@@ -553,17 +553,17 @@ def _dir_rnx_site_id(rnx_name, sites_id9_series, country_code="XXX"):
         site_id9 = site_id4 + "00XXX"
 
         ser_sit_bool = sites_id9_series.str[:4].str.match(site_id4)
-        sites_id9_fnd = sites_id9_series.loc[ser_sit_bool]
-        ser_cnt_bool = sites_id9_fnd.str.contains(country_code)
+        ser_sit_fnd = sites_id9_series.loc[ser_sit_bool]
+        ser_cty_bool = ser_sit_fnd.str.contains(country_code)
 
-        if ser_sit_bool.any():
-            site_id9 = sites_id9_fnd.values[0]
-
-        if ser_sit_bool.sum() > 1 and ser_cnt_bool.sum() == 1:
-            site_id9 = sites_id9_fnd.loc[ser_cnt_bool].values[0]
+        if ser_sit_bool.sum() == 1:
+            site_id9 = ser_sit_fnd.values[0]
+        elif ser_sit_bool.sum() > 1 and ser_cty_bool.sum() == 1:
+            site_id9 = ser_sit_fnd.loc[ser_cty_bool].values[0]
         else:
+            site_id9 = ser_sit_fnd.values[0]
             warnmsg = "more than one site_id9 found for %s: %s"
-            log.warning(warnmsg, site_id4, sites_id9_fnd.to_list())
+            log.warning(warnmsg, site_id4, ser_sit_fnd.to_list())
             log.warning("keeping the first one : %s", site_id9)
 
     site_id4_upper = site_id9[0:4]
