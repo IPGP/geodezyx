@@ -4,7 +4,6 @@
 from .read_antex import *
 from .read_atmo import *
 from .read_coords_misc import *
-from .read_coords_time_series import *
 from .read_coords_gins_cnes import *
 from .read_coords_epos_gfz import *
 from .read_coords_gipsyx_jpl import *
