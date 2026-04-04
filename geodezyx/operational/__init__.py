@@ -5,7 +5,7 @@ from .gins_runner import *
 from .bin_opera import *
 from .download_cddis import *
 from .download_dropbox import *
-from .download_find_files import *
+from .local_find_files import *
 from .download_gnss import *
 from .soft_frontend import *
 #from .soft_frontend.anubis_frontend import *
