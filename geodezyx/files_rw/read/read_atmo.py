@@ -40,6 +40,15 @@ def read_snx_trop(snxfile, dataframe_output=True, version=2):
     Parses SINEX format tropospheric solutions and returns station, epoch,
     and troposphere parameters (ZTD, horizontal gradients, and their uncertainties).
 
+    Supports three field-count layouts inside the ``+TROP/SOLUTION`` block:
+
+    * **8 fields** – standard IGS format:
+      ``STAT EPOCH ZTD ZTD_sig TGN TGN_sig TGE TGE_sig``
+    * **4 fields** – ZTD-only format:
+      ``STAT EPOCH ZTD ZTD_sig``
+    * **12 fields** – NGL (Nevada Geodetic Laboratory) extended format:
+      ``STAT EPOCH TROTOT _SIG TRWET TGETOT _SIG TGNTOT _SIG WVAPOR _SIG MTEMP``
+
     Parameters
     ----------
     snxfile : str
@@ -48,7 +57,14 @@ def read_snx_trop(snxfile, dataframe_output=True, version=2):
         If True, return results as pandas DataFrame. If False, return tuple.
         Default is True.
     version : int, optional
-        SINEX version (1 or 2). Affects date parsing. Default is 2.
+        SINEX epoch format:
+
+        ``2`` (default) – epoch field contains a **4-digit** year
+        (``YYYY:DOY:SOD``).
+
+        ``1`` – epoch field contains a **2-digit** year (``YY:DOY:SOD``)
+        using the standard SINEX convention: ``YY`` 80–99 → 1980–1999,
+        ``YY`` 00–79 → 2000–2079.
 
     Returns
     -------
@@ -85,13 +101,16 @@ def read_snx_trop(snxfile, dataframe_output=True, version=2):
                 if version == 2:
                     yy = int(date_elts_lis[0])
                 else:
-                    yy = int(date_elts_lis[0]) + 2000
+                    # SINEX 2-digit year convention
+                    yy_raw = int(date_elts_lis[0])
+                    yy = (1900 + yy_raw) if yy_raw >= 80 else (2000 + yy_raw)
 
                 doy = int(date_elts_lis[1])
                 sec = int(date_elts_lis[2])
                 epoc.append(conv.doy2dt(yy, doy, seconds=sec))
 
             if len(fields) == 8:
+                # Standard IGS format: ZTD _SIG TGN TGN_SIG TGE TGE_SIG
                 tro.append(np.nan if "*" in fields[2] else fields[2])
                 stro.append(np.nan if "*" in fields[3] else fields[3])
                 tgn.append(np.nan if "*" in fields[4] else fields[4])
@@ -99,7 +118,17 @@ def read_snx_trop(snxfile, dataframe_output=True, version=2):
                 tge.append(np.nan if "*" in fields[6] else fields[6])
                 stge.append(np.nan if "*" in fields[7] else fields[7])
 
+            elif len(fields) == 12:
+                # NGL extended format: TROTOT _SIG TRWET TGETOT _SIG TGNTOT _SIG WVAPOR _SIG MTEMP
+                tro.append(np.nan if "*" in fields[2] else fields[2])
+                stro.append(np.nan if "*" in fields[3] else fields[3])
+                tge.append(np.nan if "*" in fields[5] else fields[5])   # TGETOT
+                stge.append(np.nan if "*" in fields[6] else fields[6])  # TGETOT_SIG
+                tgn.append(np.nan if "*" in fields[7] else fields[7])   # TGNTOT
+                stgn.append(np.nan if "*" in fields[8] else fields[8])  # TGNTOT_SIG
+
             elif len(fields) == 4:
+                # ZTD-only format
                 tro.append(np.nan if "*" in fields[2] else fields[2])
                 stro.append(np.nan if "*" in fields[3] else fields[3])
                 tgn.append(np.nan)
@@ -207,15 +236,15 @@ def troposinex2df(read_sinex_result):
         DataFrame with columns: STAT, epoc (datetime), tro, stro, tgn, stgn,
         tge, stge. Numeric columns are converted to float type.
     """
-    DF_Sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
+    df_sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
     colnam = ["STAT", "epoc", "tro", "stro", "tgn", "stgn", "tge", "stge"]
-    DF_Sinex.columns = colnam
+    df_sinex.columns = colnam
     cols_numeric = ["tro", "stro", "tgn", "stgn", "tge", "stge"]
-    DF_Sinex[cols_numeric] = DF_Sinex[cols_numeric].apply(
+    df_sinex[cols_numeric] = df_sinex[cols_numeric].apply(
         pd.to_numeric, errors="coerce"
     )
 
-    return DF_Sinex
+    return df_sinex
 
 
 def read_bernese_trp(trpfile):

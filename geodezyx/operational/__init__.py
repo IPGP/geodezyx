@@ -17,4 +17,5 @@ from .soft_frontend import *
 #from .soft_frontend.track_frontend import *
 from .rinex_lister_plotter import *
 from .rinex_utils import *
+from .download_ngl import *
 

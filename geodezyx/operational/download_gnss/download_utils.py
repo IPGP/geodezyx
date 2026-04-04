@@ -177,39 +177,40 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
 
     Returns
     -------
-    str
-        The path to the downloaded file, or an empty string if the download failed.
-
-    Raises
-    ------
-    AutorinoDownloadError
-        If the download fails after the maximum number of retry attempts.
+    output_path : str
+        The path to the downloaded file, or the URL string if the download
+        failed.
+    downloaded : bool
+        ``True`` if the file was actually fetched from the server during this
+        call, ``False`` if it already existed locally or the download failed.
     """
-
-    # Get file size
     log.info("Download file: %s", url)
-    response = requests.head(url, timeout=timeout)
-    file_size = int(response.headers.get("content-length", 0))
 
-    # Construct output path
+    # Construct output path and ensure output directory exists
     filename = url.split("/")[-1]
     output_path = os.path.join(output_dir, filename)
-
-    # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
 
     dwl = False
 
-    # Check if file already exists
+    # Check if file already exists – skip network entirely
     if os.path.isfile(output_path):
-        log.info(f"{filename} already exists locally ;)")
+        log.info("%s already exists locally ;) – skipping.", filename)
         return (output_path, dwl)
 
-    # Download file with progress bar
+    # Try to get expected file size for the progress bar (best-effort)
+    try:
+        head_resp = requests.head(url, timeout=timeout)
+        file_size = int(head_resp.headers.get("content-length", 0))
+    except requests.exceptions.RequestException:
+        file_size = 0
+
+    # Download file with progress bar and retry logic
     try_count = 0
     while True:
         try:
             response = requests.get(url, stream=True, timeout=timeout)
+            response.raise_for_status()
             with open(output_path, "wb") as f:
                 with tqdm.tqdm(
                     total=file_size, unit="B", unit_scale=True, desc=filename
