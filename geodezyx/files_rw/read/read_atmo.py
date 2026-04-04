@@ -91,6 +91,7 @@ def read_snx_trop(snxfile, dataframe_output=True, version=2):
             continue
 
         if flagtrop:
+            fnan = lambda x: np.nan if "*" in x else x
 
             STAT.append(fields[0].upper())
 
@@ -111,26 +112,26 @@ def read_snx_trop(snxfile, dataframe_output=True, version=2):
 
             if len(fields) == 8:
                 # Standard IGS format: ZTD _SIG TGN TGN_SIG TGE TGE_SIG
-                tro.append(np.nan if "*" in fields[2] else fields[2])
-                stro.append(np.nan if "*" in fields[3] else fields[3])
-                tgn.append(np.nan if "*" in fields[4] else fields[4])
-                stgn.append(np.nan if "*" in fields[5] else fields[5])
-                tge.append(np.nan if "*" in fields[6] else fields[6])
-                stge.append(np.nan if "*" in fields[7] else fields[7])
+                tro.append(fnan(fields[2]))
+                stro.append(fnan(fields[3]))
+                tgn.append(fnan(fields[4]))
+                stgn.append(fnan(fields[5]))
+                tge.append(fnan(fields[6]))
+                stge.append(fnan(fields[7]))
 
             elif len(fields) == 12:
                 # NGL extended format: TROTOT _SIG TRWET TGETOT _SIG TGNTOT _SIG WVAPOR _SIG MTEMP
-                tro.append(np.nan if "*" in fields[2] else fields[2])
-                stro.append(np.nan if "*" in fields[3] else fields[3])
-                tge.append(np.nan if "*" in fields[5] else fields[5])   # TGETOT
-                stge.append(np.nan if "*" in fields[6] else fields[6])  # TGETOT_SIG
-                tgn.append(np.nan if "*" in fields[7] else fields[7])   # TGNTOT
-                stgn.append(np.nan if "*" in fields[8] else fields[8])  # TGNTOT_SIG
+                tro.append(fnan(fields[2]))
+                stro.append(fnan(fields[3]))
+                tge.append(fnan(fields[5]))   # TGETOT
+                stge.append(fnan(fields[6]))  # TGETOT_SIG
+                tgn.append(fnan(fields[7]))   # TGNTOT
+                stgn.append(fnan(fields[8]))  # TGNTOT_SIG
 
             elif len(fields) == 4:
                 # ZTD-only format
-                tro.append(np.nan if "*" in fields[2] else fields[2])
-                stro.append(np.nan if "*" in fields[3] else fields[3])
+                tro.append(fnan(fields[2]))
+                stro.append(fnan(fields[3]))
                 tgn.append(np.nan)
                 stgn.append(np.nan)
                 tge.append(np.nan)
