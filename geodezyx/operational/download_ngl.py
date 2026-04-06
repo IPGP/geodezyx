@@ -1,21 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-NGL (Nevada Geodetic Laboratory) tropospheric time-series downloader.
-
-This sub-module of geodezyx.operational contains functions to download,
-extract, and read GNSS tropospheric solutions from the UNR/NGL server:
-    https://geodesy.unr.edu/gps_timeseries/
-
-URL pattern for tropospheric files (one zip per station per year):
-    https://geodesy.unr.edu/gps_timeseries/<frame>/trop/<STAT>/<STAT>.<YYYY>.trop.zip
-
-Each zip contains daily SINEX tropospheric files compressed as .gz:
-    <STAT>.<YYYY>.<DOY>.trop.gz
-
-The data is read into pandas DataFrames using
-geodezyx.files_rw.read.read_atmo.read_snx_trop (version=1).
-
 The geodezyx toolbox is a software for simple but useful
 functions for Geodesy and Geophysics under the GNU LGPL v3 License
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
@@ -26,13 +11,7 @@ https://github.com/GeodeZYX/geodezyx-toolbox
 ########## BEGIN IMPORT ##########
 import logging
 import os
-import zipfile
-
-import pandas as pd
-
-from geodezyx.files_rw import unzip_gz_z
-from geodezyx.files_rw.read.read_atmo import read_snx_trop
-from geodezyx.operational.download_gnss.download_utils import download_http
+from geodezyx import files_rw, utils, operational
 
 ##########  END IMPORT  ##########
 
@@ -75,31 +54,6 @@ def _ngl_trop_url(station: str, year: int, frame: str = "IGS20") -> str:
     return f"{_NGL_BASE_URL}/{frame}/trop/{stat}/{stat}.{year}.trop.zip"
 
 
-def _extract_zip(zip_path: str, extract_dir: str) -> list:
-    """
-    Extract a zip archive and return the list of extracted file paths.
-
-    Parameters
-    ----------
-    zip_path : str
-        Path to the ``.zip`` file.
-    extract_dir : str
-        Directory into which the contents will be extracted.
-
-    Returns
-    -------
-    list of str
-        Absolute paths of all extracted files.
-    """
-    os.makedirs(extract_dir, exist_ok=True)
-    extracted = []
-    with zipfile.ZipFile(zip_path, "r") as zf:
-        for member in zf.namelist():
-            zf.extract(member, extract_dir)
-            extracted.append(os.path.join(extract_dir, member))
-    log.info("Extracted %d file(s) from %s", len(extracted), os.path.basename(zip_path))
-    return extracted
-
 
 # ============================================================
 #  Main public function
@@ -129,7 +83,7 @@ def download_ngl_trop(
     Each yearly ``.zip`` archive contains one ``.gz`` file per day of year,
     e.g. ``HOUZ.2000.136.trop.gz``.  Each ``.gz`` holds a standard SINEX
     tropospheric solution that is read with
-    :func:`geodezyx.files_rw.read_atmo.read_snx_trop` (``version=1``).
+    :func:`geodezyx.files_rw.read_atmo.read_snx_trop`.
 
     Parameters
     ----------
@@ -217,10 +171,10 @@ def download_ngl_trop(
     years = range(int(year_start), int(year_end) + 1)
 
     # --- Prepare output directories ----------------------------------------
-    dir_zips = os.path.join(output_dir, "zips")
-    dir_trop = os.path.join(output_dir, "trop")
-    dir_decomp = os.path.join(output_dir, "decompressed")
-    dir_parquet = os.path.join(output_dir, "parquet")
+    dir_zips = os.path.join(output_dir, "010_zips")
+    dir_trop = os.path.join(output_dir, "020_trop")
+    dir_decomp = os.path.join(output_dir, "030_sinex")
+    dir_parquet = os.path.join(output_dir, "040_parquet")
 
     for d in (dir_zips, dir_trop, dir_decomp, dir_parquet):
         os.makedirs(d, exist_ok=True)
@@ -237,7 +191,7 @@ def download_ngl_trop(
             # ------------------------------------------------------------------
             url = _ngl_trop_url(station, year, frame=frame)
             zip_save_dir = os.path.join(dir_zips, station)
-            zip_path, _ = download_http(
+            zip_path, _ = operational.download_http(
                 url,
                 output_dir=zip_save_dir,
                 timeout=timeout,
@@ -257,7 +211,7 @@ def download_ngl_trop(
             # STEP 2 – Extract zip → .gz files
             # ------------------------------------------------------------------
             extract_dir = os.path.join(dir_trop, station, str(year))
-            gz_files = _extract_zip(zip_path, extract_dir)
+            gz_files = utils.extract_zip(zip_path, extract_dir)
 
             if not keep_zip:
                 os.remove(zip_path)
@@ -273,7 +227,7 @@ def download_ngl_trop(
                     log.debug("Skipping non-gz file: %s", gz_path)
                     continue
 
-                trop_path = unzip_gz_z(
+                trop_path = files_rw.unzip_gz_z(
                     gz_path,
                     out_gzip_dir=decomp_dir,
                     remove_inp=not keep_gz,
@@ -312,7 +266,7 @@ def download_ngl_trop(
                     continue
 
                 try:
-                    df = read_snx_trop(trop_path, version=1)
+                    df = files_rw.read_snx_trop(trop_path)
                 except Exception as exc:
                     log.warning(
                         "Could not read SINEX file %s: %s", trop_path, exc
