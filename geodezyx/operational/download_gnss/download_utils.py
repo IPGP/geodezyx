@@ -16,6 +16,7 @@ https://github.com/IPGP/geodezyx
 import ftplib
 import requests
 import tqdm
+import socket
 
 #### Import the logger
 import logging
@@ -170,6 +171,10 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
         The directory where the downloaded file will be saved.
     timeout : int, optional
         The timeout for the HTTP connection in seconds. Default is 120 seconds.
+        This timeout applies to:
+        - Initial connection
+        - Headers reading
+        - Each chunk reading (per iteration)
     max_try : int, optional
         The maximum number of retry attempts in case of failure. Default is 4.
     sleep_time : int, optional
@@ -183,6 +188,13 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
     downloaded : bool
         ``True`` if the file was actually fetched from the server during this
         call, ``False`` if it already existed locally or the download failed.
+
+    Notes
+    -----
+    The timeout is enforced using socket.settimeout() on the underlying
+    HTTP connection, which ensures that the entire download operation
+    (including streaming) will timeout if no data is received for the
+    specified duration.
     """
     log.info("Download file: %s", url)
 
@@ -209,23 +221,53 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
     try_count = 0
     while True:
         try:
-            response = requests.get(url, stream=True, timeout=timeout)
+            # Create a session with custom timeout handling
+            session = requests.Session()
+
+            # Set socket timeout to enforce timeout on streaming
+            class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
+                def __init__(self, timeout, *args, **kwargs):
+                    self.timeout = timeout
+                    super().__init__(*args, **kwargs)
+
+                def send(self, request, **kwargs):
+                    kwargs['timeout'] = self.timeout
+                    return super().send(request, **kwargs)
+
+            session.mount('http://', TimeoutHTTPAdapter(timeout=timeout))
+            session.mount('https://', TimeoutHTTPAdapter(timeout=timeout))
+
+            response = session.get(url, stream=True, timeout=timeout)
             response.raise_for_status()
+
             with open(output_path, "wb") as f:
                 with tqdm.tqdm(
                     total=file_size, unit="B", unit_scale=True, desc=filename
                 ) as pbar:
-                    for data in response.iter_content(chunk_size=1024):
+                    # Read chunks with timeout handling
+                    for data in response.iter_content(chunk_size=8192):
+                        if not data:
+                            break
                         f.write(data)
                         pbar.update(len(data))
+
+            session.close()
             break
-        except requests.exceptions.RequestException as e:
+
+        except (socket.timeout, requests.exceptions.Timeout, requests.exceptions.ConnectionError, requests.exceptions.RequestException) as e:
             try_count += 1
-            if try_count > max_try:
+            log.warning("download failed (%s), try %i/%i", str(e), try_count, max_try)
+
+            if try_count >= max_try:
                 log.error("download failed after %i attempts", max_try)
+                # Clean up incomplete file
+                if os.path.exists(output_path):
+                    try:
+                        os.remove(output_path)
+                    except Exception:
+                        pass
                 return (url, dwl)
 
-            log.warning("download failed (%s), try %i/%i", str(e), try_count, max_try)
             time.sleep(sleep_time)
 
     dwl = True
@@ -286,6 +328,7 @@ def ftp_objt_create(
     user="anonymous",
     passwd="",
     retry_count=3,
+    timeout=120,
 ):
     """
     This function creates and returns an FTP object and a list of FTP objects for multiple downloads.
@@ -306,6 +349,8 @@ def ftp_objt_create(
         The password for the FTP server. Default is an empty string.
     retry_count : int, optional
         The number of times to retry creating the FTP object. Default is 3.
+    timeout : int, optional
+        The timeout for FTP connections in seconds. Default is 120 seconds.
 
     Returns
     -------
@@ -330,7 +375,7 @@ def ftp_objt_create(
     for i in range(parallel_download):
         for attempt in range(retry_count):
             try:
-                current_ftp_obj = ftp_constuctor(host)
+                current_ftp_obj = ftp_constuctor(host, timeout=timeout)
                 ftp_obj_list_out.append(current_ftp_obj)
                 break  # Exit the retry loop if successful
             except Exception as e:
@@ -485,6 +530,7 @@ def ftp_downld_front(
     user="anonymous",
     passwd="anonymous@isp.com",
     force=True,
+    timeout=120,
 ):
     """
     This function is used to download files from FTP servers in parallel.
@@ -505,6 +551,8 @@ def ftp_downld_front(
         The password for the FTP server. Default is 'anonymous@isp.com'.
     force : bool, optional
         If True, forces the download even if the file already exists. Default is True.
+    timeout : int, optional
+        The timeout for FTP connections in seconds. Default is 30 seconds.
 
     Returns
     -------
@@ -544,6 +592,7 @@ def ftp_downld_front(
         parallel_download=parallel_download,
         user=user,
         passwd=passwd,
+        timeout=timeout,
     )
 
     # Create a list of FTP objects for parallel downloads
@@ -792,7 +841,7 @@ def check_local_file_exists(
 
 
 def get_ftp_connect(
-    ftpobj, host, protocol, sftp, user, passwd, prev_host, count_loop, count_nmax
+    ftpobj, host, protocol, sftp, user, passwd, prev_host, count_loop, count_nmax, timeout=120
 ):
     """
     Get or create an FTP connection.
@@ -820,6 +869,8 @@ def get_ftp_connect(
         Current operation counter.
     count_nmax : int
         Maximum operations before reconnection.
+    timeout : int, optional
+        The timeout for FTP connections in seconds. Default is 30 seconds.
 
     Returns
     -------
@@ -842,6 +893,7 @@ def get_ftp_connect(
             host=host,
             user=user,
             passwd=passwd,
+            timeout=timeout,
         )
         return ftpobj, host
 
@@ -1055,6 +1107,7 @@ def crawl_ftp_files(
     force=False,
     all_files_mode=False,
     exclude_patterns=None,
+    timeout=120,
 ):
     """
     Crawl FTP servers to find available files and update download table.
@@ -1091,6 +1144,8 @@ def crawl_ftp_files(
     exclude_patterns : list of str, optional
         List of regex patterns to exclude from matched files.
         Default is None.
+    timeout : int, optional
+        The timeout for FTP connections in seconds. Default is 30 seconds.
 
     Returns
     -------
@@ -1176,6 +1231,7 @@ def crawl_ftp_files(
             prev_host,
             count_loop,
             count_nmax,
+            timeout=timeout,
         )
 
         # Save intermediate results and reset counter on reconnection
