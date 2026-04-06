@@ -33,124 +33,283 @@ from geodezyx import utils
 #                |_|             |_|
 
 
-def read_snx_trop(snxfile, dataframe_output=True, version=2):
+def _parse_trop_description(snxfile):
     """
-    Read troposphere solutions from Troposphere SINEX file.
+    Parse the ``TROP/DESCRIPTION`` block of a SINEX troposphere file to extract
+    the ordered list of solution column names.
 
-    Parses SINEX format tropospheric solutions and returns station, epoch,
-    and troposphere parameters (ZTD, horizontal gradients, and their uncertainties).
+    Handles both format generations:
 
-    Supports three field-count layouts inside the ``+TROP/SOLUTION`` block:
+    * **SINEX_TRO v0.01** – keywords ``SOLUTION_FIELDS_1`` and (optionally)
+      ``SOLUTION_FIELDS_2`` list the column names.  ``SOLUTION_FIELDS_2`` is a
+      continuation line used when more than 7 fields are needed.
+    * **SINEX_TRO v2.00** – keyword ``TROPO PARAMETER NAMES`` (three tokens)
+      lists the column names.
 
-    * **8 fields** – standard IGS format:
-      ``STAT EPOCH ZTD ZTD_sig TGN TGN_sig TGE TGE_sig``
-    * **4 fields** – ZTD-only format:
-      ``STAT EPOCH ZTD ZTD_sig``
-    * **12 fields** – NGL (Nevada Geodetic Laboratory) extended format:
-      ``STAT EPOCH TROTOT _SIG TRWET TGETOT _SIG TGNTOT _SIG WVAPOR _SIG MTEMP``
+    Post-processing applied to the raw column list:
+
+    * Every ``STDDEV`` token is renamed to ``{previous_column}_sig``, following
+      the SINEX_TRO convention that ``STDDEV`` is the standard deviation of the
+      immediately preceding parameter.
+    * All names are lower-cased.
+    * Leading ``#`` characters (e.g. ``#ACTAK`` → ``actak``) are stripped.
 
     Parameters
     ----------
     snxfile : str
-        Path to SINEX troposphere solution file.
-    dataframe_output : bool, optional
-        If True, return results as pandas DataFrame. If False, return tuple.
-        Default is True.
-    version : int, optional
-        SINEX epoch format:
-
-        ``2`` (default) – epoch field contains a **4-digit** year
-        (``YYYY:DOY:SOD``).
-
-        ``1`` – epoch field contains a **2-digit** year (``YY:DOY:SOD``)
-        using the standard SINEX convention: ``YY`` 80–99 → 1980–1999,
-        ``YY`` 00–79 → 2000–2079.
+        Path to the SINEX troposphere file.
 
     Returns
     -------
-    df : pandas.DataFrame or tuple
-        If dataframe_output=True: DataFrame with columns STAT, epoc, tro, stro,
-        tgn, stgn, tge, stge. If False: tuple with sorted Station, Epoch,
-        ZTD, ZTD_sigma, TGN, TGN_sigma, TGE, TGE_sigma.
+    cols : list of str
+        Ordered list of lowercase column names found in ``TROP/DESCRIPTION``,
+        or an empty list if the block or the relevant keyword is absent.
     """
-
-    STAT, epoc = [], []
-    tro, stro, tgn, stgn, tge, stge = [], [], [], [], [], []
-
-    flagtrop = False
+    cols_v2 = []   # SINEX_TRO v2.00  – TROPO PARAMETER NAMES
+    cols_v1 = []   # SINEX_TRO v0.01  – SOLUTION_FIELDS_1 / _2
+    in_block = False
 
     for line in open(snxfile, "r", encoding="ISO-8859-1"):
-
-        if re.compile("TROP/SOLUTION").search(line):
-            flagtrop = not flagtrop
+        if re.search(r"\+TROP/DESCRIPTION", line):
+            in_block = True
+            continue
+        if re.search(r"-TROP/DESCRIPTION", line):
+            break
+        if not in_block:
+            continue
+        # Only process data lines (first character is a space)
+        if not line.startswith(" "):
+            continue
+        parts = line.split()
+        if not parts:
             continue
 
-        if line[0] == " ":
-            fields = line.split()
+        # v2.00: "TROPO PARAMETER NAMES   col1 col2 ..."
+        if len(parts) >= 3 and " ".join(parts[:3]).upper() == "TROPO PARAMETER NAMES":
+            cols_v2.extend(parts[3:])
+
+        # v0.01: "SOLUTION_FIELDS_1   col1 col2 ..." (SOLUTION_FIELDS_2 is continuation)
+        elif parts[0].upper().startswith("SOLUTION_FIELDS"):
+            cols_v1.extend(parts[1:])
+
+    # Prefer v2.00 format when available
+    raw_cols = cols_v2 if cols_v2 else cols_v1
+
+    if not raw_cols:
+        return []
+
+    # Post-process: rename STDDEV → {prev_col}_sig, lowercase, strip leading '#'
+    result = []
+    for col in raw_cols:
+        col_clean = col.lstrip("#").lower()
+        if col_clean == "stddev" and result:
+            result.append(result[-1] + "_sig")
         else:
+            result.append(col_clean)
+
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Fallback column names used when TROP/DESCRIPTION is absent.
+# Keys are the number of *value* fields (i.e. total fields minus STAT and EPOCH).
+# ---------------------------------------------------------------------------
+_TROP_FALLBACK_COLS = {
+    # ZTD-only (e.g. simple AC submissions)
+    2: ["trotot", "trotot_sig"],
+    # Standard IGS 8-field layout: ZTD + grad North + grad East
+    6: ["trotot", "trotot_sig", "tgntot", "tgntot_sig", "tgetot", "tgetot_sig"],
+    # NGL extended 12-field layout (STAT EPOCH + 10 values)
+    10: [
+        "trotot", "trotot_sig",
+        "trowet",
+        "tgetot", "tgetot_sig",
+        "tgntot", "tgntot_sig",
+        "wvapor", "wvapor_sig",
+        "mtemp",
+    ],
+}
+
+
+def read_snx_trop(snxfile, dataframe_output=True):
+    """
+    Read troposphere solutions from a Troposphere SINEX file.
+
+    Dynamically parses the ``TROP/DESCRIPTION`` block to discover the column
+    layout before reading the ``TROP/SOLUTION`` block.  Both
+    **SINEX_TRO v0.01** (``SOLUTION_FIELDS_1``/``_2`` keywords, 2-digit years)
+    and **SINEX_TRO v2.00** (``TROPO PARAMETER NAMES`` keyword, 4-digit years,
+    long station names up to 9 characters) are supported.
+
+    Column naming convention (v2.00 Table 1-3):
+
+    * ``trotot`` / ``trotot_sig`` – zenith total delay and its std dev
+    * ``trowet`` / ``trowet_sig`` – zenith wet delay
+    * ``trodry`` / ``trodry_sig`` – zenith dry (hydrostatic) delay
+    * ``tgntot`` / ``tgntot_sig`` – total north gradient (wet + dry)
+    * ``tgetot`` / ``tgetot_sig`` – total east gradient (wet + dry)
+    * ``tgnwet``, ``tgnwet_sig``, ``tgedry``, ``tgedry_sig`` –
+      wet/dry components of the horizontal gradients
+    * ``iwv``    – integrated water vapour
+    * ``press``  – surface pressure
+    * ``epress`` – partial water vapour pressure
+    * ``temdry`` – dry temperature
+    * ``humrel`` – relative humidity
+    * ``nsat``   – number of satellites used
+    * ``gdop``   – geometric dilution of precision
+    * ``wmtemp`` / ``wmtemp_sig`` – weighted mean temperature
+    * ``acok``, ``acdl`` – combination quality counters (combined products)
+    * ``dstax``, ``dstay``, ``dstaz`` – station coordinate differences
+      (combined products, v0.01)
+    * ``pwv`` / ``pwv_sig`` – precipitable water vapour (v0.01)
+
+    Every ``STDDEV`` token in ``TROP/DESCRIPTION`` is automatically renamed to
+    ``{preceding_parameter}_sig``.
+
+    When no ``TROP/DESCRIPTION`` block is found the function falls back to
+    heuristics based on the number of value fields per data line (2, 6, or 10
+    values; see ``_TROP_FALLBACK_COLS``).  For any other count, generic names
+    ``col1``, ``col2``, … are assigned.
+
+    The epoch year is auto-detected from the string length of the year token:
+
+    * 4-character token → direct 4-digit year (SINEX_TRO v2.00 / modern files).
+    * 2-character token → standard SINEX 2-digit convention:
+      ``YY`` 80–99 → 1980–1999, ``YY`` 00–79 → 2000–2079.
+
+    Parameters
+    ----------
+    snxfile : str
+        Path to the SINEX troposphere solution file (plain text or
+        ISO-8859-1 encoded).
+    dataframe_output : bool, optional
+        If ``True`` (default), return a :class:`pandas.DataFrame`.
+        If ``False``, return a sorted list of dicts (one dict per epoch/station
+        record) with keys ``STAT``, ``epoc``, and one key per data column.
+
+    Returns
+    -------
+    df : pandas.DataFrame or list of dict
+        If ``dataframe_output=True``: DataFrame with columns ``STAT``,
+        ``epoc`` (datetime), plus one column per parameter found in
+        ``TROP/DESCRIPTION`` (or heuristic fallback names).
+        All parameter columns are cast to ``float``.
+
+        If ``dataframe_output=False``: list of dicts sorted by
+        ``(STAT, epoc)``.
+
+    See Also
+    --------
+    troposinex2df : Convert the list-of-dicts output to a DataFrame.
+    _parse_trop_description : Parse the TROP/DESCRIPTION block.
+
+    References
+    ----------
+    * SINEX_TRO v0.01 – https://files.igs.org/pub/data/format/sinex_tropo.txt
+    * SINEX_TRO v2.00 – https://files.igs.org/pub/data/format/sinex_tro_v2.00.pdf
+    """
+    # --- Step 1: discover column names from TROP/DESCRIPTION ---
+    desc_cols = _parse_trop_description(snxfile)
+
+    # --- Step 2: parse TROP/SOLUTION ---
+    records = []
+    in_trop = False
+
+    def _fnan(x):
+        """Replace asterisk-flagged values with NaN."""
+        return np.nan if isinstance(x, str) and "*" in x else x
+
+    for line in open(snxfile, "r", encoding="ISO-8859-1"):
+        if re.compile("TROP/SOLUTION").search(line):
+            in_trop = not in_trop
             continue
 
-        if flagtrop:
-            fnan = lambda x: np.nan if "*" in x else x
+        if not in_trop:
+            continue
 
-            STAT.append(fields[0].upper())
+        # Skip comment lines, block markers, etc.
+        if not line.startswith(" "):
+            continue
 
-            if not ":" in fields[1]:
-                epoc.append(conv.year_decimal2dt(fields[1]))
+        fields = line.split()
+        if len(fields) < 3:
+            continue
+
+        stat = fields[0].upper()
+        epoch_str = fields[1]
+
+        # --- Epoch parsing (auto-detect 2- vs 4-digit year) ---
+        if ":" not in epoch_str:
+            epoch = conv.year_decimal2dt(epoch_str)
+        else:
+            date_elts = epoch_str.split(":")
+            year_str = date_elts[0]
+            yy_raw = int(year_str)
+            if len(year_str) == 4:
+                # SINEX_TRO v2.00 – 4-digit year
+                yy = yy_raw
             else:
-                date_elts_lis = fields[1].split(":")
-                if version == 2:
-                    yy = int(date_elts_lis[0])
-                else:
-                    # SINEX 2-digit year convention
-                    yy_raw = int(date_elts_lis[0])
-                    yy = (1900 + yy_raw) if yy_raw >= 80 else (2000 + yy_raw)
+                # SINEX_TRO v0.01 – 2-digit year, standard SINEX convention
+                yy = (1900 + yy_raw) if yy_raw >= 80 else (2000 + yy_raw)
+            doy = int(date_elts[1])
+            sec = int(date_elts[2])
+            epoch = conv.doy2dt(yy, doy, seconds=sec)
 
-                doy = int(date_elts_lis[1])
-                sec = int(date_elts_lis[2])
-                epoc.append(conv.doy2dt(yy, doy, seconds=sec))
+        values = fields[2:]
+        n = len(values)
+        rec = {"site": stat, "epoch": epoch}
 
-            if len(fields) == 8:
-                # Standard IGS format: ZTD _SIG TGN TGN_SIG TGE TGE_SIG
-                tro.append(fnan(fields[2]))
-                stro.append(fnan(fields[3]))
-                tgn.append(fnan(fields[4]))
-                stgn.append(fnan(fields[5]))
-                tge.append(fnan(fields[6]))
-                stge.append(fnan(fields[7]))
+        if desc_cols:
+            # Dynamic path: use column names from TROP/DESCRIPTION
+            for i, col in enumerate(desc_cols):
+                rec[col] = _fnan(values[i]) if i < n else np.nan
+        else:
+            # Fallback path: heuristic based on value-field count
+            col_names = _TROP_FALLBACK_COLS.get(
+                n, [f"col{i + 1}" for i in range(n)]
+            )
+            for i, col in enumerate(col_names):
+                rec[col] = _fnan(values[i]) if i < n else np.nan
 
-            elif len(fields) == 12:
-                # NGL extended format: TROTOT _SIG TRWET TGETOT _SIG TGNTOT _SIG WVAPOR _SIG MTEMP
-                tro.append(fnan(fields[2]))
-                stro.append(fnan(fields[3]))
-                tge.append(fnan(fields[5]))   # TGETOT
-                stge.append(fnan(fields[6]))  # TGETOT_SIG
-                tgn.append(fnan(fields[7]))   # TGNTOT
-                stgn.append(fnan(fields[8]))  # TGNTOT_SIG
+        records.append(rec)
 
-            elif len(fields) == 4:
-                # ZTD-only format
-                tro.append(fnan(fields[2]))
-                stro.append(fnan(fields[3]))
-                tgn.append(np.nan)
-                stgn.append(np.nan)
-                tge.append(np.nan)
-                stge.append(np.nan)
-
-            else:
-                tro.append(np.nan)
-                stro.append(np.nan)
-                tgn.append(np.nan)
-                stgn.append(np.nan)
-                tge.append(np.nan)
-                stge.append(np.nan)
-
-    outtuple = tuple(zip(*sorted(zip(STAT, epoc, tro, stro, tgn, stgn, tge, stge))))
+    # Sort by station then epoch
+    records.sort(key=lambda r: (r["site"], r["epoch"]))
 
     if dataframe_output:
-        return troposinex2df(outtuple)
+        return troposinex2df(records)
     else:
-        return outtuple
+        return records
+
+
+def troposinex2df(records):
+    """
+    Convert a list of SINEX troposphere records to a pandas DataFrame.
+
+    Parameters
+    ----------
+    records : list of dict
+        List of per-record dicts as returned by :func:`read_snx_trop` with
+        ``dataframe_output=False``.  Each dict must contain at least the keys
+        ``STAT`` (str) and ``epoc`` (datetime); remaining keys are
+        tropospheric parameter columns.
+
+    Returns
+    -------
+    df : pandas.DataFrame
+        DataFrame with ``STAT`` and ``epoc`` as the first two columns,
+        followed by one column per parameter.  All parameter columns are
+        cast to ``float``.
+    """
+    if not records:
+        return pd.DataFrame(columns=["site", "epoch"])
+    df = pd.DataFrame(records)
+    fixed = ["site", "epoch"]
+    param_cols = [c for c in df.columns if c not in fixed]
+    df = df[fixed + param_cols]
+    df[param_cols] = df[param_cols].apply(pd.to_numeric, errors="coerce")
+    return df
+
 
 
 def read_gfz_trop(trpfile):
@@ -217,35 +376,6 @@ def read_gfz_trop(trpfile):
     DF["epoc"] = DF["epoc"].dt.floor("H")
     return DF
 
-
-def troposinex2df(read_sinex_result):
-    """
-    Convert SINEX troposphere data to pandas DataFrame.
-
-    Transforms output from read_snx_trop function into a structured DataFrame
-    with proper column names and numeric type conversion.
-
-    Parameters
-    ----------
-    read_sinex_result : tuple
-        Tuple of lists from read_snx_trop function containing station names,
-        epochs, and troposphere parameters (ZTD, gradients, uncertainties).
-
-    Returns
-    -------
-    df_sinex : pandas.DataFrame
-        DataFrame with columns: STAT, epoc (datetime), tro, stro, tgn, stgn,
-        tge, stge. Numeric columns are converted to float type.
-    """
-    df_sinex = pd.DataFrame.from_records(list(read_sinex_result)).transpose()
-    colnam = ["STAT", "epoc", "tro", "stro", "tgn", "stgn", "tge", "stge"]
-    df_sinex.columns = colnam
-    cols_numeric = ["tro", "stro", "tgn", "stgn", "tge", "stge"]
-    df_sinex[cols_numeric] = df_sinex[cols_numeric].apply(
-        pd.to_numeric, errors="coerce"
-    )
-
-    return df_sinex
 
 
 def read_bernese_trp(trpfile):
@@ -418,25 +548,81 @@ def read_rinex_met_2(metfile):
     return df
 
 
-def read_spotgins_tropo(filepath):
+# ---------------------------------------------------------------------------
+# Column mapping from SPOTGINS native names to SINEX_TRO convention
+# (as used by read_snx_trop).  Applied when sinex_columns=True.
+# ---------------------------------------------------------------------------
+_SPOTGINS_TO_SINEX_COLS = {
+    # Station / epoch
+    "site":            "site",
+    "epoch":           "epoch",
+    # Auxiliary
+    "MJD":             "mjd",
+    "DecimalYear":     "decimal_year",
+    "Const":           "const",
+    "Dateofexe":       "dateofexe",
+    "GinsVersion":     "ginsversion",
+    "PrairieVersion":  "prairieversion",
+    # ZTD parameters
+    "TROTOT":          "trotot",
+    "TRODRY":          "trodry",
+    "TROWET":          "trowet",
+    "STDWET":          "trowet_sig",
+    "STDTOT":          "trotot_sig",
+    "STDDRY":          "trodry_sig",
+    # Gradient parameters
+    "TGNTOT":          "tgntot",
+    "STDTGN":          "tgntot_sig",
+    "TGETOT":          "tgetot",
+    "STDTGE":          "tgetot_sig",
+    "TGNWET":          "tgnwet",
+    "STDTGNWET":       "tgnwet_sig",
+    "TGEWET":          "tgewet",
+    "STDTGEWET":       "tgewet_sig",
+}
+
+
+def read_spotgins_tropo(filepath, sinex_columns=False):
     """
     Read a SPOTGINS tropospheric time series file (ZTD or GRAD format).
 
     Parses SPOTGINS ZTD (zenith total delay) or GRAD (horizontal gradients)
     format and returns tropospheric parameters with associated metadata.
-    Column names are extracted from file headers and converted to lowercase.
+    Column names are extracted from file headers and kept in their original
+    case (e.g. ``TROTOT``, ``MJD``, ``Const``).  The datetime column
+    (``yyyy-mm-ddTHH:MM:SS``) is always renamed to ``epoch``.
     Header metadata is dynamically inferred from the file (no hardcoded fields).
 
     Parameters
     ----------
     filepath : str
         Path to a SPOTGINS ``.ztd`` or ``.grad`` file (can be gzip compressed).
+    sinex_columns : bool, optional
+        If ``False`` (default), column names keep the original case from the
+        file (e.g. ``TROTOT``, ``TRODRY``, ``Const``), with ``site`` and
+        ``epoch`` added by the reader.
+
+        If ``True``, column names are renamed to the SINEX_TRO convention
+        used by :func:`read_snx_trop` (lowercase):
+
+        * ``site``  → ``site``
+        * ``epoch`` → ``epoch``
+        * ``MJD``   → ``mjd``
+        * ``TROTOT`` / ``TRODRY`` / ``TROWET`` → ``trotot`` / ``trodry`` / ``trowet``
+        * ``STDWET`` → ``trowet_sig``
+        * ``TGNTOT`` / ``TGETOT`` → ``tgntot`` / ``tgetot``
+        * ``STDTGN`` / ``STDTGE`` → ``tgntot_sig`` / ``tgetot_sig``
+        * Auxiliary columns (``Const``, ``Dateofexe``, ``GinsVersion``,
+          ``PrairieVersion``, ``DecimalYear``) are lowercased.
+
+        The full mapping is available in the module-level dict
+        ``_SPOTGINS_TO_SINEX_COLS``.
 
     Returns
     -------
     df : pandas.DataFrame
-        DataFrame with one row per epoch. Columns are lowercase with the
-        datetime column named 'epoch'. No index is set.
+        DataFrame with one row per epoch. Columns use original file case
+        (or SINEX_TRO names when ``sinex_columns=True``). No index is set.
     meta : dict
         Header metadata extracted from comment block. Keys are converted to
         lowercase with spaces replaced by underscores. Includes station
@@ -476,7 +662,10 @@ def read_spotgins_tropo(filepath):
         raise ValueError("Could not find column header in file")
 
     if not data_lines:
-        return pd.DataFrame(columns=cols).rename(str.lower, axis=1), meta
+        empty_df = pd.DataFrame(columns=cols)
+        if sinex_columns:
+            empty_df = empty_df.rename(columns=_SPOTGINS_TO_SINEX_COLS)
+        return empty_df, meta
 
     from io import StringIO
 
@@ -487,18 +676,14 @@ def read_spotgins_tropo(filepath):
         names=cols,
     )
 
-    # Convert to lowercase column names
-    df.columns = df.columns.str.lower()
-
-    # Rename datetime column to epoch
-    if datetime_col:
-        datetime_col_lower = datetime_col.lower()
-        if datetime_col_lower in df.columns:
-            df = df.rename(columns={datetime_col_lower: "epoch"})
+    # Rename datetime column to epoch (keep original case for all other columns)
+    if datetime_col and datetime_col in df.columns:
+        df = df.rename(columns={datetime_col: "epoch"})
 
     # Convert numeric columns to float (exclude string/metadata columns)
-    # String columns: const, dateofexe, ginsversion, prairieversion, epoch
-    string_cols = {"epoch", "const", "dateofexe", "ginsversion", "prairieversion"}
+    # Match known string columns case-insensitively to preserve original case
+    _known_string_cols = {"epoch", "const", "dateofexe", "ginsversion", "prairieversion"}
+    string_cols = {c for c in df.columns if c.lower() in _known_string_cols}
     float_cols = [c for c in df.columns if c not in string_cols]
     df[float_cols] = df[float_cols].apply(pd.to_numeric, errors="coerce")
     df["epoch"] = pd.to_datetime(df["epoch"], errors="coerce")
@@ -507,4 +692,11 @@ def read_spotgins_tropo(filepath):
     if "station" in meta:
         df.insert(0, "site", meta["station"])
 
+    # Optionally rename to SINEX_TRO convention (as used by read_snx_trop)
+    if sinex_columns:
+        df = df.rename(columns=_SPOTGINS_TO_SINEX_COLS)
+
     return df, meta
+
+
+df , _ = read_spotgins_tropo("/home/sakic/IPGP_WORK/OVS/GNSS_OVS/2603_tropo_GL_MQ/010_tropo_files/OVS_2602/OVS_2602_tropo_01c/SPOTGINS_ABD000GLP.ztd", sinex_columns=True)
