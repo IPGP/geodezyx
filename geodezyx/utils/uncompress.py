@@ -29,6 +29,7 @@ import os
 import re
 import shutil
 import subprocess
+import zipfile
 
 #### geodeZYX modules
 from geodezyx import utils
@@ -70,6 +71,32 @@ def gzip_compress(inp_path, out_dir=None, out_fname=None, rm_inp=False):
         os.remove(inp_path)
 
     return out_path
+
+def extract_zip(zip_path: str, extract_dir: str) -> list:
+    """
+    Extract a zip archive and return the list of extracted file paths.
+
+    Parameters
+    ----------
+    zip_path : str
+        Path to the ``.zip`` file.
+    extract_dir : str
+        Directory into which the contents will be extracted.
+
+    Returns
+    -------
+    list of str
+        Absolute paths of all extracted files.
+    """
+    os.makedirs(extract_dir, exist_ok=True)
+    extracted = []
+    with zipfile.ZipFile(zip_path, "r") as zf:
+        for member in zf.namelist():
+            zf.extract(member, extract_dir)
+            extracted.append(os.path.join(extract_dir, member))
+    log.info("Extracted %d file(s) from %s", len(extracted), os.path.basename(zip_path))
+    return extracted
+
 
 def uncompress(pathin,dirout = '', opts='-f'):
     """
