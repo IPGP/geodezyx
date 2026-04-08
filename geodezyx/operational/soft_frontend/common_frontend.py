@@ -288,8 +288,8 @@ def get_best_prods(
         )
         best_prod_out = prod_list_inp
 
-        log.info("AAAAAAAAAAAAA", best_prod_out)
     elif brdc_mode and len(best_prod_out) >= 2:
+        log.info("AAAAAAAAAAAAA", best_prod_out)
         best_prod_out = [e for e in best_prod_out if "GOP"][0]
     else:
         pass
