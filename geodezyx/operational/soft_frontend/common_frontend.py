@@ -279,6 +279,7 @@ def get_best_prods(
             if date_prod == date_best:
                 best_prod_out.append(prod)
         psb += 1
+        log.info("AAAAAAAAAAAAA", best_prod_out)
 
     if len(best_prod_out) == 0:
         log.warning(
@@ -289,7 +290,6 @@ def get_best_prods(
         best_prod_out = prod_list_inp
 
     elif brdc_mode and len(best_prod_out) >= 2:
-        log.info("AAAAAAAAAAAAA", best_prod_out)
         best_prod_out = [e for e in best_prod_out if "GOP"][0]
     else:
         pass
