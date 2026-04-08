@@ -284,7 +284,7 @@ def get_best_prods(
 
     best_prod_out = []
     psb = 0
-    debug_print = True
+    debug_print = False
     while len(best_prod_out) == 0 and psb <= period_stepback_max:
         date_best = get_prod_date(date_inp, prod_ac_name=pan, period_stepback=psb)
         for prod in prod_list_inp:
