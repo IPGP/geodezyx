@@ -159,7 +159,24 @@ def effective_save_dir(parent_archive_dir, site, date, archtype="stat"):
 #### HTTP classic Download
 
 
-def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
+class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
+    """
+    Custom HTTP adapter that enforces a timeout on all requests.
+
+    This adapter ensures that socket timeouts are properly applied to
+    streaming HTTP requests, preventing indefinite hangs during downloads.
+    """
+
+    def __init__(self, timeout, *args, **kwargs):
+        self.timeout = timeout
+        super().__init__(*args, **kwargs)
+
+    def send(self, request, **kwargs):
+        kwargs["timeout"] = self.timeout
+        return super().send(request, **kwargs)
+
+
+def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5, force=False):
     """
     Download a file from an HTTP server with retry logic and progress bar.
 
@@ -179,6 +196,9 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
         The maximum number of retry attempts in case of failure. Default is 4.
     sleep_time : int, optional
         The sleep time between retry attempts in seconds. Default is 5 seconds.
+    force : bool, optional
+        If True, forces the download even if the file already exists locally.
+        Default is False.
 
     Returns
     -------
@@ -206,9 +226,9 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
     dwl = False
 
     # Check if file already exists – skip network entirely
-    if os.path.isfile(output_path):
+    if os.path.isfile(output_path) and not force:
         log.info("%s already exists locally ;) – skipping.", filename)
-        return (output_path, dwl)
+        return output_path, dwl
 
     # Try to get expected file size for the progress bar (best-effort)
     try:
@@ -219,23 +239,14 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
 
     # Download file with progress bar and retry logic
     try_count = 0
-    while True:
+    while try_count < max_try:
         try:
+            try_count += 1
+
             # Create a session with custom timeout handling
             session = requests.Session()
-
-            # Set socket timeout to enforce timeout on streaming
-            class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
-                def __init__(self, timeout, *args, **kwargs):
-                    self.timeout = timeout
-                    super().__init__(*args, **kwargs)
-
-                def send(self, request, **kwargs):
-                    kwargs['timeout'] = self.timeout
-                    return super().send(request, **kwargs)
-
-            session.mount('http://', TimeoutHTTPAdapter(timeout=timeout))
-            session.mount('https://', TimeoutHTTPAdapter(timeout=timeout))
+            session.mount("http://", TimeoutHTTPAdapter(timeout=timeout))
+            session.mount("https://", TimeoutHTTPAdapter(timeout=timeout))
 
             response = session.get(url, stream=True, timeout=timeout)
             response.raise_for_status()
@@ -252,10 +263,15 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
                         pbar.update(len(data))
 
             session.close()
-            break
+            dwl = True
+            return output_path, dwl
 
-        except (socket.timeout, requests.exceptions.Timeout, requests.exceptions.ConnectionError, requests.exceptions.RequestException) as e:
-            try_count += 1
+        except (
+            socket.timeout,
+            requests.exceptions.Timeout,
+            requests.exceptions.ConnectionError,
+            requests.exceptions.RequestException,
+        ) as e:
             log.warning("download failed (%s), try %i/%i", str(e), try_count, max_try)
 
             if try_count >= max_try:
@@ -266,12 +282,11 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5):
                         os.remove(output_path)
                     except Exception:
                         pass
-                return (url, dwl)
+                return url, dwl
 
             time.sleep(sleep_time)
 
-    dwl = True
-    return (output_path, dwl)
+    return output_path, dwl
 
 
 #  ______ _______ _____    _____                      _                 _
@@ -392,7 +407,12 @@ def ftp_objt_create(
         [f.login(user=user, passwd=passwd) for f in ftp_obj_list_out]
 
     # define the main obj for crawling
-    ftp_main = ftp_obj_list_out[0]
+    if len(ftp_obj_list_out) > 0:
+        ftp_main = ftp_obj_list_out[0]
+    else:
+        errmsg = "No FTP object(s) were created successfully :("
+        log.error(errmsg)
+        raise Exception(errmsg)
 
     # change the directory of the main ftp obj if we ask for it
     if chdir:
@@ -616,115 +636,6 @@ def ftp_downld_front(
     return out_tup_lis
 
 
-# def ftp_downloader_wo_objects(tupin):
-#     """
-#     create the necessary FTP object
-#
-#     should not be used anymore
-#     """
-#     arch_center_main, wwww_dir, filename, localdir = tupin
-#     ftp_obj_wk = FTP(arch_center_main)
-#     ftp_obj_wk.login()
-#     ftp_obj_wk.cwd(wwww_dir)
-#     localpath, bool_dl = ftp_downld_core(ftp_obj_wk, filename, localdir)
-#     ftp_obj_wk.close()
-#     return localpath, bool_dl
-
-
-# def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
-#     """
-#     filter urllist,savedirlist generated with download_gnss_rinex with an
-#     optimized FTP crawl
-#
-#     """
-#     ### create a DataFrame based on the urllist and savedirlist lists
-#     df = pd.concat((pd.DataFrame(urllist), pd.DataFrame(savedirlist)), axis=1)
-#     df_orig = df.copy()
-#
-#     ### rename the columns
-#     if df.shape[1] == 4:
-#         loginftp = True
-#         df.columns = ("url", "user", "pass", "savedir")
-#     else:
-#         loginftp = False
-#         df.columns = ("url", "savedir")
-#         df["user"] = "anonymous"
-#         df["pass"] = ""
-#
-#     ### Do the correct split for the URLs
-#     df = df.sort_values("url")
-#     df["url"] = df["url"].str.replace("ftp://", "")
-#     df["dirname"] = df["url"].apply(os.path.dirname)
-#     df["basename"] = df["url"].apply(os.path.basename)
-#     df["root"] = [e.split("/")[0] for e in df["dirname"].values]
-#     df["dir"] = [e1.replace(e2, "")[1:] for (e1, e2) in zip(df["dirname"], df["root"])]
-#     df["bool"] = False
-#
-#     #### Initialisation of the 1st variables for the loop
-#     prev_row_ftpobj = df.iloc[0]
-#     prev_row_cwd = df.iloc[0]
-#     ftp_files_list = []
-#     count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
-#     #### Initialisation of the FTP object
-#
-#     ftpobj, _ = ftp_objt_create(
-#         secure_ftp_inp=secure_ftp,
-#         host=prev_row_ftpobj.root,
-#         user=prev_row_ftpobj.user,
-#         passwd=prev_row_ftpobj["pass"],
-#     )
-#
-#     for irow, row in df.iterrows():
-#         count_loop += 1
-#
-#         ####### we recreate a new FTP object if the root URL is not the same
-#         if row.root != prev_row_ftpobj.root or count_loop > 20:
-#             ftpobj, _ = ftp_objt_create(
-#                 secure_ftp_inp=secure_ftp,
-#                 host=prev_row_ftpobj.root,
-#                 user=prev_row_ftpobj.user,
-#                 passwd=prev_row_ftpobj["pass"],
-#             )
-#
-#             prev_row_ftpobj = row
-#             count_loop = 0
-#
-#         ####### we recreate a new file list if the date path is not the same
-#         if (prev_row_cwd.dir != row.dir) or irow == 0:
-#             log.info("chdir " + row.dirname)
-#             ftpobj.cwd("/")
-#
-#             try:  #### we try to change for the right folder
-#                 ftpobj.cwd(row.dir)
-#             except:  #### If not possible, then no file in the list
-#                 ftp_files_list = []
-#
-#             ftp_files_list = ftp_dir_list_files(ftpobj)
-#             prev_row_cwd = row
-#
-#             ####### we check if the files is avaiable
-#         if row.basename in ftp_files_list:
-#             df.loc[irow, "bool"] = True
-#             log.info(row.basename + " found on server :)")
-#         else:
-#             df.loc[irow, "bool"] = False
-#             log.warning(row.basename + " not found on server :(")
-#
-#     df_good = df[df["bool"]].copy()
-#
-#     df_good["url"] = "ftp://" + df_good["url"]
-#
-#     ### generate the outputs
-#     if loginftp:
-#         urllist_out = list(zip(df_good.url, df_good.user, df_good["pass"]))
-#     else:
-#         urllist_out = list(df_good.url)
-#
-#     savedirlist_out = list(df_good.savedir)
-#
-#     return urllist_out, savedirlist_out
-
-
 ######################################################################
 ######## GENERIC FTP CRAWL INFRASTRUCTURE
 ######################################################################
@@ -841,7 +752,16 @@ def check_local_file_exists(
 
 
 def get_ftp_connect(
-    ftpobj, host, protocol, sftp, user, passwd, prev_host, count_loop, count_nmax, timeout=120
+    ftpobj,
+    host,
+    protocol,
+    sftp,
+    user,
+    passwd,
+    prev_host,
+    count_loop,
+    count_nmax,
+    timeout=120,
 ):
     """
     Get or create an FTP connection.
@@ -1421,91 +1341,200 @@ def orbclk_long2short_name(
 #### GRAVEYARD
 
 
-def downloader(
-    url, savedir, force=False, check_if_file_already_exists_uncompressed=True
-):
-    """
-    general function to download a file
+# def downloader(
+#     url, savedir, force=False, check_if_file_already_exists_uncompressed=True
+# ):
+#     """
+#     general function to download a file
+#
+#     can also handle non secure FTP
+#     """
+#
+#     if type(url) is tuple:
+#         need_auth = True
+#         username = url[1]
+#         password = url[2]
+#         url = url[0]
+#     else:
+#         need_auth = False
+#         username = ""
+#         password = ""
+#
+#     url_print = str(url)
+#
+#     rnxname = os.path.basename(url)
+#
+#     pot_compress_files_list = [os.path.join(savedir, rnxname)]
+#
+#     if check_if_file_already_exists_uncompressed:
+#         pot_compress_files_list.append(
+#             os.path.join(savedir, rnxname.replace(".gz", ""))
+#         )
+#         pot_compress_files_list.append(os.path.join(savedir, rnxname.replace(".Z", "")))
+#         pot_compress_files_list = list(set(pot_compress_files_list))
+#
+#     for f in pot_compress_files_list:
+#         if os.path.isfile(f) and (not force):
+#             log.info(os.path.basename(f) + " already exists locally ;)")
+#             return None
+#
+#     ##### LOCAL FILE (particular case for GFZ)
+#     if os.path.isfile(url):
+#         log.info("INFO : downloader : the is a local file, a simple copy will be used")
+#         log.info("       URL : %s", url)
+#         shutil.copy(url, savedir)
+#
+#     ##### REMOTE FILE (General case)
+#     elif ("http" in url) or (("ftp" in url) and not need_auth):
+#         # managing an authentification
+#         if need_auth:  # HTTP with Auth
+#             password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+#             top_level_url = url
+#             password_mgr.add_password(None, top_level_url, username, password)
+#             handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+#             # create "opener" (OpenerDirector instance)
+#             opener = urllib.request.build_opener(handler)
+#         else:  # FTP or HTTP without Auth
+#             opener = urllib.request.build_opener()
+#
+#         # use the opener to fetch a URL
+#         try:
+#             f = opener.open(url)
+#         except (urllib.error.HTTPError, urllib.error.URLError) as exp:
+#             log.warning("%s not found :(", rnxname)
+#             log.warning(url_print)
+#             log.warning(exp)
+#             return ""
+#
+#         log.info("%s found, downloading :)", rnxname)
+#         data = f.read()
+#         if not os.path.exists(savedir):
+#             os.makedirs(savedir)
+#         outpath = os.path.join(savedir, rnxname)
+#         with open(outpath, "wb") as code:
+#             code.write(data)
+#         return_str = outpath
+#
+#     elif ("ftp" in url) and need_auth:
+#         log.critical("MUST BE IMPEMENTED")
+#         return_str = ""
+#     else:
+#         log.error("something goes wrong with the URL")
+#         log.error(url)
+#         return_str = ""
+#
+#     return return_str
+#
+#
+# def downloader_wrap(intup):
+#     downloader(*intup)
+#     return None
 
-    can also handle non secure FTP
-    """
 
-    if type(url) is tuple:
-        need_auth = True
-        username = url[1]
-        password = url[2]
-        url = url[0]
-    else:
-        need_auth = False
-        username = ""
-        password = ""
-
-    url_print = str(url)
-
-    rnxname = os.path.basename(url)
-
-    pot_compress_files_list = [os.path.join(savedir, rnxname)]
-
-    if check_if_file_already_exists_uncompressed:
-        pot_compress_files_list.append(
-            os.path.join(savedir, rnxname.replace(".gz", ""))
-        )
-        pot_compress_files_list.append(os.path.join(savedir, rnxname.replace(".Z", "")))
-        pot_compress_files_list = list(set(pot_compress_files_list))
-
-    for f in pot_compress_files_list:
-        if os.path.isfile(f) and (not force):
-            log.info(os.path.basename(f) + " already exists locally ;)")
-            return None
-
-    ##### LOCAL FILE (particular case for GFZ)
-    if os.path.isfile(url):
-        log.info("INFO : downloader : the is a local file, a simple copy will be used")
-        log.info("       URL : %s", url)
-        shutil.copy(url, savedir)
-
-    ##### REMOTE FILE (General case)
-    elif ("http" in url) or (("ftp" in url) and not need_auth):
-        # managing an authentification
-        if need_auth:  # HTTP with Auth
-            password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
-            top_level_url = url
-            password_mgr.add_password(None, top_level_url, username, password)
-            handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
-            # create "opener" (OpenerDirector instance)
-            opener = urllib.request.build_opener(handler)
-        else:  # FTP or HTTP without Auth
-            opener = urllib.request.build_opener()
-
-        # use the opener to fetch a URL
-        try:
-            f = opener.open(url)
-        except (urllib.error.HTTPError, urllib.error.URLError) as exp:
-            log.warning("%s not found :(", rnxname)
-            log.warning(url_print)
-            log.warning(exp)
-            return ""
-
-        log.info("%s found, downloading :)", rnxname)
-        data = f.read()
-        if not os.path.exists(savedir):
-            os.makedirs(savedir)
-        outpath = os.path.join(savedir, rnxname)
-        with open(outpath, "wb") as code:
-            code.write(data)
-        return_str = outpath
-
-    elif ("ftp" in url) and need_auth:
-        log.critical("MUST BE IMPEMENTED")
-        return_str = ""
-    else:
-        log.error("something goes wrong with the URL")
-        log.error(url)
-        return_str = ""
-
-    return return_str
+# def ftp_downloader_wo_objects(tupin):
+#     """
+#     create the necessary FTP object
+#
+#     should not be used anymore
+#     """
+#     arch_center_main, wwww_dir, filename, localdir = tupin
+#     ftp_obj_wk = FTP(arch_center_main)
+#     ftp_obj_wk.login()
+#     ftp_obj_wk.cwd(wwww_dir)
+#     localpath, bool_dl = ftp_downld_core(ftp_obj_wk, filename, localdir)
+#     ftp_obj_wk.close()
+#     return localpath, bool_dl
 
 
-def downloader_wrap(intup):
-    downloader(*intup)
-    return None
+# def ftp_files_crawler_legacy(urllist, savedirlist, secure_ftp):
+#     """
+#     filter urllist,savedirlist generated with download_gnss_rinex with an
+#     optimized FTP crawl
+#
+#     """
+#     ### create a DataFrame based on the urllist and savedirlist lists
+#     df = pd.concat((pd.DataFrame(urllist), pd.DataFrame(savedirlist)), axis=1)
+#     df_orig = df.copy()
+#
+#     ### rename the columns
+#     if df.shape[1] == 4:
+#         loginftp = True
+#         df.columns = ("url", "user", "pass", "savedir")
+#     else:
+#         loginftp = False
+#         df.columns = ("url", "savedir")
+#         df["user"] = "anonymous"
+#         df["pass"] = ""
+#
+#     ### Do the correct split for the URLs
+#     df = df.sort_values("url")
+#     df["url"] = df["url"].str.replace("ftp://", "")
+#     df["dirname"] = df["url"].apply(os.path.dirname)
+#     df["basename"] = df["url"].apply(os.path.basename)
+#     df["root"] = [e.split("/")[0] for e in df["dirname"].values]
+#     df["dir"] = [e1.replace(e2, "")[1:] for (e1, e2) in zip(df["dirname"], df["root"])]
+#     df["bool"] = False
+#
+#     #### Initialisation of the 1st variables for the loop
+#     prev_row_ftpobj = df.iloc[0]
+#     prev_row_cwd = df.iloc[0]
+#     ftp_files_list = []
+#     count_loop = 0  # restablish the connexion after 50 loops (avoid freezing)
+#     #### Initialisation of the FTP object
+#
+#     ftpobj, _ = ftp_objt_create(
+#         secure_ftp_inp=secure_ftp,
+#         host=prev_row_ftpobj.root,
+#         user=prev_row_ftpobj.user,
+#         passwd=prev_row_ftpobj["pass"],
+#     )
+#
+#     for irow, row in df.iterrows():
+#         count_loop += 1
+#
+#         ####### we recreate a new FTP object if the root URL is not the same
+#         if row.root != prev_row_ftpobj.root or count_loop > 20:
+#             ftpobj, _ = ftp_objt_create(
+#                 secure_ftp_inp=secure_ftp,
+#                 host=prev_row_ftpobj.root,
+#                 user=prev_row_ftpobj.user,
+#                 passwd=prev_row_ftpobj["pass"],
+#             )
+#
+#             prev_row_ftpobj = row
+#             count_loop = 0
+#
+#         ####### we recreate a new file list if the date path is not the same
+#         if (prev_row_cwd.dir != row.dir) or irow == 0:
+#             log.info("chdir " + row.dirname)
+#             ftpobj.cwd("/")
+#
+#             try:  #### we try to change for the right folder
+#                 ftpobj.cwd(row.dir)
+#             except:  #### If not possible, then no file in the list
+#                 ftp_files_list = []
+#
+#             ftp_files_list = ftp_dir_list_files(ftpobj)
+#             prev_row_cwd = row
+#
+#             ####### we check if the files is avaiable
+#         if row.basename in ftp_files_list:
+#             df.loc[irow, "bool"] = True
+#             log.info(row.basename + " found on server :)")
+#         else:
+#             df.loc[irow, "bool"] = False
+#             log.warning(row.basename + " not found on server :(")
+#
+#     df_good = df[df["bool"]].copy()
+#
+#     df_good["url"] = "ftp://" + df_good["url"]
+#
+#     ### generate the outputs
+#     if loginftp:
+#         urllist_out = list(zip(df_good.url, df_good.user, df_good["pass"]))
+#     else:
+#         urllist_out = list(df_good.url)
+#
+#     savedirlist_out = list(df_good.savedir)
+#
+#     return urllist_out, savedirlist_out
