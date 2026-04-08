@@ -146,6 +146,8 @@ def get_prod_date(date_inp, prod_ac_name="", period_stepback=0):
     return date_out_srt
 
 
+get_prod_date(dt.datetime(2026,4,8,12,30,0), "BRDC", period_stepback=1)
+
 def get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
     """
     Normalizes and formats input dates for GNSS product downloading.
@@ -276,10 +278,11 @@ def get_best_prods(
                 date_prod = conv.sp3name_v3_2dt(prod)
 
             if debug_print:
+                log.info(f"current prod: {prod}")
                 log.info(f"input date: {date_inp}")
-                log.info(f"wished best prod: {date_best}")
-                log.info(f"current prod: {date_prod}")
-                log.info(f"product: {prod}")
+                log.info(f"wished best date: {date_best}")
+                log.info(f"current prod date: {date_prod}")
+                log.info(f"period stepback/max: {psb}/{period_stepback_max}")
 
             if date_prod == date_best:
                 best_prod_out.append(prod)
