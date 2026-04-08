@@ -2268,7 +2268,7 @@ def statname_dt2rinexname_long(
         name of the station
         can be a 4 or 9 char.
 
-    datein : datetime.datetime
+    datein : datetime
         date of the wished RINEX name
 
     country : string
@@ -2283,7 +2283,7 @@ def statname_dt2rinexname_long(
         U – Unknown
         The default is "R".
 
-    file_period : str, optional
+    file_period : str or None, optional
         File Period
         15M–15 Minutes
         01H–1 Hour
@@ -2292,7 +2292,7 @@ def statname_dt2rinexname_long(
         00U-Unspecified
         The default is "00U".
 
-    data_freq : str, optional
+    data_freq : str or None, optional
         data frequency.
         None is allowed (for Navigation RINEX)
 
@@ -2333,9 +2333,11 @@ def statname_dt2rinexname_long(
         The default is 'crz.gz'.
 
     preset_type : str, optional
-        takes "daily" or "hourly" values.
+        takes "daily", "hourly", "nav", "brdc" values.
+        for an hourly or daily session,
         set the most common data_freq and file_period
-        for an hourly or daily session.
+        for "nav" or "brdc" (navigation/broadcast) files,
+        remove the data_freq and set file_period to '01D'.
         The default is None.
 
     Returns
@@ -2364,12 +2366,18 @@ def statname_dt2rinexname_long(
         file_period = "01H"
         data_freq = "01S"
 
+    elif preset_type in ("nav", "brdc"):
+        file_period = "01D"
+        data_freq = None
+
     date_ok = datein.strftime("%Y") + dt2doy(datein) + datein.strftime("%H%M")
 
     data_source_ok = "_" + data_source + "_"
 
     # for nav RINEX, data_freq can be None, thus we filter it
-    elts_period_freq = [e for e in (file_period, data_freq, data_type) if e]
+    elts_tup = (file_period, data_freq, data_type)
+    elts_period_freq = [e for e in elts_tup if e]
+
     period_freq_ok = "_" + "_".join(elts_period_freq)
 
     out_rnx_name = statname_ok + data_source_ok + date_ok + period_freq_ok

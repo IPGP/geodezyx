@@ -9,6 +9,8 @@ Created on Wed Feb 11 18:47:44 2026
 import datetime as dt
 import shutil
 
+from PIL.JpegPresets import presets
+
 from geodezyx import utils
 
 #### Import the logger
@@ -367,6 +369,7 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
             data_source="S",
             data_type="MN",
             format_compression="rnx.gz",
+            preset_type="brdc",
         )
 
         prod_dir_doy = os.path.join(
