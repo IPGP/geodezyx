@@ -121,7 +121,7 @@ def get_prod_date(date_inp, prod_ac_name="", period_stepback=0):
     # Only apply latency adjustment on the initial call (period_stepback == 0)
     # to avoid double-counting latency in subsequent iterations
     is_during_latency = now - date_inp_utc < laten_ult
-    if is_during_latency and period_stepback == 0:
+    if is_during_latency and period_stepback == 0 and "ULT" in prod_ac_name:
         period_stepback += 1
 
     # rnd_def tuple : (period value, period unit, extra_delta)
