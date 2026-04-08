@@ -266,6 +266,7 @@ def get_best_prods(
     best_prod_out = []
     psb = 0
     pan = prod_ac_name
+    debug_print = True
     while len(best_prod_out) == 0 and psb <= period_stepback_max:
         date_best = get_prod_date(date_inp, prod_ac_name=pan, period_stepback=psb)
         for prod in prod_list_inp:
@@ -273,13 +274,19 @@ def get_best_prods(
                 date_prod = conv.rinexname2dt(prod)
             else:
                 date_prod = conv.sp3name_v3_2dt(prod)
-            log.debug(
-                f"input date {date_inp} / wished best prod: {date_best} / current prod: {date_prod} / product: {prod}"
-            )
+
+            if debug_print:
+                log.info(f"input date: {date_inp}")
+                log.info(f"wished best prod: {date_best}")
+                log.info(f"current prod: {date_prod}")
+                log.info(f"product: {prod}")
+
             if date_prod == date_best:
                 best_prod_out.append(prod)
         psb += 1
-        log.info("AAAAAAAAAAAAA %s", str(best_prod_out))
+
+        if debug_print:
+            log.info("LOOP END, selected prods: %s", str(best_prod_out))
 
     if len(best_prod_out) == 0:
         log.warning(
