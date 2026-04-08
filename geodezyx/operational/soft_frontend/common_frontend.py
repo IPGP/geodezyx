@@ -279,7 +279,7 @@ def get_best_prods(
             if date_prod == date_best:
                 best_prod_out.append(prod)
         psb += 1
-        log.info("AAAAAAAAAAAAA", best_prod_out)
+        log.info("AAAAAAAAAAAAA %s", str(best_prod_out))
 
     if len(best_prod_out) == 0:
         log.warning(
