@@ -64,7 +64,7 @@ def run_command(command):
             break
 
 
-def get_prod_date(date_inp, prod_ac_name="", period_stepback=0):
+def get_prod_date(date_inp, prod_ac_name="", period_stepback=0, latency=3):
     """
     Adjusts product dates based on data center latency and product type.
 
@@ -87,6 +87,16 @@ def get_prod_date(date_inp, prod_ac_name="", period_stepback=0):
         Number of periods to step back from the current time.
         Incremented internally if within the latency window.
         Defaults to 0.
+    latency : int, optional
+        The latency in hours to consider for stepping back.
+        the latency is because the data center does not provide
+        the products before a certain time after the epoch of
+        the products
+        IGS Website: latency is offically 3 hours
+        GRG on CDDIS: empircally, ~2 hours and 5 minutes
+        If we are within the latency window, we step back one
+        period to be able to get a substitute product
+        Defaults to 3 hours.
 
     Returns
     -------
@@ -95,7 +105,7 @@ def get_prod_date(date_inp, prod_ac_name="", period_stepback=0):
 
     Notes
     -----
-    - The latency window is fixed at 3 hours for all product types.
+    - The latency window is disabled for BRDC.
     - Dates are floored (rounded down) to the nearest interval boundary.
     - If `prod_ac_name` is unrecognized, the original date is returned with a warning.
     - ULT and NRT products are designed to be 2 days long,
@@ -117,12 +127,13 @@ def get_prod_date(date_inp, prod_ac_name="", period_stepback=0):
     # GRG on CDDIS: empircally, ~2 hours and 5 minutes
     # If we are within the latency window, we need to step back one
     # period to be able to get a substitute product
-    laten_ult = dt.timedelta(hours=3)
     # Only apply latency adjustment on the initial call (period_stepback == 0)
     # to avoid double-counting latency in subsequent iterations
-    is_during_latency = now - date_inp_utc < laten_ult
-    if is_during_latency and period_stepback == 0 and "ULT" in prod_ac_name:
-        period_stepback += 1
+    if not "BRDC" in prod_ac_name and period_stepback == 0:
+        laten_td = dt.timedelta(hours=latency)
+        is_during_latency = now - date_inp_utc < laten_td
+        if is_during_latency:
+            period_stepback += 1
 
     # rnd_def tuple : (period value, period unit, extra_delta)
     if "ULT" in prod_ac_name:
@@ -363,8 +374,11 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
         )
         brdc_fnd = utils.find_recursive(prod_dir_doy, brdc_fname)
 
-        redl_lim = now.timestamp() - redwld_delta * 3600
-        if len(brdc_fnd) > 0 and os.path.getmtime(brdc_fnd[0]) < redl_lim:
+        redl_lim = redwld_delta * 3600
+        brdc_mtime = os.path.getmtime(brdc_fnd[0])
+        now = now.timestamp()
+
+        if len(brdc_fnd) > 0 and now - brdc_mtime > redl_lim:
             log.info(
                 "BRDC %s found but older than %sh, re-downloading...",
                 brdc_fnd[0],
