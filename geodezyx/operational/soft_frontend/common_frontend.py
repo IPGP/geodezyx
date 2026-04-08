@@ -118,8 +118,10 @@ def get_prod_date(date_inp, prod_ac_name="", period_stepback=0):
     # If we are within the latency window, we need to step back one
     # period to be able to get a substitute product
     laten_ult = dt.timedelta(hours=3)
+    # Only apply latency adjustment on the initial call (period_stepback == 0)
+    # to avoid double-counting latency in subsequent iterations
     is_during_latency = now - date_inp_utc < laten_ult
-    if is_during_latency:
+    if is_during_latency and period_stepback == 0:
         period_stepback += 1
 
     # rnd_def tuple : (period value, period unit, extra_delta)
@@ -141,7 +143,7 @@ def get_prod_date(date_inp, prod_ac_name="", period_stepback=0):
     # so we need to substract an extra day to the date to be able to get the right product
     extra_delta = dt.timedelta(days=rnd_def[2])
 
-    rnd_use = str(period_val * (1 + period_stepback)) + period_unit
+    rnd_use = str(period_val * (1 + period_stepback)) + str(period_unit)
     date_out_srt = conv.round_dt(date_inp, rnd_use, mode="floor") - extra_delta
     return date_out_srt
 
@@ -255,7 +257,9 @@ def get_best_prods(
 
     """
     if brdc_mode:
-        prod_ac_name = "BRDC"
+        pan = "BRDC"
+    else:
+        pan = prod_ac_name
 
     if period_stepback_max is None:
         if "ULT" in prod_ac_name:
@@ -267,7 +271,6 @@ def get_best_prods(
 
     best_prod_out = []
     psb = 0
-    pan = prod_ac_name
     debug_print = True
     while len(best_prod_out) == 0 and psb <= period_stepback_max:
         date_best = get_prod_date(date_inp, prod_ac_name=pan, period_stepback=psb)
