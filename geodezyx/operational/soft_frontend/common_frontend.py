@@ -264,21 +264,21 @@ def get_best_prods(
             period_stepback_max = 0
 
     best_prod_out = []
-    perstpbak = 0
-    while len(best_prod_out) == 0 and perstpbak <= period_stepback_max:
-        date_best = get_prod_date(
-            date_inp, prod_ac_name=prod_ac_name, period_stepback=perstpbak
-        )
+    psb = 0
+    pan = prod_ac_name
+    while len(best_prod_out) == 0 and psb <= period_stepback_max:
+        date_best = get_prod_date(date_inp, prod_ac_name=pan, period_stepback=psb)
         for prod in prod_list_inp:
-            date_prod = (
-                conv.rinexname2dt(prod) if brdc_mode else conv.sp3name_v3_2dt(prod)
-            )
+            if brdc_mode:
+                date_prod = conv.rinexname2dt(prod)
+            else:
+                date_prod = conv.sp3name_v3_2dt(prod)
             log.debug(
                 f"input date {date_inp} / wished best prod: {date_best} / current prod: {date_prod} / product: {prod}"
             )
             if date_prod == date_best:
                 best_prod_out.append(prod)
-        perstpbak += 1
+        psb += 1
 
     if len(best_prod_out) == 0:
         log.warning(
@@ -287,6 +287,8 @@ def get_best_prods(
             period_stepback_max,
         )
         best_prod_out = prod_list_inp
+
+        log.info("AAAAAAAAAAAAA", best_prod_out)
     elif brdc_mode and len(best_prod_out) >= 2:
         best_prod_out = [e for e in best_prod_out if "GOP"][0]
     else:

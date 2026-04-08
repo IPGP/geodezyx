@@ -229,13 +229,16 @@ def rtklib_run_mono(
         orbclklis_use, brdclis_use = dl_prods(prod_dir, bas_srt, igs_prods)
     else:  ### use input lists and find best products: best method when
         # multiprocessing to avoid download concurrency issues
-        orbclklis_use = get_best_prods(orbclklis_inp, bas_srt, igs_prods)
-        brdclis_use = get_best_prods(brdclis_inp, bas_srt, "BRDC", brdc_mode=True)
-        # brdclis_use = brdclis_inp
+        orbclklis_use = get_best_prods(
+            orbclklis_inp, bas_srt, prod_ac_name=igs_prods, brdc_mode=False
+        )
+        brdclis_use = get_best_prods(
+            brdclis_inp, bas_srt, prod_ac_name="BRDC", brdc_mode=True
+        )
 
     # Copy best products to tmp directory
     orbclklis_ok = [_prods2tmp(orb, tmp_dir_wrk) for orb in orbclklis_use]
-    brdclis_ok = [_prods2tmp(n, tmp_dir_wrk) for n in brdclis_use]
+    brdclis_ok = [_prods2tmp(nav, tmp_dir_wrk) for nav in brdclis_use]
 
     # Command
     ### INTERNAL CHOICE: customs args are passed through moddified conf file
