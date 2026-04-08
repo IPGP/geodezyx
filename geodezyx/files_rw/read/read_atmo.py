@@ -697,6 +697,3 @@ def read_spotgins_tropo(filepath, sinex_columns=False):
         df = df.rename(columns=_SPOTGINS_TO_SINEX_COLS)
 
     return df, meta
-
-
-df , _ = read_spotgins_tropo("/home/sakic/IPGP_WORK/OVS/GNSS_OVS/2603_tropo_GL_MQ/010_tropo_files/OVS_2602/OVS_2602_tropo_01c/SPOTGINS_ABD000GLP.ztd", sinex_columns=True)
