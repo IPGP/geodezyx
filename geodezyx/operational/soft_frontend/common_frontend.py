@@ -161,7 +161,8 @@ def get_prod_date(date_inp, prod_ac_name="", period_stepback=0, latency=3):
     return date_out_srt
 
 
-get_prod_date(dt.datetime(2026,4,8,12,30,0), "BRDC", period_stepback=1)
+get_prod_date(dt.datetime(2026, 4, 8, 12, 30, 0), "BRDC", period_stepback=1)
+
 
 def get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
     """
@@ -358,38 +359,48 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
 
         ## We go for GOP non-real time BRDC
         if now - date_floor_re_utc >= dt.timedelta(hours=25):
-            return False, "nav"
-
-        ## We go for BKG real time BRDC
-        fct = conv.statname_dt2rinexname_long
-        brdc_fname = fct(
-            "BRDC",
-            date_floor_re,
-            country="WRD",
-            data_source="S",
-            data_type="MN",
-            format_compression="rnx.gz",
-            preset_type="brdc",
-        )
-
-        prod_dir_doy = os.path.join(
-            prod_parent_dir, *conv.dt2doy_year(date_floor_re, reverse_order=True)
-        )
-        brdc_fnd = utils.find_recursive(prod_dir_doy, brdc_fname)
-
-        redl_lim = redwld_delta * 3600
-        brdc_mtime = os.path.getmtime(brdc_fnd[0])
-        now = now.timestamp()
-
-        if len(brdc_fnd) > 0 and now - brdc_mtime > redl_lim:
-            log.info(
-                "BRDC %s found but older than %sh, re-downloading...",
-                brdc_fnd[0],
-                redwld_delta,
-            )
-            return True, "nav_rt"
+            redl_bool = False
+            redl_type = "nav"
         else:
-            return False, "nav_rt"
+            ## We go for BKG real time BRDC
+            fct = conv.statname_dt2rinexname_long
+            brdc_fname = fct(
+                "BRDC",
+                date_floor_re,
+                country="WRD",
+                data_source="S",
+                data_type="MN",
+                format_compression="rnx.gz",
+                preset_type="brdc",
+            )
+
+            prod_dir_doy = os.path.join(
+                prod_parent_dir, *conv.dt2doy_year(date_floor_re, reverse_order=True)
+            )
+            brdc_fnd_lis = utils.find_recursive(prod_dir_doy, brdc_fname)
+
+            ### If we find a BRDC file, we check its age to decide whether to re-download it or not
+            if len(brdc_fnd_lis) > 0:
+                brdc_fnd = brdc_fnd_lis[0]
+
+                brdc_mtime = os.path.getmtime(brdc_fnd)
+                redl_lim = redwld_delta * 3600
+                now = now.timestamp()
+
+                if now - brdc_mtime > redl_lim:
+                    infomsg = "BRDC %s found but older than %sh, re-downloading..."
+                    log.info(infomsg, brdc_fnd, redwld_delta)
+                    redl_bool = False
+                    redl_type = "nav_rt"
+                else:
+                    redl_bool = False
+                    redl_type = "nav_rt"
+
+            else:
+                redl_bool = False
+                redl_type = "nav_rt"
+
+        return redl_bool, redl_type
 
     ######### BROADCAST
     dates_inp = get_dates_fmt(dates_inp, prod_date=True, prod_ac_name="BRDC")
