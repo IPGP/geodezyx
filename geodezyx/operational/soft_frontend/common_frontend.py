@@ -391,7 +391,7 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
                 if now - brdc_mtime > redl_lim:
                     infomsg = "BRDC %s found but older than %sh, re-downloading..."
                     log.info(infomsg, brdc_fnd, redwld_delta)
-                    redl_bool = False
+                    redl_bool = True
                 else:
                     redl_bool = False
             else:
