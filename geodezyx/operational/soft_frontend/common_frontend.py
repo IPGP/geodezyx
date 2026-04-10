@@ -357,12 +357,13 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
         now = dt.datetime.now(dt.timezone.utc)
         date_floor_re_utc = date_floor_re.replace(tzinfo=dt.timezone.utc)
 
-        ## We go for GOP non-real time BRDC
         if now - date_floor_re_utc >= dt.timedelta(hours=25):
+            ## We go for GOP non-real time BRDC
             redl_bool = False
             redl_type = "nav"
         else:
             ## We go for BKG real time BRDC
+            redl_type = "nav_rt"
             fct = conv.statname_dt2rinexname_long
             brdc_fname = fct(
                 "BRDC",
@@ -391,14 +392,10 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
                     infomsg = "BRDC %s found but older than %sh, re-downloading..."
                     log.info(infomsg, brdc_fnd, redwld_delta)
                     redl_bool = False
-                    redl_type = "nav_rt"
                 else:
                     redl_bool = False
-                    redl_type = "nav_rt"
-
             else:
                 redl_bool = False
-                redl_type = "nav_rt"
 
         return redl_bool, redl_type
 
