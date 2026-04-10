@@ -67,6 +67,8 @@ def download_gnss_rinex(
             * nav_rt or brdc_rt as archive center allows to download *real time* nav files from the BKG server
             * rgp (IGN's RGP main server at St Mandé)
             * rgp_ensg (IGN's RGP, secondary server at ENSG, Marne-la-Vallée)
+            * rgp_v3 (IGN's RGP main server at St Mandé - RINEX3)
+            * rgp_ensg_v3 (IGN's RGP, secondary server at ENSG, Marne-la-Vallée - RINEX3)
             * rgp_01s (IGN's RGP, all the 24 hourly rinex for the day will be downloaded)
             * renag
             * renag_crtk & renag_crtk_01s (Centipede RTK data hosted at RENAG)

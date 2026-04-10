@@ -37,6 +37,8 @@ def parse_args():
              "'igs_bkg' (BKG's IGS data center), "
              "'rgp' (IGN's RGP main server at St Mandé), "
              "'rgp_ensg' (IGN's RGP, secondary server at ENSG, Marne-la-Vallée), "
+             "'rgp_v3' (IGN's RGP main server at St Mandé - RINEX3), "
+             "'rgp_ensg_v3' (IGN's RGP, secondary server at ENSG, Marne-la-Vallée - RINEX3), "
              "'sonel' (SONEL data center), "
              "'euref' (EPN data center hosted at ROB), "
              "'nav' or 'brdc' (navigation files from ROB server), "

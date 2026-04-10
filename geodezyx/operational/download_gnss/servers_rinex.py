@@ -303,8 +303,20 @@ def rgp_server(date, site=None):
     return urldic
 
 
+def rgp_rnx3_server(date, site=None):
+    urlserver = "ftp://rgpdata.ign.fr/pub/data_v3/"
+    urldic = _generic_server(date, site, urlserver, "data_30")
+    return urldic
+
+
 def rgp_ensg_server(date, site=None):
     urlserver = "ftp://rgpdata.ensg.eu/pub/data/"
+    urldic = _generic_server(date, site, urlserver, "data_30")
+    return urldic
+
+
+def rgp_ensg_rnx3_server(date, site=None):
+    urlserver = "ftp://rgpdata.ensg.eu/pub/data_v3/"
     urldic = _generic_server(date, site, urlserver, "data_30")
     return urldic
 
