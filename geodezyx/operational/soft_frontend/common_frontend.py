@@ -604,7 +604,7 @@ def dl_prods(prod_dir, dates_inp, prod_ac_name, download_lock=None, use_tite=Fal
                 dates_inp,
                 prod_ac_name,
                 prod_types=("sp3", "clk"),
-                data_centers=("esa",),
+                data_centers=("cddis", "esa", "ign"),
             )
         finally:
             if download_lock:
