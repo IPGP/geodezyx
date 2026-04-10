@@ -8,9 +8,6 @@ Created on Wed Feb 11 18:47:44 2026
 
 import datetime as dt
 import shutil
-
-from PIL.JpegPresets import presets
-
 from geodezyx import utils
 
 #### Import the logger
@@ -187,7 +184,7 @@ def get_dates_fmt(dates_inp, prod_date=True, prod_ac_name=""):
 
     Returns
     -------
-    list of datetime
+    dates_lis : list of datetime
         Sorted list of unique datetime objects with duplicates removed.
 
     Raises
