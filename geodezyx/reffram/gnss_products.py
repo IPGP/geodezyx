@@ -322,11 +322,11 @@ def compar_orbit(
 
                 p1b = conv.ecef2eci(
                     np.array(p1),
-                    conv.dt_gpstime2dt_utc(p1.index.to_pydatetime(), out_array=True),
+                    conv.dt_gpstime2dt_utc(p1.index.to_pydatetime()),
                 )
                 p2b = conv.ecef2eci(
                     np.array(p2),
-                    conv.dt_gpstime2dt_utc(p2.index.to_pydatetime(), out_array=True),
+                    conv.dt_gpstime2dt_utc(p2.index.to_pydatetime()),
                 )
 
                 d1prni[["x", "y", "z"]] = p1b
