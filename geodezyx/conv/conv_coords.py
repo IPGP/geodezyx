@@ -18,7 +18,6 @@ GitHub repository :
 https://github.com/IPGP/geodezyx
 """
 
-
 #### Import the logger
 import logging
 
@@ -29,6 +28,7 @@ import numpy as np
 #### geodeZYX modules
 from geodezyx import utils
 from geodezyx.conv import conv_rotation_matrices as rotmat
+from geodezyx.conv import conv_constant as conv_const
 
 # import re
 log = logging.getLogger("geodezyx")
@@ -141,6 +141,7 @@ def xyz2geo(x, y, z, outdeg=True, a=6378137.0, e2=0.00669438003):
         rlbda = np.rad2deg(rlbda)
 
     return rphi, rlbda, rhe
+
 
 def xyz2enu(x, y, z, x0, y0, z0):
     """
@@ -259,7 +260,7 @@ def enu2xyz(e, n, u, x0, y0, z0, velocity_mode=False):
             ]
         )
 
-        #r3 = r.T
+        # r3 = r.T
         r3 = np.linalg.inv(r)
 
         enu = np.vstack((e, n, u))
@@ -276,7 +277,6 @@ def enu2xyz(e, n, u, x0, y0, z0, velocity_mode=False):
             z = float(xyz[2]) + z0
 
         return x, y, z
-
 
 
 def xyz2azi_ele(x, y, z, x0, y0, z0, outdeg=False):
@@ -304,26 +304,22 @@ def xyz2azi_ele(x, y, z, x0, y0, z0, outdeg=False):
     e, n, u = xyz2enu(x, y, z, x0, y0, z0)
     d = np.sqrt(e**2 + n**2 + u**2)
     azi = np.arctan2(e, n)
-    ele = np.arcsin(u/d)
-    #ele2 = np.arctan2(u, np.sqrt(e**2 + n**2))
+    ele = np.arcsin(u / d)
+    # ele2 = np.arctan2(u, np.sqrt(e**2 + n**2))
     if outdeg:
         azi = np.rad2deg(azi)
         ele = np.rad2deg(ele)
     return azi, ele, d
 
 
-
-
-
-
- # __      __       _              __          __
- # \ \    / /      | |             \ \        / /
- #  \ \  / /__  ___| |_ ___  _ __   \ \  /\  / / __ __ _ _ __  _ __   ___ _ __ ___
- #   \ \/ / _ \/ __| __/ _ \| '__|   \ \/  \/ / '__/ _` | '_ \| '_ \ / _ \ '__/ __|
- #    \  /  __/ (__| || (_) | |       \  /\  /| | | (_| | |_) | |_) |  __/ |  \__ \
- #     \/ \___|\___|\__\___/|_|        \/  \/ |_|  \__,_| .__/| .__/ \___|_|  |___/
- #                                                      | |   | |
- #                                                      |_|   |_|
+# __      __       _              __          __
+# \ \    / /      | |             \ \        / /
+#  \ \  / /__  ___| |_ ___  _ __   \ \  /\  / / __ __ _ _ __  _ __   ___ _ __ ___
+#   \ \/ / _ \/ __| __/ _ \| '__|   \ \/  \/ / '__/ _` | '_ \| '_ \ / _ \ '__/ __|
+#    \  /  __/ (__| || (_) | |       \  /\  /| | | (_| | |_) | |_) |  __/ |  \__ \
+#     \/ \___|\___|\__\___/|_|        \/  \/ |_|  \__,_| .__/| .__/ \___|_|  |___/
+#                                                      | |   | |
+#                                                      |_|   |_|
 
 
 def geo2xyz_vector(llh, angle="deg", a=6378137.0, e2=0.00669438003):
@@ -432,6 +428,7 @@ def enu2xyz_vector(enu, xyz_ref):
 
     return xyz
 
+
 #      _                             __      _      _      _                                                _
 #     (_)                           / /     | |    | |    | |                                              (_)
 #  ___ _  __ _ _ __ ___   __ _     / /   ___| |_ __| |  __| | _____   __   ___ ___  _ ____   _____ _ __ ___ _  ___  _ __
@@ -440,6 +437,7 @@ def enu2xyz_vector(enu, xyz_ref):
 # |___/_|\__, |_| |_| |_|\__,_| /_/     |___/\__\__,_(_)__,_|\___| \_(_)  \___\___/|_| |_|\_/ \___|_|  |___/_|\___/|_| |_|
 #         __/ |
 #        |___/
+
 
 def sigma_xyz2enu(x, y, z, s_x, s_y, s_z, s_xy=0, s_yz=0, s_xz=0, return_corr=False):
     """
@@ -478,7 +476,6 @@ def sigma_xyz2enu(x, y, z, s_x, s_y, s_z, s_xy=0, s_yz=0, s_xz=0, return_corr=Fa
     s_n = np.sqrt(sigma_enu[1, 1])
     s_u = np.sqrt(sigma_enu[2, 2])
 
-
     if not return_corr:
         return s_e, s_n, s_u
     else:
@@ -504,7 +501,9 @@ def sigma_geo2xyz(lat, lon, h, s_f, s_l, s_h, ang="deg"):
     Linear Algebra, Geodesy, and GPS p332
     """
 
-    log.warning("Inputs values are assumed as uncorrelated, which is not accurate. Prefer sigma_xyz2enu.")
+    log.warning(
+        "Inputs values are assumed as uncorrelated, which is not accurate. Prefer sigma_xyz2enu."
+    )
 
     if ang == "deg":
         lat = np.deg2rad(lat)
@@ -671,17 +670,17 @@ def eci2rtn_or_rpy(p, v, c, out_rpy=False, rpy_theo_mode=False):
     return c_out
 
 
-def eci2rtn(p,v,c):
+def eci2rtn(p, v, c):
     """
     legacy wrapper of eci2rtn_or_rpy
     """
-    return eci2rtn_or_rpy(p,v,c, out_rpy=False)
+    return eci2rtn_or_rpy(p, v, c, out_rpy=False)
 
 
-def ecef2eci(xyz, utc_times):
+def ecef2eci(xyz, utc_times, xyz_vel=None):
     """
     Convert ECEF (Earth Centered Earth Fixed) positions to ECI (Earth Centered Inertial)
-    positions
+    positions, and optionally velocities.
 
     Parameters
     ----------
@@ -689,26 +688,45 @@ def ecef2eci(xyz, utc_times):
         XYZ are cartesian positions in ECEF. Should have shape (N,3)
 
     utc_times : numpy.array of floats
-        UTC_times are UTC timestamps, as datetime objects. Sould have shape (N)
+        UTC_times are UTC timestamps, as datetime objects. Should have shape (N)
+
+    xyz_vel : numpy.array of floats, optional
+        XYZ velocity components in ECEF frame. Should have shape (N,3).
+        If provided, the converted ECI velocities are also returned.
+        Default is None.
 
     Returns
     -------
     eci : numpy.array of floats
         Earth Centered Inertial coordinates. will have shape (N,3)
 
+    eci_vel : numpy.array of floats
+        ECI velocity components. will have shape (N,3).
+        Only returned when ``xyz_vel`` is provided.
+
     Note
     ----
     Requires pyorbital module
+
+    Position transformation:
 
      [X]    [C -S 0][X]
      [Y]  = [S  C 0][Y]
      [Z]eci [0  0 1][Z]ecf
 
-     C and S are cos() and sin() of gmst (Greenwich Meridian Sideral Time)
+    Velocity transformation (accounting for Earth's rotation ω_E):
+
+     [Vx]    [C -S 0][Vx]   [-S -C 0]   [X]
+     [Vy]  = [S  C 0][Vy] + ω_E·[C -S 0] · [Y]
+     [Vz]eci [0  0 1][Vz]   [0  0 0]   [Z]ecf
+
+    C and S are cos() and sin() of gmst (Greenwich Meridian Sidereal Time)
 
     References
     ----------
     http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc
+    https://fr.mathworks.com/help/aerotbx/ug/ecef2eci.html
+    https://github.com/eribean/Geneci/blob/main/geneci/conversions.py
     Inspired from satellite-js (https://github.com/shashwatak/satellite-js)
     """
 
@@ -724,13 +742,37 @@ def ecef2eci(xyz, utc_times):
     eci = xyz.copy()
     eci[:, 0] = xyz[:, 0] * np.cos(gmst) - xyz[:, 1] * np.sin(gmst)
     eci[:, 1] = xyz[:, 0] * np.sin(gmst) + xyz[:, 1] * np.cos(gmst)
-    return eci
+
+    if xyz_vel is None:
+        return eci
+
+    # Earth's rotation rate (WGS84, rad/s)
+    omega = conv_const.EARTH_ROTATION_MEAN_ANGULAR_VELOCITY
+
+    # v_ECI = R * v_ECEF + (dR/dt) * r_ECEF
+    # dR/dt = omega * [[-sin θ, -cos θ, 0],
+    #                  [ cos θ, -sin θ, 0],
+    #                  [  0,      0,    0]]
+    eci_vel = xyz_vel.copy()
+    eci_vel[:, 0] = (
+        xyz_vel[:, 0] * np.cos(gmst)
+        - xyz_vel[:, 1] * np.sin(gmst)
+        + omega * (-xyz[:, 0] * np.sin(gmst) - xyz[:, 1] * np.cos(gmst))
+    )
+    eci_vel[:, 1] = (
+        xyz_vel[:, 0] * np.sin(gmst)
+        + xyz_vel[:, 1] * np.cos(gmst)
+        + omega * (xyz[:, 0] * np.cos(gmst) - xyz[:, 1] * np.sin(gmst))
+    )
+    # eci_vel[:, 2] unchanged (vz component unaffected by rotation around Z)
+
+    return eci, eci_vel
 
 
-def eci2ecef(xyz, utc_times):
+def eci2ecef(xyz, utc_times, xyz_vel=None):
     """
     Convert ECI (Earth Centered Inertial) positions to ECEF (Earth Centered Earth Fixed)
-    positions
+    positions, and optionally velocities.
 
     Parameters
     ----------
@@ -738,37 +780,52 @@ def eci2ecef(xyz, utc_times):
         XYZ are cartesian positions in Earth Centered Inertial. Should have shape (N,3)
 
     utc_times : numpy.array of floats
-        UTC_times are UTC timestamps, as datetime objects. Sould have shape (N)
+        UTC_times are UTC timestamps, as datetime objects. Should have shape (N)
+
+    xyz_vel : numpy.array of floats, optional
+        XYZ velocity components in ECI frame. Should have shape (N,3).
+        If provided, the converted ECEF velocities are also returned.
+        Default is None.
 
     Returns
     -------
     ecef : numpy.array of floats
         Earth Centered Earth Fixed coordinates. will have shape (N,3)
 
+    ecef_vel : numpy.array of floats
+        ECEF velocity components. will have shape (N,3).
+        Only returned when ``xyz_vel`` is provided.
+
     Note
     ----
     Requires pyorbital module
 
+    Position transformation:
 
      [X]          ([C -S 0])[X]
      [Y]     = inv([S  C 0])[Y]
      [Z]ecef      ([0  0 1])[Z]eci
 
-
     Empirically:
+
      [X]       [ C  S  0][X]
      [Y]     = [-S  C  0][Y]
      [Z]ecef   [ 0  0  1][Z]eci
 
+    Velocity transformation (accounting for Earth's rotation ω_E):
 
+     [Vx]         [ C  S  0][Vx]   [-S  C 0]   [X]
+     [Vy]     = - [-S  C  0][Vy] + ω_E·[-C -S 0] · [Y]
+     [Vz]ecef     [ 0  0  1][Vz]   [ 0  0 0]   [Z]eci
 
-     C and S are cos() and sin() of gmst (Greenwich Meridian Sideral Time)
+    C and S are cos() and sin() of gmst (Greenwich Meridian Sidereal Time)
 
     References
     ----------
     http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc
+    https://fr.mathworks.com/help/aerotbx/ug/eci2ecef.html
+    https://github.com/eribean/Geneci/blob/main/geneci/conversions.py
     Inspired from satellite-js (https://github.com/shashwatak/satellite-js)
-
 
     Note
     ----
@@ -788,20 +845,44 @@ def eci2ecef(xyz, utc_times):
     ecef[:, 0] = +xyz[:, 0] * np.cos(gmst) + xyz[:, 1] * np.sin(gmst)
     ecef[:, 1] = -xyz[:, 0] * np.sin(gmst) + xyz[:, 1] * np.cos(gmst)
 
-    return ecef
+    if xyz_vel is None:
+        return ecef
+
+    # Earth's rotation rate (WGS84, rad/s)
+    omega = conv_const.EARTH_ROTATION_MEAN_ANGULAR_VELOCITY
+
+    # v_ECEF = R^T * v_ECI + (dR^T/dt) * r_ECI
+    # dR^T/dt = omega * [[-sin θ,  cos θ, 0],
+    #                    [-cos θ, -sin θ, 0],
+    #                    [  0,      0,    0]]
+    ecef_vel = xyz_vel.copy()
+    ecef_vel[:, 0] = (
+        +xyz_vel[:, 0] * np.cos(gmst)
+        + xyz_vel[:, 1] * np.sin(gmst)
+        + omega * (-xyz[:, 0] * np.sin(gmst) + xyz[:, 1] * np.cos(gmst))
+    )
+    ecef_vel[:, 1] = (
+        -xyz_vel[:, 0] * np.sin(gmst)
+        + xyz_vel[:, 1] * np.cos(gmst)
+        + omega * (-xyz[:, 0] * np.cos(gmst) - xyz[:, 1] * np.sin(gmst))
+    )
+    # ecef_vel[:, 2] unchanged (vz component unaffected by rotation around Z)
+
+    return ecef, ecef_vel
 
 
 #### Core & Legacy
 
 
- #   _____                          _
- #  / ____|                 ___    | |
- # | |     ___  _ __ ___   ( _ )   | |     ___  __ _  __ _  ___ _   _
- # | |    / _ \| '__/ _ \  / _ \/\ | |    / _ \/ _` |/ _` |/ __| | | |
- # | |___| (_) | | |  __/ | (_>  < | |___|  __/ (_| | (_| | (__| |_| |
- #  \_____\___/|_|  \___|  \___/\/ |______\___|\__, |\__,_|\___|\__, |
- #                                              __/ |            __/ |
- #                                             |___/            |___/
+#   _____                          _
+#  / ____|                 ___    | |
+# | |     ___  _ __ ___   ( _ )   | |     ___  __ _  __ _  ___ _   _
+# | |    / _ \| '__/ _ \  / _ \/\ | |    / _ \/ _` |/ _` |/ __| | | |
+# | |___| (_) | | |  __/ | (_>  < | |___|  __/ (_| | (_| | (__| |_| |
+#  \_____\___/|_|  \___|  \___/\/ |______\___|\__, |\__,_|\___|\__, |
+#                                              __/ |            __/ |
+#                                             |___/            |___/
+
 
 def vector_separator(abc):
     """
@@ -868,6 +949,7 @@ def normal_vector(phi, llambda, angle="deg", normalized=True):
         n = n / np.linalg.norm(n)
 
     return n
+
 
 def xyz2enu_core(d_x, d_y, d_z, lat0, lon0):
     """
@@ -937,6 +1019,7 @@ def xyz2enu_core(d_x, d_y, d_z, lat0, lon0):
 
         return e, n, u
 
+
 def enu2xyz_legacy(e, n, u, x0, y0, z0):
     """
     KEPT FOR LEGACY REASONS, use enu2xyz
@@ -972,8 +1055,10 @@ def enu2xyz_legacy(e, n, u, x0, y0, z0):
 
     return d_x, d_y, d_z
 
+
 ############ deprecated aliases ############
 import warnings
+
 
 def deprec_warn(old, new):
     """
@@ -1050,12 +1135,14 @@ def sENU2sFLH(*args, **kwargs):
     deprec_warn("sENU2sFLH", "sigma_enu2geo")
     return sigma_enu2geo(*args, **kwargs)
 
+
 def sFLH2sENU(*args, **kwargs):
     """
     Deprecated alias for sigma_geo2enu
     """
     deprec_warn("sFLH2sENU", "sigma_geo2enu")
     return sigma_geo2enu(*args, **kwargs)
+
 
 def sFLH2sXYZ(*args, **kwargs):
     """
