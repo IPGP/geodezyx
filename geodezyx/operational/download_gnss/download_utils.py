@@ -688,7 +688,7 @@ def regex_match_indir_all(regex, dir_files_list):
     return matches
 
 
-def check_local_file_exists(
+def check_loc_file(
     filergx, outdir, local_files_cache, force=False, all_files_mode=False
 ):
     """
@@ -1124,7 +1124,7 @@ def crawl_ftp_files(
             prev_outdir = row["outdir"]
 
         # Check if file already exists locally
-        ok_loc, ok_dwl, filename = check_local_file_exists(
+        ok_loc, ok_dwl, filename = check_loc_file(
             row[rgx_col], row["outdir"], local_files_lis, force, all_files_mode
         )
 
