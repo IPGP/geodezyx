@@ -349,7 +349,7 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
     """
     brdc_lis_out = []
 
-    def _force_redwld(date_inp):
+    def _force_brdc_redl(date_inp):
         date_floor_re = conv.round_dt(date_inp, "1d", mode="floor")
         now = dt.datetime.now(dt.timezone.utc)
         date_floor_re_utc = date_floor_re.replace(tzinfo=dt.timezone.utc)
@@ -401,7 +401,7 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
     dates_inp = list(set(dates_inp))  # remove duplicates
     brdc_tmp_stk = []
     for date in dates_inp:
-        force, nav_type = _force_redwld(date)
+        force, nav_type = _force_brdc_redl(date)
         date_floor = conv.round_dt(date, "1d", mode="floor")
         brdc_tmp = operational.download_gnss_rinex(
             # nav_type steers the download to either "nav" or "nav_rt" (real-time),
