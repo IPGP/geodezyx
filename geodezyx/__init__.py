@@ -53,7 +53,8 @@ __all__ = ['athmo',
            'stats',
            'time_series',
            'utils',
-           'utils_xtra']
+           'utils_xtra',
+           'volc_deform']
 
 if __name__ == '__main__':
     print("geodezyx version",__version__)

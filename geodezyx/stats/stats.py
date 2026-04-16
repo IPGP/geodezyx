@@ -1163,7 +1163,7 @@ def outlier_mad_df(
     df_out : pandas.DataFrame
         Filtered DataFrame with outliers removed. Has same structure
         as input but with fewer rows.
-    bb_out : numpy.ndarray
+    bb_out : np.array
         Boolean array indicating valid (True) and outlier (False) rows.
         Size matches the number of rows in the input DataFrame.
 

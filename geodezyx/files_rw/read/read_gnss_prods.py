@@ -22,7 +22,6 @@ from geodezyx import conv
 
 # from geodezyx import time_series
 from geodezyx import utils
-from geodezyx.reffram import orb_df_velocity_calc
 
 log = logging.getLogger("geodezyx")
 
