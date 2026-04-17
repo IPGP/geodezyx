@@ -243,6 +243,7 @@ def baselines_plot(
     ylabel = "Distance difference (cm)",
     plt_shift=0.02,
     plt_factor=100,
+    decim=10
 ):
     """
     Plot baseline distance time series for all site pairs.
@@ -279,9 +280,10 @@ def baselines_plot(
 
     ii = 0
     for (sit1, sit2), df_plot in df_bl_inp.groupby(["site1", "site2"]):
+
         ax.plot(
-            df_plot["epoch"],
-            (df_plot[col] + ii * plt_shift) * plt_factor,
+            df_plot["epoch"].values[::decim],
+            (df_plot[col].values[::decim] + ii * plt_shift) * plt_factor,
             label=f"{sit1}-{sit2}",
             color="C" + str(ii),
             marker=marker,
