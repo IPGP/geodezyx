@@ -472,7 +472,13 @@ def dl_orbclk(
     prods = []
     ######### ORBITS CLOCKS ETC...
     for data_centers in data_centers:
-        mgex = True if "MGX" in prod_ac_name else False
+        if "MGX" in prod_ac_name:
+            if "GRG" in prod_ac_name:
+                mgex = False
+            else:
+                mgex = True
+        else:
+            mgex = False
         prods = dl_prods_fct(
             prod_parent_dir,
             dates_lis,
