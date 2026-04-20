@@ -472,7 +472,8 @@ def dl_orbclk(
     prods = []
     ######### ORBITS CLOCKS ETC...
     for data_centers in data_centers:
-        mgex = True if "MGX" in prod_ac_name else False
+        # mgex is True only when "MGX" is present and "GRG" is absent; otherwise it is False.
+        mgex = "MGX" in prod_ac_name and "GRG" not in prod_ac_name
         prods = dl_prods_fct(
             prod_parent_dir,
             dates_lis,
@@ -604,7 +605,7 @@ def dl_prods(prod_dir, dates_inp, prod_ac_name, download_lock=None, use_tite=Fal
                 dates_inp,
                 prod_ac_name,
                 prod_types=("sp3", "clk"),
-                data_centers=("cddis", "esa", "ign"),
+                data_centers=("cddis",), # , "esa", "ign"), #REACTIVATE ME WHEN FIXED!
             )
         finally:
             if download_lock:
