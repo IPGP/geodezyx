@@ -335,7 +335,7 @@ class MyFTP_TLS(FTP_TLS):
         return conn, size
 
 
-def ftp_objt_create(
+def create_ftp_obj(
     secure_ftp_inp=False,
     host="",
     chdir="",
@@ -409,15 +409,14 @@ def ftp_objt_create(
     # define the main obj for crawling
     if len(ftp_obj_list_out) > 0:
         ftp_main = ftp_obj_list_out[0]
+        # change the directory of the main ftp obj if we ask for it
+        if chdir:
+            log.info("Move to: %s", chdir)
+            ftp_main.cwd(chdir)
     else:
         errmsg = "No FTP object(s) were created successfully :("
         log.error(errmsg)
-        raise Exception(errmsg)
-
-    # change the directory of the main ftp obj if we ask for it
-    if chdir:
-        log.info("Move to: %s", chdir)
-        ftp_main.cwd(chdir)
+        ftp_main = None
 
     return ftp_main, ftp_obj_list_out
 
@@ -606,7 +605,7 @@ def ftp_downld_front(
     host_use = urlpathobj.apply(lambda p: p.parts[1]).unique()[0]
 
     # Create the FTP object
-    ftpobj_main, ftpobj_lis = ftp_objt_create(
+    ftpobj_main, ftpobj_lis = create_ftp_obj(
         secure_ftp_inp=secure_ftp_use,
         host=host_use,
         parallel_download=parallel_download,
@@ -615,15 +614,19 @@ def ftp_downld_front(
         timeout=timeout,
     )
 
+    if not ftpobj_main:
+        warnmsg = "No FTP object could be created successfully. FTP download is aborted."
+        log.warning(warnmsg)
+        return []
+
     # Create a list of FTP objects for parallel downloads
     ftpobj_mp_lis = ftpobj_lis * int(np.ceil(len(urllist) / parallel_download))
     force_lis = [force] * len(urllist)
 
     # Check if there are less FTP objects than URLs for parallel download
     if len(ftpobj_mp_lis) < len(urllist):
-        log.warning(
-            "less FTP objects than URL for parallel download, contact the main developper"
-        )
+        warnmsg = "less FTP objects than URL for parallel download, contact the main developper"
+        log.warning(warnmsg)
 
     # Create a ThreadPool for parallel downloads
     pool = ThreadPool(parallel_download)
@@ -751,7 +754,7 @@ def check_loc_file(
     return False, False, ""
 
 
-def get_ftp_connect(
+def renew_ftp_obj(
     ftpobj,
     host,
     protocol,
@@ -808,13 +811,18 @@ def get_ftp_connect(
         else:
             sftp_use = bool(sftp)
 
-        ftpobj, _ = ftp_objt_create(
+        ftpobj, _ = create_ftp_obj(
             secure_ftp_inp=sftp_use,
             host=host,
             user=user,
             passwd=passwd,
             timeout=timeout,
         )
+
+        if not ftpobj:
+            warnmsg = "No FTP object could be created successfully."
+            log.warning(warnmsg)
+
         return ftpobj, host
 
     return ftpobj, prev_host
@@ -1141,7 +1149,7 @@ def crawl_ftp_files(
         count_loop += 1
 
         # Get or create FTP connection
-        ftpobj, prev_host = get_ftp_connect(
+        ftpobj, prev_host = renew_ftp_obj(
             ftpobj,
             row["host"],
             row["protocol"],
@@ -1339,7 +1347,6 @@ def orbclk_long2short_name(
 
 
 #### GRAVEYARD
-
 
 # def downloader(
 #     url, savedir, force=False, check_if_file_already_exists_uncompressed=True
