@@ -519,7 +519,8 @@ def make_pairs(
 
     if len(df_bases) == 0:
         log.error(f"No base RINEX files found for site: {sit_bas_use}")
-        log.error(f"All sites found: {str(list(df_all["site9"].unique()))}")
+        sites_fnd = str(list(df_all["site9"].unique()))
+        log.error(f"All sites found: {sites_fnd}")
         return [], df_all
 
     bas_prev, rov_prev = "", ""
