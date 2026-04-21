@@ -17,4 +17,5 @@ from .read_rinex import *
 from .read_rinex_nav import *
 from .read_sinex import *
 from .read_slr import *
+from .read_stats_rtklib import *
 
