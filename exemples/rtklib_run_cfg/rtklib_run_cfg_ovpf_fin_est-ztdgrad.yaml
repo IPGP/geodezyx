@@ -35,10 +35,10 @@ sites_bases:
   - NONE       # No base station
 #  - GITG00REU  # Base station
 #  - B59300REU  # Base station
-out_dir: /backuped/calcgnss/rtklib_process/OVPF_static-start_FIN_est-ztdgrad  # Output directory
+out_dir: /backuped/calcgnss/rtklib_process/OVPF_static-start_FIN_est-ztd  # Output directory
 
 # Optional parameters
-exp_prefix: OVPF_static-start_FIN_est-ztdgrad             # Output filename prefix (default: empty)
+exp_prefix: OVPF_static-start_FIN_est-ztd                 # Output filename prefix (default: empty)
 igs_prods: GRG0MGXFIN                                     # IGS product ID (default: GRG0OPSULT)
 tmp_dir: /backuped/calcgnss/rtklib_process/090_TMP        # Temporary directory (default: <out_dir>/TMP)
 prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib  # GNSS products directory (default: <tmp_dir>)
