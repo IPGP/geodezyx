@@ -160,7 +160,7 @@ def subprocess_frontend2(
     return exitcode
 
 
-def groops_basic_runner(
+def groops_basic_run(
     xml_cfg_path="",
     global_var_dict=dict(),
     xml_var_dict=dict(),
@@ -298,7 +298,7 @@ def _search_xml_groops_global(xmlpath, global_label):
 ###############################################################################
 
 
-def groops_ppp_full_runner(
+def groops_ppp_full_run(
     rinex_path,
     project_name,
     igs_ac_10char,
@@ -453,7 +453,7 @@ def groops_ppp_full_runner(
     global_var_dict["groopsInpVmfGridFile3"] = VMF_files[-2]
     global_var_dict["groopsInpVmfGridFile4"] = VMF_files[-1]
 
-    groops_basic_runner(
+    groops_basic_run(
         xml_cfg_path,
         global_var_dict,
         log_dir=log_dir,
@@ -552,7 +552,7 @@ def groops_ppp_full_runner(
         global_var_dict["timeEnd"] = date_rnx_mjd + 1
         global_var_dict["igsAC10Char"] = igs_ac_10char
         global_var_dict["inpIgsProdsDir"] = prods_gnss_dir
-        groops_basic_runner(
+        groops_basic_run(
             xml_cfg_path,
             global_var_dict,
             log_dir=log_dir,
@@ -570,7 +570,7 @@ def groops_ppp_full_runner(
 
         xml_cfg_path = cfg_files_root_dir + cfg_files_dict["convProds_bias"]
 
-        groops_basic_runner(
+        groops_basic_run(
             xml_cfg_path,
             global_var_dict,
             log_dir=log_dir,
@@ -588,7 +588,7 @@ def groops_ppp_full_runner(
 
         xml_cfg_path = cfg_files_root_dir + cfg_files_dict["convProds_orbit"]
 
-        groops_basic_runner(
+        groops_basic_run(
             xml_cfg_path,
             global_var_dict,
             log_dir=log_dir,
@@ -606,7 +606,7 @@ def groops_ppp_full_runner(
 
         xml_cfg_path = cfg_files_root_dir + cfg_files_dict["convProds_alt_attitude"]
 
-        groops_basic_runner(
+        groops_basic_run(
             xml_cfg_path,
             global_var_dict,
             log_dir=log_dir,
@@ -624,7 +624,7 @@ def groops_ppp_full_runner(
 
         xml_cfg_path = cfg_files_root_dir + cfg_files_dict["convProds_attitude"]
 
-        groops_basic_runner(
+        groops_basic_run(
             xml_cfg_path,
             global_var_dict,
             log_dir=log_dir,
@@ -662,7 +662,7 @@ def groops_ppp_full_runner(
         global_var_dict["inpSitelogMainDir"] = os.path.dirname(sitelog_path)
         global_var_dict["sitelogFile"] = os.path.basename(sitelog_path)
 
-        groops_basic_runner(
+        groops_basic_run(
             xml_cfg_path,
             global_var_dict,
             log_dir=log_dir,
@@ -684,7 +684,7 @@ def groops_ppp_full_runner(
     global_var_dict["site4Char"] = site4char
     global_var_dict["inpGnssObsRnxFile"] = rinex_path
 
-    groops_basic_runner(
+    groops_basic_run(
         xml_cfg_path,
         global_var_dict,
         log_dir=log_dir,
@@ -724,7 +724,7 @@ def groops_ppp_full_runner(
     global_var_dict["timeStart"] = date_rnx_mjd
     global_var_dict["timeEnd"] = date_rnx_mjd + 1
 
-    groops_basic_runner(
+    groops_basic_run(
         xml_cfg_path,
         global_var_dict,
         log_dir=log_dir,

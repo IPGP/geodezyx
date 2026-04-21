@@ -176,7 +176,7 @@ def pride_right_brdc(brdc_lis_inp, tmp_dir_inp):
     return brdc_ori, brdc_unzip
 
 
-def pride_pppar_runner_mono(
+def pride_pppar_run_mono(
         rnx_path,
         cfg_template_path,
         prod_ac_name,
@@ -505,7 +505,7 @@ def pride_pppar_runner_mono(
 
 def pride_pppar_mp_wrap(kwargs_inp):
     try:
-        operational.pride_pppar_runner_mono(**kwargs_inp)
+        operational.pride_pppar_run_mono(**kwargs_inp)
     except Exception as e:
         log.error("%s raised, RINEX is skipped: %s",
                   type(e).__name__,
@@ -515,23 +515,23 @@ def pride_pppar_mp_wrap(kwargs_inp):
     return None
 
 
-def pride_pppar_runner(rnx_path_list,
-                       cfg_template_path,
-                       prod_ac_name,
-                       prod_parent_dir,
-                       tmp_dir,
-                       cfg_dir,
-                       run_dir,
-                       multi_process=1,
-                       cfg_prefix='pride_pppar_cfg_1a',
-                       mode='K',
-                       options_dic={},
-                       bin_dir=None,
-                       force=False,
-                       dl_prods=False,
-                       default_fallback=False,
-                       dl_prods_only=False,
-                       clean_run_dir=True):
+def pride_pppar_run(rnx_path_list,
+                    cfg_template_path,
+                    prod_ac_name,
+                    prod_parent_dir,
+                    tmp_dir,
+                    cfg_dir,
+                    run_dir,
+                    multi_process=1,
+                    cfg_prefix='pride_pppar_cfg_1a',
+                    mode='K',
+                    options_dic={},
+                    bin_dir=None,
+                    force=False,
+                    dl_prods=False,
+                    default_fallback=False,
+                    dl_prods_only=False,
+                    clean_run_dir=True):
 
     """
     Runs the PRIDE PPPAR process for a single RINEX file.

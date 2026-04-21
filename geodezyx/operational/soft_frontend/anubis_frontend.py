@@ -28,7 +28,7 @@ log = logging.getLogger('geodezyx')
 ##########  END IMPORT  ##########
 
 
-def anubis_runner(
+def anubis_run(
     rnx_inp,
     out_dir_main,
     xml_config_generic,

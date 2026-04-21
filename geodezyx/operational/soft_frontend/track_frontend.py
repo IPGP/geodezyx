@@ -39,7 +39,7 @@ log = logging.getLogger('geodezyx')
 ##########  END IMPORT  ##########
 
 
-def track_runner(
+def track_run(
     rnx_rover,
     rnx_base,
     working_dir,
