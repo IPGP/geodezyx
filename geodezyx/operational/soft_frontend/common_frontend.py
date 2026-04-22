@@ -413,6 +413,7 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
             archtype="year/doy",
             parallel_download=1,
             force=force,
+            no_rnx2=True
         )
         brdc_tmp_stk.extend(brdc_tmp)
     # manage the weird output of download_gnss_rinex,
