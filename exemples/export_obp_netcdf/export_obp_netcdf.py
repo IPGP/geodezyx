@@ -14,8 +14,8 @@ import pandas as pd
 # =============================================================================
 
 # Choose which example to run
-run_halios = False
-run_a0a_rbr = True
+run_halios = True
+run_a0a_rbr = False
 run_emso_azores = False
 
 # =========================================================================
@@ -25,8 +25,8 @@ if run_halios:
     # Define file paths
     step = "1"  # "1","10","100"
     p_pres = f"/home/sakic/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/paros_p_{step}s_cat.pkl"
-    p_temp_sns = "/home/sakic/IPGP_WORK/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/paros_p_temp_cat.pkl"
-    p_temp_sea = "/home/sakic/IPGP_WORK/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/paros_p2t_1s_cat.pkl"
+    p_temp_sns = "/home/sakic/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/paros_p_temp_cat.pkl"
+    p_temp_sea = "/home/sakic/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/paros_p2t_1s_cat.pkl"
 
     # Read data using dedicated function
     df, column_mapping = marine.read_halios_first_deploy(
@@ -60,13 +60,13 @@ if run_halios:
 
     # Define conversion factors
     conversion_factors = {
-        'pressure': 0.01,  # hPa to dbar
+        'pressure_seafloor': 0.01,  # hPa to dbar
         'temperature_seawater': 0.001,  # milli-degrees to degrees
         'pressure_barometer': 0.01
     }
 
     # Output directory
-    output_dir = "/home/psakicki/GFZ_WORK/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/netcdf_cf"
+    output_dir = "/home/sakic/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/netcdf_cf"
 
     # Export to NetCDF
     output_path = marine.export_obp_to_netcdf(
@@ -119,7 +119,7 @@ if run_a0a_rbr:
 
     # Define conversion factors
     conversion_factors = {
-        "pressure": 0.01,  # hPa to dbar
+        "pressure_seafloor": 0.01,  # hPa to dbar
         "temperature_seawater": 1.0,  # No conversion needed
         "temperature_sensor": 1.0,  # No conversion needed
         "pressure_barometer": 0.01,
@@ -135,6 +135,7 @@ if run_a0a_rbr:
         output_dir=output_dir,
         metadata_dict=metadata_dict,
         conversion_factors=conversion_factors,
+        force=True
     )
 
 # =========================================================================
@@ -158,7 +159,7 @@ if run_emso_azores:
 
     ### step 3.3: Define conversion factors
     conversion_factors = {
-        "pressure": 0.01,  # hPa to dbar
+        "pressure_seafloor": 0.01,  # hPa to dbar
         "temperature_seawater": 1.0,  # No conversion needed
         }
 
