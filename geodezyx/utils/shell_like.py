@@ -573,12 +573,11 @@ def find_recursive(parent_folder , pattern,
     if regex and case_sensitive:
         case_sensitive = False
 
-
     if case_sensitive or not regex: # standard case, pattern is a wildcard
         regex_mode = False
         for root, dirnames, filenames in os.walk(parent_folder):
             for filename in fnmatch.filter(filenames, pattern):
-            #for filename in fnmatch.fnmatch(filenames, pattern):
+                # for filename in fnmatch.fnmatch(filenames, pattern):
                 matches.append(os.path.join(root, filename))
     else: # not case sensitive, use a regex
         regex_mode = True
@@ -589,14 +588,13 @@ def find_recursive(parent_folder , pattern,
                 except Exception as e:
                     log.error("if regex = True, pattern have to be a REGEX (and not only a simple wildcard)")
                     raise e
-                    
+
                 if bool_match:
                     matches.append(os.path.join(root, filename))
 
     if sort_results:
         matches = sorted(matches)
-        
-    
+
     if extended_file_stats:
         matches_ext = []
         for f in matches:
@@ -605,15 +603,15 @@ def find_recursive(parent_folder , pattern,
             except FileNotFoundError:
                 log.warning("file not found %s",f)
                 continue
-                
+
             matches_ext.append((f,stat))
         matches = matches_ext
-        
+
     if warn_if_empty and len(matches) == 0:
         log.warning("no files found! check parent folder and pattern (regex mode: %s)", regex_mode)
         log.info("Parent folder: %s",parent_folder)
         log.info("Pattern      : %s",pattern)
-                
+
     return matches
 
 def glob_smart(dir_path,file_pattern=None,verbose=True):
