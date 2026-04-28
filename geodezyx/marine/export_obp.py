@@ -4,15 +4,6 @@
 Created on 06/12/2025 21:28:55
 
 @author: psakic
-"""
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Dec  2 18:51:28 2025
-Refactored on Dec 6, 2025
-
-@author: psakicki
 
 Create NetCDF files following CF-1.6 Convention
 This script generates ocean bottom pressure and temperature time series data
@@ -128,9 +119,10 @@ def export_obp_to_netcdf(
     val_time = conv.dt2posix(df_obp[colnam_time]).values
 
     # Extract data arrays
+    # pressure_seafloor & temperature_seawater are mandatory, others are optional
     colnam_pres = column_mapping["pressure_seafloor"]
-    colnam_temp_sens = column_mapping["temperature_sensor"]
     colnam_temp_seaw = column_mapping["temperature_seawater"]
+    colnam_temp_sens = column_mapping.get("temperature_sensor")
     colnam_pres_baro = column_mapping.get("pressure_barometer")
     colnam_temp_baro = column_mapping.get("temperature_barometer")
 
@@ -139,16 +131,19 @@ def export_obp_to_netcdf(
     val_temp_sens = df_obp[colnam_temp_sens].values * conversion_factors.get("temperature_sensor", 1)
     val_temp_seaw = df_obp[colnam_temp_seaw].values * conversion_factors.get("temperature_seawater", 1)
 
-    # Barometer data (optional)
-    if colnam_pres_baro is not None and len(colnam_pres_baro) > 0:
-        val_pres_baro = df_obp[colnam_pres_baro].values * conversion_factors.get("pressure_barometer", 1)
-    else:
-        val_pres_baro = None
+    def _colnam2val(colnam_inp):
+        if colnam_inp is not None and len(colnam_inp) > 0:
+            val_out = df_obp[colnam_inp].values * conversion_factors.get(colnam_inp, 1)
+        else:
+            val_out = None
+        return val_out
 
-    if colnam_temp_baro is not None and len(colnam_temp_baro) > 0:
-        val_temp_baro = df_obp[colnam_temp_baro].values * conversion_factors.get("temperature_barometer", 1)
-    else:
-        val_temp_baro = None
+    # temperature sensor (optional)
+    val_temp_sens = _colnam2val(colnam_temp_sens)
+
+    # Barometer data (optional)
+    val_pres_baro = _colnam2val(colnam_pres_baro)
+    val_temp_baro = _colnam2val(colnam_temp_baro)
 
     if utils.is_iterable(colnam_pres):
         num_sensors = len(colnam_pres)
@@ -170,7 +165,7 @@ def export_obp_to_netcdf(
     time_dim = nc.createDimension('time', num_samples)
     if num_sensors > 1 or keep_sensor_dimension:
         sensor_dim = nc.createDimension('sensor', num_sensors)
-        dim_sens_tup = ('time', 'sensor')
+        dim_sens_tup = ('sensor', 'time')
     else:
         dim_sens_tup = ('time',)
 
@@ -181,7 +176,7 @@ def export_obp_to_netcdf(
     var_time.units = 'seconds since 1970-01-01 00:00:00'
     var_time.long_name = 'Time'
     var_time.standard_name = 'time'
-    var_time.calendar = 'gregorian'
+    var_time.calendar = 'standard'
     var_time.axis = 'T'
     var_time[:] = val_time
 
@@ -207,13 +202,14 @@ def export_obp_to_netcdf(
     var_temp_seaw[...] = val_temp_seaw.astype(np.float32)
 
     # Sensor Internal Temperature
-    var_temp_sens = nc.createVariable('temperature_sensor', 'f4', dim_sens_tup, fill_value=-9999.0)
-    var_temp_sens.units = 'degrees_Celsius'
-    var_temp_sens.long_name = 'Sensor Internal Temperature'
-    var_temp_sens.valid_min = np.float32(val_temp_sens.min())
-    var_temp_sens.valid_max = np.float32(val_temp_sens.max())
-    var_temp_sens.comment = 'Internal temperature of the pressure sensor'
-    var_temp_sens[...] = val_temp_sens.astype(np.float32)
+    if val_temp_sens is not None:
+        var_temp_sens = nc.createVariable('temperature_sensor', 'f4', dim_sens_tup, fill_value=-9999.0)
+        var_temp_sens.units = 'degrees_Celsius'
+        var_temp_sens.long_name = 'Sensor Internal Temperature'
+        var_temp_sens.valid_min = np.float32(val_temp_sens.min())
+        var_temp_sens.valid_max = np.float32(val_temp_sens.max())
+        var_temp_sens.comment = 'Internal temperature of the pressure sensor'
+        var_temp_sens[...] = val_temp_sens.astype(np.float32)
 
     # Barometer pressure (optional)
     if val_pres_baro is not None:
