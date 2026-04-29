@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 from geodezyx import utils, conv, files_rw, time_series, reffram, stats, utils_xtra
 import numpy as np
 
+#### Import the logger
+import logging
+log = logging.getLogger('geodezyx')
+
 
 def d_calc(coords_delta, mean_win=86400, strain_win=7 * 86400):
     """
@@ -243,7 +247,7 @@ def baselines_plot(
     ylabel = "Distance difference (cm)",
     plt_shift=0.02,
     plt_factor=100,
-    decim=10
+    decim=100
 ):
     """
     Plot baseline distance time series for all site pairs.
