@@ -10,6 +10,7 @@ Created on Fri Aug  2 17:38:41 2019
 import copy
 import datetime as dt
 import itertools
+import numbers
 
 #### Import the logger
 import logging
@@ -1503,7 +1504,9 @@ def time_win_multi(inplis):
 def ts_from_list(A, B, C, T, initype, sA=[], sB=[], sC=[], stat="STAT", name="NoName"):
     tsout = time_series.TimeSeriePoint()
 
-    if not (type(T[0]) is float or type(T[0]) is int):
+    # Check if T[0] is not a number (float, int, or numpy numeric types).
+    # If it's not a number, assume it's a datetime and convert it to POSIX timestamps
+    if not isinstance(T[0], numbers.Number):
         T = conv.dt2posix(T)
 
     if len(sA) == 0:

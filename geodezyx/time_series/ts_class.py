@@ -982,6 +982,7 @@ class TimeSeriePoint:
 
         return df
 
+
     def sort(self):
         """
         Sort points in the TimeSerie by time (in-place).
