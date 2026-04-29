@@ -1143,6 +1143,100 @@ def read_gins_double_diff_multi(filelistin):
     return tsdico
 
 
+def read_spotgins(filein):
+    """
+    Read a SPOTGINS ENU position file and return a TimeSeriePoint object.
+
+    The SPOTGINS ENU file is a whitespace-separated ASCII file with no header,
+    containing daily positioning time series in the East-North-Up (ENU) frame.
+
+    Parameters
+    ----------
+    filein : str
+        Path to the input SPOTGINS ENU file (e.g. ``SPOTGINS_HOUZ00GLP.enu``).
+
+    Returns
+    -------
+    TimeSeriePoint
+        Time series object containing the extracted ENU coordinates with their
+        formal uncertainties (1-sigma). The station name is inferred from the
+        filename (field between the first underscore and the dot extension).
+
+    Notes
+    -----
+    File columns (whitespace-separated, no header):
+
+    0. MJD            – Modified Julian Day
+    1. East [m]       – East displacement
+    2. North [m]      – North displacement
+    3. Up [m]         – Up displacement
+    4. sigma_E [m]    – Formal uncertainty of East
+    5. sigma_N [m]    – Formal uncertainty of North
+    6. sigma_U [m]    – Formal uncertainty of Up
+    7. DateStr        – Date string ``YYYYMMDDHHmmSS``
+    8. Year_decimal   – Decimal year
+    9. SatSys         – Satellite system flag (e.g. ``G``)
+    10. ProductID      – Solution product identifier
+    11. QualityFlag    – Quality flag (e.g. ``VALIDE_25_2``)
+
+    Examples
+    --------
+    >>> ts = read_spotgins("SPOTGINS_HOUZ00GLP.enu")
+    >>> ts.plot()
+    """
+    tsout = time_series.TimeSeriePoint()
+
+    # --- extract station name from filename ---
+    basename = os.path.basename(filein)
+    # Expected form: SPOTGINS_<STAT>.enu  →  take text between first '_' and '.'
+    name_part = os.path.splitext(basename)[0]          # strip extension
+    if "_" in name_part:
+        stat = name_part.split("_", 1)[1]              # everything after first '_'
+    else:
+        stat = name_part
+
+    try:
+        fobj = open(filein)
+    except Exception as e:
+        log.error("read_spotgins: unable to open %s", filein)
+        raise e
+
+    for line in fobj:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+
+        f = line.split()
+        if len(f) < 7:
+            log.warning("read_spotgins: skipping short line: %s", line)
+            continue
+
+        try:
+            mjd = float(f[0])
+            E   = float(f[1])
+            N   = float(f[2])
+            U   = float(f[3])
+            sE  = float(f[4])
+            sN  = float(f[5])
+            sU  = float(f[6])
+        except ValueError:
+            log.warning("read_spotgins: cannot parse line: %s", line)
+            continue
+
+        T = conv.mjd2dt(mjd)
+
+        point = time_series.Point(E, N, U, T, "ENU", sE, sN, sU)
+        tsout.add_point(point)
+
+    fobj.close()
+
+    tsout.boolENU = True
+    tsout.meta_set(filein, stat=stat)
+    tsout.sort()
+
+    return tsout
+
+
 def read_spotgins_quick(p):
     """
     Read SpotGINS quick format file.
@@ -1174,6 +1268,9 @@ def read_spotgins_quick(p):
     df = df.drop("mjd", axis=1)
 
     return df
+
+
+
 
 
 def diff_spotgins_quick(df1, df2):
