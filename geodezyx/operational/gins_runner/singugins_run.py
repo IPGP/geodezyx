@@ -239,6 +239,7 @@ def main():
         "-cty",
         "--country_code",
         type=str,
+        default = "XXX",
         help="A string (3 caracter ISO code) to help find the right site code in case of ambiguity",
     )
 
