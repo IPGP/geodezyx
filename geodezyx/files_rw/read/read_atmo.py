@@ -131,7 +131,7 @@ _TROP_FALLBACK_COLS = {
 }
 
 
-def read_snx_trop(snxfile, dataframe_output=True):
+def read_snx_trop(snxfile, dataframe_output=True, auto_desc_cols=False):
     """
     Read troposphere solutions from a Troposphere SINEX file.
 
@@ -186,6 +186,12 @@ def read_snx_trop(snxfile, dataframe_output=True):
         If ``True`` (default), return a :class:`pandas.DataFrame`.
         If ``False``, return a sorted list of dicts (one dict per epoch/station
         record) with keys ``STAT``, ``epoc``, and one key per data column.
+    auto_desc_cols : bool, optional
+        If ``True``, column names are extracted from the ``TROP/DESCRIPTION`` block and
+        used as-is (after post-processing).
+        If ``False`` (default), the function falls back to predefined column names.
+        Set to ``True`` to preserve original column names from the file;
+        set to ``False`` to enforce a consistent naming convention based on field count.
 
     Returns
     -------
@@ -259,7 +265,7 @@ def read_snx_trop(snxfile, dataframe_output=True):
         n = len(values)
         rec = {"site": stat, "epoch": epoch}
 
-        if desc_cols:
+        if desc_cols and auto_desc_cols:
             # Dynamic path: use column names from TROP/DESCRIPTION
             for i, col in enumerate(desc_cols):
                 rec[col] = _fnan(values[i]) if i < n else np.nan
@@ -280,7 +286,6 @@ def read_snx_trop(snxfile, dataframe_output=True):
         return troposinex2df(records)
     else:
         return records
-
 
 def troposinex2df(records):
     """
@@ -310,6 +315,8 @@ def troposinex2df(records):
     df[param_cols] = df[param_cols].apply(pd.to_numeric, errors="coerce")
     return df
 
+p = "/home/sakic/IPGP_WORK/OVS/GNSS_OVS/2603_tropo_GL_MQ/015_ngl_tropo/030_sinex/HOUE/2020/HOUE.2020.005.trop"
+read_snx_trop(p)
 
 
 def read_gfz_trop(trpfile):

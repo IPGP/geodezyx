@@ -21,7 +21,6 @@ log = logging.getLogger("geodezyx")
 _NGL_BASE_URL = "https://geodesy.unr.edu/gps_timeseries"
 
 
-
 # ============================================================
 #  Low-level helpers
 # ============================================================
@@ -52,7 +51,6 @@ def _ngl_trop_url(station: str, year: int, frame: str = "IGS20") -> str:
     """
     stat = station.upper()
     return f"{_NGL_BASE_URL}/{frame}/trop/{stat}/{stat}.{year}.trop.zip"
-
 
 
 # ============================================================
@@ -268,9 +266,7 @@ def download_ngl_trop(
                 try:
                     df = files_rw.read_snx_trop(trop_path)
                 except Exception as exc:
-                    log.warning(
-                        "Could not read SINEX file %s: %s", trop_path, exc
-                    )
+                    log.warning("Could not read SINEX file %s: %s", trop_path, exc)
                     continue
 
                 if df is None or df.empty:
@@ -289,5 +285,3 @@ def download_ngl_trop(
         results["parquet_paths"] = parquet_paths
 
     return results
-
-
