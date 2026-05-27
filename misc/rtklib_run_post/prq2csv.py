@@ -12,6 +12,7 @@ df_raw = pd.read_parquet(inp_prq, engine="auto")
 sample = "15min"
 
 for (rov, bas), df_grp in df_raw.groupby(['rover', 'base']):
+    print(rov, bas)
     df_epo = df_grp.set_index("epoch")
     df_med = df_epo[['x', 'y', 'z']].resample(sample).median()
     df_med.reset_index(inplace=True)
