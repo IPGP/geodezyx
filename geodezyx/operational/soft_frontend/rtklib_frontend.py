@@ -28,10 +28,13 @@ import collections
 import logging
 import os
 import subprocess
+from os import PathLike
+
 import numpy as np
 import shutil as shutils
 import pandas as pd
 import pyarrow.parquet as pq
+from pandas.core.interchange.dataframe_protocol import DataFrame
 from tqdm import tqdm
 
 # from threading import Lock
@@ -278,6 +281,11 @@ def rtklib_run_mono(
         out_prq_fil = out_res_fil.replace(".out", ".parquet")
         df_out2prq = files_rw.read_rtklib(out_res_fil, return_df=True)
         df_out2prq.to_parquet(out_prq_fil, engine="auto")
+
+        resmpl = "01min"
+        out_csv_fil = out_res_fil.replace(".out", "_" + resmpl + ".csv")
+        _resample_df(df_out2prq, resmpl).to_csv(out_csv_fil, index=False)
+
         log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
 
     if not keep_tmp:
@@ -655,6 +663,115 @@ def rtklib_merge_parquet(
 
     log.info(f"Merged parquet saved to {prq_path_out}")
     return prq_path_out
+
+
+def _resample_df(df_inp: DataFrame, sample: str = "15min"):
+    """
+    Resample a DataFrame with GNSS position data to a specified time interval.
+
+    This helper function resamples DataFrame containing GNSS solution positions (x, y, z)
+    to a coarser time resolution using median aggregation. It removes any duplicate
+    entries resulting from the resampling operation.
+
+    Parameters
+    ----------
+    df_inp : pandas.DataFrame
+        Input DataFrame with an 'epoch' column (datetime or datetime-like) and
+        position columns 'x', 'y', 'z' (numeric).
+    sample : str, default="15min"
+        Resampling interval as a pandas time offset string.
+        Examples: "1min", "15min", "1H" (1 hour), "1D" (1 day).
+
+    Returns
+    -------
+    pandas.DataFrame
+        Resampled DataFrame with:
+        - 'epoch' column (reset from index)
+        - 'x', 'y', 'z' columns containing median values over each resampling interval
+        - No duplicate rows
+
+    Notes
+    -----
+    - Uses median aggregation to provide robust resampling (resistant to outliers)
+    - Expects the input DataFrame to have an 'epoch' column with datetime values
+    - The original epoch index is reset in the output
+    """
+    # ...existing code...
+    df_epo = df_inp.set_index("epoch")
+    df_med = df_epo[["x", "y", "z"]].resample(sample).median()
+    df_out = df_med.reset_index(inplace=False)
+    df_out = df_out.drop_duplicates(inplace=False)
+    return df_out
+
+
+def parquet2csv(
+    prq_inp: str | PathLike, out_dir: str | PathLike, sample: str = "15min"
+):
+    """
+    Convert merged RTKLIB parquet file to CSV format, processed by rover/base pairs.
+
+    Reads a merged parquet file containing GNSS solutions from multiple rover/base
+    station pairs, resamples each pair's data independently, and exports to CSV files.
+    This function uses PyArrow filters to minimize memory usage by reading only the
+    data relevant to each rover/base pair.
+
+    Parameters
+    ----------
+    prq_inp : str or os.PathLike
+        Path to the merged parquet file containing rover/base pair GNSS solutions.
+        The file must contain columns: 'epoch', 'rover', 'base', 'x', 'y', 'z'.
+    out_dir : str or os.PathLike
+        Output directory where CSV files will be saved. Created if it doesn't exist.
+    sample : str, default="15min"
+        Resampling interval for position data. Passed to _resample_df().
+        Examples: "1min", "15min", "1H", "1D"
+
+    Returns
+    -------
+    None
+
+    Output Files
+    ------------
+    CSV files in `out_dir` with naming pattern:
+        {rover}_{base}_{sample}.csv
+
+    Each CSV contains columns:
+        - epoch: datetime of the resampled position
+        - x, y, z: median position coordinates for the resampling interval
+
+    Notes
+    -----
+    - Uses PyArrow filter expressions to read only necessary data from the parquet file
+    - Efficiently handles large parquet files by filtering at read time (minimal RAM usage)
+    - Processes each rover/base pair sequentially
+    - Prints rover/base pair names to console as they are processed
+    """
+    # Read the merged parquet file to get unique rover/base combinations
+    df_rovbas = pd.read_parquet(
+        prq_inp, engine="auto", columns=["base", "rover"]
+    ).drop_duplicates()
+
+    # Process each unique rover/base pair
+    for irow, (rov, bas) in df_rovbas.iterrows():
+        print(rov, bas)
+
+        # Define PyArrow filters to read only this rover/base pair
+        # Filters minimize memory usage by selecting data at read time
+        filters = [
+            ("rover", "==", rov),
+            ("base", "==", bas),
+        ]
+
+        # Read only the filtered data for this pair
+        df_grp = pd.read_parquet(prq_inp, engine="auto", filters=filters)
+
+        # Resample to the specified time interval
+        df_out = _resample_df(df_grp, sample)
+
+        # Export to CSV file with naming convention: rover_base_sample.csv
+        df_out.to_csv(f"{out_dir}/{rov}_{bas}_{sample}.csv", index=False)
+
+    return None
 
 
 def rtklib_run(
