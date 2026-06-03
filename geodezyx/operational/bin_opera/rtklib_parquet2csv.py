@@ -95,7 +95,7 @@ def parquet2csv_main():
         log.error(f"Failed to create output directory '{args.out_dir}': {e}")
         return 1
 
-    log.info("Parquet2CSV conversion parameters:")
+    log.info("parquet2csv conversion parameters:")
     log.info(f"  Input parquet file: {args.prq_inp}")
     log.info(f"  Output directory:   {args.out_dir}")
     log.info(f"  Resampling interval: {args.sample}")

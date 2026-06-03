@@ -753,7 +753,7 @@ def parquet2csv(
 
     # Process each unique rover/base pair
     for irow, (rov, bas) in df_rovbas.iterrows():
-        print(rov, bas)
+        log.info("loading rover/base: %s/%s", rov, bas)
 
         # Define PyArrow filters to read only this rover/base pair
         # Filters minimize memory usage by selecting data at read time
@@ -769,7 +769,9 @@ def parquet2csv(
         df_out = _resample_df(df_grp, sample)
 
         # Export to CSV file with naming convention: rover_base_sample.csv
-        df_out.to_csv(f"{out_dir}/{rov}_{bas}_{sample}.csv", index=False)
+        out_path = f"{out_dir}/{rov}_{bas}_{sample}.csv"
+        log.info("saving %s resampled data to CSV: %s", sample, out_path)
+        df_out.to_csv(out_path, index=False)
 
     return None
 
