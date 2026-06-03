@@ -34,7 +34,7 @@ import numpy as np
 import shutil as shutils
 import pandas as pd
 import pyarrow as pa
-import pyarrow.parquet as pq
+import  pyarrow.parquet as pq
 from tqdm import tqdm
 
 # from threading import Lock
@@ -684,17 +684,23 @@ def rtklib_merge_parquet(
             pbar.set_postfix_str(os.path.basename(f), refresh=False)
             if sample:
                 # Read as pandas, resample, then convert back to pyarrow
-                df = pd.read_parquet(f)
-                df = _resample_df(df, sample)
-                tbl = pa.Table.from_pandas(df)
-                tbl = _drop_pandas_meta(tbl)
+                try:
+                    df = pd.read_parquet(f)
+                    df = _resample_df(df, sample)
+                    tbl = pa.Table.from_pandas(df)
+                    tbl = _drop_pandas_meta(tbl)
+                    corrupt_tbl = False
+                except:
+                    corrupt_tbl = True
             else:
-                tbl = _drop_pandas_meta(pq.read_table(f))
-            if tbl.num_columns == 0:
+                tbl = _drop_pandas_meta(pa.parquet.read_table(f))
+                corrupt_tbl = True if tbl.num_columns == 0 else False
+
+            if corrupt_tbl:
                 log.warning(f"Skipping empty/corrupt parquet file: {f}")
                 continue
             if writer is None:
-                writer = pq.ParquetWriter(prq_path_wrk, tbl.schema)
+                writer = pa.parquet.ParquetWriter(prq_path_wrk, tbl.schema)
             writer.write_table(tbl)
     finally:
         if writer:
@@ -845,7 +851,6 @@ def rtklib_run(
     procs=8,
     exe_path="rnx2rtkp",
     fast_parquet_merge=False,
-    sample=None,
 ):
 
     log.info("STEP 1: Finding RINEX files and matching rover/base pairs")
@@ -894,7 +899,6 @@ def rtklib_run(
         exp_prefix=exp_prefix,
         fast_merge=fast_parquet_merge,
         rtklib_out_files=out_run_pairs,
-        sample=sample,
     )
 
     return out_run_pairs
