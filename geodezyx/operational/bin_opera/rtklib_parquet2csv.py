@@ -106,7 +106,7 @@ def parquet2csv_main():
             out_dir=args.out_dir,
             sample=args.sample,
         )
-        log.info("Parquet2CSV conversion completed successfully")
+        log.info("parquet2csv conversion completed successfully")
         return 0
 
     except Exception as e:

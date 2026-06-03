@@ -748,7 +748,7 @@ def parquet2csv(
     """
     # Read the merged parquet file to get unique rover/base combinations
     df_rovbas = pd.read_parquet(
-        prq_inp, engine="auto", columns=["base", "rover"]
+        prq_inp, engine="auto", columns=["rover", "base"]
     ).drop_duplicates()
 
     # Process each unique rover/base pair
