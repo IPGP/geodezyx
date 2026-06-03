@@ -670,7 +670,7 @@ def _resample_df(df_inp: DataFrame, sample: str = "15min"):
     Resample a DataFrame with GNSS position data to a specified time interval.
 
     This helper function resamples DataFrame containing GNSS solution positions (x, y, z)
-    to a coarser time resolution using median aggregation. It removes any duplicate
+    to a coarser time resolution using nanmedian aggregation. It removes any duplicate
     entries resulting from the resampling operation.
 
     Parameters
@@ -687,18 +687,18 @@ def _resample_df(df_inp: DataFrame, sample: str = "15min"):
     pandas.DataFrame
         Resampled DataFrame with:
         - 'epoch' column (reset from index)
-        - 'x', 'y', 'z' columns containing median values over each resampling interval
+        - 'x', 'y', 'z' columns containing nanmedian values over each resampling interval
         - No duplicate rows
 
     Notes
     -----
-    - Uses median aggregation to provide robust resampling (resistant to outliers)
+    - Uses nanmedian aggregation to provide robust resampling (resistant to outliers and NaN values)
     - Expects the input DataFrame to have an 'epoch' column with datetime values
     - The original epoch index is reset in the output
     """
     # ...existing code...
     df_epo = df_inp.set_index("epoch")
-    df_med = df_epo[["x", "y", "z"]].resample(sample).nanmedian()
+    df_med = df_epo[["x", "y", "z"]].resample(sample).apply(np.nanmedian)
     df_out = df_med.reset_index(inplace=False)
     df_out = df_out.drop_duplicates(inplace=False)
     return df_out
