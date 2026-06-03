@@ -698,7 +698,7 @@ def _resample_df(df_inp: DataFrame, sample: str = "15min"):
     """
     # ...existing code...
     df_epo = df_inp.set_index("epoch")
-    df_med = df_epo[["x", "y", "z"]].resample(sample).median()
+    df_med = df_epo[["x", "y", "z"]].resample(sample).nanmedian()
     df_out = df_med.reset_index(inplace=False)
     df_out = df_out.drop_duplicates(inplace=False)
     return df_out
@@ -747,6 +747,7 @@ def parquet2csv(
     - Prints rover/base pair names to console as they are processed
     """
     # Read the merged parquet file to get unique rover/base combinations
+    log.info(f"Identify rover/base pairs in: {prq_inp}")
     df_rovbas = pd.read_parquet(
         prq_inp, engine="auto", columns=["rover", "base"]
     ).drop_duplicates()
