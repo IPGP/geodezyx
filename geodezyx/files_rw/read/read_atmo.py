@@ -315,9 +315,6 @@ def troposinex2df(records):
     df[param_cols] = df[param_cols].apply(pd.to_numeric, errors="coerce")
     return df
 
-p = "/home/sakic/IPGP_WORK/OVS/GNSS_OVS/2603_tropo_GL_MQ/015_ngl_tropo/030_sinex/HOUE/2020/HOUE.2020.005.trop"
-read_snx_trop(p)
-
 
 def read_gfz_trop(trpfile):
     """
