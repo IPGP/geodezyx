@@ -67,5 +67,6 @@ exe_path: rnx2rtkp
 
 # Parquet merge options
 fast_parquet_merge: False  # If True, only merge newly created parquet files instead of scanning the whole output directory
+sample: 5min  # Sample size for quick processing (e.g., "5min" for 5 minutes, default: None for full processing)
 
 
