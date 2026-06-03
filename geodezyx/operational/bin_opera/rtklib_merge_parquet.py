@@ -13,10 +13,13 @@ import sys
 import argparse
 import logging
 from pathlib import Path
+from geodezyx import utils
 from geodezyx.operational.soft_frontend.rtklib_frontend import rtklib_merge_parquet
 
 log = logging.getLogger("geodezyx")
 
+# Extract defaults from rtklib_merge_parquet function at module level for synchronization
+RTKLIB_MERGE_DEFAULTS = utils.fct_def_args(rtklib_merge_parquet)
 
 def parse_args():
     """Parse command line arguments."""
@@ -32,11 +35,17 @@ Examples:
   rtklib_merge_parquet -p /path/to/results -e myexp
 
   # fast merge: append specific files to an existing _all.parquet
-  rtklib_merge_parquet -p /path/to/results -e myexp --fast_merge \\
-      -rof /path/to/results/2024/001/run1.out /path/to/results/2024/002/run2.out
+   rtklib_merge_parquet -p /path/to/results -e myexp --fast_merge \\
+       -rof /path/to/results/2024/001/run1.out /path/to/results/2024/002/run2.out
 
-  # explicit list of parquet files (no directory scan)
-  rtklib_merge_parquet -p /path/to/a.parquet /path/to/b.parquet -e myexp
+   # explicit list of parquet files (no directory scan)
+   rtklib_merge_parquet -p /path/to/a.parquet /path/to/b.parquet -e myexp
+ 
+   # with resampling (15min)
+   rtklib_merge_parquet -p /path/to/results -e myexp -s 15min
+ 
+   # with resampling (1 hour)
+   rtklib_merge_parquet -p /path/to/results -e myexp -s 1H
 """,
     )
 
@@ -83,6 +92,17 @@ Examples:
         ),
     )
 
+    parser.add_argument(
+        "-s",
+        "--sample",
+        default=RTKLIB_MERGE_DEFAULTS.get("sample"),
+        help=(
+            "Resampling interval for position data (default: None, no resampling). "
+            "If provided, resamples each table to the specified interval before merging. "
+            "Examples: '1min', '15min', '1H' (1 hour), '1D' (1 day)"
+        ),
+    )
+
     return parser.parse_args()
 
 
@@ -120,6 +140,8 @@ def rtklib_merge_prq_main():
     log.info(f"Fast merge:           {args.fast_merge}")
     if args.rtklib_out_files:
         log.info(f"RTKLIB out files:     {len(args.rtklib_out_files)} file(s)")
+    if args.sample:
+        log.info(f"Resampling interval:  {args.sample}")
 
     try:
         all_prq_path = rtklib_merge_parquet(
@@ -127,6 +149,7 @@ def rtklib_merge_prq_main():
             exp_prefix=args.exp_prefix,
             fast_merge=args.fast_merge,
             rtklib_out_files=args.rtklib_out_files,
+            sample=args.sample,
         )
         log.info(f"Merged parquet saved to: {all_prq_path}")
         return 0

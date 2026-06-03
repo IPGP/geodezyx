@@ -213,6 +213,14 @@ Examples:
         action="store_true",
         help=f"Fast parquet merge: only merge newly created parquet files instead of scanning the whole output directory (default: {RTKLIB_RUN_DEFAULTS.get('fast_parquet_merge')})",
     )
+    parser.add_argument(
+        "-spl",
+        "--sample",
+        help=(
+            f"Resampling interval for position data during parquet merge (default: {RTKLIB_RUN_DEFAULTS.get('sample')}, no resampling). "
+            "Examples: '1min', '15min', '1H' (1 hour), '1D' (1 day)"
+        ),
+    )
 
     args_namespace = parser.parse_args()
     args_dict = vars(args_namespace)

@@ -8,44 +8,18 @@ Created on 2026/03/04
 CLI interface for converting RTKLIB output files to Parquet format.
 """
 
-import os
 import sys
 import argparse
 import logging
 from pathlib import Path
 from geodezyx import utils, files_rw
+from geodezyx.operational.soft_frontend.rtklib_frontend import rtklib_parquet
 
 log = logging.getLogger("geodezyx")
 
-def rtklib_parquet(resdir, pattern="*out", force=False):
-    """
-    Convert RTKLIB output files to Parquet format.
+# Extract defaults from rtklib_parquet function at module level for synchronization
+RTKLIB_PARQUET_DEFAULTS = utils.fct_def_args(rtklib_parquet)
 
-    Parameters
-    ----------
-    resdir : str
-        Results directory containing RTKLIB output files.
-    pattern : str, optional
-        File pattern to search for (default: "*out").
-    force : bool, optional
-        Force conversion even if parquet file already exists (default: False).
-
-    Returns
-    -------
-    list
-        List of created/updated parquet files.
-    """
-    l_out = utils.find_recursive(resdir, pattern)
-    f_prq_lis = []
-    for f in l_out:
-        f_prq = f.replace(".out", ".parquet")
-        if not os.path.isfile(f_prq) or force:
-            df_out2prq = files_rw.read_rtklib(f, return_df=True)
-            df_out2prq.to_parquet(f_prq, engine="auto")
-            f_prq_lis.append(f_prq)
-            log.info(f"Created parquet file: {f_prq}")
-
-    return f_prq_lis
 
 def parse_args():
     """Parse command line arguments."""
@@ -54,10 +28,11 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  rtklib_parquet /path/to/results
+  rtklib_parquet -r /path/to/results
   rtklib_parquet -r /path/to/results --pattern "*.out"
   rtklib_parquet -r /path/to/results --force
-  rtklib_parquet -r /path/to/results -p "*.out" -f
+  rtklib_parquet -r /path/to/results --sample 15min
+  rtklib_parquet -r /path/to/results -p "*.out" -f -s 1H
 """,
     )
 
@@ -82,6 +57,16 @@ Examples:
         "--force",
         action="store_true",
         help="Force conversion even if parquet file already exists",
+    )
+
+    parser.add_argument(
+        "-s",
+        "--sample",
+        default=RTKLIB_PARQUET_DEFAULTS.get("sample"),
+        help=(
+            "Resampling interval for position data (default: None, no resampling). "
+            "Examples: '1min', '15min', '1H' (1 hour), '1D' (1 day)"
+        ),
     )
 
     return parser.parse_args()
@@ -110,9 +95,11 @@ def rtklib_prq_main():
     log.info(f"Processing directory: {resdir}")
     log.info(f"Pattern: {args.pattern}")
     log.info(f"Force conversion: {args.force}")
+    if args.sample:
+        log.info(f"Resampling interval: {args.sample}")
 
     try:
-        f_prq_lis = rtklib_parquet(resdir, pattern=args.pattern, force=args.force)
+        f_prq_lis = rtklib_parquet(resdir, pattern=args.pattern, force=args.force, sample=args.sample)
 
         if f_prq_lis:
             log.info(f"Successfully converted {len(f_prq_lis)} file(s) to Parquet format")

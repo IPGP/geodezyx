@@ -33,8 +33,8 @@ from os import PathLike
 import numpy as np
 import shutil as shutils
 import pandas as pd
+import pyarrow as pa
 import pyarrow.parquet as pq
-from pandas.core.interchange.dataframe_protocol import DataFrame
 from tqdm import tqdm
 
 # from threading import Lock
@@ -281,11 +281,6 @@ def rtklib_run_mono(
         out_prq_fil = out_res_fil.replace(".out", ".parquet")
         df_out2prq = files_rw.read_rtklib(out_res_fil, return_df=True)
         df_out2prq.to_parquet(out_prq_fil, engine="auto")
-
-        resmpl = "01min"
-        out_csv_fil = out_res_fil.replace(".out", "_" + resmpl + ".csv")
-        _resample_df(df_out2prq, resmpl).to_csv(out_csv_fil, index=False)
-
         log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
 
     if not keep_tmp:
@@ -570,12 +565,48 @@ def make_pairs(
 
     return rnxs_pairs, df_all
 
+def rtklib_parquet(resdir, pattern="*out", force=False, sample=None):
+    """
+    Convert RTKLIB output files to Parquet format.
+
+    Parameters
+    ----------
+    resdir : str
+        Results directory containing RTKLIB output files.
+    pattern : str, optional
+        File pattern to search for (default: "*out").
+    force : bool, optional
+        Force conversion even if parquet file already exists (default: False).
+    sample : str, optional
+        Resampling interval for position data (default: None, no resampling).
+        If provided, uses _resample_df to resample to the specified interval.
+        Examples: "1min", "15min", "1H" (1 hour), "1D" (1 day).
+
+    Returns
+    -------
+    list
+        List of created/updated parquet files.
+    """
+    l_out = utils.find_recursive(resdir, pattern)
+    f_prq_lis = []
+    for f in l_out:
+        f_prq = f.replace(".out", ".parquet")
+        if not os.path.isfile(f_prq) or force:
+            df_out2prq = files_rw.read_rtklib(f, return_df=True)
+            if sample:
+                df_out2prq = _resample_df(df_out2prq, sample)
+            df_out2prq.to_parquet(f_prq, engine="auto")
+            f_prq_lis.append(f_prq)
+            log.info(f"Created parquet file: {f_prq}")
+
+    return f_prq_lis
 
 def rtklib_merge_parquet(
     parquet_inp,
     exp_prefix="",
     fast_merge=False,
     rtklib_out_files=None,
+    sample=None,
 ):
     """
     Merge individual RTKLIB parquet files into a single consolidated parquet file.
@@ -598,6 +629,11 @@ def rtklib_merge_parquet(
         List of ``.out`` file paths produced by a previous RTKLIB run.
         Only used when ``fast_merge=True`` and ``parquet_inp`` is a directory,
         to avoid a full recursive scan.
+    sample : str, optional
+        Resampling interval for position data (default: None, no resampling).
+        If provided, uses _resample_df to resample each table to the specified interval
+        before merging.
+        Examples: "1min", "15min", "1H" (1 hour), "1D" (1 day).
 
     Returns
     -------
@@ -646,7 +682,14 @@ def rtklib_merge_parquet(
         pbar = tqdm(l_prq_merge, desc="Merging parquet", unit="file")
         for f in pbar:
             pbar.set_postfix_str(os.path.basename(f), refresh=False)
-            tbl = _drop_pandas_meta(pq.read_table(f))
+            if sample:
+                # Read as pandas, resample, then convert back to pyarrow
+                df = pd.read_parquet(f)
+                df = _resample_df(df, sample)
+                tbl = pa.Table.from_pandas(df)
+                tbl = _drop_pandas_meta(tbl)
+            else:
+                tbl = _drop_pandas_meta(pq.read_table(f))
             if tbl.num_columns == 0:
                 log.warning(f"Skipping empty/corrupt parquet file: {f}")
                 continue
@@ -665,7 +708,7 @@ def rtklib_merge_parquet(
     return prq_path_out
 
 
-def _resample_df(df_inp: DataFrame, sample: str = "15min"):
+def _resample_df(df_inp: pd.DataFrame, sample: str = "15min"):
     """
     Resample a DataFrame with GNSS position data to a specified time interval.
 
@@ -802,6 +845,7 @@ def rtklib_run(
     procs=8,
     exe_path="rnx2rtkp",
     fast_parquet_merge=False,
+    sample=None,
 ):
 
     log.info("STEP 1: Finding RINEX files and matching rover/base pairs")
@@ -850,6 +894,7 @@ def rtklib_run(
         exp_prefix=exp_prefix,
         fast_merge=fast_parquet_merge,
         rtklib_out_files=out_run_pairs,
+        sample=sample,
     )
 
     return out_run_pairs
