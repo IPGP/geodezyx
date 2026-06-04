@@ -56,7 +56,7 @@ def _rtklib_header(filein):
     re_x_ecef = re.compile(f"x-ecef")
     re_utc = re.compile(f"%  UTC")
     re_gpst = re.compile(f"%  GPST")
-    re_inp_file =re.compile(f"% inp file")
+    re_inp_file = re.compile(f"% inp file")
 
     inp_file_lis = []
 
@@ -84,7 +84,7 @@ def _rtklib_header(filein):
     return initype, d_utcgps, inp_file_lis
 
 
-def _rtklib_load_df(filein, d_utcgps=0, inpfilis=None):
+def _rtklib_load_df(filein, d_utcgps: int = 0, inpfilis=None):
     """Load RTKLIB file into DataFrame."""
     try:
         df = pd.read_csv(filein, comment="%", sep=r"\s+", header=None, engine="python")
@@ -119,6 +119,7 @@ def _rtklib_load_df(filein, d_utcgps=0, inpfilis=None):
         + pd.to_timedelta(df["time"])
         + pd.Timedelta(seconds=d_utcgps)
     )
+    df["date"] = df["date"].astype("datetime64[ns]")
 
     # get rover and base names from header if possible, else set to "XXXX00XXX"
     if inpfilis is not None:
@@ -179,11 +180,12 @@ def _rtklib_ts_point(row, initype, t):
 
     return point
 
+
 def _rtklib_inpfiles2sites(inpfilis):
     rov_bn = os.path.basename(inpfilis[0].split()[-1])
     bas_bn = os.path.basename(inpfilis[1].split()[-1])
 
-    if conv.rinex_regex_search_tester(rov_bn,short_name=False):
+    if conv.rinex_regex_search_tester(rov_bn, short_name=False):
         rover = rov_bn[0:4].upper()
     else:
         rover = rov_bn[0:4].upper()
@@ -193,6 +195,7 @@ def _rtklib_inpfiles2sites(inpfilis):
     else:
         base = bas_bn[0:4].upper()
     return rover, base
+
 
 def _rtklib_ts_meta(tsout, filein, initype, inpfilis):
     """Add metadata to TimeSeriePoint from RTKLIB file."""
@@ -376,4 +379,3 @@ def _read_rtklib_legacy(filein):
         pass
 
     return tsout
-
