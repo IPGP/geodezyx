@@ -1,0 +1,64 @@
+# RTKLIB Processing Configuration Example
+# Use with: rtklib_run -y rtklib_run_cfg_ovpf_ult.yaml
+
+# Required parameters
+rnx_dir:
+  - /gpfs/users/sakic/scratch_sakic/spotgins_bdrnx/data_PF_2026_01D01S/ # Directory containing RINEX files
+cfgfile_generik: /gpfs/users/sakic/geodezyx/exemples/rtklib_configfiles/rtknavi_example_ovpf_01d.conf # RTKLIB configuration file
+## sites_rovers: two syntaxes are supported:
+##   (A) Standard: list of rover names + separate sites_bases list (cartesian product)
+##   (B) Pair syntax: each entry is "ROVER,BASE" (explicit pairs; sites_bases is ignored)
+## Example of syntax (B):
+# sites_rovers:
+#   - BOMG00REU,GITG00REU
+#   - BORG00REU,B59300REU
+## (below uses syntax A)
+sites_rovers:                                     # List of rover stations
+  - AJB000MTQ
+  - CHN000MTQ
+  - LAM000MTQ
+  - MFO000MTQ
+  - MLM000MTQ
+  - MMA000MTQ
+  - MPL000MTQ
+  - SAM000MTQ
+  - SCH200MTQ
+  - LRIZ00MTQ
+sites_bases:
+  - HABO00MTQ              # Base station
+  - FSDC00MTQ              # Base station
+out_dir: /gpfs/users/sakic/scratch_sakic/rtklib_process/OVSM_static_FIN  # Output directory
+
+# Optional parameters
+exp_prefix: OVSM_static_FIN                          # Output filename prefix (default: empty)
+igs_prods: GRG0MGXFIN                                     # IGS product ID (default: GRG0OPSULT)
+tmp_dir: /gpfs/users/sakic/scratch_sakic/rtklib_process/090_TMP        # Temporary directory (default: <out_dir>/TMP)
+prod_dir: /gpfs/users/sakic/scratch_sakic/rtklib_process/prods_gnss_rtklib  # GNSS products directory (default: <tmp_dir>)
+
+# Date range (optional, processes all if not specified)
+date_srt: "1 year ago days ago at 23:59"            # Start date (YYYY-MM-DD or YYYY-DDD)
+date_end: "8 days ago at 23:59"            # End date (YYYY-MM-DD or YYYY-DDD)
+
+# Station coordinates (optional, uses RINEX header if not provided)
+xyz_dic:
+  HABO00MTQ: [+2.976227671815597e+06, -5.404753229910718e+06, +1.611768493086464e+06]
+  FSDC00MTQ: [+2.977561673941250e+06, -5.404212368573486e+06, +1.611870096466877e+06]
+
+# RTKLIB configuration overrides (optional)
+posmode: static  # Position mode: 0:single,1:dgps,2:kinematic,3:static,4:static-start,5:movingbase,6:fixed,7:ppp-kine,8:ppp-static,9:ppp-fixed
+solformat: xyz   # Solution format: llh, xyz, enu, nmea
+sateph: precise  # Satellite ephemeris: brdc, precise, brdc+sbas, brdc+ssrapc, brdc+ssrcom
+
+# Processing options
+force: False     # Force reprocessing (overwrite existing)
+keep_tmp: False  # Clean temporary directory after processing
+procs: 100         # Number of parallel workers (default: 4)
+
+# Executable path (optional)
+exe_path: /gpfs/users/sakic/rtklib/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp
+
+# Parquet merge options
+fast_parquet_merge: False  # If True, only merge newly created parquet files instead of scanning the whole output directory
+sample: 1d  # resample points when merging the parquets (e.g., "5min" for 5 minutes, default: None for all points)
+
+
