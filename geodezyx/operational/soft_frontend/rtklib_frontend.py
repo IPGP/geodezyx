@@ -851,6 +851,7 @@ def rtklib_run(
     procs=8,
     exe_path="rnx2rtkp",
     fast_parquet_merge=False,
+    sample=None,
 ):
 
     log.info("STEP 1: Finding RINEX files and matching rover/base pairs")
@@ -899,6 +900,7 @@ def rtklib_run(
         exp_prefix=exp_prefix,
         fast_merge=fast_parquet_merge,
         rtklib_out_files=out_run_pairs,
+        sample=sample,
     )
 
     return out_run_pairs
