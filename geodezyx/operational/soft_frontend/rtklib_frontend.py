@@ -515,6 +515,11 @@ def make_pairs(
         end_epoch=date_end,
     )
 
+    if len(rinex_all) == 0:
+        errmsg = "No RINEX found, abort..."
+        log.error(errmsg)
+        raise FileNotFoundError(errmsg)
+
     df_all = operational.rinex_table_from_list(rnxs_all, site9_col=True)
     df_all["date_end"] = df_all["date"] + df_all["per"]
     df_rovers = df_all[df_all["site9"].isin(sit_rov_use)]
