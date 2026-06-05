@@ -3,7 +3,7 @@
 
 # Required parameters
 rnx_dir:
-  - /gpfs/users/sakic/scratch_sakic/spotgins_bdrnx/data_PF_2026_01D01S/ # Directory containing RINEX files
+  - /gpfs/users/sakic/scratch_sakic/spotgins_bdrnx/data_ovs_glass/MQ_new/IPGP-GNSS/ # Directory containing RINEX files
 cfgfile_generik: /gpfs/users/sakic/geodezyx/exemples/rtklib_configfiles/rtknavi_example_ovpf_01d.conf # RTKLIB configuration file
 ## sites_rovers: two syntaxes are supported:
 ##   (A) Standard: list of rover names + separate sites_bases list (cartesian product)
