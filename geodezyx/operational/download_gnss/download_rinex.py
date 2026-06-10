@@ -282,7 +282,7 @@ def gen_table_rnx(
             log.info("datacenter/stations: %s/all", datacenter)
         else:
             log.info("datacenter/stations: %s/%s", datacenter, " ".join(site_lis))
-        for date, site in itertools.product(date_range, site_lis):
+        for site, date in itertools.product(site_lis, date_range):
             if site is None:
                 all_sites = True
 
@@ -315,7 +315,8 @@ def gen_table_rnx(
     table["host"] = urlpaths.apply(lambda p: p.parts[1])
     table["dir"] = urlpaths.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
-    # Sort table
-    table.sort_values(by=["date", "site"], inplace=True)
+    # Sort table to ensure consistent order
+    table.sort_values(by=["site", "date"], inplace=True)
+    table.reset_index(drop=True, inplace=True)
 
     return table
