@@ -316,6 +316,6 @@ def gen_table_rnx(
     table["dir"] = urlpaths.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
     # Sort table
-    table.sort_values(by=["url_theo"], inplace=True)
+    table.sort_values(by=["date", "site"], inplace=True)
 
     return table
