@@ -315,4 +315,7 @@ def gen_table_rnx(
     table["host"] = urlpaths.apply(lambda p: p.parts[1])
     table["dir"] = urlpaths.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
+    # Sort table
+    table.sort_values(by=["url_theo"], inplace=True)
+
     return table

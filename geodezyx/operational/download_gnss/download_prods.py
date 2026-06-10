@@ -200,7 +200,7 @@ def gen_table_prods(
     table["url_true"] = None
     table["filename"] = ""
 
-    # a sort to have
+    # Sort table
     table.sort_values(by=["date", "ac", "prod"], inplace=True)
 
     return table
