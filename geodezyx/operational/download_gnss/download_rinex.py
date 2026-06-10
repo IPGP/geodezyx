@@ -320,6 +320,6 @@ def gen_table_rnx(
     table.reset_index(drop=True, inplace=True)
 
 
-    log.info(table.to_string())
+    #log.info(table.to_string())
 
     return table
