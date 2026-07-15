@@ -70,6 +70,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.volc_deform.html">geodezyx.volc_deform package</a></li>
 </ul>
 </li>
 </ul>
@@ -138,6 +139,32 @@ Switch only if the best candidate is better than current by switch_margin_db.</p
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>pd.Series indexed by expected epochs, values are PRN or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.build_residual_dataframe">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">build_residual_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_obs_used</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dP_est</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicted_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'predicted_m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residual_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'residual_m'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.build_residual_dataframe" title="Link to this definition"></a></dt>
+<dd><p>Build a residual DataFrame aligned with the observation DataFrame actually
+used in the least-squares adjustment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_obs_used</strong> (<em>pd.DataFrame</em>) – Observation DataFrame used to build A and B.
+Its row order must match the row order of A and B.</p></li>
+<li><p><strong>A</strong> (<em>np.ndarray</em>) – Design matrix.</p></li>
+<li><p><strong>B</strong> (<em>np.ndarray</em>) – Observation vector.</p></li>
+<li><p><strong>dP_est</strong> (<em>np.ndarray</em>) – Estimated parameter vector.</p></li>
+<li><p><strong>predicted_col</strong> (<em>str</em><em>, </em><em>default=&quot;predicted_m&quot;</em>) – Name of the column storing the predicted values A &#64; dP_est.</p></li>
+<li><p><strong>residual_col</strong> (<em>str</em><em>, </em><em>default=&quot;residual_m&quot;</em>) – Name of the column storing the residuals B - A &#64; dP_est.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Copy of df_obs_used enriched with predicted values and residuals.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -246,6 +273,174 @@ et retourne les trois premières valeurs sous forme de numpy.array.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.hatch_carrier_smoothing_by_satellite">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">hatch_carrier_smoothing_by_satellite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_gap_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slip_threshold_m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Series</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.hatch_carrier_smoothing_by_satellite" title="Link to this definition"></a></dt>
+<dd><p>Apply Hatch carrier smoothing to a code observable independently for each
+satellite.</p>
+<p>This function implements a simple code-phase smoothing strategy in which
+the code observable provides the absolute range level, while the carrier
+phase provides a much less noisy short-term range evolution.</p>
+<p>The smoothing is performed separately for each satellite track, assuming
+that the input DataFrame uses a MultiIndex containing at least:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘epoch’ : observation epoch</p></li>
+<li><p>‘prn’   : satellite identifier</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – Input observation DataFrame indexed by a MultiIndex containing
+at least (‘epoch’, ‘prn’).</p></li>
+<li><p><strong>code_col</strong> (<em>str</em>) – Name of the code observable column, in meters.</p></li>
+<li><p><strong>phase_col</strong> (<em>str</em>) – Name of the carrier-phase observable column, in meters.
+Important: this must already be expressed in meters, not in cycles.</p></li>
+<li><p><strong>window</strong> (<em>int</em><em>, </em><em>default=100</em>) – <p>Maximum Hatch smoothing length, in number of epochs.</p>
+<p>The effective smoothing duration is approximately:</p>
+<blockquote>
+<div><p>window * sampling_seconds</p>
+</div></blockquote>
+<dl class="simple">
+<dt>With the default values used in this TP:</dt><dd><p>100 * 30 s = 3000 s ≈ 50 min</p>
+</dd>
+</dl>
+<p>A larger window gives stronger smoothing but requires longer
+continuity of the phase observable.</p>
+</p></li>
+<li><p><strong>sampling_seconds</strong> (<em>float</em><em>, </em><em>default=30.0</em>) – <p>Nominal time interval, in seconds, between two consecutive epochs
+for a given satellite.</p>
+<dl class="simple">
+<dt>This is used to detect abnormal time gaps. For example:</dt><dd><ul>
+<li><p>30.0 for a 30-second RINEX</p></li>
+<li><p>1.0  for a 1-second RINEX</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>max_gap_factor</strong> (<em>float</em><em>, </em><em>default=1.5</em>) – <p>Time-gap tolerance factor used to decide whether the smoothing filter
+must be reset.</p>
+<p>The filter is reset when the time interval between two consecutive
+epochs exceeds:</p>
+<blockquote>
+<div><p>max_gap_factor * sampling_seconds</p>
+</div></blockquote>
+<dl class="simple">
+<dt>With the default values:</dt><dd><p>1.5 * 30 s = 45 s</p>
+</dd>
+</dl>
+<p>Therefore, the filter is reset if a time gap larger than 45 seconds
+is detected.</p>
+</p></li>
+<li><p><strong>slip_threshold_m</strong> (<em>float</em><em> | </em><em>None</em><em>, </em><em>default=10.0</em>) – <p>Optional crude consistency threshold, in meters, used as a simple
+protection against cycle slips or other discontinuities.</p>
+<dl class="simple">
+<dt>At each epoch, the function compares:</dt><dd><ul>
+<li><p>the code increment   : P(k) - P(k-1)</p></li>
+<li><p>the phase increment  : L(k) - L(k-1)</p></li>
+</ul>
+</dd>
+</dl>
+<p>If:</p>
+<blockquote>
+<div><p>abs( [P(k)-P(k-1)] - [L(k)-L(k-1)] ) &gt; slip_threshold_m</p>
+</div></blockquote>
+<p>the filter is reset.</p>
+<p>This is only a simple pedagogical safeguard, not a rigorous
+cycle-slip detection method.</p>
+<p>If set to None, this additional test is disabled.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Smoothed code observable, in meters, aligned with df.index.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The recursive Hatch formula is:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>P_tilde(k) = (1/n) * P(k)</dt><dd><ul class="simple">
+<li><p>((n - 1)/n) * [P_tilde(k-1) + L(k) - L(k-1)]</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>where:</dt><dd><ul class="simple">
+<li><p>P_tilde(k) is the smoothed code,</p></li>
+<li><p>P(k) is the raw code,</p></li>
+<li><p>L(k) is the carrier phase in meters,</p></li>
+<li><p>n is the current smoothing length, increasing progressively up to
+the maximum value ‘window’.</p></li>
+</ul>
+</dd>
+<dt>The filter is reset when:</dt><dd><ul class="simple">
+<li><p>the code or phase is missing,</p></li>
+<li><p>the time gap is too large,</p></li>
+<li><p>the optional code-phase increment consistency test fails.</p></li>
+</ul>
+</dd>
+</dl>
+<p>In this TP, the default values are chosen for a simple and robust
+introductory use case based on 30-second GNSS data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.hatch_carrier_smoothing_by_satellite_fb">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">hatch_carrier_smoothing_by_satellite_fb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_gap_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slip_threshold_m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.hatch_carrier_smoothing_by_satellite_fb" title="Link to this definition"></a></dt>
+<dd><p>Apply forward-backward Hatch carrier smoothing independently for each
+satellite.</p>
+<dl class="simple">
+<dt>The function returns three aligned series:</dt><dd><ul class="simple">
+<li><p>forward  Hatch smoothing</p></li>
+<li><p>backward Hatch smoothing</p></li>
+<li><p>forward-backward average</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – Input observation DataFrame indexed by a MultiIndex containing at
+least (‘epoch’, ‘prn’).</p></li>
+<li><p><strong>code_col</strong> (<em>str</em>) – Name of the code observable column, in meters.</p></li>
+<li><p><strong>phase_col</strong> (<em>str</em>) – Name of the carrier-phase observable column, in meters.
+Important: this phase must already be expressed in meters.</p></li>
+<li><p><strong>window</strong> (<em>int</em><em>, </em><em>default=100</em>) – Maximum Hatch smoothing length, in number of epochs.</p></li>
+<li><p><strong>sampling_seconds</strong> (<em>float</em><em>, </em><em>default=30.0</em>) – Nominal sampling interval in seconds.</p></li>
+<li><p><strong>max_gap_factor</strong> (<em>float</em><em>, </em><em>default=1.5</em>) – Reset the filter when the time gap exceeds
+max_gap_factor * sampling_seconds.</p></li>
+<li><p><strong>slip_threshold_m</strong> (<em>float</em><em> | </em><em>None</em><em>, </em><em>default=10.0</em>) – Optional crude consistency threshold, in meters, applied to the
+difference between code and phase increments. If exceeded, the filter
+is reset. If None, no such test is applied.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>DataFrame with three columns:</dt><dd><ul class="simple">
+<li><p>f”{code_col}_smooth_fwd”</p></li>
+<li><p>f”{code_col}_smooth_bwd”</p></li>
+<li><p>f”{code_col}_smooth_fb”</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The forward-backward average is a simple way to reduce the edge effects
+of a purely forward causal smoother. It remains pedagogical and easy to
+inspect, but it is not an optimal state-space smoother.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.load_and_clean_rinex">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">load_and_clean_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.load_and_clean_rinex" title="Link to this definition"></a></dt>
 <dd><p>Charge et nettoie un fichier RINEX d’observation.</p>
@@ -315,42 +510,33 @@ columns = prn, start, end, duration, n_epochs.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.gnss_edu.gnss_edu.plot_residual_analysis">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_residual_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dP_est</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_est</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_rnx_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_residual_analysis" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Computes residuals (v_est = B - A &#64; dP_est) and creates a figure containing:</dt><dd><ol class="arabic simple">
-<li><p>Time series of residuals (displayed as points)</p></li>
-<li><p>Histogram of residuals (number of observations per bin)</p></li>
-<li><p>Q-Q Plot of residuals</p></li>
-<li><p>Scatter plot of residuals vs predicted values</p></li>
-<li><p>Text box displaying statistics (mean, variance, std dev, skewness, kurtosis)</p></li>
-<li><p>(Optional) Text box with additional position information:
-- Distance between estimated position and initial RINEX header position
-- Local ENU coordinates computed via tools.toolCartLocGRS80</p></li>
-</ol>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.gnss_edu.gnss_edu.</span></span><span class="sig-name descname"><span class="pre">plot_residual_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_residuals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figure_title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_est</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P_rnx_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residual_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'residual_m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicted_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'predicted_m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_left_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'timeseries'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prn_gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Timedelta</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Timedelta('0</span> <span class="pre">days</span> <span class="pre">00:30:00')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_arcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.gnss_edu.gnss_edu.plot_residual_analysis" title="Link to this definition"></a></dt>
+<dd><p>Public residual-analysis function with backward-compatible routing.</p>
+<section id="preferred-api">
+<h3>Preferred API<a class="headerlink" href="#preferred-api" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>plot_residual_analysis(</dt><dd><p>df_residuals=df_residuals,
+figure_title=…,
+save_path=…,
+P_est=…,
+P_rnx_header=…,
+top_left_plot=”timeseries” or “by_prn”,</p>
 </dd>
 </dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>-</em>) – array-like, design matrix.</p></li>
-<li><p><strong>B</strong> (<em>-</em>) – array-like, observation vector.</p></li>
-<li><p><strong>dP_est</strong> (<em>-</em>) – array-like, estimated parameter vector.</p></li>
-<li><p><strong>figure_title</strong> (<em>-</em>) – str, overall figure title.</p></li>
-<li><p><strong>save_path</strong> (<em>-</em>) – str, full path (name + extension) to save the figure.</p></li>
-<li><p><strong>P_est</strong> (<em>-</em>) – array-like, estimated position (for additional info computation).</p></li>
-<li><p><strong>P_rnx_header</strong> (<em>-</em>) – array-like, initial position from RINEX header.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib Figure object containing all subplots.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p>fig</p></li>
-</ul>
-</p>
+<p>)</p>
+</section>
+<section id="legacy-api-deprecated">
+<h3>Legacy API (deprecated)<a class="headerlink" href="#legacy-api-deprecated" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>plot_residual_analysis(</dt><dd><p>A, B, dP_est,
+figure_title=…,
+save_path=…,
+P_est=…,
+P_rnx_header=…,</p>
 </dd>
 </dl>
+<p>)</p>
+</section>
 </dd></dl>
 
 <dl class="py function">

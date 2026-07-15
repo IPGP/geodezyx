@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="geodezyx.operational.gins_runner package" href="geodezyx.operational.gins_runner.html" />
-    <link rel="prev" title="geodezyx.operational package" href="geodezyx.operational.html" /> 
+    <link rel="prev" title="geodezyx.operational.bin_opera package" href="geodezyx.operational.bin_opera.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -63,7 +63,8 @@
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.cluster_gfz">geodezyx.operational.cluster_gfz module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_cddis">geodezyx.operational.download_cddis module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_dropbox">geodezyx.operational.download_dropbox module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_find_files">geodezyx.operational.download_find_files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_ngl">geodezyx.operational.download_ngl module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.local_find_files">geodezyx.operational.local_find_files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_check">geodezyx.operational.rinex_check module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_lister_plotter">geodezyx.operational.rinex_lister_plotter module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_utils">geodezyx.operational.rinex_utils module</a></li>
@@ -75,6 +76,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.volc_deform.html">geodezyx.volc_deform package</a></li>
 </ul>
 </li>
 </ul>
@@ -265,6 +267,8 @@ ok_dwl, ok_loc, url_true, filename.</p>
 <li><p>nav_rt or brdc_rt as archive center allows to download <em>real time</em> nav files from the BKG server</p></li>
 <li><p>rgp (IGN’s RGP main server at St Mandé)</p></li>
 <li><p>rgp_ensg (IGN’s RGP, secondary server at ENSG, Marne-la-Vallée)</p></li>
+<li><p>rgp_v3 (IGN’s RGP main server at St Mandé - RINEX3)</p></li>
+<li><p>rgp_ensg_v3 (IGN’s RGP, secondary server at ENSG, Marne-la-Vallée - RINEX3)</p></li>
 <li><p>rgp_01s (IGN’s RGP, all the 24 hourly rinex for the day will be downloaded)</p></li>
 <li><p>renag</p></li>
 <li><p>renag_crtk &amp; renag_crtk_01s (Centipede RTK data hosted at RENAG)</p></li>
@@ -306,7 +310,9 @@ a new call of crawl_ftp_files.
 Then, we assume the provided list as a complete one,
 ready for the download step</p></li>
 <li><p><strong>path_all_ftp_files_save</strong> (<em>str</em>) – will save at the given path (directory+filename) in a CSV file
-ALL the remote files found on the FTP server.</p></li>
+ALL the remote files found on the FTP server.
+NB: CSV file will be saved each time a new FTP instance
+is created, i.e. every 50 days</p></li>
 <li><p><strong>quiet_mode</strong> (<em>bool</em>) – List the available RINEXs without downloading them.
 Useful only if path_ftp_crawled_files_save is given</p></li>
 <li><p><strong>final_archive_for_sup_check</strong> (<em>str</em>) – The final archive path or a file containing the archived RINEXs in
@@ -408,9 +414,43 @@ Source: <a class="reference external" href="https://stackoverflow.com/questions/
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.TimeoutHTTPAdapter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">TimeoutHTTPAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.TimeoutHTTPAdapter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">HTTPAdapter</span></code></p>
+<p>Custom HTTP adapter that enforces a timeout on all requests.</p>
+<p>This adapter ensures that socket timeouts are properly applied to
+streaming HTTP requests, preventing indefinite hangs during downloads.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.TimeoutHTTPAdapter.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.TimeoutHTTPAdapter.send" title="Link to this definition"></a></dt>
+<dd><p>Sends PreparedRequest object. Returns Response object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – The <code class="xref py py-class docutils literal notranslate"><span class="pre">PreparedRequest</span></code> being sent.</p></li>
+<li><p><strong>stream</strong> – (optional) Whether to stream the request content.</p></li>
+<li><p><strong>timeout</strong> (<em>float</em><em> or </em><em>tuple</em><em> or </em><em>urllib3 Timeout object</em>) – (optional) How long to wait for the server to send
+data before giving up, as a float, or a <span class="xref std std-ref">(connect timeout,
+read timeout)</span> tuple.</p></li>
+<li><p><strong>verify</strong> – (optional) Either a boolean, in which case it controls whether
+we verify the server’s TLS certificate, or a string, in which case it
+must be a path to a CA bundle to use</p></li>
+<li><p><strong>cert</strong> – (optional) Any user-provided SSL certificate to be trusted.</p></li>
+<li><p><strong>proxies</strong> – (optional) The proxies dictionary to apply to the request.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.check_local_file_exists">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">check_local_file_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filergx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_files_cache</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_files_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.check_local_file_exists" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.check_loc_file">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">check_loc_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filergx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_files_cache</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_files_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.check_loc_file" title="Link to this definition"></a></dt>
 <dd><p>Check if a file matching a regex exists locally.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -454,7 +494,7 @@ and ‘filename’ column.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.crawl_ftp_files">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">crawl_ftp_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sftp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_all_ftp_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_files_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.crawl_ftp_files" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">crawl_ftp_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sftp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_ftp_crawled_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_all_ftp_files_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_files_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.crawl_ftp_files" title="Link to this definition"></a></dt>
 <dd><p>Crawl FTP servers to find available files and update download table.</p>
 <p>This is a generic function used by both RINEX and products downloaders.
 It checks for existing local files, connects to FTP servers, lists remote
@@ -479,6 +519,7 @@ files, and updates the table with availability status and actual file URLs.</p>
 Default is False.</p></li>
 <li><p><strong>exclude_patterns</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – List of regex patterns to exclude from matched files.
 Default is None.</p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – The timeout for FTP connections in seconds. Default is 30 seconds.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -493,42 +534,71 @@ Default is None.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.create_ftp_obj">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">create_ftp_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secure_ftp_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.create_ftp_obj" title="Link to this definition"></a></dt>
+<dd><p>This function creates and returns an FTP object and a list of FTP objects for multiple downloads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>secure_ftp_inp</strong> (<em>bool</em>) – If True, uses FTPS for secure file transfer. Default is False.</p></li>
+<li><p><strong>host</strong> (<em>str</em><em>, </em><em>optional</em>) – The hostname of the FTP server. Default is an empty string.</p></li>
+<li><p><strong>chdir</strong> (<em>str</em><em>, </em><em>optional</em>) – The directory to change to after connecting to the FTP server. Default is an empty string.</p></li>
+<li><p><strong>parallel_download</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of parallel downloads to be performed. Default is 1.</p></li>
+<li><p><strong>user</strong> (<em>str</em><em>, </em><em>optional</em>) – The username for the FTP server. Default is “anonymous”.</p></li>
+<li><p><strong>passwd</strong> (<em>str</em><em>, </em><em>optional</em>) – The password for the FTP server. Default is an empty string.</p></li>
+<li><p><strong>retry_count</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of times to retry creating the FTP object. Default is 3.</p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – The timeout for FTP connections in seconds. Default is 120 seconds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The main FTP object for crawling and a list of FTP objects for parallel downloads.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function creates an FTP object using the appropriate constructor based on the secure_ftp_inp parameter.
+It then creates a list of FTP objects for multiple downloads.
+If a directory is specified, it changes the current working directory of the main FTP object to that directory.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.download_http">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">download_http</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_try</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.download_http" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">download_http</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_try</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.download_http" title="Link to this definition"></a></dt>
 <dd><p>Download a file from an HTTP server with retry logic and progress bar.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>url</strong> (<em>str</em>) – The URL of the file to download.</p></li>
 <li><p><strong>output_dir</strong> (<em>str</em>) – The directory where the downloaded file will be saved.</p></li>
-<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – The timeout for the HTTP connection in seconds. Default is 120 seconds.</p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – The timeout for the HTTP connection in seconds. Default is 120 seconds.
+This timeout applies to:
+- Initial connection
+- Headers reading
+- Each chunk reading (per iteration)</p></li>
 <li><p><strong>max_try</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of retry attempts in case of failure. Default is 4.</p></li>
 <li><p><strong>sleep_time</strong> (<em>int</em><em>, </em><em>optional</em>) – The sleep time between retry attempts in seconds. Default is 5 seconds.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, forces the download even if the file already exists locally.
+Default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The path to the downloaded file, or an empty string if the download failed.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>AutorinoDownloadError</strong> – If the download fails after the maximum number of retry attempts.</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>output_path</strong> (<em>str</em>) – The path to the downloaded file, or the URL string if the download
+failed.</p></li>
+<li><p><strong>downloaded</strong> (<em>bool</em>) – <code class="docutils literal notranslate"><span class="pre">True</span></code> if the file was actually fetched from the server during this
+call, <code class="docutils literal notranslate"><span class="pre">False</span></code> if it already existed locally or the download failed.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The timeout is enforced using socket.settimeout() on the underlying
+HTTP connection, which ensures that the entire download operation
+(including streaming) will timeout if no data is received for the
+specified duration.</p>
 </dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.downloader">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">downloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savedir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_if_file_already_exists_uncompressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.downloader" title="Link to this definition"></a></dt>
-<dd><p>general function to download a file</p>
-<p>can also handle non secure FTP</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.downloader_wrap">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">downloader_wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intup</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.downloader_wrap" title="Link to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.effective_save_dir">
@@ -567,28 +637,6 @@ OR only ‘/’ for a dirty saving in the parent folder
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.ftp_dir_list_files">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_dir_list_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftp_obj_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.ftp_dir_list_files" title="Link to this definition"></a></dt>
-<dd><p>Lists the files in the current directory of the FTP object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ftp_obj_in</strong> (<em>FTP object</em>) – The FTP object used to connect to the FTP server.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of filenames in the current directory of the FTP object.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This function tries to get the list of filenames in the current directory of the FTP object.
-If it encounters a permission error, it checks if the error message is “550 No files found”.
-If it is, it logs a warning message and returns an empty list.
-If the error message is different, it raises the exception.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.ftp_downld_core">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_downld_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftp_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">localdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.ftp_downld_core" title="Link to this definition"></a></dt>
 <dd><p>Performs the FTP download if we are already in the correct FTP folder.
@@ -620,7 +668,7 @@ If the download fails, it logs a failure message and returns the local path and 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.ftp_downld_front">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_downld_front</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savedirs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secure_ftp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous&#64;isp.com'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.ftp_downld_front" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_downld_front</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savedirs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secure_ftp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous&#64;isp.com'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.ftp_downld_front" title="Link to this definition"></a></dt>
 <dd><p>This function is used to download files from FTP servers in parallel.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -632,6 +680,7 @@ If the download fails, it logs a failure message and returns the local path and 
 <li><p><strong>user</strong> (<em>str</em><em>, </em><em>optional</em>) – The username for the FTP server. Default is “anonymous”.</p></li>
 <li><p><strong>passwd</strong> (<em>str</em><em>, </em><em>optional</em>) – The password for the FTP server. Default is <a class="reference external" href="mailto:'anonymous&#37;&#52;&#48;isp&#46;com">‘anonymous<span>&#64;</span>isp<span>&#46;</span>com</a>’.</p></li>
 <li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, forces the download even if the file already exists. Default is True.</p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – The timeout for FTP connections in seconds. Default is 30 seconds.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -692,49 +741,6 @@ and then calls the ftp_downloader_core function to download the file.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.ftp_downloader_wo_objects">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_downloader_wo_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tupin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.ftp_downloader_wo_objects" title="Link to this definition"></a></dt>
-<dd><p>create the necessary FTP object</p>
-<p>should not be used anymore</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.ftp_files_crawler_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_files_crawler_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urllist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savedirlist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secure_ftp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.ftp_files_crawler_legacy" title="Link to this definition"></a></dt>
-<dd><p>filter urllist,savedirlist generated with download_gnss_rinex with an
-optimized FTP crawl</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.ftp_objt_create">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">ftp_objt_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secure_ftp_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel_download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'anonymous'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.ftp_objt_create" title="Link to this definition"></a></dt>
-<dd><p>This function creates and returns an FTP object and a list of FTP objects for multiple downloads.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>secure_ftp_inp</strong> (<em>bool</em>) – If True, uses FTPS for secure file transfer. Default is False.</p></li>
-<li><p><strong>host</strong> (<em>str</em><em>, </em><em>optional</em>) – The hostname of the FTP server. Default is an empty string.</p></li>
-<li><p><strong>chdir</strong> (<em>str</em><em>, </em><em>optional</em>) – The directory to change to after connecting to the FTP server. Default is an empty string.</p></li>
-<li><p><strong>parallel_download</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of parallel downloads to be performed. Default is 1.</p></li>
-<li><p><strong>user</strong> (<em>str</em><em>, </em><em>optional</em>) – The username for the FTP server. Default is “anonymous”.</p></li>
-<li><p><strong>passwd</strong> (<em>str</em><em>, </em><em>optional</em>) – The password for the FTP server. Default is an empty string.</p></li>
-<li><p><strong>retry_count</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of times to retry creating the FTP object. Default is 3.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The main FTP object for crawling and a list of FTP objects for parallel downloads.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This function creates an FTP object using the appropriate constructor based on the secure_ftp_inp parameter.
-It then creates a list of FTP objects for multiple downloads.
-If a directory is specified, it changes the current working directory of the main FTP object to that directory.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.generate_download_urls">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">generate_download_urls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_files_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.generate_download_urls" title="Link to this definition"></a></dt>
 <dd><p>Generate complete FTP URLs for files to be downloaded.</p>
@@ -750,38 +756,8 @@ dir, filename.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.get_ftp_connection">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">get_ftp_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftpobj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sftp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_loop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_nmax</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.get_ftp_connection" title="Link to this definition"></a></dt>
-<dd><p>Get or create an FTP connection.</p>
-<p>Creates a new connection if the host has changed, counter exceeds max,
-or this is the first connection. Otherwise returns the existing connection.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ftpobj</strong> (<em>FTP</em><em> or </em><em>None</em>) – Current FTP connection object.</p></li>
-<li><p><strong>host</strong> (<em>str</em>) – Target FTP server hostname.</p></li>
-<li><p><strong>protocol</strong> (<em>str</em>) – Protocol string (“ftp” or “sftp”).</p></li>
-<li><p><strong>sftp</strong> (<em>str</em><em> or </em><em>bool</em>) – SFTP mode setting (‘auto’, True, or False).</p></li>
-<li><p><strong>user</strong> (<em>str</em><em> or </em><em>None</em>) – FTP username.</p></li>
-<li><p><strong>passwd</strong> (<em>str</em><em> or </em><em>None</em>) – FTP password.</p></li>
-<li><p><strong>prev_host</strong> (<em>str</em>) – Previous host name.</p></li>
-<li><p><strong>count_loop</strong> (<em>int</em>) – Current operation counter.</p></li>
-<li><p><strong>count_nmax</strong> (<em>int</em>) – Maximum operations before reconnection.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>ftpobj</strong> (<em>FTP</em>) – FTP connection object.</p></li>
-<li><p><strong>new_host</strong> (<em>str</em>) – The host name for connection tracking.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.get_ftp_directory_listing">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">get_ftp_directory_listing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftpobj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.get_ftp_directory_listing" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.list_ftp_dir">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">list_ftp_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftpobj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.list_ftp_dir" title="Link to this definition"></a></dt>
 <dd><p>Get FTP directory file listing.</p>
 <p>Changes to the specified directory and retrieves the list of files.
 Returns empty list if directory change fails.</p>
@@ -789,7 +765,7 @@ Returns empty list if directory change fails.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ftpobj</strong> (<em>FTP</em>) – FTP connection object.</p></li>
-<li><p><strong>directory</strong> (<em>str</em>) – Remote directory path.</p></li>
+<li><p><strong>dir_inp</strong> (<em>str</em>) – Remote directory path.</p></li>
 <li><p><strong>host</strong> (<em>str</em>) – FTP server hostname (for logging/URL generation).</p></li>
 <li><p><strong>prev_dir</strong> (<em>str</em>) – Previous directory path.</p></li>
 </ul>
@@ -806,8 +782,30 @@ is unchanged. Empty list if the directory change failed.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.match_files_in_directory">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">match_files_in_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filergx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftp_files_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_files_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.match_files_in_directory" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.list_ftp_dir_core">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">list_ftp_dir_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftpobj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.list_ftp_dir_core" title="Link to this definition"></a></dt>
+<dd><p>Lists the files in the current directory of the FTP object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ftpobj</strong> (<em>FTP object</em>) – The FTP object used to connect to the FTP server.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of filenames in the current directory of the FTP object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function tries to get the list of filenames in the current directory of the FTP object.
+If it encounters a permission error, it checks if the error message is “550 No files found”.
+If it is, it logs a warning message and returns an empty list.
+If the error message is different, it raises the exception.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.match_files_in_dir">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">match_files_in_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filergx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftp_files_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_files_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.match_files_in_dir" title="Link to this definition"></a></dt>
 <dd><p>Match files in FTP directory using regex pattern.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -903,6 +901,37 @@ if center_id_last_letter=m, it will become com</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.download_utils.renew_ftp_obj">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.download_utils.</span></span><span class="sig-name descname"><span class="pre">renew_ftp_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ftpobj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sftp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passwd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_loop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count_nmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.download_utils.renew_ftp_obj" title="Link to this definition"></a></dt>
+<dd><p>Get or create an FTP connection.</p>
+<p>Creates a new connection if the host has changed, counter exceeds max,
+or this is the first connection. Otherwise returns the existing connection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ftpobj</strong> (<em>FTP</em><em> or </em><em>None</em>) – Current FTP connection object.</p></li>
+<li><p><strong>host</strong> (<em>str</em>) – Target FTP server hostname.</p></li>
+<li><p><strong>protocol</strong> (<em>str</em>) – Protocol string (“ftp” or “sftp”).</p></li>
+<li><p><strong>sftp</strong> (<em>str</em><em> or </em><em>bool</em>) – SFTP mode setting (‘auto’, True, or False).</p></li>
+<li><p><strong>user</strong> (<em>str</em><em> or </em><em>None</em>) – FTP username.</p></li>
+<li><p><strong>passwd</strong> (<em>str</em><em> or </em><em>None</em>) – FTP password.</p></li>
+<li><p><strong>prev_host</strong> (<em>str</em>) – Previous host name.</p></li>
+<li><p><strong>count_loop</strong> (<em>int</em>) – Current operation counter.</p></li>
+<li><p><strong>count_nmax</strong> (<em>int</em>) – Maximum operations before reconnection.</p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – The timeout for FTP connections in seconds. Default is 30 seconds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>ftpobj</strong> (<em>FTP</em>) – FTP connection object.</p></li>
+<li><p><strong>new_host</strong> (<em>str</em>) – The host name for connection tracking.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1051,6 +1080,11 @@ Note: Uses HTTP, authentication may be required.</p>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.servers_rinex.rgp_ensg_rnx3_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.servers_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ensg_rnx3_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.servers_rinex.rgp_ensg_rnx3_server" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_gnss.servers_rinex.rgp_ensg_server">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.servers_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_ensg_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.servers_rinex.rgp_ensg_server" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -1067,6 +1101,11 @@ Returns URLs for all 24 hourly sessions.</p>
 one for each hourly session of the day.</p>
 </div>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.download_gnss.servers_rinex.rgp_rnx3_server">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.download_gnss.servers_rinex.</span></span><span class="sig-name descname"><span class="pre">rgp_rnx3_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.download_gnss.servers_rinex.rgp_rnx3_server" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.operational.download_gnss.servers_rinex.rgp_server">
@@ -1105,7 +1144,7 @@ Note: Authentication may be required, use user/passwd parameters in download_gns
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="geodezyx.operational.html" class="btn btn-neutral float-left" title="geodezyx.operational package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.operational.bin_opera.html" class="btn btn-neutral float-left" title="geodezyx.operational.bin_opera package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="geodezyx.operational.gins_runner.html" class="btn btn-neutral float-right" title="geodezyx.operational.gins_runner package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

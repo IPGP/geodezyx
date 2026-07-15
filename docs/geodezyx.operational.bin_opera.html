@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>geodezyx.operational.bin_opera package &mdash; geodezyx 5.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx.operational.download_gnss package" href="geodezyx.operational.download_gnss.html" />
+    <link rel="prev" title="geodezyx.operational package" href="geodezyx.operational.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/geodezyx_toolbox_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to geodezyx’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx’s complete reference package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="geodezyx.operational.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.cluster_gfz">geodezyx.operational.cluster_gfz module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_cddis">geodezyx.operational.download_cddis module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_dropbox">geodezyx.operational.download_dropbox module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_ngl">geodezyx.operational.download_ngl module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.local_find_files">geodezyx.operational.local_find_files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_check">geodezyx.operational.rinex_check module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_lister_plotter">geodezyx.operational.rinex_lister_plotter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_utils">geodezyx.operational.rinex_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_utils_legacy">geodezyx.operational.rinex_utils_legacy module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.volc_deform.html">geodezyx.volc_deform package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.html">geodezyx’s complete reference package</a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.operational.html">geodezyx.operational package</a></li>
+      <li class="breadcrumb-item active">geodezyx.operational.bin_opera package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/geodezyx.operational.bin_opera.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-geodezyx.operational.bin_opera">
+<span id="geodezyx-operational-bin-opera-package"></span><h1>geodezyx.operational.bin_opera package<a class="headerlink" href="#module-geodezyx.operational.bin_opera" title="Link to this heading"></a></h1>
+<p>CLI utilities for RTKLIB and GNSS data processing operations.</p>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-geodezyx.operational.bin_opera.download_gnss_products">
+<span id="geodezyx-operational-bin-opera-download-gnss-products-module"></span><h2>geodezyx.operational.bin_opera.download_gnss_products module<a class="headerlink" href="#module-geodezyx.operational.bin_opera.download_gnss_products" title="Link to this heading"></a></h2>
+<p>CLI entry point for GNSS products download.</p>
+<p>Mirrors the <code class="docutils literal notranslate"><span class="pre">download_gnss_rinex</span></code> CLI but targets orbital / clock products.</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.download_gnss_products.main">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.download_gnss_products.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.download_gnss_products.main" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.download_gnss_products.parse_args">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.download_gnss_products.</span></span><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.download_gnss_products.parse_args" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.bin_opera.download_gnss_rinex">
+<span id="geodezyx-operational-bin-opera-download-gnss-rinex-module"></span><h2>geodezyx.operational.bin_opera.download_gnss_rinex module<a class="headerlink" href="#module-geodezyx.operational.bin_opera.download_gnss_rinex" title="Link to this heading"></a></h2>
+<p>Created on 06/06/2025 11:23:06</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.download_gnss_rinex.main">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.download_gnss_rinex.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.download_gnss_rinex.main" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.download_gnss_rinex.parse_args">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.download_gnss_rinex.</span></span><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.download_gnss_rinex.parse_args" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.bin_opera.rtklib_merge_parquet">
+<span id="geodezyx-operational-bin-opera-rtklib-merge-parquet-module"></span><h2>geodezyx.operational.bin_opera.rtklib_merge_parquet module<a class="headerlink" href="#module-geodezyx.operational.bin_opera.rtklib_merge_parquet" title="Link to this heading"></a></h2>
+<p>Created on 2026/03/23</p>
+<p>&#64;author: psakic</p>
+<p>CLI interface for merging individual RTKLIB parquet files into a single
+consolidated parquet file.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.rtklib_merge_parquet.parse_args">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.rtklib_merge_parquet.</span></span><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.rtklib_merge_parquet.parse_args" title="Link to this definition"></a></dt>
+<dd><p>Parse command line arguments.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.rtklib_merge_parquet.rtklib_merge_prq_main">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.rtklib_merge_parquet.</span></span><span class="sig-name descname"><span class="pre">rtklib_merge_prq_main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.rtklib_merge_parquet.rtklib_merge_prq_main" title="Link to this definition"></a></dt>
+<dd><p>Main entry point for the CLI.</p>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.bin_opera.rtklib_parquet">
+<span id="geodezyx-operational-bin-opera-rtklib-parquet-module"></span><h2>geodezyx.operational.bin_opera.rtklib_parquet module<a class="headerlink" href="#module-geodezyx.operational.bin_opera.rtklib_parquet" title="Link to this heading"></a></h2>
+<p>Created on 2026/03/04</p>
+<p>&#64;author: psakic</p>
+<p>CLI interface for converting RTKLIB output files to Parquet format.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.rtklib_parquet.parse_args">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.rtklib_parquet.</span></span><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.rtklib_parquet.parse_args" title="Link to this definition"></a></dt>
+<dd><p>Parse command line arguments.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.rtklib_parquet.rtklib_prq_main">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.rtklib_parquet.</span></span><span class="sig-name descname"><span class="pre">rtklib_prq_main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.rtklib_parquet.rtklib_prq_main" title="Link to this definition"></a></dt>
+<dd><p>Main entry point for the CLI.</p>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.bin_opera.rtklib_parquet2csv">
+<span id="geodezyx-operational-bin-opera-rtklib-parquet2csv-module"></span><h2>geodezyx.operational.bin_opera.rtklib_parquet2csv module<a class="headerlink" href="#module-geodezyx.operational.bin_opera.rtklib_parquet2csv" title="Link to this heading"></a></h2>
+<p>Created on 2026/06/03</p>
+<p>&#64;author: psakic</p>
+<p>CLI interface for converting merged RTKLIB parquet files to CSV format,
+processed by rover/base pairs.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.rtklib_parquet2csv.parquet2csv_main">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.rtklib_parquet2csv.</span></span><span class="sig-name descname"><span class="pre">parquet2csv_main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.rtklib_parquet2csv.parquet2csv_main" title="Link to this definition"></a></dt>
+<dd><p>Main entry point for the parquet2csv CLI.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.rtklib_parquet2csv.parse_args">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.rtklib_parquet2csv.</span></span><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.rtklib_parquet2csv.parse_args" title="Link to this definition"></a></dt>
+<dd><p>Parse command line arguments.</p>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.bin_opera.rtklib_run_cli">
+<span id="geodezyx-operational-bin-opera-rtklib-run-cli-module"></span><h2>geodezyx.operational.bin_opera.rtklib_run_cli module<a class="headerlink" href="#module-geodezyx.operational.bin_opera.rtklib_run_cli" title="Link to this heading"></a></h2>
+<p>Created on 2026/02/19</p>
+<p>&#64;author: psakic</p>
+<p>CLI interface for running RTKLIB processing with the GeodeZYX toolbox.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.rtklib_run_cli.parse_args">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.rtklib_run_cli.</span></span><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.rtklib_run_cli.parse_args" title="Link to this definition"></a></dt>
+<dd><p>Parse CLI arguments and return only explicitly provided values.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.rtklib_run_cli.parse_site_pair">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.rtklib_run_cli.</span></span><span class="sig-name descname"><span class="pre">parse_site_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites_rovers_raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites_bases_raw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.rtklib_run_cli.parse_site_pair" title="Link to this definition"></a></dt>
+<dd><p>Parse sites_rovers that may contain comma-separated ‘ROVER,BASE’ pairs.</p>
+<p>If any item in sites_rovers_raw contains a comma, <strong>all</strong> items are interpreted
+as explicit rover/base pairs (2-tuples), and sites_bases is forced to None so
+that make_pairs uses the explicit-pairs branch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sites_rovers_raw</strong> (<em>list</em><em> of </em><em>str</em>) – Raw rover list, e.g. <code class="docutils literal notranslate"><span class="pre">['TLSE',</span> <span class="pre">'ZIMM']</span></code> or <code class="docutils literal notranslate"><span class="pre">['TLSE,GRAS',</span> <span class="pre">'ZIMM,GRAS']</span></code>.</p></li>
+<li><p><strong>sites_bases_raw</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>None</em>) – Raw base list; ignored (set to None) when pair syntax is detected.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>sites_rovers</strong> (<em>list of str or list of (str, str)</em>)</p></li>
+<li><p><strong>sites_bases</strong> (<em>list of str or None</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.bin_opera.rtklib_run_cli.rtklib_run_main">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.bin_opera.rtklib_run_cli.</span></span><span class="sig-name descname"><span class="pre">rtklib_run_main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.bin_opera.rtklib_run_cli.rtklib_run_main" title="Link to this definition"></a></dt>
+<dd><p>Main entry point for the RTKLIB CLI.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="geodezyx.operational.html" class="btn btn-neutral float-left" title="geodezyx.operational package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.operational.download_gnss.html" class="btn btn-neutral float-right" title="geodezyx.operational.download_gnss package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

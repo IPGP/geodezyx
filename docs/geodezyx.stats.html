@@ -68,6 +68,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.volc_deform.html">geodezyx.volc_deform package</a></li>
 </ul>
 </li>
 </ul>
@@ -1627,6 +1628,61 @@ Only returned if return_booleans=True.</p></li>
 </dd>
 </dl>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.outlier_mad_df">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_mad_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns_aggrgation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;ufunc</span> <span class="pre">'logical_and'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mad_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_mad_df" title="Link to this definition"></a></dt>
+<dd><p>Remove outliers from pandas DataFrame columns using MAD (Median Absolute Deviation).</p>
+<p>This function applies MAD-based outlier detection to one or more columns in a
+pandas DataFrame and returns a filtered DataFrame. Multiple columns can be
+evaluated simultaneously with results aggregated using a specified logical operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – Input DataFrame to filter.</p></li>
+<li><p><strong>columns</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – Column name(s) to evaluate for outliers.
+If a single string is provided, it will be converted to a list.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – MAD threshold for outlier detection. Default is 3.5.
+Points where MAD &gt; threshold are considered outliers.</p></li>
+<li><p><strong>columns_aggrgation</strong> (<em>callable</em><em>, </em><em>optional</em>) – Function to aggregate boolean masks from multiple columns.
+Should accept variable number of boolean arrays as arguments.
+Common choices: np.logical_and (any column flags as outlier),
+np.logical_or (all columns flag as outlier).
+See Notes for more details.
+Default is np.logical_and.</p></li>
+<li><p><strong>mad_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Mode for computing deviation center: ‘median’ or ‘mean’.
+Default is ‘median’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df_out</strong> (<em>pandas.DataFrame</em>) – Filtered DataFrame with outliers removed. Has same structure
+as input but with fewer rows.</p></li>
+<li><p><strong>bb_out</strong> (<em>np.array</em>) – Boolean array indicating valid (True) and outlier (False) rows.
+Size matches the number of rows in the input DataFrame.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#geodezyx.stats.stats.outlier_mad" title="geodezyx.stats.stats.outlier_mad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlier_mad</span></code></a></dt><dd><p>Single column outlier detection using MAD</p>
+</dd>
+<dt><a class="reference internal" href="#geodezyx.stats.stats.outlier_mad_binom" title="geodezyx.stats.stats.outlier_mad_binom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlier_mad_binom</span></code></a></dt><dd><p>Paired X,Y data outlier removal with MAD</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>When multiple columns are specified, the aggregation function determines
+how results are combined. With np.logical_and (default), a row is kept
+only if it passes in ALL columns. With np.logical_or, a row is kept
+if it passes in ANY column.</p></li>
+<li><p>Since the bad values are flagged False, and good values are True,
+the operator logic is inverted, which might be counterintuitive.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">

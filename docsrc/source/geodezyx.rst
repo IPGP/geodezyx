@@ -26,3 +26,4 @@ Subpackages
    geodezyx.time_series
    geodezyx.utils
    geodezyx.utils_xtra
+   geodezyx.volc_deform

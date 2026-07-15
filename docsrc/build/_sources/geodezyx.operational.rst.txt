@@ -12,6 +12,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   geodezyx.operational.bin_opera
    geodezyx.operational.download_gnss
    geodezyx.operational.gins_runner
    geodezyx.operational.soft_frontend
@@ -43,10 +44,18 @@ geodezyx.operational.download\_dropbox module
    :show-inheritance:
    :undoc-members:
 
-geodezyx.operational.download\_find\_files module
--------------------------------------------------
+geodezyx.operational.download\_ngl module
+-----------------------------------------
 
-.. automodule:: geodezyx.operational.download_find_files
+.. automodule:: geodezyx.operational.download_ngl
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+geodezyx.operational.local\_find\_files module
+----------------------------------------------
+
+.. automodule:: geodezyx.operational.local_find_files
    :members:
    :show-inheritance:
    :undoc-members:

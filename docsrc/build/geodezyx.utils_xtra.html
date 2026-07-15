@@ -19,6 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx.volc_deform package" href="geodezyx.volc_deform.html" />
     <link rel="prev" title="geodezyx.utils package" href="geodezyx.utils.html" /> 
 </head>
 
@@ -67,6 +68,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils_xtra.plot_utils">geodezyx.utils_xtra.plot_utils module</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.volc_deform.html">geodezyx.volc_deform package</a></li>
 </ul>
 </li>
 </ul>
@@ -116,8 +118,86 @@ functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 GitHub repository :
 <a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.df_common_finder">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">df_common_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_a_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_b_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_reg2multidx_df_a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_reg2multidx_df_b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.df_common_finder" title="Link to this definition"></a></dt>
+<dd><p>Find common index entries in two DataFrames and output the corresponding filtered DataFrames.</p>
+<p>This is a general-purpose function that finds common rows based on a multi-index.
+It can be used for any DataFrame type (orbits, clocks, stations, etc.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_a_inp</strong> (<em>DataFrame</em>) – The first input DataFrame.</p></li>
+<li><p><strong>df_b_inp</strong> (<em>DataFrame</em>) – The second input DataFrame.</p></li>
+<li><p><strong>return_index</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the function also returns the common index. Default is False.</p></li>
+<li><p><strong>supplementary_sort</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, an additional sort is performed. This is useful for multi GNSS where the output DataFrame may not be well sorted. Default is False.</p></li>
+<li><p><strong>order</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – The order of the index for the multi-index DataFrame.
+If None, the function will infer it from the input DataFrames.
+Default is None.</p></li>
+<li><p><strong>skip_reg2multidx_df_a</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, skips the conversion of the first input DataFrame to a multi-index DataFrame. Default is False.
+The inputs are assumed to be already in multi-index format to optimize execution speed.
+(For advanced use only)</p></li>
+<li><p><strong>skip_reg2multidx_df_b</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, skips the conversion of the second input DataFrame to a multi-index DataFrame. Default is False.
+The inputs are assumed to be already in multi-index format to optimize execution speed.
+(For advanced use only)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df_a_out</strong> (<em>DataFrame</em>) – The first output DataFrame with common index entries.</p></li>
+<li><p><strong>df_b_out</strong> (<em>DataFrame</em>) – The second output DataFrame with common index entries.</p></li>
+<li><p><strong>iinter</strong> (<em>Index, optional</em>) – The common index. Only returned if return_index is True.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function is designed to be flexible enough for various use cases:
+- Orbits/SP3 files with satellite and epoch as index
+- Clocks with station/satellite name and epoch as index
+- SNX files with station and epoch as index
+- Any other DataFrame type with a natural multi-index structure</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df_a</span><span class="p">,</span> <span class="n">df_b</span> <span class="o">=</span> <span class="n">df_common_finder</span><span class="p">(</span><span class="n">df_orb_a</span><span class="p">,</span> <span class="n">df_orb_b</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;prn&#39;</span><span class="p">,</span> <span class="s1">&#39;epoch&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_a</span><span class="p">,</span> <span class="n">df_b</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">df_common_finder</span><span class="p">(</span><span class="n">df_a</span><span class="p">,</span> <span class="n">df_b</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span> <span class="s1">&#39;col2&#39;</span><span class="p">],</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.df_print">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">df_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.df_print" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.df_reg_2_multidx">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">df_reg_2_multidx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_order</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.df_reg_2_multidx" title="Link to this definition"></a></dt>
+<dd><p>Convert a regular DataFrame to a multi-index DataFrame.</p>
+<p>General function for creating multi-index DataFrames from regular columns.
+Can be used for any DataFrame type (orbits, clocks, stations, etc.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_inp</strong> (<em>DataFrame</em>) – Input DataFrame.</p></li>
+<li><p><strong>index_order</strong> (<em>list</em><em> of </em><em>str</em>) – List of column names to set as multi-index, in order.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Multi-index DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;prn&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;G01&#39;</span><span class="p">,</span> <span class="s1">&#39;G01&#39;</span><span class="p">],</span> <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">],</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_multi</span> <span class="o">=</span> <span class="n">df_reg_2_multidx</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;prn&#39;</span><span class="p">,</span> <span class="s1">&#39;epoch&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.diff_pandas">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">diff_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DF</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_np_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.diff_pandas" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">diff_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_np_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.diff_pandas" title="Link to this definition"></a></dt>
 <dd><p>Differentiate a Pandas DataFrame, if index is time.</p>
 <p>This function calculates the difference between consecutive elements in a specified column of a DataFrame.
 The difference is divided by the difference in time (seconds) between the corresponding indices.
@@ -125,7 +205,7 @@ This is essentially a derivative operation, assuming the index represents time.<
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>DF</strong> (<em>pandas.DataFrame</em>) – The input DataFrame. The index should represent time.</p></li>
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – The input DataFrame. The index should represent time.</p></li>
 <li><p><strong>col_name</strong> (<em>str</em>) – The name of the column in the DataFrame that you want to differentiate.</p></li>
 <li><p><strong>use_np_diff</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use Numpy’s diff.
 Default is False.
@@ -142,42 +222,6 @@ This option has a (much) faster execution speed.</p></li>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.pandas_DF_2_tuple_serie">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_DF_2_tuple_serie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns_name_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_index_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.pandas_DF_2_tuple_serie" title="Link to this definition"></a></dt>
-<dd><p>Solve the multiple columns selection problem.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>DFin</strong> (<em>pandas.DataFrame</em>) – Input DataFrame</p></li>
-<li><p><strong>columns_name_list</strong> (<em>list</em>) – List of column names to select</p></li>
-<li><p><strong>reset_index_first</strong> (<em>bool</em><em>, </em><em>optional</em>) – Reset index before conversion (default False)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Series of tuples</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pandas.Series</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>The idea is:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">S1</span> <span class="o">=</span> <span class="n">pandas_DF_2_tuple_serie</span><span class="p">(</span><span class="n">DF1</span><span class="p">,</span> <span class="n">columns_name_list</span><span class="p">)</span>
-<span class="n">S2</span> <span class="o">=</span> <span class="n">pandas_DF_2_tuple_serie</span><span class="p">(</span><span class="n">DF2</span><span class="p">,</span> <span class="n">columns_name_list</span><span class="p">)</span>
-<span class="n">BOOL</span> <span class="o">=</span> <span class="n">S1</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">S2</span><span class="p">)</span>
-<span class="n">DF1</span><span class="p">[</span><span class="n">BOOL</span><span class="p">]</span>
-</pre></div>
-</div>
-<p class="rubric">References</p>
-<p><a class="reference external" href="https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns">https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns</a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.pandas_DF_print">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_DF_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.pandas_DF_print" title="Link to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.pandas_column_rename_dic">
@@ -204,6 +248,37 @@ This option has a (much) faster execution speed.</p></li>
 <span class="n">pda</span> <span class="o">=</span> <span class="n">pda</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="n">rnamedic</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils_xtra.pandas_utils.pandas_df_2_tuple_serie">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils_xtra.pandas_utils.</span></span><span class="sig-name descname"><span class="pre">pandas_df_2_tuple_serie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns_name_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_index_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils_xtra.pandas_utils.pandas_df_2_tuple_serie" title="Link to this definition"></a></dt>
+<dd><p>Solve the multiple columns selection problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_inp</strong> (<em>pandas.DataFrame</em>) – Input DataFrame</p></li>
+<li><p><strong>columns_name_list</strong> (<em>list</em>) – List of column names to select</p></li>
+<li><p><strong>reset_index_first</strong> (<em>bool</em><em>, </em><em>optional</em>) – Reset index before conversion (default False)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Series of tuples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.Series</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The idea is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">S1</span> <span class="o">=</span> <span class="n">pandas_DF_2_tuple_serie</span><span class="p">(</span><span class="n">DF1</span><span class="p">,</span> <span class="n">columns_name_list</span><span class="p">)</span>
+<span class="n">S2</span> <span class="o">=</span> <span class="n">pandas_DF_2_tuple_serie</span><span class="p">(</span><span class="n">DF2</span><span class="p">,</span> <span class="n">columns_name_list</span><span class="p">)</span>
+<span class="n">BOOL</span> <span class="o">=</span> <span class="n">S1</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">S2</span><span class="p">)</span>
+<span class="n">DF1</span><span class="p">[</span><span class="n">BOOL</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns">https://stackoverflow.com/questions/53432043/pandas-dataframe-selection-of-multiple-elements-in-several-columns</a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -487,6 +562,7 @@ Useful for creating publication-ready plots that fit nicely in LaTeX documents.<
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="geodezyx.utils.html" class="btn btn-neutral float-left" title="geodezyx.utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.volc_deform.html" class="btn btn-neutral float-right" title="geodezyx.volc_deform package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

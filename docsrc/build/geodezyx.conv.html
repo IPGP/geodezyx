@@ -78,6 +78,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.volc_deform.html">geodezyx.volc_deform package</a></li>
 </ul>
 </li>
 </ul>
@@ -408,73 +409,103 @@ GitHub repository :
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_coords.ecef2eci">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ecef2eci</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utc_times</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ecef2eci" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">ecef2eci</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utc_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_vel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.ecef2eci" title="Link to this definition"></a></dt>
 <dd><p>Convert ECEF (Earth Centered Earth Fixed) positions to ECI (Earth Centered Inertial)
-positions</p>
+positions, and optionally velocities.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xyz</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – XYZ are cartesian positions in ECEF. Should have shape (N,3)</p></li>
-<li><p><strong>utc_times</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – UTC_times are UTC timestamps, as datetime objects. Sould have shape (N)</p></li>
+<li><p><strong>utc_times</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – UTC_times are UTC timestamps, as datetime objects. Should have shape (N)</p></li>
+<li><p><strong>xyz_vel</strong> (<em>numpy.array</em><em> of </em><em>floats</em><em>, </em><em>optional</em>) – XYZ velocity components in ECEF frame. Should have shape (N,3).
+If provided, the converted ECI velocities are also returned.
+Default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>eci</strong> – Earth Centered Inertial coordinates. will have shape (N,3)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.array of floats</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>eci</strong> (<em>numpy.array of floats</em>) – Earth Centered Inertial coordinates. will have shape (N,3)</p></li>
+<li><p><strong>eci_vel</strong> (<em>numpy.array of floats</em>) – ECI velocity components. will have shape (N,3).
+Only returned when <code class="docutils literal notranslate"><span class="pre">xyz_vel</span></code> is provided.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Requires pyorbital module</p>
+<p>Position transformation:</p>
 <blockquote>
 <div><p>[X]    [C -S 0][X]
 [Y]  = [S  C 0][Y]
 [Z]eci [0  0 1][Z]ecf</p>
-<p>C and S are cos() and sin() of gmst (Greenwich Meridian Sideral Time)</p>
 </div></blockquote>
+<p>Velocity transformation (accounting for Earth’s rotation ω_E):</p>
+<blockquote>
+<div><p>[Vx]    [C -S 0][Vx]   [-S -C 0]   [X]
+[Vy]  = [S  C 0][Vy] + ω_E·[C -S 0] · [Y]
+[Vz]eci [0  0 1][Vz]   [0  0 0]   [Z]ecf</p>
+</div></blockquote>
+<p>C and S are cos() and sin() of gmst (Greenwich Meridian Sidereal Time)</p>
 </div>
 <p class="rubric">References</p>
 <p><a class="reference external" href="http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc">http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc</a>
+<a class="reference external" href="https://fr.mathworks.com/help/aerotbx/ug/ecef2eci.html">https://fr.mathworks.com/help/aerotbx/ug/ecef2eci.html</a>
+<a class="reference external" href="https://github.com/eribean/Geneci/blob/main/geneci/conversions.py">https://github.com/eribean/Geneci/blob/main/geneci/conversions.py</a>
 Inspired from satellite-js (<a class="reference external" href="https://github.com/shashwatak/satellite-js">https://github.com/shashwatak/satellite-js</a>)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_coords.eci2ecef">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">eci2ecef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utc_times</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.eci2ecef" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_coords.</span></span><span class="sig-name descname"><span class="pre">eci2ecef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utc_times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_vel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_coords.eci2ecef" title="Link to this definition"></a></dt>
 <dd><p>Convert ECI (Earth Centered Inertial) positions to ECEF (Earth Centered Earth Fixed)
-positions</p>
+positions, and optionally velocities.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xyz</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – XYZ are cartesian positions in Earth Centered Inertial. Should have shape (N,3)</p></li>
-<li><p><strong>utc_times</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – UTC_times are UTC timestamps, as datetime objects. Sould have shape (N)</p></li>
+<li><p><strong>utc_times</strong> (<em>numpy.array</em><em> of </em><em>floats</em>) – UTC_times are UTC timestamps, as datetime objects. Should have shape (N)</p></li>
+<li><p><strong>xyz_vel</strong> (<em>numpy.array</em><em> of </em><em>floats</em><em>, </em><em>optional</em>) – XYZ velocity components in ECI frame. Should have shape (N,3).
+If provided, the converted ECEF velocities are also returned.
+Default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ecef</strong> – Earth Centered Earth Fixed coordinates. will have shape (N,3)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.array of floats</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>ecef</strong> (<em>numpy.array of floats</em>) – Earth Centered Earth Fixed coordinates. will have shape (N,3)</p></li>
+<li><p><strong>ecef_vel</strong> (<em>numpy.array of floats</em>) – ECEF velocity components. will have shape (N,3).
+Only returned when <code class="docutils literal notranslate"><span class="pre">xyz_vel</span></code> is provided.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Requires pyorbital module</p>
-<p>[X]          ([C -S 0])[X]
+<p>Position transformation:</p>
+<blockquote>
+<div><p>[X]          ([C -S 0])[X]
 [Y]     = inv([S  C 0])[Y]
 [Z]ecef      ([0  0 1])[Z]eci</p>
-</div>
-<dl>
-<dt>Empirically:</dt><dd><p>[X]       [ C  S  0][X]
+</div></blockquote>
+<p>Empirically:</p>
+<blockquote>
+<div><p>[X]       [ C  S  0][X]
 [Y]     = [-S  C  0][Y]
 [Z]ecef   [ 0  0  1][Z]eci</p>
-<p>C and S are cos() and sin() of gmst (Greenwich Meridian Sideral Time)</p>
-</dd>
-</dl>
+</div></blockquote>
+<p>Velocity transformation (accounting for Earth’s rotation ω_E):</p>
+<blockquote>
+<div><p>[Vx]         [ C  S  0][Vx]   [-S  C 0]   [X]
+[Vy]     = - [-S  C  0][Vy] + ω_E·[-C -S 0] · [Y]
+[Vz]ecef     [ 0  0  1][Vz]   [ 0  0 0]   [Z]eci</p>
+</div></blockquote>
+<p>C and S are cos() and sin() of gmst (Greenwich Meridian Sidereal Time)</p>
+</div>
 <p class="rubric">References</p>
 <p><a class="reference external" href="http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc">http://ccar.colorado.edu/ASEN5070/handouts/coordsys.doc</a>
+<a class="reference external" href="https://fr.mathworks.com/help/aerotbx/ug/eci2ecef.html">https://fr.mathworks.com/help/aerotbx/ug/eci2ecef.html</a>
+<a class="reference external" href="https://github.com/eribean/Geneci/blob/main/geneci/conversions.py">https://github.com/eribean/Geneci/blob/main/geneci/conversions.py</a>
 Inspired from satellite-js (<a class="reference external" href="https://github.com/shashwatak/satellite-js">https://github.com/shashwatak/satellite-js</a>)</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -2145,6 +2176,24 @@ e.g.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.conv.conv_time.dt2str_iso">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">dt2str_iso</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.dt2str_iso" title="Link to this definition"></a></dt>
+<dd><p>Time representation conversion</p>
+<p>Python’s Datetime =&gt; ISO 8601 String</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dtin</strong> (<em>datetime</em><em> or </em><em>iterable</em><em> of </em><em>datetime</em>) – Datetime(s). Can handle iterable of datetimes.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Time as ISO 8601 string(s). If input is iterable, returns same type.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or iterable of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.conv.conv_time.dt2tuple">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.conv.conv_time.</span></span><span class="sig-name descname"><span class="pre">dt2tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.conv.conv_time.dt2tuple" title="Link to this definition"></a></dt>
 <dd><p>Time representation conversion</p>
@@ -2927,7 +2976,7 @@ instead of a daily session (0)</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>statname</strong> (<em>string</em>) – name of the station
 can be a 4 or 9 char.</p></li>
-<li><p><strong>datein</strong> (<em>datetime.datetime</em>) – date of the wished RINEX name</p></li>
+<li><p><strong>datein</strong> (<em>datetime</em>) – date of the wished RINEX name</p></li>
 <li><p><strong>country</strong> (<em>string</em>) – optional. the 3char. country code
 if given, will replace the one in an input 9-char statname
 default value is “XXX”</p></li>
@@ -2936,14 +2985,14 @@ R – From Receiver, data using vendor or other software
 S – From data Stream (RTCM or other)
 U – Unknown
 The default is “R”.</p></li>
-<li><p><strong>file_period</strong> (<em>str</em><em>, </em><em>optional</em>) – File Period
+<li><p><strong>file_period</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – File Period
 15M–15 Minutes
 01H–1 Hour
 01D–1 Day
 01Y–1 Year
 00U-Unspecified
 The default is “00U”.</p></li>
-<li><p><strong>data_freq</strong> (<em>str</em><em>, </em><em>optional</em>) – <p>data frequency.
+<li><p><strong>data_freq</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – <p>data frequency.
 None is allowed (for Navigation RINEX)</p>
 <p>XXC – 100 Hertz
 XXZ – Hertz,
@@ -2977,9 +3026,11 @@ MM-Meteorological Observation</p>
 </p></li>
 <li><p><strong>format_compression</strong> (<em>string</em>) – extension of the RINEX (“rnx”,”crz”,”crz.gz”) …
 The default is ‘crz.gz’.</p></li>
-<li><p><strong>preset_type</strong> (<em>str</em><em>, </em><em>optional</em>) – takes “daily” or “hourly” values.
+<li><p><strong>preset_type</strong> (<em>str</em><em>, </em><em>optional</em>) – takes “daily”, “hourly”, “nav”, “brdc” values.
+for an hourly or daily session,
 set the most common data_freq and file_period
-for an hourly or daily session.
+for “nav” or “brdc” (navigation/broadcast) files,
+remove the data_freq and set file_period to ‘01D’.
 The default is None.</p></li>
 </ul>
 </dd>

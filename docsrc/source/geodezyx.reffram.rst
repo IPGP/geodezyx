@@ -9,6 +9,30 @@ geodezyx.reffram package
 Submodules
 ----------
 
+geodezyx.reffram.compar\_clk module
+-----------------------------------
+
+.. automodule:: geodezyx.reffram.compar_clk
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+geodezyx.reffram.compar\_orb module
+-----------------------------------
+
+.. automodule:: geodezyx.reffram.compar_orb
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+geodezyx.reffram.compar\_snx module
+-----------------------------------
+
+.. automodule:: geodezyx.reffram.compar_snx
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 geodezyx.reffram.geometry module
 --------------------------------
 
