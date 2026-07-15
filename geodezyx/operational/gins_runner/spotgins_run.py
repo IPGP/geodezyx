@@ -59,6 +59,7 @@ def spotgins_run(
     verbose=False,
     updatebd_login="",
     quick_mode=False,
+    country_code="XXX"
 ):
     """
     Run the SPOTGINS process on the provided RINEX paths using multiprocessing.
@@ -109,6 +110,11 @@ def spotgins_run(
         Quick mode allows for faster latency processing, using RAPID/ULTRA products.
         but it is not a SPOTGINS official mode anymore.
         Default is False.
+    country_code : str, optional
+        A string (3 caracter ISO code) to help find the site_id9 in case of ambiguity
+        e.g. "FRA" for France.
+        Defaults to "XXX".
+
     Returns
     -------
     None
@@ -189,6 +195,7 @@ def spotgins_run(
             force=force,
             verbose=verbose,
             sites_id9=siteid9_use,
+            country_code=country_code
         )
 
         ######## DIRECTORS RUN ###############

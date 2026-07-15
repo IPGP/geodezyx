@@ -6,11 +6,14 @@ Created on 21/03/2025 21:57:04
 @author: psakic
 """
 
+from itertools import count
+
 import geodezyx.operational as opera
 import geodezyx.conv as conv
 import datetime as dt
 import argparse
 import os
+
 
 def singugins_run(
     results_folder,
@@ -28,6 +31,7 @@ def singugins_run(
     no_rnx3=False,
     quick_mode=False,
     no_clean_tmp=False,
+    country_code="XXX",
 ):
     """
     Run the SPOTGINS process within a SINGUGINS container.
@@ -77,6 +81,9 @@ def singugins_run(
     no_clean_tmp : bool, optional
         If True, temporary files will not be deleted after processing.
         Default is False (temporary files will be deleted).
+    country_code : str, optional
+        A string (3 character ISO code) to help find the right site code in case of
+        ambiguity. Default is "XXX".
 
     Returns
     -------
@@ -84,6 +91,7 @@ def singugins_run(
     """
 
     import numpy as np
+
     srt_epoch_ok = min([start_epoch, end_epoch])
     end_epoch_ok = max([start_epoch, end_epoch])
 
@@ -106,10 +114,12 @@ def singugins_run(
         force=force,
         quick_mode=quick_mode,
         no_clean_tmp=no_clean_tmp,
+        country_code=country_code,
         **spotgins_run_kwargs,
     )
 
     return
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -164,8 +174,7 @@ def main():
         "--nprocs",
         type=int,
         default=8,
-        help="Number of processes to use. "
-        "Default is 8.",
+        help="Number of processes to use. " "Default is 8.",
     )
     parser.add_argument(
         "-nu",
@@ -179,7 +188,7 @@ def main():
         "--no_concat_orb_clk",
         action="store_true",
         help="Flag to indicate whether to concatenate the"
-             "orbit and clock files prior to the main processing",
+        "orbit and clock files prior to the main processing",
     )
 
     parser.add_argument(
@@ -216,7 +225,7 @@ def main():
         action="store_true",
         help="If True, quick mode will be enabled."
         "Quick mode allows for faster latency processing, using RAPID/ULTRA products."
-        "but it is not a SPOTGINS official mode anymore."
+        "but it is not a SPOTGINS official mode anymore.",
     )
 
     parser.add_argument(
@@ -224,6 +233,13 @@ def main():
         "--no_clean_tmp",
         action="store_true",
         help="If True, temporary files will not be deleted after processing.",
+    )
+
+    parser.add_argument(
+        "-cty",
+        "--country_code",
+        type=str,
+        help="A string (3 caracter ISO code) to help find the right site code in case of ambiguity",
     )
 
     args = parser.parse_args()
@@ -249,6 +265,7 @@ def main():
         no_rnx3=args.no_rnx3,
         quick_mode=args.quick,
         no_clean_tmp=args.no_clean_tmp,
+        country_code=args.country_code,
     )
 
 
