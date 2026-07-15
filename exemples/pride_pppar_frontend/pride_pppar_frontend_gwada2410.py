@@ -59,15 +59,15 @@ for site in site_list:
     print(rnx_path_list) 
 
 
-    operational.pride_pppar_runner(rnx_path_list, 
-                                   cfg_template_path,
-                                   prod_ac_name, 
-                                   prod_parent_dir, 
-                                   tmp_dir, cfg_dir, run_dir,
-                                   mode=mode,
-                                   multi_process = multi_process,
-                                   dl_prods=0,
-                                   dl_prods_only=0,
-                                   force=False)
+    operational.pride_pppar_run(rnx_path_list,
+                                cfg_template_path,
+                                prod_ac_name,
+                                prod_parent_dir,
+                                tmp_dir, cfg_dir, run_dir,
+                                mode=mode,
+                                multi_process = multi_process,
+                                dl_prods=0,
+                                dl_prods_only=0,
+                                force=False)
 
 

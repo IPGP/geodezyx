@@ -10,12 +10,14 @@ Created on Fri Aug  2 17:38:41 2019
 import copy
 import datetime as dt
 import itertools
+import numbers
 
 #### Import the logger
 import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import scipy
 
 #### geodeZYX modules
@@ -30,45 +32,230 @@ log = logging.getLogger('geodezyx')
 
 ##########  END IMPORT  ##########
 
+def plot_timeseries(
+    coor_inp,
+    coortype="ENU",
+    diapt=1.5,
+    alpha=0.8,
+    fig=1,
+    errbar=True,
+    symbol=".",
+    errbar_width=1,
+    ylim=None,
+    legend_loc="best",
+    legend_ncol=1,
+    name="",
+    stat=""
+):
+    """
+    Standalone function to plot TimeSerie data.
 
-def print4compar(dA, dB, dC, dD, coortype):
-    if coortype == "ENU":
-        Astr, Bstr, Cstr = "E", "N", "U"
-    elif coortype == "XYZ":
-        Astr, Bstr, Cstr = "X", "Y", "Z"
+    This function can be called independently to plot time series data
+    with three components (A, B, C) and their uncertainties.
+
+    Parameters
+    ----------
+    coor_inp : tuple or pd.DataFrame
+        Input coordinates data. It can be either:
+        - a 7-tuple (A, B, C, T, sA, sB, sC) where:
+
+          - A, B, C: coordinate components as numpy arrays
+          - T: time epochs as numpy array (POSIX timestamps)
+          - sA, sB, sC: uncertainties of the components as numpy arrays
+
+        - a DataFrame with columns corresponding to the coordinate type
+          (e.g., 'e', 'n', 'u' for ENU) and their
+          uncertainties (e.g., 'se', 'sn', 'su'),
+          along with an 'epoch' column for time epochs.
+    coortype : str, optional
+        The coordinates type. The default is 'ENU'.
+        Options: 'ENU', 'XYZ', 'FLH', 'UTM'
+    diapt : float, optional
+        Point diameter. The default is 1.5.
+    alpha : float, optional
+        Alpha (transparency) of points. The default is 0.8.
+    fig : int or Figure object, optional
+        Figure ID where the data will be plotted.
+        Can accept an int (id of a Figure) OR the figure Object itself.
+        The default is 1.
+    errbar : bool, optional
+        Plot the error bars. The default is True.
+    symbol : str, optional
+        Marker symbol. The default is '.'.
+    errbar_width : float, optional
+        Coefficient for the error bar size. The default is 1.
+    ylim : tuple, optional
+        Y-axis limits. The default is None.
+    legend_loc : str, optional
+        Location of the legend. The default is 'best'.
+    legend_ncol : int, optional
+        Number of columns in the legend. The default is 1.
+    name : str, optional
+        Name for the plot legend. The default is "".
+    stat : str, optional
+        Station name for the figure title. The default is "".
+
+    Returns
+    -------
+    figobj : Figure object
+        Figure object of the plot.
+    axes : array of Axes objects
+        Array of the 3 axes objects of the plot.
+
+    """
+
+    # Define titles and labels based on coordinate type
+    coord_config = {
+        "ENU": ("East", "North", "Up", "displacement (m)"),
+        "XYZ": ("X", "Y", "Z", "displacement (m)"),
+        "FLH": ("Phi", "Lambda", "Haut", "displacement (m)"),
+        "UTM": ("East (UTM)", "North (UTM)", "Up", "displacement (m)"),
+    }
+
+    # coor_inp is a 7-tuple
+    # for the legacy behavior of the function with TimeSeriePoint internal plot method
+    if type(coor_inp) is tuple:
+        if len(coor_inp) != 7:
+            log.error("coor_inp should be a 7-tuple (A, B, C, T, sA, sB, sC)")
+            raise Exception
+        a, b, c, t, sa, sb, sc = coor_inp
+        tdt = conv.posix2dt(t)
+    # coor_inp is a DataFrame
+    elif type(coor_inp) is pd.DataFrame:
+        # Define functions to get column labels based on coordinate type
+        col_lbl = lambda n: coord_config[coortype][n][0].lower()
+        scol_lbl = lambda n: "s" + col_lbl(n)
+
+        # Extract data from DataFrame using the defined column label functions
+        a = coor_inp[col_lbl(0)].to_numpy()
+        b = coor_inp[col_lbl(1)].to_numpy()
+        c = coor_inp[col_lbl(2)].to_numpy()
+        tdt = coor_inp["epoch"].to_numpy()
+        if scol_lbl(0) in coor_inp.columns:
+            sa = coor_inp[scol_lbl(0)].to_numpy()
+            sb = coor_inp[scol_lbl(1)].to_numpy()
+            sc = coor_inp[scol_lbl(2)].to_numpy()
+        else:
+            sa = sb = sc = np.zeros_like(a)
     else:
-        Astr, Bstr, Cstr = "A", "B", "C"
+        log.error("coor_inp should be either a 7-tuple or a DataFrame")
+        raise Exception
 
-    log.info("moyenne aritm & RMS et std composante %s", Astr)
+    # Get titles and labels based on coordinate type
+    atitle, btitle, ctitle, yylabel = coord_config.get(
+        coortype, ("A", "B", "C", "displacement (??)")
+    )
+
+    log.info("plot : %s", stat)
+
+    # Get figure number
+    if isinstance(fig, int):
+        fig_num = fig
+    elif isinstance(fig, plt.Figure):
+        fig_num = fig.number
+    else:
+        fig_num = 1
+
+    # Label for the plot
+    name4plot = name[:10] if name else stat
+
+    # Check if figure already exists, reuse axes if yes, create it if no
+    if plt.fignum_exists(fig_num):
+        figobj = plt.figure(fig_num)
+        # Reuse existing axes if the figure has 3 axes
+        if len(figobj.axes) == 3:
+            axes = figobj.axes
+        else:
+            # Clear and create new axes if wrong number of axes
+            figobj.clear()
+            axes = figobj.subplots(3, 1,
+                                   sharex=True)
+    else:
+        figobj, axes = plt.subplots(3, 1,
+                                    num=fig_num,
+                                    sharex=True,
+                                    constrained_layout=True)
+
+    figobj.suptitle(stat)
+
+    # Component data and titles
+    components = [
+        (a, sa, atitle),
+        (b, sb, btitle),
+        (c, sc, ctitle),
+    ]
+
+    # Common plot parameters
+    plot_kwargs = {
+        'label': name4plot,
+        'markersize': diapt,
+        'alpha': alpha,
+    }
+
+    errbar_kwargs = {
+        **plot_kwargs,
+        'fmt': symbol,
+        'ecolor': 'xkcd:light grey',
+        'elinewidth': errbar_width,
+    }
+
+    # Loop through components and plot
+    for ax, (data, sigma, title) in zip(axes, components):
+        if errbar:
+            ax.errorbar(tdt, data, sigma, **errbar_kwargs)
+        else:
+            ax.plot(tdt, data, symbol, **plot_kwargs)
+        ax.set_ylabel(yylabel)
+        ax.set_title(title)
+        ax.legend(loc=legend_loc, ncol=legend_ncol)
+        if ylim:
+            ax.set_ylim(ylim)
+
+    figobj.autofmt_xdate()
+    axes[-1].tick_params(axis="x", labelrotation=10)
+    figobj.set_size_inches(8.27, 11.69)
+
+    return figobj, axes
+
+
+def _print4compar(dA, dB, dC, dD, coortype):
+    if coortype == "ENU":
+        a_str, b_str, c_str = "E", "N", "U"
+    elif coortype == "XYZ":
+        a_str, b_str, c_str = "X", "Y", "Z"
+    else:
+        a_str, b_str, c_str = "A", "B", "C"
+
+    log.info("moyenne aritm & RMS et std composante %s", a_str)
     log.info(str(np.nanmean(dA)))
-    log.info(stats.RMSmean(dA))
+    log.info(stats.rms_mean(dA))
     log.info(str(np.nanstd(dA)))
     log.info("")
 
-    log.info("moyenne aritm & RMS et std composante %s", Bstr)
+    log.info("moyenne aritm & RMS et std composante %s", b_str)
     log.info(str(np.nanmean(dB)))
-    log.info(stats.RMSmean(dB))
+    log.info(stats.rms_mean(dB))
     log.info(str(np.nanstd(dB)))
     log.info("")
 
-    log.info("moyenne aritm & RMS et std composante %s", Cstr)
+    log.info("moyenne aritm & RMS et std composante %s", c_str)
     log.info(str(np.nanmean(dC)))
-    log.info(stats.RMSmean(dC))
+    log.info(stats.rms_mean(dC))
     log.info(str(np.nanstd(dC)))
     log.info("")
 
     log.info("moyenne aritm & RMS et std composante D")
     log.info(str(np.nanmean(dD)))
-    log.info(stats.RMSmean(dD))
+    log.info(stats.rms_mean(dD))
     log.info(str(np.nanstd(dD)))
     log.info("")
 
     log.info(
-        "RMS3D : sqrt((RMS_{}**2 + RMS_{}**2 + RMS_{}**2)/3 ) ".format(Astr, Bstr, Cstr)
+        "RMS3D : sqrt((RMS_{}**2 + RMS_{}**2 + RMS_{}**2)/3 ) ".format(a_str, b_str, c_str)
     )
-    log.info(stats.RMSmean([stats.RMSmean(dA), stats.RMSmean(dB), stats.RMSmean(dC)]))
+    log.info(stats.rms_mean([stats.rms_mean(dA), stats.rms_mean(dB), stats.rms_mean(dC)]))
     log.info("RMS2D : uniquement sur les 2 composantes plani")
-    log.info(stats.RMSmean([stats.RMSmean(dA), stats.RMSmean(dB)]))
+    log.info(stats.rms_mean([stats.rms_mean(dA), stats.rms_mean(dB)]))
     log.info("")
 
 
@@ -141,38 +328,38 @@ def print4compar_tabular(dicolist, split=0, print_2D3D_if_any=True):
         line.append(stat)
 
         line.append(np.nanmean(dA))
-        line.append(stats.RMSmean(dA))
+        line.append(stats.rms_mean(dA))
         line.append(np.nanstd(dA))
 
         line.append(np.nanmean(dB))
-        line.append(stats.RMSmean(dB))
+        line.append(stats.rms_mean(dB))
         line.append(np.nanstd(dB))
 
         line.append(np.nanmean(dC))
-        line.append(stats.RMSmean(dC))
+        line.append(stats.rms_mean(dC))
         line.append(np.nanstd(dC))
 
         line.append(np.nanmean(dD))
-        line.append(stats.RMSmean(dD))
+        line.append(stats.rms_mean(dD))
         line.append(np.nanstd(dD))
 
         if D2Dn3D:
             line.append(np.nanmean(dDb))
-            line.append(stats.RMSmean(dDb))
+            line.append(stats.rms_mean(dDb))
             line.append(np.nanstd(dDb))
 
         line.append(
-            stats.RMSmean([stats.RMSmean(dA), stats.RMSmean(dB), stats.RMSmean(dC)])
+            stats.rms_mean([stats.rms_mean(dA), stats.rms_mean(dB), stats.rms_mean(dC)])
         )
-        line.append(stats.RMSmean([stats.RMSmean(dA), stats.RMSmean(dB)]))
+        line.append(stats.rms_mean([stats.rms_mean(dA), stats.rms_mean(dB)]))
 
         LINES_STK.append(line)
 
     if split != 0:
-        LINES_arr = np.vstack(LINES_STK)
-        LINES1 = LINES_arr[:, :split]
-        LINES2 = np.column_stack((LINES_arr[:, 0], LINES_arr[:, split:]))
-        return LINES1, LINES2
+        lines_arr = np.vstack(LINES_STK)
+        lines1 = lines_arr[:, :split]
+        lines2 = np.column_stack((lines_arr[:, 0], lines_arr[:, split:]))
+        return lines1, lines2
     else:
         return LINES_STK
 
@@ -223,60 +410,60 @@ def compar_plot(
         fig.set_size_inches(8.27, 11.69)  ### A4
 
     cm = plt.get_cmap(colormap)
-    NUM_COLORS = len(dico_list_in)
-    color_list = [cm(1.0 * i / NUM_COLORS) for i in range(NUM_COLORS)]
+    num_colors = len(dico_list_in)
+    color_list = [cm(1.0 * i / num_colors) for i in range(num_colors)]
 
     for color, D in zip(color_list, dico_list_in):
 
         nametmp = D["name"]
         nametmp = nametmp.ljust(namend - namest)
         coortype = D["coortype"]
-        Dtype = D["Dtype"]
+        dtype = D["dtype"]
 
         if coortype == "ENU":
-            Ati = "\u0394" + "East component"
-            Bti = "\u0394" + "North component"
-            Cti = "\u0394" + "Up component"
-            Dti = "\u0394" + "Distance (" + Dtype + ") component"
+            ati = "\u0394" + "East component"
+            bti = "\u0394" + "North component"
+            cti = "\u0394" + "Up component"
+            dti = "\u0394" + "Distance (" + dtype + ") component"
             ylbl = "meters"
         elif coortype == "XYZ":
-            Ati = "delta X"
-            Bti = "delta Y"
-            Cti = "delta Z"
-            Dti = "delta D " + Dtype
+            ati = "delta X"
+            bti = "delta Y"
+            cti = "delta Z"
+            dti = "delta D " + dtype
             ylbl = "meters"
         elif coortype == "FLH":
-            Ati = "delta Latitude"
-            Bti = "delta Longitude"
-            Cti = "delta Height"
-            Dti = "delta D " + Dtype + " (no sens)"
+            ati = "delta Latitude"
+            bti = "delta Longitude"
+            cti = "delta Height"
+            dti = "delta D " + dtype + " (no sens)"
             ylbl = "degrees"
         elif coortype == "UTM":
-            Ati = "delta East UTM"
-            Bti = "delta North UTM"
-            Cti = "delta Height"
-            Dti = "delta D UTM " + Dtype
+            ati = "delta East UTM"
+            bti = "delta North UTM"
+            cti = "delta Height"
+            dti = "delta D UTM " + dtype
             ylbl = "meters"
 
         else:
-            Ati = "delta A"
-            Bti = "delta B"
-            Cti = "delta C"
-            Dti = "delta D " + Dtype
+            ati = "delta A"
+            bti = "delta B"
+            cti = "delta C"
+            dti = "delta D " + dtype
             ylbl = "???"
 
         if not new_style:
-            axA = ax_arr[0][0]
-            axB = ax_arr[0][1]
-            axC = ax_arr[1][0]
-            axD = ax_arr[1][1]
+            ax_a = ax_arr[0][0]
+            ax_b = ax_arr[0][1]
+            ax_c = ax_arr[1][0]
+            ax_d = ax_arr[1][1]
         else:
-            axA = ax_arr[0]
-            axB = ax_arr[1]
-            axC = ax_arr[2]
-            axD = ax_arr[3]
+            ax_a = ax_arr[0]
+            ax_b = ax_arr[1]
+            ax_c = ax_arr[2]
+            ax_d = ax_arr[3]
 
-        axA.plot(
+        ax_a.plot(
             D["TA"],
             D["dA"],
             ".-",
@@ -285,11 +472,11 @@ def compar_plot(
             alpha=alpha,
             color=color,
         )
-        axA.set_ylabel(ylbl)
-        axA.legend()
-        axA.set_title(Ati)
+        ax_a.set_ylabel(ylbl)
+        ax_a.legend()
+        ax_a.set_title(ati)
 
-        axB.plot(
+        ax_b.plot(
             D["TB"],
             D["dB"],
             ".-",
@@ -298,11 +485,11 @@ def compar_plot(
             alpha=alpha,
             color=color,
         )
-        axB.set_ylabel(ylbl)
-        axB.legend()
-        axB.set_title(Bti)
+        ax_b.set_ylabel(ylbl)
+        ax_b.legend()
+        ax_b.set_title(bti)
 
-        axC.plot(
+        ax_c.plot(
             D["TC"],
             D["dC"],
             ".-",
@@ -311,11 +498,11 @@ def compar_plot(
             alpha=alpha,
             color=color,
         )
-        axC.set_ylabel(ylbl)
-        axC.legend()
-        axC.set_title(Cti)
+        ax_c.set_ylabel(ylbl)
+        ax_c.legend()
+        ax_c.set_title(cti)
 
-        axD.plot(
+        ax_d.plot(
             D["TD"],
             D["dD"],
             ".-",
@@ -324,10 +511,10 @@ def compar_plot(
             alpha=alpha,
             color=color,
         )
-        axD.set_ylabel(ylbl)
-        axD.legend()
-        axD.set_title(Dti)
-        axD.set_xlabel("Date")
+        ax_d.set_ylabel(ylbl)
+        ax_d.legend()
+        ax_d.set_title(dti)
+        ax_d.set_xlabel("Date")
 
         fig.autofmt_xdate()
         fig.tight_layout()
@@ -425,7 +612,7 @@ def compar(
             log.info(tsvar.name)
             log.info("------------------------------")
 
-        if tsvar.bool_interp_uptodate == False:
+        if not tsvar.bool_interp_uptodate:
             tsvar.interp_set()
 
         A, B, C, T, sA, sB, sC = tsvar.to_list(coortype=coortype)
@@ -433,10 +620,10 @@ def compar(
         tsref = tstup[0].interp_get(T, coortype=coortype)
         Aref, Bref, Cref, Tref, sA, sB, sC = tsref.to_list(coortype=coortype)
 
-        if win != []:
+        if win:
             if verbose:
                 log.info("Windowing")
-            bl = time_win_T(T, win, mode=mode)
+            bl = time_win_t(T, win, mode=mode)
             if verbose:
                 log.info("# pts total: %s", len(bl))
                 log.info("# pts valid: %s", np.sum(bl))
@@ -490,7 +677,7 @@ def compar(
                 log.info("Stats after cleaning")
 
             if print_report:
-                print4compar(dA, dB, dC, dD, coortype)
+                _print4compar(dA, dB, dC, dD, coortype)
         else:
             Tdt = conv.posix2dt(Tref)
             TA, TB, TC, TD = Tdt, Tdt, Tdt, Tdt
@@ -540,73 +727,6 @@ def compar(
         output = dicolist
 
     return output
-
-
-# def compar2(tstup,coortype='ENU',seuil=3.,win=[],mode='keep',
-#            Dtype='3D',namest=0,namend=10,alpha = 5 , diapt = 5 ,verbose=True,
-#            print_report=True,plot=True):
-#     """
-#     160903 cette fonction semble discontinuée
-#     """
-
-#     tsref = tstup[0]
-#     dicolist = []
-
-#     for tsvar in tstup:
-#         Aref,Bref,Cref,Tref,_,_,_  = tsref.to_list()
-#         Avar,Bvar,Cvar,Tvar,_,_,_  = tsvar.to_list()
-
-#         Tref = np.round(Tref,1)
-#         Tvar = np.round(Tvar,1)
-
-#         Tcommon    = np.intersect1d(Tref,Tvar)
-#         Tcommon_dt = conv.posix2dt(Tcommon)
-
-#         ind_ref = np.nonzero(np.in1d(Tref , Tcommon))[0]
-#         ind_var = np.nonzero(np.in1d(Tvar , Tcommon))[0]
-
-#         dA = Avar[ind_var] - Aref[ind_ref]
-#         dB = Bvar[ind_var] - Bref[ind_ref]
-#         dC = Cvar[ind_var] - Cref[ind_ref]
-
-#         if Dtype == '2D':
-#             dD = np.sqrt(dA ** 2 + dB ** 2)
-#         elif Dtype == '3D':
-#             dD = np.sqrt(dA ** 2 + dB ** 2 + dC ** 2)
-
-#         dicovar = dict()
-
-#         dicovar['name']     = tsvar.name
-#         dicovar['coortype'] = coortype
-#         dicovar['Dtype']    = Dtype
-
-#         dicovar['TA'] = Tcommon_dt
-#         dicovar['dA'] = np.array(dA)
-#         dicovar['dAbrut'] = np.array(dA)
-#         dicovar['TB'] = Tcommon_dt
-#         dicovar['dB'] = np.array(dB)
-#         dicovar['dBbrut'] = np.array(dB)
-#         dicovar['TC'] = Tcommon_dt
-#         dicovar['dC'] = np.array(dC)
-#         dicovar['dCbrut'] = np.array(dC)
-#         dicovar['TD'] = Tcommon_dt
-#         dicovar['dD'] = np.array(dD)
-#         dicovar['dDbrut'] = np.array(dD)
-#         dicovar['dDtype'] = np.array(Dtype)
-
-#         dicolist.append(dicovar)
-
-#     if plot:
-#         compar_plot(dicolist,namest,namend,alpha,diapt)
-#         try:
-#             suptit = ' '.join((tstup[-1].stat , str(tstup[-1].startdate()) ,
-#                                str(tstup[-1].enddate())))
-#             plt.suptitle(suptit)
-#         except:
-#             pass
-
-#     return dicolist
-
 
 def round_time(tsin, round_to, mode="round"):
     tsout = copy.deepcopy(tsin)
@@ -1065,7 +1185,7 @@ def time_win(tsin, windows, mode="keep", outbool=False):
         return tsout
 
 
-def time_win_T(Tin, win, mode="del"):
+def time_win_t(Tin, win, mode="del"):
     boolfinalist = []
 
     for t in Tin:
@@ -1384,7 +1504,9 @@ def time_win_multi(inplis):
 def ts_from_list(A, B, C, T, initype, sA=[], sB=[], sC=[], stat="STAT", name="NoName"):
     tsout = time_series.TimeSeriePoint()
 
-    if not (type(T[0]) is float or type(T[0]) is int):
+    # Check if T[0] is not a number (float, int, or numpy numeric types).
+    # If it's not a number, assume it's a datetime and convert it to POSIX timestamps
+    if not isinstance(T[0], numbers.Number):
         T = conv.dt2posix(T)
 
     if len(sA) == 0:

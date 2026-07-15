@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+# %%
+# Step 01 - From RINEX observations to structured GNSS data tables
 """
 Step 01 - From RINEX observations to structured GNSS data tables
 
@@ -50,8 +51,8 @@ Standard library
 """
 
 # %%
-###############################################################################
 # Reference
+###############################################################################
 #
 # Sakic, P., Mansur, G., Chaiyaporn, K., & Ballu, V. (2019).
 # The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented
@@ -61,20 +62,23 @@ Standard library
 
 
 # %%
-###############################################################################
 # Imports
 ###############################################################################
 
 import datetime as dt
 import os
+from itertools import count
 from pathlib import Path
 
+from _io_guard import ensure_matplotlib_cache
+from _io_guard import resolve_rinex_files
+
+ensure_matplotlib_cache()
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 from geodezyx import files_rw
-from geodezyx import operational
 
 # Robust import for the pedagogical plotting helper
 try:
@@ -91,12 +95,13 @@ except Exception:
 
 
 # %%
-###############################################################################
 # Configuration
 ###############################################################################
 
 PROCESSING_DATE = dt.datetime(2019, 6, 25)
 WORK_DIR = Path(os.environ["HOME"]).expanduser() / "gnss_edu_data"
+FIGURES_DIR = WORK_DIR / "figures"
+SHOW_FIGURES = False
 
 # Two permanent GNSS stations about 10 km apart in the Paris region
 STATION_DICT = {"rgp": ["SMNE", "MLVL"]}
@@ -113,13 +118,15 @@ GAP_THRESHOLD = pd.Timedelta(minutes=30)
 print("Configuration loaded.")
 print("Processing date :", PROCESSING_DATE)
 print("Working directory:", WORK_DIR)
+print("Figures directory:", FIGURES_DIR)
+print("Show figures     :", SHOW_FIGURES)
 print("Example PRN     :", EXAMPLE_PRN)
 print("Example observable:", EXAMPLE_OBSERVABLE)
 
 
 # %%
-###############################################################################
 # Create the working directory
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -127,14 +134,41 @@ print("Example observable:", EXAMPLE_OBSERVABLE)
 ###############################################################################
 
 WORK_DIR.mkdir(parents=True, exist_ok=True)
+FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
 print("Working directory is ready:")
 print(WORK_DIR)
+print("Figures directory is ready:")
+print(FIGURES_DIR)
 
+if SHOW_FIGURES:
+    plt.ion()
+else:
+    plt.ioff()
+    plt.show = lambda *args, **kwargs: None
+
+FIGURE_COUNTER = count(1)
+
+
+def finalize_figure(fig, output_name, show=SHOW_FIGURES):
+    """Save a figure to disk and optionally display it."""
+    figure_index = next(FIGURE_COUNTER)
+    output_name_clean = output_name
+    if output_name_clean.startswith("step01_"):
+        output_name_clean = output_name_clean[len("step01_") :]
+    numbered_output_name = f"step01_{figure_index:02d}_{output_name_clean}"
+    output_path = FIGURES_DIR / numbered_output_name
+    fig.savefig(output_path, dpi=150, bbox_inches="tight")
+    print(f"Figure saved: {output_path}")
+
+    if show:
+        fig.show()
+
+    plt.close(fig)
 
 # %%
-###############################################################################
 # Download sample RINEX observation files
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -146,21 +180,16 @@ print(WORK_DIR)
 # real observation files rather than artificial toy arrays.
 ###############################################################################
 
-download_output = operational.download_gnss_rinex(
+download_output = resolve_rinex_files(
     statdico=STATION_DICT,
-    output_dir=str(WORK_DIR),
-    startdate=PROCESSING_DATE,
-    enddate=PROCESSING_DATE,
-    parallel_download=1,
+    date=PROCESSING_DATE,
+    work_dir=WORK_DIR,
 )
-
-print("Download output:")
-print(download_output)
 
 
 # %%
-###############################################################################
 # Identify the BASE and ROVER files
+###############################################################################
 #
 # Note
 # ----
@@ -187,8 +216,8 @@ print(rover_rinex_file)
 
 
 # %%
-###############################################################################
 # Read one RINEX file in two different pandas formats
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -229,8 +258,8 @@ print("Columns    :", list(df_index.columns[:12]))
 
 
 # %%
+# Optional inspection in Spyder or PyCharm or VS Code
 ###############################################################################
-# Optional inspection in Spyder
 #
 # Open the Variable Explorer and compare:
 #   - df_flat
@@ -246,8 +275,8 @@ df_flat
 
 
 # %%
-###############################################################################
 # Extract the approximate receiver position from the RINEX header
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -272,8 +301,8 @@ print(approx_position_xyz)
 
 
 # %%
-###############################################################################
 # Flat-table selection: one PRN at one epoch
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -305,8 +334,8 @@ print(flat_single_epoch)
 
 
 # %%
-###############################################################################
 # Flat-table selection: one PRN over a time window
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -334,8 +363,8 @@ print(flat_time_window)
 
 
 # %%
-###############################################################################
 # MultiIndex selection: one PRN at one epoch
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -358,8 +387,8 @@ print(index_single_epoch)
 
 
 # %%
-###############################################################################
 # MultiIndex selection: one PRN over a time window
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -380,8 +409,8 @@ print(index_time_window)
 
 
 # %%
-###############################################################################
 # Add an explicit row identifier
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -411,8 +440,8 @@ print(row_demo)
 
 
 # %%
-###############################################################################
 # Visualize one observable by satellite PRN
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -441,12 +470,12 @@ fig, ax = plot_gnss_timeseries_by_prn(
 )
 
 ax.grid(True, alpha=0.3)
-plt.show()
+finalize_figure(fig, "step01_timeseries_by_prn_arcs.png")
 
 
 # %%
-###############################################################################
 # Optional variant: the same plot with a legend
+###############################################################################
 #
 # Note
 # ----
@@ -469,12 +498,12 @@ fig, ax = plot_gnss_timeseries_by_prn(
 )
 
 ax.grid(True, alpha=0.3)
-plt.show()
+finalize_figure(fig, "step01_timeseries_by_prn_legend.png")
 
 
 # %%
-###############################################################################
 # Clean the observation table before later modeling
+###############################################################################
 #
 # Educational objective
 # ---------------------
@@ -555,8 +584,8 @@ if len(df_removed) > 0:
     print(df_removed.head())
 
 # %%
-###############################################################################
 # Suggested student questions
+###############################################################################
 #
 # 1. Why is the MultiIndex structure convenient for GNSS observations?
 # 2. Why can a row identifier be useful before introducing least squares?
@@ -566,8 +595,8 @@ if len(df_removed) > 0:
 
 
 # %%
-###############################################################################
 # Step 01 conclusion
+###############################################################################
 #
 # At this stage, students should be able to:
 #   - read a RINEX observation file with geodezyx,
@@ -586,6 +615,4 @@ if len(df_removed) > 0:
 print("Step 01 completed.")
 print("The observation table is now ready for the data-to-model transition in Step 02.")
 
-
-
-
+# %%

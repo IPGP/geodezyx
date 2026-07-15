@@ -68,6 +68,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.volc_deform.html">geodezyx.volc_deform package</a></li>
 </ul>
 </li>
 </ul>
@@ -918,68 +919,51 @@ functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
 GitHub repository :
 <a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.RMSmean">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">RMSmean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indata</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.RMSmean" title="Link to this definition"></a></dt>
-<dd><p>Calculate the root mean square (RMS) mean of a list or array.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>indata</strong> (<em>array-like</em>) – Input values.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The RMS mean value.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This function is redundant with rms_mean. Use rms_mean instead.</p>
-</div>
-<p class="rubric">Notes</p>
-<p>The RMS mean is defined as: sqrt(mean(indata^2))
-NaN values are ignored in the calculation.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.butter_lowpass">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">butter_lowpass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.butter_lowpass" title="Link to this definition"></a></dt>
-<dd><p>Design a Butterworth low-pass filter.</p>
+<dd><p>Design a Butterworth lowpass digital filter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cutoff</strong> (<em>float</em>) – Cutoff frequency.</p></li>
-<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency.</p></li>
-<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – Order of the filter. The default is 5.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – Critical frequency (Hertz). Frequencies above this will be attenuated.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency (Hertz).</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – Order of the filter. Default is 5.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Numerator coefficients of the IIR filter.</p></li>
-<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Denominator coefficients of the IIR filter.</p></li>
+<li><p><strong>b</strong> (<em>numpy.ndarray</em>) – Numerator (zeros) of the IIR filter.</p></li>
+<li><p><strong>a</strong> (<em>numpy.ndarray</em>) – Denominator (poles) of the IIR filter.</p></li>
 </ul>
 </p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>This function uses scipy.signal.butter to design the filter.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.butter</span></code></dt><dd><p>Design IIR filters</p>
+</dd>
+<dt><a class="reference internal" href="#geodezyx.stats.stats.butter_lowpass_filter" title="geodezyx.stats.stats.butter_lowpass_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">butter_lowpass_filter</span></code></a></dt><dd><p>Apply the designed filter to data</p>
+</dd>
+</dl>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.butter_lowpass_filter">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">butter_lowpass_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.butter_lowpass_filter" title="Link to this definition"></a></dt>
-<dd><p>Apply a Butterworth low-pass filter to data.</p>
+<dd><p>Apply Butterworth lowpass digital filter to data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>array-like</em>) – Input data to be filtered.</p></li>
-<li><p><strong>cutoff</strong> (<em>float</em>) – Cutoff frequency.</p></li>
-<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency.</p></li>
-<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – Order of the filter. The default is 5.</p></li>
+<li><p><strong>data</strong> (<em>array-like</em>) – Input signal to be filtered.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – Critical frequency (Hertz). Frequencies above this will be attenuated.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency (Hertz).</p></li>
+<li><p><strong>order</strong> (<em>int</em><em>, </em><em>optional</em>) – Order of the filter. Default is 5.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>y</strong> – Filtered data.</p>
+<dd class="field-even"><p><strong>y</strong> – Filtered signal.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray</p>
@@ -988,7 +972,11 @@ NaN values are ignored in the calculation.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#geodezyx.stats.stats.butter_lowpass" title="geodezyx.stats.stats.butter_lowpass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">butter_lowpass</span></code></a></dt><dd><p>Design the Butterworth low-pass filter.</p>
+<dt><a class="reference internal" href="#geodezyx.stats.stats.butter_lowpass" title="geodezyx.stats.stats.butter_lowpass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">butter_lowpass</span></code></a></dt><dd><p>Design the lowpass filter</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.butter</span></code></dt><dd><p>Design IIR filters</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.lfilter</span></code></dt><dd><p>Apply IIR filters</p>
 </dd>
 </dl>
 </div>
@@ -997,25 +985,24 @@ NaN values are ignored in the calculation.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.color_of_season">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">color_of_season</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datein</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.color_of_season" title="Link to this definition"></a></dt>
-<dd><p>Get a color representation of the season.</p>
+<dd><p>Get color representation for a season.</p>
+<p>Maps seasons to matplotlib-compatible color codes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>datein</strong> (<em>datetime</em><em> or </em><em>date</em>) – The date to get the season color for.</p>
+<dd class="field-odd"><p><strong>datein</strong> (<em>datetime.date</em><em> or </em><em>datetime.datetime</em>) – The date to get the season color for.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Color code: ‘b’ (blue) for winter, ‘r’ (red) for summer,
+<dd class="field-even"><p><strong>color</strong> – Color code: ‘b’ (blue) for winter, ‘r’ (red) for summer,
 ‘g’ (green) for spring, ‘k’ (black) for autumn.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>Useful for plotting time series with color-coded seasons.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#geodezyx.stats.stats.get_season" title="geodezyx.stats.stats.get_season"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_season</span></code></a></dt><dd><p>Get the season name for a given date.</p>
+<dt><a class="reference internal" href="#geodezyx.stats.stats.get_season" title="geodezyx.stats.stats.get_season"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_season</span></code></a></dt><dd><p>Determine season from date</p>
 </dd>
 </dl>
 </div>
@@ -1024,61 +1011,69 @@ NaN values are ignored in the calculation.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.confid_interval_slope">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">confid_interval_slope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.confid_interval_slope" title="Link to this definition"></a></dt>
-<dd><p>Calcule un intervalle de confiance sur une tendance</p>
+<dd><p>Calculate a confidence interval on the slope of a linear trend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>array</em>) – la variable indépendante</p></li>
-<li><p><strong>y</strong> (<em>array</em>) – la variable dépendante</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – la probabilité d’erreur tolérée</p></li>
+<li><p><strong>x</strong> (<em>array_like</em>) – Independent variable.</p></li>
+<li><p><strong>y</strong> (<em>array_like</em>) – Dependent variable.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Confidence level (default is 0.95 for 95% confidence).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>mi</strong> (<em>float</em>) – la borne inférieure de l’intervalle</p></li>
-<li><p><strong>ma</strong> (<em>float</em>) – la borne supérieure de l’intervalle</p></li>
+<li><p><strong>mi</strong> (<em>float</em>) – Lower bound of the confidence interval for the slope.</p></li>
+<li><p><strong>ma</strong> (<em>float</em>) – Upper bound of the confidence interval for the slope.</p></li>
+<li><p><em>Source</em></p></li>
+<li><p><em>——-</em></p></li>
+<li><p><em>Based on methods from</em></p></li>
+<li><p><strong>http</strong> (<em>//www.i4.auc.dk/borre/matlab</em>)</p></li>
+<li><p><strong>http</strong> (<em>//kom.aau.dk/~borre/matlab/</em>)</p></li>
 </ul>
 </p>
 </dd>
 </dl>
-<p class="rubric">References</p>
-<p><a class="reference external" href="http://www.i4.auc.dk/borre/matlab">http://www.i4.auc.dk/borre/matlab</a>
-<a class="reference external" href="http://kom.aau.dk/~borre/matlab/">http://kom.aau.dk/~borre/matlab/</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.dates_middle">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">dates_middle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.dates_middle" title="Link to this definition"></a></dt>
-<dd><p>Calculate the middle date between two dates.</p>
+<dd><p>Compute the midpoint between two dates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<em>datetime</em>) – Start date.</p></li>
-<li><p><strong>end</strong> (<em>datetime</em>) – End date.</p></li>
+<li><p><strong>start</strong> (<em>datetime</em><em> or </em><em>numeric</em>) – Start date/time.</p></li>
+<li><p><strong>end</strong> (<em>datetime</em><em> or </em><em>numeric</em>) – End date/time.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The middle date between start and end.</p>
+<dd class="field-even"><p><strong>middle</strong> – The midpoint between start and end.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>datetime</p>
+<dd class="field-odd"><p>datetime or numeric</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.detrend_timeseries">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">detrend_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.detrend_timeseries" title="Link to this definition"></a></dt>
-<dd><p>detrend, i.e. remove linear tendence of a timeserie Y(X)</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">detrend_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.detrend_timeseries" title="Link to this definition"></a></dt>
+<dd><p>Remove linear trend from a time series.</p>
+<p>Removes the linear trend from Y(X) by subtracting the fitted line and
+restoring the original starting value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>Y</strong> (<em>X &amp;</em>) – Values</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – Independent variable (time or similar).</p></li>
+<li><p><strong>y</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – Dependent variable (data values).</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>X &amp; Yout</strong> – Detrended Y</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list or numpy.array</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.ndarray</em>) – Independent variable (unchanged).</p></li>
+<li><p><strong>yout</strong> (<em>numpy.ndarray</em>) – Detrended dependent variable.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1086,20 +1081,20 @@ NaN values are ignored in the calculation.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.find_intersection">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">find_intersection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.find_intersection" title="Link to this definition"></a></dt>
-<dd><p>Find intersection points of two curves defined by points (x1, y1) and (x2, y2).</p>
+<dd><p>Find intersection points of two line plots.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x1</strong> (<em>array-like</em>) – X coordinates of the first curve.</p></li>
-<li><p><strong>y1</strong> (<em>array-like</em>) – Y coordinates of the first curve.</p></li>
-<li><p><strong>x2</strong> (<em>array-like</em>) – X coordinates of the second curve.</p></li>
-<li><p><strong>y2</strong> (<em>array-like</em>) – Y coordinates of the second curve.</p></li>
+<li><p><strong>x1</strong> (<em>array-like</em>) – X-coordinates of the first line.</p></li>
+<li><p><strong>y1</strong> (<em>array-like</em>) – Y-coordinates of the first line.</p></li>
+<li><p><strong>x2</strong> (<em>array-like</em>) – X-coordinates of the second line.</p></li>
+<li><p><strong>y2</strong> (<em>array-like</em>) – Y-coordinates of the second line.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>roots</strong> (<em>numpy.ndarray</em>) – X coordinates of intersection points.</p></li>
-<li><p><strong>y_vals</strong> (<em>numpy.ndarray</em>) – Y coordinates of intersection points.</p></li>
+<li><p><strong>roots</strong> (<em>numpy.ndarray</em>) – X-coordinates of the intersection points.</p></li>
+<li><p><strong>y_intersect</strong> (<em>numpy.ndarray</em>) – Y-coordinates of the intersection points.</p></li>
 </ul>
 </p>
 </dd>
@@ -1109,16 +1104,48 @@ NaN values are ignored in the calculation.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.gaussian_filter_GFZ_style_smoother">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">gaussian_filter_GFZ_style_smoother</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tim_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dat_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.gaussian_filter_GFZ_style_smoother" title="Link to this definition"></a></dt>
-<dd><p>Gaussian filter to smooth data based on GFZ’s GMT_plus.pm/gaussian_kernel.</p>
-<p>This is a deprecated slow version. Use gaussian_filter_GFZ_style_smoother_improved instead.</p>
+<dt class="sig sig-object py" id="geodezyx.stats.stats.gaussian_filter_gfz">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">gaussian_filter_gfz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tim_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dat_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.gaussian_filter_gfz" title="Link to this definition"></a></dt>
+<dd><p>Apply Gaussian filter to smooth data.</p>
+<p>Gaussian filter based on GFZ’s GMT_plus.pm/gaussian_kernel.
+Smooths data by weighted averaging using Gaussian weights.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tim_ref</strong> (<em>array-like</em>) – The X/T component of the time series (in decimal days).</p></li>
-<li><p><strong>dat_ref</strong> (<em>array-like</em>) – The Y component (the data).</p></li>
-<li><p><strong>width</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the window. An odd number is best. The default is 7.</p></li>
+<li><p><strong>tim_ref</strong> (<em>array-like</em><em> (</em><em>list</em><em> or </em><em>numpy.ndarray</em><em>)</em>) – X/T component of the time series (in decimal days).</p></li>
+<li><p><strong>dat_ref</strong> (<em>array-like</em><em> (</em><em>list</em><em> or </em><em>numpy.ndarray</em><em>)</em>) – Y component (the data values).</p></li>
+<li><p><strong>width</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the smoothing window. An odd number is recommended.
+Default is 7.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>dat_smt2</strong> – Smoothed Y values with Gaussian weighting.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For additional smoothing ideas and references, see:
+- <a class="reference external" href="https://scipy-cookbook.readthedocs.io/items/SignalSmooth.html">https://scipy-cookbook.readthedocs.io/items/SignalSmooth.html</a>
+- <a class="reference external" href="https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way">https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way</a>
+- <a class="reference external" href="https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth">https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.gaussian_filter_gfz_legacy">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">gaussian_filter_gfz_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tim_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dat_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.gaussian_filter_gfz_legacy" title="Link to this definition"></a></dt>
+<dd><p>Apply Gaussian filter to smooth data (legacy, slow version).</p>
+<p>Gaussian filter based on GFZ’s GMT_plus.pm/gaussian_kernel.
+This is a legacy version that is VERY SLOW due to a dirty conversion
+from Perl code. The pythonic version gaussian_filter_gfz should be
+used instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tim_ref</strong> (<em>array-like</em>) – X/T component of the time series (in decimal days).</p></li>
+<li><p><strong>dat_ref</strong> (<em>array-like</em>) – Y component (the data values).</p></li>
+<li><p><strong>width</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the window. Odd numbers are recommended. Default is 7.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1130,51 +1157,19 @@ NaN values are ignored in the calculation.</p>
 </dl>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>This version is very slow (dirty conversion of a Perl function).
-Use gaussian_filter_GFZ_style_smoother_improved instead.</p>
+<p>This function is VERY SLOW. Use gaussian_filter_gfz instead.</p>
 </div>
 <p class="rubric">Notes</p>
-<p>Some other nice ideas for smoothing:
-<a class="reference external" href="http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html">http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html</a>
-<a class="reference external" href="https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way">https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way</a>
-<a class="reference external" href="https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth">https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth</a></p>
+<p>For additional smoothing ideas and references, see:
+- <a class="reference external" href="http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html">http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html</a>
+- <a class="reference external" href="https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way">https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way</a>
+- <a class="reference external" href="https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth">https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth</a></p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#geodezyx.stats.stats.gaussian_filter_GFZ_style_smoother_improved" title="geodezyx.stats.stats.gaussian_filter_GFZ_style_smoother_improved"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gaussian_filter_GFZ_style_smoother_improved</span></code></a></dt><dd><p>Pythonic version that should be used.</p>
+<dt><a class="reference internal" href="#geodezyx.stats.stats.gaussian_filter_gfz" title="geodezyx.stats.stats.gaussian_filter_gfz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gaussian_filter_gfz</span></code></a></dt><dd><p>Pythonic and faster version</p>
 </dd>
 </dl>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.gaussian_filter_GFZ_style_smoother_improved">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">gaussian_filter_GFZ_style_smoother_improved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tim_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dat_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.gaussian_filter_GFZ_style_smoother_improved" title="Link to this definition"></a></dt>
-<dd><p>Gaussian filter to smooth data,
-based on GFZ’s GMT_plus.pm/gaussian_kernel</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tim_ref</strong> (<em>iterable</em><em> (</em><em>list</em><em> or </em><em>array</em><em>)</em>) – the X/T component of the time serie (in decimal days!)</p></li>
-<li><p><strong>dat_ref</strong> (<em>iterable</em><em> (</em><em>list</em><em> or </em><em>array</em><em>)</em>) – the Y component (the data).</p></li>
-<li><p><strong>width</strong> (<em>int</em><em>, </em><em>optional</em>) – size of the window
-(odd number is best ?).
-The default is 7.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>dat_smt2</strong> – smoothed Y.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>array</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Some other nice ideas here
-<a class="reference external" href="http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html">http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html</a>
-<a class="reference external" href="https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way">https://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way</a>
-<a class="reference external" href="https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth">https://stackoverflow.com/questions/32900854/how-to-smooth-a-line-using-gaussian-kde-kernel-in-python-setting-a-bandwidth</a></p>
 </div>
 </dd></dl>
 
@@ -1184,17 +1179,19 @@ The default is 7.</p></li>
 <dd><p>Determine the season for a given date.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>now</strong> (<em>datetime</em><em> or </em><em>date</em>) – The date to determine the season for.</p>
+<dd class="field-odd"><p><strong>now</strong> (<em>datetime.date</em><em> or </em><em>datetime.datetime</em>) – The date to determine the season for. If datetime is provided,
+the date component is used.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The season name: ‘winter’, ‘spring’, ‘summer’, or ‘autumn’.</p>
+<dd class="field-even"><p><strong>season</strong> – The season name: ‘winter’, ‘spring’, ‘summer’, or ‘autumn’.
+Returns None if the date is outside the defined ranges.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Season boundaries are based on the Northern Hemisphere calendar:
+<p>Season boundaries are:
 - Winter: Dec 21 - Mar 20
 - Spring: Mar 21 - Jun 20
 - Summer: Jun 21 - Sep 22
@@ -1203,78 +1200,85 @@ The default is 7.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.harmonic_mean">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">harmonic_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.harmonic_mean" title="Link to this definition"></a></dt>
-<dd><p>Calculate the harmonic mean of a list or array.</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">harmonic_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.harmonic_mean" title="Link to this definition"></a></dt>
+<dd><p>Compute harmonic mean of a list or array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>A</strong> (<em>array-like</em>) – Input values.</p>
+<dd class="field-odd"><p><strong>a</strong> (<em>array-like</em>) – Input values.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The harmonic mean of A.</p>
+<dd class="field-even"><p><strong>result</strong> – The harmonic mean of the input values.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>The harmonic mean is defined as the reciprocal of the arithmetic mean of the reciprocals.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.lagrange1">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">lagrange1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.lagrange1" title="Link to this definition"></a></dt>
-<dd><p>Low level function to determine a lagrangian polynom</p>
-<p>Replace scipy.interpolate.lagrange which is HIGHLY instable</p>
+<dd><p>Determine Lagrangian polynomial from points (low-level function).</p>
+<p>Creates a polynomial interpolation function using Lagrange’s method.
+This replaces scipy.interpolate.lagrange which is highly unstable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>points</strong> (<em>list</em><em> of </em><em>n-interable</em>) – point list.</p>
+<dd class="field-odd"><p><strong>points</strong> (<em>list</em><em> of </em><em>tuple</em>) – List of (x, y) coordinate tuples defining the polynomial.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>p</strong> (<em>function</em>) – function representing the polynom.</p></li>
-<li><p><em>Source</em></p></li>
-<li><p><em>——</em></p></li>
-<li><p><strong>from</strong> (<em>https://gist.github.com/melpomene/2482930</em>)</p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>p</strong> – Function representing the Lagrangian polynomial.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>More numerically stable than scipy.interpolate.lagrange.</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://gist.github.com/melpomene/2482930">https://gist.github.com/melpomene/2482930</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.lagrange2">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">lagrange2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.lagrange2" title="Link to this definition"></a></dt>
-<dd><p>Low level function to determine a lagrangian polynom</p>
-<p>Replace scipy.interpolate.lagrange which is HIGHLY instable</p>
-<p>this function is more pythonic, but slower thant lagrange1….</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">lagrange2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.lagrange2" title="Link to this definition"></a></dt>
+<dd><p>Determine Lagrangian polynomial from points (more Pythonic version).</p>
+<p>Creates a polynomial interpolation function using Lagrange’s method.
+This version is more Pythonic but slower than lagrange1. Like lagrange1,
+it replaces scipy.interpolate.lagrange which is highly unstable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>points</strong> (<em>list</em><em> of </em><em>n-interable</em>) – point list.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – X-coordinates of the interpolation points.</p></li>
+<li><p><strong>y</strong> (<em>array-like</em>) – Y-coordinates of the interpolation points.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>p</strong> (<em>function</em>) – function representing the polynom.</p></li>
-<li><p><em>Source</em></p></li>
-<li><p><em>——</em></p></li>
-<li><p><strong>from</strong> (<em>https://gist.github.com/melpomene/2482930</em>)</p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>p</strong> – Function representing the Lagrangian polynomial.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>More numerically stable than scipy.interpolate.lagrange.
+More Pythonic but slower than lagrange1.</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://gist.github.com/melpomene/2482930">https://gist.github.com/melpomene/2482930</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.lagrange_interpolate">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">lagrange_interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">titrp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.lagrange_interpolate" title="Link to this definition"></a></dt>
-<dd><p>Perform a temporal lagrangian interpolation
-the X-component is a time</p>
+<dd><p>Perform temporal Lagrangian polynomial interpolation.</p>
+<p>Interpolates Y values at specified time epochs using Lagrangian polynomial
+fitting. The X-component represents time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tdata</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – X/T component of the known points.</p></li>
-<li><p><strong>ydata</strong> (<em>iterable</em><em> of </em><em>floats</em>) – Y component of the known points..</p></li>
-<li><p><strong>titrp</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – Epochs of the wished points.</p></li>
-<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – degree of the polynom. Better if even. The default is 10.</p></li>
+<li><p><strong>tdata</strong> (<em>array-like</em><em> of </em><em>datetime</em>) – X/T component (time) of the known interpolation points.</p></li>
+<li><p><strong>ydata</strong> (<em>array-like</em><em> of </em><em>float</em>) – Y component (data values) of the known interpolation points.</p></li>
+<li><p><strong>titrp</strong> (<em>array-like</em><em> of </em><em>datetime</em>) – Epochs at which to compute interpolated values.</p></li>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – Degree of the Lagrangian polynomial. Better if even. Default is 10.</p></li>
 <li><p><strong>t_type</strong> (<em>str</em><em>, </em><em>optional</em>) – type of the time component, can be “datetime”, “posix” or “pandas_timestamp”.
 The default is “datetime”.
 pandas_timestamp is recommended for a more precise applications
@@ -1282,35 +1286,45 @@ pandas_timestamp is recommended for a more precise applications
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>Yintrp</strong> (<em>float array</em>) – output interpolated data.</p></li>
-<li><p><em>Tips</em></p></li>
-<li><p><em>—-</em></p></li>
-<li><p><em>Use conv.dt_range to generate the wished epochs range</em></p></li>
-</ul>
-</p>
+<dd class="field-even"><p><strong>y_intrp</strong> – Interpolated Y values at the requested epochs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#geodezyx.stats.stats.lagrange1" title="geodezyx.stats.stats.lagrange1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lagrange1</span></code></a></dt><dd><p>Low-level Lagrangian polynomial function</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">conv.dt_range</span></code></dt><dd><p>Generate a range of datetime epochs</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>Use conv.dt_range to generate the wished epochs range.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.linear_coef_a_b">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">linear_coef_a_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.linear_coef_a_b" title="Link to this definition"></a></dt>
-<dd><p>Gives coefficients of the line between two points (x1,y1) &amp; (x2,y2)
-x1,y1,x2,y2 can be iterables</p>
+<dd><p>Calculate line coefficients from two points.</p>
+<p>Calculates the slope (a) and intercept (b) coefficients of a line passing
+through two points (x1, y1) and (x2, y2). Input values can be scalars or iterables.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x1</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><em>numpy.array</em>) – Coordinates of the 1st and the 2nd point</p></li>
-<li><p><strong>y1</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><em>numpy.array</em>) – Coordinates of the 1st and the 2nd point</p></li>
-<li><p><strong>x2</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><em>numpy.array</em>) – Coordinates of the 1st and the 2nd point</p></li>
-<li><p><strong>y2</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><em>numpy.array</em>) – Coordinates of the 1st and the 2nd point</p></li>
+<li><p><strong>x1</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><em>numpy.ndarray</em>) – X-coordinate(s) of the first point.</p></li>
+<li><p><strong>y1</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><em>numpy.ndarray</em>) – Y-coordinate(s) of the first point.</p></li>
+<li><p><strong>x2</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><em>numpy.ndarray</em>) – X-coordinate(s) of the second point.</p></li>
+<li><p><strong>y2</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><em>numpy.ndarray</em>) – Y-coordinate(s) of the second point.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>a</strong> (<em>float</em>) – regression coefficient</p></li>
-<li><p><strong>b1 &amp; b2</strong> (<em>float</em>) – regression offsets coefficient (b1 must be equal to b2)</p></li>
+<li><p><strong>a</strong> (<em>float or numpy.ndarray</em>) – Slope coefficient of the line.</p></li>
+<li><p><strong>b1</strong> (<em>float or numpy.ndarray</em>) – Y-intercept using first point (should equal b2).</p></li>
+<li><p><strong>b2</strong> (<em>float or numpy.ndarray</em>) – Y-intercept using second point (should equal b1).</p></li>
 </ul>
 </p>
 </dd>
@@ -1319,30 +1333,34 @@ x1,y1,x2,y2 can be iterables</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.linear_reg_getvalue">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">linear_reg_getvalue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.linear_reg_getvalue" title="Link to this definition"></a></dt>
-<dd><p>From a vector X and coefficients a &amp; b, get Y = a*X + b</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">linear_reg_getvalue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.linear_reg_getvalue" title="Link to this definition"></a></dt>
+<dd><p>Compute Y = a*X + b from a vector X and coefficients a and b.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
-<li><p><strong>b</strong> (<em>a &amp;</em>) – Linear regression coefficients</p></li>
-<li><p><strong>full</strong> (<em>bool</em>) – True : return X , Y = aX + b , False : return Y = aX + b</p></li>
+<li><p><strong>x</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – Input values.</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – Linear regression slope coefficient.</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – Linear regression intercept coefficient.</p></li>
+<li><p><strong>full</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return both X and Y = aX + b.
+If False, return only Y = aX + b.
+Default is True.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>Y</strong> (<em>numpy.array</em>) – if full == False</p></li>
-<li><p><em>OR</em></p></li>
-<li><p><strong>X , Y</strong> (<em>numpy.array</em>) – if full == True</p></li>
+<li><p><strong>y</strong> (<em>numpy.ndarray</em>) – Computed values Y = aX + b.
+Only returned if <cite>full</cite> is False.</p></li>
+<li><p><strong>x</strong> (<em>numpy.ndarray</em>) – Input values (unchanged).
+Only returned if <cite>full</cite> is True.</p></li>
+<li><p><strong>y</strong> (<em>numpy.ndarray</em>) – Computed values Y = aX + b.
+Only returned if <cite>full</cite> is True.</p></li>
 </ul>
 </p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Unstable while working with POSIX Time as X-data (too heigh values ? …)
-Decimal Years are recommended</p>
-</div>
+<p class="rubric">Notes</p>
+<p>This function may be unstable when working with POSIX Time as X-data due to
+large values. Decimal Years are recommended for better numerical stability.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1380,135 +1398,49 @@ For larger datasets, scipy’s linregress is faster (n points &gt; ~13000).</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.mad">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">mad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.mad" title="Link to this definition"></a></dt>
-<dd><p>Calculate the Median Absolute Deviation (MAD) of a list or array.</p>
+<dd><p>Compute Median Absolute Deviation (MAD).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>array-like</em>) – Input values.</p></li>
-<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Calculation mode. Can be ‘median’ or ‘mean’. The default is ‘median’.</p></li>
+<li><p><strong>data</strong> (<em>array-like</em>) – Input data values.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Mode for computing deviation center: ‘median’ or ‘mean’.
+Default is ‘median’.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The Median Absolute Deviation value.</p>
+<dd class="field-even"><p><strong>result</strong> – The Median Absolute Deviation.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>When mode is ‘median’: MAD = median(<a href="#id1"><span class="problematic" id="id2">|data - median(data)|</span></a>)
-When mode is ‘mean’: MAD = mean(<a href="#id3"><span class="problematic" id="id4">|data - mean(data)|</span></a>)
-NaN values are ignored in the calculation.</p>
-<p class="rubric">References</p>
-<p><a class="reference external" href="http://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm">http://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm</a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.movingaverage">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">movingaverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.movingaverage" title="Link to this definition"></a></dt>
-<dd><p>Calculate moving average using convolution (INTERNAL_ID_1).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>values</strong> (<em>array-like</em>) – Input values.</p></li>
-<li><p><strong>window</strong> (<em>int</em>) – Window size for the moving average.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>smas</strong> – Moving average calculated with ‘valid’ mode.
-The output size will be len(values) - window + 1.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>The ‘valid’ mode requires enough datapoints. For example, if you remove ‘valid’,
-it will start at point one without any prior points.
-This implementation returns a shorter array than the input.</p>
-<p class="rubric">References</p>
-<p><a class="reference external" href="http://sentdex.com/sentiment-analysisbig-data-and-python-tutorials-algorithmic-trading/how-to-chart-stocks-and-forex-doing-your-own-financial-charting/calculate-simple-moving-average-sma-python/">http://sentdex.com/sentiment-analysisbig-data-and-python-tutorials-algorithmic-trading/how-to-chart-stocks-and-forex-doing-your-own-financial-charting/calculate-simple-moving-average-sma-python/</a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.movingaverage_bis">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">movingaverage_bis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convolve_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'same'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.movingaverage_bis" title="Link to this definition"></a></dt>
-<dd><p>Calculate moving average using convolution with specified mode (INTERNAL_ID_4).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>interval</strong> (<em>array-like</em>) – Input values.</p></li>
-<li><p><strong>window_size</strong> (<em>int</em>) – Size of the convolution window.</p></li>
-<li><p><strong>convolve_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Mode for convolution: ‘same’, ‘valid’, or ‘full’.
-The default is ‘same’, which returns output with same size as input.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Moving average with specified convolution mode applied.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Slower than other methods but gives output of the same size as input.
-The ‘same’ mode is recommended for most applications.</p>
-<p class="rubric">References</p>
-<p><a class="reference external" href="https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python">https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python</a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.movingaverage_ter">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">movingaverage_ter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_width</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.movingaverage_ter" title="Link to this definition"></a></dt>
-<dd><p>Calculate moving average using cumulative sum (INTERNAL_ID_5).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>array-like</em>) – Input values.</p></li>
-<li><p><strong>window_width</strong> (<em>int</em>) – Width of the moving window.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ma_vec</strong> – Moving average vector with reduced size compared to input.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Returns output shorter than the input.</p>
-<p class="rubric">References</p>
-<p><a class="reference external" href="https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python">https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python</a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.outlier_above_below">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_above_below</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">nanmean&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theshold_absolute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theshold_relative_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reference'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_above_below" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_above_below</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">nanmean&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theshold_absolute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theshold_relative_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reference'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_above_below" title="Link to this definition"></a></dt>
 <dd><p>Gives values of X which are between threshold values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>array</em>) – Input array</p></li>
-<li><p><strong>threshold_values</strong> (<em>single value</em><em> (</em><em>float</em><em>) or </em><em>a 2-tuple</em>) – <p>(lower bound threshold, upper bound threshold)</p>
-<p>WARN: those value(s) have to be positives.
+<li><p><strong>threshold_values</strong> (<em>single value</em><em> (</em><em>float</em><em>) or </em><em>a 2-tuple</em>) – <p>(lower bound theshold , upper bound theshold)</p>
+<p><cite>WARN</cite> : those value(s) have to be positives.
 Minus sign for lower bound and plus sign for upper
 one will be applied internally</p>
 </p></li>
 <li><p><strong>reference</strong> (<em>float</em><em> or </em><em>callable</em>) – the central reference value
 can be a absolute fixed value (float) or
 a function (e.g. np.mean of np.median)</p></li>
-<li><p><strong>theshold_absolute</strong> (<em>bool</em>) – <dl>
-<dt>if True threshold_values are absolutes values</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">low</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">-</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<li><p><strong>theshold_absolute</strong> (<em>bool</em>) – <p>if True threshold_values are absolutes values</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">low</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">-</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">upp</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">+</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 </div>
-</dd>
-<dt>if False they are fractions of theshold_relative_value</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">low</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">-</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">theshold_relative_value</span>
+<p>if False they are fractions of theshold_relative_value</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">low</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">-</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">theshold_relative_value</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">upp</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">+</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">theshold_relative_value</span>
 </pre></div>
 </div>
-</dd>
-</dl>
 <p>(see also below)</p>
 </p></li>
 <li><p><strong>theshold_relative_value</strong> (<em>str</em><em> or </em><em>function</em>) – if the string “reference” or None is given, then it the reference
@@ -1517,12 +1449,12 @@ if it is a fuction (e.g. np.std()) then it is this value returned
 by this function which is used
 Only useful when theshold_absolute = False</p></li>
 <li><p><strong>return_booleans</strong> (<em>bool</em>) – return booleans or not</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – print debug information</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>Xout</strong> (<em>numpy array</em>) – X between low_bound &amp; upp_bound</p></li>
+<li><p><strong>xout</strong> (<em>numpy array</em>) – X between low_bound &amp; upp_bound</p></li>
 <li><p><strong>bbool</strong> (<em>numpy array</em>) – X-sized array of booleans</p></li>
 </ul>
 </p>
@@ -1532,42 +1464,33 @@ Only useful when theshold_absolute = False</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.outlier_above_below_binom">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_above_below_binom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">nanmean&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theshold_absolute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theshold_relative_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reference'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detrend_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_above_below_binom" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_above_below_binom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">nanmean&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theshold_absolute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theshold_relative_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reference'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detrend_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_above_below_binom" title="Link to this definition"></a></dt>
 <dd><p>Gives values of Y which are between threshold values, and correct an
 associated X so as X =&gt; Y(X)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Y</strong> (<em>array</em>) – The dependent variable</p></li>
-<li><p><strong>X</strong> (<em>array</em>) – The independent variable</p></li>
-<li><p><strong>threshold_values</strong> (<em>single value</em><em> (</em><em>float</em><em>) or </em><em>a 2-tuple</em>) – (lower bound threshold, upper bound threshold)</p></li>
-<li><p><strong>reference</strong> (<em>float</em><em> or </em><em>callable</em>) – the central reference value</p></li>
-<li><p><strong>theshold_absolute</strong> (<em>bool</em>) – if True threshold_values are absolutes values</p></li>
-<li><p><strong>theshold_relative_value</strong> (<em>str</em><em> or </em><em>function</em>) – relative threshold value specification</p></li>
-<li><p><strong>return_booleans</strong> (<em>bool</em>) – return booleans or not</p></li>
-<li><p><strong>detrend_first</strong> (<em>bool</em>) – remove trend before outlier detection</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – print debug information</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>Yout</strong> (<em>array</em>) – Filtered Y values</p></li>
-<li><p><strong>Xout</strong> (<em>array</em>) – Corresponding filtered X values</p></li>
-<li><p><strong>Xout</strong> (<em>array</em>) – Corresponding filtered X values
-<cite>WARN</cite> : those value(s) have to be positives.
+<li><p><strong>threshold_values</strong> (<em>single value</em><em> (</em><em>float</em><em>) or </em><em>a 2-tuple</em>) – <p>(lower bound theshold , upper bound theshold)</p>
+<p><cite>WARN</cite> : those value(s) have to be positives.
 Minus sign for lower bound and plus sign for upper
-one will be applied internally</p></li>
-<li><p><strong>reference</strong> (<em>float or callable</em>) – the central reference value
+one will be applied internally</p>
+</p></li>
+<li><p><strong>reference</strong> (<em>float</em><em> or </em><em>callable</em>) – the central reference value
 can be a absolute fixed value (float) or
 a function (e.g. np.mean of np.median)</p></li>
-<li><p><strong>theshold_absolute</strong> (<em>bool</em>) – if True threshold_values are absolutes values
-&gt;&gt;&gt; low = reference - threshold_values[0]
-&gt;&gt;&gt; upp = reference + threshold_values[1]
-if False they are fractions of theshold_relative_value
-&gt;&gt;&gt; low = reference - threshold_values[0] * theshold_relative_value
-&gt;&gt;&gt; upp = reference + threshold_values[1] * theshold_relative_value
-(see also below)</p></li>
-<li><p><strong>theshold_relative_value</strong> (<em>str or function</em>) – if the string “reference” or None is given, then it the reference
+<li><p><strong>theshold_absolute</strong> (<em>bool</em>) – <p>if True threshold_values are absolutes values</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">low</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">-</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">upp</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">+</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>if False they are fractions of theshold_relative_value</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">low</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">-</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">theshold_relative_value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">upp</span> <span class="o">=</span> <span class="n">reference</span> <span class="o">+</span> <span class="n">threshold_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">theshold_relative_value</span>
+</pre></div>
+</div>
+<p>(see also below)</p>
+</p></li>
+<li><p><strong>theshold_relative_value</strong> (<em>str</em><em> or </em><em>function</em>) – if the string “reference” or None is given, then it the reference
 value which is used
 if it is a fuction (e.g. np.std()) then it is this value returned
 by this function which is used
@@ -1577,11 +1500,10 @@ Recommended</p></li>
 <li><p><strong>return_booleans</strong> (<em>bool</em>) – return booleans or not</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>)</p></li>
 </ul>
-</p>
 </dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p><strong>Xout</strong> (<em>numpy array</em>) – X between low_bound &amp; upp_bound</p></li>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>x_out</strong> (<em>numpy array</em>) – X between low_bound &amp; upp_bound</p></li>
 <li><p><strong>bbool</strong> (<em>numpy array</em>) – X-sized array of booleans</p></li>
 </ul>
 </p>
@@ -1591,19 +1513,19 @@ Recommended</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.outlier_above_below_simple">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_above_below_simple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upp_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_above_below_simple" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_above_below_simple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upp_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_above_below_simple" title="Link to this definition"></a></dt>
 <dd><p>Gives values of X which are between low_bound &amp; upp_bound</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
+<li><p><strong>x</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
 <li><p><strong>upp_bound</strong> (<em>low_bound &amp;</em>) – lower and upper bound of X values wished</p></li>
 <li><p><strong>return_booleans</strong> (<em>bool</em>) – return booleans or not</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>Xout</strong> (<em>numpy.array</em>) – X between low_bound &amp; upp_bound</p></li>
+<li><p><strong>xout</strong> (<em>numpy.array</em>) – X between low_bound &amp; upp_bound</p></li>
 <li><p><strong>bbool</strong> (<em>bool</em>) – X-sized array of booleans</p></li>
 </ul>
 </p>
@@ -1634,8 +1556,8 @@ will override threshold value if given</p></li>
 <li><p><em>Source</em></p></li>
 <li><p><em>——</em></p></li>
 <li><p><em>Utilisation de la MAD pour detecter les outliers</em></p></li>
-<li><p><strong>http</strong> (<em>//www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm</em>)</p></li>
-<li><p><strong>http</strong> (<em>//web.ipac.caltech.edu/staff/fmasci/home/statistics_refs/BetterThanMAD.pdf</em>)</p></li>
+<li><p><strong>https</strong> (<em>//www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm</em>)</p></li>
+<li><p><strong>https</strong> (<em>//web.ipac.caltech.edu/staff/fmasci/home/statistics_refs/BetterThanMAD.pdf</em>)</p></li>
 </ul>
 </p>
 </dd>
@@ -1644,7 +1566,7 @@ will override threshold value if given</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.outlier_mad_binom">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_mad_binom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detrend_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_mad_binom" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_mad_binom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detrend_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_mad_binom" title="Link to this definition"></a></dt>
 <dd><p>clean the outlier of Y using the MAD approach
 and clean the corresponding values in X
 assuming that we have the function : X =&gt; Y(X)
@@ -1652,8 +1574,8 @@ assuming that we have the function : X =&gt; Y(X)
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Y</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
-<li><p><strong>X</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – X Values so as X =&gt; Y(X)</p></li>
+<li><p><strong>y</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
+<li><p><strong>x</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – X Values so as X =&gt; Y(X)</p></li>
 <li><p><strong>threshold</strong> (<em>float</em>) – MAD threshold</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>)</p></li>
 <li><p><strong>detrend_first</strong> (<em>bool</em>) – detrend linear behavior of Y(X) first</p></li>
@@ -1662,7 +1584,7 @@ assuming that we have the function : X =&gt; Y(X)
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>Yclean &amp; Xclean</strong> (<em>numpy.array</em>)</p></li>
+<li><p><strong>yclean &amp; xclean</strong> (<em>numpy.array</em>)</p></li>
 <li><p><strong>bb</strong> (<em>numpy.array (if return_booleans == True)</em>) – Y-sized booleans</p></li>
 </ul>
 </p>
@@ -1672,326 +1594,73 @@ assuming that we have the function : X =&gt; Y(X)
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.outlier_mad_binom_legacy">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_mad_binom_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detrend_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_mad_binom_legacy" title="Link to this definition"></a></dt>
-<dd><p>clean the outlier of X and clean the corresponding values in Y</p>
-<p>legacy : order of X Y is different than in the main version, and here
-it might be unstable for the detrend</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.outlier_sigma">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_sigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasigmain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_sigma" title="Link to this definition"></a></dt>
-<dd><p>Remove outliers from sigma values above a threshold.</p>
-<p>This is a very old and discontinued function, not very efficient.</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_mad_binom_legacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detrend_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_booleans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_mad_binom_legacy" title="Link to this definition"></a></dt>
+<dd><p>Remove outliers from paired X,Y data using MAD (legacy version).</p>
+<p>Legacy version with different argument order than the main version.
+May be unstable when detrending.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>datasigmain</strong> (<em>array-like</em>) – Input sigma values.</p></li>
-<li><p><strong>threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Threshold multiplier of median sigma. The default is 3.</p></li>
+<li><p><strong>x</strong> (<em>array-like</em>) – X values.</p></li>
+<li><p><strong>y</strong> (<em>array-like</em>) – Y values (dependent on X).</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – MAD threshold. Default is 3.5.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, print elimination information. Default is False.</p></li>
+<li><p><strong>detrend_first</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, detrend before outlier detection. Default is False.</p></li>
+<li><p><strong>return_booleans</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, also return boolean selection array. Default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>datasigmaout</strong> (<em>numpy.ndarray</em>) – Filtered sigma values.</p></li>
-<li><p><strong>boolbad</strong> (<em>numpy.ndarray</em>) – Boolean array indicating which values were kept (not outliers).</p></li>
+<li><p><strong>x_clean</strong> (<em>numpy.ndarray</em>) – Cleaned X values.</p></li>
+<li><p><strong>y_clean</strong> (<em>numpy.ndarray</em>) – Cleaned Y values.</p></li>
+<li><p><strong>bb</strong> (<em>numpy.ndarray, optional</em>) – Boolean array indicating valid points.
+Only returned if return_booleans=True.</p></li>
 </ul>
 </p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>This function is deprecated and not recommended for new code.
-A point with sigma &gt; threshold * median(sigmas) is considered an outlier.</p>
-<section id="deprecation">
-<h3>Deprecation<a class="headerlink" href="#deprecation" title="Link to this heading"></a></h3>
-<p>This is a very old and discontinued function.</p>
-</section>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.rms_mean">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">rms_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.rms_mean" title="Link to this definition"></a></dt>
-<dd><p>Calculate the root mean square (RMS) mean of a list or array.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>A</strong> (<em>array-like</em>) – Input values.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The RMS mean value.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>The RMS mean is defined as: sqrt(mean(A^2))
-NaN values are ignored in the calculation.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.rms_mean_alternativ">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">rms_mean_alternativ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.rms_mean_alternativ" title="Link to this definition"></a></dt>
-<dd><p>Calculate the “GRGS style” RMS of a list or array.</p>
-<p>This calculates the standard deviation (RMS of deviations from the mean).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>A</strong> (<em>array-like</em>) – Input values.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The RMS value of deviations from the mean.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This function calculates: sqrt(mean((A - mean(A))^2))
-which is essentially the standard deviation.
-As of 1808, this is basically the standard deviation.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.rms_mean_kouba">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">rms_mean_kouba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multipl_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg_of_freedom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.rms_mean_kouba" title="Link to this definition"></a></dt>
-<dd><p>Calculate RMS mean following Kouba’s method.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>A</strong> (<em>array-like</em>) – Input values.</p></li>
-<li><p><strong>multipl_coef</strong> (<em>int</em><em>, </em><em>optional</em>) – Multiplication coefficient. The default is 3.</p></li>
-<li><p><strong>deg_of_freedom</strong> (<em>int</em><em>, </em><em>optional</em>) – Degrees of freedom. The default is 7.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The RMS value calculated using Kouba’s method.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Formula: sqrt(sum(A^2) / (multipl_coef * len(A) - deg_of_freedom))</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.runningMean">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">runningMean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.runningMean" title="Link to this definition"></a></dt>
-<dd><p>Calculate running mean (INTERNAL_ID_2).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>array-like</em>) – Input values.</p></li>
-<li><p><strong>N</strong> (<em>int</em>) – Window size.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>y</strong> – Running mean with same size as input.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This implementation returns an output with the same size as input,
-but the result is shifted. Y[0] should be aligned with the middle of the first window.</p>
-<p class="rubric">References</p>
-<p><a class="reference external" href="http://stackoverflow.com/questions/13728392/moving-average-or-running-mean">http://stackoverflow.com/questions/13728392/moving-average-or-running-mean</a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.running_mean">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">running_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convolve_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'same'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.running_mean" title="Link to this definition"></a></dt>
-<dd><p>Gives running mean / moving average of data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_in</strong> (<em>list</em><em> or </em><em>numpy.array</em>) – Values</p></li>
-<li><p><strong>window</strong> (<em>float</em><em> or </em><em>int</em>) – Size of the window for the running mean</p></li>
-<li><p><strong>convolve_mode</strong> (<em>str</em>) – (expert) mode for the underlying convolution</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>data_run</strong> – running mean of data_in (sane size as data_in)
-should stay “same”</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.array</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<dl>
-<dt>Nota :</dt><dd><p>After a stress test, this one is the only one to
-provide an output with same size as input
-AND not shifted
-This fct is slow but at leat, do the job</p>
-<p>See running_mean_help for more details</p>
-<p>convolve_mode should stay fixed as “same”</p>
-</dd>
-<dt>Nota 2 (for developpers) :</dt><dd><p>Wrapper based on fct movingaverage_bis</p>
-<p>The substraction of the mean is an empirical trick</p>
-</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.running_mean_core">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">running_mean_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.running_mean_core" title="Link to this definition"></a></dt>
-<dd><p>Calculate running mean using cumulative sum (INTERNAL_ID_3).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>array-like</em>) – Input values.</p></li>
-<li><p><strong>N</strong> (<em>int</em>) – Window size.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>xout</strong> – Running mean with reduced size.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>More efficient than runningMean but returns output shorter than input.</p>
-<p class="rubric">References</p>
-<p><a class="reference external" href="https://stackoverflow.com/questions/13728392/moving-average-or-running-mean">https://stackoverflow.com/questions/13728392/moving-average-or-running-mean</a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.running_mean_help">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">running_mean_help</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.running_mean_help" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.sinusoide">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">sinusoide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.sinusoide" title="Link to this definition"></a></dt>
-<dd><p>produce a sinusoidal waveform</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>T</strong> (<em>float</em>) – time variable.</p></li>
-<li><p><strong>A</strong> (<em>float</em>) – amplitude, the peak deviation of the function from zero.</p></li>
-<li><p><strong>omega</strong> (<em>float</em><em>, </em><em>optional</em>) – ω = 2πf, angular frequency, the rate of change of the
-function argument in units of radians per second.</p></li>
-<li><p><strong>phi</strong> (<em>float</em><em>, </em><em>optional</em>) – phase, specifies (in radians) where in its cycle
-the oscillation is at t = 0.
-The default is 0.</p></li>
-<li><p><strong>f</strong> (<em>float</em>) – ordinary frequency, the number of oscillations (cycles)
-that occur each second of time.
-If given, it overrides the angular frequency omega.
-Thus, to use it, declare also omega = 0
-The default is None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a sinusoidal waveform.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p><a class="reference external" href="https://en.wikipedia.org/wiki/Sine_wave">https://en.wikipedia.org/wiki/Sine_wave</a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.smooth">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hanning'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.smooth" title="Link to this definition"></a></dt>
-<dd><p>Smooth the data using a window with requested size.</p>
-<p>This method is based on the convolution of a scaled window with the signal.
-The signal is prepared by introducing reflected copies of the signal
-(with the window size) in both ends so that transient parts are minimized
-in the beginning and end part of the output signal.</p>
-<p>Note: works only for equally spaced data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>array</em>) – the input signal</p></li>
-<li><p><strong>window_len</strong> (<em>int</em>) – the dimension of the smoothing window; should be an odd integer</p></li>
-<li><p><strong>window</strong> (<em>str</em>) – the type of window from ‘flat’, ‘hanning’, ‘hamming’, ‘bartlett’, ‘blackman’
-flat window will produce a moving average smoothing.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>the smoothed signal</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>array</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">*</span><span class="mf">0.1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">smooth</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-</div>
+<p>This is a legacy function. Use outlier_mad_binom for the standard version.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.hanning</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.hamming</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.bartlett</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.blackman</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.convolve</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.lfilter</span></code></p>
-</div>
-<p class="rubric">Notes</p>
-<p>The window parameter could be the window itself if an array instead of a string
-length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.</p>
-<p class="rubric">References</p>
-<p><a class="reference external" href="http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html">http://scipy-cookbook.readthedocs.io/items/SignalSmooth.html</a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.time_win_basic">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">time_win_basic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tlisin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Datalisin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outposix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_boolis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_boolis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.time_win_basic" title="Link to this definition"></a></dt>
-<dd><p>Filter time series data within a specified time window.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<em>datetime</em><em> or </em><em>float</em>) – Start time of the window (POSIX if float).</p></li>
-<li><p><strong>end</strong> (<em>datetime</em><em> or </em><em>float</em>) – End time of the window (POSIX if float).</p></li>
-<li><p><strong>Tlisin</strong> (<em>array-like</em><em> of </em><em>datetime</em><em> or </em><em>float</em>) – Time values of the input time series.</p></li>
-<li><p><strong>Datalisin</strong> (<em>array-like</em>) – Data values of the input time series.</p></li>
-<li><p><strong>outposix</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, output times are in POSIX format. The default is True.</p></li>
-<li><p><strong>invert</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, invert the boolean mask (select values outside the window).
-The default is False.</p></li>
-<li><p><strong>out_array</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, convert outputs to numpy arrays. The default is False.</p></li>
-<li><p><strong>out_boolis</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, also return the boolean mask. The default is False.</p></li>
-<li><p><strong>only_boolis</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, only compute and return the boolean mask (faster).
-The default is False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>Tlisout</strong> (<em>array or None</em>) – Time values within the window (or outside if invert=True).
-None if only_boolis=True.</p></li>
-<li><p><strong>Datalisout</strong> (<em>array or None</em>) – Data values within the window (or outside if invert=True).
-None if only_boolis=True.</p></li>
-<li><p><strong>boolis</strong> (<em>numpy.ndarray, optional</em>) – Boolean mask array if out_boolis=True or only_boolis=True.</p></li>
-</ul>
-</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#geodezyx.stats.stats.outlier_mad_binom" title="geodezyx.stats.stats.outlier_mad_binom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlier_mad_binom</span></code></a></dt><dd><p>Main version with correct argument order</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>Internally works with POSIX time format.</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.time_win_multi">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">time_win_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tlist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Datalislis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outposix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.time_win_multi" title="Link to this definition"></a></dt>
-<dd><p>Filter multiple time series data within a specified time window.</p>
+<dt class="sig sig-object py" id="geodezyx.stats.stats.outlier_mad_df">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_mad_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns_aggrgation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;ufunc</span> <span class="pre">'logical_and'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mad_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'median'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_mad_df" title="Link to this definition"></a></dt>
+<dd><p>Remove outliers from pandas DataFrame columns using MAD (Median Absolute Deviation).</p>
+<p>This function applies MAD-based outlier detection to one or more columns in a
+pandas DataFrame and returns a filtered DataFrame. Multiple columns can be
+evaluated simultaneously with results aggregated using a specified logical operator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<em>datetime</em><em> or </em><em>float</em>) – Start time of the window.</p></li>
-<li><p><strong>end</strong> (<em>datetime</em><em> or </em><em>float</em>) – End time of the window.</p></li>
-<li><p><strong>Tlist</strong> (<em>array-like</em>) – Time values (common to all data series).</p></li>
-<li><p><strong>Datalislis</strong> (<em>list</em><em> of </em><em>array-like</em>) – List of data arrays to filter.</p></li>
-<li><p><strong>outposix</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, output times are in POSIX format. The default is True.</p></li>
-<li><p><strong>invert</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, invert the selection. The default is False.</p></li>
-<li><p><strong>out_array</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, convert outputs to numpy arrays. The default is False.</p></li>
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – Input DataFrame to filter.</p></li>
+<li><p><strong>columns</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – Column name(s) to evaluate for outliers.
+If a single string is provided, it will be converted to a list.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – MAD threshold for outlier detection. Default is 3.5.
+Points where MAD &gt; threshold are considered outliers.</p></li>
+<li><p><strong>columns_aggrgation</strong> (<em>callable</em><em>, </em><em>optional</em>) – Function to aggregate boolean masks from multiple columns.
+Should accept variable number of boolean arrays as arguments.
+Common choices: np.logical_and (any column flags as outlier),
+np.logical_or (all columns flag as outlier).
+See Notes for more details.
+Default is np.logical_and.</p></li>
+<li><p><strong>mad_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Mode for computing deviation center: ‘median’ or ‘mean’.
+Default is ‘median’.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>Tlisout</strong> (<em>array</em>) – Time values within the window.</p></li>
-<li><p><strong>Datalislisout</strong> (<em>list of arrays</em>) – Filtered data arrays.</p></li>
+<li><p><strong>df_out</strong> (<em>pandas.DataFrame</em>) – Filtered DataFrame with outliers removed. Has same structure
+as input but with fewer rows.</p></li>
+<li><p><strong>bb_out</strong> (<em>np.array</em>) – Boolean array indicating valid (True) and outlier (False) rows.
+Size matches the number of rows in the input DataFrame.</p></li>
 </ul>
 </p>
 </dd>
@@ -1999,7 +1668,424 @@ None if only_boolis=True.</p></li>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#geodezyx.stats.stats.time_win_basic" title="geodezyx.stats.stats.time_win_basic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time_win_basic</span></code></a></dt><dd><p>Filter a single time series.</p>
+<dt><a class="reference internal" href="#geodezyx.stats.stats.outlier_mad" title="geodezyx.stats.stats.outlier_mad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlier_mad</span></code></a></dt><dd><p>Single column outlier detection using MAD</p>
+</dd>
+<dt><a class="reference internal" href="#geodezyx.stats.stats.outlier_mad_binom" title="geodezyx.stats.stats.outlier_mad_binom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outlier_mad_binom</span></code></a></dt><dd><p>Paired X,Y data outlier removal with MAD</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>When multiple columns are specified, the aggregation function determines
+how results are combined. With np.logical_and (default), a row is kept
+only if it passes in ALL columns. With np.logical_or, a row is kept
+if it passes in ANY column.</p></li>
+<li><p>Since the bad values are flagged False, and good values are True,
+the operator logic is inverted, which might be counterintuitive.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.outlier_sigma">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">outlier_sigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasigmain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.outlier_sigma" title="Link to this definition"></a></dt>
+<dd><p>Remove outliers based on sigma threshold (legacy method).</p>
+<p>Removes points where sigma &gt; threshold * median(sigmas). This is an old
+and discontinued method that is not very efficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datasigmain</strong> (<em>array-like</em>) – Input sigma (uncertainty) values.</p></li>
+<li><p><strong>threshold</strong> (<em>int</em><em>, </em><em>optional</em>) – Multiplier for the sigma threshold. Default is 3.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>datasigmaout</strong> (<em>numpy.ndarray</em>) – Sigma values filtered to exclude outliers.</p></li>
+<li><p><strong>boolbad</strong> (<em>numpy.ndarray</em>) – Boolean array indicating valid values (True = keep, False = outlier).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is a legacy function and is rarely used. More modern methods like
+MAD-based outlier detection are recommended.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.rms_mean">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">rms_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.rms_mean" title="Link to this definition"></a></dt>
+<dd><p>Compute RMS (Root Mean Square) of a list or array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a</strong> (<em>array-like</em>) – Input values.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>result</strong> – The RMS value of the input.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.rms_mean_alternativ">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">rms_mean_alternativ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.rms_mean_alternativ" title="Link to this definition"></a></dt>
+<dd><p>Compute RMS with mean subtraction (standard deviation equivalent).</p>
+<p>Computes: √&lt; (A - Ā)² &gt; instead of √&lt; (A)² &gt;, where Ā is the arithmetic mean.
+This is essentially the standard deviation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>a</strong> (<em>array-like</em>) – Input values.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>result</strong> – The RMS value with mean subtraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is equivalent to the standard deviation of the input.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.rms_mean_kouba">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">rms_mean_kouba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multipl_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg_of_freedom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.rms_mean_kouba" title="Link to this definition"></a></dt>
+<dd><p>Compute weighted RMS (Root Mean Square) with Kouba’s method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>array-like</em>) – Input values.</p></li>
+<li><p><strong>multipl_coef</strong> (<em>int</em><em>, </em><em>optional</em>) – Multiplication coefficient. Default is 3.</p></li>
+<li><p><strong>deg_of_freedom</strong> (<em>int</em><em>, </em><em>optional</em>) – Degrees of freedom. Default is 7.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>result</strong> – The weighted RMS value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.running_mean">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">running_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.running_mean" title="Link to this definition"></a></dt>
+<dd><p>Compute running mean (moving average) of data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_in</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – Input data values.</p></li>
+<li><p><strong>window</strong> (<em>float</em><em> or </em><em>int</em>) – Size of the window for the running mean.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data_run</strong> – Running mean of the input data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.running_mean_1">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">running_mean_1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.running_mean_1" title="Link to this definition"></a></dt>
+<dd><p>Compute running mean using convolution with ‘valid’ mode.</p>
+<p>This method includes the ‘valid’ mode which requires enough datapoints.
+For example, without ‘valid’, it would start at the first point with no prior
+points, resulting in (1+0+0)/3 = 0.3333.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>array-like</em>) – Input data values.</p></li>
+<li><p><strong>window</strong> (<em>int</em>) – Window size for the running mean.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>smas</strong> – Running mean values using ‘valid’ convolution mode.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Internal ID: 1
+See: <a class="reference external" href="https://sentdex.com/sentiment-analysisbig-data-and-python-tutorials-algorithmic-trading/">https://sentdex.com/sentiment-analysisbig-data-and-python-tutorials-algorithmic-trading/</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.running_mean_2">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">running_mean_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.running_mean_2" title="Link to this definition"></a></dt>
+<dd><p>Compute running mean by explicit windowing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Input data values.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Window size for the running mean.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>y</strong> – Running mean values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Internal ID: 2
+See: <a class="reference external" href="https://stackoverflow.com/questions/13728392/moving-average-or-running-mean">https://stackoverflow.com/questions/13728392/moving-average-or-running-mean</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.running_mean_3">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">running_mean_3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.running_mean_3" title="Link to this definition"></a></dt>
+<dd><p>Compute running mean using cumulative sum (moyenne glissante).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Input data values.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Window size for the running mean.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>xout</strong> – Running mean values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Internal ID: 3
+See: <a class="reference external" href="https://stackoverflow.com/questions/13728392/moving-average-or-running-mean">https://stackoverflow.com/questions/13728392/moving-average-or-running-mean</a>
+(Alleo’s answer)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.running_mean_4">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">running_mean_4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convolve_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'same'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.running_mean_4" title="Link to this definition"></a></dt>
+<dd><p>Compute running mean using convolution with configurable mode.</p>
+<p>This method is slower than some alternatives but provides output with the same
+size as input without shifting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interval</strong> (<em>array-like</em>) – Input data values.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – Size of the convolution window.</p></li>
+<li><p><strong>convolve_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Convolution mode (‘same’, ‘valid’, ‘full’). Default is ‘same’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>result</strong> – Running mean values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Internal ID: 4
+See: <a class="reference external" href="https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python">https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.running_mean_5">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">running_mean_5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_width</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.running_mean_5" title="Link to this definition"></a></dt>
+<dd><p>Compute running mean using cumulative sum method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>array-like</em>) – Input data values.</p></li>
+<li><p><strong>window_width</strong> (<em>int</em>) – Width of the running mean window.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ma_vec</strong> – Moving average vector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Internal ID: 5
+See: <a class="reference external" href="https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python">https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python</a>
+(Roman Kh’s answer)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.running_mean_convolut">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">running_mean_convolut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convolve_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'same'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.running_mean_convolut" title="Link to this definition"></a></dt>
+<dd><p>Compute running mean using convolution mode.</p>
+<p>Computes the moving average of input data using convolution with a
+specified mode. The result is mean-centered to avoid bias.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_in</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – Input data values.</p></li>
+<li><p><strong>window</strong> (<em>float</em><em> or </em><em>int</em>) – Size of the window for the running mean.</p></li>
+<li><p><strong>convolve_mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Mode for underlying convolution operation. Default is ‘same’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data_run</strong> – Running mean of data_in with same size as input (not shifted).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>After stress testing, this implementation provides output with the same
+size as input without shifting, though it is slower than some alternatives.
+The subtraction of the mean is an empirical trick to center the result.</p>
+<p>This is a wrapper based on running_mean_4. For more details on convolution
+modes, see:
+- <a class="reference external" href="https://stackoverflow.com/questions/13728392/moving-average-or-running-mean">https://stackoverflow.com/questions/13728392/moving-average-or-running-mean</a>
+- <a class="reference external" href="https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python">https://stackoverflow.com/questions/11352047/finding-moving-average-from-data-points-in-python</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.sinusoide">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">sinusoide</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.sinusoide" title="Link to this definition"></a></dt>
+<dd><p>Generate a sinusoidal waveform.</p>
+<p>Produces a sinusoidal waveform of the form: A * sin(ω*T + φ)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em><em> or </em><em>array-like</em>) – Time variable.</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – Amplitude, the peak deviation of the function from zero.</p></li>
+<li><p><strong>omega</strong> (<em>float</em>) – Angular frequency (ω = 2πf), the rate of change of the function
+argument in units of radians per second.</p></li>
+<li><p><strong>phi</strong> (<em>float</em><em>, </em><em>optional</em>) – Phase offset in radians, specifying where in its cycle the
+oscillation is at t = 0. Default is 0.</p></li>
+<li><p><strong>f</strong> (<em>float</em><em>, </em><em>optional</em>) – Ordinary frequency (cycles per second). If provided, it overrides
+the <cite>omega</cite> parameter. To use this parameter, set omega=0.
+Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>result</strong> – The sinusoidal waveform value(s).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or numpy.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>See: <a class="reference external" href="https://en.wikipedia.org/wiki/Sine_wave">https://en.wikipedia.org/wiki/Sine_wave</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.smooth">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hanning'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.smooth" title="Link to this definition"></a></dt>
+<dd><p>Smooth data using a window with requested size.</p>
+<p>This method is based on the convolution of a scaled window with the signal.
+The signal is prepared by introducing reflected copies of the signal
+(with the window size) in both ends to minimize transient parts at the
+beginning and end of the output signal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy.ndarray</em>) – The input signal. Must be 1-dimensional.</p></li>
+<li><p><strong>window_len</strong> (<em>int</em><em>, </em><em>optional</em>) – The dimension of the smoothing window. Should be an odd integer.
+Default is 11.</p></li>
+<li><p><strong>window</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of window from {‘flat’, ‘hanning’, ‘hamming’, ‘bartlett’, ‘blackman’}.
+‘flat’ window will produce a moving average smoothing.
+Default is ‘hanning’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>y</strong> – The smoothed signal.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If input is not 1-dimensional or smaller than window size.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Works only for equally spaced data.</p>
+<p>The output length may differ from input length. To correct this,
+return <cite>y[(window_len/2-1):-(window_len/2)]</cite> instead of <cite>y</cite>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.hanning</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.hamming</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.bartlett</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.blackman</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.convolve</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.lfilter</span></code></p>
+</div>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://scipy-cookbook.readthedocs.io/items/SignalSmooth.html">https://scipy-cookbook.readthedocs.io/items/SignalSmooth.html</a></p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">smooth</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.time_win_basic">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">time_win_basic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_lis_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_lis_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outposix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_boolis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_boolis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.time_win_basic" title="Link to this definition"></a></dt>
+<dd><p>Filter data within a time window.</p>
+<p>Selects data points that fall within a specified time window.
+Internally converts to POSIX time for computation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>datetime</em><em> or </em><em>float</em>) – Start of the time window.</p></li>
+<li><p><strong>end</strong> (<em>datetime</em><em> or </em><em>float</em>) – End of the time window.</p></li>
+<li><p><strong>t_lis_inp</strong> (<em>array-like</em><em> of </em><em>datetime</em><em> or </em><em>float</em>) – Time values of the data points.</p></li>
+<li><p><strong>data_lis_inp</strong> (<em>array-like</em>) – Data values corresponding to the times.</p></li>
+<li><p><strong>outposix</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, output times in POSIX format.
+If False, output as datetime. Default is True.</p></li>
+<li><p><strong>invert</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, invert the boolean selection (select data outside window).
+Default is False.</p></li>
+<li><p><strong>out_array</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return outputs as numpy arrays. Default is False.</p></li>
+<li><p><strong>out_boolis</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, also return the boolean selection array. Default is False.</p></li>
+<li><p><strong>only_boolis</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, skip filtering and only return boolean array.
+Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>tlisout</strong> (<em>array-like</em>) – Filtered time values. None if only_boolis=True.</p></li>
+<li><p><strong>datalisout</strong> (<em>array-like</em>) – Filtered data values. None if only_boolis=True.</p></li>
+<li><p><strong>boolis</strong> (<em>numpy.ndarray, optional</em>) – Boolean array indicating selected points.
+Only returned if out_boolis=True.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.stats.stats.time_win_multi">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">time_win_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_lis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_lislis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outposix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.time_win_multi" title="Link to this definition"></a></dt>
+<dd><p>Filter multiple datasets within a time window.</p>
+<p>Applies time window filtering to multiple data arrays simultaneously,
+using the same time array for all datasets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>datetime</em><em> or </em><em>float</em>) – Start of the time window.</p></li>
+<li><p><strong>end</strong> (<em>datetime</em><em> or </em><em>float</em>) – End of the time window.</p></li>
+<li><p><strong>t_lis</strong> (<em>array-like</em>) – Time values for filtering.</p></li>
+<li><p><strong>data_lislis</strong> (<em>list</em><em> of </em><em>array-like</em>) – Multiple data arrays to filter.</p></li>
+<li><p><strong>outposix</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, output times in POSIX format. Default is True.</p></li>
+<li><p><strong>invert</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, invert the selection. Default is False.</p></li>
+<li><p><strong>out_array</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return outputs as numpy arrays. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Tlisout</strong> (<em>array-like</em>) – Filtered time values.</p></li>
+<li><p><strong>datalislisout</strong> (<em>list of array-like</em>) – Filtered data arrays.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#geodezyx.stats.stats.time_win_basic" title="geodezyx.stats.stats.time_win_basic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time_win_basic</span></code></a></dt><dd><p>Filter single dataset within time window</p>
 </dd>
 </dl>
 </div>
@@ -2007,80 +2093,77 @@ None if only_boolis=True.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.stats.stats.time_win_multi_start_end">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">time_win_multi_start_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Start_list_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">End_list_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tlisin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Datalisin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outposix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_boolis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.time_win_multi_start_end" title="Link to this definition"></a></dt>
-<dd><p>Filter time series data within multiple specified time windows.</p>
-<p>All windows must be satisfied simultaneously (logical AND operation).</p>
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">time_win_multi_start_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_list_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_list_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_lis_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_lis_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outposix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_boolis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.time_win_multi_start_end" title="Link to this definition"></a></dt>
+<dd><p>Filter data within multiple time windows simultaneously.</p>
+<p>Selects data points that fall within ALL specified time windows.
+This is useful for selecting intersections of multiple time periods.
+Internally converts to POSIX time for computation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Start_list_in</strong> (<em>array-like</em>) – List of start times for each window.</p></li>
-<li><p><strong>End_list_in</strong> (<em>array-like</em>) – List of end times for each window.</p></li>
-<li><p><strong>Tlisin</strong> (<em>array-like</em>) – Time values of the input time series.</p></li>
-<li><p><strong>Datalisin</strong> (<em>array-like</em>) – Data values of the input time series.</p></li>
-<li><p><strong>outposix</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, output times are in POSIX format. The default is True.</p></li>
-<li><p><strong>invert</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, invert the selection. The default is False.</p></li>
-<li><p><strong>out_array</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, convert outputs to numpy arrays. The default is False.</p></li>
-<li><p><strong>out_boolis</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, also return boolean masks. The default is False.</p></li>
+<li><p><strong>start_list_inp</strong> (<em>list</em><em> of </em><em>datetime</em><em> or </em><em>float</em>) – Start times of the time windows.</p></li>
+<li><p><strong>end_list_inp</strong> (<em>list</em><em> of </em><em>datetime</em><em> or </em><em>float</em>) – End times of the time windows.</p></li>
+<li><p><strong>t_lis_inp</strong> (<em>array-like</em><em> of </em><em>datetime</em><em> or </em><em>float</em>) – Time values of the data points.</p></li>
+<li><p><strong>data_lis_inp</strong> (<em>array-like</em>) – Data values corresponding to the times.</p></li>
+<li><p><strong>outposix</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, output times in POSIX format. Default is True.</p></li>
+<li><p><strong>invert</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, invert the selection. Default is False.</p></li>
+<li><p><strong>out_array</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return outputs as numpy arrays. Default is False.</p></li>
+<li><p><strong>out_boolis</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, also return boolean selection arrays. Default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>Tlisout</strong> (<em>array</em>) – Time values satisfying all windows.</p></li>
-<li><p><strong>Datalisout</strong> (<em>array</em>) – Data values satisfying all windows.</p></li>
-<li><p><strong>boolis_opera</strong> (<em>numpy.ndarray, optional</em>) – Combined boolean mask if out_boolis=True.</p></li>
-<li><p><strong>boolis_stk</strong> (<em>numpy.ndarray, optional</em>) – Stack of individual window boolean masks if out_boolis=True.</p></li>
+<li><p><strong>tlisout</strong> (<em>array-like</em>) – Filtered time values.</p></li>
+<li><p><strong>datalisout</strong> (<em>array-like</em>) – Filtered data values.</p></li>
+<li><p><strong>boolis_opera</strong> (<em>numpy.ndarray, optional</em>) – Combined boolean array (intersection of all windows).
+Only returned if out_boolis=True.</p></li>
+<li><p><strong>boolis_stk</strong> (<em>numpy.ndarray, optional</em>) – Stack of individual boolean arrays for each window.
+Only returned if out_boolis=True.</p></li>
 </ul>
 </p>
 </dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Internally works in POSIX time format.
-A point is included only if it falls within ALL specified time windows (AND operation).</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="#geodezyx.stats.stats.time_win_basic" title="geodezyx.stats.stats.time_win_basic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time_win_basic</span></code></a></dt><dd><p>Filter using a single time window.</p>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If len(Start_list_in) != len(End_list_in).</p>
 </dd>
 </dl>
-</div>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.wrapTo180">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">wrapTo180</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.wrapTo180" title="Link to this definition"></a></dt>
-<dd><p>Wrap longitude values to the range [-180, 180).</p>
+<dt class="sig sig-object py" id="geodezyx.stats.stats.wrap_to180">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">wrap_to180</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.wrap_to180" title="Link to this definition"></a></dt>
+<dd><p>Wrap longitude values to the range (-180, 180].</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>lon</strong> (<em>float</em><em> or </em><em>array-like</em>) – Longitude value(s) in degrees.</p>
+<dd class="field-odd"><p><strong>lon</strong> (<em>float</em><em> or </em><em>array-like</em>) – Longitude values in degrees.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Wrapped longitude value(s).</p>
+<dd class="field-even"><p><strong>result</strong> – Longitude values wrapped to (-180, 180].</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float or numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>This function is based on MATLAB’s wrapTo180 function.</p>
+<p>Based on MATLAB’s wrap_to180 function.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.stats.stats.wrapTo360">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">wrapTo360</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.wrapTo360" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="geodezyx.stats.stats.wrap_to360">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.stats.stats.</span></span><span class="sig-name descname"><span class="pre">wrap_to360</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.stats.stats.wrap_to360" title="Link to this definition"></a></dt>
 <dd><p>Wrap longitude values to the range [0, 360).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>lon</strong> (<em>float</em><em> or </em><em>array-like</em>) – Longitude value(s) in degrees.</p>
+<dd class="field-odd"><p><strong>lon</strong> (<em>float</em><em> or </em><em>array-like</em>) – Longitude values in degrees.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Wrapped longitude value(s).</p>
+<dd class="field-even"><p><strong>result</strong> – Longitude values wrapped to [0, 360].</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float or numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>This function is based on MATLAB’s wrapTo360 function.</p>
+<p>Based on MATLAB’s wrap_to360 function.</p>
 </dd></dl>
 
 </section>

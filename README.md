@@ -2,8 +2,8 @@
 
 # geodezyx
 
-**Version: 5.1.1-post2**  
-**Date: 2026-03-12**  
+**Version: 5.2.0**  
+**Date: 2026-07-15**  
 
 **Authors:** 
 * Pierre Sakic (IPGP, Paris, France)
@@ -18,9 +18,15 @@
 
 **Contact e-mail:** sakic@ipgp.fr
 
-**Citation:** Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
+**Citation:** Sakic, P., Nahmani, S., Mansur, G.B. (2026). geodezyx: A Versatile Python Toolbox for Geodetic Data Manipulation with GNSS Processing Pedagogical Features. 
+In: International Association of Geodesy Symposia. Springer, Berlin, Heidelberg. [https://doi.org/10.1007/1345_2026_387](https://doi.org/10.1007/1345_2026_387)
+
+Sakic, Pierre; Mansur, Gustavo; Chaiyaporn, Kitpracha; Ballu, Valérie (2019):
 *The geodeZYX toolbox: a versatile Python 3 toolbox for geodetic-oriented purposes*. 
 V. 4.0. GFZ Data Services. [http://doi.org/10.5880/GFZ.1.1.2019.002](http://doi.org/10.5880/GFZ.1.1.2019.002)
+
+
+
 
 **Licence:** GNU LGPL v3 (see below) 
 
@@ -36,6 +42,9 @@ It includes low-level functions, file management functions,
 time and space-coordinates conversion functions, 
 data (especially GNSS observations and orbits) retrieve functions, 
 plots and visual selection functions ...
+
+It is designed for Python 3 on a LINUX Ubuntu-like system.
+Also tested with Anaconda
 
 ## Toolbox's highlights
 * read RINEX2 and RINEX3/4 as Pandas' DataFrame
@@ -70,7 +79,7 @@ GNU Lesser General Public License, Version 3, 29 June 2007
 _geodezyx_ is free software: you can redistribute it and/or modify it
 under the terms of the GNU Lesser General Public License as published by the 
 Free Software Foundation, either version 3 of the License, or 
-(at your option) any later version. _geodezyx_ is distributed 
+(at your option) any later version. The geodeZYX toolbox is distributed 
 in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even 
 the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 See the GNU Lesser General Public License for more details. 

@@ -83,7 +83,7 @@ Contents
 
    self
    getting_started
-   cookbook   
+   cookbook
    geodezyx
 
 

@@ -1,0 +1,1185 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>geodezyx.operational.soft_frontend package &mdash; geodezyx 5.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx.reffram package" href="geodezyx.reffram.html" />
+    <link rel="prev" title="geodezyx.operational.gins_runner.legacy package" href="geodezyx.operational.gins_runner.legacy.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/geodezyx_toolbox_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to geodezyx’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="geodezyx.operational.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.cluster_gfz">geodezyx.operational.cluster_gfz module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_cddis">geodezyx.operational.download_cddis module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_dropbox">geodezyx.operational.download_dropbox module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.download_ngl">geodezyx.operational.download_ngl module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.local_find_files">geodezyx.operational.local_find_files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_check">geodezyx.operational.rinex_check module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_lister_plotter">geodezyx.operational.rinex_lister_plotter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_utils">geodezyx.operational.rinex_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.operational.html#module-geodezyx.operational.rinex_utils_legacy">geodezyx.operational.rinex_utils_legacy module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.volc_deform.html">geodezyx.volc_deform package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.html">geodezyx package</a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.operational.html">geodezyx.operational package</a></li>
+      <li class="breadcrumb-item active">geodezyx.operational.soft_frontend package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/geodezyx.operational.soft_frontend.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-geodezyx.operational.soft_frontend">
+<span id="geodezyx-operational-soft-frontend-package"></span><h1>geodezyx.operational.soft_frontend package<a class="headerlink" href="#module-geodezyx.operational.soft_frontend" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-geodezyx.operational.soft_frontend.anubis_frontend">
+<span id="geodezyx-operational-soft-frontend-anubis-frontend-module"></span><h2>geodezyx.operational.soft_frontend.anubis_frontend module<a class="headerlink" href="#module-geodezyx.operational.soft_frontend.anubis_frontend" title="Link to this heading"></a></h2>
+<p>Created on Tue Jul  5 15:48:26 2022</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.anubis_frontend.anubis_run">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.anubis_frontend.</span></span><span class="sig-name descname"><span class="pre">anubis_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir_main</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xml_config_generic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_nav</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_sp3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anubis_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/opt/gnss_softs/bin/anubis'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.anubis_frontend.anubis_run" title="Link to this definition"></a></dt>
+<dd><p>Run an Anubis quality check.
+Designed for Anubis 3.3.
+Works with Anubis 3.7 at least.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rnx_inp</strong> (<em>str</em><em> or </em><em>list</em>) – <p>Input RINEXs. can be a RINEX path list,
+or the path of the parent archive directory</p>
+<p>Note that this function is optimized for the
+batch processing of several RINEXs.
+If you want to process a single RINEX,
+gives its path in a list (<cite>[rnx_inp]</cite>)</p>
+</p></li>
+<li><p><strong>out_dir_main</strong> (<em>str</em>) – output main directory.</p></li>
+<li><p><strong>xml_config_generic</strong> (<em>str</em>) – path of the generic XML configuration file.
+will be stored in &lt;out_dir_main&gt;/inp
+See note bellow to find some exemples</p></li>
+<li><p><strong>period</strong> (<em>None</em><em> or </em><em>int</em>) – nominal file period in the RINEX (in sec)
+if None is given, guess based on the RINEX name
+The default is None.</p></li>
+<li><p><strong>interval</strong> (<em>None</em><em> or </em><em>int</em>) – nominal data interval in the RINEX (in sec)
+if None is given, guess based on the RINEX name
+The default is None.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, do not run the Anubis QC.
+Anubis QC results are stored in &lt;out_dir_main&gt;/out
+The default is False.</p></li>
+<li><p><strong>download_nav</strong> (<em>bool</em><em>, </em><em>optional</em>) – Download automatically the Broadcast navigation files.
+will be stored in &lt;out_dir_main&gt;/nav
+The default is True.</p></li>
+<li><p><strong>download_sp3</strong> (<em>bool</em><em>, </em><em>optional</em>) – Download automatically the SP3 orbit files.
+CODE’s MGEX or REPRO3 before 2018 are used per default.
+will be stored in &lt;out_dir_main&gt;/nav
+The default is False.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – Per default, skip anubis execution if a xtr
+file already exists in out_dir_main
+The default is False.</p></li>
+<li><p><strong>anubis_path</strong> (<em>str</em><em>, </em><em>optional</em>) – path of the Anubis executable.
+The default is “/opt/gnss_softs/bin/anubis”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>xml_cfg_list</strong> – list of the generated XML config files.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generic Configuration files for Anubis version 2 and 3
+can be found here:</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;...&gt;/geodezyx/exemples/anubis_configfiles</span></code></p>
+<p>or directly on the geodezyx’s toolbox GitHub repository:</p>
+<p><a class="reference external" href="https://github.com/IPGP/geodezyx/tree/master/geodezyx/000_exemples/anubis_configfiles">https://github.com/IPGP/geodezyx/tree/master/geodezyx/000_exemples/anubis_configfiles</a></p>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.soft_frontend.common_frontend">
+<span id="geodezyx-operational-soft-frontend-common-frontend-module"></span><h2>geodezyx.operational.soft_frontend.common_frontend module<a class="headerlink" href="#module-geodezyx.operational.soft_frontend.common_frontend" title="Link to this heading"></a></h2>
+<p>Created on Wed Feb 11 18:47:44 2026</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.common_frontend.dl_brdc">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.common_frontend.</span></span><span class="sig-name descname"><span class="pre">dl_brdc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redwld_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.common_frontend.dl_brdc" title="Link to this definition"></a></dt>
+<dd><p>Downloads BRDC (Broadcast Ephemeris) files for PRIDE PPPAR from a given directory and date list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prod_parent_dir</strong> (<em>str</em>) – The parent directory where the products are stored.</p></li>
+<li><p><strong>dates_inp</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – If list, the list of dates for which the BRDC files are to be downloaded.
+If tuple, the start and end dates for which the BRDC files are to be downloaded.</p></li>
+<li><p><strong>redwld_delta</strong> (<em>int</em><em>, </em><em>optional</em>) – The age threshold in hours for re-downloading BRDC files. If a found BRDC
+file is older than this threshold, it will be re-downloaded. Defaults to 4 hours.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>brdc_path_lis</strong> – A list of downloaded BRDC files.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function first rounds the dates in the date list to the nearest day and removes duplicates.
+It then downloads the BRDC files for each unique date using the operational.download_gnss_rinex function.
+The downloaded files are appended to a list which is returned at the end.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.common_frontend.dl_orbclk">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.common_frontend.</span></span><span class="sig-name descname"><span class="pre">dl_orbclk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('sp3',</span> <span class="pre">'clk',</span> <span class="pre">'bia',</span> <span class="pre">'obx',</span> <span class="pre">'erp')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_centers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('cddis',</span> <span class="pre">'esa',</span> <span class="pre">'ign',</span> <span class="pre">'whu')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.common_frontend.dl_orbclk" title="Link to this definition"></a></dt>
+<dd><p>Downloads GNSS products for PRIDE PPPAR from a given directory and date list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prod_parent_dir</strong> (<em>str</em>) – The parent directory where the products are stored.</p></li>
+<li><p><strong>dates_inp</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – If list, the list of dates for which the products are to be downloaded.
+If tuple, the start and end dates for which the products are to be downloaded.</p></li>
+<li><p><strong>prod_ac_name</strong> (<em>str</em>) – The name of the analysis center providing the products.</p></li>
+<li><p><strong>prod_types</strong> (<em>tuple</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – The types of GNSS products to be downloaded
+(e.g., “sp3”, “clk”, “bia”, “obx”, “erp”).
+Defaults to (“sp3”, “clk”, “bia”, “obx”, “erp”).</p></li>
+<li><p><strong>data_centers</strong> (<em>tuple</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – The data centers from which to download the products
+Defaults to (“cddis”, “esa”, “ign”, “whu”).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of downloaded GNSS products.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function downloads various GNSS products such as orbits, clocks, biases, etc.
+It iterates over specified data centers and attempts to download the products.
+If at least 5 products are found, the function stops further downloads.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.common_frontend.dl_orbclk_tite">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.common_frontend.</span></span><span class="sig-name descname"><span class="pre">dl_orbclk_tite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">login</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sakic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.common_frontend.dl_orbclk_tite" title="Link to this definition"></a></dt>
+<dd><p>Downloads GRG SP3 and CLK products from CNES’s TITE server.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.common_frontend.dl_prods">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.common_frontend.</span></span><span class="sig-name descname"><span class="pre">dl_prods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_lock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_tite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.common_frontend.dl_prods" title="Link to this definition"></a></dt>
+<dd><p>Download shared products (SP3/CLK and BRDC) once for all parallel runs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prod_dir</strong> (<em>str</em>) – Directory where products will be downloaded.</p></li>
+<li><p><strong>dates_inp</strong> (<em>iterable</em><em> of </em><em>datetime</em>) – If list, the list of dates for which the products are to be downloaded.
+If tuple, the start and end dates for which the products are to be downloaded.</p></li>
+<li><p><strong>prod_ac_name</strong> (<em>str</em>) – Analysis center identifier.</p></li>
+<li><p><strong>download_lock</strong> (<em>threading.Lock</em><em>, </em><em>optional</em>) – Lock to protect concurrent downloads (if needed).</p></li>
+<li><p><strong>use_tite</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, attempts to download SP3/CLK products from CNES’s TITE server
+instead of the default method. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing two lists: (orbclklis_out, brdclis_out)
+- orbclklis_out: List of downloaded SP3/CLK product files.
+- brdclis_out: List of downloaded BRDC files.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.common_frontend.get_best_prods">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.common_frontend.</span></span><span class="sig-name descname"><span class="pre">get_best_prods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_list_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brdc_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period_stepback_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.common_frontend.get_best_prods" title="Link to this definition"></a></dt>
+<dd><p>Finds the best matching product file(s) for a given date with progressive latency tolerance.</p>
+<p>Searches through available product files to match the requested date, progressively
+increasing latency tolerance if no exact match is found. Falls back to returning all
+products if no match is found after maximum latency attempts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prod_list_inp</strong> (<em>list</em><em> of </em><em>str</em>) – List of available product file names.</p></li>
+<li><p><strong>date_inp</strong> (<em>datetime.datetime</em>) – The target date to match.</p></li>
+<li><p><strong>prod_ac_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Analysis center name (e.g., “ULT”, “NRT”, “FIN”). Determines maximum latency steps
+if not explicitly provided. Defaults to empty string.</p></li>
+<li><p><strong>brdc_mode</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, treats files as BRDC (Broadcast), and uses <cite>rinexname2dt</cite> for parsing.
+If False, treats files as SP3/CLK, and uses <cite>sp3name_v3_2dt</cite>.
+Defaults to False.</p></li>
+<li><p><strong>period_stepback_max</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of latency steps to attempt. If None, defaults are:
+- “ULT”: 3 steps
+- “NRT”: 23 steps
+- Others: 0 steps
+Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of matching product file names. If no matches found, returns the entire input list.
+For BRDC mode with 2+ matches, attempts to filter for “GOP” products.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Performs iterative search: starts with exact date match, then incrementally steps back
+through latency periods to find products.</p></li>
+<li><p>File naming convention interpretation varies by <cite>brdc_mode</cite> setting.</p></li>
+<li><p>Contains potential bug in BRDC filtering logic: <cite>[e for e in best_prod_out if “GOP”][0]</cite>
+may raise IndexError if no products contain “GOP” substring.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.common_frontend.get_dates_fmt">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.common_frontend.</span></span><span class="sig-name descname"><span class="pre">get_dates_fmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dates_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.common_frontend.get_dates_fmt" title="Link to this definition"></a></dt>
+<dd><p>Normalizes and formats input dates for GNSS product downloading.</p>
+<p>Converts various date input formats to a standardized sorted list. Optionally applies
+product-specific date adjustments to account for data center latency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dates_inp</strong> (<em>datetime</em><em>, </em><em>list</em><em> of </em><em>datetime</em><em>, or </em><em>tuple</em><em> of </em><em>datetime</em>) – Input dates in one of three formats:
+- Single datetime: converted to a single-element list
+- List of datetime: used as-is
+- Tuple of (start_date, end_date): generates daily range from start to end</p></li>
+<li><p><strong>prod_date</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, applies <cite>get_prod_date</cite> to adjust dates for product latency.
+Defaults to True.</p></li>
+<li><p><strong>prod_ac_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Analysis center name passed to <cite>get_prod_date</cite> for latency adjustments.
+Defaults to empty string.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>dates_lis</strong> – Sorted list of unique datetime objects with duplicates removed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of datetime</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If <cite>dates_inp</cite> is neither a datetime, list, tuple, nor iterable.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_dates_fmt</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">15</span><span class="p">))</span>
+<span class="go">[datetime(2026, 2, 15, 0, 0)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_dates_fmt</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">15</span><span class="p">)])</span>
+<span class="go">[datetime(2026, 2, 15, 0, 0)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_dates_fmt</span><span class="p">((</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">17</span><span class="p">)))</span>
+<span class="go">[datetime(2026, 2, 15, 0, 0), datetime(2026, 2, 16, 0, 0), datetime(2026, 2, 17, 0, 0)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.common_frontend.get_prod_date">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.common_frontend.</span></span><span class="sig-name descname"><span class="pre">get_prod_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period_stepback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.common_frontend.get_prod_date" title="Link to this definition"></a></dt>
+<dd><p>Adjusts product dates based on data center latency and product type.</p>
+<p>Accounts for the delay before data centers provide products after the epoch time.
+Automatically increments latency stepback if the current time is within the latency
+window, then rounds the date according to the product type’s cadence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date_inp</strong> (<em>datetime.datetime</em>) – The input date to be adjusted.</p></li>
+<li><p><strong>prod_ac_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The product analysis center name. Determines rounding interval:
+- “ULT”: Ultra-rapid (6-hour intervals)
+- “NRT”: Near Real-Time (1-hour intervals)
+- “FIN” or “RAP”: Final or Rapid (1-day intervals)
+- “BRDC”: Broadcast ephemeris (1-day intervals)
+Default is empty string.</p></li>
+<li><p><strong>period_stepback</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of periods to step back from the current time.
+Incremented internally if within the latency window.
+Defaults to 0.</p></li>
+<li><p><strong>latency</strong> (<em>int</em><em>, </em><em>optional</em>) – The latency in hours to consider for stepping back.
+the latency is because the data center does not provide
+the products before a certain time after the epoch of
+the products
+IGS Website: latency is offically 3 hours
+GRG on CDDIS: empircally, ~2 hours and 5 minutes
+If we are within the latency window, we step back one
+period to be able to get a substitute product
+Defaults to 3 hours.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The adjusted and floored date according to the product cadence.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime.datetime</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The latency window is disabled for BRDC.</p></li>
+<li><p>Dates are floored (rounded down) to the nearest interval boundary.</p></li>
+<li><p>If <cite>prod_ac_name</cite> is unrecognized, the original date is returned with a warning.</p></li>
+<li><p>ULT and NRT products are designed to be 2 days long,
+so an extra day is subtracted to get the correct product date.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_prod_date</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="s2">&quot;ULT&quot;</span><span class="p">)</span>
+<span class="go">datetime(2026, 2, 14, 6, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_prod_date</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="s2">&quot;FIN&quot;</span><span class="p">)</span>
+<span class="go">datetime(2026, 2, 15, 0, 0)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.common_frontend.run_command">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.common_frontend.</span></span><span class="sig-name descname"><span class="pre">run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.common_frontend.run_command" title="Link to this definition"></a></dt>
+<dd><p>Runs a shell command and captures both stdout and stderr.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>command</strong> (<em>str</em>) – The shell command to be executed.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function uses subprocess.Popen to run the command in a new process.
+It continuously reads and prints stdout and stderr until the process finishes.
+The function prints the return code of the process once it completes.</p>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.soft_frontend.groops_frontend">
+<span id="geodezyx-operational-soft-frontend-groops-frontend-module"></span><h2>geodezyx.operational.soft_frontend.groops_frontend module<a class="headerlink" href="#module-geodezyx.operational.soft_frontend.groops_frontend" title="Link to this heading"></a></h2>
+<p>Created on Tue Jan 17 10:54:49 2023</p>
+<p>&#64;author: psakicki</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.groops_frontend.groops_basic_run">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">groops_basic_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_cfg_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_var_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xml_var_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ERROR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groops_bin_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/opt/softs_gnss/groops/bin/groops'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.groops_frontend.groops_basic_run" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xml_cfg_path</strong> (<em>str</em><em>, </em><em>optional</em>) – the XML config file for GROOPS. The default is “”.</p></li>
+<li><p><strong>global_var_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionnary to change the global variables values, like:
+global_var_dict[“global_var_name”] = new_value
+The default is dict().</p></li>
+<li><p><strong>xml_var_dict</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionnary to change the values in the config XML file.
+Not implemented yet.
+The default is dict().</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True print the command but do not run it . The default is False.</p></li>
+<li><p><strong>verbosity</strong> (<em>str</em><em>, </em><em>optional</em>) – verbosity level of the console logger
+use keywords CRITICAL, ERROR, WARNING, INFO, DEBUG
+The default is ‘ERROR’.</p></li>
+<li><p><strong>log_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – If provided, directory where the logs are stored. The default is None.</p></li>
+<li><p><strong>groops_bin_path</strong> (<em>TYPE</em><em>, </em><em>optional</em>) – Path of the GROOPS bin.
+The default is ‘/opt/softs_gnss/groops/bin/groops’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.groops_frontend.groops_ppp_full_run">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">groops_ppp_full_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">igs_ac_10char</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_files_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmf_tropo_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prods_gnss_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_files_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sitelogs_root_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groops_bin_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/opt/softs_gnss/groops/bin/groops'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ERROR'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.groops_frontend.groops_ppp_full_run" title="Link to this definition"></a></dt>
+<dd><p>High level function to run a GROOPS’s PPP job
+This function download IGS’s products, convert them, and run the PPP job
+see the Notes below for more details</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rinex_path</strong> (<em>str</em>) – the path of the RINEX file to process.</p></li>
+<li><p><strong>project_name</strong> (<em>str</em>) – a personalized name for your processing project</p></li>
+<li><p><strong>igs_ac_10char</strong> (<em>str</em>) – the 10 char. ID for the IGS AC you want to use
+e.g. ‘COD0OPSFIN’
+can handle operational (OPS) and MGEX (MGX) lines</p></li>
+<li><p><strong>cfg_files_dict</strong> (<em>dict</em>) – a dictionary controlling the conversion/processing steps
+and the corresponding config files.</p></li>
+<li><p><strong>log_root_dir</strong> (<em>str</em>) – directory path where the frontend logs will be written</p></li>
+<li><p><strong>vmf_tropo_root_dir</strong> (<em>str</em>) – directory path where the VMF3/ECMWF grids will be stored
+(auto download)</p></li>
+<li><p><strong>prods_gnss_root_dir</strong> (<em>str</em>) – directory path where the IGS products (not converted) will be stored
+(auto download)</p></li>
+<li><p><strong>cfg_files_root_dir</strong> (<em>str</em>) – directory path where the config files are stored.</p></li>
+<li><p><strong>sitelogs_root_dir</strong> (<em>str</em>) – directory path where the sitelogs files are stored.</p></li>
+<li><p><strong>groops_bin_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path of the GROOPS bin.
+The default is ‘/opt/softs_gnss/groops/bin/groops’.</p></li>
+<li><p><strong>verbosity</strong> (<em>str</em><em>, </em><em>optional</em>) – verbosity level of the console logger for the
+GROOPS’s messages
+use keywords CRITICAL, ERROR, WARNING, INFO, DEBUG
+The default is ‘ERROR’.
+This verbosity level does not apply to this function</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>the config files must be checked and edited manually</strong>
+to fit your environnement config
+it is the config files which contains the most useful parameters
+use <cite>groopsGui</cite> to help you</p>
+<p>prototype for config files are in:
+<cite>…/geodezyx/000_exemples/groops_frontend/configfiles/</cite></p>
+<p>do not forget to update on a regular basis GROOPS’s <cite>data</cite> folder:
+` <a class="reference external" href="https://ftp.tugraz.at/outgoing/ITSG/groops/data">https://ftp.tugraz.at/outgoing/ITSG/groops/data</a>.zip`</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.groops_frontend.log_subprocess">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">log_subprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.groops_frontend.log_subprocess" title="Link to this definition"></a></dt>
+<dd><p>Intern fuction for subprocess_frontend2
+to write the stdout/err in the console logger + a logfile</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.groops_frontend.subprocess_frontend2">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">subprocess_frontend2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_name_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'out.log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_name_err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'err.log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logname_timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">err_also_in_outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_objt_level_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_objt_level_err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.groops_frontend.subprocess_frontend2" title="Link to this definition"></a></dt>
+<dd><p>A generic frontend to run an extern command through subprocess
+and write the stdout and stderr outputs in log files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cmd_in</strong> (<em>str</em>) – The subprocess command.</p></li>
+<li><p><strong>save_log</strong> (<em>str</em><em>, </em><em>optional</em>) – export as log the stdout/stderr in files. The default is True.</p></li>
+<li><p><strong>log_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – directory where the logs will be stored. The default is None.</p></li>
+<li><p><strong>log_name_out</strong> (<em>str</em><em>, </em><em>optional</em>) – filename of the stdout log. The default is “out.log”.</p></li>
+<li><p><strong>log_name_err</strong> (<em>str</em><em>, </em><em>optional</em>) – filename of the stderr log. The default is “err.log”.</p></li>
+<li><p><strong>logname_timestamp</strong> (<em>str</em><em>, </em><em>optional</em>) – add a timestamp as prefix. The default is True.</p></li>
+<li><p><strong>logger_objt_level_out</strong> (<em>method</em><em> of </em><em>a Logger object</em><em>, </em><em>optional</em>) – set the logger level of the stdout messages.
+can be logger.info or logger.debug for instance.
+The default is None (logger.info per default then).</p></li>
+<li><p><strong>logger_objt_level_err</strong> (<em>method</em><em> of </em><em>a Logger object</em><em>, </em><em>optional</em>) – set the logger level of the stderr messages.
+can be logger.error or logger.critical for instance.
+The default is None (logger.error per default then).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>exitcode</strong> – the exit code of the command.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Inspired by:
+<a class="reference external" href="https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging">https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging</a>
+And for the threading:
+<a class="reference external" href="https://stackoverflow.com/questions/6809590/merging-a-python-scripts-subprocess-stdout-and-stderr-while-keeping-them-disti">https://stackoverflow.com/questions/6809590/merging-a-python-scripts-subprocess-stdout-and-stderr-while-keeping-them-disti</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.groops_frontend.vmf_tropo_downloader">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.groops_frontend.</span></span><span class="sig-name descname"><span class="pre">vmf_tropo_downloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startdate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2019,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enddate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2019,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'VMF3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'OP'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.groops_frontend.vmf_tropo_downloader" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.soft_frontend.hector_frontend">
+<span id="geodezyx-operational-soft-frontend-hector-frontend-module"></span><h2>geodezyx.operational.soft_frontend.hector_frontend module<a class="headerlink" href="#module-geodezyx.operational.soft_frontend.hector_frontend" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to run the
+time series velocities estimation software HECTOR.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The geodezyx toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.hector_frontend.MJD2dt">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">MJD2dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mjd_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.hector_frontend.MJD2dt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.hector_frontend.get_FLH_from_NEUfile">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">get_FLH_from_NEUfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neufilepath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.hector_frontend.get_FLH_from_NEUfile" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.hector_frontend.keeping_specific_stats">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">keeping_specific_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listoffiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_stats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.hector_frontend.keeping_specific_stats" title="Link to this definition"></a></dt>
+<dd><p>if invert = True : NOT keeping BUT removing specific stats</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.hector_frontend.momfile_trend_processing">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">momfile_trend_processing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_momfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generik_conf_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_ctl_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.hector_frontend.momfile_trend_processing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.hector_frontend.multi_momfile_trend_processing">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">multi_momfile_trend_processing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inpdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generik_conf_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pre.mom'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_ctl_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_specific</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.hector_frontend.multi_momfile_trend_processing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.hector_frontend.multi_neufile_outlier_removing">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">multi_neufile_outlier_removing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inpdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generik_conf_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'neu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_specific</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_ctl_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.hector_frontend.multi_neufile_outlier_removing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.hector_frontend.multi_sumfiles_trend_extract">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">multi_sumfiles_trend_extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_neu_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_specific</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'epc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.hector_frontend.multi_sumfiles_trend_extract" title="Link to this definition"></a></dt>
+<dd><p>style = globk OR epc
+make a GLOBK style .vel file or
+make a dirty velocity file compatible with EPC</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.hector_frontend.neufile_outlier_removing">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">neufile_outlier_removing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_neufile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generik_conf_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_ctl_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.hector_frontend.neufile_outlier_removing" title="Link to this definition"></a></dt>
+<dd><p>from a NEU file
+=&gt; removeoutlier preprocessing
+=&gt; 3 MOM files (one per component)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.hector_frontend.sumfiles_to_statdico">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">sumfiles_to_statdico</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inpdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specific_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_specific</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.hector_frontend.sumfiles_to_statdico" title="Link to this definition"></a></dt>
+<dd><p>this fct search for every sum file in a folder
+a stat dico contains no data
+only the paths to the E,N,U sum files
+statdico[stat] = [path/E.sum,path/N.sum,path/U.sum ]
+for each stat getting the 3 ENU sum files</p>
+<p>Thoses lists will be send in sumfiles_trend_extract</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.hector_frontend.sumfiles_trend_extract">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">sumfiles_trend_extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listof3ENUsumfile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.hector_frontend.sumfiles_trend_extract" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.hector_frontend.velfile_from_a_list_of_statVsV_tuple">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.hector_frontend.</span></span><span class="sig-name descname"><span class="pre">velfile_from_a_list_of_statVsV_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listoftup</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_neu_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'epc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.hector_frontend.velfile_from_a_list_of_statVsV_tuple" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.soft_frontend.midas_frontend">
+<span id="geodezyx-operational-soft-frontend-midas-frontend-module"></span><h2>geodezyx.operational.soft_frontend.midas_frontend module<a class="headerlink" href="#module-geodezyx.operational.soft_frontend.midas_frontend" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to run the
+time series velocities estimation software MIDAS.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The geodezyx toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.midas_frontend.midas_plot">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.midas_frontend.</span></span><span class="sig-name descname"><span class="pre">midas_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_tenu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_vel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.midas_frontend.midas_plot" title="Link to this definition"></a></dt>
+<dd><p>based on a plot for TimeSeriePoint</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.midas_frontend.midas_run">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.midas_frontend.</span></span><span class="sig-name descname"><span class="pre">midas_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tenu_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_midas_soft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_plot_open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.midas_frontend.midas_run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.midas_frontend.midas_vel_files_2_pandas_DF">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.midas_frontend.</span></span><span class="sig-name descname"><span class="pre">midas_vel_files_2_pandas_DF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vel_files_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.midas_frontend.midas_vel_files_2_pandas_DF" title="Link to this definition"></a></dt>
+<dd><p>Convert MIDAS Velocity files to a Pandas DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vel_files_in</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – if list of str, will consider directly the files inside the list
+if str, can be the path of a single file, or a generic (wilcard) path
+to consider several files</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>DF</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.soft_frontend.pride_pppar_frontend">
+<span id="geodezyx-operational-soft-frontend-pride-pppar-frontend-module"></span><h2>geodezyx.operational.soft_frontend.pride_pppar_frontend module<a class="headerlink" href="#module-geodezyx.operational.soft_frontend.pride_pppar_frontend" title="Link to this heading"></a></h2>
+<p>Created on Wed Feb 14 18:01:49 2024</p>
+<p>&#64;author: psakic</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_best_latency">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">pride_best_latency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_lis_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_best_latency" title="Link to this definition"></a></dt>
+<dd><p>Selects the best latency from a list of product files.</p>
+<p>Internal function for get_right_prod.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prod_lis_inp</strong> (<em>list</em>) – A list of product file paths.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The best latency found in the list.
+But can be several if the latency is the same for several products.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_pppar_mp_wrap">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">pride_pppar_mp_wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kwargs_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_pppar_mp_wrap" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_pppar_run">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">pride_pppar_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_path_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_template_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pride_pppar_cfg_1a'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options_dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dl_prods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dl_prods_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_run_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_pppar_run" title="Link to this definition"></a></dt>
+<dd><p>Runs the PRIDE PPPAR process for a single RINEX file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rnx_path</strong> (<em>str</em>) – The path to the RINEX file.</p></li>
+<li><p><strong>cfg_template_path</strong> (<em>str</em>) – The path to the configuration template file.</p></li>
+<li><p><strong>prod_ac_name</strong> (<em>str</em>) – The name of the analysis center providing the products.</p></li>
+<li><p><strong>prod_parent_dir</strong> (<em>str</em>) – The parent directory where the products are stored.</p></li>
+<li><p><strong>tmp_dir</strong> (<em>str</em>) – The temporary directory for intermediate files.</p></li>
+<li><p><strong>cfg_dir</strong> (<em>str</em>) – The directory for configuration files.</p></li>
+<li><p><strong>run_dir</strong> (<em>str</em>) – The directory where the run results will be stored.</p></li>
+<li><p><strong>cfg_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – The prefix for the configuration file name. Default is “pride_pppar_cfg_1a”.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode for the PRIDE PPPAR process. Default is “K”.</p></li>
+<li><p><strong>options_dic</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional options for the PRIDE PPPAR process. Default is an empty dictionary.</p></li>
+<li><p><strong>bin_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – The directory where the PRIDE PPPAR binaries are located. Default is None.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, forces the process to run even if logs already exist. Default is False.</p></li>
+<li><p><strong>dl_prods</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, downloads the necessary products. Default is False.</p></li>
+<li><p><strong>default_fallback</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, uses default values if products are not found. Default is False.</p></li>
+<li><p><strong>dl_prods_only</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, only downloads the products and exits. Default is False.</p></li>
+<li><p><strong>clean_run_dir</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, removes temporary files inside the run directory. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_pppar_run_mono">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">pride_pppar_run_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_template_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_ac_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_parent_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pride_pppar_cfg_1a'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options_dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dl_prods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dl_prods_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_run_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_pppar_run_mono" title="Link to this definition"></a></dt>
+<dd><p>Runs the PRIDE PPPAR process for a single RINEX file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rnx_path</strong> (<em>str</em>) – The path to the RINEX file.</p></li>
+<li><p><strong>cfg_template_path</strong> (<em>str</em>) – The path to the configuration template file.</p></li>
+<li><p><strong>prod_ac_name</strong> (<em>str</em>) – The name of the analysis center providing the products.</p></li>
+<li><p><strong>prod_parent_dir</strong> (<em>str</em>) – The parent directory where the products are stored.</p></li>
+<li><p><strong>tmp_dir</strong> (<em>str</em>) – The temporary directory for intermediate files.</p></li>
+<li><p><strong>cfg_dir</strong> (<em>str</em>) – The directory for configuration files.</p></li>
+<li><p><strong>run_dir</strong> (<em>str</em>) – The directory where the run results will be stored.</p></li>
+<li><p><strong>cfg_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – The prefix for the configuration file name. Default is “pride_pppar_cfg_1a”.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode for the PRIDE PPPAR process. Default is “K”.</p></li>
+<li><p><strong>options_dic</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional options for the PRIDE PPPAR process. Default is an empty dictionary.</p></li>
+<li><p><strong>bin_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – The directory where the PRIDE PPPAR binaries are located. Default is None.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, forces the process to run even if logs already exist. Default is False.</p></li>
+<li><p><strong>dl_prods</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, downloads the necessary products. Default is False.</p></li>
+<li><p><strong>default_fallback</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, uses default values if products are not found. Default is False.</p></li>
+<li><p><strong>dl_prods_only</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, only downloads the products and exits. Default is False.</p></li>
+<li><p><strong>clean_run_dir</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, removes temporary files inside the run directory. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_right_brdc">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">pride_right_brdc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brdc_lis_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir_inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_right_brdc" title="Link to this definition"></a></dt>
+<dd><p>Selects the appropriate BRDC (Broadcast Ephemeris) file from a list and unzips it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>brdc_lis_inp</strong> (<em>list</em>) – A list of BRDC file paths.</p></li>
+<li><p><strong>tmp_dir_inp</strong> (<em>str</em>) – The directory where the unzipped BRDC file will be stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the original BRDC file path and the unzipped BRDC file path.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_right_prod">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">pride_right_prod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_lis_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_fallback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.pride_pppar_frontend.pride_right_prod" title="Link to this definition"></a></dt>
+<dd><p>Selects the appropriate product file from a list and unzips it if necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prod_lis_inp</strong> (<em>list</em>) – A list of product file paths.</p></li>
+<li><p><strong>tmp_dir_inp</strong> (<em>str</em>) – The directory where the unzipped product file will be stored.</p></li>
+<li><p><strong>prod_name</strong> (<em>str</em>) – The name of the product.</p></li>
+<li><p><strong>default_fallback</strong> (<em>bool</em>) – If True, uses default values if products are not found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing the unzipped product file path and the original product file path.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.pride_pppar_frontend.remove_regex_reserved_characters">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.pride_pppar_frontend.</span></span><span class="sig-name descname"><span class="pre">remove_regex_reserved_characters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.pride_pppar_frontend.remove_regex_reserved_characters" title="Link to this definition"></a></dt>
+<dd><p>Removes all REGEX reserved characters from the input string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_string</strong> (<em>str</em>) – The string to be cleaned of REGEX reserved characters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cleaned string with all REGEX reserved characters removed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.soft_frontend.rtklib_frontend">
+<span id="geodezyx-operational-soft-frontend-rtklib-frontend-module"></span><h2>geodezyx.operational.soft_frontend.rtklib_frontend module<a class="headerlink" href="#module-geodezyx.operational.soft_frontend.rtklib_frontend" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to run the
+GNSS processing software RTKLIB.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The geodezyx toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.rtklib_frontend.make_pairs">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">make_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites_rovers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites_bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_srt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.rtklib_frontend.make_pairs" title="Link to this definition"></a></dt>
+<dd><p>Find RINEX files and match rover/base pairs based on time coverage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rnx_dir</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Directory containing RINEX files.</p></li>
+<li><p><strong>sites_rovers</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – List of rover site codes.</p></li>
+<li><p><strong>sites_bases</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – Base site code.</p></li>
+<li><p><strong>date_srt</strong> (<em>datetime.datetime</em><em>, </em><em>optional</em>) – Start date for RINEX file search.</p></li>
+<li><p><strong>date_end</strong> (<em>datetime.datetime</em><em>, </em><em>optional</em>) – End date for RINEX file search.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>rnxs_pairs</strong> (<em>list of tuples</em>) – rover_path, base_path</p></li>
+<li><p><strong>df_all</strong> (<em>pandas DataFrame</em>) – all RINEX file information</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.rtklib_frontend.parquet2csv">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">parquet2csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prq_inp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'15min'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.rtklib_frontend.parquet2csv" title="Link to this definition"></a></dt>
+<dd><p>Convert merged RTKLIB parquet file to CSV format, processed by rover/base pairs.</p>
+<p>Reads a merged parquet file containing GNSS solutions from multiple rover/base
+station pairs, resamples each pair’s data independently, and exports to CSV files.
+This function uses PyArrow filters to minimize memory usage by reading only the
+data relevant to each rover/base pair.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prq_inp</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Path to the merged parquet file containing rover/base pair GNSS solutions.
+The file must contain columns: ‘epoch’, ‘rover’, ‘base’, ‘x’, ‘y’, ‘z’.</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Output directory where CSV files will be saved. Created if it doesn’t exist.</p></li>
+<li><p><strong>sample</strong> (<em>str</em><em>, </em><em>default=&quot;15min&quot;</em>) – Resampling interval for position data. Passed to _resample_df().
+Examples: “1min”, “15min”, “1H”, “1D”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>None</em></p></li>
+<li><p><em>Output Files</em></p></li>
+<li><p><em>————</em></p></li>
+<li><p>CSV files in <cite>out_dir</cite> with naming pattern – {rover}_{base}_{sample}.csv</p></li>
+<li><p><em>Each CSV contains columns</em> –</p>
+<ul>
+<li><p>epoch: datetime of the resampled position</p></li>
+<li><p>x, y, z: median position coordinates for the resampling interval</p></li>
+</ul>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Uses PyArrow filter expressions to read only necessary data from the parquet file</p></li>
+<li><p>Efficiently handles large parquet files by filtering at read time (minimal RAM usage)</p></li>
+<li><p>Processes each rover/base pair sequentially</p></li>
+<li><p>Prints rover/base pair names to console as they are processed</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.rtklib_frontend.rtklib_merge_parquet">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">rtklib_merge_parquet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parquet_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_merge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtklib_out_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.rtklib_frontend.rtklib_merge_parquet" title="Link to this definition"></a></dt>
+<dd><p>Merge individual RTKLIB parquet files into a single consolidated parquet file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parquet_inp</strong> (<em>str</em><em> or </em><em>os.PathLike</em><em> or </em><em>list</em><em> of </em><em>str</em>) – Either a directory path (all <code class="docutils literal notranslate"><span class="pre">*.parquet</span></code> files inside are collected
+recursively) <strong>or</strong> an explicit list of parquet file paths.
+The merged output file is written to the directory (or, for a list,
+to the directory of the first file in the list).</p></li>
+<li><p><strong>exp_prefix</strong> (<em>str</em><em>, </em><em>default=&quot;&quot;</em>) – Prefix used to name the merged output file (&lt;exp_prefix&gt;_all.parquet).</p></li>
+<li><p><strong>fast_merge</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, only merges the parquet files corresponding to
+<code class="docutils literal notranslate"><span class="pre">rtklib_out_files</span></code> (or those in the explicit list) and appends them
+to an already-existing <code class="docutils literal notranslate"><span class="pre">&lt;exp_prefix&gt;_all.parquet</span></code> file.
+If False, scans the whole directory recursively for parquet files.</p></li>
+<li><p><strong>rtklib_out_files</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – List of <code class="docutils literal notranslate"><span class="pre">.out</span></code> file paths produced by a previous RTKLIB run.
+Only used when <code class="docutils literal notranslate"><span class="pre">fast_merge=True</span></code> and <code class="docutils literal notranslate"><span class="pre">parquet_inp</span></code> is a directory,
+to avoid a full recursive scan.</p></li>
+<li><p><strong>sample</strong> (<em>str</em><em>, </em><em>optional</em>) – Resampling interval for position data (default: None, no resampling).
+If provided, uses _resample_df to resample each table to the specified interval
+before merging.
+Examples: “1min”, “15min”, “1H” (1 hour), “1D” (1 day).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the merged parquet file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.rtklib_frontend.rtklib_parquet">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">rtklib_parquet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'*out'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.rtklib_frontend.rtklib_parquet" title="Link to this definition"></a></dt>
+<dd><p>Convert RTKLIB output files to Parquet format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resdir</strong> (<em>str</em>) – Results directory containing RTKLIB output files.</p></li>
+<li><p><strong>pattern</strong> (<em>str</em><em>, </em><em>optional</em>) – File pattern to search for (default: “<a href="#id1"><span class="problematic" id="id2">*</span></a>out”).</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>optional</em>) – Force conversion even if parquet file already exists (default: False).</p></li>
+<li><p><strong>sample</strong> (<em>str</em><em>, </em><em>optional</em>) – Resampling interval for position data (default: None, no resampling).
+If provided, uses _resample_df to resample to the specified interval.
+Examples: “1min”, “15min”, “1H” (1 hour), “1D” (1 day).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of created/updated parquet files.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.rtklib_frontend.rtklib_run">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">rtklib_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfgfile_generik</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites_rovers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites_bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">igs_prods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GRG0OPSFIN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_srt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posmode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solformat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sateph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_tmp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">procs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exe_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rnx2rtkp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_parquet_merge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.rtklib_frontend.rtklib_run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.rtklib_frontend.rtklib_run_mono">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">rtklib_run_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_rover</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfgfile_generik</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">igs_prods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GRG0OPSFIN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_prods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbclklis_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brdclis_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rover_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_rover</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posmode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solformat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sateph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_tmp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exe_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rnx2rtkp'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.rtklib_frontend.rtklib_run_mono" title="Link to this definition"></a></dt>
+<dd><p>Worker function for parallel RTKLIB processing.
+Uses pre-downloaded shared products to avoid download concurrency issues.</p>
+<p>This is the function that gets parallelized.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.rtklib_frontend.rtklib_run_pair">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.rtklib_frontend.</span></span><span class="sig-name descname"><span class="pre">rtklib_run_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rinex_pairs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfgfile_generik</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbclklis_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brdclis_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">igs_prods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GRG0OPSFIN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posmode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solformat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sateph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_tmp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">procs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exe_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rnx2rtkp'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.rtklib_frontend.rtklib_run_pair" title="Link to this definition"></a></dt>
+<dd><p>Run RTKLIB processing in parallel for multiple rover/base RINEX pairs.</p>
+<dl class="simple">
+<dt>This function:</dt><dd><ol class="arabic simple">
+<li><p>Downloads all required products (SP3/CLK and BRDC) once in a preliminary step</p></li>
+<li><p>Runs RTKLIB processing in parallel using ThreadPoolExecutor</p></li>
+</ol>
+</dd>
+</dl>
+<p>This avoids download concurrency issues by separating the download phase from
+the processing phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rinex_pairs</strong> (<em>list</em><em> of </em><em>tuples</em>) – List of (rnx_rov, rnx_bas) file path tuples to process.</p></li>
+<li><p><strong>cfgfile_generik</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Path to generic RTKLIB configuration file.</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Directory where results are saved.</p></li>
+<li><p><strong>tmp_dir</strong> (<em>str</em><em> or </em><em>os.PathLike</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Temporary directory for intermediate files.</p></li>
+<li><p><strong>prod_dir</strong> (<em>str</em><em> or </em><em>os.PathLike</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Directory where to search for orbits, clocks, and BRDC files.</p></li>
+<li><p><strong>orbclklis_inp</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – List of orbit/clock files to select from if not downloading.</p></li>
+<li><p><strong>brdclis_inp</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – List of BRDC files to select from if not downloading.</p></li>
+<li><p><strong>igs_prods</strong> (<em>str</em><em>, </em><em>default=&quot;GRG0OPSFIN&quot;</em>) – Analysis center/product identifier.</p></li>
+<li><p><strong>procs</strong> (<em>int</em><em>, </em><em>default=4</em>) – Maximum number of parallel workers.</p></li>
+<li><p><strong>exp_prefix</strong> (<em>str</em><em>, </em><em>default=&quot;&quot;</em>) – Prefix added to output file stems.</p></li>
+<li><p><strong>rover_auto_conf</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, reads rover RINEX header for antenna configuration.</p></li>
+<li><p><strong>base_auto_conf</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, reads base RINEX header for antenna configuration.</p></li>
+<li><p><strong>xyz_dic</strong> (<em>dict</em><em>, </em><em>optional</em>) – [X, Y, Z] coordinates (dict value) for each station (dict key).
+If None, uses [0, 0, 0] for all.</p></li>
+<li><p><strong>solformat</strong> (<em>str</em><em>, </em><em>default=None</em>) – Output solution format.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, forces reprocessing even if output exists.</p></li>
+<li><p><strong>keep_tmp</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, deletes tmp_dir contents at start.</p></li>
+<li><p><strong>exe_path</strong> (<em>str</em>) – Filesystem path to the RTKLIB rnx2rtkp executable.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of output file paths for all processed pairs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pairs</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="s1">&#39;/path/to/rover1.rnx&#39;</span><span class="p">,</span> <span class="s1">&#39;/path/to/base1.rnx&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="s1">&#39;/path/to/rover2.rnx&#39;</span><span class="p">,</span> <span class="s1">&#39;/path/to/base2.rnx&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">rtklib_run_pair</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">pairs</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;/path/to/config.conf&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;/path/to/output&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">procs</span><span class="o">=</span><span class="mi">4</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.soft_frontend.rtklib_frontend_legacy">
+<span id="geodezyx-operational-soft-frontend-rtklib-frontend-legacy-module"></span><h2>geodezyx.operational.soft_frontend.rtklib_frontend_legacy module<a class="headerlink" href="#module-geodezyx.operational.soft_frontend.rtklib_frontend_legacy" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.rtklib_frontend_legacy.rtklib_run_from_rinex">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.rtklib_frontend_legacy.</span></span><span class="sig-name descname"><span class="pre">rtklib_run_from_rinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_rover</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generik_conf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmp_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experience_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rover_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_auto_conf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_rover</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IGS0OPSFIN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_tmp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exe_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/home/psakicki/SOFTWARE/RTKLIB_explorer/RTKLIB/app/consapp/rnx2rtkp/gcc/rnx2rtkp'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.rtklib_frontend_legacy.rtklib_run_from_rinex" title="Link to this definition"></a></dt>
+<dd><p>Run RTKLIB <cite>rnx2rtkp</cite> from rover/base RINEX observations using a generic RTKLIB
+configuration file, optionally overriding antenna/receiver metadata from RINEX
+headers and downloading required GNSS products (SP3 precise orbits and BRDC nav).</p>
+<dl class="simple">
+<dt>The function:</dt><dd><ul class="simple">
+<li><p>creates output and temporary directory structure</p></li>
+<li><p>uncompresses compressed RINEX inputs if needed</p></li>
+<li><p>reads start/end times and sampling interval from the rover/base RINEX</p></li>
+<li><p>builds a run-specific RTKLIB config file from <cite>generik_conf</cite></p></li>
+<li><p>optionally fills rover/base antenna positions and eccentricities from RINEX headers</p></li>
+<li><p>downloads required products into <cite>prod_dir</cite>:
+- SP3 precise orbit from <cite>calc_center</cite>
+- BRDC navigation RINEX</p></li>
+<li><p>calls the external executable <cite>rnx2rtkp</cite> with assembled arguments</p></li>
+<li><p>writes outputs to the <cite>out_dir</cite> directory</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rnx_rover</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to rover observation RINEX. May be compressed (e.g. <cite>.gz</cite>, <cite>.Z</cite> and
+other formats supported by <cite>geodezyx.operational.check_if_compressed_rinex</cite>).</p></li>
+<li><p><strong>rnx_base</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to base observation RINEX. May be compressed.</p></li>
+<li><p><strong>generik_conf</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Path to a generic RTKLIB configuration file (key=value format). This file is
+parsed by <cite>read_conf_file</cite> and then overridden according to function options.</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em>) – Directory where results are saved. This parameter is mandatory.</p></li>
+<li><p><strong>tmp_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em><em> | </em><em>None</em><em>, </em><em>default=None</em>) – Temporary directory for intermediate files. Optional. If not provided,
+defaults to <cite>out_dir/TMP</cite>.</p></li>
+<li><p><strong>prod_dir</strong> (<em>str</em><em> | </em><em>os.PathLike</em><em> | </em><em>None</em><em>, </em><em>default=None</em>) – Directory where to search for orbits, clocks, and BRDC files. Optional.
+If not provided, defaults to <cite>tmp_dir</cite>.</p></li>
+<li><p><strong>experience_prefix</strong> (<em>str</em><em>, </em><em>default=&quot;&quot;</em>) – Prefix added to the output file stem used to name the generated <cite>.conf</cite>
+and <cite>.out</cite> files.</p></li>
+<li><p><strong>rover_auto_conf</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, reads rover RINEX header and injects rover antenna type, XYZ position,
+and antenna eccentricities into the produced config (keys <cite>ant1-*</cite>).
+If False, rover settings remain those defined in <cite>generik_conf</cite>.</p></li>
+<li><p><strong>base_auto_conf</strong> (<em>bool</em><em>, </em><em>default=True</em>) – If True, reads base RINEX header and injects base antenna type, XYZ position,
+and antenna eccentricities into the produced config (keys <cite>ant2-*</cite>).</p></li>
+<li><p><strong>xyz_rover</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Rover station ECEF XYZ coordinates in meters ([X, Y, Z]). If <cite>xyz_rover[0] != 0</cite>,
+these coordinates override the rover RINEX header coordinates; otherwise the rover
+header coordinates are used.</p></li>
+<li><p><strong>xyz_base</strong> (<em>list</em><em>[</em><em>float</em><em>]</em><em>, </em><em>default=</em><em>[</em><em>0</em><em>, </em><em>0</em><em>, </em><em>0</em><em>]</em>) – Base station ECEF XYZ coordinates in meters ([X, Y, Z]). If <cite>xyz_base[0] != 0</cite>,
+these coordinates override the base RINEX header coordinates; otherwise the base
+header coordinates are used.
+Note: this is a simple sentinel check; a real X coordinate of 0 would be treated
+as “not provided”.</p></li>
+<li><p><strong>outtype</strong> (<em>str</em><em>, </em><em>default=&quot;auto&quot;</em>) – Output solution format. If not <cite>“auto”</cite>, sets RTKLIB <cite>out-solformat</cite> to one of:
+<cite>“dms”</cite>, <cite>“deg”</cite>, <cite>“xyz”</cite>, <cite>“enu”</cite> (case-insensitive).
+If <cite>“auto”</cite>, uses whatever is defined in <cite>generik_conf</cite>.</p></li>
+<li><p><strong>calc_center</strong> (<em>str</em><em>, </em><em>default=&quot;IGS0OPSFIN&quot;</em>) – Analysis center/product identifier used when downloading GNSS precise products
+via <cite>geodezyx.operational.download_gnss_products</cite>. Must match what that
+downloader expects.</p></li>
+<li><p><strong>force</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, forces reprocessing even if output file already exists.</p></li>
+<li><p><strong>clean_tmp</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, deletes all contents of <cite>tmp_dir</cite> at the beginning of the
+function execution.</p></li>
+<li><p><strong>exe_path</strong> (<em>str</em><em>, </em><em>default=</em><em>...</em>) – Filesystem path to the RTKLIB <cite>rnx2rtkp</cite> executable.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out_result_fil</strong> – Path to the RTKLIB output solution file (<cite>.out</cite>).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> – If no SP3 orbit file or no BRDC navigation file can be found locally or downloaded.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The generated config file is written to <cite>out_dir</cite> and named using:
+<cite>&lt;experience_prefix&gt;_&lt;rover4&gt;_&lt;base4&gt;_&lt;YYYY_DOY&gt;.conf</cite>.</p></li>
+<li><p>The RTKLIB command is executed via <cite>subprocess.call(…, shell=True)</cite> using
+<cite>/bin/bash</cite>, with a single concatenated command string.</p></li>
+<li><p>A warning is emitted if the base RINEX time span does not fully cover the rover span.</p></li>
+</ul>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.operational.soft_frontend.track_frontend">
+<span id="geodezyx-operational-soft-frontend-track-frontend-module"></span><h2>geodezyx.operational.soft_frontend.track_frontend module<a class="headerlink" href="#module-geodezyx.operational.soft_frontend.track_frontend" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.operational contains functions to run the
+GNSS processing software TRACK.</p>
+<p>it can be imported directly with:
+from geodezyx import operational</p>
+<p>The geodezyx toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.track_frontend.run_track">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.track_frontend.</span></span><span class="sig-name descname"><span class="pre">run_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_full_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_conf_fil</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_rover</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.track_frontend.run_track" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.operational.soft_frontend.track_frontend.track_run">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.operational.soft_frontend.track_frontend.</span></span><span class="sig-name descname"><span class="pre">track_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rnx_rover</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">working_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experience_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XYZbase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XYZrover</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'XYZ'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'short'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">antmodfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'~/gg/tables/antmod.dat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calc_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'igs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forced_sp3_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'G'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rinex_full_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_on_gfz_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forced_iono_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.operational.soft_frontend.track_frontend.track_run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="geodezyx.operational.gins_runner.legacy.html" class="btn btn-neutral float-left" title="geodezyx.operational.gins_runner.legacy package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.reffram.html" class="btn btn-neutral float-right" title="geodezyx.reffram package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

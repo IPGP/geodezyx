@@ -77,14 +77,14 @@ print(Rinexs)
 
 
 for rnx in Rinexs:
-    operational.groops_ppp_full_runner(rnx,
-                           project_name,
-                           igs_ac_10char,
-                           cfg_files_dict,
-                           log_root_dir,
-                           vmf_tropo_root_dir,
-                           prods_gnss_root_dir,
-                           cfg_files_root_dir,
-                           sitelogs_root_dir,
-                           verbosity="INFO")
+    operational.groops_ppp_full_run(rnx,
+                                    project_name,
+                                    igs_ac_10char,
+                                    cfg_files_dict,
+                                    log_root_dir,
+                                    vmf_tropo_root_dir,
+                                    prods_gnss_root_dir,
+                                    cfg_files_root_dir,
+                                    sitelogs_root_dir,
+                                    verbosity="INFO")
 

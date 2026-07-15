@@ -264,6 +264,7 @@ def vector_numeric_conv(func):
 
     return wrapper
 
+
 def vector_string_conv(func):
     """
     Decorator for string time conversion functions.
@@ -291,7 +292,10 @@ def vector_string_conv(func):
 
     return wrapper
 
-def _vectorize_2args_core(func, arg1, arg2, preprocessor_arg1=None, preprocessor_arg2=None, *args, **kwargs):
+
+def _vectorize_2args_core(
+    func, arg1, arg2, preprocessor_arg1=None, preprocessor_arg2=None, *args, **kwargs
+):
     """
     Core logic for vectorizing functions with 2 arguments.
 
@@ -367,13 +371,13 @@ def _vectorize_2args_core(func, arg1, arg2, preprocessor_arg1=None, preprocessor
         # Apply preprocessors
         if preprocessor_arg1:
             a1 = preprocessor_arg1(a1)
-        elif hasattr(a1, 'item'):
+        elif hasattr(a1, "item"):
             # Convert numpy types to Python types
             a1 = a1.item()
 
         if preprocessor_arg2 and a2 is not None:
             a2 = preprocessor_arg2(a2)
-        elif a2 is not None and hasattr(a2, 'item'):
+        elif a2 is not None and hasattr(a2, "item"):
             # Convert numpy types to Python types
             a2 = a2.item()
 
@@ -443,9 +447,12 @@ def vector_2args_datetime_numeric_conv(func):
     @wraps(func)
     def wrapper(arg1, arg2=None, *args, **kwargs):
         return _vectorize_2args_core(
-            func, arg1, arg2,
+            func,
+            arg1,
+            arg2,
             preprocessor_arg1=_normalize_datetime_input,
-            *args, **kwargs
+            *args,
+            **kwargs,
         )
 
     return wrapper
@@ -1260,13 +1267,14 @@ def utc2gpstime(dtin_utc):
 
     Parameters
     ----------
-    dtin_utc : datetime
-        input UTC time.
+    dtin_utc : datetime or iterable of datetime
+        input UTC time(s). Can handle iterable of datetimes.
 
     Returns
     -------
-    gpsweek,gpssecs
-        Converted epoch in GPS time, i.e. GPS Week and GPS seconds in week.
+    (gpsweek, gpssecs) : tuple or iterable of tuples
+        Converted epoch(s) in GPS time, i.e. (GPS Week, GPS seconds in week).
+        If input is iterable, returns same type.
 
     """
     utc_offset = leapsec.find_leapsecond(dtin_utc)
@@ -1400,6 +1408,7 @@ def dt2list(dtin, return_useful_values=True):
         return list(dtin.timetuple())[:-3]
     else:
         return list(dtin.timetuple())
+
 
 @vector_2args_numeric_conv
 def gpstime2dt(gpsweek, gpsdow_or_seconds, dow_input=True, output_time_scale="utc"):
@@ -1626,6 +1635,86 @@ str_date2dt = date_string_2_dt
 strdate2dt = date_string_2_dt
 
 
+@vector_string_conv
+def date_pattern2dt(date_str_inp):
+    """
+    Time representation conversion
+
+    Convert a date string in various formats to a Python datetime object.
+
+    This function uses regular expressions to match the input date string
+    against several common date formats and converts it to a datetime object.
+
+    Parameters
+    ----------
+    date_str_inp : str
+        The input date string to be converted.
+
+    Returns
+    -------
+    datetime.datetime
+        The corresponding datetime object.
+
+    Raises
+    ------
+    ValueError
+        If the input string does not match any of the expected date formats.
+    """
+    if re.match(r"\d{4}-\d{2}-\d{2}", date_str_inp):
+        # Match format YYYY-MM-DD
+        date = dt.datetime.strptime(date_str_inp, "%Y-%m-%d")
+    elif re.match(r"\d{4}-\d{3}", date_str_inp):
+        # Match format Year-DayOfYear (e.g., 2023-123)
+        date = doy2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
+    elif re.match(r"\d{4}-\d{1}", date_str_inp):
+        # Match format GPS Week-Day (e.g., 1234-5)
+        date = gpstime2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
+    elif re.match(r"\d{8}", date_str_inp):
+        # Match format YYYYMMDD
+        date = dt.datetime.strptime(date_str_inp, "%Y%m%d")
+    elif re.match(r"\d{6}", date_str_inp):
+        # Match format YYMMDD
+        date = dt.datetime.strptime(date_str_inp, "%y%m%d")
+    elif re.match(r"\d{5}", date_str_inp):
+        # Match format JJCNES (Julian Day CNES)
+        date = jjul_cnes2dt(int(date_str_inp))
+    else:
+        import dateparser
+
+        try:
+            date = dateparser.parse(date_str_inp)
+        except:
+            raise ValueError("Input string does not match any expected date format.")
+    return date
+
+
+def minmax_pattern_dt(date1_inp, date2_inp):
+    """
+    Convert two date strings into datetime objects and return the minimum and maximum.
+
+    This is useful for a frontend CLI function.
+
+    Parameters
+    ----------
+    date1_inp : str
+        The first date string to be converted.
+    date2_inp : str
+        The second date string to be converted.
+
+    Returns
+    -------
+    tuple
+        A tuple containing the minimum and maximum datetime objects derived from the input strings.
+
+    Raises
+    ------
+    ValueError
+        If the input strings cannot be converted into valid datetime objects.
+    """
+    datetup = (date_pattern2dt(date1_inp), date_pattern2dt(date2_inp))
+    return min(datetup), max(datetup)
+
+
 # Additional conversion functions follow the same pattern...
 # (MJD, CNES Julian Day, etc.)
 
@@ -1785,6 +1874,26 @@ def dt2str(dtin, str_format="%Y-%m-%d %H:%M:%S"):
     return dtin.strftime(str_format)
 
 
+@vector_datetime_conv
+def dt2str_iso(dtin):
+    """
+    Time representation conversion
+
+    Python's Datetime => ISO 8601 String
+
+    Parameters
+    ----------
+    dtin : datetime or iterable of datetime
+        Datetime(s). Can handle iterable of datetimes.
+
+    Returns
+    -------
+    str or iterable of str
+        Time as ISO 8601 string(s). If input is iterable, returns same type.
+    """
+    return dtin.isoformat()
+
+
 def date2dt(date_in):
     """
     Convert date object to datetime
@@ -1812,8 +1921,111 @@ def date2dt(date_in):
 # to avoid duplicating complex regex parsing logic
 # (These can be refactored later if needed)
 
+
 @vector_string_conv
-def rinexname2dt(rinexpath):
+def rnxperiod2tdlta(peri_inp):
+    peri_val = int(peri_inp[0:2])
+    peri_unit = str(peri_inp[2])
+
+    if peri_unit == "S":
+        unit_sec = 1
+    elif peri_unit == "M":
+        unit_sec = 60
+    elif peri_unit == "H":
+        unit_sec = 3600
+    elif peri_unit == "D":
+        unit_sec = 86400
+    else:
+        log.warning("odd RINEX period: %s, assume it as 01D", peri_inp)
+        unit_sec = 86400
+
+    td_out = dt.timedelta(seconds=peri_val * unit_sec)
+
+    return td_out
+
+
+def _rnxname2dt_long(rinexname, out_per_smp=False):
+    """Parse RINEX long name convention to datetime."""
+    date_str = rinexname[12:23]
+
+    yyyy = int(date_str[:4])
+    doy = int(date_str[4:7])
+    hh = int(date_str[7:9])
+    mm = int(date_str[9:11])
+    dt_out = doy2dt(yyyy, doy) + dt.timedelta(seconds=hh * 3600 + mm * 60)
+
+    if out_per_smp:
+        per_str = rinexname[24:27]
+        smp_str = rinexname.split("_")[4]
+        per = rnxperiod2tdlta(per_str)
+        smp = rnxperiod2tdlta(smp_str)
+        return dt_out, per, smp
+    else:
+        return dt_out
+
+
+def _rnxname2dt_long_gfz(rinexname, out_per_smp=False):
+    """Parse RINEX long name GFZ GODC internal convention to datetime."""
+    date_str = rinexname.split("_")[5]
+    time_str = rinexname.split("_")[6]
+
+    yyyy = int(date_str[:4])
+    mo = int(date_str[4:6])
+    dd = int(date_str[6:8])
+    hh = int(time_str[0:2])
+    mm = int(time_str[2:4])
+    ss = int(time_str[4:6])
+    dt_out = dt.datetime(yyyy, mo, dd, hh, mm, ss)
+
+    if out_per_smp:
+        per_str = rinexname.split("_")[7]
+        smp_str = rinexname.split("_")[8]
+        per = rnxperiod2tdlta(per_str)
+        smp = rnxperiod2tdlta(smp_str)
+        return dt_out, per, smp
+    else:
+        return dt_out
+
+
+def _rnxname2dt_short(rinexname, out_per_smp=False):
+    """Parse RINEX short name convention to datetime."""
+    alphabet = list(string.ascii_lowercase)
+    doy = int(rinexname[4:7])
+
+    # sub hourly case
+    if re.match(r"^....[0-9]{3}.[0-9]{2}\.[0-9]{2}", rinexname.lower()):
+        yy = int(rinexname[11:13])
+        minn = int(rinexname[8:10])
+    else:
+        yy = int(rinexname[9:11])
+        minn = 0
+
+    year = yy + 1900 if yy > 80 else yy + 2000
+    h = alphabet.index(rinexname[7]) if rinexname[7] in alphabet else 0
+
+    dt_out = dt.datetime(year, 1, 1) + dt.timedelta(
+        days=doy - 1, seconds=h * 3600 + minn * 60
+    )
+
+    if h > 0:
+        if minn > 0:
+            per = dt.timedelta(minutes=15)
+        else:
+            per = dt.timedelta(hours=1)
+    else:
+        per = dt.timedelta(days=1)
+
+    # this info is not avaiable in RNX2 short naming convention
+    smp = None
+
+    if out_per_smp:
+        return dt_out, per, smp
+    else:
+        return dt_out
+
+
+@vector_string_conv
+def rinexname2dt(rinexpath, out_per_smp=False):
     """
     Time representation conversion
 
@@ -1823,72 +2035,34 @@ def rinexname2dt(rinexpath):
 
     Parameters
     ----------
-    rinexpath : string
-        RINEX path. The RINEX basename will be extracted automatically.
+    rinexpath : string or iterable of string
+        RINEX path(s). The RINEX basename will be extracted automatically.
+        Can handle iterable of strings.
+
+    out_per_smp : bool
+        if True, also returns the period and sample as timedelta objects.
 
     Returns
     -------
-    dt : datetime
-        Datetime
+    dt : datetime or iterable of datetime
+        Datetime(s). If input is iterable, returns same type.
+    per : timedelta or iterable of timedelta,
+        optional Period of the RINEX file (if out_per_smp is True)
+    smp : timedelta or iterable of timedelta,
+        optional Sample interval of the RINEX file (if out_per_smp is True)
     """
-
     rinexname = os.path.basename(rinexpath)
-    # rinexname = rinexpath
 
-    ##### LONG rinex name
     if re.search(conv_rinex.rinex_regex_long_name(), rinexname) or re.search(
         conv_rinex.rinex_regex_long_name_brdc(), rinexname
     ):
-        date_str = rinexname.split("_")[2]
-        yyyy = int(date_str[:4])
-        doy = int(date_str[4:7])
-        hh = int(date_str[7:9])
-        mm = int(date_str[9:11])
-        dt_out = doy2dt(yyyy, doy) + dt.timedelta(seconds=hh * 3600 + mm * 60)
-        return dt_out
+        return _rnxname2dt_long(rinexname, out_per_smp=out_per_smp)
 
-        ##### LONG rinex name -- GFZ's GODC internal name
     elif re.search(conv_rinex.rinex_regex_long_name_gfz_godc(), rinexname):
-        date_str = rinexname.split("_")[5]
-        time_str = rinexname.split("_")[6]
-        yyyy = int(date_str[:4])
-        mo = int(date_str[4:6])
-        dd = int(date_str[6:8])
+        return _rnxname2dt_long_gfz(rinexname, out_per_smp=out_per_smp)
 
-        hh = int(time_str[0:2])
-        mm = int(time_str[2:4])
-        ss = int(time_str[4:6])
-
-        dt_out = dt.datetime(yyyy, mo, dd, hh, mm, ss)
-
-        return dt_out
-
-        ##### SHORT rinex name
-    elif re.search(
-        conv_rinex.rinex_regex(), rinexname.lower()
-    ):  ##EUREF are upper case...
-        alphabet = list(string.ascii_lowercase)
-        doy = int(rinexname[4:7])
-        # sub hourly case
-        if re.match(r"^....[0-9]{3}.[0-9]{2}\.[0-9]{2}",rinexname.lower()):
-            yy = int(rinexname[11:13])
-            minn = int(rinexname[8:10])
-        # regular case
-        else:
-            yy = int(rinexname[9:11])
-            minn = 0
-
-        if yy > 80:
-            year = yy + 1900
-        else:
-            year = yy + 2000
-
-        if rinexname[7] in alphabet:
-            h = alphabet.index(rinexname[7])
-        else:
-            h = 0
-
-        return dt.datetime(year, 1, 1) + dt.timedelta(days=doy - 1, seconds=h * 3600 + minn * 60)
+    elif re.search(conv_rinex.rinex_regex(), rinexname.lower()):
+        return _rnxname2dt_short(rinexname, out_per_smp=out_per_smp)
 
     else:
         log.error("RINEX name is not well formated: %s", rinexname)
@@ -1896,7 +2070,7 @@ def rinexname2dt(rinexpath):
 
 
 @vector_string_conv
-def sp3name2dt(sp3path):
+def sp3name2dt(sp3path, out_per_smp=False):
     """
     Time representation conversion
 
@@ -1906,24 +2080,33 @@ def sp3name2dt(sp3path):
 
     Parameters
     ----------
-    sp3path : string
-        Orbit SP3 path. The basename will be extracted automatically.
+    sp3path : string or iterable of string
+        Orbit SP3 path(s). The basename will be extracted automatically.
+        Can handle iterable of strings.
 
+    out_per_smp : bool
+        if True, also returns the period and sample as timedelta objects.
+        Default is False.
     Returns
     -------
-    dt : datetime
-        Datetime
+    dt : datetime or iterable of datetime
+        Datetime(s). If input is iterable, returns same type.
+    per : timedelta or iterable of timedelta,
+        optional Period of the SP3 file (if out_per_smp is True)
+    smp : timedelta or iterable of timedelta,
+        optional Sample interval of the SP3 file (if out_per_smp is True)
     """
 
     sp3name = os.path.basename(sp3path)
 
     if len(sp3name) < 17:  ###### A REGEX WOULD BE MUCH BETTER !!!! (PSakic 2021-06)
-        return sp3name_leg_2dt(sp3path)
+        return sp3name_leg_2dt(sp3path, out_per_smp=out_per_smp)
     else:
-        return sp3name_v3_2dt(sp3path)
+        return sp3name_v3_2dt(sp3path, out_per_smp=out_per_smp)
+
 
 @vector_string_conv
-def sp3name_leg_2dt(sp3path):
+def sp3name_leg_2dt(sp3path, out_per_smp=False):
     """
     Time representation conversion
 
@@ -1933,23 +2116,39 @@ def sp3name_leg_2dt(sp3path):
 
     Parameters
     ----------
-    sp3path : string
-        Orbit SP3 path. The basename will be extracted automatically.
-
+    sp3path : string or iterable of string
+        Orbit SP3 path(s). The basename will be extracted automatically.
+        Can handle iterable of strings.
+    out_per_smp : bool
+        if True, also returns the period and sample as timedelta objects.
+        Default is False.
     Returns
     -------
-    dt : datetime
-        Datetime
+    dt : datetime or iterable of datetime
+        Datetime(s). If input is iterable, returns same type.
+    per : timedelta or iterable of timedelta,
+        optional Period of the SP3 file (if out_per_smp is True)
+    smp : timedelta or iterable of timedelta,
+        optional Sample interval of the SP3 file (if out_per_smp is True)
     """
 
     sp3name = os.path.basename(sp3path)
 
     week = int(sp3name[3:7])
     dow = int(sp3name[7])
-    return gpstime2dt(week, dow)
+    dt_out = gpstime2dt(week, dow)
+
+    per = dt.timedelta(days=1)
+    smp = dt.timedelta(seconds=900)
+
+    if out_per_smp:
+        return dt_out, per, smp
+    else:
+        return dt_out
+
 
 @vector_string_conv
-def sp3name_v3_2dt(sp3path):
+def sp3name_v3_2dt(sp3path, out_per_smp=False):
     """
     Time representation conversion
 
@@ -1959,26 +2158,41 @@ def sp3name_v3_2dt(sp3path):
 
     Parameters
     ----------
-    sp3path : string
-        Orbit SP3 path. The basename will be extracted automatically.
+    sp3path : string or iterable of string
+        Orbit SP3 path(s). The basename will be extracted automatically.
+        Can handle iterable of strings.
+    out_per_smp : bool
+        if True, also returns the period and sample as timedelta objects.
+        Default is False.
 
     Returns
     -------
-    dt : datetime
-        Datetime
+    dt : datetime or iterable of datetime
+        Datetime(s). If input is iterable, returns same type.
+    per : timedelta or iterable of timedelta,
+        optional Period of the SP3 file (if out_per_smp is True)
+    smp : timedelta or iterable of timedelta,
+        optional Sample interval of the SP3 file (if out_per_smp is True)
     """
     sp3name = os.path.basename(sp3path)
-    datestr = sp3name.split("_")
-    datestr = datestr[1]
+    datestr0 = sp3name.split("_")
+    datestr = datestr0[1]
+    perstr = datestr0[2]
+    smpstr = datestr0[3]
 
     yyyy = int(datestr[0:4])
     doy = int(datestr[4:7])
     hh = int(datestr[7:9])
     mm = int(datestr[9:11])
 
-    dt_out = doy2dt(yyyy, doy) + dt.timedelta(hh * 3600 + mm * 60)
+    dt_out = doy2dt(yyyy, doy, hh, mm)
 
-    return dt_out
+    per = rnxperiod2tdlta(perstr)
+    smp = rnxperiod2tdlta(smpstr)
+    if out_per_smp:
+        return dt_out, per, smp
+    else:
+        return dt_out
 
 
 def statname_dt2rinexname(
@@ -2054,7 +2268,7 @@ def statname_dt2rinexname_long(
         name of the station
         can be a 4 or 9 char.
 
-    datein : datetime.datetime
+    datein : datetime
         date of the wished RINEX name
 
     country : string
@@ -2069,7 +2283,7 @@ def statname_dt2rinexname_long(
         U – Unknown
         The default is "R".
 
-    file_period : str, optional
+    file_period : str or None, optional
         File Period
         15M–15 Minutes
         01H–1 Hour
@@ -2078,7 +2292,7 @@ def statname_dt2rinexname_long(
         00U-Unspecified
         The default is "00U".
 
-    data_freq : str, optional
+    data_freq : str or None, optional
         data frequency.
         None is allowed (for Navigation RINEX)
 
@@ -2119,9 +2333,11 @@ def statname_dt2rinexname_long(
         The default is 'crz.gz'.
 
     preset_type : str, optional
-        takes "daily" or "hourly" values.
+        takes "daily", "hourly", "nav", "brdc" values.
+        for an hourly or daily session,
         set the most common data_freq and file_period
-        for an hourly or daily session.
+        for "nav" or "brdc" (navigation/broadcast) files,
+        remove the data_freq and set file_period to '01D'.
         The default is None.
 
     Returns
@@ -2150,12 +2366,18 @@ def statname_dt2rinexname_long(
         file_period = "01H"
         data_freq = "01S"
 
+    elif preset_type in ("nav", "brdc"):
+        file_period = "01D"
+        data_freq = None
+
     date_ok = datein.strftime("%Y") + dt2doy(datein) + datein.strftime("%H%M")
 
     data_source_ok = "_" + data_source + "_"
 
     # for nav RINEX, data_freq can be None, thus we filter it
-    elts_period_freq = [e for e in (file_period, data_freq, data_type) if e]
+    elts_tup = (file_period, data_freq, data_type)
+    elts_period_freq = [e for e in elts_tup if e]
+
     period_freq_ok = "_" + "_".join(elts_period_freq)
 
     out_rnx_name = statname_ok + data_source_ok + date_ok + period_freq_ok
@@ -2445,8 +2667,6 @@ def dt2epoch_rnx3(dt_in, epoch_flag=0, nsats=0, rec_clk_offset=0):
         return epoch_out
 
 
-
-
 #  _____       _   _                 _       _____       _                        _   _____                                     _        _   _
 # |  __ \     | | | |               ( )     |_   _|     | |                      | | |  __ \                                   | |      | | (_)
 # | |__) |   _| |_| |__   ___  _ __ |/ ___    | |  _ __ | |_ ___ _ __ _ __   __ _| | | |__) |___ _ __  _ __ ___  ___  ___ _ __ | |_ __ _| |_ _  ___  _ __  ___
@@ -2457,6 +2677,7 @@ def dt2epoch_rnx3(dt_in, epoch_flag=0, nsats=0, rec_clk_offset=0):
 #        |___/                                                                                  |_|                                                                           |_|
 
 ### Python's Internal Representations
+
 
 def date2dt(date_in):
     """
@@ -2532,7 +2753,8 @@ def pandas_timestamp2dt(timstp_in):
         else:
             return timstp_in.to_pydatetime()
 
-def pandas_timestamp2posix(timstp_in,out_unit_coef=10**9,out_type=np.int64):
+
+def pandas_timestamp2posix(timstp_in, out_unit_coef=10**9, out_type=np.int64):
     """
     Time Python type conversion
 
@@ -2567,10 +2789,13 @@ def pandas_timestamp2posix(timstp_in,out_unit_coef=10**9,out_type=np.int64):
         posix_out = part1 + part2
         return posix_out
 
+
 import pandas as pd
+
 p = pd.Timestamp("2026-01-01 00:00:00.9876543212345678")
 pandas_timestamp2posix(p)
 np.float64(p.timestamp()) + np.float64(p.nanosecond / 1e9)
+
 
 def numpy_dt2dt(numpy_dt_in):
     """
@@ -2605,7 +2830,7 @@ def numpy_dt2dt(numpy_dt_in):
             typ = np.array
         return typ([numpy_dt2dt(e) for e in numpy_dt_in])
 
-    #timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
+    # timestamp = ((numpy_dt_in - np.datetime64('1970-01-01T00:00:00'))
     #             / np.timedelta64(1, 's'))
     # return dt.datetime.fromtimestamp(timestamp)
 
@@ -2613,7 +2838,9 @@ def numpy_dt2dt(numpy_dt_in):
 
     else:
         import pandas as pd
+
         return pd.Timestamp(numpy_dt_in).to_pydatetime()
+
 
 def time_obj_tester(delta=False, out_iterable=list, start=None):
     """
@@ -2691,8 +2918,12 @@ def time_obj_tester(delta=False, out_iterable=list, start=None):
     # If delta is True, calculate time deltas relative to the start time
     if delta:
         times_datetime = out_iterable([t - start for t in times_datetime])
-        times_datetime_numpy = out_iterable([t - np.datetime64(start) for t in times_datetime_numpy])
-        times_pandas_timestamp = out_iterable([t - pd.Timestamp(start) for t in times_pandas_timestamp])
+        times_datetime_numpy = out_iterable(
+            [t - np.datetime64(start) for t in times_datetime_numpy]
+        )
+        times_pandas_timestamp = out_iterable(
+            [t - pd.Timestamp(start) for t in times_pandas_timestamp]
+        )
 
     # Return the generated time objects in the specified formats
     return times_datetime, times_datetime_numpy, times_pandas_timestamp
@@ -2701,6 +2932,7 @@ def time_obj_tester(delta=False, out_iterable=list, start=None):
 ##### Nota Bene
 ##### numpy_datetime2dt & datetime64_numpy2dt have been moved
 ##### to the funtion graveyard (PSakic 2021-02-22)
+
 
 def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
     """
@@ -2734,15 +2966,20 @@ def epo_epos_converter(inp, inp_type="mjd", out_type="yyyy", verbose=False):
     inp_cmd = "-type " + str(inp_type)
     out_cmd = "-o " + str(out_type)
 
-    cmd = " ".join(("perl $EPOS8_BIN_TOOLS/SCRIPTS/get_epoch.pl", epo_cmd, inp_cmd, out_cmd))
+    cmd = " ".join(
+        ("perl $EPOS8_BIN_TOOLS/SCRIPTS/get_epoch.pl", epo_cmd, inp_cmd, out_cmd)
+    )
 
     if verbose:
         log.debug(cmd)
-    
-    import subprocess
-    result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, executable='/bin/bash')
 
-    out = int(result.stdout.decode('utf-8'))
+    import subprocess
+
+    result = subprocess.run(
+        cmd, shell=True, stdout=subprocess.PIPE, executable="/bin/bash"
+    )
+
+    out = int(result.stdout.decode("utf-8"))
 
     if verbose:
         log.debug(out)

@@ -17,6 +17,14 @@ geodezyx.time\_series.ts\_class module
    :show-inheritance:
    :undoc-members:
 
+geodezyx.time\_series.ts\_class\_xtra module
+--------------------------------------------
+
+.. automodule:: geodezyx.time_series.ts_class_xtra
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 geodezyx.time\_series.ts\_export module
 ---------------------------------------
 

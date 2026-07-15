@@ -12,18 +12,13 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   geodezyx.operational.bin_opera
+   geodezyx.operational.download_gnss
    geodezyx.operational.gins_runner
+   geodezyx.operational.soft_frontend
 
 Submodules
 ----------
-
-geodezyx.operational.anubis\_frontend module
---------------------------------------------
-
-.. automodule:: geodezyx.operational.anubis_frontend
-   :members:
-   :show-inheritance:
-   :undoc-members:
 
 geodezyx.operational.cluster\_gfz module
 ----------------------------------------
@@ -49,74 +44,18 @@ geodezyx.operational.download\_dropbox module
    :show-inheritance:
    :undoc-members:
 
-geodezyx.operational.download\_find\_files module
--------------------------------------------------
+geodezyx.operational.download\_ngl module
+-----------------------------------------
 
-.. automodule:: geodezyx.operational.download_find_files
+.. automodule:: geodezyx.operational.download_ngl
    :members:
    :show-inheritance:
    :undoc-members:
 
-geodezyx.operational.download\_prods module
--------------------------------------------
+geodezyx.operational.local\_find\_files module
+----------------------------------------------
 
-.. automodule:: geodezyx.operational.download_prods
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-geodezyx.operational.download\_rinex module
--------------------------------------------
-
-.. automodule:: geodezyx.operational.download_rinex
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-geodezyx.operational.download\_rinex\_legacy module
----------------------------------------------------
-
-.. automodule:: geodezyx.operational.download_rinex_legacy
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-geodezyx.operational.download\_utils module
--------------------------------------------
-
-.. automodule:: geodezyx.operational.download_utils
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-geodezyx.operational.groops\_frontend module
---------------------------------------------
-
-.. automodule:: geodezyx.operational.groops_frontend
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-geodezyx.operational.hector\_frontend module
---------------------------------------------
-
-.. automodule:: geodezyx.operational.hector_frontend
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-geodezyx.operational.midas\_frontend module
--------------------------------------------
-
-.. automodule:: geodezyx.operational.midas_frontend
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-geodezyx.operational.pride\_pppar\_frontend module
---------------------------------------------------
-
-.. automodule:: geodezyx.operational.pride_pppar_frontend
+.. automodule:: geodezyx.operational.local_find_files
    :members:
    :show-inheritance:
    :undoc-members:
@@ -149,22 +88,6 @@ geodezyx.operational.rinex\_utils\_legacy module
 ------------------------------------------------
 
 .. automodule:: geodezyx.operational.rinex_utils_legacy
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-geodezyx.operational.rtklib\_frontend module
---------------------------------------------
-
-.. automodule:: geodezyx.operational.rtklib_frontend
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-geodezyx.operational.track\_frontend module
--------------------------------------------
-
-.. automodule:: geodezyx.operational.track_frontend
    :members:
    :show-inheritance:
    :undoc-members:

@@ -66,10 +66,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.dict_utils">geodezyx.utils.dict_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.list_utils">geodezyx.utils.list_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.shell_like">geodezyx.utils.shell_like module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.uncompress">geodezyx.utils.uncompress module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.utils.utils_core">geodezyx.utils.utils_core module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.volc_deform.html">geodezyx.volc_deform package</a></li>
 </ul>
 </li>
 </ul>
@@ -1381,28 +1383,6 @@ Use None for unbounded indices. Default is (None, None).</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.shell_like.gzip_compress">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">gzip_compress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.gzip_compress" title="Link to this definition"></a></dt>
-<dd><p>Compress a file using gzip.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>inp_path</strong> (<em>str</em>) – Path to the input file to compress.</p></li>
-<li><p><strong>out_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory. Default is None (same as input file).</p></li>
-<li><p><strong>out_fname</strong> (<em>str</em><em>, </em><em>optional</em>) – Output filename. Default is None (input filename + “.gz”).</p></li>
-<li><p><strong>rm_inp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, remove the input file after compression. Default is False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Path to the compressed output file.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.shell_like.head">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.head" title="Link to this definition"></a></dt>
 <dd><p>Get the first few lines of a file.</p>
@@ -1631,30 +1611,6 @@ to get better performance.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.utils.shell_like.uncompress">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">uncompress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dirout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-f'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.uncompress" title="Link to this definition"></a></dt>
-<dd><p>Uncompress a file using the uncompress command.</p>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version Use: </span><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.files_rw.unzip_gz_z()</span></code> instead.</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pathin</strong> (<em>str</em>) – Path to the file to uncompress.</p></li>
-<li><p><strong>dirout</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory. Default is ‘’ (current directory).</p></li>
-<li><p><strong>opts</strong> (<em>str</em><em>, </em><em>optional</em>) – Options for the uncompress command. Default is ‘-f’.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Path to the uncompressed file, or None if input file does not exist.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str or None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.shell_like.walk_dir">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.shell_like.</span></span><span class="sig-name descname"><span class="pre">walk_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.shell_like.walk_dir" title="Link to this definition"></a></dt>
 <dd><p>From a main parent_dir, returns files_list &amp; dirs_list containing all the files and all the dirs in the parent_dir.
@@ -1699,6 +1655,87 @@ See <a class="reference external" href="https://docs.python.org/3/library/codecs
 <p class="rubric">Notes</p>
 <p>Supported encodings: utf8, latin_1, etc.
 See <a class="reference external" href="https://docs.python.org/3/library/codecs.html#standard-encodings">https://docs.python.org/3/library/codecs.html#standard-encodings</a></p>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.utils.uncompress">
+<span id="geodezyx-utils-uncompress-module"></span><h2>geodezyx.utils.uncompress module<a class="headerlink" href="#module-geodezyx.utils.uncompress" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<dl class="simple">
+<dt>This sub-module of geodezyx.utils contains functions for Shell-like</dt><dd><p>operations in Python.</p>
+</dd>
+</dl>
+<p>it can be imported directly with:
+from geodezyx import utils</p>
+<p>The geodezyx toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.uncompress.extract_zip">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.uncompress.</span></span><span class="sig-name descname"><span class="pre">extract_zip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zip_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#geodezyx.utils.uncompress.extract_zip" title="Link to this definition"></a></dt>
+<dd><p>Extract a zip archive and return the list of extracted file paths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zip_path</strong> (<em>str</em>) – Path to the <code class="docutils literal notranslate"><span class="pre">.zip</span></code> file.</p></li>
+<li><p><strong>extract_dir</strong> (<em>str</em>) – Directory into which the contents will be extracted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Absolute paths of all extracted files.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.uncompress.gzip_compress">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.uncompress.</span></span><span class="sig-name descname"><span class="pre">gzip_compress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.uncompress.gzip_compress" title="Link to this definition"></a></dt>
+<dd><p>Compress a file using gzip.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inp_path</strong> (<em>str</em>) – Path to the input file to compress.</p></li>
+<li><p><strong>out_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory. Default is None (same as input file).</p></li>
+<li><p><strong>out_fname</strong> (<em>str</em><em>, </em><em>optional</em>) – Output filename. Default is None (input filename + “.gz”).</p></li>
+<li><p><strong>rm_inp</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, remove the input file after compression. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the compressed output file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.uncompress.uncompress">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.uncompress.</span></span><span class="sig-name descname"><span class="pre">uncompress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dirout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-f'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.uncompress.uncompress" title="Link to this definition"></a></dt>
+<dd><p>Uncompress a file using the uncompress command.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version Use: </span><code class="xref py py-func docutils literal notranslate"><span class="pre">geodezyx.files_rw.unzip_gz_z()</span></code> instead.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pathin</strong> (<em>str</em>) – Path to the file to uncompress.</p></li>
+<li><p><strong>dirout</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory. Default is ‘’ (current directory).</p></li>
+<li><p><strong>opts</strong> (<em>str</em><em>, </em><em>optional</em>) – Options for the uncompress command. Default is ‘-f’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the uncompressed file, or None if input file does not exist.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -1947,6 +1984,12 @@ invert : exclude text between the pattern</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.utils.utils_core.fct_def_args">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">fct_def_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.fct_def_args" title="Link to this definition"></a></dt>
+<dd><p>Extract default arguments of a function as a dictionary.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.utils.utils_core.get_computer_name">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.utils.utils_core.</span></span><span class="sig-name descname"><span class="pre">get_computer_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.utils.utils_core.get_computer_name" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -2076,7 +2119,7 @@ This boolean will avoid True as return if you test a string</p></li>
 <dd class="field-odd"><p><strong>inp</strong> (<em>any</em>) – The input to be converted into a list.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list containing the input elements if the input is iterable,
+<dd class="field-even"><p><strong>list</strong> – A list containing the input elements if the input is iterable,
 otherwise a list with the input as its single element.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>

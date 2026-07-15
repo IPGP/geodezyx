@@ -573,12 +573,11 @@ def find_recursive(parent_folder , pattern,
     if regex and case_sensitive:
         case_sensitive = False
 
-
     if case_sensitive or not regex: # standard case, pattern is a wildcard
         regex_mode = False
         for root, dirnames, filenames in os.walk(parent_folder):
             for filename in fnmatch.filter(filenames, pattern):
-            #for filename in fnmatch.fnmatch(filenames, pattern):
+                # for filename in fnmatch.fnmatch(filenames, pattern):
                 matches.append(os.path.join(root, filename))
     else: # not case sensitive, use a regex
         regex_mode = True
@@ -589,14 +588,13 @@ def find_recursive(parent_folder , pattern,
                 except Exception as e:
                     log.error("if regex = True, pattern have to be a REGEX (and not only a simple wildcard)")
                     raise e
-                    
+
                 if bool_match:
                     matches.append(os.path.join(root, filename))
 
     if sort_results:
         matches = sorted(matches)
-        
-    
+
     if extended_file_stats:
         matches_ext = []
         for f in matches:
@@ -605,15 +603,15 @@ def find_recursive(parent_folder , pattern,
             except FileNotFoundError:
                 log.warning("file not found %s",f)
                 continue
-                
+
             matches_ext.append((f,stat))
         matches = matches_ext
-        
+
     if warn_if_empty and len(matches) == 0:
         log.warning("no files found! check parent folder and pattern (regex mode: %s)", regex_mode)
         log.info("Parent folder: %s",parent_folder)
         log.info("Pattern      : %s",pattern)
-                
+
     return matches
 
 def glob_smart(dir_path,file_pattern=None,verbose=True):
@@ -743,75 +741,6 @@ def insert_str_in_file_if_line_contains(file_path,str_to_insert,
     f.close()
 
     return file_path
-
-def gzip_compress(inp_path, out_dir=None, out_fname=None, rm_inp=False):
-    """
-    Compress a file using gzip.
-
-    Parameters
-    ----------
-    inp_path : str
-        Path to the input file to compress.
-    out_dir : str, optional
-        Output directory. Default is None (same as input file).
-    out_fname : str, optional
-        Output filename. Default is None (input filename + ".gz").
-    rm_inp : bool, optional
-        If True, remove the input file after compression. Default is False.
-
-    Returns
-    -------
-    str
-        Path to the compressed output file.
-    """
-    if not out_dir:
-        out_dir = os.path.dirname(inp_path)
-    if not out_fname:
-        out_fname = os.path.basename(inp_path) + ".gz"
-    out_path = os.path.join(out_dir, out_fname)
-    with open(inp_path, 'rb') as f_in:
-        with gzip.open(out_path, 'wb') as f_out:
-            shutil.copyfileobj(f_in, f_out)
-    if rm_inp and os.path.isfile(inp_path):
-        os.remove(inp_path)
-
-    return out_path
-
-def uncompress(pathin,dirout = '', opts='-f'):
-    """
-    Uncompress a file using the uncompress command.
-
-    .. deprecated::
-        Use :func:`geodezyx.files_rw.unzip_gz_z` instead.
-
-    Parameters
-    ----------
-    pathin : str
-        Path to the file to uncompress.
-    dirout : str, optional
-        Output directory. Default is '' (current directory).
-    opts : str, optional
-        Options for the uncompress command. Default is '-f'.
-
-    Returns
-    -------
-    str or None
-        Path to the uncompressed file, or None if input file does not exist.
-    """
-    log.warning("function discontinued, use files_rw.unzip_gz_z() instead")
-    if not os.path.isfile(pathin):
-        log.error('uncompress : %s doesnt exist !!!', pathin)
-        return None
-    komand = 'uncompress ' + opts + ' ' + pathin
-    subprocess.call([komand], shell=True)
-    pathout_temp = '.'.join(pathin.split('.')[:-1])
-
-    if dirout == '':
-        pathout = pathout_temp
-    else:
-        pathout = os.path.join(dirout,os.path.basename(pathout_temp))
-        shutil.move(pathout_temp,pathout)
-    return pathout
 
 
 def create_dir(directory):

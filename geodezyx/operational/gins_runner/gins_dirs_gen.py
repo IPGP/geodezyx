@@ -218,11 +218,11 @@ def gen_dirs_rnxs(
             crinex_path = rnx_path
             crz2rnx_classic = True
             if crz2rnx_classic:
-                rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use, verbose=verbose)
+                rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use,
+                                               verbose=verbose, mode="command")
             else: # with Valgur's hatanaka
-                rnx_path = operational.uncomp_rnxpath(crinex_path, tmp_fld_use)
-                rnx_content = hatanaka.decompress(crinex_path)
-                utils.write_in_file(rnx_content, rnx_path)
+                rnx_path = operational.crz2rnx(crinex_path, tmp_fld_use,
+                                               verbose=verbose, mode="python")
             if not os.path.isfile(rnx_path):
                 bool_cntu = _fail_rnx(rnx_path, rnx_dt, "CRZ2RNX failed")
                 if bool_cntu:

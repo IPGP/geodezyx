@@ -33,6 +33,14 @@ geodezyx.utils.shell\_like module
    :show-inheritance:
    :undoc-members:
 
+geodezyx.utils.uncompress module
+--------------------------------
+
+.. automodule:: geodezyx.utils.uncompress
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 geodezyx.utils.utils\_core module
 ---------------------------------
 

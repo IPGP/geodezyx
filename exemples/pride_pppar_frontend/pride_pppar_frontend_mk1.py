@@ -50,10 +50,10 @@ run_dir = parent_dir + "/run"
 
 mode = "S"
 
-operational.pride_pppar_runner(rnx_path_list, 
-                               cfg_template_path,
-                               prod_ac_name, 
-                               prod_parent_dir, 
-                               tmp_dir, cfg_dir, run_dir,
-                               mode=mode,
-                               force=True)
+operational.pride_pppar_run(rnx_path_list,
+                            cfg_template_path,
+                            prod_ac_name,
+                            prod_parent_dir,
+                            tmp_dir, cfg_dir, run_dir,
+                            mode=mode,
+                            force=True)

@@ -32,7 +32,7 @@ name = "geodezyx" # REQUIRED, is the only field that cannot be marked as dynamic
 #
 # For a discussion on single-sourcing the version, see
 # https://packaging.python.org/guides/single-sourcing-package-version/
-version = "5.1.1-post2" # REQUIRED, although can be dynamic
+version = "5.2.0" # REQUIRED, although can be dynamic
 
 # This is a one-line description or tagline of what your project does. This
 # corresponds to the "Summary" metadata field:
@@ -163,7 +163,14 @@ testgins_run = "geodezyx.operational.gins_runner.testgins_run:main"
 bdgins_update = "geodezyx.operational.gins_runner.gins_bd_update:main"
 orbclk_concat = "geodezyx.operational.gins_runner.gins_orbclk_concat:main"
 download_gnss_rinex = "geodezyx.operational.bin_opera.download_gnss_rinex:main"
+download_gnss_products = "geodezyx.operational.bin_opera.download_gnss_products:main"
+rtklib_run = "geodezyx.operational.bin_opera.rtklib_run_cli:rtklib_run_main"
+rtklib_parquet = "geodezyx.operational.bin_opera.rtklib_parquet:rtklib_prq_main"
+rtklib_merge_parquet = "geodezyx.operational.bin_opera.rtklib_merge_parquet:rtklib_merge_prq_main"
+rtklib_parquet2csv = "geodezyx.operational.bin_opera.rtklib_parquet2csv:parquet2csv_main"
 vmf1_compute = "geodezyx.athmo.vmf1_compute:main"
+date_conv = "geodezyx.conv.bin.date_conv:main"
+doy = "geodezyx.conv.bin.date_conv:main"
 
 # This is configuration specific to the `setuptools` build backend.
 # If you are using a different build backend, you will need to change this.
@@ -179,7 +186,8 @@ include = ["geodezyx*"] # package names should match these glob patterns (["*"] 
 #namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [tool.bumpversion]
-current_version = "5.1.1-post2"
+current_version = "5.2.0"
+
 
 ##### SIMPLE CYCLE - MAJOR.MINOR.PATCH #####
 #parse = "(?p<major>\\d+)\\.(?p<minor>\\d+)\\.(?p<patch>\\d+)"

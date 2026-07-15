@@ -7,7 +7,7 @@ import logging.config # MUST remain logging.config for < v3.10
 import os
 from os import path
 
-__version__='5.1.1-post2'  ## increase it with bump-my-version !!!
+__version__='5.2.0'  ## increase it with bump-my-version !!!
 
 #### IMPORT CONFIG FOR LOGGER
 log_file_path = os.path.join(path.dirname(path.abspath(__file__)),'logconfig','loggzyx.py')
@@ -30,7 +30,7 @@ else:
 from . import conv
 from . import utils
 
-#from . import atmo
+#from . import athmo
 #from . import files_rw
 #from . import geodyn
 #from . import interp
@@ -41,7 +41,7 @@ from . import utils
 #from . import time_series
 #from . import utils_xtra
 
-__all__ = ['atmo',
+__all__ = ['athmo',
            'conv',
            'externlib',
            'files_rw',
@@ -53,7 +53,8 @@ __all__ = ['atmo',
            'stats',
            'time_series',
            'utils',
-           'utils_xtra']
+           'utils_xtra',
+           'volc_deform']
 
 if __name__ == '__main__':
     print("geodezyx version",__version__)

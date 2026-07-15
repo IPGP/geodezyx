@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="geodezyx.stats package" href="geodezyx.stats.html" />
-    <link rel="prev" title="geodezyx.operational.gins_runner.legacy package" href="geodezyx.operational.gins_runner.legacy.html" /> 
+    <link rel="prev" title="geodezyx.operational.soft_frontend package" href="geodezyx.operational.soft_frontend.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -60,6 +60,9 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">geodezyx.reffram package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.compar_clk">geodezyx.reffram.compar_clk module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.compar_orb">geodezyx.reffram.compar_orb module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.compar_snx">geodezyx.reffram.compar_snx module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.geometry">geodezyx.reffram.geometry module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.gnss_products">geodezyx.reffram.gnss_products module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-geodezyx.reffram.kepler_gzyx">geodezyx.reffram.kepler_gzyx module</a></li>
@@ -71,6 +74,7 @@
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.volc_deform.html">geodezyx.volc_deform package</a></li>
 </ul>
 </li>
 </ul>
@@ -106,6 +110,253 @@
 <span id="geodezyx-reffram-package"></span><h1>geodezyx.reffram package<a class="headerlink" href="#module-geodezyx.reffram" title="Link to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-geodezyx.reffram.compar_clk">
+<span id="geodezyx-reffram-compar-clk-module"></span><h2>geodezyx.reffram.compar_clk module<a class="headerlink" href="#module-geodezyx.reffram.compar_clk" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<p>The geodezyx toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.compar_clk.compar_clk_plot">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.compar_clk.</span></span><span class="sig-name descname"><span class="pre">compar_clk_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.pdf',</span> <span class="pre">'.png',</span> <span class="pre">'.svg')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_label_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'psec'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_Col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.compar_clk.compar_clk_plot" title="Link to this definition"></a></dt>
+<dd><p>General description</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diff_sat_all_df_inp</strong> (<em>DataFrame</em>) – a DataFrame produced by compar_clk</p></li>
+<li><p><strong>yaxis_limit</strong> (<em>3-tuple iterable</em><em> or </em><em>2-element tuple</em>) – force the y axis limits. must look like
+(ymin,ymax) to set all th axis at the same limits</p></li>
+<li><p><strong>col_name</strong> (<em>Normally the name</em><em> of </em><em>the column with the sat names</em>)</p></li>
+<li><p><strong>bias_Col_name</strong> (<em>The column with the clk values</em>)</p></li>
+<li><p><strong>Default</strong> (<em>'bias'</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>the Figure and the 3 Axes if no save is asked</em></p></li>
+<li><p><em>export path (str) if save is asked</em></p></li>
+<li><p><em>but plot a plot anyway</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.compar_clk.compar_clock">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.compar_clk.</span></span><span class="sig-name descname"><span class="pre">compar_clock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_inp_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clk_df_inp_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.compar_clk.compar_clock" title="Link to this definition"></a></dt>
+<dd><p>Compares 2 GNSS clock bias DataFrames (from .clk), to a
+statistics table (with compar_clock_table)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>clk_df_inp_2</strong> (<em>clk_df_inp_1 &amp;</em>) – Clock DataFrame provided by files_rw.read_clk()</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df_clk_diff</strong> – Clock bias difference DataFrame</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.compar_clk.compar_clock_table">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.compar_clk.</span></span><span class="sig-name descname"><span class="pre">compar_clock_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_clk_diff_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias_diff'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.compar_clk.compar_clock_table" title="Link to this definition"></a></dt>
+<dd><p>Generate a table with statistical indicators for a clock comparison
+(RMS mean, standard dev, …)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_clk_diff_inp</strong> (<em>DataFrame</em>) – Clock bias difference DataFrame (from compar_clock)</p></li>
+<li><p><strong>col_name</strong> (<em>str</em>) – the column with the sat names</p></li>
+<li><p><strong>bias_col_name</strong> (<em>str</em>) – The column with the clk difference values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>compar_df_out</strong> – Statistical results of the comparison.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.reffram.compar_orb">
+<span id="geodezyx-reffram-compar-orb-module"></span><h2>geodezyx.reffram.compar_orb module<a class="headerlink" href="#module-geodezyx.reffram.compar_orb" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<p>The geodezyx toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.compar_orb.compar_orbit">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.compar_orb.</span></span><span class="sig-name descname"><span class="pre">compar_orbit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_inp_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_inp_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">900</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sats_used_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['G']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_name_1_2_for_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtn_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_ecef_eci</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_null_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_sat_null</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.compar_orb.compar_orbit" title="Link to this definition"></a></dt>
+<dd><p>Compares 2 GNSS orbits files (SP3), and gives a summary plot and a
+statistics table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_inp_1</strong> (<em>str</em><em> or </em><em>Pandas DataFrame</em>) – contains the orbits or path (string) to the sp3</p></li>
+<li><p><strong>data_inp_2</strong> (<em>str</em><em> or </em><em>Pandas DataFrame</em>) – contains the orbits or path (string) to the sp3</p></li>
+<li><p><strong>step_data</strong> (<em>int</em>) – per default data sampling</p></li>
+<li><p><strong>sats_used_list</strong> (<em>list</em><em> of </em><em>str</em>) – used constellation or satellite : G E r c … E01 , G02 …
+Individuals satellites are prioritary on whole constellations
+e.g. [‘G’,”E04”]</p></li>
+<li><p><strong>rtn_output</strong> (<em>bool</em>) – select output, Radial Transverse Normal or XYZ</p></li>
+<li><p><strong>convert_ecef_eci</strong> (<em>bool</em>) – convert sp3 ECEF =&gt; ECI (Terrestrial =&gt; Celestrial)
+must be True in operational to avoid artifacts.</p></li>
+<li><p><strong>name1</strong> (<em>str</em><em> (</em><em>optionals</em><em>)</em>) – optional custom names for the 2 orbits</p></li>
+<li><p><strong>name2</strong> (<em>str</em><em> (</em><em>optionals</em><em>)</em>) – optional custom names for the 2 orbits</p></li>
+<li><p><strong>use_name_1_2_for_table_name</strong> (<em>bool</em>) – False : use name 1 and 2 for table name, use datafile instead</p></li>
+<li><p><strong>clean_null_values</strong> (<em>bool</em><em> or </em><em>str</em>) – if True or “all” remove sat position in all X,Y,Z values
+are null (0.000000)
+if “any”, remove sat position if X or Y or Z is null
+if False, keep everything</p></li>
+<li><p><strong>conv_coef</strong> (<em>int</em>) – conversion coefficient, km to m 10**3, km to mm 10**6</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul>
+<li><p><strong>diff_sat_all</strong> (<em>Pandas DataFrame</em>)</p></li>
+<li><p><em>contains differences b/w data_inp_1 &amp; data_inp_2</em></p></li>
+<li><p><em>in Radial Transverse Normal OR XYZ frame</em> –</p>
+<dl class="simple">
+<dt>Attributes of diff_sat_all :</dt><dd><p>diff_sat_all.name : title of the table</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>clean_null_values if useful (and necessary) only if
+convert_ECEF_ECI = False
+if convert_ECEF_ECI = True, the cleaning will be done by
+a side effect trick : the convertion ECEF =&gt; ECI will generate NaN
+for a zero-valued position
+But, nevertheless, activating  clean_null_values = True is better
+This Note is in fact usefull if you want to see bad positions on a plot
+=&gt; Then convert_ECEF_ECI = False and clean_null_values = False</p>
+</div>
+<p class="rubric">References</p>
+<p>“Coordinate Systems”, ASEN 3200 1/24/06 George h. Born</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.compar_orb.compar_orbit_frontend">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.compar_orb.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_frontend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_df2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sats_used_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['G']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.compar_orb.compar_orbit_frontend" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.compar_orb.compar_orbit_plot">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.compar_orb.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.pdf',</span> <span class="pre">'.png',</span> <span class="pre">'.svg')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_label_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'m'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.compar_orb.compar_orbit_plot" title="Link to this definition"></a></dt>
+<dd><p>Generates a plot for orbit comparison data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diff_sat_all_df_inp</strong> (<em>DataFrame</em>) – A DataFrame produced by the <cite>compar_orbit</cite> function, containing orbit comparison data.</p></li>
+<li><p><strong>save_plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, saves the plot to a file instead of returning the Figure and Axes. Default is False.</p></li>
+<li><p><strong>save_plot_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory where the plot will be saved. Default is an empty string.</p></li>
+<li><p><strong>save_plot_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the saved plot file. If “auto”, the name is generated automatically. Default is “auto”.</p></li>
+<li><p><strong>save_plot_name_suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – Suffix to append to the saved plot name. Default is None.</p></li>
+<li><p><strong>save_plot_ext</strong> (<em>tuple</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – File extensions for the saved plot. Default is (“.pdf”, “.png”, “.svg”).</p></li>
+<li><p><strong>yaxis_limit</strong> (<em>tuple</em><em> or </em><em>list</em><em>, </em><em>optional</em>) – Limits for the y-axis. Can be a 3-tuple for independent axis limits or a 2-tuple for uniform limits. Default is None.</p></li>
+<li><p><strong>yaxis_label_unit</strong> (<em>str</em><em>, </em><em>optional</em>) – Unit label for the y-axis. Default is “m”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>If <cite>save_plot</cite> is False, returns the Figure and Axes as a tuple. If <cite>save_plot</cite> is True, returns the path of the saved plot file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple or str</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function creates three subplots for Radial, Transverse, and Normal differences (RTN) or X, Y, Z differences.</p></li>
+<li><p>The y-axis limits can be customized for each subplot or applied uniformly.</p></li>
+<li><p>If <cite>save_plot</cite> is True, the plot is saved in the specified directory with the specified name and extensions.</p></li>
+<li><p>The function uses the <cite>viridis</cite> colormap for distinguishing satellites.</p></li>
+</ul>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">compar_orbit_plot</span><span class="p">(</span><span class="n">diff_sat_all_df_inp</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.compar_orb.compar_orbit_table">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.compar_orb.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rms_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'natural'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_tab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.compar_orb.compar_orbit_table" title="Link to this definition"></a></dt>
+<dd><p>Generate a table with statistical indicators for an orbit comparison
+(RMS mean, standard dev, …)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diff_sat_all_df_inp</strong> (<em>Pandas DataFrame</em>) – a DataFrame produced by compar_orbit</p></li>
+<li><p><strong>rms_style</strong> (<em>str</em>) – ‘natural’: use the natural definition of the RMS
+‘GRGS’: RMS calc based on the GRGS definition of the RMS (OV help)
+is actually the standard deviation
+‘kouba’: RMS as defined in Kouba et al. 1994, p75
+using the degree of freedom (3*Nobs - 7)</p></li>
+<li><p><strong>light_tab</strong> (<em>bool</em>) – produce a table with only RMS, with min/max/arithmetic instead</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Compar_tab_out</strong> – Statistical results of the comparison</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>you can pretty print the output DataFrame using tabular module
+here is a template:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">tabulate</span><span class="w"> </span><span class="kn">import</span> <span class="n">tabulate</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">compar_table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span> <span class="n">floatfmt</span><span class="o">=</span><span class="s2">&quot;.4f&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.reffram.compar_snx">
+<span id="geodezyx-reffram-compar-snx-module"></span><h2>geodezyx.reffram.compar_snx module<a class="headerlink" href="#module-geodezyx.reffram.compar_snx" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<p>The geodezyx toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.reffram.compar_snx.compar_sinex">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.compar_snx.</span></span><span class="sig-name descname"><span class="pre">compar_sinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snx1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snx2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_means_summary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_meta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dataframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manu_wwwwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.compar_snx.compar_sinex" title="Link to this definition"></a></dt>
+<dd><p>Compare 2 SINEX files and provide statistics on station position differences</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snx1</strong> (<em>str</em><em> or </em><em>DataFrame</em>) – Paths to the SINEX files to compare or DataFrames containing SINEX data</p></li>
+<li><p><strong>snx2</strong> (<em>str</em><em> or </em><em>DataFrame</em>) – Paths to the SINEX files to compare or DataFrames containing SINEX data</p></li>
+<li><p><strong>stat_select</strong> (<em>str</em><em> or </em><em>list</em><em>, </em><em>optional</em>) – Regular expression or list of station codes to filter the comparison</p></li>
+<li><p><strong>invert_select</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, invert the selection criteria for stations</p></li>
+<li><p><strong>out_means_summary</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return a summary of means; otherwise, return the full DataFrame</p></li>
+<li><p><strong>out_meta</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, include metadata (week, day, number of stations) in the output</p></li>
+<li><p><strong>out_dataframe</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return the output as a DataFrame; otherwise, return as a tuple</p></li>
+<li><p><strong>manu_wwwwd</strong> (<em>str</em><em>, </em><em>optional</em>) – Manual specification of week/day if not extracted from filename</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-geodezyx.reffram.geometry">
 <span id="geodezyx-reffram-geometry-module"></span><h2>geodezyx.reffram.geometry module<a class="headerlink" href="#module-geodezyx.reffram.geometry" title="Link to this heading"></a></h2>
@@ -825,9 +1076,31 @@ based on: <cite>Astronomical algorithms</cite>, Jean Meeus (1st edition, 1991)</
 <dl class="py function">
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.clk_df_common_epoch_finder">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">clk_df_common_epoch_finder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_a_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clk_df_b_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplementary_sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['name',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.clk_df_common_epoch_finder" title="Link to this definition"></a></dt>
-<dd><p>Find common sats/station and epochs in to Clock DF, and output the
-corresponding Clock DFs</p>
-<p>Is an adapted version of orb_df_common_epoch_finder</p>
+<dd><p>Find common sats/station and epochs in two Clock DataFrames and output the
+corresponding Clock DataFrames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clk_df_a_inp</strong> (<em>DataFrame</em>) – The first input Clock DataFrame.</p></li>
+<li><p><strong>clk_df_b_inp</strong> (<em>DataFrame</em>) – The second input Clock DataFrame.</p></li>
+<li><p><strong>return_index</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the function also returns the common index. Default is False.</p></li>
+<li><p><strong>supplementary_sort</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, an additional sort is performed. Default is False.</p></li>
+<li><p><strong>order</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – The order of the index for the multi-index DataFrame. Default is [“name”,”epoch”].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>clk_df_a_out</strong> (<em>DataFrame</em>) – The first output Clock DataFrame with common stations/satellites and epochs.</p></li>
+<li><p><strong>clk_df_b_out</strong> (<em>DataFrame</em>) – The second output Clock DataFrame with common stations/satellites and epochs.</p></li>
+<li><p><strong>iinter</strong> (<em>Index, optional</em>) – The common index. Only returned if return_index is True.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is a wrapper for df_common_finder() specialized for clock DataFrames.</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -876,235 +1149,6 @@ The default is False</p></li>
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.clk_df_filter2">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">clk_df_filter2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('AS',</span> <span class="pre">'AR')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_strt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(1980,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.datetime(2099,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.clk_df_filter2" title="Link to this definition"></a></dt>
 <dd><p>attempt for a faster version of clk_df_filter, but the original is faster</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.clk_df_reg_2_multidx">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">clk_df_reg_2_multidx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['name',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.clk_df_reg_2_multidx" title="Link to this definition"></a></dt>
-<dd><p>From an regular Clock DF generated by read_clk(), set some columns
-(typically [“name”,”epoch”]) as indexes
-The outputed DF is then a Multi-index DF</p>
-<p>It an adapted version of orb_df_reg_2_multidx</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_clk_plot">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_clk_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.pdf',</span> <span class="pre">'.png',</span> <span class="pre">'.svg')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_label_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'psec'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_Col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_clk_plot" title="Link to this definition"></a></dt>
-<dd><p>General description</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>diff_sat_all_df_inp</strong> (<em>DataFrame</em>) – a DataFrame produced by compar_clk</p></li>
-<li><p><strong>yaxis_limit</strong> (<em>3-tuple iterable</em><em> or </em><em>2-element tuple</em>) – force the y axis limits. must look like
-(ymin,ymax) to set all th axis at the same limits</p></li>
-<li><p><strong>col_name</strong> (<em>Normally the name</em><em> of </em><em>the column with the sat names</em>)</p></li>
-<li><p><strong>bias_Col_name</strong> (<em>The column with the clk values</em>)</p></li>
-<li><p><strong>Default</strong> (<em>'bias'</em>)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>the Figure and the 3 Axes if no save is asked</em></p></li>
-<li><p><em>export path (str) if save is asked</em></p></li>
-<li><p><em>but plot a plot anyway</em></p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_clock">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_clock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clk_df_inp_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clk_df_inp_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_clock" title="Link to this definition"></a></dt>
-<dd><p>Compares 2 GNSS clock bias DataFrames (from .clk), to a
-statistics table (with compar_clock_table)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>clk_df_inp_2</strong> (<em>clk_df_inp_1 &amp;</em>) – Clock DataFrame provided by files_rw.read_clk()</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>df_clk_diff</strong> – Clock bias difference DataFrame</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_clock_table">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_clock_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_clk_diff_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'name'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bias_diff'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_clock_table" title="Link to this definition"></a></dt>
-<dd><p>Generate a table with statistical indicators for a clock comparison
-(RMS mean, standard dev, …)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df_clk_diff_inp</strong> (<em>DataFrame</em>) – Clock bias difference DataFrame (from compar_clock)</p></li>
-<li><p><strong>col_name</strong> (<em>str</em>) – the column with the sat names</p></li>
-<li><p><strong>bias_col_name</strong> (<em>str</em>) – The column with the clk difference values</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>compar_df_out</strong> – Statistical results of the comparison.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_orbit">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_inp_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_inp_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">900</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sats_used_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['G']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_name_1_2_for_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtn_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_ecef_eci</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_null_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conv_coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_sat_null</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit" title="Link to this definition"></a></dt>
-<dd><p>Compares 2 GNSS orbits files (SP3), and gives a summary plot and a
-statistics table</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_inp_1</strong> (<em>str</em><em> or </em><em>Pandas DataFrame</em>) – contains the orbits or path (string) to the sp3</p></li>
-<li><p><strong>data_inp_2</strong> (<em>str</em><em> or </em><em>Pandas DataFrame</em>) – contains the orbits or path (string) to the sp3</p></li>
-<li><p><strong>step_data</strong> (<em>int</em>) – per default data sampling</p></li>
-<li><p><strong>sats_used_list</strong> (<em>list</em><em> of </em><em>str</em>) – used constellation or satellite : G E r c … E01 , G02 …
-Individuals satellites are prioritary on whole constellations
-e.g. [‘G’,”E04”]</p></li>
-<li><p><strong>rtn_output</strong> (<em>bool</em>) – select output, Radial Transverse Normal or XYZ</p></li>
-<li><p><strong>convert_ecef_eci</strong> (<em>bool</em>) – convert sp3 ECEF =&gt; ECI (Terrestrial =&gt; Celestrial)
-must be True in operational to avoid artifacts.</p></li>
-<li><p><strong>name1</strong> (<em>str</em><em> (</em><em>optionals</em><em>)</em>) – optional custom names for the 2 orbits</p></li>
-<li><p><strong>name2</strong> (<em>str</em><em> (</em><em>optionals</em><em>)</em>) – optional custom names for the 2 orbits</p></li>
-<li><p><strong>use_name_1_2_for_table_name</strong> (<em>bool</em>) – False : use name 1 and 2 for table name, use datafile instead</p></li>
-<li><p><strong>clean_null_values</strong> (<em>bool</em><em> or </em><em>str</em>) – if True or “all” remove sat position in all X,Y,Z values
-are null (0.000000)
-if “any”, remove sat position if X or Y or Z is null
-if False, keep everything</p></li>
-<li><p><strong>conv_coef</strong> (<em>int</em>) – conversion coefficient, km to m 10**3, km to mm 10**6</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul>
-<li><p><strong>diff_sat_all</strong> (<em>Pandas DataFrame</em>)</p></li>
-<li><p><em>contains differences b/w data_inp_1 &amp; data_inp_2</em></p></li>
-<li><p><em>in Radial Transverse Normal OR XYZ frame</em> –</p>
-<dl class="simple">
-<dt>Attributes of diff_sat_all :</dt><dd><p>diff_sat_all.name : title of the table</p>
-</dd>
-</dl>
-</li>
-</ul>
-</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>clean_null_values if useful (and necessary) only if
-convert_ECEF_ECI = False
-if convert_ECEF_ECI = True, the cleaning will be done by
-a side effect trick : the convertion ECEF =&gt; ECI will generate NaN
-for a zero-valued position
-But, nevertheless, activating  clean_null_values = True is better
-This Note is in fact usefull if you want to see bad positions on a plot
-=&gt; Then convert_ECEF_ECI = False and clean_null_values = False</p>
-</div>
-<p class="rubric">References</p>
-<p>“Coordinate Systems”, ASEN 3200 1/24/06 George h. Born</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_orbit_frontend">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_frontend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_df2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ac2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sats_used_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['G']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit_frontend" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_orbit_plot">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_name_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('.pdf',</span> <span class="pre">'.png',</span> <span class="pre">'.svg')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis_label_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'m'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit_plot" title="Link to this definition"></a></dt>
-<dd><p>Generates a plot for orbit comparison data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>diff_sat_all_df_inp</strong> (<em>DataFrame</em>) – A DataFrame produced by the <cite>compar_orbit</cite> function, containing orbit comparison data.</p></li>
-<li><p><strong>save_plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, saves the plot to a file instead of returning the Figure and Axes. Default is False.</p></li>
-<li><p><strong>save_plot_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory where the plot will be saved. Default is an empty string.</p></li>
-<li><p><strong>save_plot_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the saved plot file. If “auto”, the name is generated automatically. Default is “auto”.</p></li>
-<li><p><strong>save_plot_name_suffix</strong> (<em>str</em><em>, </em><em>optional</em>) – Suffix to append to the saved plot name. Default is None.</p></li>
-<li><p><strong>save_plot_ext</strong> (<em>tuple</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – File extensions for the saved plot. Default is (“.pdf”, “.png”, “.svg”).</p></li>
-<li><p><strong>yaxis_limit</strong> (<em>tuple</em><em> or </em><em>list</em><em>, </em><em>optional</em>) – Limits for the y-axis. Can be a 3-tuple for independent axis limits or a 2-tuple for uniform limits. Default is None.</p></li>
-<li><p><strong>yaxis_label_unit</strong> (<em>str</em><em>, </em><em>optional</em>) – Unit label for the y-axis. Default is “m”.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>If <cite>save_plot</cite> is False, returns the Figure and Axes as a tuple. If <cite>save_plot</cite> is True, returns the path of the saved plot file.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple or str</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>The function creates three subplots for Radial, Transverse, and Normal differences (RTN) or X, Y, Z differences.</p></li>
-<li><p>The y-axis limits can be customized for each subplot or applied uniformly.</p></li>
-<li><p>If <cite>save_plot</cite> is True, the plot is saved in the specified directory with the specified name and extensions.</p></li>
-<li><p>The function uses the <cite>viridis</cite> colormap for distinguishing satellites.</p></li>
-</ul>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">compar_orbit_plot</span><span class="p">(</span><span class="n">diff_sat_all_df_inp</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_orbit_table">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_orbit_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff_sat_all_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rms_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'natural'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_tab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_orbit_table" title="Link to this definition"></a></dt>
-<dd><p>Generate a table with statistical indicators for an orbit comparison
-(RMS mean, standard dev, …)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>diff_sat_all_df_inp</strong> (<em>Pandas DataFrame</em>) – a DataFrame produced by compar_orbit</p></li>
-<li><p><strong>rms_style</strong> (<em>str</em>) – ‘natural’: use the natural definition of the RMS
-‘GRGS’: RMS calc based on the GRGS definition of the RMS (OV help)
-is actually the standard deviation
-‘kouba’: RMS as defined in Kouba et al. 1994, p75
-using the degree of freedom (3*Nobs - 7)</p></li>
-<li><p><strong>light_tab</strong> (<em>bool</em>) – produce a table with only RMS, with min/max/arithmetic instead</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Compar_tab_out</strong> – Statistical results of the comparison</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>DataFrame</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>you can pretty print the output DataFrame using tabular module
-here is a template:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">tabulate</span><span class="w"> </span><span class="kn">import</span> <span class="n">tabulate</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">compar_table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span> <span class="n">floatfmt</span><span class="o">=</span><span class="s2">&quot;.4f&quot;</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.compar_sinex">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">compar_sinex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snx1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snx2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat_select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert_select</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_means_summary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_meta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dataframe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manu_wwwwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.compar_sinex" title="Link to this definition"></a></dt>
-<dd><p>Compare 2 SINEX files and provide statistics on station position differences</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>snx1</strong> (<em>str</em><em> or </em><em>DataFrame</em>) – Paths to the SINEX files to compare or DataFrames containing SINEX data</p></li>
-<li><p><strong>snx2</strong> (<em>str</em><em> or </em><em>DataFrame</em>) – Paths to the SINEX files to compare or DataFrames containing SINEX data</p></li>
-<li><p><strong>stat_select</strong> (<em>str</em><em> or </em><em>list</em><em>, </em><em>optional</em>) – Regular expression or list of station codes to filter the comparison</p></li>
-<li><p><strong>invert_select</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, invert the selection criteria for stations</p></li>
-<li><p><strong>out_means_summary</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return a summary of means; otherwise, return the full DataFrame</p></li>
-<li><p><strong>out_meta</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, include metadata (week, day, number of stations) in the output</p></li>
-<li><p><strong>out_dataframe</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return the output as a DataFrame; otherwise, return as a tuple</p></li>
-<li><p><strong>manu_wwwwd</strong> (<em>str</em><em>, </em><em>optional</em>) – Manual specification of week/day if not extracted from filename</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1182,6 +1226,7 @@ The inputs are assumed to be already in multi-index format to optimize execution
 <p>designed for orbits/sp3 first with sat and epoch as order parmeter,
 but can be used also for instance for snx files with
 STAT and epoch as order parmeter</p>
+<p>This function is a wrapper for df_common_finder() specialized for orbit DataFrames.</p>
 </div>
 </dd></dl>
 
@@ -1256,14 +1301,6 @@ files_rw.read_eop_C04()</p>
 <dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.orb_df_multidx_2_reg">
 <span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_multidx_2_reg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['prn',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_multidx_2_reg" title="Link to this definition"></a></dt>
 <dd><p>Convert a Multi-index formatted OrbitDF to his original form</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="geodezyx.reffram.gnss_products.orb_df_reg_2_multidx">
-<span class="sig-prename descclassname"><span class="pre">geodezyx.reffram.gnss_products.</span></span><span class="sig-name descname"><span class="pre">orb_df_reg_2_multidx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['prn',</span> <span class="pre">'epoch']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.reffram.gnss_products.orb_df_reg_2_multidx" title="Link to this definition"></a></dt>
-<dd><p>From an regular Orbit DF generated by read_sp3(), set some columns
-(typically [“prn”,”epoch”]) as indexes
-The outputed DF is then a Multi-index DF</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2085,7 +2122,7 @@ iau_zr(r)</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="geodezyx.operational.gins_runner.legacy.html" class="btn btn-neutral float-left" title="geodezyx.operational.gins_runner.legacy package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.operational.soft_frontend.html" class="btn btn-neutral float-left" title="geodezyx.operational.soft_frontend package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="geodezyx.stats.html" class="btn btn-neutral float-right" title="geodezyx.stats package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

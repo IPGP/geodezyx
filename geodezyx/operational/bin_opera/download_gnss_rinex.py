@@ -11,8 +11,7 @@ import datetime as dt
 import sys
 from geodezyx import conv
 
-from geodezyx.operational.download_rinex import download_gnss_rinex
-
+from geodezyx.operational.download_gnss.download_rinex import download_gnss_rinex
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -38,6 +37,8 @@ def parse_args():
              "'igs_bkg' (BKG's IGS data center), "
              "'rgp' (IGN's RGP main server at St Mandé), "
              "'rgp_ensg' (IGN's RGP, secondary server at ENSG, Marne-la-Vallée), "
+             "'rgp_v3' (IGN's RGP main server at St Mandé - RINEX3), "
+             "'rgp_ensg_v3' (IGN's RGP, secondary server at ENSG, Marne-la-Vallée - RINEX3), "
              "'sonel' (SONEL data center), "
              "'euref' (EPN data center hosted at ROB), "
              "'nav' or 'brdc' (navigation files from ROB server), "
@@ -60,11 +61,11 @@ def parse_args():
     )
     parser.add_argument(
         "-a", "--archtype",
-        default="stat",
-        help="Archive directory structure type. Options: 'stat' (station-based), "
+        default="site",
+        help="Archive directory structure type. Options: 'site' (station-based), "
              "'year' (year-based), 'daily' (daily structure). "
-             "Exemple: 'stat/year/doy'. "
-             "Default: 'year/doy'"
+             "Exemple: 'site/year/doy'. "
+             "Default: 'site'"
     )
     parser.add_argument(
         "-u", "--user",

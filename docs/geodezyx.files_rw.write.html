@@ -1,0 +1,386 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>geodezyx.files_rw.write package &mdash; geodezyx 5.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=1bd908e2"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="geodezyx.geodyn package" href="geodezyx.geodyn.html" />
+    <link rel="prev" title="geodezyx.files_rw.read package" href="geodezyx.files_rw.read.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/geodezyx_toolbox_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to geodezyx’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html"><cite>geodezyx</cite>’s Cookbook</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="geodezyx.html">geodezyx’s complete reference package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="geodezyx.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.atmo.html">geodezyx.atmo package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.conv.html">geodezyx.conv package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="geodezyx.files_rw.html">geodezyx.files_rw package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="geodezyx.files_rw.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.files_rw.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="geodezyx.files_rw.html#module-geodezyx.files_rw.geo_files_converter_lib">geodezyx.files_rw.geo_files_converter_lib module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.geodyn.html">geodezyx.geodyn package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.gnss_edu.html">geodezyx.gnss_edu package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.interp.html">geodezyx.interp package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.logconfig.html">geodezyx.logconfig package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.marine.html">geodezyx.marine package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.operational.html">geodezyx.operational package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.reffram.html">geodezyx.reffram package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.stats.html">geodezyx.stats package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.time_series.html">geodezyx.time_series package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils.html">geodezyx.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.utils_xtra.html">geodezyx.utils_xtra package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="geodezyx.volc_deform.html">geodezyx.volc_deform package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">geodezyx</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.html">geodezyx’s complete reference package</a></li>
+          <li class="breadcrumb-item"><a href="geodezyx.files_rw.html">geodezyx.files_rw package</a></li>
+      <li class="breadcrumb-item active">geodezyx.files_rw.write package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/geodezyx.files_rw.write.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-geodezyx.files_rw.write">
+<span id="geodezyx-files-rw-write-package"></span><h1>geodezyx.files_rw.write package<a class="headerlink" href="#module-geodezyx.files_rw.write" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-geodezyx.files_rw.write.write_geo_files">
+<span id="geodezyx-files-rw-write-write-geo-files-module"></span><h2>geodezyx.files_rw.write.write_geo_files module<a class="headerlink" href="#module-geodezyx.files_rw.write.write_geo_files" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.files_rw contains functions to
+write misc. geodetic data in dedicated files.</p>
+<p>it can be imported directly with:
+from geodezyx import files_rw</p>
+<p>The geodezyx toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_geo_files.ine_block_mono">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">ine_block_mono</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_intrvl_strt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_intrvl_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_geo_files.ine_block_mono" title="Link to this definition"></a></dt>
+<dd><p>Write an EPOS INE block</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_geo_files.sp3_overlap_creator">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">sp3_overlap_creator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ac_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix_out_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manage_missing_sats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exclude_missing_epoch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eliminate_null_sat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">severe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separated_systems_export</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_bad_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_geo_files.sp3_overlap_creator" title="Link to this definition"></a></dt>
+<dd><p>Generate an SP3 Orbit file with overlap based on the SP3s of the
+days before and after</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ac_list</strong> (<em>list</em>) – 3-character codes of the ACs.</p></li>
+<li><p><strong>dir_in</strong> (<em>str</em>) – where the input sp3 are.</p></li>
+<li><p><strong>dir_out</strong> (<em>str</em>) – where the output sp3 will be outputed.</p></li>
+<li><p><strong>suffix_out_input</strong> (<em>str</em><em>, </em><em>optional</em>) – last char of the 3-char. code. if None, then it is the same as input.</p></li>
+<li><p><strong>overlap_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Overlapsize. The default is 7200.</p></li>
+<li><p><strong>force</strong> (<em>True</em><em>, </em><em>optional</em>) – force overwrite. The default is False.</p></li>
+<li><p><strong>manage_missing_sats</strong> (<em>str</em><em>, </em><em>optional</em>) – <p>‘exclude_missing_day’ : generate a file with only the common sat
+between the 3 days. Thus, exclude the missing sats for a complete day</p>
+<p>’exclude_missing_epoch’ : generate a file with only sat with full epochs</p>
+<p>’extrapolate’ : extrapolate the missing sats based on the first/last epoch</p>
+<p>The default is ‘exclude_missing_epoch’.</p>
+</p></li>
+<li><p><strong>eliminate_null_sat</strong> (<em>bool</em><em>, </em><em>optional</em>) – eliminate null sat. The default is True.</p></li>
+<li><p><strong>severe</strong> (<em>bool</em><em>, </em><em>optional</em>) – raise an exception if problem. The default is False.</p></li>
+<li><p><strong>separated_systems_export</strong> (<em>bool</em><em>, </em><em>optional</em>) – export different sp3 for different system. The default is False.</p></li>
+<li><p><strong>first_date</strong> (<em>datetime</em><em>, </em><em>optional</em>) – exclude SP3 before this epoch</p></li>
+<li><p><strong>end_date</strong> (<em>datetime</em><em>, </em><em>optional</em>) – exclude SP3 after this epoch</p></li>
+<li><p><strong>exclude_bad_epoch</strong> (<em>bool</em><em>, </em><em>optional</em>) – remove bad epoch (usually filled with 99999999.9999999 or 0.00000000)</p></li>
+<li><p><strong>sys</strong> (<em>string</em><em>, </em><em>optional</em>) – if just to keep one system (e.g.: G)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>start/end date are not implemented
+the force option skips existing files
+not implemented for new names</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_geo_files.write_clk">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_clk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_clk_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'orb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_std_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_geo_files.write_clk" title="Link to this definition"></a></dt>
+<dd><p>Write a SP3 Clock file from an Clock DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_clk_in</strong> (<em>DataFrame</em>) – Input Clock DataFrame.</p></li>
+<li><p><strong>outpath</strong> (<em>str</em>) – The output path of the file (see also outname).</p></li>
+<li><p><strong>outname</strong> (<em>None</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – None = outpath is the full path (directory + filename) of the output.
+A string = a manual name for the file.
+‘auto_old_cnv’ = automatically generate the filename (old convention)
+‘auto_new_cnv’ = automatically generate the filename (new convention)
+The default is None.</p></li>
+<li><p><strong>prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – the output 3-char. name of the AC. The default is ‘orb’.</p></li>
+<li><p><strong>header</strong> (<em>str</em><em>, </em><em>optional</em>) – A string describing the clk file header. The default is “”.</p></li>
+<li><p><strong>output_std_values</strong> (<em>bool</em><em>, </em><em>optional</em>) – Add observation sigmas as the last column. The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>The string containing the formatted clock data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_geo_files.write_epos_sta_coords">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_epos_sta_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_inp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_wrt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'site'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_time_limit_for_first_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_time_limit_for_last_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soln_in_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trf_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xTRFnn'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_geo_files.write_epos_sta_coords" title="Link to this definition"></a></dt>
+<dd><p>Write an EPOS coordinate file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_inp</strong> (<em>DataFrame</em>) – Input Orbit DataFrame.</p></li>
+<li><p><strong>file_out</strong> (<em>str</em>) – The output path of the file.</p></li>
+<li><p><strong>sort_wrt</strong> (<em>bool</em><em>, </em><em>optional</em>) – Sort the values with respect to a DF column.
+The default is “site”.</p></li>
+<li><p><strong>no_time_limit_for_first_period</strong> (<em>bool</em><em>, </em><em>optional</em>) – No time limit for the first period.
+The default is True.</p></li>
+<li><p><strong>no_time_limit_for_last_period</strong> (<em>bool</em><em>, </em><em>optional</em>) – No time limit for the last period.
+The default is True.</p></li>
+<li><p><strong>soln_in_df</strong> (<em>bool</em><em>, </em><em>optional</em>) – Soln in DF.
+The default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_geo_files.write_ine_dummy_file">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_ine_dummy_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Sat_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_intrvl_strt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_intrvl_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_geo_files.write_ine_dummy_file" title="Link to this definition"></a></dt>
+<dd><p>Write an EPOS INE dummy (empty values) file</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_geo_files.write_sp3">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_geo_files.</span></span><span class="sig-name descname"><span class="pre">write_sp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orb_df_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'orb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_null_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_format_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_geo_files.write_sp3" title="Link to this definition"></a></dt>
+<dd><p>Write a SP3 file from an Orbit DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>orb_df_in</strong> (<em>DataFrame</em>) – Input Orbit DataFrame.</p></li>
+<li><p><strong>outpath</strong> (<em>str</em>) – The output path of the file (see also outname).</p></li>
+<li><p><strong>outname</strong> (<em>None</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – None = outpath is the full path (directory + filename) of the output.
+A string = a manual name for the file.
+‘auto_old_cnv’ = automatically generate the filename (old convention)
+‘auto_new_cnv’ = automatically generate the filename (new convention)
+The default is None.</p></li>
+<li><p><strong>prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – the output 3-char. name of the AC. The default is ‘orb’.</p></li>
+<li><p><strong>skip_null_epoch</strong> (<em>bool</em><em>, </em><em>optional</em>) – Do not write an epoch if all sats are null (filtering).
+The default is True.</p></li>
+<li><p><strong>force_format_c</strong> (<em>bool</em><em>, </em><em>optional</em>) – force SP3’s format c. The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>The string containing the formatted SP3 data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.files_rw.write.write_rinex">
+<span id="geodezyx-files-rw-write-write-rinex-module"></span><h2>geodezyx.files_rw.write.write_rinex module<a class="headerlink" href="#module-geodezyx.files_rw.write.write_rinex" title="Link to this heading"></a></h2>
+<p>&#64;author: psakic</p>
+<p>This sub-module of geodezyx.files_rw contains functions to
+read RINEX files observation files.</p>
+<p>it can be imported directly with:
+from geodezyx import files_rw</p>
+<p>The geodezyx toolbox is a software for simple but useful
+functions for Geodesy and Geophysics under the GNU LGPL v3 License</p>
+<p>Copyright (C) 2019 Pierre Sakic et al. (IPGP, <a class="reference external" href="mailto:sakic&#37;&#52;&#48;ipgp&#46;fr">sakic<span>&#64;</span>ipgp<span>&#46;</span>fr</a>)
+GitHub repository :
+<a class="reference external" href="https://github.com/IPGP/geodezyx">https://github.com/IPGP/geodezyx</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_rinex.header_rinex3_generic">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_rinex.</span></span><span class="sig-name descname"><span class="pre">header_rinex3_generic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_rinex.header_rinex3_generic" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_rinex.write_epoch_rinex3">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_rinex.</span></span><span class="sig-name descname"><span class="pre">write_epoch_rinex3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clk_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_rinex.write_epoch_rinex3" title="Link to this definition"></a></dt>
+<dd><p>Write the epoch line in the RINEX3 format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>epoch</strong> (<em>datetime</em>) – the epoch.</p></li>
+<li><p><strong>nsats</strong> (<em>int</em>) – numbers of satellites for the epoch.</p></li>
+<li><p><strong>epoch_flag</strong> (<em>int</em><em>, </em><em>optional</em>) – Epoch flag:
+0 : OK
+1 : power failure between previous and current epoch
+&gt;1 : Special event (see documentation)
+The default is 0.</p></li>
+<li><p><strong>clk_offset</strong> (<em>float</em><em>, </em><em>optional</em>) – Receiver clock offset correction (seconds, optional).
+The default is 0..</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>lout</strong> – output string line.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_rinex.write_rinex3">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_rinex.</span></span><span class="sig-name descname"><span class="pre">write_rinex3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFrnx_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rnx_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_rinex.write_rinex3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_rinex.write_rinex3_body">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_rinex.</span></span><span class="sig-name descname"><span class="pre">write_rinex3_body</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DFrnx_in</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_rinex.write_rinex3_body" title="Link to this definition"></a></dt>
+<dd><p>Write the body (data records) of a RINEX files (Version 3 only)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>DFrnx_in</strong> (<em>RINEX DataFrame</em>) – Input RINEX DataFrame.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>rnx_str_out</strong> (<em>str</em>) – The RINEX data records as string.</p></li>
+<li><p><strong>dict_sys_obs</strong> (<em>dict</em>) – A dictionnary with GNSS system as key (G,R,E…).
+And the observables for each system as values
+(gives the order of the observables)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-geodezyx.files_rw.write.write_tropo_spotgins">
+<span id="geodezyx-files-rw-write-write-tropo-spotgins-module"></span><h2>geodezyx.files_rw.write.write_tropo_spotgins module<a class="headerlink" href="#module-geodezyx.files_rw.write.write_tropo_spotgins" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_tropo_spotgins.extract_data_from_gz">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_tropo_spotgins.</span></span><span class="sig-name descname"><span class="pre">extract_data_from_gz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gz_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_tropo_spotgins.extract_data_from_gz" title="Link to this definition"></a></dt>
+<dd><p>Lit le .gz à l’envers, ne garde que la dernière estimation par horodatage.
+Retourne une liste triée: [iso_date, ZTD, ZTD_STD, ZHD, ZWD, TGN, STD_TGN, TGE, STD_TGE].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_tropo_spotgins.generate_header">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_tropo_spotgins.</span></span><span class="sig-name descname"><span class="pre">generate_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">station_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_tropo_spotgins.generate_header" title="Link to this definition"></a></dt>
+<dd><p>Construit l’entête SPOTGINS. Si position est None, utilise des 0.0.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_tropo_spotgins.main">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_tropo_spotgins.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_tropo_spotgins.main" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_tropo_spotgins.parse_args">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_tropo_spotgins.</span></span><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_tropo_spotgins.parse_args" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="geodezyx.files_rw.write.write_tropo_spotgins.read_master_file">
+<span class="sig-prename descclassname"><span class="pre">geodezyx.files_rw.write.write_tropo_spotgins.</span></span><span class="sig-name descname"><span class="pre">read_master_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">station_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">master_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#geodezyx.files_rw.write.write_tropo_spotgins.read_master_file" title="Link to this definition"></a></dt>
+<dd><p>Retourne un dict avec X,Y,Z,Lon,Lat,H ou None si fichier absent / station non trouvée.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="geodezyx.files_rw.read.html" class="btn btn-neutral float-left" title="geodezyx.files_rw.read package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="geodezyx.geodyn.html" class="btn btn-neutral float-right" title="geodezyx.geodyn package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pierre Sakic - Gustavo Mansur - Samuel Nahmani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
