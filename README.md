@@ -2,8 +2,8 @@
 
 # geodezyx
 
-**Version: 5.2.0**  
-**Date: 2026-07-15**  
+**Version: 5.2.1-beta0**  
+**Date: 2026-08-21**  
 
 **Authors:** 
 * Pierre Sakic (IPGP, Paris, France)
