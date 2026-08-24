@@ -285,10 +285,10 @@ def df_common_finder(
     # Auto-detect index order if not provided
     if order is None:
         # Use the existing multi-index if available
-        if isinstance(df_a_inp.index, pd.MultiIndex):
+        if isinstance(df_a_inp.index, pd.Index) or isinstance(df_a_inp.index, pd.MultiIndex):
             order = list(df_a_inp.index.names)
         else:
-            raise ValueError("order parameter must be provided if DataFrame is not already multi-indexed")
+            raise ValueError("order parameter must be provided if DataFrame is not already (multi-)indexed")
 
     # Convert to multi-index if needed
     if not skip_reg2multidx_df_a:
