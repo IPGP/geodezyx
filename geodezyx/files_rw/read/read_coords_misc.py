@@ -679,12 +679,12 @@ def read_nrcan_pos(filein):
             h = float(f[i_h])
 
             ### old and useless conversion (2021-01)
-            # sE = float(f[15])
-            # sN = float(f[16])
-            # sU = float(f[17])
-            # slat , slon , sh = conv.sigma_enu2geo(lat,lon,h,sE,sN,sU)
-
-            slat, slon, sh = float(f[i_slat]), float(f[i_slon]), float(f[i_sh])
+            sE = float(f[i_slon])
+            sN = float(f[i_slat])
+            sU = float(f[i_sh])
+            slat , slon , sh = conv.sigma_enu2geo(lat,lon,h,sE,sN,sU)
+            
+            # slat, slon, sh = float(f[i_slat]), float(f[i_slon]), float(f[i_sh])
 
             t = conv.date_string_2_dt(f[4] + " " + f[5])
 
