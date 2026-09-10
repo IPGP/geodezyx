@@ -1128,7 +1128,7 @@ def outlier_mad(
 
 
 def outlier_mad_df(
-        df, columns, threshold=3.5, columns_aggrgation=np.logical_and, mad_mode="median"
+        df, columns, threshold=3.5, col_aggreg=np.logical_and, mad_mode="median"
     ):
     """
     Remove outliers from pandas DataFrame columns using MAD (Median Absolute Deviation).
@@ -1147,7 +1147,7 @@ def outlier_mad_df(
     threshold : float, optional
         MAD threshold for outlier detection. Default is 3.5.
         Points where MAD > threshold are considered outliers.
-    columns_aggrgation : callable, optional
+    col_aggreg : callable, optional
         Function to aggregate boolean masks from multiple columns.
         Should accept variable number of boolean arrays as arguments.
         Common choices: np.logical_and (any column flags as outlier),
@@ -1191,7 +1191,7 @@ def outlier_mad_df(
         _, bb = outlier_mad(df[col].values, threshold=threshold, mad_mode=mad_mode)
         bb_stk.append(bb)
 
-    bb_out = columns_aggrgation(*bb_stk) if len(bb_stk) > 1 else bb_stk[0]
+    bb_out = col_aggreg(*bb_stk) if len(bb_stk) > 1 else bb_stk[0]
     df_out = df[bb_out]
 
     return df_out, bb_out
