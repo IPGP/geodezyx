@@ -486,115 +486,300 @@ def sigma_xyz2enu(x, y, z, s_x, s_y, s_z, s_xy=0, s_yz=0, s_xz=0, return_corr=Fa
         return s_e, s_n, s_u, c_en, c_eu, c_nu
 
 
-def sigma_geo2xyz(lat, lon, h, s_f, s_l, s_h, ang="deg"):
+def sigma_geo2xyz(lat, lon, h, s_f, s_l, s_h, s_fl=0, s_fh=0, s_lh=0, ang="deg", return_corr=False):
     """
     Convert standard deviation
     Geographic FLH => Cartesian ECEF XYZ
 
-    Warning
+    Note
+    ----
+    Inputs values are now assumed correlated (241105)
+
+    Parameters
+    ----------
+    lat, lon, h : floats
+        latitude, longitude, height
+    s_f, s_l, s_h : floats
+        standard deviations for latitude, longitude, height
+    s_fl, s_fh, s_lh : floats, optional
+        correlation terms (covariances) between latitude-longitude, latitude-height, longitude-height
+        Default is 0 (uncorrelated)
+    ang : str, optional
+        angle type 'deg' or 'rad'. Default is 'deg'
+    return_corr : bool, optional
+        if True, also return correlation coefficients. Default is False
+
+    Returns
     -------
-    Inputs values are assumed as uncorrelated, which is not accurate
-    Must be improved
+    s_x, s_y, s_z : floats
+        standard deviations for X, Y, Z
+    c_xy, c_xz, c_yz : floats
+        correlation coefficients (only if return_corr=True)
 
     References
     ----------
     Linear Algebra, Geodesy, and GPS p332
     """
 
-    log.warning(
-        "Inputs values are assumed as uncorrelated, which is not accurate. Prefer sigma_xyz2enu."
-    )
 
     if ang == "deg":
         lat = np.deg2rad(lat)
         lon = np.deg2rad(lon)
         s_f = np.deg2rad(s_f)
         s_l = np.deg2rad(s_l)
-    x, y, z = geo2xyz(lat, lon, h)
-    x2, y2, z2 = geo2xyz(lat + s_f, lon + s_l, h + s_h)
 
-    return np.abs(x - x2), np.abs(y - y2), np.abs(z - z2)
+    # Create covariance matrix for FLH
+    sigma_flh = np.array(
+        [[s_f**2, s_fl, s_fh], [s_fl, s_l**2, s_lh], [s_fh, s_lh, s_h**2]]
+    )
+
+    # Jacobian matrix for the transformation geo2xyz
+    # df_f, df_l, df_h for X, Y, Z
+    wn = wnorm(lat)
+
+    # Partial derivatives for X
+    dX_df = -(wn + h) * np.sin(lat) * np.cos(lon)
+    dX_dl = -(wn + h) * np.cos(lat) * np.sin(lon)
+    dX_dh = np.cos(lat) * np.cos(lon)
+
+    # Partial derivatives for Y
+    dY_df = -(wn + h) * np.sin(lat) * np.sin(lon)
+    dY_dl = (wn + h) * np.cos(lat) * np.cos(lon)
+    dY_dh = np.cos(lat) * np.sin(lon)
+
+    # Partial derivatives for Z
+    e2 = 0.00669438003
+    dZ_df = (wn * (1.0 - e2) + h) * np.cos(lat)
+    dZ_dl = 0
+    dZ_dh = np.sin(lat)
+
+    # Jacobian matrix
+    J = np.array(
+        [
+            [dX_df, dX_dl, dX_dh],
+            [dY_df, dY_dl, dY_dh],
+            [dZ_df, dZ_dl, dZ_dh],
+        ]
+    )
+
+    # Covariance matrix in XYZ
+    sigma_xyz = np.dot(np.dot(J, sigma_flh), J.T)
+
+    s_x = np.sqrt(np.maximum(sigma_xyz[0, 0], 0))  # Avoid negative values due to numerical precision
+    s_y = np.sqrt(np.maximum(sigma_xyz[1, 1], 0))
+    s_z = np.sqrt(np.maximum(sigma_xyz[2, 2], 0))
+
+    if not return_corr:
+        return s_x, s_y, s_z
+    else:
+        # correlation coefficients
+        c_xy = sigma_xyz[0, 1] / (s_x * s_y) if s_x * s_y > 0 else 0
+        c_xz = sigma_xyz[0, 2] / (s_x * s_z) if s_x * s_z > 0 else 0
+        c_yz = sigma_xyz[1, 2] / (s_y * s_z) if s_y * s_z > 0 else 0
+        return s_x, s_y, s_z, c_xy, c_xz, c_yz
 
 
-def sigma_geo2enu(lat, lon, h, s_f, s_l, s_h, ang="deg"):
+def sigma_geo2enu(lat, lon, h, s_f, s_l, s_h, s_fl=0, s_fh=0, s_lh=0, ang="deg", return_corr=False):
     """
     Convert standard deviation
     Geographic FLH => Cartesian Topocentric ENU
 
-    Warning
+    Note
+    ----
+    Inputs values are now assumed correlated (241105)
+
+    Parameters
+    ----------
+    lat, lon, h : floats
+        latitude, longitude, height
+    s_f, s_l, s_h : floats
+        standard deviations for latitude, longitude, height
+    s_fl, s_fh, s_lh : floats, optional
+        correlation terms (covariances) between latitude-longitude, latitude-height, longitude-height
+        Default is 0 (uncorrelated)
+    ang : str, optional
+        angle type 'deg' or 'rad'. Default is 'deg'
+    return_corr : bool, optional
+        if True, also return correlation coefficients. Default is False
+
+    Returns
     -------
-    Inputs values are assumed as uncorrelated, which is not accurate
-    Must be improved
+    s_e, s_n, s_u : floats
+        standard deviations for East, North, Up
+    c_en, c_eu, c_nu : floats
+        correlation coefficients (only if return_corr=True)
 
     References
     ----------
     Linear Algebra, Geodesy, and GPS p332
     """
-    # conversion batarde du sigma FLH => sigma ENU
-    # Par conversion des angles en distance
+    # First convert FLH covariances to XYZ covariances
+    s_x, s_y, s_z, c_xy_xyz, c_xz_xyz, c_yz_xyz = sigma_geo2xyz(
+        lat, lon, h, s_f, s_l, s_h, s_fl, s_fh, s_lh, ang=ang, return_corr=True
+    )
 
+    # Reconstruct XYZ covariance matrix from sigmas and correlations
+    sigma_xyz = np.array(
+        [[s_x**2, c_xy_xyz * s_x * s_y, c_xz_xyz * s_x * s_z],
+         [c_xy_xyz * s_x * s_y, s_y**2, c_yz_xyz * s_y * s_z],
+         [c_xz_xyz * s_x * s_z, c_yz_xyz * s_y * s_z, s_z**2]]
+    )
+
+    # Get latitude and longitude in degrees for the transformation
     if ang == "deg":
-        lat = np.deg2rad(lat)
-        lon = np.deg2rad(lon)
-        s_f = np.deg2rad(s_f)
-        s_l = np.deg2rad(s_l)
+        f_deg, l_deg = lat, lon
+    else:
+        f_deg, l_deg = np.rad2deg(lat), np.rad2deg(lon)
 
-    e2 = 0.00669438003
-    # f=1.0 - np.sqrt(1-e2)
-    a = 6378137.0
+    # Use rotation matrix for the transformation
+    c = rotmat.c_ecef2enu_sigma(f_deg, l_deg, angtype="deg")
 
-    # Je présume que Rpsi est le rayon du cercle tangent à l'ellipsoide à une
-    # lattitude donnée (comm du 150710)
-    psi = np.arctan((1 - e2) * np.tan(lat))
-    r_psi = a * np.sqrt(1 - e2) / np.sqrt(1 - e2 * np.cos(psi) ** 2)
+    # Covariance matrix in ENU
+    sigma_enu = np.dot(np.dot(c, sigma_xyz), c.T)
 
-    # r est le rayon d'un petit cercle (un parallèle)
-    r = np.cos(psi) * (r_psi + h)
+    s_e = np.sqrt(np.maximum(sigma_enu[0, 0], 0))  # Avoid negative values
+    s_n = np.sqrt(np.maximum(sigma_enu[1, 1], 0))
+    s_u = np.sqrt(np.maximum(sigma_enu[2, 2], 0))
 
-    # On pourrait simplifier par 2pi mais autant avoir toute la démarche
-    s_e = (np.pi * 2 * r * s_l) / (2 * np.pi)
-    s_n = (np.pi * 2 * r_psi * s_f) / (2 * np.pi)
-    s_u = s_h
-    return s_e, s_n, s_u
+    if not return_corr:
+        return s_e, s_n, s_u
+    else:
+        # correlation coefficients
+        c_en = sigma_enu[0, 1] / (s_e * s_n) if s_e * s_n > 0 else 0
+        c_eu = sigma_enu[0, 2] / (s_e * s_u) if s_e * s_u > 0 else 0
+        c_nu = sigma_enu[1, 2] / (s_n * s_u) if s_n * s_u > 0 else 0
+        return s_e, s_n, s_u, c_en, c_eu, c_nu
 
 
-def sigma_enu2geo(lat, lon, h, s_e, s_n, s_u, ang="deg", a=6378137.0, e2=0.00669438003):
+def sigma_enu2geo(lat, lon, h, s_e, s_n, s_u, s_en=0, s_eu=0, s_nu=0, ang="deg", a=6378137.0, e2=0.00669438003, return_corr=False):
     """
     Convert standard deviation
     Cartesian Topocentric ENU => Geographic FLH
 
-    Warning
+    Note
+    ----
+    Inputs values are now assumed correlated (241105)
+
+    Parameters
+    ----------
+    lat, lon, h : floats
+        latitude, longitude, height
+    s_e, s_n, s_u : floats
+        standard deviations for East, North, Up
+    s_en, s_eu, s_nu : floats, optional
+        correlation terms (covariances) between East-North, East-Up, North-Up
+        Default is 0 (uncorrelated)
+    ang : str, optional
+        angle type 'deg' or 'rad'. Default is 'deg'
+    a : float, optional
+        Semi-major axis of the ellipsoid in meters. Default is 6378137.0 (WGS84)
+    e2 : float, optional
+        Square of the first eccentricity of the ellipsoid. Default is 0.00669438003 (WGS84)
+    return_corr : bool, optional
+        if True, also return correlation coefficients. Default is False
+
+    Returns
     -------
-    Inputs values are assumed as uncorrelated, which is not accurate
-    Must be improved
+    s_f, s_l, s_h : floats
+        standard deviations for latitude, longitude, height
+    c_fl, c_fh, c_lh : floats
+        correlation coefficients (only if return_corr=True)
 
     References
     ----------
     Linear Algebra, Geodesy, and GPS p332
     """
+    
+    # Create covariance matrix for ENU
+    sigma_enu = np.array(
+        [[s_e**2, s_en, s_eu], [s_en, s_n**2, s_nu], [s_eu, s_nu, s_u**2]]
+    )
 
-    # conversion batarde du sigma ENU => sigma FLH
-    # Par conversion des angles en distance
+    # Convert coordinates to radians if needed
+    if ang == "deg":
+        lat_rad = np.deg2rad(lat)
+        lon_rad = np.deg2rad(lon)
+    else:
+        lat_rad = lat
+        lon_rad = lon
 
-    # f=1.0 - np.sqrt(1-e2)
+    # Get the rotation matrix from ENU to XYZ (transpose of c_ecef2enu)
+    f_deg = lat if ang == "deg" else np.rad2deg(lat)
+    l_deg = lon if ang == "deg" else np.rad2deg(lon)
 
-    # Je présume que Rpsi est le rayon du cercle tangent à l'ellipsoide à une
-    # lattitude donnée (comm du 150710)
-    psi = np.arctan((1 - e2) * np.tan(lat))
-    r_psi = a * np.sqrt(1 - e2) / np.sqrt(1 - e2 * np.cos(psi) ** 2)
+    c_enu2xyz = rotmat.c_ecef2enu_sigma(f_deg, l_deg, angtype="deg").T
 
-    # r est le rayon d'un petit cercle (un parallèle)
-    r = np.cos(psi) * (r_psi + h)
+    # Transform covariance from ENU to XYZ
+    sigma_xyz = np.dot(np.dot(c_enu2xyz, sigma_enu), c_enu2xyz.T)
 
-    # On pourait simplifier par 2pi mais autant avoir toute la démarche
-    s_l = s_e * (2 * np.pi) / (np.pi * 2 * r)
-    s_f = s_n * (2 * np.pi) / (np.pi * 2 * r_psi)
-    s_h = s_u
+    # Now use the inverse approach: transform XYZ covariance to FLH
+    # Get XYZ coordinates from the geographic position
+    x, y, z = geo2xyz(lat_rad, lon_rad, h, angle="rad")
+
+    # Compute radius values needed for the Jacobian
+    p = np.sqrt(x**2 + y**2)  # radius in equatorial plane
+    r = np.sqrt(p**2 + z**2)  # radius to the point
+
+    wn_val = wnorm(lat_rad, a=a, e2=e2)
+
+    # Compute partial derivatives of lat, lon, h with respect to X, Y, Z
+    # Using the formula from standard ellipsoidal coordinate transformations
+    sin_lat = np.sin(lat_rad)
+    cos_lat = np.cos(lat_rad)
+    sin_lon = np.sin(lon_rad)
+    cos_lon = np.cos(lon_rad)
+
+    # Simplified Jacobian (second order terms)
+    N_val = wn_val
+
+    dlat_dx = -sin_lat * cos_lon / N_val
+    dlat_dy = -sin_lat * sin_lon / N_val
+    dlat_dz = cos_lat / N_val
+
+    dlon_dx = -sin_lon / p if p > 0 else 0
+    dlon_dy = cos_lon / p if p > 0 else 0
+    dlon_dz = 0
+
+    dh_dx = cos_lat * cos_lon
+    dh_dy = cos_lat * sin_lon
+    dh_dz = sin_lat
+
+    # Jacobian matrix
+    J = np.array(
+        [
+            [dlat_dx, dlat_dy, dlat_dz],
+            [dlon_dx, dlon_dy, dlon_dz],
+            [dh_dx, dh_dy, dh_dz],
+        ]
+    )
+
+    # Covariance matrix in FLH
+    sigma_flh = np.dot(np.dot(J, sigma_xyz), J.T)
+
+    s_f = np.sqrt(np.maximum(sigma_flh[0, 0], 0))
+    s_l = np.sqrt(np.maximum(sigma_flh[1, 1], 0))
+    s_h = np.sqrt(np.maximum(sigma_flh[2, 2], 0))
 
     if ang == "deg":
-        s_l = np.rad2deg(s_l)
         s_f = np.rad2deg(s_f)
-    return s_f, s_l, s_h
+        s_l = np.rad2deg(s_l)
+
+    if not return_corr:
+        return s_f, s_l, s_h
+    else:
+        # correlation coefficients
+        # Account for angle unit conversion when computing correlations
+        if ang == "deg":
+            s_f_rad = np.deg2rad(s_f)
+            s_l_rad = np.deg2rad(s_l)
+            c_fl = sigma_flh[0, 1] / (s_f_rad * s_l_rad) if s_f_rad * s_l_rad > 0 else 0
+            c_fh = sigma_flh[0, 2] / (s_f_rad * s_h) if s_f_rad * s_h > 0 else 0
+            c_lh = sigma_flh[1, 2] / (s_l_rad * s_h) if s_l_rad * s_h > 0 else 0
+        else:
+            c_fl = sigma_flh[0, 1] / (s_f * s_l) if s_f * s_l > 0 else 0
+            c_fh = sigma_flh[0, 2] / (s_f * s_h) if s_f * s_h > 0 else 0
+            c_lh = sigma_flh[1, 2] / (s_l * s_h) if s_l * s_h > 0 else 0
+        return s_f, s_l, s_h, c_fl, c_fh, c_lh
 
 
 def eci2rtn_or_rpy(p, v, c, out_rpy=False, rpy_theo_mode=False):
