@@ -146,7 +146,11 @@ def calc_baselines_virtual(df_inp, rov12_pairs, pivots, threshold_mad=3.5,
                 df_bl["site2"] = rov2
                 df_bl["pivot"] = piv
 
-                df_bl, _ = stats.outlier_mad_df(df_bl, ["d"], thd)
+                ## mean is substractred for outlier detection
+                df_bl_cor = df_bl["d"] - df_bl["d_mean"]
+                df_bl_cor = pd.DataFrame(df_bl_cor)
+                _, mad_bool = stats.outlier_mad_df(df_bl_cor, [0], thd)
+                df_bl = df_bl[mad_bool]
 
                 df_bl_stk.append(df_bl)
                 rov12_sets_done.append(rov12_set)
@@ -228,8 +232,12 @@ def calc_baselines_direct(
         df_bl["site1"] = rov
         df_bl["site2"] = bas
         df_bl["pivot"] = None
-
-        df_bl, _ = stats.outlier_mad_df(df_bl, ["d"], thd)
+        
+        ## mean is substractred for outlier detection
+        df_bl_cor = df_bl["d"] - df_bl["d_mean"]
+        df_bl_cor = pd.DataFrame(df_bl_cor)
+        _, mad_bool = stats.outlier_mad_df(df_bl_cor, [0], thd)
+        df_bl = df_bl[mad_bool]
 
         df_bl_stk.append(df_bl)
 
