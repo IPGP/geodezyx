@@ -67,7 +67,7 @@ def rtklib_out2prq(resdir, pattern="*out", force=False, sample=None):
             df_out2prq = files_rw.read_rtklib(f, return_df=True)
             if sample:
                 df_out2prq = _resample_df(df_out2prq, sample)
-            df_out2prq.to_parquet(f_prq, engine="auto")
+            df_out2prq.to_parquet(f_prq, engine="auto", compression="zstd")
             f_prq_lis.append(f_prq)
             log.info(f"Created parquet file: {f_prq}")
 
@@ -263,7 +263,7 @@ def rtklib_merge_prq(
                 log.warning(f"Skipping empty/corrupt parquet file: {f}")
                 continue
             if writer is None:
-                writer = pa.parquet.ParquetWriter(prq_path_wrk, tbl.schema)
+                writer = pa.parquet.ParquetWriter(prq_path_wrk, tbl.schema, compression="zstd")
             writer.write_table(tbl)
     finally:
         if writer:
