@@ -170,7 +170,7 @@ orbclk_concat = "geodezyx.operational.gins_runner.gins_orbclk_concat:main"
 rtklib_run = "geodezyx.operational.rtklib_runner.bin.rtklib_run_cli:rtklib_run_main"
 rtklib_out2parquet = "geodezyx.operational.rtklib_runner.bin.rtklib_out2parquet:rtklib_out2parquet_main"
 rtklib_merge_parquet = "geodezyx.operational.rtklib_runner.bin.rtklib_merge_parquet:rtklib_merge_prq_main"
-rtklib_parquet2csv = "geodezyx.operational.rtklib_runner.bin.rtklib_parquet2csv:parquet2csv_main"
+rtklib_parquet2out = "geodezyx.operational.rtklib_runner.bin.rtklib_parquet2csv:parquet2out_main"
 ### download gnss data
 download_gnss_rinex = "geodezyx.operational.bin_opera.download_gnss_rinex:main"
 download_gnss_products = "geodezyx.operational.bin_opera.download_gnss_products:main"
