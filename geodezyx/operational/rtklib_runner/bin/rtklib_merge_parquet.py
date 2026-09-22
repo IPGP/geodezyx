@@ -29,38 +29,38 @@ def parse_args():
         epilog="""
 Examples:
   # scan a whole directory
-  rtklib_merge_prq -i /path/to/results
+  rtklib_merge_parquet -i /path/to/results
 
   # scan a directory with an experiment prefix
-  rtklib_merge_prq -i /path/to/results -x myexp
+  rtklib_merge_parquet -i /path/to/results -x myexp
 
   # specify output directory
-  rtklib_merge_prq -i /path/to/results -o /path/to/output
+  rtklib_merge_parquet -i /path/to/results -o /path/to/output
 
   # fast merge: append specific files to an existing _all.parquet
-   rtklib_merge_prq -i /path/to/results -x myexp --fast_merge \\
+   rtklib_merge_parquet -i /path/to/results -x myexp --fast_merge \\
        -rof /path/to/results/2024/001/run1.out /path/to/results/2024/002/run2.out
 
    # explicit list of parquet files (no directory scan)
-   rtklib_merge_prq -i /path/to/a.parquet /path/to/b.parquet -x myexp
+   rtklib_merge_parquet -i /path/to/a.parquet /path/to/b.parquet -x myexp
  
    # with resampling (15min)
-   rtklib_merge_prq -i /path/to/results -x myexp -p 15min
+   rtklib_merge_parquet -i /path/to/results -x myexp -p 15min
  
    # with resampling (1 hour)
-   rtklib_merge_prq -i /path/to/results -x myexp -p 1H
+   rtklib_merge_parquet -i /path/to/results -x myexp -p 1H
 
    # with date filtering (start and end)
-   rtklib_merge_prq -i /path/to/results -x myexp -s 2024-01-01 -e 2024-01-31
+   rtklib_merge_parquet -i /path/to/results -x myexp -s 2024-01-01 -e 2024-01-31
 
    # with date filtering (start + days)
-   rtklib_merge_prq -i /path/to/results -x myexp -s 2024-01-01 -d 7
+   rtklib_merge_parquet -i /path/to/results -x myexp -s 2024-01-01 -d 7
 
    # with date filtering (end + days)
-   rtklib_merge_prq -i /path/to/results -x myexp -e 2024-01-31 -d 7
+   rtklib_merge_parquet -i /path/to/results -x myexp -e 2024-01-31 -d 7
 
    # with output directory and resampling
-   rtklib_merge_prq -i /path/to/results -x myexp -o /output/dir -p 15min
+   rtklib_merge_parquet -i /path/to/results -x myexp -o /output/dir -p 15min
 """,
     )
 

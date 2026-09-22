@@ -78,13 +78,13 @@ def rtklib_prq2out_main():
     args = parse_args()
 
     # Validate input file
-    prq_inp_path = Path(args.prq_inp)
+    prq_inp_path = Path(args.parquet_inp)
     if not prq_inp_path.exists():
-        log.error(f"Input parquet file not found: {args.prq_inp}")
+        log.error(f"Input parquet file not found: {args.parquet_inp}")
         return 1
 
     if not prq_inp_path.is_file():
-        log.error(f"Input path is not a file: {args.prq_inp}")
+        log.error(f"Input path is not a file: {args.parquet_inp}")
         return 1
 
     # Create output directory if it doesn't exist
@@ -96,13 +96,13 @@ def rtklib_prq2out_main():
         return 1
 
     log.info("rtklib_prq2out conversion parameters:")
-    log.info(f"  Input parquet file: {args.prq_inp}")
+    log.info(f"  Input parquet file: {args.parquet_inp}")
     log.info(f"  Output directory:   {args.out_dir}")
     log.info(f"  Resampling interval: {args.sample}")
 
     try:
         rtklib_prq2out(
-            prq_inp=args.prq_inp,
+            prq_inp=args.parquet_inp,
             out_dir=args.out_dir,
             sample=args.sample,
         )

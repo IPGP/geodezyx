@@ -108,6 +108,11 @@ def _get_year_doy_dirs(base_dir, start_date, end_date):
     log.info(f"Date range: {start_date.date()} to {end_date.date()} -> {len(year_doy_dirs)} directories")
     return year_doy_dirs
 
+def _drop_pandas_meta(tbl):
+    """Drop the 'pandas' metadata key so all tables share the same schema."""
+    meta = {k: v for k, v in tbl.schema.metadata.items() if k != b"pandas"}
+    return tbl.replace_schema_metadata(meta)
+
 def rtklib_merge_prq(
     parquet_inp,
     exp_prefix="",
@@ -233,11 +238,6 @@ def rtklib_merge_prq(
         l_prq_merge = l_prq
         prq_path_wrk = prq_path_out
 
-    def _drop_pandas_meta(tbl):
-        """Drop the 'pandas' metadata key so all tables share the same schema."""
-        meta = {k: v for k, v in tbl.schema.metadata.items() if k != b"pandas"}
-        return tbl.replace_schema_metadata(meta)
-
     # Stream each source table directly through a ParquetWriter —
     # no pandas conversion, no in-memory concat.
     writer = None
@@ -318,6 +318,9 @@ def _resample_df(df_inp: pd.DataFrame, sample: str = "15min"):
     for col in ["Q", "ns", "sdx", "sdy", "sdz", "sdxy", "sdyz", "sdxz", "age", "ratio"]:
         if col in df_epo.columns:
             df_out[col] = df_epo[[col]].resample(sample).median()
+    for col in ["rover", "base"]:
+        if col in df_epo.columns:
+            df_out[col] = df_epo[[col]].resample(sample).first()
 
     # Reset index to convert epoch back to a regular column
     df_out = df_out.reset_index(inplace=False)
