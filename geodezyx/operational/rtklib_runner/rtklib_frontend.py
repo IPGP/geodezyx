@@ -282,7 +282,7 @@ def rtklib_run_mono(
         shutils.rmtree(tmp_dir_wrk, ignore_errors=True)
         os.remove(out_res_fil.replace(".out", "") + "_events.pos")
 
-    return out_res_fil
+    return out_res_fil + ".gz"
 
 
 def rtklib_run_pair(
