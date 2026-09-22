@@ -73,7 +73,7 @@ Examples:
 
 
 
-def rtklib_out2parquet_main():
+def rtklib_out2prq_main():
     """Main entry point for the CLI."""
     args = parse_args()
     # Configure logging
@@ -114,7 +114,7 @@ def rtklib_out2parquet_main():
         return 1
 
 if __name__ == "__main__":
-    sys.exit(rtklib_out2parquet_main())
+    sys.exit(rtklib_out2prq_main())
 
 
 
