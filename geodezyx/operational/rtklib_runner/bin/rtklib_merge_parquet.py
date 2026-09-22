@@ -45,10 +45,10 @@ Examples:
    rtklib_merge_prq -i /path/to/a.parquet /path/to/b.parquet -x myexp
  
    # with resampling (15min)
-   rtklib_merge_prq -i /path/to/results -x myexp -sp 15min
+   rtklib_merge_prq -i /path/to/results -x myexp -p 15min
  
    # with resampling (1 hour)
-   rtklib_merge_prq -i /path/to/results -x myexp -sp 1H
+   rtklib_merge_prq -i /path/to/results -x myexp -p 1H
 
    # with date filtering (start and end)
    rtklib_merge_prq -i /path/to/results -x myexp -s 2024-01-01 -e 2024-01-31
@@ -60,7 +60,7 @@ Examples:
    rtklib_merge_prq -i /path/to/results -x myexp -e 2024-01-31 -d 7
 
    # with output directory and resampling
-   rtklib_merge_prq -i /path/to/results -x myexp -o /output/dir -sp 15min
+   rtklib_merge_prq -i /path/to/results -x myexp -o /output/dir -p 15min
 """,
     )
 
@@ -108,7 +108,7 @@ Examples:
     )
 
     parser.add_argument(
-        "-sp",
+        "-p",
         "--sample",
         default=RTKLIB_MERGE_DEFAULTS.get("sample"),
         help=(

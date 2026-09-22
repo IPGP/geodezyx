@@ -33,13 +33,13 @@ Examples:
   rtklib_prq2out -i /path/to/merged_all.parquet -o /path/to/output_csv
 
   # Convert with 1min resampling
-  rtklib_prq2out -i /path/to/merged_all.parquet -o /path/to/output_csv -s 1min
+  rtklib_prq2out -i /path/to/merged_all.parquet -o /path/to/output_csv -p 1min
 
   # Convert with 1 hour resampling
-  rtklib_prq2out -i /path/to/merged_all.parquet -o /path/to/output_csv -s 1H
+  rtklib_prq2out -i /path/to/merged_all.parquet -o /path/to/output_csv -p 1H
 
   # Custom resampling (daily)
-  rtklib_prq2out -i /path/to/merged_all.parquet -o /path/to/output_csv -s 1D
+  rtklib_prq2out -i /path/to/merged_all.parquet -o /path/to/output_csv -p 1D
 """,
     )
 
@@ -60,7 +60,7 @@ Examples:
     )
 
     parser.add_argument(
-        "-s",
+        "-p",
         "--sample",
         default=rtklib_prq2out_DEFAULTS.get("sample", "15min"),
         help=(
