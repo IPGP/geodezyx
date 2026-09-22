@@ -158,19 +158,25 @@ edu = ["gnsstoolbox", "gpsdatetime", "seaborn", "plotly", "statsmodels"]
 # which executes the function `main` from this package when invoked.
 [project.scripts]
 # sample = "sample:main"
+### date conversion
+date_conv = "geodezyx.conv.bin.date_conv:main"
+doy = "geodezyx.conv.bin.date_conv:main"
+### gins_runner
 singugins_run = "geodezyx.operational.gins_runner.singugins_run:main"
 testgins_run = "geodezyx.operational.gins_runner.testgins_run:main"
 bdgins_update = "geodezyx.operational.gins_runner.gins_bd_update:main"
 orbclk_concat = "geodezyx.operational.gins_runner.gins_orbclk_concat:main"
+### rtklib_run
+rtklib_run = "geodezyx.operational.rtklib_runner.bin.rtklib_run_cli:rtklib_run_main"
+rtklib_out2parquet = "geodezyx.operational.rtklib_runner.bin.rtklib_out2parquet:rtklib_out2parquet_main"
+rtklib_merge_parquet = "geodezyx.operational.rtklib_runner.bin.rtklib_merge_parquet:rtklib_merge_prq_main"
+rtklib_parquet2csv = "geodezyx.operational.rtklib_runner.bin.rtklib_parquet2csv:parquet2csv_main"
+### download gnss data
 download_gnss_rinex = "geodezyx.operational.bin_opera.download_gnss_rinex:main"
 download_gnss_products = "geodezyx.operational.bin_opera.download_gnss_products:main"
-rtklib_run = "geodezyx.operational.bin_opera.rtklib_run_cli:rtklib_run_main"
-rtklib_parquet = "geodezyx.operational.bin_opera.rtklib_parquet:rtklib_prq_main"
-rtklib_merge_parquet = "geodezyx.operational.bin_opera.rtklib_merge_parquet:rtklib_merge_prq_main"
-rtklib_parquet2csv = "geodezyx.operational.bin_opera.rtklib_parquet2csv:parquet2csv_main"
+### misc
 vmf1_compute = "geodezyx.athmo.vmf1_compute:main"
-date_conv = "geodezyx.conv.bin.date_conv:main"
-doy = "geodezyx.conv.bin.date_conv:main"
+
 
 # This is configuration specific to the `setuptools` build backend.
 # If you are using a different build backend, you will need to change this.

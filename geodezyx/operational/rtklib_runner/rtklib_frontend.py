@@ -28,14 +28,8 @@ import collections
 import logging
 import os
 import subprocess
-from os import PathLike
-
 import numpy as np
 import shutil as shutils
-import pandas as pd
-import pyarrow as pa
-import  pyarrow.parquet as pq
-from tqdm import tqdm
 
 # from threading import Lock
 
@@ -281,6 +275,7 @@ def rtklib_run_mono(
         out_prq_fil = out_res_fil.replace(".out", ".parquet")
         df_out2prq = files_rw.read_rtklib(out_res_fil, return_df=True)
         df_out2prq.to_parquet(out_prq_fil, engine="auto")
+        utils.gzip_compress(out_res_fil + ".out", rm_inp=True)
         log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
 
     if not keep_tmp:
@@ -571,271 +566,6 @@ def make_pairs(
 
     return rnxs_pairs, df_all
 
-def rtklib_parquet(resdir, pattern="*out", force=False, sample=None):
-    """
-    Convert RTKLIB output files to Parquet format.
-
-    Parameters
-    ----------
-    resdir : str
-        Results directory containing RTKLIB output files.
-    pattern : str, optional
-        File pattern to search for (default: "*out").
-    force : bool, optional
-        Force conversion even if parquet file already exists (default: False).
-    sample : str, optional
-        Resampling interval for position data (default: None, no resampling).
-        If provided, uses _resample_df to resample to the specified interval.
-        Examples: "1min", "15min", "1H" (1 hour), "1D" (1 day).
-
-    Returns
-    -------
-    list
-        List of created/updated parquet files.
-    """
-    l_out = utils.find_recursive(resdir, pattern)
-    f_prq_lis = []
-    for f in l_out:
-        f_prq = f.replace(".out", ".parquet")
-        if not os.path.isfile(f_prq) or force:
-            df_out2prq = files_rw.read_rtklib(f, return_df=True)
-            if sample:
-                df_out2prq = _resample_df(df_out2prq, sample)
-            df_out2prq.to_parquet(f_prq, engine="auto")
-            f_prq_lis.append(f_prq)
-            log.info(f"Created parquet file: {f_prq}")
-
-    return f_prq_lis
-
-def rtklib_merge_parquet(
-    parquet_inp,
-    exp_prefix="",
-    fast_merge=False,
-    rtklib_out_files=None,
-    sample=None,
-):
-    """
-    Merge individual RTKLIB parquet files into a single consolidated parquet file.
-
-    Parameters
-    ----------
-    parquet_inp : str or os.PathLike or list of str
-        Either a directory path (all ``*.parquet`` files inside are collected
-        recursively) **or** an explicit list of parquet file paths.
-        The merged output file is written to the directory (or, for a list,
-        to the directory of the first file in the list).
-    exp_prefix : str, default=""
-        Prefix used to name the merged output file (<exp_prefix>_all.parquet).
-    fast_merge : bool, default=False
-        If True, only merges the parquet files corresponding to
-        ``rtklib_out_files`` (or those in the explicit list) and appends them
-        to an already-existing ``<exp_prefix>_all.parquet`` file.
-        If False, scans the whole directory recursively for parquet files.
-    rtklib_out_files : list of str, optional
-        List of ``.out`` file paths produced by a previous RTKLIB run.
-        Only used when ``fast_merge=True`` and ``parquet_inp`` is a directory,
-        to avoid a full recursive scan.
-    sample : str, optional
-        Resampling interval for position data (default: None, no resampling).
-        If provided, uses _resample_df to resample each table to the specified interval
-        before merging.
-        Examples: "1min", "15min", "1H" (1 hour), "1D" (1 day).
-
-    Returns
-    -------
-    str
-        Path to the merged parquet file.
-    """
-    # --- resolve source files and output directory ---
-    if isinstance(parquet_inp, (str, os.PathLike)) and os.path.isdir(parquet_inp):
-        prq_out_dir = str(parquet_inp)
-        if fast_merge and rtklib_out_files:
-            l_prq = [f.replace(".out", ".parquet") for f in rtklib_out_files]
-            l_prq = [f for f in l_prq if os.path.exists(f)]
-        else:
-            l_prq = utils.find_recursive(prq_out_dir, "*parquet")
-    else:
-        # parquet_inp is an explicit list of parquet files
-        l_prq = list(parquet_inp)
-        prq_out_dir = os.path.dirname(os.path.abspath(l_prq[0])) if l_prq else "."
-
-    prq_path_out = os.path.join(prq_out_dir, exp_prefix + "_all.parquet")
-    prq_path_tmp = prq_path_out + ".tmp"
-
-    # Exclude the output file itself and stray temp files from the source list
-    l_prq = [
-        f for f in l_prq if not f.endswith("_all.parquet") and not f.endswith(".tmp")
-    ]
-
-    # When fast-merging, prepend the existing merged file so it is streamed
-    # first; write to a temp path to avoid reading and writing the same file.
-    if fast_merge and os.path.exists(prq_path_out):
-        l_prq_merge = [prq_path_out] + l_prq
-        prq_path_wrk = prq_path_tmp
-    else:
-        l_prq_merge = l_prq
-        prq_path_wrk = prq_path_out
-
-    def _drop_pandas_meta(tbl):
-        """Drop the 'pandas' metadata key so all tables share the same schema."""
-        meta = {k: v for k, v in tbl.schema.metadata.items() if k != b"pandas"}
-        return tbl.replace_schema_metadata(meta)
-
-    # Stream each source table directly through a ParquetWriter —
-    # no pandas conversion, no in-memory concat.
-    writer = None
-    try:
-        pbar = tqdm(l_prq_merge, desc="Merging parquet", unit="file")
-        for f in pbar:
-            pbar.set_postfix_str(os.path.basename(f), refresh=False)
-            if sample:
-                # Read as pandas, resample, then convert back to pyarrow
-                try:
-                    df = pd.read_parquet(f)
-                    df = _resample_df(df, sample)
-                    tbl = pa.Table.from_pandas(df)
-                    tbl = _drop_pandas_meta(tbl)
-                    corrupt_tbl = False
-                except:
-                    corrupt_tbl = True
-            else:
-                tbl = _drop_pandas_meta(pa.parquet.read_table(f))
-                corrupt_tbl = True if tbl.num_columns == 0 else False
-
-            if corrupt_tbl:
-                log.warning(f"Skipping empty/corrupt parquet file: {f}")
-                continue
-            if writer is None:
-                writer = pa.parquet.ParquetWriter(prq_path_wrk, tbl.schema)
-            writer.write_table(tbl)
-    finally:
-        if writer:
-            writer.close()
-
-    # Atomically replace the previous merged file when using a temp path
-    if prq_path_wrk == prq_path_tmp and os.path.exists(prq_path_tmp):
-        os.replace(prq_path_tmp, prq_path_out)
-
-    log.info(f"Merged parquet saved to {prq_path_out}")
-    return prq_path_out
-
-
-def _resample_df(df_inp: pd.DataFrame, sample: str = "15min"):
-    """
-    Resample a DataFrame with GNSS position data to a specified time interval.
-
-    This helper function resamples DataFrame containing GNSS solution positions (x, y, z)
-    to a coarser time resolution using median aggregation. It removes any duplicate
-    entries resulting from the resampling operation.
-
-    Parameters
-    ----------
-    df_inp : pandas.DataFrame
-        Input DataFrame with an 'epoch' column (datetime or datetime-like) and
-        position columns 'x', 'y', 'z' (numeric).
-    sample : str, default="15min"
-        Resampling interval as a pandas time offset string.
-        Examples: "1min", "15min", "1H" (1 hour), "1D" (1 day).
-
-    Returns
-    -------
-    pandas.DataFrame
-        Resampled DataFrame with:
-        - 'epoch' column (reset from index)
-        - 'x', 'y', 'z' columns containing median values over each resampling interval
-        - No duplicate rows
-
-    Notes
-    -----
-    - Uses median aggregation to provide robust resampling (resistant to outliers and NaN values)
-    - Expects the input DataFrame to have an 'epoch' column with datetime values
-    - The original epoch index is reset in the output
-    """
-    # ...existing code...
-    df_epo = df_inp.set_index("epoch")
-    df_med = df_epo[["x", "y", "z"]].resample(sample).median()
-    df_out = df_med.reset_index(inplace=False)
-    df_out = df_out.drop_duplicates(inplace=False)
-    return df_out
-
-
-def parquet2csv(
-    prq_inp: str | PathLike, out_dir: str | PathLike, sample: str = "15min"
-):
-    """
-    Convert merged RTKLIB parquet file to CSV format, processed by rover/base pairs.
-
-    Reads a merged parquet file containing GNSS solutions from multiple rover/base
-    station pairs, resamples each pair's data independently, and exports to CSV files.
-    This function uses PyArrow filters to minimize memory usage by reading only the
-    data relevant to each rover/base pair.
-
-    Parameters
-    ----------
-    prq_inp : str or os.PathLike
-        Path to the merged parquet file containing rover/base pair GNSS solutions.
-        The file must contain columns: 'epoch', 'rover', 'base', 'x', 'y', 'z'.
-    out_dir : str or os.PathLike
-        Output directory where CSV files will be saved. Created if it doesn't exist.
-    sample : str, default="15min"
-        Resampling interval for position data. Passed to _resample_df().
-        Examples: "1min", "15min", "1H", "1D"
-
-    Returns
-    -------
-    None
-
-    Output Files
-    ------------
-    CSV files in `out_dir` with naming pattern:
-        {rover}_{base}_{sample}.csv
-
-    Each CSV contains columns:
-        - epoch: datetime of the resampled position
-        - x, y, z: median position coordinates for the resampling interval
-
-    Notes
-    -----
-    - Uses PyArrow filter expressions to read only necessary data from the parquet file
-    - Efficiently handles large parquet files by filtering at read time (minimal RAM usage)
-    - Processes each rover/base pair sequentially
-    - Prints rover/base pair names to console as they are processed
-    """
-    # Read the merged parquet file to get unique rover/base combinations
-    log.info(f"Identify rover/base pairs in: {prq_inp}")
-    df_rovbas = pd.read_parquet(
-        prq_inp, engine="auto", columns=["rover", "base"]
-    ).drop_duplicates()
-
-    # Process each unique rover/base pair
-    for irow, (rov, bas) in df_rovbas.iterrows():
-        log.info("loading rover/base: %s/%s", rov, bas)
-
-        # Define PyArrow filters to read only this rover/base pair
-        # Filters minimize memory usage by selecting data at read time
-        filters = [
-            ("rover", "==", rov),
-            ("base", "==", bas),
-        ]
-
-        # Read only the filtered data for this pair
-        df_grp = pd.read_parquet(prq_inp, engine="auto", filters=filters)
-
-        # Resample to the specified time interval
-        df_out = _resample_df(df_grp, sample)
-
-        df_out["year"] = df_out["epoch"].dt.year
-        df_out["doy"] = df_out["epoch"].apply(conv.dt2doy, args=(int,))
-        df_out["mjd"] = df_out["epoch"].apply(conv.dt2mjd)
-
-        # Export to CSV file with naming convention: rover_base_sample.csv
-        out_path = f"{out_dir}/{rov}_{bas}_{sample}.csv"
-        log.info("saving %s resampled data to CSV: %s", sample, out_path)
-        df_out.to_csv(out_path, index=False)
-
-    return None
-
-
 def rtklib_run(
     rnx_dir,
     cfgfile_generik,
@@ -879,7 +609,7 @@ def rtklib_run(
         raise
 
     log.info(f"STEP 3: Running {len(rnxs_pairs)} RTKLIB processes in parallel")
-    out_run_pairs = operational.rtklib_run_pair(
+    out_run_pairs = rtklib_run_pair(
         rnxs_pairs,
         cfgfile_generik,
         out_dir=out_dir,
@@ -900,13 +630,13 @@ def rtklib_run(
     )
 
     # merge all parquet files into one
-    log.info("STEP 4: Merging individual parquet files into one")
-    rtklib_merge_parquet(
-        out_dir,
-        exp_prefix=exp_prefix,
-        fast_merge=fast_parquet_merge,
-        rtklib_out_files=out_run_pairs,
-        sample=sample,
-    )
+    # log.info("STEP 4: Merging individual parquet files into one")
+    # rtklib_merge_parquet(
+    #     out_dir,
+    #     exp_prefix=exp_prefix,
+    #     fast_merge=fast_parquet_merge,
+    #     rtklib_out_files=out_run_pairs,
+    #     sample=sample,
+    # )
 
     return out_run_pairs

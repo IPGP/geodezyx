@@ -13,7 +13,7 @@ import sys
 import yaml
 from pathlib import Path
 from geodezyx.conv import minmax_pattern_dt
-from geodezyx.operational.soft_frontend import rtklib_frontend
+from geodezyx.operational.rtklib_runner import rtklib_frontend
 from geodezyx import utils
 
 import logging

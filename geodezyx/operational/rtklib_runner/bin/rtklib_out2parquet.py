@@ -12,13 +12,13 @@ import sys
 import argparse
 import logging
 from pathlib import Path
-from geodezyx import utils, files_rw
-from geodezyx.operational.soft_frontend.rtklib_frontend import rtklib_parquet
+from geodezyx import utils
+from geodezyx.operational.rtklib_runner.rtklib_parquet import rtklib_out2prq
 
 log = logging.getLogger("geodezyx")
 
 # Extract defaults from rtklib_parquet function at module level for synchronization
-RTKLIB_PARQUET_DEFAULTS = utils.fct_def_args(rtklib_parquet)
+RTKLIB_PARQUET_DEFAULTS = utils.fct_def_args(rtklib_out2prq)
 
 
 def parse_args():
@@ -28,11 +28,11 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  rtklib_parquet -r /path/to/results
-  rtklib_parquet -r /path/to/results --pattern "*.out"
-  rtklib_parquet -r /path/to/results --force
-  rtklib_parquet -r /path/to/results --sample 15min
-  rtklib_parquet -r /path/to/results -p "*.out" -f -s 1H
+  rtklib_out2parquet -r /path/to/results
+  rtklib_out2parquet -r /path/to/results --pattern "*.out"
+  rtklib_out2parquet -r /path/to/results --force
+  rtklib_out2parquet -r /path/to/results --sample 15min
+  rtklib_out2parquet -r /path/to/results -p "*.out" -f -s 1H
 """,
     )
 
@@ -72,7 +72,8 @@ Examples:
     return parser.parse_args()
 
 
-def rtklib_prq_main():
+
+def rtklib_out2parquet_main():
     """Main entry point for the CLI."""
     args = parse_args()
     # Configure logging
@@ -99,7 +100,7 @@ def rtklib_prq_main():
         log.info(f"Resampling interval: {args.sample}")
 
     try:
-        f_prq_lis = rtklib_parquet(resdir, pattern=args.pattern, force=args.force, sample=args.sample)
+        f_prq_lis = rtklib_out2prq(resdir, pattern=args.pattern, force=args.force, sample=args.sample)
 
         if f_prq_lis:
             log.info(f"Successfully converted {len(f_prq_lis)} file(s) to Parquet format")
@@ -113,7 +114,7 @@ def rtklib_prq_main():
         return 1
 
 if __name__ == "__main__":
-    sys.exit(rtklib_prq_main())
+    sys.exit(rtklib_out2parquet_main())
 
 
 

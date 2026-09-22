@@ -14,12 +14,12 @@ import argparse
 import logging
 from pathlib import Path
 from geodezyx import utils
-from geodezyx.operational.soft_frontend.rtklib_frontend import rtklib_merge_parquet
+from geodezyx.operational.rtklib_runner.rtklib_parquet import rtklib_merge_prq
 
 log = logging.getLogger("geodezyx")
 
-# Extract defaults from rtklib_merge_parquet function at module level for synchronization
-RTKLIB_MERGE_DEFAULTS = utils.fct_def_args(rtklib_merge_parquet)
+# Extract defaults from rtklib_merge_prq function at module level for synchronization
+RTKLIB_MERGE_DEFAULTS = utils.fct_def_args(rtklib_merge_prq)
 
 def parse_args():
     """Parse command line arguments."""
@@ -29,23 +29,23 @@ def parse_args():
         epilog="""
 Examples:
   # scan a whole directory
-  rtklib_merge_parquet -p /path/to/results
+  rtklib_merge_prq -p /path/to/results
 
   # scan a directory with an experiment prefix
-  rtklib_merge_parquet -p /path/to/results -e myexp
+  rtklib_merge_prq -p /path/to/results -e myexp
 
   # fast merge: append specific files to an existing _all.parquet
-   rtklib_merge_parquet -p /path/to/results -e myexp --fast_merge \\
+   rtklib_merge_prq -p /path/to/results -e myexp --fast_merge \\
        -rof /path/to/results/2024/001/run1.out /path/to/results/2024/002/run2.out
 
    # explicit list of parquet files (no directory scan)
-   rtklib_merge_parquet -p /path/to/a.parquet /path/to/b.parquet -e myexp
+   rtklib_merge_prq -p /path/to/a.parquet /path/to/b.parquet -e myexp
  
    # with resampling (15min)
-   rtklib_merge_parquet -p /path/to/results -e myexp -s 15min
+   rtklib_merge_prq -p /path/to/results -e myexp -s 15min
  
    # with resampling (1 hour)
-   rtklib_merge_parquet -p /path/to/results -e myexp -s 1H
+   rtklib_merge_prq -p /path/to/results -e myexp -s 1H
 """,
     )
 
@@ -144,7 +144,7 @@ def rtklib_merge_prq_main():
         log.info(f"Resampling interval:  {args.sample}")
 
     try:
-        all_prq_path = rtklib_merge_parquet(
+        all_prq_path = rtklib_merge_prq(
             parquet_inp,
             exp_prefix=args.exp_prefix,
             fast_merge=args.fast_merge,

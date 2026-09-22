@@ -13,13 +13,13 @@ import sys
 import argparse
 import logging
 from pathlib import Path
-from geodezyx.operational.soft_frontend.rtklib_frontend import parquet2csv
+from geodezyx.operational.rtklib_runner.rtklib_parquet import rtklib_prq2out
 from geodezyx import utils
 
 log = logging.getLogger("geodezyx")
 
-# Extract defaults from parquet2csv function at module level for synchronization
-PARQUET2CSV_DEFAULTS = utils.fct_def_args(parquet2csv)
+# Extract defaults from rtklib_prq2out function at module level for synchronization
+rtklib_prq2out_DEFAULTS = utils.fct_def_args(rtklib_prq2out)
 
 
 def parse_args():
@@ -30,16 +30,16 @@ def parse_args():
         epilog="""
 Examples:
   # Convert parquet to CSV with default 15min resampling
-  parquet2csv -i /path/to/merged_all.parquet -o /path/to/output_csv
+  rtklib_prq2out -i /path/to/merged_all.parquet -o /path/to/output_csv
 
   # Convert with 1min resampling
-  parquet2csv -i /path/to/merged_all.parquet -o /path/to/output_csv -s 1min
+  rtklib_prq2out -i /path/to/merged_all.parquet -o /path/to/output_csv -s 1min
 
   # Convert with 1 hour resampling
-  parquet2csv -i /path/to/merged_all.parquet -o /path/to/output_csv -s 1H
+  rtklib_prq2out -i /path/to/merged_all.parquet -o /path/to/output_csv -s 1H
 
   # Custom resampling (daily)
-  parquet2csv -i /path/to/merged_all.parquet -o /path/to/output_csv -s 1D
+  rtklib_prq2out -i /path/to/merged_all.parquet -o /path/to/output_csv -s 1D
 """,
     )
 
@@ -62,7 +62,7 @@ Examples:
     parser.add_argument(
         "-s",
         "--sample",
-        default=PARQUET2CSV_DEFAULTS.get("sample", "15min"),
+        default=rtklib_prq2out_DEFAULTS.get("sample", "15min"),
         help=(
             "Resampling interval for position data "
             "(default: %(default)s). "
@@ -73,8 +73,8 @@ Examples:
     return parser.parse_args()
 
 
-def parquet2csv_main():
-    """Main entry point for the parquet2csv CLI."""
+def rtklib_prq2out_main():
+    """Main entry point for the rtklib_prq2out CLI."""
     args = parse_args()
 
     # Validate input file
@@ -95,25 +95,23 @@ def parquet2csv_main():
         log.error(f"Failed to create output directory '{args.out_dir}': {e}")
         return 1
 
-    log.info("parquet2csv conversion parameters:")
+    log.info("rtklib_prq2out conversion parameters:")
     log.info(f"  Input parquet file: {args.prq_inp}")
     log.info(f"  Output directory:   {args.out_dir}")
     log.info(f"  Resampling interval: {args.sample}")
 
     try:
-        parquet2csv(
+        rtklib_prq2out(
             prq_inp=args.prq_inp,
             out_dir=args.out_dir,
             sample=args.sample,
         )
-        log.info("parquet2csv conversion completed successfully")
+        log.info("rtklib_prq2out conversion completed successfully")
         return 0
 
     except Exception as e:
-        log.error(f"Error during parquet2csv conversion: {e}", exc_info=True)
+        log.error(f"Error during rtklib_prq2out conversion: {e}", exc_info=True)
         return 1
 
-
 if __name__ == "__main__":
-    sys.exit(parquet2csv_main())
-
+    sys.exit(rtklib_prq2out_main())

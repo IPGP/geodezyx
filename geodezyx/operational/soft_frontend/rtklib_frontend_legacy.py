@@ -1,9 +1,5 @@
-import collections
-
 ########## BEGIN IMPORT ##########
 #### External modules
-import concurrent.futures
-import datetime as dt
 
 #### Import the logger
 import logging
@@ -11,14 +7,13 @@ import os
 import subprocess
 import numpy as np
 import shutil as shutils
-from threading import Lock
 
 #### geodeZYX modules
 from geodezyx import files_rw
 from geodezyx import operational
 from geodezyx import utils
 from geodezyx import conv
-from geodezyx.operational.soft_frontend.rtklib_frontend import _prods2tmp, _read_cfg, _write_cfg
+from geodezyx.operational.rtklib_runner.rtklib_frontend import _prods2tmp, _read_cfg, _write_cfg
 
 log = logging.getLogger("geodezyx")
 ##########  END IMPORT  ##########
