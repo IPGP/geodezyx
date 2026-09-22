@@ -117,6 +117,7 @@ def rtklib_merge_prq(
     start_date=None,
     end_date=None,
     days=None,
+    output_dir=None,
 ):
     """
     Merge individual RTKLIB parquet files into a single consolidated parquet file.
@@ -158,6 +159,10 @@ def rtklib_merge_prq(
         Number of days to process. Only used if start_date XOR end_date is provided.
         If start_date is given, processes N days starting from start_date.
         If end_date is given, processes N days ending at end_date.
+    output_dir : str or os.PathLike, optional
+        Output directory where the merged parquet file will be saved.
+        If not provided, the output is saved to the input directory (or the directory
+        of the first file if an explicit list is provided).
 
     Returns
     -------
@@ -190,24 +195,26 @@ def rtklib_merge_prq(
 
     # --- resolve source files and output directory ---
     if isinstance(parquet_inp, (str, os.PathLike)) and os.path.isdir(parquet_inp):
-        prq_out_dir = str(parquet_inp)
+        # Use provided output_dir if available, otherwise use input directory
+        prq_out_dir = str(output_dir) if output_dir else str(parquet_inp)
         if fast_merge and rtklib_out_files:
             l_prq = [f.replace(".out", ".parquet") for f in rtklib_out_files]
             l_prq = [f for f in l_prq if os.path.exists(f)]
         else:
             # If date filtering is enabled, scan only year/doy directories within the range
             if filter_by_date:
-                year_doy_dirs = _get_year_doy_dirs(prq_out_dir, start_date, end_date)
+                year_doy_dirs = _get_year_doy_dirs(str(parquet_inp), start_date, end_date)
                 l_prq = []
                 for year_doy_dir in year_doy_dirs:
                     if os.path.isdir(year_doy_dir):
                         l_prq.extend(utils.find_recursive(year_doy_dir, "*parquet"))
             else:
-                l_prq = utils.find_recursive(prq_out_dir, "*parquet")
+                l_prq = utils.find_recursive(str(parquet_inp), "*parquet")
     else:
         # parquet_inp is an explicit list of parquet files
         l_prq = list(parquet_inp)
-        prq_out_dir = os.path.dirname(os.path.abspath(l_prq[0])) if l_prq else "."
+        # Use provided output_dir if available, otherwise use directory of first file
+        prq_out_dir = str(output_dir) if output_dir else (os.path.dirname(os.path.abspath(l_prq[0])) if l_prq else ".")
 
     prq_path_out = os.path.join(prq_out_dir, exp_prefix + "_all.parquet")
     prq_path_tmp = prq_path_out + ".tmp"

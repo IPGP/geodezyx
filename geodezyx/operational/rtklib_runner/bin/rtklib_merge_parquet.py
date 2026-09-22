@@ -34,6 +34,9 @@ Examples:
   # scan a directory with an experiment prefix
   rtklib_merge_prq -i /path/to/results -x myexp
 
+  # specify output directory
+  rtklib_merge_prq -i /path/to/results -o /path/to/output
+
   # fast merge: append specific files to an existing _all.parquet
    rtklib_merge_prq -i /path/to/results -x myexp --fast_merge \\
        -rof /path/to/results/2024/001/run1.out /path/to/results/2024/002/run2.out
@@ -55,6 +58,9 @@ Examples:
 
    # with date filtering (end + days)
    rtklib_merge_prq -i /path/to/results -x myexp -e 2024-01-31 -d 7
+
+   # with output directory and resampling
+   rtklib_merge_prq -i /path/to/results -x myexp -o /output/dir -sp 15min
 """,
     )
 
@@ -147,6 +153,19 @@ Examples:
         ),
     )
 
+    parser.add_argument(
+        "-o",
+        "--output",
+        dest="output_dir",
+        default=None,
+        metavar="PATH",
+        help=(
+            "Output directory where the merged parquet file will be saved. "
+            "If not provided, the output is saved to the input directory "
+            "(or the directory of the first file if an explicit list is provided)."
+        ),
+    )
+
     return parser.parse_args()
 
 
@@ -193,6 +212,8 @@ def rtklib_merge_prq_main():
     log.info(f"Fast merge:           {args.fast_merge}")
     if args.rtklib_out_files:
         log.info(f"RTKLIB out files:     {len(args.rtklib_out_files)} file(s)")
+    if args.output_dir:
+        log.info(f"Output directory:     {args.output_dir}")
     if args.sample:
         log.info(f"Resampling interval:  {args.sample}")
     if args.start_date or args.end_date:
@@ -210,6 +231,7 @@ def rtklib_merge_prq_main():
             start_date=args.start_date,
             end_date=args.end_date,
             days=args.days,
+            output_dir=args.output_dir,
         )
         log.info(f"Merged parquet saved to: {all_prq_path}")
         return 0

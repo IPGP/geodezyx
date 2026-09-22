@@ -45,7 +45,7 @@ Examples:
 
     parser.add_argument(
         "-i",
-        "--prq_inp",
+        "--parquet_inp",
         required=True,
         metavar="FILE",
         help="Path to the merged parquet file containing rover/base pair GNSS solutions",
