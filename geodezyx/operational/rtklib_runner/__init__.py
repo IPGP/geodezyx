@@ -1,2 +1,2 @@
-from rtklib_frontend import *
-from rtklib_parquet import *
+from .rtklib_frontend import *
+from .rtklib_parquet import *
