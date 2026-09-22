@@ -13,7 +13,7 @@ import sys
 import argparse
 import logging
 from pathlib import Path
-from geodezyx import utils
+from geodezyx import utils, conv
 from geodezyx.operational.rtklib_runner.rtklib_parquet import rtklib_merge_prq
 
 log = logging.getLogger("geodezyx")
@@ -29,28 +29,37 @@ def parse_args():
         epilog="""
 Examples:
   # scan a whole directory
-  rtklib_merge_prq -p /path/to/results
+  rtklib_merge_prq -i /path/to/results
 
   # scan a directory with an experiment prefix
-  rtklib_merge_prq -p /path/to/results -e myexp
+  rtklib_merge_prq -i /path/to/results -x myexp
 
   # fast merge: append specific files to an existing _all.parquet
-   rtklib_merge_prq -p /path/to/results -e myexp --fast_merge \\
+   rtklib_merge_prq -i /path/to/results -x myexp --fast_merge \\
        -rof /path/to/results/2024/001/run1.out /path/to/results/2024/002/run2.out
 
    # explicit list of parquet files (no directory scan)
-   rtklib_merge_prq -p /path/to/a.parquet /path/to/b.parquet -e myexp
+   rtklib_merge_prq -i /path/to/a.parquet /path/to/b.parquet -x myexp
  
    # with resampling (15min)
-   rtklib_merge_prq -p /path/to/results -e myexp -s 15min
+   rtklib_merge_prq -i /path/to/results -x myexp -sp 15min
  
    # with resampling (1 hour)
-   rtklib_merge_prq -p /path/to/results -e myexp -s 1H
+   rtklib_merge_prq -i /path/to/results -x myexp -sp 1H
+
+   # with date filtering (start and end)
+   rtklib_merge_prq -i /path/to/results -x myexp -s 2024-01-01 -e 2024-01-31
+
+   # with date filtering (start + days)
+   rtklib_merge_prq -i /path/to/results -x myexp -s 2024-01-01 -d 7
+
+   # with date filtering (end + days)
+   rtklib_merge_prq -i /path/to/results -x myexp -e 2024-01-31 -d 7
 """,
     )
 
     parser.add_argument(
-        "-p",
+        "-i",
         "--parquet_inp",
         nargs="+",
         required=True,
@@ -62,7 +71,7 @@ Examples:
     )
 
     parser.add_argument(
-        "-e",
+        "-x",
         "--exp_prefix",
         default="",
         help="Prefix used to name the merged output file (<exp_prefix>_all.parquet). Default: ''",
@@ -93,13 +102,48 @@ Examples:
     )
 
     parser.add_argument(
-        "-s",
+        "-sp",
         "--sample",
         default=RTKLIB_MERGE_DEFAULTS.get("sample"),
         help=(
             "Resampling interval for position data (default: None, no resampling). "
             "If provided, resamples each table to the specified interval before merging. "
             "Examples: '1min', '15min', '1H' (1 hour), '1D' (1 day)"
+        ),
+    )
+
+    parser.add_argument(
+        "-s",
+        "--start_date",
+        dest="start_date",
+        type=conv.date_pattern2dt,
+        default=None,
+        help=(
+            "Start date for filtering parquet files (flexible format: YYYY-MM-DD, YYYY-DDD, etc.). "
+            "Assumes directory structure: <path>/<year>/<doy>/*.parquet"
+        ),
+    )
+
+    parser.add_argument(
+        "-e",
+        "--end_date",
+        type=conv.date_pattern2dt,
+        default=None,
+        help=(
+            "End date for filtering parquet files (flexible format: YYYY-MM-DD, YYYY-DDD, etc.). "
+            "Assumes directory structure: <path>/<year>/<doy>/*.parquet"
+        ),
+    )
+
+    parser.add_argument(
+        "-d",
+        "--days",
+        type=int,
+        default=None,
+        help=(
+            "Number of days to process. Only used if start_date XOR end_date is provided. "
+            "If start_date is given, processes N days starting from start_date. "
+            "If end_date is given, processes N days ending at end_date."
         ),
     )
 
@@ -135,6 +179,15 @@ def rtklib_merge_prq_main():
         )
         return 1
 
+    # Validate date parameters
+    if (args.start_date is not None or args.end_date is not None) and args.days is not None:
+        if args.start_date is not None and args.end_date is not None:
+            log.error(
+                "Cannot use both --start_date and --end_date together with --days. "
+                "Use either (--start_date and optionally --days) or (--end_date and optionally --days)."
+            )
+            return 1
+
     log.info(f"Parquet input:        {inp_label}")
     log.info(f"Experiment prefix:    '{args.exp_prefix}'")
     log.info(f"Fast merge:           {args.fast_merge}")
@@ -142,6 +195,10 @@ def rtklib_merge_prq_main():
         log.info(f"RTKLIB out files:     {len(args.rtklib_out_files)} file(s)")
     if args.sample:
         log.info(f"Resampling interval:  {args.sample}")
+    if args.start_date or args.end_date:
+        log.info(f"Date range:           {args.start_date or 'N/A'} to {args.end_date or 'N/A'}")
+    if args.days:
+        log.info(f"Days:                 {args.days}")
 
     try:
         all_prq_path = rtklib_merge_prq(
@@ -150,6 +207,9 @@ def rtklib_merge_prq_main():
             fast_merge=args.fast_merge,
             rtklib_out_files=args.rtklib_out_files,
             sample=args.sample,
+            start_date=args.start_date,
+            end_date=args.end_date,
+            days=args.days,
         )
         log.info(f"Merged parquet saved to: {all_prq_path}")
         return 0

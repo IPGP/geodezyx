@@ -4,6 +4,7 @@ import logging
 import os
 from os import PathLike
 import shutil
+from datetime import datetime, timedelta
 
 
 import pandas as pd
@@ -75,12 +76,47 @@ def rtklib_out2prq(resdir, pattern="*out", force=False, sample=None):
 
     return f_prq_lis
 
+def _get_year_doy_dirs(base_dir, start_date, end_date):
+    """
+    Generate list of year/doy subdirectory paths within a date range.
+
+    Parameters
+    ----------
+    base_dir : str
+        Base directory path.
+    start_date : datetime
+        Start date (inclusive) for generating paths.
+    end_date : datetime
+        End date (inclusive) for generating paths.
+
+    Returns
+    -------
+    list of str
+        List of paths like <base_dir>/<year>/<doy> within the date range.
+    """
+    year_doy_dirs = []
+    current_date = start_date.date()
+    end_date_only = end_date.date()
+
+    while current_date <= end_date_only:
+        year = current_date.year
+        doy = current_date.timetuple().tm_yday
+        year_doy_path = os.path.join(base_dir, str(year), str(doy))
+        year_doy_dirs.append(year_doy_path)
+        current_date += timedelta(days=1)
+
+    log.info(f"Date range: {start_date.date()} to {end_date.date()} -> {len(year_doy_dirs)} directories")
+    return year_doy_dirs
+
 def rtklib_merge_prq(
     parquet_inp,
     exp_prefix="",
     fast_merge=False,
     rtklib_out_files=None,
     sample=None,
+    start_date=None,
+    end_date=None,
+    days=None,
 ):
     """
     Merge individual RTKLIB parquet files into a single consolidated parquet file.
@@ -90,6 +126,8 @@ def rtklib_merge_prq(
     parquet_inp : str or os.PathLike or list of str
         Either a directory path (all ``*.parquet`` files inside are collected
         recursively) **or** an explicit list of parquet file paths.
+        When date filtering is used (start_date, end_date), parquet_inp should be
+        a directory structured as <directory>/<year>/<doy>/*.parquet
         The merged output file is written to the directory (or, for a list,
         to the directory of the first file in the list).
     exp_prefix : str, default=""
@@ -108,12 +146,48 @@ def rtklib_merge_prq(
         If provided, uses _resample_df to resample each table to the specified interval
         before merging.
         Examples: "1min", "15min", "1H" (1 hour), "1D" (1 day).
+    start_date : str or datetime, optional
+        Start date for filtering parquet files (inclusive).
+        Can be a string (any format accepted by conv.date_pattern2dt) or datetime object.
+        If provided with days or end_date, filters files based on directory structure <year>/<doy>.
+    end_date : str or datetime, optional
+        End date for filtering parquet files (inclusive).
+        Can be a string (any format accepted by conv.date_pattern2dt) or datetime object.
+        If provided with days or start_date, filters files based on directory structure <year>/<doy>.
+    days : int, optional
+        Number of days to process. Only used if start_date XOR end_date is provided.
+        If start_date is given, processes N days starting from start_date.
+        If end_date is given, processes N days ending at end_date.
 
     Returns
     -------
     str
         Path to the merged parquet file.
     """
+    # --- Parse and validate date parameters ---
+    filter_by_date = start_date is not None or end_date is not None
+
+    if filter_by_date:
+        # Convert string dates to datetime if needed
+        if isinstance(start_date, str):
+            start_date = conv.date_pattern2dt(start_date)
+        if isinstance(end_date, str):
+            end_date = conv.date_pattern2dt(end_date)
+
+        # Compute the actual start and end dates based on days parameter
+        if start_date is not None and end_date is None and days is not None:
+            end_date = start_date + timedelta(days=days - 1)
+        elif end_date is not None and start_date is None and days is not None:
+            start_date = end_date - timedelta(days=days - 1)
+        elif start_date is None or end_date is None:
+            # Need both start_date and end_date for filtering
+            raise ValueError(
+                "When using date filtering, both start_date and end_date must be provided "
+                "(or one of them with days parameter)"
+            )
+
+        log.info(f"Date range for filtering: {start_date.date()} to {end_date.date()}")
+
     # --- resolve source files and output directory ---
     if isinstance(parquet_inp, (str, os.PathLike)) and os.path.isdir(parquet_inp):
         prq_out_dir = str(parquet_inp)
@@ -121,7 +195,15 @@ def rtklib_merge_prq(
             l_prq = [f.replace(".out", ".parquet") for f in rtklib_out_files]
             l_prq = [f for f in l_prq if os.path.exists(f)]
         else:
-            l_prq = utils.find_recursive(prq_out_dir, "*parquet")
+            # If date filtering is enabled, scan only year/doy directories within the range
+            if filter_by_date:
+                year_doy_dirs = _get_year_doy_dirs(prq_out_dir, start_date, end_date)
+                l_prq = []
+                for year_doy_dir in year_doy_dirs:
+                    if os.path.isdir(year_doy_dir):
+                        l_prq.extend(utils.find_recursive(year_doy_dir, "*parquet"))
+            else:
+                l_prq = utils.find_recursive(prq_out_dir, "*parquet")
     else:
         # parquet_inp is an explicit list of parquet files
         l_prq = list(parquet_inp)

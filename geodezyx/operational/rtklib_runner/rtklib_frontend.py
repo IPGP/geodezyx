@@ -268,6 +268,7 @@ def rtklib_run_mono(
 
     # THIS IS THE PART THAT GETS PARALLELIZED
     subprocess.call([bigcomand], executable="/bin/bash", shell=True)
+    out_res_fil_fin = out_res_fil
     if not os.path.isfile(out_res_fil) or os.path.getsize(out_res_fil) < 2000:
         log.error(f"RTKLIB failed for {exp_full_name} :(")
     else:
@@ -277,14 +278,16 @@ def rtklib_run_mono(
         df_out2prq.to_parquet(out_prq_fil, engine="auto")
         compress_out = True
         if compress_out:
-            out_res_fil = utils.gzip_compress(out_res_fil, rm_inp=True)
+            out_res_fil_fin = utils.gzip_compress(out_res_fil, rm_inp=True)
+        else:
+            out_res_fil_fin = out_res_fil
         log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
 
     if not keep_tmp:
         shutils.rmtree(tmp_dir_wrk, ignore_errors=True)
         os.remove(out_res_fil.replace(".out", "") + "_events.pos")
 
-    return out_res_fil
+    return out_res_fil_fin
 
 
 def rtklib_run_pair(
