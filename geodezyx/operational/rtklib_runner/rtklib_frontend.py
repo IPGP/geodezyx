@@ -275,7 +275,9 @@ def rtklib_run_mono(
         out_prq_fil = out_res_fil.replace(".out", ".parquet")
         df_out2prq = files_rw.read_rtklib(out_res_fil, return_df=True)
         df_out2prq.to_parquet(out_prq_fil, engine="auto")
-        utils.gzip_compress(out_res_fil + ".out", rm_inp=False)
+        compress_out = True
+        if compress_out:
+            out_res_fil = utils.gzip_compress(out_res_fil, rm_inp=True)
         log.info("RTKLIB RUN OK for {} :)".format(exp_full_name))
 
     if not keep_tmp:
