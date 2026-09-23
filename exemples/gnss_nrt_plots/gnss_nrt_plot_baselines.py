@@ -149,15 +149,18 @@ fig_virtu, ax_virtu = volc_deform.baselines_plot(
 )
 fig_virtu.tight_layout()
 
+
+
+out_prefix = "PDF_GNSS_NRT_"
 utils_xtra.plot_utils.figure_saver(fig_direct,
                                    outdir_plots, 
-                                   "bl_direct",
+                                   out_prefix + "bl_direct",
                                    formt="A4",
                                    dpi=400, 
                                    outtype=(".png",".eps", ".svg"))
 utils_xtra.plot_utils.figure_saver(fig_virtu,
                                    outdir_plots,
-                                   "bl_virtu",
+                                   out_prefix + "bl_virtu",
                                    formt="A4",
                                    dpi=400, 
                                    outtype=(".png",".eps", ".svg"))
@@ -193,14 +196,14 @@ fig_virtu_strain , ax_virtu_strain = volc_deform.baselines_plot(
 
 utils_xtra.plot_utils.figure_saver(fig_direct_strain,
                                    outdir_plots, 
-                                   "bl_direct_strain",
+                                   out_prefix + "bl_direct_strain",
                                    formt="A4",
                                    dpi=400, 
                                    outtype=(".png",".eps", ".svg"))
 
 utils_xtra.plot_utils.figure_saver(fig_virtu_strain,
                                    outdir_plots,
-                                   "bl_virtu_strain",
+                                   out_prefix + "bl_virtu_strain",
                                    formt="A4",
                                    dpi=400, 
                                    outtype=(".png",".eps", ".svg"))
