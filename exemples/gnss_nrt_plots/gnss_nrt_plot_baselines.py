@@ -94,24 +94,24 @@ pivot = "GITG"
 # ('DSRG', 'DERG')]
 
 
-rovbas_pairs = [('BOMG', 'GITG'),
+rovbas_pairs = [
+('BOMG', 'GITG'),
 ('BORG', 'GITG'),
 ('CFNG', 'GITG'),
 ('DERG', 'GITG'),
 ('DSRG', 'GITG'),
 ('SNEG', 'GITG'),
-('BOMG', 'DSRG'),
-('DSRG', 'BOMG'),
-('BOMG', 'SNEG'),
-('SNEG', 'BOMG'),
-('SNEG', 'DSRG'),
-('DSRG', 'SNEG'),
 ('SNEG', 'DERG'),
-('DERG', 'SNEG'),
 ('DERG', 'DSRG'),
-('DSRG', 'DERG')]
-
-
+('DSRG', 'BORG'),
+('BORG', 'BOMG'),
+('BOMG', 'SNEG'),
+('SNEG', 'DSRG'),
+('SNEG', 'BORG'),
+('DERG', 'BORG'),
+('DERG', 'BOMG'),
+('DSRG', 'BOMG'),
+]
 
 df_input = df_nopivo
 
