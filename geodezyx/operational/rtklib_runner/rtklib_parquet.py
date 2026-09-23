@@ -151,6 +151,7 @@ def rtklib_merge_prq(
         Resampling interval for position data (default: None, no resampling).
         If provided, uses _resample_df to resample each table to the specified interval
         before merging.
+        Warning: resampling slows down the process.
         Examples: "1min", "15min", "1H" (1 hour), "1D" (1 day).
     start_date : str or datetime, optional
         Start date for filtering parquet files (inclusive).

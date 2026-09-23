@@ -50,9 +50,9 @@ if utils.get_computer_name() == 'HPEB8a':
     outdir_plots = "/home/sakic/IPGP_WORK/OVS/GNSS_OVS/2601_OVPF_erruption_all/060_plots"
     mpl_cfg = "/home/sakic/CODES/geodezyx_toolbox_PS_perso_scripts/MISC/matplotlib_env/2602_new_on_HPEB8a/matplotlibrc_PSmpl02a.rc"
 elif utils.get_computer_name() == 'volcalcgnss':
-    tot_prq_path = "/home/sakic/aaa_FOURBI/OVPF_static-start_ULT_01min_03days_all.parquet"
-    outdir_plots = "/home/sakic/IPGP_WORK/OVS/GNSS_OVS/2601_OVPF_erruption_all/060_plots"
-    mpl_cfg = ""
+    tot_prq_path = "/backuped/calcgnss/rtklib_results/OVPF_static-start_ULT/07days_01min/OVPF_static-start_ULT_all.parquet"
+    outdir_plots = "/backuped/calcgnss/rtklib_results/OVPF_static-start_ULT/07days_01min/plots"
+    mpl_cfg = "/opt/softs_gnss/geodezyx/misc/matplotlib_env/matplotlibrc_PSmpl02a.rc"
     
 mpl.rc_file(mpl_cfg)
 
@@ -63,7 +63,9 @@ df_raw = pd.read_parquet(tot_prq_path, engine="auto")
 df_all = df_raw
 
 df_all = df_all[df_all["base"] == "GITG"]
-#df_all = df_all[df_all["epoch"].dt.second % 10 == 0]
+
+
+#df_all = df_all[df_all["epoch"].dt.second == 0]
 
 #START = dt.datetime(2026,3,8)
 #df_all = df_all[(pd.Timestamp(START) < df_all["epoch"])]
@@ -75,10 +77,11 @@ shift = 2 # cm
 
 figall, axall = plt.subplots(3,1)
         
-for irov , (rov, df_rovbas) in enumerate(df_all.groupby("rover")):
+for irov , (rov, df_rovbas_ori) in enumerate(df_all.groupby("rover")):
     fig, ax = plt.subplots(3,1)
 
-    
+    df_rovbas = df_rovbas_ori.set_index("epoch")
+    df_rovbas.resample("1min")
     df_rovbas[["e","n","u"]] = conv.xyz2enu_vector(df_rovbas[["x","y","z"]],
                                                     xyz_dic[rov])
     
@@ -88,7 +91,7 @@ for irov , (rov, df_rovbas) in enumerate(df_all.groupby("rover")):
                                             np.logical_and)
 
     for i,enu in enumerate(["e","n","u"]):
-        t = df_rovbas_cln["epoch"]
+        t = df_rovbas_cln.index
 
         y = df_rovbas_cln[enu] - df_rovbas_cln[enu].median()
         y = y * 100 # m > cm
