@@ -115,11 +115,17 @@ for irov , (rov, df_rovbas_ori) in enumerate(df_all.groupby("rover")):
             ax[i].set_ylim((-ylims,ylims))
         
         axall[i].legend()
+
+    last_epoc = df_all["epoch"].max()
+    last_epoc_str = conv.dt2str_iso(last_epoc)
+    now_str = conv.dt2str_iso(conv.now())
         
-        
-    now = " (" + utils.get_timestamp(utc=True) + ")"
-    fig.suptitle(rov + now )
-    figall.suptitle("summary " + now)
+    ax[0].set_title(f"generated: {now_str}, last epoch: {last_epoc_str}")
+    fig.suptitle("Position variation " + rov)
+    
+    axall[0].set_title(f"generated: {now_str}, last epoch: {last_epoc_str}")
+    figall.suptitle("Position variation - Summary")
+    figall.tight_layout()
 
 
     utils_xtra.plot_utils.figure_saver(
@@ -128,7 +134,9 @@ for irov , (rov, df_rovbas_ori) in enumerate(df_all.groupby("rover")):
         "PDF_GNSS_NRT_posi_" + rov,
         dpi=400, 
         outtype=(".png", ".eps", ".svg"),
-        formt="A4"
+        formt="A4",
+        tight_layout=True
+        
     )
     
     
@@ -138,7 +146,8 @@ utils_xtra.plot_utils.figure_saver(
     "PDF_GNSS_NRT_posi_all",
     dpi=400, 
     outtype=(".png", ".eps", ".svg"),
-    formt="A4"
+    formt="A4",
+    tight_layout=True
 )
 
 

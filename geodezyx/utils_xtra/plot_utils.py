@@ -200,6 +200,7 @@ def figure_saver(
     formt=None,
     dpi=200,
     transparent=False,
+    tight_layout=False
 ):
     """
     This function provides a front end to export pretty-print plots
@@ -257,6 +258,9 @@ def figure_saver(
                 if formtup:
                     figobjt_in.set_size_inches(*formtup)
 
+            if tight_layout:
+                figobjt_in.tight_layout()
+                
             figobjt_in.savefig(outpath, transparent=transparent, dpi=dpi)
 
         outpath_stk.append(outpath)

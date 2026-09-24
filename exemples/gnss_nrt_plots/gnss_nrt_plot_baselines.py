@@ -142,6 +142,7 @@ fig_direct, ax_direct = volc_deform.baselines_plot(
     decim=1
 )
 fig_direct.tight_layout()
+
 fig_virtu, ax_virtu = volc_deform.baselines_plot(
     df_virtu, col=d_col, suptitle="Virtual baselines", 
     marker=".", linestyle="",
@@ -157,13 +158,16 @@ utils_xtra.plot_utils.figure_saver(fig_direct,
                                    out_prefix + "bl_direct",
                                    formt="A4",
                                    dpi=400, 
-                                   outtype=(".png",".eps", ".svg"))
+                                   outtype=(".png",".eps", ".svg"),
+                                   tight_layout=True)
+
 utils_xtra.plot_utils.figure_saver(fig_virtu,
                                    outdir_plots,
                                    out_prefix + "bl_virtu",
                                    formt="A4",
                                    dpi=400, 
-                                   outtype=(".png",".eps", ".svg"))
+                                   outtype=(".png",".eps", ".svg"),
+                                   tight_layout=True)
 
 
 #### Strain
@@ -199,12 +203,14 @@ utils_xtra.plot_utils.figure_saver(fig_direct_strain,
                                    out_prefix + "bl_direct_strain",
                                    formt="A4",
                                    dpi=400, 
-                                   outtype=(".png",".eps", ".svg"))
+                                   outtype=(".png",".eps", ".svg"),
+                                   tight_layout=True)
 
 utils_xtra.plot_utils.figure_saver(fig_virtu_strain,
                                    outdir_plots,
                                    out_prefix + "bl_virtu_strain",
                                    formt="A4",
                                    dpi=400, 
-                                   outtype=(".png",".eps", ".svg"))
+                                   outtype=(".png",".eps", ".svg"),
+                                   tight_layout=True)
 

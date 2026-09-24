@@ -37,6 +37,7 @@ from functools import wraps
 import re
 import os
 import string
+from zoneinfo import ZoneInfo
 
 import numpy as np
 
@@ -466,6 +467,46 @@ def vector_2args_datetime_numeric_conv(func):
 #    |_|  |_|_| |_| |_|\___|  \_____\___/|_| |_|\_/ \___|_|  |___/_|\___/|_| |_|
 #
 ### Time conversion functions
+
+
+
+def now(timezone='utc'):
+    """
+    Get the current time with timezone information.
+
+    Parameters
+    ----------
+    timezone : str, optional
+        Timezone specification. Default is 'utc'.
+        - 'utc' or 'UTC': UTC timezone
+        - 'local': Local system timezone
+        - Any valid IANA timezone name (e.g., 'Europe/Paris', 'America/New_York')
+
+    Returns
+    -------
+    dt.datetime
+        Current datetime with timezone information (timezone-aware)
+
+    Examples
+    --------
+    >>> now_utc = now()  # UTC timezone
+    >>> now_local = now('local')  # Local timezone
+    >>> now_paris = now('Europe/Paris')  # Paris timezone
+    """
+    if timezone.lower() in ('utc', 'utc'):
+        return dt.datetime.now(dt.timezone.utc)
+    elif timezone.lower() == 'local':
+        return dt.datetime.now(dt.timezone.utc).astimezone()
+    else:
+        # Try to use the timezone name as an IANA timezone
+        try:
+            tz = ZoneInfo(timezone)
+            return dt.datetime.now(tz)
+        except Exception as e:
+            raise ValueError(
+                f"Invalid timezone: '{timezone}'. "
+                f"Use 'utc', 'local', or a valid IANA timezone name (e.g., 'Europe/Paris')"
+            ) from e
 
 
 @vector_numeric_conv
@@ -1858,6 +1899,7 @@ def dt2str(dtin, str_format="%Y-%m-%d %H:%M:%S"):
     Time representation conversion
 
     Python's Datetime => String
+    legacy function, prefer dt2str_iso
 
     Parameters
     ----------
@@ -1880,6 +1922,8 @@ def dt2str_iso(dtin):
     Time representation conversion
 
     Python's Datetime => ISO 8601 String
+    w.r.t. UTC/Zulu Time Zone
+    (`%Y-%m-%dT%H:%M:%SZ`)
 
     Parameters
     ----------

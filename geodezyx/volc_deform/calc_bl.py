@@ -302,8 +302,14 @@ def baselines_plot(
             linestyle=linestyle,
         )
         ii += 1
-        ax.set_ylabel(ylabel)
-        ax.legend()
-        fig.suptitle(suptitle)
+    
+    last_epoc = df_bl_inp["epoch"].max()
+    last_epoc_str = conv.dt2str_iso(last_epoc)
+    now_str = conv.dt2str_iso(conv.now())
+    ax.set_ylabel(ylabel)
+    ax.legend()
+    ax.set_title(f"generated: {now_str}, last epoch: {last_epoc_str}")
+    fig.suptitle(suptitle)
+    fig.tight_layout()
 
     return fig, ax
