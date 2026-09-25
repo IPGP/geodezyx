@@ -56,7 +56,7 @@ elif utils.get_computer_name() == 'volcalcgnss':
     
 mpl.rc_file(mpl_cfg)
 
-
+out_exts = (".png",".eps",)
 
 # read the merged parquet file
 df_raw = pd.read_parquet(tot_prq_path, engine="auto")
@@ -65,7 +65,8 @@ df_all = df_raw
 df_all = df_all[df_all["base"] == "GITG"]
 
 
-#df_all = df_all[df_all["epoch"].dt.second == 0]
+### decimation at minute
+df_all = df_all[df_all["epoch"].dt.second == 0]
 
 #START = dt.datetime(2026,3,8)
 #df_all = df_all[(pd.Timestamp(START) < df_all["epoch"])]
@@ -118,7 +119,7 @@ for irov , (rov, df_rovbas_ori) in enumerate(df_all.groupby("rover")):
 
     last_epoc = df_all["epoch"].max()
     last_epoc_str = conv.dt2str_iso(last_epoc)
-    now_str = conv.dt2str_iso(conv.now())
+    now_str = conv.dt2str_iso(conv.now('utc'))
         
     ax[0].set_title(f"generated: {now_str}, last epoch: {last_epoc_str}")
     fig.suptitle("Position variation " + rov)
@@ -133,7 +134,7 @@ for irov , (rov, df_rovbas_ori) in enumerate(df_all.groupby("rover")):
         outdir_plots,
         "PDF_GNSS_NRT_posi_" + rov,
         dpi=400, 
-        outtype=(".png", ".eps", ".svg"),
+        outtype=out_exts,
         formt="A4",
         tight_layout=True
         
@@ -145,7 +146,7 @@ utils_xtra.plot_utils.figure_saver(
     outdir_plots, 
     "PDF_GNSS_NRT_posi_all",
     dpi=400, 
-    outtype=(".png", ".eps", ".svg"),
+    outtype=out_exts,
     formt="A4",
     tight_layout=True
 )

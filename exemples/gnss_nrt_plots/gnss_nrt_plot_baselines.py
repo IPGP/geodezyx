@@ -153,12 +153,13 @@ fig_virtu.tight_layout()
 
 
 out_prefix = "PDF_GNSS_NRT_"
+out_exts = (".png",".eps",)
 utils_xtra.plot_utils.figure_saver(fig_direct,
                                    outdir_plots, 
                                    out_prefix + "bl_direct",
                                    formt="A4",
                                    dpi=400, 
-                                   outtype=(".png",".eps", ".svg"),
+                                   outtype=out_exts,
                                    tight_layout=True)
 
 utils_xtra.plot_utils.figure_saver(fig_virtu,
@@ -166,7 +167,7 @@ utils_xtra.plot_utils.figure_saver(fig_virtu,
                                    out_prefix + "bl_virtu",
                                    formt="A4",
                                    dpi=400, 
-                                   outtype=(".png",".eps", ".svg"),
+                                   outtype=out_exts,
                                    tight_layout=True)
 
 
@@ -203,7 +204,7 @@ utils_xtra.plot_utils.figure_saver(fig_direct_strain,
                                    out_prefix + "bl_direct_strain",
                                    formt="A4",
                                    dpi=400, 
-                                   outtype=(".png",".eps", ".svg"),
+                                   outtype=out_exts,
                                    tight_layout=True)
 
 utils_xtra.plot_utils.figure_saver(fig_virtu_strain,
@@ -211,6 +212,6 @@ utils_xtra.plot_utils.figure_saver(fig_virtu_strain,
                                    out_prefix + "bl_virtu_strain",
                                    formt="A4",
                                    dpi=400, 
-                                   outtype=(".png",".eps", ".svg"),
+                                   outtype=out_exts,
                                    tight_layout=True)
 

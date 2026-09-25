@@ -470,14 +470,14 @@ def vector_2args_datetime_numeric_conv(func):
 
 
 
-def now(timezone='utc'):
+def now(timezone='local'):
     """
     Get the current time with timezone information.
 
     Parameters
     ----------
     timezone : str, optional
-        Timezone specification. Default is 'utc'.
+        Timezone specification. Default is 'local'.
         - 'utc' or 'UTC': UTC timezone
         - 'local': Local system timezone
         - Any valid IANA timezone name (e.g., 'Europe/Paris', 'America/New_York')

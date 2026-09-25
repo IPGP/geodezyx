@@ -305,7 +305,7 @@ def baselines_plot(
     
     last_epoc = df_bl_inp["epoch"].max()
     last_epoc_str = conv.dt2str_iso(last_epoc)
-    now_str = conv.dt2str_iso(conv.now())
+    now_str = conv.dt2str_iso(conv.now('utc'))
     ax.set_ylabel(ylabel)
     ax.legend()
     ax.set_title(f"generated: {now_str}, last epoch: {last_epoc_str}")
