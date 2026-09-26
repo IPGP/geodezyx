@@ -51,7 +51,7 @@ elif utils.get_computer_name() == 'volcalcgnss':
     tot_prq_path = "/backuped/calcgnss/rtklib_results/OVPF_static-start_ULT/07days_01min/OVPF_static-start_ULT_all.parquet"
     outdir_plots = "/backuped/calcgnss/rtklib_results/OVPF_static-start_ULT/07days_01min/plots"
     mpl_cfg = "/opt/softs_gnss/geodezyx/misc/matplotlib_env/matplotlibrc_PSmpl02a.rc"
-    
+
 mpl.rc_file(mpl_cfg)
 
 
@@ -95,23 +95,36 @@ pivot = "GITG"
 
 
 rovbas_pairs = [
-('BOMG', 'GITG'),
-('BORG', 'GITG'),
-('CFNG', 'GITG'),
-('DERG', 'GITG'),
-('DSRG', 'GITG'),
-('SNEG', 'GITG'),
-('SNEG', 'DERG'),
-('DERG', 'DSRG'),
-('DSRG', 'BORG'),
-('BORG', 'BOMG'),
-('BOMG', 'SNEG'),
-('SNEG', 'DSRG'),
-('SNEG', 'BORG'),
-('DERG', 'BORG'),
-('DERG', 'BOMG'),
-('DSRG', 'BOMG'),
+    ("BOMG", "GITG"),
+    ("BORG", "GITG"),
+    ("CFNG", "GITG"),
+    ("DERG", "GITG"),
+    ("DSRG", "GITG"),
+    ("SNEG", "GITG"),
+    ### New direct baselines
+    ("BOMG", "BORG"),
+    ("BOMG", "DERG"),
+    ("BOMG", "DSRG"),
+    ("BOMG", "SNEG"),
+    ("BORG", "DERG"),
+    ("BORG", "DSRG"),
+    ("BORG", "SNEG"),
+    ("DERG", "DSRG"),
+    ("DERG", "SNEG"),
+    ("DSRG", "SNEG"),
+    ### old direct baselines
+    # ('SNEG', 'DERG'),
+    # ('DERG', 'DSRG'),
+    # ('DSRG', 'BORG'),
+    # ('BORG', 'BOMG'),
+    # ('BOMG', 'SNEG'),
+    # ('SNEG', 'DSRG'),
+    # ('SNEG', 'BORG'),
+    # ('DERG', 'BORG'),
+    # ('DERG', 'BOMG'),
+    # ('DSRG', 'BOMG'),
 ]
+
 
 df_input = df_nopivo
 
@@ -120,7 +133,7 @@ mean_win=1
 thd_ = 3.
 
 df_direct = volc_deform.calc_baselines_direct(
-    df_all, rovbas_pairs, bases_excluded=pivots, 
+    df_all, rovbas_pairs, bases_excluded=pivots,
     threshold_mad=thd_, xyz_dic_inp=xyz_dic, mean_win=mean_win,
     strain_win=86400*3
 )
@@ -137,28 +150,27 @@ d_col = "d_mean0"
 
 
 fig_direct, ax_direct = volc_deform.baselines_plot(
-    df_direct, col=d_col, suptitle="Direct baselines", 
+    df_direct, col=d_col, suptitle="Direct baselines",
     marker=".", linestyle="",
     decim=1
 )
 fig_direct.tight_layout()
 
 fig_virtu, ax_virtu = volc_deform.baselines_plot(
-    df_virtu, col=d_col, suptitle="Virtual baselines", 
+    df_virtu, col=d_col, suptitle="Virtual baselines",
     marker=".", linestyle="",
     decim=1
 )
 fig_virtu.tight_layout()
 
 
-
 out_prefix = "PDF_GNSS_NRT_"
 out_exts = (".png",".eps",)
 utils_xtra.plot_utils.figure_saver(fig_direct,
-                                   outdir_plots, 
+                                   outdir_plots,
                                    out_prefix + "bl_direct",
                                    formt="A4",
-                                   dpi=400, 
+                                   dpi=400,
                                    outtype=out_exts,
                                    tight_layout=True)
 
@@ -166,7 +178,7 @@ utils_xtra.plot_utils.figure_saver(fig_virtu,
                                    outdir_plots,
                                    out_prefix + "bl_virtu",
                                    formt="A4",
-                                   dpi=400, 
+                                   dpi=400,
                                    outtype=out_exts,
                                    tight_layout=True)
 
@@ -200,10 +212,10 @@ fig_virtu_strain , ax_virtu_strain = volc_deform.baselines_plot(
 
 
 utils_xtra.plot_utils.figure_saver(fig_direct_strain,
-                                   outdir_plots, 
+                                   outdir_plots,
                                    out_prefix + "bl_direct_strain",
                                    formt="A4",
-                                   dpi=400, 
+                                   dpi=400,
                                    outtype=out_exts,
                                    tight_layout=True)
 
@@ -211,7 +223,6 @@ utils_xtra.plot_utils.figure_saver(fig_virtu_strain,
                                    outdir_plots,
                                    out_prefix + "bl_virtu_strain",
                                    formt="A4",
-                                   dpi=400, 
+                                   dpi=400,
                                    outtype=out_exts,
                                    tight_layout=True)
-
