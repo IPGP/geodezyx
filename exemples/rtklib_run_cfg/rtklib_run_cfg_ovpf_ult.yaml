@@ -57,7 +57,7 @@ prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib  # GNSS products direct
 
 # Date range (optional, processes all if not specified)
 date_srt: "12 hours ago"    # Start date (YYYY-MM-DD or YYYY-DDD)
-date_end: " 20 minutes ago" # End date (YYYY-MM-DD or YYYY-DDD)
+date_end: " 15 minutes ago" # End date (YYYY-MM-DD or YYYY-DDD)
 
 # Station coordinates (optional, uses RINEX header if not provided)
 xyz_dic:
