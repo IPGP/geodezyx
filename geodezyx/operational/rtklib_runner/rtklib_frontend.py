@@ -140,7 +140,7 @@ def rtklib_run_mono(
     srt_str = rov_srt_fast.strftime("%Y_%j_%H%M")
     exp_full_name = "_".join((exp_prefix, rov_name, bas_name, srt_str))
 
-    year_doy_str = rov_srt_fast.strftime("%Y/%j/%h%m")
+    year_doy_str = rov_srt_fast.strftime("%Y/%j/%H%M")
     out_dir_year_doy = str(os.path.join(out_dir, year_doy_str))
     utils.create_dir(out_dir_year_doy)
 
