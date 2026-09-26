@@ -66,7 +66,7 @@ df_all = df_all[df_all["base"] == "GITG"]
 
 
 ### decimation at minute
-df_all = df_all[df_all["epoch"].dt.second == 0]
+# df_all = df_all[df_all["epoch"].dt.second == 0]
 
 #START = dt.datetime(2026,3,8)
 #df_all = df_all[(pd.Timestamp(START) < df_all["epoch"])]
@@ -82,10 +82,12 @@ for irov , (rov, df_rovbas_ori) in enumerate(df_all.groupby("rover")):
     fig, ax = plt.subplots(3,1)
 
     df_rovbas = df_rovbas_ori.set_index("epoch")
-    df_rovbas.resample("1min")
+    # resample to 1 minute and take median
+    df_rovbas = df_rovbas.resample("1min").median(numeric_only=True)
+
     df_rovbas[["e","n","u"]] = conv.xyz2enu_vector(df_rovbas[["x","y","z"]],
                                                     xyz_dic[rov])
-    
+
     df_rovbas_cln, boolbad = stats.outlier_mad_df(df_rovbas,
                                             ["e","n","u"],
                                             3.5,

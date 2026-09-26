@@ -6,7 +6,8 @@ import numpy as np
 
 #### Import the logger
 import logging
-log = logging.getLogger('geodezyx')
+
+log = logging.getLogger("geodezyx")
 
 
 def d_calc(coords_delta, mean_win=86400, strain_win=7 * 86400):
@@ -72,8 +73,15 @@ def d_calc(coords_delta, mean_win=86400, strain_win=7 * 86400):
     return df_bl
 
 
-def calc_baselines_virtual(df_inp, rov12_pairs, pivots, threshold_mad=3.5,
-                           mean_win=86400, strain_win=7 * 86400):
+def calc_baselines_virtual(
+    df_inp,
+    rov12_pairs,
+    pivots,
+    threshold_mad=3.5,
+    mean_win=86400,
+    strain_win=7 * 86400,
+    resample="1min",
+):
     """
     Compute virtual baselines between rover pairs via a common pivot station.
 
@@ -130,6 +138,11 @@ def calc_baselines_virtual(df_inp, rov12_pairs, pivots, threshold_mad=3.5,
                 df_rov1_wrk = df_rov1_ini.drop_duplicates(keep="first")
                 df_rov2_wrk = df_rov2_ini.drop_duplicates(keep="first")
 
+                for df_wrk in (df_rov1_wrk, df_rov2_wrk):
+                    df_wrk.set_index("epoch", inplace=True)
+                    df_wrk = df_wrk.resample(resample).median(numeric_only=True)
+                    df_wrk.reset_index(inplace=True)
+
                 thd = threshold_mad
                 df_rov1_wrk, _ = stats.outlier_mad_df(df_rov1_wrk, col, thd)
                 df_rov2_wrk, _ = stats.outlier_mad_df(df_rov2_wrk, col, thd)
@@ -160,7 +173,14 @@ def calc_baselines_virtual(df_inp, rov12_pairs, pivots, threshold_mad=3.5,
 
 
 def calc_baselines_direct(
-    df_inp, rovbas_pairs, bases_excluded=[], threshold_mad=3.5, xyz_dic_inp=None, mean_win=86400, strain_win=7 * 86400
+    df_inp,
+    rovbas_pairs,
+    bases_excluded=[],
+    threshold_mad=3.5,
+    xyz_dic_inp=None,
+    mean_win=86400,
+    strain_win=7 * 86400,
+    resample="1min",
 ):
     """
     Compute direct baselines between rovers and their reference base stations.
@@ -219,6 +239,10 @@ def calc_baselines_direct(
         df_wrk = df_roba
         ii += 1
 
+        df_wrk.set_index("epoch", inplace=True)
+        df_wrk = df_wrk.resample(resample).median(numeric_only=True)
+        df_wrk.reset_index(inplace=True)
+
         df_wrk, _ = stats.outlier_mad_df(df_wrk, col, thd)
 
         if not xyz_dic_inp or not bas in xyz_dic_inp:
@@ -232,7 +256,7 @@ def calc_baselines_direct(
         df_bl["site1"] = rov
         df_bl["site2"] = bas
         df_bl["pivot"] = None
-        
+
         ## mean is substractred for outlier detection
         df_bl_cor = df_bl["d"] - df_bl["d_mean"]
         df_bl_cor = pd.DataFrame(df_bl_cor)
@@ -252,10 +276,10 @@ def baselines_plot(
     marker="",
     linestyle="-",
     suptitle="Direct baselines",
-    ylabel = "Distance difference (cm)",
+    ylabel="Distance difference (cm)",
     plt_shift=0.02,
     plt_factor=100,
-    decim=100
+    decim=100,
 ):
     """
     Plot baseline distance time series for all site pairs.
@@ -302,10 +326,10 @@ def baselines_plot(
             linestyle=linestyle,
         )
         ii += 1
-    
+
     last_epoc = df_bl_inp["epoch"].max()
     last_epoc_str = conv.dt2str_iso(last_epoc)
-    now_str = conv.dt2str_iso(conv.now('utc'))
+    now_str = conv.dt2str_iso(conv.now("utc"))
     ax.set_ylabel(ylabel)
     ax.legend()
     ax.set_title(f"generated: {now_str}, last epoch: {last_epoc_str}")

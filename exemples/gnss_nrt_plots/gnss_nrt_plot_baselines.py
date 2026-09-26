@@ -68,12 +68,10 @@ START = dt.datetime(2026,3,8)
 
 
 ### decimation at minute
-df_all = df_all[df_all["epoch"].dt.second == 0]
-
+# df_all = df_all[df_all["epoch"].dt.second == 0]
 df_all = df_all[(pd.Timestamp(START) < df_all["epoch"])]
 
 df_nopivo = df_all[df_all["pivot"] == False]
-
 pivot = "GITG"
 
 # rovbas_pairs = [('BOMG', 'GITG'),
@@ -92,7 +90,6 @@ pivot = "GITG"
 # ('DERG', 'SNEG'),
 # ('DERG', 'DSRG'),
 # ('DSRG', 'DERG')]
-
 
 rovbas_pairs = [
     ("BOMG", "GITG"),
@@ -125,9 +122,7 @@ rovbas_pairs = [
     # ('DSRG', 'BOMG'),
 ]
 
-
 df_input = df_nopivo
-
 
 mean_win=1
 thd_ = 3.
@@ -226,3 +221,4 @@ utils_xtra.plot_utils.figure_saver(fig_virtu_strain,
                                    dpi=400,
                                    outtype=out_exts,
                                    tight_layout=True)
+
