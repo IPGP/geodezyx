@@ -21,16 +21,28 @@ sites_rovers:  # List of rover stations
   - DERG00REU, GITG00REU  # Explicit pair: DERG00REU as rover, GITG00REU as base
   - DSRG00REU, GITG00REU  # Explicit pair: DSRG00REU as rover, GITG00REU as base
   - SNEG00REU, GITG00REU  # Explicit pair: SNEG00REU as rover, GITG00REU as base
+### new direct pairs, based on virtual pair plot
+  - BOMG00REU, BORG00REU
+  - BOMG00REU, DERG00REU
   - BOMG00REU, DSRG00REU
-  - DSRG00REU, BOMG00REU
   - BOMG00REU, SNEG00REU
-  - SNEG00REU, BOMG00REU
-  - SNEG00REU, DSRG00REU
-  - DSRG00REU, SNEG00REU
-  - SNEG00REU, DERG00REU
-  - DERG00REU, SNEG00REU
+  - BORG00REU, DERG00REU
+  - BORG00REU, DSRG00REU
+  - BORG00REU, SNEG00REU
   - DERG00REU, DSRG00REU
-  - DSRG00REU, DERG00REU
+  - DERG00REU, SNEG00REU
+  - DSRG00REU, SNEG00REU
+### old direct pairs
+#  - BOMG00REU, DSRG00REU
+#  - DSRG00REU, BOMG00REU
+#  - BOMG00REU, SNEG00REU
+#  - SNEG00REU, BOMG00REU
+#  - SNEG00REU, DSRG00REU
+#  - DSRG00REU, SNEG00REU
+#  - SNEG00REU, DERG00REU
+#  - DERG00REU, SNEG00REU
+#  - DERG00REU, DSRG00REU
+#  - DSRG00REU, DERG00REU
 sites_bases:
   - NONE       # No pivot base station
 #  - GITG00REU  # Pivot base station
@@ -44,8 +56,8 @@ tmp_dir: /backuped/calcgnss/rtklib_process/090_TMP        # Temporary directory 
 prod_dir: /home/ovsgnss/040_PRODS_GNSS/prods_gnss_rtklib  # GNSS products directory (default: <tmp_dir>)
 
 # Date range (optional, processes all if not specified)
-date_srt: "12 hours ago" # Start date (YYYY-MM-DD or YYYY-DDD)
-date_end: "1 hour ago"         # End date (YYYY-MM-DD or YYYY-DDD)
+date_srt: "12 hours ago"    # Start date (YYYY-MM-DD or YYYY-DDD)
+date_end: " 20 minutes ago" # End date (YYYY-MM-DD or YYYY-DDD)
 
 # Station coordinates (optional, uses RINEX header if not provided)
 xyz_dic:
