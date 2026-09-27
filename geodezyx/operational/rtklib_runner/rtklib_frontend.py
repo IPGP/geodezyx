@@ -275,7 +275,7 @@ def rtklib_run_mono(
         utils.gzip_compress(out_res_fil + ".stat", rm_inp=True)
         out_prq_fil = out_res_fil.replace(".out", ".parquet")
         df_out2prq = files_rw.read_rtklib(out_res_fil, return_df=True)
-        df_out2prq["orbit"] = os.path.basename(orbclklis_ok[0])
+        #df_out2prq["orbit"] = os.path.basename(orbclklis_ok[0])
         df_out2prq.to_parquet(out_prq_fil, engine="auto")
         compress_out = True
         if compress_out:
