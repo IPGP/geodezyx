@@ -207,7 +207,7 @@ def figure_saver(
 
     Parameters
     ----------
-    figobjt_in : matplotlib Figure object
+    figobjt_in : matplotlib.Figure
         input matplotlib Figure object. use for instance plt.gcf() to get it.
     outdir : str
         the output directory.
@@ -224,6 +224,8 @@ def figure_saver(
         DPI of the figure. The default is 200.
     transparent : bool, optional
         make the plot transparent. The default is False.
+    tight_layout : bool, optional
+        use tight layout. The default is False.
 
     Returns
     -------

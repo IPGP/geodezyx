@@ -127,15 +127,15 @@ df_input = df_nopivo
 mean_win=1
 thd_ = 3.
 
-df_direct = volc_deform.calc_baselines_direct(
-    df_all, rovbas_pairs, bases_excluded=pivots,
+df_direct = volc_deform.calc_baselines(
+    df_all, rov12_pairs=rovbas_pairs, mode="direct", bases_excluded=pivots,
     threshold_mad=thd_, xyz_dic_inp=xyz_dic, mean_win=mean_win,
-    strain_win=86400*3
+    strain_win=60*24
 )
-df_virtu = volc_deform.calc_baselines_virtual(
-    df_all, rovbas_pairs, pivots=["GITG"],
+df_virtu = volc_deform.calc_baselines(
+    df_all, rov12_pairs=rovbas_pairs, mode="virtual", pivots=["GITG"],
     threshold_mad=thd_, mean_win=mean_win,
-    strain_win=86400*3
+    strain_win=60*24
 )
 
 del df_all
@@ -182,15 +182,16 @@ utils_xtra.plot_utils.figure_saver(fig_virtu,
 
 strain_col = "strain"
 
-fig_direct_strain , ax_direct_strain = volc_deform.baselines_plot(
+fig_direct_strain, ax_direct_strain = volc_deform.baselines_plot(
     df_direct,
     col=strain_col,
     suptitle="Direct strain",
+    ylabel="strain",
     marker=".",
     linestyle="",
     plt_shift=0 * 2 * 10**-6,
     plt_factor=1,
-    decim=1
+    decim=1,
 )
 
 fig_virtu_strain , ax_virtu_strain = volc_deform.baselines_plot(
@@ -221,4 +222,3 @@ utils_xtra.plot_utils.figure_saver(fig_virtu_strain,
                                    dpi=400,
                                    outtype=out_exts,
                                    tight_layout=True)
-
