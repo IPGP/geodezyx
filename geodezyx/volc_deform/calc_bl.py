@@ -138,10 +138,14 @@ def calc_baselines_virtual(
                 df_rov1_wrk = df_rov1_ini.drop_duplicates(keep="first")
                 df_rov2_wrk = df_rov2_ini.drop_duplicates(keep="first")
 
-                for df_wrk in (df_rov1_wrk, df_rov2_wrk):
+                def _resample(df_wrk):
                     df_wrk.set_index("epoch", inplace=True)
                     df_wrk = df_wrk.resample(resample).median(numeric_only=True)
                     df_wrk.reset_index(inplace=True)
+                    return df_wrk
+
+                df_rov1_wrk = _resample(df_rov1_wrk)
+                df_rov2_wrk = _resample(df_rov2_wrk)
 
                 thd = threshold_mad
                 df_rov1_wrk, _ = stats.outlier_mad_df(df_rov1_wrk, col, thd)
