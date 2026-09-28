@@ -399,6 +399,8 @@ def rtklib_run_pair(
     xyz_rovers = []
     xyz_bases = []
 
+    print("AAAAAAAAAAAAAAA", rinex_pairs)
+
     #  Preliminary - determine xyz dictionnaries
     log.info("STEP 1: Determining time spans for all RINEX pairs...")
     for rnx_rov, rnx_bas in rinex_pairs:
