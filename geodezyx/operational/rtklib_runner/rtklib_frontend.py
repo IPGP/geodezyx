@@ -523,7 +523,6 @@ def make_pairs(
         log.error(errmsg)
         raise FileNotFoundError(errmsg)
 
-
     df_all = operational.rinex_table_from_list(rnxs_all, site9_col=True)
     df_all["date_end"] = df_all["date"] + df_all["per"]
     df_rovers = df_all[df_all["site9"].isin(sit_rov_use)]
@@ -571,6 +570,8 @@ def make_pairs(
         pairs_for_rov = df_rov.apply(lambda r: _find_bas4rov(r, df_bas), axis=1)
         # Add non-None pairs to the list
         rnxs_pairs.extend([pair for pair in pairs_for_rov if pair is not None])
+
+    print("AAAAAAAAAAAAAACCCCCCCCC", rnxs_pairs)
 
     return rnxs_pairs, df_all
 
