@@ -399,7 +399,7 @@ def rtklib_run_pair(
     xyz_rovers = []
     xyz_bases = []
 
-    print("AAAAAAAAAAAAAAA", rinex_pairs)
+    print("AAAAAAAAAAAAAAA", rnxs_pairs[-20:-1])
 
     #  Preliminary - determine xyz dictionnaries
     log.info("STEP 1: Determining time spans for all RINEX pairs...")
@@ -571,7 +571,7 @@ def make_pairs(
         # Add non-None pairs to the list
         rnxs_pairs.extend([pair for pair in pairs_for_rov if pair is not None])
 
-    print("AAAAAAAAAAAAAACCCCCCCCC", rnxs_pairs)
+    print("AAAAAAAAAAAAAACCCCCCCCC", rnxs_pairs[-20:-1])
 
     return rnxs_pairs, df_all
 
