@@ -569,7 +569,7 @@ def make_pairs(
         # Use apply to process each rover row
         pairs_for_rov = df_rov.apply(lambda r: _find_bas4rov(r, df_bas), axis=1)
         # Add non-None pairs to the list
-        rnxs_pairs.extend([pair for pair in pairs_for_rov if pair is not None])
+        rnxs_pairs.extend([pair for pair in pairs_for_rov if type(pair) is tuple])
 
     print("AAAAAAAAAAAAAACCCCCCCCC", rnxs_pairs[-20:-1])
 
