@@ -552,7 +552,8 @@ def make_pairs(
             log.warning(f"\n{df_bas_sel.to_string()}")
 
         row_bas = df_bas_sel.iloc[0]
-        return row_rov["path"], row_bas["path"]
+        rovbas_outtup = (row_rov["path"], row_bas["path"])
+        return rovbas_outtup
 
     for rov, bas in pairs_use:
         if rov == bas:
