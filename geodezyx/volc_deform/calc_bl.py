@@ -59,6 +59,9 @@ def d_calc(coords_delta, mean_win=86400, strain_win=7 * 86400):
     df_bl["d_mean0"] = d_mean - d_med
     df_bl["d_diff"] = d_diff
 
+    # Compute linear regression
+    a, b = stats.linear_regression(df_bl["d_mean"].values, df_bl["epoch"].values)
+
     # strain: relative change of d_mean between first and last sample of the strain_win window
     lbd_strain = lambda x: (x[-1] - x[0]) / x[0]
     d_mean_ser = pd.Series(d_mean)
@@ -170,7 +173,9 @@ def _direct_baseline(
         else:
             coords_delta = df_wrk[col] - xyz_dic_inp[bas]
 
+        # Compute baseline metrics
         df_bl = d_calc(coords_delta, mean_win=mean_win, strain_win=strain_win)
+        # Add metadata columns
         df_bl["epoch"] = df_wrk["epoch"].values
         df_bl["site1"] = rov
         df_bl["site2"] = bas
@@ -424,6 +429,17 @@ def baselines_plot(
         Matplotlib line style passed to ``ax.plot``. Default is ``"-"``.
     suptitle : str, optional
         Title string for the figure. Default is ``"Direct baselines"``.
+    ylabel : str, optional
+        Label for the y-axis. Default is ``"Distance difference (cm)"``.
+    plt_shift : float, optional
+        Vertical shift applied to each site pair's time series to avoid overlap.
+        Default is ``0.02`` (in the same units as the y-axis).
+    plt_factor : float, optional
+        Scaling factor applied to the y-axis values. Default is ``100``
+        (to convert meters to centimeters).
+    decim : int, optional
+        Decimation factor for plotting. Only every *decim*-th point is plotted.
+        Default is ``100``.
 
     Returns
     -------
