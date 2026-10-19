@@ -51,9 +51,11 @@ elif utils.get_computer_name() == 'volcalcgnss':
     tot_prq_path = "/backuped/calcgnss/rtklib_results/OVPF_static-start_ULT/07days_01min/OVPF_static-start_ULT_all.parquet"
     outdir_plots = "/backuped/calcgnss/rtklib_results/OVPF_static-start_ULT/07days_01min/plots"
     mpl_cfg = "/opt/softs_gnss/geodezyx/misc/matplotlib_env/matplotlibrc_PSmpl02a.rc"
+else:
+    print("Unknown computer name, please set the paths manually")
+
 
 mpl.rc_file(mpl_cfg)
-
 
 # read the merged parquet file
 df_raw = pd.read_parquet(tot_prq_path, engine="auto")
@@ -70,6 +72,8 @@ START = dt.datetime(2026,3,8)
 ### decimation at minute
 # df_all = df_all[df_all["epoch"].dt.second == 0]
 df_all = df_all[(pd.Timestamp(START) < df_all["epoch"])]
+
+print(df_all.to_string())
 
 df_nopivo = df_all[df_all["pivot"] == False]
 pivot = "GITG"
