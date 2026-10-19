@@ -149,6 +149,7 @@ fig_direct, ax_direct = volc_deform.baselines_plot(
     marker=".", linestyle="",
     decim=1
 )
+
 fig_direct.tight_layout()
 
 fig_virtu, ax_virtu = volc_deform.baselines_plot(

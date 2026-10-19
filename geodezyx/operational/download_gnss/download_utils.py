@@ -30,8 +30,6 @@ import os
 import pathlib
 import shutil
 import time
-import urllib
-import urllib.request
 
 ########## BEGIN IMPORT ##########
 #### External modules
@@ -93,7 +91,7 @@ def effective_save_dir_orbit(
         Parent archive directory path.
     calc_center : str
         Calculation center identifier.
-    date : datetime
+    date : dt.datetime
         Date for organizing the directory structure.
     archtype : str, optional
         Archive directory structure pattern. Default is "year/doy/".
@@ -142,7 +140,7 @@ def effective_save_dir(parent_archive_dir, site, date, archtype="stat"):
         Parent archive directory path.
     site : str
         Station site code.
-    date : datetime
+    date : dt.datetime
         Date for organizing the directory structure.
     archtype : str, optional
         Archive directory structure pattern. Default is "stat".
@@ -635,6 +633,7 @@ def ftp_downld_front(
 
     # Check if urls and savedirs are iterable, if not convert them to list
     urllist = urls if utils.is_iterable(urls) else [urls]
+    urllist = list(urllist)
     savedirlist = savedirs if utils.is_iterable(savedirs) else [savedirs] * len(urllist)
     secure_ftp_use = secure_ftp[0] if utils.is_iterable(secure_ftp) else secure_ftp
     ##### dirty to select secure_ftp 1st elt only....
@@ -648,7 +647,7 @@ def ftp_downld_front(
         )
 
     # Extract the host from the urls
-    urlpathobj = pd.Series(urllist).apply(pathlib.Path)
+    urlpathobj = pd.Series([pathlib.Path(e) for e in urllist])
     host_use = urlpathobj.apply(lambda p: p.parts[1]).unique()[0]
 
     # Create the FTP object
@@ -662,7 +661,9 @@ def ftp_downld_front(
     )
 
     if not ftpobj_main:
-        warnmsg = "No FTP object could be created successfully. FTP download is aborted."
+        warnmsg = (
+            "No FTP object could be created successfully. FTP download is aborted."
+        )
         log.warning(warnmsg)
         return []
 
@@ -740,7 +741,7 @@ def regex_match_indir_all(regex, dir_files_list):
 
 def check_loc_file(
     filergx, outdir, local_files_cache, force=False, all_files_mode=False
-):
+) -> tuple[bool, bool, str]:
     """
     Check if a file matching a regex exists locally.
 
@@ -909,7 +910,9 @@ def list_ftp_dir_core(ftpobj):
     return files
 
 
-def list_ftp_dir(ftpobj, dir_inp, host, prev_dir):
+def list_ftp_dir(
+    ftpobj, dir_inp, host, prev_dir
+) -> tuple[list[str] | None, list[str] | None]:
     """
     Get FTP directory file listing.
 
@@ -1095,7 +1098,7 @@ def crawl_ftp_files(
     all_files_mode=False,
     exclude_patterns=None,
     timeout=120,
-):
+) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
     """
     Crawl FTP servers to find available files and update download table.
 
@@ -1235,15 +1238,16 @@ def crawl_ftp_files(
         else:
             ftp_result = list_ftp_dir(ftpobj, row["dir"], row["host"], prev_dir)
 
+        file_match = None
         if ftp_result[0] is not None:
             ftp_files_list, ftp_files_urls = ftp_result
             prev_dir = row["dir"]
 
             if ftp_files_urls:
                 all_ftp_files_stk.append(pd.Series(ftp_files_urls))
-
-        # Match files on server using regex pattern
-        file_match = match_files_in_dir(row[rgx_col], ftp_files_list, all_files_mode)
+            # Match files on server using regex pattern
+            if ftp_files_list:
+                file_match = match_files_in_dir(row[rgx_col], ftp_files_list, all_files_mode)
 
         # Apply exclude patterns
         if exclude_patterns and file_match:

@@ -588,7 +588,7 @@ def round_dt(dtin, round_to, python_dt_out=True, mode="round"):
 
     Returns
     -------
-    dtout : datetime or iterable of datetime
+    dtout : dt.datetime or iterable of dt.datetime
         Rounded Datetime(s). If input is iterable, returns same type.
 
     Note
@@ -702,14 +702,14 @@ def dt_range(start_dt, end_dt, day_step=1, sec_step=0):
 
     Parameters
     ----------
-    start_dt, end_dt : datetime
+    start_dt, end_dt : dt.datetime
         Start and end datetimes
     day_step, sec_step : int, optional
         Step size in days and seconds
 
     Returns
     -------
-    out_range : list of datetime
+    out_range : list of dt.datetime
         Range of dates
     """
     out_range = [start_dt]
@@ -730,7 +730,7 @@ def dt2posix(dtin):
 
     Parameters
     ----------
-    dtin : datetime or iterable of datetime
+    dtin : dt.datetime or iterable of dt.datetime
         Datetime(s). Can handle iterable of datetimes.
 
     Returns
@@ -1133,12 +1133,12 @@ def dt_tai2dt_utc(dtin):
 
     Parameters
     ----------
-    dtin : datetime or iterable of datetime
+    dtin : dt.datetime or iterable of dt.datetime
         Datetime(s) in TAI. Can handle iterable of datetimes.
 
     Returns
     -------
-    datetime or iterable of datetime
+    dt.datetime or iterable of dt.datetime
         Datetime(s) in UTC. If input is iterable, returns same type.
 
     Note
@@ -1285,10 +1285,10 @@ def dt_utc2dt_ut1_smart(
             d_ut1aft = df_eop.iloc[df_eop.index.get_loc(dtin, "bfill")]
 
             a, b, b2 = stats.linear_coef_a_b(
-                d_ut1bef["MJD"],
-                d_ut1bef["UT1-UTC"],
-                d_ut1aft["MJD"],
-                d_ut1aft["UT1-UTC"],
+                d_ut1bef["MJD"].to_list(),
+                d_ut1bef["UT1-UTC"].to_list(),
+                d_ut1aft["MJD"].to_list(),
+                d_ut1aft["UT1-UTC"].to_list(),
             )
 
             d_ut1 = stats.linear_reg_getvalue(dt2mjd(dtin), a, b, full=False)

@@ -249,7 +249,7 @@ def gen_table_rnx(
     archtype,
     no_rnx2,
     no_rnx3,
-):
+) -> pd.DataFrame:
     """
     Generate a crawl table for RINEX file downloads.
 
@@ -278,14 +278,14 @@ def gen_table_rnx(
     all_sites = False
     for datacenter, site_lis in statdico.items():
         if site_lis is None:
-            site_lis = [None]
+            site_lis = [""]
             stations_str = "all"
         else:
             stations_str = " ".join(site_lis)
         log.info("datacenter/stations: %s/%s", datacenter, stations_str)
 
         for site, date in itertools.product(site_lis, date_range):
-            if site is None:
+            if site == "":
                 all_sites = True
 
             urldic, protocol, _ = _server_select_rnx(datacenter, date, site)
@@ -313,7 +313,8 @@ def gen_table_rnx(
     table["filename"] = ""
 
     # Parse URL components
-    urlpaths = table["url_theo"].apply(pathlib.Path)
+    urltheolis = [pathlib.Path(p) for p in table["url_theo"].to_list()]
+    urlpaths = pd.Series(urltheolis, index=table.index)
     table["regex"] = urlpaths.apply(lambda p: p.name)
     table["host"] = urlpaths.apply(lambda p: p.parts[1])
     table["dir"] = urlpaths.apply(lambda p: os.path.join(*p.parts[2:-1]))

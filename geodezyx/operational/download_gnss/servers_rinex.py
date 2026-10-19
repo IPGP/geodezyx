@@ -589,10 +589,12 @@ def _server_select_rnx(datacenter, date, site=None):
         urldic = euref_server(date, site)
     elif datacenter == "igs_bkg":
         urldic = igs_bkg_server(date, site)
+        protocol = "https"
     elif datacenter in ("nav", "brdc"):
         urldic = nav_rob_server(date, site)
     elif datacenter in ("nav_rt", "brdc_rt"):
         urldic = nav_bkg_server(date, site)
+        protocol = "https"
     elif datacenter == "nav_cddis":
         urldic = igs_cddis_nav_server(date, site)
     elif datacenter == "rgp":

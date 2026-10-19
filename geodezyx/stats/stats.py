@@ -36,15 +36,21 @@ log = logging.getLogger("geodezyx")
 ##########  END IMPORT  ##########
 
 
-def linear_regression(x, y, fulloutput=False, simple_lsq=False, alpha=0.95):
+def linear_regression(
+    x: list | np.ndarray,
+    y: list | np.ndarray,
+    fulloutput: bool = False,
+    simple_lsq: bool = False,
+    alpha: float = 0.95,
+) -> tuple[float, float] | tuple[float, float, tuple[float, float], float]:
     """
     Performs linear regression on two vectors, X and Y, and returns the coefficients a (slope) and b (intercept).
 
     Parameters
     ----------
-    x : list or numpy.array
+    x : list or np.array
         The X values.
-    y : list or numpy.array
+    y : list or np.array
         The Y values.
     simple_lsq : bool, optional
         If True, performs a basic, low-level least square inversion (faster, but less outputs).
@@ -107,7 +113,9 @@ def linear_regression(x, y, fulloutput=False, simple_lsq=False, alpha=0.95):
         return slope, intercept, confid_interval_slope(x, y, alpha), std_err
 
 
-def linear_reg_getvalue(x, a, b, full=True):
+def linear_reg_getvalue(
+    x: list | np.ndarray, a: float, b: float, full: bool = True
+) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
     """
     Compute Y = a*X + b from a vector X and coefficients a and b.
 
@@ -149,7 +157,12 @@ def linear_reg_getvalue(x, a, b, full=True):
         return a * np.array(x) + b
 
 
-def linear_coef_a_b(x1, y1, x2, y2):
+def linear_coef_a_b(
+    x1: float | list | np.ndarray,
+    y1: float | list | np.ndarray,
+    x2: float | list | np.ndarray,
+    y2: float | list | np.ndarray,
+) -> tuple:
     """
     Calculate line coefficients from two points.
 
@@ -195,7 +208,9 @@ def linear_coef_a_b(x1, y1, x2, y2):
     return a, b1, b2
 
 
-def detrend_timeseries(x, y):
+def detrend_timeseries(
+    x: list | np.ndarray, y: list | np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Remove linear trend from a time series.
 
@@ -228,7 +243,9 @@ def detrend_timeseries(x, y):
     return x, yout
 
 
-def confid_interval_slope(x, y, alpha=0.95):
+def confid_interval_slope(
+    x: np.ndarray, y: np.ndarray, alpha: float = 0.95
+) -> tuple[float, float]:
     """
     Calculate a confidence interval on the slope of a linear trend.
 
@@ -283,7 +300,7 @@ def confid_interval_slope(x, y, alpha=0.95):
     return mi, ma
 
 
-def running_mean(data_in, window):
+def running_mean(data_in: list | np.ndarray, window: float | int) -> np.ndarray:
     """
     Compute running mean (moving average) of data.
 
@@ -303,7 +320,9 @@ def running_mean(data_in, window):
     return pd.DataFrame(data_in).mean(window=window).values.flatten()
 
 
-def running_mean_convolut(data_in, window, convolve_mode="same"):
+def running_mean_convolut(
+    data_in: list | np.ndarray, window: float | int, convolve_mode: str = "same"
+) -> np.ndarray:
     """
     Compute running mean using convolution mode.
 
@@ -410,7 +429,7 @@ def running_mean_convolut(data_in, window, convolve_mode="same"):
 # #plt.plot(X,Y5,"g.")
 
 
-def running_mean_1(values, window):
+def running_mean_1(values: np.ndarray | list, window: int) -> np.ndarray:
     """
     Compute running mean using convolution with 'valid' mode.
 
@@ -441,7 +460,7 @@ def running_mean_1(values, window):
     return smas  # as a numpy array
 
 
-def running_mean_2(x, n):
+def running_mean_2(x: np.ndarray | list, n: int) -> np.ndarray:
     """
     Compute running mean by explicit windowing.
 
@@ -469,7 +488,7 @@ def running_mean_2(x, n):
     return y / n
 
 
-def running_mean_3(x, n):
+def running_mean_3(x: np.ndarray | list, n: int) -> np.ndarray:
     """
     Compute running mean using cumulative sum (moyenne glissante).
 
@@ -498,7 +517,9 @@ def running_mean_3(x, n):
     return xout
 
 
-def running_mean_4(interval, window_size, convolve_mode="same"):
+def running_mean_4(
+    interval: np.ndarray | list, window_size: int, convolve_mode: str = "same"
+) -> np.ndarray:
     """
     Compute running mean using convolution with configurable mode.
 
@@ -529,7 +550,7 @@ def running_mean_4(interval, window_size, convolve_mode="same"):
     return np.convolve(interval, window, convolve_mode)
 
 
-def running_mean_5(data, window_width):
+def running_mean_5(data: np.ndarray | list, window_width: int) -> np.ndarray:
     """
     Compute running mean using cumulative sum method.
 
@@ -558,7 +579,13 @@ def running_mean_5(data, window_width):
     return ma_vec
 
 
-def sinusoide(t, a, omega, phi=0, f=None):
+def sinusoide(
+    t: float | np.ndarray,
+    a: float,
+    omega: float,
+    phi: float = 0,
+    f: float | None = None,
+) -> float | np.ndarray:
     """
     Generate a sinusoidal waveform.
 
@@ -600,7 +627,9 @@ def sinusoide(t, a, omega, phi=0, f=None):
     return a * np.sin(omega_use * t + phi)
 
 
-def butter_lowpass(cutoff, fs, order=5):
+def butter_lowpass(
+    cutoff: float, fs: float, order: int = 5
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Design a Butterworth lowpass digital filter.
 
@@ -632,7 +661,9 @@ def butter_lowpass(cutoff, fs, order=5):
     return b, a
 
 
-def butter_lowpass_filter(data, cutoff, fs, order=5):
+def butter_lowpass_filter(
+    data: np.ndarray | list, cutoff: float, fs: float, order: int = 5
+) -> np.ndarray:
     """
     Apply Butterworth lowpass digital filter to data.
 
@@ -664,7 +695,9 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
     return y
 
 
-def gaussian_filter_gfz(tim_ref, dat_ref, width=7):
+def gaussian_filter_gfz(
+    tim_ref: np.ndarray | list, dat_ref: np.ndarray | list, width: int = 7
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Apply Gaussian filter to smooth data.
 
@@ -732,7 +765,7 @@ def gaussian_filter_gfz(tim_ref, dat_ref, width=7):
     return dat_smt2
 
 
-def smooth(x, window_len=11, window="hanning"):
+def smooth(x: np.ndarray, window_len: int = 11, window: str = "hanning") -> np.ndarray:
     """
     Smooth data using a window with requested size.
 
@@ -812,7 +845,7 @@ def smooth(x, window_len=11, window="hanning"):
     return y
 
 
-def harmonic_mean(a):
+def harmonic_mean(a: np.ndarray | list) -> float:
     """
     Compute harmonic mean of a list or array.
 
@@ -832,7 +865,12 @@ def harmonic_mean(a):
     return len(a) / np.sum(1.0 / a)
 
 
-def find_intersection(x1, y1, x2, y2):
+def find_intersection(
+    x1: np.ndarray | list,
+    y1: np.ndarray | list,
+    x2: np.ndarray | list,
+    y2: np.ndarray | list,
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Find intersection points of two line plots.
 
@@ -884,7 +922,7 @@ def find_intersection(x1, y1, x2, y2):
     return roots, p1(roots)
 
 
-def wrap_to360(lon):
+def wrap_to360(lon: float | np.ndarray) -> float | np.ndarray:
     """
     Wrap longitude values to the range [0, 360).
 
@@ -907,7 +945,7 @@ def wrap_to360(lon):
     return lon
 
 
-def wrap_to180(lon):
+def wrap_to180(lon: float | np.ndarray) -> float | np.ndarray:
     """
     Wrap longitude values to the range (-180, 180].
 
@@ -941,7 +979,7 @@ def wrap_to180(lon):
 # Low level statistic function
 
 
-def rms_mean(a):
+def rms_mean(a: np.ndarray | list) -> float:
     """
     Compute RMS (Root Mean Square) of a list or array.
 
@@ -959,7 +997,7 @@ def rms_mean(a):
     return np.sqrt(np.nanmean(np.square(np.array(a, np.float64))))
 
 
-def rms_mean_alternativ(a):
+def rms_mean_alternativ(a: np.ndarray | list) -> float:
     """
     Compute RMS with mean subtraction (standard deviation equivalent).
 
@@ -984,7 +1022,9 @@ def rms_mean_alternativ(a):
     return np.sqrt(np.nanmean(np.square(a - np.nanmean(a))))
 
 
-def rms_mean_kouba(a, multipl_coef=3, deg_of_freedom=7):
+def rms_mean_kouba(
+    a: np.ndarray | list, multipl_coef: int = 3, deg_of_freedom: int = 7
+) -> float:
     """
     Compute weighted RMS (Root Mean Square) with Kouba's method.
 
@@ -1006,7 +1046,7 @@ def rms_mean_kouba(a, multipl_coef=3, deg_of_freedom=7):
     return np.sqrt(np.sum(np.square(a)) / (multipl_coef * len(a) - deg_of_freedom))
 
 
-def mad(data, mode="median"):
+def mad(data: np.ndarray | list, mode: str = "median") -> float:
     """
     Compute Median Absolute Deviation (MAD).
 
@@ -1037,13 +1077,13 @@ def mad(data, mode="median"):
 
 
 def outlier_mad(
-    data,
-    threshold=3.5,
-    verbose=False,
-    convert_to_np_array=True,
-    mad_mode="median",
-    seuil=None,
-):
+    data: np.ndarray | list,
+    threshold: float = 3.5,
+    verbose: bool = False,
+    convert_to_np_array: bool = True,
+    mad_mode: str = "median",
+    seuil: float | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
     """
     clean the outlier of Ya dataset using the MAD approach
 
@@ -1128,8 +1168,12 @@ def outlier_mad(
 
 
 def outlier_mad_df(
-        df, columns, threshold=3.5, col_aggreg=np.logical_and, mad_mode="median"
-    ):
+    df: pd.DataFrame,
+    columns: str | list,
+    threshold: float = 3.5,
+    col_aggreg=np.logical_and,
+    mad_mode: str = "median",
+) -> tuple[pd.DataFrame, np.ndarray]:
     """
     Remove outliers from pandas DataFrame columns using MAD (Median Absolute Deviation).
 
@@ -1198,7 +1242,12 @@ def outlier_mad_df(
 
 
 def outlier_mad_binom(
-    y, x, threshold=3.5, verbose=False, detrend_first=False, return_booleans=False
+    y: np.ndarray | list,
+    x: np.ndarray | list,
+    threshold: float = 3.5,
+    verbose: bool = False,
+    detrend_first: bool = False,
+    return_booleans: bool = False,
 ):
     """
     clean the outlier of Y using the MAD approach
@@ -1248,7 +1297,12 @@ def outlier_mad_binom(
         return y_clean, x_clean, bb
 
 
-def outlier_above_below_simple(x, low_bound, upp_bound, return_booleans=True):
+def outlier_above_below_simple(
+    x: np.ndarray | list,
+    low_bound: float,
+    upp_bound: float,
+    return_booleans: bool = True,
+) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
     """
     Gives values of X which are between low_bound & upp_bound
 
@@ -1291,13 +1345,13 @@ def outlier_above_below_simple(x, low_bound, upp_bound, return_booleans=True):
 
 
 def outlier_above_below(
-    x,
-    threshold_values,
+    x: np.ndarray | list,
+    threshold_values: float | tuple,
     reference=np.nanmean,
-    theshold_absolute=True,
-    return_booleans=True,
-    theshold_relative_value="reference",
-    verbose=False,
+    theshold_absolute: bool = True,
+    return_booleans: bool = True,
+    theshold_relative_value: str = "reference",
+    verbose: bool = False,
 ):
     """
     Gives values of X which are between threshold values
@@ -1395,15 +1449,15 @@ def outlier_above_below(
 
 
 def outlier_above_below_binom(
-    y,
-    x,
-    threshold_values,
+    y: np.ndarray | list,
+    x: np.ndarray | list,
+    threshold_values: float | tuple,
     reference=np.nanmean,
-    theshold_absolute=True,
-    theshold_relative_value="reference",
-    return_booleans=False,
-    detrend_first=True,
-    verbose=False,
+    theshold_absolute: bool = True,
+    theshold_relative_value: str = "reference",
+    return_booleans: bool = False,
+    detrend_first: bool = True,
+    verbose: bool = False,
 ):
     """
     Gives values of Y which are between threshold values, and correct an

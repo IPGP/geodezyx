@@ -60,7 +60,8 @@ def d_calc(coords_delta, mean_win=86400, strain_win=7 * 86400):
     df_bl["d_diff"] = d_diff
 
     # Compute linear regression
-    a, b = stats.linear_regression(df_bl["d_mean"].values, df_bl["epoch"].values)
+    a, b = stats.linear_regression(df_bl["d_mean"].to_list(),
+                                   df_bl["epoch"].to_list())
 
     # strain: relative change of d_mean between first and last sample of the strain_win window
     lbd_strain = lambda x: (x[-1] - x[0]) / x[0]
@@ -198,7 +199,7 @@ def calc_baselines(
     mean_win=86400,
     strain_win=7 * 86400,
     resample="1min",
-):
+) -> pd.DataFrame:
     """
     Compute baselines between rovers and reference stations.
 
@@ -283,7 +284,8 @@ def calc_baselines(
             resample,
         )
 
-    return pd.concat(df_bl_stk)
+    df_bls = pd.concat(df_bl_stk)
+    return df_bls
 
 
 # Backward compatibility wrappers
@@ -295,7 +297,7 @@ def calc_baselines_virtual(
     mean_win=86400,
     strain_win=7 * 86400,
     resample="1min",
-):
+) -> pd.DataFrame:
     """
     Compute virtual baselines between rover pairs via a common pivot station.
 
@@ -319,6 +321,14 @@ def calc_baselines_virtual(
     threshold_mad : float, optional
         Median Absolute Deviation multiplier used as the outlier rejection
         threshold. Default is 3.5.
+    mean_win : int, optional
+        Rolling window size (in samples) used to compute the running mean of
+        the baseline distance. Default is 86400.
+    strain_win : int or list of int, optional
+        Window size(s) (in samples) used to compute the strain rate.
+        Default is 7 * 86400.
+    resample : str, optional
+        Resampling frequency. Default is ``"1min"``.
 
     Returns
     -------
@@ -346,7 +356,7 @@ def calc_baselines_direct(
     mean_win=86400,
     strain_win=7 * 86400,
     resample="1min",
-):
+) -> pd.DataFrame:
     """
     Compute direct baselines between rovers and their reference base stations.
 
@@ -374,6 +384,14 @@ def calc_baselines_direct(
         ``{base: [x, y, z]}``. If ``None`` or the base is not found in the
         dictionary the first epoch of the rover time series is used as
         reference. Default is ``None``.
+    mean_win : int, optional
+        Rolling window size (in samples) used to compute the running mean of
+        the baseline distance. Default is 86400.
+    strain_win : int or list of int, optional
+        Window size(s) (in samples) used to compute the strain rate.
+        Default is 7 * 86400.
+    resample : str, optional
+        Resampling frequency. Default is ``"1min"``.
 
     Returns
     -------
@@ -406,7 +424,7 @@ def baselines_plot(
     plt_shift=0.02,
     plt_factor=100,
     decim=100,
-):
+) -> tuple[plt.Figure, plt.Axes]:
     """
     Plot baseline distance time series for all site pairs.
 
