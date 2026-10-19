@@ -73,7 +73,7 @@ START = dt.datetime(2026,3,8)
 # df_all = df_all[df_all["epoch"].dt.second == 0]
 df_all = df_all[(pd.Timestamp(START) < df_all["epoch"])]
 
-print(df_all.to_string())
+# print(df_all.to_string())
 
 df_nopivo = df_all[df_all["pivot"] == False]
 pivot = "GITG"
