@@ -1,16 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-@author: psakic
+Download utilities for GNSS data and products.
+
 This sub-module of geodezyx.operational contains functions to download
-gnss data and products from distant IGS servers.
-it can be imported directly with:
-from geodezyx import operational
-The geodezyx toolbox is a software for simple but useful
-functions for Geodesy and Geophysics under the GNU LGPL v3 License
+GNSS data and products from distant IGS servers.
+
+It can be imported directly with::
+
+    from geodezyx import operational
+
+The geodezyx toolbox is a software for simple but useful functions for
+Geodesy and Geophysics under the GNU LGPL v3 License.
+
 Copyright (C) 2019 Pierre Sakic et al. (IPGP, sakic@ipgp.fr)
-GitHub repository :
-https://github.com/IPGP/geodezyx
+
+GitHub repository:
+    https://github.com/IPGP/geodezyx
 """
 
 import ftplib
@@ -77,18 +83,34 @@ def effective_save_dir_orbit(
     parent_archive_dir, calc_center, date, archtype="year/doy/"
 ):
     """
-    INTERNAL_FUNCTION
+    Generate the effective save directory path for orbit files.
 
-    archtype =
-        stat
-        stat/year
-        stat/year/doy
-        year/doy
-        year/stat
-        week/dow
-        wkwwww : use a GFZ's CF-ORB wk<wwww> naming
-        OR only '/' for a dirty saving in the parent folder
-        ... etc ...
+    Internal function used for organizing downloaded orbit files.
+
+    Parameters
+    ----------
+    parent_archive_dir : str
+        Parent archive directory path.
+    calc_center : str
+        Calculation center identifier.
+    date : datetime
+        Date for organizing the directory structure.
+    archtype : str, optional
+        Archive directory structure pattern. Default is "year/doy/".
+        Supported patterns:
+        - "stat": Station directory
+        - "stat/year": Station/Year structure
+        - "stat/year/doy": Station/Year/DOY structure
+        - "year/doy": Year/DOY structure
+        - "year/stat": Year/Station structure
+        - "week/dow": GPS week/Day of week structure
+        - "wkwwww": GFZ CF-ORB wk<wwww> naming convention
+        - "/": Save directly in parent folder
+
+    Returns
+    -------
+    str
+        Effective save directory path.
     """
     if archtype == "/":
         return parent_archive_dir
@@ -110,18 +132,36 @@ def effective_save_dir_orbit(
 
 def effective_save_dir(parent_archive_dir, site, date, archtype="stat"):
     """
-    INTERNAL_FUNCTION
+    Generate the effective save directory path for station files.
 
-    archtype =
-        site
-        site/year
-        site/year/doy
-        year/doy
-        year/site
-        week/dow
-        OR only '/' for a dirty saving in the parent folder
-        ... etc ...
+    Internal function used for organizing downloaded station files.
 
+    Parameters
+    ----------
+    parent_archive_dir : str
+        Parent archive directory path.
+    site : str
+        Station site code.
+    date : datetime
+        Date for organizing the directory structure.
+    archtype : str, optional
+        Archive directory structure pattern. Default is "stat".
+        Supported patterns:
+        - "stat": Station directory
+        - "stat/year": Station/Year structure
+        - "stat/year/doy": Station/Year/DOY structure
+        - "year/doy": Year/DOY structure
+        - "year/stat": Year/Station structure
+        - "week/dow": GPS week/Day of week structure
+        - "/": Save directly in parent folder
+
+    Returns
+    -------
+    str
+        Effective save directory path.
+
+    Notes
+    -----
     If site is None or empty, it will be replaced with "ALL_STATIONS" in the path.
     """
     if archtype == "/":
@@ -302,8 +342,14 @@ def download_http(url, output_dir, timeout=120, max_try=4, sleep_time=5, force=F
 
 class MyFTP_TLS(FTP_TLS):
     """
-    This class is a subclass of FTP_TLS from the ftplib module. It is used to create an FTPS client that shares the TLS session.
-    This is to avoid the error: ssl.SSLEOFError: EOF occurred in violation of protocol (_ssl.c:2396)
+    Custom FTPS client that reuses TLS session.
+
+    This class is a subclass of FTP_TLS from the ftplib module. It creates
+    an FTPS client that shares the TLS session to avoid the error:
+    ssl.SSLEOFError: EOF occurred in violation of protocol (_ssl.c:2396)
+
+    Notes
+    -----
     Source: https://stackoverflow.com/questions/14659154/ftps-with-python-ftplib-session-reuse-required
     """
 
@@ -525,17 +571,19 @@ def ftp_downld_mono(ftp_obj, full_remote_path, localdir, force=False):
 
 def ftp_downld_wrap(intup):
     """
-    This function is a wrapper for the ftp_downld function. It unpacks the input tuple and passes it to the ftp_downld function.
+    Wrapper function for FTP download operations.
+
+    Unpacks the input tuple and passes it to the ftp_downld_mono function.
 
     Parameters
     ----------
     intup : tuple
-        A tuple containing the parameters to be passed to the ftp_downld function.
+        A tuple containing the parameters to be passed to ftp_downld_mono.
 
     Returns
     -------
     tuple
-        The output of the ftp_downld function.
+        The output of the ftp_downld_mono function.
     """
     outtup = ftp_downld_mono(*intup)
     return outtup
@@ -571,13 +619,12 @@ def ftp_downld_front(
     force : bool, optional
         If True, forces the download even if the file already exists. Default is True.
     timeout : int, optional
-        The timeout for FTP connections in seconds. Default is 30 seconds.
+        The timeout for FTP connections in seconds. Default is 120 seconds.
 
     Returns
     -------
-    out_tup_lis : List of tuples
-        Returns a list of tuples containing
-        the local path of the downloaded file and
+    out_tup_lis : list of tuple
+        List of tuples containing the local path of the downloaded file and
         a boolean indicating whether the download was successful.
         e.g. [(local_path1, True), (local_path2, False), ...]
 
@@ -765,7 +812,7 @@ def renew_ftp_obj(
     count_loop,
     count_nmax,
     timeout=120,
-):
+) -> tuple[FTP | None, str]:
     """
     Get or create an FTP connection.
 
@@ -793,13 +840,13 @@ def renew_ftp_obj(
     count_nmax : int
         Maximum operations before reconnection.
     timeout : int, optional
-        The timeout for FTP connections in seconds. Default is 30 seconds.
+        The timeout for FTP connections in seconds. Default is 120 seconds.
 
     Returns
     -------
-    ftpobj : FTP
+    ftpobj : FTP or None
         FTP connection object.
-    new_host : str
+    host_out : str
         The host name for connection tracking.
     """
     if host != prev_host or count_loop > count_nmax or count_loop == 1:
@@ -823,9 +870,11 @@ def renew_ftp_obj(
             warnmsg = "No FTP object could be created successfully."
             log.warning(warnmsg)
 
-        return ftpobj, host
+        host_out = host
+        return ftpobj, host_out
 
-    return ftpobj, prev_host
+    host_out = prev_host
+    return ftpobj, host_out
 
 
 def list_ftp_dir_core(ftpobj):
@@ -943,6 +992,11 @@ def update_table_row_with_match(table, irow, file_match, all_files_mode=False):
         Matched filename(s) from FTP directory.
     all_files_mode : bool, optional
         If True, file_match is a list of files. Default is False.
+
+    Returns
+    -------
+    None
+        Updates the input table in-place with crawl results.
     """
     if file_match:
         table.loc[irow, "ok_dwl"] = True
@@ -971,6 +1025,11 @@ def generate_download_urls(table, all_files_mode=False):
         dir, filename.
     all_files_mode : bool, optional
         If True, handle semicolon-separated filenames. Default is False.
+
+    Returns
+    -------
+    None
+        Updates the 'url_true' column in the input table in-place.
     """
     nam_col = "filename"
 
@@ -1073,7 +1132,7 @@ def crawl_ftp_files(
         List of regex patterns to exclude from matched files.
         Default is None.
     timeout : int, optional
-        The timeout for FTP connections in seconds. Default is 30 seconds.
+        The timeout for FTP connections in seconds. Default is 120 seconds.
 
     Returns
     -------
@@ -1170,7 +1229,12 @@ def crawl_ftp_files(
             _save_all_ftp_files(all_ftp_files_stk)
 
         # Get file list when directory changes
-        ftp_result = list_ftp_dir(ftpobj, row["dir"], row["host"], prev_dir)
+        if not ftpobj:
+            log.warning("FTP object is None, skipping row %d", irow)
+            continue
+        else:
+            ftp_result = list_ftp_dir(ftpobj, row["dir"], row["host"], prev_dir)
+
         if ftp_result[0] is not None:
             ftp_files_list, ftp_files_urls = ftp_result
             prev_dir = row["dir"]
