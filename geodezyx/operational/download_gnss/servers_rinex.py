@@ -263,8 +263,9 @@ def igs_ign_ensg_server(date, site=None):
 
 
 def igs_bkg_server(date, site=None):
-    urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/obs/"
+    # urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/obs/"
     # ftp://igs-ftp.bkg.bund.de/IGS/obs/2024/082/IGS00WRD_R_20240820000_01D_MN.rnx.gz
+    urlserver = "https://igs.bkg.bund.de/root_ftp/IGS/obs/"
 
     urldic = _generic_server(date, site, urlserver)
     return urldic
@@ -348,8 +349,10 @@ def euref_server(date, site=None):
 
 
 def nav_bkg_server(date, site=None):
-    urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/BRDC/"
+    # urlserver = "ftp://igs-ftp.bkg.bund.de/IGS/BRDC/"
     # ftp://igs-ftp.bkg.bund.de/IGS/BRDC/2024/082/BRDC00WRD_S_20240820000_01D_MN.rnx.gz
+
+    urlserver = "https://igs.bkg.bund.de/root_ftp/IGS/BRDC/"
 
     ### generate regex
     rnx2rgx, rnx3rgx = _rnx_nav_rgx(
