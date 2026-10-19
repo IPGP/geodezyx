@@ -87,10 +87,9 @@ def _normalize_datetime_input(dt_input):
         return dt_input.astype("datetime64[us]").astype(dt.datetime)
     else:
         # Try pandas Timestamp (lazy import)
+        import pandas as pd_lazy
         try:
-            import pandas as pd
-
-            if isinstance(dt_input, pd.Timestamp):
+            if isinstance(dt_input, pd_lazy.Timestamp):
                 return dt_input.to_pydatetime()
         except ImportError:
             pass
@@ -125,10 +124,9 @@ def _normalize_timedelta_input(td_input):
         return dt.timedelta(microseconds=int(td_input / np.timedelta64(1, "us")))
     else:
         # Try pandas Timedelta (lazy import)
+        import pandas as pd_lazy
         try:
-            import pandas as pd
-
-            if isinstance(td_input, pd.Timedelta):
+            if isinstance(td_input, pd_lazy.Timedelta):
                 return td_input.to_pytimedelta()
         except ImportError:
             pass
@@ -156,9 +154,8 @@ def _output_to_datetime_type(dt_output, target_type):
     if target_type == "datetime64" or target_type is np.datetime64:
         return np.datetime64(dt_output)
     elif target_type == "Timestamp":
-        import pandas as pd
-
-        return pd.Timestamp(dt_output)
+        import pandas as pd_lazy
+        return pd_lazy.Timestamp(dt_output)
     else:
         return dt_output
 
@@ -469,7 +466,6 @@ def vector_2args_datetime_numeric_conv(func):
 ### Time conversion functions
 
 
-
 def now(timezone='local'):
     """
     Get the current time with timezone information.
@@ -599,19 +595,19 @@ def round_dt(dtin, round_to, python_dt_out=True, mode="round"):
     ----
     This function uses Pandas for efficient vectorized operations.
     """
-    import pandas as pd
+    import pandas as pd_lazy
 
     # Determine if input is singleton
     is_singleton = not utils.is_iterable(dtin)
 
     input_type = lambda x: x
     if is_singleton:
-        dtin_series = pd.Series([_normalize_datetime_input(dtin)])
+        dtin_series = pd_lazy.Series([_normalize_datetime_input(dtin)])
     else:
         input_type = utils.get_type_smart(dtin)
         # Normalize all datetime inputs
         dtin_norma = [_normalize_datetime_input(d) for d in dtin]
-        dtin_series = pd.Series(dtin_norma)
+        dtin_series = pd_lazy.Series(dtin_norma)
 
     # Apply rounding based on mode
     if mode == "round":
@@ -748,9 +744,9 @@ def dt2posix(dtin):
     with different precision below microsecond level.
     """
     # The decorator handles normalization, so dtin is always native datetime here
-    D = dtin - dt.datetime(1970, 1, 1)
-    dout = D.days * 86400 + D.seconds + D.microseconds * 10**-6
-    return np.round(dout, 6)
+    d_use = dtin - dt.datetime(1970, 1, 1)
+    d_out = d_use.days * 86400 + d_use.seconds + d_use.microseconds * 10**-6
+    return np.round(d_out, 6)
 
 
 @vector_numeric_conv
@@ -1688,8 +1684,9 @@ def date_pattern2dt(date_str_inp):
 
     Parameters
     ----------
-    date_str_inp : str
+    date_str_inp : str or datetime
         The input date string to be converted.
+        If the input is already a datetime object, it will be returned as is.
 
     Returns
     -------
@@ -1701,29 +1698,36 @@ def date_pattern2dt(date_str_inp):
     ValueError
         If the input string does not match any of the expected date formats.
     """
-    if re.match(r"\d{4}-\d{2}-\d{2}", date_str_inp):
+
+    # Check if the input is already a datetime object, return it directly
+    if isinstance(date_str_inp, dt.datetime):
+        return date_str_inp
+
+    date_str_use = str(date_str_inp)
+
+    if re.match(r"\d{4}-\d{2}-\d{2}", date_str_use):
         # Match format YYYY-MM-DD
-        date = dt.datetime.strptime(date_str_inp, "%Y-%m-%d")
-    elif re.match(r"\d{4}-\d{3}", date_str_inp):
+        date = dt.datetime.strptime(date_str_use, "%Y-%m-%d")
+    elif re.match(r"\d{4}-\d{3}", date_str_use):
         # Match format Year-DayOfYear (e.g., 2023-123)
-        date = doy2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
-    elif re.match(r"\d{4}-\d{1}", date_str_inp):
+        date = doy2dt(int(date_str_use[:4]), int(date_str_use[5:]))
+    elif re.match(r"\d{4}-\d{1}", date_str_use):
         # Match format GPS Week-Day (e.g., 1234-5)
-        date = gpstime2dt(int(date_str_inp[:4]), int(date_str_inp[5:]))
-    elif re.match(r"\d{8}", date_str_inp):
+        date = gpstime2dt(int(date_str_use[:4]), int(date_str_use[5:]))
+    elif re.match(r"\d{8}", date_str_use):
         # Match format YYYYMMDD
-        date = dt.datetime.strptime(date_str_inp, "%Y%m%d")
-    elif re.match(r"\d{6}", date_str_inp):
+        date = dt.datetime.strptime(date_str_use, "%Y%m%d")
+    elif re.match(r"\d{6}", date_str_use):
         # Match format YYMMDD
-        date = dt.datetime.strptime(date_str_inp, "%y%m%d")
-    elif re.match(r"\d{5}", date_str_inp):
+        date = dt.datetime.strptime(date_str_use, "%y%m%d")
+    elif re.match(r"\d{5}", date_str_use):
         # Match format JJCNES (Julian Day CNES)
-        date = jjul_cnes2dt(int(date_str_inp))
+        date = jjul_cnes2dt(int(date_str_use))
     else:
         import dateparser
 
         try:
-            date = dateparser.parse(date_str_inp)
+            date = dateparser.parse(date_str_use)
         except:
             raise ValueError("Input string does not match any expected date format.")
     return date
@@ -1737,9 +1741,9 @@ def minmax_pattern_dt(date1_inp, date2_inp):
 
     Parameters
     ----------
-    date1_inp : str
+    date1_inp : str or datetime
         The first date string to be converted.
-    date2_inp : str
+    date2_inp : str or datetime
         The second date string to be converted.
 
     Returns
@@ -1749,7 +1753,6 @@ def minmax_pattern_dt(date1_inp, date2_inp):
 
     Raises
     ------
-    ValueError
         If the input strings cannot be converted into valid datetime objects.
     """
     datetup = (date_pattern2dt(date1_inp), date_pattern2dt(date2_inp))
@@ -2786,13 +2789,13 @@ def pandas_timestamp2dt(timstp_in):
         Time as Datetime(s)
     """
 
-    import pandas as pd
+    import pandas as pd_lazy
 
     if utils.is_iterable(timstp_in):
         typ = utils.get_type_smart(timstp_in)
         return typ([pandas_timestamp2dt(e) for e in timstp_in])
     else:
-        if isinstance(timstp_in, pd.Timedelta):
+        if isinstance(timstp_in, pd_lazy.Timedelta):
             return timstp_in.to_pytimedelta()
         else:
             return timstp_in.to_pydatetime()
@@ -2881,9 +2884,8 @@ def numpy_dt2dt(numpy_dt_in):
     ### better implementation because of the timezone bug (PS 241124)
 
     else:
-        import pandas as pd
-
-        return pd.Timestamp(numpy_dt_in).to_pydatetime()
+        import pandas as pd_lazy
+        return pd_lazy.Timestamp(numpy_dt_in).to_pydatetime()
 
 
 def time_obj_tester(delta=False, out_iterable=list, start=None):
@@ -2942,7 +2944,7 @@ def time_obj_tester(delta=False, out_iterable=list, start=None):
       ...))
     """
 
-    import pandas as pd
+    import pandas as pd_lazy
 
     if start is None:
         start = dt.datetime(2020, 1, 1, 0, 0, 0)
@@ -2957,7 +2959,7 @@ def time_obj_tester(delta=False, out_iterable=list, start=None):
 
     # Convert the datetime objects to numpy.datetime64 and pandas.Timestamp formats
     times_datetime_numpy = out_iterable([np.datetime64(t) for t in times_datetime])
-    times_pandas_timestamp = out_iterable([pd.Timestamp(t) for t in times_datetime])
+    times_pandas_timestamp = out_iterable([pd_lazy.Timestamp(t) for t in times_datetime])
 
     # If delta is True, calculate time deltas relative to the start time
     if delta:
@@ -2966,7 +2968,7 @@ def time_obj_tester(delta=False, out_iterable=list, start=None):
             [t - np.datetime64(start) for t in times_datetime_numpy]
         )
         times_pandas_timestamp = out_iterable(
-            [t - pd.Timestamp(start) for t in times_pandas_timestamp]
+            [t - pd_lazy.Timestamp(start) for t in times_pandas_timestamp]
         )
 
     # Return the generated time objects in the specified formats
