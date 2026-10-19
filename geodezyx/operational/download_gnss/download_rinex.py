@@ -6,8 +6,6 @@ Created on 23/04/2024 21:31:45
 @author: psakic
 """
 
-import datetime as dt
-import glob
 import itertools
 import logging
 import os
@@ -215,10 +213,10 @@ def download_gnss_rinex(
         log.warning("quiet mode, no download was performed")
     else:
         out_tup_lis = dlutils.ftp_downld_front(
-            table_dwld["url_true"].values,
-            table_dwld["outdir"].values,
+            table_dwld["url_true"].to_list(),
+            table_dwld["outdir"].to_list(),
             parallel_download=parallel_download,
-            secure_ftp=(table_dwld["protocol"] == "sftp").values,
+            secure_ftp=(table_dwld["protocol"] == "sftp").to_list(),
             user=user,
             passwd=passwd,
             force=force,

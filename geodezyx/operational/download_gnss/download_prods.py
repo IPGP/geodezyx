@@ -272,13 +272,9 @@ def download_gnss_products(
         get MGEX products. The default is False.
     repro : int, optional
         get repro products. The default is 0 i.e. operational products.
-    sorted_mode : bool, optional
-        sort the download or not. The default is False.
     return_also_uncompressed_files : bool, optional
         in the final list output, return also already downloaded and
         uncompressed files. The default is True.
-    ftp_download : bool, optional
-        kept for backward compatibility. The default is False.
     dow_manu : int or bool or None, optional
         Control the download for weekly files.
         dow_manu = False: use computed DOW (regular case).
