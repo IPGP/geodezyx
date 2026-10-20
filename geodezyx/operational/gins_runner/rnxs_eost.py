@@ -8,9 +8,7 @@ Created on 05/01/2026 19:09:20
 
 import os
 import geodezyx.operational.download_gnss.download_utils as dlutils
-import geodezyx.operational.download_gnss.download_rinex as dlrinex
 import geodezyx.conv as conv
-import re
 from datetime import datetime
 
 #### Import the logger
@@ -23,7 +21,7 @@ def list_rnx_eost(year_start=None, year_end=None, excl_rnx2_post2022=True):
     """
     Lists the paths of RINEX files available on the EOST Strasbourg server within a specified year range.
 
-    This is a wrapper around `list_rnx_http` specifically for the EOST server.
+    This is a wrapper around `list_http_files` specifically for the EOST server.
 
     Parameters
     ----------
@@ -44,7 +42,7 @@ def list_rnx_eost(year_start=None, year_end=None, excl_rnx2_post2022=True):
 
     Notes
     -----
-    - Uses the generic `list_rnx_http` function internally.
+    - Uses the generic `list_http_files` function internally.
     - The function fetches directory listings recursively from the server.
     - Logs the number of RINEX files found for each day.
 
@@ -65,7 +63,7 @@ def list_rnx_eost(year_start=None, year_end=None, excl_rnx2_post2022=True):
         date_end = datetime(year_end, 12, 31).date()
 
     # Get the list of files from the generic function
-    rnx_path_lst = dlrinex.list_rnx_http(url_eost, date_start, date_end)
+    rnx_path_lst = dlutils.list_http_files(url_eost, date_start, date_end)
 
     # Apply EOST-specific filtering for RINEX v2 post-2022
     if excl_rnx2_post2022:
@@ -132,7 +130,7 @@ def list_rnx_igs_brdc(date_start=None, date_end=None):
     """
     Lists the paths of broadcast ephemeris (BRDC) files available on the IGS BKG server.
 
-    This is a wrapper around `list_rnx_http` specifically for the IGS BRDC repository.
+    This is a wrapper around `list_http_files` specifically for the IGS BRDC repository.
 
     Parameters
     ----------
@@ -161,5 +159,5 @@ def list_rnx_igs_brdc(date_start=None, date_end=None):
     True
     """
     url_igs_brdc = "https://igs.bkg.bund.de/root_ftp/IGS/BRDC/"
-    return dlrinex.list_rnx_http(url_igs_brdc, date_start, date_end)
+    return dlutils.list_http_files(url_igs_brdc, date_start, date_end)
 

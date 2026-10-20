@@ -23,6 +23,8 @@ import ftplib
 import requests
 import tqdm
 import socket
+import htmllistparse
+import re
 
 #### Import the logger
 import logging
@@ -1087,7 +1089,102 @@ def collect_local_files(table):
         return pd.Series([])
 
 
-def crawl_ftp_files(
+def list_http_files(url_base, date_start=None, date_end=None):
+    """
+    Generic function to list files available on an HTTP server with year/day structure.
+
+    This function works with any HTTP server that organizes files in the following
+    directory structure: {url_base}/{year}/{doy}/ where doy is the day of year.
+
+    Parameters
+    ----------
+    url_base : str
+        The base URL of the repository (e.g., 'http://example.com/rinex/').
+        Should end with a trailing slash.
+    date_start : str or datetime.date, optional
+        The starting date for filtering files. Can be in formats: 'YYYY-MM-DD',
+        'YYYYMMDD', day-of-year 'YYYY-DDD', or as a datetime object.
+        If None, no lower bound is applied. Default is None.
+    date_end : str or datetime.date, optional
+        The ending date for filtering files. Can be in formats: 'YYYY-MM-DD',
+        'YYYYMMDD', day-of-year 'YYYY-DDD', or as a datetime object.
+        If None, no upper bound is applied. Default is None.
+
+    Returns
+    -------
+    list of str
+        A list of URLs pointing to the files that match the specified date criteria.
+
+    Notes
+    -----
+    - The function fetches directory listings recursively from the server.
+    - Dates are converted to day-of-year (doy) for fetching from the server.
+    - Logs the number of files found for each day.
+    - Works with any HTTP server with year/day-of-year directory structure.
+
+    Examples
+    --------
+    >>> files = list_http_files(
+    ...     "https://igs.bkg.bund.de/root_ftp/IGS/BRDC/",
+    ...     date_start="2020-01-01",
+    ...     date_end="2020-01-31"
+    ... )
+    >>> len(files) > 0
+    True
+    """
+    # Parse date inputs using geodezyx's date converter
+    if date_start is not None:
+        date_start = conv.date_pattern2dt(date_start)
+    if date_end is not None:
+        date_end = conv.date_pattern2dt(date_end)
+
+    rnx_path_lst = []
+
+    # Generate list of dates to fetch
+    if date_start is not None and date_end is not None:
+        for current_date in conv.dt_range(date_start, date_end):
+            year = current_date.year
+            doy = current_date.timetuple().tm_yday
+
+            url_day = os.path.join(url_base, f"{year}", f"{doy:03d}") + "/"
+            try:
+                cwd, listing = htmllistparse.fetch_listing(url_day, timeout=30)
+                for file in listing:
+                    rnx_path = os.path.join(url_day, file.name)
+                    rnx_path_lst.append(rnx_path)
+                log.info(f"{len(listing)} files found for day {year}-{doy:03d}")
+            except Exception as e:
+                log.warning(f"Failed to fetch listing from {url_day}: {e}")
+    else:
+        # Fallback: fetch year/day structure from server listing
+        log.warning(
+            "No date range specified. Will attempt to list all available dates from server."
+        )
+        try:
+            cwd, listing = htmllistparse.fetch_listing(url_base, timeout=30)
+            for item in listing:
+                url_year = os.path.join(url_base, item.name)
+                year = item.name.strip("/")
+                if not re.match(r"^\d{4}/$", item.name):
+                    continue
+                year = int(year)
+
+                cwd, listing = htmllistparse.fetch_listing(url_year, timeout=30)
+                for subitem in listing:
+                    url_day = os.path.join(url_year, subitem.name)
+                    day = subitem.name.strip("/")
+                    cwd, listing = htmllistparse.fetch_listing(url_day, timeout=30)
+                    for file in listing:
+                        rnx_path = os.path.join(url_day, file.name)
+                        rnx_path_lst.append(rnx_path)
+                    log.info(f"{len(listing)} files found for day {year}-{day}")
+        except Exception as e:
+            log.warning(f"Failed to fetch listing from {url_base}: {e}")
+
+    return rnx_path_lst
+
+
+def crawl_files(
     table,
     sftp="auto",
     user=None,
@@ -1100,49 +1197,50 @@ def crawl_ftp_files(
     timeout=120,
 ) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
     """
-    Crawl FTP servers to find available files and update download table.
+    Crawl FTP/SFTP/HTTP/HTTPS servers to find available files and update download table.
 
     This is a generic function used by both RINEX and products downloaders.
-    It checks for existing local files, connects to FTP servers, lists remote
+    It checks for existing local files, connects to remote servers, lists remote
     files, and updates the table with availability status and actual file URLs.
+
+    Supports both FTP-based protocols (ftp, sftp) and HTTP-based protocols (http, https).
 
     Parameters
     ----------
     table : pd.DataFrame
         Input table containing download metadata with columns:
-        - 'host': FTP server hostname
+        - 'host': Server hostname
         - 'dir': Remote directory path
         - 'outdir': Local output directory
         - 'regex': Filename regex pattern
-        - 'protocol': String indicating protocol ("ftp" or "sftp")
+        - 'protocol': String indicating protocol ("ftp", "sftp", "http", or "https")
+        - 'url_theo': Full theoretical URL (for HTTP)
         - 'crawled': Boolean indicating if already crawled
     sftp : str or bool, optional
         SFTP mode setting. Default is 'auto'.
     user : str, optional
-        FTP username. Default is None (anonymous).
+        Server username. Default is None (anonymous).
     passwd : str, optional
-        FTP password. Default is None (anonymous).
+        Server password. Default is None (anonymous).
     path_ftp_crawled_files_save : str, optional
         Path to save the crawled files table as CSV.
     path_all_ftp_files_save : str, optional
-        Path to save all discovered FTP files as CSV.
+        Path to save all discovered files as CSV.
     force : bool, optional
         Force re-download even if files exist locally. Default is False.
     all_files_mode : bool, optional
-        If True, download ALL files matching the regex.
-        Default is False.
+        If True, download ALL files matching the regex. Default is False.
     exclude_patterns : list of str, optional
-        List of regex patterns to exclude from matched files.
-        Default is None.
+        List of regex patterns to exclude from matched files. Default is None.
     timeout : int, optional
-        The timeout for FTP connections in seconds. Default is 120 seconds.
+        Connection timeout in seconds. Default is 120 seconds.
 
     Returns
     -------
     table_use : pd.DataFrame
         Updated table with crawl results.
-    all_ftp_files : pd.Series
-        All files discovered on FTP servers.
+    all_files : pd.Series
+        All files discovered on servers.
     all_loc_files : pd.Series
         Local file paths for files that already exist.
     """
@@ -1156,17 +1254,17 @@ def crawl_ftp_files(
         if path_ftp_crawled_files_save:
             table_inp.to_csv(path_ftp_crawled_files_save)
 
-    def _save_all_ftp_files(all_ftp_files_stk_inp):
-        if all_ftp_files_stk_inp:
-            all_ftp_files_out = pd.concat(all_ftp_files_stk_inp)
-            all_ftp_files_out.reset_index(drop=True, inplace=True)
+    def _save_all_files(all_files_stk_inp):
+        if all_files_stk_inp:
+            all_files_out = pd.concat(all_files_stk_inp)
+            all_files_out.reset_index(drop=True, inplace=True)
         else:
-            all_ftp_files_out = pd.Series([], dtype=str)
+            all_files_out = pd.Series([], dtype=str)
 
         if path_all_ftp_files_save:
-            all_ftp_files_out.to_csv(path_all_ftp_files_save, header=False)
+            all_files_out.to_csv(path_all_ftp_files_save, header=False)
 
-        return all_ftp_files_out
+        return all_files_out
 
     table_use = table.copy()
 
@@ -1178,7 +1276,7 @@ def crawl_ftp_files(
     prev_dir = ""
     prev_outdir = ""
     ftp_files_list = []
-    all_ftp_files_stk = []
+    all_files_stk = []
     local_files_lis = []
     count_loop = 0
     count_nmax = 50
@@ -1187,6 +1285,9 @@ def crawl_ftp_files(
     for irow, row in table_use.iterrows():
         if row["crawled"]:
             continue
+
+        protocol = row.get("protocol", "ftp").lower()
+        is_http = protocol in ("http", "https")
 
         # Check local files when output directory changes
         if prev_outdir != row["outdir"]:
@@ -1203,6 +1304,7 @@ def crawl_ftp_files(
             table_use.loc[irow, "ok_loc"] = True
             table_use.loc[irow, "ok_dwl"] = False
             table_use.loc[irow, nam_col] = filename
+            table_use.loc[irow, "crawled"] = True
             continue
         elif ok_dwl and force:
             table_use.loc[irow, "ok_loc"] = False
@@ -1211,71 +1313,126 @@ def crawl_ftp_files(
 
         count_loop += 1
 
-        # Get or create FTP connection
-        ftpobj, prev_host = renew_ftp_obj(
-            ftpobj,
-            row["host"],
-            row["protocol"],
-            sftp,
-            user,
-            passwd,
-            prev_host,
-            count_loop,
-            count_nmax,
-            timeout=timeout,
-        )
+        # Handle HTTP/HTTPS protocol
+        if is_http:
+            url_theo = row.get("url_theo", "")
+            try:
+                # Parse date from row if available
+                date_val = row.get("date", None)
 
-        # Save intermediate results and reset counter on reconnection
-        if count_loop > count_nmax:
-            count_loop = 0
-            _save_crawled_files(table_use)
-            _save_all_ftp_files(all_ftp_files_stk)
+                # Use list_http_files to fetch available files
+                http_files_list = list_http_files(url_theo, date_start=date_val, date_end=date_val)
 
-        # Get file list when directory changes
-        if not ftpobj:
-            log.warning("FTP object is None, skipping row %d", irow)
-            continue
+                if http_files_list:
+                    all_files_stk.append(pd.Series(http_files_list))
+                    # Try to match with regex
+                    http_filenames = [os.path.basename(url) for url in http_files_list]
+                    file_match = match_files_in_dir(row[rgx_col], http_filenames, all_files_mode)
+
+                    if file_match:
+                        # Find the full URL(s) for the matched file(s)
+                        if all_files_mode and isinstance(file_match, list):
+                            matching_urls = [
+                                url for url in http_files_list
+                                if os.path.basename(url) in file_match
+                            ]
+                            if matching_urls:
+                                table_use.loc[irow, "url_true"] = ";".join(matching_urls)
+                                table_use.loc[irow, "ok_dwl"] = True
+                                table_use.loc[irow, nam_col] = ";".join(file_match)
+                                log.info(f"{len(file_match)} file(s) found on server :)")
+                            else:
+                                table_use.loc[irow, "ok_dwl"] = False
+                        else:
+                            matching_url = [
+                                url for url in http_files_list
+                                if url.endswith(file_match)
+                            ]
+                            if matching_url:
+                                table_use.loc[irow, "url_true"] = matching_url[0]
+                                table_use.loc[irow, "ok_dwl"] = True
+                                table_use.loc[irow, nam_col] = file_match
+                                log.info(f"{file_match} found on server :)")
+                            else:
+                                table_use.loc[irow, "ok_dwl"] = False
+                    else:
+                        table_use.loc[irow, "ok_dwl"] = False
+                        log.warning(f"{row[rgx_col]} not found on server :(")
+                else:
+                    table_use.loc[irow, "ok_dwl"] = False
+                    log.warning(f"No files found at {url_theo}")
+
+            except Exception as e:
+                table_use.loc[irow, "ok_dwl"] = False
+                log.warning(f"Failed to crawl {url_theo}: {e}")
+
+        # Handle FTP/SFTP protocol
         else:
-            ftp_result = list_ftp_dir(ftpobj, row["dir"], row["host"], prev_dir)
+            # Get or create FTP connection
+            ftpobj, prev_host = renew_ftp_obj(
+                ftpobj,
+                row["host"],
+                protocol,
+                sftp,
+                user,
+                passwd,
+                prev_host,
+                count_loop,
+                count_nmax,
+                timeout=timeout,
+            )
 
-        file_match = None
-        if ftp_result[0] is not None:
-            ftp_files_list, ftp_files_urls = ftp_result
-            prev_dir = row["dir"]
+            # Save intermediate results and reset counter on reconnection
+            if count_loop > count_nmax:
+                count_loop = 0
+                _save_crawled_files(table_use)
+                _save_all_files(all_files_stk)
 
-            if ftp_files_urls:
-                all_ftp_files_stk.append(pd.Series(ftp_files_urls))
-            # Match files on server using regex pattern
-            if ftp_files_list:
-                file_match = match_files_in_dir(row[rgx_col], ftp_files_list, all_files_mode)
-
-        # Apply exclude patterns
-        if exclude_patterns and file_match:
-            if all_files_mode and isinstance(file_match, list):
-                for negpatt in exclude_patterns:
-                    file_match = [
-                        f for f in file_match if not re_module.search(negpatt, f)
-                    ]
-            elif isinstance(file_match, str):
-                for negpatt in exclude_patterns:
-                    if re_module.search(negpatt, file_match):
-                        file_match = None
-                        break
-
-        # Update table based on file availability
-        # Use a local wrapper to handle both column naming conventions
-        if file_match:
-            table_use.loc[irow, "ok_dwl"] = True
-            if all_files_mode and isinstance(file_match, list):
-                table_use.loc[irow, nam_col] = ";".join(file_match)
-                log.info(f"{len(file_match)} file(s) found on server :)")
+            # Get file list when directory changes
+            if not ftpobj:
+                log.warning("FTP object is None, skipping row %d", irow)
+                table_use.loc[irow, "crawled"] = True
+                continue
             else:
-                table_use.loc[irow, nam_col] = file_match
-                log.info(str(file_match) + " found on server :)")
-        else:
-            table_use.loc[irow, "ok_dwl"] = False
-            table_use.loc[irow, nam_col] = ""
-            log.warning(f"{row[rgx_col]} not found on server :(")
+                ftp_result = list_ftp_dir(ftpobj, row["dir"], row["host"], prev_dir)
+
+            file_match = None
+            if ftp_result[0] is not None:
+                ftp_files_list, ftp_files_urls = ftp_result
+                prev_dir = row["dir"]
+
+                if ftp_files_urls:
+                    all_files_stk.append(pd.Series(ftp_files_urls))
+                # Match files on server using regex pattern
+                if ftp_files_list:
+                    file_match = match_files_in_dir(row[rgx_col], ftp_files_list, all_files_mode)
+
+            # Apply exclude patterns
+            if exclude_patterns and file_match:
+                if all_files_mode and isinstance(file_match, list):
+                    for negpatt in exclude_patterns:
+                        file_match = [
+                            f for f in file_match if not re_module.search(negpatt, f)
+                        ]
+                elif isinstance(file_match, str):
+                    for negpatt in exclude_patterns:
+                        if re_module.search(negpatt, file_match):
+                            file_match = None
+                            break
+
+            # Update table based on file availability
+            if file_match:
+                table_use.loc[irow, "ok_dwl"] = True
+                if all_files_mode and isinstance(file_match, list):
+                    table_use.loc[irow, nam_col] = ";".join(file_match)
+                    log.info(f"{len(file_match)} file(s) found on server :)")
+                else:
+                    table_use.loc[irow, nam_col] = file_match
+                    log.info(str(file_match) + " found on server :)")
+            else:
+                table_use.loc[irow, "ok_dwl"] = False
+                table_use.loc[irow, nam_col] = ""
+                log.warning(f"{row[rgx_col]} not found on server :(")
 
         table_use.loc[irow, "crawled"] = True
 
@@ -1284,7 +1441,7 @@ def crawl_ftp_files(
 
     # Save final results
     _save_crawled_files(table_use)
-    all_ftp_files = _save_all_ftp_files(all_ftp_files_stk)
+    all_files = _save_all_files(all_files_stk)
 
     # Clean up FTP connection
     if ftpobj:
@@ -1293,7 +1450,83 @@ def crawl_ftp_files(
     # Collect local file paths
     all_loc_files = collect_local_files(table_use)
 
-    return table_use, all_ftp_files, all_loc_files
+    return table_use, all_files, all_loc_files
+
+
+def crawl_ftp_files(
+    table,
+    sftp="auto",
+    user=None,
+    passwd=None,
+    path_ftp_crawled_files_save=None,
+    path_all_ftp_files_save=None,
+    force=False,
+    all_files_mode=False,
+    exclude_patterns=None,
+    timeout=120,
+) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
+    """
+    Crawl FTP servers to find available files and update download table.
+
+    This is a wrapper around the generic crawl_files function.
+    It checks for existing local files, connects to FTP servers, lists remote
+    files, and updates the table with availability status and actual file URLs.
+
+    Now also supports HTTP/HTTPS servers through crawl_files.
+
+    Parameters
+    ----------
+    table : pd.DataFrame
+        Input table containing download metadata with columns:
+        - 'host': FTP server hostname
+        - 'dir': Remote directory path
+        - 'outdir': Local output directory
+        - 'regex': Filename regex pattern
+        - 'protocol': String indicating protocol ("ftp", "sftp", "http", or "https")
+        - 'crawled': Boolean indicating if already crawled
+    sftp : str or bool, optional
+        SFTP mode setting. Default is 'auto'.
+    user : str, optional
+        FTP username. Default is None (anonymous).
+    passwd : str, optional
+        FTP password. Default is None (anonymous).
+    path_ftp_crawled_files_save : str, optional
+        Path to save the crawled files table as CSV.
+    path_all_ftp_files_save : str, optional
+        Path to save all discovered files as CSV.
+    force : bool, optional
+        Force re-download even if files exist locally. Default is False.
+    all_files_mode : bool, optional
+        If True, download ALL files matching the regex.
+        Default is False.
+    exclude_patterns : list of str, optional
+        List of regex patterns to exclude from matched files.
+        Default is None.
+    timeout : int, optional
+        The timeout for connections in seconds. Default is 120 seconds.
+
+    Returns
+    -------
+    table_use : pd.DataFrame
+        Updated table with crawl results.
+    all_files : pd.Series
+        All files discovered on servers.
+    all_loc_files : pd.Series
+        Local file paths for files that already exist.
+    """
+    # Call the generic crawl_files function which handles both FTP and HTTP
+    return crawl_files(
+        table,
+        sftp=sftp,
+        user=user,
+        passwd=passwd,
+        path_ftp_crawled_files_save=path_ftp_crawled_files_save,
+        path_all_ftp_files_save=path_all_ftp_files_save,
+        force=force,
+        all_files_mode=all_files_mode,
+        exclude_patterns=exclude_patterns,
+        timeout=timeout,
+    )
 
 
 def orbclk_long2short_name(

@@ -10,9 +10,6 @@ import itertools
 import logging
 import os
 import pathlib
-import re
-import htmllistparse
-
 
 import pandas as pd
 
@@ -187,6 +184,7 @@ def download_gnss_rinex(
         files_all = pd.Series([], dtype=str)
         files_loc = pd.Series([], dtype=str)
     else:
+        # Use generic crawl_ftp_files which now handles both FTP and HTTP protocols
         table_crawl, files_all, files_loc = dlutils.crawl_ftp_files(
             table_ini,
             sftp="auto",
@@ -206,17 +204,18 @@ def download_gnss_rinex(
     # Only download if files are available and not in quiet mode
     if len(table_dwld) == 0:
         errmsg = (
-            "no valid RINEX URL found/selected on the FTP server, check your inputs"
+            "no valid RINEX URL found/selected on the server, check your inputs"
         )
         log.error(errmsg)
     elif quiet_mode:
         log.warning("quiet mode, no download was performed")
     else:
+        # Use ftp_downld_front for both FTP and HTTP (based on protocol in url_true)
         out_tup_lis = dlutils.ftp_downld_front(
             table_dwld["url_true"].to_list(),
             table_dwld["outdir"].to_list(),
             parallel_download=parallel_download,
-            secure_ftp=(table_dwld["protocol"] == "sftp").to_list(),
+            secure_ftp=(table_dwld["protocol"].isin(["sftp", "https"])).to_list(),
             user=user,
             passwd=passwd,
             force=force,
@@ -328,93 +327,4 @@ def gen_table_rnx(
     return table
 
 
-def list_rnx_http(url_base, date_start=None, date_end=None):
-    """
-    Generic function to list RINEX files available on an HTTP server with year/day structure.
 
-    This function works with any HTTP server that organizes RINEX files in the following
-    directory structure: {url_base}/{year}/{doy}/ where doy is the day of year.
-
-    Parameters
-    ----------
-    url_base : str
-        The base URL of the RINEX repository (e.g., 'http://example.com/rinex/').
-        Should end with a trailing slash.
-    date_start : str or datetime.date, optional
-        The starting date for filtering RINEX files. Can be in formats: 'YYYY-MM-DD',
-        'YYYYMMDD', day-of-year 'YYYY-DDD', or as a datetime object.
-        If None, no lower bound is applied. Default is None.
-    date_end : str or datetime.date, optional
-        The ending date for filtering RINEX files. Can be in formats: 'YYYY-MM-DD',
-        'YYYYMMDD', day-of-year 'YYYY-DDD', or as a datetime object.
-        If None, no upper bound is applied. Default is None.
-
-    Returns
-    -------
-    list of str
-        A list of URLs pointing to the RINEX files that match the specified date criteria.
-
-    Notes
-    -----
-    - The function fetches directory listings recursively from the server.
-    - Dates are converted to day-of-year (doy) for fetching from the server.
-    - Logs the number of RINEX files found for each day.
-    - Works with any HTTP server with year/day-of-year directory structure.
-
-    Examples
-    --------
-    >>> rnx_files = list_rnx_http(
-    ...     "https://igs.bkg.bund.de/root_ftp/IGS/BRDC/",
-    ...     date_start="2020-01-01",
-    ...     date_end="2020-01-31"
-    ... )
-    >>> len(rnx_files) > 0
-    True
-    """
-    # Parse date inputs using geodezyx's date converter
-    if date_start is not None:
-        date_start = conv.date_pattern2dt(date_start)
-    if date_end is not None:
-        date_end = conv.date_pattern2dt(date_end)
-
-    rnx_path_lst = []
-
-    # Generate list of dates to fetch
-    if date_start is not None and date_end is not None:
-        for current_date in conv.dt_range(date_start, date_end):
-            year = current_date.year
-            doy = current_date.timetuple().tm_yday
-
-            url_day = os.path.join(url_base, f"{year}", f"{doy:03d}") + "/"
-            try:
-                cwd, listing = htmllistparse.fetch_listing(url_day, timeout=30)
-                for file in listing:
-                    rnx_path = os.path.join(url_day, file.name)
-                    rnx_path_lst.append(rnx_path)
-                log.info(f"{len(listing)} RINEXs found for day {year}-{doy:03d}")
-            except Exception as e:
-                log.warning(f"Failed to fetch listing from {url_day}: {e}")
-    else:
-        # Fallback: fetch year/day structure from server listing
-        log.warning(
-            "No date range specified. Will attempt to list all available dates from server."
-        )
-        cwd, listing = htmllistparse.fetch_listing(url_base, timeout=30)
-        for item in listing:
-            url_year = os.path.join(url_base, item.name)
-            year = item.name.strip("/")
-            if not re.match(r"^\d{4}/$", item.name):
-                continue
-            year = int(year)
-
-            cwd, listing = htmllistparse.fetch_listing(url_year, timeout=30)
-            for subitem in listing:
-                url_day = os.path.join(url_year, subitem.name)
-                day = subitem.name.strip("/")
-                cwd, listing = htmllistparse.fetch_listing(url_day, timeout=30)
-                for file in listing:
-                    rnx_path = os.path.join(url_day, file.name)
-                    rnx_path_lst.append(rnx_path)
-                log.info(f"{len(listing)} RINEXs found for day {year}-{day}")
-
-    return rnx_path_lst
