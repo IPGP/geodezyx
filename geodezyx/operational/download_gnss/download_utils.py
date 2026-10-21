@@ -1513,6 +1513,8 @@ def crawl_files(
     prev_host = ""
     prev_dir = ""
     prev_outdir = ""
+    prev_http_url_base = ""  # Cache for HTTP URL to avoid redundant calls
+    prev_http_files_list = []  # Cache for HTTP files list
     ftp_files_list = []
     all_files_stk = []
     local_files_lis = []
@@ -1564,8 +1566,13 @@ def crawl_files(
                 # Parse date from row if available
                 date_val = row.get("date", None)
 
-                # Use list_http_files to fetch available files
-                http_files_list = list_http_files(url_base, date_start=date_val, date_end=date_val)
+                # Use cached HTTP files list if URL hasn't changed; otherwise fetch from server
+                if url_base == prev_http_url_base:
+                    http_files_list = prev_http_files_list
+                else:
+                    http_files_list = list_http_files(url_base, date_start=date_val, date_end=date_val)
+                    prev_http_url_base = url_base
+                    prev_http_files_list = http_files_list
 
                 if http_files_list:
                     all_files_stk.append(pd.Series(http_files_list))
