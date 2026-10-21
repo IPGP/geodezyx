@@ -589,6 +589,222 @@ def ftp_downld_wrap(intup):
     return outtup
 
 
+def downld_front(
+    urls,
+    savedirs,
+    protocols=None,
+    parallel_download=1,
+    secure_ftp=False,
+    user="anonymous",
+    passwd="anonymous@isp.com",
+    force=True,
+    timeout=120,
+):
+    """
+    Generic download function that handles both FTP/SFTP and HTTP/HTTPS protocols.
+
+    This function automatically detects the protocol from URLs and calls the
+    appropriate download function (FTP or HTTP) for each file.
+
+    Parameters
+    ----------
+    urls : str or list
+        The URL or list of URLs of the files to be downloaded.
+    savedirs : str or list
+        The directory or list of directories where the downloaded files should be saved.
+    protocols : str or list, optional
+        Protocol for each URL (ftp, sftp, http, https). If None, detected from URL.
+    parallel_download : int, optional
+        The number of parallel downloads to be performed. Default is 1.
+    secure_ftp : bool or list, optional
+        If True, uses FTPS for secure file transfer. Can be per-URL list. Default is False.
+    user : str, optional
+        The username for the FTP server. Default is "anonymous".
+    passwd : str, optional
+        The password for the FTP server. Default is 'anonymous@isp.com'.
+    force : bool, optional
+        If True, forces the download even if the file already exists. Default is True.
+    timeout : int, optional
+        The timeout for connections in seconds. Default is 120 seconds.
+
+    Returns
+    -------
+    out_tup_lis : list of tuple
+        List of tuples containing the local path of the downloaded file and
+        a boolean indicating whether the download was successful.
+        e.g. [(local_path1, True), (local_path2, False), ...]
+
+    Notes
+    -----
+    This function dispatches to ftp_downld_front() for FTP/SFTP URLs and
+    http_downld_front() for HTTP/HTTPS URLs.
+    """
+    import re as re_module
+
+    # Check if urls and savedirs are iterable, if not convert them to list
+    urllist = urls if utils.is_iterable(urls) else [urls]
+    urllist = list(urllist)
+    savedirlist = savedirs if utils.is_iterable(savedirs) else [savedirs] * len(urllist)
+
+    if isinstance(secure_ftp, (list, tuple)):
+        secure_ftp_list = list(secure_ftp)
+    else:
+        secure_ftp_list = [secure_ftp] * len(urllist)
+
+    # Check if the length of urllist and savedirlist are the same
+    if len(urllist) != len(savedirlist):
+        log.error(
+            "URL & out dirs lists do not have the same length: %s %s",
+            len(urllist),
+            len(savedirlist),
+        )
+        return []
+
+    # Detect protocol from URLs if not provided
+    if protocols is None:
+        protocols = []
+        for url in urllist:
+            if url.startswith(("http://", "https://")):
+                protocols.append("http" if url.startswith("http://") else "https")
+            elif url.startswith(("ftp://", "sftp://")):
+                protocols.append("ftp" if url.startswith("ftp://") else "sftp")
+            else:
+                # Fallback: try to parse from path structure
+                match = re_module.match(r"^([a-z]+)://", url)
+                if match:
+                    protocols.append(match.group(1))
+                else:
+                    protocols.append("ftp")  # Default to FTP
+
+    # Separate URLs by protocol
+    ftp_indices = []
+    http_indices = []
+
+    for idx, proto in enumerate(protocols):
+        if proto in ("ftp", "sftp"):
+            ftp_indices.append(idx)
+        elif proto in ("http", "https"):
+            http_indices.append(idx)
+
+    out_tup_lis = []
+
+    # Download FTP/SFTP files
+    if ftp_indices:
+        ftp_urls = [urllist[i] for i in ftp_indices]
+        ftp_savedirs = [savedirlist[i] for i in ftp_indices]
+        ftp_secure = [secure_ftp_list[i] for i in ftp_indices]
+
+        log.info("Downloading %d FTP/SFTP file(s)", len(ftp_urls))
+        ftp_results = ftp_downld_front(
+            ftp_urls,
+            ftp_savedirs,
+            parallel_download=parallel_download,
+            secure_ftp=ftp_secure,
+            user=user,
+            passwd=passwd,
+            force=force,
+            timeout=timeout,
+        )
+        out_tup_lis.extend(ftp_results)
+
+    # Download HTTP/HTTPS files
+    if http_indices:
+        http_urls = [urllist[i] for i in http_indices]
+        http_savedirs = [savedirlist[i] for i in http_indices]
+
+        log.info("Downloading %d HTTP/HTTPS file(s)", len(http_urls))
+        http_results = http_downld_front(
+            http_urls,
+            http_savedirs,
+            parallel_download=parallel_download,
+            force=force,
+            timeout=timeout,
+        )
+        out_tup_lis.extend(http_results)
+
+    return out_tup_lis
+
+
+def http_downld_wrap(intup):
+    """
+    Wrapper function for HTTP download operations.
+
+    Parameters
+    ----------
+    intup : tuple
+        A tuple containing (url, output_dir, force, timeout).
+
+    Returns
+    -------
+    tuple
+        Result of the download_http function.
+    """
+    url, output_dir, force, timeout = intup
+    return download_http(url, output_dir, timeout=timeout, force=force)
+
+
+def http_downld_front(
+    urls,
+    savedirs,
+    parallel_download=1,
+    force=False,
+    timeout=120,
+):
+    """
+    Download files from HTTP/HTTPS servers in parallel.
+
+    Parameters
+    ----------
+    urls : list
+        List of URLs of the files to be downloaded.
+    savedirs : list
+        List of directories where the downloaded files should be saved.
+    parallel_download : int, optional
+        The number of parallel downloads to be performed. Default is 1.
+    force : bool, optional
+        If True, forces the download even if the file already exists. Default is False.
+    timeout : int, optional
+        The timeout for HTTP connections in seconds. Default is 120 seconds.
+
+    Returns
+    -------
+    out_tup_lis : list of tuple
+        List of tuples containing the local path of the downloaded file and
+        a boolean indicating whether the download was successful.
+    """
+    # Ensure inputs are lists
+    urllist = list(urls) if utils.is_iterable(urls) else [urls]
+    savedirlist = (
+        list(savedirs)
+        if utils.is_iterable(savedirs)
+        else [savedirs] * len(urllist)
+    )
+
+    if len(urllist) != len(savedirlist):
+        log.error(
+            "URL & out dirs lists do not have the same length: %s %s",
+            len(urllist),
+            len(savedirlist),
+        )
+        return []
+
+    # Create list of arguments for parallel downloads
+    force_lis = [force] * len(urllist)
+    timeout_lis = [timeout] * len(urllist)
+
+    # Create a ThreadPool for parallel downloads
+    pool = ThreadPool(parallel_download)
+
+    # Start the parallel downloads
+    out_tup_lis = pool.map(
+        http_downld_wrap, list(zip(urllist, savedirlist, force_lis, timeout_lis))
+    )
+    pool.close()
+    pool.join()
+
+    return out_tup_lis
+
+
 def ftp_downld_front(
     urls,
     savedirs,
@@ -685,6 +901,86 @@ def ftp_downld_front(
     out_tup_lis = pool.map(
         ftp_downld_wrap, list(zip(ftpobj_mp_lis, urllist, savedirlist, force_lis))
     )
+
+    return out_tup_lis
+
+
+def http_downld_wrap(intup):
+    """
+    Wrapper function for HTTP download operations.
+
+    Parameters
+    ----------
+    intup : tuple
+        A tuple containing (url, output_dir, force, timeout).
+
+    Returns
+    -------
+    tuple
+        Result of the download_http function.
+    """
+    url, output_dir, force, timeout = intup
+    return download_http(url, output_dir, timeout=timeout, force=force)
+
+
+def http_downld_front(
+    urls,
+    savedirs,
+    parallel_download=1,
+    force=False,
+    timeout=120,
+):
+    """
+    Download files from HTTP/HTTPS servers in parallel.
+
+    Parameters
+    ----------
+    urls : list
+        List of URLs of the files to be downloaded.
+    savedirs : list
+        List of directories where the downloaded files should be saved.
+    parallel_download : int, optional
+        The number of parallel downloads to be performed. Default is 1.
+    force : bool, optional
+        If True, forces the download even if the file already exists. Default is False.
+    timeout : int, optional
+        The timeout for HTTP connections in seconds. Default is 120 seconds.
+
+    Returns
+    -------
+    out_tup_lis : list of tuple
+        List of tuples containing the local path of the downloaded file and
+        a boolean indicating whether the download was successful.
+    """
+    # Ensure inputs are lists
+    urllist = list(urls) if utils.is_iterable(urls) else [urls]
+    savedirlist = (
+        list(savedirs)
+        if utils.is_iterable(savedirs)
+        else [savedirs] * len(urllist)
+    )
+
+    if len(urllist) != len(savedirlist):
+        log.error(
+            "URL & out dirs lists do not have the same length: %s %s",
+            len(urllist),
+            len(savedirlist),
+        )
+        return []
+
+    # Create list of arguments for parallel downloads
+    force_lis = [force] * len(urllist)
+    timeout_lis = [timeout] * len(urllist)
+
+    # Create a ThreadPool for parallel downloads
+    pool = ThreadPool(parallel_download)
+
+    # Start the parallel downloads
+    out_tup_lis = pool.map(
+        http_downld_wrap, list(zip(urllist, savedirlist, force_lis, timeout_lis))
+    )
+    pool.close()
+    pool.join()
 
     return out_tup_lis
 
@@ -1021,13 +1317,13 @@ def update_table_row_with_match(table, irow, file_match, all_files_mode=False):
 
 def generate_download_urls(table, all_files_mode=False):
     """
-    Generate complete FTP URLs for files to be downloaded.
+    Generate complete URLs for files to be downloaded using the correct protocol.
 
     Parameters
     ----------
     table : pd.DataFrame
         Table with crawl results. Must have columns: ok_dwl, ok_loc, host,
-        dir, filename.
+        dir, filename, protocol.
     all_files_mode : bool, optional
         If True, handle semicolon-separated filenames. Default is False.
 
@@ -1044,11 +1340,13 @@ def generate_download_urls(table, all_files_mode=False):
 
         def make_urls(row):
             filenames = row[nam_col].split(";")
+            # Get protocol, default to ftp if not specified
+            protocol = row.get("protocol", "ftp").lower()
             # Normalize dir: RINEX dir has no leading '/' (built from pathlib.Path parts),
             # while products dir has a leading '/' (built from os.path.join with absolute
             # basedir).  Strip any leading '/' and always add exactly one.
             dir_clean = row["dir"].lstrip("/")
-            urls = [f"ftp://{row['host']}/{dir_clean}/{fname}" for fname in filenames]
+            urls = [f"{protocol}://{row['host']}/{dir_clean}/{fname}" for fname in filenames]
             return ";".join(urls)
 
         table.loc[fil_ok_dwl, "url_true"] = table.loc[fil_ok_dwl].apply(
@@ -1056,8 +1354,12 @@ def generate_download_urls(table, all_files_mode=False):
         )
     else:
         # Same normalization for the single-file case
+        def make_url(row):
+            protocol = row.get("protocol", "ftp").lower()
+            return f"{protocol}://{row['host']}/{row['dir'].lstrip('/')}/{row[nam_col]}"
+
         table.loc[fil_ok_dwl, "url_true"] = table.loc[fil_ok_dwl].apply(
-            lambda x: f"ftp://{x['host']}/{x['dir'].lstrip('/')}/{x[nam_col]}", axis=1
+            make_url, axis=1
         )
 
 
@@ -1096,11 +1398,13 @@ def list_http_files(url_base, date_start=None, date_end=None):
     This function works with any HTTP server that organizes files in the following
     directory structure: {url_base}/{year}/{doy}/ where doy is the day of year.
 
+    If url_base already ends with /year/doy/, it will list files directly from that directory.
+
     Parameters
     ----------
     url_base : str
         The base URL of the repository (e.g., 'http://example.com/rinex/').
-        Should end with a trailing slash.
+        Can end with a trailing slash or include year/doy structure.
     date_start : str or datetime.date, optional
         The starting date for filtering files. Can be in formats: 'YYYY-MM-DD',
         'YYYYMMDD', day-of-year 'YYYY-DDD', or as a datetime object.
@@ -1117,7 +1421,7 @@ def list_http_files(url_base, date_start=None, date_end=None):
 
     Notes
     -----
-    - The function fetches directory listings recursively from the server.
+    - The function fetches directory listings from the server.
     - Dates are converted to day-of-year (doy) for fetching from the server.
     - Logs the number of files found for each day.
     - Works with any HTTP server with year/day-of-year directory structure.
@@ -1140,17 +1444,35 @@ def list_http_files(url_base, date_start=None, date_end=None):
 
     rnx_path_lst = []
 
+    # Detect if url_base already contains year/doy structure
+    # Check if last two path components are numbers (year/doy pattern)
+    url_parts = url_base.rstrip("/").split("/")
+    has_year_doy = False
+    if len(url_parts) >= 2:
+        try:
+            last_two = url_parts[-2:]
+            if len(last_two[0]) == 4 and last_two[0].isdigit() and \
+               len(last_two[1]) == 3 and last_two[1].isdigit():
+                has_year_doy = True
+        except:
+            pass
+
     # Generate list of dates to fetch
     if date_start is not None and date_end is not None:
         for current_date in conv.dt_range(date_start, date_end):
             year = current_date.year
             doy = current_date.timetuple().tm_yday
 
-            url_day = os.path.join(url_base, f"{year}", f"{doy:03d}") + "/"
+            # If url_base already has year/doy, use it directly; otherwise build it
+            if has_year_doy:
+                url_day = url_base if url_base.endswith("/") else url_base + "/"
+            else:
+                url_day = url_base.rstrip("/") + "/" + f"{year}/{doy:03d}/"
+
             try:
                 cwd, listing = htmllistparse.fetch_listing(url_day, timeout=30)
                 for file in listing:
-                    rnx_path = os.path.join(url_day, file.name)
+                    rnx_path = url_day.rstrip("/") + "/" + file.name
                     rnx_path_lst.append(rnx_path)
                 log.info(f"{len(listing)} files found for day {year}-{doy:03d}")
             except Exception as e:
@@ -1163,19 +1485,19 @@ def list_http_files(url_base, date_start=None, date_end=None):
         try:
             cwd, listing = htmllistparse.fetch_listing(url_base, timeout=30)
             for item in listing:
-                url_year = os.path.join(url_base, item.name)
+                url_year = url_base.rstrip("/") + "/" + item.name
                 year = item.name.strip("/")
-                if not re.match(r"^\d{4}/$", item.name):
+                if not re.match(r"^\d{4}/?$", item.name):
                     continue
                 year = int(year)
 
                 cwd, listing = htmllistparse.fetch_listing(url_year, timeout=30)
                 for subitem in listing:
-                    url_day = os.path.join(url_year, subitem.name)
+                    url_day = url_year.rstrip("/") + "/" + subitem.name
                     day = subitem.name.strip("/")
                     cwd, listing = htmllistparse.fetch_listing(url_day, timeout=30)
                     for file in listing:
-                        rnx_path = os.path.join(url_day, file.name)
+                        rnx_path = url_day.rstrip("/") + "/" + file.name
                         rnx_path_lst.append(rnx_path)
                     log.info(f"{len(listing)} files found for day {year}-{day}")
         except Exception as e:
@@ -1320,13 +1642,22 @@ def crawl_files(
                 # Parse date from row if available
                 date_val = row.get("date", None)
 
+                # Extract base directory (remove regex pattern filename)
+                # url_theo has format: https://host/path/year/doy/REGEX_PATTERN
+                # We need: https://host/path/year/doy/
+                # Split at the last "/" to remove the regex pattern
+                if url_theo.endswith("/"):
+                    url_base = url_theo
+                else:
+                    url_base = url_theo.rsplit("/", 1)[0] + "/"
+
                 # Use list_http_files to fetch available files
-                http_files_list = list_http_files(url_theo, date_start=date_val, date_end=date_val)
+                http_files_list = list_http_files(url_base, date_start=date_val, date_end=date_val)
 
                 if http_files_list:
                     all_files_stk.append(pd.Series(http_files_list))
                     # Try to match with regex
-                    http_filenames = [os.path.basename(url) for url in http_files_list]
+                    http_filenames = [str(os.path.basename(url)) for url in http_files_list]
                     file_match = match_files_in_dir(row[rgx_col], http_filenames, all_files_mode)
 
                     if file_match:

@@ -210,10 +210,11 @@ def download_gnss_rinex(
     elif quiet_mode:
         log.warning("quiet mode, no download was performed")
     else:
-        # Use ftp_downld_front for both FTP and HTTP (based on protocol in url_true)
-        out_tup_lis = dlutils.ftp_downld_front(
+        # Use generic downld_front which handles both FTP and HTTP protocols
+        out_tup_lis = dlutils.downld_front(
             table_dwld["url_true"].to_list(),
             table_dwld["outdir"].to_list(),
+            protocols=table_dwld["protocol"].to_list(),
             parallel_download=parallel_download,
             secure_ftp=(table_dwld["protocol"].isin(["sftp", "https"])).to_list(),
             user=user,
