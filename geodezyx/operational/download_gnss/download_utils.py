@@ -30,7 +30,6 @@ import re
 import logging
 import os
 import pathlib
-import shutil
 import time
 
 ########## BEGIN IMPORT ##########
@@ -905,86 +904,6 @@ def ftp_downld_front(
     return out_tup_lis
 
 
-def http_downld_wrap(intup):
-    """
-    Wrapper function for HTTP download operations.
-
-    Parameters
-    ----------
-    intup : tuple
-        A tuple containing (url, output_dir, force, timeout).
-
-    Returns
-    -------
-    tuple
-        Result of the download_http function.
-    """
-    url, output_dir, force, timeout = intup
-    return download_http(url, output_dir, timeout=timeout, force=force)
-
-
-def http_downld_front(
-    urls,
-    savedirs,
-    parallel_download=1,
-    force=False,
-    timeout=120,
-):
-    """
-    Download files from HTTP/HTTPS servers in parallel.
-
-    Parameters
-    ----------
-    urls : list
-        List of URLs of the files to be downloaded.
-    savedirs : list
-        List of directories where the downloaded files should be saved.
-    parallel_download : int, optional
-        The number of parallel downloads to be performed. Default is 1.
-    force : bool, optional
-        If True, forces the download even if the file already exists. Default is False.
-    timeout : int, optional
-        The timeout for HTTP connections in seconds. Default is 120 seconds.
-
-    Returns
-    -------
-    out_tup_lis : list of tuple
-        List of tuples containing the local path of the downloaded file and
-        a boolean indicating whether the download was successful.
-    """
-    # Ensure inputs are lists
-    urllist = list(urls) if utils.is_iterable(urls) else [urls]
-    savedirlist = (
-        list(savedirs)
-        if utils.is_iterable(savedirs)
-        else [savedirs] * len(urllist)
-    )
-
-    if len(urllist) != len(savedirlist):
-        log.error(
-            "URL & out dirs lists do not have the same length: %s %s",
-            len(urllist),
-            len(savedirlist),
-        )
-        return []
-
-    # Create list of arguments for parallel downloads
-    force_lis = [force] * len(urllist)
-    timeout_lis = [timeout] * len(urllist)
-
-    # Create a ThreadPool for parallel downloads
-    pool = ThreadPool(parallel_download)
-
-    # Start the parallel downloads
-    out_tup_lis = pool.map(
-        http_downld_wrap, list(zip(urllist, savedirlist, force_lis, timeout_lis))
-    )
-    pool.close()
-    pool.join()
-
-    return out_tup_lis
-
-
 ######################################################################
 ######## GENERIC FTP CRAWL INFRASTRUCTURE
 ######################################################################
@@ -1444,41 +1363,27 @@ def list_http_files(url_base, date_start=None, date_end=None):
 
     rnx_path_lst = []
 
-    # Detect if url_base already contains year/doy structure
-    # Check if last two path components are numbers (year/doy pattern)
-    url_parts = url_base.rstrip("/").split("/")
-    has_year_doy = False
-    if len(url_parts) >= 2:
-        try:
-            last_two = url_parts[-2:]
-            if len(last_two[0]) == 4 and last_two[0].isdigit() and \
-               len(last_two[1]) == 3 and last_two[1].isdigit():
-                has_year_doy = True
-        except:
-            pass
+    # Detect if url_base already contains year/doy structure using regex
+    # Check if last two path components match year/doy pattern (YYYY/DDD)
+    url_clean = url_base.rstrip("/")
+    has_year_doy = bool(re.search(r'/\d{4}/\d{3}/?$', url_clean))
 
-    # Generate list of dates to fetch
-    if date_start is not None and date_end is not None:
+    # Build list of URLs to fetch and their date labels for logging
+    urls_to_fetch = []
+
+    # Case 1: URL already contains year/doy structure - use it directly
+    if has_year_doy:
+        url_day = url_base if url_base.endswith("/") else url_base + "/"
+        urls_to_fetch.append((url_day, None))
+    # Case 2: Date range provided - iterate over dates
+    elif date_start is not None and date_end is not None:
         for current_date in conv.dt_range(date_start, date_end):
             year = current_date.year
             doy = current_date.timetuple().tm_yday
-
-            # If url_base already has year/doy, use it directly; otherwise build it
-            if has_year_doy:
-                url_day = url_base if url_base.endswith("/") else url_base + "/"
-            else:
-                url_day = url_base.rstrip("/") + "/" + f"{year}/{doy:03d}/"
-
-            try:
-                cwd, listing = htmllistparse.fetch_listing(url_day, timeout=30)
-                for file in listing:
-                    rnx_path = url_day.rstrip("/") + "/" + file.name
-                    rnx_path_lst.append(rnx_path)
-                log.info(f"{len(listing)} files found for day {year}-{doy:03d}")
-            except Exception as e:
-                log.warning(f"Failed to fetch listing from {url_day}: {e}")
+            url_day = url_base.rstrip("/") + "/" + f"{year}/{doy:03d}/"
+            urls_to_fetch.append((url_day, f"{year}-{doy:03d}"))
+    # Case 3: Fallback - fetch year/day structure from server listing
     else:
-        # Fallback: fetch year/day structure from server listing
         log.warning(
             "No date range specified. Will attempt to list all available dates from server."
         )
@@ -1495,13 +1400,24 @@ def list_http_files(url_base, date_start=None, date_end=None):
                 for subitem in listing:
                     url_day = url_year.rstrip("/") + "/" + subitem.name
                     day = subitem.name.strip("/")
-                    cwd, listing = htmllistparse.fetch_listing(url_day, timeout=30)
-                    for file in listing:
-                        rnx_path = url_day.rstrip("/") + "/" + file.name
-                        rnx_path_lst.append(rnx_path)
-                    log.info(f"{len(listing)} files found for day {year}-{day}")
+                    urls_to_fetch.append((url_day, f"{year}-{day}"))
         except Exception as e:
             log.warning(f"Failed to fetch listing from {url_base}: {e}")
+
+    # Common processing: fetch and collect files for all URLs
+    for url_day, date_label in urls_to_fetch:
+        try:
+            cwd, listing = htmllistparse.fetch_listing(url_day, timeout=30)
+            for file in listing:
+                rnx_path = url_day.rstrip("/") + "/" + file.name
+                rnx_path_lst.append(rnx_path)
+            # Log with appropriate label
+            if date_label:
+                log.info(f"{len(listing)} files found for day {date_label}")
+            else:
+                log.info(f"{len(listing)} files found in {url_day}")
+        except Exception as e:
+            log.warning(f"Failed to fetch listing from {url_day}: {e}")
 
     return rnx_path_lst
 
@@ -1639,17 +1555,14 @@ def crawl_files(
         if is_http:
             url_theo = row.get("url_theo", "")
             try:
+                # Build URL from structured fields: protocol, host, dir
+                protocol = row.get("protocol", "http").lower()
+                host = row.get("host", "")
+                dir_path = row.get("dir", "").lstrip("/")
+                url_base = f"{protocol}://{host}/{dir_path}/" if dir_path else f"{protocol}://{host}/"
+
                 # Parse date from row if available
                 date_val = row.get("date", None)
-
-                # Extract base directory (remove regex pattern filename)
-                # url_theo has format: https://host/path/year/doy/REGEX_PATTERN
-                # We need: https://host/path/year/doy/
-                # Split at the last "/" to remove the regex pattern
-                if url_theo.endswith("/"):
-                    url_base = url_theo
-                else:
-                    url_base = url_theo.rsplit("/", 1)[0] + "/"
 
                 # Use list_http_files to fetch available files
                 http_files_list = list_http_files(url_base, date_start=date_val, date_end=date_val)
@@ -1858,122 +1771,3 @@ def crawl_ftp_files(
         exclude_patterns=exclude_patterns,
         timeout=timeout,
     )
-
-
-def orbclk_long2short_name(
-    longname_filepath_in,
-    rm_longname_file=False,
-    center_id_last_letter=None,
-    center_manual_short_name=None,
-    force=False,
-    dryrun=False,
-    output_dirname=None,
-):
-    """
-    Rename a long naming new convention IGS product file to the short old
-    convention.
-
-    Naming will be done automatically based on the 3 first characters of the
-    long AC id. e.g. CODE => cod, GRGS => grg, NOAA => noa ...
-
-    Parameters
-    ----------
-    longname_filepath_in : str
-        Full path of the long name product file.
-    rm_longname_file : bool
-        Remove the original long name product file.
-    center_id_last_letter : str
-        Replace the last letter of the short AC id by another letter
-        (see note below).
-    center_manual_short_name : str
-        Replace completely the long name with this one.
-        Overrides center_id_last_letter.
-    force : bool
-        If False, skip if the file already exists.
-    dryrun : bool
-        If True, don't rename effectively, just output the new name.
-    output_dirname : str
-        Directory where the output shortname will be created.
-        If None, will be created in the same folder as the input longname.
-
-    Returns
-    -------
-    shortname_filepath : str
-        Path of the short old-named product file.
-
-    Note
-    ----
-    If you rename MGEX orbits, we advise to set
-    center_id_last_letter="m".
-    The AC code name will be changed to keep a MGEX convention
-    (but any other character can be used too).
-
-    e.g. for Bern's products, the long id is CODE
-
-    if center_id_last_letter=None, it will become cod,
-    if center_id_last_letter=m, it will become com
-    """
-
-    log.info("will rename " + longname_filepath_in)
-
-    longname_basename = os.path.basename(longname_filepath_in)
-    longname_dirname = os.path.dirname(longname_filepath_in)
-
-    if not output_dirname:
-        output_dirname = longname_dirname
-
-    center = longname_basename[:3]
-
-    if center_manual_short_name:
-        center = center_manual_short_name
-    elif center_id_last_letter:
-        center_as_list = list(center)
-        center_as_list[-1] = center_id_last_letter
-        center = "".join(center_as_list)
-
-    yyyy = int(longname_basename.split("_")[1][:4])
-    doy = int(longname_basename.split("_")[1][4:7])
-
-    day_dt = conv.doy2dt(yyyy, doy)
-
-    wwww, dow = conv.dt2gpstime(day_dt)
-
-    shortname_prefix = center.lower() + str(wwww).zfill(4) + str(dow)
-
-    ### Type handling
-    shortname = shortname_prefix  # default
-    if "SP3" in longname_basename:
-        shortname = shortname_prefix + ".sp3"
-    elif "CLK" in longname_basename:
-        shortname = shortname_prefix + ".clk"
-    elif "ERP" in longname_basename:
-        shortname = shortname_prefix + ".erp"
-    elif "BIA" in longname_basename:
-        shortname = shortname_prefix + ".bia"
-    elif "SNX" in longname_basename:
-        shortname = shortname_prefix + ".snx"
-    else:
-        log.error("filetype not found for " + longname_basename)
-
-    ### Compression handling
-    if longname_basename[-3:] == ".gz":
-        shortname = shortname + ".gz"
-    elif longname_basename[-2:] == ".Z":
-        shortname = shortname + ".Z"
-
-    shortname_filepath = os.path.join(output_dirname, shortname)
-
-    if not force and os.path.isfile(shortname_filepath):
-        log.info("skip " + longname_filepath_in)
-        log.info(shortname_filepath + " already exists")
-        return shortname_filepath
-
-    if not dryrun:
-        log.info("renaming " + longname_filepath_in + " => " + shortname_filepath)
-        shutil.copy2(longname_filepath_in, shortname_filepath)
-
-    if rm_longname_file and not dryrun:
-        log.info("remove " + longname_filepath_in)
-        os.remove(longname_filepath_in)
-
-    return shortname_filepath
