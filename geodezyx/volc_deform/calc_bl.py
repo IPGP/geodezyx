@@ -60,7 +60,7 @@ def d_calc(coords_delta, mean_win=86400, strain_win=7 * 86400):
     df_bl["d_diff"] = d_diff
 
     # Compute linear regression
-    a, b = stats.linear_regression(df_bl["d_mean"].values, df_bl["epoch"].values)
+    # a, b = stats.linear_regression(df_bl["d_mean"].values, df_bl["epoch"].values)
 
     # strain: relative change of d_mean between first and last sample of the strain_win window
     lbd_strain = lambda x: (x[-1] - x[0]) / x[0]
