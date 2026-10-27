@@ -3,9 +3,9 @@
 """
 Created on 06/12/2025 21:28:55
 
-@author: psakic
+@author: psakic, rjoyard
 
-Create NetCDF files following CF-1.6 Convention
+Create NetCDF files following CF-1.13 Convention
 This script generates ocean bottom pressure and temperature time series data
 with support for different instrument types and configurations.
 
@@ -17,6 +17,7 @@ The script supports:
 
 import logging
 import os
+import json
 
 import numpy as np
 from netCDF4 import Dataset
@@ -31,7 +32,6 @@ from geodezyx import conv, utils
 # NETCDF EXPORT FUNCTION
 # =============================================================================
 
-
 def export_obp_to_netcdf(
     df_obp: pd.DataFrame,
     column_mapping: Dict[str, Optional[List[str]]],
@@ -43,7 +43,7 @@ def export_obp_to_netcdf(
     force: bool = False,
 ) -> str:
     """
-    Export ocean bottom pressure data to CF-1.6 compliant NetCDF file.
+    Export ocean bottom pressure data to a CF-1.13 NetCDF file.
 
     Parameters
     ----------
@@ -52,7 +52,7 @@ def export_obp_to_netcdf(
     column_mapping : dict
         Dictionary mapping standard variable names to dataframe column names:
         - "time": time column name
-        - "pressure_seafloor": pressure column name(s) (str or list of str)
+        - "pressure_sensor": pressure column name(s) (str or list of str)
         - "temperature_sensor": internal temperature column name(s) (str or list of str)
         - "temperature_seawater": seawater temperature column name(s) (str or list of str)
         - "pressure_barometer": barometer pressure column name(s) (str or list of str, optional)
@@ -66,11 +66,10 @@ def export_obp_to_netcdf(
         - longitude: float (MANDATORY)
         - depth: float (MANDATORY, meters)
         - institution: str (MANDATORY)
-        - source: str (MANDATORY)
+        - project: str (MANDATORY)
         - references: str (MANDATORY)
         - station_name: str (MANDATORY)
         - comment: str (MANDATORY)
-        - project: str (MANDATORY)
         - creator_name: str (MANDATORY)
         - creator_email: str (MANDATORY)
         - creator_url: str (MANDATORY)
@@ -85,7 +84,7 @@ def export_obp_to_netcdf(
     keep_sensor_dimension : bool
         Whether to keep sensor dimension even for single sensor
     quality_flags : np.ndarray, optional
-        Quality control flags array (0=good, 1=questionable, 2=bad)
+        Quality control flags array (0=not_evaluated, 1=good, 2=questionable, 3=bad)
     force : bool
         Whether to overwrite existing file if it already exists
 
@@ -98,7 +97,7 @@ def export_obp_to_netcdf(
     # Set default conversion factors
     if conversion_factors is None:
         conversion_factors = {
-            "pressure": 0.01,  # hPa to dbar
+            "pressure": 1.0,  # 0.01 for hPa to dbar
             "temperature_seawater": 1.0,
             "pressure_barometer": 0.01,
         }
@@ -123,7 +122,7 @@ def export_obp_to_netcdf(
     num_days = (end_date - start_date).days
 
     # Convert time to POSIX timestamps
-    val_time = conv.dt2posix(df_obp[colnam_time].dt.to_pydatetime()).values
+    val_time = conv.dt2posix(np.array(df_obp[colnam_time].dt.to_pydatetime()))
 
     #####  Extract data arrays
     def _stdvarnam2val(std_var_name, optional=False):
@@ -137,7 +136,7 @@ def export_obp_to_netcdf(
         ----------
         std_var_name : str
             Standard variable name key to lookup in column_mapping
-            (e.g., "pressure_seafloor", "temperature_sensor")
+            (e.g., "pressure_sensor", "temperature_sensor")
         optional : bool, optional
             If True, use dict.get() for safe lookup (returns None if key missing).
             If False, use direct dict access (raises KeyError if key missing).
@@ -150,7 +149,7 @@ def export_obp_to_netcdf(
             Returns None if no column names are found.
         val_out : np.ndarray or None
             Processed data values with conversion factor applied and transposed to
-            (sensor, time) dimension ordering for CF-1.6 compliance.
+            (sensor, time) dimension ordering.
             Returns None if input column name is None.
 
         Notes
@@ -180,14 +179,14 @@ def export_obp_to_netcdf(
             val_out = df_obp[colnam_out].values
             # Apply conversion factor (e.g., hPa to dbar)
             val_out = val_out * conv_fact
-            # Transpose to (sensor, time) ordering for CF-1.6 compliance
+            # Transpose to (sensor, time) ordering
             val_out = np.transpose(val_out)
 
         return colnam_out, val_out
 
-    colnam_pres, val_pres = _stdvarnam2val("pressure_seafloor")
-    colnam_temp_seaw, val_temp_sens = _stdvarnam2val("temperature_sensor")
-    colnam_temp_sens, val_temp_seaw = _stdvarnam2val("temperature_seawater")
+    colnam_pres, val_pres = _stdvarnam2val("pressure_sensor")
+    colnam_temp_sens, val_temp_sens = _stdvarnam2val("temperature_sensor")
+    colnam_temp_seaw, val_temp_seaw = _stdvarnam2val("temperature_seawater")
 
     # Barometer data (optional)
     colnam_pres_baro, val_pres_baro = _stdvarnam2val("pressure_barometer", True)
@@ -195,14 +194,27 @@ def export_obp_to_netcdf(
 
     num_sensors = len(colnam_pres) if utils.is_iterable(colnam_pres) else 1
 
-    # Quality flags (0 = good, 1 = questionable, 2 = bad)
+    # Quality flags (0 = not evaluated, 1 = good, 2 = questionable, 3 = bad)
+    # Raw data are not assumed to be 'good' before a QC procedure has been applied.
     if quality_flags is None:
         quality_flags = np.zeros(num_samples, dtype=np.int8)
+    else:
+        quality_flags = np.asarray(quality_flags, dtype=np.int8)
+        if quality_flags.shape != (num_samples,):
+            raise ValueError(
+                f"quality_flags must contain one value per time sample "
+                f"({num_samples} expected, got {quality_flags.size})."
+            )
+        if not np.isin(quality_flags, [0, 1, 2, 3]).all():
+            raise ValueError(
+                "quality_flags values must be one of: "
+                "0=not_evaluated, 1=good, 2=questionable, 3=bad."
+            )
 
     # Create NetCDF file
-    srt_str = conv.dt2str(start_date, "%Y%m%d%H%M%S")
-    end_str = conv.dt2str(end_date, "%Y%m%d%H%M%S")
-    output_file = f"{metadata_dict['station_id']}_{srt_str}_{end_str}_{sampling_interval_seconds}s.nc"
+    srt_str = conv.dt2str(start_date, "%Y%m%d%H%M")
+    end_str = conv.dt2str(end_date, "%Y%m%d%H%M")
+    output_file = f"{metadata_dict['station_id']}_{srt_str}_{end_str}_{sampling_interval_seconds:04d}S.nc"
     output_path = output_dir + "/" + output_file
 
     if os.path.isfile(output_path):
@@ -224,7 +236,7 @@ def export_obp_to_netcdf(
         dim_sens_tup = ("sensor", "time")
     else:
         dim_sens_tup = ("time",)
-
+    barometer_dim = nc.createDimension("barometer", 1)
     string_dim = nc.createDimension("string_length", 50)
 
     # Create coordinate variables
@@ -237,29 +249,18 @@ def export_obp_to_netcdf(
     var_time[:] = val_time
 
     # Create data variables - Pressure (bottom pressure in dbar)
-    var_pres = nc.createVariable(
-        "pressure_seafloor", "f4", dim_sens_tup, fill_value=-9999.0
-    )
+    var_pres = nc.createVariable("pressure_sensor", "f4", dim_sens_tup, fill_value=-9999.0)
     var_pres.units = "dbar"
     var_pres.long_name = "Bottom Pressure"
     var_pres.standard_name = "sea_water_pressure_at_sea_floor"
-    var_pres.positive = "down"
     var_pres.valid_min = np.float32(val_pres.min())
     var_pres.valid_max = np.float32(val_pres.max())
     var_pres.comment = "Sea water pressure at seafloor"
+    #var_pres.coordinates = "latitude longitude depth"
+    var_pres.ancillary_variables = "quality_flag"
     var_pres[...] = val_pres.astype(np.float32)
-
-    # Seawater Temperature
-    var_temp_seaw = nc.createVariable(
-        "temperature_seawater", "f4", ("time",), fill_value=-9999.0
-    )
-    var_temp_seaw.units = "degrees_Celsius"
-    var_temp_seaw.long_name = "Seawater Temperature"
-    var_temp_seaw.standard_name = "sea_water_temperature"
-    var_temp_seaw.valid_min = np.float32(val_temp_seaw.min())
-    var_temp_seaw.valid_max = np.float32(val_temp_seaw.max())
-    var_temp_seaw.comment = "Sea water temperature at seafloor"
-    var_temp_seaw[...] = val_temp_seaw.astype(np.float32)
+    add_statistics(var_pres, val_pres, axis=1)
+    var_pres.statistics_dimension = "sensor"
 
     # Sensor Internal Temperature
     if val_temp_sens is not None:
@@ -271,35 +272,39 @@ def export_obp_to_netcdf(
         var_temp_sens.valid_min = np.float32(val_temp_sens.min())
         var_temp_sens.valid_max = np.float32(val_temp_sens.max())
         var_temp_sens.comment = "Internal temperature of the pressure sensor"
+        #var_temp_sens.coordinates = "latitude longitude depth"
+        var_temp_sens.ancillary_variables = "quality_flag"
         var_temp_sens[...] = val_temp_sens.astype(np.float32)
+        add_statistics(var_temp_sens, val_temp_sens, axis=1)
+        var_temp_sens.statistics_dimension = "sensor"
 
     # Barometer pressure (optional)
     if val_pres_baro is not None:
         var_pres_baro = nc.createVariable(
             "pressure_barometer",
             "f4",
-            ("time",),
+            ("barometer", "time"),
             fill_value=-9999.0,
             zlib=True,
             complevel=4,
         )
-        var_pres_baro.units = "hPa"
+        var_pres_baro.units = "dbar"
         var_pres_baro.long_name = "Internal Barometer Pressure"
         var_pres_baro.standard_name = "air_pressure"
         var_pres_baro.valid_min = np.float32(val_pres_baro.min())
         var_pres_baro.valid_max = np.float32(val_pres_baro.max())
-        var_pres_baro.comment = (
-            "Internal atmospheric pressure for leak detection and quality control"
-        )
-        var_pres_baro.ancillary_variables = "temperature_barometer"
+        var_pres_baro.comment = ("Internal atmospheric pressure for leak detection and quality control")
+        var_pres_baro.ancillary_variables = "temperature_barometer quality_flag"
         var_pres_baro[:] = val_pres_baro.astype(np.float32)
+        add_statistics(var_pres_baro, val_pres_baro, axis=1)
+        var_pres_baro.statistics_dimension = "barometer"
 
     # Barometer temperature (optional)
     if val_temp_baro is not None:
         var_temp_baro = nc.createVariable(
             "temperature_barometer",
             "f4",
-            ("time",),
+            ("barometer", "time"),
             fill_value=-9999.0,
             zlib=True,
             complevel=4,
@@ -309,18 +314,59 @@ def export_obp_to_netcdf(
         var_temp_baro.valid_min = np.float32(val_temp_baro.min())
         var_temp_baro.valid_max = np.float32(val_temp_baro.max())
         var_temp_baro.comment = "Internal temperature of the barometer"
+        var_temp_baro.ancillary_variables = "quality_flag"
         var_temp_baro[:] = val_temp_baro.astype(np.float32)
+        add_statistics(var_temp_baro, val_temp_baro, axis=1)
+        var_temp_baro.statistics_dimension = "barometer"
 
-    # Quality flags
+    # Seawater Temperature
+    var_temp_seaw = nc.createVariable(
+        "temperature_seawater", "f4", ("time",), fill_value=-9999.0
+    )
+    var_temp_seaw.units = "degrees_Celsius"
+    var_temp_seaw.long_name = "Seawater Temperature"
+    var_temp_seaw.standard_name = "sea_water_temperature"
+    var_temp_seaw.valid_min = np.float32(val_temp_seaw.min())
+    var_temp_seaw.valid_max = np.float32(val_temp_seaw.max())
+    var_temp_seaw.comment = "Sea water temperature at seafloor"
+    #var_temp_seaw.coordinates = "latitude longitude depth"
+    var_temp_seaw.ancillary_variables = "quality_flag"
+    var_temp_seaw[...] = val_temp_seaw.astype(np.float32)
+    add_statistics(var_temp_seaw, val_temp_seaw)
+
+    # Quality flag
+    # CF defines how a flag variable must be described, but does not require
+    # raw data to be assigned a quality assessment before QC has been performed.
     var_qc = nc.createVariable("quality_flag", "i1", ("time",))
-    var_qc.long_name = "Quality Control Flag"
-    var_qc.flag_values = np.array([0, 1, 2], dtype=np.int8)
-    var_qc.flag_meanings = "good questionable bad"
-    var_qc.comment = "0=good, 1=questionable, 2=bad"
+    var_qc.long_name = "Data Quality Flag"
+    var_qc.standard_name = "quality_flag"
+    var_qc.flag_values = np.array([0, 1, 2, 3], dtype=np.int8)
+    var_qc.flag_meanings = "not_evaluated good questionable bad"
+    var_qc.valid_range = np.array([0, 3], dtype=np.int8)
+    var_qc.comment = (
+        "0=not_evaluated, 1=good, 2=questionable, 3=bad. "
+        "Raw observations are set to 0 until a quality-control procedure is applied."
+    )
     var_qc[:] = quality_flags
 
+    # Sensor IDs
+    if "sensor_ids" in metadata_dict:
+        sensor_ids = metadata_dict["sensor_ids"]
+        bpr_sensor_ids = np.array([sensor_ids["BPR1"], sensor_ids["BPR2"]], dtype=np.int32)
+        var_sensor = nc.createVariable("sensor", "i4", ("sensor",))
+        var_sensor.long_name = "BPR pressure sensor serial number"
+        var_sensor[:] = bpr_sensor_ids
+        barometer_id = metadata_dict["sensor_ids"]["Barometer"]
+        var_barometer = nc.createVariable(
+            "barometer",
+            "i4",
+            ("barometer",)
+        )
+        var_barometer.long_name = "Barometer sensor serial number"
+        var_barometer[:] = [barometer_id]
+
     # Add global attributes
-    nc.Conventions = "CF-1.6"
+    nc.Conventions = "CF-1.13"
     nc.title = metadata_dict.get(
         "title", f'Ocean Bottom Pressure Data - Station {metadata_dict["station_id"]}'
     )
@@ -335,12 +381,13 @@ def export_obp_to_netcdf(
     nc.time_coverage_resolution = f"PT{sampling_interval_seconds}S"
 
     # Add geospatial attributes
-    nc.geospatial_lat_min = metadata_dict.get("latitude", -9999.0)
+    # On garde ?
+    '''nc.geospatial_lat_min = metadata_dict.get("latitude", -9999.0)
     nc.geospatial_lat_max = metadata_dict.get("latitude", -9999.0)
     nc.geospatial_lon_min = metadata_dict.get("longitude", -9999.0)
     nc.geospatial_lon_max = metadata_dict.get("longitude", -9999.0)
     nc.geospatial_vertical_min = metadata_dict.get("depth", -9999.0)
-    nc.geospatial_vertical_max = metadata_dict.get("depth", -9999.0)
+    nc.geospatial_vertical_max = metadata_dict.get("depth", -9999.0)'''
     nc.geospatial_vertical_units = "m"
     nc.geospatial_vertical_positive = "down"
 
@@ -352,11 +399,10 @@ def export_obp_to_netcdf(
         "longitude",
         "depth",
         "institution",
-        "source",
+        "project",
         "references",
         "station_name",
         "comment",
-        "project",
         "creator_name",
         "creator_email",
         "creator_url",
@@ -368,36 +414,19 @@ def export_obp_to_netcdf(
     for attr in mandatory_attrs:
         if attr not in metadata_dict.keys():
             metadata_dict[attr] = "NOT_PROVIDED"
-            warnings.warn(
-                f"Missing mandatory attributes in metadata_dict: {attr}. ", UserWarning
-            )
+            warnings.warn(f"Missing mandatory attributes in metadata_dict: {attr}. ", UserWarning)
 
     for config_key, attr_val in metadata_dict.items():
-        nc.setncattr(config_key, attr_val)
-
-    # Add station location variables
-    var_lat = nc.createVariable("latitude", "f8")
-    var_lat.units = "degrees_north"
-    var_lat.long_name = "Station Latitude"
-    var_lat.standard_name = "latitude"
-    var_lat.valid_min = -90.0
-    var_lat.valid_max = 90.0
-    var_lat[:] = metadata_dict.get("latitude", -9999.0)
-
-    var_lon = nc.createVariable("longitude", "f8")
-    var_lon.units = "degrees_east"
-    var_lon.long_name = "Station Longitude"
-    var_lon.standard_name = "longitude"
-    var_lon.valid_min = -180.0
-    var_lon.valid_max = 180.0
-    var_lon[:] = metadata_dict.get("longitude", -9999.0)
-
-    var_depth = nc.createVariable("depth", "f8")
-    var_depth.units = "m"
-    var_depth.long_name = "Station Depth"
-    var_depth.standard_name = "depth"
-    var_depth.positive = "down"
-    var_depth[:] = metadata_dict.get("depth", -9999.0)
+        if config_key == "sensor_ids":
+            sensor_ids = attr_val
+            nc.setncattr(
+                "sensor_ids",
+                f"BPR1 : {sensor_ids['BPR1']}, "
+                f"BPR2 : {sensor_ids['BPR2']}, "
+                f"Barometer : {sensor_ids['Barometer']}"
+            )
+        else:
+            nc.setncattr(config_key, attr_val)
 
     # Close the file
     nc.close()
@@ -406,9 +435,7 @@ def export_obp_to_netcdf(
     print(f"Number of samples: {num_samples}")
     print(f"Time range: {start_date} to {end_date}")
     print(f"Sampling interval: {sampling_interval_seconds} seconds")
-    print(
-        f"Station location: {metadata_dict.get('latitude', 'N/A')}°N, {metadata_dict.get('longitude', 'N/A')}°E at {metadata_dict.get('depth', 'N/A')}m depth"
-    )
+    print(f"Station location: {metadata_dict.get('latitude', 'N/A')}°N, {metadata_dict.get('longitude', 'N/A')}°E at {metadata_dict.get('depth', 'N/A')}m depth")
 
     return output_path
 
@@ -416,7 +443,6 @@ def export_obp_to_netcdf(
 # =============================================================================
 # DATA READER FUNCTIONS
 # =============================================================================
-
 
 def read_halios_first_deploy(
     path_pressure: str,
@@ -487,7 +513,7 @@ def read_halios_first_deploy(
     # Create column mapping
     column_mapping_out = {
         "time": time_col,
-        "pressure_seafloor": pressure_col,
+        "pressure_sensor": pressure_col,
         "temperature_sensor": temp_sensor_col,
         "temperature_seawater": temp_seawater_col,
         "pressure_barometer": None,
@@ -495,3 +521,101 @@ def read_halios_first_deploy(
     }
 
     return df_out, column_mapping_out
+
+def get_metadata_info(metadata_path):
+    """
+    Read an RBR metadata file and extract instrument information.
+
+    Returns
+    -------
+    sensor_ids : list
+        Sensor serial numbers ordered as [BPR1, BPR2, Barometer].
+    instrument_serial : int
+        RBR instrument serial number.
+    instrument_model : str
+        RBR instrument model.
+    firmware_version : str
+        Instrument firmware version.
+    ruskin_version : str
+        Ruskin software version.
+    sampling_mode : str
+        Instrument sampling mode.
+    """
+
+    with open(metadata_path, "r", encoding="utf-8") as f:
+        metadata = json.load(f)
+
+    dataheader = metadata["dataheader"]
+
+    # Sensor IDs
+    sensor_ids = []
+
+    # BPR sensors first
+    for entry in dataheader:
+        if entry.get("name") == "BPR pressure" and "sensor" in entry:
+            sensor_id = int(entry["sensor"])
+            if sensor_id not in sensor_ids:
+                sensor_ids.append(sensor_id)
+
+    # Barometer sensor last
+    for entry in dataheader:
+        if entry.get("name") == "Barometer pressure" and "sensor" in entry:
+            sensor_id = int(entry["sensor"])
+            if sensor_id not in sensor_ids:
+                sensor_ids.append(sensor_id)
+            break
+
+    # Instrument metadata
+    instrument_serial = metadata.get("instrument", {}).get("serial")
+    instrument_model = metadata.get("instrument", {}).get("model")
+    firmware_version = metadata.get("instrument", {}).get("fwversion")
+
+    ruskin_version = metadata.get("version", {}).get("ruskin")
+
+    sampling_mode = metadata.get("sampling", {}).get("mode")
+
+    return (
+        sensor_ids,
+        instrument_serial,
+        instrument_model,
+        firmware_version,
+        ruskin_version,
+        sampling_mode,
+    )
+
+def read_emso_tid(file_path):
+    """
+    Read an EMSO/SBE .tid file without header.
+    Expected format:
+    index   date   time   pressure   temperature
+    """
+    df = pd.read_csv(file_path, sep=r"\s+", header=None,
+        names=[
+            "index",
+            "date",
+            "time",
+            "pressure",
+            "temperature"
+        ]
+    )
+    # Create datetime
+    df["datetime"] = pd.to_datetime(df["date"] + " " + df["time"], format="%m/%d/%Y %H:%M:%S")
+    # Remove columns not needed anymore
+    df = df.drop(columns=["index", "date", "time"])
+    # Put datetime first
+    df = df[["datetime", "pressure", "temperature"]]
+    return df
+
+# =============================================================================
+# STATISTICS
+# =============================================================================
+
+def add_statistics(var_nc, values, axis=None):
+    values = np.asarray(values, dtype=float)
+    var_nc.stat_min = np.asarray(np.nanmin(values, axis=axis), dtype=np.float32)
+    var_nc.stat_max = np.asarray(np.nanmax(values, axis=axis), dtype=np.float32)
+    var_nc.stat_mean = np.asarray(np.nanmean(values, axis=axis), dtype=np.float32)
+    var_nc.stat_median = np.asarray(np.nanmedian(values, axis=axis), dtype=np.float32)
+    var_nc.stat_std = np.asarray(np.nanstd(values, axis=axis), dtype=np.float32)
+    var_nc.stat_count = np.asarray(np.sum(np.isfinite(values), axis=axis), dtype=np.int64)
+    var_nc.stat_missing = np.asarray(np.sum(~np.isfinite(values), axis=axis), dtype=np.int64)
