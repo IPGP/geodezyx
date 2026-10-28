@@ -284,9 +284,7 @@ def nav_rob_server(date, site=None):
     )  ### NAV RNX HERE !!!
 
     ### generate urls
-    #urldir = os.path.join(urlserver, str(date.year))  ## NO DOY FOR THIS ONE !!!
-    # now we add the doy in the path (2026-10-28)
-    urldir = os.path.join(urlserver, str(date.year), conv.dt2doy(date))
+    urldir = os.path.join(urlserver, str(date.year))  ## NO DOY FOR THIS ONE !!!
     rnx2url = os.path.join(urldir, rnx2rgx)
     rnx3url = os.path.join(urldir, rnx3rgx)
 
