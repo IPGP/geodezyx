@@ -7,7 +7,6 @@ Created on 07/01/2026 11:42:12
 """
 
 import pandas as pd
-from plotly.graph_objs.funnel import marker
 
 from geodezyx import utils, volc_deform, utils_xtra
 import datetime as dt
