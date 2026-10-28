@@ -7,6 +7,7 @@ Created on 07/01/2026 11:42:12
 """
 
 import pandas as pd
+from plotly.graph_objs.funnel import marker
 
 from geodezyx import utils, volc_deform, utils_xtra
 import datetime as dt
@@ -126,10 +127,8 @@ rovbas_pairs = [
 
 df_input = df_nopivo
 
-mean_win=1
+mean_win=10
 thd_ = 3.
-
-print(df_all.iloc[0:200].to_string())
 
 df_direct = volc_deform.calc_baselines(
     df_all, rov12_pairs=rovbas_pairs, mode="direct", bases_excluded=pivots,
@@ -147,18 +146,28 @@ del df_all
 d_col = "d_diff"
 d_col = "d_mean0"
 
+d_col = ["d0", "d_mean0"]
+marker = [".", ""]
+linestyle = ["", "-"]
+alpha = [1, 0.5]
 
 fig_direct, ax_direct = volc_deform.baselines_plot(
-    df_direct, col=d_col, suptitle="Direct baselines",
-    marker=".", linestyle="",
+    df_direct, col=d_col,
+    suptitle="Direct baselines",
+    marker=marker,
+    linestyle=linestyle,
+    alpha=alpha,
     decim=1
 )
 
 fig_direct.tight_layout()
 
 fig_virtu, ax_virtu = volc_deform.baselines_plot(
-    df_virtu, col=d_col, suptitle="Virtual baselines",
-    marker=".", linestyle="",
+    df_virtu, col=d_col,
+    suptitle="Virtual baselines",
+    marker=marker,
+    linestyle=linestyle,
+    alpha=alpha,
     decim=1
 )
 fig_virtu.tight_layout()

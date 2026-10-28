@@ -59,9 +59,6 @@ def d_calc(coords_delta, mean_win=86400, strain_win=7 * 86400):
     df_bl["d_mean0"] = d_mean - d_med
     df_bl["d_diff"] = d_diff
 
-    # Compute linear regression
-    # a, b = stats.linear_regression(df_bl["d_mean"].values, df_bl["epoch"].values)
-
     # strain: relative change of d_mean between first and last sample of the strain_win window
     lbd_strain = lambda x: (x[-1] - x[0]) / x[0]
     d_mean_ser = pd.Series(d_mean)
@@ -76,9 +73,15 @@ def d_calc(coords_delta, mean_win=86400, strain_win=7 * 86400):
     return df_bl
 
 
-def _process_bl_pair(df_bl, thd):
-    """Apply common baseline filtering."""
+def d_trend(df_bl, col="d"):
+    """Compute the trend of the baseline distance."""
+    return stats.linear_regression(
+        np.linspace(0, len(df_bl), num=len(df_bl)), df_bl[col].to_list()
+    )
 
+
+def _clean_bl_pair(df_bl, thd):
+    """Apply common baseline filtering."""
 
     df_bl_cor = df_bl["d"] - df_bl["d_mean"]
     df_bl_cor = pd.DataFrame(df_bl_cor)
@@ -132,12 +135,14 @@ def _virtual_baseline(
 
                 coords_delta = df_rov1_cmn[col] - df_rov2_cmn[col]
                 df_bl = d_calc(coords_delta, mean_win=mean_win, strain_win=strain_win)
+                a, b = d_trend(df_bl, col="d_mean0")
+
                 df_bl["epoch"] = df_rov1_cmn.index
                 df_bl["site1"] = rov1
                 df_bl["site2"] = rov2
                 df_bl["pivot"] = piv
 
-                df_bl = _process_bl_pair(df_bl, threshold_mad)
+                df_bl = _clean_bl_pair(df_bl, threshold_mad)
                 df_bl_stk.append(df_bl)
                 rov12_sets_done.append(rov12_set)
 
@@ -181,7 +186,7 @@ def _direct_baseline(
         df_bl["site2"] = bas
         df_bl["pivot"] = None
 
-        df_bl = _process_bl_pair(df_bl, threshold_mad)
+        df_bl = _clean_bl_pair(df_bl, threshold_mad)
         df_bl_stk.append(df_bl)
 
     return df_bl_stk
@@ -414,10 +419,11 @@ def calc_baselines_direct(
 
 def baselines_plot(
     df_bl_inp,
-    col="d_mean0",
+    col=None,
     figax_tup=None,
-    marker="",
-    linestyle="-",
+    marker=None,
+    linestyle=None,
+    alpha=None,
     suptitle="Direct baselines",
     ylabel="Distance difference (cm)",
     plt_shift=0.02,
@@ -432,18 +438,25 @@ def baselines_plot(
     df_bl_inp : pandas.DataFrame
         DataFrame of baselines as returned by :func:`calc_baselines_direct` or
         :func:`calc_baselines_virtual`. Must contain the columns ``site1``,
-        ``site2``, ``epoch`` and the column specified by *d_col*.
-    col : str, optional
-        Name of the column to plot on the y-axis. Default is ``"d_mean0"``
-        (centred running mean distance).
+        ``site2``, ``epoch`` and the column(s) specified by *col*.
+    col : str or list of str, optional
+        Name(s) of the column(s) to plot on the y-axis. Default is
+        ``["d", "d_mean0"]`` (raw distance and centred running mean distance).
     figax_tup : tuple of (matplotlib.figure.Figure, matplotlib.axes.Axes) or None, optional
         Existing ``(fig, ax)`` tuple to draw on. If ``None`` a new figure and
         axes are created. Default is ``None``.
-    marker : str, optional
-        Matplotlib marker style passed to ``ax.plot``. Default is ``""``
-        (no marker).
-    linestyle : str, optional
-        Matplotlib line style passed to ``ax.plot``. Default is ``"-"``.
+    marker : str or list of str, optional
+        Matplotlib marker style(s) passed to ``ax.plot``. Can be a single string
+        applied to all columns, or a list of strings for each column.
+        Default is ``[".", ""]`` (marker for first column, no marker for others).
+    linestyle : str or list of str, optional
+        Matplotlib line style(s) passed to ``ax.plot``. Can be a single string
+        applied to all columns, or a list of strings for each column.
+        Default is ``["", "-"]`` (no line for first column, solid line for others).
+    alpha : float or list of float, optional
+        Alpha transparency value(s) passed to ``ax.plot``. Can be a single float
+        applied to all columns, or a list of floats for each column.
+        Default is ``[0.6, 1]``.
     suptitle : str, optional
         Title string for the figure. Default is ``"Direct baselines"``.
     ylabel : str, optional
@@ -466,19 +479,57 @@ def baselines_plot(
         The axes object containing the plot.
     """
 
+    # Set defaults for col, marker, linestyle, alpha
+    if col is None:
+        col = ["d0", "d_mean0"]
+    if marker is None:
+        marker = [".", ""]
+    if linestyle is None:
+        linestyle = ["", "-"]
+    if alpha is None:
+        alpha = [0.6, 1]
+
+    # Convert single values to lists for uniform handling
+    col = utils.listify(col)
+    marker = (
+        utils.listify(marker)
+        if isinstance(marker, str) or isinstance(marker, list)
+        else marker
+    )
+    linestyle = (
+        utils.listify(linestyle)
+        if isinstance(linestyle, str) or isinstance(linestyle, list)
+        else linestyle
+    )
+    alpha = (
+        utils.listify(alpha)
+        if isinstance(alpha, (int, float, str)) or isinstance(alpha, list)
+        else alpha
+    )
+
+    # Ensure all lists have the same length as col
+    marker = marker * len(col) if len(marker) < len(col) else marker[: len(col)]
+    linestyle = (
+        linestyle * len(col) if len(linestyle) < len(col) else linestyle[: len(col)]
+    )
+    alpha = alpha * len(col) if len(alpha) < len(col) else alpha[: len(col)]
+
     fig, ax = figax_tup if figax_tup else plt.subplots()
 
     ii = 0
     for (sit1, sit2), df_plot in df_bl_inp.groupby(["site1", "site2"]):
-
-        ax.plot(
-            df_plot["epoch"].values[::decim],
-            (df_plot[col].values[::decim] + ii * plt_shift) * plt_factor,
-            label=f"{sit1}-{sit2}",
-            color="C" + str(ii),
-            marker=marker,
-            linestyle=linestyle,
-        )
+        for icol, (col_name, mk, ls, alph) in enumerate(
+            zip(col, marker, linestyle, alpha)
+        ):
+            ax.plot(
+                df_plot["epoch"].values[::decim],
+                (df_plot[col_name].values[::decim] + ii * plt_shift) * plt_factor,
+                label=f"{sit1}-{sit2}" if icol == 0 else f"{sit1}-{sit2} ({col_name})",
+                color="C" + str(ii),
+                marker=mk,
+                linestyle=ls,
+                alpha=alph,
+            )
         ii += 1
 
     last_epoc = df_bl_inp["epoch"].max()
