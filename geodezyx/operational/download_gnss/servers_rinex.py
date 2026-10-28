@@ -272,7 +272,9 @@ def igs_bkg_server(date, site=None):
 
 
 def nav_rob_server(date, site=None):
-    urlserver = "ftp://epncb.oma.be/pub/obs/BRDC/"
+    #urlserver = "ftp://epncb.oma.be/pub/obs/BRDC/"
+    # now the server is HTTPS (2026-10-28
+    urlserver = "https://epncb.oma.be/pub/RINEX/BRDC/"
 
     # can not use _generic_server here because of the specific server path structure / file name
 
@@ -592,6 +594,7 @@ def _server_select_rnx(datacenter, date, site=None):
         protocol = "https"
     elif datacenter in ("nav", "brdc"):
         urldic = nav_rob_server(date, site)
+        protocol = "https"
     elif datacenter in ("nav_rt", "brdc_rt"):
         urldic = nav_bkg_server(date, site)
         protocol = "https"
