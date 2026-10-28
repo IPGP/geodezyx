@@ -323,7 +323,7 @@ def gen_table_rnx(
     table.sort_values(by=["site", "date"], inplace=True)
     table.reset_index(drop=True, inplace=True)
 
-    # log.info(table.to_string())
+    log.info(table.to_string())
 
     return table
 
