@@ -1367,12 +1367,13 @@ def list_http_files(url_base, date_start=None, date_end=None):
     # Check if last two path components match year/doy pattern (YYYY/DDD)
     url_clean = url_base.rstrip("/")
     has_year_doy = bool(re.search(r'/\d{4}/\d{3}/?$', url_clean))
+    has_year_only = bool(re.search(r'/\d{4}/?$', url_clean))
 
     # Build list of URLs to fetch and their date labels for logging
     urls_to_fetch = []
 
-    # Case 1: URL already contains year/doy structure - use it directly
-    if has_year_doy:
+    # Case 1: URL already contains year/doy or year-only structure - use it directly
+    if has_year_doy or has_year_only:
         url_day = url_base if url_base.endswith("/") else url_base + "/"
         urls_to_fetch.append((url_day, None))
     # Case 2: Date range provided - iterate over dates
