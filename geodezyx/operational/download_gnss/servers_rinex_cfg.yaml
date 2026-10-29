@@ -1,4 +1,4 @@
-servers:
+rinex_servers:
   igs_cddis:
     name: IGS CDDIS
     description: NASA's Crustal Dynamics Data Information System

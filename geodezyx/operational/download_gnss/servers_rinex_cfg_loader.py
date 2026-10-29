@@ -59,7 +59,7 @@ class ServerConfig:
     def _get_default_config_path() -> Path:
         """Get the default configuration file path."""
         current_dir = Path(__file__).parent
-        config_path = current_dir / "servers_config.yaml"
+        config_path = current_dir / "servers_rinex_cfg.yaml"
         return config_path
 
     def _load_config(self) -> None:
@@ -83,15 +83,15 @@ class ServerConfig:
                 f"Error reading configuration file: {e}"
             ) from e
 
-        if not self._config or 'servers' not in self._config:
+        if not self._config or 'rinex_servers' not in self._config:
             raise ServerConfigError(
-                "Invalid configuration: 'servers' section not found"
+                "Invalid configuration: 'rinex_servers' section not found"
             )
 
         log.info(
             "Loaded server configuration from %s with %d servers",
             config_path,
-            len(self._config.get('servers', {}))
+            len(self._config.get('rinex_servers', {}))
         )
 
     def get_server(self, datacenter: str) -> Dict[str, Any]:

@@ -1,0 +1,115 @@
+# GNSS Products Archive Centers Configuration
+# Central configuration for GNSS product servers (orbits, clocks, ERPs, etc.)
+# Replaces hardcoded servers_prods.py functions
+# Version 1.0 - 2024
+
+products:
+  # IGS Data Center - Operational Products
+  # Primary source for IGS operational products (sp3, clk, erp, etc.)
+  igs:
+    name: IGS
+    description: IGS Analysis Center (IGN France)
+    host: igs.ign.fr
+    protocol: ftp
+    basedir: /pub/igs/products/
+    mgex_suffix: mgex/
+    uses_generic: true
+
+  # CDDIS Data Center - SFTP (Secure)
+  # NASA CDDIS (Crustal Dynamics Data Information System)
+  # NOTE: Uses SFTP (secure FTP) instead of regular FTP
+  cddis:
+    name: CDDIS
+    description: NASA Crustal Dynamics Data Information System
+    host: gdc.cddis.eosdis.nasa.gov
+    protocol: sftp
+    basedir: /pub/gps/products/
+    mgex_suffix: mgex/
+    uses_generic: true
+    secure: true
+
+  # CDDIS GLONASS Products
+  # GLONASS-specific products via CDDIS
+  cddis_glonass:
+    name: CDDIS GLONASS
+    description: GLONASS products via NASA CDDIS
+    host: cddis.gsfc.nasa.gov
+    protocol: ftp
+    basedir: /pub/glonass/products/
+    mgex_suffix: mgex/
+    uses_generic: true
+
+  # ESA Analysis Center
+  # European Space Agency GNSS products
+  esa:
+    name: ESA
+    description: European Space Agency Analysis Center
+    host: gssc.esa.int
+    protocol: ftp
+    basedir: /gnss/products/
+    mgex_suffix: mgex/
+    uses_generic: true
+
+  # ENSG - École Nationale des Sciences Géographiques
+  # French alternative to IGN, mirrored from IGS
+  ensg:
+    name: ENSG
+    description: École Nationale des Sciences Géographiques
+    host: igs.ensg.ign.fr
+    protocol: ftp
+    basedir: /pub/igs/products/
+    mgex_suffix: mgex/
+    uses_generic: true
+
+  # WHU - Wuhan University
+  # Chinese analysis center for GNSS products
+  whu:
+    name: WHU
+    description: Wuhan University Analysis Center
+    host: igs.gnsswhu.cn
+    protocol: ftp
+    basedir: /pub/gps/products/
+    mgex_suffix: mgex/
+    uses_generic: true
+
+  # IGN Reference Frame Products
+  # IGN-specific reference frame and ionosphere products
+  ign_rf:
+    name: IGN Reference Frame
+    description: IGN Reference Frame Products
+    host: igs-rf.ign.fr
+    protocol: ftp
+    basedir: /pub/
+    mgex_suffix: mgex/
+    uses_generic: true
+
+  # IGN Ionosphere Products
+  # IGN ionosphere/GNSS products
+  ign_iono:
+    name: IGN Ionosphere
+    description: IGN Ionosphere Products
+    host: igs-rf.ign.fr
+    protocol: ftp
+    basedir: /pub/
+    uses_generic: true
+
+  # ENSG Reference Frame Products
+  # ENSG-specific reference frame products
+  ensg_rf:
+    name: ENSG Reference Frame
+    description: ENSG Reference Frame Products
+    host: igs-rf.ensg.ign.fr
+    protocol: ftp
+    basedir: /pub/
+    mgex_suffix: mgex/
+    uses_generic: true
+
+
+# Aliases for backward compatibility
+# Maps legacy names to current archive center identifiers
+aliases:
+  igsign: igs
+  ign_products: igs
+  nasa: cddis
+  gssc: esa
+  wuhan: whu

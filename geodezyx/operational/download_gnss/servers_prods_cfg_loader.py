@@ -7,7 +7,7 @@ Provides a flexible API for loading and querying GNSS product archive
 center configurations from YAML, replacing the hardcoded
 servers_prods.py functions.
 
-This module is analogous to servers_config_loader.py but specifically
+This module is analogous to servers_rinex_cfg_loader.py but specifically
 for GNSS product archive centers (sp3, clk, erp, etc.).
 """
 
@@ -53,7 +53,7 @@ class ProductsConfig:
         Parameters
         ----------
         config_path : str, optional
-            Path to products_config.yaml file.
+            Path to servers_prods_cfg.yaml file.
             If None, searches relative to this module.
         """
         if yaml is None:
@@ -64,7 +64,7 @@ class ProductsConfig:
         if config_path is None:
             # Default to file in same directory as this module
             module_dir = Path(__file__).parent
-            config_path = module_dir / "products_config.yaml"
+            config_path = module_dir / "servers_prods_cfg.yaml"
         else:
             config_path = Path(config_path)
 
@@ -317,7 +317,7 @@ def get_config(config_path=None):
     Parameters
     ----------
     config_path : str, optional
-        Path to products_config.yaml. Only used on first call.
+        Path to servers_prods_cfg.yaml. Only used on first call.
 
     Returns
     -------

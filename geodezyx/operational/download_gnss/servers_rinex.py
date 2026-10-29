@@ -9,7 +9,7 @@ import os
 from typing import Dict, Any, Optional, Tuple, Union
 
 from geodezyx import conv
-from .servers_config_loader import get_config, ServerConfigError
+from .servers_rinex_cfg_loader import get_config, ServerConfigError
 
 log = logging.getLogger("geodezyx")
 
