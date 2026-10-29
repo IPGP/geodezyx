@@ -113,3 +113,202 @@ aliases:
   nasa: cddis
   gssc: esa
   wuhan: whu
+
+
+# Reprocessing Information
+# Configuration for reprocessing campaigns
+reprocessing:
+  operational:
+    id: 0
+    name: "Operational"
+    description: "Operational/latest products"
+    subdir: ""
+    
+  repro1:
+    id: 1
+    name: "Reprocessing 1"
+    description: "First reprocessing campaign"
+    subdir: "repro1/"
+    
+  repro2:
+    id: 2
+    name: "Reprocessing 2"
+    description: "Second reprocessing campaign"
+    subdir: "repro2/"
+    
+  repro3:
+    id: 3
+    name: "Reprocessing 3"
+    description: "Third reprocessing campaign"
+    subdir: "repro3/"
+
+
+# Product Type Information
+# Metadata about available GNSS product types
+product_types:
+  # Orbit/Ephemeris Products
+  sp3:
+    name: SP3
+    description: GNSS Orbit - SP3 format (Extended Ephemeris Format)
+    category: orbit
+    extension: ".sp3"
+    compressed_extension: ".sp3.Z"
+    
+  # Clock Products
+  clk:
+    name: CLK
+    description: GNSS Receiver & Satellite Clocks
+    category: clock
+    extension: ".clk"
+    compressed_extension: ".clk.Z"
+    
+  # Earth Rotation Parameters
+  erp:
+    name: ERP
+    description: Earth Rotation Parameters
+    category: earth_rotation
+    extension: ".erp"
+    compressed_extension: ".erp.Z"
+    
+  # Sinex Normal Equations
+  snx:
+    name: SNX
+    description: SINEX Normal Equations
+    category: analysis
+    extension: ".snx"
+    compressed_extension: ".snx.Z"
+    
+  # Discontinuity Information
+  dis:
+    name: DIS
+    description: Discontinuity Information
+    category: metadata
+    extension: ".dis"
+    compressed_extension: ".dis.Z"
+    
+  # Troposphere
+  trop:
+    name: TROP
+    description: Tropospheric Zenith Delay Estimates
+    category: troposphere
+    extension: ".tro"
+    compressed_extension: ".tro.Z"
+    
+  # Biases
+  bia:
+    name: BIA
+    description: Code & Phase Biases
+    category: bias
+    extension: ".bia"
+    compressed_extension: ".bia.Z"
+
+
+# Analysis Centers Information
+# Metadata about providers of GNSS analysis products
+analysis_centers:
+  # CODE - Center for Orbit Determination in Europe
+  cod:
+    name: CODE
+    description: Center for Orbit Determination in Europe
+    institution: University of Bern
+    abbreviation: cod
+    
+  # GRG - Groupe de Recherche en Géodésie
+  grg:
+    name: GRG
+    description: Groupe de Recherche en Géodésie (CNES)
+    institution: French National Center for Space Studies (CNES)
+    abbreviation: grg
+    
+  # IGS - Rapid combined
+  igs:
+    name: IGS Rapid
+    description: IGS Rapid combination
+    abbreviation: igs
+    
+  # WHU - Wuhan University
+  wum:
+    name: WHU
+    description: Wuhan University
+    abbreviation: wum
+    
+  # ESA - European Space Agency
+  esa:
+    name: ESA
+    description: European Space Agency
+    abbreviation: esa
+    
+  # IGS Ultra-rapid
+  igu:
+    name: IGS Ultra-Rapid
+    description: IGS Ultra-rapid products
+    abbreviation: igu
+    
+  # GFZ - German Research Centre for Geosciences
+  gfz:
+    name: GFZ
+    description: German Research Centre for Geosciences
+    abbreviation: gfz
+
+
+# GNSS Constellations & MGEX Support
+# Information about constellations and MGEX multi-constellation support
+constellations:
+  gps:
+    name: "GPS"
+    abbr: "G"
+    mgex_support: true
+    
+  glonass:
+    name: "GLONASS"
+    abbr: "R"
+    mgex_support: true
+    
+  galileo:
+    name: "Galileo"
+    abbr: "E"
+    mgex_support: true
+    
+  beidou:
+    name: "BeiDou"
+    abbr: "C"
+    mgex_support: true
+    
+  qzss:
+    name: "QZSS"
+    abbr: "J"
+    mgex_support: true
+    
+  irnss:
+    name: "NavIC/IRNSS"
+    abbr: "I"
+    mgex_support: true
+
+
+# Naming Convention Patterns
+# Old and new naming conventions for product files
+naming_conventions:
+  # Old convention: e.g., wum22380.sp3.Z, cod22381.clk.Z
+  old:
+    name: "Old Convention"
+    pattern: "{ac_lower}{gpsweek}{dow}{ac_abbr}{product_lower}.{ext}"
+    example: "wum22380.sp3.Z"
+    deprecated: false
+    
+  # New convention: e.g., WUM0MGXFIN_20220150000_01D_15M_ORB.SP3.gz
+  new:
+    name: "New Long Convention"
+    pattern: "{AC}{MGEX}{PROD_ID}_{YYYYMMDD}{HHMM}_{LENGTH}_{INTERVAL}_{PROD}.{EXT}.{COMPRESSION}"
+    example: "WUM0MGXFIN_20220150000_01D_15M_ORB.SP3.gz"
+    deprecated: false
+    recommended: true
+
+
+# Configuration Metadata
+metadata:
+  version: "1.0"
+  created: "2024"
+  description: "Central configuration for GNSS product archive centers"
+  purpose: "Replace hardcoded servers_prods.py functions with declarative YAML"
+  compatibility: "100% backward compatible with original servers_prods.py interface"
+  status: "production"
