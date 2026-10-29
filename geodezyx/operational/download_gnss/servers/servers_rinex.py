@@ -234,7 +234,7 @@ _TRULY_EXCEPTIONAL = {
 }
 
 
-def _server_select_rnx(datacenter, date, site=None):
+def server_select_rinex(datacenter, date, site=None):
     """
     Central dispatcher using ultra-flexible generic builder.
     

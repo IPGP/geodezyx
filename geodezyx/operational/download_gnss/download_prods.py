@@ -25,6 +25,8 @@ import pandas as pd
 #### geodeZYX modules
 from geodezyx import conv, utils
 from . import download_utils as dlutils
+from geodezyx.operational.download_gnss.servers.servers_prods import server_select_prods
+
 
 log = logging.getLogger("geodezyx")
 
@@ -42,9 +44,6 @@ log = logging.getLogger("geodezyx")
 ############################################################################
 ######## PRODUCTS DOWNLOADER
 ############################################################################
-
-
-from geodezyx.operational.download_gnss.servers.servers_prods import _server_select_prods
 
 
 def _regex_prods(dt_cur, ac_cur, prod_cur, new_name_conv=True, dow_manu=False):
@@ -159,7 +158,7 @@ def gen_table_prods(
         date, ac, prod, outdir, host, dir, regex, protocol, crawled,
         ok_dwl, ok_loc, url_true, filename.
     """
-    host, basedir, protocol, secure_ftp = _server_select_prods(
+    host, basedir, protocol, secure_ftp = server_select_prods(
         archive_center, mgex, repro
     )
 

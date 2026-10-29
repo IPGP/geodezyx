@@ -22,7 +22,7 @@ from .servers_prods_cfg_loader import get_cfg_prods, ServerCfgProductsError
 log = logging.getLogger("geodezyx")
 
 
-def _server_select_prods(archive_center, mgex=False, repro=0):
+def server_select_prods(archive_center, mgex=False, repro=0):
     """
     Resolve archive center name to FTP host, base directory, and protocol.
 
@@ -57,8 +57,8 @@ def _server_select_prods(archive_center, mgex=False, repro=0):
 
     Examples
     --------
-    >>> host, basedir, protocol, secure = _server_select_prods("igs")
-    >>> host, basedir, protocol, secure = _server_select_prods("cddis", mgex=True, repro=2)
+    >>> host, basedir, protocol, secure = server_select_prods("igs")
+    >>> host, basedir, protocol, secure = server_select_prods("cddis", mgex=True, repro=2)
 
     Notes
     -----

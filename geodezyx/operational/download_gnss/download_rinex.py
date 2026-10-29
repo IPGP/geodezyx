@@ -15,10 +15,10 @@ import pandas as pd
 
 from . import download_utils as dlutils
 from geodezyx import conv
+from geodezyx.operational.download_gnss.servers.servers_rinex import server_select_rinex
 
 log = logging.getLogger("geodezyx")
 
-from geodezyx.operational.download_gnss.servers.servers_rinex import _server_select_rnx
 
 def download_gnss_rinex(
     statdico,
@@ -287,7 +287,7 @@ def gen_table_rnx(
             if site == "":
                 all_sites = True
 
-            urldic, protocol, _ = _server_select_rnx(datacenter, date, site)
+            urldic, protocol, _ = server_select_rinex(datacenter, date, site)
 
             if not urldic:
                 continue
