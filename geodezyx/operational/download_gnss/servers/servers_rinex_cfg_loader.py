@@ -118,13 +118,13 @@ class ServerCfgRinex:
         # Resolve aliases
         actual_server = self._resolve_alias(datacenter)
 
-        if actual_server not in self._config['servers']:
+        if actual_server not in self._config['rinex_servers']:
             raise ServerCfgRinexError(
                 f"Unknown server: '{datacenter}'. "
-                f"Available servers: {list(self._config['servers'].keys())}"
+                f"Available servers: {list(self._config['rinex_servers'].keys())}"
             )
 
-        return self._config['servers'][actual_server]
+        return self._config['rinex_servers'][actual_server]
 
     def _resolve_alias(self, name: str) -> str:
         """
@@ -152,7 +152,7 @@ class ServerCfgRinex:
         list
             List of server names
         """
-        return list(self._config['servers'].keys())
+        return list(self._config['rinex_servers'].keys())
 
     def list_aliases(self) -> Dict[str, str]:
         """
@@ -175,7 +175,7 @@ class ServerCfgRinex:
             List of server names offering observation files
         """
         return [
-            name for name, config in self._config['servers'].items()
+            name for name, config in self._config['rinex_servers'].items()
             if config.get('file_type') == 'observation'
         ]
 
@@ -189,7 +189,7 @@ class ServerCfgRinex:
             List of server names offering navigation files
         """
         return [
-            name for name, config in self._config['servers'].items()
+            name for name, config in self._config['rinex_servers'].items()
             if config.get('file_type') == 'navigation'
         ]
 
