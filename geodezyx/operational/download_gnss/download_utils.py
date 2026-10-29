@@ -1095,46 +1095,13 @@ def renew_ftp_obj(
     return ftpobj, host_out
 
 
-def list_ftp_dir_core(ftpobj):
-    """
-    Lists the files in the current directory of the FTP object.
-
-    Parameters
-    ----------
-    ftpobj : FTP object
-        The FTP object used to connect to the FTP server.
-
-    Returns
-    -------
-    list
-        A list of filenames in the current directory of the FTP object.
-
-    Notes
-    -----
-    This function tries to get the list of filenames in the current directory of the FTP object.
-    If it encounters a permission error, it checks if the error message is "550 No files found".
-    If it is, it logs a warning message and returns an empty list.
-    If the error message is different, it raises the exception.
-    """
-    files = []
-    try:
-        files = ftpobj.nlst()
-    except ftplib.error_perm as resp:
-        if str(resp) == "550 No files found":
-            log.warning("No files in this directory" + ftpobj.pwd())
-        else:
-            raise
-    return files
-
-
 def list_ftp_dir(
     ftpobj, dir_inp, host, prev_dir
-) -> tuple[list[str] | None, list[str] | None]:
+) -> tuple[list[str], list[str]]:
     """
     Get FTP directory file listing.
 
     Changes to the specified directory and retrieves the list of files.
-    Returns empty list if directory change fails.
 
     Parameters
     ----------
@@ -1145,33 +1112,42 @@ def list_ftp_dir(
     host : str
         FTP server hostname (for logging/URL generation).
     prev_dir : str
-        Previous directory path.
+        Previous directory path (used to optimize cwd calls).
 
     Returns
     -------
     ftp_files_list : list of str
-        Filenames in the remote directory. None if directory is unchanged.
+        Filenames in the remote directory.
     ftp_files_urls : list of str
-        Complete FTP URLs for all files in the directory. None if directory
-        is unchanged. Empty list if the directory change failed.
+        Complete FTP URLs for all files in the directory.
+        Empty list if the directory change failed.
     """
+    # Change to root before navigating to target directory (only if needed)
     if prev_dir != dir_inp:
         log.info("chdir " + dir_inp)
         ftpobj.cwd("/")
 
+    try:
+        ftpobj.cwd(dir_inp)
+        
+        # Get file list with error handling
+        files = []
         try:
-            ftpobj.cwd(dir_inp)
-            ftp_files_list = list_ftp_dir_core(ftpobj)
-            ftp_files_urls = [
-                f"ftp://{host}/{dir_inp.lstrip('/')}/{f}" for f in ftp_files_list
-            ]
-            return ftp_files_list, ftp_files_urls
+            files = ftpobj.nlst()
+        except ftplib.error_perm as resp:
+            if str(resp) != "550 No files found":
+                raise
+            log.warning("No files in directory %s", ftpobj.pwd())
+        
+        ftp_files_urls = [
+            f"ftp://{host}/{dir_inp.lstrip('/')}/{f}" for f in files
+        ]
+        
+        return files, ftp_files_urls
 
-        except Exception as e:
-            log.warning("unable to chdir to %s, exception %s", dir_inp, e)
-            return [], []
-
-    return None, None
+    except Exception as e:
+        log.warning("unable to chdir to %s, exception %s", dir_inp, e)
+        return [], []
 
 
 def match_files_in_dir(filergx, ftp_files_list, all_files_mode=False):
@@ -1516,6 +1492,7 @@ def crawl_files(
     prev_outdir = ""
     prev_http_url_base = ""  # Cache for HTTP URL to avoid redundant calls
     prev_http_files_list = []  # Cache for HTTP files list
+    ftp_dir_cache = {}  # Cache for FTP directory listings
     ftp_files_list = []
     all_files_stk = []
     local_files_lis = []
@@ -1640,24 +1617,30 @@ def crawl_files(
                 _save_crawled_files(table_use)
                 _save_all_files(all_files_stk)
 
-            # Get file list when directory changes
+            # Check if FTP object is valid
             if not ftpobj:
                 log.warning("FTP object is None, skipping row %d", irow)
                 table_use.loc[irow, "crawled"] = True
                 continue
-            else:
+
+            # Only fetch if directory changed or not in cache
+            if prev_dir != row["dir"] or row["dir"] not in ftp_dir_cache:
                 ftp_result = list_ftp_dir(ftpobj, row["dir"], row["host"], prev_dir)
-
-            file_match = None
-            if ftp_result[0] is not None:
                 ftp_files_list, ftp_files_urls = ftp_result
+                # Store in cache
+                ftp_dir_cache[row["dir"]] = ftp_result
                 prev_dir = row["dir"]
+            else:
+                # Use cached results
+                ftp_files_list, ftp_files_urls = ftp_dir_cache[row["dir"]]
 
-                if ftp_files_urls:
-                    all_files_stk.append(pd.Series(ftp_files_urls))
+            # store all files found on server for later saving
+            file_match = None
+            if ftp_files_urls:
+                all_files_stk.append(pd.Series(ftp_files_urls))
+            if ftp_files_list:
                 # Match files on server using regex pattern
-                if ftp_files_list:
-                    file_match = match_files_in_dir(row[rgx_col], ftp_files_list, all_files_mode)
+                file_match = match_files_in_dir(row[rgx_col], ftp_files_list, all_files_mode)
 
             # Apply exclude patterns
             if exclude_patterns and file_match:
