@@ -44,7 +44,7 @@ log = logging.getLogger("geodezyx")
 ############################################################################
 
 
-from .servers_prods import _server_select_prods
+from geodezyx.operational.download_gnss.servers.servers_prods import _server_select_prods
 
 
 def _regex_prods(dt_cur, ac_cur, prod_cur, new_name_conv=True, dow_manu=False):

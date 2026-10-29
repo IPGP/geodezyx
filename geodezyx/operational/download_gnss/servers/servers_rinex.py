@@ -9,7 +9,7 @@ import os
 from typing import Dict, Any, Optional, Tuple, Union
 
 from geodezyx import conv
-from .servers_rinex_cfg_loader import get_config, ServerConfigError
+from .servers_rinex_cfg_loader import get_cfg_rinex, ServerCfgRinexError
 
 log = logging.getLogger("geodezyx")
 
@@ -146,8 +146,8 @@ def _generic_server(
             urldic[3] = os.path.join(urldir, rnx3rgx)
     
     elif file_type == "navigation":
-        nav_sys = config.get("nav_sys", ".")
-        nav_data_source = config.get("nav_data_source", ".")
+        nav_sys = config.get("nav_sys", "..")
+        nav_data_source = config.get("nav_data_source", "..")
         rnx2rgx, rnx3rgx = _rnx_nav_rgx(date, site, sys=nav_sys, data_source=nav_data_source)
         
         # Apply case formatting
@@ -170,11 +170,11 @@ def _server_from_cfg(datacenter: str, date, site=None) -> Tuple:
     
     Returns: (urldic, protocol, mode1hz)
     """
-    config = get_config()
+    config = get_cfg_rinex()
     
     try:
         server_cfg = config.get_server(datacenter)
-    except ServerConfigError as e:
+    except ServerCfgRinexError as e:
         log.warning("Unknown server '%s': %s", datacenter, e)
         return None, None, None
     

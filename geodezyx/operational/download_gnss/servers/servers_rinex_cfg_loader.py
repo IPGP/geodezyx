@@ -20,12 +20,12 @@ except ImportError:
 log = logging.getLogger("geodezyx")
 
 
-class ServerConfigError(Exception):
+class ServerCfgRinexError(Exception):
     """Raised when there's an error loading or accessing server configuration."""
     pass
 
 
-class ServerConfig:
+class ServerCfgRinex:
     """
     Manages GNSS server configurations loaded from YAML file.
 
@@ -46,7 +46,7 @@ class ServerConfig:
     def __init__(self, config_file: Optional[str] = None):
         """Initialize the ServerConfig with optional custom config file path."""
         if yaml is None:
-            raise ServerConfigError(
+            raise ServerCfgRinexError(
                 "PyYAML is required for server configuration. "
                 "Install it with: pip install pyyaml"
             )
@@ -67,7 +67,7 @@ class ServerConfig:
         config_path = Path(self.config_file)
 
         if not config_path.exists():
-            raise ServerConfigError(
+            raise ServerCfgRinexError(
                 f"Server configuration file not found: {config_path}"
             )
 
@@ -75,16 +75,16 @@ class ServerConfig:
             with open(config_path, 'r', encoding='utf-8') as f:
                 self._config = yaml.safe_load(f)
         except yaml.YAMLError as e:
-            raise ServerConfigError(
+            raise ServerCfgRinexError(
                 f"Error parsing YAML configuration: {e}"
             ) from e
         except IOError as e:
-            raise ServerConfigError(
+            raise ServerCfgRinexError(
                 f"Error reading configuration file: {e}"
             ) from e
 
         if not self._config or 'rinex_servers' not in self._config:
-            raise ServerConfigError(
+            raise ServerCfgRinexError(
                 "Invalid configuration: 'rinex_servers' section not found"
             )
 
@@ -119,7 +119,7 @@ class ServerConfig:
         actual_server = self._resolve_alias(datacenter)
 
         if actual_server not in self._config['servers']:
-            raise ServerConfigError(
+            raise ServerCfgRinexError(
                 f"Unknown server: '{datacenter}'. "
                 f"Available servers: {list(self._config['servers'].keys())}"
             )
@@ -212,10 +212,10 @@ class ServerConfig:
 
 
 # Global configuration instance (lazy-loaded)
-_config_instance: Optional[ServerConfig] = None
+_config_instance: Optional[ServerCfgRinex] = None
 
 
-def get_config(config_file: Optional[str] = None) -> ServerConfig:
+def get_cfg_rinex(config_file: Optional[str] = None) -> ServerCfgRinex:
     """
     Get the global server configuration instance (lazy-loaded).
 
@@ -226,16 +226,16 @@ def get_config(config_file: Optional[str] = None) -> ServerConfig:
 
     Returns
     -------
-    ServerConfig
+    ServerCfgRinex
         Global configuration instance
     """
     global _config_instance
     if _config_instance is None:
-        _config_instance = ServerConfig(config_file)
+        _config_instance = ServerCfgRinex(config_file)
     return _config_instance
 
 
-def reload_config(config_file: Optional[str] = None) -> ServerConfig:
+def reload_config(config_file: Optional[str] = None) -> ServerCfgRinex:
     """
     Reload the server configuration (useful for testing or config updates).
 
@@ -246,9 +246,9 @@ def reload_config(config_file: Optional[str] = None) -> ServerConfig:
 
     Returns
     -------
-    ServerConfig
+    ServerCfgRinex
         Reloaded configuration instance
     """
     global _config_instance
-    _config_instance = ServerConfig(config_file)
+    _config_instance = ServerCfgRinex(config_file)
     return _config_instance

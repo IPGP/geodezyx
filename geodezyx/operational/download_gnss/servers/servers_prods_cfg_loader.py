@@ -23,12 +23,11 @@ except ImportError:
 log = logging.getLogger("geodezyx")
 
 
-class ProductsConfigError(Exception):
+class ServerCfgProductsError(Exception):
     """Exception raised for products configuration errors."""
     pass
 
-
-class ProductsConfig:
+class ServerCfgProducts:
     """
     Load and query GNSS product archive center configurations from YAML.
 
@@ -37,7 +36,7 @@ class ProductsConfig:
     _server_select_prods().
 
     Example:
-        >>> cfg = ProductsConfig()
+        >>> cfg = ServerCfgProducts()
         >>> host, basedir, protocol, secure = cfg.get_archive_center("igs")
         >>> archive_centers = cfg.list_archive_centers()
         >>> all_product_types = cfg.list_product_types()
@@ -57,7 +56,7 @@ class ProductsConfig:
             If None, searches relative to this module.
         """
         if yaml is None:
-            raise ProductsConfigError(
+            raise ServerCfgProductsError(
                 "PyYAML is required. Install with: pip install pyyaml"
             )
 
@@ -69,7 +68,7 @@ class ProductsConfig:
             config_path = Path(config_path)
 
         if not config_path.exists():
-            raise ProductsConfigError(
+            raise ServerCfgProductsError(
                 f"Products configuration not found: {config_path}"
             )
 
@@ -82,7 +81,7 @@ class ProductsConfig:
             self._config = yaml.safe_load(f)
 
         if not self._config:
-            raise ProductsConfigError(
+            raise ServerCfgProductsError(
                 f"Failed to load configuration from {self.config_path}"
             )
 
@@ -310,7 +309,7 @@ class ProductsConfig:
 _products_config_instance = None
 
 
-def get_config(config_path=None):
+def get_cfg_prods(config_path=None):
     """
     Get or create the global ProductsConfig singleton instance.
 
@@ -321,13 +320,13 @@ def get_config(config_path=None):
 
     Returns
     -------
-    ProductsConfig
+    ServerCfgProducts
         Singleton configuration instance
     """
     global _products_config_instance
 
     if _products_config_instance is None:
-        _products_config_instance = ProductsConfig(config_path)
+        _products_config_instance = ServerCfgProducts(config_path)
 
     return _products_config_instance
 
@@ -354,5 +353,5 @@ def server_select_prods(archive_center, mgex=False, repro=0):
     tuple
         (host, basedir, protocol, secure_ftp)
     """
-    cfg = get_config()
+    cfg = get_cfg_prods()
     return cfg.get_archive_center(archive_center, mgex, repro)

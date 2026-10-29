@@ -17,7 +17,7 @@ Version: 2.0 - 2024
 
 import logging
 
-from .servers_prods_cfg_loader import get_config, ProductsConfigError
+from .servers_prods_cfg_loader import get_cfg_prods, ServerCfgProductsError
 
 log = logging.getLogger("geodezyx")
 
@@ -73,7 +73,7 @@ def _server_select_prods(archive_center, mgex=False, repro=0):
     in download_prods.py without any code changes.
     """
     try:
-        cfg = get_config()
+        cfg = get_cfg_prods()
         host, basedir, protocol, secure_ftp = cfg.get_archive_center(
             archive_center, mgex=mgex, repro=repro
         )
@@ -88,6 +88,6 @@ def _server_select_prods(archive_center, mgex=False, repro=0):
 
         return host, basedir, protocol, secure_ftp
 
-    except ProductsConfigError as e:
+    except ServerCfgProductsError as e:
         log.error("Configuration error: %s", e)
         return None, None, None, None
