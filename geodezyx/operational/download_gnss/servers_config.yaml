@@ -1,289 +1,302 @@
-# GNSS RINEX Server Configuration
-# ================================
-# This file defines all available GNSS data servers and their connection parameters.
-# Each server entry specifies the URL structure, protocol, and file format details.
-
 servers:
   igs_cddis:
-    name: "IGS CDDIS"
-    description: "NASA's Crustal Dynamics Data Information System"
-    url: "ftp://gdc.cddis.eosdis.nasa.gov/gps/data/daily/"
-    protocol: "sftp"
-    file_type: "observation"  # observation | navigation
-    structure: "year/doy"
-    subdir_format: "{year}/{doy}/{yy}d"  # Custom subdirectory for RINEX2
-    rnx_version: [2, 3]
-    case: "lower"  # lower | upper | mixed
-    uses_generic: false
-    notes: "May crash if too many requests"
-
+    name: IGS CDDIS
+    description: NASA's Crustal Dynamics Data Information System
+    url: ftp://gdc.cddis.eosdis.nasa.gov/gps/data/daily/
+    protocol: sftp
+    file_type: observation
+    structure: year/doy/subdir
+    subdir_format: '{yy}d'
+    rnx_version:
+    - 2
+    - 3
+    rnx2_case: lower
+    rnx3_case: upper
+    uses_generic: true
+    notes: May crash if too many requests
   igs_sopac:
-    name: "IGS SOPAC"
-    description: "UCSD Scripps Orbit and Permanent Array Center"
-    url: "ftp://garner.ucsd.edu/pub/rinex/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
+    name: IGS SOPAC
+    description: UCSD Scripps Orbit and Permanent Array Center
+    url: ftp://garner.ucsd.edu/pub/rinex/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
-    notes: "May crash if too many requests"
-
+    notes: May crash if too many requests
   igs_ign:
-    name: "IGS IGN"
-    description: "Institut National de l'Information Géographique et Forestière"
-    url: "ftp://igs.ign.fr/pub/igs/data/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
+    name: IGS IGN
+    description: Institut National de l'Information Géographique et Forestière
+    url: ftp://igs.ign.fr/pub/igs/data/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
-    notes: "May crash if too many requests"
-
+    notes: May crash if too many requests
   igs_ign_ensg:
-    name: "IGS IGN ENSG"
-    description: "École Nationale des Sciences Géographiques mirror"
-    url: "ftp://igs.ensg.eu/pub/igs/data/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
+    name: IGS IGN ENSG
+    description: École Nationale des Sciences Géographiques mirror
+    url: ftp://igs.ensg.eu/pub/igs/data/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
-    notes: "May crash if too many requests"
-
+    notes: May crash if too many requests
   igs_bkg:
-    name: "IGS BKG"
-    description: "Bundesamt für Kartographie und Geodäsie"
-    url: "https://igs.bkg.bund.de/root_ftp/IGS/obs/"
-    protocol: "https"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
+    name: IGS BKG
+    description: Bundesamt für Kartographie und Geodäsie
+    url: https://igs.bkg.bund.de/root_ftp/IGS/obs/
+    protocol: https
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
-
   sonel:
-    name: "SONEL"
-    description: "Sea level and geodetic data network"
-    url: "ftp://ftp.sonel.org/gps/data/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
+    name: SONEL
+    description: Sea level and geodetic data network
+    url: ftp://ftp.sonel.org/gps/data/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
-
   euref:
-    name: "EUREF"
-    description: "European Permanent GNSS Network"
-    url: "ftp://epncb.oma.be/pub/obs/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
-    case: "upper"  # RINEX2 files are uppercase
-    uses_generic: false
-
+    name: EUREF
+    description: European Permanent GNSS Network
+    url: ftp://epncb.oma.be/pub/obs/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
+    rnx2_case: upper
+    rnx3_case: upper
+    uses_generic: true
   nav_rob:
-    name: "ROB Navigation"
-    description: "Royal Observatory of Belgium BRDC navigation files"
-    url: "https://epncb.oma.be/pub/RINEX/BRDC/"
-    protocol: "https"
-    file_type: "navigation"
-    structure: "year"  # No DOY for this one
-    nav_sys: "M"
-    nav_data_source: "R"
-    rnx_version: [2, 3]
-    uses_generic: false
-
+    name: ROB Navigation
+    description: Royal Observatory of Belgium BRDC navigation files
+    url: https://epncb.oma.be/pub/RINEX/BRDC/
+    protocol: https
+    file_type: navigation
+    structure: year
+    nav_sys: M
+    nav_data_source: R
+    rnx_version:
+    - 3
+    uses_generic: true
   nav_bkg:
-    name: "BKG Navigation"
-    description: "Bundesamt für Kartographie und Geodäsie BRDC navigation files"
-    url: "https://igs.bkg.bund.de/root_ftp/IGS/BRDC/"
-    protocol: "https"
-    file_type: "navigation"
-    structure: "year/doy"
-    nav_sys: "M"
-    nav_data_source: "S"
-    rnx_version: [3]  # RINEX3 only
-
+    name: BKG Navigation
+    description: Bundesamt für Kartographie und Geodäsie BRDC navigation files
+    url: https://igs.bkg.bund.de/root_ftp/IGS/BRDC/
+    protocol: https
+    file_type: navigation
+    structure: year/doy
+    nav_sys: M
+    nav_data_source: S
+    rnx_version:
+    - 3
+    uses_generic: true
   nav_cddis:
-    name: "CDDIS Navigation"
-    description: "NASA CDDIS BRDC navigation files"
-    url: "ftp://gdc.cddis.eosdis.nasa.gov/gps/data/daily/"
-    protocol: "ftp"
-    file_type: "navigation"
-    structure: "year/doy"
-    subdir_format: "{year}/{doy}/{yy}n"
-    rnx_version: [2, 3]
-    uses_generic: false
-
+    name: CDDIS Navigation
+    description: NASA CDDIS BRDC navigation files
+    url: ftp://gdc.cddis.eosdis.nasa.gov/gps/data/daily/
+    protocol: ftp
+    file_type: navigation
+    structure: year/doy/subdir
+    subdir_format: '{yy}n'
+    rnx_version:
+    - 2
+    - 3
+    uses_generic: true
   rgp:
-    name: "RGP"
-    description: "Réseau GNSS Permanent (IGN)"
-    url: "ftp://rgpdata.ign.fr/pub/data/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    urlsuffix: "data_30"
-    rnx_version: [2, 3]
+    name: RGP
+    description: Réseau GNSS Permanent (IGN)
+    url: ftp://rgpdata.ign.fr/pub/data/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy/subdir
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
-
+    subdir_format: data_30
   rgp_rnx3:
-    name: "RGP RINEX3"
-    description: "Réseau GNSS Permanent RINEX3 version"
-    url: "ftp://rgpdata.ign.fr/pub/data_v3/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    urlsuffix: "data_30"
-    rnx_version: [3]
+    name: RGP RINEX3
+    description: Réseau GNSS Permanent RINEX3 version
+    url: ftp://rgpdata.ign.fr/pub/data_v3/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy/subdir
+    rnx_version:
+    - 3
     uses_generic: true
-
+    subdir_format: data_30
   rgp_ensg:
-    name: "RGP ENSG"
-    description: "Réseau GNSS Permanent (ENSG mirror)"
-    url: "ftp://rgpdata.ensg.eu/pub/data/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    urlsuffix: "data_30"
-    rnx_version: [2, 3]
+    name: RGP ENSG
+    description: Réseau GNSS Permanent (ENSG mirror)
+    url: ftp://rgpdata.ensg.eu/pub/data/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy/subdir
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
-
+    subdir_format: data_30
   rgp_ensg_rnx3:
-    name: "RGP ENSG RINEX3"
-    description: "Réseau GNSS Permanent RINEX3 (ENSG mirror)"
-    url: "ftp://rgpdata.ensg.eu/pub/data_v3/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    urlsuffix: "data_30"
-    rnx_version: [3]
+    name: RGP ENSG RINEX3
+    description: Réseau GNSS Permanent RINEX3 (ENSG mirror)
+    url: ftp://rgpdata.ensg.eu/pub/data_v3/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy/subdir
+    rnx_version:
+    - 3
     uses_generic: true
-
+    subdir_format: data_30
   rgp_01s:
-    name: "RGP 1Hz"
-    description: "RGP IGN 01S/1Hz high-frequency data (hourly RINEX files)"
-    url: "ftp://rgpdata.ign.fr/pub/data/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    urlsuffix: "data_1"
-    data_freq: "01S"
-    rnx_version: [2, 3]
-    mode: "hourly"  # Returns 24 URLs (one per hour)
+    name: RGP 1Hz
+    description: RGP IGN 01S/1Hz high-frequency data (hourly RINEX files)
+    url: ftp://rgpdata.ign.fr/pub/data/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy/subdir
+    data_freq: 01S
+    rnx_version:
+    - 2
+    - 3
+    mode: hourly
     uses_generic: true
-
+    subdir_format: data_1
   spotgins_eost:
-    name: "SPOTGINS EOST"
-    description: "Strasbourg GNSS data center"
-    url: "http://loading.u-strasbg.fr/SPOTGINS/TEST/rinex/"
-    protocol: "http"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
+    name: SPOTGINS EOST
+    description: Strasbourg GNSS data center
+    url: http://loading.u-strasbg.fr/SPOTGINS/TEST/rinex/
+    protocol: http
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
-
   renag:
-    name: "RENAG"
-    description: "Réseau de laboratoires pour la détection et la surveillance des séismes"
-    url: "ftp://renag.unice.fr/data/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
+    name: RENAG
+    description: Réseau de laboratoires pour la détection et la surveillance des séismes
+    url: ftp://renag.unice.fr/data/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
-
   renag_crtk:
-    name: "RENAG CRTk"
-    description: "RENAG CRTk RTK GNSS network (30-second data)"
-    url: "ftp://renag.unice.fr/centipede_30s/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    data_freq: "30S"
-    rnx_version: [3]
+    name: RENAG CRTk
+    description: RENAG CRTk RTK GNSS network (30-second data)
+    url: ftp://renag.unice.fr/centipede_30s/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    data_freq: 30S
+    rnx_version:
+    - 3
     uses_generic: true
-
   renag_crtk_01s:
-    name: "RENAG CRTk 1Hz"
-    description: "RENAG CRTk RTK GNSS network (1-second data)"
-    url: "ftp://renag.unice.fr/centipede_1s/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    data_freq: "01S"
-    rnx_version: [3]
+    name: RENAG CRTk 1Hz
+    description: RENAG CRTk RTK GNSS network (1-second data)
+    url: ftp://renag.unice.fr/centipede_1s/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    data_freq: 01S
+    rnx_version:
+    - 3
     uses_generic: true
-
   orpheon:
-    name: "Orpheon"
-    description: "RENAG-hosted network"
-    url: "ftp://renag.unice.fr/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
+    name: Orpheon
+    description: RENAG-hosted network
+    url: ftp://renag.unice.fr/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
     auth_required: true
-
   uwiseismic:
-    name: "UWISeismic"
-    description: "University of the West Indies seismic network"
-    url: "ftp://www2.uwiseismic.com/rinex/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
+    name: UWISeismic
+    description: University of the West Indies seismic network
+    url: ftp://www2.uwiseismic.com/rinex/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
     auth_required: true
-
   ovsg:
-    name: "OVSG"
-    description: "Observatoire Volcanologique et Sismologique de Guadeloupe"
-    url_format: "conditional"  # Uses different URL based on date range
-    protocol: "http"
-    file_type: "observation"
-    structure: "year/doy"
-    urlsuffix: "rinex"
-    rnx_version: [2, 3]
+    name: OVSG
+    description: Observatoire Volcanologique et Sismologique de Guadeloupe
+    url_format: conditional
+    protocol: http
+    file_type: observation
+    structure: year/doy/subdir
+    rnx_version:
+    - 2
+    - 3
     uses_generic: false
-    # Conditionally use one of these URLs:
-    # Date <= 2014-02-10: http://webobs.ovsg.univ-ag.fr/rawdata/GPS-GPSDATA.backtemp_20140210/
-    # Else: http://webobs.ovsg.univ-ag.fr/rawdata/GPS/GPSDATA/
-
+    subdir_format: rinex
   unavco:
-    name: "UNAVCO"
-    description: "UNAVCO GNSS data archive"
-    url: "ftp://data-out.unavco.org/pub/rinex/obs/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
+    name: UNAVCO
+    description: UNAVCO GNSS data archive
+    url: ftp://data-out.unavco.org/pub/rinex/obs/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
-
   geoaus:
-    name: "Geosciences Australia"
-    description: "Australian GNSS data center"
-    url: "ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/yydoy"  # Special format: yy+doy
-    rnx_version: [2, 3]
-    uses_generic: false
-
-  ens_fr:
-    name: "ENS France"
-    description: "École Normale Supérieure GNSS data"
-    url: "ftp://gnss.ens.fr/pub/public/crl/GPS/rinex/"
-    protocol: "ftp"
-    file_type: "observation"
-    structure: "year/doy"
-    rnx_version: [2, 3]
+    name: Geosciences Australia
+    description: Australian GNSS data center
+    url: ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/
+    protocol: ftp
+    file_type: observation
+    structure: year/yydoy
+    rnx_version:
+    - 2
+    - 3
     uses_generic: true
-
-# Server aliases for backwards compatibility
+  ens_fr:
+    name: ENS France
+    description: École Normale Supérieure GNSS data
+    url: ftp://gnss.ens.fr/pub/public/crl/GPS/rinex/
+    protocol: ftp
+    file_type: observation
+    structure: year/doy
+    rnx_version:
+    - 2
+    - 3
+    uses_generic: true
 aliases:
-  igs: "igs_cddis"
-  brdc: "nav_rob"
-  nav: "nav_rob"
-  brdc_rt: "nav_bkg"
-  nav_rt: "nav_bkg"
+  igs: igs_cddis
+  brdc: nav_rob
+  nav: nav_rob
+  brdc_rt: nav_bkg
+  nav_rt: nav_bkg
