@@ -4,11 +4,10 @@
 # Version 1.0 - 2024
 
 products:
-  # IGS Data Center - Operational Products
-  # Primary source for IGS operational products (sp3, clk, erp, etc.)
-  igs:
-    name: IGS
-    description: IGS Analysis Center (IGN France)
+  # IGN France IGS Products
+  ign:
+    name: IGN
+    description: IGN France
     host: igs.ign.fr
     protocol: ftp
     basedir: /pub/igs/products/
@@ -108,8 +107,8 @@ products:
 # Aliases for backward compatibility
 # Maps legacy names to current archive center identifiers
 aliases:
-  igsign: igs
-  ign_products: igs
+  igs: cddis
+  ign_products: ign
   nasa: cddis
   gssc: esa
   wuhan: whu
