@@ -374,7 +374,7 @@ def download_gnss_products(
 
     out_tup_lis = []
 
-    if len(table_dl) == 0:
+    if len(table_dl) == 0 and len(files_loc) == 0:
         log.error(
             "no valid product URL found/selected on the FTP server, check your inputs"
         )

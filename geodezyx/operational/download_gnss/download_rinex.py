@@ -201,7 +201,7 @@ def download_gnss_rinex(
     out_tup_lis = []
 
     # Only download if files are available and not in quiet mode
-    if len(table_dwld) == 0:
+    if len(table_dwld) == 0 and len(files_loc) == 0:
         errmsg = (
             "no valid RINEX URL found/selected on the server, check your inputs"
         )
@@ -322,7 +322,8 @@ def gen_table_rnx(
     table.sort_values(by=["site", "date"], inplace=True)
     table.reset_index(drop=True, inplace=True)
 
-    log.info(table.to_string())
+    if False:  # Set to True for debugging purposes
+        log.info(table.to_string())
 
     return table
 
