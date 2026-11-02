@@ -398,13 +398,14 @@ def download_gnss_products(
             outdir_list_exp.extend([outdir_val] * len(parts))
             protocol_list_exp.extend([prot_val] * len(parts))
 
-        out_tup_lis = dlutils.ftp_downld_front(
-            url_list_exp,
-            outdir_list_exp,
-            parallel_download=parallel_download,
-            secure_ftp=protocol_list_exp,
-            force=force,
-        )
+        if len(url_list_exp) > 0:
+            out_tup_lis = dlutils.ftp_downld_front(
+                url_list_exp,
+                outdir_list_exp,
+                parallel_download=parallel_download,
+                secure_ftp=protocol_list_exp,
+                force=force,
+            )
 
     ###################################################################
     ########### Collect results
