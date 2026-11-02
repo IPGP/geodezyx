@@ -201,7 +201,13 @@ def download_gnss_rinex(
     out_tup_lis = []
 
     # Only download if files are available and not in quiet mode
-    if len(table_dwld) == 0 and len(files_loc) == 0:
+    if len(table_dwld) == 0 and len(files_loc) > 0:
+        log.info(
+            "no valid RINEX URL found/selected on the server, "
+            "but %d local files already exist",
+            len(files_loc),
+        )
+    elif len(table_dwld) == 0 and len(files_loc) == 0:
         errmsg = (
             "no valid RINEX URL found/selected on the server, check your inputs"
         )

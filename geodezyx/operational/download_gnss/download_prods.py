@@ -27,7 +27,6 @@ from geodezyx import conv, utils
 from . import download_utils as dlutils
 from geodezyx.operational.download_gnss.servers.servers_prods import server_select_prods
 
-
 log = logging.getLogger("geodezyx")
 
 ##########  END IMPORT  ##########
@@ -374,8 +373,15 @@ def download_gnss_products(
 
     out_tup_lis = []
 
-    if len(table_dl) == 0 and len(files_loc) == 0:
-        log.error(
+    if len(table_dl) == 0 and len(files_loc) > 0:
+        log.info(
+            "no valid product URL found/selected on the FTP server, "
+            "but %d local files already exist",
+            len(files_loc),
+        )
+
+    elif len(table_dl) == 0 and len(files_loc) == 0:
+        log.warning(
             "no valid product URL found/selected on the FTP server, check your inputs"
         )
     elif quiet_mode:
@@ -398,14 +404,14 @@ def download_gnss_products(
             outdir_list_exp.extend([outdir_val] * len(parts))
             protocol_list_exp.extend([prot_val] * len(parts))
 
-        if len(url_list_exp) > 0:
-            out_tup_lis = dlutils.ftp_downld_front(
-                url_list_exp,
-                outdir_list_exp,
-                parallel_download=parallel_download,
-                secure_ftp=protocol_list_exp,
-                force=force,
-            )
+        # Download the expanded list of URLs
+        out_tup_lis = dlutils.ftp_downld_front(
+            url_list_exp,
+            outdir_list_exp,
+            parallel_download=parallel_download,
+            secure_ftp=protocol_list_exp,
+            force=force,
+        )
 
     ###################################################################
     ########### Collect results
