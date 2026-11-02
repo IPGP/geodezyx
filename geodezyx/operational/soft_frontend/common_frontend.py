@@ -413,7 +413,7 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
             archtype="year/doy",
             parallel_download=1,
             force=force,
-            no_rnx2=True
+            no_rnx2=True,
         )
         brdc_tmp_stk.extend(brdc_tmp)
     # manage the weird output of download_gnss_rinex,
@@ -491,10 +491,6 @@ def dl_orbclk(
             return_also_uncompressed_files=True,
             dow_manu=False,
         )
-
-        # if len(prods) >= 5:
-        #    log.info("enougth products found: %s", len(prods))
-        #    break
 
     return prods
 
@@ -606,7 +602,11 @@ def dl_prods(prod_dir, dates_inp, prod_ac_name, download_lock=None, use_tite=Fal
                 dates_inp,
                 prod_ac_name,
                 prod_types=("sp3", "clk"),
-                data_centers=("esa","ign","cddis"), # "cddis" , "esa", "ign"), #REACTIVATE ME WHEN FIXED!
+                data_centers=(
+                    "esa",
+                    "ign",
+                    "cddis",
+                ),  # "cddis" , "esa", "ign"), #REACTIVATE ME WHEN FIXED!
             )
         finally:
             if download_lock:
