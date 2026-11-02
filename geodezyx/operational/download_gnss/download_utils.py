@@ -852,7 +852,7 @@ def ftp_downld_front(
     urllist = urls if utils.is_iterable(urls) else [urls]
     urllist = list(urllist)
     savedirlist = savedirs if utils.is_iterable(savedirs) else [savedirs] * len(urllist)
-    print("AAAAAAAAAAAAAA",  secure_ftp)
+    print("AAAAAAAAAAAAAA",  secure_ftp, urllist)
     secure_ftp_use = secure_ftp[0] if utils.is_iterable(secure_ftp) else secure_ftp
     ##### dirty to select secure_ftp 1st elt only....
 
