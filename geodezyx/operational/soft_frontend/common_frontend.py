@@ -354,7 +354,7 @@ def dl_brdc(prod_parent_dir, dates_inp, redwld_delta=4):
         now = dt.datetime.now(dt.timezone.utc)
         date_floor_re_utc = date_floor_re.replace(tzinfo=dt.timezone.utc)
 
-        if now - date_floor_re_utc >= dt.timedelta(hours=24 + redwld_delta + 1):
+        if now - date_floor_re_utc >= dt.timedelta(hours=7*24 + redwld_delta + 1):
             ## We go for GOP non-real time BRDC
             redl_bool = False
             redl_type = "nav"
