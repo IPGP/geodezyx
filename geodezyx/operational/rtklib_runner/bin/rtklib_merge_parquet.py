@@ -63,10 +63,10 @@ Examples:
    rtklib_merge_parquet -i /path/to/results -x myexp -o /output/dir -p 15min
 
    # with CSV export
-   rtklib_merge_parquet -i /path/to/results -x myexp --output_csv
+   rtklib_merge_parquet -i /path/to/results -x myexp -c
 
    # with CSV export and resampling
-   rtklib_merge_parquet -i /path/to/results -x myexp -p 15min --output_csv
+   rtklib_merge_parquet -i /path/to/results -x myexp -p 15min -c
 """,
     )
 
@@ -173,6 +173,7 @@ Examples:
     )
 
     parser.add_argument(
+        "-c",
         "--output_csv",
         action="store_true",
         help=(
