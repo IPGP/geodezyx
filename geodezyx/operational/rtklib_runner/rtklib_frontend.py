@@ -138,7 +138,9 @@ def rtklib_run_mono(
 
     # EXPERIENCE / OUTPUT NAMES
     srt_str = rov_srt_fast.strftime("%Y_%j_%H%M")
-    exp_full_name = "_".join((exp_prefix, rov_name, bas_name, srt_str))
+    exp_full_name = "_".join(
+        (str(exp_prefix), str(rov_name), str(bas_name), str(srt_str))
+    )
 
     year_doy_str = rov_srt_fast.strftime("%Y/%j/%H%M")
     out_dir_year_doy = str(os.path.join(out_dir, year_doy_str))
@@ -149,8 +151,9 @@ def rtklib_run_mono(
 
     if (
         not force
-        and os.path.isfile(out_res_fil) or os.path.isfile(out_res_fil + ".gz")
-        #and os.path.getsize(out_res_fil) > 25000  # empiric failed file limit
+        and os.path.isfile(out_res_fil)
+        or os.path.isfile(out_res_fil + ".gz")
+        # and os.path.getsize(out_res_fil) > 25000  # empiric failed file limit
     ):
         log.info(f"Output file already exists, skipping: {out_res_fil}")
         return out_res_fil
@@ -275,7 +278,7 @@ def rtklib_run_mono(
         utils.gzip_compress(out_res_fil + ".stat", rm_inp=True)
         out_prq_fil = out_res_fil.replace(".out", ".parquet")
         df_out2prq = files_rw.read_rtklib(out_res_fil, return_df=True)
-        #df_out2prq["orbit"] = os.path.basename(orbclklis_ok[0])
+        # df_out2prq["orbit"] = os.path.basename(orbclklis_ok[0])
         df_out2prq.to_parquet(out_prq_fil, engine="auto")
         compress_out = True
         if compress_out:
@@ -571,6 +574,7 @@ def make_pairs(
         rnxs_pairs.extend([pair for pair in pairs_for_rov if type(pair) is tuple])
 
     return rnxs_pairs, df_all
+
 
 def rtklib_run(
     rnx_dir,

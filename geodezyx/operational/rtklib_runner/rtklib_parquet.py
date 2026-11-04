@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 import pyarrow as pa
-import  pyarrow.parquet as pq
+import pyarrow.parquet as pq
 from tqdm import tqdm
 
 # from threading import Lock
@@ -19,11 +19,11 @@ from geodezyx import files_rw
 from geodezyx import utils
 from geodezyx import conv
 
-
 log = logging.getLogger("geodezyx")
 
 
 ##########  END IMPORT  ##########
+
 
 def rtklib_out2prq(resdir, pattern="*out", force=False, sample=None):
     """
@@ -49,7 +49,7 @@ def rtklib_out2prq(resdir, pattern="*out", force=False, sample=None):
         List of created/updated parquet files.
     """
     l_out0 = utils.find_recursive(resdir, pattern)
-    l_out_gz = utils.find_recursive(resdir, pattern  + ".gz")
+    l_out_gz = utils.find_recursive(resdir, pattern + ".gz")
 
     if len(l_out_gz) > 0:
         unzip_dir = resdir + "/tmp_unzip"
@@ -75,6 +75,7 @@ def rtklib_out2prq(resdir, pattern="*out", force=False, sample=None):
         shutil.rmtree(unzip_dir)
 
     return f_prq_lis
+
 
 def _get_year_doy_dirs(base_dir, start_date, end_date):
     """
@@ -105,13 +106,17 @@ def _get_year_doy_dirs(base_dir, start_date, end_date):
         year_doy_dirs.append(year_doy_path)
         current_date += timedelta(days=1)
 
-    log.info(f"Date range: {start_date.date()} to {end_date.date()} -> {len(year_doy_dirs)} directories")
+    log.info(
+        f"Date range: {start_date.date()} to {end_date.date()} -> {len(year_doy_dirs)} directories"
+    )
     return year_doy_dirs
+
 
 def _drop_pandas_meta(tbl):
     """Drop the 'pandas' metadata key so all tables share the same schema."""
     meta = {k: v for k, v in tbl.schema.metadata.items() if k != b"pandas"}
     return tbl.replace_schema_metadata(meta)
+
 
 def rtklib_merge_prq(
     parquet_inp,
@@ -123,6 +128,7 @@ def rtklib_merge_prq(
     end_date=None,
     days=None,
     output_dir=None,
+    output_csv=False,
 ):
     """
     Merge individual RTKLIB parquet files into a single consolidated parquet file.
@@ -169,6 +175,9 @@ def rtklib_merge_prq(
         Output directory where the merged parquet file will be saved.
         If not provided, the output is saved to the input directory (or the directory
         of the first file if an explicit list is provided).
+    output_csv : bool, default=False
+        If True, also exports the merged data to a CSV file with the same name
+        as the parquet file (e.g., <exp_prefix>_all.csv).
 
     Returns
     -------
@@ -209,7 +218,9 @@ def rtklib_merge_prq(
         else:
             # If date filtering is enabled, scan only year/doy directories within the range
             if filter_by_date:
-                year_doy_dirs = _get_year_doy_dirs(str(parquet_inp), start_date, end_date)
+                year_doy_dirs = _get_year_doy_dirs(
+                    str(parquet_inp), start_date, end_date
+                )
                 l_prq = []
                 for year_doy_dir in year_doy_dirs:
                     if os.path.isdir(year_doy_dir):
@@ -220,7 +231,11 @@ def rtklib_merge_prq(
         # parquet_inp is an explicit list of parquet files
         l_prq = list(parquet_inp)
         # Use provided output_dir if available, otherwise use directory of first file
-        prq_out_dir = str(output_dir) if output_dir else (os.path.dirname(os.path.abspath(l_prq[0])) if l_prq else ".")
+        prq_out_dir = (
+            str(output_dir)
+            if output_dir
+            else (os.path.dirname(os.path.abspath(l_prq[0])) if l_prq else ".")
+        )
 
     prq_path_out = os.path.join(prq_out_dir, exp_prefix + "_all.parquet")
     prq_path_tmp = prq_path_out + ".tmp"
@@ -264,7 +279,9 @@ def rtklib_merge_prq(
                 log.warning(f"Skipping empty/corrupt parquet file: {f}")
                 continue
             if writer is None:
-                writer = pa.parquet.ParquetWriter(prq_path_wrk, tbl.schema, compression="zstd")
+                writer = pa.parquet.ParquetWriter(
+                    prq_path_wrk, tbl.schema, compression="zstd"
+                )
             writer.write_table(tbl)
     finally:
         if writer:
@@ -275,6 +292,17 @@ def rtklib_merge_prq(
         os.replace(prq_path_tmp, prq_path_out)
 
     log.info(f"Merged parquet saved to {prq_path_out}")
+
+    # Export to CSV if requested
+    if output_csv:
+        csv_path_out = prq_path_out.replace(".parquet", ".csv")
+        try:
+            df = pd.read_parquet(prq_path_out)
+            df.to_csv(csv_path_out, index=False)
+            log.info(f"Merged CSV exported to {csv_path_out}")
+        except Exception as e:
+            log.error(f"Error exporting CSV: {e}", exc_info=True)
+
     return prq_path_out
 
 
@@ -407,7 +435,11 @@ def parquet2csv(
 
 
 def rtklib_prq2out(
-    prq_inp: str | PathLike, out_dir: str | PathLike, sample: str | None = None, rover: str | None = None, base: str | None = None
+    prq_inp: str | PathLike,
+    out_dir: str | PathLike,
+    sample: str | None = None,
+    rover: str | None = None,
+    base: str | None = None,
 ):
     """
     Convert merged RTKLIB parquet file to .out format, processed by rover/base pairs.
@@ -505,7 +537,9 @@ def rtklib_prq2out(
     return out_files
 
 
-def _write_rtklib_out(df: pd.DataFrame, out_path: str, rover: str = "XXXX00XXX", base: str = "XXXX00XXX"):
+def _write_rtklib_out(
+    df: pd.DataFrame, out_path: str, rover: str = "XXXX00XXX", base: str = "XXXX00XXX"
+):
     """
     Write a DataFrame to RTKLIB .out format file.
 
@@ -539,15 +573,23 @@ def _write_rtklib_out(df: pd.DataFrame, out_path: str, rover: str = "XXXX00XXX",
         f.write("% (converted from parquet format)\n")
         f.write(f"% rover site: {rover}\n")
         f.write(f"% base site : {base}\n")
-        f.write(f"% obs start : {epoch_start.strftime('%Y/%m/%d %H:%M:%S.%f')[:-3]} GPST\n")
-        f.write(f"% obs end   : {epoch_end.strftime('%Y/%m/%d %H:%M:%S.%f')[:-3]} GPST\n")
+        f.write(
+            f"% obs start : {epoch_start.strftime('%Y/%m/%d %H:%M:%S.%f')[:-3]} GPST\n"
+        )
+        f.write(
+            f"% obs end   : {epoch_end.strftime('%Y/%m/%d %H:%M:%S.%f')[:-3]} GPST\n"
+        )
         f.write("% pos mode  : (unknown)\n")
         f.write("% freqs     : (unknown)\n")
         f.write("% ephemeris : (unknown)\n")
         f.write("% solution  : (unknown)\n")
         f.write("%\n")
-        f.write("% (x/y/z-ecef=WGS84,Q=1:fix,2:float,3:sbas,4:dgps,5:single,6:ppp,ns=# of satellites)\n")
-        f.write("%  GPST                      x-ecef(m)      y-ecef(m)      z-ecef(m)   Q  ns   sdx(m)   sdy(m)   sdz(m)  sdxy(m)  sdyz(m)  sdzx(m) age(s)  ratio\n")
+        f.write(
+            "% (x/y/z-ecef=WGS84,Q=1:fix,2:float,3:sbas,4:dgps,5:single,6:ppp,ns=# of satellites)\n"
+        )
+        f.write(
+            "%  GPST                      x-ecef(m)      y-ecef(m)      z-ecef(m)   Q  ns   sdx(m)   sdy(m)   sdz(m)  sdxy(m)  sdyz(m)  sdzx(m) age(s)  ratio\n"
+        )
 
         # Write data rows
         for idx, row in df.iterrows():
@@ -563,11 +605,21 @@ def _write_rtklib_out(df: pd.DataFrame, out_path: str, rover: str = "XXXX00XXX",
             sdx = float(row["sdx"]) if "sdx" in row and pd.notna(row["sdx"]) else 0.0
             sdy = float(row["sdy"]) if "sdy" in row and pd.notna(row["sdy"]) else 0.0
             sdz = float(row["sdz"]) if "sdz" in row and pd.notna(row["sdz"]) else 0.0
-            sdxy = float(row["sdxy"]) if "sdxy" in row and pd.notna(row["sdxy"]) else 0.0
-            sdyz = float(row["sdyz"]) if "sdyz" in row and pd.notna(row["sdyz"]) else 0.0
-            sdxz = float(row["sdxz"]) if "sdxz" in row and pd.notna(row["sdxz"]) else 0.0
+            sdxy = (
+                float(row["sdxy"]) if "sdxy" in row and pd.notna(row["sdxy"]) else 0.0
+            )
+            sdyz = (
+                float(row["sdyz"]) if "sdyz" in row and pd.notna(row["sdyz"]) else 0.0
+            )
+            sdxz = (
+                float(row["sdxz"]) if "sdxz" in row and pd.notna(row["sdxz"]) else 0.0
+            )
             age = float(row["age"]) if "age" in row and pd.notna(row["age"]) else 0.0
-            ratio = float(row["ratio"]) if "ratio" in row and pd.notna(row["ratio"]) else 0.0
+            ratio = (
+                float(row["ratio"])
+                if "ratio" in row and pd.notna(row["ratio"])
+                else 0.0
+            )
 
             # Format output line (matching RTKLIB .out format exactly)
             # Format: date time, then %14.4f x, %14.4f y, %14.4f z, %3d Q, %3d ns, %8.4f sd*, %6.2f age, %6.1f ratio

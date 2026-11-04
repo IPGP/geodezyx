@@ -61,6 +61,12 @@ Examples:
 
    # with output directory and resampling
    rtklib_merge_parquet -i /path/to/results -x myexp -o /output/dir -p 15min
+
+   # with CSV export
+   rtklib_merge_parquet -i /path/to/results -x myexp --output_csv
+
+   # with CSV export and resampling
+   rtklib_merge_parquet -i /path/to/results -x myexp -p 15min --output_csv
 """,
     )
 
@@ -166,6 +172,15 @@ Examples:
         ),
     )
 
+    parser.add_argument(
+        "--output_csv",
+        action="store_true",
+        help=(
+            "If set, also exports the merged data to a CSV file with the same name "
+            "as the parquet file (e.g., <exp_prefix>_all.csv)."
+        ),
+    )
+
     return parser.parse_args()
 
 
@@ -220,6 +235,8 @@ def rtklib_merge_prq_main():
         log.info(f"Date range:           {args.start_date or 'N/A'} to {args.end_date or 'N/A'}")
     if args.days:
         log.info(f"Days:                 {args.days}")
+    if args.output_csv:
+        log.info(f"Output CSV:           Yes")
 
     try:
         all_prq_path = rtklib_merge_prq(
@@ -232,6 +249,7 @@ def rtklib_merge_prq_main():
             end_date=args.end_date,
             days=args.days,
             output_dir=args.output_dir,
+            output_csv=args.output_csv,
         )
         log.info(f"Merged parquet saved to: {all_prq_path}")
         return 0
