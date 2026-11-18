@@ -131,7 +131,7 @@ rovbas_pairs = [
 
 df_input = df_nopivo
 
-mean_win = 1
+mean_win = 60 * 2 # en minutes
 thd_ = 3.0
 strain_win = 6 * 24
 
@@ -145,6 +145,7 @@ df_direct = volc_deform.calc_baselines(
     mean_win=mean_win,
     strain_win=strain_win,
 )
+
 df_virtu = volc_deform.calc_baselines(
     df_all,
     rov12_pairs=rovbas_pairs,
@@ -155,7 +156,7 @@ df_virtu = volc_deform.calc_baselines(
     strain_win=strain_win,
 )
 
-del df_all
+# del df_all
 
 d_col = "d_diff"
 d_col = "d_mean0"
