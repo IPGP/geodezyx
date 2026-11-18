@@ -161,10 +161,10 @@ df_virtu = volc_deform.calc_baselines(
 d_col = "d_diff"
 d_col = "d_mean0"
 
-d_col = ["d0", "d_mean0"]
-marker = [".", ""]
-linestyle = ["", "-"]
-alpha = [1, 0.5]
+d_col = ["d_mean0", "d0"]
+marker = ["", "."]
+linestyle = ["-", ""]
+alpha = [0.5, 1.]
 
 fig_direct, ax_direct = volc_deform.baselines_plot(
     df_direct,
