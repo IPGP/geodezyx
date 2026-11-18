@@ -131,7 +131,7 @@ rovbas_pairs = [
 
 df_input = df_nopivo
 
-mean_win = 3600 * 3
+mean_win = 1
 thd_ = 3.0
 strain_win = 6 * 24
 
