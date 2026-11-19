@@ -148,13 +148,10 @@ def rtklib_run_mono(
 
     out_conf_fil = os.path.join(out_dir_year_doy, exp_full_name + ".conf")
     out_res_fil = os.path.join(out_dir_year_doy, exp_full_name + ".out")
+    size_out_fil = os.path.getsize(out_res_fil) if os.path.isfile(out_res_fil) else 0
+    size_out_gz = os.path.getsize(out_res_fil + ".gz") if os.path.isfile(out_res_fil + ".gz") else 0
 
-    if (
-        not force
-        and os.path.isfile(out_res_fil)
-        or os.path.isfile(out_res_fil + ".gz")
-        # and os.path.getsize(out_res_fil) > 25000  # empiric failed file limit
-    ):
+    if not force and (size_out_fil > 25000 or size_out_gz > 5000):  # empiric failed file limit
         log.info(f"Output file already exists, skipping: {out_res_fil}")
         return out_res_fil
 
