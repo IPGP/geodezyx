@@ -325,7 +325,7 @@ def gen_table_rnx(
     table["dir"] = urlpaths.apply(lambda p: os.path.join(*p.parts[2:-1]))
 
     # Sort table to ensure consistent order
-    table.sort_values(by=["site", "date"], inplace=True)
+    table.sort_values(by=["date", "site"], inplace=True)
     table.reset_index(drop=True, inplace=True)
 
     if False:  # Set to True for debugging purposes
