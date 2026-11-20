@@ -164,7 +164,7 @@ d_col = "d_mean0"
 d_col = ["d_mean0", "d0"]
 marker = ["", "."]
 linestyle = ["-", ""]
-alpha = [1., .5]
+alpha = [1., .05]
 
 fig_direct, ax_direct = volc_deform.baselines_plot(
     df_direct,
