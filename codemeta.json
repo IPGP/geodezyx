@@ -49,6 +49,6 @@
   ],
   "name": "geodezyx",
   "programmingLanguage": "Python 3",
-  "version": "5.2.4-beta3",
+  "version": "5.2.4",
   "referencePublication": "https://doi.org/10.5281/zenodo.24091080"
 }
