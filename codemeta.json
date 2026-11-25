@@ -1,0 +1,54 @@
+{
+  "@context": "https://w3id.org/codemeta/3.0",
+  "type": "SoftwareSourceCode",
+  "applicationCategory": "geodesy",
+  "author": [
+    {
+      "id": "https://orcid.org/0000-0003-1770-0532",
+      "type": "Person",
+      "affiliation": {
+        "type": "Organization",
+        "name": "Institut de physique du globe de Paris"
+      },
+      "email": "sakic@ipgp.fr",
+      "familyName": "Sakic",
+      "givenName": "Pierre"
+    },
+    {
+      "id": "https://orcid.org/0000-0002-9339-2749",
+      "type": "Person",
+      "affiliation": {
+        "type": "Organization",
+        "name": "Institut de physique du globe de Paris"
+      },
+      "email": "nahmani@ipgp.fr",
+      "familyName": "Nahmani",
+      "givenName": "Samuel"
+    },
+    {
+      "id": "https://orcid.org/0000-0003-2963-4886",
+      "type": "Person",
+      "affiliation": {
+        "type": "Organization",
+        "name": "GFZ German Research Centre for Geosciences"
+      },
+      "email": "gustavobmansur@gmail.com",
+      "familyName": "Mansur",
+      "givenName": "Gustavo"
+    }
+  ],
+  "codeRepository": "git+https://github.com/IPGP/geodezyx.git",
+  "dateCreated": "2016-01-01",
+  "dateModified": "2026-11-25",
+  "datePublished": "2025-01-01",
+  "description": "The purpose of geodezyx is to provide all the functions which\ncan be useful for Geodesy and Geophysics.",
+  "keywords": [
+    "geodesy",
+    "GNSS",
+    "RINEX"
+  ],
+  "name": "geodezyx",
+  "programmingLanguage": "Python 3",
+  "version": "5.2.2",
+  "referencePublication": "https://doi.org/10.5281/zenodo.24091080"
+}
