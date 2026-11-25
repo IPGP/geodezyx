@@ -2,7 +2,7 @@
 
 # geodezyx
 
-**Version: 5.2.2-beta7**  
+**Version: 5.2.2**  
 **Date: 2026-11-25**  
 
 **Authors:** 

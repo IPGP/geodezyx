@@ -32,7 +32,7 @@ name = "geodezyx" # REQUIRED, is the only field that cannot be marked as dynamic
 #
 # For a discussion on single-sourcing the version, see
 # https://packaging.python.org/guides/single-sourcing-package-version/
-version = "5.2.2-beta7" # REQUIRED, although can be dynamic
+version = "5.2.2" # REQUIRED, although can be dynamic
 
 # This is a one-line description or tagline of what your project does. This
 # corresponds to the "Summary" metadata field:
@@ -186,7 +186,7 @@ include = ["geodezyx*"] # package names should match these glob patterns (["*"] 
 #namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [tool.bumpversion]
-current_version = "5.2.2-beta7"
+current_version = "5.2.2"
 
 
 ##### SIMPLE CYCLE - MAJOR.MINOR.PATCH #####
@@ -194,6 +194,8 @@ current_version = "5.2.2-beta7"
 #serialize = ["{major}.{minor}.{patch}"]
 
 ##### MORE COMPLEX CYCLE - MAJOR.MINOR.PATCH-PRERELEASE #####
+# respect PEP 440: https://peps.python.org/pep-0440/
+
 parse = """(?x)
     (?P<major>0|[1-9]\\d*)\\.
     (?P<minor>0|[1-9]\\d*)\\.
