@@ -198,8 +198,8 @@ lines.markersize  : 1.5            # markersize, in points
 # 10 pt is the standard value.
 #
 #font.family         : arial
-font.family         : ubuntu
-#font.family         : DejaVu Sans
+#font.family         : ubuntu
+font.family         : DejaVu Sans
 #font.style          : normal
 #font.variant        : normal
 font.weight          : normal
