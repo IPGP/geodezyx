@@ -524,7 +524,7 @@ def baselines_plot(
             ax.plot(
                 df_plot["epoch"].values[::decim],
                 (df_plot[col_name].values[::decim] + ii * plt_shift) * plt_factor,
-                label=f"{sit1}-{sit2}" if icol == 0 else f"{sit1}-{sit2} ({col_name})",
+                label=f"{sit1}-{sit2}" if icol == 0 else None, #f"{sit1}-{sit2} ({col_name})",
                 color="C" + str(ii),
                 marker=mk,
                 linestyle=ls,
