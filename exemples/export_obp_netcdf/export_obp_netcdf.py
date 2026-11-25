@@ -3,19 +3,21 @@
 """
 Created on 06/12/2025 21:31:54
 
-@author: psakic
+@author: psakic, rjoyard
 """
 
 from geodezyx import marine, conv
 import pandas as pd
+import export_obp
+import os
 
 # =============================================================================
 # EXAMPLE USAGE / MAIN EXECUTION
 # =============================================================================
 
 # Choose which example to run
-run_halios = True
-run_a0a_rbr = False
+run_halios = False
+run_a0a_rbr = True
 run_emso_azores = False
 
 # =========================================================================
@@ -83,15 +85,23 @@ if run_halios:
 # =========================================================================
 if run_a0a_rbr:
     # Define file path
-    p_a0a = "/home/sakic/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0100_from_Treden/RawData/transfer_3167556_files_8a99b7f8/204657_20210409_1130_data.txt"
-    p_a0a = "/home/sakic/Downloads/204657_20210919_1458_data.txt"
+    p_a0a = "/Users/rjoyar01/Desktop/mayotte/A0A_MAY30_R/208295_20240921_1633_data.txt"
+    p_metadata = "/Users/rjoyar01/Desktop/mayotte/A0A_MAY30_R/208295_20240921_1633_metadata.txt"
     df_a0a = pd.read_csv(p_a0a, sep=",")
     df_a0a["Time"] = pd.to_datetime(df_a0a["Time"])
+    (
+        sensor_ids,
+        instrument_serial,
+        instrument_model,
+        firmware_version,
+        ruskin_version,
+        sampling_mode,
+    ) = export_obp.get_metadata_info(p_metadata)
 
     # Create column mapping
     column_mapping = {
         "time": "Time",
-        "pressure_seafloor": ["BPR pressure", "BPR pressure.1"],
+        "pressure_sensor": ["BPR pressure", "BPR pressure.1"],
         "temperature_sensor": ["BPR temperature", "BPR temperature.1"],
         "temperature_seawater": ["Temperature"],
         "pressure_barometer": ["Barometer pressure"],
@@ -100,18 +110,33 @@ if run_a0a_rbr:
 
     # Define station configuration
     metadata_dict = {
-        'station_id': 'A0Ax',
-        'station_name': 'Ocean Bottom Pressure Station A0Ax',
-        'latitude': 0.000,
-        'longitude': 0.000,
-        'depth': 3000.0,
-        'institution': 'Institut de physique du globe de Paris',
-        'source': 'Réseau de surveillance volcanologique et sismologique de Mayotte (REVOSIMA)',
-        'references': 'https://www.ipgp.fr/observation/infrastructures-nationales-hebergees/revosima/',
-        'comment': 'Ocean Bottom Pressure Data',
+        'ruskin_version': ruskin_version,
+        'source_data': os.path.basename(p_a0a),
+        'source_metadata': os.path.basename(p_metadata),
+        'campaign_deployment': 'MAYOBS25',
+        'doi_deployment': '10.17600/18003404',
+        'campaign_recovery': 'MAYOBS30',
+        'doi_recovery': '10.17600/18003592',
+        'station_id': 'A0AR',
+        'station_name': 'Ocean Bottom Pressure Station A0A Reference',
+        'sensor_ids': {
+            'BPR1': sensor_ids[0],
+            'BPR2': sensor_ids[1],
+            'Barometer': sensor_ids[2]
+        },
+        'instrument_model': instrument_model,
+        'rbr_instrument_serial': instrument_serial,
+        'firmware_version': firmware_version,
+        'sampling_mode': sampling_mode,
+        'latitude': -12.695,
+        'longitude': 45.426,
+        'depth': 1730.0,
+        'institution': 'LIttoral ENvironnement et Sociétés, UMR7266 CNRS, La Rochelle Université',
         'project': 'Réseau de surveillance volcanologique et sismologique de Mayotte (REVOSIMA)',
-        'creator_name': 'LIENSs/REVOSIMA',
-        'creator_email': 'xxxxx@xxxxxxx.fr',
+        'references': 'https://www.ipgp.fr/observation/infrastructures-nationales-hebergees/revosima/',
+        'comment': 'No quality control or scientific processing has been applied.',
+        'creator_name': 'LIENSs',
+        'creator_email': 'contact_a0a_pin@univ-lr.fr',
         'creator_url': 'https://lienss.univ-larochelle.fr/',
         'processing_level': 'Raw Data',
         'summary': 'Ocean Bottom Pressure and Temperature Data from A0A OBP Station'
@@ -119,17 +144,17 @@ if run_a0a_rbr:
 
     # Define conversion factors
     conversion_factors = {
-        "pressure_seafloor": 0.01,  # hPa to dbar
-        "temperature_seawater": 1.0,  # No conversion needed
-        "temperature_sensor": 1.0,  # No conversion needed
-        "pressure_barometer": 0.01,
+        "pressure_sensor": 1.0, # 0.01,       # hPa -> dbar
+        "temperature_seawater": 1.0,
+        "temperature_sensor": 1.0,
+        "pressure_barometer": 1.0,       # hPa -> hPa
     }
 
     # Output directory
-    output_dir = "/home/sakic/IPGP_WORK/REVOSIMA/2510_OBSCOM_OBP/2510_paros_cat/netcdf_cf"
+    output_dir = "/Users/rjoyar01/Desktop/mayotte/A0A_MAY30_R/test_netcdf"
 
     # Export to NetCDF
-    output_path = marine.export_obp_to_netcdf(
+    output_path = export_obp.export_obp_to_netcdf(
         df_obp=df_a0a,
         column_mapping=column_mapping,
         output_dir=output_dir,
@@ -144,59 +169,55 @@ if run_a0a_rbr:
 
 if run_emso_azores:
     ### step 3.1:  read the data as a Pandas DataFrame
-    p = "/home/sakic/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0110_RawData/090_MOMAR_for_exemple/2017_JPPW_SBE27_2016_2017.csv"
-    df = pd.read_csv(p, sep="\t")
-    df.columns = df.columns.str.strip()
-    df["datetime"] = pd.to_datetime(df["datetime"])
+    p = "/Users/rjoyar01/Downloads/2023_JPPW_SBE26_2022_2023.tid"
+    df = export_obp.read_emso_tid(p)
 
     ### step 3.2: Create column mapping
     column_mapping = {
         "time": "datetime",
-        "pressure_seafloor": "pressure",
+        "pressure_sensor": "pressure",
         "temperature_seawater": "temperature",
         "temperature_sensor": "temperature"
     }
 
-    ### step 3.3: Define conversion factors
     conversion_factors = {
-        "pressure_seafloor": 0.01,  # hPa to dbar
-        "temperature_seawater": 1.0,  # No conversion needed
-        }
-
+        "pressure_sensor": 1.0,
+        "temperature_seawater": 1.0,
+        "temperature_sensor": 1.0,
+    }
 
     # step 3.5:  Define station configuration
     metadata_dict = {
+        'source_data': os.path.basename(p),
         'station_id': 'JPPW',
         'station_name': 'JPP West site',
         'latitude': conv.dms2degdec_num(-37, 17.559)  ,
         'longitude': 32.281416,
         'depth': 1729.0,
-        'institution': 'CNRS/LIENSs',
-        'source': 'EMSO Azores',
-        'references': 'xxxx',
-        'comment': 'Ocean Bottom Pressure Data',
+        'institution': 'LIttoral ENvironnement et Sociétés, UMR7266 CNRS, La Rochelle Université',
         'project': 'EMSO Azores',
-        'creator_name': 'CNRS/LIENSs',
-        'creator_email': 'xxxxx@xxxxxxx.fr',
+        'references': 'xxxx',
+        'comment': 'No quality control or scientific processing has been applied',
+        'creator_name': 'LIENSs',
+        'creator_email': 'valerie.ballu@univ-lr.fr',
         'creator_url': 'https://lienss.univ-larochelle.fr/',
         'processing_level': 'Raw Data',
         'summary': 'Ocean Bottom Pressure and Temperature Data from SBE53 pressure sensor'
     }
 
-
     ### step 3.6: Export to NetCDF
 
     # Output directory
-    output_dir = "/home/sakic/IPGP_WORK/REVOSIMA/0110_Pressure_Mayotte/0110_RawData/090_MOMAR_for_exemple/output"
+    output_dir = "/Users/rjoyar01/Desktop/mayotte/A0A_MAY30_R/test_netcdf"
 
-    output_path = marine.export_obp_to_netcdf(
+    output_path = export_obp.export_obp_to_netcdf(
         df_obp=df,
         column_mapping=column_mapping,
         output_dir=output_dir,
         metadata_dict=metadata_dict,
         conversion_factors=conversion_factors,
+        force=True
     )
-
 
 # =========================================================================
 # Final test: Load and print the exported NetCDF file for verification
