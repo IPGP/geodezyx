@@ -39,7 +39,7 @@
   ],
   "codeRepository": "git+https://github.com/IPGP/geodezyx.git",
   "dateCreated": "2016-01-01",
-  "dateModified": "2026-11-24",
+  "dateModified": "2026-11-25",
   "datePublished": "2025-01-01",
   "description": "The purpose of geodezyx is to provide all the functions which\ncan be useful for Geodesy and Geophysics.",
   "keywords": [
@@ -49,6 +49,6 @@
   ],
   "name": "geodezyx",
   "programmingLanguage": "Python 3",
-  "version": "5.2.2-beta3",
+  "version": "5.2.2-beta7",
   "referencePublication": "https://doi.org/10.5281/zenodo.24091080"
 }
