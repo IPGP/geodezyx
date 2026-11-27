@@ -7,4 +7,5 @@ from .list_utils   import *
 from .shell_like   import *
 from .utils_core   import *
 from .uncompress   import *
+from .checksum     import *
 
