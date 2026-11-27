@@ -227,10 +227,11 @@ def butterworth(df, t0=3*24*3600, t1=10*24*3600, kind='bandpass', order=4):
         The filtered data.
     """
     difftime = np.diff(df.index)
-    if not df.index[0].tzname():
-        pass  # directly nanosec
-    else:
-        difftime = np.array([e.total_seconds() * 10**9 for e in difftime])  # TimeDelta to be conv in nanosec
+    difftime = difftime.astype('timedelta64[ns]').astype(int)
+    # if not df.index[0].tzname():
+    #    pass  # directly nanosec
+    # else:
+    #   difftime = np.array([e.total_seconds() * 10**9 for e in difftime])  # TimeDelta to be conv in nanosec
 
     if not np.all(difftime == difftime[0]):
         print('The sampling is not regular, return')

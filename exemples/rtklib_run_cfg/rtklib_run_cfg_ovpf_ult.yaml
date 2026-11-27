@@ -3,7 +3,7 @@
 
 # Required parameters
 rnx_dir:
-  - /vol/ovpf/miroir_ovpf/DonneesTemporaires/Geodesy/GNSS/RINEX/15M01S/ # Directory containing RINEX files
+  - /vol/ovpf/miroir_ovpf/DonneesTemporaires/Geodesy/GNSS/RINEX/15M01S/PF/%Y/%j # Directory containing RINEX files
   - /home/ovsgnss/050_DATA_GNSS/data_centipede_reu/B59300REU
 cfgfile_generik: /opt/softs_gnss/geodezyx/exemples/rtklib_configfiles/rtknavi_example_ovpf_01b.conf # RTKLIB configuration file
 ## sites_rovers: two syntaxes are supported:
@@ -76,9 +76,3 @@ procs: 6         # Number of parallel workers (default: 4)
 
 # Executable path (optional)
 exe_path: rnx2rtkp
-
-# Parquet merge options
-fast_parquet_merge: False  # If True, only merge newly created parquet files instead of scanning the whole output directory
-sample: 5min  # resample points when merging the parquets (e.g., "5min" for 5 minutes, default: None for all points)
-
-

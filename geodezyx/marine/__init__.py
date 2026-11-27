@@ -3,6 +3,7 @@
 
 from .marine import *
 from .obp import *
+from .obp26 import *
 from .obscom import *
 from .dac import *
 from .export_obp import *
